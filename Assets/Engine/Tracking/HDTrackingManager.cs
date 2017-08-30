@@ -76,13 +76,14 @@ public class HDTrackingManager
         return group.ToString();
     }
 
+    // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
              
     public virtual void Update()
     {        
     }
-    
-#region notify
+
+#region notify    
     /// <summary>
     /// Called when the application starts
     /// </summary>

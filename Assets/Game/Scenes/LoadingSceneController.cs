@@ -366,12 +366,10 @@ public class LoadingSceneController : SceneController {
             {
                 m_loadingDone = true;
                 m_loading = false;
-                s_inSaveLoaderState = false;
-
-                HDTrackingManager.Instance.Notify_ApplicationStart();
+                s_inSaveLoaderState = false;                
             };
 
-            PersistenceFacade.instance.Sync_Persistences(onDone);            			
+            PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.FirstLoading, onDone);            			
         }
     }
 
