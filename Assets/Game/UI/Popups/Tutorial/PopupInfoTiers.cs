@@ -20,4 +20,13 @@ public class PopupInfoTiers : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoTiers";
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	public void OnClosePreAnimation() {
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._07_close_tier_popup);
+		}
+	}
 }

@@ -61,9 +61,13 @@ public class HDTrackingManager
         REWARD_GLOBAL_EVENT,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
+		REWARD_AD,						// Reward given by watching an ad
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
-        REFUND_GLOBAL_EVENT,            // USed when the user quits a global event so keys spent on it need to be refunded
-        SHOP_EXCHANGE                   // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
+        SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
+
+		GLOBAL_EVENT_KEYS_RESET,		// At the end of the event keys are reset back to 0
+		GLOBAL_EVENT_REFUND,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
+		GLOBAL_EVENT_BONUS				// Spend a key to duplicate score registered to a global event at the end of the run
     };
 
 	public enum EFunnels

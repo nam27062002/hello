@@ -462,7 +462,7 @@ public class ResultsScreenController : MonoBehaviour {
 				GameVars.unlockedDragonSku = m_unlockBar.nextDragonData.def.sku;
 			}
 
-			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
 				HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._05_continue_clicked);
 			}
 

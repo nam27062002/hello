@@ -211,4 +211,10 @@ public class MenuDragonScreenController : MonoBehaviour {
             PersistenceFacade.instance.Save_Request(true);
         }
 	}
+
+	public void OnPlayButton() {
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
+		}
+	}
 }
