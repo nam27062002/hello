@@ -35,18 +35,7 @@ public class PersistenceManagerImp : GameProgressManager
         LocalProgress_IsSaveEnabled = false;        
         LocalProgress_Data = new PersistenceData(id);        
         LocalProgress_Data.Load();
-
-        Action loadSystems = delegate ()
-        {            
-            if (LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK)
-            {
-                Systems_Load(LocalProgress_Data);                                
-            }
-
-            // Save is disabled if the local progress load state is not right
-            LocalProgress_IsSaveEnabled = LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK;
-        };
-
+        
         //Check for valid results and enable saving if we are in a valid state!
         if (LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK)
         {
