@@ -579,7 +579,7 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.player.playable = false;
 
                 // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
-                SaveFacade.Instance.timePlayed += (int)m_elapsedSeconds;
+                UsersManager.currentUser.timePlayed += (int)m_elapsedSeconds;                    
 			} break;
 
             case EStates.SHOWING_RESULTS: {
@@ -750,7 +750,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-            RewardManager.paidReviveCount, RewardManager.freeReviveCount);
+            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc);
     }
 
     private void Track_RunEnd(bool _quitGame) {

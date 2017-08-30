@@ -2,10 +2,15 @@
 
 Shader "Hungry Dragon/TransparentSoftAdditive"
 {
-	Properties{
+	Properties
+	{
+		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
-		[HideInInspector] _VColor("Custom vertex color", Color) = (1.0, 1.0, 1.0, 1.0)
-//		[Toggle(CUSTOMPARTICLESYSTEM)] _EnableCustomParticleSystem("Custom Particle System", int) = 0.0
+		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
+		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
+		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
+		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
+
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
@@ -18,13 +23,7 @@ Shader "Hungry Dragon/TransparentSoftAdditive"
 		ZWrite Off
 		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
-/*
-		BindChannels{
-			Bind "Color", color
-			Bind "Vertex", vertex
-			Bind "TexCoord", texcoord
-		}
-*/
+
 		// ---- Fragment program cards
 		SubShader
 		{
@@ -38,11 +37,17 @@ Shader "Hungry Dragon/TransparentSoftAdditive"
 				#pragma multi_compile_particles
 
 				#pragma shader_feature  __ CUSTOMPARTICLESYSTEM
+				#pragma shader_feature  __ EMISSIVEPOWER
+				#pragma shader_feature  __ AUTOMATICPANNING
 
 				#include "UnityCG.cginc"
 
+				#define SOFTADDITIVE
+				#include "transparentparticles.cginc"
+
+/*
 				sampler2D _MainTex;
-				fixed4 _TintColor;
+//				fixed4 _TintColor;
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -57,12 +62,9 @@ Shader "Hungry Dragon/TransparentSoftAdditive"
 				};
 
 				float4 _MainTex_ST;
-
-
-#ifdef CUSTOMPARTICLESYSTEM
-				float4 _VColor;
+#ifdef EMISSIVEPOWER
+				float _EmissivePower;
 #endif
-
 				v2f vert(appdata_t v)
 				{
 					v2f o;
@@ -75,14 +77,16 @@ Shader "Hungry Dragon/TransparentSoftAdditive"
 
 				fixed4 frag(v2f i) : COLOR
 				{
-#ifdef CUSTOMPARTICLESYSTEM
-					half4 prev = i.color * tex2D(_MainTex, i.texcoord) * _VColor;
-#else
 					half4 prev = i.color * tex2D(_MainTex, i.texcoord);
-#endif
 					prev.rgb *= prev.a;
+
+#ifdef EMISSIVEPOWER
+					return prev * _EmissivePower;
+#else
 					return prev;
+#endif
 				}
+*/
 				ENDCG
 			}
 		}

@@ -104,6 +104,9 @@ public class FireBreathDynamic : MonoBehaviour
 
     private ParticleSystem[] m_particleList;
 
+    private bool m_isTitan = false;
+
+    public float m_reflectionScale = 5.0f;
 
     void OnEnable()
     {
@@ -207,6 +210,8 @@ public class FireBreathDynamic : MonoBehaviour
 
 
         m_particleList = GetComponentsInChildren<ParticleSystem>();
+
+        m_isTitan = (InstanceManager.player.sku == "dragon_titan");
 
     }
 
@@ -448,6 +453,16 @@ public class FireBreathDynamic : MonoBehaviour
                         if (colFire != null)
                         {
                             colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
+                        }
+
+                        if (m_isTitan)
+                        {
+                            FireReflection fr = colFire.GetComponent<FireReflection>();
+                            if (fr != null)
+                            {
+                                float dot = Vector3.Dot(transform.right, hit.normal);
+                                fr.addVelocity((transform.right - (hit.normal * dot * 2.0f)) * m_reflectionScale);
+                            }
                         }
 
                         m_lastTime = Time.time;

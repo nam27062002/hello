@@ -98,7 +98,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		if(_def == null) return;
 
 		// Init internal vars
-		m_type = GetCurrencyType( m_def );
+		m_type = UserProfile.SkuToCurrency( m_def.Get("type") );
 
 		// Init visuals
 		// Icon
@@ -122,23 +122,18 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 
 		// Price
 		// Figure out currency first
-		m_price = m_def.GetAsFloat("priceDollars");
-		if(m_price > 0) {	// Real money prevails over HC
-			// Price is localized by the store api
-			m_currency = UserProfile.Currency.REAL;
-			if (GameStoreManager.SharedInstance.IsReady())
-			{
-				string localizedPrice =  GameStoreManager.SharedInstance.GetLocalisedPrice( m_def.sku);
-				m_priceButtons.SetAmount( localizedPrice, UserProfile.Currency.REAL);
+		// Special case for real money
+		m_currency = UserProfile.SkuToCurrency(m_def.Get("priceType"));
+		m_price = m_def.GetAsFloat("price");
+		if(m_currency == UserProfile.Currency.REAL) {
+			// Price is localized by the store api, if available
+			if(GameStoreManager.SharedInstance.IsReady()) {
+				string localizedPrice =  GameStoreManager.SharedInstance.GetLocalisedPrice(m_def.sku);
+				m_priceButtons.SetAmount(localizedPrice, m_currency);
+			} else {
+				m_priceButtons.SetAmount("$" + StringUtils.FormatNumber(m_price, 2), m_currency);
 			}
-			else
-			{
-				m_priceButtons.SetAmount("$" + StringUtils.FormatNumber(m_price, 2), UserProfile.Currency.REAL);
-			}
-
 		} else {
-			m_currency = UserProfile.Currency.HARD;
-			m_price = m_def.GetAsFloat("priceHC");
 			m_priceButtons.SetAmount(m_price, m_currency);
 		}
 	}
@@ -148,7 +143,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public static void ApplyShopPack( DefinitionNode def )
 	{	
-		UserProfile.Currency type = GetCurrencyType(def);
+		UserProfile.Currency type = UserProfile.SkuToCurrency(def.Get("type"));
 		// Add amount
 		// [AOC] Could be joined in a single instruction for all types, but keep it split in case we need some extra processing (i.e. tracking!)
 		switch(type) {
@@ -166,23 +161,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		}
 
 		// Save persistence
-		PersistenceManager.Save(true);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <returns></returns>
-	/// <param name="def"></param>
-	private static UserProfile.Currency GetCurrencyType( DefinitionNode def )
-	{
-		UserProfile.Currency type = UserProfile.Currency.NONE;
-		switch(def.Get("type")) {
-			case "sc": type = UserProfile.Currency.SOFT; break;
-			case "hc": type = UserProfile.Currency.HARD; break;
-			case "keys": type = UserProfile.Currency.KEYS; break;
-		}
-		return type;
+		PersistenceFacade.instance.Save_Request(true);
 	}
 
 	//------------------------------------------------------------------------//
@@ -332,7 +311,12 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 
 	private void OnPurchaseSuccessEnd(DefinitionNode _def) {
 		// Notify player
-		UINotificationShop.CreateAndLaunch(GetCurrencyType(_def), _def.GetAsInt("amount"), Vector3.down * 150f, this.GetComponentInParent<Canvas>().transform as RectTransform);
+		UINotificationShop.CreateAndLaunch(
+			UserProfile.SkuToCurrency(_def.Get("type")), 
+			_def.GetAsInt("amount"), 
+			Vector3.down * 150f, 
+			this.GetComponentInParent<Canvas>().transform as RectTransform
+		);
 
 		// Notify listeners
 		OnPurchaseSuccess.Invoke(this);

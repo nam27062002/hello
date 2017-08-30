@@ -57,7 +57,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	// Optional screen darkening setup
 	public bool darkenScreen = false;
 	public float darkScreenDistance = 50f;
-	public Color darkScreenColor = Colors.WithAlpha(Color.black, 0.8f);
+	public Color darkScreenColor = Colors.WithAlpha(Color.black, 0.4f);
 
 	// Editor Settings
 	public bool livePreview = true;
@@ -79,7 +79,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	// STATIC MEMBERS													//
 	//------------------------------------------------------------------//
 	// A single dark screen shared among all cameras/snap points
-	private static SpriteRenderer m_darkScreen = null;
+	private static MeshRenderer m_darkScreen = null;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -163,14 +163,17 @@ public class CameraSnapPoint : MonoBehaviour {
 
 		// Dark screen
 		// Apply values
-		SpriteRenderer screen = ApplyDarkScreen(_cam);
+		MeshRenderer screen = ApplyDarkScreen(_cam);
 		if(screen != null) {
 			if(darkenScreen) {
 				screen.gameObject.SetActive(true);
 				screen.transform.localPosition = Vector3.forward * darkScreenDistance;
-				screen.color = this.darkScreenColor;
+                Color darkScreenColorFixed = this.darkScreenColor;
+                darkScreenColorFixed.a *= 0.5f;
+
+                screen.material.SetColor("_TintColor", darkScreenColorFixed);
 			} else {
-				screen.color = Colors.WithAlpha(screen.color, 0f);
+//				screen.color = Colors.WithAlpha(screen.color, 0f);
 				screen.gameObject.SetActive(false);
 			}
 		}
@@ -267,7 +270,7 @@ public class CameraSnapPoint : MonoBehaviour {
 		}
 
 		// Dark screen
-		SpriteRenderer screen = ApplyDarkScreen(_cam);
+		MeshRenderer screen = ApplyDarkScreen(_cam);
 		if(screen != null) {
 			// Make sure the screen is active (if we have the darken screen toggled)
 			if(darkenScreen) screen.gameObject.SetActive(true);
@@ -277,10 +280,10 @@ public class CameraSnapPoint : MonoBehaviour {
 
 			// Tween color
 			// If disabling the darken screen, tween to transparent
-			Color targetColor = darkenScreen ? this.darkScreenColor : Colors.WithAlpha(screen.color, 0f);
-			seq.Join(DOTween.To(
-				() => { return screen.color; },
-				(_newValue) => { screen.color = _newValue; },
+			Color targetColor = darkenScreen ? this.darkScreenColor : Colors.WithAlpha(screen.material.GetColor("_TintColor"), 0f);
+            seq.Join(DOTween.To(
+				() => { return screen.material.GetColor("_TintColor"); },
+				(_newValue) => { screen.material.SetColor("_TintColor", _newValue); },
 				targetColor, _duration
 			).SetAs(_params));
 		}
@@ -317,14 +320,14 @@ public class CameraSnapPoint : MonoBehaviour {
 	/// </summary>
 	/// <returns>The dark screen linked to the given camera.</returns>
 	/// <param name="_cam">Camera to be checked.</param>
-	private static SpriteRenderer ApplyDarkScreen(Camera _cam) {
+	private static MeshRenderer ApplyDarkScreen(Camera _cam) {
 		// Is dark screen instance created?
 		if(m_darkScreen == null) {
 			// No! Do it now
 			GameObject screenPrefab = Resources.Load<GameObject>(DARK_SCREEN_PREFAB_PATH);
 			GameObject screenInstance = GameObject.Instantiate<GameObject>(screenPrefab);
 			screenInstance.hideFlags = HideFlags.DontSave;
-			m_darkScreen = screenInstance.GetComponent<SpriteRenderer>();
+			m_darkScreen = screenInstance.GetComponent<MeshRenderer>();
 		}
 
 		// Move dark screen to target camera's hierarchy

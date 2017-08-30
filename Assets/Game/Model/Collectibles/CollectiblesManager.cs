@@ -92,11 +92,11 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, 1, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 		}
 
-		// Save persistence
-		PersistenceManager.Save();
+        // Save persistence
+        PersistenceFacade.instance.Save_Request();
 
-		// Clear manager
-		Clear();
+        // Clear manager
+        Clear();
 	}
 
 	/// <summary>

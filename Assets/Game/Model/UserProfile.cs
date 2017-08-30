@@ -10,7 +10,6 @@
 using UnityEngine;
 using System;
 using SimpleJSON;
-using System.Collections;
 using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,7 +21,7 @@ using System.Collections.Generic;
 /// IT extends <c>UserSaveSystem</c>, which takes care of technical parameters such as last time it's been saved and so on
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class UserProfile : UserSaveSystem
+public class UserProfile : UserPersistenceSystem
 {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
@@ -373,7 +372,7 @@ public class UserProfile : UserSaveSystem
 		// [AOC] For now we don't need to differientate earnings from paid and free sources, neither do we need to differientate earnings and expenses, so use the same event for everything
 		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 
-        if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT) {
+        if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT && toAdd > 0) {
             HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount);
         }
     }
@@ -471,6 +470,7 @@ public class UserProfile : UserSaveSystem
 			case Currency.HARD: return "hc";
 			case Currency.GOLDEN_FRAGMENTS: return "goldenFragments";
 			case Currency.KEYS: return "keys";
+			case Currency.REAL: return "money";
 		}
 		return string.Empty;
 	}
@@ -484,6 +484,7 @@ public class UserProfile : UserSaveSystem
 			case "hc": return Currency.HARD;
 			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
 			case "keys": return Currency.KEYS;
+			case "money": return Currency.REAL;
 		}
 		return Currency.NONE;
 	}
@@ -575,7 +576,7 @@ public class UserProfile : UserSaveSystem
     {
         base.Load();
 
-        string jsonAsString = m_saveData.ToString();
+        string jsonAsString = m_persistenceData.ToString();
         if (jsonAsString != null)
         {   
 			#if UNITY_EDITOR
@@ -595,7 +596,7 @@ public class UserProfile : UserSaveSystem
         m_saveTimestamp = DateTime.UtcNow;
 
         JSONNode json = ToJson();
-		m_saveData.Merge(json.ToString());
+        m_persistenceData.Merge(json.ToString());
     }
 
 	//------------------------------------------------------------------------//

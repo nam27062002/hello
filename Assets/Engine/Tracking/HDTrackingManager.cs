@@ -11,7 +11,7 @@ public class HDTrackingManager
     // Singleton ///////////////////////////////////////////////////////////
 #if UNITY_EDITOR
     // Disabled on editor because ubimobile services crashes on editor when platform is set to iOS
-    private static bool IsEnabled = false;
+    private static bool IsEnabled = true;
 #else
     private static bool IsEnabled = true;
 #endif
@@ -37,6 +37,9 @@ public class HDTrackingManager
             return smInstance;
         }
     }
+
+    public virtual void Init() {}
+
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
@@ -63,12 +66,17 @@ public class HDTrackingManager
         SHOP_EXCHANGE                   // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
     };
 
+	public enum EFunnels
+	{
+		LOAD_GAME = 0
+	};
+
     public static string EconomyGroupToString(EEconomyGroup group)
     {
         return group.ToString();
     }
 
-    public TrackingSaveSystem TrackingSaveSystem { get; set; }
+    public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
              
     public virtual void Update()
     {        
@@ -120,8 +128,11 @@ public class HDTrackingManager
     /// <param name="superFireRushNb">Amount of times superfury rush has been triggered during the round.</param>
     /// <param name="hcRevive">Amount of times the user paid with HC spent to revive the dragon.</param>
     /// <param name="adRevive">Amount of times the user paid by watching an ad to revive her dragon druring the round.</param>
+    /// <param name="scGained">Amount of soft currency gained during the round.</param>
+    /// <param name="hcGained">Amount of hard currency gained during the round.</param>
     public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
-        int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive) {}
+        int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
+        int scGained, int hcGained) {}
 
     /// <summary>
     /// Called when a run finished (because of death or quit game). Remember that a round is composed of at least one run, but it can have more than one if after a run
@@ -196,6 +207,18 @@ public class HDTrackingManager
     /// <param name="provider">Ad Provider. Optional.</param>    
     /// </summary>
     public virtual void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration=0, string provider=null) {}
+
+	/// <summary>
+	/// The game has reached a step in the loading funnel.
+	/// </summary>
+	/// <param name="_step">Step to notify.</param>
+	public virtual void Notify_Funnel_Load(FunnelData_Load.Steps _step) {}
+
+	/// <summary>
+	/// The game has reached a step in the firts user experience funnel.
+	/// </summary>
+	/// <param name="_step">Step to notify.</param>
+	public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
     #endregion
 
     #region log
@@ -219,6 +242,6 @@ public class HDTrackingManager
     {
         Debug.LogError("[HDTrackingManager] " + msg);
     }
-#endregion
+	#endregion
 }
 

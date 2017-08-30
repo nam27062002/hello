@@ -35,7 +35,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	[SerializeField] private Vector3 m_boundsScale = Vector3.zero;
 
 	[SeparatorAttribute]
-	[SerializeField] private bool m_forcePreview = false;
+	[SerializeField] private bool m_drawPreview = false;
 	[SerializeField] private float m_previewStep = 0.1f;
 	[SerializeField] private float m_previewMaxTime = 60f;
 
@@ -184,7 +184,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 		UpdateFunction(0f);
 		m_centerOffset = -m_target;
 
-		if (m_forcePreview || !Application.isPlaying) {
+		if (m_drawPreview) {
 			float time = 0;
 			float maxTime = m_previewMaxTime;
 			float step = Mathf.Max(0.1f, m_previewStep);

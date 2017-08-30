@@ -46,10 +46,17 @@ namespace LevelEditor {
 			RailManager.CreateInstance();
 
             UsersManager.CreateInstance();
-            SaveFacade.Instance.Init();
-            PersistenceManager.Init();
-            PersistenceManager.Load();
 
+            DragonManager.SetupUser(UsersManager.currentUser);
+            MissionManager.SetupUser(UsersManager.currentUser);
+            EggManager.SetupUser(UsersManager.currentUser);
+            ChestManager.SetupUser(UsersManager.currentUser);
+            GameStoreManager.SharedInstance.Initialize();
+
+            PersistenceFacade.CreateInstance();
+            PersistenceFacade.instance.Init();
+            PersistenceFacade.instance.Sync_Persistences(null);
+            
 			if (LevelEditor.settings.poolLimit == "unlimited") {
 				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
 			} else {
@@ -75,12 +82,12 @@ namespace LevelEditor {
 		/// </summary>
 		private IEnumerator Start() {
 
-			while( !PersistenceManager.loadCompleted )
+			while( !PersistenceFacade.instance.IsLoadCompleted)
 			{
 				yield return null;
-			}
+			}            
 
-			InstanceManager.player.gameObject.SetActive(true);
+            InstanceManager.player.gameObject.SetActive(true);
 
 			ChestManager.CreateInstance();
 			EggManager.CreateInstance();

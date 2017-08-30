@@ -1,243 +1,436 @@
 {
-    "TrackingEvents": {        
+    "TrackingEvents": {
+        "custom.game.ad.start": {
+            "Parameters": [
+                {"nbAdsLtd": {"Status": "OK"}},
+                {"nbAdsSession": {"Status": "OK"}},
+                {"adIsAvailable": {"Status": "OK"}},
+                {"rewardType": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"provider": {"Status": "OK"}},
+                {"adsType": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.player.iap.secondaryStore": {
+            "Parameters": [
+                {"itemID": {"Status": "OK"}},
+                {"itemQuantity": {"Status": "OK"}},
+                {"promotionType": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"currency": {"Status": "OK"}},
+                {"moneyIAP": {"Status": "OK"}},
+                {"totalPurchases": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.gameplay.start": {
+            "Parameters": [
+                {"sessionsCount": {"Status": "OK"}},
+                {"gameRunNb": {"Status": "OK"}},
+                {"xp": {"Status": "OK"}},
+                {"dragonProgression": {"Status": "OK"}},
+                {"dragonSkin": {"Status": "OK"}},
+                {"pet1": {"Status": "OK"}},
+                {"pet2": {"Status": "OK"}},
+                {"pet3": {"Status": "OK"}},
+                {"pet4": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.game.ad.finished": {
+            "Parameters": [
+                {"isLoaded": {"Status": "OK"}},
+                {"provider": {"Status": "OK"}},
+                {"adViewingDuration": {"Status": "OK"}},
+                {"maxReached": {"Status": "OK"}},
+                {"adsType": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.eco.source": {
+            "Parameters": [
+                {"sessionsCount": {"Status": "OK"}},
+                {"gameRunNb": {"Status": "OK"}},
+                {"maxXp": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"currency": {"Status": "OK"}},
+                {"amountDelta": {"Status": "OK"}},
+                {"amountBalance": {"Status": "OK"}},
+                {"ecoGroup": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.mobile.stop": {
+            "Parameters": [
+                {"isPayingSession": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"sessionPlaytime": {"Status": "OK"}},
+                {"stopCause": {"Status": "OK"}},
+                {"totalPlaytime": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.game.cs": {
+            "Parameters": [
+                {"totalPurchases": {"Status": "OK"}},
+                {"sessionsCount": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"pvpMatchesPlayed": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.gameplay.end": {
+            "Parameters": [
+                {"sessionsCount": {"Status": "OK"}},
+                {"deathInCurrentRunNb": {"Status": "OK"}},
+                {"gameRunNb": {"Status": "OK"}},
+                {"xp": {"Status": "OK"}},
+                {"deltaXp": {"Status": "OK"}},
+                {"dragonProgression": {"Status": "OK"}},
+                {"maxXp": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"timePlayed": {"Status": "OK"}},
+                {"score": {"Status": "OK"}},
+                {"deathType": {"Status": "OK"}},
+                {"deathCause": {"Status": "OK"}},
+                {"deathCoordinates": {"Status": "OK"}},
+                {"chestsFound": {"Status": "OK"}},
+                {"eggFound": {"Status": "OK"}},
+                {"highestMultiplier": {"Status": "OK"}},
+                {"highestBaseMultiplier": {"Status": "OK"}},
+                {"fireRushNb": {"Status": "OK"}},
+                {"superFireRushNb": {"Status": "OK"}},
+                {"hcRevive": {"Status": "OK"}},
+                {"adRevive": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.gameplay.dead": {
+            "Parameters": [
+                {"sessionsCount": {"Status": "OK"}},
+                {"deathInCurrentRunNb": {"Status": "OK"}},
+                {"gameRunNb": {"Status": "OK"}},
+                {"xp": {"Status": "OK"}},
+                {"timePlayed": {"Status": "OK"}},
+                {"score": {"Status": "OK"}},
+                {"deathType": {"Status": "OK"}},
+                {"deathCause": {"Status": "OK"}},
+                {"deathCoordinates": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.player.iap": {
+            "Parameters": [
+                {"storeTransactionID": {"Status": "OK"}},
+                {"houstonTransactionID": {"Status": "OK"}},
+                {"itemID": {"Status": "OK"}},
+                {"promotionType": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"moneyCurrency": {"Status": "OK"}},
+                {"moneyIAP": {"Status": "OK"}},
+                {"totalPurchases": {"Status": "OK"}},
+                {"totalStoreVisits": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.eco.sink": {
+            "Parameters": [
+                {"sessionsCount": {"Status": "OK"}},
+                {"gameRunNb": {"Status": "OK"}},
+                {"maxXp": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}},
+                {"currency": {"Status": "OK"}},
+                {"amountDelta": {"Status": "OK"}},
+                {"amountBalance": {"Status": "OK"}},
+                {"ecoGroup": {"Status": "OK"}},
+                {"item": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "custom.mobile.start": {
+            "Parameters": [
+                {"abtesting": {"Status": "OK"}},
+                {"playerProgress": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
         "game.start": {
-            "Parameters": [                                                                
-				{"acq_marketing_id": {"Status": ""}},
-				{"hardware": {"Status": ""}},
-				{"installDate": {"Status": ""}}                              
-                {"osVersion": {"Status": ""}},
-				{"playerID": {"Status": ""}},
-				{"providerAuth": {"Status": ""}},                
-				{"pushNotif": {"Status": ""}},                
-				{"SubVersion": {"Status": ""}},               
-                {"typeNotif": {"Status": ""}},
-				{"InGameId": {"Status": ""}}     								
+            "Parameters": [
+                {"acq_marketing_id": {"Status": "OK"}},
+                {"hardware": {"Status": "OK"}},
+                {"installDate": {"Status": "OK"}},
+                {"osVersion": {"Status": "OK"}},
+                {"playerID": {"Status": "OK"}},
+                {"providerAuth": {"Status": "OK"}},
+                {"pushNotif": {"Status": "OK"}},
+                {"SubVersion": {"Status": "OK"}},
+                {"typeNotif": {"Status": "OK"}},
+                {"InGameId": {"Status": "OK"}}
             ],
             "APIs": ["dna"]
-        },        
-		"custom.mobile.start": {
-            "Parameters": [                                                                
-				{"abtesting": {"Status": ""}},
-				{"playerProgress": {"Status": ""}}			                
-            ],
-            "APIs": ["dna"]
-        },
-		"custom.mobile.stop": {
-            "Parameters": [                                                                
-				{"isPayingSession": {"Status": ""}},
-				{"playerProgress": {"Status": ""}},				
-                {"sessionPlaytime": {"Status": ""}},
-				{"stopCause": {"Status": ""}},
-				{"totalPlaytime": {"Status": ""}}                				
-            ],
-            "APIs": ["dna"]
-        },    
-		"custom.player.iap": {
-            "Parameters": [                                                                
-				{"storeTransactionID": {"Status": ""}},
-				{"houstonTransactionID": {"Status": ""}},
-				{"itemID": {"Status": ""}},
-				{"promotionType": {"Status": ""}},
-				{"playerProgress": {"Status": ""}},				
-                {"moneyCurrency": {"Status": ""}},				
-				{"moneyIAP": {"Status": ""}},               				
-				{"totalPurchases": {"Status": ""}},
-				{"totalStoreVisits": {"Status": ""}}                								
-            ],
-            "APIs": ["dna"]
-        },        		
-		"custom.player.iap.secondaryStore": {
-            "Parameters": [                                                                				
-				{"itemID": {"Status": ""}},
-				{"itemQuantity": {"Status": ""}},               				
-				{"promotionType": {"Status": ""}},
-				{"playerProgress": {"Status": ""}},				
-                {"currency": {"Status": ""}},				
-				{"moneyIAP": {"Status": ""}},               				
-				{"totalPurchases": {"Status": ""}}				
-            ],
-            "APIs": ["dna"]
-        },
-		"custom.game.cs": {
-            "Parameters": [                                                                				
-				{"totalPurchases": {"Status": ""}},							
-				{"sessionsCount": {"Status": ""}},               								
-				{"playerProgress": {"Status": ""}},
-				{"pvpMatchesPlayed": {"Status": ""}}
-            ],
-            "APIs": ["dna"]
-        },
-		"custom.game.ad.start": {
-            "Parameters": [                                                                				
-				{"nbAdsLtd": {"Status": ""}},							
-				{"nbAdsSession": {"Status": ""}},               								
-				{"adIsAvailable": {"Status": ""}},               								
-				{"rewardType": {"Status": ""}},               								
-				{"playerProgress": {"Status": ""}},
-				{"provider": {"Status": ""}},
-				{"adsType": {"Status": ""}}              							
-            ],
-            "APIs": ["dna"]
-        },
-		"custom.game.ad.finished": {
-            "Parameters": [                                                                				
-				{"isLoaded": {"Status": ""}},							
-				{"provider": {"Status": ""}},
-				{"adViewingDuration": {"Status": ""}},               								
-				{"maxReached": {"Status": ""}},               																
-				{"adsType": {"Status": ""}}              							
-            ],
-            "APIs": ["dna"]
-        }        					
+        }
     },
-    "ParameterValues": { 
-		"abtesting": {
-            "Type": "STRING:125",
-            "Values": []
-        },			
-		"acq_marketing_id": {
-            "Type": "TRACK_DNA_MARKETING_ID",
-            "Values": []
-        },  
-		"adIsAvailable": {
+    "ParameterValues": {
+        "fireRushNb": {
             "Type": "INT",
-            "Values": []
-        },	
-		"adsType": {
-            "Type": "STRING:125",
             "Values": []
         },
-		"adViewingDuration": {
+        "InGameId": {
             "Type": "INT",
-            "Values": []
-        },			
-		"currency": {
-            "Type": "STRING:125",
-            "Values": []
-        },				
-		"hardware": {
-            "Type": "TRACK_DNA_HARDWARE",
-            "Values": []
-        }, 
-		"houstonTransactionID": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-		"InGameId": {
-            "Type": "INT",
-            "Values": []
-        },	
-		"installDate": {
-            "Type": "TRACK_DNA_INSTALL_DATE",
-            "Values": []
-        }, 
-		"isLoaded": {
-            "Type": "INT",
-            "Values": []
-        },	
-		"isPayingSession": {
-            "Type": "INT",
-            "Values": []
-        },	
-		"itemID": {
-            "Type": "STRING:125",
             "Values": []
         },
-		"itemQuantity": {
+        "dragonProgression": {
             "Type": "INT",
-            "Values": []
-        },	
-		"maxReached": {
-            "Type": "INT",
-            "Values": []
-        },					
-		"moneyCurrency": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-		"moneyIAP": {
-            "Type": "FLOAT",
             "Values": []
         },
-		"nbAdsLtd": {
+        "hcRevive": {
             "Type": "INT",
             "Values": []
-        },	
-		"nbAdsSession": {
-            "Type": "INT",
-            "Values": []
-        },				
-		"osVersion": {
-            "Type": "TRACK_OS",
-            "Values": []
-        },   
-		"playerID": {
-            "Type": "STRING:125",
-            "Values": []
-        }, 
-		"playerProgress": {
-            "Type": "STRING:125",
-            "Values": []
-        },	
-		"promotionType": {
-            "Type": "STRING:125",
-            "Values": []
-        },			
-		"provider": {
-            "Type": "STRING:125",
-            "Values": []
-        },		   		
-		"providerAuth": {
-            "Type": "STRING:125",
-            "Values": []
-        },		
+        },
         "pushNotif": {
             "Type": "TRACK_DNA_PUSH_NOTIF",
             "Values": []
         },
-		"pvpMatchesPlayed": {
-            "Type": "INT",
-            "Values": []
-        },
-		"rewardType": {
-            "Type": "STRING:125",
-            "Values": []
-        },		
-		"sessionPlaytime": {
-            "Type": "INT",
-            "Values": []
-        },	
-		"sessionsCount": {
-            "Type": "INT",
-            "Values": []
-        }
-		"stopCause": {
-            "Type": "STRING:125",
-            "Values": []
-        },		
-		"storeTransactionID": {
-            "Type": "STRING:125",
-            "Values": []
-        },			
-		"SubVersion": {
+        "ecoGroup": {
             "Type": "STRING:125",
             "Values": []
         },
-		"totalPlaytime": {
+        "dragonSkin": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "isLoaded": {
             "Type": "INT",
             "Values": []
-        },	
-		"totalPurchases": {
+        },
+        "amountDelta": {
             "Type": "INT",
             "Values": []
-        },	
-		"totalStoreVisits": {
+        },
+        "maxReached": {
             "Type": "INT",
             "Values": []
-        },		
+        },
+        "amountBalance": {
+            "Type": "INT",
+            "Values": []
+        },
+        "stopCause": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "highestMultiplier": {
+            "Type": "FLOAT",
+            "Values": []
+        },
         "typeNotif": {
             "Type": "STRING:125",
             "Values": []
-        }    																
+        },
+        "abtesting": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "sessionPlaytime": {
+            "Type": "INT",
+            "Values": []
+        },
+        "chestsFound": {
+            "Type": "INT",
+            "Values": []
+        },
+        "sessionsCount": {
+            "Type": "INT",
+            "Values": []
+        },
+        "hardware": {
+            "Type": "TRACK_DNA_HARDWARE",
+            "Values": []
+        },
+        "totalStoreVisits": {
+            "Type": "INT",
+            "Values": []
+        },
+        "deltaXp": {
+            "Type": "INT",
+            "Values": []
+        },
+        "item": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "pvpMatchesPlayed": {
+            "Type": "INT",
+            "Values": []
+        },
+        "adRevive": {
+            "Type": "INT",
+            "Values": []
+        },
+        "timePlayed": {
+            "Type": "INT",
+            "Values": []
+        },
+        "houstonTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "Score": {
+            "Type": "INT",
+            "Values": []
+        },
+        "totalPurchases": {
+            "Type": "INT",
+            "Values": []
+        },
+        "eggFound": {
+            "Type": "INT",
+            "Values": []
+        },
+        "gameRunNb": {
+            "Type": "INT",
+            "Values": []
+        },
+        "playerID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "pet3": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "pet4": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "providerAuth": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "pet1": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "rewardType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "pet2": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "moneyIAP": {
+            "Type": "FLOAT",
+            "Values": []
+        },
+        "isPayingSession": {
+            "Type": "INT",
+            "Values": []
+        },
+        "itemID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "maxXp": {
+            "Type": "INT",
+            "Values": []
+        },
+        "osVersion": {
+            "Type": "TRACK_OS",
+            "Values": []
+        },
+        "installDate": {
+            "Type": "TRACK_DNA_INSTALL_DATE",
+            "Values": []
+        },
+        "provider": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "storeTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "acq_marketing_id": {
+            "Type": "TRACK_DNA_MARKETING_ID",
+            "Values": []
+        },
+        "adsType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "highestBaseMultiplier": {
+            "Type": "FLOAT",
+            "Values": []
+        },
+        "superFireRushNb": {
+            "Type": "INT",
+            "Values": []
+        },
+        "currency": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "deathInCurrentRunNB ": {
+            "Type": "INT",
+            "Values": []
+        },
+        "promotionType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "adViewingDuration": {
+            "Type": "INT",
+            "Values": []
+        },
+        "itemQuantity": {
+            "Type": "INT",
+            "Values": []
+        },
+        "nbAdsLtd": {
+            "Type": "INT",
+            "Values": []
+        },
+        "nbAdsSession": {
+            "Type": "INT",
+            "Values": []
+        },
+        "deathType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "adIsAvailable": {
+            "Type": "INT",
+            "Values": []
+        },
+        "SubVersion": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "playerProgress": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "totalPlaytime": {
+            "Type": "INT",
+            "Values": []
+        },
+        "xp": {
+            "Type": "INT",
+            "Values": []
+        },
+        "moneyCurrency": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "deathCoordinates": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "deathCause": {
+            "Type": "STRING:125",
+            "Values": []
+        }
     }
 }
