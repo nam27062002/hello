@@ -515,6 +515,10 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
 			case EStates.COUNTDOWN: {
+				if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) 
+					&&  !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
+					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._11_load_is_done);
+				}
 				// Notify the game
 				// Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
 			} break;
@@ -583,6 +587,10 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
             case EStates.SHOWING_RESULTS: {
+				if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._04_run_is_done);
+				}
+
                 // Show loading screen
 				LoadingScreen.Toggle(true, false);
 

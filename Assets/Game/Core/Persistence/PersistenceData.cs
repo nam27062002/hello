@@ -195,16 +195,19 @@ public class PersistenceData
     /// <returns></returns>
     public bool IsStoredClear()
     {
+#if UNITY_EDITOR
+        return true;
+#else
         // It should always return false except when debugging that can be changed to true
-        /*if (FeatureSettingsManager.IsDebugEnabled)
+        if (FeatureSettingsManager.IsDebugEnabled)
         {
             return false;
         }
         else
         {
             return false;
-        }*/
-        return true;
+        }      
+#endif
     }
 
     public MemoryStream SaveToStream()
@@ -560,5 +563,5 @@ public class PersistenceData
     {
         get { return m_data.rawData; }
     }
-#endif    
+#endif
 }
