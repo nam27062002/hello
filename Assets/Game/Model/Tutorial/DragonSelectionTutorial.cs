@@ -134,6 +134,9 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 					// Update tutorial flag and save persistence
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
+
+					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06_load_and_animation);
+
 					PersistenceManager.Save();
 				} else {
 					// Timer not finished, scroll

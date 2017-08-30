@@ -212,6 +212,10 @@ public class HUDRevive : MonoBehaviour {
 			// Show!
 			if(m_animator != null) m_animator.Show();
 		} else {
+			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+				HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._04_run_is_done);
+			}
+
 			// Timer
 			duration = m_deathAnimDuration;
 		}

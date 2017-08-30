@@ -158,6 +158,8 @@ public class GameSceneController : GameSceneControllerBase {
 			// Open popup
 			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._01_loading_done);
 		}
 
 		// Load the dragon

@@ -36,13 +36,17 @@ abstract public class TouchControls : MonoBehaviour {
 	public TouchState CurrentTouchState { get { return this.m_currentTouchState; } }
 	public Vector3 CurrentTouchPos { get { return m_currentTouchPos; } }
 
-	public bool touchAction = false;    	   
+	public bool touchAction = false;
+
+	private bool m_registerFirstTouch = true; //first touch
 
 	// Use this for initialization
 	virtual public void Start () {
 	
 		m_isTouchObjsRendering = false;
 		m_isTouch2ObjsRendering = false;
+
+		m_registerFirstTouch = true;
 		
 		// Need to do this, as Unity doesn't seem to clear previous mouse clicks until the first query (i.e. GetMouseButton...())
 		// e.g. you clicked button '0' in the front end, and then during the game queried for GetMouseButtonDown(1) during
@@ -133,6 +137,11 @@ abstract public class TouchControls : MonoBehaviour {
 			//Debug.Log("Got touchState 0 = " + touchState.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
 			if(touchState == TouchState.pressed)
 			{
+				if (m_registerFirstTouch) {
+					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._03_game_started);
+					m_registerFirstTouch = false;
+				}
+
 				if(m_currentTouchState == TouchState.none)
 				{
 					if(OnTouchPress())
