@@ -425,9 +425,9 @@ public class ResultsScreenController : MonoBehaviour {
 					// Process unlocked skins for current dragon
 					UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
 
-					// Save persistence
-					PersistenceManager.Save(true);
-				} break;
+                    // Save persistence
+                    PersistenceFacade.instance.Save_Request(true);
+                    } break;
 
 				// Show global events contribute popup?		// [AOC] TEMP!! Waiting for the new results screen flow to properly integrate this!
 				case ToCheck.GLOBAL_EVENT: {

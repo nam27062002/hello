@@ -50,6 +50,8 @@ public class PopupMessage : MonoBehaviour
         };
         public EButtonsMode ButtonMode { get; set; }
         
+        public bool IsButtonCloseVisible { get; set; }
+
         public Config()
         {
             Reset();
@@ -67,6 +69,7 @@ public class PopupMessage : MonoBehaviour
             CancelButtonTid = "TID_GEN_CANCEL";
             OnCancel = null;
             ButtonMode = EButtonsMode.None;
+            IsButtonCloseVisible = true;
         }
     }
 
@@ -117,6 +120,9 @@ public class PopupMessage : MonoBehaviour
     [SerializeField]
     private Localizer m_buttonConfirmRightText;
 
+    [SerializeField]
+    private GameObject m_buttonCloseRoot;
+
     private Config m_config;    
 
     private bool IsInited { get; set; }
@@ -125,7 +131,8 @@ public class PopupMessage : MonoBehaviour
         DebugUtils.Assert(m_titleText != null, "Required field!");
         DebugUtils.Assert(m_messageText != null, "Required field!");        
         DebugUtils.Assert(m_buttonConfirmCenter != null, "Required field!");        
-        DebugUtils.Assert(m_buttonConfirmCenterText != null, "Required field!");        
+        DebugUtils.Assert(m_buttonConfirmCenterText != null, "Required field!");
+        DebugUtils.Assert(m_buttonCloseRoot != null, "Required field!");
 
         IsInited = false;
 
@@ -196,6 +203,11 @@ public class PopupMessage : MonoBehaviour
         else if (m_config.MessageText != null)
         {
             m_messageText.text.text = m_config.MessageText;
+        }
+
+        if (m_buttonCloseRoot != null)
+        {
+            m_buttonCloseRoot.SetActive(m_config.IsButtonCloseVisible);
         }
 
         // All buttons disabled by default since the required ones will be enabled depending on the button mode

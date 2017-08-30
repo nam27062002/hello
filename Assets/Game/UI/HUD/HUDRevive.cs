@@ -128,8 +128,8 @@ public class HUDRevive : MonoBehaviour {
 					// Do it!
 					RewardManager.paidReviveCount++;
 					DoRevive( DragonPlayer.ReviveReason.PAYING );
-					PersistenceManager.Save();
-				} else {
+                    PersistenceFacade.instance.Save_Request();
+                } else {
 					// Resume countdown timer!
 					m_timer.Resume();
 				}

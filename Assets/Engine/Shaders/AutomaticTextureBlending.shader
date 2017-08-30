@@ -39,19 +39,7 @@ Shader "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap"
 				#define BLEND_TEXTURE
 
 				#define CUSTOM_VERTEXCOLOR		
-/*
-				#define CUSTOM_VERTEXPOSITION
 
-				uniform float _WaveRadius;
-				uniform float _WavePhase;
-
-				float4 getCustomVertexPosition(inout appdata_t v)
-				{
-					float3 incWave = (0.5 + sin((_Time.y  * _WavePhase) + (v.vertex.xyz * _WavePhase)) * 0.5) * _WaveRadius;
-					float4 tvertex = v.vertex + float4(v.normal, 0.0) * (incWave.x + incWave.y + incWave.z) * 0.33333;
-					return mul(UNITY_MATRIX_MVP, tvertex);
-				}
-*/
 				#include "scenary.cginc"
 
 			ENDCG

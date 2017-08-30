@@ -256,10 +256,10 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(newEquip) {
 			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
-		PersistenceManager.Save();
+        PersistenceFacade.instance.Save_Request();
 
-		// Hide all powerups
-		if(m_powerAnim != null) m_powerAnim.Hide();
+        // Hide all powerups
+        if (m_powerAnim != null) m_powerAnim.Hide();
 
 		// Hide header
 		m_title.GetComponent<ShowHideAnimator>().Hide();
@@ -457,12 +457,12 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Change selected pill state
 				m_selectedPill.SetState(Wardrobe.SkinState.OWNED);
 
-				// Save!
-				PersistenceManager.Save(true);
+                // Save!
+                PersistenceFacade.instance.Save_Request(true);
 
-				// Show some nice FX
-				// Let's re-select the skin for now
-				DisguisePill pill = m_selectedPill;
+                // Show some nice FX
+                // Let's re-select the skin for now
+                DisguisePill pill = m_selectedPill;
 				m_selectedPill = null;
 				OnPillClicked(pill);
 
@@ -497,9 +497,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Refresh and store new equipped pill
 		m_selectedPill.Equip(true);
 		m_equippedPill = m_selectedPill;
-		PersistenceManager.Save();
+        PersistenceFacade.instance.Save_Request();
 
-		// Hide button!
-		m_equipButton.animator.Hide();
+        // Hide button!
+        m_equipButton.animator.Hide();
 	}
 }

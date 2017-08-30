@@ -70,12 +70,9 @@ public class CPProgressionCheats : MonoBehaviour {
 		GlobalEventManager.ClearCurrentEvent();
 
         // Clear persistence and sets the default persistence
-        PersistenceManager.Clear();
+        PersistenceFacade.instance.Save_ResetToDefault();
 
-        UsersManager.Reset();
-
-        // We need to load the default persistence in order to make UserManager.currentUser load the default data
-        FGOL.Save.SaveGameManager.Instance.Load(Authenticator.Instance.User);
+        UsersManager.Reset();        
 
 		// Backup all preferences that must be kept between resets
 		int resetProgressCount = PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0);
@@ -126,9 +123,9 @@ public class CPProgressionCheats : MonoBehaviour {
 			} break;
 		}
 
-		// Save persistence
-		PersistenceManager.Save();
-	}
+        // Save persistence
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// Specialized versions to be used as button callbacks.
@@ -173,11 +170,11 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Process unlocked skins for current dragon
 		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
 
-		// Save persistence
-		PersistenceManager.Save();
+        // Save persistence
+        PersistenceFacade.instance.Save_Request();
 
-		// Simulate a dragon selected event so everything is refreshed
-		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
+        // Simulate a dragon selected event so everything is refreshed
+        Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
 	}
 
 	/// <summary>
@@ -235,11 +232,11 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Process unlocked skins for current dragon
 		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
 
-		// Save persistence
-		PersistenceManager.Save();
+        // Save persistence
+        PersistenceFacade.instance.Save_Request();
 
-		// Simulate a dragon selected event so everything is refreshed
-		Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
+        // Simulate a dragon selected event so everything is refreshed
+        Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
 	}
 
 	/// <summary>
@@ -253,8 +250,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		int slotIdx = EggManager.AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));
 
 		// If successful, save persistence
-		if(slotIdx >= 0) PersistenceManager.Save();
-	}
+		if(slotIdx >= 0) PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// Unlock and buy all dragons.
@@ -270,8 +267,8 @@ public class CPProgressionCheats : MonoBehaviour {
                 }
             }
 
-			// Save persistence
-			PersistenceManager.Save();
+            // Save persistence
+            PersistenceFacade.instance.Save_Request();
         }
     }
 
@@ -299,9 +296,9 @@ public class CPProgressionCheats : MonoBehaviour {
 				}
 			}
 
-			// Save persistence
-			PersistenceManager.Save();
-		}
+            // Save persistence
+            PersistenceFacade.instance.Save_Request();
+        }
 	}
 
 	/// <summary>
@@ -315,11 +312,11 @@ public class CPProgressionCheats : MonoBehaviour {
 		}
 
 		// Mark all golden eggs as collected
-		UsersManager.currentUser.goldenEggsCollected = 100;	// Dirty, but should do the trick xD
+		UsersManager.currentUser.goldenEggsCollected = 100; // Dirty, but should do the trick xD
 
-		// Save persistence
-		PersistenceManager.Save();
-	}
+        // Save persistence
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// Reset all pets to lock state.
@@ -341,9 +338,9 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.goldenEggsCollected = 0;
 		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
-		// Save!
-		PersistenceManager.Save();
-	}
+        // Save!
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// Reset the pets collection to a random amount of locked/unlocked pets.
@@ -385,9 +382,9 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Initialize current amount of golden fragments to a random value within the limit
 		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (long)Random.Range(0, EggManager.goldenEggRequiredFragments), 0);
 
-		// Save!
-		PersistenceManager.Save();
-	}
+        // Save!
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// Reset only the special pets to lock state.
@@ -413,9 +410,9 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 		UsersManager.currentUser.goldenEggsCollected = 0;
 
-		// Save!
-		PersistenceManager.Save();
-	}
+        // Save!
+        PersistenceFacade.instance.Save_Request();
+    }
 
     /// <summary>
     /// Simulates daily chest collection (no menu refresh for now, reload menu for that).
@@ -449,7 +446,15 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetMapUpgrades() {
 		// Not much to do:
-		UsersManager.currentUser.mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
-		PersistenceManager.Save();
-	}
+		UsersManager.currentUser.mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime(); // Already expired
+        PersistenceFacade.instance.Save_Request();
+    }
+
+    /// <summary>
+    /// Starts the like game flow.
+    /// </summary>
+    public void StartLikeGameFlow()
+    {
+		PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
+    }
 }
