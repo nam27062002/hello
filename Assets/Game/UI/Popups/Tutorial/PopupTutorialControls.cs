@@ -36,6 +36,7 @@ public class PopupTutorialControls : MonoBehaviour {
 	private GameSceneController m_sceneController = null;
 	private string m_localizedLoadingString = "";
 	private float m_loadProgress = 0f;
+	private bool m_loading;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -50,6 +51,8 @@ public class PopupTutorialControls : MonoBehaviour {
 		// Cache localized string to avoid doing the translation every frame
 		m_localizedLoadingString = LocalizationManager.SharedInstance.Localize("TID_GEN_LOADING");
 		m_localizedLoadingString += " {0}%";	// Add percentage replacement at the end
+
+		m_loading = true;
 	}
 
 	/// <summary>
@@ -60,6 +63,13 @@ public class PopupTutorialControls : MonoBehaviour {
 		m_loadProgress = m_sceneController.levelActivationProgress;
 		m_loadingInfo.Set(m_loadProgress < 1f, true);
 		m_playButton.Set(m_loadProgress >= 1f, true);
+
+		if (m_loading) {
+			if (m_loadProgress >= 1f) {
+				HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._01_loading_done);
+				m_loading = false;
+			}
+		}
 
         if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_loadProgress >= 1) {
 			GetComponent<PopupController>().Close(true);

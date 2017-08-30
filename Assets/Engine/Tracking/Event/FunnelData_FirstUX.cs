@@ -6,9 +6,9 @@ public class FunnelData_FirstUX : FunnelData {
 	//-- Step index ------------------------
 	public enum Steps {
 		_01_loading_done = 0,
-    	_02_clicked_play,		
-    	_03_game_started,	 		
-    	_04_run_is_done,		
+    	_02_clicked_play,
+		_03_game_started,
+    	_04_run_is_done,
     	_05_continue_clicked,
     	_06_load_and_animation,
     	_07_close_tier_popup,
@@ -26,7 +26,7 @@ public class FunnelData_FirstUX : FunnelData {
 	private const string STEP_01_loading_done	 		= "01.loading_done";
 	private const string STEP_02_clicked_play	 		= "02.clicked_play";
 	private const string STEP_03_game_started	 		= "03.game_started";
-	private const string STEP_04_run_is_done	 		= "04.run_is_done\t";
+	private const string STEP_04_run_is_done	 		= "04.run_is_done";
 	private const string STEP_05_continue_clicked		= "05.continue_clicked";
 	private const string STEP_06_load_and_animation 	= "06.load_and_animation";
 	private const string STEP_07_close_tier_popup 		= "07.close_tier_popup";
