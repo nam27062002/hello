@@ -26,11 +26,9 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	public const string PATH = "UI/Popups/GlobalEvents/PF_PopupGlobalEventContribution";
 
 	private const int MAX_SUBMIT_ATTEMPTS = 2;
-	private const long DOUBLE_UP_COST_KEYS = 1;	// [AOC] HARDCODED!! Take it from content!
 
 	private enum Panel {
 		OFFLINE,
-		LOG_IN,
 		ACTIVE
 	}
 	
@@ -39,7 +37,6 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Panels
 	[SerializeField] private ShowHideAnimator m_offlineGroupAnim = null;
-	[SerializeField] private ShowHideAnimator m_loginGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_activeGroupAnim = null;
 	[Space]
 	[SerializeField] private Localizer m_tapToContinueText = null;
@@ -51,35 +48,40 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 
 	[Separator("Active Panel")]
 	[SerializeField] private NumberTextAnimator m_scoreText = null;	
+	[SerializeField] private Localizer m_bonusDragonInfoText = null;
 	[SerializeField] private TextMeshProUGUI m_bonusDragonText = null;
 	[SerializeField] private NumberTextAnimator m_finalScoreText = null;	
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_keysBonusLabelText = null;
 	[Space]
-	[SerializeField] private Localizer m_useKeysButtonText = null;
-	[SerializeField] private ShowHideAnimator m_useKeysButtonAnim = null;
-	[SerializeField] private ShowHideAnimator m_buyKeysButtonAnim = null;
+	[SerializeField] private CurrencyButton m_buyKeyPCButton = null;
+	[SerializeField] private ShowHideAnimator m_buyKeyAdButtonAnim = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_keysBonusText = null;
 	[SerializeField] private ShowHideAnimator m_keysBonusTextAnim = null;
 	[Space]
-	[SerializeField] private ShowHideAnimator m_scoreGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_scoreOrnamentAnim = null;
-	[SerializeField] private ShowHideAnimator m_bonusDragonGroupAnim = null;
+	[SerializeField] private ShowHideAnimator m_scoreGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_bonusDragonOrnamentAnim = null;
+	[SerializeField] private ShowHideAnimator m_bonusDragonGroupAnim = null;
+	[SerializeField] private ShowHideAnimator m_keyOrnamentAnim = null;
 	[SerializeField] private ShowHideAnimator m_keyBonusGroupAnim = null;
 	[Space]
 	[SerializeField] private float m_rowDelay = 1f;
 
 	// Internal logic
-	private Panel m_activePanel = Panel.OFFLINE;
 	private GlobalEvent m_event = null;
-	private int m_submitAttempts = 0;
-	private bool m_usedKey = false;
-	private bool m_bonusDragon = false;
-	private long m_finalScore = 0;
-	private bool m_continueEnabled = false;
+	private Panel m_activePanel = Panel.OFFLINE;
 	private Sequence m_activePanelSequence = null;
+
+	private long m_finalScore = 0;
+	private int m_submitAttempts = 0;
+	private bool m_continueEnabled = false;
+
+	private bool m_bonusDragon = false;
+	private bool m_keyBonus = false;
+	private bool m_keyPurchased = false;
+	private DefinitionNode m_keyShopPackDef = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -88,14 +90,8 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
+		// Initialize some vars
+		m_keyShopPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, "shop_pack_keys_0");
 	}
 
 	/// <summary>
@@ -112,13 +108,6 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, OnContributionConfirmed);
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
 	}
 
 	/// <summary>
@@ -144,8 +133,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		GlobalEventManager.ErrorCode error = GlobalEventManager.CanContribute();
 		switch(error) {
 			case GlobalEventManager.ErrorCode.NONE:				m_activePanel = Panel.ACTIVE;	break;
-			case GlobalEventManager.ErrorCode.OFFLINE:			m_activePanel = Panel.OFFLINE;		break;
-			case GlobalEventManager.ErrorCode.NOT_LOGGED_IN:	m_activePanel = Panel.LOG_IN;		break;
+			case GlobalEventManager.ErrorCode.OFFLINE:			m_activePanel = Panel.OFFLINE;	break;
 		}
 
 		// Initialize active panel
@@ -156,6 +144,12 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 					m_finalScoreText.SetValue(0, false);
 					RefreshKeysField(_animate);
 
+					// Bonus dragon info
+					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_event.bonusDragonSku);
+					if ( bonusDragonDef != null ){
+						m_bonusDragonInfoText.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_INFO", bonusDragonDef.GetLocalized("tidName"));
+					}
+
 					// Bonus dragon text
 					if(m_event.bonusDragonSku == DragonManager.currentDragon.def.sku) {
 						m_bonusDragonText.text = "x2";
@@ -164,17 +158,17 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 					}
 
 					// Hide everything (prepare for anim)
-					m_scoreGroupAnim.Hide(false);
 					m_scoreOrnamentAnim.Hide(false);
-					m_bonusDragonGroupAnim.Hide(false);
+					m_scoreGroupAnim.Hide(false);
 					m_bonusDragonOrnamentAnim.Hide(false);
+					m_bonusDragonGroupAnim.Hide(false);
+					m_keyOrnamentAnim.Hide(false);
 					m_keyBonusGroupAnim.Hide(false);
 				}
 				m_tapToContinueText.Localize("TID_RESULTS_TAP_TO_CONTINUE");
 			} break;
 
-			case Panel.OFFLINE:
-			case Panel.LOG_IN: {
+			case Panel.OFFLINE: {
 				// Nothing to do!
 				m_tapToContinueText.Localize("TID_RESULTS_TAP_TO_SKIP");
 			} break;
@@ -183,28 +177,27 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		// Set panels visibility
 		m_activeGroupAnim.Set(m_activePanel == Panel.ACTIVE, _animate);
 		m_offlineGroupAnim.Set(m_activePanel == Panel.OFFLINE, _animate);
-		m_loginGroupAnim.Set(m_activePanel == Panel.LOG_IN, _animate);
 	}
 
 	/// <summary>
 	/// Shows up the proper asset in the keys field.
 	/// </summary>
 	private void RefreshKeysField(bool _animate) {
-		// Have contributed?
-		if(m_usedKey) {
+		// Key found in-game or obtained using other methods (ads, PC)
+		if(m_keyBonus) {
 			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_KEY_BONUS_USED");
 			m_keysBonusText.text = "x2";
 		} else {
-			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_KEY_BONUS", "x2");
+			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_KEY_BONUS_NOT_FOUND", "x2");
 		}
 
 		// Select what to choose - depends on whether we have already used a key and whether we have enough keys
-		m_buyKeysButtonAnim.Set(!m_usedKey && UsersManager.currentUser.keys < DOUBLE_UP_COST_KEYS, _animate);
-		m_useKeysButtonAnim.Set(!m_usedKey && UsersManager.currentUser.keys >= DOUBLE_UP_COST_KEYS, _animate);
-		m_keysBonusTextAnim.Set(m_usedKey, _animate);
+		m_buyKeyPCButton.animator.Set(!m_keyBonus, _animate);
+		m_buyKeyAdButtonAnim.Set(!m_keyBonus, _animate);
+		m_keysBonusTextAnim.Set(m_keyBonus, _animate);
 
 		// Set up double up price tag
-		m_useKeysButtonText.Localize("TID_EVENT_RESULTS_USE_KEY_BUTTON", StringUtils.FormatNumber(DOUBLE_UP_COST_KEYS));
+		m_buyKeyPCButton.SetAmount(m_keyShopPackDef.GetAsFloat("price"), UserProfile.Currency.HARD);
 	}
 
 	/// <summary>
@@ -225,10 +218,11 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 		RefreshKeysField(true);
 
 		// Hide everything
-		m_scoreGroupAnim.Hide(false);
 		m_scoreOrnamentAnim.Hide(false);
-		m_bonusDragonGroupAnim.Hide(false);
+		m_scoreGroupAnim.Hide(false);
 		m_bonusDragonOrnamentAnim.Hide(false);
+		m_bonusDragonGroupAnim.Hide(false);
+		m_keyOrnamentAnim.Hide(false);
 		m_keyBonusGroupAnim.Hide(false);
 
 		// Sequentially update values
@@ -237,10 +231,10 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 
 			// Base score
 			.AppendCallback(() => {
-				m_scoreGroupAnim.Show();
 				m_scoreOrnamentAnim.Show();
+				m_scoreGroupAnim.Show();
 			})
-			.AppendInterval(m_scoreOrnamentAnim.tweenDelay + m_scoreOrnamentAnim.tweenDuration)
+			.AppendInterval(m_scoreGroupAnim.tweenDelay + m_scoreGroupAnim.tweenDuration)
 			.AppendCallback(() => {
 				m_finalScore = (long)m_event.objective.currentValue;
 				m_scoreText.SetValue(m_finalScore, true);
@@ -250,10 +244,10 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 
 			// Bonus Dragon
 			.AppendCallback(() => {
-				m_bonusDragonGroupAnim.Show();
 				m_bonusDragonOrnamentAnim.Show();
+				m_bonusDragonGroupAnim.Show();
 			})
-			.AppendInterval(m_bonusDragonOrnamentAnim.tweenDelay + m_bonusDragonOrnamentAnim.tweenDuration)
+			.AppendInterval(m_bonusDragonGroupAnim.tweenDelay + m_bonusDragonGroupAnim.tweenDuration)
 			.AppendCallback(() => {
 				if(m_bonusDragon) m_finalScore *= 2;
 				m_finalScoreText.SetValue(m_finalScore, true);
@@ -262,11 +256,12 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 
 			// Bonus key
 			.AppendCallback(() => {
+				m_keyOrnamentAnim.Show();
 				m_keyBonusGroupAnim.Show();
 			})
 			.AppendInterval(m_keyBonusGroupAnim.tweenDelay + m_keyBonusGroupAnim.tweenDuration)
 			.AppendCallback(() => {
-				if(m_usedKey) m_finalScore *= 2;
+				if(m_keyBonus) m_finalScore *= 2;
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
 
@@ -283,13 +278,47 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	/// Discard event contribution and close the popup.
 	/// </summary>
 	private void CloseAndDiscard() {
-		// If we spend keys, refund
-		if(m_usedKey) {
-			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)DOUBLE_UP_COST_KEYS, true, HDTrackingManager.EEconomyGroup.REFUND_GLOBAL_EVENT);	// Refund as a paid key so we don't have any issue with the limits
+		// If we purchased keys, refund
+		if(m_keyPurchased) {
+			UsersManager.currentUser.EarnCurrency(
+				UserProfile.Currency.HARD, 
+				(ulong)m_keyShopPackDef.GetAsLong("price"), 
+				true, 
+				HDTrackingManager.EEconomyGroup.GLOBAL_EVENT_REFUND
+			);
 		}
 
 		// Close popup
 		GetComponent<PopupController>().Close(true);
+	}
+
+	/// <summary>
+	/// Perform all required actions when using keys to double the score.
+	/// </summary>
+	/// <param name="_keysAmount">Amount of keys to be consumed.</param>
+	/// <param name="_animate">Whether to refresh visuals or not.</param>
+	private void ConsumeKeys(ulong _keysAmount, bool _updateScore) {
+		// Remember decision
+		m_keyBonus = true;
+
+		// Always consume via ResourcesFlow (for tracking purposes)
+		ResourcesFlow keysFlow = new ResourcesFlow();
+		keysFlow.Begin(
+			(long)_keysAmount, 
+			UserProfile.Currency.KEYS, 
+			HDTrackingManager.EEconomyGroup.GLOBAL_EVENT_BONUS,
+			null
+		);
+
+		// Update score?
+		if(_updateScore) {
+			// Refresh visuals
+			RefreshKeysField(true);
+
+			// Update final score
+			m_finalScore *= 2;
+			m_finalScoreText.SetValue(m_finalScore, true);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -306,7 +335,16 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 
 		// Reset local vars
 		m_submitAttempts = 0;
-		m_usedKey = false;
+
+		// Was key collected during this run? We'll know it because we'll have at least one key
+		if(UsersManager.currentUser.keys > 0) {
+			// Yes! Use it immediately!
+			ConsumeKeys((ulong)UsersManager.currentUser.keys, false);
+		} else {
+			m_keyBonus = false;
+		}
+
+		// Bonus dragon?
 		if(m_event != null) {
 			m_bonusDragon = DragonManager.currentDragon.def.sku == m_event.bonusDragonSku;
 		} else {
@@ -348,6 +386,17 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	public void OnClosePreAnimation() {
 		// Disable continue spamming!
 		m_continueEnabled = false;
+
+		// Remove all keys from the user. With the new design keys are no longer stockable!
+		if(UsersManager.currentUser.keys > 0) {
+			ResourcesFlow flow = new ResourcesFlow();
+			flow.Begin(
+				UsersManager.currentUser.keys, 	// Spend as many keys as we currently have
+				UserProfile.Currency.KEYS, 
+				HDTrackingManager.EEconomyGroup.GLOBAL_EVENT_KEYS_RESET,
+				null
+			);
+		}
 	}
 
 	/// <summary>
@@ -364,48 +413,55 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Log In button has been pressed.
-	/// </summary>
-	public void OnLoginButton() {
-		// [AOC] TODO!!
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TODO!!"),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
-	}
-
-	/// <summary>
 	/// Double up button has been pressed.
 	/// </summary>
-	public void OnUseKeyButton() {
-		// Remember decision
-		m_usedKey = true;
-
-		// Refresh visuals
-		RefreshKeysField(true);
-
-		// Perform transaction
-		UsersManager.currentUser.SpendCurrency(UserProfile.Currency.KEYS, (ulong)DOUBLE_UP_COST_KEYS);
-
-		// Update final score
-		m_finalScore *= 2;
-		m_finalScoreText.SetValue(m_finalScore, true);
+	public void OnBuyKeyAdButton() {
+		// Show a video ad!
+		PopupAdBlocker.Launch(
+			true, 
+			GameAds.EAdPurpose.RESULTS_GET_KEY,
+			(bool _success) => {
+				// Add keys and consume them instantly (for tracking purposes)
+				ulong keysAmount = 1;
+				UsersManager.currentUser.EarnCurrency(
+					UserProfile.Currency.KEYS, 
+					keysAmount, 
+					true, 
+					HDTrackingManager.EEconomyGroup.REWARD_AD
+				);
+				ConsumeKeys(keysAmount, true);
+			}
+		);
 	}
 
 	/// <summary>
 	/// Buy more keys button has been pressed.
 	/// </summary>
-	public void OnBuyMoreKeysButton() {
-		// Open the shop!
-		PopupController popup = PopupManager.LoadPopup(PopupCurrencyShop.PATH);
-		PopupCurrencyShop shopPopup = popup.GetComponent<PopupCurrencyShop>();
-		shopPopup.Init(PopupCurrencyShop.Mode.KEYS_ONLY);
-		shopPopup.closeAfterPurchase = true;
-		popup.Open();
+	public void OnBuyKeyPCButton() {
+		// Perform transaction
+		ResourcesFlow flow = new ResourcesFlow("GlobalEventBonusScore");
+		flow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Remember decision
+				m_keyPurchased = true;
 
-		// Refresh visuals
-		RefreshKeysField(true);
+				// Add keys and consume them instantly (for tracking purposes)
+				ulong keysAmount = (ulong)m_keyShopPackDef.GetAsLong("amount");
+				UsersManager.currentUser.EarnCurrency(
+					UserProfile.Currency.KEYS, 
+					keysAmount, 
+					true, 
+					HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE
+				);
+				ConsumeKeys(keysAmount, true);
+			}
+		);
+		flow.Begin(
+			m_keyShopPackDef.GetAsLong("price"), 
+			UserProfile.Currency.HARD, 
+			HDTrackingManager.EEconomyGroup.SHOP_KEYS_PACK, 
+			m_keyShopPackDef
+		);
 	}
 
 	/// <summary>
@@ -428,7 +484,7 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 					// Attempt to do the contribution (we may have lost connectivity)
 					GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
 						m_bonusDragon ? 2f : 1f,
-						m_usedKey ? 2f : 1f
+						m_keyBonus ? 2f : 1f
 					);
 					if(res == GlobalEventManager.ErrorCode.NONE) {
 						// Success! Wait for the confirmation from the server
@@ -443,7 +499,6 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 				}
 			} break;
 
-			case Panel.LOG_IN:
 			case Panel.OFFLINE: {
 				// Discard contribution if allowed
 				if(m_continueEnabled) {

@@ -129,6 +129,15 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	#endregion
 
 	// -------------------------------------------------------------------------
+	// Misc colors
+	#region MiscColors
+	[SerializeField] private Color m_colorErrorMessage = Color.red;
+	public static Color ERROR_MESSAGE_COLOR {
+		get { return instance.m_colorErrorMessage; }
+	}
+	#endregion
+
+	// -------------------------------------------------------------------------
 	// Pet category colors
 	#region PetCategoryColors
 	[SerializeField] private Color m_petCategoryColorEat = Color.white;

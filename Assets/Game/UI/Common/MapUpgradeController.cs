@@ -46,8 +46,6 @@ public class MapUpgradeController : MonoBehaviour {
 	private long m_unlockPricePC = 0;
 	private bool m_wasUnlocked = false;	// Lock state in last frame, used to track end of timer
 
-	private PopupController m_adBlockingPopup;
-
 	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
 	//		 That's why we check the game scene controller if available, otherwise take it directly from the user's profile
 	private bool isUnlocked {
@@ -168,27 +166,14 @@ public class MapUpgradeController : MonoBehaviour {
 	/// The unlock with ad button has been pressed.
 	/// </summary>
 	public void OnUnlockWithAd() {
-		// Ignore if map is already unlocked
+		// Ignore if map is already unlocked (probably spamming button)
 		if(isUnlocked) return;
 
-		// Ignore if offline
-		if(Application.internetReachability == NetworkReachability.NotReachable) {
-			// Show some feedback
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_ADS_UNAVAILABLE"), new Vector2(0.5f, 0.33f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			return;
-		}
-
-		m_adBlockingPopup = PopupManager.OpenPopupInstant("UI/Popups/InGame/PF_PopupAdBlocker");
-		GameAds.instance.ShowRewarded( GameAds.EAdPurpose.UPGRADE_MAP, OnVideoRewardCallback );
-
-		// [AOC] TODO!! Show a video ad!
-		// Open placeholder popup
-		// PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
-		// popup.OnClosePostAnimation.AddListener(OnAdClosed);
+		// Show video ad!
+		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.UPGRADE_MAP, OnVideoRewardCallback);
 	}
 
 	void OnVideoRewardCallback(bool done){
-		m_adBlockingPopup.Close(true);
 		if ( done ){
 			UsersManager.currentUser.UnlockMap();
             PersistenceFacade.instance.Save_Request();
@@ -200,7 +185,7 @@ public class MapUpgradeController : MonoBehaviour {
 	/// The unlock with PC button has been pressed.
 	/// </summary>
 	public void OnUnlockWithPC() {
-		// Ignore if map is already unlocked
+		// Ignore if map is already unlocked (probably spamming button)
 		if(isUnlocked) return;
 
         // Start purchase flow        

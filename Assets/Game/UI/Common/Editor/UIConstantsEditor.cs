@@ -64,6 +64,8 @@ public class UIConstantsEditor : CategorizedEditor {
 			// Order is relevant in case of conflict! (i.e. "Color" and "PowerColor")
 			else if(p.name.Contains("m_tmp")) {
 				m_categories[CAT_TMP_SHORTCUTS].Add(p);
+			} else if(p.name.Contains("m_color")) {
+				m_categories[CAT_COLORS].Add(p, "Misc");
 			} else if(p.name.Contains("m_powerColor")) {
 				m_categories[CAT_COLORS].Add(p, "Power Colors");
 			} else if(p.name.Contains("m_petCategoryColor")) {

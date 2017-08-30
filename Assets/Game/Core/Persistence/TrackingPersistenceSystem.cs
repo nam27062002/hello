@@ -11,6 +11,10 @@
     private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
     private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
     private const string PARAM_USER_ID = "userID";
+    /// <summary>
+    /// Whether or not this is the first time the game is loaded ever
+    /// </summary>
+    private const string PARAM_FIRST_LOADING = "firstLoading";
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -161,11 +165,25 @@
         }
     }
 
+    public bool IsFirstLoading
+    {
+        get
+        {
+            return Cache_GetBool(PARAM_FIRST_LOADING);
+        }
+
+        set
+        {
+            Cache_SetBool(PARAM_FIRST_LOADING, value);
+        }
+    }
+
     public TrackingPersistenceSystem()
     {
         m_systemName = "Tracking";
 
         CacheDataInt dataInt;
+        CacheDataBool dataBool;
         CacheDataString dataString = new CacheDataString(PARAM_USER_ID, "");
         Cache_AddData(PARAM_USER_ID, dataString);
 
@@ -216,6 +234,10 @@
         key = PARAM_ADS_SESSIONS;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
+
+        key = PARAM_FIRST_LOADING;
+        dataBool = new CacheDataBool(key, true);
+        Cache_AddData(key, dataBool);
 
         Reset();
     }
