@@ -146,7 +146,9 @@ public class PopupGlobalEventContribution : MonoBehaviour {
 
 					// Bonus dragon info
 					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_event.bonusDragonSku);
-					m_bonusDragonInfoText.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_INFO", bonusDragonDef.GetLocalized("tidName"));
+					if ( bonusDragonDef != null ){
+						m_bonusDragonInfoText.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_INFO", bonusDragonDef.GetLocalized("tidName"));
+					}
 
 					// Bonus dragon text
 					if(m_event.bonusDragonSku == DragonManager.currentDragon.def.sku) {
