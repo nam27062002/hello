@@ -205,7 +205,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		// If leaderboard refresh interval has expired, request new data to the server
 		DateTime now = serverTime;
-		if(instance.m_leaderboardCheckTimestamp < now || _force) {
+		if(_force
+		|| instance.m_leaderboardCheckTimestamp < now 
+		|| Prefs.GetBoolPlayer(DebugSettings.GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD, false)) {
 			// Do it
 			Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
 			GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
