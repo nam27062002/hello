@@ -52,8 +52,10 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		9.	SrcAlphaSaturate	Blend factor is(f, f, f, 1); where f = min(As, 1 - Ad).
 		10.	OneMinusSrcAlpha	Blend factor is(1 - As, 1 - As, 1 - As, 1 - As).
 */
-		[Enum(Zero, 0, One, 1, DstColor, 2, SrcColor, 3, OneMinusDstColor, 4, SrcAlpha, 5, OneMinusSrcColor, 6, DstAlpha, 7, OneMinusDstAlpha, 8, SrcAlphaSaturate, 9, OneMinusSrcAlpha, 10)] _BlendSrc("Blend source", Float) = 1.0
-		[Enum(Zero, 0, One, 1, DstColor, 2, SrcColor, 3, OneMinusDstColor, 4, SrcAlpha, 5, OneMinusSrcColor, 6, DstAlpha, 7, OneMinusDstAlpha, 8, SrcAlphaSaturate, 9, OneMinusSrcAlpha, 10)] _BlendDst("Blend destination", Float) = 1.0
+//		[Enum(Zero, 0, One, 1, DstColor, 2, SrcColor, 3, OneMinusDstColor, 4, SrcAlpha, 5, OneMinusSrcColor, 6, DstAlpha, 7, OneMinusDstAlpha, 8, SrcAlphaSaturate, 9, OneMinusSrcAlpha, 10)] _BlendSrc("Blend source", Float) = 0.0
+//		[Enum(Zero, 0, One, 1, DstColor, 2, SrcColor, 3, OneMinusDstColor, 4, SrcAlpha, 5, OneMinusSrcColor, 6, DstAlpha, 7, OneMinusDstAlpha, 8, SrcAlphaSaturate, 9, OneMinusSrcAlpha, 10)] _BlendDst("Blend destination", Float) = 0.0
+//		_EnableBlend("Enable alpha blend", Float) = 0
+		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 	}
 
 	SubShader {
@@ -64,7 +66,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 			Tags{ "LightMode" = "ForwardBase" }
 
 			Cull [_Cull]
-			Blend [_BlendSrc] [_BlendDst]
+//			Blend [_EnableBlend] [_BlendSrc] [_BlendDst]
 
 			CGPROGRAM
 				#pragma vertex vert

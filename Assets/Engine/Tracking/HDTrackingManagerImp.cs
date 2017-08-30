@@ -84,6 +84,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         CheckAndGenerateUserID();
 
+        Session_IsFirstLoading = TrackingPersistenceSystem.IsFirstLoading;
+
+        // It has to be true only in the first loading
+        if (Session_IsFirstLoading)
+        {
+            TrackingPersistenceSystem.IsFirstLoading = false;
+        }
+
         // Session counter advanced
         TrackingPersistenceSystem.SessionCount++;              
 
@@ -183,7 +191,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-#region notify
+#region notify    
     public override void Notify_ApplicationStart()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -1085,6 +1093,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private string Session_LastDeathSource { get; set; }
     private string Session_LastDeathCoordinates { get; set; }
 
+    private bool Session_IsFirstLoading { get; set; }
+
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
@@ -1095,7 +1105,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathType = null;
         Session_LastDeathSource = null;
         Session_LastDeathCoordinates = null;
-    }
+        Session_IsFirstLoading = false;
+     }
 #endregion
 
 #region debug

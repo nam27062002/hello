@@ -113,6 +113,34 @@ public abstract class PersistenceSystem
         }
     }
 
+    protected class CacheDataBool : CacheData
+    {
+        public CacheDataBool(string key, bool defaultValue)
+        {
+            Key = key;
+            DefaultValue = defaultValue;
+            Value = DefaultValue;
+        }
+
+        public bool DefaultValue { get; set; }
+        public bool Value { get; set; }
+
+        public override void Reset()
+        {
+            Value = DefaultValue;
+        }
+
+        public override void Load(PersistenceSystem system)
+        {
+            Value = system.GetBool(Key, DefaultValue);
+        }
+
+        public override void Save(PersistenceSystem system)
+        {
+            system.SetBool(Key, Value);
+        }
+    }
+
     private Dictionary<string, CacheData> m_cacheData;
 
     protected void Cache_AddData(string key, CacheData data)
@@ -199,6 +227,30 @@ public abstract class PersistenceSystem
             if (dataString != null && dataString.Value != value)
             {
                 dataString.Value = value;
+                IsDirty = true;
+            }
+        }
+    }
+
+    protected bool Cache_GetBool(string key)
+    {
+        bool returnValue = false;
+        if (m_cacheData.ContainsKey(key))
+        {
+            returnValue = ((CacheDataBool)m_cacheData[key]).Value;
+        }
+
+        return returnValue;
+    }
+
+    protected void Cache_SetBool(string key, bool value)
+    {
+        if (m_cacheData != null && m_cacheData.ContainsKey(key))
+        {
+            CacheDataBool dataBool = ((CacheDataBool)m_cacheData[key]);
+            if (dataBool != null && dataBool.Value != value)
+            {
+                dataBool.Value = value;
                 IsDirty = true;
             }
         }
