@@ -220,17 +220,25 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 			} break;
 
 			case UserProfile.Currency.REAL: {
-				// Start real money transaction flow
-				m_loadingPopupController = PopupManager.PopupLoading_Open();
-				m_loadingPopupController.OnClosePostAnimation.AddListener( OnConnectionCheck );
-				Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
-					{
-						m_checkConnectionError = connectionError;
-					#if UNITY_EDITOR
-						m_checkConnectionError = null;
-					#endif
-						m_loadingPopupController.Close(true);
-					});
+                    // HACK to fix HDK-524 quickly:
+                    // There's an issue with PopupController that prevents OnClosePostAnimation listener from being called when a popup is closed immediately after being opened
+                    // So far we just avoid that situation
+                    if (Application.internetReachability == NetworkReachability.NotReachable) {
+                        OnPurchaseError.Invoke(this);
+                        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+                    } else {
+                        // Start real money transaction flow
+                        m_loadingPopupController = PopupManager.PopupLoading_Open();
+                        m_loadingPopupController.OnClosePostAnimation.AddListener(OnConnectionCheck);
+                        Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
+                        {
+                            m_checkConnectionError = connectionError;
+                    #if UNITY_EDITOR
+                            m_checkConnectionError = null;
+                    #endif
+                            m_loadingPopupController.Close(true);
+                        });
+                    }
 			} break;
 		}
 	}
