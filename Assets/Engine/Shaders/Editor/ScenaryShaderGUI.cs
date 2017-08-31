@@ -11,6 +11,7 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using System.IO;
 
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used.
@@ -76,16 +77,18 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         readonly public static string lightmapContrastText = "Lightmap contrast";
 
-//        readonly public static string primaryMapsText = "Maps";
-//        readonly public static string renderOptions = "Render Options";
-//        readonly public static string renderingMode = "Rendering Mode";
+        readonly public static string blendModeText = "Blend Mode";
 
-//        readonly public static string[] blendNames = Enum.GetNames(typeof(BlendMode));
+        //        readonly public static string primaryMapsText = "Maps";
+        //        readonly public static string renderOptions = "Render Options";
+        //        readonly public static string renderingMode = "Rendering Mode";
+
+        //        readonly public static string[] blendNames = Enum.GetNames(typeof(BlendMode));
     }
 
-/// <summary>
-/// Material Properties
-/// </summary>
+    /// <summary>
+    /// Material Properties
+    /// </summary>
     MaterialProperty mp_mainTexture;
 
     MaterialProperty mp_blendTexture;
@@ -102,7 +105,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_darkenPosition;
     MaterialProperty mp_darkenDistance;
 
-    MaterialProperty mp_blendMode;
+    MaterialProperty mp_BlendMode;
 
     MaterialProperty mp_EmissivePower;
     MaterialProperty mp_BlinkTimeMultiplier;
@@ -201,9 +204,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
         /// Enum Material PProperties
 
         mp_VertexcolorMode = FindProperty("VertexColor", props);
-
         mp_Cull = FindProperty("_Cull", props);
 
+        mp_BlendMode = FindProperty("_BlendMode", props);
     }
 
 
@@ -216,6 +219,50 @@ internal class ScenaryShaderGUI : ShaderGUI {
         EditorGUILayout.EndVertical();
 
         return feature.floatValue > 0.0f;
+    }
+
+
+    static void setBlendMode(Material material, int blendMode)
+    {
+        material.SetFloat("_BlendMode", blendMode);
+
+        switch (blendMode)
+        {
+            case 0:
+                material.SetOverrideTag("RenderType", "Opaque");
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetFloat("_ZWrite", 1.0f);
+                material.renderQueue = 2000;
+                material.SetFloat("_Cull", 2.0f);  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
+                material.DisableKeyword("CUTOFF");
+                Debug.Log("Blend mode opaque");
+                break;
+
+            case 1:
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.renderQueue = 3000;
+                material.SetFloat("_ZWrite", 0.0f);
+                material.SetFloat("_Cull", 0.0f);  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
+                material.DisableKeyword("CUTOFF");
+                Debug.Log("Blend mode transparent");
+                break;
+
+            case 2:
+                material.SetOverrideTag("RenderType", "TransparentCutout");
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetFloat("_ZWrite", 1.0f);
+                material.renderQueue = 2500;
+                material.SetFloat("_Cull", 0.0f);  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
+                material.EnableKeyword("CUTOFF");
+
+                Debug.Log("Blend mode cutout");
+                break;
+        }
+
     }
 
     /// <summary>
@@ -236,6 +283,22 @@ internal class ScenaryShaderGUI : ShaderGUI {
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
+
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+        materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
+        EditorGUILayout.EndVertical();
+
+        int blendMode = (int)mp_BlendMode.floatValue;
+        if (EditorGUI.EndChangeCheck())
+        {
+            setBlendMode(material, blendMode);
+        }
+        if (blendMode == 2)
+        {
+            materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
+        }
+
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
 
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
@@ -250,7 +313,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 //            material.SetFloat("_EnableNormalMap", normalMap ? 1.0f : 0.0f);
             EditorUtility.SetDirty(material);
             Debug.Log("EnableNormalMap " + (normalMap));
-            DebugKeywords(material);
+//            DebugKeywords(material);
         }
 
         EditorGUI.BeginChangeCheck();
@@ -273,7 +336,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_specularPower, Styles.specularPowerText);
             materialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText);
         }
-
+/*
         EditorGUI.BeginChangeCheck();
         bool cutoff = featureSet(mp_EnableCutoff, Styles.enableCutoffText);
         if (EditorGUI.EndChangeCheck())
@@ -281,20 +344,16 @@ internal class ScenaryShaderGUI : ShaderGUI {
             mp_Cull.floatValue = cutoff ? 0.0f : 2.0f;  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
             material.SetOverrideTag("RenderType", cutoff ? "TransparentCutout" : "Opaque");
         }
-
-        if (cutoff)
-        {
-            materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
-        }
+*/
 
         featureSet(mp_EnableFog, Styles.enableFogText);
-
+/*
         if(featureSet(mp_EnableDarken, Styles.enableDarkenText))
         {
             materialEditor.ShaderProperty(mp_darkenPosition, Styles.darkenPositionText);
             materialEditor.ShaderProperty(mp_darkenDistance, Styles.darkenDistanceText);
         }
-
+*/
         featureSet(mp_VertexcolorMode, Styles.vertexColorModeText);
 
         if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
@@ -332,5 +391,275 @@ internal class ScenaryShaderGUI : ShaderGUI {
             m.DisableKeyword(keyword);
     }
 
-    
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //  Tools
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Seek for old scenary shaders and change by new scenary standard material
+    /// </summary>
+    [MenuItem("Tools/Replace old scenary shaders")]
+    public static void ReplaceOldScenaryShaders()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+
+            // UnlitShadowLightmap.shader
+            if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // UnlitShadowLightmapDarken.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableDarken", 1.0f);
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+                mat.EnableKeyword("DARKEN");
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // UnlitShadowLightmapEmissive.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Emissive blink")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableEmissiveBlink", 1.0f);
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+                mat.EnableKeyword("EMISSIVEBLINK");
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // UnlitShadowLightmapNormal.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Normal Map")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_SpecularPower", 20.0f);
+                mat.SetFloat("_EnableNormalMap", 1.0f);
+                mat.SetFloat("_NormalStrength", 1.0f);
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
+                mat.EnableKeyword("NORMALMAP");
+                mat.EnableKeyword("SPECULAR");
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // UnlitShadowLightmapCutoff.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + LightMap + AlphaCutoff (cutoff vegetation)")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableCutoff", 1.0f);
+                mat.SetFloat("_Cutoff", 0.5f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("CUTOFF");
+
+                EditorUtility.SetDirty(mat);
+
+                setBlendMode(mat, 2);   //Cutoff
+                Debug.Log("Cutoff: " + mat.name);
+                sChanged++;
+            }
+            // UnlitShadowLightmapVColorMultiply.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Vertex Color Multiply")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("VertexColor", 3.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("VERTEXCOLOR_MODULATE");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // AutomaticTextureBlending.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+                mat.SetFloat("_EnableAutomaticBlend", 1.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("BLEND_TEXTURE");
+                mat.EnableKeyword("CUSTOM_VERTEXCOLOR");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // AutomaticTextureBlendingDarken.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableDarken", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+                mat.SetFloat("_EnableAutomaticBlend", 1.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("DARKEN");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("BLEND_TEXTURE");
+                mat.EnableKeyword("CUSTOM_VERTEXCOLOR");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // TextureBlendingBasic.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("BLEND_TEXTURE");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // TextureBlendingAdditive.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Additive")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+                mat.SetFloat("VertexColor", 2.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("BLEND_TEXTURE");
+                mat.EnableKeyword("VERTEXCOLOR_ADDITIVE");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // TextureBlendingDarken.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Darken")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableDarken", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("DARKEN");
+                mat.EnableKeyword("BLEND_TEXTURE");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // TextureBlendingNormal.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay + Normal Map")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_SpecularPower", 20.0f);
+                mat.SetFloat("_EnableNormalMap", 1.0f);
+                mat.SetFloat("_NormalStrength", 1.0f);
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("VertexColor", 1.0f);
+
+                mat.EnableKeyword("NORMALMAP");
+                mat.EnableKeyword("SPECULAR");
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("VERTEXCOLOR_OVERLAY");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // TextureBlendingOverlay.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
+                mat.SetFloat("_EnableBlendTexture", 1.0f);
+                mat.SetFloat("VertexColor", 1.0f);
+
+                mat.EnableKeyword("FOG");
+                mat.EnableKeyword("OPAQUEALPHA");
+                mat.EnableKeyword("BLEND_TEXTURE");
+                mat.EnableKeyword("VERTEXCOLOR_OVERLAY");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // UnlitShadowLightmapTransparent.shader
+            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Transparent (On Line Decorations)")
+            {
+                mat.shader = shader;
+                mat.SetFloat("_EnableFog", 1.0f);
+
+                mat.EnableKeyword("FOG");
+                //                mat.EnableKeyword("CUTOFF");
+
+                setBlendMode(mat, 1);   //Transparent
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+        }
+        Debug.Log(sChanged + " materials changed.");
+    }
 }

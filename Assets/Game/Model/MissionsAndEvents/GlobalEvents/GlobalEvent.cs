@@ -172,42 +172,33 @@ public partial class GlobalEvent {
 	/// <param name="_data">User data to be checked.</param>
 	public void RefreshLeaderboardPosition(GlobalEventUserData _data) {
 		// Check whether the player is in the leaderboard
-		int idx = m_leaderboard.FindIndex((_a) => _a.userID == _data.userID);
-		bool wasOnTheLeaderboard = (idx >= 0);
-		bool shouldBeOnTheLeaderboard = _data.score > 0; 
-			//&& (m_leaderboard.Count == 0 || m_leaderboard.Count < 100 || _data.score >= m_leaderboard.Last().score);
-
-		// Cases:
-		// a) Player on the leaderboard
-		if(wasOnTheLeaderboard) {
-			// Should stay?
-			if(shouldBeOnTheLeaderboard) {
-				// Update score
-				m_leaderboard[idx].score = _data.score;
-			} else {
-				// Remove from the leaderboard
-				m_leaderboard.RemoveAt(idx);
-			}
-		}
-
-		// b) Player not on the leaderboard
-		else {
-			// Should enter?
-			if(shouldBeOnTheLeaderboard) {
+		bool sort = false;
+		if ( m_leaderboard.Count < _data.position || _data.position < 0){
+			// if I'm not in the leaderboard -> check if I have to be
+			if ( m_leaderboard[ leaderboard.Count - 1 ].score <= _data.score ){	
 				m_leaderboard.Add(new GlobalEventUserData(_data));	// Make a copy!
-			} else {
-				// Nothing to do
+				sort = true;
 			}
+			else if ( _data.score > 0 && _data.position < 0 )
+			{
+				_data.position = UnityEngine.Random.Range( m_leaderboard.Count, m_leaderboard.Count * 3);
+			}
+		}else{
+			// Update Score
+			m_leaderboard[ _data.position ].score = _data.score;
+			sort = true;
 		}
 
 		// Sort the leaderboard
-		m_leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
+		if ( sort ){
+			m_leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
 
-		// Update positions
-		for(int i = 0; i < m_leaderboard.Count; ++i) {
-			m_leaderboard[i].position = i;
-			if(m_leaderboard[i].userID == _data.userID) {
-				_data.position = i;
+			// Update positions
+			for(int i = 0; i < m_leaderboard.Count; ++i) {
+				m_leaderboard[i].position = i;
+				if(m_leaderboard[i].userID == _data.userID) {
+					_data.position = i;
+				}
 			}
 		}
 

@@ -87,10 +87,12 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 	/// <param name="_profileName">The name of the profile to be loaded.</param>
 	public static void Load(string _profileName = "")
     {               
+        /*
         DragonManager.SetupUser(UsersManager.currentUser);
 		MissionManager.SetupUser(UsersManager.currentUser);
         EggManager.SetupUser(UsersManager.currentUser);
 		ChestManager.SetupUser(UsersManager.currentUser);
+        */
 
         //[DGR] FGOL SaveFacade is used to load the persistence
         // Makes sure Local ID is pointing to the active profile
@@ -943,15 +945,15 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
         return returnValue;
     }
-#endregion
+    #endregion    
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// SaveFacade's load has been completed.
-	/// </summary>
-	public void OnLoadCompleted() {
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// SaveFacade's load has been completed.
+    /// </summary>
+    public void OnLoadCompleted() {
 		// Unsubscribe from the event
 		SaveFacade.Instance.OnLoadComplete -= OnLoadCompleted;
 

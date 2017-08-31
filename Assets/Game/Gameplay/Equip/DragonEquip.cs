@@ -142,7 +142,7 @@ public class DragonEquip : MonoBehaviour {
 					if ( equipable != null && attackPointIdx < m_attachPoints.Length )
 					{
 						if (m_attachPoints[attackPointIdx] != null )
-							m_attachPoints[attackPointIdx].EquipAccessory( equipable );
+							m_attachPoints[attackPointIdx].EquipAccessory( equipable, this );
 					}
 				}
 			}

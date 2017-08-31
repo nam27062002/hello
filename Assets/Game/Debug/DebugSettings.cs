@@ -28,7 +28,6 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public const string DRAGON_EAT			 			        = "DRAGON_EAT";
 	public const string DRAGON_EAT_DISTANCE_POWER_UP 	        = "DRAGON_EAT_DISTANCE_POWER_UP";
 	public const string DRAGON_SLOW_POWER_UP   			        = "DRAGON_SLOW_POWER_UP";
-    public const string DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD   = "DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD";
 
     public const string SHOW_XP_BAR			 			        = "SHOW_XP_BAR";
 	public const string SHOW_COLLISIONS					        = "SHOW_COLLISIONS";
@@ -64,6 +63,8 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public const string MAP_ZOOM_SPEED							= "MAP_ZOOM_SPEED";
 	public const string MAP_ZOOM_RESET							= "MAP_ZOOM_RESET";
 	public const string MAP_POSITION_RESET						= "MAP_POSITION_RESET";
+
+	public const string GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD	= "GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -158,9 +159,6 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
         key = INGAME_PARTICLES_EATEN;
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));
-
-        key = DRAGON_BOOST_WITH_HARD_PUSH_THRESHOLD;
-        Prefs.SetFloatPlayer(key, Prefs.GetFloatPlayer(key, DragonControlPlayer.BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD));		        
 
 		key = FOG_MANAGER;
 		Prefs.SetBoolPlayer(key, Prefs.GetBoolPlayer(key, true));

@@ -304,8 +304,8 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"lightUpTime":1,"speed":8,"acceleration":24,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":24,"radius":6,"cameraShakeDuration":0.7,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
-  m_databaseKey: PF_Kamikaze 1
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"lightUpTime":1,"speed":10,"acceleration":24,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":24,"radius":6,"cameraShakeDuration":0.7,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_databaseKey: PF_TEST_SKY_Kamikaze
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
@@ -367,9 +367,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 9
+    m_sightRadius: 8
     m_maxRadius: 4
-    m_minRadius: 0
+    m_minRadius: 1
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
@@ -426,6 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec584a59a08542389a808fe083fe92c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_isPlaceHolder: 0
   m_walkSpeed: 1
   m_runSpeed: 1
   m_minPlaybakSpeed: 0.9

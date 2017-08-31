@@ -69,6 +69,7 @@ namespace AI {
 
 			if (!m_onGround) {
 				m_upVector = Vector3.up;
+				Debug.Log("rest up");
 				FreeFall();
 			}
 
@@ -100,6 +101,9 @@ namespace AI {
 					}
 					break;
 			}
+
+			Debug.DrawRay(position, m_groundNormal, Color.red, 1f);
+			Debug.DrawRay(position, m_upVector, Color.green, 1f);
 		}
 
 		protected override void ExtendedFixedUpdate() {
@@ -136,11 +140,11 @@ namespace AI {
 		}
 
 		protected override void UpdateOrientation() {
-			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
+			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_groundNormal);
 
 			if (m_limitHorizontalRotation) {
-				if (m_direction.x < 0f) 	 m_targetRotation = Quaternion.AngleAxis(m_faceLeftAngle, m_upVector) * m_targetRotation; 
-				else if (m_direction.x > 0f) m_targetRotation = Quaternion.AngleAxis(m_faceRightAngle, m_upVector) * m_targetRotation; 
+				if (m_direction.x < 0f) 	 m_targetRotation = Quaternion.AngleAxis(m_faceLeftAngle, m_groundNormal) * m_targetRotation; 
+				else if (m_direction.x > 0f) m_targetRotation = Quaternion.AngleAxis(m_faceRightAngle, m_groundNormal) * m_targetRotation; 
 			}
 		}
 

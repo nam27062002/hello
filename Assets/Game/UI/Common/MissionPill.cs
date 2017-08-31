@@ -55,8 +55,6 @@ public class MissionPill : MonoBehaviour {
 		}
 	}
 
-	private PopupController m_adBlockingPopup;
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -368,8 +366,8 @@ public class MissionPill : MonoBehaviour {
 			(ResourcesFlow _flow) => {
 				// Just do it
 				MissionManager.RemoveMission(m_missionDifficulty);
-				PersistenceManager.Save();
-			}
+                PersistenceFacade.instance.Save_Request();
+            }
 		);
 		purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REMOVE_MISSION, m_mission.def);
 	}
@@ -380,21 +378,29 @@ public class MissionPill : MonoBehaviour {
 	public void OnFreeRemoveMission(){
 		if(m_mission == null) return;
 
-		m_adBlockingPopup = PopupManager.OpenPopupInstant("UI/Popups/InGame/PF_PopupAdBlocker");
-		GameAds.instance.ShowRewarded( GameAds.EAdPurpose.REMOVE_MISSION, OnVideoRewardCallback );
-		// PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
-		// popup.OnClosePostAnimation.AddListener(OnRemoveMissionAdClosed);
+		// Ignore if offline
+		if(Application.internetReachability == NetworkReachability.NotReachable) {
+			// Show some feedback
+			UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"), 
+				new Vector2(0.5f, 0.33f), 
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+			return;
+		}
+
+		// Show video ad!
+		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.REMOVE_MISSION, OnVideoRewardCallback);
 	}
 
 	void OnVideoRewardCallback( bool done )
 	{
-		m_adBlockingPopup.Close(true);
 		if ( done )
 		{
 			UsersManager.currentUser.dailyRemoveMissionAdUses++;
 			MissionManager.RemoveMission(m_missionDifficulty);
-			PersistenceManager.Save();
-		}
+            PersistenceFacade.instance.Save_Request();
+        }
 	}
 
 	/// <summary>
@@ -403,8 +409,8 @@ public class MissionPill : MonoBehaviour {
 	private void OnRemoveMissionAdClosed() {
 		UsersManager.currentUser.dailyRemoveMissionAdUses++;
 		MissionManager.RemoveMission(m_missionDifficulty);
-		PersistenceManager.Save();
-	}
+        PersistenceFacade.instance.Save_Request();
+    }
 
 	/// <summary>
 	/// The skip time with ad button has been pressed.
@@ -412,18 +418,20 @@ public class MissionPill : MonoBehaviour {
 	public void OnSkipTimeWithAd() {
 		if(m_mission == null) return;
 
-		PopupController popup = PopupManager.OpenPopupInstant(PopupAdPlaceholder.PATH);
-		popup.OnClosePostAnimation.AddListener(OnSkipTimeAdClosed);
+		// Show Ad!
+		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.SKIP_MISSION_COOLDOWN, OnSkipTimeAdClosed);
 	}
 
 	/// <summary>
 	/// Ad popup has been closed.
 	/// </summary>
-	private void OnSkipTimeAdClosed() {
+	private void OnSkipTimeAdClosed(bool _success) {
 		// Do it!
-		MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);		
-		PersistenceManager.Save();
-	}
+		if(_success) {
+			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);
+	        PersistenceFacade.instance.Save_Request();
+		}
+    }
 
 	/// <summary>
 	/// Callback for the skip mission button.
@@ -438,8 +446,8 @@ public class MissionPill : MonoBehaviour {
 			(ResourcesFlow _flow) => {
 				// Just do it
 				MissionManager.SkipMission(m_missionDifficulty, -1f);
-				PersistenceManager.Save();
-			}
+                PersistenceFacade.instance.Save_Request();
+            }
 		);
 		purchaseFlow.Begin((long)m_mission.skipCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.SKIP_MISSION, m_mission.def);
 	}

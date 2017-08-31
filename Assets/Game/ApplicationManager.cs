@@ -4,12 +4,10 @@
 // Created by David Germade on 24/08/2016.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
-using System;
+using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
-
 /// <summary>
 /// This class is responsible for handling stuff related to the whole application in a high level. For example if an analytics event has to be sent when the application is paused or resumed
 /// you should send that event from here. It also offers a place where to initialize stuff only once regardless the amount of times the flow leads the user to the Loading scene.
@@ -61,29 +59,25 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             DebugSettings.Init();
         }
 
-
-
         Reset();
 
         FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
         SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
-
         SocialManager.Instance.Init();
 
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(GameEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.AddListener(GameEvents.GAME_ENDED, Game_OnEnded);
-
-        SaveFacade.Instance.OnLoadStarted += OnLoadStarted;
-        SaveFacade.Instance.OnLoadComplete += OnLoadComplete;
+        Messenger.AddListener(GameEvents.GAME_ENDED, Game_OnEnded);        
 
         Notifications_Init();
 
 		Device_Init();
-        
+
+        GameCenter_Init();
+
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
@@ -137,7 +131,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Tracking session has to be finished when the application is closed
         HDTrackingManager.Instance.Notify_ApplicationEnd();
 
-        PersistenceManager.Save();
+        //PersistenceManager.Save();
 
 		Device_Destroy();
         
@@ -153,16 +147,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Reset()
     {
         LastPauseTime = -1;
-        NeedsToRestartFlow = false;
-        SaveLoadIsCompleted = false;
+        NeedsToRestartFlow = false;        
         Game_IsInGame = false;
         Game_IsPaused = false;
         Debug_IsPaused = false;
     }
 
-    public bool NeedsToRestartFlow { get; set; }
-
-    private bool SaveLoadIsCompleted { get; set; }
+    public bool NeedsToRestartFlow { get; set; }    
 
     protected void Update()
     {
@@ -262,10 +253,20 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test player's progress
             // Debug_TestPlayerProgress();
-            // ---------------------------             
+            // ---------------------------
+
+            // ---------------------------
+            // Test persistence save
+            Debug_TestPersistenceSave();
+            // ---------------------------
         }
 
         HDTrackingManager.Instance.Update();
+        PersistenceFacade.instance.Update();
+
+		#if UNITY_EDITOR
+		GameServerManager.SharedInstance.Update();
+		#endif
 
         if (NeedsToRestartFlow)
         {
@@ -323,10 +324,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             HDTrackingManager.Instance.Notify_ApplicationResumed();
         }
 
-        // If the save stuff done in the first loading is not done then the pause is ignored
-        if (SaveLoadIsCompleted)
-        {
-            long currentTime = Globals.GetUnixTimestamp();
+        // If the  done in the first loading is not done then the pause is ignored
+        if (PersistenceFacade.instance.IsLoadCompleted)
+        {            
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
             {
@@ -347,7 +347,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 // [DGR] NOTIF Not supported yet
                 //NotificationManager.Instance.ScheduleReEngagementNotifications();
 
-                SaveFacade.Instance.Save(null, false);
+                PersistenceFacade.instance.Save_Request();
             }
             else
             {
@@ -356,10 +356,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     // [DGR] NOTIF Not supported yet           
                     //NotificationManager.Instance.CheckNotifications(delegate ()
                     {
+                        /*
                         if (SocialManager.Instance.IsUser(SocialFacade.Network.Default))
                         {
                             if (LastPauseTime != -1)
                             {
+                                long currentTime = Globals.GetUnixTimestamp();
                                 long timePaused = currentTime - LastPauseTime;
                                 if (timePaused >= CloudSaveResyncTime && SaveFacade.Instance.cloudSaveEnabled)
                                 {
@@ -381,6 +383,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                                 SocialManager.Instance.OnAppResume(false);
                             }
                         }
+                        */
                     }
                     // [DGR] NOTIF Not supported yet           
                     //);
@@ -414,20 +417,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
             */            
         }        
-    }
-
-    private void OnLoadStarted()
-    {
-        SaveLoadIsCompleted = false;
-    }
-
-    private void OnLoadComplete()
-    {
-        SaveLoadIsCompleted = true;
-
-        // A new tracking session is started
-        HDTrackingManager.Instance.Notify_ApplicationStart();
-    }
+    }    
 
     #region game
     private bool Game_IsInGame { get; set; }
@@ -586,6 +576,85 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 #endif
 
         NotificationsManager.SharedInstance.SetNotificationsEnabled(true);
+    }
+    #endregion
+
+    #region game_center
+    // This region is responsible for handling login to the platform (game center or google play)
+
+    private class GameCenterListener : GameCenterManager.GameCenterListenerBase
+    {
+        public override void onAuthenticationFinished()
+        {
+            Debug.Log("GameCenterDelegate onAuthenticationFinished");
+
+            GameCenterManager.SharedInstance.RequestUserToken(); // Async process
+        }
+
+        public override void onAuthenticationFailed()
+        {
+            Debug.Log("GameCenterDelegate onAuthenticationFailed");
+        }
+
+        public override void onAuthenticationCancelled()
+        {
+            Debug.Log("GameCenterDelegate onAuthenticationCancelled");
+        }
+
+        public override void onUnauthenticated()
+        {
+            Debug.Log("GameCenterDelegate onUnauthenticated");
+        }
+
+        public override void onGetToken(JSONNode kTokenDataJSON)
+        {
+            Debug.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() + 
+                " userID = " + GameCenterManager.SharedInstance.GetUserId() + 
+                " userName = " + GameCenterManager.SharedInstance.GetUserName());         
+        }
+
+        public override void onNotAuthenticatedException()
+        {
+            Debug.Log("GameCenterDelegate onNotAuthenticatedException");
+        }
+
+        public override void onGetAchievementsInfo(Dictionary<string, GameCenterManager.GameCenterAchievement> kAchievementsInfo)
+        {
+            Debug.Log("GameCenterListener: onGetAchievementsInfo");
+
+            foreach (KeyValuePair<string, GameCenterManager.GameCenterAchievement> kEntry in kAchievementsInfo)
+            {
+                GameCenterManager.GameCenterAchievement kAchievement = (GameCenterManager.GameCenterAchievement)kEntry.Value;
+
+                Debug.Log("-----------------------------------------\nachievement: " + kEntry.Key + "\ndesc: " + kAchievement.m_strDescription + "\npercent: " + kAchievement.m_fPercentComplete + "\nunlocked: " + kAchievement.m_iIsUnlocked + "\ncurrent: " + kAchievement.m_iCurrentAmount + "\namount: " + kAchievement.m_iTotalAmount);
+            }
+        }
+        public override void onGetLeaderboardScore(string strLeaderboardSKU, int iScore, int iRank)
+        {
+            Debug.Log("GameCenterListener: onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank);
+        }
+    }
+    private GameCenterListener m_gameCenterListener = null;
+
+    private void GameCenter_Init()
+    {
+        m_gameCenterListener = new GameCenterListener();
+
+        GameCenterManager.GameCenterItemData[] achievementsData = null;
+        GameCenterManager.GameCenterItemData[] leaderboardsData = null;
+        GameCenterManager.SharedInstance.AddGameCenterListener(m_gameCenterListener);
+        GameCenterManager.SharedInstance.Initialise(ref achievementsData, ref leaderboardsData);
+    }
+
+    public void GameCenter_Login()
+    {
+        GameSessionManager.SharedInstance.ResetGameCenterCancelState();
+        GameSessionManager.SharedInstance.LogInToGameCenter(false);
+    }
+
+    public void GameCenter_LogOut()
+    {
+        GameSessionManager.SharedInstance.LogOutFromGameCenter();
     }
     #endregion
 
@@ -933,6 +1002,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Debug_TestPlayerProgress()
     {
         Debug.Log("player progress = " + UsersManager.currentUser.GetPlayerProgress());
+    }
+
+    private void Debug_TestPersistenceSave()
+    {
+        PersistenceFacade.instance.Save_Request();
     }
     #endregion
 }

@@ -699,7 +699,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		{
 			m_isHighScore = true;
 			UsersManager.currentUser.highScore = m_score;
-			PersistenceManager.Save();
+			PersistenceFacade.instance.Save_Request();
 		}
 		else
 		{

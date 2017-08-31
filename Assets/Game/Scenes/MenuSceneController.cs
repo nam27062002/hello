@@ -23,7 +23,6 @@ public class MenuSceneController : SceneController {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly string NAME = "SC_Menu";
-
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -152,6 +151,45 @@ public class MenuSceneController : SceneController {
 			OnDragonSelected("dragon_classic");
 			OnPlayButton();
 		}
+		else
+		{
+			CheckRatingFlow();
+		}
+	}
+
+	protected void CheckRatingFlow()
+	{
+		// Check we come form a run!
+		// Check if we need to make the player rate the game
+		if ( Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true))
+		{
+			if ( GameSceneManager.prevScene.CompareTo(ResultsScreenController.NAME) == 0 || GameSceneManager.prevScene.CompareTo(GameSceneController.NAME) == 0)
+			{
+				string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
+				System.DateTime futureDate = System.DateTime.Now;
+				if (!System.DateTime.TryParse(dateStr, out futureDate))
+					futureDate = System.DateTime.Now;
+				if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
+				{
+					DragonData data = DragonManager.GetDragonData("dragon_crocodile");
+					if ( data.GetLockState() != DragonData.LockState.LOCKED )
+					{
+						// Check if first time here!
+						bool _checked = Prefs.GetBoolPlayer( Prefs.RATE_CHECK_DRAGON, false );
+						if ( _checked )
+						{
+							// Start Asking!
+							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
+						}
+						else
+						{
+							// Next time we will
+							Prefs.SetBoolPlayer( Prefs.RATE_CHECK_DRAGON, true );
+						}
+					}
+				}
+			}
+		}
 	}
 
 	protected override void OnDestroy() {
@@ -249,12 +287,12 @@ public class MenuSceneController : SceneController {
 		if(_sku != UsersManager.currentUser.currentDragon && DragonManager.GetDragonData(_sku).isOwned) {
 			// Update profile
 			UsersManager.currentUser.currentDragon = _sku;
-		
-			// Save persistence
-			PersistenceManager.Save();
 
-			// Broadcast message
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_CONFIRMED, _sku);
+            // Save persistence
+            PersistenceFacade.instance.Save_Request();
+
+            // Broadcast message
+            Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_CONFIRMED, _sku);
 		}
 	}
 

@@ -17,6 +17,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 	
 		_CutOff("Alpha cutoff threshold", Range(0.0, 1.0)) = 0.5
+
 		_DarkenPosition("Darken position",  float) = 0.0
 		_DarkenDistance("Darken distance",  float) = 20.0
 
@@ -29,13 +30,33 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(CUSTOM_VERTEXCOLOR)] _EnableAutomaticBlend("Automatic Y blend", Float) = 0
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
+		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
-		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 0
+		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
 		[Toggle(DARKEN)] _EnableDarken("Enable darken", Float) = 0
 		[Toggle(EMISSIVEBLINK)] _EnableEmissiveBlink("Enable emissive blink", Float) = 0
 		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 		[KeywordEnum(None, Overlay, Additive, Modulate)] VertexColor("Vertex color mode", Float) = 0
 		[Enum(Back, 0, Front, 1, Off, 2)] _Cull("Cull mode", Float) = 0.0
+/*
+		0.	Zero				Blend factor is(0, 0, 0, 0).
+		1.	One					Blend factor is(1, 1, 1, 1).
+		2.	DstColor			Blend factor is(Rd, Gd, Bd, Ad).
+		3.	SrcColor			Blend factor is(Rs, Gs, Bs, As).
+		4.	OneMinusDstColor	Blend factor is(1 - Rd, 1 - Gd, 1 - Bd, 1 - Ad).
+		5.	SrcAlpha			Blend factor is(As, As, As, As).
+		6.	OneMinusSrcColor	Blend factor is(1 - Rs, 1 - Gs, 1 - Bs, 1 - As).
+		7.	DstAlpha			Blend factor is(Ad, Ad, Ad, Ad).
+		8.	OneMinusDstAlpha	Blend factor is(1 - Ad, 1 - Ad, 1 - Ad, 1 - Ad).
+		9.	SrcAlphaSaturate	Blend factor is(f, f, f, 1); where f = min(As, 1 - Ad).
+		10.	OneMinusSrcAlpha	Blend factor is(1 - As, 1 - As, 1 - As, 1 - As).
+*/
+		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
+		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
+		[Enum(Opaque, 0, Transparent, 1, CutOff, 2)] _BlendMode("Blend mode", Float) = 0.0
+		_ZWrite("__zw", Float) = 1.0
+
+		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 	}
 
 	SubShader {
@@ -46,6 +67,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 			Tags{ "LightMode" = "ForwardBase" }
 
 			Cull [_Cull]
+			Blend [_SrcBlend] [_DstBlend]
+			ZWrite[_ZWrite]
 
 			CGPROGRAM
 				#pragma vertex vert
@@ -60,6 +83,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma multi_compile __ CUTOFF
 				#pragma multi_compile __ OPAQUEALFA
 				#pragma multi_compile __ EMISSIVEBLINK
+				#pragma multi_compile __ BLEND
 
 				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 
@@ -75,6 +99,22 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //				#define OPAQUEALPHA
 //				#define BLEND_TEXTURE
 //				#define CUSTOM_VERTEXCOLOR
+
+				#if LOW_DETAIL_ON
+				#undef NORMALMAP
+				#undef SPECULAR
+				#endif
+
+				#if MEDIUM_DETAIL_ON
+				#undef SPECULAR
+				#endif
+
+				#if HI_DETAIL_ON
+				#endif
+
+//				#define FOG
+//				#define OPAQUEALPHA
+
 
 				#include "scenary.cginc"
 			ENDCG

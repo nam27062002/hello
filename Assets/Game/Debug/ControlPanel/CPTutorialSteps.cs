@@ -80,8 +80,8 @@ public class CPTutorialSteps : MonoBehaviour {
 
 					// Change target step
 					UsersManager.currentUser.SetTutorialStepCompleted(newToggle.step, _toggled);
-					PersistenceManager.Save();
-				}
+                    PersistenceFacade.instance.Save_Request();
+                }
 			);
 		}
 	}
@@ -177,7 +177,7 @@ public class CPTutorialSteps : MonoBehaviour {
 		for(int i = 0; i < m_toggles.Count; i++) {
 			UsersManager.currentUser.SetTutorialStepCompleted(m_toggles[i].step, _toggle);
 		}
-		PersistenceManager.Save();
+		PersistenceFacade.instance.Save_Request();
 	}
 
 	/// <summary>

@@ -9,8 +9,16 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         NONE,
         REVIVE,
         UPGRADE_MAP,
-        REMOVE_MISSION
+        REMOVE_MISSION,
+		SKIP_MISSION_COOLDOWN,
+		RESULTS_GET_KEY
     };
+
+	public static bool adsAvailable {
+		get { return Application.internetReachability != NetworkReachability.NotReachable
+				  && FeatureSettingsManager.AreAdsEnabled;
+		}
+	}
 
 	public delegate void OnPlayVideoCallback(bool giveReward);
 	private OnPlayVideoCallback m_onInterstitialCallback;
@@ -20,7 +28,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
     public void Init()
 	{
-        if (FeatureSettingsManager.AreAdsEnabled)
+		if (adsAvailable)
         {
             string interstitialId = "af85208c87c746e49cb88646d60a11f9";
             string rewardId = "242e5f30622549f0ae85de0921842b71";
@@ -51,15 +59,17 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
 	public void ShowInterstitial(OnPlayVideoCallback callback)
 	{
+		// If ads are not available, return immediately
+		if(!adsAvailable) {
+			// Notify of the error
+			if(callback != null) {
+				callback.Invoke(false);
+			}
+			return;
+		}
+
         m_onInterstitialCallback = callback;
-        
-        if (FeatureSettingsManager.AreAdsEnabled) {            
-            AdsManager.SharedInstance.PlayNotRewarded(OnInsterstitialResult, 5);
-        } else {
-            // 1 second to wait before calling the callback because of an error on the blocker popup that prevents it from being closed when close() is
-            // called immediately after open() was called
-            UbiBCN.CoroutineManager.DelayedCall(() => OnInsterstitialResult(AdsManager.EPlayResult.TIMEOUT), 1);
-        }
+		AdsManager.SharedInstance.PlayNotRewarded(OnInsterstitialResult, 5);
 	}
 
 	private void OnInsterstitialResult(AdsManager.EPlayResult result)
@@ -72,24 +82,25 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
 	public void ShowRewarded(EAdPurpose adPurpose, OnPlayVideoCallback callback)
 	{
-        CurrentAdPurpose = adPurpose;
+		// If ads are not available, return immediately
+		if(!adsAvailable) {
+			// Notify of the error
+			if(callback != null) {
+				callback.Invoke(false);
+			}
+			return;
+		}
+
+		// Store setup
+		CurrentAdPurpose = adPurpose;
+		CurrentAdStartTimestamp = Time.unscaledTime;
 		m_onRewardedCallback = callback;
 
-        bool adAvailable = FeatureSettingsManager.AreAdsEnabled;
-        // Ad has been requested is tracked
-        HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), adAvailable, TRACK_AD_PROVIDER_ID);
+		// Ad has been requested is tracked
+        HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), true, TRACK_AD_PROVIDER_ID);
 
-        CurrentAdStartTimestamp = Time.unscaledTime;
-
-        if (adAvailable) {
-            // Ad is requested
-            AdsManager.SharedInstance.PlayRewarded(OnRewardedResult, 5);
-        } else {
-            // 1 second to wait before calling the callback because of an error on the blocker popup that prevents the popup from being closed when close() is
-            // called immediately after open() was called
-            //UbiBCN.CoroutineManager.DelayedCall(() => OnRewardedResult(AdsManager.EPlayResult.TIMEOUT), 1);
-			UbiBCN.CoroutineManager.DelayedCall(() => OnRewardedResult(AdsManager.EPlayResult.PLAYED), 1);	// [AOC] TEMP!! Simulate the ad was viewed while we try to fix some weird bug with ads not being given sometimes
-        }       
+		// Request Ad
+		AdsManager.SharedInstance.PlayRewarded(OnRewardedResult, 5);
 	}
 
 	private void OnRewardedResult(AdsManager.EPlayResult result)

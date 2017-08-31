@@ -160,7 +160,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		}
 
 		// Leaderboard
-		m_leaderboard.Refresh();
+		// m_leaderboard.Refresh();
 	}
 
 	//------------------------------------------------------------------------//
