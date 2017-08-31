@@ -242,6 +242,7 @@ public class RemoteImageLoader : MonoBehaviour {
 				tex = m_placeholderImage;
 			}
 		}
+		yield return null;
 
 		// Assign new texture to the image
 		m_targetImage.texture = tex;

@@ -181,10 +181,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
         // keep the original materials, sometimes it will become Gold!
         m_materials = new Dictionary<int, List<Material>>();
-		Transform view = transform.Find("view");
-		if (view != null) {
-			m_renderers = view.GetComponentsInChildren<Renderer>();
-		}
+		m_renderers = GetComponentsInChildren<Renderer>();
         
 		m_vertexCount = 0;
 		m_rendererCount = 0;
