@@ -34,6 +34,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	//-----------------------------------------------
+	[SeparatorAttribute("Place Holder Setup")]
+	[SerializeField] private bool m_isPlaceHolder = false;
+
 	[SeparatorAttribute("Animation playback speed")]
 	[SerializeField] private float m_walkSpeed = 1f;
 	[SerializeField] private float m_runSpeed = 1f;
@@ -177,8 +180,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 
         // keep the original materials, sometimes it will become Gold!
-        m_materials = new Dictionary<int, List<Material>>();        
-		m_renderers = GetComponentsInChildren<Renderer>();
+        m_materials = new Dictionary<int, List<Material>>();
+		Transform view = transform.Find("view");
+		if (view != null) {
+			m_renderers = view.GetComponentsInChildren<Renderer>();
+		}
         
 		m_vertexCount = 0;
 		m_rendererCount = 0;
@@ -388,6 +394,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
     public void SetMaterialType(MaterialType _type) {
+		if (m_isPlaceHolder) {
+			_type = MaterialType.NORMAL;
+		}
 		m_materialType = _type;
         
 		// Restore materials

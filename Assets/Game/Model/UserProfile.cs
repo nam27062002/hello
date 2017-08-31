@@ -775,7 +775,14 @@ public class UserProfile : UserPersistenceSystem
 				GlobalEventUserData newEvent = new GlobalEventUserData();
 				newEvent.Load(eventsData[i]);
 				newEvent.userID = userId;
-				m_globalEvents[newEvent.eventID] = newEvent;
+				if ( newEvent.eventID > 0 ){
+					m_globalEvents[newEvent.eventID] = newEvent;
+				}
+				#if UNITY_EDITOR
+				else{
+					DebugUtils.Assert(false, "Event with negative id");
+				}
+				#endif
 			}
 		}
 	}
@@ -916,7 +923,14 @@ public class UserProfile : UserPersistenceSystem
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
 		foreach(KeyValuePair<int, GlobalEventUserData> kvp in m_globalEvents) {
-			eventsData.Add(kvp.Value.Save(true));
+			if ( kvp.Value.eventID >= 0 ){
+				eventsData.Add(kvp.Value.Save(true));
+			}
+			#if UNITY_EDITOR
+			else{
+				DebugUtils.Assert(false, "Event with negative id");
+			}
+			#endif
 		}
 		data.Add("globalEvents", eventsData);
 
