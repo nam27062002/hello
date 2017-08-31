@@ -116,9 +116,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             }
 
 #if UNITY_ANDROID
-            DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.m_strVersionAndroidGplay, kDNAEnvironment);
+            DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionAndroidGplay, kDNAEnvironment);
 #elif UNITY_IOS
-			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.m_strVersionIOS, kDNAEnvironment);
+			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionIOS, kDNAEnvironment);
 #endif
         }
 #endif
