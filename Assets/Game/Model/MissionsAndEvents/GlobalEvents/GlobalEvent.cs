@@ -348,6 +348,7 @@ public partial class GlobalEvent {
 			}
 
 			// Update leaderboard entry
+			m_leaderboard[i].Reset();
 			m_leaderboard[i].Load(leaderboardData[i]);
 			m_leaderboard[i].position = i;
 		}
