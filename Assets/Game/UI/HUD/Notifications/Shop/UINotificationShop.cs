@@ -29,7 +29,7 @@ public class UINotificationShop : MonoBehaviour {
 
 	void Update() {
 		if (m_visible) {
-			m_timer -= Time.deltaTime;
+			m_timer -= Time.unscaledDeltaTime;
 			if (m_timer <= 0f) {
 				m_animator.Hide(true);
 				m_visible = false;
