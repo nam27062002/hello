@@ -447,7 +447,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				if (m_currentEvent.isRewardAvailable) {
 					GlobalEventManager.RequestCurrentEventRewards();
 				}
-
+				/*
 				GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 				// Player data
 				if ( responseJson.ContainsKey("playerData") ) {
@@ -455,6 +455,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				}else{
 					currentEventUserData.Reset();
 				}
+				*/
 
 				// Notify game that we have new data concerning the current event
 				Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
@@ -535,6 +536,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Player data
 			if ( responseJson.ContainsKey("u") ) {
 				currentEventUserData.Load(responseJson["u"]);
+				if ( currentEventUserData.position < m_currentEvent.leaderboard.Count  && currentEventUserData.position >= 0){
+					m_currentEvent.leaderboard[ currentEventUserData.position ].userID = currentEventUserData.userID;
+				}
 			}else{
 				currentEventUserData.Reset();
 			}

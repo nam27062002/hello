@@ -107,7 +107,8 @@ public class GlobalEventUserData {
 		if(_data.ContainsKey("eventId")) eventID = _data["eventId"].AsInt;	// Event ID is optional
 		if(_data.ContainsKey("uid")) userID = _data["uid"];
 		if(_data.ContainsKey("score")) score = _data["score"].AsInt;
-		if(_data.ContainsKey("rank")) position = _data["rank"].AsInt;
+		if(_data.ContainsKey("rank")) 
+			position = _data["rank"].AsInt;
 		if(_data.ContainsKey("endTimestamp")) endTimestamp = _data["endTimestamp"].AsLong;
 		if(_data.ContainsKey("rewardCollected")) rewardCollected = _data["rewardCollected"].AsBool;
 
