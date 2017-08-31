@@ -93,13 +93,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
             {
                 case ESyncState.GettingPersistences:
                     Sync_LoadLocalPersistence();
-
-                    // The application start notification is sent to the TrackingManager if we're in the first loading and the local persistence is ok (if it's corrupted then
-                    // some critical data required by tracking are not going to be available, so we have to fix the problem before sending tracking events
-                    if (Sync_From == ESyncFrom.FirstLoading && Manager.LocalProgress_Data != null && Manager.LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK)
-                    {
-                        HDTrackingManager.Instance.Notify_ApplicationStart();
-                    }
+                    
                     /*
                     GameServerManager.SharedInstance.Configure();
                     GameServerManager.SharedInstance.Auth(null);
@@ -170,6 +164,13 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
             case PersistenceStates.LoadState.OK:
             {
+                // The application start notification is sent to the TrackingManager if we're in the first loading and the local persistence is ok (if it's corrupted then
+                // some critical data required by tracking are not going to be available, so we have to fix the problem before sending tracking events
+                if (Sync_From == ESyncFrom.FirstLoading)
+                {
+                    HDTrackingManager.Instance.Notify_ApplicationStart();
+                }
+
                 Sync_OnLoadedSuccessfully();
             }
             break;

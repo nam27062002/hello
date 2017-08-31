@@ -408,9 +408,10 @@ public class GameServerManagerCalety : GameServerManager {
 	//------------------------------------------------------------------------//
 	#region commands
 	/// <summary>
-	/// Max amount of retries when an authorization error is got after sending a command. If this happens then Auth is tried to sent before resending the command that caused the error
+	/// Max amount of retries when an authorization error is got after sending a command. If this happens then Auth is tried to sent before resending the command that caused the error.
+    /// It's set to 0 because Calety already retries to send commands.
 	/// </summary>
-	private const int COMMANDS_MAX_AUTH_RETRIES = 1;
+	private const int COMMANDS_MAX_AUTH_RETRIES = 0;
 
 	private enum ECommand {
 		Unknown = -1,
