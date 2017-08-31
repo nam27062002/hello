@@ -121,7 +121,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 						globalEventUserData.eventID = globalEventKey;
 						user.globalEvents.Add(globalEventKey, globalEventUserData);
 					}
-					globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
+					if ( liveEvent.ContainsKey("end") )
+						globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
 				}
 				parsed = true;
 			}
