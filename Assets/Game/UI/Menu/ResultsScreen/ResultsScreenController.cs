@@ -30,6 +30,22 @@ public class ResultsScreenController : MonoBehaviour {
 		COUNT
 	};
 
+	private enum NewStep {
+		INIT = 0,
+
+		INTRO,				// Always, dragon animation
+		SCORE,				// Always, run score + high score feedback
+		REWARDS,			// Always, sc earned during the run
+		COLLECTIBLES,		// Optional, collected Eggs, Chests, etc.
+		MISSIONS,			// Optional, completed missions
+		XP,					// Always, dragon xp progression
+		SKIN_UNLOCKED,		// Optional, if a skin was unlocked. As many as needed if more than one skin was unlocked in the same run
+		DRAGON_UNLOCKED,	// Optional, if a new dragon was unlocked
+		GLOBAL_EVENT,		// Optional, if there is an active event and the player has a score to add to it
+
+		FINISHED
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
