@@ -30,14 +30,12 @@ public class PopupCurrencyShop : MonoBehaviour {
 	public enum Mode {
 		DEFAULT,
 		SC_ONLY,
-		PC_ONLY,
-		KEYS_ONLY
+		PC_ONLY
 	};
 
 	public enum Tabs {
 		PC,
 		SC,
-		KEYS,
 		COUNT
 	};
 
@@ -93,10 +91,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 				case Tabs.PC: {
 					defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "hc");
 				} break;
-
-				case Tabs.KEYS: {
-					defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "keys");
-				} break;
 			}
 
 			// Initialize the tab
@@ -140,10 +134,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 		switch(_mode) {
 			case Mode.SC_ONLY: {
 				initialTab = (int)Tabs.SC; 
-			}break;
-
-			case Mode.KEYS_ONLY: {
-				initialTab = (int)Tabs.KEYS; 
 			} break;
 
 			case Mode.PC_ONLY: 
