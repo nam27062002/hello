@@ -80,7 +80,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			// Parse remaining time
 			m_timerText.text = TimeUtils.FormatTime(
 				GlobalEventManager.currentEvent.remainingTime.TotalSeconds,
-				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			);
 		}
@@ -160,7 +160,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		}
 
 		// Leaderboard
-		m_leaderboard.Refresh();
+		// m_leaderboard.Refresh();
 	}
 
 	//------------------------------------------------------------------------//

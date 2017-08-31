@@ -78,7 +78,9 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         if (m_autoSpawner.state == AutoSpawnBehaviour.State.Idle) {
             if (IsOperatorDead()) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-					return !m_newCamera.IsInsideActivationMinArea(m_spawnAtTransform.position);
+					if (m_newCamera != null) {
+						return !m_newCamera.IsInsideActivationMinArea(m_spawnAtTransform.position);
+					}
 				}
             }
         }

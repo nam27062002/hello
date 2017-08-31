@@ -172,42 +172,35 @@ public partial class GlobalEvent {
 	/// <param name="_data">User data to be checked.</param>
 	public void RefreshLeaderboardPosition(GlobalEventUserData _data) {
 		// Check whether the player is in the leaderboard
-		int idx = m_leaderboard.FindIndex((_a) => _a.userID == _data.userID);
-		bool wasOnTheLeaderboard = (idx >= 0);
-		bool shouldBeOnTheLeaderboard = _data.score > 0; 
-			//&& (m_leaderboard.Count == 0 || m_leaderboard.Count < 100 || _data.score >= m_leaderboard.Last().score);
+		bool sort = false;
+		if ( m_leaderboard.Count < _data.position || _data.position < 0){
+			// if I'm not in the leaderboard -> check if I have to be
+			int index = leaderboard.Count - 1;
 
-		// Cases:
-		// a) Player on the leaderboard
-		if(wasOnTheLeaderboard) {
-			// Should stay?
-			if(shouldBeOnTheLeaderboard) {
-				// Update score
-				m_leaderboard[idx].score = _data.score;
-			} else {
-				// Remove from the leaderboard
-				m_leaderboard.RemoveAt(idx);
-			}
-		}
-
-		// b) Player not on the leaderboard
-		else {
-			// Should enter?
-			if(shouldBeOnTheLeaderboard) {
+			if ( index >= 0 && m_leaderboard[ index ].score <= _data.score ){	
 				m_leaderboard.Add(new GlobalEventUserData(_data));	// Make a copy!
-			} else {
-				// Nothing to do
+				sort = true;
 			}
+			else if ( _data.score > 0 && _data.position < 0 )
+			{
+				_data.position = UnityEngine.Random.Range( m_leaderboard.Count, m_leaderboard.Count * 3);
+			}
+		}else{
+			// Update Score
+			m_leaderboard[ _data.position ].score = _data.score;
+			sort = true;
 		}
 
 		// Sort the leaderboard
-		m_leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
+		if ( sort ){
+			m_leaderboard.Sort((_a, _b) => -(_a.score.CompareTo(_b.score)));	// Using float's CompareTo directly. Reverse sign since we want to sort from bigger to lower.
 
-		// Update positions
-		for(int i = 0; i < m_leaderboard.Count; ++i) {
-			m_leaderboard[i].position = i;
-			if(m_leaderboard[i].userID == _data.userID) {
-				_data.position = i;
+			// Update positions
+			for(int i = 0; i < m_leaderboard.Count; ++i) {
+				m_leaderboard[i].position = i;
+				if(m_leaderboard[i].userID == _data.userID) {
+					_data.position = i;
+				}
 			}
 		}
 
@@ -287,12 +280,7 @@ public partial class GlobalEvent {
 		m_currentValue = 0f;
 		m_leaderboard.Clear();
 
-		GlobalEventUserData playerEventData = null;
-		if(!UsersManager.currentUser.globalEvents.TryGetValue(m_id, out playerEventData)) {
-			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(m_id, UsersManager.currentUser.userId, 0, -1, 0);
-		}
-	
+		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(m_id);
 		playerEventData.endTimestamp = _data["endTimestamp"].AsLong;
 	}
 
@@ -360,6 +348,7 @@ public partial class GlobalEvent {
 			}
 
 			// Update leaderboard entry
+			m_leaderboard[i].Reset();
 			m_leaderboard[i].Load(leaderboardData[i]);
 			m_leaderboard[i].position = i;
 		}

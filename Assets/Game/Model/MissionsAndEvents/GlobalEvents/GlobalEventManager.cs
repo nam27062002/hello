@@ -121,7 +121,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 						globalEventUserData.eventID = globalEventKey;
 						user.globalEvents.Add(globalEventKey, globalEventUserData);
 					}
-					globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
+					if ( liveEvent.ContainsKey("end") )
+						globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
 				}
 				parsed = true;
 			}
@@ -246,7 +247,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		int contribution = (int)instance.m_currentEvent.objective.currentValue;
 		contribution = (int)(_bonusDragonMultiplier * contribution);
 		contribution = (int)(_keysMultiplier * contribution);
-
+		// contribution = (int)(100 * contribution);
 		// Requets to the server!
 		Debug.Log("<color=magenta>REGISTER SCORE</color>");
 		GameServerManager.SharedInstance.GlobalEvent_RegisterScore(
@@ -292,9 +293,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(!IsReady()) return ErrorCode.NOT_INITIALIZED;
 
 		// User must be logged in!
-		// [AOC] CHECK HOW TO DO IT!!
+		// [AOC] NOT ANYMORE!
 		//if(CPGlobalEventsTest.loginCheck && !SocialManager.Instance.IsLoggedIn(SocialFacade.Network.Default)) return ErrorCode.NOT_LOGGED_IN;
-		if(CPGlobalEventsTest.loginCheck && !GameSessionManager.SharedInstance.IsLogged()) return ErrorCode.NOT_LOGGED_IN;
+		//if(CPGlobalEventsTest.loginCheck && !GameSessionManager.SharedInstance.IsLogged()) return ErrorCode.NOT_LOGGED_IN;
 
 		// We must have a valid event
 		if(instance.m_currentEvent == null) return ErrorCode.NO_VALID_EVENT;
@@ -371,6 +372,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(_error != null) {
 			// [AOC] Do something or just ignore?
 			// Probably store somewhere that there was an error so retry timer is reset or smth
+
+			// Notify game that we have new data concerning the current event
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
 			return;
 		}
 
@@ -417,6 +422,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(_error != null) {
 			// [AOC] Do something or just ignore?
 			// Probably store somewhere that there was an error so retry timer is reset or smth
+
+			// Notify game that we have new data concerning the current event
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
 			return;
 		}
 
@@ -437,14 +446,6 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 				if (m_currentEvent.isRewardAvailable) {
 					GlobalEventManager.RequestCurrentEventRewards();
-				}
-
-				GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
-				// Player data
-				if ( responseJson.ContainsKey("playerData") ) {
-					currentEventUserData.Load(responseJson["playerData"]);
-				}else{
-					currentEventUserData.Reset();
 				}
 
 				// Notify game that we have new data concerning the current event
@@ -498,6 +499,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(_error != null) {
 			// [AOC] Do something or just ignore?
 			// Probably store somewhere that there was an error so retry timer is reset or smth
+
+			// Notify game that we have new data concerning the current event
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 			return;
 		}
 
@@ -519,11 +524,23 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
-			// Player data
-			if ( responseJson.ContainsKey("u") ) {
-				currentEventUserData.Load(responseJson["u"]);
-			}else{
-				currentEventUserData.Reset();
+			if ( responseJson.ContainsKey("c") && responseJson["c"].AsBool ) // if cheater
+			{
+				// if cheater the player is not in the leaderboard, so we set position to -1 and let him position itself on the leaderboard
+				currentEventUserData.position = -1;
+				m_currentEvent.RefreshLeaderboardPosition( currentEventUserData );
+			}
+			else
+			{
+				// Player data
+				if ( responseJson.ContainsKey("u") ) {
+					currentEventUserData.Load(responseJson["u"]);
+					if ( currentEventUserData.position < m_currentEvent.leaderboard.Count  && currentEventUserData.position >= 0){
+						m_currentEvent.leaderboard[ currentEventUserData.position ].userID = currentEventUserData.userID;
+					}
+				}else{
+					currentEventUserData.position = -1;
+				}
 			}
 
 			// Update timestamps
