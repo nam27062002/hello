@@ -427,7 +427,7 @@ public class ResultsScreenController : MonoBehaviour {
 
                     // Save persistence
                     PersistenceFacade.instance.Save_Request(true);
-                    } break;
+                } break;
 
 				// Show global events contribute popup?		// [AOC] TEMP!! Waiting for the new results screen flow to properly integrate this!
 				case ToCheck.GLOBAL_EVENT: {
@@ -436,9 +436,10 @@ public class ResultsScreenController : MonoBehaviour {
 
 					// Is there a valid current event to display? Check error codes to know so.
 					GlobalEventManager.ErrorCode canContribute = GlobalEventManager.CanContribute();
-					if(canContribute == GlobalEventManager.ErrorCode.NONE
+					if((canContribute == GlobalEventManager.ErrorCode.NONE
 					|| canContribute == GlobalEventManager.ErrorCode.OFFLINE
-					|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN) {
+					|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN)
+					&& GlobalEventManager.currentEvent.objective.enabled) {	// [AOC] This will cover cases where the event is active but not enable for this player (i.e. during the tutorial).
 						// Show global event contribution popup
 						PopupController popup = PopupManager.OpenPopupInstant(PopupGlobalEventContribution.PATH);
 

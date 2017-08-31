@@ -194,4 +194,32 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			} break;
 		}
 	}
+
+	/// <summary>
+	/// The Facebook button has been pressed.
+	/// </summary>
+	public void OnFacebookButton() {
+		Application.OpenURL("https://www.facebook.com/UbisoftMobile/");
+	}
+
+	/// <summary>
+	/// The Twitter button has been pressed.
+	/// </summary>
+	public void OnTwitterButton() {
+		Application.OpenURL("https://twitter.com/UbisoftMobile");
+	}
+
+	/// <summary>
+	/// The Instagram button has been pressed.
+	/// </summary>
+	public void OnInstagramButton() {
+		Application.OpenURL("https://www.instagram.com/ubisoftmobile/");
+	}
+
+	/// <summary>
+	/// The Web button has been pressed.
+	/// </summary>
+	public void OnWebButton() {
+		Application.OpenURL("http://blog.ubi.com/");
+	}
 }

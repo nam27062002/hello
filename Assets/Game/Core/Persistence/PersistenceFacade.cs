@@ -62,6 +62,15 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     }    
 
     #region sync
+    public enum ESyncFrom
+    {
+        None,
+        FirstLoading,
+        FromSettings
+    }
+
+    private ESyncFrom Sync_From { get; set; }
+
     private enum ESyncState
     {
         None,
@@ -70,7 +79,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     }
 
     private ESyncState m_syncState;
-    private ESyncState SyncState
+    private ESyncState Sync_State
     {
         get
         {
@@ -83,8 +92,8 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
             switch (m_syncState)
             {
                 case ESyncState.GettingPersistences:
-                    Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);
-
+                    Sync_LoadLocalPersistence();
+                    
                     /*
                     GameServerManager.SharedInstance.Configure();
                     GameServerManager.SharedInstance.Auth(null);
@@ -96,6 +105,11 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                     break;
             }
         }
+    }
+
+    private void Sync_LoadLocalPersistence()
+    {
+        Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);        
     }
 
     private void Sync_ProcessSyncing()
@@ -137,7 +151,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                 Action solveProblem = delegate ()
                 {
                     // We need to try to read local persistence again
-                    Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);
+                    Sync_LoadLocalPersistence();
 
                     // And check its status again
                     Sync_ProcessSyncing();
@@ -150,28 +164,37 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
             case PersistenceStates.LoadState.OK:
             {
+                // The application start notification is sent to the TrackingManager if we're in the first loading and the local persistence is ok (if it's corrupted then
+                // some critical data required by tracking are not going to be available, so we have to fix the problem before sending tracking events
+                if (Sync_From == ESyncFrom.FirstLoading)
+                {
+                    HDTrackingManager.Instance.Notify_ApplicationStart();
+                }
+
                 Sync_OnLoadedSuccessfully();
             }
             break;
         }
     }
 
-    private bool Sync_IsRunning() { return SyncState != ESyncState.None; }
+    private bool Sync_IsRunning() { return Sync_State != ESyncState.None; }
     private Action Sync_OnDone { get; set; }
 
     private void Sync_Reset()
     {
-        SyncState = ESyncState.None;
+        Sync_From = ESyncFrom.None;
+        Sync_State = ESyncState.None;
         Sync_OnDone = null;
     }
 
-    public void Sync_Persistences(Action onDone)
+    public void Sync_Persistences(ESyncFrom from, Action onDone)
     {
         if (!Sync_IsRunning())
         {
             AuthManager.Instance.LoadUser();
 
-            SyncState = ESyncState.GettingPersistences;
+            Sync_From = from;
+            Sync_State = ESyncState.GettingPersistences;
             Sync_OnDone = onDone;                        
         }
         else if (FeatureSettingsManager.IsDebugEnabled)
@@ -198,7 +221,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
     private void Sync_Update()
     {
-        switch (SyncState)
+        switch (Sync_State)
         {
             case ESyncState.GettingPersistences:
             {
@@ -222,7 +245,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                 if (localPersistenceIsReady &&
                 (!needsCloudPersistence || cloudPersistenceIsReady))
                 {
-                    SyncState = ESyncState.Syncing;
+                    Sync_State = ESyncState.Syncing;
                 }
             }
             break;            

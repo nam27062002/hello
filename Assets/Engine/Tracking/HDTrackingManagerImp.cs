@@ -84,6 +84,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         CheckAndGenerateUserID();
 
+        Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
+
+        // It has to be true only in the first loading
+        if (Session_IsFirstTime)
+        {
+            TrackingPersistenceSystem.IsFirstLoading = false;
+        }
+
         // Session counter advanced
         TrackingPersistenceSystem.SessionCount++;              
 
@@ -108,9 +116,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             }
 
 #if UNITY_ANDROID
-            DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.m_strVersionAndroidGplay, kDNAEnvironment);
+            DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionAndroidGplay, kDNAEnvironment);
 #elif UNITY_IOS
-			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.m_strVersionIOS, kDNAEnvironment);
+			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionIOS, kDNAEnvironment);
 #endif
         }
 #endif
@@ -183,7 +191,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-#region notify
+#region notify    
     public override void Notify_ApplicationStart()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -413,7 +421,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
 	public override void Notify_Funnel_Load(FunnelData_Load.Steps _step) {
-		Track_Funnel(m_loadFunnel.name, m_loadFunnel.GetStepName(_step), m_loadFunnel.GetStepDuration(_step), m_loadFunnel.GetStepTotalTime(_step));
+		Track_Funnel(m_loadFunnel.name, m_loadFunnel.GetStepName(_step), m_loadFunnel.GetStepDuration(_step), m_loadFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
 	}
 
 	/// <summary>
@@ -421,7 +429,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
 	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
-		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step));
+		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
 	}
 #endregion
 
@@ -717,8 +725,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_SUPER_FIRE_RUSH_NB, superFireRushNb);
             e.SetParameterValue(TRACK_PARAM_HC_REVIVE, hcRevive);
             e.SetParameterValue(TRACK_PARAM_AD_REVIVE, adRevive);
-			
-			Track_SendEvent(e);
+            e.SetParameterValue(TRACK_PARAM_SC_EARNED, scGained);
+            e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
+
+            Track_SendEvent(e);
         }
     }
 
@@ -747,11 +757,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration)
+	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad)
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
-			Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad ");
+			Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);
 		}
 
 		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(_event);
@@ -760,7 +770,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			e.SetParameterValue(TRACK_PARAM_STEP_NAME, _step);
 			e.SetParameterValue(TRACK_PARAM_STEP_DURATION, _stepDuration);
 			e.SetParameterValue(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
-			e.SetParameterValue(TRACK_PARAM_FIRST_LOAD, false);	// first load?
+			e.SetParameterValue(TRACK_PARAM_FIRST_LOAD, _fistLoad);	
 			
 			Track_SendEvent(e);
 		}
@@ -790,7 +800,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
-    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";	
+    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
+    private const string TRACK_PARAM_HC_EARNED                  = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
@@ -818,6 +829,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
+    private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
     private const string TRACK_PARAM_SCORE                      = "score";
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
@@ -1085,6 +1097,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     private string Session_LastDeathSource { get; set; }
     private string Session_LastDeathCoordinates { get; set; }
 
+    /// <summary>
+    /// Whether or not this is the first session since installation. It's required as a parameter for some events.
+    /// </summary>
+    private bool Session_IsFirstTime { get; set; }
+
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
@@ -1095,7 +1112,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathType = null;
         Session_LastDeathSource = null;
         Session_LastDeathCoordinates = null;
-    }
+        Session_IsFirstTime = false;
+     }
 #endregion
 
 #region debug

@@ -30,12 +30,13 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	private const float BUTTON_SIZE = 25f;
 	private const float SEPARATOR_SIZE = 10f;
 
-	private const int NUM_BUTTONS = 12;		// Update as needed
+	private const int NUM_BUTTONS = 13;		// Update as needed
 	private const int NUM_SEPARATORS = 3;		// Update as needed
 
 	private enum Icons {
 		DISGUISES_CAPTURE_TOOL = 0,
 		PETS_CAPTURE_TOOL,
+		SPAWNERS_CAPTURE_TOOL,
 
 		COUNT
 	}
@@ -86,7 +87,8 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		m_icons.Clear();
 		string[] iconPaths = new string[] {
 			"Assets/Tools/UITools/icon_camera_disguises.png",
-			"Assets/Tools/UITools/icon_camera_pets.png"
+			"Assets/Tools/UITools/icon_camera_pets.png",
+			"Assets/Tools/UITools/icon_camera_yellow.png"
 		};
 
 		for(int i = 0; i < (int)Icons.COUNT; i++) {
@@ -179,6 +181,11 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			// UI Pets Capture Tool
 			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.PETS_CAPTURE_TOOL], "UI Pets Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.OpenScene("Assets/Tools/UITools/SC_PetsCaptureTool.unity", true);
+			}
+
+			// UI Spawners Capture Tool
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.SPAWNERS_CAPTURE_TOOL], "UI Spawners Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenScene("Assets/Tools/UITools/SC_SpawnersCaptureTool.unity", true);
 			}
 
 			// Egg Test Scene
