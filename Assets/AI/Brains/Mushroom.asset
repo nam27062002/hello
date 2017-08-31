@@ -14,9 +14,18 @@ MonoBehaviour:
   m_states:
   - m_name: Wander
     m_componentAssets:
-    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
-    - {fileID: 11400000, guid: 15b8f8f1e42604cf09dc6047cede9054, type: 2}
-    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
-  m_transitionData: []
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+    - {fileID: 11400000, guid: f108278378c454c55bf61b21322ed73a, type: 2}
+  - m_name: Idle
+    m_componentAssets:
+    - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
+    - {fileID: 11400000, guid: f108278378c454c55bf61b21322ed73a, type: 2}
+  m_transitionData:
+  - to: 1
+    id: onRest
+    from: 0
+  - to: 0
+    id: onMove
+    from: 1
   m_firstState_A: 0
-  m_firstState_B: 0
+  m_firstState_B: 1
