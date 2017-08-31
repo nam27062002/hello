@@ -339,14 +339,15 @@ if $BUILD_ANDROID; then
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
-	STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}";
+  STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}";
+  mkdir -p "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"
+  mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.apk" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/"
 
   if $GENERATE_OBB; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
     PACKAGE_NAME="$(cat bundleIdentifier.txt)"
     rm -f "bundleIdentifier.txt"
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
-    mkdir -p "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"
     mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}"
   fi
 fi
@@ -412,11 +413,8 @@ if $UPLOAD;then
 
   # Copy APK
   if $BUILD_ANDROID; then
-      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"* "server/"
-      if $GENERATE_OBB; then
-          mkdir -p "server/${STAGE_APK_FILE}"
-          cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}" "server/${STAGE_APK_FILE}/"
-      fi
+      mkdir -p "server/${STAGE_APK_FILE}"
+      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/*" "server/${STAGE_APK_FILE}/"
   fi
 
   # Unmount server and remove tmp folder

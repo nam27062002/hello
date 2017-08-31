@@ -1,0 +1,2241 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>Nikolay Naumenko</Author>
+  <LastAuthor>Nikolay Naumenko</LastAuthor>
+  <LastPrinted>2017-03-10T16:21:24Z</LastPrinted>
+  <Created>2016-04-05T10:31:36Z</Created>
+  <LastSaved>2017-08-29T09:51:46Z</LastSaved>
+  <Version>16.00</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>12885</WindowHeight>
+  <WindowWidth>28800</WindowWidth>
+  <WindowTopX>0</WindowTopX>
+  <WindowTopY>0</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s26" ss:Name="Good">
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#008000"/>
+   <Interior ss:Color="#CCFFCC" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s29" ss:Name="Input">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#7F7F7F"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#7F7F7F"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#7F7F7F"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#7F7F7F"/>
+   </Borders>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#333399"/>
+   <Interior ss:Color="#FFCC99" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s62" ss:Name="Normal 2">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s35" ss:Name="Note">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Interior ss:Color="#FFFF99" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m191771712">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771732">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771752">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771772">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771584">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771604">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771624">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771644">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771168">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771188">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771208">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191771228">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770880">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770900">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770920">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770940">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770672">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770692">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770712">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770732">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770752">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770772">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770792">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m191770812">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m195365152">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m195365172">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m195365192">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m195365212">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m196770624">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m196770644">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m196770664">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="m196770684">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s63">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+  </Style>
+  <Style ss:ID="s64">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#16365C" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s65">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#16365C" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s66">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#16365C" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s67">
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#16365C" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s68">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#16365C" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s73">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s75">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s78">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s79">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders/>
+  </Style>
+  <Style ss:ID="s80">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s82">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s91">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+  </Style>
+  <Style ss:ID="s92">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s94">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s95">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s96">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s97">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s98">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s99">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s100">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s101">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s102">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s103">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s108">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s109">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s110">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s111">
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s112">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s113">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s118">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s124">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s125">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s126">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s127">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s128">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s129">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s132">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s133">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s134">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s135">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s141" ss:Parent="s62">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s142" ss:Parent="s62">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s143">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s144">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s145">
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s146">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s147">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s148">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s149">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s150">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s151">
+   <Borders/>
+  </Style>
+  <Style ss:ID="s153" ss:Parent="s35">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior ss:Color="#FFFF99" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s155" ss:Parent="s26">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#008000"/>
+   <Interior ss:Color="#CCFFCC" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s156" ss:Parent="s26">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12"/>
+   <Interior ss:Color="#92D050" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s157">
+   <Interior ss:Color="#FF0000" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s160">
+   <Interior ss:Color="#BF8F00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s161" ss:Parent="s26">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#008000"/>
+   <Interior/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="spec">
+  <Table ss:ExpandedColumnCount="11" ss:ExpandedRowCount="106" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="53.25" ss:DefaultRowHeight="14.0625">
+   <Column ss:Width="43.5"/>
+   <Column ss:Width="184.5"/>
+   <Column ss:AutoFitWidth="0" ss:Width="69.75"/>
+   <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="231.75"/>
+   <Column ss:Width="144.75"/>
+   <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="287.25"/>
+   <Column ss:AutoFitWidth="0" ss:Width="193.5"/>
+   <Column ss:Width="300.75"/>
+   <Column ss:AutoFitWidth="0" ss:Width="344.25"/>
+   <Column ss:Index="11" ss:AutoFitWidth="0" ss:Width="71.25"/>
+   <Row ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Event #</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Name/Type</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Api</Data></Cell>
+    <Cell ss:StyleID="s66"><Data ss:Type="String">Send Conditions</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Parameter Name</Data></Cell>
+    <Cell ss:StyleID="s66"><Data ss:Type="String">Value Type</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Real Type</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">Value Description</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Comment</Data></Cell>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">Status</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="9" ss:StyleID="m196770624"><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:MergeDown="9" ss:StyleID="m196770644"><Data ss:Type="String">game.start</Data></Cell>
+    <Cell ss:MergeDown="9" ss:StyleID="m196770664"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="9" ss:StyleID="m196770684"><Data ss:Type="String">Sent by the plugin automatically when DNA logs in successfully.</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">acq_marketing_id</Data></Cell>
+    <Cell ss:StyleID="s96"><Data ss:Type="String">TRACK_DNA_MARKETING_ID</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">TRACK_DNA_MARKETING_ID</Data></Cell>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">hardware</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">TRACK_DNA_HARDWARE</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">TRACK_DNA_HARDWARE</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">installDate</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">TRACK_DNA_INSTALL_DATE</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">TRACK_DNA_INSTALL_DATE</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">osVersion</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">TRACK_OS</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">TRACK_OS</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">playerID</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">providerAuth</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">pushNotif</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">TRACK_DNA_PUSH_NOTIF</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">TRACK_DNA_PUSH_NOTIF</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">SubVersion</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">typeNotif</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s101"><Data ss:Type="String">InGameId</Data></Cell>
+    <Cell ss:StyleID="s102"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s101"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s103"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="30">
+    <Cell ss:MergeDown="1" ss:StyleID="s75"><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:MergeDown="1" ss:StyleID="s82"><Data ss:Type="String">custom.mobile.start</Data></Cell>
+    <Cell ss:MergeDown="1" ss:StyleID="s79"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="1" ss:StyleID="s94"><Data ss:Type="String">Sent when the user starts a game round by clicking on play button in menu. It's also sent when the application is resumed only if the session had been started.</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">abtesting</Data></Cell>
+    <Cell ss:StyleID="s109"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s110"/>
+    <Cell ss:StyleID="s108"/>
+    <Cell ss:StyleID="s110"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="34.5">
+    <Cell ss:Index="5" ss:StyleID="s111"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s112"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s111"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s113"/>
+    <Cell ss:StyleID="s111"/>
+    <Cell ss:StyleID="s113"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="4" ss:StyleID="m195365152"><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:MergeDown="4" ss:StyleID="m195365172"><Data ss:Type="String">custom.mobile.stop</Data></Cell>
+    <Cell ss:MergeDown="4" ss:StyleID="m195365192"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="4" ss:StyleID="m195365212"><Data ss:Type="String">Sent when the application is closed. It's also sent when the application is paused (it's sent to background). Some devices won't be able to send it when paused. Those devices will send it when resumed. It should be sent even though cutom.mobile.start hasn't been sent.</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">isPayingSession</Data></Cell>
+    <Cell ss:StyleID="s96"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="21">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">sessionPlaytime</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="18">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">stopCause</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="25.5">
+    <Cell ss:Index="5" ss:StyleID="s101"><Data ss:Type="String">totalPlaytime</Data></Cell>
+    <Cell ss:StyleID="s102"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s101"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s103"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="8" ss:StyleID="s75"><Data ss:Type="Number">4</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="s82"><Data ss:Type="String">custom.player.iap</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="s79"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="s94"><Data ss:Type="String">Sent when the user completes an in-app purchase implying real money.</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">storeTransactionID</Data></Cell>
+    <Cell ss:StyleID="s109"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s110"/>
+    <Cell ss:StyleID="s108"/>
+    <Cell ss:StyleID="s110"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">houstonTransactionID</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">itemID</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">promotionType</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">moneyCurrency</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">moneyIAP</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">totalPurchases</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s111"><Data ss:Type="String">totalStoreVisits</Data></Cell>
+    <Cell ss:StyleID="s112"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s111"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s113"/>
+    <Cell ss:StyleID="s111"/>
+    <Cell ss:StyleID="s113"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="6" ss:StyleID="m191770672"><Data ss:Type="Number">5</Data></Cell>
+    <Cell ss:MergeDown="6" ss:StyleID="m191770692"><Data ss:Type="String">custom.player.iap.secondaryStore</Data></Cell>
+    <Cell ss:MergeDown="6" ss:StyleID="m191770712"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="6" ss:StyleID="m191770732"><Data ss:Type="String">Sent when the user spend currencies</Data></Cell>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">itemID</Data></Cell>
+    <Cell ss:StyleID="s124"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s125"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">itemQuantity</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">promotionType</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">currency</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">moneyIAP</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s103"><Data ss:Type="String">totalPurchases</Data></Cell>
+    <Cell ss:StyleID="s128"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s129"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="3" ss:StyleID="m191770752"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:MergeDown="3" ss:StyleID="m191770772"><Data ss:Type="String">custom.game.cs</Data></Cell>
+    <Cell ss:MergeDown="3" ss:StyleID="m191770792"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="3" ss:StyleID="m191770812"><Data ss:Type="String">Sent when the user clicks on the button to send a customer support ticket.</Data></Cell>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">totalPurchases</Data></Cell>
+    <Cell ss:StyleID="s124"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s125"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">sessionsCount</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s103"><Data ss:Type="String">pvpMatchesPlayed</Data></Cell>
+    <Cell ss:StyleID="s128"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s129"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="6" ss:StyleID="m191770880"><Data ss:Type="Number">7</Data></Cell>
+    <Cell ss:MergeDown="6" ss:StyleID="m191770900"><Data ss:Type="String">custom.game.ad.start</Data></Cell>
+    <Cell ss:MergeDown="6" ss:StyleID="m191770920"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="6" ss:StyleID="m191770940"><Data ss:Type="String">Sent when an ad is requested to show it to the user to pay for something.</Data></Cell>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">nbAdsLtd</Data></Cell>
+    <Cell ss:StyleID="s124"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s97"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s125"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">nbAdsSession</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">adIsAvailable</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">rewardType</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">provider</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s103"><Data ss:Type="String">adsType</Data></Cell>
+    <Cell ss:StyleID="s128"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s129"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="4" ss:StyleID="s118"><Data ss:Type="Number">8</Data></Cell>
+    <Cell ss:MergeDown="4" ss:StyleID="s79"><Data ss:Type="String">custom.game.ad.finished</Data></Cell>
+    <Cell ss:MergeDown="4" ss:StyleID="s82"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="4" ss:StyleID="s91"><Data ss:Type="String">Sent after the user has finished watching the ad or when the ad is aborted.</Data></Cell>
+    <Cell ss:StyleID="s110"><Data ss:Type="String">isLoaded</Data></Cell>
+    <Cell ss:StyleID="s132"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s110"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s108"/>
+    <Cell ss:StyleID="s110"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">provider</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">adViewingDuration</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s100"><Data ss:Type="String">maxReached</Data></Cell>
+    <Cell ss:StyleID="s126"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s113"><Data ss:Type="String">adsType</Data></Cell>
+    <Cell ss:StyleID="s134"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s113"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s111"/>
+    <Cell ss:StyleID="s113"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="8" ss:StyleID="s73"><Data ss:Type="Number">9</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="s80"><Data ss:Type="String">custom.gameplay.start</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="s78"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="s92"><Data ss:Type="String">Sent when the user starts a run (after clicking on menu play button).</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">sessionsCount</Data></Cell>
+    <Cell ss:StyleID="s96"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">gameRunNb</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">xp</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">dragonProgression</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">dragonSkin</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">pet1</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">pet2</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">pet3</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s111"><Data ss:Type="String">pet4</Data></Cell>
+    <Cell ss:StyleID="s112"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s111"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s113"/>
+    <Cell ss:StyleID="s111"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="8" ss:StyleID="m191771168"><Data ss:Type="Number">10</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="m191771188"><Data ss:Type="String">custom.gameplay.dead</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="m191771208"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="m191771228"><Data ss:Type="String">Send when dragon die while game run</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">sessionsCount</Data></Cell>
+    <Cell ss:StyleID="s96"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s108"><Data ss:Type="String">deathInCurrentRunNb</Data></Cell>
+    <Cell ss:StyleID="s109"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s110"/>
+    <Cell ss:StyleID="s108"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">gameRunNb</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">xp</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s141"><Data ss:Type="String">timePlayed</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s141"><Data ss:Type="String">score</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s141"><Data ss:Type="String">deathType</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s141"><Data ss:Type="String">deathCause</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s142"><Data ss:Type="String">deathCoordinates</Data></Cell>
+    <Cell ss:StyleID="s102"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s101"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="20" ss:StyleID="s75"><Data ss:Type="Number">11</Data></Cell>
+    <Cell ss:MergeDown="20" ss:StyleID="s82"><Data ss:Type="String">custom.gameplay.end</Data></Cell>
+    <Cell ss:MergeDown="20" ss:StyleID="s79"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="20" ss:StyleID="s94"><Data ss:Type="String">Send when player finished run (exact moment doesn't matter)</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">sessionsCount</Data></Cell>
+    <Cell ss:StyleID="s109"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s110"/>
+    <Cell ss:StyleID="s108"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s108"><Data ss:Type="String">deathInCurrentRunNb</Data></Cell>
+    <Cell ss:StyleID="s109"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s110"/>
+    <Cell ss:StyleID="s108"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">gameRunNb</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">xp</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">deltaXp</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">dragonProgression</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">maxXp</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">timePlayed</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">score</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">deathType</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">deathCause</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">deathCoordinates</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">chestsFound</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">eggFound</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">highestMultiplier</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">highestBaseMultiplier</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">fireRushNb</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">superFireRushNb</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">hcRevive</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s111"><Data ss:Type="String">adRevive</Data></Cell>
+    <Cell ss:StyleID="s112"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s111"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s113"/>
+    <Cell ss:StyleID="s111"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="7" ss:StyleID="m191771584"><Data ss:Type="Number">12</Data></Cell>
+    <Cell ss:MergeDown="7" ss:StyleID="m191771604"><Data ss:Type="String">custom.eco.source</Data></Cell>
+    <Cell ss:MergeDown="7" ss:StyleID="m191771624"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="7" ss:StyleID="m191771644"><Data ss:Type="String">When player gain HC, SC or pieces of golden egg</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">sessionsCount</Data></Cell>
+    <Cell ss:StyleID="s96"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s95"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s97"/>
+    <Cell ss:StyleID="s95"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">gameRunNb</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">maxXp</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">currency</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">amountDelta</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">amountBalance</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s101"><Data ss:Type="String">ecoGroup</Data></Cell>
+    <Cell ss:StyleID="s102"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s101"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:MergeDown="8" ss:StyleID="m191771712"><Data ss:Type="Number">13</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="m191771732"><Data ss:Type="String">custom.eco.sink</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="m191771752"><Data ss:Type="String">dna</Data></Cell>
+    <Cell ss:MergeDown="8" ss:StyleID="m191771772"><Data ss:Type="String">When player spend any currency</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">sessionsCount</Data></Cell>
+    <Cell ss:StyleID="s109"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s108"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s110"/>
+    <Cell ss:StyleID="s108"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">gameRunNb</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">maxXp</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s133"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">currency</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">amountDelta</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">amountBalance</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s127"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15.75">
+    <Cell ss:Index="5" ss:StyleID="s98"><Data ss:Type="String">ecoGroup</Data></Cell>
+    <Cell ss:StyleID="s99"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s98"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s100"/>
+    <Cell ss:StyleID="s98"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:Index="5" ss:StyleID="s101"><Data ss:Type="String">item</Data></Cell>
+    <Cell ss:StyleID="s102"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s101"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s103"/>
+    <Cell ss:StyleID="s101"/>
+    <Cell ss:StyleID="s135"><Data ss:Type="String">OK</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>106</ActiveRow>
+     <ActiveCol>5</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+   <x:PageLayoutZoom>0</x:PageLayoutZoom>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="parms">
+  <Table ss:ExpandedColumnCount="7" ss:ExpandedRowCount="66" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="53.25" ss:DefaultRowHeight="14.0625">
+   <Column ss:Width="159"/>
+   <Column ss:Width="193.5"/>
+   <Column ss:Width="142.5"/>
+   <Column ss:Width="363.75"/>
+   <Column ss:Index="6" ss:Width="159"/>
+   <Column ss:Width="117.75"/>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Parameter </Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Type</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">Values</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">Description</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s143"><Data ss:Type="String">abtesting</Data></Cell>
+    <Cell ss:StyleID="s144"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s145"/>
+    <Cell ss:StyleID="s144"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">acq_marketing_id</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">TRACK_DNA_MARKETING_ID</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">adIsAvailable</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">adsType</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">adViewingDuration</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">currency</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">hardware</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">TRACK_DNA_HARDWARE</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">houstonTransactionID</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">InGameId</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">installDate</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">TRACK_DNA_INSTALL_DATE</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">isLoaded</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">isPayingSession</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">itemID</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">itemQuantity</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">maxReached</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">moneyCurrency</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">moneyIAP</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">nbAdsLtd</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">nbAdsSession</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">osVersion</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">TRACK_OS</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">playerID</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">playerProgress</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">promotionType</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">provider</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">providerAuth</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">pushNotif</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">TRACK_DNA_PUSH_NOTIF</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">pvpMatchesPlayed</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">rewardType</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">sessionPlaytime</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">sessionsCount</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">stopCause</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">storeTransactionID</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">SubVersion</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">totalPlaytime</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">totalPurchases</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">totalStoreVisits</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">typeNotif</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">gameRunNb</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">xp</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">dragonProgression</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">dragonSkin</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">pet1</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">pet2</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">pet3</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">pet4</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">timePlayed</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">Score</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">deathType</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">deathCause</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">deathCoordinates</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">deltaXp</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">maxXp</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">chestsFound</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">eggFound</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">highestMultiplier</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">highestBaseMultiplier</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">FLOAT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">fireRushNb</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">superFireRushNb</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">hcRevive</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">adRevive</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">amountDelta</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">amountBalance</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">deathInCurrentRunNB </Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">INT</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s149"><Data ss:Type="String">ecoGroup</Data></Cell>
+    <Cell ss:StyleID="s150"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s151"/>
+    <Cell ss:StyleID="s150"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="16.5">
+    <Cell ss:StyleID="s146"><Data ss:Type="String">item</Data></Cell>
+    <Cell ss:StyleID="s147"><Data ss:Type="String">STRING:125</Data></Cell>
+    <Cell ss:StyleID="s148"/>
+    <Cell ss:StyleID="s147"/>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.25" x:Right="0.25" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>-4</HorizontalResolution>
+    <VerticalResolution>-4</VerticalResolution>
+   </Print>
+   <TopRowVisible>30</TopRowVisible>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>37</ActiveRow>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+   <x:PageLayoutZoom>0</x:PageLayoutZoom>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="Sheet2">
+  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="35" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="53.25" ss:DefaultRowHeight="14.0625">
+   <Row ss:AutoFitHeight="0"/>
+   <Row ss:AutoFitHeight="0">
+    <Cell><Data ss:Type="String">Color</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="2"><Data ss:Type="String">not started</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s153"/>
+    <Cell><Data ss:Type="String">WIP</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s155"/>
+    <Cell><Data ss:Type="String">done, to be checked</Data></Cell>
+    <Cell ss:Index="8"><Data ss:Type="String">sessionsCount</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s156"/>
+    <Cell><Data ss:Type="String">Verifyed</Data></Cell>
+    <Cell ss:Index="8"><Data ss:Type="String">gameRunNb</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s157"/>
+    <Cell><Data ss:Type="String">BUG</Data></Cell>
+    <Cell ss:Index="8"><Data ss:Type="String">xp</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s29"/>
+    <Cell><Data ss:Type="String">BUG fixed, to be checked</Data></Cell>
+    <Cell ss:Index="8"><Data ss:Type="String">dragonProgression</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:StyleID="s160"/>
+    <Cell><Data ss:Type="String">For new implementation (April 17)</Data></Cell>
+    <Cell ss:Index="8" ss:StyleID="s161"><Data ss:Type="String">dragonSkin</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8" ss:StyleID="s161"><Data ss:Type="String">pet1</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8" ss:StyleID="s161"><Data ss:Type="String">pet2</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8" ss:StyleID="s161"><Data ss:Type="String">pet3</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8" ss:StyleID="s161"><Data ss:Type="String">pet4</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">timePlayed</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">Score</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">deathType</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">deathCause</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">deathCoordinates</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">deltaXp</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">maxXp</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">playerProgress</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">chestsFound</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">eggFound</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">highestMultiplier</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">highestBaseMultiplier</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">fireRushNb</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">superFireRushNb</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">hcRevive</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">adRevive</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">currency</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">amountDelta</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">amountBalance</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">source</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">ecoGroup</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0">
+    <Cell ss:Index="8"><Data ss:Type="String">item</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Unsynced/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>4</ActiveRow>
+     <ActiveCol>7</ActiveCol>
+     <RangeSelection>R5C8:R35C8</RangeSelection>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+   <x:PageLayoutZoom>0</x:PageLayoutZoom>
+   <x:Print>     </x:Print>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

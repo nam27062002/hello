@@ -515,6 +515,10 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
 			case EStates.COUNTDOWN: {
+				if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) 
+					&&  !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
+					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._11_load_is_done);
+				}
 				// Notify the game
 				// Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
 			} break;
@@ -579,10 +583,14 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.player.playable = false;
 
                 // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
-                SaveFacade.Instance.timePlayed += (int)m_elapsedSeconds;
+                UsersManager.currentUser.timePlayed += (int)m_elapsedSeconds;                    
 			} break;
 
             case EStates.SHOWING_RESULTS: {
+				if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._04_run_is_done);
+				}
+
                 // Show loading screen
 				LoadingScreen.Toggle(true, false);
 
@@ -750,7 +758,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-            RewardManager.paidReviveCount, RewardManager.freeReviveCount);
+            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc);
     }
 
     private void Track_RunEnd(bool _quitGame) {

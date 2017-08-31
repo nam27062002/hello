@@ -206,7 +206,7 @@ public class Egg {
 
 		// Save persistence
 		// [AOC] A bit of an overkill, try to improve it on the future
-		PersistenceManager.Save();
+		PersistenceFacade.instance.Save_Request();
 	}
 
 	/// <summary>
@@ -279,11 +279,11 @@ public class Egg {
 			UsersManager.currentUser.goldenEggsCollected++;
 		}
 
-		// Save persistence
-		PersistenceManager.Save();
+        // Save persistence
+        PersistenceFacade.instance.Save_Request();
 
-		// Notify game
-		Messenger.Broadcast<Egg>(GameEvents.EGG_OPENED, this);
+        // Notify game
+        Messenger.Broadcast<Egg>(GameEvents.EGG_OPENED, this);
 	}
 
 	//------------------------------------------------------------------------//

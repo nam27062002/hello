@@ -10,6 +10,7 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 	{
 		_MatCap("Gold Tex", 2D) = "white" {}
 		_Tint("Gold tint", Color) = (1.0, 1.0, 1.0, 1.0)
+		_StencilMask("Stencil Mask", int) = 10
 	}
 	
 	Subshader
@@ -18,6 +19,14 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 		{
 			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 			
+			Stencil
+			{
+				Ref[_StencilMask]
+				Comp always
+				Pass Replace
+				ZFail keep
+			}
+
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag

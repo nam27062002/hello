@@ -23,6 +23,8 @@ public class ProgressComparatorSystem : SaveSystem
 
     public override void Load()
     {
+        // [DGR] TODO: Adapt to PersistenceData
+        /*
         if (UserProfile == null)
         {
             UserProfile = new UserProfile();
@@ -35,6 +37,7 @@ public class ProgressComparatorSystem : SaveSystem
 
         timePlayed = UserProfile.timePlayed;
         iapPurchaseMade = UserProfile.iapPurchaseMade;                
+        */
     }
 
     public override void Save()

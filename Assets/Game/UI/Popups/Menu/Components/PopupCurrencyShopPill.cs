@@ -161,7 +161,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		}
 
 		// Save persistence
-		PersistenceManager.Save(true);
+		PersistenceFacade.instance.Save_Request(true);
 	}
 
 	//------------------------------------------------------------------------//
