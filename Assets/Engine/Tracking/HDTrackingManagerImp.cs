@@ -725,8 +725,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_SUPER_FIRE_RUSH_NB, superFireRushNb);
             e.SetParameterValue(TRACK_PARAM_HC_REVIVE, hcRevive);
             e.SetParameterValue(TRACK_PARAM_AD_REVIVE, adRevive);
-			
-			Track_SendEvent(e);
+            e.SetParameterValue(TRACK_PARAM_SC_EARNED, scGained);
+            e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
+
+            Track_SendEvent(e);
         }
     }
 
@@ -798,7 +800,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
-    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";	
+    private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
+    private const string TRACK_PARAM_HC_EARNED                  = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
@@ -826,6 +829,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
+    private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
     private const string TRACK_PARAM_SCORE                      = "score";
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
