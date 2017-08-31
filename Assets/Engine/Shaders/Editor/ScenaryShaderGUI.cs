@@ -224,6 +224,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
     static void setBlendMode(Material material, int blendMode)
     {
+        material.SetFloat("_BlendMode", blendMode);
+
         switch (blendMode)
         {
             case 0:
