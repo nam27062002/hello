@@ -694,7 +694,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000010300958386
 GameObject:
   m_ObjectHideFlags: 1
@@ -6613,7 +6613,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1675041137417422
 GameObject:
   m_ObjectHideFlags: 1
@@ -6758,7 +6758,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1681815120287510
 GameObject:
   m_ObjectHideFlags: 1
@@ -21550,12 +21550,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114356373474101944}
-    characterCount: 96
+    characterCount: 27
     spriteCount: 0
-    spaceCount: 17
-    wordCount: 18
+    spaceCount: 0
+    wordCount: 4
     linkCount: 0
-    lineCount: 3
+    lineCount: 1
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -25626,9 +25626,9 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114579989435771624}
-    characterCount: 23
+    characterCount: 25
     spriteCount: 0
-    spaceCount: 3
+    spaceCount: 0
     wordCount: 4
     linkCount: 0
     lineCount: 1
@@ -28134,7 +28134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_EVENTS_OFFLINE_TITLE
+  m_tid: TID_EVENT_OFFLINE_TITLE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114686464318105642
@@ -31315,7 +31315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_EVENTS_OFFLINE_MESSAGE
+  m_tid: TID_EVENT_OFFLINE_MESSAGE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114828187175947100
@@ -33021,8 +33021,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: RequestEventData
+      - m_Target: {fileID: 114286362065990610}
+        m_MethodName: Refresh
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -74694,7 +74694,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -12.599976}
+  m_AnchoredPosition: {x: 0, y: -12.600098}
   m_SizeDelta: {x: 850, y: 750}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224000013378995286
@@ -79817,7 +79817,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 641.01, y: 100}
+  m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224677980329623088
 RectTransform:
@@ -80227,7 +80227,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -0.004638672, y: 0}
-  m_SizeDelta: {x: -763.9, y: 140}
+  m_SizeDelta: {x: 0, y: 140}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224724265691775922
 RectTransform:
@@ -81371,7 +81371,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 2}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 508.4, y: -465}
+  m_AnchoredPosition: {x: 508.4004, y: -465}
   m_SizeDelta: {x: 500, y: 930}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224871968471646800
@@ -81894,10 +81894,10 @@ RectTransform:
   m_Father: {fileID: 224723830093344034}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 118.04999, y: -70}
-  m_SizeDelta: {x: 156.09998, y: 50.01}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 50.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224948655670633294
 RectTransform:
