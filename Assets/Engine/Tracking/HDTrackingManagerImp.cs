@@ -84,10 +84,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         CheckAndGenerateUserID();
 
-        Session_IsFirstLoading = TrackingPersistenceSystem.IsFirstLoading;
+        Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
 
         // It has to be true only in the first loading
-        if (Session_IsFirstLoading)
+        if (Session_IsFirstTime)
         {
             TrackingPersistenceSystem.IsFirstLoading = false;
         }
@@ -421,7 +421,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
 	public override void Notify_Funnel_Load(FunnelData_Load.Steps _step) {
-		Track_Funnel(m_loadFunnel.name, m_loadFunnel.GetStepName(_step), m_loadFunnel.GetStepDuration(_step), m_loadFunnel.GetStepTotalTime(_step));
+		Track_Funnel(m_loadFunnel.name, m_loadFunnel.GetStepName(_step), m_loadFunnel.GetStepDuration(_step), m_loadFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
 	}
 
 	/// <summary>
@@ -429,7 +429,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
 	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
-		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step));
+		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
 	}
 #endregion
 
@@ -757,11 +757,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration)
+	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad)
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
-			Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad ");
+			Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);
 		}
 
 		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(_event);
@@ -770,7 +770,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			e.SetParameterValue(TRACK_PARAM_STEP_NAME, _step);
 			e.SetParameterValue(TRACK_PARAM_STEP_DURATION, _stepDuration);
 			e.SetParameterValue(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
-			e.SetParameterValue(TRACK_PARAM_FIRST_LOAD, false);	// first load?
+			e.SetParameterValue(TRACK_PARAM_FIRST_LOAD, _fistLoad);	
 			
 			Track_SendEvent(e);
 		}
@@ -1097,7 +1097,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     private string Session_LastDeathSource { get; set; }
     private string Session_LastDeathCoordinates { get; set; }
 
-    private bool Session_IsFirstLoading { get; set; }
+    /// <summary>
+    /// Whether or not this is the first session since installation. It's required as a parameter for some events.
+    /// </summary>
+    private bool Session_IsFirstTime { get; set; }
 
     private void Session_Reset()
     {
@@ -1109,7 +1112,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathType = null;
         Session_LastDeathSource = null;
         Session_LastDeathCoordinates = null;
-        Session_IsFirstLoading = false;
+        Session_IsFirstTime = false;
      }
 #endregion
 
