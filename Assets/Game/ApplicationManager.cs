@@ -258,11 +258,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test persistence save
             Debug_TestPersistenceSave();
-            // ---------------------------           
+            // ---------------------------
         }
 
         HDTrackingManager.Instance.Update();
         PersistenceFacade.instance.Update();
+
+		#if UNITY_EDITOR
+		GameServerManager.SharedInstance.Update();
+		#endif
 
         if (NeedsToRestartFlow)
         {
