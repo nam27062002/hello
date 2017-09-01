@@ -82,7 +82,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-
 	}
 
 	/// <summary>
@@ -99,6 +98,16 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Select active panel based on current global event state.
 	/// </summary>
 	public void Refresh() {
+
+		if ( GlobalEventManager.currentEvent != null ){
+			if (GlobalEventManager.currentEvent.isRewardAvailable){
+				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.REWARD).GetComponent<EventRewardScreen>();
+				scr.StartFlow();
+				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.REWARD);
+				return;
+			}
+		}
+
 		SelectPanel();
 
 		// Refresh active panel
