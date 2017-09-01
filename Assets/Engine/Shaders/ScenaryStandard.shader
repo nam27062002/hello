@@ -87,6 +87,9 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 
 				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 
+				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+
+
 				#define HG_SCENARY
 
 				#include "UnityCG.cginc"
