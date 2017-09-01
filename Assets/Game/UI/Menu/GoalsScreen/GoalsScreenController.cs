@@ -68,7 +68,13 @@ public class GoalsScreenController : MonoBehaviour {
 					TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
 					2
 				);
+
+				if (GlobalEventManager.currentEvent.remainingTime.TotalSeconds <= 0 ){
+					GlobalEventManager.RequestCurrentEventState();
+				}
 			}
+
+
 		}
 	}
 
