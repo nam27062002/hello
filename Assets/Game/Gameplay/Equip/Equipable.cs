@@ -26,6 +26,7 @@ public class Equipable : MonoBehaviour {
 		Horn_1,
 		Horn_2,
 		Neck_2,
+		Hip_1,
 		Count
 	};
 
