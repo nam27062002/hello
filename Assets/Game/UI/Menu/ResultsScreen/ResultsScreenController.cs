@@ -439,7 +439,9 @@ public class ResultsScreenController : MonoBehaviour {
 					if((canContribute == GlobalEventManager.ErrorCode.NONE
 					|| canContribute == GlobalEventManager.ErrorCode.OFFLINE
 					|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN)
-					&& GlobalEventManager.currentEvent.objective.enabled) {	// [AOC] This will cover cases where the event is active but not enable for this player (i.e. during the tutorial).
+					&& GlobalEventManager.currentEvent.objective.enabled
+					&& GlobalEventManager.currentEvent.remainingTime.TotalSeconds > 0	// We check event hasn't finished while playing
+					) {	// [AOC] This will cover cases where the event is active but not enable for this player (i.e. during the tutorial).
 						// Show global event contribution popup
 						// Special one if the player hasn't scored
 						PopupController popup = null;

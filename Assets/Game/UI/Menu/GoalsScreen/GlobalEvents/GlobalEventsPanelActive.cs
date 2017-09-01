@@ -85,7 +85,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			);
 		}
 
-		// [AOC] TODO!! Manage event end when this panel is active
 	}
 
 	//------------------------------------------------------------------------//
