@@ -460,8 +460,13 @@ public class FireBreathDynamic : MonoBehaviour
                             FireReflection fr = colFire.GetComponent<FireReflection>();
                             if (fr != null)
                             {
-                                float dot = Vector3.Dot(transform.right, hit.normal);
-                                fr.addVelocity((transform.right - (hit.normal * dot * 2.0f)) * m_reflectionScale);
+                                Vector3 right = transform.right;
+                                right.z = 0.0f;
+                                right.Normalize();
+                                float dot = Vector3.Dot(right, hit.normal);
+                                float rndRange = Random.RandomRange(-m_reflectionScale * 0.5f, m_reflectionScale * 0.5f);
+                                Vector3 direction = right - (hit.normal * dot);
+                                fr.addVelocity(direction * m_reflectionScale + direction.normalized * rndRange);
                             }
                         }
 
