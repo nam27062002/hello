@@ -30,6 +30,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
 	[SerializeField] private Image m_objectiveIcon = null;
 	[SerializeField] private Image m_bonusDragonIcon = null;
+	[Space]
+	[SerializeField] private GlobalEventsRewardInfo m_topRewardInfo = null;
 	[SerializeField] private Localizer m_topRewardPercentileText = null;
 	[SerializeField] private Localizer m_playerPercentileText = null;
 	[Space]
@@ -85,7 +87,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			);
 		}
 
-		// [AOC] TODO!! Manage event end when this panel is active
 	}
 
 	//------------------------------------------------------------------------//
@@ -108,6 +109,9 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 		// Bonus dragon icon
 		m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
+
+		// Top reward info
+		m_topRewardInfo.InitFromReward(evt.topContributorsRewardSlot);
 
 		// Top reward info text
 		float topPercentile = evt.topContributorsRewardSlot.targetPercentage * 100f;
