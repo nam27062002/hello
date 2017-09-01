@@ -306,7 +306,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
                 moneyPrice = product.m_fLocalisedPriceValue;
             }
 
-            // store transaction ID is also used for houston transaction ID
+            // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
             string houstonTransactionID = _storeTransactionID;
             string promotionType = null; // Not implemented yet            
             HDTrackingManager.Instance.Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
