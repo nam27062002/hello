@@ -168,10 +168,7 @@ public class CameraSnapPoint : MonoBehaviour {
 			if(darkenScreen) {
 				screen.gameObject.SetActive(true);
 				screen.transform.localPosition = Vector3.forward * darkScreenDistance;
-                Color darkScreenColorFixed = this.darkScreenColor;
-                darkScreenColorFixed.a *= 0.5f;
-
-                screen.material.SetColor("_TintColor", darkScreenColorFixed);
+                screen.material.SetColor("_TintColor", FixColorForDarkScreen(this.darkScreenColor));
 			} else {
 //				screen.color = Colors.WithAlpha(screen.color, 0f);
 				screen.gameObject.SetActive(false);
@@ -283,7 +280,7 @@ public class CameraSnapPoint : MonoBehaviour {
 			Color targetColor = darkenScreen ? this.darkScreenColor : Colors.WithAlpha(screen.material.GetColor("_TintColor"), 0f);
             seq.Join(DOTween.To(
 				() => { return screen.material.GetColor("_TintColor"); },
-				(_newValue) => { screen.material.SetColor("_TintColor", _newValue); },
+				(_newValue) => { screen.material.SetColor("_TintColor", FixColorForDarkScreen(_newValue)); },
 				targetColor, _duration
 			).SetAs(_params));
 		}
@@ -333,5 +330,12 @@ public class CameraSnapPoint : MonoBehaviour {
 		// Move dark screen to target camera's hierarchy
 		m_darkScreen.transform.SetParent(_cam.transform, false);
 		return m_darkScreen;
+	}
+
+	/// <summary>
+	/// With the new drak screen shader, alpha needs to be adjusted.
+	/// </summary>
+	private Color FixColorForDarkScreen(Color _c) {
+		return Colors.WithAlpha(_c, _c.a * 0.5f);
 	}
 }

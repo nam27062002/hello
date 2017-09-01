@@ -20,7 +20,6 @@ using DG.Tweening;
 /// Simple behaviour to show/hide the target game object depending on several
 /// conditions.
 /// </summary>
-[RequireComponent(typeof(ShowHideAnimator))]
 public class MenuShowConditionally : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -42,6 +41,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Exposed references
+	[SerializeField] private ShowHideAnimator m_targetAnimator = null;
+
 	// Config
 	// Dragon-based visibility
 	[SerializeField] private bool m_checkSelectedDragon = false;
@@ -64,9 +66,6 @@ public class MenuShowConditionally : MonoBehaviour {
 
 	// Animation options
 	[SerializeField] private bool m_restartShowAnimation = false;
-
-	// Internal references
-	private ShowHideAnimator m_animator = null;
 
 	// Extra Properties
 	public string targetDragonSku {
@@ -91,7 +90,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get external references
-		m_animator = GetComponent<ShowHideAnimator>();
+		Debug.Assert(m_targetAnimator != null, "No target defined!");
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
@@ -217,16 +216,17 @@ public class MenuShowConditionally : MonoBehaviour {
 		// If forcing animation and going from visible to visible, hide before showing again
 		if(_resetAnim 
 		&& _show 
-		&& m_animator.visible 
+		&& m_targetAnimator.visible 
 		&& isActiveAndEnabled 
-		&& m_animator.tweenType != ShowHideAnimator.TweenType.NONE) {
+		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
 			// Go to opposite of the target state
-			m_animator.Hide(_useAnims, false);
+			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
+			m_targetAnimator.Hide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
 
 			// Program the animation to the target state in sync with the dragon scroll animation (more or less)
 			StartCoroutine(LaunchDelayedAnimation(_show, _useAnims));
 		} else {
-			m_animator.Set(_show, _useAnims);
+			m_targetAnimator.Set(_show, _useAnims);
 		}
 	}
 
@@ -301,10 +301,10 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_useAnims">Whether to use anims or not.</param>
 	private IEnumerator LaunchDelayedAnimation(bool _toShow, bool _useAnims) {
 		// Delay
-		yield return new WaitForSeconds(m_animator.tweenDuration);
+		yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
 
 		// Do it! (If still enabled!)
-		if(this.enabled) m_animator.Set(_toShow, _useAnims);
+		if(this.enabled) m_targetAnimator.Set(_toShow, _useAnims);
 	}
 }
 

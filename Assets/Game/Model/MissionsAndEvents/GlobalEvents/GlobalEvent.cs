@@ -175,7 +175,9 @@ public partial class GlobalEvent {
 		bool sort = false;
 		if ( m_leaderboard.Count < _data.position || _data.position < 0){
 			// if I'm not in the leaderboard -> check if I have to be
-			if ( m_leaderboard[ leaderboard.Count - 1 ].score <= _data.score ){	
+			int index = leaderboard.Count - 1;
+
+			if ( index >= 0 && m_leaderboard[ index ].score <= _data.score ){	
 				m_leaderboard.Add(new GlobalEventUserData(_data));	// Make a copy!
 				sort = true;
 			}
@@ -278,12 +280,7 @@ public partial class GlobalEvent {
 		m_currentValue = 0f;
 		m_leaderboard.Clear();
 
-		GlobalEventUserData playerEventData = null;
-		if(!UsersManager.currentUser.globalEvents.TryGetValue(m_id, out playerEventData)) {
-			// User has never contributed to this event, create a new, empty, player event data
-			playerEventData = new GlobalEventUserData(m_id, UsersManager.currentUser.userId, 0, -1, 0);
-		}
-	
+		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(m_id);
 		playerEventData.endTimestamp = _data["endTimestamp"].AsLong;
 	}
 
@@ -351,6 +348,7 @@ public partial class GlobalEvent {
 			}
 
 			// Update leaderboard entry
+			m_leaderboard[i].Reset();
 			m_leaderboard[i].Load(leaderboardData[i]);
 			m_leaderboard[i].position = i;
 		}
