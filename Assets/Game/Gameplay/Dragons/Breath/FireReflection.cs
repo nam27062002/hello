@@ -43,4 +43,11 @@ public class FireReflection : MonoBehaviour {
             m_particleScaler.m_scale *= m_scaleProgression;
         }
 	}
+
+    void OnBecameInvisible()
+    {
+        m_reflectionEnabled = false;
+        Debug.Log("FireReflection becames invisible!");
+    }
+
 }

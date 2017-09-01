@@ -105,7 +105,6 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-		bool parsed = false;
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
 			if ( responseJson != null && responseJson.ContainsKey("liveEvents") ){
@@ -124,10 +123,10 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 					if ( liveEvent.ContainsKey("end") )
 						globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
 				}
-				parsed = true;
 			}
 		}
-		if (parsed)
+
+		if (user.globalEvents.Count > 0)
 			RequestCurrentEventData();
 	}
 
