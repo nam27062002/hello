@@ -441,7 +441,13 @@ public class ResultsScreenController : MonoBehaviour {
 					|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN)
 					&& GlobalEventManager.currentEvent.objective.enabled) {	// [AOC] This will cover cases where the event is active but not enable for this player (i.e. during the tutorial).
 						// Show global event contribution popup
-						PopupController popup = PopupManager.OpenPopupInstant(PopupGlobalEventContribution.PATH);
+						// Special one if the player hasn't scored
+						PopupController popup = null;
+						if(GlobalEventManager.currentEvent.objective.currentValue > 0) {
+							popup = PopupManager.OpenPopupInstant(PopupGlobalEventContribution.PATH);
+						} else {
+							popup = PopupManager.OpenPopupInstant(PopupGlobalEventNoContribution.PATH);
+						}
 
 						// When the popup is closed, check next step
 						popup.OnClosePostAnimation.AddListener(OnGoToMenu);
