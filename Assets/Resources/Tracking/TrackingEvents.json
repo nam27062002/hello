@@ -1,5 +1,21 @@
 {
     "TrackingEvents": {
+        "custom.game.first.ux": {
+            "Parameters": [
+                {"stepName": {"Status": "OK"}},
+                {"stepDuration": {"Status": "OK"}},
+                {"totalDuration": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
+        "af_purchase": {
+            "Parameters": [
+                {"af_def_logPurchase": {"Status": ""}},
+                {"af_def_currency": {"Status": ""}},
+                {"af_quantity": {"Status": ""}}
+            ],
+            "APIs": ["appsflyer"]
+        },
         "custom.game.ad.start": {
             "Parameters": [
                 {"nbAdsLtd": {"Status": "OK"}},
@@ -148,6 +164,15 @@
             ],
             "APIs": ["dna"]
         },
+        "custom.game.load.funnel": {
+            "Parameters": [
+                {"stepName": {"Status": "OK"}},
+                {"stepDuration": {"Status": "OK"}},
+                {"totalDuration": {"Status": "OK"}},
+                {"firstLoad": {"Status": "OK"}}
+            ],
+            "APIs": ["dna"]
+        },
         "custom.mobile.start": {
             "Parameters": [
                 {"abtesting": {"Status": "OK"}},
@@ -169,6 +194,13 @@
                 {"InGameId": {"Status": "OK"}}
             ],
             "APIs": ["dna"]
+        },
+        "fb_Purchased": {
+            "Parameters": [
+                {"fb_def_logPurchase": {"Status": ""}},
+                {"fb_def_currency": {"Status": ""}}
+            ],
+            "APIs": ["facebook"]
         }
     },
     "ParameterValues": {
@@ -228,6 +260,10 @@
             "Type": "STRING:125",
             "Values": []
         },
+        "fb_def_logPurchase": {
+            "Type": "FLOAT",
+            "Values": []
+        },
         "abtesting": {
             "Type": "STRING:125",
             "Values": []
@@ -238,6 +274,10 @@
         },
         "chestsFound": {
             "Type": "INT",
+            "Values": []
+        },
+        "af_def_logPurchase": {
+            "Type": "FLOAT",
             "Values": []
         },
         "sessionsCount": {
@@ -256,8 +296,16 @@
             "Type": "INT",
             "Values": []
         },
+        "totalDuration": {
+            "Type": "INT",
+            "Values": []
+        },
         "item": {
             "Type": "STRING:125",
+            "Values": []
+        },
+        "fb_def_currency": {
+            "Type": "STRING",
             "Values": []
         },
         "pvpMatchesPlayed": {
@@ -336,6 +384,10 @@
             "Type": "INT",
             "Values": []
         },
+        "af_def_currency": {
+            "Type": "STRING",
+            "Values": []
+        },
         "osVersion": {
             "Type": "TRACK_OS",
             "Values": []
@@ -349,6 +401,10 @@
             "Values": []
         },
         "storeTransactionID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+        "stepName": {
             "Type": "STRING:125",
             "Values": []
         },
@@ -372,7 +428,15 @@
             "Type": "STRING:125",
             "Values": []
         },
+        "firstLoad": {
+            "Type": "INT",
+            "Values": []
+        },
         "deathInCurrentRunNB ": {
+            "Type": "INT",
+            "Values": []
+        },
+        "af_quantity": {
             "Type": "INT",
             "Values": []
         },
@@ -410,6 +474,10 @@
         },
         "playerProgress": {
             "Type": "STRING:125",
+            "Values": []
+        },
+        "stepDuration": {
+            "Type": "INT",
             "Values": []
         },
         "totalPlaytime": {
