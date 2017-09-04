@@ -51,7 +51,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 	[Space]
 	[SerializeField] private float[] m_pillRotationSequence = new float[0];
 	[SerializeField] private GameObject m_tabButtonsContainer = null;
-	[SerializeField] private GameObject m_tabButtonsContainerAlt = null;
 
 	// Other setup parameters
 	private bool m_closeAfterPurchase = false;
@@ -127,7 +126,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 
 		// If required, hide tab buttons
 		m_tabButtonsContainer.SetActive(_mode == Mode.DEFAULT);
-		m_tabButtonsContainerAlt.SetActive(!m_tabButtonsContainer.activeSelf);	// Show alternative deco if buttons are hidden
 
 		// Select initial tab and scroll list
 		int initialTab = m_tabs.GetScreenIndex(m_tabs.initialScreen);
