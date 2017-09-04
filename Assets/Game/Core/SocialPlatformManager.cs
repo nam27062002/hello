@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 
 public class SocialPlatformManager : MonoBehaviour
 {
@@ -82,19 +82,18 @@ public class SocialPlatformManager : MonoBehaviour
 
 	void OnSocialPlatformLogin()
 	{
-		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
-	}
+		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());        
+    }
 
 	void OnSocialPlatformLoginFailed()
 	{
-		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
-	}
+		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());        
+    }
 
 	void OnSocialPlatformLogOut()
 	{
 		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
 	}
-
 	//////////////////////////////////////////////////////////////////////////
 
 	// Delegate /////////////////////////////////////////////////////////////
@@ -112,26 +111,41 @@ public class SocialPlatformManager : MonoBehaviour
 	};
 	UsingPlatform m_platform = UsingPlatform.FACEBOOK;
 
-	public void Init()
+    private static string[] PLATFORM_TIDS = new string[]
+    {
+        "TID_SOCIAL_FACEBOOK",
+        "TID_SOCIAL_NETWORK_WEIBO_NAME"        
+    };    
+
+    private bool IsInited { get; set; }
+
+    public void Init()
 	{
-		switch(m_platform)
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-				m_facebookDelegate = new GameFacebookListener( this );
-				FacebookManager.SharedInstance.SetFacebookListener( m_facebookDelegate );
-				FacebookManager.SharedInstance.Initialise();
-			}break;
-		}
+        if (!IsInited)
+        {
+            IsInited = true;
+
+            switch (m_platform)
+            {
+                case UsingPlatform.FACEBOOK:
+                    {
+                        m_facebookDelegate = new GameFacebookListener(this);
+                        FacebookManager.SharedInstance.SetFacebookListener(m_facebookDelegate);
+                        FacebookManager.SharedInstance.Initialise();
+                    }
+                    break;
+            }
+        }
 	}
 
-	public void Login()
-	{
-		switch(m_platform)
+	public void Login(bool isAppInit)
+	{                    
+        switch (m_platform)
 		{
 			case UsingPlatform.FACEBOOK:
 			{
-				FacebookManager.SharedInstance.LogIn();
+                GameSessionManager.SharedInstance.LogInToFacebook(isAppInit);
+				//FacebookManager.SharedInstance.LogIn();
 			}break;
 		}
 	}
@@ -168,19 +182,7 @@ public class SocialPlatformManager : MonoBehaviour
 
 	public string GetPlatformName()
 	{
-		string ret = "editor";
-		switch( m_platform )
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-				ret = "facebook";
-			}break;
-			case UsingPlatform.WEIBO:
-			{
-				ret = "weibo";
-			}break;
-		}
-		return ret;
+        return LocalizationManager.SharedInstance.Localize(PLATFORM_TIDS[(int)m_platform]);     
 	}
 
 	public string GetToken()

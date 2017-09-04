@@ -4,19 +4,21 @@
 using FGOL.Server;
 using System;
 using System.Collections.Generic;
-public class PersistenceManagerImp : GameProgressManager
+public class PersistenceLocalManager
 {
     //m_version needs to reflect the minimum version on the server and the minimum support version of the app
     // [DGR] Version number set here so it will be accessible immediately, which is needed when the persistence profiles editor is used with the game off
     //private string m_version = "0.1.1";
 
-    public override void Init()
+    public void Init()
     {
         LocalProgress_Init();
         Systems_Init();         
-    }    
-    
+    }
+
     #region local_progress    
+
+    public PersistenceData LocalProgress_Data { get; set; }
 
     /// <summary>
     /// Whether or not a game progress can be saved locally. It's used to keep I/O operations in sync, so saving locally will be disabled while a loading/saving operation
@@ -30,7 +32,7 @@ public class PersistenceManagerImp : GameProgressManager
         LocalProgress_IsSaveEnabled = false;
     }
 
-    public override PersistenceData LocalProgress_Load(string id)
+    public virtual PersistenceData LocalProgress_Load(string id)
     {
         LocalProgress_IsSaveEnabled = false;        
         LocalProgress_Data = new PersistenceData(id);        
@@ -48,26 +50,30 @@ public class PersistenceManagerImp : GameProgressManager
         return LocalProgress_Data;
     }
 
-    public override void LocalProgress_ResetToDefault(string id, SimpleJSON.JSONNode defaultProfile)
+    public void LocalProgress_ResetToDefault(string id, SimpleJSON.JSONNode defaultProfile)
     {        
-        LocalProgress_Data = new PersistenceData(id);                
-        LocalProgress_Data.Merge(defaultProfile.ToString());
+        PersistenceData defaultData = new PersistenceData(id);
+        defaultData.Merge(defaultProfile.ToString());
+        
+        LocalProgress_Override(defaultData);                
+    }
 
-        // Default persistence is always OK
-        LocalProgress_Data.LoadState = PersistenceStates.LoadState.OK;
+    public void LocalProgress_Override(PersistenceData data)
+    {
+        LocalProgress_Data = data;
 
         // Loads the systems         
-        Systems_Load(LocalProgress_Data);        
-        
+        Systems_Load(LocalProgress_Data);
+
         // Saves the default persistence if everything went ok
         LocalProgress_IsSaveEnabled = LocalProgress_Data.LoadState == PersistenceStates.LoadState.OK;
         if (LocalProgress_IsSaveEnabled)
         {
             LocalProgress_SaveToDisk();
-        }        
+        }
     }
 
-    public override PersistenceStates.SaveState LocalProgress_SaveToDisk()            
+    public virtual PersistenceStates.SaveState LocalProgress_SaveToDisk()            
     {
         PersistenceStates.SaveState state = PersistenceStates.SaveState.Disabled;        
         if (LocalProgress_Data != null && LocalProgress_IsSaveEnabled)
@@ -144,12 +150,12 @@ public class PersistenceManagerImp : GameProgressManager
         return state;
     }
 
-    public override void Systems_RegisterSystem(PersistenceSystem system)
+    public void Systems_RegisterSystem(PersistenceSystem system)
     {
         Systems_Catalog.Add(system.name, system);
     }
 
-    public override void Systems_UnregisterSystem(PersistenceSystem system)
+    public void Systems_UnregisterSystem(PersistenceSystem system)
     {
         if (system != null && Systems_Catalog.ContainsKey(system.name))
         {
@@ -170,7 +176,7 @@ public class PersistenceManagerImp : GameProgressManager
             pair.Value.Save();            
         }
     }
-    #endregion
+    #endregion    
 
     #region log
     private const string LOG_CHANNEL = "[PersistenceManagerImp]:";

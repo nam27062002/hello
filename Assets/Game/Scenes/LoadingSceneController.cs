@@ -369,7 +369,7 @@ public class LoadingSceneController : SceneController {
                 s_inSaveLoaderState = false;                
             };
 
-            PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.FirstLoading, onDone);            			
+            PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.Launch, onDone);            			
         }
     }
 

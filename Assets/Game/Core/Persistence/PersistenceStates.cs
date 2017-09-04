@@ -15,5 +15,25 @@
         PermissionError,
         DiskSpace,
         Disabled
-    }    
+    }
+
+    public enum ConflictState
+    {
+        RecommendLocal,
+        RecommendCloud,
+        UseLocal,
+        UseCloud,
+        UserDecision,
+        Equal,
+        LocalSaveCorrupt,
+        CloudSaveCorrupt,
+        LocalCorruptUpgradeNeeded
+    }
+
+    public enum ConflictResult
+    {
+        Local,
+        Cloud,
+        Dismissed
+    }
 }

@@ -62,7 +62,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Reset();
 
         FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
-        SocialFacade.Instance.Init();
+        //SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
         SocialManager.Instance.Init();
