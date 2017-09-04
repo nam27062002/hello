@@ -62,7 +62,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Reset();
 
         FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
-        SocialFacade.Instance.Init();
+        //SocialFacade.Instance.Init();
         GameServicesFacade.Instance.Init();
 
         SocialManager.Instance.Init();
@@ -258,11 +258,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test persistence save
             Debug_TestPersistenceSave();
-            // ---------------------------           
+            // ---------------------------
         }
 
         HDTrackingManager.Instance.Update();
         PersistenceFacade.instance.Update();
+
+		#if UNITY_EDITOR
+		GameServerManager.SharedInstance.Update();
+		#endif
 
         if (NeedsToRestartFlow)
         {

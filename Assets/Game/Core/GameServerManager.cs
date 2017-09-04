@@ -178,14 +178,15 @@ public class GameServerManager
     public virtual void Auth(ServerCallback callback) {}    
     public virtual void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {}
 	public virtual void LogOut(ServerCallback callback) {}
+    public virtual bool IsLoggedIn() { return false; }    
 
-	//------------------------------------------------------------------------//
-	// CUSTOMIZER															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CUSTOMIZER															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
     public virtual void GetPersistence(ServerCallback callback) {}
     public virtual void SetPersistence(string persistence, ServerCallback callback) {}
 	public virtual void UpdateSaveVersion(bool prelimUpdate, ServerCallback callback) {}
@@ -241,4 +242,16 @@ public class GameServerManager
 	/// <param name="_eventID">The identifier of the target event.</param>
 	/// <param name="_callback">Callback action</param>
 	public virtual void GlobalEvent_GetLeaderboard(int _eventID, ServerCallback _callback) {}
+
+	//------------------------------------------------------------------------//
+	// DEBUG ONLY															  //
+	//------------------------------------------------------------------------//
+	#if UNITY_EDITOR
+	/// <summary>
+	/// Update frame.
+	/// </summary>
+	public virtual void Update() {
+		;	// Put a breakpoint in here to peek what the GameServerManager is doing
+	}
+	#endif
 }

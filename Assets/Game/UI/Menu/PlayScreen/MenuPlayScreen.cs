@@ -34,6 +34,8 @@ public class MenuPlayScreen : MonoBehaviour {
     [SerializeField]
     private Localizer m_incentivizeLabelLocalizer = null;    
 
+	private bool m_showLegalPopup;
+
     private SocialFacade.Network m_socialNetwork = SocialFacade.Network.Default;
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -50,7 +52,7 @@ public class MenuPlayScreen : MonoBehaviour {
             m_socialNetwork = SocialManager.GetSelectedSocialNetwork();
         }               
 
-        Refresh();
+		Refresh();
     }
 	
 	/// <summary>
@@ -58,8 +60,20 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() 
 	{
+		HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
+	}
+
+	private void Update() {
+		if (m_showLegalPopup) {
+			Debug.LogError("LEGAL");
+			// Open terms and conditions popup
+			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
+			m_showLegalPopup = false;
+		}
 	}
 
 	/// <summary>
@@ -76,6 +90,8 @@ public class MenuPlayScreen : MonoBehaviour {
 	public void OnConnectBtn()
 	{        
         PersistenceManager.Popups_OpenLoadingPopup();
+
+        /*
         if (SocialManager.GetSelectedSocialNetwork() != m_socialNetwork)
         {
             Debug.LogError("You are trying to switch networks. There should be a proper flow in place for this.");
@@ -90,6 +106,12 @@ public class MenuPlayScreen : MonoBehaviour {
 
             Refresh();
         });
+        */
+        PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.Settings, delegate()
+        {
+            PersistenceManager.Popups_CloseLoadingPopup();
+            Refresh();
+        });
     }
    
     private void Refresh()
@@ -98,7 +120,8 @@ public class MenuPlayScreen : MonoBehaviour {
         // By default we consider that the button has to be enabled. Next We check the login state, so it will be disabled if the user's logged in
         m_badge.SetActive(true);
         m_connectButton.interactable = true;
-        
+
+        /*
         m_incentivizeRoot.SetActive(!SocialManager.Instance.WasLoginIncentivised(SocialManager.GetSelectedSocialNetwork()));
         
         AuthManager.LoginState loginState = AuthManager.LoginState.NeverLoggedIn;
@@ -112,11 +135,16 @@ public class MenuPlayScreen : MonoBehaviour {
             default:
                 break;
         }
+        */
+        m_badge.SetActive(!SocialPlatformManager.SharedInstance.IsLoggedIn());
+
 #else
         m_badge.SetActive(false);
 #endif
+
+		m_showLegalPopup = PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION;
     }
-   
+   	
     //------------------------------------------------------------------//
     // CALLBACKS														//
     //------------------------------------------------------------------//

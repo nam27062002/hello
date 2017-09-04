@@ -220,17 +220,25 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 			} break;
 
 			case UserProfile.Currency.REAL: {
-				// Start real money transaction flow
-				m_loadingPopupController = PopupManager.PopupLoading_Open();
-				m_loadingPopupController.OnClosePostAnimation.AddListener( OnConnectionCheck );
-				Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
-					{
-						m_checkConnectionError = connectionError;
-					#if UNITY_EDITOR
-						m_checkConnectionError = null;
-					#endif
-						m_loadingPopupController.Close(true);
-					});
+                    // HACK to fix HDK-524 quickly:
+                    // There's an issue with PopupController that prevents OnClosePostAnimation listener from being called when a popup is closed immediately after being opened
+                    // So far we just avoid that situation
+                    if (Application.internetReachability == NetworkReachability.NotReachable) {
+                        OnPurchaseError.Invoke(this);
+                        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+                    } else {
+                        // Start real money transaction flow
+                        m_loadingPopupController = PopupManager.PopupLoading_Open();
+                        m_loadingPopupController.OnClosePostAnimation.AddListener(OnConnectionCheck);
+                        Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
+                        {
+                            m_checkConnectionError = connectionError;
+                    #if UNITY_EDITOR
+                            m_checkConnectionError = null;
+                    #endif
+                            m_loadingPopupController.Close(true);
+                        });
+                    }
 			} break;
 		}
 	}
@@ -256,7 +264,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		else
 		{
 			OnPurchaseError.Invoke(this);
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
@@ -298,7 +306,8 @@ public class PopupCurrencyShopPill : MonoBehaviour {
                 moneyPrice = product.m_fLocalisedPriceValue;
             }
 
-            string houstonTransactionID = null; // Not implemented yet
+            // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
+            string houstonTransactionID = _storeTransactionID;
             string promotionType = null; // Not implemented yet            
             HDTrackingManager.Instance.Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
 

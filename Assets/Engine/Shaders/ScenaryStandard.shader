@@ -38,7 +38,6 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 		[KeywordEnum(None, Overlay, Additive, Modulate)] VertexColor("Vertex color mode", Float) = 0
 		[Enum(Back, 0, Front, 1, Off, 2)] _Cull("Cull mode", Float) = 0.0
-
 /*
 		0.	Zero				Blend factor is(0, 0, 0, 0).
 		1.	One					Blend factor is(1, 1, 1, 1).
@@ -52,9 +51,11 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		9.	SrcAlphaSaturate	Blend factor is(f, f, f, 1); where f = min(As, 1 - Ad).
 		10.	OneMinusSrcAlpha	Blend factor is(1 - As, 1 - As, 1 - As, 1 - As).
 */
-//		[Enum(Zero, 0, One, 1, DstColor, 2, SrcColor, 3, OneMinusDstColor, 4, SrcAlpha, 5, OneMinusSrcColor, 6, DstAlpha, 7, OneMinusDstAlpha, 8, SrcAlphaSaturate, 9, OneMinusSrcAlpha, 10)] _BlendSrc("Blend source", Float) = 0.0
-//		[Enum(Zero, 0, One, 1, DstColor, 2, SrcColor, 3, OneMinusDstColor, 4, SrcAlpha, 5, OneMinusSrcColor, 6, DstAlpha, 7, OneMinusDstAlpha, 8, SrcAlphaSaturate, 9, OneMinusSrcAlpha, 10)] _BlendDst("Blend destination", Float) = 0.0
-//		_EnableBlend("Enable alpha blend", Float) = 0
+		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
+		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
+		[Enum(Opaque, 0, Transparent, 1, CutOff, 2)] _BlendMode("Blend mode", Float) = 0.0
+		_ZWrite("__zw", Float) = 1.0
+
 		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 	}
 
@@ -63,15 +64,16 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		LOD 100
 		
 		Pass {		
-			Tags{ "LightMode" = "ForwardBase" }
+//			Tags{ "LightMode" = "ForwardBase" }
 
 			Cull [_Cull]
-//			Blend [_EnableBlend] [_BlendSrc] [_BlendDst]
+			Blend [_SrcBlend] [_DstBlend]
+			ZWrite[_ZWrite]
 
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma multi_compile_fwdbase
+//				#pragma multi_compile_fwdbase
 				#pragma multi_compile __ BLEND_TEXTURE
 				#pragma multi_compile __ CUSTOM_VERTEXCOLOR
 				#pragma multi_compile __ SPECULAR
@@ -81,8 +83,12 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma multi_compile __ CUTOFF
 				#pragma multi_compile __ OPAQUEALFA
 				#pragma multi_compile __ EMISSIVEBLINK
+				#pragma multi_compile __ LIGHTMAP_ON
 
 				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
+
+				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+
 
 				#define HG_SCENARY
 

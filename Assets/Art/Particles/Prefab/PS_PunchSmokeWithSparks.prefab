@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 4081742943543316}
   - component: {fileID: 198474315785064262}
   - component: {fileID: 199644388362888352}
+  - component: {fileID: 114251864578309578}
   m_Layer: 0
   m_Name: PS_PunchSmokeWithSparks
   m_TagString: Untagged
@@ -68,8 +69,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1417612035248436}
-  m_LocalRotation: {x: 0.7071068, y: -0.000000061817246, z: -0.000000061817246, w: -0.7071068}
-  m_LocalPosition: {x: 36.3, y: 12.02, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4960356064200120}
@@ -103,6 +104,17 @@ Transform:
   m_Father: {fileID: 4081742943543316}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114251864578309578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1417612035248436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198019599006091426
 ParticleSystem:
   m_ObjectHideFlags: 1

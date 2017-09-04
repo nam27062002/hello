@@ -85,7 +85,14 @@ v2f vert(appdata_t v)
 #endif
 
 #ifdef DOUBLESIDED
-	o.normalWorld *= sign(dot(o.normalWorld, o.viewDir));
+	float s = sign(dot(o.normalWorld, o.viewDir));
+	o.normalWorld *= s;
+
+#ifdef NORMALMAP
+//	o.tangentWorld *= s;
+//	o.binormalWorld *= s;
+#endif
+
 #endif
 	return o;
 }

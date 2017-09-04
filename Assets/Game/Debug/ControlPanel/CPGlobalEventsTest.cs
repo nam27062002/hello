@@ -27,7 +27,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 
 	public const string TEST_ENABLED = "EVENTS_TEST_ENABLED";
 	public static bool testEnabled {
-		get { return Prefs.GetBoolPlayer(TEST_ENABLED, OFFLINE_BY_DEFAULT); }
+		get { return DebugSettings.useDebugServer && Prefs.GetBoolPlayer(TEST_ENABLED, OFFLINE_BY_DEFAULT); }	// Debug server must be enabled!
 		set { Prefs.SetBoolPlayer(TEST_ENABLED, value); }
 	}
 

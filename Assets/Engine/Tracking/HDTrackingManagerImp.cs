@@ -9,6 +9,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
     {
+        None,
         WaitingForSessionStart,
         SessionStarted,
         Banned
@@ -21,7 +22,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private bool IsStartSessionNotified { get; set; }
 
-    private bool IsDNAInitialised { get; set; }    
+    private bool AreSDKsInitialised { get; set; }    
 
     public HDTrackingManagerImp()
     {
@@ -33,7 +34,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {        
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
-        IsDNAInitialised = false;
+        AreSDKsInitialised = false;                
 
         if (TrackingPersistenceSystem == null)
         {
@@ -47,7 +48,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_Reset();
         m_loadFunnel.Reset();
 		m_firstUXFunnel.Reset();
-    }
+    }        
 
     private void CheckAndGenerateUserID()
     {
@@ -69,12 +70,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void StartSession()
     {     
-        if (!IsDNAInitialised)
-        {
-            InitDNA();
-            IsDNAInitialised = true;
-        }
-
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("StartSession");
@@ -83,6 +78,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         State = EState.SessionStarted;
 
         CheckAndGenerateUserID();
+
+        InitSDKs();
 
         Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
 
@@ -102,11 +99,22 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_StartSessionEvent();        
     }
 
-    private void InitDNA()
+    private void InitSDKs()
+    {
+        if (!AreSDKsInitialised)
+        {
+            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            InitDNA(settingsInstance);
+            InitAppsFlyer(settingsInstance);
+
+            AreSDKsInitialised = true;
+        }
+    }
+
+    private void InitDNA(CaletySettings settingsInstance)
     {
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-#if !UNITY_EDITOR
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+#if !UNITY_EDITOR        
         if (settingsInstance != null)
         {
             UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
@@ -121,6 +129,23 @@ public class HDTrackingManagerImp : HDTrackingManager
 			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionIOS, kDNAEnvironment);
 #endif
         }
+#endif
+    }
+
+    private void InitAppsFlyer(CaletySettings settingsInstance)
+    {
+        // Init AppsFlyer
+#if UNITY_IOS
+        string strAppsFlyerPlatformID = "1163163344";
+#elif UNITY_ANDROID
+        string strAppsFlyerPlatformID = settingsInstance.GetBundleID();
+#else
+        string strAppsFlyerPlatformID = "";
+#endif        
+        AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, TrackingPersistenceSystem.UserID);
+
+#if UNITY_ANDROID
+        AppsFlyerManager.SharedInstance.SetAndroidGCMKey(settingsInstance.m_strGameCenterAppGoogle[settingsInstance.m_iBuildEnvironmentSelected]);
 #endif
     }
 
