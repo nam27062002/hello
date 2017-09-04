@@ -214,6 +214,7 @@ public class GameServerManagerCalety : GameServerManager {
 		m_delegate = new GameSessionDelegate(Commands_OnResponse);
 		GameSessionManager.SharedInstance.SetListener(m_delegate);
 
+        Login_Init();
 		Commands_Init();
 
 		//[DGR] Extra api calls which are needed by Dragon but are not defined in Calety. Maybe they could be added in Calety when it supports offline mode
@@ -226,9 +227,70 @@ public class GameServerManagerCalety : GameServerManager {
 	public override void Ping(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
-	
-    public override void Auth(ServerCallback callback) {
-        Commands_EnqueueCommand(ECommand.Auth, null, callback);
+
+    #region login
+    private enum ELoginState
+    {
+        Logging,
+        Logged,
+        NotLogged
+    };
+
+    private ELoginState Login_State { get; set; }               
+
+    private Queue<ServerCallback> Login_Callbacks { get; set; }
+
+    private void Login_Init()
+    {
+        Login_State = ELoginState.NotLogged;      
+        if (Login_Callbacks != null)
+        {
+            Login_Callbacks.Clear();
+        }  
+    }    
+
+    public override void Auth(ServerCallback callback)
+    {
+        if (callback != null)
+        {
+            if (Login_Callbacks == null)
+            {
+                Login_Callbacks = new Queue<ServerCallback>();
+            }
+
+            Login_Callbacks.Enqueue(callback);
+        }
+
+        if (Login_State == ELoginState.Logged)
+        {
+            Login_OnAuthResponse(null, null);            
+        }
+        else
+        {            
+            if (Login_State == ELoginState.NotLogged)
+            {
+                Login_State = ELoginState.Logging;
+                Commands_EnqueueCommand(ECommand.Auth, null, Login_OnAuthResponse);
+            }
+        }                
+    }
+
+    private void Login_OnAuthResponse(Error error, ServerResponse response)
+    {
+        Login_State = (error == null) ? ELoginState.Logged : ELoginState.NotLogged;        
+        
+        if (Login_Callbacks != null)
+        {
+            ServerCallback loginCallback;     
+            while (Login_Callbacks.Count > 0)
+            {
+                loginCallback = Login_Callbacks.Dequeue();
+                if (loginCallback != null)
+                {
+                    loginCallback(error, response);
+                }
+            }
+        }
     }
 
 	/// <summary>
@@ -273,14 +335,16 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private bool IsLogged() {
-		return m_delegate.m_logged;
-	}
+	public override bool IsLoggedIn() {
+        //return m_delegate.m_logged;
+        return Login_State == ELoginState.Logged;
+	}    
+    #endregion
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public override void GetServerTime(ServerCallback callback) {
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void GetServerTime(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.GetTime, null, callback);            
 	}
 
@@ -700,13 +764,13 @@ public class GameServerManagerCalety : GameServerManager {
 				} break;                
 
 				case ECommand.GetPersistence: {
-					if(IsLogged()) {
+					if(IsLoggedIn()) {
                         Command_SendCommand(COMMAND_GET_PERSISTENCE);                        
 					}
 				} break;
 
 				case ECommand.SetPersistence: {
-					if(IsLogged()) {
+					if(IsLoggedIn()) {
 						Dictionary<string, string> kParams = new Dictionary<string, string>();						
 						kParams["universe"] = parameters["persistence"];
                         Command_SendCommand(COMMAND_SET_PERSISTENCE);                            
@@ -725,7 +789,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 				case ECommand.SetQualitySettings: {
 					// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
-					if(IsLogged()) {
+					if(IsLoggedIn()) {
                         Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                       
 					} else if (FeatureSettingsManager.IsDebugEnabled) {
 						LogError("SetQualitySettings require the user to be logged");
@@ -748,7 +812,7 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.GlobalEvents_GetEvent:
 				case ECommand.GlobalEvents_GetRewards:
 				case ECommand.GlobalEvents_GetLeadeboard: {
-					if(IsLogged()) {
+					if(IsLoggedIn()) {
 						Dictionary<string, string> kParams = new Dictionary<string, string>();						
 						kParams["eventId"] = parameters["eventId"];
 						string global_event_command = "";
@@ -765,7 +829,7 @@ public class GameServerManagerCalety : GameServerManager {
 				}break;
 
 				case ECommand.GlobalEvents_RegisterScore: {
-					if ( IsLogged() ) {
+					if ( IsLoggedIn() ) {
 						Dictionary<string, string> kParams = new Dictionary<string, string>();							
 						kParams["eventId"] = parameters["eventId"];
 						kParams["progress"] = parameters["progress"];
@@ -1144,6 +1208,7 @@ public class GameServerManagerCalety : GameServerManager {
 			defaultJson.Add("version", FGOL.Save.SaveGameManager.Instance.Version);
 
             // We need to add the tracking information that has been collected while the user played offline
+            /*
             TrackingPersistenceSystem system = HDTrackingManager.Instance.TrackingPersistenceSystem;
             if (system != null && !defaultJson.ContainsKey(system.name))
             {
@@ -1151,19 +1216,20 @@ public class GameServerManagerCalety : GameServerManager {
                 system.SetSocialParams(manager.GetPlatformName(), manager.GetUserId(), Authenticator.Instance.User.ID);
                 defaultJson.Add(system.name, system.ToJSON());
             }
+            */
 
 			strResponse = defaultJson.ToString();
 		}
 
 		return Commands_OnResponse(strResponse, iResponseCode);                
 	}
-	#endregion
+    #endregion    
 
-	//------------------------------------------------------------------------//
-	// LOGGING METHODS														  //
-	//------------------------------------------------------------------------//
-	#region log
-	private const string LOG_CHANNEL = "[GameServerManagerCalety]";
+    //------------------------------------------------------------------------//
+    // LOGGING METHODS														  //
+    //------------------------------------------------------------------------//
+    #region log
+    private const string LOG_CHANNEL = "[GameServerManagerCalety]";
 
 	/// <summary>
 	/// 

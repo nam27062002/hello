@@ -2,9 +2,9 @@
 /// This class is responsible for simulating different cases for debug purposes
 /// </summary>
 using System.Collections.Generic;
-public class PersistenceManagerDebug : PersistenceManagerImp
+public class PersistenceLocalManagerDebug : PersistenceLocalManager
 {    
-    public PersistenceManagerDebug(string name)
+    public PersistenceLocalManagerDebug(string name)
     {
         Name = name;        
     }
