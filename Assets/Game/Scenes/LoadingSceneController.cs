@@ -344,6 +344,9 @@ public class LoadingSceneController : SceneController {
                 EggManager.SetupUser(UsersManager.currentUser);
                 ChestManager.SetupUser(UsersManager.currentUser);
                 GameStoreManager.SharedInstance.Initialize();
+#if UNITY_ANDROID
+				ApplicationManager.instance.GameCenter_Login();
+#endif
 
                 StartLoadFlow();
                 break;

@@ -589,6 +589,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             Debug.Log("GameCenterDelegate onAuthenticationFinished");
 
             GameCenterManager.SharedInstance.RequestUserToken(); // Async process
+
+			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onAuthenticationFailed()
@@ -604,13 +606,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         public override void onUnauthenticated()
         {
             Debug.Log("GameCenterDelegate onUnauthenticated");
+			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onGetToken(JSONNode kTokenDataJSON)
         {
             Debug.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() + 
                 " userID = " + GameCenterManager.SharedInstance.GetUserId() + 
-                " userName = " + GameCenterManager.SharedInstance.GetUserName());         
+                " userName = " + GameCenterManager.SharedInstance.GetUserName());
         }
 
         public override void onNotAuthenticatedException()
@@ -655,6 +658,16 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void GameCenter_LogOut()
     {
         GameSessionManager.SharedInstance.LogOutFromGameCenter();
+    }
+
+    public bool GameCenter_IsAuthenticated()
+    {
+		return GameCenterManager.SharedInstance.CheckIfAuthenticated();
+    }
+
+    public void GameCenter_ShowAchievements()
+    {
+    	GameCenterManager.SharedInstance.ShowAchievements();
     }
     #endregion
 
