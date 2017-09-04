@@ -909,6 +909,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
     /// <summary>
     /// This popup is shown when there's no internet connection
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29No+internet+connection
+    /// MOVED
     /// </summary>    
     public static void Popups_OpenErrorConnection(SocialFacade.Network network, Action onConfirm)
     {

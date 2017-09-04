@@ -8,7 +8,6 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend"
 		[HideInInspector] _VColor("Custom vertex color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_MainTex("Particle Texture", 2D) = "white" {}
 		_ABOffset("Alpha blend offset", Range(0.0, 8.0)) = 0.5
-//		[Toggle(CUSTOMPARTICLESYSTEM)] _EnableCustomParticleSystem("Custom Particle System", int) = 0.0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
@@ -20,15 +19,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend"
 		Cull Off
 		Lighting Off
 		ZWrite Off
-//		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
-/*
-		BindChannels{	
-			Bind "Color", color
-			Bind "Vertex", vertex
-			Bind "TexCoord", texcoord
-		}
-*/
 
 		Pass
 		{
@@ -36,7 +27,6 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend"
 			#pragma vertex vert
 			#pragma fragment frag
 //			#pragma multi_compile_particles
-			#pragma shader_feature  __ CUSTOMPARTICLESYSTEM
 
 			#include "UnityCG.cginc"
 

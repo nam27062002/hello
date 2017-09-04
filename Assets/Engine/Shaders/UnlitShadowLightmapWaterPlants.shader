@@ -24,14 +24,16 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 //			cull front
 			cull off
 			ZWrite On
-			Fog{ Color(0, 0, 0, 0) }
 
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma multi_compile_fwdbase
-//				#pragma glsl_no_auto_normalization
-//				#pragma fragmentoption ARB_precision_hint_fastest
+
+				#pragma multi_compile __ FOG
+				#pragma multi_compile __ DARKEN
+				#pragma multi_compile __ CUTOFF
+				#pragma multi_compile __ OPAQUEALFA
+				#pragma multi_compile __ LIGHTMAP_ON
 
 				#define HG_SCENARY
 
