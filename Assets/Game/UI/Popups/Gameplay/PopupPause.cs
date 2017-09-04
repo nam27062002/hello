@@ -118,6 +118,10 @@ public class PopupPause : PopupPauseBase {
 	public void OnEndGameButton() {
 		if (GameSettings.Get(GameSettings.SHOW_EXIT_RUN_CONFIRMATION_POPUP)) {
 			PopupManager.OpenPopupInstant(PopupExitRunConfirmation.PATH);
+		} else {
+			if (InstanceManager.gameSceneController != null) {
+				InstanceManager.gameSceneController.EndGame(true);
+			}
 		}
 	}
 
