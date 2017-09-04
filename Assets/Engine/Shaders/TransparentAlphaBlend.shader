@@ -28,8 +28,6 @@ Shader "Hungry Dragon/TransparentAlphaBlend"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile_particles
-			#pragma shader_feature  __ CUSTOMPARTICLESYSTEM
 			#pragma shader_feature  __ EMISSIVEPOWER
 			#pragma shader_feature  __ AUTOMATICPANNING
 
