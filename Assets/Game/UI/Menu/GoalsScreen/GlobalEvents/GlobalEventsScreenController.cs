@@ -208,21 +208,21 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// The Facebook button has been pressed.
 	/// </summary>
 	public void OnFacebookButton() {
-		Application.OpenURL("https://www.facebook.com/UbisoftMobile/");
+		Application.OpenURL("https://www.facebook.com/HungryDragonGame");
 	}
 
 	/// <summary>
 	/// The Twitter button has been pressed.
 	/// </summary>
 	public void OnTwitterButton() {
-		Application.OpenURL("https://twitter.com/UbisoftMobile");
+		Application.OpenURL("https://twitter.com/_HungryDragon");
 	}
 
 	/// <summary>
 	/// The Instagram button has been pressed.
 	/// </summary>
 	public void OnInstagramButton() {
-		Application.OpenURL("https://www.instagram.com/ubisoftmobile/");
+		Application.OpenURL("https://www.instagram.com/hungrydragongame");
 	}
 
 	/// <summary>
