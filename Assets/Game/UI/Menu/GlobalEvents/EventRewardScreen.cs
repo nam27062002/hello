@@ -8,33 +8,48 @@ public class EventRewardScreen : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	private enum State {
-		INIT,
 		ANIMATING,
-		OPEN_NEXT_REWARD
+		IDLE
+	}
+
+	private enum Step {
+		INIT = 0,
+		INTRO,
+		GLOBAL_REWARD,		// As much times as needed
+		NO_GLOBAL_REWARD,	// When the global score hasn't reached the threshold for the minimum reward, show a special screen
+		TOP_REWARD_INTRO,	// When the player has been classified for the top reward
+		TOP_REWARD,			// When the player has been classified for the top reward
+		FINISH
 	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed References
+	// Step screens
 	[SerializeField] private ShowHideAnimator m_introScreen = null;
-	[SerializeField] private ShowHideAnimator m_globalEventStepScreen = null;
+	[SerializeField] private ShowHideAnimator m_globalRewardScreen = null;
+	[SerializeField] private ShowHideAnimator m_noGlobalRewardScreen = null;
+	[SerializeField] private ShowHideAnimator m_topRewardIntroScreen = null;
 
+	// Other references
 	[Space]
 	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
 	[SerializeField] private RewardInfoUI m_rewardInfo = null;
 	[SerializeField] private DragControlRotation m_rewardDragController = null;
 
+	// Individual elements references
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
+	[SerializeField] private Localizer m_topRewardText = null;
 
 	// Internal references
 	private RewardSceneController m_sceneController = null;
 
 	// Internal logic
 	private GlobalEvent m_event;
-	private int m_step;
+	private Step m_step;
 	private State m_state;
+	private int m_givenGlobalRewards;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -88,14 +103,32 @@ public class EventRewardScreen : MonoBehaviour {
 		m_event = GlobalEventManager.currentEvent;
 
 		// Initialize progress bar
-		m_step = 0;
+		m_givenGlobalRewards = 0;
 		if(m_event != null) {
 			m_progressBar.RefreshRewards(m_event);
 		}
 		m_progressBar.RefreshProgress(0);
 
 		// Set initial state
-		m_state = State.INIT;
+		m_step = Step.INIT;
+		m_state = State.IDLE;
+
+		// Hide all screens
+		for(int i = 0; i < (int)Step.FINISH; ++i) {
+			ShowHideAnimator screen = GetScreen((Step)i);
+			if(screen != null) {
+				screen.ForceHide(false);
+			}
+		}
+
+		// Hide other UI elements
+		m_tapToContinue.ForceHide(false);
+		m_rewardDragController.gameObject.SetActive(false);
+
+		// If already in the screen, start the flow immediately
+		if(this.isActiveAndEnabled) {
+			AdvanceStep();
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -126,70 +159,199 @@ public class EventRewardScreen : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Get the screen associated to a specific step.
+	/// </summary>
+	/// <returns>The screen linked to the given step.</returns>
+	/// <param name="_step">Step whose screen we want.</param>
+	private ShowHideAnimator GetScreen(Step _step) {
+		switch(_step) {
+			case Step.INTRO:			return m_introScreen;			break;
+			case Step.GLOBAL_REWARD:	return m_globalRewardScreen;	break;
+			case Step.NO_GLOBAL_REWARD:	return m_noGlobalRewardScreen;	break;
+			case Step.TOP_REWARD_INTRO: return m_topRewardIntroScreen;	break;
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Shows the screen associated to a specific step-
+	/// </summary>
+	/// <param name="_step">Step to be displayed.</param>
+	private void ShowScreen(Step _step) {
+		for(int i = 0; i < (int)Step.FINISH; ++i) {
+			ShowHideAnimator screen = GetScreen((Step)i);
+			if(screen != null) {
+				screen.Set(i == (int)_step);	// Only show target screen
+			}
+		}
+	}
+
+	/// <summary>
 	/// Go to next reward slot.
 	/// </summary>
 	private void AdvanceStep() {
-		// Advance progress bar
-		float duration = 0.5f;
-		if(m_step < m_event.rewardSlots.Count - 1) {
-			m_progressBar.RefreshProgress(m_event.rewardSlots[m_step].targetPercentage, duration);
-		} else {
-			m_progressBar.RefreshProgress(1f, duration);
-		}
+		// Check current step to decide where to go next
+		Step oldStep = m_step;
+		Step nextStep = Step.INTRO;
+		switch(m_step) {
+			case Step.INTRO: {
+				// Do we have global rewards?
+				if(m_event.rewardLevel > 0) {
+					nextStep = Step.GLOBAL_REWARD;
+				} else {
+					nextStep = Step.NO_GLOBAL_REWARD;
+				}
+			} break;
 
-		// Tell the scene to open the next reward
-		m_sceneController.OpenReward();
+			case Step.GLOBAL_REWARD: {
+				// There are still rewards to collect?
+				if(m_givenGlobalRewards < m_event.rewardLevel) {
+					nextStep = Step.GLOBAL_REWARD;
+				} else {
+					// No! Has top reward?
+					if(m_event.topContributor) {
+						nextStep = Step.TOP_REWARD_INTRO;
+					} else {
+						nextStep = Step.FINISH;
+					}
+				}
+			} break;
+
+			case Step.NO_GLOBAL_REWARD: {
+				// Has top reward?
+				if(m_event.topContributor) {
+					nextStep = Step.TOP_REWARD_INTRO;
+				} else {
+					nextStep = Step.FINISH;
+				}
+			} break;
+
+			case Step.TOP_REWARD_INTRO: {
+				nextStep = Step.TOP_REWARD;
+			} break;
+
+			case Step.TOP_REWARD: {
+				nextStep = Step.FINISH;
+			} break;
+		}
 
 		// Hide tap to continue text
 		m_tapToContinue.Hide();
-
-		// Update logic vars
-		m_step++;
 		m_state = State.ANIMATING;
+
+		// Store new step and show the right screen
+		m_step = nextStep;
+		ShowScreen(m_step);
+
+		// Only display reward UI in target steps
+		bool showRewardUI = (nextStep == Step.GLOBAL_REWARD || nextStep == Step.TOP_REWARD);
+		m_rewardInfo.showHideAnimator.Set(showRewardUI);
+		m_rewardDragController.gameObject.SetActive(showRewardUI);
+
+		// Perform different stuff depending on new step
+		switch(nextStep) {
+			case Step.INTRO: {
+				// Clear 3D scene
+				m_sceneController.Clear();
+
+				// Change state after some delay
+				UbiBCN.CoroutineManager.DelayedCall(
+					() => { 
+						m_state = State.IDLE;
+					}, 
+					0.5f
+				);
+			} break;
+
+			case Step.GLOBAL_REWARD: {
+				// Add reward to the stack
+				UsersManager.currentUser.rewardStack.Push(m_event.rewardSlots[m_givenGlobalRewards].reward);
+
+				// Animate progress bar
+				m_progressBar.RefreshProgress(m_event.rewardSlots[m_givenGlobalRewards].targetPercentage, 0.5f);
+
+				// Tell the scene to open the next reward (should be already stacked)
+				m_sceneController.OpenReward();
+
+				// Increase global reward level
+				m_givenGlobalRewards++;
+			} break;
+
+			case Step.NO_GLOBAL_REWARD: {
+				// Clear 3D scene
+				m_sceneController.Clear();
+
+				// Restore tap to continue after some delay
+				UbiBCN.CoroutineManager.DelayedCall(
+					() => { 
+						m_state = State.IDLE;
+						m_tapToContinue.Show(); 
+					}, 
+					0.5f
+				);
+			} break;
+
+			case Step.TOP_REWARD_INTRO: {
+				// Clear 3D scene
+				m_sceneController.Clear();
+
+				// Initialize text
+				float topPercentile = m_event.topContributorsRewardSlot.targetPercentage * 100f;
+				m_topRewardText.Localize(
+					m_topRewardText.tid, 
+					StringUtils.FormatNumber(topPercentile, 2)
+				);
+
+				// Change state after some delay
+				UbiBCN.CoroutineManager.DelayedCall(
+					() => {
+						m_state = State.IDLE;
+					},
+					0.5f
+				);
+			} break;
+
+			case Step.TOP_REWARD: {
+				// Add reward to the stack
+				UsersManager.currentUser.rewardStack.Push(m_event.topContributorsRewardSlot.reward);
+
+				// Tell the scene to open the next reward (should be already stacked)
+				m_sceneController.OpenReward();
+			} break;
+
+			case Step.FINISH: {
+				// Mark event as collected
+				m_event.FinishRewardCollection();	// [AOC] TODO!! Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
+
+				// Purge event list
+				GlobalEventManager.ClearRewardedEvents();
+
+				// Request new event data
+				GlobalEventManager.TMP_RequestCustomizer();
+
+				// Save!
+				PersistenceFacade.instance.Save_Request();
+
+				// Go back to main screen
+				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_SELECTION);
+			} break;
+		}
+
+		//Debug.Log("<color=green>Step changed from " + oldStep + " to " + nextStep + " (" + m_givenGlobalRewards + ")</color>");
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// The "collect rewards" button has been pressed.
-	/// </summary>
-	public void OnRewardButton() {
-		// Toggle screens
-		m_introScreen.Hide();
-		m_globalEventStepScreen.Show();
-
-		// Queue event rewards
-		// Reverse order so first reward is collected first
-		for(int i = m_event.rewardSlots.Count - 1; i >= 0; --i) {
-			UsersManager.currentUser.rewardStack.Push(m_event.rewardSlots[i].reward);
-		}
-
-		// Open first reward!
-		AdvanceStep();
-	}
-
-	/// <summary>
 	/// The "Tap To Continue" button has been pressed.
 	/// </summary>
 	public void OnContinueButton() {
-		// Ignore if we're still animating some other reward
+		// Ignore if we're still animating some step (prevent spamming)
 		if(m_state == State.ANIMATING) return;
 
-		// If it's the last reward, stop collecting
-		if(m_step == m_event.rewardLevel) {
-			// Mark event as collected
-			m_event.FinishRewardCollection();	// [AOC] TODO!! Mark event as collected immediately after rewards have been pushed to the stack
-
-			// Request new event data
-			GlobalEventManager.RequestCurrentEventData();
-
-			// Go back to main screen
-			InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_SELECTION);
-		} else {
-			// Collect next reward
-			AdvanceStep();
-		}
+		// Next step!
+		AdvanceStep();
 	}
 
 	/// <summary>
@@ -222,7 +384,7 @@ public class EventRewardScreen : MonoBehaviour {
 	/// </summary>
 	private void OnSceneAnimFinished() {
 		// Change logic state
-		m_state = State.OPEN_NEXT_REWARD;
+		m_state = State.IDLE;
 
 		// Show tap to continue text
 		m_tapToContinue.Show();
@@ -285,14 +447,9 @@ public class EventRewardScreen : MonoBehaviour {
 	/// Screen is about to be displayed.
 	/// </summary>
 	public void OnShowPreAnimation() {
-		// If in the INIT state, show the initial screen
-		if(m_state == State.INIT) {
-			// Show initial screen
-			m_introScreen.RestartShow();
-			m_globalEventStepScreen.ForceHide(false);
-
-			// Change state!
-			m_state = State.OPEN_NEXT_REWARD;
+		// If in the INIT step, start the flow!
+		if(m_step == Step.INIT) {
+			AdvanceStep();
 		}
 	}
 }

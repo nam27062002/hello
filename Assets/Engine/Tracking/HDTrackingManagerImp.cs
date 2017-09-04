@@ -9,6 +9,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
     {
+        None,
         WaitingForSessionStart,
         SessionStarted,
         Banned
@@ -33,7 +34,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {        
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
-        AreSDKsInitialised = false;
+        AreSDKsInitialised = false;                
 
         if (TrackingPersistenceSystem == null)
         {
@@ -47,7 +48,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_Reset();
         m_loadFunnel.Reset();
 		m_firstUXFunnel.Reset();
-    }
+    }        
 
     private void CheckAndGenerateUserID()
     {
@@ -69,12 +70,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void StartSession()
     {     
-        if (!AreSDKsInitialised)
-        {
-            InitSDKs();            
-            AreSDKsInitialised = true;
-        }
-
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("StartSession");
@@ -83,6 +78,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         State = EState.SessionStarted;
 
         CheckAndGenerateUserID();
+
+        InitSDKs();
 
         Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
 
@@ -104,9 +101,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void InitSDKs()
     {
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        InitDNA(settingsInstance);
-        InitAppsFlyer(settingsInstance);        
+        if (!AreSDKsInitialised)
+        {
+            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            InitDNA(settingsInstance);
+            InitAppsFlyer(settingsInstance);
+
+            AreSDKsInitialised = true;
+        }
     }
 
     private void InitDNA(CaletySettings settingsInstance)
@@ -140,7 +142,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 #else
         string strAppsFlyerPlatformID = "";
 #endif        
-        AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, GameSessionManager.SharedInstance.GetUID());
+        AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, TrackingPersistenceSystem.UserID);
 
 #if UNITY_ANDROID
         AppsFlyerManager.SharedInstance.SetAndroidGCMKey(settingsInstance.m_strGameCenterAppGoogle[settingsInstance.m_iBuildEnvironmentSelected]);

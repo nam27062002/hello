@@ -78,6 +78,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string lightmapContrastText = "Lightmap contrast";
 
         readonly public static string blendModeText = "Blend Mode";
+        readonly public static string renderQueueText = "Render queue";
 
         //        readonly public static string primaryMapsText = "Maps";
         //        readonly public static string renderOptions = "Render Options";
@@ -361,19 +362,23 @@ internal class ScenaryShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
             materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
         }
-/*
-        if (featureSet(mp_EnableLightmapContrast, Styles.lightmapContrastText))
-        {
-            materialEditor.
-        }
-*/
-/*
-        if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
-        {
-            material.shaderKeywords = null;
-        }
-*/
+        /*
+                if (featureSet(mp_EnableLightmapContrast, Styles.lightmapContrastText))
+                {
+                    materialEditor.
+                }
+        */
+        /*
+                if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
+                {
+                    material.shaderKeywords = null;
+                }
+        */
 
+        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        EditorGUILayout.LabelField(Styles.renderQueueText);
+        material.renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        EditorGUILayout.EndHorizontal();
     }
 
     static void DebugKeywords(Material mat)

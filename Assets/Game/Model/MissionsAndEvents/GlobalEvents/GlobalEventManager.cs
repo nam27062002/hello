@@ -324,6 +324,27 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	}
 
 	/// <summary>
+	/// Clears all the events that have already been processed.
+	/// </summary>
+	public static void ClearRewardedEvents() {
+		// First we have to resolve all the stored events (profile)
+		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+
+		if (storedEvents.Count > 0) {
+			List<int> deleteEvents = new List<int>();
+			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
+				if (pair.Value.rewardCollected) {
+					deleteEvents.Add(pair.Key);
+				}
+			}
+
+			for (int i = 0; i < deleteEvents.Count; i++) {
+				storedEvents.Remove(deleteEvents[i]);
+			}
+		}
+	}
+
+	/// <summary>
 	/// Tells the manager with which user data he should work.
 	/// </summary>
 	/// <param name="_user">Profile to work with.</param>

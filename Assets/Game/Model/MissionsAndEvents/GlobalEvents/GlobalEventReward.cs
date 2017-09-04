@@ -44,6 +44,18 @@ public partial class GlobalEvent {
 			// Reward data
 			reward = Metagame.Reward.CreateFromJson(_data, HDTrackingManager.EEconomyGroup.REWARD_GLOBAL_EVENT);
 
+			// [AOC] Going to hell!
+			// 		 Mini-hack: if reward is gold fragments, tweak its rarity so displayed reward looks cooler
+			if(reward.type == Metagame.RewardGoldenFragments.TYPE_CODE) {
+				if(reward.amount >= 5) {
+					reward.rarity = Metagame.Reward.Rarity.EPIC;
+				} else if(reward.amount >= 3) {
+					reward.rarity = Metagame.Reward.Rarity.SPECIAL;
+				} else {
+					reward.rarity = Metagame.Reward.Rarity.COMMON;
+				}
+			}
+
 			// Init target percentage
 			// Target amount should be initialized from outside, knowing the global target
 			targetPercentage = _data["targetPercentage"].AsFloat;

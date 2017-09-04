@@ -101,7 +101,10 @@ namespace Metagame {
 		//------------------------------------------------------------------------//
 		// Mandatory:
 		protected Rarity m_rarity = Rarity.COMMON;
-		public Rarity rarity { get { return m_rarity; } }
+		public Rarity rarity { 
+			get { return m_rarity; } 
+			set { m_rarity = value; }
+		}
 
 		protected string m_type = "";
 		public string type { get { return m_type; } }
