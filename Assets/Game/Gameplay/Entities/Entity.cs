@@ -45,6 +45,7 @@ public class Entity : IEntity {
 	private DragonTier m_burnableFromTier = 0;
 	public DragonTier burnableFromTier { get { return m_burnableFromTier; } }
 
+	private bool m_isEdibleByZ;
 	private bool m_isEdible;
 	private DragonTier m_edibleFromTier = 0;
 	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
@@ -162,9 +163,11 @@ public class Entity : IEntity {
 
 		m_health = m_maxHealth;
 
+		m_isEdibleByZ = true;
+
 		m_newCamera = InstanceManager.gameCamera;
 
-        m_spawned = true;		
+        m_spawned = true;
     }
 
     public override void Disable(bool _destroyed) {		
@@ -216,27 +219,23 @@ public class Entity : IEntity {
 	}
 
 	public bool IsEdible() {
-		/*if (m_hideNeedTierMessage) {
-			return IsEdible(InstanceManager.player.data.tier);
-		}
-		*/
-		return allowEdible && m_isEdible;
+		return allowEdible && m_isEdibleByZ && m_isEdible;
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return allowEdible && m_isEdible && (m_edibleFromTier <= _tier);
+		return allowEdible && m_isEdibleByZ && m_isEdible && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {
-		return allowEdible && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
+		return allowEdible && m_isEdibleByZ && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
 	}
 
 	public bool CanBeGrabbed( DragonTier _tier ){
-		return allowEdible && m_canBeGrabbed && m_grabFromTier <= _tier;
+		return allowEdible && m_isEdibleByZ && m_canBeGrabbed && m_grabFromTier <= _tier;
 	}
 
 	public bool CanBeLatchedOn( DragonTier _tier){
-		return allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
+		return allowEdible && m_isEdibleByZ && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
 	override public bool CanBeSmashed()
@@ -269,6 +268,8 @@ public class Entity : IEntity {
                 if (m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
                 m_checkOnScreenTimer = 0.5f;
             }
+
+			m_isEdibleByZ = m_machine.position.z < 14f;
         }
 	}
 

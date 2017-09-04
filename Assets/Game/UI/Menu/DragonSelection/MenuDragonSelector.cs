@@ -71,6 +71,15 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 			}
 		}
 		enableEvents = true;
+
+		if ( enableEvents )
+		{
+			if (GlobalEventManager.user != null && GlobalEventManager.Connected() && GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0 )
+			{
+				// ask for live events again
+				GlobalEventManager.TMP_RequestCustomizer();
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
