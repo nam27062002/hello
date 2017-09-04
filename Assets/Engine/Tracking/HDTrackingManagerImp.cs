@@ -34,9 +34,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {        
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
-        AreSDKsInitialised = false;
-        
-        Messenger.AddListener<bool>(GameEvents.LOGGED, OnLoggedIn);
+        AreSDKsInitialised = false;                
 
         if (TrackingPersistenceSystem == null)
         {
@@ -50,24 +48,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_Reset();
         m_loadFunnel.Reset();
 		m_firstUXFunnel.Reset();
-    }
-
-    public override void Destroy()
-    {
-        if (State != EState.None)
-        {
-            Messenger.RemoveListener<bool>(GameEvents.LOGGED, OnLoggedIn);
-        }
-    }
-
-    private void OnLoggedIn(bool logged)
-    {       
-        // SDKs need the game to be logged in 
-        if (logged)
-        {
-            InitSDKs();
-        }
-    }
+    }        
 
     private void CheckAndGenerateUserID()
     {
@@ -97,6 +78,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         State = EState.SessionStarted;
 
         CheckAndGenerateUserID();
+
+        InitSDKs();
 
         Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
 
@@ -159,7 +142,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 #else
         string strAppsFlyerPlatformID = "";
 #endif        
-        AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, GameSessionManager.SharedInstance.GetUID());
+        AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, TrackingPersistenceSystem.UserID);
 
 #if UNITY_ANDROID
         AppsFlyerManager.SharedInstance.SetAndroidGCMKey(settingsInstance.m_strGameCenterAppGoogle[settingsInstance.m_iBuildEnvironmentSelected]);
