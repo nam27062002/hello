@@ -87,6 +87,8 @@ public class MenuPlayScreen : MonoBehaviour {
 	public void OnConnectBtn()
 	{        
         PersistenceManager.Popups_OpenLoadingPopup();
+
+        /*
         if (SocialManager.GetSelectedSocialNetwork() != m_socialNetwork)
         {
             Debug.LogError("You are trying to switch networks. There should be a proper flow in place for this.");
@@ -101,6 +103,12 @@ public class MenuPlayScreen : MonoBehaviour {
 
             Refresh();
         });
+        */
+        PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.Settings, delegate()
+        {
+            PersistenceManager.Popups_CloseLoadingPopup();
+            Refresh();
+        });
     }
    
     private void Refresh()
@@ -109,7 +117,8 @@ public class MenuPlayScreen : MonoBehaviour {
         // By default we consider that the button has to be enabled. Next We check the login state, so it will be disabled if the user's logged in
         m_badge.SetActive(true);
         m_connectButton.interactable = true;
-        
+
+        /*
         m_incentivizeRoot.SetActive(!SocialManager.Instance.WasLoginIncentivised(SocialManager.GetSelectedSocialNetwork()));
         
         AuthManager.LoginState loginState = AuthManager.LoginState.NeverLoggedIn;
@@ -123,6 +132,9 @@ public class MenuPlayScreen : MonoBehaviour {
             default:
                 break;
         }
+        */
+        m_badge.SetActive(!SocialPlatformManager.SharedInstance.IsLoggedIn());
+
 #else
         m_badge.SetActive(false);
 #endif
