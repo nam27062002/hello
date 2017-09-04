@@ -9,58 +9,44 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1646362531023180}
+  m_RootGameObject: {fileID: 1123789131701346}
   m_IsPrefabParent: 1
---- !u!1 &1646362531023180
+--- !u!1 &1123789131701346
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4244220982790568}
-  - component: {fileID: 114598444018470182}
-  - component: {fileID: 114391430644990302}
+  - component: {fileID: 4686910070267404}
+  - component: {fileID: 114459968686366322}
+  - component: {fileID: 114523622895664178}
   m_Layer: 0
-  m_Name: SP_TEST_SKY_Bomber
+  m_Name: SP_Air_Kamikaze
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4244220982790568
+--- !u!4 &4686910070267404
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1646362531023180}
+  m_GameObject: {fileID: 1123789131701346}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114391430644990302
+--- !u!114 &114459968686366322
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1646362531023180}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  size: {x: 28.442123, y: 11.918668}
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &114598444018470182
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1646362531023180}
+  m_GameObject: {fileID: 1123789131701346}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
@@ -72,9 +58,9 @@ MonoBehaviour:
     y: 0
     width: 2
     height: 2
-  m_mixEntities: 1
+  m_mixEntities: 0
   m_entityPrefabList:
-  - name: Goblin/PF_TEST_SKY_Bomber
+  - name: Goblin/PF_Air_Kamikaze
     chance: 100
   m_quantity:
     min: 1
@@ -95,8 +81,8 @@ MonoBehaviour:
   m_activationKillTriggers: []
   m_deactivationTriggers: []
   m_spawnTime:
-    min: 220
-    max: 220
+    min: 200
+    max: 200
   m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 0
   m_homePosDistance:
@@ -104,3 +90,17 @@ MonoBehaviour:
     max: 2
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &114523622895664178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1123789131701346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  size: {x: 10, y: 10}
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
