@@ -47,8 +47,10 @@ public class MenuPlayButton : MenuNavigationButton {
 			// Go to the dragon default screen defined in the inspector
 			OnNavigationButton();
 		}
-
+			
 		// Save flag to not display play screen again
 		GameVars.playScreenShown = true;
+
+		HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._04_click_play);
 	}
 }
