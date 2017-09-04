@@ -225,7 +225,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
                     // So far we just avoid that situation
                     if (Application.internetReachability == NetworkReachability.NotReachable) {
                         OnPurchaseError.Invoke(this);
-                        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+                        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
                     } else {
                         // Start real money transaction flow
                         m_loadingPopupController = PopupManager.PopupLoading_Open();
@@ -264,7 +264,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		else
 		{
 			OnPurchaseError.Invoke(this);
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
