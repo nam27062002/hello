@@ -6,13 +6,13 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: VFX_DissolveSmoke
+  m_Name: VFX_DarkyDragonSmoke
   m_Shader: {fileID: 4800000, guid: f8c292fcd31822d479cb17bf9feb1c58, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _HASNOISEEMISSIVE_ON _HASOPACITYMASK_ON _ISTHENOISEOPACITY_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3064
+  m_CustomRenderQueue: 3080
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -35,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DissolveTex:
-        m_Texture: {fileID: 2800000, guid: fceba7f7f1e091347a3143a5876dcedc, type: 3}
+        m_Texture: {fileID: 2800000, guid: 181d09fb144e0964090d8a81cfdfbf72, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -43,43 +43,74 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ffe12ad914a92384ea502a8226017ccf, type: 3}
+        m_Texture: {fileID: 2800000, guid: 848d07310e78c0f4a9faef43f83873da, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 56801c86f5c02314ea816bb02f7b4f31, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OpacityMask:
+        m_Texture: {fileID: 2800000, guid: fceba7f7f1e091347a3143a5876dcedc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture:
+        m_Texture: {fileID: 2800000, guid: 565c0198a7bfec040a915719528aea95, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _ABOffset: 0.5
     - _BlendMode: 10
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _Depth: 0.1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EmissionPower: 20
     - _EmissionSaturation: 1
+    - _FinalEmissive: 1
+    - _FinalOpacityPower: 1
+    - _FinalPower: 2
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _HasNoiseEmissive: 1
+    - _HasOpacity: 0
+    - _HasOpacityMask: 1
+    - _IsEmissiveWithDepth: 0
+    - _IsTheNoiseOpacity: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OpacitySaturation: 0.85
+    - _OpacityMaskMulti: 1
+    - _OpacityMaskPower: 2.5
+    - _OpacityPower: 20
+    - _OpacitySaturation: 1
     - _Parallax: 0.02
+    - _PoweredNoise: 5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _USpeed: 0
     - _UVSec: 0
+    - _VSpeed: -0.5
     - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DissolveStep: {r: 0, g: 0.15, b: 0, a: 0}
+    - _Color: {r: 0.125, g: 0.125, b: 0.125, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _VColor: {r: 1, g: 1, b: 1, a: 1}
