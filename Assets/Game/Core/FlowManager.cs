@@ -106,7 +106,9 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	public static void Restart() {        
         // Delete key singletons that must be reloaded		
         GameVars.DestroyInstance();
-		
+
+        HDTrackingManager.Instance.Destroy();
+
         // [DGR] We need to destroy SaveFacade system because a new instance of UserProfile will be created when restarting so we need to make sure this system
         // is going to use the new UserProfile instance        
         SaveFacade.Instance.Reset();   

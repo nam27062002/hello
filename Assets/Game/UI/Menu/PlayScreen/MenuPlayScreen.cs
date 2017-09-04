@@ -60,6 +60,8 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() 
 	{
+		HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
 	}
@@ -69,6 +71,7 @@ public class MenuPlayScreen : MonoBehaviour {
 			Debug.LogError("LEGAL");
 			// Open terms and conditions popup
 			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
 			m_showLegalPopup = false;
 		}
 	}
@@ -141,7 +144,7 @@ public class MenuPlayScreen : MonoBehaviour {
 
 		m_showLegalPopup = PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION;
     }
-   
+   	
     //------------------------------------------------------------------//
     // CALLBACKS														//
     //------------------------------------------------------------------//

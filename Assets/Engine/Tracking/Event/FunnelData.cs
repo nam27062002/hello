@@ -46,7 +46,7 @@ public abstract class FunnelData : TrackingEventData {
 	/// <param name="_index">Setp index.</param>
 	protected int GetStepDuration(int _index) {
 		if (_index > m_currentStep + 1) {
-			Debug.LogError("[" + name + "] Game is Notifying the step " + m_stepNames[_index] + " but the expected step is " + m_stepNames[m_currentStep + 1]);
+			Debug.LogWarning("[" + name + "] Game is Notifying the step " + m_stepNames[_index] + " but the expected step is " + m_stepNames[m_currentStep + 1]);
 		}
 
 		float now = Time.realtimeSinceStartup;
