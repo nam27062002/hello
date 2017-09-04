@@ -64,7 +64,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		LOD 100
 		
 		Pass {		
-			Tags{ "LightMode" = "ForwardBase" }
+//			Tags{ "LightMode" = "ForwardBase" }
 
 			Cull [_Cull]
 			Blend [_SrcBlend] [_DstBlend]
@@ -73,7 +73,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma multi_compile_fwdbase
+//				#pragma multi_compile_fwdbase
 				#pragma multi_compile __ BLEND_TEXTURE
 				#pragma multi_compile __ CUSTOM_VERTEXCOLOR
 				#pragma multi_compile __ SPECULAR
@@ -83,9 +83,12 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma multi_compile __ CUTOFF
 				#pragma multi_compile __ OPAQUEALFA
 				#pragma multi_compile __ EMISSIVEBLINK
-				#pragma multi_compile __ BLEND
+				#pragma multi_compile __ LIGHTMAP_ON
 
 				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
+
+				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+
 
 				#define HG_SCENARY
 

@@ -18,13 +18,13 @@
 		ZWrite Off
 		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
-
+/*
 		BindChannels{
 			Bind "Color", color
 			Bind "Vertex", vertex
 			Bind "TexCoord", texcoord
 		}
-
+*/
 		// ---- Fragment program cards
 		SubShader{			
 
