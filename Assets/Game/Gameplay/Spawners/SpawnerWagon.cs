@@ -85,40 +85,35 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 			}
 			m_rect.center = (Vector2)transform.position + m_rect.position;
 
-			// lets find the spline
-			m_railSpline = RailManager.GetRailByName(m_railName);
+			// adjust probabilities
+			float probFactor = 0;
+			for (int i = 0; i < m_entityPrefabList.Length; i++) {
+				probFactor += m_entityPrefabList[i].chance;
+			}
 
-
-			if (m_railSpline != null) {
-				// adjust probabilities
-				float probFactor = 0;
+			if (probFactor > 0f) {
+				probFactor = 100f / probFactor;
 				for (int i = 0; i < m_entityPrefabList.Length; i++) {
-					probFactor += m_entityPrefabList[i].chance;
+					m_entityPrefabList[i].chance *= probFactor;
 				}
 
-				if (probFactor > 0f) {
-					probFactor = 100f / probFactor;
-					for (int i = 0; i < m_entityPrefabList.Length; i++) {
-						m_entityPrefabList[i].chance *= probFactor;
-					}
-
-					//sort probs
-					for (int i = 0; i < m_entityPrefabList.Length; i++) {
-						for (int j = 0; j < m_entityPrefabList.Length - i - 1; j++) {
-							if (m_entityPrefabList[j].chance > m_entityPrefabList[j + 1].chance) {
-								EntityPrefab temp = m_entityPrefabList[j];
-								m_entityPrefabList[j] = m_entityPrefabList[j + 1];
-								m_entityPrefabList[j + 1] = temp;
-							}
+				//sort probs
+				for (int i = 0; i < m_entityPrefabList.Length; i++) {
+					for (int j = 0; j < m_entityPrefabList.Length - i - 1; j++) {
+						if (m_entityPrefabList[j].chance > m_entityPrefabList[j + 1].chance) {
+							EntityPrefab temp = m_entityPrefabList[j];
+							m_entityPrefabList[j] = m_entityPrefabList[j + 1];
+							m_entityPrefabList[j + 1] = temp;
 						}
 					}
-
-					SpawnerManager.instance.Register(this, true);
-
-					gameObject.SetActive(false);
-					return;
 				}
+
+				SpawnerManager.instance.Register(this, true);
+
+				gameObject.SetActive(false);
+				return;
 			}
+
 		}
 
 		// we are not goin to use this spawner, lets destroy it
@@ -127,7 +122,7 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 
 	void OnDestroy() {
 		if (SpawnerManager.isInstanceCreated)
-			SpawnerManager.instance.Unregister(this, false);
+			SpawnerManager.instance.Unregister(this, true);
 	}
 
 	public void Initialize() {
@@ -162,6 +157,15 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 
 	public bool CanRespawn() {
 		if (m_state == State.Idle) {
+			// lets find the spline
+			if (m_railSpline == null) {
+				m_railSpline = RailManager.GetRailByName(m_railName);
+				if (m_railSpline == null) {
+					Destroy(gameObject);
+					return false;
+				}
+			}
+
 			if (m_respawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				if (!m_camera.IsInsideActivationMinArea(area.bounds)) {
 					Destroy(gameObject);

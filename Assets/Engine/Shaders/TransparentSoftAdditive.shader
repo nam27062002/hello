@@ -21,7 +21,6 @@ Shader "Hungry Dragon/TransparentSoftAdditive"
 		Cull Off
 		Lighting Off
 		ZWrite Off
-		Fog{ Color(0,0,0,0) }
 		ZTest[_ZTest]
 
 		// ---- Fragment program cards
@@ -33,10 +32,7 @@ Shader "Hungry Dragon/TransparentSoftAdditive"
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma fragmentoption ARB_precision_hint_fastest
-				#pragma multi_compile_particles
 
-				#pragma shader_feature  __ CUSTOMPARTICLESYSTEM
 				#pragma shader_feature  __ EMISSIVEPOWER
 				#pragma shader_feature  __ AUTOMATICPANNING
 

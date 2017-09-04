@@ -34,6 +34,8 @@ public class MenuPlayScreen : MonoBehaviour {
     [SerializeField]
     private Localizer m_incentivizeLabelLocalizer = null;    
 
+	private bool m_showLegalPopup;
+
     private SocialFacade.Network m_socialNetwork = SocialFacade.Network.Default;
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -50,7 +52,7 @@ public class MenuPlayScreen : MonoBehaviour {
             m_socialNetwork = SocialManager.GetSelectedSocialNetwork();
         }               
 
-        Refresh();
+		Refresh();
     }
 	
 	/// <summary>
@@ -60,6 +62,15 @@ public class MenuPlayScreen : MonoBehaviour {
 	{
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
+	}
+
+	private void Update() {
+		if (m_showLegalPopup) {
+			Debug.LogError("LEGAL");
+			// Open terms and conditions popup
+			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			m_showLegalPopup = false;
+		}
 	}
 
 	/// <summary>
@@ -127,6 +138,8 @@ public class MenuPlayScreen : MonoBehaviour {
 #else
         m_badge.SetActive(false);
 #endif
+
+		m_showLegalPopup = PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION;
     }
    
     //------------------------------------------------------------------//

@@ -177,7 +177,7 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_state == State.ANIMATING) return;
 
 		// If it's the last reward, stop collecting
-		if(m_step > m_event.rewardLevel) {
+		if(m_step == m_event.rewardLevel) {
 			// Mark event as collected
 			m_event.FinishRewardCollection();	// [AOC] TODO!! Mark event as collected immediately after rewards have been pushed to the stack
 

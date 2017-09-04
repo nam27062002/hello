@@ -70,6 +70,11 @@ public class MenuShowConditionallyEditor : Editor {
 			GUI.enabled = wasEnabled;
 		}
 
+		// Target
+		EditorGUILayout.Space();
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("m_targetAnimator"), true);
+		EditorGUILayoutExt.Separator();
+
 		// Dragon-based visibility
 		// Toggle group
 		p = serializedObject.FindProperty("m_checkSelectedDragon");
