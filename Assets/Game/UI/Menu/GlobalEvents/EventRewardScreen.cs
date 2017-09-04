@@ -323,11 +323,14 @@ public class EventRewardScreen : MonoBehaviour {
 				// Mark event as collected
 				m_event.FinishRewardCollection();	// [AOC] TODO!! Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
 
-				// Save!
-				PersistenceFacade.instance.Save_Request();
+				// Purge event list
+				GlobalEventManager.ClearRewardedEvents();
 
 				// Request new event data
-				GlobalEventManager.RequestCurrentEventData();
+				GlobalEventManager.TMP_RequestCustomizer();
+
+				// Save!
+				PersistenceFacade.instance.Save_Request();
 
 				// Go back to main screen
 				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_SELECTION);
