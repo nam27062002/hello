@@ -41,6 +41,8 @@ public class Startup {
 			// Update values!!
 			string resourcesPath = Application.dataPath + "/Resources/";
 
+			referencesObject.m_settings = (CaletySettings)Resources.Load("CaletySettings");
+
 			// Rules
 			string rulesPath = resourcesPath + "Rules/";
 			referencesObject.m_definitions.Clear();

@@ -5136,6 +5136,7 @@ GameObject:
   - component: {fileID: 224716486123360128}
   - component: {fileID: 222927010368667370}
   - component: {fileID: 114251202803407600}
+  - component: {fileID: 114817690657646864}
   m_Layer: 5
   m_Name: GPText
   m_TagString: Untagged
@@ -6012,6 +6013,7 @@ GameObject:
   - component: {fileID: 224623284101569188}
   - component: {fileID: 222383625092779774}
   - component: {fileID: 114204268309356854}
+  - component: {fileID: 114750324571503826}
   m_Layer: 5
   m_Name: GPText
   m_TagString: Untagged
@@ -14601,7 +14603,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: INICIAR SESSION
+  m_text: LOG OUT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: ac7c0658756714744bb4af943129b7ca, type: 2}
@@ -14668,12 +14670,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114251202803407600}
-    characterCount: 15
+    characterCount: 7
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 2
+    lineCount: 1
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -19284,7 +19286,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 5f111460fedc5224b9d5d923f8f0cc98, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 10f5bd6308d6461458b0800a00aab441, type: 3}
   m_Type: 1
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -22874,6 +22876,20 @@ MonoBehaviour:
   m_anim: {fileID: 95817868178705722}
   m_colorWhenMinReached: {r: 1, g: 0, b: 0, a: 1}
   m_colorWhenMaxReached: {r: 0, g: 1, b: 0, a: 1}
+--- !u!114 &114750324571503826
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1935442279047516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_GEN_LOGIN
+  m_caseType: 1
+  m_replacements: []
 --- !u!114 &114752046365504616
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -24054,6 +24070,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114817690657646864
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1780914229774144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_GEN_LOGOUT
+  m_caseType: 1
+  m_replacements: []
 --- !u!114 &114818200465086568
 MonoBehaviour:
   m_ObjectHideFlags: 1
