@@ -414,7 +414,10 @@ if $UPLOAD;then
   # Copy APK
   if $BUILD_ANDROID; then
       mkdir -p "server/${STAGE_APK_FILE}"
-      cp -R "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/" "server/${STAGE_APK_FILE}/"
+      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${STAGE_APK_FILE}.apk" "server/${STAGE_APK_FILE}/"
+      if $GENERATE_OBB; then
+        cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}" "server/${STAGE_APK_FILE}/"
+      fi
   fi
 
   # Unmount server and remove tmp folder
