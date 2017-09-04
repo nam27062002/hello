@@ -39,6 +39,7 @@ public class HDTrackingManager
     }
 
     public virtual void Init() {}
+    public virtual void Destroy() {}
 
     //////////////////////////////////////////////////////////////////////////
 

@@ -9,6 +9,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
     {
+        None,
         WaitingForSessionStart,
         SessionStarted,
         Banned
@@ -34,6 +35,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
         AreSDKsInitialised = false;
+        
+        Messenger.AddListener<bool>(GameEvents.LOGGED, OnLoggedIn);
 
         if (TrackingPersistenceSystem == null)
         {
@@ -47,6 +50,23 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_Reset();
         m_loadFunnel.Reset();
 		m_firstUXFunnel.Reset();
+    }
+
+    public override void Destroy()
+    {
+        if (State != EState.None)
+        {
+            Messenger.RemoveListener<bool>(GameEvents.LOGGED, OnLoggedIn);
+        }
+    }
+
+    private void OnLoggedIn(bool logged)
+    {       
+        // SDKs need the game to be logged in 
+        if (logged)
+        {
+            InitSDKs();
+        }
     }
 
     private void CheckAndGenerateUserID()
@@ -69,12 +89,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void StartSession()
     {     
-        if (!AreSDKsInitialised)
-        {
-            InitSDKs();            
-            AreSDKsInitialised = true;
-        }
-
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("StartSession");
@@ -104,9 +118,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void InitSDKs()
     {
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        InitDNA(settingsInstance);
-        InitAppsFlyer(settingsInstance);        
+        if (!AreSDKsInitialised)
+        {
+            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            InitDNA(settingsInstance);
+            InitAppsFlyer(settingsInstance);
+
+            AreSDKsInitialised = true;
+        }
     }
 
     private void InitDNA(CaletySettings settingsInstance)
