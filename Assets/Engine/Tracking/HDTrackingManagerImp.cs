@@ -167,8 +167,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             TrackingManager.TrackingConfig kTrackingConfig = new TrackingManager.TrackingConfig();
             kTrackingConfig.m_eTrackPlatform = TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
             kTrackingConfig.m_strJSONConfigFilePath = "Tracking/TrackingEvents";
-            kTrackingConfig.m_strStartSessionEventName = "01_START_SESSION";
-            kTrackingConfig.m_strEndSessionEventName = "02_END_SESSION";
+            kTrackingConfig.m_strStartSessionEventName = "game.start";
+			kTrackingConfig.m_strEndSessionEventName = "custom.mobile.stop";
             kTrackingConfig.m_strMergeAccountEventName = "MERGE_ACCOUNTS";
             kTrackingConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion();
             kTrackingConfig.m_strTrackingID = trackingID;
