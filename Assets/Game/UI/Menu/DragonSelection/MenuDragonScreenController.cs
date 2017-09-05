@@ -46,6 +46,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 		
 	}
 
+	void Start(){
+		if (GlobalEventManager.user != null && GlobalEventManager.Connected() ){
+			if (GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0){
+				// ask for live events again
+				GlobalEventManager.TMP_RequestCustomizer();
+			}
+		}
+	}
+
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
@@ -54,6 +63,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 		GlobalEvent ge = GlobalEventManager.currentEvent;
 		if (ge != null) {
+			ge.UpdateState();
 			if (ge.isRewardAvailable) {
 				m_goToGlobalEventRewardScreen = true;
 			}
