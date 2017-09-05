@@ -65,8 +65,10 @@ namespace Metagame {
 			type = type.ToLower();
 			
 			string data = "";
-			if(_data.ContainsKey("sku")) 	data = _data["sku"];
-			if(_data.ContainsKey("amount")) data = _data["amount"];
+			if(_data.ContainsKey("sku")) 	
+				data = _data["sku"];
+			else if(_data.ContainsKey("amount")) 
+				data = _data["amount"];
 
 			return CreateFromTypeCode(type, data, _economyGroup);
 		}
