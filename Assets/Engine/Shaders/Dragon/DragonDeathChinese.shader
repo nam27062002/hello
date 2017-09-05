@@ -72,14 +72,14 @@ SubShader {
 			#if HI_DETAIL_ON
 			#define FRESNEL
 			#define NORMALMAP
-			#define SPEC
+			#define SPECULAR
 
 			#endif
 
-			#define CUTOUT
+			#define CUTOFF
 			#define DOUBLESIDED
 
-			#define REFL
+			#define FXLAYER_REFLECTION
 
 			struct appdata_t {
 				float4 vertex : POSITION;

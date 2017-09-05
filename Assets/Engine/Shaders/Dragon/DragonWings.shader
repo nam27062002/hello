@@ -58,7 +58,6 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 				#pragma multi_compile __ SILHOUETTE
 
-
 				#include "UnityCG.cginc" 
 				#include "Lighting.cginc"
 				#include "../HungryDragon.cginc"
@@ -74,11 +73,11 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 				#if HI_DETAIL_ON
 				#define FRESNEL
 				#define NORMALMAP
-				#define SPEC
-	//			#define REFL
+				#define SPECULAR
+	//			#define FXLAYER_REFLECTION
 				#endif
 
-				#define CUTOUT
+				#define CUTOFF
 				#define DOUBLESIDED
 
 				struct appdata_t {
