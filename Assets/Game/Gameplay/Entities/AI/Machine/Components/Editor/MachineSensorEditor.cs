@@ -110,8 +110,10 @@ public class MachineSensorEditor : ExtendedPropertyDrawer {
 				// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 				loop = _property.NextVisible(false);
 
-				// If within an array, Next() will give the next element of the array, which will be already be drawn by itself afterwards, so we don't want it - check depth to prevent it
-				if(_property.depth <= baseDepth) loop = false;
+				if (loop) {
+					// If within an array, Next() will give the next element of the array, which will be already be drawn by itself afterwards, so we don't want it - check depth to prevent it
+					if(_property.depth <= baseDepth) loop = false;
+				}
 			}
 		}
 	}

@@ -37,13 +37,14 @@ GameObject:
   m_Component:
   - component: {fileID: 4323013659205960}
   - component: {fileID: 114546948629056198}
-  - component: {fileID: 114804269563537504}
-  - component: {fileID: 114411617260218986}
+  - component: {fileID: 114621152088698202}
   - component: {fileID: 114921518987072694}
+  - component: {fileID: 114898857369252430}
   - component: {fileID: 114400225865560770}
   - component: {fileID: 136651104195514550}
+  - component: {fileID: 135286915927351416}
   - component: {fileID: 54621127734676652}
-  m_Layer: 22
+  m_Layer: 26
   m_Name: PF_FlyingTicket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,55 +414,6 @@ MonoBehaviour:
   m_parentName: view
   m_parentRoot: {fileID: 4323013659205960}
   m_worldPositionStays: 1
---- !u!114 &114411617260218986
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1723884167458480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 14
-    m_maxRadius: 11
-    m_minRadius: 4
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0
-      max: 0.5
-  m_edible:
-    m_rotateToMouth: 3
-  m_inflammable:
-    m_burningTime: 0
-    m_canBeDissolved: 1
-    m_ashExceptions: []
-  m_onSpawnSound: 
-  m_airMotion:
-    m_mass: 10
-    m_defaultUpVector: 0
-    m_orientationSpeed: 240
-    m_dragonStyleRotation: 0
-    m_faceDirection: 1
-    m_rollRotation: 1
-    m_rollAngle: 35
-    m_limitHorizontalRotation: 1
-    m_faceLeftAngle: -30
-    m_faceRightAngle: 30
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 340
-    m_faceDownAngle: 20
 --- !u!114 &114546948629056198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -476,6 +428,20 @@ MonoBehaviour:
   offset: {x: 0.0041236877, y: -0.0036917627}
   radius: 0.7410726
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &114621152088698202
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1723884167458480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d0c6fb7d8a04d119abb3940dea6472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: GoodJunkScore
+  m_hideNeedTierMessage: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &114627666513974538
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -525,7 +491,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 0
---- !u!114 &114804269563537504
+--- !u!114 &114898857369252430
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -533,12 +499,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 1723884167458480}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
+  m_Script: {fileID: 11500000, guid: 98c3b002b90194cff9229a79ba8b13e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: FlyingPig
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 1
+  m_airMotion:
+    m_mass: 20
+    m_defaultUpVector: 0
+    m_orientationSpeed: 240
+    m_dragonStyleRotation: 0
+    m_faceDirection: 1
+    m_rollRotation: 1
+    m_rollAngle: 35
+    m_limitHorizontalRotation: 1
+    m_faceLeftAngle: -60
+    m_faceRightAngle: 60
+    m_limitVerticalRotation: 1
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 16
+    m_maxRadius: 12
+    m_minRadius: 6
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.25
+      max: 1.25
 --- !u!114 &114921518987072694
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -551,19 +543,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 15
-  m_energy: 4
-  m_energyDrainSec: 1
-  m_energyRecoverSec: 0.25
+  m_energy: 6
+  m_energyDrainSec: 0.75
+  m_energyRecoverSec: 0.5
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":7,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":16,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":16,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_FlyingTicket
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 27
   m_avoidCollisions: 1
   m_avoidWater: 1
+--- !u!135 &135286915927351416
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1723884167458480}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.75
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &136651104195514550
 CapsuleCollider:
   m_ObjectHideFlags: 1

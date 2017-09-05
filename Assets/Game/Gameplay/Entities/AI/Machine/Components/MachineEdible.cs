@@ -91,7 +91,7 @@ namespace AI {
 		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {			
 			if (_rewardsPlayer) {
 				// Get the reward to be given from the entity
-				Reward reward = (m_entity as Entity).GetOnKillReward(false);
+				Reward reward = m_entity.GetOnKillReward(false);
 				if (!_isPlayer){
 					reward.alcohol = 0;
 					// Pets never harm player if they eat bad junk

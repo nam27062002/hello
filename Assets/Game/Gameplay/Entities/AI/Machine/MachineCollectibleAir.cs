@@ -2,29 +2,32 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class MachineCollectible : MonoBehaviour, IMachine {		
+	public class MachineCollectibleAir : MonoBehaviour, IMachine, ISpawnable {		
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 
+		[SerializeField] private MC_MotionAir m_airMotion = new MC_MotionAir();
+		[SerializeField] protected MachineSensor m_sensor = new MachineSensor();
+		public MachineSensor sensor { get{ return m_sensor; } }
 
-		private CollectibleViewControl m_viewControl = null;
 		private IEntity m_entity = null;
+		private Pilot m_pilot = null;
 		private Transform m_transform;
 
 
-		public Vector3 eye						{ get { return Vector3.zero; } }
-		public Vector3 target					{ get { return Vector3.zero; } }
-		public virtual Vector3 upVector 		{ get { return Vector3.up; } set {} }
-		public Transform enemy 					{ get { return null; } }
-		public bool isPetTarget 				{ get { return false; } set {} }
-		public virtual float lastFallDistance 	{ get { return 0f; } }
-		public virtual bool isKinematic 		{ get { return false; } set {} }
+		public Vector3 eye				{ get { return Vector3.zero; } }
+		public Vector3 target			{ get { return Vector3.zero; } }
+		public Transform enemy 			{ get { return null; } }
+		public bool isPetTarget 		{ get { return false; } set {} }
+		public float lastFallDistance 	{ get { return 0f; } }
+		public bool isKinematic 		{ get { return false; } set {} }
 
-		public virtual Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
-		public virtual Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
-		public virtual Vector3 direction 		{ get { return Vector3.zero; } }
-		public virtual Vector3 groundDirection	{ get { return Vector3.right; } }
-		public virtual Vector3 velocity			{ get { return Vector3.zero; } }
-		public virtual Vector3 angularVelocity	{ get { return Vector3.zero; } }
+		public Quaternion orientation 	{ get { return m_airMotion.orientation; } set { m_airMotion.orientation = value; } }
+		public Vector3 position			{ get { return m_airMotion.position; } set { m_airMotion.position = value; } }
+		public Vector3 direction 		{ get { return m_airMotion.direction; } }
+		public Vector3 groundDirection	{ get { return Vector3.right; } }
+		public Vector3 upVector 		{ get { return m_airMotion.upVector; } set { m_airMotion.upVector = value; } }
+		public Vector3 velocity			{ get { return m_airMotion.velocity; } }
+		public Vector3 angularVelocity	{ get { return m_airMotion.angularVelocity; } }
 
 		public float biteResistance { get { return 0; } }
 		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
@@ -32,8 +35,11 @@ namespace AI {
 
 		protected virtual void Awake() {
 			m_transform = transform;
-			m_viewControl = GetComponent<CollectibleViewControl>();
 			m_entity = GetComponent<IEntity>();	
+			m_pilot = GetComponent<Pilot>();
+
+			m_airMotion.Attach(this, m_entity, m_pilot);
+			m_sensor.Attach(this, m_entity, m_pilot);
 		}
 
 		protected virtual void OnTriggerEnter(Collider _other) {
@@ -43,12 +49,14 @@ namespace AI {
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_transform, reward);
 
-				m_viewControl.Collect();
 				m_entity.Disable(true);
 			}
 		}
 
-		public void Spawn(ISpawner _spawner) {}
+		public void Spawn(ISpawner _spawner) {
+			m_airMotion.Init();
+			m_sensor.Init();
+		}
 
 		public void Activate() {
 			gameObject.SetActive(true);
@@ -61,6 +69,22 @@ namespace AI {
 			m_deactivateCallback = _action;
 			Invoke("Activate", duration);
 		}
+
+		public void CustomUpdate() {
+			if (!IsDead()) {				
+				m_sensor.Update();
+				m_airMotion.Update();
+
+			}
+		}
+
+		public virtual void CustomFixedUpdate() {
+			if (!IsDead()) {
+				m_airMotion.FixedUpdate();
+			}
+		}
+
+		//---------------------------------------------------------------
 
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 		public void DisableSensor(float _seconds) {}
@@ -78,8 +102,7 @@ namespace AI {
 		public bool IsDead(){ return false; }
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }
-		public void CustomFixedUpdate(){}
-
+		
 		public virtual bool Burn(Transform _transform) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
