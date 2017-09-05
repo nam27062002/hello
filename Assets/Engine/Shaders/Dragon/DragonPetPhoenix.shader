@@ -74,10 +74,10 @@ SubShader {
 			#if HI_DETAIL_ON
 			#define FRESNEL
 			#define NORMALMAP
-			#define SPEC
+			#define SPECULAR
 			#endif
 
-			#define FIRE
+			#define FXLAYER_FIRE
 
 			struct appdata_t {
 				float4 vertex : POSITION;

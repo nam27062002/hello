@@ -140,10 +140,10 @@ SubShader {
 		#if HI_DETAIL_ON
 		#define FRESNEL
 		#define NORMALMAP
-		#define SPEC
+		#define SPECULAR
 		#endif
 
-		#define CUTOUT
+		#define CUTOFF
 		#define DOUBLESIDED
 
 
