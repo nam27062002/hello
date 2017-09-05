@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ViewParticleSpawner : MonoBehaviour {
 	[SerializeField] private Renderer m_view;
+	[SerializeField] private Collider m_colliderBounds;
 	[SerializeField] private ParticleData[] m_particleDatas;
 
 
@@ -39,6 +40,8 @@ public class ViewParticleSpawner : MonoBehaviour {
 		if(m_camera != null) {
 			if (m_view != null) {
 				isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_view.bounds);
+			} else if (m_colliderBounds != null) {
+				isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_colliderBounds.bounds);
 			} else {
 				isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_parent.position);
 			}
