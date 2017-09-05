@@ -392,9 +392,11 @@ public partial class GlobalEvent {
 	/// <summary>
 	/// Infer event's state based on current timestamp.
 	/// </summary>
-	private void UpdateState() {
-		// Use server time to prevent cheating!
-		SetState(GetStateForTimestamp(GameServerManager.SharedInstance.GetEstimatedServerTime()));
+	public void UpdateState() {
+		if ( m_state != State.REWARD_COLLECTED ){
+			// Use server time to prevent cheating!
+			SetState(GetStateForTimestamp(GameServerManager.SharedInstance.GetEstimatedServerTime()));
+		}
 	}
 
 	/// <summary>

@@ -325,6 +325,7 @@ public class EventRewardScreen : MonoBehaviour {
 
 				// Purge event list
 				GlobalEventManager.ClearRewardedEvents();
+				GlobalEventManager.ClearCurrentEvent();
 
 				// Request new event data
 				GlobalEventManager.TMP_RequestCustomizer();

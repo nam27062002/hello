@@ -75,10 +75,10 @@ SubShader {
 		#if HI_DETAIL_ON
 		#define FRESNEL
 		#define NORMALMAP
-		#define SPEC
+		#define SPECULAR
 		#endif
 
-		#define BLINKLIGHTS
+		#define SELFILLUMINATE_BLINKLIGHTS
 
 		struct appdata_t {
 			float4 vertex : POSITION;
