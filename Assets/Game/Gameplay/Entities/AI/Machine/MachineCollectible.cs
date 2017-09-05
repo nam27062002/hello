@@ -38,14 +38,14 @@ namespace AI {
 
 		protected virtual void OnTriggerEnter(Collider _other) {
 			if (_other.CompareTag("Player")) {				
-				Reward reward = (m_entity as Entity).GetOnKillReward(false);
+				Reward reward = m_entity.GetOnKillReward(false);
 
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_transform, reward);
 
 				m_viewControl.Collect();
 				m_entity.Disable(true);
-			} 
+			}
 		}
 
 		public void Spawn(ISpawner _spawner) {}

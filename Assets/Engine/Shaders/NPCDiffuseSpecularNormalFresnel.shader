@@ -52,19 +52,14 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#define RIM
 			#define BUMP
 			#endif
 
 			#if HI_DETAIL_ON
-			#define RIM
 			#define BUMP
-			#define SPEC
 			#define REFL
 			#endif
 
-//			#define BUMP
-//			#define REFL
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

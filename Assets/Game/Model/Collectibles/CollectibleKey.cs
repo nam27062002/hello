@@ -58,7 +58,7 @@ public class CollectibleKey : Collectible {
 		// If limit reached, don't collect
 		if(UsersManager.currentUser.keys >= UsersManager.currentUser.GetCurrencyMax(UserProfile.Currency.KEYS)) {
 			// Broadcast message to show some feedback
-			Messenger.Broadcast<CollectibleKey>(GameEvents.KEY_COLLECTED_FAIL, this);
+			Messenger.Broadcast(GameEvents.TICKET_COLLECTED_FAIL, this);
 			return false;
 		}
 		return true;
@@ -69,6 +69,6 @@ public class CollectibleKey : Collectible {
 	/// </summary>
 	override protected void OnCollect() {
 		// Dispatch global event
-		Messenger.Broadcast<CollectibleKey>(GameEvents.KEY_COLLECTED, this);
+		Messenger.Broadcast(GameEvents.TICKET_COLLECTED, this);
 	}
 }
