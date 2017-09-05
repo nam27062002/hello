@@ -86,6 +86,10 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		gameObject.SetActive(false);
 	}
 
+	public virtual Reward GetOnKillReward(bool _burnt) {
+		return new Reward();
+	}
+
     public virtual void CustomUpdate() {
     	for (int i = 0; i < m_otherSpawnables.Count; i++) {
 			m_otherSpawnables[i].CustomUpdate();

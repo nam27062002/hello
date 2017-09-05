@@ -83,7 +83,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	[SerializeField] protected string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
 	protected Vector3 m_attackTargetPosition;
-	public Vector3 attackTargetPosition { get{ return m_attackTargetPosition; } set{ m_attackTargetPosition = value; } }
+	public Vector3 attackTargetPosition { get { return m_attackTargetPosition; } set { m_attackTargetPosition = value; } }
 	[SerializeField] private string m_onScaredAudio;
 	private AudioObject m_onScaredAudioAO;
 	[SerializeField] private string m_onPanicAudio;
