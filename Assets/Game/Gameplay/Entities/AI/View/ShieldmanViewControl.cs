@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ShieldmanViewControl : ViewControl {
 
-	[SeparatorAttribute("Shield")]
+	[SeparatorAttribute("Shiekd")]
 	[SerializeField] private GameObject m_shield;
 
 
