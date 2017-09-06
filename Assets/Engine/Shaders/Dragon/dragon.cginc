@@ -1,6 +1,5 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
@@ -33,14 +32,19 @@ uniform float4 _ColorAdd;
 
 uniform float _InnerLightAdd;
 uniform float4 _InnerLightColor;
-uniform float4 _FresnelColor;
-uniform float4 _AmbientAdd;
 
-uniform float _SpecExponent;
+#ifdef FRESNEL
 uniform float _Fresnel;
+uniform float4 _FresnelColor;
+#endif
+
+uniform float4 _AmbientAdd;
 
 uniform float3 _SecondLightDir;
 uniform float4 _SecondLightColor;
+#ifdef SPECULAR
+uniform float _SpecExponent;
+#endif
 
 
 #if defined (FXLAYER_REFLECTION)
@@ -129,7 +133,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #ifdef FRESNEL
 	// Fresnel
-	float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
+	float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0) * _FresnelColor.xyz;
 
 #else
 	float fresnel = 0.0f;
@@ -151,7 +155,7 @@ fixed4 frag(v2f i) : SV_Target
 
 	fixed4 col;
 
-#if defined (FXLAYER_REFLECTION)		//Used by chinesse dragon
+#if defined (FXLAYER_REFLECTION)		//Used by chinese dragon
 	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
 
 	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
@@ -182,7 +186,7 @@ fixed4 frag(v2f i) : SV_Target
 	satMask *= blink * 10.0;
 	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
-#elif defined (SELFILLUMINATE_BLINKLIGHTS)					//Used by reptile
+#elif defined (SELFILLUMINATE_BLINKLIGHTS)					//Used by reptile rings
 	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
 	fixed3 selfIlluminate = col.xyz * detail.r * anim;
 
@@ -190,7 +194,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));
 
 #endif
-	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate + (fresnel * _FresnelColor.xyz) + _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate + fresnel + _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 
 #ifndef CUTOFF
 	UNITY_OPAQUE_ALPHA(col.a);

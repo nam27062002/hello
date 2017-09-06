@@ -345,7 +345,11 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
         EditorGUILayout.LabelField(Styles.renderQueueText);
-        material.renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        int renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        if (material.renderQueue !=  renderQueue)
+        {
+            material.renderQueue = renderQueue;
+        }
         EditorGUILayout.EndHorizontal();
     }
 

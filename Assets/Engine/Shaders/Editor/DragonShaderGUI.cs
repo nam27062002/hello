@@ -77,6 +77,13 @@ internal class DragonShaderGUI : ShaderGUI {
         readonly public static string colorMultiplyText = "Color Multiply";
         readonly public static string colorAddText = "Color Add";
 
+        readonly public static string innerLightAddText = "Inner Light Add";
+        readonly public static string innerLightColorText = "Inner Light Color";
+        readonly public static string innerLightWavePhaseText = "Inner Light wave phase";
+        readonly public static string innerLightWaveSpeedText = "Inner Light wave speed";
+
+        readonly public static string ambientAddText = "Ambient Add";
+
         readonly public static string enableNormalMapText = "Enable Normal map";
         readonly public static string normalStrengthText = "Normal Texture strength";
 
@@ -97,6 +104,15 @@ internal class DragonShaderGUI : ShaderGUI {
         readonly public static string fireMapText = "Fire Texture";
         readonly public static string fireAmountText = "Fire amount";
 
+        readonly public static string reflectionLayerText = "Reflection layer are actually used by chinese dragon. Applied as (Reflection Texture intensity) * (Reflection Amount) * (Detail Texture.b)";
+        readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix. Applied as (Fire Amount) * (Detail Texture.b)";
+
+        readonly public static string selfIluminationText = "Self ilumination";
+
+        readonly public static string normalSelfIluminationText = "Default Self ilumination. Based on (Main Texture.rgb) * (Detail Texture.r) * _InnerLightAdd * (_InnerLightColor.rgb)";
+        readonly public static string autoInnerLightSelfIluminationText = "Devil dragon self ilumination.";
+        readonly public static string blinkLightsSelfIluminationText = "Reptile dragon rings self ilumination.";
+
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string renderQueueText = "Render queue";
 
@@ -107,10 +123,6 @@ internal class DragonShaderGUI : ShaderGUI {
     MaterialProperty mp_normalStrength;
     MaterialProperty mp_cutOff;
 
-    MaterialProperty mp_tint;
-    MaterialProperty mp_colorAdd;
-    MaterialProperty mp_innerLightAdd;
-    MaterialProperty mp_innerLightColor;
     MaterialProperty mp_specExponent;
     MaterialProperty mp_fresnel;
     MaterialProperty mp_fresnelColor;
@@ -123,7 +135,10 @@ internal class DragonShaderGUI : ShaderGUI {
     MaterialProperty mp_fireMap;
     MaterialProperty mp_fireAmount;
 
-
+    MaterialProperty mp_colorMultiply;
+    MaterialProperty mp_colorAdd;
+    MaterialProperty mp_innerLightAdd;
+    MaterialProperty mp_innerLightColor;
     MaterialProperty mp_innerLightWavePhase;
     MaterialProperty mp_innerLightWaveSpeed;
 
@@ -185,10 +200,12 @@ internal class DragonShaderGUI : ShaderGUI {
         mp_secondLightDir = FindProperty("_SecondLightDir", props);
         mp_secondLightColor = FindProperty("_SecondLightColor", props);
 
-        mp_tint = FindProperty("_Tint", props);
+        mp_colorMultiply = FindProperty("_Tint", props);
         mp_colorAdd = FindProperty("_ColorAdd", props);
         mp_innerLightAdd = FindProperty("_InnerLightAdd", props);
         mp_innerLightColor = FindProperty("_InnerLightColor", props);
+        mp_innerLightWavePhase = FindProperty("_InnerLightWavePhase", props);
+        mp_innerLightWaveSpeed = FindProperty("_InnerLightWaveSpeed", props);
 
         mp_fresnel = FindProperty("_Fresnel", props);
         mp_fresnelColor = FindProperty("_FresnelColor", props);
@@ -198,9 +215,6 @@ internal class DragonShaderGUI : ShaderGUI {
         mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
         mp_fireMap = FindProperty("_FireMap", props);
         mp_fireAmount = FindProperty("_FireAmount", props);
-
-        mp_innerLightWavePhase = FindProperty("_InnerLightWavePhase", props);
-        mp_innerLightWaveSpeed = FindProperty("_InnerLightWaveSpeed", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
 
@@ -251,10 +265,8 @@ internal class DragonShaderGUI : ShaderGUI {
         }
 
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
-        GUILayout.BeginHorizontal();
         materialEditor.TextureProperty(mp_detailTexture, Styles.detailTextureText, false);
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
-        GUILayout.EndHorizontal();
 
         bool normalMap = mp_normalTexture.textureValue != null as Texture;
 
@@ -291,27 +303,58 @@ internal class DragonShaderGUI : ShaderGUI {
 
         switch(fxLayer)
         {
-            case 1:
+            case 1:     //FXLayer_Reflection
+                EditorGUILayout.HelpBox(Styles.reflectionLayerText, MessageType.Info);
                 materialEditor.TextureProperty(mp_reflectionMap, Styles.reflectionMapText, false);
                 materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
                 break;
 
-            case 2:
+            case 2:     //FXLayer_Fire
+                EditorGUILayout.HelpBox(Styles.fireLayerText, MessageType.Info);
                 materialEditor.TextureProperty(mp_fireMap, Styles.fireMapText, false);
                 materialEditor.ShaderProperty(mp_fireAmount, Styles.fireAmountText);
                 break;
         }
 
+        featureSet(mp_SelfIlluminate, Styles.selfIluminationText);
+        int selfIluminateMode = (int)mp_SelfIlluminate.floatValue;
 
-
-
-        //        DebugKeywords(material);
-
-        if (GUILayout.Button("Reset keywords"))
+        switch(selfIluminateMode)
         {
-            material.shaderKeywords = null;
+            case 0:     //SELFILUMINATE_NORMAL
+                EditorGUILayout.HelpBox(Styles.normalSelfIluminationText, MessageType.Info);
+                materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
+                break;
+
+            case 1:     //SELFILUMINATE_AUTOINNERLIGHTS
+                EditorGUILayout.HelpBox(Styles.autoInnerLightSelfIluminationText, MessageType.Info);
+                materialEditor.ShaderProperty(mp_innerLightWavePhase, Styles.innerLightWavePhaseText);
+                materialEditor.ShaderProperty(mp_innerLightWaveSpeed, Styles.innerLightWaveSpeedText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
+                break;
+
+            case 3:     //SELFILLUMINATE_BLINKLIGHTS
+                EditorGUILayout.HelpBox(Styles.blinkLightsSelfIluminationText, MessageType.Info);
+                break;
         }
 
+        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        EditorGUILayout.LabelField(Styles.renderQueueText);
+        int renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        if (material.renderQueue != renderQueue)
+        {
+            material.renderQueue = renderQueue;
+        }
+        EditorGUILayout.EndHorizontal();
+
+
+        /*
+                if (GUILayout.Button("Reset keywords"))
+                {
+                    material.shaderKeywords = null;
+                }
+        */
     }
 
     static void SetMaterialKeywords(Material material)
