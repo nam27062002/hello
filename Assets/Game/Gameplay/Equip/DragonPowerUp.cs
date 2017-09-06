@@ -305,11 +305,11 @@ public class DragonPowerUp : MonoBehaviour {
 				int numHits = _powerDef.GetAsInt("param2");
 				switch(subtype) {
 					case "mine": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_MINE.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
 					} break;
 
 					case "poison": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
 					} break;
 
 					default: {
@@ -332,7 +332,7 @@ public class DragonPowerUp : MonoBehaviour {
 					} break;
 
 					case "arrows": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
 					} break;
 
 					default: {
@@ -347,7 +347,7 @@ public class DragonPowerUp : MonoBehaviour {
 				int numHits = _powerDef.GetAsInt("param2");
 				switch(subtype) {
 					case "EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier4": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
 					} break;
 
                     default: {
@@ -356,12 +356,52 @@ public class DragonPowerUp : MonoBehaviour {
                     }
                 } break;
 
+			case "eat": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
+			} break;
+
+			case "cage_breaker": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
+			} break;
+
+			case "immune_trash": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
+			} break;
+
+			case "explode_mine": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
+			} break;
+
+			case "alcohol_resistance": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
+			} break;
+
 			case "lives": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
 			} break;
 
 			case "dragonram": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_OBSTACLE.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+			} break;
+
+			case "bomb": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+			} break;
+
+			case "dog": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+			} break;
+
+			case "phoenix": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+			} break;
+
+			case "stun": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+			} break;
+
+			case "findBonus": {
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
 			} break;
 
             case "fury_size_increase":
@@ -379,9 +419,14 @@ public class DragonPowerUp : MonoBehaviour {
                     return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_SPEED.ToHexString("#"));
                 }break;
 
+			case "unlimited_boost":
+			{
+				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_SPEED.ToHexString("#"));
+			}break;
+
             case "reduce_life_drain":
                 {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_DRAIN.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
                 }break;
 
             case "more_coin":
@@ -401,17 +446,17 @@ public class DragonPowerUp : MonoBehaviour {
 
             case "freeze_aura":
                 {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+                    return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
                 }break;
 
             case "fireball":
                 {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
+                    return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
                 }break;
 
             case "magnet":
                 {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_MAGNETIC.ToHexString("#"));
+                    return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_MAGNETIC.ToHexString("#"));
                 }break;
 
             case "vacuum":
@@ -433,7 +478,10 @@ public class DragonPowerUp : MonoBehaviour {
 				*/
 
 				// [AOC] As of 05/07/2017, entity names are included in the TID (i.e. "Increased %U0 health on eating Birds")
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
+				if (_short)
+					return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
+				else
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
 			} break;
 
 			default: {
