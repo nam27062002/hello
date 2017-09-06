@@ -369,9 +369,48 @@ internal class ScenaryShaderGUI : ShaderGUI {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// <summary>
+    /// Seek for all scenary standard shaders and set cull mode to back
+    /// </summary>
+    [MenuItem("Tools/Scenary/set opaque to cull back")]
+    public static void SetOpaqueToCullBack()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+            // UnlitShadowLightmap.shader
+            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
+            {
+                int blendMode = (int)mat.GetFloat("_BlendMode");
+                int cullMode = (int)mat.GetFloat("_Cull");
+
+                if (blendMode == 0 && cullMode == 0)
+                {
+                    setBlendMode(mat, 0);
+                    sChanged++;
+                }
+            }
+        }
+
+        Debug.Log(sChanged + " materials changed");
+    }
+
+
+
+    /// <summary>
     /// Seek for old scenary shaders and change by new scenary standard material
     /// </summary>
-    [MenuItem("Tools/Replace old scenary shaders")]
+    [MenuItem("Tools/Scenary/Replace old scenary shaders")]
     public static void ReplaceOldScenaryShaders()
     {
         Debug.Log("Obtaining material list");
