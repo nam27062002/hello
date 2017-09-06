@@ -17,7 +17,7 @@ public class Ticket : Entity {
 		base.CustomUpdate();
 
 		if (m_wasVisibleByPlayer) {
-			if (!m_newCamera.IsInsideFrustrum(m_bounds.bounds.bounds)) {
+			if (!m_newCamera.IsInsideActivationMinArea(m_bounds.bounds.bounds)) {
 				Disable(true);
 			}
 		} else {
