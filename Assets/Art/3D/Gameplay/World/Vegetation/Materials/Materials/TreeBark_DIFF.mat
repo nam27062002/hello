@@ -13,7 +13,8 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -32,11 +33,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - VertexColor: 1
+    - _BlendMode: 0
     - _BlinkTimeMultiplier: 2
-    - _Cull: 0
+    - _Cull: 2
     - _CutOff: 0.5
     - _DarkenDistance: 20
     - _DarkenPosition: 0
+    - _DstBlend: 0
     - _EmissivePower: 1
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 1
@@ -52,6 +55,8 @@ Material:
     - _FogStart: 0
     - _NormalStrength: 1
     - _SpecularPower: 3
+    - _SrcBlend: 1
+    - _ZWrite: 1
     m_Colors:
     - _FogColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
