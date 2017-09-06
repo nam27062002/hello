@@ -381,7 +381,10 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			case "dragonram": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+				if (_short)
+					return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+				else
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_WATER.ToHexString("#"));
 			} break;
 
 			case "bomb": {
