@@ -158,7 +158,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected void Update()
     {
         // To Debug
-        if (Input.GetKeyDown(KeyCode.A))
+        if (FeatureSettingsManager.IsDebugEnabled && Input.GetKeyDown(KeyCode.A))
         {
             // ---------------------------
             // Test eggs collected
@@ -261,8 +261,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
         }
 
-        HDTrackingManager.Instance.Update();
-        PersistenceFacade.instance.Update();
+        HDTrackingManager.Instance.Update();        
 
 		#if UNITY_EDITOR
 		GameServerManager.SharedInstance.Update();
@@ -324,8 +323,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             HDTrackingManager.Instance.Notify_ApplicationResumed();
         }
 
-        // If the  done in the first loading is not done then the pause is ignored
-        if (PersistenceFacade.instance.IsLoadCompleted)
+        // If the persistences are not being synced then we need to make sure the local progress will be stored when going to pause
+        if (!PersistenceFacade.instance.Sync_IsSyncing())
         {            
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
@@ -347,7 +346,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 // [DGR] NOTIF Not supported yet
                 //NotificationManager.Instance.ScheduleReEngagementNotifications();
 
-                PersistenceFacade.instance.Save_Request();
+                PersistenceFacade.instance.Save_Request(true);
             }
             else
             {

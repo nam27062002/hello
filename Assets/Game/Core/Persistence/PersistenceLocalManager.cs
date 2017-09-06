@@ -1,9 +1,10 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible for managing persistence load/save. It stores the user's local game progress which is stored on device
 /// </summary>
 using FGOL.Server;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 public class PersistenceLocalManager
 {
     //m_version needs to reflect the minimum version on the server and the minimum support version of the app
@@ -75,7 +76,7 @@ public class PersistenceLocalManager
 
     public virtual PersistenceStates.SaveState LocalProgress_SaveToDisk()            
     {
-        PersistenceStates.SaveState state = PersistenceStates.SaveState.Disabled;        
+        PersistenceStates.SaveState state = PersistenceStates.SaveState.OK;        
         if (LocalProgress_Data != null && LocalProgress_IsSaveEnabled)
         {
             Systems_Save();

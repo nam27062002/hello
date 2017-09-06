@@ -370,14 +370,17 @@ public class LoadingSceneController : SceneController {
 
             Debug.Log("Started Loading Flow");
 
-            Action onDone = delegate()
+            Action<PersistenceStates.ESyncResult> onDone = delegate(PersistenceStates.ESyncResult result)
             {
                 m_loadingDone = true;
                 m_loading = false;
-                s_inSaveLoaderState = false;                
+                s_inSaveLoaderState = false;
+
+                // Initialize managers needing data from the loaded profile
+                GlobalEventManager.SetupUser(UsersManager.currentUser);
             };
 
-            PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.Launch, onDone);            			
+            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
         }
     }
 

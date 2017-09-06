@@ -32,6 +32,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void Init()
     {        
+    	base.Init();
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
         AreSDKsInitialised = false;                
@@ -48,7 +49,42 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_Reset();
         m_loadFunnel.Reset();
 		m_firstUXFunnel.Reset();
-    }        
+
+		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		Messenger.AddListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
+		Messenger.AddListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
+    }
+
+    public override void Destroy ()
+    {
+		base.Destroy ();
+		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
+		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
+	}
+
+	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
+	{
+        StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(_sku);
+        string moneyCurrencyCode = null;
+        float moneyPrice = 0f;            
+        if (product != null) {                
+            moneyCurrencyCode = product.m_strCurrencyCode;
+            moneyPrice = product.m_fLocalisedPriceValue;
+        }
+
+        // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
+        string houstonTransactionID = _storeTransactionID;
+        string promotionType = null; // Not implemented yet            
+        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
+
+	}
+
+	private void OnPurchaseFailed(string _sku) 
+	{
+		
+	}
+
 
     private void CheckAndGenerateUserID()
     {
@@ -202,7 +238,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (TrackingPersistenceSystem != null && TrackingPersistenceSystem.IsDirty)
         {
             TrackingPersistenceSystem.IsDirty = false;
-            PersistenceFacade.instance.Save_Request();
+            PersistenceFacade.instance.Save_Request(false);
         }
 
         if (Session_AnyRoundsStarted)

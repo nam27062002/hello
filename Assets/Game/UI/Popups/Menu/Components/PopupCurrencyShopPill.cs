@@ -298,19 +298,6 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
 		// Is it this one?
 		if(_sku == m_def.sku) {
-            StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(m_def.sku);
-            string moneyCurrencyCode = null;
-            float moneyPrice = 0f;            
-            if (product != null) {                
-                moneyCurrencyCode = product.m_strCurrencyCode;
-                moneyPrice = product.m_fLocalisedPriceValue;
-            }
-
-            // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
-            string houstonTransactionID = _storeTransactionID;
-            string promotionType = null; // Not implemented yet            
-            HDTrackingManager.Instance.Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
-
 			// Stop tracking
 			TrackPurchaseResult(false);
 
