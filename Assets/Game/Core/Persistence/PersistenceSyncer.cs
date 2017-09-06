@@ -227,11 +227,8 @@ public class PersistenceSyncer
 			case EState.WaitingForLocalOp:
 			{
 				if (LocalOp == null || LocalOp.State == PersistenceSyncOp.EState.Ready)
-				{
-					if (CloudOp == null)
-					{
-						State = EState.WaitingForCloudOp;
-					}
+				{				
+                    State = EState.WaitingForCloudOp;					
 				}
 			}
 			break;

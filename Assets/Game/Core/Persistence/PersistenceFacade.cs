@@ -108,7 +108,9 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 	public void Sync_FromSettings(Action<PersistenceStates.ESyncResult> onDone)
 	{
         PersistenceSyncOpFactory factory = Config.SyncFromSettingsFactory;
-        PersistenceSyncOp localOp = factory.GetLoadLocalOp(Sync_LocalData);
+
+        // We need to save the current progress so the user won't lose it during the process
+        PersistenceSyncOp localOp = factory.GetSaveLocalOp(Sync_LocalData, false);
 		PersistenceSyncOp cloudOp = factory.GetLoadCloudOp(Sync_CloudData, false);
 		PersistenceSyncOp syncOp = factory.GetSyncOp(localOp, cloudOp, false);
 		Sync_Perform(localOp, cloudOp, syncOp, onDone);
