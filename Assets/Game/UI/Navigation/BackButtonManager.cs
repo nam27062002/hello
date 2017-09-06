@@ -27,9 +27,10 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 	// Registered handlers
 	// [AOC] Test if a Stack works fine or is too restrictive
 	private List<BackButtonHandler> m_handlers = new List<BackButtonHandler>();
+
 	
 	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
+	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Register to the manager, on top of the stack.
@@ -44,7 +45,6 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 	public static void Unregister(BackButtonHandler _handler) {
 		instance.__Unregister(_handler);
 	}
-
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -66,12 +66,14 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	private void Update() {		
 		// Back button pressed?
 		if (Input.GetKeyUp(KeyCode.Escape)) {
-			if (m_handlers.Count > 0) {
-				m_handlers.Last().Trigger();
-				//TODO: Should we add a delay before next back event?
+			if (!InputLocker.locked) {
+				if (m_handlers.Count > 0) {
+					m_handlers.Last().Trigger();
+					//TODO: Should we add a delay before next back event?
+				}
 			}
 		}
 	}

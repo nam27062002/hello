@@ -40,6 +40,15 @@ public class Spawner : AbstractSpawner {
 		public float value = 0f;
 	}
 
+	[System.Serializable]
+	public class SkuKillCondition {		
+		[EntitySkuList]
+		public string sku;
+
+		[NumericRange(0f)]	// Force positive value
+		public float value = 0f;
+	}
+
 	public enum SpawnPointSeparation {
 		Sphere = 0,
 		Line
@@ -77,6 +86,9 @@ public class Spawner : AbstractSpawner {
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
 	public SpawnCondition[] deactivationTriggers { get { return m_deactivationTriggers; }}
+
+	[SerializeField] public SkuKillCondition[] m_deactivationKillTriggers = new SkuKillCondition[0];
+	public SkuKillCondition[] deactivationKillTriggers { get { return m_deactivationKillTriggers; } }
 
 	[Separator("Respawn")]
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
@@ -485,6 +497,14 @@ public class Spawner : AbstractSpawner {
 			// If one of the conditions has already triggered, no need to keep checking
 			// [AOC] This would be useful if we had a lot of conditions to check, but it will usually be just one and we would be adding an extra instruction for nothing, so let's keep it commented for now
 			// if(!endConditionsOk) break;
+		}
+
+		for (int i = 0; i < m_deactivationKillTriggers.Length; i++) {
+			string sku = m_deactivationKillTriggers[i].sku;
+
+			if (RewardManager.killCount.ContainsKey(sku)) {
+				endConditionsOk &= RewardManager.killCount[sku] < m_deactivationKillTriggers[i].value;
+			}
 		}
 
 		// If we've reached either of the end conditions, mark the spawner as ready to disable
