@@ -14,9 +14,17 @@ namespace AI {
 		private Transform m_transform;
 
 
-		public Vector3 eye				{ get { return Vector3.zero; } }
-		public Vector3 target			{ get { return Vector3.zero; } }
-		public Transform enemy 			{ get { return null; } }
+		public Vector3 eye				{ get { return m_sensor.sensorPosition; } }
+		public Vector3 target			{ get { return m_pilot.target; } }
+		public Transform enemy { 
+			get {
+				if ((GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {
+					return m_sensor.enemy;
+				} else {
+					return null;
+				}
+			}
+		}
 		public bool isPetTarget 		{ get { return false; } set {} }
 		public float lastFallDistance 	{ get { return 0f; } }
 		public bool isKinematic 		{ get { return false; } set {} }
@@ -32,6 +40,8 @@ namespace AI {
 		public float biteResistance { get { return 0; } }
 		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
 
+		private Signals m_signals;
+
 
 		protected virtual void Awake() {
 			m_transform = transform;
@@ -40,6 +50,25 @@ namespace AI {
 
 			m_airMotion.Attach(this, m_entity, m_pilot);
 			m_sensor.Attach(this, m_entity, m_pilot);
+
+			m_signals = new Signals(this);
+			m_signals.Init();
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Alert, SignalTriggers.OnAlert);
+			m_signals.SetOnDisableTrigger(Signals.Type.Alert, SignalTriggers.OnIgnoreAll);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Warning, SignalTriggers.OnWarning);	
+			m_signals.SetOnDisableTrigger(Signals.Type.Warning, SignalTriggers.OnCalm);		
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.OnDanger);
+			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.OnSafe);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Critical, SignalTriggers.OnCritical);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
+			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
+
+			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.OnDestroyed);
 		}
 
 		protected virtual void OnTriggerEnter(Collider _other) {
@@ -54,6 +83,13 @@ namespace AI {
 		}
 
 		public void Spawn(ISpawner _spawner) {
+			m_signals.Init();
+
+			if (InstanceManager.player != null)	{
+				DragonPlayer player = InstanceManager.player;
+				m_sensor.SetupEnemy(player.dragonEatBehaviour.mouth, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
+			}
+
 			m_airMotion.Init();
 			m_sensor.Init();
 		}
@@ -68,6 +104,18 @@ namespace AI {
 			gameObject.SetActive(false);
 			m_deactivateCallback = _action;
 			Invoke("Activate", duration);
+		}
+
+		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
+			m_signals.SetValue(_signal, _activated, _params);
+		}
+
+		public bool GetSignal(Signals.Type _signal) {
+			return m_signals.GetValue(_signal);
+		}
+
+		public object[] GetSignalParams(Signals.Type _signal) {
+			return m_signals.GetParams(_signal);
 		}
 
 		public void CustomUpdate() {
@@ -93,9 +141,6 @@ namespace AI {
 		public bool HasCorpse() { return false; }
 		public void ReceiveDamage(float _damage) {}
 
-		public bool GetSignal(Signals.Type _signal) { return false;}
-		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {}
-		public object[] GetSignalParams(Signals.Type _signal) { return null;}
 
 		public virtual void UseGravity(bool _value) { }
 		public virtual bool IsFacingDirection() { return false; }
