@@ -9,6 +9,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
     {
+        None,
         WaitingForSessionStart,
         SessionStarted,
         Banned
@@ -21,7 +22,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private bool IsStartSessionNotified { get; set; }
 
-    private bool IsDNAInitialised { get; set; }    
+    private bool AreSDKsInitialised { get; set; }    
 
     public HDTrackingManagerImp()
     {
@@ -31,9 +32,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void Init()
     {        
+    	base.Init();
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
-        IsDNAInitialised = false;
+        AreSDKsInitialised = false;                
 
         if (TrackingPersistenceSystem == null)
         {
@@ -47,7 +49,42 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_Reset();
         m_loadFunnel.Reset();
 		m_firstUXFunnel.Reset();
+
+		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		Messenger.AddListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
+		Messenger.AddListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
     }
+
+    public override void Destroy ()
+    {
+		base.Destroy ();
+		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
+		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
+	}
+
+	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
+	{
+        StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(_sku);
+        string moneyCurrencyCode = null;
+        float moneyPrice = 0f;            
+        if (product != null) {                
+            moneyCurrencyCode = product.m_strCurrencyCode;
+            moneyPrice = product.m_fLocalisedPriceValue;
+        }
+
+        // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
+        string houstonTransactionID = _storeTransactionID;
+        string promotionType = null; // Not implemented yet            
+        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
+
+	}
+
+	private void OnPurchaseFailed(string _sku) 
+	{
+		
+	}
+
 
     private void CheckAndGenerateUserID()
     {
@@ -69,12 +106,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void StartSession()
     {     
-        if (!IsDNAInitialised)
-        {
-            InitDNA();
-            IsDNAInitialised = true;
-        }
-
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("StartSession");
@@ -83,6 +114,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         State = EState.SessionStarted;
 
         CheckAndGenerateUserID();
+
+        InitSDKs();
 
         Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
 
@@ -102,11 +135,22 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_StartSessionEvent();        
     }
 
-    private void InitDNA()
+    private void InitSDKs()
+    {
+        if (!AreSDKsInitialised)
+        {
+            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            InitDNA(settingsInstance);
+            InitAppsFlyer(settingsInstance);
+
+            AreSDKsInitialised = true;
+        }
+    }
+
+    private void InitDNA(CaletySettings settingsInstance)
     {
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-#if !UNITY_EDITOR
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+#if !UNITY_EDITOR        
         if (settingsInstance != null)
         {
             UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
@@ -121,6 +165,23 @@ public class HDTrackingManagerImp : HDTrackingManager
 			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionIOS, kDNAEnvironment);
 #endif
         }
+#endif
+    }
+
+    private void InitAppsFlyer(CaletySettings settingsInstance)
+    {
+        // Init AppsFlyer
+#if UNITY_IOS
+        string strAppsFlyerPlatformID = "1163163344";
+#elif UNITY_ANDROID
+        string strAppsFlyerPlatformID = settingsInstance.GetBundleID();
+#else
+        string strAppsFlyerPlatformID = "";
+#endif        
+        AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, TrackingPersistenceSystem.UserID);
+
+#if UNITY_ANDROID
+        AppsFlyerManager.SharedInstance.SetAndroidGCMKey(settingsInstance.m_strGameCenterAppGoogle[settingsInstance.m_iBuildEnvironmentSelected]);
 #endif
     }
 
@@ -142,8 +203,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             TrackingManager.TrackingConfig kTrackingConfig = new TrackingManager.TrackingConfig();
             kTrackingConfig.m_eTrackPlatform = TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
             kTrackingConfig.m_strJSONConfigFilePath = "Tracking/TrackingEvents";
-            kTrackingConfig.m_strStartSessionEventName = "01_START_SESSION";
-            kTrackingConfig.m_strEndSessionEventName = "02_END_SESSION";
+            kTrackingConfig.m_strStartSessionEventName = "game.start";
+			kTrackingConfig.m_strEndSessionEventName = "custom.mobile.stop";
             kTrackingConfig.m_strMergeAccountEventName = "MERGE_ACCOUNTS";
             kTrackingConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion();
             kTrackingConfig.m_strTrackingID = trackingID;
@@ -177,7 +238,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (TrackingPersistenceSystem != null && TrackingPersistenceSystem.IsDirty)
         {
             TrackingPersistenceSystem.IsDirty = false;
-            PersistenceFacade.instance.Save_Request();
+            PersistenceFacade.instance.Save_Request(false);
         }
 
         if (Session_AnyRoundsStarted)

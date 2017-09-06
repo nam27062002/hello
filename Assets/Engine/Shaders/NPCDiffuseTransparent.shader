@@ -22,9 +22,6 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel + Transparent (Spawners)"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-//			#pragma glsl_no_auto_normalization
-//			#pragma fragmentoption ARB_precision_hint_fastest
-//			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#define HG_ENTITIES
 

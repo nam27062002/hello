@@ -104,7 +104,7 @@ public class NetTest : MonoBehaviour
         switch (socialAPI)
         {
             case ESocialAPI.Calety:
-                SocialPlatformManager.SharedInstance.Login();
+                SocialPlatformManager.SharedInstance.Login(true);
                 break;
 
             case ESocialAPI.FGOL:

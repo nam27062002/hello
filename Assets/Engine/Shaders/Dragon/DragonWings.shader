@@ -34,12 +34,10 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 	SubShader{
 		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 		//	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
-		Cull Off
-	//	Cull Front
+//		Cull back
 		ColorMask RGBA
 
 		Pass {
-
 			Stencil
 			{
 				Ref[_StencilMask]
@@ -49,16 +47,16 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 			}
 			ztest less
 			ZWrite on
+			Cull off
 			Blend SrcAlpha OneMinusSrcAlpha
 
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma glsl_no_auto_normalization
-				#pragma fragmentoption ARB_precision_hint_fastest
+//				#pragma glsl_no_auto_normalization
+//				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 				#pragma multi_compile __ SILHOUETTE
-
 
 				#include "UnityCG.cginc" 
 				#include "Lighting.cginc"
@@ -75,11 +73,11 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 				#if HI_DETAIL_ON
 				#define FRESNEL
 				#define NORMALMAP
-				#define SPEC
-	//			#define REFL
+				#define SPECULAR
+	//			#define FXLAYER_REFLECTION
 				#endif
 
-				#define CUTOUT
+				#define CUTOFF
 				#define DOUBLESIDED
 
 				struct appdata_t {

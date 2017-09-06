@@ -28,7 +28,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
     public void Init()
 	{
-		if (adsAvailable)
+		if (FeatureSettingsManager.AreAdsEnabled)
         {
             string interstitialId = "af85208c87c746e49cb88646d60a11f9";
             string rewardId = "242e5f30622549f0ae85de0921842b71";

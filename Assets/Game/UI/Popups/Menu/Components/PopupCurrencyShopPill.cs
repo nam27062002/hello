@@ -225,7 +225,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
                     // So far we just avoid that situation
                     if (Application.internetReachability == NetworkReachability.NotReachable) {
                         OnPurchaseError.Invoke(this);
-                        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+                        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
                     } else {
                         // Start real money transaction flow
                         m_loadingPopupController = PopupManager.PopupLoading_Open();
@@ -264,7 +264,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		else
 		{
 			OnPurchaseError.Invoke(this);
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
@@ -298,18 +298,6 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
 		// Is it this one?
 		if(_sku == m_def.sku) {
-            StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(m_def.sku);
-            string moneyCurrencyCode = null;
-            float moneyPrice = 0f;            
-            if (product != null) {                
-                moneyCurrencyCode = product.m_strCurrencyCode;
-                moneyPrice = product.m_fLocalisedPriceValue;
-            }
-
-            string houstonTransactionID = null; // Not implemented yet
-            string promotionType = null; // Not implemented yet            
-            HDTrackingManager.Instance.Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
-
 			// Stop tracking
 			TrackPurchaseResult(false);
 

@@ -151,7 +151,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		}
 
         // Save persistence
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
 
         // Notify game
         Messenger.Broadcast(GameEvents.CHESTS_PROCESSED);
@@ -204,7 +204,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		Messenger.Broadcast(GameEvents.CHESTS_RESET);
 
         // Save persistence
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
     }
 
 	//------------------------------------------------------------------//
@@ -215,7 +215,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	/// </summary>
 	/// <returns>Whether the manager has been initialized.</returns>
 	public static bool IsReady() {
-		return instance.m_user != null && PersistenceFacade.instance.IsLoadCompleted;
+		return instance.m_user != null && PersistenceFacade.instance.Sync_IsFromLaunchApplicationDone;
 	}
 
 	/// <summary>

@@ -1,455 +1,306 @@
-﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade>
-{    
-    private GameProgressManager Manager;
-    private string m_debugManagerKey = null;   
-    
-    public bool IsLoadCompleted { get; set; } 
+{		 
+    private PersistenceFacadeConfig Config { get; set; }   
 
     public void Init()
     {
-        // If you want to test a particular flow you just need to set the id of the flow to test to m_debugManagerKey
-        //m_debugManagerKey = DEBUG_PM_LOCAL_PERMISSION_ERROR;                
-
-        IsLoadCompleted = false;
-
-        if (FeatureSettingsManager.IsDebugEnabled && !string.IsNullOrEmpty(m_debugManagerKey))
+        PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
+        userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Error_Local_Save_Permission;
+        if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
-            // Test a particular flow
-            Manager = Debug_GetManager(m_debugManagerKey);            
-            if (Manager == null)
+            Config = new PersistenceFacadeConfigDebug(userCaseId);
+        }
+        else
+        {
+            Config = new PersistenceFacadeConfig();
+        }
+
+        Sync_IsFromLaunchApplicationDone = false;
+        Sync_Init();
+        Local_Init();
+        Save_Init();
+    }
+    
+    protected void Update()
+    {
+        if (Sync_Syncer != null)
+        {
+            Sync_Syncer.Update();
+        }
+
+        Save_Update();
+	}
+
+	#region sync
+	private PersistenceSyncer Sync_Syncer { get; set; }
+
+	public PersistenceData Sync_LocalData { get; set; }
+	public PersistenceData Sync_CloudData { get; set; }
+
+	public bool Sync_AreDataInSync { get; set; }
+
+    private bool Sync_IsLoadingCloudFromLaunch { get; set; }
+
+	private void Sync_Init()
+	{
+        Sync_IsLoadingCloudFromLaunch = false;
+        Sync_AreDataInSync = false;
+
+        if (Sync_Syncer == null)
+        {
+            Sync_Syncer = new PersistenceSyncer();
+        }
+        else
+        {
+            Sync_Syncer.Reset(true);
+        }
+
+        string dataName = PersistencePrefs.ActiveProfileName;
+        Sync_LocalData = new PersistenceData(dataName);
+        Sync_CloudData = new PersistenceData(dataName);        
+    }
+
+    public bool Sync_IsFromLaunchApplicationDone { get; set; }    
+
+	public void Sync_FromLaunchApplication(Action<PersistenceStates.ESyncResult> onDone)
+	{
+        // Local load is done first in order to make sure the application is launched as quick as possible
+        PersistenceSyncOpFactory factory = Config.SyncFromLaunchFactory;
+		PersistenceSyncOp localOp = factory.GetLoadLocalOp(Sync_LocalData);
+        PersistenceSyncOp syncOp = factory.GetSyncOp(localOp, null, false);
+
+        Action<PersistenceStates.ESyncResult> onLocalLoad = delegate (PersistenceStates.ESyncResult result)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
             {
-                LogError("No manager defined for " + m_debugManagerKey);
+                Log("FROM LAUNCH: Local loaded");
+            }
+
+            Sync_IsFromLaunchApplicationDone = true;
+            Sync_IsLoadingCloudFromLaunch = true;
+            if (onDone != null)
+            {
+                onDone(result);
+            }
+
+            Action<PersistenceStates.ESyncResult> onCloudLoad = delegate (PersistenceStates.ESyncResult r)
+            {
+                Sync_IsLoadingCloudFromLaunch = false;
+
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    Log("FROM LAUNCH: CLOUD loaded");
+                }
+            };
+
+            // It needs to load the cloud and merge. We use a dummy local load op since it's already loaded. We just want to provide the syncer with the local data
+            localOp = factory.GetLoadLocalOp(Sync_LocalData, false);
+            PersistenceSyncOp cloudOp = factory.GetLoadCloudOp(Sync_CloudData, true);
+            syncOp = factory.GetLoadCloudOp(Sync_CloudData, true);
+            Sync_Perform(localOp, cloudOp, syncOp, onCloudLoad);
+        };
+
+        Sync_Perform(localOp, null, syncOp, onLocalLoad);       
+    }
+
+	public void Sync_FromSettings(Action<PersistenceStates.ESyncResult> onDone)
+	{
+        PersistenceSyncOpFactory factory = Config.SyncFromSettingsFactory;
+
+        // We need to save the current progress so the user won't lose it during the process
+        PersistenceSyncOp localOp = factory.GetSaveLocalOp(Sync_LocalData, false);
+		PersistenceSyncOp cloudOp = factory.GetLoadCloudOp(Sync_CloudData, false);
+		PersistenceSyncOp syncOp = factory.GetSyncOp(localOp, cloudOp, false);
+		Sync_Perform(localOp, cloudOp, syncOp, onDone);
+	}
+
+	private void Sync_Perform(PersistenceSyncOp localOp, PersistenceSyncOp cloudOp, 
+	                          PersistenceSyncOp syncOp, Action<PersistenceStates.ESyncResult> onDone)
+	{
+		Action<PersistenceStates.ESyncResult> onSyncDone = delegate(PersistenceStates.ESyncResult result)
+		{
+			if (onDone != null)
+			{
+				onDone(result);
+				onDone = null;
+			}
+
+            // Syncs are considered in sync if all ops have been successful
+            Sync_AreDataInSync = (localOp != null && localOp.Result == PersistenceStates.ESyncResult.Success &&
+                                  cloudOp != null && cloudOp.Result == PersistenceStates.ESyncResult.Success &&
+                                  syncOp != null && syncOp.Result == PersistenceStates.ESyncResult.Success);
+
+            Log("Sync DONE AreDataInSync = " + Sync_AreDataInSync);
+		};
+
+		Sync_Syncer.Sync(localOp, cloudOp, syncOp, onSyncDone);
+	}
+
+    public bool Sync_IsSyncing()
+    {
+        return Sync_Syncer.IsSyncing();
+    }
+	#endregion
+
+	#region save
+    private float Save_TimeToPerform { get; set; }
+
+    private bool Save_IsPerforming { get; set; }
+
+    private void Save_Init()
+    {
+        Save_TimeToPerform = -1;
+        Save_IsPerforming = false;
+    }
+
+	public void Save_Request(bool immediate=false)
+	{        
+		if (immediate)
+		{
+            Save_Perform();
+		}
+        else
+        {
+            Save_TimeToPerform = 0f;
+        }
+	}
+
+    /// <summary>
+    /// Performs save game. Only local save supported so far
+    /// </summary>    
+	private void Save_Perform()
+	{
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {        
+            Log("SAVE Trying to save");            
+        }
+
+        Save_TimeToPerform = -1;
+
+        // Since the cloud load is not blocker because we want the application to start as soon as the local persistence has been loaded then, taking into condiseration that loading the 
+        // cloud persistence can take long, it could happen that a Save is requested. In this case we just save the local persistence in order to avoid any losses
+        if (Sync_IsLoadingCloudFromLaunch)
+        {
+            // It's saved only if the local persistence is not locked
+            if (!Sync_Syncer.IsLocalLocked())
+            {
+                Sync_LocalData.Save();
+                Save_OnPerformed(true);
             }
         }
         else
+        {        
+            PersistenceSyncOpFactory factory = Config.SaveFactory;
+            PersistenceSyncOp localOp = factory.GetSaveLocalOp(Sync_LocalData, false);
+            PersistenceSyncOp cloudOp = null;//factory.GetLoadCloudOp(Sync_CloudData, false, true);
+            PersistenceSyncOp syncOp = factory.GetSyncOp(localOp, cloudOp, false);
+
+            Action<PersistenceStates.ESyncResult> onSaveDone = delegate (PersistenceStates.ESyncResult result)
+            {
+                Save_OnPerformed(result == PersistenceStates.ESyncResult.Success);
+            };
+
+            Sync_Perform(localOp, cloudOp, syncOp, onSaveDone);
+        }        
+	}
+
+    private void Save_OnPerformed(bool success)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Manager = new PersistenceManagerImp();            
+            if (success)
+            {
+                Log("SAVE completed successfully");
+            }
+            else
+            {
+                LogWarning("SAVE couldn't be completed successfully");
+            }
         }
 
-        Manager.Init();
-
-        Systems_Init();
-        Save_Reset();
-        Sync_Reset();
-
-        GameServerManager.SharedInstance.Configure();
-        GameServerManager.SharedInstance.Auth(null);
+        // If success then 
+        Save_TimeToPerform = (success) ? -1 : 30f;
     }
 
-    public void Reset()
+    private void Save_Update()
     {
-        Systems_Reset();        
-    }    
-    
-    public void Update()
-    {        
-        if (Sync_IsRunning())
+        if (Save_TimeToPerform > -1)
         {
-            Sync_Update();
-        }
-        else
-        {
-            // Save is not allowed while syncing
-            Save_TimeLeftToSave -= Time.unscaledDeltaTime;
-            if (Save_TimeLeftToSave <= 0f)
-            {
+            Save_TimeToPerform -= Time.deltaTime;
+            if (Save_TimeToPerform < 0)
+            {                
                 Save_Perform();
             }
         }
-    }    
-
-    #region sync
-    public enum ESyncFrom
-    {
-        None,
-        FirstLoading,
-        FromSettings
     }
+	#endregion
 
-    private ESyncFrom Sync_From { get; set; }
+	#region local
+	public UserPersistenceSystem Local_UserPersistenceSystem { get; set; }
 
-    private enum ESyncState
-    {
-        None,
-        GettingPersistences,
-        Syncing              
-    }
+	private void Local_Init()
+	{
+        Local_UserPersistenceSystem = UsersManager.currentUser;
+        Sync_LocalData.Systems_RegisterSystem(Local_UserPersistenceSystem);        
 
-    private ESyncState m_syncState;
-    private ESyncState Sync_State
-    {
-        get
+        TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        if (trackingSystem != null)
         {
-            return m_syncState;
-        }
-
-        set
-        {
-            m_syncState = value;
-            switch (m_syncState)
-            {
-                case ESyncState.GettingPersistences:
-                    Sync_LoadLocalPersistence();
-                    
-                    /*
-                    GameServerManager.SharedInstance.Configure();
-                    GameServerManager.SharedInstance.Auth(null);
-                    */
-                    break;
-
-                case ESyncState.Syncing:
-                    Sync_ProcessSyncing();
-                    break;
-            }
-        }
-    }
-
-    private void Sync_LoadLocalPersistence()
-    {
-        Manager.LocalProgress_Load(LocalPersistence_ActiveProfileID);        
-    }
-
-    private void Sync_ProcessSyncing()
-    {
-        bool cloudPersistenceIsReady = false;
-        bool cloudPersistenceIsValid = false;
-
-        // Checks local persistence status
-        switch (Manager.LocalProgress_Data.LoadState)
-        {
-            case PersistenceStates.LoadState.Corrupted:
-            {
-                bool useCloud = cloudPersistenceIsReady && cloudPersistenceIsValid;
-
-                Action solveProblem = delegate ()
-                {
-                    if (!useCloud)
-                    {
-                        // Local persistence has to be reseted to the default one
-                        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, PersistenceUtils.GetDefaultDataFromProfile());
-                    }
-                    Sync_OnLoadedSuccessfully();
-                };
-
-                Popups_OpenLoadSaveCorruptedError(useCloud, solveProblem);                
-            }
-            break;
-
-            case PersistenceStates.LoadState.NotFound:
-            {
-                // If it hasn't been found then the default persistence is stored locally and we proces the Syncing state again
-                Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, PersistenceUtils.GetDefaultDataFromProfile());
-                Sync_ProcessSyncing();
-            }
-            break;
-
-            case PersistenceStates.LoadState.PermissionError:
-            {
-                Action solveProblem = delegate ()
-                {
-                    // We need to try to read local persistence again
-                    Sync_LoadLocalPersistence();
-
-                    // And check its status again
-                    Sync_ProcessSyncing();
-                };
-
-                // A popup asking the user to check internal storage permissions and try again
-                Popups_OpenLocalSavePermissionError(solveProblem);
-            }
-            break;
-
-            case PersistenceStates.LoadState.OK:
-            {
-                // The application start notification is sent to the TrackingManager if we're in the first loading and the local persistence is ok (if it's corrupted then
-                // some critical data required by tracking are not going to be available, so we have to fix the problem before sending tracking events
-                if (Sync_From == ESyncFrom.FirstLoading)
-                {
-                    HDTrackingManager.Instance.Notify_ApplicationStart();
-                }
-
-                Sync_OnLoadedSuccessfully();
-            }
-            break;
-        }
-    }
-
-    private bool Sync_IsRunning() { return Sync_State != ESyncState.None; }
-    private Action Sync_OnDone { get; set; }
-
-    private void Sync_Reset()
-    {
-        Sync_From = ESyncFrom.None;
-        Sync_State = ESyncState.None;
-        Sync_OnDone = null;
-    }
-
-    public void Sync_Persistences(ESyncFrom from, Action onDone)
-    {
-        if (!Sync_IsRunning())
-        {
-            AuthManager.Instance.LoadUser();
-
-            Sync_From = from;
-            Sync_State = ESyncState.GettingPersistences;
-            Sync_OnDone = onDone;                        
-        }
-        else if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            LogError("Sync is already running");
-        }
-    }
-    
-
-    private void Sync_OnLoadedSuccessfully()
-    {
-        // Initialize managers needing data from the loaded profile
-        GlobalEventManager.SetupUser(UsersManager.currentUser);
-
-        IsLoadCompleted = true;        
-
-        if (Sync_OnDone != null)
-        {
-            Sync_OnDone();            
-        }
-
-        Sync_Reset();
-    }
-
-    private void Sync_Update()
-    {
-        switch (Sync_State)
-        {
-            case ESyncState.GettingPersistences:
-            {
-                bool localPersistenceIsReady = Manager.LocalProgress_Data != null;
-                bool needsCloudPersistence = false;
-                bool cloudPersistenceIsReady = false;
-
-                // Examine local progress
-                if (localPersistenceIsReady)
-                {
-                    switch (Manager.LocalProgress_Data.LoadState)
-                    {
-                        case PersistenceStates.LoadState.Corrupted:
-                            // We need to wait for the cloud response because if the user has saved some progress in the cloud then the user's local progress
-                            // can be restored to the cloud progress
-                            //needsCloudPersistence = true;                        
-                            break;
-                    }
-                }
-
-                if (localPersistenceIsReady &&
-                (!needsCloudPersistence || cloudPersistenceIsReady))
-                {
-                    Sync_State = ESyncState.Syncing;
-                }
-            }
-            break;            
-        }
-    }
-    #endregion
-
-    #region save
-    // This region is responsible for saving persistence, which is saved periodically or on demand
+            Sync_LocalData.Systems_RegisterSystem(trackingSystem);            
+        }        
+	}
 
     /// <summary>
-    /// Time in seconds between persistence saves. Persistence is saved periodically every SAVE_PERIOD_TIME seconds
+    /// Resets the current local persistence to the default one. This method should be called only for DEBUG purposes.
     /// </summary>
-    private const float SAVE_PERIOD_TIME = 60.0f;
-
-    /// <summary>
-    /// Time left in seconds for the next persistence save
-    /// </summary>
-    private float Save_TimeLeftToSave { get; set; }
-
-    private enum ESaveType
+    public void Local_ResetToDefault()
     {
-        Automatic,
-        Requested
-    }
-
-    private void Save_Reset()
-    {
-        Save_TimeLeftToSave = SAVE_PERIOD_TIME;
-    }
-
-    public void Save_ResetToDefault()
-    {
-        Manager.LocalProgress_ResetToDefault(LocalPersistence_ActiveProfileID, PersistenceUtils.GetDefaultDataFromProfile());        
-    }
-
-    /// <summary>
-    /// Request a persistence save.
-    /// </summary>
-    /// <param name="immediately">When <c>true</c> the save is performed immediately. When <c>false</c> the save is performed at next tick. Use <c>true</c> only 
-    /// when you can't wait a tick, for example, when the game is shutting down.</param>
-    public void Save_Request(bool immediately=false)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
+        if (Sync_LocalData != null)
         {
-            Log("Save_Request");
-        }
+            SimpleJSON.JSONClass defaultPersistence = PersistenceUtils.GetDefaultDataFromProfile(Sync_LocalData.Key);
+            Sync_LocalData.LoadFromString(defaultPersistence.ToString());
 
-        // Immediately means that we need to perform the persistence save right now because next tick might not happen (exemple when the game is shutting down),
-        // otherwise we delay the save until the next tick. This way several requests done in the same tick will be resolved with a single save
-        if (immediately)
-        {
-            Save_Perform();
-        }
-        else
-        {
-            Save_TimeLeftToSave = 0f;
+            // Saves the new local persistence. We don't need to use any syncer because this method is called only for debug purposes
+            Sync_LocalData.Save();
         }
     }
+	#endregion
 
-    private void Save_Perform()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("Save_Perform");
-        }
+	#region social
+	public bool Social_IsLoggedIn()
+	{
+		return false;
+	}
+	#endregion	
 
-        Save_Reset();
-        Manager.LocalProgress_SaveToDisk();        
-    }
-    #endregion
-
-    #region local_persistence
-
-    // Default persistence profile - it's stored in the player preferences, that way can be set from the editor and read during gameplay
-    public static string LocalPersistence_ActiveProfileID
-    {
-        get { return PlayerPrefs.GetString("activeProfile", PersistenceProfile.DEFAULT_PROFILE); }
-        set
-        {
-            PlayerPrefs.SetString("activeProfile", value);            
-        }
-    }    
-    #endregion
-
-    #region systems
-    private UserPersistenceSystem Systems_User { get; set; }
-    private TrackingPersistenceSystem Systems_Tracking { get; set; }
-
-    private void Systems_Init()
-    {        
-        Systems_User = UsersManager.currentUser;
-        Manager.Systems_RegisterSystem(Systems_User);
-
-        Systems_Tracking = HDTrackingManager.Instance.TrackingPersistenceSystem;
-        if (Systems_Tracking != null)
-        {
-            Manager.Systems_RegisterSystem(Systems_Tracking);
-        }
-    }
-
-    private void Systems_Reset()
-    {
-        // If has to be unregistered because another user object will be created every time the user is led to the loading scene
-        if (Systems_User != null)
-        {
-            Manager.Systems_UnregisterSystem(Systems_User);
-            Systems_User = null;
-        }
-
-        if (Systems_Tracking != null)
-        {
-            Systems_Tracking.Reset();
-            Manager.Systems_UnregisterSystem(Systems_Tracking);
-            Systems_Tracking = null;
-        }
-    }
-    #endregion
-
-    #region debug
-    private const string LOG_CHANNEL = "PersistenceFacade:";
-
-    private void Log(string msg)
-    {
-        Debug.Log(LOG_CHANNEL + msg);
-    }
-
-    private void LogError(string msg)
-    {
-        Debug.LogError(LOG_CHANNEL + msg);
-    }
-
-    private const string DEBUG_PM_LOCAL_CORRUPTED = "LocalCorrupted";
-    private const string DEBUG_PM_LOCAL_NOT_FOUND = "LocalNotFound";
-    private const string DEBUG_PM_LOCAL_PERMISSION_ERROR = "LocalPermissionError";    
-
-    private GameProgressManager Debug_GetManager(string managerKey)
-    {                
-        PersistenceManagerDebug manager = new PersistenceManagerDebug(managerKey);
-
-        switch (managerKey)
-        {
-            case DEBUG_PM_LOCAL_CORRUPTED:
-            {
-                Queue<PersistenceStates.LoadState> states = new Queue<PersistenceStates.LoadState>();
-                states.Enqueue(PersistenceStates.LoadState.Corrupted);
-                manager.ForcedLoadStates = states;
-            }
-            break;
-
-            case DEBUG_PM_LOCAL_NOT_FOUND:
-            {
-                Queue<PersistenceStates.LoadState> states = new Queue<PersistenceStates.LoadState>();
-                states.Enqueue(PersistenceStates.LoadState.NotFound);
-                manager.ForcedLoadStates = states;
-            }
-            break;
-
-            case DEBUG_PM_LOCAL_PERMISSION_ERROR:
-            {
-                Queue<PersistenceStates.LoadState> states = new Queue<PersistenceStates.LoadState>();
-
-                // Two are enqueued so we can test the case where the problem is not fixed and the case where the problem is fixed
-                for (int i = 0; i < 2; i++)
-                {
-                    states.Enqueue(PersistenceStates.LoadState.PermissionError);
-                }
-
-                manager.ForcedLoadStates = states;
-            }
-            break;
-
-            default:
-                manager = null;
-                break;
-        }
-
-        return manager;        
-    }
-    #endregion
-
-    #region popups
-    /// <summary>
+	#region popups
+	/// <summary>
     /// This popup is shown when the local save is corrupted when the game was going to continue locally
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/20%29Local+save+corrupted
     /// </summary>
     /// <param name="cloudEver">Whether or not the user has synced with server</param>    
-    private void Popups_OpenLoadSaveCorruptedError(bool cloudEver, Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+	public static void Popups_OpenLoadSaveCorruptedError(bool cloudEver, Action onConfirm)
+	{        
+		PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
         config.MessageTid = (cloudEver) ? "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-    }
+        PopupManager.PopupMessage_Open(config);        
 
-    /// <summary>
+        //Popup popup = FlowController.Instance.OpenPopup("Local save corrupted. Reset?");
+		//popup.AddButton("Ok", onConfirm, true);
+	}
+
+	/// <summary>
     /// This popup is shown when the access to the local save file is not authorized by the device
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/18%29No+access+to+local+data
     /// </summary>    
-    public static void Popups_OpenLocalSavePermissionError(Action onConfirm)
-    {
+    public static void Popups_OpenLocalLoadPermissionError(Action onConfirm)
+    {		
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOAD_FAILED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_LOAD_FAILED_DESC";
@@ -458,6 +309,88 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
+        
+		//Popup popup = FlowController.Instance.OpenPopup("No permission to load local persistence. Try again?");
+		//popup.AddButton("Retry", onConfirm, true);
     }
+
+	/// <summary>
+    /// This popup is shown when starting the game if there's no free disk space to store the local save
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/27%29No+disk+space
+    /// </summary>    
+    public static void Popups_OpenLocalSaveDiskOutOfSpaceError(Action onConfirm)
+    {		
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_DISABLED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_DISABLED_SPACE_DESC";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+     
+		//Popup popup = FlowController.Instance.OpenPopup("No space to save local persistence. Try again?");
+		//popup.AddButton("Retry", onConfirm, true);
+    }
+
+    /// <summary>
+    /// This popup is shown when starting the game if there's no access to disk to store the local save.
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/28%29No+disk+access
+    /// </summary>    
+    public static void Popups_OpenLocalSavePermissionError(Action onConfirm)
+    {		
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_DISABLED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_DISABLED_ACCESS_DESC";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+     
+		//Popup popup = FlowController.Instance.OpenPopup("No permission to save local persistence. Try again?");
+		//popup.AddButton("Retry", onConfirm, true);
+    }
+
+
+    /// <summary>
+    /// This popup is shown when there's no internet connection
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29No+internet+connection
+    /// </summary>    
+    public static void Popups_OpenErrorConnection(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
+        config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
+        config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+        
+		//Popup popup = FlowController.Instance.OpenPopup("No connection.");
+		//popup.AddButton("Ok", onConfirm, true);
+    } 
     #endregion    
+
+	#region log
+	private const string LOG_CHANNEL = "Persistence:";
+
+    public static void Log(string msg)
+    {
+        Debug.Log(LOG_CHANNEL + msg);
+    }
+
+    public static void LogError(string msg)
+    {
+        Debug.LogError(LOG_CHANNEL + msg);
+    }
+
+	public static void LogWarning(string msg)
+    {
+        Debug.LogWarning(LOG_CHANNEL + msg);
+    }
+	#endregion
 }
+
+

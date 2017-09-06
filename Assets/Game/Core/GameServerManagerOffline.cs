@@ -265,7 +265,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
-			eventData.Add("topReward", CreateEventRewardData(0.01f, "pet", "pet_24", -1));
+			//eventData.Add("topReward", CreateEventRewardData(0.01f, "pet", "pet_24", -1));
+			eventData.Add("topReward", CreateEventRewardData(0.01f, Metagame.RewardGoldenFragments.TYPE_CODE, "", 20));
 
 			// Bonuses
 			eventData.Add("bonusDragon", "dragon_reptile");
@@ -600,7 +601,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					top.Add(Metagame.RewardEgg.TYPE_CODE, "egg_premium");
 				}
 				*/
-				eventData.Add("r", 3);
+				eventData.Add("r", 2);
 				eventData.Add("top", true);
 			}
 			res["response"] = eventData.ToString();

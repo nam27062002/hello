@@ -39,9 +39,14 @@ public abstract class FunnelData : TrackingEventData {
 		return m_stepNames[_index];
 	}
 
+	/// <summary>
+	/// Gets the duration in milliseconds of the step.
+	/// </summary>
+	/// <returns>The step duration in milliseconds.</returns>
+	/// <param name="_index">Setp index.</param>
 	protected int GetStepDuration(int _index) {
 		if (_index > m_currentStep + 1) {
-			Debug.LogError("[" + name + "] Game is Notifying the step " + m_stepNames[_index] + " but the expected step is " + m_stepNames[m_currentStep + 1]);
+			Debug.LogWarning("[" + name + "] Game is Notifying the step " + m_stepNames[_index] + " but the expected step is " + m_stepNames[m_currentStep + 1]);
 		}
 
 		float now = Time.realtimeSinceStartup;
@@ -54,11 +59,16 @@ public abstract class FunnelData : TrackingEventData {
 		m_stepTimeStamp[_index] = now;
 		m_currentStep = _index;
 
-		return (int)(now - last);
+		return (int)((now - last) * 1000);
 	}
 
+	/// <summary>
+	/// Gets the step total time in milliseconds since the start of the funnel.
+	/// </summary>
+	/// <returns>The step total time in milliseconds.</returns>
+	/// <param name="_index">Step index.</param>
 	protected int GetStepTotalTime(int _index) {
-		return (int)(m_stepTimeStamp[_index] - m_stepTimeStamp[0]);
+		return (int)((m_stepTimeStamp[_index] - m_stepTimeStamp[0]) * 1000);
 	}
 
 }

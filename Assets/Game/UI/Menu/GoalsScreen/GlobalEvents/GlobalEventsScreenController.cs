@@ -82,7 +82,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-
 	}
 
 	/// <summary>
@@ -99,6 +98,16 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Select active panel based on current global event state.
 	/// </summary>
 	public void Refresh() {
+
+		if ( GlobalEventManager.currentEvent != null ){
+			if (GlobalEventManager.currentEvent.isRewardAvailable){
+				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.REWARD).GetComponent<EventRewardScreen>();
+				scr.StartFlow();
+				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.REWARD);
+				return;
+			}
+		}
+
 		SelectPanel();
 
 		// Refresh active panel
@@ -199,21 +208,21 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// The Facebook button has been pressed.
 	/// </summary>
 	public void OnFacebookButton() {
-		Application.OpenURL("https://www.facebook.com/UbisoftMobile/");
+		Application.OpenURL("https://www.facebook.com/HungryDragonGame");
 	}
 
 	/// <summary>
 	/// The Twitter button has been pressed.
 	/// </summary>
 	public void OnTwitterButton() {
-		Application.OpenURL("https://twitter.com/UbisoftMobile");
+		Application.OpenURL("https://twitter.com/_HungryDragon");
 	}
 
 	/// <summary>
 	/// The Instagram button has been pressed.
 	/// </summary>
 	public void OnInstagramButton() {
-		Application.OpenURL("https://www.instagram.com/ubisoftmobile/");
+		Application.OpenURL("https://www.instagram.com/hungrydragongame");
 	}
 
 	/// <summary>

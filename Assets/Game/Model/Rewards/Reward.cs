@@ -65,8 +65,10 @@ namespace Metagame {
 			type = type.ToLower();
 			
 			string data = "";
-			if(_data.ContainsKey("sku")) 	data = _data["sku"];
-			if(_data.ContainsKey("amount")) data = _data["amount"];
+			if(_data.ContainsKey("sku")) 	
+				data = _data["sku"];
+			else if(_data.ContainsKey("amount")) 
+				data = _data["amount"];
 
 			return CreateFromTypeCode(type, data, _economyGroup);
 		}
@@ -101,7 +103,10 @@ namespace Metagame {
 		//------------------------------------------------------------------------//
 		// Mandatory:
 		protected Rarity m_rarity = Rarity.COMMON;
-		public Rarity rarity { get { return m_rarity; } }
+		public Rarity rarity { 
+			get { return m_rarity; } 
+			set { m_rarity = value; }
+		}
 
 		protected string m_type = "";
 		public string type { get { return m_type; } }

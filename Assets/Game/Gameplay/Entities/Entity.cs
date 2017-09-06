@@ -28,7 +28,7 @@ public class Entity : IEntity {
 
 	/************/
 
-	private CircleArea2D m_bounds;
+	protected CircleArea2D m_bounds;
 	public override CircleArea2D circleArea { get{ return m_bounds; } }
 
 	private Reward m_reward;
@@ -45,6 +45,7 @@ public class Entity : IEntity {
 	private DragonTier m_burnableFromTier = 0;
 	public DragonTier burnableFromTier { get { return m_burnableFromTier; } }
 
+	private bool m_isEdibleByZ;
 	private bool m_isEdible;
 	private DragonTier m_edibleFromTier = 0;
 	public DragonTier edibleFromTier { get { return m_edibleFromTier; } }
@@ -72,7 +73,7 @@ public class Entity : IEntity {
 
     private float m_checkOnScreenTimer = 0;
 
-	private GameCamera m_newCamera;
+	protected GameCamera m_newCamera;
 
 
 	//-----------------------------------------------
@@ -162,9 +163,11 @@ public class Entity : IEntity {
 
 		m_health = m_maxHealth;
 
+		m_isEdibleByZ = true;
+
 		m_newCamera = InstanceManager.gameCamera;
 
-        m_spawned = true;		
+        m_spawned = true;
     }
 
     public override void Disable(bool _destroyed) {		
@@ -186,7 +189,7 @@ public class Entity : IEntity {
     /// </summary>
     /// <returns>The reward to be given to the player when killing this unit.</returns>
     /// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
-    public Reward GetOnKillReward(bool _burnt) {
+    public override Reward GetOnKillReward(bool _burnt) {
 		// Create a copy of the base rewards and tune them
 		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
@@ -216,31 +219,26 @@ public class Entity : IEntity {
 	}
 
 	public bool IsEdible() {
-		/*if (m_hideNeedTierMessage) {
-			return IsEdible(InstanceManager.player.data.tier);
-		}
-		*/
-		return allowEdible && m_isEdible;
+		return allowEdible && m_isEdibleByZ && m_isEdible;
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return allowEdible && m_isEdible && (m_edibleFromTier <= _tier);
+		return allowEdible && m_isEdibleByZ && m_isEdible && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {
-		return allowEdible && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
+		return allowEdible && m_isEdibleByZ && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
 	}
 
 	public bool CanBeGrabbed( DragonTier _tier ){
-		return allowEdible && m_canBeGrabbed && m_grabFromTier <= _tier;
+		return allowEdible && m_isEdibleByZ && m_canBeGrabbed && m_grabFromTier <= _tier;
 	}
 
 	public bool CanBeLatchedOn( DragonTier _tier){
-		return allowEdible && m_canBeLatchedOn && m_latchFromTier <= _tier;
+		return allowEdible && m_isEdibleByZ && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
-	override public bool CanBeSmashed()
-	{
+	override public bool CanBeSmashed() {
 		return true;
 	}
 
@@ -269,6 +267,8 @@ public class Entity : IEntity {
                 if (m_newCamera != null) m_isOnScreen = m_newCamera.IsInsideActivationMinArea(transform.position);
                 m_checkOnScreenTimer = 0.5f;
             }
+
+			m_isEdibleByZ = m_machine.position.z < 14f;
         }
 	}
 

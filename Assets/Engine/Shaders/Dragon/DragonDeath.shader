@@ -59,8 +59,8 @@ SubShader {
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma glsl_no_auto_normalization
-			#pragma fragmentoption ARB_precision_hint_fastest
+//			#pragma glsl_no_auto_normalization
+//			#pragma fragmentoption ARB_precision_hint_fastest
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 			#pragma multi_compile __ SILHOUETTE
 
@@ -80,11 +80,11 @@ SubShader {
 			#if HI_DETAIL_ON
 			#define FRESNEL
 			#define NORMALMAP
-			#define SPEC
+			#define SPECULAR
 
 			#endif
 
-			#define CUTOUT
+			#define CUTOFF
 			#define DOUBLESIDED
 
 			struct appdata_t {

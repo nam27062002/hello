@@ -51,8 +51,8 @@ namespace AI {
 							object[] param = m_machine.GetSignalParams(Signals.Type.Trigger);
 							if (param != null && param.Length > 0 && ((GameObject)param[0]).CompareTag("Player")) {
 								m_dragon.ReceiveDamage(m_data.damage, m_data.type, m_machine.transform);
+								m_timer = m_data.delay;
 							}
-							m_timer = m_data.delay;
 						}
 					}
 				}

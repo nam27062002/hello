@@ -70,7 +70,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		GlobalEventManager.ClearCurrentEvent();
 
         // Clear persistence and sets the default persistence
-        PersistenceFacade.instance.Save_ResetToDefault();
+        PersistenceFacade.instance.Local_ResetToDefault();
 
         UsersManager.Reset();        
 
@@ -124,7 +124,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		}
 
         // Save persistence
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
     }
 
 	/// <summary>
@@ -171,7 +171,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
 
         // Save persistence
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
 
         // Simulate a dragon selected event so everything is refreshed
         Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
@@ -233,7 +233,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
 
         // Save persistence
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
 
         // Simulate a dragon selected event so everything is refreshed
         Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
@@ -249,8 +249,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Add it to the inventory
 		int slotIdx = EggManager.AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));
 
-		// If successful, save persistence
-		if(slotIdx >= 0) PersistenceFacade.instance.Save_Request();
+        // If successful, save persistence
+        PersistenceFacade.instance.Save_Request(false);
     }
 
 	/// <summary>
@@ -268,7 +268,7 @@ public class CPProgressionCheats : MonoBehaviour {
             }
 
             // Save persistence
-            PersistenceFacade.instance.Save_Request();
+            PersistenceFacade.instance.Save_Request(false);
         }
     }
 
@@ -297,7 +297,7 @@ public class CPProgressionCheats : MonoBehaviour {
 			}
 
             // Save persistence
-            PersistenceFacade.instance.Save_Request();
+            PersistenceFacade.instance.Save_Request(false);
         }
 	}
 
@@ -315,7 +315,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.goldenEggsCollected = 100; // Dirty, but should do the trick xD
 
         // Save persistence
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
     }
 
 	/// <summary>
@@ -339,7 +339,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
         // Save!
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
     }
 
 	/// <summary>
@@ -383,7 +383,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (long)Random.Range(0, EggManager.goldenEggRequiredFragments), 0);
 
         // Save!
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
     }
 
 	/// <summary>
@@ -411,7 +411,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		UsersManager.currentUser.goldenEggsCollected = 0;
 
         // Save!
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
     }
 
     /// <summary>
@@ -447,7 +447,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	public void OnResetMapUpgrades() {
 		// Not much to do:
 		UsersManager.currentUser.mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime(); // Already expired
-        PersistenceFacade.instance.Save_Request();
+        PersistenceFacade.instance.Save_Request(false);
     }
 
     /// <summary>

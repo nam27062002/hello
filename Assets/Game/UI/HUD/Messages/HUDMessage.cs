@@ -201,8 +201,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.DRUNK:				Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
-			case Type.KEY_FOUND:			Messenger.AddListener<CollectibleKey>(GameEvents.KEY_COLLECTED, OnKeyCollected);			break;
-			case Type.KEY_LIMIT:			Messenger.AddListener<CollectibleKey>(GameEvents.KEY_COLLECTED_FAIL, OnKeyCollectedFail);			break;
+			case Type.KEY_FOUND:			Messenger.AddListener(GameEvents.TICKET_COLLECTED, OnKeyCollected);			break;
+			case Type.KEY_LIMIT:			Messenger.AddListener(GameEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 		}
 	}
 
@@ -231,8 +231,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.DRUNK:				Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
-			case Type.KEY_FOUND:			Messenger.RemoveListener<CollectibleKey>(GameEvents.KEY_COLLECTED, OnKeyCollected);			break;
-			case Type.KEY_LIMIT:			Messenger.RemoveListener<CollectibleKey>(GameEvents.KEY_COLLECTED_FAIL, OnKeyCollectedFail);			break;
+			case Type.KEY_FOUND:			Messenger.RemoveListener(GameEvents.TICKET_COLLECTED, OnKeyCollected);			break;
+			case Type.KEY_LIMIT:			Messenger.RemoveListener(GameEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 		}
 	}
 
@@ -570,7 +570,7 @@ public class HUDMessage : MonoBehaviour {
 	/// A key has been found while playing.
 	/// </summary>
 	/// <param name="_key">The found key.</param>
-	private void OnKeyCollected(CollectibleKey _key) {
+	private void OnKeyCollected() {
 		Show();
 	}
 
@@ -578,7 +578,7 @@ public class HUDMessage : MonoBehaviour {
 	/// A key has been found while playing, but we failed to collect it (limit reached).
 	/// </summary>
 	/// <param name="_key">The found key.</param>
-	private void OnKeyCollectedFail(CollectibleKey _key) {
+	private void OnKeyCollectedFail() {
 		Show();
 	}
 }

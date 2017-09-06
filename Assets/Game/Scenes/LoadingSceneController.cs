@@ -105,7 +105,8 @@ public class LoadingSceneController : SceneController {
     // References
 	[SerializeField] private TextMeshProUGUI m_loadingTxt = null;
 	[SerializeField] private Slider m_loadingBar = null;
-	[SerializeField] private InitRefObject m_savingReferences;	// this will point to an asset that points to lozalication and rules to make sure they get into the apk and not in the obb file
+	public InitRefObject m_savingReferences;	// this will point to an asset that points to lozalication and rules to make sure they get into the apk and not in the obb file
+	public GameObject m_messagePopup;
 
 	// Internal
 	private float timer = 0;
@@ -137,7 +138,12 @@ public class LoadingSceneController : SceneController {
 		base.Awake();
 		ContentManager.InitContent();
 		// Check required references
-		DebugUtils.Assert(m_loadingTxt != null, "Required component!");       
+		DebugUtils.Assert(m_loadingTxt != null, "Required component!"); 
+
+		// Used for android permissions
+		PopupManager.CreateInstance(true);
+        // Initialize localization
+        SetSavedLanguage();      
     }    
 
 	/// <summary>
@@ -155,55 +161,7 @@ public class LoadingSceneController : SceneController {
         // Content and persistence
 		//DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
 
-        // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
-        // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
-        ApplicationManager.CreateInstance();
 
-        HDTrackingManager.Instance.Init();
-
-		UsersManager.CreateInstance();
-
-        // Game
-        PersistenceFacade.CreateInstance();
-        PersistenceFacade.instance.Init();
-
-        DragonManager.CreateInstance(true);
-		LevelManager.CreateInstance(true);
-		MissionManager.CreateInstance(true);
-		ChestManager.CreateInstance(true);
-		RewardManager.CreateInstance(true);
-		EggManager.CreateInstance(true);
-		EggManager.InitFromDefinitions();
-
-		// Settings and setup
-		GameSettings.CreateInstance(false);
-
-		// Tech
-		GameSceneManager.CreateInstance(true);
-		FlowManager.CreateInstance(true);
-		PoolManager.CreateInstance(true);
-		ParticleManager.CreateInstance(true);
-		PopupManager.CreateInstance(true);
-		FirePropagationManager.CreateInstance(true);
-		SpawnerManager.CreateInstance(true);
-		SpawnerAreaManager.CreateInstance(true);
-		EntityManager.CreateInstance(true);
-		InstanceManager.CreateInstance(true);
-
-        // The stuff that this manager handles has to be done only once, regardless the game reboots
-        FeatureSettingsManager.CreateInstance(false);
-
-        GameAds.CreateInstance(true);
-        GameAds.instance.Init();        
-
-        // Initialize localization
-        SetSavedLanguage();
-
-        if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
-            // Initialize local mini-tracking session!
-            // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
-            MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
-        }
 		#if UNITY_ANDROID
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             if (settingsInstance != null)
@@ -338,15 +296,65 @@ public class LoadingSceneController : SceneController {
 
         switch (state)
         {
-            case State.WAITING_SAVE_FACADE:                
+            case State.WAITING_SAVE_FACADE:
+            {
+				// [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
+        		// No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
+        		ApplicationManager.CreateInstance();
+
+				// The stuff that this manager handles has to be done only once, regardless the game reboots
+				FeatureSettingsManager.CreateInstance(false);
+
+				if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
+		            // Initialize local mini-tracking session!
+		            // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
+		            MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
+		        }
+
+				HDTrackingManager.Instance.Init();
+				UsersManager.CreateInstance();
+
+		        // Game
+		        PersistenceFacade.CreateInstance();
+		        PersistenceFacade.instance.Init();
+
+		        DragonManager.CreateInstance(true);
+				LevelManager.CreateInstance(true);
+				MissionManager.CreateInstance(true);
+				ChestManager.CreateInstance(true);
+				RewardManager.CreateInstance(true);
+				EggManager.CreateInstance(true);
+				EggManager.InitFromDefinitions();
+
+				// Settings and setup
+				GameSettings.CreateInstance(false);
+
+				// Tech
+				GameSceneManager.CreateInstance(true);
+				FlowManager.CreateInstance(true);
+				PoolManager.CreateInstance(true);
+				ParticleManager.CreateInstance(true);
+				FirePropagationManager.CreateInstance(true);
+				SpawnerManager.CreateInstance(true);
+				SpawnerAreaManager.CreateInstance(true);
+				EntityManager.CreateInstance(true);
+				InstanceManager.CreateInstance(true);
+
+		        GameAds.CreateInstance(true);
+		        GameAds.instance.Init();
+                 
+            	ControlPanel.CreateInstance();
                 DragonManager.SetupUser(UsersManager.currentUser);
                 MissionManager.SetupUser(UsersManager.currentUser);
                 EggManager.SetupUser(UsersManager.currentUser);
                 ChestManager.SetupUser(UsersManager.currentUser);
                 GameStoreManager.SharedInstance.Initialize();
+#if UNITY_ANDROID
+				ApplicationManager.instance.GameCenter_Login();
+#endif
 
                 StartLoadFlow();
-                break;
+          	}break;
         }
     }
         
@@ -362,14 +370,17 @@ public class LoadingSceneController : SceneController {
 
             Debug.Log("Started Loading Flow");
 
-            Action onDone = delegate()
+            Action<PersistenceStates.ESyncResult> onDone = delegate(PersistenceStates.ESyncResult result)
             {
                 m_loadingDone = true;
                 m_loading = false;
-                s_inSaveLoaderState = false;                
+                s_inSaveLoaderState = false;
+
+                // Initialize managers needing data from the loaded profile
+                GlobalEventManager.SetupUser(UsersManager.currentUser);
             };
 
-            PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.FirstLoading, onDone);            			
+            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
         }
     }
 

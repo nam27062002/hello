@@ -46,26 +46,20 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma glsl_no_auto_normalization
-			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#if LOW_DETAIL_ON
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#define RIM
 			#define BUMP
 			#endif
 
 			#if HI_DETAIL_ON
-			#define RIM
 			#define BUMP
-			#define SPEC
 			#define REFL
 			#endif
 
-//			#define BUMP
-//			#define REFL
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

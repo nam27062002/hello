@@ -34,47 +34,95 @@ internal class DragonShaderGUI : ShaderGUI {
 
     private static class Styles
     {
-        public static string mainTextureText = "MainTex";
-        public static string blendTextureText = "Blend Texture";
+/*
+        _MainTex ("Base (RGB)", 2D) = "white" {}
+        _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
-        public static string normalTextureText = "Normal Texture";
-        public static string normalStrengthText = "Normal Texture strength";
-        public static GUIContent alphaCutoffText = new GUIContent("Alpha Cutoff", "Threshold for alpha cutoff");
+        _BumpMap ("Normal Map (RGB)", 2D) = "white" {}
+        _NormalStrenght("Normal Strenght", float) = 1.0
 
-//        public static GUIContent fogText = new GUIContent("Fog");
-///        public static GUIContent darkenText = new GUIContent("Darken");
+        _DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
 
-        public static string fogText = "Fog";
-        public static string darkenText = "Darken";
-        public static string specularText = "Specular";
-        public static string automaticBlendingText = "Automatic blending";
-        public static string overlayColorText = "Vertex Color Tint";
+        _Tint("Color Multiply", Color) = (1,1,1,1)
+        _ColorAdd("Color Add", Color) = (0,0,0,0)
 
-        public static string specularFactorText = "Specular factor:";
-        public static string specularDirText = "Specular direction:";
+        _InnerLightAdd("Inner Light Add", float) = 0.0
+        _InnerLightColor("Inner Light Color", Color) = (1,1,1,1)
 
-        public static string darkenPositionText = "Darken position:";
-        public static string darkenDistanceText = "Darken distance:";
+        _SpecExponent("Specular Exponent", float) = 1.0
+        _Fresnel("Fresnel factor", Range(0, 10)) = 1.5
+        _FresnelColor("Fresnel Color", Color) = (1,1,1,1)
+        _AmbientAdd("Ambient Add", Color) = (0,0,0,0)
+        _SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
+        _SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
-        public static string whiteSpaceString = " ";
-        public static string primaryMapsText = "Maps";
-        public static string renderOptions = "Render Options";
-        public static string renderingMode = "Rendering Mode";
-//        public static GUIContent emissiveWarning = new GUIContent("Emissive value is animated but the material has not been configured to support emissive. Please make sure the material itself has some amount of emissive.");
-//        public static GUIContent emissiveColorWarning = new GUIContent("Ensure emissive color is non-black for emission to have effect.");
-        public static readonly string[] blendNames = Enum.GetNames(typeof(BlendMode));
+        _ReflectionMap("Reflection Map", Cube) = "white" {}
+        _ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+
+        _InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
+        _InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
+
+        // Blending state
+        [HideInInspector] _Mode("__mode", Float) = 0.0
+        [HideInInspector] _SrcBlend("__src", Float) = 1.0
+        [HideInInspector] _DstBlend("__dst", Float) = 0.0
+        [HideInInspector] _ZWrite("__zw", Float) = 1.0
+
+        _StencilMask("Stencil Mask", int) = 10
+*/
+        readonly public static string mainTextureText = "Main Texture";
+        readonly public static string detailTextureText = "Detail Texture";
+        readonly public static string normalTextureText = "Normal Texture";
+
+        readonly public static string colorMultiplyText = "Color Multiply";
+        readonly public static string colorAddText = "Color Add";
+
+        readonly public static string innerLightAddText = "Inner Light Add";
+        readonly public static string innerLightColorText = "Inner Light Color";
+        readonly public static string innerLightWavePhaseText = "Inner Light wave phase";
+        readonly public static string innerLightWaveSpeedText = "Inner Light wave speed";
+
+        readonly public static string ambientAddText = "Ambient Add";
+
+        readonly public static string enableNormalMapText = "Enable Normal map";
+        readonly public static string normalStrengthText = "Normal Texture strength";
+
+        readonly public static string CutoffText = "Alpha cutoff threshold";
+
+        readonly public static string enableSpecularText = "Enable Specular";
+        readonly public static string specularPowerText = "Specular Exponent";
+        readonly public static string secondLightDirectionText = "Second light direction";
+        readonly public static string secondLightColorText = "Second light color";
+
+        readonly public static string enableFresnelText = "Enable Fresnel";
+        readonly public static string fresnelPowerText = "Fresnel Power";
+        readonly public static string fresnelColorText = "Fresnel Color";
+
+        readonly public static string additionalFXLayerText = "Additional FX layer";
+        readonly public static string reflectionMapText = "Reflection Texture";
+        readonly public static string reflectionAmountText = "Reflection amount";
+        readonly public static string fireMapText = "Fire Texture";
+        readonly public static string fireAmountText = "Fire amount";
+
+        readonly public static string reflectionLayerText = "Reflection layer are actually used by chinese dragon. Applied as (Reflection Texture intensity) * (Reflection Amount) * (Detail Texture.b)";
+        readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix. Applied as (Fire Amount) * (Detail Texture.b)";
+
+        readonly public static string selfIluminationText = "Self ilumination";
+
+        readonly public static string normalSelfIluminationText = "Default Self ilumination. Based on (Main Texture.rgb) * (Detail Texture.r) * _InnerLightAdd * (_InnerLightColor.rgb)";
+        readonly public static string autoInnerLightSelfIluminationText = "Devil dragon self ilumination.";
+        readonly public static string blinkLightsSelfIluminationText = "Reptile dragon rings self ilumination.";
+
+        readonly public static string blendModeText = "Blend Mode";
+        readonly public static string renderQueueText = "Render queue";
+
     }
-
     MaterialProperty mp_mainTexture;
-    MaterialProperty mp_cutOff;
+    MaterialProperty mp_detailTexture;
     MaterialProperty mp_normalTexture;
     MaterialProperty mp_normalStrength;
-    MaterialProperty mp_detailTexture;
+    MaterialProperty mp_cutOff;
 
-    MaterialProperty mp_tint;
-    MaterialProperty mp_colorAdd;
-    MaterialProperty mp_innerLightAdd;
-    MaterialProperty mp_innerLightColor;
     MaterialProperty mp_specExponent;
     MaterialProperty mp_fresnel;
     MaterialProperty mp_fresnelColor;
@@ -84,45 +132,104 @@ internal class DragonShaderGUI : ShaderGUI {
 
     MaterialProperty mp_reflectionMap;
     MaterialProperty mp_reflectionAmount;
+    MaterialProperty mp_fireMap;
+    MaterialProperty mp_fireAmount;
+
+    MaterialProperty mp_colorMultiply;
+    MaterialProperty mp_colorAdd;
+    MaterialProperty mp_innerLightAdd;
+    MaterialProperty mp_innerLightColor;
     MaterialProperty mp_innerLightWavePhase;
     MaterialProperty mp_innerLightWaveSpeed;
 
-    MaterialProperty mp_blendMode;
+    MaterialProperty mp_BlendMode;
 
-    MaterialEditor m_MaterialEditor;
+
+    /// <summary>
+    /// Toggle Material Properties
+    /// </summary>
+    MaterialProperty mp_EnableSpecular;
+    MaterialProperty mp_EnableNormalMap;
+
+    MaterialProperty mp_EnableCutoff;
+    MaterialProperty mp_EnableFresnel;
+    MaterialProperty mp_EnableSilhouette;
+
+    /// <summary>
+    /// Enum Material PProperties
+    /// </summary>
+
+    MaterialProperty mp_FxLayer;
+    MaterialProperty mp_SelfIlluminate;
+
+    MaterialEditor m_materialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
-    bool m_FirstTimeApply = true;
+    readonly static string kw_blendTexture = "BLEND_TEXTURE";
+    readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
+    readonly static string kw_fog = "FOG";
+    readonly static string kw_darken = "DARKEN";
+    readonly static string kw_normalmap = "NORMALMAP";
+    readonly static string kw_specular = "SPECULAR";
+    readonly static string kw_cutOff = "CUTOFF";
+    readonly static string kw_emissiveBlink = "EMISSIVEBLINK";
 
+    private GUISkin editorSkin;
+    private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
 
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
+    void IniEditorSkin()
+    {
+        if (editorSkin == null)
+        {
+            editorSkin = AssetDatabase.LoadAssetAtPath(editorSkinPath, typeof(GUISkin)) as GUISkin;
+        }
+    }
+
     public void FindProperties(MaterialProperty[] props)
     {
         mp_mainTexture = FindProperty("_MainTex", props);
-        mp_cutOff = FindProperty("_Cutoff", props);
+        mp_detailTexture = FindProperty("_DetailTex", props);
         mp_normalTexture = FindProperty("_BumpMap", props);
         mp_normalStrength = FindProperty("_NormalStrenght", props);
-        mp_detailTexture = FindProperty("_DetailTex", props);
+        mp_cutOff = FindProperty("_Cutoff", props);
 
-        mp_tint = FindProperty("_Tint", props);
-        mp_colorAdd = FindProperty("_ColorAdd", props);
-        mp_innerLightAdd = FindProperty("_InnerLightAdd", props);
-        mp_innerLightColor = FindProperty("_InnerLightColor", props);
         mp_specExponent = FindProperty("_SpecExponent", props);
-        mp_fresnel = FindProperty("_Fresnel", props);
-        mp_fresnelColor = FindProperty("_FresnelColor", props);
-        mp_ambientAdd = FindProperty("_AmbientAdd", props);
         mp_secondLightDir = FindProperty("_SecondLightDir", props);
         mp_secondLightColor = FindProperty("_SecondLightColor", props);
 
-        mp_reflectionMap = FindProperty("_ReflectionMap", props);
-        mp_reflectionMap = FindProperty("_ReflectionAmount", props);
+        mp_colorMultiply = FindProperty("_Tint", props);
+        mp_colorAdd = FindProperty("_ColorAdd", props);
+        mp_innerLightAdd = FindProperty("_InnerLightAdd", props);
+        mp_innerLightColor = FindProperty("_InnerLightColor", props);
         mp_innerLightWavePhase = FindProperty("_InnerLightWavePhase", props);
         mp_innerLightWaveSpeed = FindProperty("_InnerLightWaveSpeed", props);
 
-        mp_blendMode = FindProperty("_Mode", props);
+        mp_fresnel = FindProperty("_Fresnel", props);
+        mp_fresnelColor = FindProperty("_FresnelColor", props);
+        mp_ambientAdd = FindProperty("_AmbientAdd", props);
+
+        mp_reflectionMap = FindProperty("_ReflectionMap", props);
+        mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
+        mp_fireMap = FindProperty("_FireMap", props);
+        mp_fireAmount = FindProperty("_FireAmount", props);
+
+        mp_BlendMode = FindProperty("_BlendMode", props);
+
+        /// Toggle Material Properties
+
+        mp_EnableSpecular = FindProperty("_EnableSpecular", props);
+        mp_EnableNormalMap = FindProperty("_EnableNormalMap", props);
+        mp_EnableCutoff = FindProperty("_EnableCutoff", props);
+        mp_EnableFresnel = FindProperty("_EnableFresnel", props);
+        mp_EnableSilhouette = FindProperty("_EnableSilhouette", props);
+
+        /// Enum Material Properties
+
+        mp_FxLayer = FindProperty("FXLayer", props);
+        mp_SelfIlluminate = FindProperty("SelfIlluminate", props);
     }
 
     /// <summary>
@@ -131,47 +238,124 @@ internal class DragonShaderGUI : ShaderGUI {
     /// 
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
     {
+        IniEditorSkin();
         FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
-        m_MaterialEditor = materialEditor;
+        m_materialEditor = materialEditor;
         Material material = materialEditor.target as Material;
 
-        // Make sure that needed setup (ie keywords/renderqueue) are set up if we're switching some existing
-        // material to a standard shader.
-        // Do this before any GUI code has been issued to prevent layout issues in subsequent GUILayout statements (case 780071)
-        if (m_FirstTimeApply)
+        GUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.LabelField("Dragon standard shader", editorSkin.customStyles[0]);
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+        materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
+        EditorGUILayout.EndVertical();
+
+        int blendMode = (int)mp_BlendMode.floatValue;
+        if (EditorGUI.EndChangeCheck())
         {
-            MaterialChanged(material);
-            m_FirstTimeApply = false;
+            setBlendMode(material, blendMode);
+        }
+        if (blendMode == 1)
+        {
+            materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
         }
 
-        ShaderPropertiesGUI(material);
-/*
-        if (GUILayout.Button("Reset keywords"))
+        materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
+        materialEditor.TextureProperty(mp_detailTexture, Styles.detailTextureText, false);
+        materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
+
+        bool normalMap = mp_normalTexture.textureValue != null as Texture;
+
+        if (EditorGUI.EndChangeCheck())
         {
-            material.shaderKeywords = null;
+            SetKeyword(material, kw_normalmap, normalMap);
+            EditorUtility.SetDirty(material);
+            Debug.Log("EnableNormalMap " + (normalMap));
+            //            DebugKeywords(material);
         }
-*/
+
+        EditorGUI.BeginChangeCheck();
+
+        if (normalMap)
+        {
+            materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
+        }
+
+        if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
+        {
+            materialEditor.ShaderProperty(mp_specExponent, Styles.specularPowerText);
+            materialEditor.ShaderProperty(mp_secondLightDir, Styles.secondLightDirectionText);
+            materialEditor.ShaderProperty(mp_secondLightColor, Styles.secondLightColorText);
+        }
+
+        if (featureSet(mp_EnableFresnel, Styles.enableFresnelText))
+        {
+            materialEditor.ShaderProperty(mp_fresnel, Styles.fresnelPowerText);
+            materialEditor.ShaderProperty(mp_fresnelColor, Styles.fresnelColorText);
+        }
+
+        featureSet(mp_FxLayer, Styles.additionalFXLayerText);
+        int fxLayer = (int)mp_FxLayer.floatValue;
+
+        switch(fxLayer)
+        {
+            case 1:     //FXLayer_Reflection
+                EditorGUILayout.HelpBox(Styles.reflectionLayerText, MessageType.Info);
+                materialEditor.TextureProperty(mp_reflectionMap, Styles.reflectionMapText, false);
+                materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+                break;
+
+            case 2:     //FXLayer_Fire
+                EditorGUILayout.HelpBox(Styles.fireLayerText, MessageType.Info);
+                materialEditor.TextureProperty(mp_fireMap, Styles.fireMapText, false);
+                materialEditor.ShaderProperty(mp_fireAmount, Styles.fireAmountText);
+                break;
+        }
+
+        featureSet(mp_SelfIlluminate, Styles.selfIluminationText);
+        int selfIluminateMode = (int)mp_SelfIlluminate.floatValue;
+
+        switch(selfIluminateMode)
+        {
+            case 0:     //SELFILUMINATE_NORMAL
+                EditorGUILayout.HelpBox(Styles.normalSelfIluminationText, MessageType.Info);
+                materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
+                break;
+
+            case 1:     //SELFILUMINATE_AUTOINNERLIGHTS
+                EditorGUILayout.HelpBox(Styles.autoInnerLightSelfIluminationText, MessageType.Info);
+                materialEditor.ShaderProperty(mp_innerLightWavePhase, Styles.innerLightWavePhaseText);
+                materialEditor.ShaderProperty(mp_innerLightWaveSpeed, Styles.innerLightWaveSpeedText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
+                break;
+
+            case 3:     //SELFILLUMINATE_BLINKLIGHTS
+                EditorGUILayout.HelpBox(Styles.blinkLightsSelfIluminationText, MessageType.Info);
+                break;
+        }
+
+        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        EditorGUILayout.LabelField(Styles.renderQueueText);
+        int renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        if (material.renderQueue != renderQueue)
+        {
+            material.renderQueue = renderQueue;
+        }
+        EditorGUILayout.EndHorizontal();
+
+
+        /*
+                if (GUILayout.Button("Reset keywords"))
+                {
+                    material.shaderKeywords = null;
+                }
+        */
     }
-
-    static void MaterialChanged(Material material)
-    {
-//        material.shaderKeywords = null;
-
-        SetupMaterialWithBlendMode(material, (BlendMode)material.GetFloat("_Mode"));
-
-        SetMaterialKeywords(material);
-
-
-        string kwl = "";
-        foreach (string kw in material.shaderKeywords)
-        {
-            kwl += kw + ",";
-        }
-
-        Debug.Log("Material keywords: " + kwl);
-
-    }
-
 
     static void SetMaterialKeywords(Material material)
     {
@@ -179,7 +363,6 @@ internal class DragonShaderGUI : ShaderGUI {
         // (MaterialProperty value might come from renderer material property block)
         SetKeyword(material, "NORMALMAP", material.GetTexture("_BumpMap"));
     }
-
 
     static void SetKeyword(Material m, string keyword, bool state)
     {
@@ -189,99 +372,64 @@ internal class DragonShaderGUI : ShaderGUI {
             m.DisableKeyword(keyword);
     }
 
-    public void ShaderPropertiesGUI(Material material)
+
+    private bool featureSet(MaterialProperty feature, string label)
     {
-        // Use default labelWidth
-        EditorGUIUtility.labelWidth = 0f;
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+        m_materialEditor.ShaderProperty(feature, label);
+        EditorGUILayout.EndVertical();
 
-        // Detect any changes to the material
-        EditorGUI.BeginChangeCheck();
-        {
-            BlendModePopup();
+        return feature.floatValue > 0.0f;
+    }
 
-            // Primary properties
-            GUILayout.Label(Styles.primaryMapsText, EditorStyles.boldLabel);
-
-            m_MaterialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
-            if (((BlendMode)material.GetFloat("_Mode") == BlendMode.Cutout))
-            {
-                m_MaterialEditor.ShaderProperty(mp_cutOff, Styles.alphaCutoffText.text, MaterialEditor.kMiniTextureFieldLabelIndentLevel + 1);
-            }
-
-            m_MaterialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
-            if (material.GetTexture("_BumpMap") != null)
-            {
-                m_MaterialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
-            }
-
-
-            EditorGUILayout.Space();
-            GUILayout.Label(Styles.renderOptions, EditorStyles.boldLabel);
-
-        }
-        if (EditorGUI.EndChangeCheck())
-        {
-            foreach (var obj in mp_blendMode.targets)
-                MaterialChanged((Material)obj);
-        }
+    static void DebugKeywords(Material mat)
+    {
+        foreach (string kw in mat.shaderKeywords)
+            Debug.Log("Material keywords: " + kw);
     }
 
 
-
-    void BlendModePopup()
+    public static void setBlendMode(Material material, int blendMode)
     {
-        EditorGUI.showMixedValue = mp_blendMode.hasMixedValue;
-        BlendMode mode = (BlendMode)mp_blendMode.floatValue;
+        material.SetFloat("_BlendMode", blendMode);
 
-        EditorGUI.BeginChangeCheck();
-        mode = (BlendMode)EditorGUILayout.Popup(Styles.renderingMode, (int)mode, Styles.blendNames);
-        if (EditorGUI.EndChangeCheck())
-        {
-            m_MaterialEditor.RegisterPropertyChangeUndo("Rendering Mode");
-            mp_blendMode.floatValue = (float)mode;
-        }
-
-        EditorGUI.showMixedValue = false;
-    }
-
-    public static void SetupMaterialWithBlendMode(Material material, BlendMode blendMode)
-    {
         switch (blendMode)
         {
-            case BlendMode.Opaque:
-                material.SetOverrideTag("RenderType", "");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetInt("_ZWrite", 1);
-                material.DisableKeyword("CUTOUT");
-//                material.DisableKeyword("_ALPHATEST_ON");
-//                material.DisableKeyword("_ALPHABLEND_ON");
-//                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = -1;
+            case 0:
+                material.SetOverrideTag("RenderType", "Opaque");
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetFloat("_ZWrite", 1.0f);
+                ///                material.renderQueue = 2000;
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
+                material.DisableKeyword("CUTOFF");
+                Debug.Log("Blend mode opaque");
                 break;
-            case BlendMode.Cutout:
-                material.SetOverrideTag("RenderType", "TransparentCutout");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetInt("_ZWrite", 1);
-                material.EnableKeyword("CUTOUT");
-//                material.EnableKeyword("_ALPHATEST_ON");
-//                material.DisableKeyword("_ALPHABLEND_ON");
-//                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
-                break;
-            case BlendMode.Transparent:
+
+            case 1:
                 material.SetOverrideTag("RenderType", "Transparent");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-                material.DisableKeyword("CUTOUT");
-//                material.DisableKeyword("_ALPHATEST_ON");
-//                material.DisableKeyword("_ALPHABLEND_ON");
-//                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                //                material.renderQueue = 3000;
+                material.SetFloat("_ZWrite", 0.0f);
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+                material.EnableKeyword("CUTOFF");
+                material.EnableKeyword("DOUBLESIDED");
+                Debug.Log("Blend mode transparent");
+                break;
+
+            case 2:
+                material.SetOverrideTag("RenderType", "TransparentCutout");
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetFloat("_ZWrite", 1.0f);
+                //                material.renderQueue = 2500;
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+
+                Debug.Log("Blend mode cutout");
                 break;
         }
+
     }
 
 }

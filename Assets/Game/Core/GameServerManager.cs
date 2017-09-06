@@ -178,14 +178,15 @@ public class GameServerManager
     public virtual void Auth(ServerCallback callback) {}    
     public virtual void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {}
 	public virtual void LogOut(ServerCallback callback) {}
+    public virtual bool IsLoggedIn() { return false; }    
 
-	//------------------------------------------------------------------------//
-	// CUSTOMIZER															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CUSTOMIZER															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
     public virtual void GetPersistence(ServerCallback callback) {}
     public virtual void SetPersistence(string persistence, ServerCallback callback) {}
 	public virtual void UpdateSaveVersion(bool prelimUpdate, ServerCallback callback) {}
