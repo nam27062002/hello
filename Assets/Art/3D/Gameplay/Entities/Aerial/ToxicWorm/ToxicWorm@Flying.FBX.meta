@@ -1,15 +1,24 @@
 fileFormatVersion: 2
-guid: 98a92f4ec7fb8496fb00c05c225f5703
-timeCreated: 1504707939
+guid: 72d8e8256ec304d75ba5618aece5672a
+timeCreated: 1504707474
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: ToxicWorm_Eyes
+    100004: ToxicWorm_Hip
+    100006: ToxicWorm_L_EyeBrow
+    100008: ToxicWorm_R_EyeBrow
+    100010: ToxicWorm_Tail
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: gear_4_dents_
+    400002: ToxicWorm_Eyes
+    400004: ToxicWorm_Hip
+    400006: ToxicWorm_L_EyeBrow
+    400008: ToxicWorm_R_EyeBrow
+    400010: ToxicWorm_Tail
+    7400000: Flying
+    9500000: //RootNode
   materials:
     importMaterials: 0
     materialName: 0
@@ -18,7 +27,7 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -32,7 +41,47 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Flying
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: ToxicWorm_Hip
+        weight: 1
+      - path: ToxicWorm_Hip/ToxicWorm_Tail
+        weight: 1
+      - path: ToxicWorm_Hip/ToxicWorm_Eyes
+        weight: 1
+      - path: ToxicWorm_Hip/ToxicWorm_Eyes/ToxicWorm_R_EyeBrow
+        weight: 1
+      - path: ToxicWorm_Hip/ToxicWorm_Eyes/ToxicWorm_L_EyeBrow
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -74,7 +123,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
