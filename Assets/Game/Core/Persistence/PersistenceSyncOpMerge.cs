@@ -53,12 +53,21 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
 	private enum EFlowId
 	{
 		Done,
+
+        // Local
 		Error_Local_Load_NotFound,
 		Error_Local_Load_Permission,
 		Error_Local_Load_Corrupted,
 		Error_Local_Save_DiskSpace,
-		Error_Local_Save_Permission
-	}
+		Error_Local_Save_Permission,
+
+        // Cloud
+        Error_Cloud_Not_Connection,
+        Error_Cloud_Social_NotLogged,
+
+        // Merge
+        Merge
+    }
 
 	private EFlowId Flow_GetId()
 	{
@@ -124,12 +133,33 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
 
 	private EFlowId Flow_GetFlowIdBecauseOfCloud()
 	{
+        EFlowId returnValue = EFlowId.Done;
+
         if (CloudOp != null)
         {
             CloudOp.CalculateResult();
-        }
 
-        EFlowId returnValue = EFlowId.Done;
+            if (CloudOp.Result != PersistenceStates.ESyncResult.Success && !CloudOp.IsSilent)
+            {
+                switch (CloudOp.Result)
+                {
+                    case PersistenceStates.ESyncResult.Error_Cloud_NotConnection:
+                    case PersistenceStates.ESyncResult.Error_Cloud_Server_NotLogged:
+                    case PersistenceStates.ESyncResult.Error_Cloud_Server_Persistence:                    
+                        returnValue = EFlowId.Error_Cloud_Not_Connection;
+                        break;
+
+                    case PersistenceStates.ESyncResult.Error_Cloud_Social_NotLogged:
+                        returnValue = EFlowId.Error_Cloud_Social_NotLogged;
+                        break;
+
+                    case PersistenceStates.ESyncResult.Error_Cloud_Server_MergeShowPopupNeeded:
+                        returnValue = EFlowId.Merge;
+                        break;
+                }
+            }
+        }
+        
 		return returnValue;
 	}
 
@@ -172,7 +202,25 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
 				Flow_ProcessErrorLocalSavePermission();
 			}
 			break;
-		}
+
+            case EFlowId.Error_Cloud_Not_Connection:
+            {
+                Flow_ProcessErrorCloudNotConnection();
+            }
+            break;
+
+            case EFlowId.Error_Cloud_Social_NotLogged:
+            {
+                Flow_ProcessErrorCloudSocialNotLogged();
+            }
+            break;
+
+            case EFlowId.Merge:
+            {
+                Flow_ProcessMerge();
+            }
+            break;           
+        }
 	}			
 
 	private void Flow_ProcessDone()
@@ -234,7 +282,18 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
         PersistenceFacade.Popups_OpenLoadSaveCorruptedError(useCloud, solveProblem);                
 	}
 
-	private void Flow_ProcessErrorLocalSavePermission()
+    private void Flow_ProcessErrorLocalSaveDiskSpace()
+    {
+        Action solveProblem = delegate ()
+        {
+            // Try to save again			                       
+            Syncer_Sync(LocalOp, null, null);
+        };
+
+        PersistenceFacade.Popups_OpenLocalSaveDiskOutOfSpaceError(solveProblem);
+    }
+
+    private void Flow_ProcessErrorLocalSavePermission()
 	{
 		Action solveProblem = delegate() 
 		{                                
@@ -243,21 +302,37 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
         };
                 
         PersistenceFacade.Popups_OpenLocalSavePermissionError(solveProblem);                
-	}
+	}	
 
-	private void Flow_ProcessErrorLocalSaveDiskSpace()
-	{
-		Action solveProblem = delegate() 
-		{                                
-            // Try to save again			                       
-			Syncer_Sync(LocalOp, null, null);                       
+    private void Flow_ProcessErrorCloudNotConnection()
+    {
+        Action onDone = delegate ()
+        {
+            // Disable message errors so the sync operation finishes
+            CloudOp.IsSilent = true;
+            Sync();
         };
-                
-        PersistenceFacade.Popups_OpenLocalSaveDiskOutOfSpaceError(solveProblem);                
-	}
-	#endregion			          
 
-	private PersistenceSyncer mSyncer;
+        // A popup notifying the error is shown. When the user clicks on ok button we just need to close it and let the user keep playing
+        PersistenceFacade.Popups_OpenErrorConnection(onDone);
+    }
+
+    private void Flow_ProcessErrorCloudSocialNotLogged()
+    {
+        // No popup should be shown. The op needs to just be over
+        CloudOp.IsSilent = true;
+        Sync();
+    }
+
+    private void Flow_ProcessMerge()
+    {
+        // No popup should be shown. The op needs to just be over
+        CloudOp.IsSilent = true;
+        Sync();
+    }
+    #endregion
+
+    private PersistenceSyncer mSyncer;
 	private PersistenceSyncer Syncer 
 	{ 
 		get 

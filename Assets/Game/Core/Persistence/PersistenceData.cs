@@ -610,12 +610,12 @@ public class PersistenceData
 
 	private void Systems_Load()
 	{
-		if (LoadState == PersistenceStates.LoadState.OK)
+		if (Systems != null && LoadState == PersistenceStates.LoadState.OK)
         {
             try
             {
                 Systems_Reset();
-
+                
 				int count = Systems.Count;
 				for (int i = 0; i < count; i++)
 				{
