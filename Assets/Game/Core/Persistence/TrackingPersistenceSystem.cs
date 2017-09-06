@@ -1,4 +1,4 @@
-﻿public class TrackingPersistenceSystem : PersistenceSystem
+public class TrackingPersistenceSystem : PersistenceSystem
 {
     private const string PARAM_ACCOUNT_ID = "accID";
     private const string PARAM_ADS_COUNT = "adsCount";
