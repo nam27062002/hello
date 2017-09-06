@@ -103,7 +103,8 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount) {
 			m_waitingMergeResponse = false;            
 			Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
-		}
+            Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
+        }
 
 		public override void onShowMaintenanceMode() {         
 			Debug.TaggedLog(tag, "onShowMaintenanceMode");
@@ -113,13 +114,15 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeSucceeded() {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeSucceeded");
-		}
+            Messenger.Broadcast(GameEvents.MERGE_SUCCEEDED);                
+        }
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
 		public override void onMergeFailed() {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeFailed");
-		}
+            Messenger.Broadcast(GameEvents.MERGE_FAILED);                        
+        }
 
 		// The user has requested a password to do a cross platform merge
 		public override void onMergeXPlatformPass(string pass) {

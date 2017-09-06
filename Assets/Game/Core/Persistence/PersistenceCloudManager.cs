@@ -290,7 +290,7 @@ public class PersistenceCloudManager
     protected virtual void Social_LogIn()
     {        
         Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Social_OnLoggedInHelper);
-        SocialPlatformManager.SharedInstance.Login(Load_IsFromLauncher);
+        SocialPlatformManager.SharedInstance.Login();
     }    
         
     private void Social_OnLoggedInHelper(bool logged)
