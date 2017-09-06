@@ -1,21 +1,9 @@
-﻿//[DGR] ANTICHEAT No support added yet
+//[DGR] ANTICHEAT No support added yet
 //using CodeStage.AntiCheat.ObscuredTypes;
 using FGOL.Server;
 using System;
-using System.Collections.Generic;
-
 public class UserPersistenceSystem : PersistenceSystem
-{
-    private int m_gameDataID = -1;
-
-    public int gameDataID
-    {
-        set
-        {
-            m_gameDataID = value;
-        }
-    }
-
+{	
     private bool m_hasBeenIngame = false;
 
     public bool hasBeenIngame
@@ -60,8 +48,7 @@ public class UserPersistenceSystem : PersistenceSystem
     }
 
     public override void Reset()
-    {
-        m_gameDataID = -1;
+    {        
         timePlayed = 0;
 
         m_hasBeenIngame = false;
@@ -77,8 +64,7 @@ public class UserPersistenceSystem : PersistenceSystem
     public override void Load()
     {
         try
-        {
-            m_gameDataID = GetInt("GameDataID", -1);
+        {            
             timePlayed = GetInt("TimePlayed");
             m_hasBeenIngame = GetBool("HasBeenIngame", false);
             m_numGameLoops = GetInt("NumGameLoops", 0);            
@@ -93,24 +79,20 @@ public class UserPersistenceSystem : PersistenceSystem
         {
             Debug.LogError("UserPersistenceSystem (Load) :: Exception - " + e);
             throw new CorruptedSaveException(e);
-        }
-
-        //[DGR] RULES: No support added yet
-        //GameDataManager.Instance.gameDataID = m_gameDataID;
+        }        
     }
 
     public override void Save()
     {
-        SetInt("GameDataID", m_gameDataID);
+		SetInt("NumGameLoops", m_numGameLoops);		        
         SetInt("TimePlayed", timePlayed);
         SetBool("HasBeenIngame", m_hasBeenIngame);
-        SetInt("NumGameLoops", m_numGameLoops);
         SetBool("IsPirate", isPirate);
         SetBool("IsHacker", isHacker);
         SetBool("IsCheater", isCheater);
         SetInt("FlaggedReason", flaggedReason);
         SetBool("Banned", bannedFromLiveEvents);
-        SetBool("IapPurchaseMade", iapPurchaseMade);        
+        SetBool("IapPurchaseMade", iapPurchaseMade);                
     }
         
     public override bool Upgrade()
