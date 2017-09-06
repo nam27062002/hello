@@ -72,6 +72,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	public Image icon { get { return m_icon; } }
 
 	// Internal references
+	private RectTransform m_lockIconAnim;
 	private ShowHideAnimator m_equippedFrame;
 	private DOTweenAnimation m_equippedFX;
 	private Localizer m_infoText;
@@ -88,6 +89,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_equippedFrame = transform.FindComponentRecursive<ShowHideAnimator>("EquippedFrame");
 		m_equippedFX = transform.FindComponentRecursive<DOTweenAnimation>("EquippedFX");
 		m_infoText = transform.FindComponentRecursive<Localizer>("InfoText");
+		m_lockIconAnim = transform.FindComponentRecursive<RectTransform>("PF_UILock");
 	}
 
 	/// <summary>
@@ -106,7 +108,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_equippedFrame.ForceHide(false);
 		m_equippedFX.gameObject.SetActive(false);
 
-		// Skin preview
+		// Skin preview 
 		m_icon.sprite = _spr;
 
 		// Set initial state
@@ -122,8 +124,12 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_state = _state;
 
 		// Locked?
-		if(!locked) {			m_icon.color = Color.white;// Unlocked
-		} else {					m_icon.color = Color.gray;// Locked
+		if (locked) {
+			m_icon.color = Color.gray;// Locked
+			m_lockIconAnim.gameObject.SetActive(true);
+		} else {
+			m_icon.color = Color.white;// Unlocked
+			m_lockIconAnim.gameObject.SetActive(false);
 		}
 
 		// "New" notification
