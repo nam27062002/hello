@@ -165,7 +165,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 					foreach(string key in m_profilePrefabs.Keys) 
 					{
 						labels[i] = key;
-						if(key == PersistenceFacade.LocalPersistence_ActiveProfileID) 
+						if(key == PersistencePrefs.ActiveProfileName) 
 						{
 							currentIdx = i;
 						}
@@ -178,7 +178,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 					if(GUI.changed) 
 					{
                         // Store new selected profile as active one
-                        PersistenceFacade.LocalPersistence_ActiveProfileID = labels[newIdx];
+                        PersistencePrefs.ActiveProfileName = labels[newIdx];
 					}
 				} EditorGUILayout.EndHorizontal();
 
@@ -343,7 +343,7 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 
 		// Make active button
 		if(GUILayout.Button("Make Active")) {
-			PersistenceFacade.LocalPersistence_ActiveProfileID = m_selectedProfile;	// Savegames and profiles have the same name
+			PersistencePrefs.ActiveProfileName = m_selectedProfile;	// Savegames and profiles have the same name
 		}
 
         // Delete button - only if allowed   
@@ -397,12 +397,12 @@ public class PersistenceProfilesEditorWindow : EditorWindow {
 		// If game is running, reloads the game as well
 		if(Application.isPlaying) {
 			if(GUILayout.Button("Make Active and Apply (reloads the game)")) {
-                PersistenceFacade.LocalPersistence_ActiveProfileID = m_selectedSavegame;	// Savegames and profiles have the same name
+                PersistencePrefs.ActiveProfileName = m_selectedSavegame;	// Savegames and profiles have the same name
 				FlowManager.Restart();
 			}
 		} else {
 			if(GUILayout.Button("Make Active")) {
-                PersistenceFacade.LocalPersistence_ActiveProfileID = m_selectedSavegame;	// Savegames and profiles have the same name
+                PersistencePrefs.ActiveProfileName = m_selectedSavegame;	// Savegames and profiles have the same name
 			}
 		}
 

@@ -238,7 +238,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (TrackingPersistenceSystem != null && TrackingPersistenceSystem.IsDirty)
         {
             TrackingPersistenceSystem.IsDirty = false;
-            PersistenceFacade.instance.Save_Request();
+            PersistenceFacade.instance.Save_Request(false);
         }
 
         if (Session_AnyRoundsStarted)
