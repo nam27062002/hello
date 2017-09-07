@@ -1,7 +1,7 @@
-// ResultsScreenStep.cs
+// ResultsScreenStepMissions.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 28/08/2017.
+// Created by Alger Ortín Castellví on 05/09/2017.
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
@@ -9,17 +9,14 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Single step on the results screen sequence.
-/// Parent class that must be implemented by all steps.
-/// When finished, steps must invoke the OnFinished event.
+/// Step for the results screen.
 /// </summary>
-public abstract class ResultsScreenStep : MonoBehaviour {
+public class ResultsScreenStepMissions : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -27,35 +24,26 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private bool m_darkScreen = false;
-
-	// Events
-	[HideInInspector] [SerializeField] public UnityEvent OnFinished = new UnityEvent();
-
-	/// <summary>
-	/// Initialize and launch this step.
-	/// </summary>
-	public void Launch() {
-		// Common stuff
-		// Toggle dark screen
-		ResultsDarkScreen.Set(m_darkScreen);
-
-		// Custom launch implementation
-		DoLaunch();
-	}
-
+	
 	//------------------------------------------------------------------------//
-	// ABSTARCT METHODS														  //
+	// ResultsScreenStep IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Check whether this step must be displayed or not based on the run results.
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
-	public abstract bool MustBeDisplayed();
+	override public bool MustBeDisplayed() {
+		return false;
+	}
 
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
-	protected abstract void DoLaunch();
+	override protected void DoLaunch() {
+
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
 }
