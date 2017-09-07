@@ -8,7 +8,9 @@ struct v2f
 
 	float4 color : COLOR;
 
+#if !defined(GHOST)
 	float3 vLight : TEXCOORD2;
+#endif
 
 #ifdef SPECULAR
 	float3 halfDir : TEXCOORD7;
@@ -23,10 +25,6 @@ struct v2f
 	float3 tangentWorld : TANGENT;
 	float3 binormalWorld : TEXCOORD5;
 #endif
-
-#ifdef CUSTOM_ALPHA
-	float height : TEXCOORD3;
-#endif 
 
 #if defined(MATCAP)
 	float2 cap : TEXCOORD1;
@@ -47,13 +45,6 @@ uniform float4 _GoldColor;
 uniform sampler2D _NormalTex;
 uniform float4 _NormalTex_ST;
 uniform float _NormalStrength;
-#endif
-
-#ifdef CUSTOM_ALPHA
-uniform sampler2D _AlphaTex;
-uniform float4 _AlphaTex_ST;
-uniform float _AlphaMSKScale;
-uniform float _AlphaMSKOffset;
 #endif
 
 #ifdef SPECULAR
@@ -88,7 +79,10 @@ v2f vert(appdata_t v)
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 	float3 normal = UnityObjectToWorldNormal(v.normal);
+
+#if !defined(GHOST)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
+#endif
 
 	// To calculate tangent world
 #ifdef NORMALMAP
@@ -116,10 +110,6 @@ v2f vert(appdata_t v)
 #endif
 
 	o.color = v.color;
-
-#ifdef CUSTOM_ALPHA
-	o.height = v.vertex.y;
-#endif
 
 #ifdef MATCAP
 	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
@@ -164,13 +154,17 @@ fixed4 frag(v2f i) : SV_Target
 	float3 normalDirection = i.normalWorld;
 #endif
 
+#if !defined(GHOST)
 	fixed3 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 	col.xyz *= diffuse + i.vLight;
+#endif
 
 #ifdef SPECULAR
 //	specMask = 1.0;
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
+#else
+
 #endif
 //				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
 
@@ -197,14 +191,11 @@ fixed4 frag(v2f i) : SV_Target
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
 
-#if defined (CUSTOM_ALPHA)
-	float st = smoothstep(_AlphaMSKOffset - 0.3, _AlphaMSKOffset, i.height);
-	float2 off = float2(0.333, _Time.y * 0.75);
-	float alpha = tex2D(_AlphaTex, (i.uv * _AlphaMSKScale) + off).w;
-	col.a = clamp(st + alpha, 0.0, 1.0) * (st);
-	//clip(st + alpha - 0.1);
+#if defined(GHOST)
+	col.a = clamp(fresnel + specMask, 0.0, 1.0);
+#endif
 
-#elif defined (TINT) || defined (CUSTOM_TINT)
+#if defined (TINT) || defined (CUSTOM_TINT)
 	col.a *= _Tint.a;
 
 #endif

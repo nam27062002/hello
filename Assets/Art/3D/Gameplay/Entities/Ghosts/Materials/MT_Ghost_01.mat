@@ -7,18 +7,22 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_Ghost_01
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_Shader: {fileID: 4800000, guid: 36a28fe944442094e95d5e61f314f21a, type: 3}
   m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
     GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3060
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -47,6 +51,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NormalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -56,31 +64,41 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaMSKOffset: 0
+    - _AlphaMSKScale: 3
     - _BumpScale: 1
     - _BumpStrength: 3
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EmissionScaleUI: 0
+    - _EmissiveBlinkPhase: 1
     - _FresnelFactor: 1.71
+    - _FresnelPower: 1.38
     - _Glossiness: 0.5
     - _Metallic: 0
     - _Mode: 0
+    - _NormalStrength: 3
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Shininess: 0.078125
     - _SpecIntensity: 0.5
     - _Specular: 0.1
+    - _SpecularPower: 80
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _WavePhase: 1
+    - _WaveRadius: 1.5
     - _ZWrite: 1
     m_Colors:
     - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.64, g: 0.64, b: 0.64, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissiveColor: {r: 1, g: 0, b: 0, a: 0}
+    - _FresnelColor: {r: 0, g: 1, b: 0.048275948, a: 1}
     - _LightColor: {r: 1, g: 1, b: 1, a: 1}
     - _LightDir: {r: 1, g: 1, b: 1, a: 1}
-    - _Tint: {r: 1, g: 1, b: 1, a: 0.259}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint: {r: 0.42525363, g: 1, b: 0, a: 1}
