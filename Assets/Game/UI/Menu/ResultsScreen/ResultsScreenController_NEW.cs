@@ -50,7 +50,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Make use of properties to easily add test code without getting it all dirty
 	// They can be static since they're getting the data from static singletons as well
-	public static long score {
+	public long score {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.scoreValue;
@@ -60,7 +60,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		}
 	}
 
-	public static long coins {
+	public long coins {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.coinsValue;
@@ -70,7 +70,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		}
 	}
 
-	public static int survivalBonus {
+	public int survivalBonus {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return (int)CPResultsScreenTest.survivalBonus;
@@ -80,7 +80,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		}
 	}
 
-	public static long highScore {
+	public long highScore {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.highScoreValue;
@@ -90,7 +90,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		}
 	}
 
-	public static bool isHighScore {
+	public bool isHighScore {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.newHighScore;
@@ -100,7 +100,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		}
 	}
 
-	public static float time {
+	public float time {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.timeValue;
@@ -108,6 +108,19 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 				return InstanceManager.gameSceneControllerBase.elapsedSeconds;
 			}
 		}
+	}
+
+	// Accumulated rewards during the results flow
+	private long m_totalCoins = 0;
+	public long totalCoins {
+		get { return m_totalCoins; }
+		set { m_totalCoins = value; }
+	}
+
+	private long m_totalPc = 0;
+	public long totalPc {
+		get { return m_totalPc; }
+		set { m_totalPc = value; }
 	}
 
 	//------------------------------------------------------------------//
@@ -152,9 +165,19 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		ResultsDarkScreen.targetCamera = m_scene.camera;
 		ResultsDarkScreen.Hide(false);
 
-		// Hide all steps
+		// Initialize some internal vars
+		m_totalCoins = UsersManager.currentUser.coins;
+		m_totalPc = UsersManager.currentUser.pc;
+
+		// Initialize all steps
 		for(int i = 0; i < m_steps.Length; ++i) {
-			if(m_steps[i] != null) m_steps[i].gameObject.SetActive(false);
+			if(m_steps[i] != null) {
+				// Tell them we're their parent
+				m_steps[i].Init(this);
+
+				// Start hidden!
+				m_steps[i].gameObject.SetActive(false);
+			}
 		}
 
 		// Launch first step!

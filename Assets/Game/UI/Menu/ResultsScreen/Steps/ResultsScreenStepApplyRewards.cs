@@ -33,7 +33,7 @@ public class ResultsScreenStepApplyRewards : ResultsScreenStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		return false;
+		return true;
 	}
 
 	/// <summary>

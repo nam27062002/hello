@@ -76,7 +76,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1270524779433212
 GameObject:
   m_ObjectHideFlags: 1
@@ -1505,7 +1505,7 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 224492003851422036}
     startTime: 0
-    endTime: 0.20652173
+    endTime: 0.10144927
     from: 1
     ease: 6
     floatValue: 0
@@ -1541,7 +1541,7 @@ MonoBehaviour:
   - type: 1
     target: {fileID: 224807026500603556}
     startTime: 0.10144928
-    endTime: 0.30072463
+    endTime: 0.20289853
     from: 1
     ease: 6
     floatValue: 0
@@ -1631,18 +1631,7 @@ MonoBehaviour:
     vectorValue: {x: 4, y: 4, z: 1}
     OnStart:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 114844618552041858}
-          m_MethodName: OnShowNewHighScore
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+        m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
     OnEnd:
@@ -1660,18 +1649,7 @@ MonoBehaviour:
     vectorValue: {x: 0, y: 600, z: 0}
     OnStart:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 114844618552041858}
-          m_MethodName: OnShowNewHighScore
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+        m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
     OnEnd:
@@ -1857,10 +1835,10 @@ RectTransform:
   m_Father: {fileID: 224297246639678618}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 581.735, y: -50}
+  m_SizeDelta: {x: 421.53, y: 100}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224411017625599660
 RectTransform:
@@ -1878,7 +1856,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 536.735, y: -50}
-  m_SizeDelta: {x: 80, y: 0}
+  m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413547271044822
 RectTransform:
@@ -1893,10 +1871,10 @@ RectTransform:
   m_Father: {fileID: 224063182798128908}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 291.5, y: -125}
+  m_SizeDelta: {x: 583, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224439813378155168
 RectTransform:
@@ -2007,10 +1985,10 @@ RectTransform:
   m_Father: {fileID: 224063182798128908}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 874.5, y: -125}
+  m_SizeDelta: {x: 583, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224807026500603556
 RectTransform:
@@ -2089,7 +2067,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 27}
-  m_SizeDelta: {x: 0, y: 140}
+  m_SizeDelta: {x: 529.65, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224880549388032640
 RectTransform:

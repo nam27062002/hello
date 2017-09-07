@@ -46,20 +46,24 @@ public class ResultsScreenStepScore : ResultsScreenStep {
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
+	override protected void DoInit() {
+		// Notify when sequence is finished
+		m_sequence.OnFinished.AddListener(() => OnFinished.Invoke());
+	}
+
+	/// <summary>
+	/// Initialize and launch this step.
+	/// </summary>
 	override protected void DoLaunch() {
 		// Start score number animation
 		// [AOC] TODO!! Better sync with animation?
-		m_scoreText.SetValue(0, ResultsScreenController_NEW.score);
+		m_scoreText.SetValue(0, m_controller.score);
 
 		// Set high score text
-		m_highScoreText.Localize(m_highScoreText.tid, StringUtils.FormatNumber(ResultsScreenController_NEW.highScore));
+		m_highScoreText.Localize(m_highScoreText.tid, StringUtils.FormatNumber(m_controller.highScore));
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);
-
-		// Notify when finished
-		m_sequence.OnFinished.RemoveListener(OnSequenceFinished);
-		m_sequence.OnFinished.AddListener(OnSequenceFinished);
 
 		// Launch sequence!
 		m_sequence.Launch();
@@ -69,19 +73,11 @@ public class ResultsScreenStepScore : ResultsScreenStep {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The sequence has finished.
-	/// </summary>
-	private void OnSequenceFinished() {
-		// Mark the step as finished as well
-		OnFinished.Invoke();
-	}
-
-	/// <summary>
 	/// Time to show the new high score feedback (if required).
 	/// </summary>
 	public void OnShowNewHighScore() {
 		// Check whether we did a new high score and show the corresponding feedback
-		if(ResultsScreenController_NEW.isHighScore) {
+		if(m_controller.isHighScore) {
 			// Show widget and launch animation!
 			m_newHighScoreAnim.gameObject.SetActive(true);
 			m_newHighScoreAnim.Launch();

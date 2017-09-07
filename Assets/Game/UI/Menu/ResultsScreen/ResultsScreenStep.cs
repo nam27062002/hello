@@ -33,6 +33,24 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	// Events
 	[HideInInspector] [SerializeField] public UnityEvent OnFinished = new UnityEvent();
 
+	// Internal
+	protected ResultsScreenController_NEW m_controller = null;
+
+	//------------------------------------------------------------------------//
+	// PUBLIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize this step with the given results screen controller.
+	/// </summary>
+	/// <param name="_controller">The results screen controller that will be triggering this step.</param>
+	public void Init(ResultsScreenController_NEW _controller) {
+		// Store reference
+		m_controller = _controller;
+
+		// Custom init implementation
+		DoInit();
+	}
+
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
@@ -46,7 +64,7 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
-	// ABSTARCT METHODS														  //
+	// ABSTRACT METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Check whether this step must be displayed or not based on the run results.
@@ -54,8 +72,16 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	public abstract bool MustBeDisplayed();
 
+	//------------------------------------------------------------------------//
+	// OVERRIDE CANDIDATES													  //
+	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialize and launch this step.
+	/// Custom initialization of the step.
 	/// </summary>
-	protected abstract void DoLaunch();
+	protected virtual void DoInit() { }
+
+	/// <summary>
+	/// Custom launch of the step.
+	/// </summary>
+	protected virtual void DoLaunch() { }
 }
