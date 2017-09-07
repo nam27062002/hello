@@ -384,6 +384,7 @@ public class Builder : MonoBehaviour
 	{
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if(settingsInstance != null){
+			CaletyModularSettings currentModularSettings = CaletyModularSettingsEditor.GetCaletyModularSettings ();
 			string environment = GetArg("-env");
 			CaletySettings clonedSettings = settingsInstance.Clone ();
 			switch( environment )
@@ -405,7 +406,7 @@ public class Builder : MonoBehaviour
 				// Update Gradle
 				CaletySettingsEditor.UpdateGradleConfig();
 				// Generate Manifest
-				CaletySettingsEditor.UpdateManifests( settingsInstance );
+				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
 		}
 	}

@@ -650,13 +650,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     public void GameCenter_Login()
     {
-        GameSessionManager.SharedInstance.ResetGameCenterCancelState();
-        GameSessionManager.SharedInstance.LogInToGameCenter(false);
+		GameCenterManager.SharedInstance.AuthenticateLocalPlayer();
     }
 
     public void GameCenter_LogOut()
     {
-        GameSessionManager.SharedInstance.LogOutFromGameCenter();
+		GameCenterManager.SharedInstance.UnauthenticateLocalPlayer();
     }
 
     public bool GameCenter_IsAuthenticated()

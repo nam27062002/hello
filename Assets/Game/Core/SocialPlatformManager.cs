@@ -127,12 +127,14 @@ public class SocialPlatformManager : MonoBehaviour
         {
             IsInited = true;
 
+            // TODO
+            // m_platform = Get Platform from calety settings
             switch (m_platform)
             {
                 case UsingPlatform.FACEBOOK:
                     {
                         m_facebookDelegate = new GameFacebookListener(this);
-                        FacebookManager.SharedInstance.SetFacebookListener(m_facebookDelegate);
+                        FacebookManager.SharedInstance.AddFacebookListener(m_facebookDelegate);
                         FacebookManager.SharedInstance.Initialise();
                     }
                     break;
@@ -148,7 +150,7 @@ public class SocialPlatformManager : MonoBehaviour
 		{
 			case UsingPlatform.FACEBOOK:
 			{
-                GameSessionManager.SharedInstance.LogInToFacebook(IsFirstLogin);
+                GameSessionManager.SharedInstance.LogInToSocialPlatform(IsFirstLogin);
 				//FacebookManager.SharedInstance.LogIn();
 			}break;
 		}
