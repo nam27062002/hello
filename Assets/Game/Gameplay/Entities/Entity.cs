@@ -28,7 +28,7 @@ public class Entity : IEntity {
 
 	/************/
 
-	private CircleArea2D m_bounds;
+	protected CircleArea2D m_bounds;
 	public override CircleArea2D circleArea { get{ return m_bounds; } }
 
 	private Reward m_reward;
@@ -73,7 +73,7 @@ public class Entity : IEntity {
 
     private float m_checkOnScreenTimer = 0;
 
-	private GameCamera m_newCamera;
+	protected GameCamera m_newCamera;
 
 
 	//-----------------------------------------------
@@ -189,7 +189,7 @@ public class Entity : IEntity {
     /// </summary>
     /// <returns>The reward to be given to the player when killing this unit.</returns>
     /// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
-    public Reward GetOnKillReward(bool _burnt) {
+    public override Reward GetOnKillReward(bool _burnt) {
 		// Create a copy of the base rewards and tune them
 		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
@@ -238,8 +238,7 @@ public class Entity : IEntity {
 		return allowEdible && m_isEdibleByZ && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
-	override public bool CanBeSmashed()
-	{
+	override public bool CanBeSmashed() {
 		return true;
 	}
 

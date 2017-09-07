@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 public class HDPersistenceComparator : PersistenceComparator
 {
     private PersistenceComparatorSystem m_localProgress = null;
@@ -233,6 +234,8 @@ public class HDPersistenceComparator : PersistenceComparator
 
     public override void ReconcileData(PersistenceData local, PersistenceData cloud)
     {
+		// [DGR] TODO
+		/*
         // Prepare local purchases dictionary
         Dictionary<string, object> localPurchasesRaw = local.Purchases as Dictionary<string, object>;
         Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData> localPurchases = new Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData>();
@@ -246,6 +249,7 @@ public class HDPersistenceComparator : PersistenceComparator
         // Detect difference between keys in dictionaries
         CopyIAPPurchases(localPurchases, cloudPurchases, cloud);
         CopyIAPPurchases(cloudPurchases, localPurchases, local);
+        */
     }
 
     public override object GetLocalProgress()
@@ -259,7 +263,9 @@ public class HDPersistenceComparator : PersistenceComparator
     }
 
     // Parse IAP data from raw dictionary and copy into parsed dictionary
-    private void ParsePurchases(Dictionary<string, object> raw, Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData> parsed)
+	// [DGR] TODO
+   /*
+	private void ParsePurchases(Dictionary<string, object> raw, Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData> parsed)
     {
         if (raw != null)
         {
@@ -274,9 +280,12 @@ public class HDPersistenceComparator : PersistenceComparator
             }
         }
     }
+    */
 
     // Copy IAP purchases from one dictionary to another and save the changes in a save file
-    private void CopyIAPPurchases(Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData> source, Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData> target, PersistenceData targetSave)
+	// [DGR] TODO
+    /*
+	private void CopyIAPPurchases(Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData> source, Dictionary<string, IAPSaveSystem.ReconcilablePurchaseData> target, PersistenceData targetSave)
     {
         var iterator = source.GetEnumerator();
 
@@ -327,4 +336,5 @@ public class HDPersistenceComparator : PersistenceComparator
         // Save the raw purchases dictionary as purchases in the save
         targetSave.Purchases = purchasesDictionary;
     }
+    */
 }

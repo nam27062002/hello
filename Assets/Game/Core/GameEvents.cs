@@ -86,8 +86,8 @@ public enum GameEvents {
 	EARLY_ALL_HUNGRY_LETTERS_COLLECTED, 	//
 	ALL_HUNGRY_LETTERS_COLLECTED,			//
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
-	KEY_COLLECTED,				// params: CollectibleKey _key
-	KEY_COLLECTED_FAIL,			// params: CollectibleKey _key
+	TICKET_COLLECTED,				// no params
+	TICKET_COLLECTED_FAIL,			// no params
 
 	// Dragon collection events
 	DRAGON_ACQUIRED,			// params: DragonData _data
@@ -123,8 +123,13 @@ public enum GameEvents {
 	// GameServerManager events
 	LOGGED,						// params: bool	
 
-	// Social Platform Manager Events
-	SOCIAL_LOGGED,				// params: bool	
+    // Merge
+    MERGE_SUCCEEDED,
+    MERGE_FAILED,
+    MERGE_SHOW_POPUP_NEEDED,    // params: CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount
+
+    // Social Platform Manager Events
+    SOCIAL_LOGGED,				// params: bool	
 	
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params

@@ -39,6 +39,7 @@ public class SimulatorSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
+		ControlPanel.CreateInstance();
 	}
 
 	/// <summary>
@@ -80,7 +81,7 @@ public class SimulatorSceneController : SceneController {
 	/// </summary>
 	public void OnResetButton() {
         // Clear persistence
-        PersistenceFacade.instance.Save_ResetToDefault();
+        PersistenceFacade.instance.Local_ResetToDefault();
 
         // Restart game
         FlowManager.Restart();

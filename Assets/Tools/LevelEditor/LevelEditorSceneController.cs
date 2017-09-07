@@ -54,7 +54,7 @@ namespace LevelEditor {
 
             PersistenceFacade.CreateInstance();
             PersistenceFacade.instance.Init();
-            PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.Launch, null);
+            PersistenceFacade.instance.Sync_FromLaunchApplication(null);
             
 			if (LevelEditor.settings.poolLimit == "unlimited") {
 				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
@@ -73,7 +73,7 @@ namespace LevelEditor {
             // Call parent
             base.Awake();
 
-			
+			ControlPanel.CreateInstance();
 		}
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace LevelEditor {
 		/// </summary>
 		private IEnumerator Start() {
 
-			while( !PersistenceFacade.instance.IsLoadCompleted)
+			while( !PersistenceFacade.instance.Sync_IsFromLaunchApplicationDone)
 			{
 				yield return null;
 			}            

@@ -24,6 +24,15 @@ public class SpawnerConditions : MonoBehaviour {
 		public float value = 0f;
 	}
 
+	[System.Serializable]
+	public class SkuKillCondition {	
+		[EntitySkuList]	
+		public string sku;
+
+		[NumericRange(0f)]	// Force positive value
+		public float value = 0f;
+	}
+
 	//--------------------------------------------------------------------------
 
 	[Separator("Activation")]
@@ -44,6 +53,9 @@ public class SpawnerConditions : MonoBehaviour {
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers = new SpawnCondition[0];
 	public SpawnCondition[] deactivationTriggers { get { return m_deactivationTriggers; }}
+
+	[SerializeField] public SkuKillCondition[] m_deactivationKillTriggers = new SkuKillCondition[0];
+	public SkuKillCondition[] deactivationKillTriggers { get { return m_deactivationKillTriggers; } }
 
 
 	//--------------------------------------------------------------------------
@@ -114,6 +126,14 @@ public class SpawnerConditions : MonoBehaviour {
 				case SpawnCondition.Type.TIME: {
 						endConditionsOk &= (_time < m_deactivationTriggers[i].value);	// We haven't yet reached the time limit
 					} break;
+			}
+		}
+
+		for (int i = 0; i < m_deactivationKillTriggers.Length; i++) {
+			string sku = m_deactivationKillTriggers[i].sku;
+
+			if (RewardManager.killCount.ContainsKey(sku)) {
+				endConditionsOk &= RewardManager.killCount[sku] >= m_deactivationKillTriggers[i].value;
 			}
 		}
 

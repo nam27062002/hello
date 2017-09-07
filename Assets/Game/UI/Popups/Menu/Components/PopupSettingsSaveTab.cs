@@ -639,8 +639,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
         {
             case EState.Normal:
             {
-                returnValue = AuthManager.Instance.GetNetworkLoginState(SocialManagerUtilities.GetLoginTypeFromSocialNetwork(network));
-            }
+                returnValue = AuthManager.LoginState.LoggedIn;//AuthManager.Instance.GetNetworkLoginState(SocialManagerUtilities.GetLoginTypeFromSocialNetwork(network));
+                }
             break;
 
             case EState.NeverLoggedIn:

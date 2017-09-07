@@ -77,7 +77,7 @@ namespace AI {
 				m_pilot.OnDie();
 
 			// reward
-			Reward reward = (m_entity as Entity).GetOnKillReward(true);
+			Reward reward = m_entity.GetOnKillReward(true);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);
 
 			m_timer = m_burningTime;

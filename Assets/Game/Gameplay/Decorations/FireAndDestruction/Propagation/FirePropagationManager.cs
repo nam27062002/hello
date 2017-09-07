@@ -7,7 +7,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	private QuadTree<FireNode> m_fireNodesTree;
 	private List<FireNode> m_fireNodes;
 	private List<FireNode> m_burningFireNodes;
-	private AudioSource m_fireNodeAudio;
+	private AudioSource m_fireNodeAudio = null;
 
 	private BoundingSphere[] m_boundigSpheres;
 
@@ -20,12 +20,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 		m_boundigSpheres = new BoundingSphere[1000];
 
-		m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
-		m_fireNodeAudio.playOnAwake = false;
-		m_fireNodeAudio.loop = false;
-		m_fireNodeAudio.clip = Resources.Load("audio/sfx/Fire/EnvTrch") as AudioClip;
 
-		m_fireNodeAudio.outputAudioMixerGroup = (Resources.Load("audio/SfxMixer") as UnityEngine.Audio.AudioMixer).FindMatchingGroups("Master")[0];
 	}
 
 	/// <summary>
@@ -50,6 +45,16 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
+
+		if ( m_fireNodeAudio == null )
+		{
+			m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
+			m_fireNodeAudio.playOnAwake = false;
+			m_fireNodeAudio.loop = false;
+			m_fireNodeAudio.clip = Resources.Load("audio/sfx/Fire/EnvTrch") as AudioClip;
+			m_fireNodeAudio.outputAudioMixerGroup = (Resources.Load("audio/SfxMixer") as UnityEngine.Audio.AudioMixer).FindMatchingGroups("Master")[0];
+		}
+
 		// Create and populate QuadTree
 		// Get map bounds!
 		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
@@ -115,7 +120,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// </summary>
 	/// <param name="_fireNode">Fire node.</param>
 	public static void PlayBurnAudio() {
-		if(!instance.m_fireNodeAudio.isPlaying)
+		if(instance.m_fireNodeAudio != null && !instance.m_fireNodeAudio.isPlaying)
 			instance.m_fireNodeAudio.Play();
 	}
 
@@ -125,7 +130,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// <param name="_fireNode">Fire node.</param>
 	public static void StopBurnAudio() {		
 		if (instance.m_burningFireNodes.Count <= 0)
-			if (instance.m_fireNodeAudio != null)
+			if (instance.m_fireNodeAudio != null && instance.m_fireNodeAudio != null)
 				instance.m_fireNodeAudio.Stop();
 	}
 

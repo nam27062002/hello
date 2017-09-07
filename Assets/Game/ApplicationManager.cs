@@ -158,7 +158,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected void Update()
     {
         // To Debug
-        if (Input.GetKeyDown(KeyCode.A))
+        if (FeatureSettingsManager.IsDebugEnabled && Input.GetKeyDown(KeyCode.A))
         {
             // ---------------------------
             // Test eggs collected
@@ -261,8 +261,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
         }
 
-        HDTrackingManager.Instance.Update();
-        PersistenceFacade.instance.Update();
+        HDTrackingManager.Instance.Update();        
 
 		#if UNITY_EDITOR
 		GameServerManager.SharedInstance.Update();
@@ -324,8 +323,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             HDTrackingManager.Instance.Notify_ApplicationResumed();
         }
 
-        // If the  done in the first loading is not done then the pause is ignored
-        if (PersistenceFacade.instance.IsLoadCompleted)
+        // If the persistences are not being synced then we need to make sure the local progress will be stored when going to pause
+        if (!PersistenceFacade.instance.Sync_IsSyncing())
         {            
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
@@ -347,7 +346,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 // [DGR] NOTIF Not supported yet
                 //NotificationManager.Instance.ScheduleReEngagementNotifications();
 
-                PersistenceFacade.instance.Save_Request();
+                PersistenceFacade.instance.Save_Request(true);
             }
             else
             {
@@ -589,6 +588,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             Debug.Log("GameCenterDelegate onAuthenticationFinished");
 
             GameCenterManager.SharedInstance.RequestUserToken(); // Async process
+
+			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onAuthenticationFailed()
@@ -604,13 +605,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         public override void onUnauthenticated()
         {
             Debug.Log("GameCenterDelegate onUnauthenticated");
+			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onGetToken(JSONNode kTokenDataJSON)
         {
             Debug.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() + 
                 " userID = " + GameCenterManager.SharedInstance.GetUserId() + 
-                " userName = " + GameCenterManager.SharedInstance.GetUserName());         
+                " userName = " + GameCenterManager.SharedInstance.GetUserName());
         }
 
         public override void onNotAuthenticatedException()
@@ -655,6 +657,16 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void GameCenter_LogOut()
     {
         GameSessionManager.SharedInstance.LogOutFromGameCenter();
+    }
+
+    public bool GameCenter_IsAuthenticated()
+    {
+		return GameCenterManager.SharedInstance.CheckIfAuthenticated();
+    }
+
+    public void GameCenter_ShowAchievements()
+    {
+    	GameCenterManager.SharedInstance.ShowAchievements();
     }
     #endregion
 

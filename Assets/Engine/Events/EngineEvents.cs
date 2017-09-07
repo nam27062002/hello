@@ -27,6 +27,7 @@ public enum EngineEvents {
 	// Rules and localization
 	LANGUAGE_CHANGED,		// no params
 	DEFINITIONS_LOADED,		// no params
+	GOOGLE_PLAY_STATE_UPDATE,// no params
 
 	// Store Transactions
 	PURCHASE_SUCCESSFUL,	// string _productSku (TODO: _transactionData? _purchaseId?)

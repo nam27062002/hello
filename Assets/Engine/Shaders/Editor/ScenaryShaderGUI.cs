@@ -32,11 +32,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
         Cutout,
         Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
     }
+
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
-
-
     private static class Styles
     {
         readonly public static string mainTextureText = "MainTex";
@@ -51,17 +50,12 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string enableCutoffText = "Enable Alpha cutoff";
         readonly public static string CutoffText = "Alpha cutoff threshold";
 
-        //        public static GUIContent fogText = new GUIContent("Fog");
-        ///        public static GUIContent darkenText = new GUIContent("Darken");
-
         readonly public static string enableSpecularText = "Enable Specular";
         readonly public static string specularPowerText = "Specular Power";
         readonly public static string specularDirText = "Specular direction";
 
-
         readonly public static string enableFogText = "Enable Fog";
         readonly public static string enableDarkenText = "Enable Darken";
-
 
         readonly public static string automaticBlendingText = "Automatic blending";
         readonly public static string overlayColorText = "Vertex Color Tint";
@@ -80,11 +74,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string renderQueueText = "Render queue";
 
-        //        readonly public static string primaryMapsText = "Maps";
-        //        readonly public static string renderOptions = "Render Options";
-        //        readonly public static string renderingMode = "Rendering Mode";
-
-        //        readonly public static string[] blendNames = Enum.GetNames(typeof(BlendMode));
     }
 
     /// <summary>
@@ -148,10 +137,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
     readonly static string kw_cutOff = "CUTOFF";
     readonly static string kw_emissiveBlink = "EMISSIVEBLINK";
 
-
-    bool m_FirstTimeApply = true;
-
-
     private GUISkin editorSkin;
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
 
@@ -210,9 +195,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_BlendMode = FindProperty("_BlendMode", props);
     }
 
-
-
-
     private bool featureSet(MaterialProperty feature, string label)
     {
         EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
@@ -223,7 +205,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     }
 
 
-    static void setBlendMode(Material material, int blendMode)
+    public static void setBlendMode(Material material, int blendMode)
     {
         material.SetFloat("_BlendMode", blendMode);
 
@@ -234,8 +216,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetFloat("_ZWrite", 1.0f);
-                material.renderQueue = 2000;
-                material.SetFloat("_Cull", 2.0f);  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
+///                material.renderQueue = 2000;
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 material.DisableKeyword("CUTOFF");
                 Debug.Log("Blend mode opaque");
                 break;
@@ -244,9 +226,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetOverrideTag("RenderType", "Transparent");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.renderQueue = 3000;
+//                material.renderQueue = 3000;
                 material.SetFloat("_ZWrite", 0.0f);
-                material.SetFloat("_Cull", 0.0f);  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.DisableKeyword("CUTOFF");
                 Debug.Log("Blend mode transparent");
                 break;
@@ -256,8 +238,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetFloat("_ZWrite", 1.0f);
-                material.renderQueue = 2500;
-                material.SetFloat("_Cull", 0.0f);  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
+//                material.renderQueue = 2500;
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.EnableKeyword("CUTOFF");
 
                 Debug.Log("Blend mode cutout");
@@ -308,10 +290,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         if (EditorGUI.EndChangeCheck())
         {
-            //            mp_EnableNormalMap.floatValue =  normalMap ? 1.0f : 0.0f;
-            //            materialEditor.ShaderProperty(mp_EnableNormalMap, Styles.enableNormalMapText);
             SetKeyword(material, kw_normalmap, normalMap);
-//            material.SetFloat("_EnableNormalMap", normalMap ? 1.0f : 0.0f);
             EditorUtility.SetDirty(material);
             Debug.Log("EnableNormalMap " + (normalMap));
 //            DebugKeywords(material);
@@ -326,26 +305,15 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
         {
-//            materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
             materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
             materialEditor.ShaderProperty(mp_EnableAutomaticBlend, Styles.automaticBlendingText);
         }
-
 
         if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
         {
             materialEditor.ShaderProperty(mp_specularPower, Styles.specularPowerText);
             materialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText);
         }
-/*
-        EditorGUI.BeginChangeCheck();
-        bool cutoff = featureSet(mp_EnableCutoff, Styles.enableCutoffText);
-        if (EditorGUI.EndChangeCheck())
-        {
-            mp_Cull.floatValue = cutoff ? 0.0f : 2.0f;  // https://docs.unity3d.com/ScriptReference/Rendering.CullMode.html
-            material.SetOverrideTag("RenderType", cutoff ? "TransparentCutout" : "Opaque");
-        }
-*/
 
         featureSet(mp_EnableFog, Styles.enableFogText);
 /*
@@ -377,7 +345,11 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
         EditorGUILayout.LabelField(Styles.renderQueueText);
-        material.renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        int renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        if (material.renderQueue !=  renderQueue)
+        {
+            material.renderQueue = renderQueue;
+        }
         EditorGUILayout.EndHorizontal();
     }
 
@@ -386,7 +358,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
         foreach (string kw in mat.shaderKeywords)
             Debug.Log("Material keywords: " + kw);
     }
-
 
     static void SetKeyword(Material m, string keyword, bool state)
     {
@@ -402,9 +373,48 @@ internal class ScenaryShaderGUI : ShaderGUI {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// <summary>
+    /// Seek for all scenary standard shaders and set cull mode to back
+    /// </summary>
+    [MenuItem("Tools/Scenary/set opaque to cull back")]
+    public static void SetOpaqueToCullBack()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+            // UnlitShadowLightmap.shader
+            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
+            {
+                int blendMode = (int)mat.GetFloat("_BlendMode");
+                int cullMode = (int)mat.GetFloat("_Cull");
+
+                if (blendMode == 0 && cullMode == 0)
+                {
+                    setBlendMode(mat, 0);
+                    sChanged++;
+                }
+            }
+        }
+
+        Debug.Log(sChanged + " materials changed");
+    }
+
+
+
+    /// <summary>
     /// Seek for old scenary shaders and change by new scenary standard material
     /// </summary>
-    [MenuItem("Tools/Replace old scenary shaders")]
+    [MenuItem("Tools/Scenary/Replace old scenary shaders")]
     public static void ReplaceOldScenaryShaders()
     {
         Debug.Log("Obtaining material list");
