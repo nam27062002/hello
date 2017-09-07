@@ -119,6 +119,8 @@ public class SocialPlatformManager : MonoBehaviour
 
     private bool IsInited { get; set; }
 
+    private bool IsFirstLogin { get; set; }
+
     public void Init()
 	{
         if (!IsInited)
@@ -136,19 +138,23 @@ public class SocialPlatformManager : MonoBehaviour
                     break;
             }
         }
-	}
 
-	public void Login(bool isAppInit)
-	{                    
+        IsFirstLogin = true;
+    }
+
+	public void Login()
+	{        
         switch (m_platform)
 		{
 			case UsingPlatform.FACEBOOK:
 			{
-                GameSessionManager.SharedInstance.LogInToFacebook(isAppInit);
+                GameSessionManager.SharedInstance.LogInToFacebook(IsFirstLogin);
 				//FacebookManager.SharedInstance.LogIn();
 			}break;
 		}
-	}
+
+        IsFirstLogin = false;
+    }
 
 	public bool IsLoggedIn()
 	{

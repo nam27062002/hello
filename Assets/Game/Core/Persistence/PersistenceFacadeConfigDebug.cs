@@ -13,7 +13,10 @@
         Error_Local_Save_Permission,
         Error_Local_Load_Corrupted_Save_Permission,
 
-        Error_Cloud_Not_Connection,        
+        Error_Cloud_NotConnection,      
+        Error_Cloud_Server_NotLogged,
+        Error_Cloud_Server_Persistence,
+        Error_Cloud_Social_NotLogged, 
     };
 
     private EUserCaseId UserCaseId { get; set;  }
@@ -23,7 +26,7 @@
         UserCaseId = id;
     }
 
-    protected override PersistenceSyncOpFactory GetFactory(EFactoryType type)
+    protected override PersistenceSyncOpFactory GetFactory(PersistenceSyncer.EPurpose type)
     {
         // Factories are regenerated so the same user case can be tested several times
         Setup();
@@ -66,9 +69,21 @@
                 SetupErrorLocalLoadCorruptedSavePermission();
                 break;
 
-            case EUserCaseId.Error_Cloud_Not_Connection:
-                SetupErrorCloudNotConnection();
-                break;            
+            case EUserCaseId.Error_Cloud_NotConnection:
+                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_NotConnection);
+                break;
+
+            case EUserCaseId.Error_Cloud_Server_NotLogged:
+                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_Server_NotLogged);
+                break;
+
+            case EUserCaseId.Error_Cloud_Social_NotLogged:
+                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_Social_NotLogged);
+                break;
+
+            case EUserCaseId.Error_Cloud_Server_Persistence:
+                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_Server_Persistence);                
+                break;
         }
     }
 
@@ -229,7 +244,7 @@
         SyncFromLaunchFactory = debugFactory;
     }
 
-    private void SetupErrorCloudNotConnection()
+    private void SetupErrorCloudConnection(PersistenceStates.ESyncResult cloudResult)
     {
         // From Launch
         // The game should load with local persistence and no delays because of the cloud error connection        
@@ -243,9 +258,10 @@
 
         // Load cloud with no connection
         PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.LoadCloud);
-        debugOp.Debug_RegisterData(100f, PersistenceStates.ESyncResult.Error_Cloud_Not_Connection, null);
+        debugOp.Debug_RegisterData(5f, cloudResult, null);
         
         SetFactoryToAllTypes(productionFactory);
         SyncFromLaunchFactory = debugFactory;
+        SyncFromSettingsFactory = debugFactory;
     }    
 }
