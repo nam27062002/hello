@@ -158,107 +158,114 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected void Update()
     {
         // To Debug
-        if (FeatureSettingsManager.IsDebugEnabled && Input.GetKeyDown(KeyCode.A))
+        if (FeatureSettingsManager.IsDebugEnabled)
         {
-            // ---------------------------
-            // Test eggs collected
-            //Debug_TestEggsCollected();
-            // ---------------------------       
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                // ---------------------------
+                // Test eggs collected
+                //Debug_TestEggsCollected();
+                // ---------------------------       
 
-            // ---------------------------
-            // Test feature settings from server
-            //Debug_TestFeatureSettingsFromServer();
-            // ---------------------------            
+                // ---------------------------
+                // Test feature settings from server
+                //Debug_TestFeatureSettingsFromServer();
+                // ---------------------------            
 
-            // ---------------------------
-            // Test feature settings
-            //Debug_TestFeatureSettingsTypeData();
-            // ---------------------------                        
+                // ---------------------------
+                // Test feature settings
+                //Debug_TestFeatureSettingsTypeData();
+                // ---------------------------                        
 
-            // ---------------------------
-            // Test restart flow
-            //Debug_RestartFlow();
-            // ---------------------------            
+                // ---------------------------
+                // Test restart flow
+                //Debug_RestartFlow();
+                // ---------------------------            
 
-            // ---------------------------
-            // Test toggle pause
-            //Debug_ToggleIsPaused();
-            // ---------------------------
+                // ---------------------------
+                // Test toggle pause
+                //Debug_ToggleIsPaused();
+                // ---------------------------
 
-            // ---------------------------
-            // Test feature settings
-            //Debug_TestToggleSound();
-            // ---------------------------     
+                // ---------------------------
+                // Test feature settings
+                //Debug_TestToggleSound();
+                // ---------------------------     
 
-            // ---------------------------
-            // Test drunk effect
-            //Debug_TestToggleDrunk();
-            // ---------------------------     
+                // ---------------------------
+                // Test drunk effect
+                //Debug_TestToggleDrunk();
+                // ---------------------------     
 
-            // ---------------------------
-            // Test frame color effect
-            //Debug_TestToggleFrameColor();
-            // ---------------------------    
+                // ---------------------------
+                // Test frame color effect
+                //Debug_TestToggleFrameColor();
+                // ---------------------------    
 
-            // ---------------------------
-            // Test quality settings
-            //Debug_TestQualitySettings();
-            // ---------------------------         
+                // ---------------------------
+                // Test quality settings
+                //Debug_TestQualitySettings();
+                // ---------------------------         
 
-            // ---------------------------
-            // Test toggling entities visibility
-            //Debug_TestToggleEntitiesVisibility();
-            // ---------------------------        
+                // ---------------------------
+                // Test toggling entities visibility
+                //Debug_TestToggleEntitiesVisibility();
+                // ---------------------------        
 
-            // ---------------------------
-            // Test toggling particles visibility
-            //Debug_TestToggleParticlesVisibility();
-            // ---------------------------        
+                // ---------------------------
+                // Test toggling particles visibility
+                //Debug_TestToggleParticlesVisibility();
+                // ---------------------------        
 
-            // ---------------------------
-            // Test toggling particles culling
-            //Debug_TestToggleParticlesCulling();
-            // ---------------------------        
+                // ---------------------------
+                // Test toggling particles culling
+                //Debug_TestToggleParticlesCulling();
+                // ---------------------------        
 
-            // ---------------------------
-            // Test toggling player particles visibility
-            //Debug_TestTogglePlayerParticlesVisibility();
-            // ---------------------------        
+                // ---------------------------
+                // Test toggling player particles visibility
+                //Debug_TestTogglePlayerParticlesVisibility();
+                // ---------------------------        
 
-            // ---------------------------
-            // Test toggling player particles visibility
-            //Debug_TestToggleCustomParticlesCullingEnabled();
-            // ---------------------------        
+                // ---------------------------
+                // Test toggling player particles visibility
+                //Debug_TestToggleCustomParticlesCullingEnabled();
+                // ---------------------------        
 
-            // ---------------------------
-            // Test toggling profiler memory scene
-            //Debug_ToggleProfilerMemoryScene();
-            // ---------------------------
+                // ---------------------------
+                // Test toggling profiler memory scene
+                //Debug_ToggleProfilerMemoryScene();
+                // ---------------------------
 
-            // ---------------------------
-            // Test toggling profiler load scenes scene
-            //Debug_ToggleProfilerLoadScenesScene();
-            // ---------------------------
+                // ---------------------------
+                // Test toggling profiler load scenes scene
+                //Debug_ToggleProfilerLoadScenesScene();
+                // ---------------------------
 
-            // ---------------------------
-            // Test schedule notification
-            //Debug_ScheduleNotification();
-            // ---------------------------
+                // ---------------------------
+                // Test schedule notification
+                //Debug_ScheduleNotification();
+                // ---------------------------
 
-            // ---------------------------
-            // Test send play test
-            //Debug_OnSendPlayTest();
-            // ---------------------------
+                // ---------------------------
+                // Test send play test
+                //Debug_OnSendPlayTest();
+                // ---------------------------
 
-            // ---------------------------
-            // Test player's progress
-            // Debug_TestPlayerProgress();
-            // ---------------------------
+                // ---------------------------
+                // Test player's progress
+                // Debug_TestPlayerProgress();
+                // ---------------------------
 
-            // ---------------------------
-            // Test persistence save
-            Debug_TestPersistenceSave();
-            // ---------------------------
+                // ---------------------------
+                // Test persistence save
+                //Debug_TestPersistenceSave();
+                // ---------------------------
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                //GameSessionManager.RemoveKeys();
+            }
         }
 
         HDTrackingManager.Instance.Update();        
