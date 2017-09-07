@@ -244,7 +244,7 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
             Syncer_Sync(LocalOp, null, null);
         };
 
-        Syncer.Sync(saveLocalOp, null, syncOp, onSaved);        
+        Syncer.Sync(PersistenceSyncer.EPurpose.Internal, saveLocalOp, null, syncOp, onSaved);        
 	}
 
 	private void Flow_ProcessErrorLocalLoadPermission()
@@ -276,7 +276,7 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
                 Syncer_Sync(LocalOp, null, null);
             };
 
-            Syncer.Sync(saveLocalOp, null, syncOp, onSaved);                                  
+            Syncer.Sync(PersistenceSyncer.EPurpose.Internal, saveLocalOp, null, syncOp, onSaved);                                  
         };
                 
         PersistenceFacade.Popups_OpenLoadSaveCorruptedError(useCloud, solveProblem);                
@@ -354,6 +354,6 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
 			Sync();
 		};
 
-		Syncer.Sync(localOp, cloudOp, syncOp, resync);        
+		Syncer.Sync(PersistenceSyncer.EPurpose.Internal, localOp, cloudOp, syncOp, resync);        
 	}
 }

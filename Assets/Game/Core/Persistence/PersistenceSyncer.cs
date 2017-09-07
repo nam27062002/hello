@@ -2,6 +2,16 @@ using System;
 using System.Collections.Generic;
 public class PersistenceSyncer
 {
+    public enum EPurpose
+    {      
+        SyncFromLaunch,
+        SyncFromSettings,
+        Save,
+        Internal
+    };
+
+    private EPurpose Purpose { get; set; }
+
 	private enum EState
 	{
 		None,
@@ -177,13 +187,14 @@ public class PersistenceSyncer
 		}
 	}
 
-	public void Sync(PersistenceSyncOp localOp, PersistenceSyncOp cloudOp, 
+	public void Sync(EPurpose purpose, PersistenceSyncOp localOp, PersistenceSyncOp cloudOp, 
 	                 PersistenceSyncOp syncOp, Action<PersistenceStates.ESyncResult> onDone)
 	{
 		if (State == EState.None)
 		{
 			Reset(false);
 
+            Purpose = purpose;
 			LocalOp = localOp;
 			CloudOp = cloudOp;
 			SyncOp = syncOp;

@@ -26,7 +26,7 @@
         UserCaseId = id;
     }
 
-    protected override PersistenceSyncOpFactory GetFactory(EFactoryType type)
+    protected override PersistenceSyncOpFactory GetFactory(PersistenceSyncer.EPurpose type)
     {
         // Factories are regenerated so the same user case can be tested several times
         Setup();

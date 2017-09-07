@@ -47,7 +47,8 @@ public class PersistenceSyncOpCloud : PersistenceSyncOp
         {
             switch (mStep)
             {
-                case EStep.LoggingToSocial:                
+                case EStep.LoggingToSocial:
+                    Social_RemoveMergeListeners();              
                     break;
             }
 
@@ -159,7 +160,7 @@ public class PersistenceSyncOpCloud : PersistenceSyncOp
     private void OnDone(PersistenceStates.ESyncResult result)
     {        
         Result = result;
-        OnPerformDone();
+        Step = EStep.Done;        
     }
 
     #region server
