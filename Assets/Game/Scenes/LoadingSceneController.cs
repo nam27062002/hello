@@ -178,16 +178,16 @@ public class LoadingSceneController : SceneController {
                     string text = settingsInstance.m_kAndroidDangerousPermissions[i];   // Get the text
                     text = text.Replace (".", "_").ToUpper ();                          // Replace . per _ and convert it to mayus
                     text = "TID_" + text;                                               // Add TID_
-                    kNewAndroidDangerousPermission.m_strPermissionsMessage = LocalizationManager.SharedInstance.Localize(text);
+                    kNewAndroidDangerousPermission.m_strPermissionsMessage = text;
 
                     kAndroidPermissionsConfig.m_kAndroidDangerousPermissions.Add(kNewAndroidDangerousPermission);
                 }
-				kAndroidPermissionsConfig.m_strPermissionsInSettingsMessage = LocalizationManager.SharedInstance.Localize ("TID_POPUP_ANDROID_PERMISSION_SETTINGS_TEXT");
-				kAndroidPermissionsConfig.m_strPermissionsShutdownMessage   = LocalizationManager.SharedInstance.Localize ("TID_POPUP_ANDROID_PERMISSION_EXIT");
-				kAndroidPermissionsConfig.m_strPopupButtonYes               = LocalizationManager.SharedInstance.Localize ("TID_POPUP_ANDROID_PERMISSION_ALLOW");
-				kAndroidPermissionsConfig.m_strPopupButtonNo                = LocalizationManager.SharedInstance.Localize ("TID_POPUP_ANDROID_PERMISSION_DENY");
-				kAndroidPermissionsConfig.m_strPopupButtonSettings          = LocalizationManager.SharedInstance.Localize ("TID_POPUP_ANDROID_PERMISSION_SETTINGS");
-				kAndroidPermissionsConfig.m_strPopupButtonExit              = LocalizationManager.SharedInstance.Localize ("TID_EXIT_GAME");
+				kAndroidPermissionsConfig.m_strPermissionsInSettingsMessage = "TID_POPUP_ANDROID_PERMISSION_SETTINGS_TEXT";
+				kAndroidPermissionsConfig.m_strPermissionsShutdownMessage   = "TID_POPUP_ANDROID_PERMISSION_EXIT";
+				kAndroidPermissionsConfig.m_strPopupButtonYes               = "TID_POPUP_ANDROID_PERMISSION_ALLOW";
+				kAndroidPermissionsConfig.m_strPopupButtonNo                = "TID_POPUP_ANDROID_PERMISSION_DENY";
+				kAndroidPermissionsConfig.m_strPopupButtonSettings          = "TID_POPUP_ANDROID_PERMISSION_SETTINGS";
+				kAndroidPermissionsConfig.m_strPopupButtonExit              = "TID_EXIT_GAME";
 
                 AndroidPermissionsManager.SharedInstance.Initialise(ref kAndroidPermissionsConfig);
 
@@ -203,10 +203,10 @@ public class LoadingSceneController : SceneController {
 					m_androidPermissionsListener.m_permissionsFinished = false;
 					CaletyConstants.PopupConfig pConfig = new CaletyConstants.PopupConfig();
 					pConfig.m_strTitle = "";
-					pConfig.m_strMessage = "This is a nice message";
+					pConfig.m_strMessage = "TID_POPUP_ANDROID_PERMISSION_SETTINGS_TEXT";
 					pConfig.m_strIconURL = "";
 					AndroidPermissionsManager.AndroidPermissionsPopupButton button = new AndroidPermissionsManager.AndroidPermissionsPopupButton();
-					button.m_strText = "Bla Bla";
+					button.m_strText = "TID_EXIT_GAME";
 					button.m_pOnResponse = m_androidPermissionsListener.onAndroidPermissionsFinished;
 					pConfig.m_kPopupButtons.Add(button);
 					m_androidPermissionsListener.onAndroidPermissionPopupNeeded( pConfig );

@@ -7,7 +7,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     public void Init()
     {
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-        userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Error_Local_Save_Permission;
+        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Error_Cloud_Social_NotLogged;
         if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
             Config = new PersistenceFacadeConfigDebug(userCaseId);
@@ -21,6 +21,9 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         Sync_Init();
         Local_Init();
         Save_Init();
+
+        GameServerManager.SharedInstance.Configure();
+        SocialPlatformManager.SharedInstance.Init();
     }
     
     protected void Update()
@@ -98,11 +101,11 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
             // It needs to load the cloud and merge. We use a dummy local load op since it's already loaded. We just want to provide the syncer with the local data
             localOp = factory.GetLoadLocalOp(Sync_LocalData, false);
             PersistenceSyncOp cloudOp = factory.GetLoadCloudOp(Sync_CloudData, true);
-            syncOp = factory.GetLoadCloudOp(Sync_CloudData, true);
-            Sync_Perform(localOp, cloudOp, syncOp, onCloudLoad);
+            syncOp = factory.GetSyncOp(localOp, null, false);
+            Sync_Perform(PersistenceSyncer.EPurpose.SyncFromLaunch, localOp, cloudOp, syncOp, onCloudLoad);
         };
 
-        Sync_Perform(localOp, null, syncOp, onLocalLoad);       
+        Sync_Perform(PersistenceSyncer.EPurpose.SyncFromLaunch, localOp, null, syncOp, onLocalLoad);       
     }
 
 	public void Sync_FromSettings(Action<PersistenceStates.ESyncResult> onDone)
@@ -113,11 +116,10 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         PersistenceSyncOp localOp = factory.GetSaveLocalOp(Sync_LocalData, false);
 		PersistenceSyncOp cloudOp = factory.GetLoadCloudOp(Sync_CloudData, false);
 		PersistenceSyncOp syncOp = factory.GetSyncOp(localOp, cloudOp, false);
-		Sync_Perform(localOp, cloudOp, syncOp, onDone);
+		Sync_Perform(PersistenceSyncer.EPurpose.SyncFromSettings, localOp, cloudOp, syncOp, onDone);
 	}
 
-	private void Sync_Perform(PersistenceSyncOp localOp, PersistenceSyncOp cloudOp, 
-	                          PersistenceSyncOp syncOp, Action<PersistenceStates.ESyncResult> onDone)
+	private void Sync_Perform(PersistenceSyncer.EPurpose purpose, PersistenceSyncOp localOp, PersistenceSyncOp cloudOp, PersistenceSyncOp syncOp, Action<PersistenceStates.ESyncResult> onDone)
 	{
 		Action<PersistenceStates.ESyncResult> onSyncDone = delegate(PersistenceStates.ESyncResult result)
 		{
@@ -132,10 +134,31 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                                   cloudOp != null && cloudOp.Result == PersistenceStates.ESyncResult.Success &&
                                   syncOp != null && syncOp.Result == PersistenceStates.ESyncResult.Success);
 
-            Log("Sync DONE AreDataInSync = " + Sync_AreDataInSync);
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                string msg = "Sync DONE ";
+                if (localOp != null)
+                {
+                    msg += " localOp.Result = " + localOp.Result;
+                }
+
+                if (cloudOp != null)
+                {
+                    msg += " cloudOp.Result = " + cloudOp.Result;
+                }
+
+                if (syncOp != null)
+                {
+                    msg += " syncOp.Result = " + syncOp.Result;
+                }
+
+                msg += " AreDataInSync = " + Sync_AreDataInSync;
+
+                Log(msg);
+            }            
 		};
 
-		Sync_Syncer.Sync(localOp, cloudOp, syncOp, onSyncDone);
+		Sync_Syncer.Sync(purpose, localOp, cloudOp, syncOp, onSyncDone);
 	}
 
     public bool Sync_IsSyncing()
@@ -202,7 +225,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                 Save_OnPerformed(result == PersistenceStates.ESyncResult.Success);
             };
 
-            Sync_Perform(localOp, cloudOp, syncOp, onSaveDone);
+            Sync_Perform(PersistenceSyncer.EPurpose.Save, localOp, cloudOp, syncOp, onSaveDone);
         }        
 	}
 
@@ -370,15 +393,26 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
         
 		//Popup popup = FlowController.Instance.OpenPopup("No connection.");
 		//popup.AddButton("Ok", onConfirm, true);
-    } 
-    #endregion    
+    }
+    #endregion
 
-	#region log
-	private const string LOG_CHANNEL = "Persistence:";
+    #region log
+    private static bool LOG_USE_COLOR = false;
+    private const string LOG_CHANNEL = "[Persistence]:";    
+    private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
     public static void Log(string msg)
     {
-        Debug.Log(LOG_CHANNEL + msg);
+        if (LOG_USE_COLOR)
+        {
+            msg = LOG_CHANNEL_COLOR + msg + " </color>";
+        }
+        else
+        {
+            msg = LOG_CHANNEL + msg;
+        }
+
+        Debug.Log(msg);
     }
 
     public static void LogError(string msg)

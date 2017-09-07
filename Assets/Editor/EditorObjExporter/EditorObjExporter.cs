@@ -40,7 +40,9 @@ public class EditorObjExporter : ScriptableObject
 	private static string MeshToString(MeshFilter mf, Dictionary<string, ObjMaterial> materialList) 
 	{
 		Mesh m = mf.sharedMesh;
-		Material[] mats = mf.GetComponent<Renderer>().sharedMaterials;
+
+        Renderer rnd = mf.GetComponent<Renderer>();
+        Material[] mats = rnd != null ? rnd.sharedMaterials : null;
  
 		StringBuilder sb = new StringBuilder();
  
@@ -67,40 +69,44 @@ public class EditorObjExporter : ScriptableObject
 		{
 			sb.Append(string.Format("vt {0} {1}\n",v.x,v.y));
 		}
- 
-		for (int material=0; material < m.subMeshCount; material ++) {
-			sb.Append("\n");
-			sb.Append("usemtl ").Append(mats[material].name).Append("\n");
-			sb.Append("usemap ").Append(mats[material].name).Append("\n");
- 
-			//See if this material is already in the materiallist.
-			try
-			{
-				ObjMaterial objMaterial = new ObjMaterial();
- 
-				objMaterial.name = mats[material].name;
- 
-				if (mats[material].mainTexture)
-					objMaterial.textureName = AssetDatabase.GetAssetPath(mats[material].mainTexture);
-				else 
-					objMaterial.textureName = null;
- 
-				materialList.Add(objMaterial.name, objMaterial);
-			}
-			catch (ArgumentException)
-			{
-				//Already in the dictionary
-			}
- 
- 
-			int[] triangles = m.GetTriangles(material);
-			for (int i=0;i<triangles.Length;i+=3) 
-			{
-				//Because we inverted the x-component, we also needed to alter the triangle winding.
-				sb.Append(string.Format("f {1}/{1}/{1} {0}/{0}/{0} {2}/{2}/{2}\n", 
-					triangles[i]+1 + vertexOffset, triangles[i+1]+1 + normalOffset, triangles[i+2]+1 + uvOffset));
-			}
-		}
+
+        if (mats != null)
+        {
+            for (int material = 0; material < m.subMeshCount; material++)
+            {
+                sb.Append("\n");
+                sb.Append("usemtl ").Append(mats[material].name).Append("\n");
+                sb.Append("usemap ").Append(mats[material].name).Append("\n");
+
+                //See if this material is already in the materiallist.
+                try
+                {
+                    ObjMaterial objMaterial = new ObjMaterial();
+
+                    objMaterial.name = mats[material].name;
+
+                    if (mats[material].mainTexture)
+                        objMaterial.textureName = AssetDatabase.GetAssetPath(mats[material].mainTexture);
+                    else
+                        objMaterial.textureName = null;
+
+                    materialList.Add(objMaterial.name, objMaterial);
+                }
+                catch (ArgumentException)
+                {
+                    //Already in the dictionary
+                }
+
+
+                int[] triangles = m.GetTriangles(material);
+                for (int i = 0; i < triangles.Length; i += 3)
+                {
+                    //Because we inverted the x-component, we also needed to alter the triangle winding.
+                    sb.Append(string.Format("f {1}/{1}/{1} {0}/{0}/{0} {2}/{2}/{2}\n",
+                        triangles[i] + 1 + vertexOffset, triangles[i + 1] + 1 + normalOffset, triangles[i + 2] + 1 + uvOffset));
+                }
+            }
+        }
  
 		vertexOffset += m.vertices.Length;
 		normalOffset += m.normals.Length;
@@ -125,7 +131,7 @@ public class EditorObjExporter : ScriptableObject
  
 	private static void MaterialsToFile(Dictionary<string, ObjMaterial> materialList, string folder, string filename)
 	{
-		using (StreamWriter sw = new StreamWriter(folder + Path.PathSeparator + filename + ".mtl")) 
+		using (StreamWriter sw = new StreamWriter(folder + Path.DirectorySeparatorChar + filename + ".mtl")) 
 		{
 			foreach( KeyValuePair<string, ObjMaterial> kvp in materialList )
 			{
@@ -143,7 +149,7 @@ public class EditorObjExporter : ScriptableObject
 					string destinationFile = kvp.Value.textureName;
  
  
-					int stripIndex = destinationFile.LastIndexOf(Path.PathSeparator);
+					int stripIndex = destinationFile.LastIndexOf(Path.DirectorySeparatorChar);
  
 					if (stripIndex >= 0)
 						destinationFile = destinationFile.Substring(stripIndex + 1).Trim();
@@ -151,7 +157,7 @@ public class EditorObjExporter : ScriptableObject
  
 					string relativeFile = destinationFile;
  
-					destinationFile = folder + Path.PathSeparator + destinationFile;
+					destinationFile = folder + Path.DirectorySeparatorChar + destinationFile;
  
 					Debug.Log("Copying texture from " + kvp.Value.textureName + " to " + destinationFile);
  
@@ -178,7 +184,7 @@ public class EditorObjExporter : ScriptableObject
 	{
 		Dictionary<string, ObjMaterial> materialList = PrepareFileWrite();
  
-		using (StreamWriter sw = new StreamWriter(folder +Path.PathSeparator + filename + ".obj")) 
+		using (StreamWriter sw = new StreamWriter(folder +Path.DirectorySeparatorChar + filename + ".obj")) 
 		{
 			sw.Write("mtllib ./" + filename + ".mtl\n");
  
@@ -192,7 +198,7 @@ public class EditorObjExporter : ScriptableObject
 	{
 		Dictionary<string, ObjMaterial> materialList = PrepareFileWrite();
  
-		using (StreamWriter sw = new StreamWriter(folder +Path.PathSeparator + filename + ".obj")) 
+		using (StreamWriter sw = new StreamWriter(folder +Path.DirectorySeparatorChar + filename + ".obj")) 
 		{
 			sw.Write("mtllib ./" + filename + ".mtl\n");
  
@@ -294,7 +300,7 @@ public class EditorObjExporter : ScriptableObject
  
 			string filename = EditorSceneManager.GetActiveScene().name + "_" + exportedObjects;
  
-			int stripIndex = filename.LastIndexOf(Path.PathSeparator);
+			int stripIndex = filename.LastIndexOf(Path.DirectorySeparatorChar);
  
 			if (stripIndex >= 0)
 				filename = filename.Substring(stripIndex + 1).Trim();
@@ -307,10 +313,70 @@ public class EditorObjExporter : ScriptableObject
 		else
 			EditorUtility.DisplayDialog("Objects not exported", "Make sure at least some of your selected objects have mesh filters!", "");
 	}
- 
- 
- 
-	[MenuItem ("Custom/Export/Export each selected to single OBJ")]
+
+
+    [MenuItem("Custom/Export/Export whole collision map to single OBJ")]
+    static void ExportCollidersToSingle()
+    {
+        if (!CreateTargetFolder())
+            return;
+
+        PolyMesh[] selection;
+        AssetFinder.FindAssetInScene<PolyMesh>(out selection);
+
+        if (selection.Length == 0)
+        {
+            EditorUtility.DisplayDialog("No source object selected!", "Please select one or more target objects", "");
+            return;
+        }
+
+        int exportedObjects = 0;
+
+        ArrayList mfList = new ArrayList();
+
+        for (int i = 0; i < selection.Length; i++)
+        {
+            Component[] meshfilter = selection[i].GetComponentsInChildren(typeof(MeshFilter));
+
+            for (int m = 0; m < meshfilter.Length; m++)
+            {
+                Renderer rnd = meshfilter[m].gameObject.GetComponent<Renderer>();
+                if (rnd != null && Mathf.Abs(rnd.transform.position.z) < 0.2f)
+                {
+                    exportedObjects++;
+                    mfList.Add(meshfilter[m]);
+                }
+            }
+        }
+
+        if (exportedObjects > 0)
+        {
+            MeshFilter[] mf = new MeshFilter[mfList.Count];
+
+            for (int i = 0; i < mfList.Count; i++)
+            {
+                mf[i] = (MeshFilter)mfList[i];
+            }
+
+            string filename = EditorSceneManager.GetActiveScene().name + "_" + exportedObjects;
+
+            int stripIndex = filename.LastIndexOf(Path.DirectorySeparatorChar);
+
+            if (stripIndex >= 0)
+                filename = filename.Substring(stripIndex + 1).Trim();
+
+            MeshesToFile(mf, targetFolder, filename);
+
+
+            EditorUtility.DisplayDialog("Objects exported", "Exported " + exportedObjects + " objects to " + filename, "");
+        }
+        else
+            EditorUtility.DisplayDialog("Objects not exported", "Make sure at least some of your selected objects have mesh filters!", "");
+    }
+
+
+
+    [MenuItem ("Custom/Export/Export each selected to single OBJ")]
 	static void ExportEachSelectionToSingle()
 	{
 		if (!CreateTargetFolder())

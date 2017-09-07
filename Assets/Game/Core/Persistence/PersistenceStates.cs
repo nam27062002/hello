@@ -53,7 +53,12 @@ public class PersistenceStates
         Error_Local_Save_DiskSpace,
 
         // Cloud errors
-        Error_Cloud_Not_Connection,
+        Error_Cloud_NotConnection,
+        Error_Cloud_Social_NotLogged,
+        Error_Cloud_Server_NotLogged,
+        Error_Cloud_Server_Persistence,
+        Error_Cloud_Server_MergeFailed,
+        Error_Cloud_Server_MergeShowPopupNeeded,
 
         // Any other error
         Error_Default 

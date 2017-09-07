@@ -4,17 +4,10 @@
 using System;
 using System.Collections.Generic;
 public class PersistenceFacadeConfig
-{    
-    protected enum EFactoryType
-    {
-        SyncFromLaunch,
-        SyncFromSettings,
-        Save
-    };
+{        
+    private Dictionary<PersistenceSyncer.EPurpose, PersistenceSyncOpFactory> CachedFactories { get; set; }
 
-    private Dictionary<EFactoryType, PersistenceSyncOpFactory> CachedFactories { get; set; }
-
-    protected virtual PersistenceSyncOpFactory GetFactory(EFactoryType type)
+    protected virtual PersistenceSyncOpFactory GetFactory(PersistenceSyncer.EPurpose type)
     {
         PersistenceSyncOpFactory returnValue = null;
         if (CachedFactories != null && CachedFactories.ContainsKey(type))
@@ -25,11 +18,11 @@ public class PersistenceFacadeConfig
         return returnValue;
     }
 
-    private void CacheFactory(EFactoryType type, PersistenceSyncOpFactory factory)
+    private void CacheFactory(PersistenceSyncer.EPurpose type, PersistenceSyncOpFactory factory)
     {
         if (CachedFactories == null)
         {
-            CachedFactories = new Dictionary<EFactoryType, PersistenceSyncOpFactory>();
+            CachedFactories = new Dictionary<PersistenceSyncer.EPurpose, PersistenceSyncOpFactory>();
         }
 
         if (CachedFactories.ContainsKey(type))
@@ -44,20 +37,20 @@ public class PersistenceFacadeConfig
 
     public PersistenceSyncOpFactory SyncFromLaunchFactory
     {
-        get { return GetFactory(EFactoryType.SyncFromLaunch); }    
-        set { CacheFactory(EFactoryType.SyncFromLaunch, value); }    
+        get { return GetFactory(PersistenceSyncer.EPurpose.SyncFromLaunch); }    
+        set { CacheFactory(PersistenceSyncer.EPurpose.SyncFromLaunch, value); }    
     }
 
     public PersistenceSyncOpFactory SyncFromSettingsFactory
     {
-        get { return GetFactory(EFactoryType.SyncFromSettings); }
-        set { CacheFactory(EFactoryType.SyncFromSettings, value); }
+        get { return GetFactory(PersistenceSyncer.EPurpose.SyncFromSettings); }
+        set { CacheFactory(PersistenceSyncer.EPurpose.SyncFromSettings, value); }
     }
 
     public PersistenceSyncOpFactory SaveFactory
     {
-        get { return GetFactory(EFactoryType.Save); }
-        set { CacheFactory(EFactoryType.Save, value); }
+        get { return GetFactory(PersistenceSyncer.EPurpose.Save); }
+        set { CacheFactory(PersistenceSyncer.EPurpose.Save, value); }
     }
 
     public PersistenceFacadeConfig()
@@ -75,10 +68,10 @@ public class PersistenceFacadeConfig
     protected void SetFactoryToAllTypes(PersistenceSyncOpFactory factory)
     {
         // All use the same factory because only one can be called simultaneously
-        int count = Enum.GetValues(typeof(EFactoryType)).Length;
+        int count = Enum.GetValues(typeof(PersistenceSyncer.EPurpose)).Length;
         for (int i = 0; i < count; i++)
         {
-            CacheFactory((EFactoryType)i, factory);
+            CacheFactory((PersistenceSyncer.EPurpose)i, factory);
         }
     }
 
