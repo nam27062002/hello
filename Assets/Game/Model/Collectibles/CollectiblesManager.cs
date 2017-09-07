@@ -37,10 +37,8 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		get { return instance.m_egg; }
 	}
 
-	private CollectibleKey m_key = null;
-	public static CollectibleKey key {
-		get { return instance.m_key; }
-	}
+	private bool m_key = false;
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -63,7 +61,8 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		// Init all collectible types!
 		instance.InitLevelEggs();
 		instance.InitLevelChests();
-		instance.InitLevelKeys();
+
+		Messenger.AddListener(GameEvents.TICKET_COLLECTED, instance.OnCollectKey);	
 	}
 
 	/// <summary>
@@ -73,7 +72,9 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	public static void Clear() {
 		instance.m_egg = null;
 		instance.m_chests.Clear();
-		instance.m_key = null;
+		instance.m_key = false;
+
+		Messenger.RemoveListener(GameEvents.TICKET_COLLECTED, instance.OnCollectKey);
 	}
 
 	public static void Process() {
@@ -87,7 +88,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		ChestManager.ProcessChests();
 
 		// Process keys
-		if(instance.m_key != null && instance.m_key.collected) {
+		if (instance.m_key) {
 			// Just add a new key to the user profile
 			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, 1, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 		}
@@ -221,31 +222,14 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		}
 	}
 
-	/// <summary>
-	/// Select a random key from the current level and define it as the active key.
-	/// All other keys in the level will be removed.
-	/// A level must be loaded beforehand, otherwise nothing will happen.
-	/// To be called at the start of the game.
-	/// </summary>
-	private void InitLevelKeys() {
-		// Remove all keys from the user, with the new design keys are no longer stockable
-		if(UsersManager.currentUser.keys > 0) {
-			ResourcesFlow flow = new ResourcesFlow();
-			flow.Begin(
-				UsersManager.currentUser.keys, 	// Spend as many keys as we currently have
-				UserProfile.Currency.KEYS, 
-				HDTrackingManager.EEconomyGroup.GLOBAL_EVENT_KEYS_RESET,
-				null
-			);
-		}
-
-		// Pick a random key from the scene
-		instance.m_key = SelectRandomCollectible<CollectibleKey>(CollectibleKey.TAG, true, TutorialStep.FIRST_RUN);
-	}
 
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
+	private void OnCollectKey() {
+		m_key = true;
+	}
+
 	/// <summary>
 	/// Select a random collectible of the requested type from the current level.
 	/// All other collectible of the same type in the level will be destroyed.
