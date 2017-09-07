@@ -20,6 +20,9 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_InnerLightAdd ("Inner Light Add", float) = 0.0
 		_InnerLightColor ("Inner Light Color", Color) = (1,1,1,1)
 
+		_InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
+		_InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
+
 		_AmbientAdd("Ambient Add", Color) = (0,0,0,0)
 
 		_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
@@ -34,9 +37,6 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 		_FireMap("Fire Map", 2D) = "white" {}
 		_FireAmount("Fire amount", Range(0.0, 1.0)) = 0.0
-
-		_InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
-		_InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
 
 		// Blending state
 		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
@@ -57,7 +57,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 		/// Enum Material Properties
 		[KeywordEnum(None, Reflection, Fire)] FXLayer("Additional FX layer", Float) = 0
-		[KeywordEnum(None, AutoInnerLight, BlinkLights)] SelfIlluminate("Additional FX layer", Float) = 0
+		[KeywordEnum(Normal, AutoInnerLight, BlinkLights)] SelfIlluminate("Additional FX layer", Float) = 0
 			
 	}
 
@@ -91,8 +91,8 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature  __ CUTOFF
 			#pragma shader_feature  __ FRESNEL
 
-			#pragma shader_feature SELFILLUMINATE_NONE SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
-			#pragma shader_feature FXLAYER_NONE FXLAYER_REFLECTION FXLAYER_FIRE
+			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
+			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"

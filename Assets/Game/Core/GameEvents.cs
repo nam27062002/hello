@@ -123,8 +123,13 @@ public enum GameEvents {
 	// GameServerManager events
 	LOGGED,						// params: bool	
 
-	// Social Platform Manager Events
-	SOCIAL_LOGGED,				// params: bool	
+    // Merge
+    MERGE_SUCCEEDED,
+    MERGE_FAILED,
+    MERGE_SHOW_POPUP_NEEDED,    // params: CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount
+
+    // Social Platform Manager Events
+    SOCIAL_LOGGED,				// params: bool	
 	
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params

@@ -107,7 +107,7 @@ public class MenuPlayScreen : MonoBehaviour {
             Refresh();
         });
         */
-        PersistenceFacade.instance.Sync_Persistences(PersistenceFacade.ESyncFrom.Settings, delegate()
+        PersistenceFacade.instance.Sync_FromSettings(delegate(PersistenceStates.ESyncResult result)
         {
             PersistenceManager.Popups_CloseLoadingPopup();
             Refresh();

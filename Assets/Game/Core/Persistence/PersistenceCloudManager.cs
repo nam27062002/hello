@@ -1,4 +1,4 @@
-﻿using FGOL.Server;
+using FGOL.Server;
 using System;
 public class PersistenceCloudManager
 {
@@ -177,14 +177,16 @@ public class PersistenceCloudManager
 
     private void Cloud_LoadPersistenceFromString(string persistence)
     {
+        /*
         if (Cloud_Persistence == null)
         {
-            Cloud_Persistence = new PersistenceData(PersistenceFacade.LocalPersistence_ActiveProfileID);
+            Cloud_Persistence = new PersistenceData(PersistenceFacade.SharedInstance.LocalPersistence_ActiveProfileID());
         }        
 
-        Cloud_Persistence.LoadFromString(persistence);        
+        Cloud_Persistence.LoadFromString(persistence);   
+        */     
     }
-    #endregion
+	#endregion
 
     #region server
     protected virtual void Server_CheckConnection()
@@ -212,7 +214,7 @@ public class PersistenceCloudManager
 
                 if (Load_IsSilent)
                 {
-                    PersistenceFacade.Popups_OpenErrorConnection(onDone);
+                    //PersistenceFacade.SharedInstance.Popups_OpenErrorConnection(onDone);
                 }
                 else
                 {
@@ -246,7 +248,7 @@ public class PersistenceCloudManager
 
                 if (Load_IsSilent)
                 {
-                    PersistenceFacade.Popups_OpenErrorConnection(onDone);
+                    //PersistenceFacade.SharedInstance.Popups_OpenErrorConnection(onDone);
                 }     
                 else
                 {
@@ -288,7 +290,7 @@ public class PersistenceCloudManager
     protected virtual void Social_LogIn()
     {        
         Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Social_OnLoggedInHelper);
-        SocialPlatformManager.SharedInstance.Login(Load_IsFromLauncher);
+        SocialPlatformManager.SharedInstance.Login();
     }    
         
     private void Social_OnLoggedInHelper(bool logged)
@@ -312,7 +314,7 @@ public class PersistenceCloudManager
         }
     }
 
-    protected virtual bool Social_IsLoggedIn()
+    public virtual bool Social_IsLoggedIn()
     {
         return SocialPlatformManager.SharedInstance.IsLoggedIn();
     }

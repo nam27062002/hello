@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
@@ -30,18 +30,31 @@ public class PersistenceData
 
     public PersistenceData(string key) : this(SaveUtilities.GetSavePath(key), key) { }
 
+	public List<PersistenceSystem> Systems { get; set; }
+
     public PersistenceData(string savePath, string key)
     {
         m_savePath = savePath;
         m_key = key;
 
-        m_data = new JSONNestedKeyValueStore();
-
-        LoadState = PersistenceStates.LoadState.OK;
-        SaveState = PersistenceStates.SaveState.OK;
-
-        GenerateEncryptionKey();
+		Reset ();
     }
+
+	public void Reset ()
+	{
+		m_data = new JSONNestedKeyValueStore ();
+
+		LoadState = PersistenceStates.LoadState.OK;
+		SaveState = PersistenceStates.SaveState.OK;
+
+		GenerateEncryptionKey ();
+
+		if (Systems != null)
+		{
+			Systems_Reset();
+			Systems.Clear();
+		}
+	}
 
     public string Key
     {
@@ -95,11 +108,26 @@ public class PersistenceData
         }
     }
 
-    public PersistenceStates.LoadState LoadState { get; set; }
+	private PersistenceStates.LoadState mLoadState;
+    public PersistenceStates.LoadState LoadState 
+	{ 
+		get 
+		{
+			return mLoadState;
+		}
+
+		set
+		{
+			mLoadState = value;
+		}
+	}
+
     public PersistenceStates.SaveState SaveState { get; set; }
 
     public PersistenceStates.SaveState Save(bool backUpOnFail = true)
-    {
+	{
+		Systems_Save();
+
         SaveState = PersistenceStates.SaveState.DiskSpace;
 
         string playerPrefKey = "Save." + m_key + ".sav";
@@ -144,6 +172,8 @@ public class PersistenceData
 
                         int requiredPadding = ReservedDiskSpace - (lengthBytes.Length + saveBytes.Length);
 
+						// [DGR] TO Remove
+						requiredPadding = 0;
                         if (requiredPadding > 0)
                         {
                             byte[] padding = new byte[requiredPadding];
@@ -201,7 +231,7 @@ public class PersistenceData
         // It should always return false except when debugging that can be changed to true
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            return false;
+            return true;
         }
         else
         {
@@ -356,6 +386,7 @@ public class PersistenceData
         {
             OnLoad();
             LoadState = PersistenceStates.LoadState.OK;
+			Systems_Load();
         }
         else
         {
@@ -397,10 +428,13 @@ public class PersistenceData
                     LoadState = PersistenceStates.LoadState.Corrupted;
                 }
             }
+            /*
+            // [DGR] TODO
             else if (headerVersion > HeaderVersion)
             {
                 LoadState = PersistenceStates.LoadState.VersionMismatch;
             }
+            */
             else
             {
                 versionOkay = true;
@@ -441,10 +475,12 @@ public class PersistenceData
                 {
                     using (StreamReader reader = new StreamReader(jsonMemoryStream))
                     {
-                        if (m_data.FromJSON(reader.ReadToEnd()))
+						string text = reader.ReadToEnd();
+                        if (m_data.FromJSON(text))
                         {
                             OnLoad();
                             LoadState = PersistenceStates.LoadState.OK;
+							Systems_Load();
                         }
                         else
                         {
@@ -548,6 +584,7 @@ public class PersistenceData
             if (returnValue)
             {
                 LoadState = PersistenceStates.LoadState.OK;
+				Systems_Load();
             }
             else
             {
@@ -557,6 +594,75 @@ public class PersistenceData
 
         return returnValue;    
     }
+
+	#region systems
+	private void Systems_Reset()
+	{
+		if (Systems != null)
+		{
+			int count = Systems.Count;
+			for (int i = 0; i < count; i++)
+			{
+				Systems[i].Reset();
+			}
+		}
+	}
+
+	private void Systems_Load()
+	{
+		if (Systems != null && LoadState == PersistenceStates.LoadState.OK)
+        {
+            try
+            {
+                Systems_Reset();
+                
+				int count = Systems.Count;
+				for (int i = 0; i < count; i++)
+				{
+					Systems[i].Load();
+				}
+            }
+            catch (FGOL.Server.CorruptedSaveException)
+            {
+                LoadState = PersistenceStates.LoadState.Corrupted;
+            }	
+        }      
+	}
+
+	private void Systems_Save()
+	{
+		if (Systems != null)
+		{
+			int count = Systems.Count;
+			for (int i = 0; i < count; i++)
+			{
+				Systems[i].Save();
+			}
+		}
+	}
+
+	public void Systems_RegisterSystem(PersistenceSystem system)
+	{
+		if (Systems == null)
+		{
+			Systems = new List<PersistenceSystem> ();
+		}
+
+		if (!Systems.Contains(system))
+		{
+			system.data = this;
+			Systems.Add(system);
+		}
+	}
+
+	public void Systems_UnregisterSystem(PersistenceSystem system)
+	{
+		if (Systems != null && Systems.Contains(system))
+		{
+			Systems.Remove(system);
+		}
+	}
+	#endregion
 
 #if UNITY_EDITOR
     public Dictionary<string, object> rawSaveData
