@@ -69,6 +69,7 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] private bool		m_hasGroupBonus = false;
 
 	[Separator("Activation")]
+	[SerializeField] private bool 		m_eventOnly = false;
 	[SerializeField] private DragonTier m_minTier = DragonTier.TIER_0;
 	[SerializeField] private DragonTier m_maxTier = DragonTier.TIER_4;
 	[SerializeField] private bool	    m_checkMaxTier = false;
@@ -153,80 +154,87 @@ public class Spawner : AbstractSpawner {
 	}
 
 	protected override void OnStart() {
-		float rnd = Random.Range(0f, 100f);
-		DragonTier playerTier = InstanceManager.player.data.tier;
-
-		bool enabledByTier = false;
-		if (m_checkMaxTier) {
-			enabledByTier = (playerTier >= m_minTier) && (playerTier <= m_maxTier);
-		} else {
-			enabledByTier = (playerTier >= m_minTier);
+		bool enabledByEvents = true;
+		if (m_eventOnly) {
+			enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
 		}
 
-		if (m_activationChance < 100f) {
-			// check debug 
-			if (DebugSettings.spawnChance0) {
-				rnd = 100f;
-			} else if (DebugSettings.spawnChance100) {
-				rnd = 0f;
+		if (enabledByEvents) {
+			float rnd = Random.Range(0f, 100f);
+			DragonTier playerTier = InstanceManager.player.data.tier;
+
+			bool enabledByTier = false;
+			if (m_checkMaxTier) {
+				enabledByTier = (playerTier >= m_minTier) && (playerTier <= m_maxTier);
+			} else {
+				enabledByTier = (playerTier >= m_minTier);
 			}
-		}
 
-		if (InstanceManager.player != null && enabledByTier) {
-			if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
-
-				m_entitySku = new string[GetMaxEntities()];
-				m_poolHandlerIndex = new int[GetMaxEntities()];
-				for (int i = 0; i < m_entitySku.Length; i++) {
-					m_entitySku[i] = "";
-					m_poolHandlerIndex[i] = 0;
+			if (m_activationChance < 100f) {
+				// check debug 
+				if (DebugSettings.spawnChance0) {
+					rnd = 100f;
+				} else if (DebugSettings.spawnChance100) {
+					rnd = 0f;
 				}
+			}
 
-				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
-				m_pcProbCoefA = def.GetAsFloat("flyingPigsProbaCoefA", 1f);
-				m_pcProbCoefB = def.GetAsFloat("flyingPigsProbaCoefB", 1f);
+			if (InstanceManager.player != null && enabledByTier) {
+				if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
-				if (m_activationKillTriggers == null) {
-					m_activationKillTriggers = new SpawnKillCondition[0];
-				}
-
-				if (m_quantity.max < m_quantity.min) {
-					m_quantity.min = m_quantity.max;
-				}                			
-
-				// adjust probabilities
-				float probFactor = 0;
-				for (int i = 0; i < m_entityPrefabList.Length; i++) {
-					probFactor += m_entityPrefabList[i].chance;
-				}
-
-				if (probFactor > 0f) {
-					probFactor = 100f / probFactor;
-					for (int i = 0; i < m_entityPrefabList.Length; i++) {
-						m_entityPrefabList[i].chance *= probFactor;
+					m_entitySku = new string[GetMaxEntities()];
+					m_poolHandlerIndex = new int[GetMaxEntities()];
+					for (int i = 0; i < m_entitySku.Length; i++) {
+						m_entitySku[i] = "";
+						m_poolHandlerIndex[i] = 0;
 					}
 
-					//sort probs
+					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+					m_pcProbCoefA = def.GetAsFloat("flyingPigsProbaCoefA", 1f);
+					m_pcProbCoefB = def.GetAsFloat("flyingPigsProbaCoefB", 1f);
+
+					if (m_activationKillTriggers == null) {
+						m_activationKillTriggers = new SpawnKillCondition[0];
+					}
+
+					if (m_quantity.max < m_quantity.min) {
+						m_quantity.min = m_quantity.max;
+					}                			
+
+					// adjust probabilities
+					float probFactor = 0;
 					for (int i = 0; i < m_entityPrefabList.Length; i++) {
-						for (int j = 0; j < m_entityPrefabList.Length - i - 1; j++) {
-							if (m_entityPrefabList[j].chance > m_entityPrefabList[j + 1].chance) {
-								EntityPrefab temp = m_entityPrefabList[j];
-								m_entityPrefabList[j] = m_entityPrefabList[j + 1];
-								m_entityPrefabList[j + 1] = temp;
+						probFactor += m_entityPrefabList[i].chance;
+					}
+
+					if (probFactor > 0f) {
+						probFactor = 100f / probFactor;
+						for (int i = 0; i < m_entityPrefabList.Length; i++) {
+							m_entityPrefabList[i].chance *= probFactor;
+						}
+
+						//sort probs
+						for (int i = 0; i < m_entityPrefabList.Length; i++) {
+							for (int j = 0; j < m_entityPrefabList.Length - i - 1; j++) {
+								if (m_entityPrefabList[j].chance > m_entityPrefabList[j + 1].chance) {
+									EntityPrefab temp = m_entityPrefabList[j];
+									m_entityPrefabList[j] = m_entityPrefabList[j + 1];
+									m_entityPrefabList[j + 1] = temp;
+								}
 							}
 						}
+
+						// clamp scale values
+						if (m_scale.min < 0.95f) m_scale.min = 0.95f;
+						if (m_scale.max > 1.05f) m_scale.min = 1.05f;
+							
+						RegisterInSpawnerManager();
+						SpawnerAreaManager.instance.Register(this);
+
+						gameObject.SetActive(false);
+
+						return;
 					}
-
-					// clamp scale values
-					if (m_scale.min < 0.95f) m_scale.min = 0.95f;
-					if (m_scale.max > 1.05f) m_scale.min = 1.05f;
-						
-					RegisterInSpawnerManager();
-					SpawnerAreaManager.instance.Register(this);
-
-					gameObject.SetActive(false);
-
-					return;
 				}
 			}
 		}
