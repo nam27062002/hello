@@ -13,6 +13,7 @@ public class GameStoreManagerCalety : GameStoreManager
     	public bool m_isReady = false;
 		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
+			Debug.Log("onPurchaseCompleted");
 			// string gameSku = PlatformSkuToGameSku( sku );
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, sku);
 			if ( def != null )
@@ -24,16 +25,19 @@ public class GameStoreManagerCalety : GameStoreManager
 
 		public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
+			Debug.Log("onPurchaseCancelled");
 			Messenger.Broadcast<string>(EngineEvents.PURCHASE_CANCELLED, sku);
 		}
 
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
+			Debug.Log("onPurchaseFailed");
 			Messenger.Broadcast<string>(EngineEvents.PURCHASE_FAILED, sku);
 		}
 
 		public override void onStoreIsReady() 
 		{
+			Debug.Log("onStoreIsReady");
 			m_isReady = true;	
 		}
 		/*
