@@ -55,7 +55,7 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Init currency counters
-		m_coinsCounter.SetValue(m_controller.totalCoins, true);
+		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
 
 		// Instantly set total amount of rewarded coins
