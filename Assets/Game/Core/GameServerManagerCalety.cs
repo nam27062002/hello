@@ -208,8 +208,6 @@ public class GameServerManagerCalety : GameServerManager {
 		kServerConfig.m_strClientPlatformBuild = "ios";
 #endif
 
-        // [DGR] TODO: To adapt when Weibo is integrated
-        kServerConfig.m_strSocialPlatform = CaletyConstants.SOCIAL_PLATFORM_FACEBOOK;
         kServerConfig.m_strServerApplicationSecretKey = "avefusilmagnifica";
 
 		ServerManager.SharedInstance.Initialise(ref kServerConfig);
@@ -760,9 +758,6 @@ public class GameServerManagerCalety : GameServerManager {
                     if (FeatureSettingsManager.IsDebugEnabled)
                         Log("Command Login");
 
-					if(!string.IsNullOrEmpty(parameters["platformId"])) {
-						ServerManager.SharedInstance.SetSocialPlatform(parameters["platformId"]);
-					}
 					ServerManager.SharedInstance.Server_SendAuth(parameters["platformId"], parameters["platformToken"]);
 				} break;                
 

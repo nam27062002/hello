@@ -7,9 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_ToxicWorm
-  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
-  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
-    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+  m_Shader: {fileID: 4800000, guid: a738c36c40dcd9b4a99a344a3d38da4c, type: 3}
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE GLOWEFFECT_MULTIPLY_COLOR_OFF
+    GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF
+    GLOWEFFECT_USE_VERTEXCOLOR_OFF SELFILLUMINATE_BLINKLIGHTS
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,6 +21,10 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BlendTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -39,8 +44,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DetailTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FireMap:
+        m_Texture: {fileID: 2800000, guid: 1a2a5adc7f7aef0419ada82fbca15328, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -63,34 +76,64 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ReflectionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - FXLayer: 0
+    - SelfIlluminate: 2
     - _AlphaMSKOffset: -0.226
     - _AlphaMSKScale: 8
+    - _BlendMode: 1
     - _BumpScale: 1
+    - _Cull: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _FresnelPower: 5
+    - _DstBlend: 10
+    - _EnableCutoff: 0
+    - _EnableFresnel: 1
+    - _EnableNormalMap: 0
+    - _EnableSilhouette: 0
+    - _EnableSpecular: 0
+    - _FireAmount: 1
+    - _Fresnel: 0
+    - _FresnelPower: 1.68
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _InnerLightAdd: 0
+    - _InnerLightWavePhase: 1
+    - _InnerLightWaveSpeed: 1
     - _Metallic: 0
     - _Mode: 0
+    - _NormalStrenght: 1
     - _NormalStrength: -1.99
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
+    - _SpecExponent: 1
     - _SpecularHighlights: 1
     - _SpecularPower: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
+    - _StartTime: 0
     - _StencilMask: 10
     - _UVSec: 0
+    - _WaterSpeed: 0.5
     - _WavePhase: 4.34
     - _WaveRadius: 1.5
-    - _ZWrite: 1
+    - _ZLimit: 0
+    - _ZWrite: 0
     m_Colors:
+    - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0, g: 0, b: 0, a: 0}
+    - _FresnelColor: {r: 0.36551726, g: 1, b: 0, a: 1}
+    - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 0}
+    - _StartPosition: {r: 0, g: 0, b: 0, a: 0}
+    - _Tint: {r: 0.20000005, g: 1, b: 0, a: 0.428}

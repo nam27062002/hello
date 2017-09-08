@@ -39,11 +39,15 @@ public class MenuPetPreview : MonoBehaviour {
 
 	private const string RARITY_GLOW_PREFAB_PATH = "UI/Menu/Pets/PF_PetRarityGlow_";	// Attach rarity sku to it
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private string m_sku;
+    private static readonly Color EPIC_COLOR = new Color(255.0f / 255.0f, 237.0f / 255.0f, 0.0f / 255.0f);
+    private static readonly Color RARE_COLOR = new Color(2.0f / 255.0f, 240.0f / 255.0f, 13.0f / 255.0f);
+    private static readonly Color SPECIAL_COLOR = new Color(255.0f / 255.0f, 153.0f / 255.0f, 0.0f / 255.0f);
+
+    //------------------------------------------------------------------//
+    // MEMBERS															//
+    //------------------------------------------------------------------//
+    // Exposed
+    [SerializeField] private string m_sku;
 	public string sku { 
 		get { return m_sku; }
 		set { m_sku = value; }
@@ -57,6 +61,7 @@ public class MenuPetPreview : MonoBehaviour {
 	private Animator m_animator = null;
 	private GameObject m_rarityGlow = null;
 	private Tween m_rarityGlowShowHideTween = null;
+    private Renderer[] m_renderers;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -66,7 +71,18 @@ public class MenuPetPreview : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		m_animator = GetComponentInChildren<Animator>();
+        m_renderers = GetComponentsInChildren<Renderer>();
 	}
+
+    void setFresnelColor(Color col)
+    {
+        for (int c = 0; c < m_renderers.Length; c++)
+        {
+            Material m = m_renderers[c].material;
+            m.SetFloat("_Fresnel", 1.0f);
+            m.SetColor("_FresnelColor", col);
+        }
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -96,14 +112,17 @@ public class MenuPetPreview : MonoBehaviour {
 	public void ToggleRarityGlow(bool _show) {
 		// Show?
 		if(_show) {
-			// If not yet loaded, do it
-			if(m_rarityGlow == null) {
-				// Get pet definition from sku
-				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_sku);
-				if(petDef == null) return;
+            // If not yet loaded, do it
+            DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_sku);
+            if (petDef == null) return;
+            string rarity = petDef.Get("rarity");
 
-				// Load glow for the target rarity
-				GameObject glowPrefab = Resources.Load<GameObject>(RARITY_GLOW_PREFAB_PATH + petDef.Get("rarity"));
+            if (m_rarityGlow == null) {
+				// Get pet definition from sku
+
+                // Load glow for the target rarity
+                string prefabPath = RARITY_GLOW_PREFAB_PATH + rarity;
+                GameObject glowPrefab = Resources.Load<GameObject>(prefabPath);
 				if(glowPrefab == null) return;	// No glow for this rarity (i.e. common)
 
 				// Create new instance - use root node if available so the glow follows the pet's animation
@@ -121,15 +140,32 @@ public class MenuPetPreview : MonoBehaviour {
 					.SetEase(Ease.OutBack)
 					.SetAutoKill(false)
 					.Pause();
+
 			}
 
 			// Launch animation forwards
+
 			if(m_rarityGlowShowHideTween != null) {
 				m_rarityGlowShowHideTween.PlayForward();
 			} else if(m_rarityGlow != null) {
 				m_rarityGlow.SetActive(true);
 			}
+
+            if (rarity == "epic")
+            {
+                setFresnelColor(EPIC_COLOR);
+            }
+            else if (rarity == "rare")
+            {
+                setFresnelColor(RARE_COLOR);
+            }
+            else if (rarity == "special")
+            {
+                setFresnelColor(SPECIAL_COLOR);
+            }
+
 		} else {
+
 			// Hiding, ignore if not yet loaded
 			if(m_rarityGlow == null) return;
 
@@ -139,6 +175,8 @@ public class MenuPetPreview : MonoBehaviour {
 			} else if(m_rarityGlow != null) {
 				m_rarityGlow.SetActive(false);
 			}
+
+            setFresnelColor(Color.black);
 		}
 	}
 }

@@ -503,7 +503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_airMotion:
-    m_mass: 20
+    m_mass: 5
     m_defaultUpVector: 0
     m_orientationSpeed: 120
     m_dragonStyleRotation: 0
@@ -518,9 +518,9 @@ MonoBehaviour:
     m_faceDownAngle: 40
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 9
-    m_maxRadius: 7
-    m_minRadius: 5
+    m_sightRadius: 7
+    m_maxRadius: 5
+    m_minRadius: 3
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -550,10 +550,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":10,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":12,"panicSpeed":18,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":15,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":40,"panicSpeed":60,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_FlyingTicket
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 27
+  m_avoidDistanceAttenuation: 7
   m_avoidCollisions: 1
   m_avoidWater: 1
 --- !u!135 &135286915927351416

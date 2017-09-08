@@ -7,7 +7,8 @@ Shader "Hungry Dragon/NPC/NPC worm"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 	
-		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27	
+
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_StencilMask("Stencil Mask", int) = 10
 	}
