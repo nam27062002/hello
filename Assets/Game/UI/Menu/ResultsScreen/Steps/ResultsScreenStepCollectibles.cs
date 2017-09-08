@@ -72,6 +72,10 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 		m_eggFoundAnim.ForceHide(false);
 		m_eggNotFoundAnim.ForceHide(false);
 
+		// Init currency counters
+		m_coinsCounter.SetValue(m_controller.totalCoins, true);
+		m_pcCounter.SetValue(m_controller.totalPc, false);
+
 		// Launch sequence!
 		m_sequence.Launch();
 	}
