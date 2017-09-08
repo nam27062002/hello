@@ -74,7 +74,7 @@ namespace AI {
 				m_animEvents.onAttachProjectile -= new PreyAnimationEvents.OnAttachprojectile(OnAttachProjectile);
 				m_animEvents.onAttackDealDamage -= new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);
 				m_animEvents.onAttackEnd 		-= new PreyAnimationEvents.OnAttackEndDelegate(OnAnimEnd);
-				m_animEvents.onInterrupt 		+= new PreyAnimationEvents.OnInterruptDelegate(OnAnimEnd);
+				m_animEvents.onInterrupt 		-= new PreyAnimationEvents.OnInterruptDelegate(OnAnimEnd);
 
 				m_pilot.ReleaseAction(Pilot.Action.Stop);
 			}
