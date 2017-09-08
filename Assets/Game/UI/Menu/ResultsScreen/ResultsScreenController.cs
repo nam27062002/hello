@@ -389,7 +389,7 @@ public class ResultsScreenController : MonoBehaviour {
 			case State.COLLECTIBLES: {
 				// Launch 3D rewards animations
 				// Start timer to next state
-				m_timer = m_scene.LaunchRewardsAnim(m_carousel.chestsPill);
+				//m_timer = m_scene.LaunchRewardsAnim(m_carousel.chestsPill);
 
 				// Show chests carousel as well
 				m_carousel.DoChests();

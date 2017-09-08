@@ -36,14 +36,14 @@ public class TweenSequenceElement {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
+	public string name = "";
 	public Type type = Type.IDLE;
-
 	public Transform target = null;
 
-	// [0..1] relative to the full sequence duration
+	// Seconds
 	public float startTime = 0f;
-	public float endTime = 1f;
-	public float duration { get { return Mathf.Max(endTime - startTime, 0f); }}	// At lesat 0!
+	public float endTime = 0.25f;
+	public float duration { get { return Mathf.Max(endTime - startTime, 0f); }}	// At least 0!
 
 	public bool from = true;
 	public Ease ease = Ease.Linear;
@@ -77,30 +77,27 @@ public class TweenSequenceElement {
 
 		// Aux vars
 		Tweener tween = null;
-		float scaledStartTime = startTime * _seq.totalDuration;
-		float scaledEndTime = endTime * _seq.totalDuration;
-		float scaledDuration = duration * _seq.totalDuration;
 
 		// Depends on type!
 		switch(type) {
 			case Type.FADE: {
 				// If the object doesn't have a canvas group, add it now!
 				CanvasGroup targetGroup = target.ForceGetComponent<CanvasGroup>();
-				tween = targetGroup.DOFade(floatValue, scaledDuration);
+				tween = targetGroup.DOFade(floatValue, duration);
 			} break;
 
 			case Type.SCALE: {
-				tween = target.DOScale(vectorValue, scaledDuration);
+				tween = target.DOScale(vectorValue, duration);
 			} break;
 
 			case Type.MOVE: {
-				tween = target.DOLocalMove(vectorValue, scaledDuration);
+				tween = target.DOBlendableLocalMoveBy(vectorValue, duration);
 			} break;
 
 			case Type.IDLE: {
 				// Super-special case: we won't be creating any tween, just inserting the start and end callbacks
-				_seq.sequence.InsertCallback(scaledStartTime, () => OnStart.Invoke());
-				_seq.sequence.InsertCallback(scaledEndTime, () => OnEnd.Invoke());
+				_seq.sequence.InsertCallback(startTime, () => OnStart.Invoke());
+				_seq.sequence.InsertCallback(endTime, () => OnEnd.Invoke());
 				return;	// Don't do anything else!
 			} break;
 		}
@@ -118,7 +115,7 @@ public class TweenSequenceElement {
 			tween.OnComplete(() => OnEnd.Invoke());
 
 			// Insert tween to the sequence!
-			_seq.sequence.Insert(scaledStartTime, tween);
+			_seq.sequence.Insert(startTime, tween);
 		}
 	}
 

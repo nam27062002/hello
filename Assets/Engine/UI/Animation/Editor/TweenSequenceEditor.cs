@@ -48,8 +48,39 @@ public class TweenSequenceEditor : Editor {
 		m_list = new ReorderableList(serializedObject, serializedObject.FindProperty("m_elements"));
 
 		// Header
-		m_list.drawHeaderCallback = (Rect _rect) => { 
-			EditorGUI.LabelField(_rect, "Sequence Elements"); 
+		m_list.drawHeaderCallback = (Rect _rect) => {
+			// Show columns info
+			Rect pos = _rect;
+
+			// Target
+			pos.x += 25f;	// Move handle size (approx)
+			pos.x += TweenSequenceElementPropertyDrawer.FOLDOUT_WIDTH;
+			pos.width = TweenSequenceElementPropertyDrawer.TARGET_WIDTH;
+			EditorGUI.LabelField(pos, "Target");
+
+			// Type
+			pos.x += pos.width;
+			pos.width = TweenSequenceElementPropertyDrawer.TYPE_WIDTH;
+			pos.width += TweenSequenceElementPropertyDrawer.SPACE_WIDTH;
+			EditorGUI.LabelField(pos, "Type");
+
+			// Start Time
+			pos.x += pos.width;
+			pos.width = TweenSequenceElementPropertyDrawer.TIME_TEXT_WIDTH;
+			pos.width += 1f;	// Small space between start time and duration
+			EditorGUI.LabelField(pos, "Start");
+
+			// Duration
+			pos.x += pos.width;
+			pos.width = TweenSequenceElementPropertyDrawer.TIME_TEXT_WIDTH;
+			pos.width += TweenSequenceElementPropertyDrawer.SPACE_WIDTH;
+			EditorGUI.LabelField(pos, "Dur");
+
+			// End Time - put at the end
+			pos.x = _rect.x + _rect.width;
+			pos.width = TweenSequenceElementPropertyDrawer.TIME_TEXT_WIDTH;
+			pos.x -= pos.width;
+			EditorGUI.LabelField(pos, "End");
 		};
 
 		// Element
@@ -111,10 +142,10 @@ public class TweenSequenceEditor : Editor {
 		serializedObject.Update();
 
 		// Total duration
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("m_totalDuration"));
+		// [AOC] Use a delayed float field to prevent total duration resetting to 0 when clearing the textfield (thus losing all tween element values)
+		EditorGUILayout.DelayedFloatField(serializedObject.FindProperty("m_totalDuration"));
 
 		// Elements list
-		EditorGUILayoutExt.Separator();
 		m_list.DoLayoutList();
 
 		// Play mode tools

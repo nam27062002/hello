@@ -266,7 +266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1857396539879838
 GameObject:
   m_ObjectHideFlags: 1
@@ -839,10 +839,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_totalDuration: 4
   m_elements:
-  - type: 1
+  - name: 
+    type: 1
     target: {fileID: 224477478497264848}
     startTime: 0
-    endTime: 0.10144927
+    endTime: 0.3
     from: 1
     ease: 6
     floatValue: 0
@@ -857,10 +858,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 2
+  - name: 
+    type: 2
     target: {fileID: 224477478497264848}
     startTime: 0
-    endTime: 0.20652173
+    endTime: 0.6
     from: 1
     ease: 6
     floatValue: 0
@@ -875,10 +877,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 1
+  - name: 
+    type: 1
     target: {fileID: 224550078749184456}
-    startTime: 0.10144928
-    endTime: 0.20289853
+    startTime: 0.3
+    endTime: 0.6
     from: 1
     ease: 6
     floatValue: 0
@@ -893,10 +896,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 2
+  - name: 
+    type: 2
     target: {fileID: 224550078749184456}
-    startTime: 0.108695656
-    endTime: 0.3043478
+    startTime: 0.3
+    endTime: 0.90000004
     from: 1
     ease: 6
     floatValue: 0
@@ -911,10 +915,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 1
+  - name: 
+    type: 1
     target: {fileID: 224154238863994324}
-    startTime: 0.25383133
-    endTime: 0.35869566
+    startTime: 0.9
+    endTime: 1.05
     from: 1
     ease: 1
     floatValue: 0
@@ -929,10 +934,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 0
+  - name: Coins Transfer
+    type: 0
     target: {fileID: 224753080379860722}
-    startTime: 0.35890368
-    endTime: 0.40579712
+    startTime: 1.1
+    endTime: 2.6
     from: 0
     ease: 9
     floatValue: 0
@@ -958,10 +964,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 1
+  - name: 
+    type: 1
     target: {fileID: 224154238863994324}
-    startTime: 0.80093277
-    endTime: 0.9057971
+    startTime: 3.75
+    endTime: 3.9
     from: 0
     ease: 1
     floatValue: 0
@@ -976,10 +983,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 1
+  - name: 
+    type: 1
     target: {fileID: 224753080379860722}
-    startTime: 0.80455595
-    endTime: 1
+    startTime: 3.75
+    endTime: 4
     from: 0
     ease: 9
     floatValue: 0
@@ -994,10 +1002,11 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - type: 3
+  - name: 
+    type: 3
     target: {fileID: 224753080379860722}
-    startTime: 0.80455595
-    endTime: 1
+    startTime: 3.75
+    endTime: 4
     from: 0
     ease: 9
     floatValue: 0
@@ -1490,7 +1499,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1368343050031986}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
@@ -1520,7 +1529,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1158746840999874}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
@@ -1664,10 +1673,10 @@ RectTransform:
   m_Father: {fileID: 224728515776424312}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 291.5, y: -125}
+  m_SizeDelta: {x: 583, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224073450566123680
 RectTransform:
@@ -1722,10 +1731,10 @@ RectTransform:
   m_Father: {fileID: 224154238863994324}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 324.37, y: -25}
+  m_SizeDelta: {x: 322.86, y: 50}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224145388111325794
 RectTransform:
@@ -1763,7 +1772,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -16.779297, y: -17.596191}
-  m_SizeDelta: {x: 0, y: 120}
+  m_SizeDelta: {x: 324.37, y: 120}
   m_Pivot: {x: 1, y: 1}
 --- !u!224 &224176069739158538
 RectTransform:
@@ -1800,7 +1809,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 27}
-  m_SizeDelta: {x: 0, y: 140}
+  m_SizeDelta: {x: 169.97, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224363153848088016
 RectTransform:
@@ -1969,10 +1978,10 @@ RectTransform:
   m_Father: {fileID: 224154238863994324}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 324.37, y: -90}
+  m_SizeDelta: {x: 324.37, y: 50}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224983706756588662
 RectTransform:
@@ -1987,8 +1996,8 @@ RectTransform:
   m_Father: {fileID: 224728515776424312}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 874.5, y: -125}
+  m_SizeDelta: {x: 583, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}

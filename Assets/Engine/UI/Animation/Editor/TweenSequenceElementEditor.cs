@@ -19,6 +19,15 @@ using UnityEditor;
 [CustomPropertyDrawer(typeof(TweenSequenceElement))]
 public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	public const float FOLDOUT_WIDTH = 5f;
+	public const float TARGET_WIDTH = 90f;
+	public const float TYPE_WIDTH = 60f;
+	public const float SPACE_WIDTH = 5f;
+	public const float TIME_TEXT_WIDTH = 30f;
+
+	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 
@@ -56,6 +65,9 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 			return;
 		}
 
+		// Get parent sequence!
+		TweenSequence parentSequence = _property.serializedObject.targetObject as TweenSequence;
+
 		// Useful properties
 		SerializedProperty typeProp = _property.FindPropertyRelative("type");
 		SerializedProperty targetProp = _property.FindPropertyRelative("target");
@@ -63,7 +75,6 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 		// Aux vars
 		m_pos.height = EditorGUIUtility.singleLineHeight;
 		Rect pos = m_pos;
-		float spaceWidth = 5f;
 		bool isIdle = typeProp.enumValueIndex == (int)TweenSequenceElement.Type.IDLE;
 
 		// Reset indentation and label size (no indentation within the widget, m_pos already contains global indentation)
@@ -73,7 +84,7 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 
 		// Line 1: Foldout + Target + Type + Timing
 		// Foldout
-		pos.width = 5f;
+		pos.width = FOLDOUT_WIDTH;
 		_property.isExpanded = EditorGUI.Foldout(pos, _property.isExpanded, GUIContent.none);
 
 		// Target and type can't be changed while playing
@@ -81,9 +92,10 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 
 		// Target
 		pos.x += pos.width;
-		pos.width = 90f;
+		pos.width = TARGET_WIDTH;
 		if(isIdle) {
-			EditorGUI.LabelField(pos, "Idle");
+			SerializedProperty nameProp = _property.FindPropertyRelative("name");
+			nameProp.stringValue = EditorGUI.TextField(pos, nameProp.stringValue, EditorStyles.label);	// Trick to be able to edit a label
 		} else {
 			// Show warning if target is missing
 			if(targetProp.objectReferenceValue == null) {
@@ -96,54 +108,83 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 
 		// Type
 		pos.x += pos.width;
-		pos.width = 60f;
+		pos.width = TYPE_WIDTH;
 		EditorGUI.PropertyField(pos, typeProp, GUIContent.none);
 
 		GUI.enabled = true;
 
 		// Space
 		pos.x += pos.width;
-		pos.width = spaceWidth;
+		pos.width = SPACE_WIDTH;
 
 		// Timing
 		SerializedProperty startTimeProp = _property.FindPropertyRelative("startTime");
 		SerializedProperty endTimeProp = _property.FindPropertyRelative("endTime");
 		float startTime = startTimeProp.floatValue;
 		float endTime = endTimeProp.floatValue;
-
-		float timeTextWidth = 30f;
-		float timeSliderWidth = m_pos.x + m_pos.width - pos.x - 2 * timeTextWidth - 3 * spaceWidth;	// Flexible; Remaining space minus the 2 time text fields and the spaces in between
+		float duration = endTime - startTime;
 
 		// Start time text
 		pos.x += pos.width;
-		pos.width = timeTextWidth;
+		pos.width = TIME_TEXT_WIDTH;
 		startTime = EditorGUI.DelayedFloatField(pos, startTime);
 
 		// Space
 		pos.x += pos.width;
-		pos.width = spaceWidth;
+		pos.width = 1f;
 
-		// Slider
-		pos.x += pos.width;
-		pos.width = timeSliderWidth;
-		EditorGUI.MinMaxSlider(pos, ref startTime, ref endTime, 0f, 1f);
+		// Duration text
+		EditorGUI.BeginChangeCheck(); {
+			pos.x += pos.width;
+			pos.width = TIME_TEXT_WIDTH;
+			duration = EditorGUI.DelayedFloatField(pos, duration);
+		} if(EditorGUI.EndChangeCheck()) {
+			// Duration has changed, adjust end time to match new duration
+			// Validate new duration
+			duration = Mathf.Max(duration, 0f);	// At least 0!
+			endTime = startTime + duration;
+		}
 
 		// Space
 		pos.x += pos.width;
-		pos.width = spaceWidth;
+		pos.width = SPACE_WIDTH;
+
+		// Slider - Flexible; Remaining space minus the end time text and the space in between
+		pos.x += pos.width;
+		float remainingWidth = m_pos.x + m_pos.width - pos.x;
+		float timeSliderWidth = remainingWidth - TIME_TEXT_WIDTH - SPACE_WIDTH;
+		pos.width = timeSliderWidth;
+		EditorGUI.MinMaxSlider(pos, ref startTime, ref endTime, 0f, parentSequence.totalDuration);
+
+		// Space
+		pos.x += pos.width;
+		pos.width = SPACE_WIDTH;
 
 		// End time text
 		pos.x += pos.width;
-		pos.width = timeTextWidth;
+		pos.width = TIME_TEXT_WIDTH;
 		endTime = EditorGUI.DelayedFloatField(pos, endTime);
 
-		// Space
-		pos.x += pos.width;
-		pos.width = spaceWidth;
+		// Validate values and apply!!
+		// If end time is out of bounds, move both start and end time (probably duration increased or total sequence duration decreased)
+		if(endTime > parentSequence.totalDuration) {
+			endTime = parentSequence.totalDuration;
+			startTime = endTime - duration;
+		}
 
-		// Store new start and end time
-		startTimeProp.floatValue = Mathf.Clamp(startTime, 0f, endTime);;
-		endTimeProp.floatValue = Mathf.Clamp(endTime, startTime, 1f);
+		// If start time is bigger than end time, move end time back
+		// If by doing so we get out of bounds, reduce duration
+		startTime = Mathf.Max(startTime, 0f);	// At least 0!
+		if(startTime > endTime) {
+			endTime = startTime + duration;
+			if(endTime > parentSequence.totalDuration) {
+				endTime = parentSequence.totalDuration;
+			}
+		}
+
+		// Store new start and end time, both should be valid now
+		startTimeProp.floatValue = startTime;
+		endTimeProp.floatValue = endTime;
 
 		// Next Line
 		AdvancePos(m_pos.height, 2f);

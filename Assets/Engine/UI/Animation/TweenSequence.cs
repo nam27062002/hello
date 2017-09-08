@@ -85,7 +85,7 @@ public class TweenSequence : MonoBehaviour {
 			if(m_elements[i] != null) m_elements[i].InsertTo(this);
 		}
 
-		// Append callback
+		// Append callback at the end
 		m_sequence.InsertCallback(m_totalDuration, () => OnFinished.Invoke());	// That way we ensure that the sequence has the expected duration
 	}
 

@@ -110,6 +110,11 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		}
 	}
 
+	private bool m_eggFound = false;
+	public bool eggFound {
+		get { return m_eggFound; }
+	}
+
 	// Accumulated rewards during the results flow
 	private long m_totalCoins = 0;
 	public long totalCoins {
@@ -168,6 +173,24 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		// Initialize some internal vars
 		m_totalCoins = UsersManager.currentUser.coins;
 		m_totalPc = UsersManager.currentUser.pc;
+		m_eggFound = false;
+		switch(CPResultsScreenTest.eggMode) {
+			case CPResultsScreenTest.EggTestMode.FOUND: {
+				m_eggFound = true; 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.NOT_FOUND: {
+				m_eggFound = false; 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.RANDOM: {
+				m_eggFound = (Random.Range(0f, 1f) > 0.5f); 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.NONE: {
+				m_eggFound = CollectiblesManager.egg != null && CollectiblesManager.egg.collected;
+			} break;
+		}
 
 		// Initialize all steps
 		for(int i = 0; i < m_steps.Length; ++i) {
