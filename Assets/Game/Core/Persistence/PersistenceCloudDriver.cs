@@ -27,7 +27,7 @@ public class PersistenceCloudDriver
 	private PersistenceLocalDriver LocalDriver { get; set; }
 
 	public bool IsInSync { get; set; }
-
+    
 	public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
@@ -563,6 +563,19 @@ public class PersistenceCloudDriver
     private bool Upload_IsRunning { get; set; }
 	private bool Upload_IsAllowed { get; set; }
 
+    public bool Upload_IsEnabled
+    {
+        get
+        {
+            return PersistencePrefs.IsCloudSaveEnabled;
+        }
+
+        set
+        {
+            PersistencePrefs.IsCloudSaveEnabled = value;
+        }
+    }
+
 	private const float UPLOAD_TIME_BETWEEN_PERFORMS = 30f;
 	private float Upload_TimeLeftToPerform { get; set; }
 
@@ -622,13 +635,22 @@ public class PersistenceCloudDriver
 		Upload_Perform(LocalDriver.Data.ToString(), onUploadDone);
 	}
 
-	protected virtual void Upload_Perform(string persistence, Action<bool> onDone) {}
+	protected virtual void Upload_Perform(string persistence, Action<bool> onDone)
+    {
+        GameServerManager.SharedInstance.SetPersistence(persistence, (Error error, GameServerManager.ServerResponse response) =>
+        {
+            if (onDone != null)
+            {
+                onDone(error == null);
+            }
+        });
+    }
 	#endregion
 
 	public void Update()
 	{        
 		// Upload local to cloud
-		if (Upload_IsAllowed && !Upload_IsRunning && LocalDriver.UpdatesAheadOfCloud > 0)
+		if (Upload_IsAllowed && Upload_IsEnabled && !Upload_IsRunning && LocalDriver.UpdatesAheadOfCloud > 0)
 		{
 			Upload_TimeLeftToPerform -= UnityEngine.Time.deltaTime;
 			if (Upload_TimeLeftToPerform <= 0f)

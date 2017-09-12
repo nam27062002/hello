@@ -66,8 +66,8 @@ public class HDPersistenceComparator : PersistenceComparator
                 //Check local save progress and automatically replace with cloud if its a brand new save!
                 if (m_localProgress.dragonsOwned <= 1 && m_localProgress.eggsCollected == 0 && m_cloudProgress.timePlayed == 0 && !m_localProgress.iapPurchaseMade)
                 {
-                    Debug.Log("HDPersistenceComparator (CompareSaves) :: Brand New Save UseCloud");
-                    state = PersistenceStates.EConflictState.UseCloud;
+                    Debug.Log("HDPersistenceComparator (CompareSaves) :: Brand New Save UseLoad");
+                    state = PersistenceStates.EConflictState.UseLocal;
                 }
                 //If dragons and the amount of eggs collected are equal
                 else if (m_localProgress.dragonsOwned == m_cloudProgress.dragonsOwned && m_localProgress.eggsCollected == m_cloudProgress.eggsCollected)
