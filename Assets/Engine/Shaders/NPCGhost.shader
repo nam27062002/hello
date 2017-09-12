@@ -22,6 +22,9 @@ Shader "Hungry Dragon/NPC/NPC Ghost (Spawners)"
 			ZWrite off
 			Cull back
 			Blend SrcAlpha OneMinusSrcAlpha
+//			Blend One OneMinusSrcAlpha // Premultiplied transparency
+//			Blend OneMinusDstColor One
+//			Blend One One // Additive
 
 			Stencil
 			{

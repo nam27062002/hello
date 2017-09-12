@@ -116,27 +116,14 @@ public class MenuPlayScreen : MonoBehaviour {
    
     private void Refresh()
     {
-#if CLOUD_SAVE && (WEIBO || FACEBOOK)
-        // By default we consider that the button has to be enabled. Next We check the login state, so it will be disabled if the user's logged in
-        m_badge.SetActive(true);
+#if CLOUD_SAVE && (WEIBO || FACEBOOK)        
         m_connectButton.interactable = true;
 
-        /*
-        m_incentivizeRoot.SetActive(!SocialManager.Instance.WasLoginIncentivised(SocialManager.GetSelectedSocialNetwork()));
-        
-        AuthManager.LoginState loginState = AuthManager.LoginState.NeverLoggedIn;
-        loginState = AuthManager.Instance.GetNetworkLoginState(SocialManagerUtilities.GetLoginTypeFromSocialNetwork(m_socialNetwork));
+        UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
+        bool socialIsLoggedIn = PersistenceFacade.instance.Social_IsLoggedIn();
 
-        switch (loginState)
-        {
-            case AuthManager.LoginState.LoggedIn:
-                m_badge.SetActive(false);
-                break;
-            default:
-                break;
-        }
-        */
-        m_badge.SetActive(!SocialPlatformManager.SharedInstance.IsLoggedIn());
+        m_incentivizeRoot.SetActive(socialState != UserProfile.ESocialState.LoggedInAndInventivised);
+        m_badge.SetActive(!socialIsLoggedIn);        
 
 #else
         m_badge.SetActive(false);

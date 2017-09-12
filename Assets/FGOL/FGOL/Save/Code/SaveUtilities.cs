@@ -123,7 +123,7 @@ namespace FGOL.Save
                 stream.Read(contentLengthBytes, 0, contentLengthBytes.Length);
                 if(!isLittleEndian) Array.Reverse(contentLengthBytes);
                 contentLength = BitConverter.ToInt32(contentLengthBytes, 0);
-
+                
                 validHeader = true;
             }
 
@@ -242,6 +242,12 @@ namespace FGOL.Save
             return bytes.ToArray();
         }
 
+#if UNITY_EDITOR
+        public static bool UseDebugMode = true;
+#else
+        public static bool UseDebugMode = false;
+#endif
+
         public static MemoryStream GetUnpaddedSaveData(string savePath)
         {
             using(FileStream fs = new FileStream(savePath, FileMode.Open, FileAccess.Read))
@@ -251,6 +257,9 @@ namespace FGOL.Save
                 byte[] lengthBytes = BitConverter.GetBytes(dataLength);
                 fs.Read(lengthBytes, 0, lengthBytes.Length);
                 dataLength = BitConverter.ToInt32(lengthBytes, 0);
+
+                if (UseDebugMode)
+                    dataLength = (int)fs.Length;
 
                 MemoryStream ms = new MemoryStream();
 

@@ -35,6 +35,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private void Init()
     {
+        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);
+        Messenger.AddListener(GameEvents.PERSISTENCE_SYNC_DONE, OnPersistenceSyncDone);
+
         Model_Init();
         Social_Init();
         Cloud_Init();
@@ -45,47 +48,56 @@ public class PopupSettingsSaveTab : MonoBehaviour
     void OnEnable()
     {
         IsShown = true;
-        Reset();
-    }
+        RefreshView();
+    }    
 
     void OnDestroy()
     {
         IsShown = false;
-    }
-
-    private void Reset()
-    {
-        Cloud_Reset();
-        Social_Reset();
-        User_Reset();
-        Resync_Refresh();        
-    }
+        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);
+        Messenger.RemoveListener(GameEvents.PERSISTENCE_SYNC_DONE, OnPersistenceSyncDone);        
+    }    
 
     /// <summary>
     /// Returns whether or not this tab is being shown
     /// </summary>
     private bool IsShown { get; set; }
-
-    public string GetCenteredNetworkLocalized()
+    
+    private void RefreshView()
     {
-        SocialFacade.Network network = Model_SocialGetCenteredNetwork();
-        return SocialFacade.GetLocalizedNetworkName(network);        
+        Model_Refresh();
+        User_Refresh();
+        Social_Refresh();
+        Resync_Refresh();
     }
 
-    private void OnNetworkSelectCenter(SocialFacade.Network network)
+    private bool IsLoadingPopupOpen { get; set; }
+
+    private void OpenLoadingPopup()
     {
-        string localizedName = SocialFacade.GetLocalizedNetworkName(network);
-        if (localizedName != null)
+        IsLoadingPopupOpen = true;
+        PersistenceFacade.Popups_OpenLoadingPopup();
+    }
+
+    private void CloseLoadingPopup()
+    {
+        IsLoadingPopupOpen = false;
+        PersistenceFacade.Popups_CloseLoadingPopup();
+    }
+
+    private void OnSocialLogged(bool logged)
+    {
+        RefreshView();
+
+        if (IsLoadingPopupOpen)
         {
-            User_OnNetworkSelectCenter(network, localizedName);
-            Social_OnNetworkSelectCenter(network, localizedName);            
+            CloseLoadingPopup();
         }
     }
 
-    private void RefreshView()
+    private void OnPersistenceSyncDone()
     {
-        Social_Refresh();
-        Resync_Refresh();
+        RefreshView();
     }
 
     #region social
@@ -111,30 +123,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
         m_socialLogoutBtn.SetActive(false);
     }
 
-    private void Social_Reset()
-    {
-        Social_Init();
-
-        // It simulates the automatic scroll of the default social network
-        StartCoroutine(DelayedCall(0.1f, Social_Refresh));
-    }
-
     private void Social_Refresh()
-    {
-        SocialFacade.Network centeredNetwork = Model_SocialGetCenteredNetwork();
-
-        bool isLoggedInToCenteredNetwork = Model_SocialIsLoggedIn(centeredNetwork);
-        bool isCloudSaveEnabled = Model_SaveIsCloudSaveEnabled();
-
-        User.LoginType[] authenticatedNetworks = Model_AuthGetAuthenticatedNetworks();
-        bool isLoggedInToAnyNetwork = authenticatedNetworks != null && authenticatedNetworks.Length > 0;
-        if (isLoggedInToAnyNetwork)
-        {
-            // logged in to one of the networks... button states depend on what the centered network state is like            
-            m_socialEnableBtn.gameObject.SetActive(!isLoggedInToCenteredNetwork);
-            // note: Can't switch networks if cloud save is disabled
+    {        
+        bool isLoggedIn = Model_SocialIsLoggedIn();
+        bool isCloudSaveEnabled = Model_SaveIsCloudSaveEnabled();        
+        if (isLoggedIn)
+        {            
+            m_socialEnableBtn.gameObject.SetActive(false);         
             m_socialEnableBtn.interactable = isCloudSaveEnabled;                        
-            m_socialLogoutBtn.SetActive(isLoggedInToCenteredNetwork);
+            m_socialLogoutBtn.SetActive(true);
         }
         else
         {
@@ -144,17 +141,16 @@ public class PopupSettingsSaveTab : MonoBehaviour
             m_socialLogoutBtn.SetActive(false);
         }
 
-        OnNetworkSelectCenter(centeredNetwork);
-    }
-
-    private void Social_OnNetworkSelectCenter(SocialFacade.Network network, string localizedName)
-    {
+        string localizedName = SocialPlatformManager.SharedInstance.GetPlatformName();
         if (localizedName != null)
         {
+            m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, localizedName);
+            m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, localizedName);
+
             m_socialMessageText.gameObject.SetActive(true);
 
             // if logged in and the cloud save is enabled...
-            if (Model_SocialIsLoggedIn(network) && Model_SaveIsCloudSaveEnabled())
+            if (Model_SocialIsLoggedIn() && Model_SaveIsCloudSaveEnabled())
             {
                 // ... show an advice about cloud save.
                 m_socialMessageText.Localize(TID_CLOUD_DESC_LOGGED, localizedName);
@@ -163,129 +159,82 @@ public class PopupSettingsSaveTab : MonoBehaviour
             {
                 // else use a generic string.
                 m_socialMessageText.Localize(TID_CLOUD_DESC, localizedName);
-            }
-        }
+            }            
+        }        
     }
 
-    private void Social_LoginToCenteredNetwork()
+    /// <summary>
+    /// Callback called by the player when the user clicks on log in the social network
+    /// </summary>
+    public void Social_Login()
     {
-        // log in to selected network        
-        SocialFacade.Network network = Model_SocialGetCenteredNetwork();
-
         // [DGR] ANALYTICS: Not supported yet
         // HSXAnalyticsManager.Instance.loginContext = "OptionsLogin";
-                
-        SocialManager.Instance.Login(network, (success) =>
-        {         
-            PersistenceManager.Popups_CloseLoadingPopup();
 
-            if (success)
+        OpenLoadingPopup();
+        Action<PersistenceStates.ESyncResult> onDone = delegate (PersistenceStates.ESyncResult result)
+        {
+            CloseLoadingPopup();         
+            if (result == PersistenceStates.ESyncResult.Success)
             {
-                Log("LOGIN to " + network.ToString() + " SUCCESSFUL");                
-                User_LoadProfileInfo();
-                Social_Refresh();
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Log("LOGIN SUCCESSFUL");
+
+                User_LoadProfileInfo();                
             }
             else
             {
-                Log("LOGIN to " + network.ToString() + " FAILED");                
-                Social_Refresh();
-
-                //	Claim cloud save disabled
-                Cloud_DisableCloudSave();
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Log("LOGIN FAILED");                
             }
-        });
+
+            RefreshView();
+        };
+
+        PersistenceFacade.instance.Sync_FromSettings(onDone);        
     }
+   
 
     /// <summary>
-    /// Callback called by the player when the user clicks on enable a social network
+    /// Callback called by the player when the user clicks on log out from the social network
     /// </summary>
-    public void Social_OnSelectNetwork()
-    {
-        SocialFacade.Network currentNetwork = Model_SocialGetSelectedSocialNetwork();
-        SocialFacade.Network centeredNetwork = Model_SocialGetCenteredNetwork();
-
-        bool sameNetwork = currentNetwork == centeredNetwork;
-        bool loggedInToCurrentNetwork = SocialManager.Instance.IsLoggedIn(currentNetwork);
-        if (sameNetwork && loggedInToCurrentNetwork)
+    public void Social_Logout()
+    {        
+        if (Model_SocialIsLoggedIn())
         {
-            Log("Shouldn't be able to click Select when it's already the current network!");
-            return;
-        }
+            PersistenceFacade.Popups_OpenLogoutWarning(Model_SaveIsCloudSaveEnabled(),
+                delegate ()
+                {
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        Log("LOGGING OUT... ");
 
-        if (currentNetwork != SocialFacade.Network.Default)
-        {
-            // you've got a preferred network, see if logged in or not
-            if (Model_SocialIsLoggedIn(currentNetwork))
-            {                
-                // they're logged in to a network already...ask them if they want to log out of the current network
-                PersistenceManager.Popups_OpenLoginWhenAlreadyLoggedIn(currentNetwork, centeredNetwork,
-                    delegate ()
-                    {
-                        //Debug.Log("WEIBOWEIBO: LOGGING OUT of " + currentNetwork.ToString());
-                        PersistenceManager.Popups_OpenLoadingPopup();                        
-                        SocialManager.Instance.Logout(currentNetwork, delegate ()
+                    OpenLoadingPopup();
+                    SocialPlatformManager.SharedInstance.Logout();
+
+                        /*
+                        delegate ()
                         {
-                            //Debug.Log("WEIBOWEIBO: LOG OUT from " + currentNetwork.ToString() + " COMPLETE!");
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                                Debug.Log("LOGGING OUT COMPLETED");
+
                             // on logout
-                            // [DGR] ANALYTICS: Not supported yet
-                            // HSXAnalyticsManager.Instance.SocialLogout(currentNetwork.ToString());
+                            PersistenceManager.Popups_CloseLoadingPopup();
+                            User_LoadProfileInfo();
+                            Cloud_DisableCloudSave();                            
 
-                            // Log in to new network
-                            Social_LoginToCenteredNetwork();
-                        });
-                    },
-                    null
-                );                                
-            }
-            else
-            {             
-                // Not logged in to current network
-                Social_LoginToCenteredNetwork();
-            }
+                            //  Reenable log in button
+                            m_socialLogoutBtn.SetActive(false);
+                            m_socialEnableBtn.gameObject.SetActive(true);                            
+                        }
+                        );*/
+                },
+                null
+            );                                
         }
-    }
-
-    /// <summary>
-    /// Callback called by the player when the user clicks on log out from the current social network
-    /// </summary>
-    public void Social_OnLogoutNetwork()
-    {
-        SocialFacade.Network currentNetwork = Model_SocialGetSelectedSocialNetwork();
-        if (currentNetwork != SocialFacade.Network.Default)
+        else if (FeatureSettingsManager.IsDebugEnabled)
         {
-            if (Model_SocialIsLoggedIn(currentNetwork))
-            {
-                PersistenceManager.Popups_OpenLogoutWarning(currentNetwork, Model_SaveIsCloudSaveEnabled(),
-                    delegate ()
-                    {
-                        Log("LOGGING OUT of " + currentNetwork.ToString());
-                        PersistenceManager.Popups_OpenLoadingPopup();
-                        SocialManager.Instance.Logout(currentNetwork, 
-                            delegate ()
-                            {
-                                Debug.Log("LOGGING OUT of " + currentNetwork.ToString() + " COMPLETED");
-                                // on logout
-                                PersistenceManager.Popups_CloseLoadingPopup();
-                                User_LoadProfileInfo();
-                                Cloud_DisableCloudSave();
-
-                                // [DGR] ANALYTICS Not supported yet
-                                //HSXAnalyticsManager.Instance.SocialLogout(currentNetwork.ToString());
-
-                                //  Reenable log in button
-                                m_socialLogoutBtn.SetActive(false);
-                                m_socialEnableBtn.gameObject.SetActive(true);                            
-                            }
-                         );
-                    },
-                    null
-                );                                
-            }
-            else            
-            {
-                LogError("LOGIN: Not logged in to " + currentNetwork); 
-            }
-        }
+            LogError("LOGIN: Not logged in to " ); 
+        }        
     }
     #endregion
 
@@ -295,61 +244,40 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     [SerializeField]
     private GameObject m_cloudDisabledButton;
-
-    private bool m_cloudIsEnabled;
+    
     private bool Cloud_IsEnabled
     {
         get
         {
-            return m_cloudIsEnabled;
+            return PersistenceFacade.instance.Sync_IsCloudSaveEnabled;
         }
 
         set
         {
-            m_cloudIsEnabled = value;
-
-            m_cloudEnabledButton.SetActive(m_cloudIsEnabled);
-            m_cloudDisabledButton.SetActive(!m_cloudIsEnabled);            
+            PersistenceFacade.instance.Sync_IsCloudSaveEnabled = value;
+            Cloud_Refresh();           
         }
     }
 
     private bool Cloud_IsStateChanging { get; set; }        
 
     private void Cloud_Init()
-    {
-        Cloud_IsEnabled = false;
+    {        
         Cloud_IsStateChanging = false;
     }
 
     private void Cloud_Reset()
-    {
-        Cloud_IsEnabled = SaveFacade.Instance.cloudSaveEnabled;
+    {        
         Cloud_IsStateChanging = false;
-    }
-
-    private void Cloud_DisableCloudSave()
-    {
-        SaveFacade.Instance.ClearError();
-
-        // Report cloud save disabled to analytics only once! The actual disable logic may be called multiple times
-        if (SaveFacade.Instance.cloudSaveEnabled)
-        {
-            // [DGR] ANALYTICS Not supported yet
-            //HSXAnalyticsManager.Instance.CloudSaveDisabledResult("Disabled", SystemInfo.deviceModel);
-        }
-
-        SaveFacade.Instance.cloudSaveEnabled = false;
-        Cloud_IsEnabled = false;
-        
-        RefreshView();
-    }
+    }    
 
     /// <summary>
     /// Callback called by the player when the user clicks on enable/disable the cloud save
     /// </summary>
     public void Cloud_OnChangeSaveEnable()
-    {                     
-        if (!Cloud_IsStateChanging)
+    {
+        Cloud_IsEnabled = !Cloud_IsEnabled;
+        /*if (!Cloud_IsStateChanging)
         {
 #if CLOUD_SAVE && (FACEBOOK || WEIBO)
             bool newvalue = !Cloud_IsEnabled;
@@ -362,8 +290,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     PersistenceManager.Popups_OpenCloudDisable(
                         delegate
                         {
-                            Cloud_IsEnabled = false;                            
-                            Cloud_DisableCloudSave();
+                            Cloud_IsEnabled = false;                                                        
                             Cloud_IsStateChanging = false;
                         },                        
                         delegate ()
@@ -397,8 +324,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 }
             }
 #endif
-        }               
-    }    
+        }  */             
+    }   
+    
+    private void Cloud_Refresh()
+    {
+        m_cloudEnabledButton.SetActive(Cloud_IsEnabled);
+        m_cloudDisabledButton.SetActive(!Cloud_IsEnabled);
+    } 
     #endregion
 
     #region resync
@@ -428,10 +361,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     /// </summary>
     public void Resync_OnCloudSaveSync()
     {
-        if (SaveFacade.Instance.cloudSaveEnabled)
-        {
-            SaveFacade.Instance.GoToSaveLoaderState();
-        }
+        PersistenceFacade.instance.Sync_FromSettings(null);
     }
     #endregion
 
@@ -474,6 +404,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private bool User_IsAvatarLoaded { get; set; }
 
+    private EState User_LastState { get; set; }
+
     private void User_Init()
     {
         User_IsLoggedIn = false;
@@ -483,22 +415,22 @@ public class PopupSettingsSaveTab : MonoBehaviour
         m_userNotLoggedInRoot.SetActive(false);
         m_userLoggedInRoot.SetActive(false);
         m_userPreviouslyLoggedInRoot.SetActive(false);
+        User_LastState = EState.None;
     }
 
     private void User_Reset()
     {
-        User_Init();
-        User_LoadProfileInfo();
+        User_Init();                
     }
 
-    private void User_LoadProfileInfo()
+    /*private void User_LoadProfileInfo()
     {
         m_userLoggedInRoot.SetActive(false);
         m_userPreviouslyLoggedInRoot.SetActive(false);
 
         User_IsAvatarLoaded = false;
 
-        if (Model_SocialIsLoggedIn(SocialFacade.Network.Default))
+        if (Model_SocialIsLoggedIn())
         {
             User_IsLoggedIn = true;
 
@@ -509,26 +441,157 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
             m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
 
-            Model_SocialGetProfileInfo(SocialFacade.Network.Default, 
-            delegate (string userName) 
+            SocialPlatformManager.SharedInstance.GetProfileInfo(
+                delegate (string userName) 
+                {
+                    if (!string.IsNullOrEmpty(userName) && User_IsLoggedIn && m_userNameText != null)
+                    {
+                        m_userNameText.text = userName;
+                    }
+                }, 
+                delegate (Texture2D profileImage)
+                {
+                    if (IsShown)
+                    {
+                        if (User_IsLoggedIn)
+                        {
+                            if (profileImage != null)
+                            {
+                                User_IsAvatarLoaded = true;
+
+                                Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);                            
+                                m_userAvatarImage.sprite = sprite;                            
+                                m_userAvatarImage.gameObject.SetActive(true);
+                                // m_profileSpinner.SetActive(false);
+                            }
+                            else if (!User_IsAvatarLoaded)
+                            {
+                                //m_profileSpinner.SetActive(false);
+                                m_userAvatarImage.gameObject.SetActive(true);
+                            }
+                        }
+                    }
+                });
+        }
+        else
+        {
+            User_IsLoggedIn = false;                        
+
+            m_userPreviouslyLoggedInRoot.SetActive(false);
+            m_userNotLoggedInRewardText.gameObject.SetActive(false);
+            m_userNotLoggedInMessageText.gameObject.SetActive(false);            
+            
+            switch (Model_State)
             {
-                if (!string.IsNullOrEmpty(userName) && User_IsLoggedIn && m_userNameText != null)
+                //case EState.LoggedIn:
+                   // m_userNotLoggedInRewardText.gameObject.SetActive(true);
+
+                    //if (!Model_SocialWasLoginIncentivised(SocialFacade.Network.Default))
+                    //{
+                       // PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
+                    //}
+                    //else
+                    //{
+                    //    m_userNotLoggedInRewardText.Localize(TID_SOCIAL_PERM_MAINMENU);
+                    //}
+
+                    //break;
+
+                case EState.NeverLoggedIn:
+                    m_userNotLoggedInRewardText.gameObject.SetActive(true);
+                    PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);                    
+                    m_userNotLoggedInMessageText.gameObject.SetActive(true);                    
+                    m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());                                        
+                    //m_spriteBGReceive.SetActive(true);
+                    break;
+                
+                case EState.PreviouslyLoggedIn:
+                    //Activate & Deactivate correspondant widgets for this state
+                    m_userNotLoggedInRewardText.gameObject.SetActive(false);
+                    m_userNotLoggedInMessageText.gameObject.SetActive(false);
+                    //m_spriteBGReceive.SetActive(false);
+                    m_userPreviouslyLoggedInRoot.SetActive(true);
+
+                    string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+                    m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, platformName);
+                    m_socialMessageText.Localize(TID_CLOUD_DESC, platformName);                    
+
+                    break;
+            }
+
+            m_userNotLoggedInRoot.SetActive(true);
+        }
+    }    
+    */
+    
+    private void User_Refresh()
+    {
+        if (User_LastState != Model_State || true)
+        {
+            bool needsToLoadProfile = Model_HasBeenLoaded(Model_State);// && !Model_HasBeenLoaded(User_LastState);            
+
+            User_LastState = Model_State;
+
+            m_userLoggedInRoot.SetActive(false);
+            m_userNotLoggedInRoot.SetActive(false);
+            m_userPreviouslyLoggedInRoot.SetActive(false);            
+
+            if (needsToLoadProfile)
+            {
+                User_LoadProfileInfo();
+            }
+
+            switch (Model_State)
+            {
+                case EState.LoggedIn:
+                case EState.LoggedInAndIncentivised:                                    
+                    m_userLoggedInRoot.SetActive(true);
+                    m_userAvatarImage.gameObject.SetActive(false);
+                    //m_profileSpinner.SetActive(true);                    
+                    break;
+                
+                case EState.NeverLoggedIn:
+                    m_userNotLoggedInRoot.SetActive(true);                    
+                    m_userNotLoggedInRewardText.gameObject.SetActive(true);
+                    PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
+                    m_userNotLoggedInMessageText.gameObject.SetActive(true);
+                    m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
+                    break;
+
+                case EState.PreviouslyLoggedIn:
+                    m_userPreviouslyLoggedInRoot.SetActive(true);                                        
+                    string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+                    m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, platformName);
+                    m_socialMessageText.Localize(TID_CLOUD_DESC, platformName);
+                    break;                
+            }
+        }
+    }    
+
+    private void User_LoadProfileInfo()
+    {
+        m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
+
+        SocialPlatformManager.SharedInstance.GetProfileInfo(
+            delegate (string userName)
+            {
+                if (!string.IsNullOrEmpty(userName) /*&& User_IsLoggedIn*/ && m_userNameText != null)
                 {
                     m_userNameText.text = userName;
                 }
-            }, 
+            },
             delegate (Texture2D profileImage)
             {
                 if (IsShown)
                 {
-                    if (User_IsLoggedIn)
+                    //if (User_IsLoggedIn)
                     {
                         if (profileImage != null)
                         {
                             User_IsAvatarLoaded = true;
 
-                            Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);                            
-                            m_userAvatarImage.sprite = sprite;                            
+                            Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
+                            m_userAvatarImage.sprite = sprite;
                             m_userAvatarImage.gameObject.SetActive(true);
                             // m_profileSpinner.SetActive(false);
                         }
@@ -539,174 +602,69 @@ public class PopupSettingsSaveTab : MonoBehaviour
                         }
                     }
                 }
-            });
-        }
-        else
-        {
-            User_IsLoggedIn = false;
-            
-            AuthManager.LoginState loginState = Model_AuthGetLoginState(SocialFacade.Network.Default);            
-
-            m_userPreviouslyLoggedInRoot.SetActive(false);
-            m_userNotLoggedInRewardText.gameObject.SetActive(false);
-            m_userNotLoggedInMessageText.gameObject.SetActive(false);
-
-            string centeredNetwork = GetCenteredNetworkLocalized();
-            
-            switch (loginState)
-            {
-                case AuthManager.LoginState.LoggedInFriendsPermissionNeeded:
-                    m_userNotLoggedInRewardText.gameObject.SetActive(true);
-
-                    if (!Model_SocialWasLoginIncentivised(SocialFacade.Network.Default))
-                    {
-                        PersistenceManager.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
-                    }
-                    else
-                    {
-                        m_userNotLoggedInRewardText.Localize(TID_SOCIAL_PERM_MAINMENU);
-                    }
-
-                    break;
-                case AuthManager.LoginState.NeverLoggedIn:
-                    m_userNotLoggedInRewardText.gameObject.SetActive(true);
-                    PersistenceManager.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);                    
-                    m_userNotLoggedInMessageText.gameObject.SetActive(true);
-
-                    if (!string.IsNullOrEmpty(centeredNetwork))
-                    {
-                        m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, centeredNetwork);
-                    }
-                    //m_spriteBGReceive.SetActive(true);
-
-                    break;
-                case AuthManager.LoginState.PreviouslyLoggedIn:
-                    //Activate & Deactivate correspondant widgets for this state
-                    m_userNotLoggedInRewardText.gameObject.SetActive(false);
-                    m_userNotLoggedInMessageText.gameObject.SetActive(false);
-                    //m_spriteBGReceive.SetActive(false);
-                    m_userPreviouslyLoggedInRoot.SetActive(true);                    
-
-                    if (!string.IsNullOrEmpty(centeredNetwork))
-                    {
-                        m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, centeredNetwork);
-                        m_socialMessageText.Localize(TID_CLOUD_DESC, centeredNetwork);
-                    }
-
-                    break;
-            }
-
-            m_userNotLoggedInRoot.SetActive(true);
-        }
-    }    
-
-    private void User_OnNetworkSelectCenter(SocialFacade.Network network, string localizedName)
-    {
-        if (localizedName != null)
-        {
-            m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, localizedName);
-            m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, localizedName);            
-        }
+            });    
     }
     #endregion
 
     #region model
     private enum EState
-    {
-        Normal, // Delegates to the model
+    {        
+        None,
         NeverLoggedIn,
         PreviouslyLoggedIn,
-        LoggedInFriendsPermissionNeeded
+        LoggedIn,
+        LoggedInAndIncentivised
     }
 
-    private EState state = EState.Normal;
+    private EState Model_State { get; set; }
+
+    private bool Model_HasBeenLoaded(EState state)
+    {
+        return state == EState.PreviouslyLoggedIn || state == EState.LoggedIn || state == EState.LoggedInAndIncentivised;
+    }
 
     private void Model_Init()
     {
-#if UNITY_EDITOR && false
-        SocialFacade.Instance.Init();
-        GameServicesFacade.Instance.Init();
-        SocialManager.Instance.Init();
+        Model_Refresh();
+    }                
 
-        state = EState.Normal;
-#endif
-    }    
-
-    private AuthManager.LoginState Model_AuthGetLoginState(SocialFacade.Network network)
+    private void Model_Refresh()
     {
-        AuthManager.LoginState returnValue = AuthManager.LoginState.NeverLoggedIn;       
-        switch (state)
+        EState state = EState.NeverLoggedIn;
+        bool isLoggedIn = PersistenceFacade.instance.Social_IsLoggedIn();
+        UserProfile userProfile = UsersManager.currentUser;
+        if (userProfile != null)
         {
-            case EState.Normal:
+            switch (userProfile.SocialState)
             {
-                returnValue = AuthManager.LoginState.LoggedIn;//AuthManager.Instance.GetNetworkLoginState(SocialManagerUtilities.GetLoginTypeFromSocialNetwork(network));
-                }
-            break;
+                case UserProfile.ESocialState.NeverLoggedIn:
+                    state = EState.NeverLoggedIn;
+                    break;
 
-            case EState.NeverLoggedIn:
-            {
-                returnValue = AuthManager.LoginState.NeverLoggedIn;
-            }
-            break;
+                case UserProfile.ESocialState.LoggedIn:
+                    state = (isLoggedIn) ? EState.LoggedIn : EState.PreviouslyLoggedIn;
+                    break;
 
-            case EState.PreviouslyLoggedIn:
-            {
-                returnValue = AuthManager.LoginState.PreviouslyLoggedIn;
+                case UserProfile.ESocialState.LoggedInAndInventivised:
+                    state = (isLoggedIn) ? EState.LoggedInAndIncentivised : EState.PreviouslyLoggedIn;
+                    break;                
             }
-            break;
-
-            case EState.LoggedInFriendsPermissionNeeded:
-            {
-                returnValue = AuthManager.LoginState.LoggedInFriendsPermissionNeeded;
-            }
-            break;
         }
 
-        return returnValue;
+        Model_State = state;
     }
 
-    private User.LoginType[] Model_AuthGetAuthenticatedNetworks()
-    {
-        User.LoginType[] returnValue = null;
-        switch (state)
-        {
-            case EState.Normal:
-            {
-                returnValue = AuthManager.Instance.GetAuthenticatedNetworks();
-            }
-            break;
-
-            case EState.NeverLoggedIn:            
-            {
-                returnValue = null;
-            }
-            break;
-        }
-
-        return returnValue;
-    }
-
-    private SocialFacade.Network Model_SocialGetSelectedSocialNetwork()
-    {        
-        return SocialManager.GetSelectedSocialNetwork();
-    }
-
-    private SocialFacade.Network Model_SocialGetCenteredNetwork()
-    {
-        // So far we assume that the nework is Facebook
-        return SocialFacade.Network.Facebook;
-    }
-
-    private bool Model_SocialIsLoggedIn(SocialFacade.Network network)
+    private bool Model_SocialIsLoggedIn()
     {
         bool returnValue = false;
-        switch (state)
-        {
-            case EState.Normal:
-                {
-                    returnValue = SocialManager.Instance.IsLoggedIn(network);
-                }
-                break;
+        switch (Model_State)
+        {            
+            case EState.LoggedIn:
+            case EState.LoggedInAndIncentivised:
+            {
+                returnValue = PersistenceFacade.instance.Social_IsLoggedIn();
+            }
+            break;
 
             case EState.NeverLoggedIn:
             case EState.PreviouslyLoggedIn:
@@ -717,60 +675,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
         }
 
         return returnValue;
-    }
-
-    private void Model_SocialGetProfileInfo(SocialFacade.Network network, Action<string> onGetName, Action<Texture2D> onGetImage)
-    {
-        switch (state)
-        {
-            case EState.Normal:
-            {
-                SocialManager.Instance.GetProfileInfo(network, onGetName, onGetImage);
-            }
-            break;            
-        }
-    }
-
-    private bool Model_SocialWasLoginIncentivised(SocialFacade.Network network)
-    {
-        bool returnValue = false;
-        switch (state)
-        {
-            case EState.Normal:
-            {
-                returnValue = SocialManager.Instance.WasLoginIncentivised(network);
-            }
-            break;
-
-            case EState.NeverLoggedIn:
-            {
-                returnValue = false;
-            }
-            break;            
-        }
-
-        return returnValue;
-    }    
+    }            
 
     private bool Model_SaveIsCloudSaveEnabled()
     {
-        bool returnValue = false;
-        switch (state)
-        {
-            case EState.Normal:
-                {
-                    returnValue = SaveFacade.Instance.cloudSaveEnabled;
-                }
-                break;
-
-            case EState.NeverLoggedIn:
-                {
-                    returnValue = false;
-                }
-                break;
-        }
-
-        return returnValue;
+        return PersistenceFacade.instance.Sync_IsCloudSaveEnabled;        
     }
     #endregion
 
@@ -810,5 +719,5 @@ public class PopupSettingsSaveTab : MonoBehaviour
         HDTrackingManager.Instance.Notify_CustomerSupportRequested();
     }
 
-    #endregion
+    #endregion    
 }

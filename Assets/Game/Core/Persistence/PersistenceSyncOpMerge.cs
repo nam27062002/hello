@@ -1,5 +1,6 @@
 using SimpleJSON;
 using System;
+using System.Collections.Generic;
 public class PersistenceSyncOpMerge : PersistenceSyncOp
 {
 	private PersistenceSyncOp LocalOp { get; set; }
@@ -28,7 +29,7 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
 
 	private void ResetDataToDefault(PersistenceData data)
 	{
-		JSONClass defaultPersistence = PersistenceUtils.GetDefaultDataFromProfile(data.Key);
+		JSONClass defaultPersistence = PersistenceUtils.GetDefaultDataFromProfile();
 		data.LoadFromString(defaultPersistence.ToString());
 	}
 
@@ -153,6 +154,7 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
                         returnValue = EFlowId.Error_Cloud_Social_NotLogged;
                         break;
 
+                    case PersistenceStates.ESyncResult.Success:
                     case PersistenceStates.ESyncResult.Error_Cloud_Server_MergeShowPopupNeeded:
                         returnValue = EFlowId.Merge;
                         break;
@@ -327,9 +329,33 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
     private void Flow_ProcessMerge()
     {
         // No popup should be shown. The op needs to just be over
-        CloudOp.IsSilent = true;
-        Sync();
-    }
+        CloudOp.Result = PersistenceStates.ESyncResult.Success;
+        Result = PersistenceStates.ESyncResult.Success;
+
+        bool goAhead = true;
+
+        if ((CloudOp != null && (CloudOp.Result == PersistenceStates.ESyncResult.Success || CloudOp.Result == PersistenceStates.ESyncResult.Error_Cloud_Server_MergeShowPopupNeeded)
+            && LocalOp != null))
+        {
+            PersistenceData localData = LocalOp.Data;
+            UserProfile userProfile = Systems_GetUserProfile(LocalOp.Data);
+            if (userProfile != null && userProfile.SocialState == UserProfile.ESocialState.NeverLoggedIn)
+            {
+                goAhead = false;
+                userProfile.SocialState = UserProfile.ESocialState.LoggedIn;
+
+                // Needs to save it
+                PersistenceSyncOp saveLocalOp = OpFactory.GetSaveLocalOp(localData, false);
+                PersistenceSyncOp syncOp = OpFactory.GetSyncOp(saveLocalOp, null, false);                
+                Syncer_Sync(saveLocalOp, null, syncOp);
+            }
+        }
+        
+        if (goAhead)
+        {
+            Sync();
+        }
+    }    
     #endregion
 
     private PersistenceSyncer mSyncer;
@@ -345,6 +371,27 @@ public class PersistenceSyncOpMerge : PersistenceSyncOp
 			return mSyncer;
 		}
 	}
+
+    private UserProfile Systems_GetUserProfile(PersistenceData data)
+    {        
+        if (data != null)
+        {
+            List<PersistenceSystem> systems = data.Systems;
+            if (systems != null)
+            {
+                int count = systems.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    if (systems[i] is UserProfile)
+                    {
+                        return systems[i] as UserProfile;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 
 	private void Syncer_Sync(PersistenceSyncOp localOp, PersistenceSyncOp cloudOp, 
 	                         PersistenceSyncOp syncOp)

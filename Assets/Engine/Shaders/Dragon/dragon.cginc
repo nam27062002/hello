@@ -131,15 +131,6 @@ fixed4 frag(v2f i) : SV_Target
 	diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
 	diffuse.w = 1.0;
 
-#ifdef FRESNEL
-	// Fresnel
-	float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0) * _FresnelColor.xyz;
-
-#else
-	float fresnel = 0.0f;
-
-#endif
-
 	// Specular
 	float3 halfDir = normalize(i.viewDir + light0Direction);
 
@@ -194,7 +185,15 @@ fixed4 frag(v2f i) : SV_Target
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));
 
 #endif
-	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate + fresnel + _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate + _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+
+// Fresnel
+#ifdef FRESNEL
+	float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
+	col.xyz += fresnel * _FresnelColor.xyz;
+#endif
+
+
 
 #ifndef CUTOFF
 	UNITY_OPAQUE_ALPHA(col.a);

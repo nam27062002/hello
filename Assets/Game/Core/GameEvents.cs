@@ -131,6 +131,8 @@ public enum GameEvents {
     // Social Platform Manager Events
     SOCIAL_LOGGED,				// params: bool	
 	
+    PERSISTENCE_SYNC_DONE,
+
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
 	UI_TOGGLE_CURRENCY_COUNTERS,	// params: bool _show
