@@ -650,10 +650,39 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         m_gameCenterListener = new GameCenterListener();
 
-        GameCenterManager.GameCenterItemData[] achievementsData = null;
+        // Load achievements
+		GameCenterManager.GameCenterItemData[] kAchievementsData = null;
+		Dictionary<string, DefinitionNode> kAchievementSKUs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.ACHIEVEMENTS);
+		if (kAchievementSKUs.Count > 0)
+		{
+			kAchievementsData = new GameCenterManager.GameCenterItemData[kAchievementSKUs.Count];
+			int iSKUIdx = 0;
+			foreach(KeyValuePair<string, DefinitionNode> kEntry in kAchievementSKUs)
+			{
+				kAchievementsData[iSKUIdx] = new GameCenterManager.GameCenterItemData();
+				kAchievementsData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
+				if (kEntry.Value.Has ("amount"))
+				{
+					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount");
+				}
+				else
+				{
+					kAchievementsData[iSKUIdx].m_iAmount = 1;
+				}
+
+				kAchievementsData[iSKUIdx].m_strAppleID = kEntry.Value.Get("appleSku");
+				kAchievementsData[iSKUIdx].m_strGoogleID = kEntry.Value.Get("googleSku");
+				kAchievementsData[iSKUIdx].m_strAmazonID = kEntry.Value.Get("amazonSku");
+				iSKUIdx++;
+			}
+		}
+
         GameCenterManager.GameCenterItemData[] leaderboardsData = null;
+
+        // TODO: Load leaderboards
+
         GameCenterManager.SharedInstance.AddGameCenterListener(m_gameCenterListener);
-        GameCenterManager.SharedInstance.Initialise(ref achievementsData, ref leaderboardsData);
+		GameCenterManager.SharedInstance.Initialise(ref kAchievementsData, ref leaderboardsData);
     }
 
     public void GameCenter_Login()
