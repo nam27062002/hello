@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-
+using System.Collections.Generic;
 public class SocialPlatformManager : MonoBehaviour
 {
 
@@ -23,13 +23,13 @@ public class SocialPlatformManager : MonoBehaviour
     
 	//////////////////////////////////////////////////////////////////////////
 
-	// FB Listener //////////////////////////////////////////////////////
-	private class GameFacebookListener : FacebookManager.FacebookListenerBase
+	// Social Listener //////////////////////////////////////////////////////
+	public class GameSocialListener : FacebookManager.FacebookListenerBase
 	{
-		const string TAG = "GameFacebookListener";
+		const string TAG = "GameSocialListener";
 		private SocialPlatformManager m_manager;
 
-		public GameFacebookListener( SocialPlatformManager manager )
+		public GameSocialListener( SocialPlatformManager manager )
 		{
 			m_manager = manager;
 		}
@@ -40,7 +40,13 @@ public class SocialPlatformManager : MonoBehaviour
 			m_manager.OnSocialPlatformLogin();
 		}
 
-		public override void onLogInFailed()
+        public override void onLogInCancelled()
+        {
+            Debug.TaggedLog(TAG, "onLogInCancelled");
+            m_manager.OnSocialPlatformLoginFailed();
+        }
+
+        public override void onLogInFailed()
 		{
 			Debug.TaggedLog(TAG, "onLogInFailed");
 			m_manager.OnSocialPlatformLoginFailed();
@@ -94,157 +100,69 @@ public class SocialPlatformManager : MonoBehaviour
 	{
 		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
 	}
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
-	// Delegate /////////////////////////////////////////////////////////////
-
-	//////////////////////////////////////////////////////////////////////////
-
-	// Members //////////////////////////////////////////////////////
-
-	GameFacebookListener m_facebookDelegate;
-
-	public enum UsingPlatform
-	{
-		FACEBOOK,
-		WEIBO
-	};
-	UsingPlatform m_platform = UsingPlatform.FACEBOOK;
-
-    private static string[] PLATFORM_TIDS = new string[]
-    {
-        "TID_SOCIAL_FACEBOOK",
-        "TID_SOCIAL_NETWORK_WEIBO_NAME"        
-    };    
-
+    private GameSocialListener m_socialListener;
+	
     private bool IsInited { get; set; }
 
     private bool IsFirstLogin { get; set; }
+
+    private SocialUtils m_socialUtils;
 
     public void Init()
 	{
         if (!IsInited)
         {
+            m_socialListener = new GameSocialListener(this);
+
             IsInited = true;
 
             // TODO
-            // m_platform = Get Platform from calety settings
-            switch (m_platform)
-            {
-                case UsingPlatform.FACEBOOK:
-                    {
-                        m_facebookDelegate = new GameFacebookListener(this);
-                        FacebookManager.SharedInstance.AddFacebookListener(m_facebookDelegate);
-                        FacebookManager.SharedInstance.Initialise();
-                    }
-                    break;
-            }
+            // m_platform = Get Platform from calety settings            
+            m_socialUtils = new SocialUtilsFb();
+            m_socialUtils.Init(m_socialListener);            
         }
 
         IsFirstLogin = true;
     }
 
 	public void Login()
-	{        
-        switch (m_platform)
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-                GameSessionManager.SharedInstance.LogInToSocialPlatform(IsFirstLogin);
-				//FacebookManager.SharedInstance.LogIn();
-			}break;
-		}
-
+	{
+        GameSessionManager.SharedInstance.LogInToSocialPlatform(/*IsFirstLogin*/false);
         IsFirstLogin = false;
     }
 
 	public bool IsLoggedIn()
 	{
-		bool ret = false;
-		switch(m_platform)
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-				ret = FacebookManager.SharedInstance.IsLoggedIn();
-			}break;
-		}
-		return ret;
+        return m_socialUtils.IsLoggedIn();
 	}
 
-	public string GetSocialIconPath()
-	{
-		string ret = "";
-		switch( m_platform )
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-				
-			}break;
-			case UsingPlatform.WEIBO:
-			{
-				
-			}break;
-		}
-		return ret;
-	}
+    public void Logout()
+    {
+        GameSessionManager.SharedInstance.LogOutFromSocialPlatform();
+        IsFirstLogin = false;
+    }
 
-	public string GetPlatformName()
+    public string GetPlatformName()
 	{
-        return LocalizationManager.SharedInstance.Localize(PLATFORM_TIDS[(int)m_platform]);     
+        string tid = m_socialUtils.GetPlatformNameTID();
+        return LocalizationManager.SharedInstance.Localize(tid);     
 	}
 
 	public string GetToken()
 	{
-		string ret = "";
-		switch( m_platform )
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-				Facebook.Unity.AccessToken aToken = Facebook.Unity.AccessToken.CurrentAccessToken;
-				ret = aToken.TokenString;
-			}break;
-			case UsingPlatform.WEIBO:
-			{
-				
-			}break;
-		}
-		return ret;
-	}
+        return m_socialUtils.GetAccessToken();
+    }
 
 	public string GetUserId()
 	{
-		string ret = "";
-		switch( m_platform )
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-				Facebook.Unity.AccessToken aToken = Facebook.Unity.AccessToken.CurrentAccessToken;
-				ret = aToken.UserId;
-			}break;
-			case UsingPlatform.WEIBO:
-			{
-				
-			}break;
-		}
-		return ret;
-	}
+        return m_socialUtils.GetSocialID();        
+	}	
 
-	public string GetUserName()
-	{
-		string ret = "";
-		switch( m_platform )
-		{
-			case UsingPlatform.FACEBOOK:
-			{
-				ret = FacebookManager.SharedInstance.UserName;
-			}break;
-			case UsingPlatform.WEIBO:
-			{
-				
-			}break;
-		}
-		return ret;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
+    public void GetProfileInfo(Action<string> onGetName, Action<Texture2D> onGetImage)
+    {
+        m_socialUtils.GetProfileInfo(onGetName, onGetImage);                  
+    }    
+    //////////////////////////////////////////////////////////////////////////
 }

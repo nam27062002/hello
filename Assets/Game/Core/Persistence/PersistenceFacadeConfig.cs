@@ -80,5 +80,12 @@ public class PersistenceFacadeConfig
         // It doesn't need a sync op factory becaused this factory won't be used to get sync operations
         PersistenceSyncOpFactory syncFactory = new PersistenceSyncOpFactory(true, null);        
         return new PersistenceSyncOpFactory(true, syncFactory);
-    }    
+    }
+
+    #region social    
+    public virtual bool Social_IsLoggedIn()
+    {
+        return SocialPlatformManager.SharedInstance.IsLoggedIn();
+    }
+    #endregion
 }
