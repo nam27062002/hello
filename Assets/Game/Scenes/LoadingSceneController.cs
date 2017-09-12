@@ -314,9 +314,8 @@ public class LoadingSceneController : SceneController {
 				HDTrackingManager.Instance.Init();
 				UsersManager.CreateInstance();
 
-		        // Game
-		        PersistenceFacade.CreateInstance();
-		        PersistenceFacade.instance.Init();
+		        // Game		        
+                PersistenceFacade.instance.Reset();
 
 		        DragonManager.CreateInstance(true);
 				LevelManager.CreateInstance(true);
@@ -370,7 +369,7 @@ public class LoadingSceneController : SceneController {
 
             Debug.Log("Started Loading Flow");
 
-            Action<PersistenceStates.ESyncResult> onDone = delegate(PersistenceStates.ESyncResult result)
+            Action onDone = delegate()
             {
                 m_loadingDone = true;
                 m_loading = false;
@@ -382,37 +381,6 @@ public class LoadingSceneController : SceneController {
 
             PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
         }
-    }
-
-    private void OnLoadingFinished()
-    {
-        Debug.Log("OnLoadingFinished - " + m_loading);        
-        if (m_loading)
-        {
-            SaveFacade.Instance.OnLoadComplete -= OnLoadingFinished;
-
-            m_loading = false;
-
-            Action onComplete = delegate ()
-            {
-                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Auth state check complete!");
-
-                s_inSaveLoaderState = false;
-                m_loadingDone = true;                
-            };
-
-            SocialFacade.Network network = SocialManager.GetSelectedSocialNetwork();
-            if (SocialManager.Instance.IsUser(network) && !SaveFacade.Instance.cloudSaveEnabled)
-            {
-            	m_state = State.WAITING_SOCIAL_AUTH;
-                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Check Facebook User Auth State!");
-                SocialManager.Instance.Authenticate(network, onComplete);
-            }
-            else
-            {
-                onComplete();
-            }
-        }
-    }    
+    }   
 }
 

@@ -104,9 +104,7 @@ public class SocialPlatformManager : MonoBehaviour
 
     private GameSocialListener m_socialListener;
 	
-    private bool IsInited { get; set; }
-
-    private bool IsFirstLogin { get; set; }
+    private bool IsInited { get; set; }    
 
     private SocialUtils m_socialUtils;
 
@@ -122,15 +120,25 @@ public class SocialPlatformManager : MonoBehaviour
             // m_platform = Get Platform from calety settings            
             m_socialUtils = new SocialUtilsFb();
             m_socialUtils.Init(m_socialListener);            
-        }
-
-        IsFirstLogin = true;
+        }        
     }
 
-	public void Login()
+    /*public enum ELoginResult
+    {
+        Ok,
+        Error,
+        MergeNeed
+    };
+    */
+
+    public void Login()
+    {
+
+    }
+
+	public void Login(bool isAppInit)
 	{
-        GameSessionManager.SharedInstance.LogInToSocialPlatform(/*IsFirstLogin*/false);
-        IsFirstLogin = false;
+        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);        
     }
 
 	public bool IsLoggedIn()
@@ -140,8 +148,7 @@ public class SocialPlatformManager : MonoBehaviour
 
     public void Logout()
     {
-        GameSessionManager.SharedInstance.LogOutFromSocialPlatform();
-        IsFirstLogin = false;
+        GameSessionManager.SharedInstance.LogOutFromSocialPlatform();        
     }
 
     public string GetPlatformName()
