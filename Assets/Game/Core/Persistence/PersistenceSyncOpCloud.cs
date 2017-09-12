@@ -264,7 +264,7 @@ public class PersistenceSyncOpCloud : PersistenceSyncOp
     private void Social_OnLoggedInHelper(bool logged)
     {
         Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, Social_OnLoggedInHelper);
-        Social_OnLoggedIn(logged);
+        Social_OnLoggedIn(logged);        
     }
 
     protected void Social_OnLoggedIn(bool logged)
@@ -272,6 +272,10 @@ public class PersistenceSyncOpCloud : PersistenceSyncOp
         if (Step == EStep.LoggingToSocial)
         {
             Social_IsLogInReady = true;            
+            if (!logged)
+            {
+                Social_MergeState = ESocialMergeState.Failed;
+            }
         }
     }
 

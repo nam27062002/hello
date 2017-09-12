@@ -67,15 +67,18 @@ SubShader {
 		#endif
 
 		#if MEDIUM_DETAIL_ON
-		#define FRESNEL
+//		#define FRESNEL
 		#define NORMALMAP
 		#endif
 
 		#if HI_DETAIL_ON
-		#define FRESNEL
+//		#define FRESNEL
 		#define NORMALMAP
 		#define SPECULAR
 		#endif
+
+		#define FRESNEL
+
 
 		struct appdata_t {
 			float4 vertex : POSITION;
