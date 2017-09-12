@@ -36,25 +36,24 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 		}
 	}
 
-	protected override void Syncer_ExtendedLogInSocial(Action<ELogInSocialResult> onDone)
+	protected override void Syncer_ExtendedLogInSocial(Action<SocialPlatformManager.ELoginResult, string> onDone)
 	{
 		if (onDone != null)
 		{
 			if (!IsLogInSocialEnabled)
 			{
-				onDone(ELogInSocialResult.Error);
+				onDone(SocialPlatformManager.ELoginResult.Error, null);
 			}
 			else if (IsMergeEnabled)
 			{
 				// We need to do it only once because the flow might make the game
 				// reload so we don't want this to be send again
-				IsMergeEnabled = false;
-				Data.LoadFromString(PersistenceAsString);
-				onDone(ELogInSocialResult.NeedsToMerge);
+				IsMergeEnabled = false;				
+				onDone(SocialPlatformManager.ELoginResult.NeedsToMerge, PersistenceAsString);
 			}
 			else
 			{
-				onDone(ELogInSocialResult.Ok);
+				onDone(SocialPlatformManager.ELoginResult.Ok, null);
 			}
 		}
 	}

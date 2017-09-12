@@ -158,7 +158,7 @@ public class PersistenceFacade
                         Config.LocalDriver.IsLoadedInGame = true;
                     }
 
-                    Sync_OnDone(result, onDone);
+                    Sync_OnDone(result, null);
                 };
 
                 Config.CloudDriver.Sync(true, true, onSyncDone);                

@@ -11,14 +11,7 @@ public class PersistenceCloudDriver
 		LoggingInSocial,
 		GettingPersistence,
 		Syncing
-	};
-
-	protected enum ELogInSocialResult
-	{
-		Ok,
-		Error,
-		NeedsToMerge
-	};
+	};	
 
 	private enum EState
 	{
@@ -63,7 +56,7 @@ public class PersistenceCloudDriver
 	#region syncer
 	private bool Syncer_IsSilent { get; set; }
 	private bool Syncer_IsAppInit { get; set; }
-	private ELogInSocialResult Syncer_LogInSocialResult { get; set; }
+	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult> Syncer_OnSyncDone { get; set; }
 
 	private ESyncSetp mSyncerStep;
@@ -122,7 +115,7 @@ public class PersistenceCloudDriver
 		Syncer_IsAppInit = false;
 		Syncer_IsSilent = false;
 		Syncer_OnSyncDone = null;
-		Syncer_LogInSocialResult = ELogInSocialResult.Error;
+		Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
 	}
 
 	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult> onDone)
@@ -144,7 +137,7 @@ public class PersistenceCloudDriver
 		{
             if (Syncer_Step == ESyncSetp.LoggingInSocial)
             {
-                Social_Discard();
+                SocialPlatformManager.SharedInstance.Login_Discard();
             }
 
 			Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
@@ -187,21 +180,22 @@ public class PersistenceCloudDriver
 
 	private void Syncer_LogInSocial()
 	{
-		Action<ELogInSocialResult> onDone = delegate(ELogInSocialResult result)
+		Action<SocialPlatformManager.ELoginResult, string> onDone = delegate(SocialPlatformManager.ELoginResult result, string persistenceMerge)
 		{
 			Syncer_LogInSocialResult = result;
 			switch (Syncer_LogInSocialResult)
 			{
-				case ELogInSocialResult.Error:
+				case SocialPlatformManager.ELoginResult.Error:
 					Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
 					break;
 
-				case ELogInSocialResult.Ok:
+				case SocialPlatformManager.ELoginResult.Ok:
 					Syncer_Step = ESyncSetp.GettingPersistence;
 					break;
 
-				case ELogInSocialResult.NeedsToMerge:
-					Syncer_Step = ESyncSetp.Syncing;
+				case SocialPlatformManager.ELoginResult.NeedsToMerge:                    
+                    Data.LoadFromString(persistenceMerge);                    
+                    Syncer_Step = ESyncSetp.Syncing;
 					break;
 			}
 		};
@@ -244,7 +238,7 @@ public class PersistenceCloudDriver
 			{
 				conflictState = PersistenceStates.EConflictState.RecommendCloud;
 			} 
-			else if (Syncer_LogInSocialResult == ELogInSocialResult.NeedsToMerge)
+			else if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 			{
 				// If we need to merge with socil account then we need the user
 				// to choose what to do explicitly, so we recommend cloud if 
@@ -272,7 +266,7 @@ public class PersistenceCloudDriver
 			// When merging the user doesn't have access to the cloud persistence unless its platform
 			// id gets overriden by the one to be able to access to the cloud, so this user is not allowed
 			// to correct cloud persistence
-			bool canOverride = Syncer_LogInSocialResult != ELogInSocialResult.NeedsToMerge;
+			bool canOverride = Syncer_LogInSocialResult != SocialPlatformManager.ELoginResult.NeedsToMerge;
 
 			Action onContinue = delegate() 
 			{
@@ -333,7 +327,7 @@ public class PersistenceCloudDriver
 			case PersistenceStates.EConflictState.RecommendCloud:
 			case PersistenceStates.EConflictState.RecommendLocal:				
 				// If the user is solving a merge then the decission can't be dismiss
-				bool isDismissable = Syncer_LogInSocialResult != ELogInSocialResult.NeedsToMerge;
+				bool isDismissable = Syncer_LogInSocialResult != SocialPlatformManager.ELoginResult.NeedsToMerge;
 				PersistenceFacade.Popups_OpenMerge(conflict, Syncer_Comparator.GetLocalProgress() as PersistenceComparatorSystem, 
 			                                   Syncer_Comparator.GetCloudProgress() as PersistenceComparatorSystem, isDismissable, 
 			                                   Syncer_ResolveConflict);
@@ -366,7 +360,7 @@ public class PersistenceCloudDriver
 				if (FeatureSettingsManager.IsDebugEnabled)
                 	PersistenceFacade.Log("(ResolveConflict) :: Resolving conflict with cloud save!");
 								
-				if (Syncer_LogInSocialResult == ELogInSocialResult.NeedsToMerge)
+				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 				{
                     // Calety is called to override game platform token so the game will log in server with the right account Id when reloading	
                     GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
@@ -382,7 +376,7 @@ public class PersistenceCloudDriver
                 break;
 
             case PersistenceStates.EConflictResult.Local:
-				if (Syncer_LogInSocialResult == ELogInSocialResult.NeedsToMerge)
+				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 				{
                     // Merge is solved with local persistence which makes the game log out from social because the social account chosen is linked to a different user
                     // and the user has refused to override her account with the one linked to that social account
@@ -539,9 +533,9 @@ public class PersistenceCloudDriver
         });
     }
 
-	protected virtual void Syncer_ExtendedLogInSocial(Action<ELogInSocialResult> onDone)
-    {        
-        Social_LogIn(Syncer_IsSilent, Syncer_IsAppInit, onDone);        
+	protected virtual void Syncer_ExtendedLogInSocial(Action<SocialPlatformManager.ELoginResult, string> onDone)
+    {
+        SocialPlatformManager.SharedInstance.Login(Syncer_IsSilent, Syncer_IsAppInit, onDone);        
     }
 
 	protected virtual void Syncer_ExtendedGetPersistence (Action<bool> onDone)
@@ -564,150 +558,7 @@ public class PersistenceCloudDriver
         });
     }
     #endregion
-
-    #region social
-    private enum ESocialMergeState
-    {
-        Waiting,
-        Succeeded,
-        Failed,
-        ShowPopupNeeeded
-    }
-
-    private ESocialMergeState Social_MergeState { get; set; }
-    private bool Social_IsLogInReady { get; set; }
-
-    private Action<ELogInSocialResult> Social_OnDone { get; set; }
-
-    private bool Social_IsLogging { get; set; }
-
-    protected virtual void Social_LogIn(bool isSilent, bool isAppInit, Action<ELogInSocialResult> onDone)
-    {
-        Social_IsLogging = true;
-        Social_OnDone = onDone;
-        Social_AddMergeListeners();
-
-        Social_IsLogInReady = true;
-        Social_MergeState = ESocialMergeState.Waiting;
-
-        /*
-        if (Social_IsLoggedIn())
-        {
-            Social_MergeState = ESocialMergeState.Succeeded;
-        }
-        else if (Syncer_IsSilent) // If it's silent then no explicit login should be done                                           
-        {
-            Social_IsLogInReady = false;
-            Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Social_OnLoggedInHelper);
-            SocialPlatformManager.SharedInstance.Login(isAppInit);
-        }  
-        */
-        Social_IsLogInReady = false;
-        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Social_OnLoggedInHelper);
-        SocialPlatformManager.SharedInstance.Login(isAppInit);
-    }
-
-    private void Social_OnLoggedInHelper(bool logged)
-    {
-        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, Social_OnLoggedInHelper);
-        Social_OnLoggedIn(logged);
-    }
-
-    protected void Social_OnLoggedIn(bool logged)
-    {        
-        Social_IsLogInReady = true;
-        if (!logged)
-        {
-            Social_MergeState = ESocialMergeState.Failed;
-        }        
-    }
-
-    public virtual bool Social_IsLoggedIn()
-    {
-        return SocialPlatformManager.SharedInstance.IsLoggedIn();
-    }
-
-    private void Social_AddMergeListeners()
-    {
-        Messenger.AddListener(GameEvents.MERGE_SUCCEEDED, Social_OnMergeSucceeded);
-        Messenger.AddListener(GameEvents.MERGE_FAILED, Social_OnMergeFailed);
-        Messenger.AddListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, Social_OnMergeShowPopupNeeded);
-    }
-
-    private void Social_RemoveMergeListeners()
-    {
-        Messenger.RemoveListener(GameEvents.MERGE_SUCCEEDED, Social_OnMergeSucceeded);
-        Messenger.RemoveListener(GameEvents.MERGE_FAILED, Social_OnMergeFailed);
-        Messenger.RemoveListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, Social_OnMergeShowPopupNeeded);
-    }
-
-    private void Social_OnMergeSucceeded()
-    {
-        Social_MergeState = ESocialMergeState.Succeeded;
-    }
-
-    private void Social_OnMergeFailed()
-    {
-        Social_MergeState = ESocialMergeState.Failed;
-    }
-
-    private void Social_OnMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount)
-    {
-        Social_MergeState = ESocialMergeState.ShowPopupNeeeded;
-
-        // Loads the cloud data from here
-        Data.LoadFromString(kCloudAccount.ToString());
-    }
-
-    private void Social_Update()
-    {
-        bool isLoggedIn = Social_IsLoggedIn();
-        if (Social_IsLogInReady && (Social_MergeState != ESocialMergeState.Waiting || !isLoggedIn))
-        {
-            if (isLoggedIn)
-            {
-                if (Social_MergeState == ESocialMergeState.Failed)
-                {
-                    // If merge fails then no persistence can be retrieved
-                    Social_PerformDone(ELogInSocialResult.Error);
-                }
-                else if (Social_MergeState == ESocialMergeState.ShowPopupNeeeded)
-                {
-                    Social_PerformDone(ELogInSocialResult.NeedsToMerge);
-                }
-                else
-                {
-                    Social_PerformDone(ELogInSocialResult.Ok);
-                }
-            }
-            else
-            {
-                Social_PerformDone(ELogInSocialResult.Error);
-            }
-        }
-    }
-
-    private void Social_PerformDone(ELogInSocialResult result)
-    {
-        if (Social_OnDone != null)
-        {
-            Social_OnDone(result);            
-        }
-
-        Social_Discard();
-    }
-
-    private void Social_Discard()
-    {
-        if (Social_IsLogging)
-        {
-            Social_RemoveMergeListeners();
-            Social_OnDone = null;
-            Social_IsLogging = false;
-        }
-    }
-    #endregion
-
+    
     #region upload
     private bool Upload_IsRunning { get; set; }
 	private bool Upload_IsAllowed { get; set; }
@@ -775,12 +626,7 @@ public class PersistenceCloudDriver
 	#endregion
 
 	public void Update()
-	{
-        if (Syncer_Step == ESyncSetp.LoggingInSocial)
-        {
-            Social_Update();
-        }
-
+	{        
 		// Upload local to cloud
 		if (Upload_IsAllowed && !Upload_IsRunning && LocalDriver.UpdatesAheadOfCloud > 0)
 		{

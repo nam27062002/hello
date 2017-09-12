@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
+using SimpleJSON;
 using System;
-using System.Collections.Generic;
 public class SocialPlatformManager : MonoBehaviour
 {
 
@@ -121,35 +121,7 @@ public class SocialPlatformManager : MonoBehaviour
             m_socialUtils = new SocialUtilsFb();
             m_socialUtils.Init(m_socialListener);            
         }        
-    }
-
-    /*public enum ELoginResult
-    {
-        Ok,
-        Error,
-        MergeNeed
-    };
-    */
-
-    public void Login()
-    {
-
-    }
-
-	public void Login(bool isAppInit)
-	{
-        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);        
-    }
-
-	public bool IsLoggedIn()
-	{
-        return m_socialUtils.IsLoggedIn();
-	}
-
-    public void Logout()
-    {
-        GameSessionManager.SharedInstance.LogOutFromSocialPlatform();        
-    }
+    }    
 
     public string GetPlatformName()
 	{
@@ -162,14 +134,190 @@ public class SocialPlatformManager : MonoBehaviour
         return m_socialUtils.GetAccessToken();
     }
 
-	public string GetUserId()
+	public string GetUserID()
 	{
         return m_socialUtils.GetSocialID();        
 	}	
 
+    public string GetUserName()
+    {
+        return m_socialUtils.GetUserName();
+    }
+
     public void GetProfileInfo(Action<string> onGetName, Action<Texture2D> onGetImage)
     {
         m_socialUtils.GetProfileInfo(onGetName, onGetImage);                  
-    }    
+    }
     //////////////////////////////////////////////////////////////////////////
+
+    #region login    
+    public enum ELoginResult
+    {
+        Ok,
+        Error,
+        NeedsToMerge
+    }
+
+    private enum ELoginMergeState
+    {
+        Waiting,
+        Succeeded,
+        Failed,
+        ShowPopupNeeeded
+    }
+
+    private ELoginMergeState Login_MergeState { get; set; }
+    private bool Login_IsLogInReady { get; set; }
+
+    private Action<ELoginResult, string> Login_OnDone { get; set; }
+
+    private bool Login_IsLogging { get; set; }            
+
+    private string Login_MergePersistence { get; set;  }
+
+    public bool IsLoggedIn()
+    {
+        return m_socialUtils.IsLoggedIn();
+    }
+
+    public void Logout()
+    {
+        GameSessionManager.SharedInstance.LogOutFromSocialPlatform();
+    }
+
+    public void Login(bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
+    {
+        Login_Discard();
+
+        Login_IsLogging = true;
+        Login_OnDone = onDone;
+        Login_AddMergeListeners();
+
+        Login_IsLogInReady = true;
+        Login_MergeState = ELoginMergeState.Waiting;
+
+        if (isSilent)
+        {
+            Login_OnLoggedIn(IsLoggedIn());
+
+            // Forces merge process
+            if (IsLoggedIn())
+            {
+                string strUserID = GetUserID();
+                string strUserName = GetUserName();
+                GameSessionManager.SharedInstance.ProcessMergeAccounts(strUserID, strUserName);
+            }            
+        }
+        else
+        {
+            Login_IsLogInReady = false;
+            Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
+            GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
+        }       
+    }
+
+    private void Login_OnLoggedInHelper(bool logged)
+    {
+        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
+        Login_OnLoggedIn(logged);
+    }
+
+    protected void Login_OnLoggedIn(bool logged)
+    {
+        Login_IsLogInReady = true;
+        if (!logged)
+        {
+            Login_MergeState = ELoginMergeState.Failed;
+        }
+    }    
+
+    private void Login_AddMergeListeners()
+    {
+        Messenger.AddListener(GameEvents.MERGE_SUCCEEDED, Login_OnMergeSucceeded);
+        Messenger.AddListener(GameEvents.MERGE_FAILED, Login_OnMergeFailed);
+        Messenger.AddListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, Login_OnMergeShowPopupNeeded);
+    }
+
+    private void Login_RemoveMergeListeners()
+    {
+        Messenger.RemoveListener(GameEvents.MERGE_SUCCEEDED, Login_OnMergeSucceeded);
+        Messenger.RemoveListener(GameEvents.MERGE_FAILED, Login_OnMergeFailed);
+        Messenger.RemoveListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, Login_OnMergeShowPopupNeeded);
+    }
+
+    private void Login_OnMergeSucceeded()
+    {
+        Login_MergeState = ELoginMergeState.Succeeded;
+    }
+
+    private void Login_OnMergeFailed()
+    {
+        Login_MergeState = ELoginMergeState.Failed;
+    }
+
+    private void Login_OnMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount)
+    {
+        Login_MergeState = ELoginMergeState.ShowPopupNeeeded;
+
+        // Loads the cloud data from here
+        Login_MergePersistence = kCloudAccount.ToString();
+    }
+
+    private void Login_Update()
+    {
+        bool isLoggedIn = IsLoggedIn();
+        if (Login_IsLogInReady && (Login_MergeState != ELoginMergeState.Waiting || !isLoggedIn))
+        {
+            if (isLoggedIn)
+            {
+                if (Login_MergeState == ELoginMergeState.Failed)
+                {
+                    // If merge fails then no persistence can be retrieved
+                    Login_PerformDone(ELoginResult.Error);
+                }
+                else if (Login_MergeState == ELoginMergeState.ShowPopupNeeeded)
+                {
+                    Login_PerformDone(ELoginResult.NeedsToMerge);
+                }
+                else
+                {
+                    Login_PerformDone(ELoginResult.Ok);
+                }
+            }
+            else
+            {
+                Login_PerformDone(ELoginResult.Error);
+            }
+        }
+    }
+
+    private void Login_PerformDone(ELoginResult result)
+    {
+        if (Login_OnDone != null)
+        {
+            Login_OnDone(result, Login_MergePersistence);
+        }
+
+        Login_Discard();
+    }
+
+    public void Login_Discard()
+    {
+        if (Login_IsLogging)
+        {
+            Login_RemoveMergeListeners();
+            Login_OnDone = null;
+            Login_IsLogging = false;
+            Login_MergePersistence = null;
+        }
+    }
+    #endregion
+
+    public void Update()
+    {
+        if (Login_IsLogging)
+        {
+            Login_Update();
+        }
+    }
 }

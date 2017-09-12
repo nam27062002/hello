@@ -22,15 +22,7 @@ public class LoadingSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Loading";
-
-    private static bool s_inSaveLoaderState = false;
-
-    public static bool InSaveLoaderState
-    {
-        get { return s_inSaveLoaderState; }
-    }
-
+	public static readonly string NAME = "SC_Loading";    
 
 	//------------------------------------------------------------------//
 	// CLASS															//
@@ -360,9 +352,7 @@ public class LoadingSceneController : SceneController {
     private void StartLoadFlow()
     {
         if (m_startLoadFlow)
-        {
-            s_inSaveLoaderState = true;
-
+        {            
             m_startLoadFlow = false;
             m_loading = true;
             m_loadingDone = false;
@@ -372,8 +362,7 @@ public class LoadingSceneController : SceneController {
             Action onDone = delegate()
             {
                 m_loadingDone = true;
-                m_loading = false;
-                s_inSaveLoaderState = false;
+                m_loading = false;                
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
