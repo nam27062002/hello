@@ -134,7 +134,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
+	private void Awake() {
 		// Subscribe to the finished event on each step
 		for(int i = 0; i < m_steps.Length; ++i) {
 			if(m_steps[i] != null) {
