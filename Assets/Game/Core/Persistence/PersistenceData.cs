@@ -156,7 +156,10 @@ public class PersistenceData
             //Log error if we have a bigger save then reserved space!
             if (saveBytes.Length >= (ReservedDiskSpace - sizeof(int)))
             {
-                Debug.LogError("PersistenceData (Save) :: PersistenceData has gone over reserved diskspace of: " + ReservedDiskSpace);
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    PersistenceFacade.LogError("PersistenceData (Save) :: PersistenceData has gone over reserved diskspace of: " + ReservedDiskSpace);
+                }
             }
 
             try
@@ -172,8 +175,9 @@ public class PersistenceData
 
                         int requiredPadding = ReservedDiskSpace - (lengthBytes.Length + saveBytes.Length);
 
-						// [DGR] TO Remove
-						requiredPadding = 0;
+						if (SaveUtilities.UseDebugMode)
+						    requiredPadding = 0;
+
                         if (requiredPadding > 0)
                         {
                             byte[] padding = new byte[requiredPadding];
@@ -202,8 +206,11 @@ public class PersistenceData
             }
             catch (Exception e)
             {
-                Debug.LogError("SaveData (Save) :: Exception saving to disk");
-                DebugUtils.LogException(e);
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    PersistenceFacade.LogError("PersistenceDataData (Save) :: Exception saving to disk");
+                    DebugUtils.LogException(e);
+                }
             }
             finally
             {
@@ -238,7 +245,7 @@ public class PersistenceData
             return false;
         }      
 #endif
-    }
+    }    
 
     public MemoryStream SaveToStream()
     {
@@ -313,24 +320,33 @@ public class PersistenceData
             }
             catch (UnauthorizedAccessException e)
             {
-                Debug.LogError("Permissions error when loading file at path: " + m_savePath);
-                DebugUtils.LogException(e);
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    PersistenceFacade.LogError("Permissions error when loading file at path: " + m_savePath);
+                    DebugUtils.LogException(e);
+                }
+
                 LoadState = PersistenceStates.LoadState.PermissionError;
             }
             catch (FileNotFoundException)
             {
-                Debug.LogWarning("No save file found at path: " + m_savePath);
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    PersistenceFacade.LogWarning("No save file found at path: " + m_savePath);
             }
             catch (Exception e)
             {
-                Debug.LogError("Exception when loading file at path: " + m_savePath);
-                DebugUtils.LogException(e);
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    PersistenceFacade.LogError("Exception when loading file at path: " + m_savePath);
+                    DebugUtils.LogException(e);
+                }
+
                 LoadState = PersistenceStates.LoadState.Corrupted;
             }
         }
-        else
+        else if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Debug.LogWarning("No save file found at path: " + m_savePath);
+            PersistenceFacade.LogWarning("No save file found at path: " + m_savePath);
         }
 
 
@@ -351,8 +367,11 @@ public class PersistenceData
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning("Unable to parse save data in PlayerPrefs");
-                    Debug.LogWarning(e);
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                    {
+                        Debug.LogWarning("Unable to parse save data in PlayerPrefs");
+                        Debug.LogWarning(e);
+                    }
                 }
             }
         }
@@ -390,7 +409,9 @@ public class PersistenceData
         }
         else
         {
-            Debug.LogWarning("Trying to load invalid JSON file at path: " + m_savePath);
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.LogWarning("Trying to load invalid JSON file at path: " + m_savePath);
+
             LoadState = PersistenceStates.LoadState.Corrupted;
         }
 
@@ -441,8 +462,8 @@ public class PersistenceData
             }
 
             if (versionOkay)
-            {
-                if (IsValidFile(stream, ref contentBytes))
+            {                
+                if (IsValidFile(stream, ref contentBytes))                
                 {
                     if (IsStoredClear())
                     {
@@ -457,14 +478,18 @@ public class PersistenceData
                         }
                         else
                         {
-                            Debug.LogError("SaveData :: Decryption failed!");
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                                PersistenceFacade.LogError("PersistenceData :: Decryption failed!");
+
                             LoadState = PersistenceStates.LoadState.Corrupted;
                         }
                     }
                 }
                 else
                 {
-                    Debug.LogError("SaveData :: File Corrupted!");
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        PersistenceFacade.LogError("PersistenceData :: File Corrupted!");
+
                     LoadState = PersistenceStates.LoadState.Corrupted;
                 }
             }
@@ -484,7 +509,9 @@ public class PersistenceData
                         }
                         else
                         {
-                            Debug.LogWarning("Trying to load invalid JSON file at path: " + m_savePath);
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                                Debug.LogWarning("Trying to load invalid JSON file at path: " + m_savePath);
+
                             LoadState = PersistenceStates.LoadState.Corrupted;
                         }
                     }
@@ -494,8 +521,11 @@ public class PersistenceData
         catch (Exception e)
         {
             //TODO determine exception types and see if any are recoverable!
-            Debug.LogWarning("Exception when parsing file from stream");
-            Debug.LogWarning(e);
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Debug.LogWarning("Exception when parsing file from stream");
+                Debug.LogWarning(e);
+            }
         }
 
         return LoadState;
@@ -518,32 +548,39 @@ public class PersistenceData
         bool validHeader = SaveUtilities.DeserializeHeader(stream, ref headerLength/*, ref m_modifiedTime, ref m_deviceName*/, ref md5Hash, ref contentLength);
 
         if (validHeader)
-        {
+        {            
             contentBytes = new byte[contentLength];
             int contentRead = stream.Read(contentBytes, 0, contentLength);
 
-            if (contentRead == contentLength)
+            if (SaveUtilities.UseDebugMode)
             {
-                string contentHash = SaveUtilities.CalculateMD5Hash(contentBytes);
-
-                if (md5Hash == contentHash)
-                {
-                    valid = true;
-                }
-                else
-                {
-                    Debug.LogError(string.Format("SaveData :: MD5 Checksum Failed (Got {0} expected {1})", md5Hash, contentHash));
-                }
+                valid = true;
             }
             else
-            {
-                Debug.LogError(string.Format("SaveData :: Content length different to expected (Got {0} expected {1})", contentRead, contentLength));
+            {                
+                if (contentRead == contentLength)
+                {
+                    string contentHash = SaveUtilities.CalculateMD5Hash(contentBytes);
+
+                    if (md5Hash == contentHash)
+                    {
+                        valid = true;
+                    }
+                    else if (FeatureSettingsManager.IsDebugEnabled)
+                    {
+                        PersistenceFacade.LogError(string.Format("PersistenceData :: MD5 Checksum Failed (Got {0} expected {1})", md5Hash, contentHash));
+                    }
+                }
+                else if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    PersistenceFacade.LogError(string.Format("PersistenceData :: Content length different to expected (Got {0} expected {1})", contentRead, contentLength));
+                }
             }
         }
-        else
+        else if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Debug.LogError("SaveData :: Invalid header detected!");
-        }
+            PersistenceFacade.LogError("PersistenceData :: Invalid header detected!");
+        }                
 
         return valid;
     }
@@ -561,7 +598,9 @@ public class PersistenceData
     private Stream UpgradeFile(Stream stream)
     {
         //TODO upgrade between versions
-        Debug.Log("NOT YET IMPLEMENTED");
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("NOT YET IMPLEMENTED");
+
         return stream;
     }
 
@@ -595,7 +634,7 @@ public class PersistenceData
         return returnValue;    
     }
 
-	#region systems
+#region systems
 	private void Systems_Reset()
 	{
 		if (Systems != null)
@@ -662,7 +701,7 @@ public class PersistenceData
 			Systems.Remove(system);
 		}
 	}
-	#endregion
+#endregion
 
 #if UNITY_EDITOR
     public Dictionary<string, object> rawSaveData
@@ -670,4 +709,5 @@ public class PersistenceData
         get { return m_data.rawData; }
     }
 #endif
+    
 }
