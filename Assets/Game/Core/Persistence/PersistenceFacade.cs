@@ -7,7 +7,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     public void Init()
     {
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Error_Cloud_Social_NotLogged;
+        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Error_Local_Save_DiskSpace;
         if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
             Config = new PersistenceFacadeConfigDebug(userCaseId);
@@ -28,6 +28,8 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     
     protected void Update()
     {
+        PersistencePrefs.Update();
+
         if (Sync_Syncer != null)
         {
             Sync_Syncer.Update();
@@ -43,6 +45,19 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 	public PersistenceData Sync_CloudData { get; set; }
 
 	public bool Sync_AreDataInSync { get; set; }
+
+    public bool Sync_IsCloudSaveEnabled
+    {
+        get
+        {
+            return PersistencePrefs.IsCloudSaveEnabled;
+        }
+
+        set
+        {
+            PersistencePrefs.IsCloudSaveEnabled = value;
+        }
+    }
 
     private bool Sync_IsLoadingCloudFromLaunch { get; set; }
 
@@ -123,16 +138,11 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 	{
 		Action<PersistenceStates.ESyncResult> onSyncDone = delegate(PersistenceStates.ESyncResult result)
 		{
-			if (onDone != null)
-			{
-				onDone(result);
-				onDone = null;
-			}
-
             // Syncs are considered in sync if all ops have been successful
             Sync_AreDataInSync = (localOp != null && localOp.Result == PersistenceStates.ESyncResult.Success &&
                                   cloudOp != null && cloudOp.Result == PersistenceStates.ESyncResult.Success &&
                                   syncOp != null && syncOp.Result == PersistenceStates.ESyncResult.Success);
+
 
             if (FeatureSettingsManager.IsDebugEnabled)
             {
@@ -155,7 +165,27 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
                 msg += " AreDataInSync = " + Sync_AreDataInSync;
 
                 Log(msg);
+            }
+
+            Action<PersistenceStates.ESyncResult> onComplete = delegate(PersistenceStates.ESyncResult onCompleteResult)
+            {
+                Messenger.Broadcast(GameEvents.PERSISTENCE_SYNC_DONE);
+
+                if (onDone != null)
+                {
+                    onDone(onCompleteResult);
+                }
+            };
+
+            if (result == PersistenceStates.ESyncResult.Success && Local_UserProfile.SocialState == UserProfile.ESocialState.LoggedIn &&
+                (purpose == PersistenceSyncer.EPurpose.SyncFromLaunch || purpose == PersistenceSyncer.EPurpose.SyncFromSettings))
+            {
+                Sync_OnFirstLoginComplete(onComplete);
             }            
+            else 
+			{
+                onComplete(result);               
+			}                                                
 		};
 
 		Sync_Syncer.Sync(purpose, localOp, cloudOp, syncOp, onSyncDone);
@@ -165,9 +195,44 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     {
         return Sync_Syncer.IsSyncing();
     }
-	#endregion
 
-	#region save
+    private void Sync_OnFirstLoginComplete(Action<PersistenceStates.ESyncResult> onDone)
+    {       
+        Action onLoginCompleteDone = delegate ()
+        {
+            Action onSaveDone = delegate ()
+            {
+                if (onDone != null)
+                {
+                    onDone(PersistenceStates.ESyncResult.Success);                    
+                }
+            };
+
+            // Gives the reward
+            int rewardAmount = Rules_GetPCAmountToIncentivizeSocial();
+            Local_UserProfile.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardAmount, false, HDTrackingManager.EEconomyGroup.INCENTIVISE_SOCIAL_LOGIN);
+
+            // Mark it as already rewarded
+            Local_UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndInventivised;
+
+            // It needs to save the persistence            
+            Save_Perform(onSaveDone);            
+        };
+
+        Popups_OpenLoginComplete(Rules_GetPCAmountToIncentivizeSocial(), onLoginCompleteDone);        
+    }
+    #endregion
+
+    #region texts
+    public const string TID_SOCIAL_FB_LOGIN_MAINMENU_INCENTIVIZED = "TID_SOCIAL_LOGIN_MAINMENU_INCENTIVIZED";
+
+    public static void Texts_LocalizeIncentivizedSocial(Localizer text)
+    {
+        text.Localize(TID_SOCIAL_FB_LOGIN_MAINMENU_INCENTIVIZED, Rules_GetPCAmountToIncentivizeSocial() + "");
+    }
+    #endregion
+
+    #region save
     private float Save_TimeToPerform { get; set; }
 
     private bool Save_IsPerforming { get; set; }
@@ -193,7 +258,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     /// <summary>
     /// Performs save game. Only local save supported so far
     /// </summary>    
-	private void Save_Perform()
+	private void Save_Perform(Action onDone = null)
 	{
         if (FeatureSettingsManager.IsDebugEnabled)
         {        
@@ -210,7 +275,11 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
             if (!Sync_Syncer.IsLocalLocked())
             {
                 Sync_LocalData.Save();
-                Save_OnPerformed(true);
+                Save_OnPerformed(true, onDone);
+            }
+            else
+            {
+                Save_OnPerformed(false, onDone);
             }
         }
         else
@@ -222,14 +291,14 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
             Action<PersistenceStates.ESyncResult> onSaveDone = delegate (PersistenceStates.ESyncResult result)
             {
-                Save_OnPerformed(result == PersistenceStates.ESyncResult.Success);
+                Save_OnPerformed(result == PersistenceStates.ESyncResult.Success, onDone);
             };
 
             Sync_Perform(PersistenceSyncer.EPurpose.Save, localOp, cloudOp, syncOp, onSaveDone);
         }        
 	}
 
-    private void Save_OnPerformed(bool success)
+    private void Save_OnPerformed(bool success, Action onDone)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
@@ -245,6 +314,11 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 
         // If success then 
         Save_TimeToPerform = (success) ? -1 : 30f;
+
+        if (onDone != null)
+        {
+            onDone();
+        }
     }
 
     private void Save_Update()
@@ -261,12 +335,12 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 	#endregion
 
 	#region local
-	public UserPersistenceSystem Local_UserPersistenceSystem { get; set; }
+	public UserProfile Local_UserProfile { get; set; }
 
 	private void Local_Init()
 	{
-        Local_UserPersistenceSystem = UsersManager.currentUser;
-        Sync_LocalData.Systems_RegisterSystem(Local_UserPersistenceSystem);        
+        Local_UserProfile = UsersManager.currentUser;
+        Sync_LocalData.Systems_RegisterSystem(Local_UserProfile);        
 
         TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
         if (trackingSystem != null)
@@ -282,7 +356,7 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
     {
         if (Sync_LocalData != null)
         {
-            SimpleJSON.JSONClass defaultPersistence = PersistenceUtils.GetDefaultDataFromProfile(Sync_LocalData.Key);
+            SimpleJSON.JSONClass defaultPersistence = PersistenceUtils.GetDefaultDataFromProfile();
             Sync_LocalData.LoadFromString(defaultPersistence.ToString());
 
             // Saves the new local persistence. We don't need to use any syncer because this method is called only for debug purposes
@@ -294,17 +368,88 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 	#region social
 	public bool Social_IsLoggedIn()
 	{
-		return false;
+		return Config.Social_IsLoggedIn();
 	}
-	#endregion	
+    #endregion
 
-	#region popups
-	/// <summary>
+    #region rules
+    // This region is responsible for giving access to rules related to persistence/social networks
+
+    /// <summary>
+    /// Returns the amount of PC the user will receive if she logs in a social network (she actually has to grant the friends list permission to get the reward)
+    /// </summary>
+    /// <returns></returns>
+    public static int Rules_GetPCAmountToIncentivizeSocial()
+    {
+        int returnValue = 0;
+        DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+        if (_def != null)
+        {
+            returnValue = _def.GetAsInt("incentivizeFBGem");
+        }
+
+        return returnValue;
+    }
+    #endregion
+
+    #region popups
+    // This region is responsible for opening the related to persistence popups    
+    private static bool Popups_IsInited { get; set; }
+
+    private static void Popups_Init()
+    {
+        if (!Popups_IsInited)
+        {
+            Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+            Popups_IsInited = true;
+        }
+    }
+
+    private static void Popups_Destroy()
+    {
+        Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+    }
+
+    private static PopupController Popups_LoadingPopup { get; set; }
+
+    private static bool Popups_IsLoadingPopupOpen()
+    {
+        return Popups_LoadingPopup != null;
+    }
+
+    /// <summary>
+    /// Opens a popup to make the user wait until the response of a request related to persistence is received
+    /// </summary>
+    public static void Popups_OpenLoadingPopup()
+    {
+        if (!Popups_IsLoadingPopupOpen())
+        {
+            Popups_LoadingPopup = PopupManager.PopupLoading_Open();
+        }
+    }
+
+    public static void Popups_CloseLoadingPopup()
+    {
+        if (Popups_IsLoadingPopupOpen())
+        {
+            Popups_LoadingPopup.Close(true);
+        }
+    }
+
+    private static void Popups_OnPopupClosed(PopupController popup)
+    {
+        if (popup == Popups_LoadingPopup)
+        {
+            Popups_LoadingPopup = null;
+        }
+    }
+
+    /// <summary>
     /// This popup is shown when the local save is corrupted when the game was going to continue locally
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/20%29Local+save+corrupted
     /// </summary>
     /// <param name="cloudEver">Whether or not the user has synced with server</param>    
-	public static void Popups_OpenLoadSaveCorruptedError(bool cloudEver, Action onConfirm)
+    public static void Popups_OpenLoadSaveCorruptedError(bool cloudEver, Action onConfirm)
 	{        
 		PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
@@ -394,10 +539,37 @@ public class PersistenceFacade : UbiBCN.SingletonMonoBehaviour<PersistenceFacade
 		//Popup popup = FlowController.Instance.OpenPopup("No connection.");
 		//popup.AddButton("Ok", onConfirm, true);
     }
+
+    public static void Popups_OpenLoginComplete(int rewardAmount, Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SOCIAL_LOGIN_COMPLETE_NAME";
+        config.MessageTid = "TID_SOCIAL_LOGIN_COMPLETE_DESC";
+        config.MessageParams = new string[] { rewardAmount + "" };
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when the user clicks on logout button on settings popup
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/12%29Logout
+    /// </summary>   
+    public static void Popups_OpenLogoutWarning(bool cloudSaveEnabled, Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_NAME" : "TID_SOCIAL_WARNING_LOGOUT_TITLE";
+        config.MessageTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_DESC" : "TID_SOCIAL_WARNING_LOGOUT_DESC";
+        config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;
+        config.OnCancel = onCancel;
+        PopupManager.PopupMessage_Open(config);
+    }
     #endregion
 
     #region log
-    private static bool LOG_USE_COLOR = false;
+    private static bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[Persistence]:";    
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 

@@ -531,7 +531,7 @@ GameObject:
   - component: {fileID: 114953656590092240}
   - component: {fileID: 114595571147311906}
   m_Layer: 5
-  m_Name: EnableBtn
+  m_Name: LoginBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7196,10 +7196,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 0}
-    characterCount: 72
+    characterCount: 79
     spriteCount: 0
     spaceCount: 13
-    wordCount: 13
+    wordCount: 14
     linkCount: 0
     lineCount: 2
     pageCount: 1
@@ -7429,7 +7429,7 @@ MonoBehaviour:
     spaceCount: 6
     wordCount: 7
     linkCount: 0
-    lineCount: 2
+    lineCount: 1
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -7798,7 +7798,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114000011535713424}
-        m_MethodName: Social_OnSelectNetwork
+        m_MethodName: Social_Login
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8327,20 +8327,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b905768408bc6f4483d81fa459ea5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_socialEnableBtn: {fileID: 114901577741063458}
-  m_socialLogoutBtn: {fileID: 1709041107398020}
-  m_socialMessageText: {fileID: 114472511572693704}
-  m_cloudEnabledButton: {fileID: 1602486761131900}
-  m_cloudDisabledButton: {fileID: 1249399499057192}
-  m_resyncButton: {fileID: 114306519739238240}
-  m_userNotLoggedInRoot: {fileID: 1369063469028706}
-  m_userLoggedInRoot: {fileID: 1171595780342778}
-  m_userPreviouslyLoggedInRoot: {fileID: 1748638246715154}
-  m_userAvatarImage: {fileID: 114604030408855982}
-  m_userNameText: {fileID: 114775726380759404}
-  m_userNotLoggedInMessageText: {fileID: 114754373418331366}
-  m_userNotLoggedInRewardText: {fileID: 114425663490218506}
-  m_userPreviouslyLoggedInMessageText: {fileID: 114675425098330698}
+  m_socialEnableBtn: {fileID: 114000010668796150}
+  m_socialLogoutBtn: {fileID: 1000013722358350}
+  m_socialMessageText: {fileID: 114000014072898540}
+  m_cloudEnabledButton: {fileID: 1000013294978160}
+  m_cloudDisabledButton: {fileID: 1000011190516038}
+  m_resyncButton: {fileID: 114888821882389864}
+  m_userNotLoggedInRoot: {fileID: 1000010717057788}
+  m_userLoggedInRoot: {fileID: 1000012226029716}
+  m_userPreviouslyLoggedInRoot: {fileID: 1000011515433072}
+  m_userAvatarImage: {fileID: 114592911171426524}
+  m_userNameText: {fileID: 114000012857506634}
+  m_userNotLoggedInMessageText: {fileID: 114000013078707600}
+  m_userNotLoggedInRewardText: {fileID: 114000012344160306}
+  m_userPreviouslyLoggedInMessageText: {fileID: 114000010022773250}
+  m_notificationsSlider: {fileID: 114210729926921150}
 --- !u!114 &114000011539519882
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8755,7 +8756,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: '#LOG IN'
+  m_tid: 'TID_GEN_LOGIN '
   m_caseType: 1
   m_replacements: []
 --- !u!114 &114000012472757118
@@ -9031,7 +9032,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114000011535713424}
-        m_MethodName: Social_OnLogoutNetwork
+        m_MethodName: Social_Logout
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9325,7 +9326,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 65.8
+  m_fontSize: 71.5
   m_fontSizeBase: 75
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -13933,7 +13934,18 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114000011535713424}
+        m_MethodName: OnNotificationsSettingChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114210926951441566
@@ -36628,7 +36640,7 @@ CanvasGroup:
   m_GameObject: {fileID: 1000012323982928}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 0
+  m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!225 &225964406910072652

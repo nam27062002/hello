@@ -21,6 +21,13 @@
 
     private EUserCaseId UserCaseId { get; set;  }
 
+    private enum ECustomBool
+    {
+        TRUE,
+        FALSE,
+        AS_BASE
+    };    
+
     public PersistenceFacadeConfigDebug(EUserCaseId id)
     {
         UserCaseId = id;
@@ -28,6 +35,8 @@
 
     protected override PersistenceSyncOpFactory GetFactory(PersistenceSyncer.EPurpose type)
     {
+        Social_IsLoggedInConf = ECustomBool.AS_BASE;
+
         // Factories are regenerated so the same user case can be tested several times
         Setup();
         return base.GetFactory(type);
@@ -263,5 +272,30 @@
         SetFactoryToAllTypes(productionFactory);
         SyncFromLaunchFactory = debugFactory;
         SyncFromSettingsFactory = debugFactory;
-    }    
+    }
+
+    #region social
+    private ECustomBool Social_IsLoggedInConf { get; set; }
+
+    public override bool Social_IsLoggedIn()
+    {
+        bool returnValue = false;
+        switch (Social_IsLoggedInConf)
+        {
+            case ECustomBool.AS_BASE:
+                returnValue = base.Social_IsLoggedIn();
+                break;
+
+            case ECustomBool.TRUE:
+                returnValue = true;
+                break;
+
+            case ECustomBool.FALSE:
+                returnValue = false;
+                break;
+        }
+
+        return returnValue;
+    }
+    #endregion
 }
