@@ -282,6 +282,35 @@ public class UserProfile : UserPersistenceSystem
 	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
+    public enum ESocialState
+    {
+        NeverLoggedIn,
+        LoggedIn,
+        LoggedInAndInventivised
+    };
+
+
+    private static List<string> smSocialStatesAsString;
+    private static List<string> SocialStatesAsString
+    {
+        get
+        {
+            if (smSocialStatesAsString == null)
+            {
+                smSocialStatesAsString = new List<string>();
+                int count = Enum.GetValues(typeof(ESocialState)).Length;
+                for (int i = 0; i < count; i++)
+                {
+                    smSocialStatesAsString.Add(((ESocialState)i).ToString());
+                }
+            }
+
+            return smSocialStatesAsString;
+        }
+    }    
+
+    public ESocialState SocialState { get; set; }
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -314,7 +343,9 @@ public class UserProfile : UserPersistenceSystem
 
 		m_wardrobe = new Wardrobe();
 		m_petCollection = new PetCollection();
-		m_userMissions = new UserMissions();      
+		m_userMissions = new UserMissions();
+
+        SocialState = ESocialState.NeverLoggedIn;
     }
 
 	/// <summary>
@@ -675,10 +706,24 @@ public class UserProfile : UserPersistenceSystem
         }
         else {
             m_superFuryProgression = 0;
-        }        
+        }
 
-		// Some cheats override profile settings - will be saved with the next Save()
-		if(Prefs.GetBoolPlayer("skipTutorialCheat")) {
+        key = "socialState";
+        SocialState = ESocialState.NeverLoggedIn;
+        if (profile.ContainsKey(key)) {
+            int count = Enum.GetValues(typeof(ESocialState)).Length;
+            string value = profile["socialState"];
+            int index = SocialStatesAsString.IndexOf(value);
+            if (index == -1) {
+                if (FeatureSettingsManager.IsDebugEnabled) 
+                    Debug.LogError("USER_PROFILE: " + value + " is not a valid ESocialState");                
+            } else {
+                SocialState = (ESocialState)index;
+            }
+        }
+
+        // Some cheats override profile settings - will be saved with the next Save()
+        if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
 			UsersManager.currentUser.gamesPlayed = 5;	// Fake the amount of played games to skip some tutorial steps depending on it
 			Prefs.SetBoolPlayer("skipTutorialCheat", false);
@@ -784,7 +829,7 @@ public class UserProfile : UserPersistenceSystem
 				}
 				#endif
 			}
-		}
+		}        
 	}
 
 	/// <summary>
@@ -893,6 +938,7 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add("gamesPlayed",m_gamesPlayed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		profile.Add("highScore",m_highScore.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		profile.Add("superFuryProgression",m_superFuryProgression.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+        profile.Add("socialState",SocialStatesAsString[(int)SocialState]);
 
 		data.Add("userProfile", profile);
 

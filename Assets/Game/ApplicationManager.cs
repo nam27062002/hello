@@ -259,12 +259,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
                 // ---------------------------
                 // Test persistence save
-                //Debug_TestPersistenceSave();
+                Debug_TestPersistenceSave();
                 // ---------------------------
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
-                //GameSessionManager.RemoveKeys();
+                GameSessionManager.RemoveKeys();
+                PersistencePrefs.Clear();
             }
         }
 
