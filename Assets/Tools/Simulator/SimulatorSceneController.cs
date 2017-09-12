@@ -81,7 +81,7 @@ public class SimulatorSceneController : SceneController {
 	/// </summary>
 	public void OnResetButton() {
         // Clear persistence
-        PersistenceFacade.instance.Local_ResetToDefault();
+        PersistenceFacade.instance.LocalDriver.OverrideWithDefault(null);
 
         // Restart game
         FlowManager.Restart();

@@ -77,14 +77,16 @@ public class UserPersistenceSystem : PersistenceSystem
         }
         catch (Exception e)
         {
-            Debug.LogError("UserPersistenceSystem (Load) :: Exception - " + e);
+			if (FeatureSettingsManager.IsDebugEnabled)
+            	PersistenceFacade.LogError("UserPersistenceSystem (Load) :: Exception - " + e);
+
             throw new CorruptedSaveException(e);
         }        
     }
 
     public override void Save()
     {
-		SetInt("NumGameLoops", m_numGameLoops);		        
+		SetInt("NumGameLoops", m_numGameLoops);		        		
         SetInt("TimePlayed", timePlayed);
         SetBool("HasBeenIngame", m_hasBeenIngame);
         SetBool("IsPirate", isPirate);
@@ -92,7 +94,7 @@ public class UserPersistenceSystem : PersistenceSystem
         SetBool("IsCheater", isCheater);
         SetInt("FlaggedReason", flaggedReason);
         SetBool("Banned", bannedFromLiveEvents);
-        SetBool("IapPurchaseMade", iapPurchaseMade);                
+        SetBool("IapPurchaseMade", iapPurchaseMade);                        
     }
         
     public override bool Upgrade()

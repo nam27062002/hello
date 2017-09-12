@@ -1,301 +1,349 @@
-﻿public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
+public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 {
     public enum EUserCaseId
     {
         Production,
 
-        Custom_Local,        
+		Launch_Local_NotFound_Cloud_NoConnection,
+		Launch_Local_NotFound_Error_FullDisk_Cloud_NoConnection,
+		Launch_Local_Error_LoadPermission_Cloud_NoConnection,
+		Launch_Local_NeverLoggedIn_Cloud_NoConnection,
+		Launch_Local_LoggedIn_Cloud_NoConnection,
+		Launch_Local_LoggedInAndIncentivised_Cloud_NoConnection,
+		Launch_Local_LoggedIn_Cloud_Error_NotLoggedInServer,
+		Launch_Local_NeverLoggedIn_Cloud_Error_NotLoggedInSocial,
+		Launch_Local_NeverLoggedIn_Cloud_Error_GetPersistence,
+		Launch_Local_NeverLoggedIn_Cloud_More,
+		Launch_Local_NeverLoggedIn_Error_FullDisk_Cloud_More,
+		Launch_Local_NeverLoggedIn_Cloud_Less,
+		Launch_Local_NeverLoggedIn_Cloud_Equal,
+		Launch_Local_NeverLoggedIn_Cloud_Less_Error_Upload,
+		Launch_Local_NeverLoggedIn_Cloud_Less_Error_Merge,
+		Launch_Local_NeverLoggedIn_Cloud_Corrupted,
+		Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload,
+		Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge,
+		Launch_Local_Corrupted_Cloud_NoConnection,
+		Launch_Local_Corrupted_Cloud_Ok,
+		Launch_Local_Corrupted_Cloud_Corrupted,
 
-        Error_Local_Load_NotFound,
-        Error_Local_Load_Permission,
-        Error_Local_Load_Corrupted,
-        Error_Local_Save_DiskSpace,
-        Error_Local_Save_Permission,
-        Error_Local_Load_Corrupted_Save_Permission,
-
-        Error_Cloud_NotConnection,      
-        Error_Cloud_Server_NotLogged,
-        Error_Cloud_Server_Persistence,
-        Error_Cloud_Social_NotLogged, 
+		Settings_Local_NeverLoggedIn_Cloud_NoConnection,
+		Settings_Local_LoggedIn_Cloud_NoConnection,
+		Settings_Local_LoggedInAndIncentivised_Cloud_NoConnection,
+		Settings_Local_LoggedIn_Cloud_Error_NotLoggedInServer,
+		Settings_Local_LoggedIn_Cloud_Error_NotLoggedInSocial,
+		Settings_Local_NeverLoggedIn_Cloud_Error_GetPersistence,
+		Settings_Local_NeverLoggedIn_Cloud_More,
+		Settings_Local_NeverLoggedIn_Error_FullDisk_Cloud_More,
+		Settings_Local_NeverLoggedIn_Cloud_Less,
+		Settings_Local_NeverLoggedIn_Cloud_Equal,
+		Settings_Local_NeverLoggedIn_Cloud_Less_Error_Upload,
+		Settings_Local_NeverLoggedIn_Cloud_Less_Error_Merge,
+		Settings_Local_NeverLoggedIn_Cloud_Corrupted,
+		Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload,
+		Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge,
     };
 
-    private EUserCaseId UserCaseId { get; set;  }
-
-    private enum ECustomBool
-    {
-        TRUE,
-        FALSE,
-        AS_BASE
-    };    
+    private EUserCaseId UserCaseId { get; set;  }   
 
     public PersistenceFacadeConfigDebug(EUserCaseId id)
     {
         UserCaseId = id;
-    }
-
-    protected override PersistenceSyncOpFactory GetFactory(PersistenceSyncer.EPurpose type)
-    {
-        Social_IsLoggedInConf = ECustomBool.AS_BASE;
-
-        // Factories are regenerated so the same user case can be tested several times
-        Setup();
-        return base.GetFactory(type);
-    }
+		Setup();
+    }   
 
     protected override void Setup()
-    {        
-        switch (UserCaseId)
-        {
-            case EUserCaseId.Production:
-                base.Setup();
-                break;
+	{        
+		if (UserCaseId == EUserCaseId.Production)
+		{
+			base.Setup ();
+		} 
+		else
+		{
+			LocalDriver = new PersistenceLocalDriverDebug();
+			CloudDriver = new PersistenceCloudDriverDebug();
+			CloudDriver.Setup(LocalDriver);
 
-            case EUserCaseId.Custom_Local:
-                SetupCustomLocal();
-                break;
-
-            case EUserCaseId.Error_Local_Load_NotFound:
-                SetupErrorLocalLoadNotFound();
-                break;
-
-            case EUserCaseId.Error_Local_Load_Permission:
-                SetupErrorLocalLoadPermission();
-                break;
-
-            case EUserCaseId.Error_Local_Load_Corrupted:
-                SetupErrorLocalLoadCorrupted();
-                break;
-
-            case EUserCaseId.Error_Local_Save_DiskSpace:
-                SetupErrorLocalSaveDiskSpace();
-                break;
-
-            case EUserCaseId.Error_Local_Save_Permission:
-                SetupErrorLocalSavePermission();
-                break;
-
-            case EUserCaseId.Error_Local_Load_Corrupted_Save_Permission:
-                SetupErrorLocalLoadCorruptedSavePermission();
-                break;
-
-            case EUserCaseId.Error_Cloud_NotConnection:
-                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_NotConnection);
-                break;
-
-            case EUserCaseId.Error_Cloud_Server_NotLogged:
-                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_Server_NotLogged);
-                break;
-
-            case EUserCaseId.Error_Cloud_Social_NotLogged:
-                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_Social_NotLogged);
-                break;
-
-            case EUserCaseId.Error_Cloud_Server_Persistence:
-                SetupErrorCloudConnection(PersistenceStates.ESyncResult.Error_Cloud_Server_Persistence);                
-                break;
-        }
+			SetupUserCaseId(UserCaseId);
+		}
     }
 
-    private void SetupCustomLocal()
-    {
-        // From Launch        
-        // The game loads with the persistence defined here
-        // No login to fb (show incentive)
-        // No cloud synced
+	private void SetupUserCaseId(EUserCaseId caseId)
+	{
+		switch (caseId)
+		{
+			case EUserCaseId.Launch_Local_NotFound_Cloud_NoConnection:
+				// Default profile is loaded
+				LocalDriverDebug.PersistenceAsString = null;
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        string persistence = "{\"userProfile\":{\"sc\":\"10000:0\",\"pc\":\"0:0\",\"keys\":\"3:0\",\"currentDragon\":\"dragon_baby\",\"currentLevel\":\"level_0\",\"timestamp\":\"09 / 06 / 2017 07:31:01\",\"gf\":\"0:0\",\"tutorialStep\":\"131070\",\"furyUsed\":\"False\",\"gamesPlayed\":\"0\",\"highScore\":\"0\",\"superFuryProgression\":\"0\"},\"dragons\":[{\"sku\":\"dragon_baby\",\"owned\":\"True\",\"xp\":\"0\",\"level\":\"0\",\"disguise\":\"dragon_baby_0\",\"pets\":[\"\"]}],\"User\":{\"NumGameLoops\":0},\"disguises\":[{\"disguise\":\"dragon_baby_0\",\"level\":\"3\"},{\"disguise\":\"dragon_crocodile_0\",\"level\":\"3\"},{\"disguise\":\"dragon_reptile_0\",\"level\":\"3\"},{\"disguise\":\"dragon_fat_0\",\"level\":\"3\"},{\"disguise\":\"dragon_bug_0\",\"level\":\"3\"},{\"disguise\":\"dragon_chinese_0\",\"level\":\"3\"},{\"disguise\":\"dragon_classic_0\",\"level\":\"3\"},{\"disguise\":\"dragon_devil_0\",\"level\":\"3\"},{\"disguise\":\"dragon_balrog_0\",\"level\":\"3\"},{\"disguise\":\"dragon_titan_0\",\"level\":\"3\"}],\"pets\":[],\"missions\":{\"activeMissions\":[{\"sku\":\"ftux1\",\"state\":\"3\",\"currentValue\":\"0\",\"targetValue\":\"42\",\"singleRun\":\"True\",\"cooldownStartTimestamp\":\"01 / 01 / 0001 00:00:00\"},{\"sku\":\"ftux2\",\"state\":\"3\",\"currentValue\":\"0\",\"targetValue\":\"100\",\"singleRun\":\"False\",\"cooldownStartTimestamp\":\"01 / 01 / 0001 00:00:00\"},{\"sku\":\"ftux3\",\"state\":\"3\",\"currentValue\":\"0\",\"targetValue\":\"20000\",\"singleRun\":\"False\",\"cooldownStartTimestamp\":\"01 / 01 / 0001 00:00:00\"}]},\"eggs\":{\"inventory\":[],\"incubationEndTimestamp\":\"01 / 01 / 0001 00:00:00\",\"collectedAmount\":\"0\",\"goldenEggsCollected\":\"0\"},\"chests\":{\"chests\":[{\"state\":\"1\",\"spawnPointID\":\" - \"},{\"state\":\"1\",\"spawnPointID\":\" - \"},{\"state\":\"1\",\"spawnPointID\":\" - \"},{\"state\":\"1\",\"spawnPointID\":\" - \"},{\"state\":\"1\",\"spawnPointID\":\" - \"}],\"resetTimestamp\":\"09 / 06 / 2017 17:12:42\"},\"dailyRemoveMissionAdTimestamp\":\"09 / 05 / 2017 17:12:39\",\"dailyRemoveMissionAdUses\":\"0\",\"mapResetTimestamp\":\"09 / 05 / 2017 17:12:39\",\"globalEvents\":[],\"Tracking\":{\"userID\":\"\",\"socialPlatform\":\"\",\"socialID\":\"\",\"accID\":0,\"sessionCount\":0,\"gameRoundCount\":0,\"totalPlaytime\":0,\"totalPurchases\":0,\"totalStoreVisits\":0,\"adsCount\":0,\"adsSessions\":0,\"firstLoading\":true},\"deviceName\":\"BCDTDAVIDGERM\",\"modifiedTime\":1504683061}";
-        //string persistence = "{\'userProfile\':{\'sc\':\'10000:0\',\'pc\':\'0:0\',\'keys\':\'3:0\',\'currentDragon\':\'dragon_baby\',\'currentLevel\':\'level_0\',\'timestamp\':\'09 / 06 / 2017 07:31:01\',\'gf\':\'0:0\',\'tutorialStep\':\'131070\',\'furyUsed\':\'False\',\'gamesPlayed\':\'0\',\'highScore\':\'0\',\'superFuryProgression\':\'0\'},\'dragons\':[{\'sku\':\'dragon_baby\',\'owned\':\'True\',\'xp\':\'0\',\'level\':\'0\',\'disguise\':\'dragon_baby_0\',\'pets\':[\'\']}],\'User\':{\'NumGameLoops\':0},\'disguises\':[{\'disguise\':\'dragon_baby_0\',\'level\':\'3\'},{\'disguise\':\'dragon_crocodile_0\',\'level\':\'3\'},{\'disguise\':\'dragon_reptile_0\',\'level\':\'3\'},{\'disguise\':\'dragon_fat_0\',\'level\':\'3\'},{\'disguise\':\'dragon_bug_0\',\'level\':\'3\'},{\'disguise\':\'dragon_chinese_0\',\'level\':\'3\'},{\'disguise\':\'dragon_classic_0\',\'level\':\'3\'},{\'disguise\':\'dragon_devil_0\',\'level\':\'3\'},{\'disguise\':\'dragon_balrog_0\',\'level\':\'3\'},{\'disguise\':\'dragon_titan_0\',\'level\':\'3\'}],\'pets\':[],\'missions\':{\'activeMissions\':[{\'sku\':\'ftux1\',\'state\':\'3\',\'currentValue\':\'0\',\'targetValue\':\'42\',\'singleRun\':\'True\',\'cooldownStartTimestamp\':\'01 / 01 / 0001 00:00:00\'},{\'sku\':\'ftux2\',\'state\':\'3\',\'currentValue\':\'0\',\'targetValue\':\'100\',\'singleRun\':\'False\',\'cooldownStartTimestamp\':\'01 / 01 / 0001 00:00:00\'},{\'sku\':\'ftux3\',\'state\':\'3\',\'currentValue\':\'0\',\'targetValue\':\'20000\',\'singleRun\':\'False\',\'cooldownStartTimestamp\':\'01 / 01 / 0001 00:00:00\'}]},\'eggs\':{\'inventory\':[],\'incubationEndTimestamp\':\'01 / 01 / 0001 00:00:00\',\'collectedAmount\':\'0\',\'goldenEggsCollected\':\'0\'},\'chests\':{\'chests\':[{\'state\':\'1\',\'spawnPointID\':\' - \'},{\'state\':\'1\',\'spawnPointID\':\' - \'},{\'state\':\'1\',\'spawnPointID\':\' - \'},{\'state\':\'1\',\'spawnPointID\':\' - \'},{\'state\':\'1\',\'spawnPointID\':\' - \'}],\'resetTimestamp\':\'09 / 06 / 2017 17:12:42\'},\'dailyRemoveMissionAdTimestamp\':\'09 / 05 / 2017 17:12:39\',\'dailyRemoveMissionAdUses\':\'0\',\'mapResetTimestamp\':\'09 / 05 / 2017 17:12:39\',\'globalEvents\':[],\'Tracking\':{\'userID\':\'\',\'socialPlatform\':\'\',\'socialID\':\'\',\'accID\':0,\'sessionCount\':0,\'gameRoundCount\':0,\'totalPlaytime\':0,\'totalPurchases\':0,\'totalStoreVisits\':0,\'adsCount\':0,\'adsSessions\':0,\'firstLoading\':true},\'deviceName\':\'BCDTDAVIDGERM\',\'modifiedTime\':1504683061}";
+			case EUserCaseId.Launch_Local_NotFound_Error_FullDisk_Cloud_NoConnection:
+				// A popup showing full disk error is shown until it's fixed. Once fixed default persistence is loaded
+				SetupUserCaseId(EUserCaseId.Launch_Local_NotFound_Cloud_NoConnection);
+				LocalDriverDebug.isFullDiskErrorEnabled = true;
+			break;
 
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();        
+			case EUserCaseId.Launch_Local_Error_LoadPermission_Cloud_NoConnection:
+				// A popup showing permission error is shown until it's fixed. Once fixed the persistence defined below is loaded
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, 10);
+				LocalDriverDebug.IsPermissionErrorEnabled = true;
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        PersistenceSyncOpFactory syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.LoadLocal);
-        debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Success, persistence);        
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_NoConnection:
+				// Game loads with the persistence defined below 
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 10);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        SetFactoryToAllTypes(productionFactory);
-        SyncFromLaunchFactory = debugFactory;        
-    }
+			case EUserCaseId.Launch_Local_LoggedIn_Cloud_NoConnection:
+				// A popup giving the login reward is shown to the user
+				// When accepted game loads with the persistence defined below althugh socialState has changed to LoggedIn
+				// and the reward was added to the profile
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, 10);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-    private void SetupErrorLocalLoadNotFound()
-    {
-        // From Launch
-        // No error popup shown (is silent)
-        // The game loads with the default persistence
-        // No login to fb (show incentive)
-        // No cloud synced
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
+			case EUserCaseId.Launch_Local_LoggedInAndIncentivised_Cloud_NoConnection:				
+				// Game loads with the persistence defined below 
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndInventivised, 10);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        PersistenceSyncOpFactory syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.LoadLocal);
-        for (int i = 0; i < 1; i++)
-        {            
-            debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Error_Local_Load_NotFound, null);
-        }
+			case EUserCaseId.Launch_Local_LoggedIn_Cloud_Error_NotLoggedInServer:								
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, 10);
+				CloudDriverDebug.IsLogInServerEnabled = false;
+			break;
 
-        SetFactoryToAllTypes(productionFactory);
-        SyncFromLaunchFactory = debugFactory;
-    }
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Error_NotLoggedInSocial:				
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 10);
+				CloudDriverDebug.IsLogInSocialEnabled = false;
+			break;
 
-    private void SetupErrorLocalLoadPermission()
-    {
-        // From Launch
-        // An error popup notifying that there's not permission to load is shown. It has a retry button
-        // When clicked the same popup is shown and when clicked again the game loads with the right persistence        
-        // No login to fb (show incentive)
-        // No cloud synced
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Error_GetPersistence:				
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 10);
+				CloudDriverDebug.IsGetPersistenceEnabled = false;
+			break;
 
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_More:								
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 10);
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, 100);
+			break;
 
-        PersistenceSyncOpFactoryDebug syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.LoadLocal);
-        for (int i = 0; i < 2; i++)
-        {
-            debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Error_Local_Load_Permission, null);
-        }
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Error_FullDisk_Cloud_More:
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_More);
+				LocalDriverDebug.isFullDiskErrorEnabled = true;
+			break;
 
-        SetFactoryToAllTypes(productionFactory);
-        SyncFromLaunchFactory = debugFactory;
-    }
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less:
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 100);
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, 10);
+			break;
 
-    private void SetupErrorLocalLoadCorrupted()
-    {
-        // From Launch
-        // An error popup notifying that local persistence is corrupted. It has a button to override it with default persistence
-        // When clicked the default persistence should be loaded
-        // No login to fb (show incentive)
-        // No cloud synced
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Equal:
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 100);
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 10);				
+			break;
 
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less_Error_Upload:
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less);
+				CloudDriverDebug.IsUploadPersistenceEnabled = false;
+			break;
 
-        PersistenceSyncOpFactoryDebug syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.LoadLocal);        
-        debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Error_Local_Load_Corrupted, null);
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less_Error_Merge:
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less);
+				CloudDriverDebug.IsMergeEnabled = true;
+			break;
 
-        SetFactoryToAllTypes(productionFactory);
-        SyncFromLaunchFactory = debugFactory;
-    }
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted:
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 100);
+				CloudDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
+			break;
 
-    private void SetupErrorLocalSaveDiskSpace()
-    {
-        // Add money by using a cheat, which forces a save
-        // An error popup notifying that there's not enough disk space to save is shown. It has a retry button
-        // When clicked the same popup is shown and when clicked again the persistence is saved successfully. If we restart the game we should see the money updated
-        // No login to fb (show incentive)
-        // No cloud synced
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload:
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 100);
+				CloudDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
+				CloudDriverDebug.IsUploadPersistenceEnabled = false;
+			break;
 
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
+			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge:
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, 100);
+				CloudDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
+				CloudDriverDebug.IsMergeEnabled = true;
+			break;
 
-        PersistenceSyncOpFactoryDebug syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.SaveLocal);
-        for (int i = 0; i < 2; i++)
-        {            
-            debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Error_Local_Save_DiskSpace, null);
-        }
+			case EUserCaseId.Launch_Local_Corrupted_Cloud_NoConnection:
+				// A popup letting the user know that local persistence is corrupted is shown.
+				// If the user chooses to reset local persistence then the game is loaded with the default persistence.
+				// If the user chooses to connect to cloud then a popup notifying that there's no connection is shown.
+				// When this popup is closed the popup that lets the user choose between connecting to cloud and resetting
+				// is shown again
+				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        SetFactoryToAllTypes(productionFactory);
-        SaveFactory = debugFactory;
-    }
+			case EUserCaseId.Launch_Local_Corrupted_Cloud_Ok:
+				// A popup letting the user know that local persistence is corrupted is shown.
+				// If the user chooses to reset local persistence then the game is loaded with the default persistence.
+				// If the user chooses to connect to cloud then the game loads with the cloud persistence				
+				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndInventivised, 100);				
+			break;
 
-    private void SetupErrorLocalSavePermission()
-    {
-        // Add money by using a cheat, which forces a save
-        // An error popup notifying that there's not permission to save is shown. It has a retry button
-        // When clicked the same popup is shown and when clicked again the persistence is saved successfully. If we restart the game we should see the money updated
-        // No login to fb (show incentive)
-        // No cloud synced
+			case EUserCaseId.Launch_Local_Corrupted_Cloud_Corrupted:
+				// A popup letting the user know that local persistence is corrupted is shown.
+				// If the user chooses to reset local persistence then the game is loaded with the default persistence.
+				// If the user chooses to connect to cloud then another popup notifying that cloud persistence is corrupted too is shown
+				// When reset button is clicked game loads with both local and cloud persistences resetted to default
+				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
+				CloudDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
+			break;
 
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_NoConnection:
+				// A popup showing no connection message is shown
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_NoConnection);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        PersistenceSyncOpFactoryDebug syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.SaveLocal);
-        for (int i = 0; i < 2; i++)
-        {
-            debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Error_Local_Save_Permission, null);
-        }
+			case EUserCaseId.Settings_Local_LoggedIn_Cloud_NoConnection:
+				// A popup showing no connection message is shown
+				SetupUserCaseId(EUserCaseId.Launch_Local_LoggedIn_Cloud_NoConnection);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        SetFactoryToAllTypes(productionFactory);
-        SaveFactory = debugFactory;
-    }
+			case EUserCaseId.Settings_Local_LoggedInAndIncentivised_Cloud_NoConnection:
+				// A popup showing no connection message is shown
+				SetupUserCaseId(EUserCaseId.Launch_Local_LoggedInAndIncentivised_Cloud_NoConnection);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-    private void SetupErrorLocalLoadCorruptedSavePermission()
-    {
-        // From Launch
-        // An error popup notifying that local persistence is corrupted. It has a button to override it with default persistence
-        // When clicked the default persistence is tried to be saved but it fails so a popup is shown with a retry button
-        // When clicked the same popup is shown again and when clicked retry again the default persistence is saved and the game
-        // should be loaded with that persistence
-        // No login to fb (show incentive)
-        // No cloud synced
+			case EUserCaseId.Settings_Local_LoggedIn_Cloud_Error_NotLoggedInServer:
+				// A popup showing no connection message is shown
+				SetupUserCaseId(EUserCaseId.Launch_Local_LoggedIn_Cloud_Error_NotLoggedInServer);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
+			case EUserCaseId.Settings_Local_LoggedIn_Cloud_Error_NotLoggedInSocial:
+				// No error popup is shown
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Error_NotLoggedInSocial);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        PersistenceSyncOpFactoryDebug syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Error_GetPersistence:
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Error_GetPersistence);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        // Load local corrupted
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.LoadLocal);
-        debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Error_Local_Load_Corrupted, null);
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_More:
+				// When login button is clicked a popup prompting the user to choose between
+				// local and cloud persistences is shown. After this popup another popup notifying
+				// the login rewad has been granted is shown. 
+				// If the user chooses local then cloud persistence is overriden with local persistence. 
+				// If cloud is chosen then the game gets reloaded and cloud persistence is shown
+				// If the user decides to dismiss the question then local and cloud persistences will keep
+				// out of sync and the user will continue with local persistence
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_More);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        // Save local error
-        debugOp = syncFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.SaveLocal);
-        for (int i = 0; i < 2; i++)
-        {
-            debugOp.Debug_RegisterData(0f, PersistenceStates.ESyncResult.Error_Local_Save_Permission, null);
-        }
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Error_FullDisk_Cloud_More:
+				// Full disk message is shown until it's fixed.
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Error_FullDisk_Cloud_More);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        SetFactoryToAllTypes(productionFactory);
-        SyncFromLaunchFactory = debugFactory;
-    }
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Less:
+				// When login button is clicked a popup showing the login reward is shown and
+				// cloud and local are in sync with local persistence
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-    private void SetupErrorCloudConnection(PersistenceStates.ESyncResult cloudResult)
-    {
-        // From Launch
-        // The game should load with local persistence and no delays because of the cloud error connection        
-        // No login to fb (show incentive)
-        // No cloud synced
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Equal:
+				// When login button is clicked a popup showing the login reward is shown and
+				// cloud and local are in sync with local persistence
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Equal);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Less_Error_Upload:
+				// When login button is clicked a popup showing an error because an error
+				// when saving the local progress in the cloud occured is shown. If the error is fixed
+				// or the user decides to dismiss the error then a popup showing the login reward is shown. 
+				// Persistences are in sync only if the error was fixed, otherwise they will get
+				// synced automatically when the error is fixed.
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less_Error_Upload);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        PersistenceSyncOpFactoryDebug syncFactory = new PersistenceSyncOpFactoryDebug(null);
-        PersistenceSyncOpFactoryDebug debugFactory = new PersistenceSyncOpFactoryDebug(syncFactory);
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Less_Error_Merge:
+				// When login button is clicked a popup is shown to let the user choose
+				// between local persistence and cloud persistence because of a merge conflict. 
+				// If local persistence is chosen then the user won't be logged in social anymore 
+				// so no login reward will be granted.
+				// If cloud persistence is chosen then the game gets reloaded with the cloud persistence
+				// Login reward is granted before reloading.
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less_Error_Merge);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-        // Load cloud with no connection
-        PersistenceSyncOpDebug debugOp = debugFactory.RegisterOp(PersistenceSyncOpFactoryDebug.EOpType.LoadCloud);
-        debugOp.Debug_RegisterData(5f, cloudResult, null);
-        
-        SetFactoryToAllTypes(productionFactory);
-        SyncFromLaunchFactory = debugFactory;
-        SyncFromSettingsFactory = debugFactory;
-    }
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted:
+				// When login button is clicked a popup notifies the user that cloud persistence 
+				// is corrupted. If the user choose to ignore the problem then cloud won't be
+				// in sync and uploading local persistence will be disabled. 
+				// If the user decides to override cloud persistence with local persistence then
+				// we do so and if everything goes ok local and cloud will be in sync.
+				// After the popup the login reward is given to the user.				
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted);
+				CloudDriverDebug.IsConnectionEnabled = false;				
+			break;
 
-    #region social
-    private ECustomBool Social_IsLoggedInConf { get; set; }
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload:
+				// When login button is clicked a popup notifies the user that cloud persistence 
+				// is corrupted. When the user decides to override cloud persistence with local persistence a
+				// popup notifying an error when writing in cloud is shown until the problem is fixed
+				// or the user decides to ignore the problem				
+				// After the popup the login reward is given to the user.				
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
 
-    public override bool Social_IsLoggedIn()
-    {
-        bool returnValue = false;
-        switch (Social_IsLoggedInConf)
-        {
-            case ECustomBool.AS_BASE:
-                returnValue = base.Social_IsLoggedIn();
-                break;
+			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge:
+				// When login button is clicked a popup notifies the user that cloud persistence 
+				// is corrupted. Local persistence can't override cloud persistence because there's a social
+				// merge to solve. This is notified to the user with a popup that let her continue playing
+				// locally, which means that the social login hasn't been completed so login reward is not given
+				// to the user.				
+				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge);
+				CloudDriverDebug.IsConnectionEnabled = false;
+			break;
+		}
+	}   
 
-            case ECustomBool.TRUE:
-                returnValue = true;
-                break;
+	private string GetPersistenceCorrupted()
+	{
+		return "{\"userProfile\":{\"sc\":\"10000:0\",\"pc\":\"0:0\",\"timestamp\":\"09 / 06 / 2017 07:31:01\"},\"User\":{\"NumGameLoops\":0,\"deviceName\":\"BCDTDAVIDGERM\",\"modifiedTime\":1504683061}";
+	}
 
-            case ECustomBool.FALSE:
-                returnValue = false;
-                break;
-        }
+	private string GetPersistence(UserProfile.ESocialState socialState, int gameLoops)
+	{
+		return "{\"userProfile\":{\"sc\":\"10000:0\",\"socialState\":\"" + socialState.ToString() 
+			+ "\"},\"User\":{\"NumGameLoops\":" + gameLoops + "}}";
+	}
+    
+	private PersistenceLocalDriverDebug LocalDriverDebug 
+	{
+		get 
+		{
+			return LocalDriver as PersistenceLocalDriverDebug;
+		}
+	}
 
-        return returnValue;
-    }
-    #endregion
+	private PersistenceCloudDriverDebug CloudDriverDebug 
+	{
+		get 
+		{
+			return CloudDriver as PersistenceCloudDriverDebug;
+		}
+	}
 }

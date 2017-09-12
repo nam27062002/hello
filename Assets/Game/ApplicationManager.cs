@@ -133,7 +133,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         //PersistenceManager.Save();
 
-		Device_Destroy();
+        PersistenceFacade.instance.Destroy();
+        Device_Destroy();
         
         m_isAlive = false;
         Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
@@ -259,16 +260,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
                 // ---------------------------
                 // Test persistence save
-                Debug_TestPersistenceSave();
+                //Debug_TestPersistenceSave();
                 // ---------------------------
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
-                GameSessionManager.RemoveKeys();
-                PersistencePrefs.Clear();
+                //GameSessionManager.RemoveKeys();
+                //PersistencePrefs.Clear();
             }
         }
 
+        PersistenceFacade.instance.Update();
         HDTrackingManager.Instance.Update();        
 
 		#if UNITY_EDITOR
@@ -332,7 +334,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
 
         // If the persistences are not being synced then we need to make sure the local progress will be stored when going to pause
-        if (!PersistenceFacade.instance.Sync_IsSyncing())
+        if (!PersistenceFacade.instance.Sync_IsSyncing)
         {            
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)

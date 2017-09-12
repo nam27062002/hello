@@ -44,13 +44,10 @@ public class PersistencePrefs
     }
 
     public static string ActiveProfileName
-    {        
-        get {
-            return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE); }
-        set
-        {
-            SetString(KEY_ACTIVE_PROFILE_NAME, value);
-        }
+    {
+        get { return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE); }
+
+		set { SetString(KEY_ACTIVE_PROFILE_NAME, value); }
     }
 
     public static bool IsCloudSaveEnabled
