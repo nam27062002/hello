@@ -54,11 +54,12 @@ public class ResultsScreenController_NEWEditor : Editor {
 					new StepSetup(ResultsScreenController_NEW.Step.MISSIONS, true, false, "Optional, completed missions"),
 
 					new StepSetup(ResultsScreenController_NEW.Step.XP, true, true, "Always, dragon xp progression"),
-					new StepSetup(ResultsScreenController_NEW.Step.SKIN_UNLOCKED, true, false, "Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run"),
-					new StepSetup(ResultsScreenController_NEW.Step.DRAGON_UNLOCKED, true, false, "Optional, if a new dragon was unlocked"),
 
 					new StepSetup(ResultsScreenController_NEW.Step.TRACKING, true, true, "Logic step, send end of game tracking - before applying the rewards!"),
 					new StepSetup(ResultsScreenController_NEW.Step.APPLY_REWARDS, true, false, "Logic step, apply rewards to the profile"),
+
+					new StepSetup(ResultsScreenController_NEW.Step.SKIN_UNLOCKED, true, true, "Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run"),
+					new StepSetup(ResultsScreenController_NEW.Step.DRAGON_UNLOCKED, true, false, "Optional, if a new dragon was unlocked"),
 
 					new StepSetup(ResultsScreenController_NEW.Step.GLOBAL_EVENT, true, true, "Optional, if there is an active event and the player has a score to add to it"),
 

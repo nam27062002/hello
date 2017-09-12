@@ -383,7 +383,8 @@ public class ResultsScreenController : MonoBehaviour {
 				// Show and animate unlock bar as well
 				// Start timer to next state
 				m_unlockBarAnimator.Show();
-				m_timer = m_unlockBar.LaunchAnimation();
+				//m_timer = m_unlockBar.LaunchAnimation();
+				m_timer = 5f;
 			} break;
 
 			case State.COLLECTIBLES: {

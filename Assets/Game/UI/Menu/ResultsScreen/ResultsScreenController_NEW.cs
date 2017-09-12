@@ -9,6 +9,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
     //------------------------------------------------------------------//
     public const string NAME = "SC_ResultsScreen";
 
+	// Execution order!
 	public enum Step {
 		INIT = 0,
 
@@ -20,11 +21,12 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		MISSIONS,			// Optional, completed missions
 
 		XP,					// Always, dragon xp progression
-		SKIN_UNLOCKED,		// Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run
-		DRAGON_UNLOCKED,	// Optional, if a new dragon was unlocked
 
 		TRACKING,			// Logic step, send end of game tracking - before applying the rewards!
 		APPLY_REWARDS,		// Logic step, apply rewards to the profile
+
+		SKIN_UNLOCKED,		// Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run
+		DRAGON_UNLOCKED,	// Optional, if a new dragon was unlocked
 
 		GLOBAL_EVENT,		// Optional, if there is an active event and the player has a score to add to it
 
@@ -205,7 +207,7 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 
 		// Launch first step!
 		m_step = Step.INIT;
-		CheckNextStep();
+		LaunchNextStep();
 	}
 
 	//------------------------------------------------------------------------//
@@ -214,10 +216,9 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 	/// <summary>
 	/// Checks the next step to be displayed and launches it. 
 	/// </summary>
-	private void CheckNextStep() {
-		// Increase step
-		m_step++;
-		ResultsScreenStep targetStep = m_steps[(int)m_step];
+	private void LaunchNextStep() {
+		// Find out next step
+		m_step = CheckNextStep();
 
 		// If we're at the last step, go back to menu!
 		if(m_step == Step.FINISHED) {
@@ -225,22 +226,49 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 			return;
 		}
 
+		// Launch the target step! We'll receive the OnStepFinished callback when step has finished
+		ResultsScreenStep targetStep = m_steps[(int)m_step];
+		targetStep.gameObject.SetActive(true);
+		targetStep.Launch();
+	}
+
+	/// <summary>
+	/// Check which step to display next.
+	/// </summary>
+	/// <returns>The next step to be displayed. Step.FINISHED if none.</returns>
+	public Step CheckNextStep() {
+		// Just use recursive call
+		return CheckNextStep(m_step);
+	}
+
+	/// <summary>
+	/// Given a step, check which step to display next.
+	/// </summary>
+	/// <returns>The next step to be displayed. Step.FINISHED if none.</returns>
+	/// <param name="_step">Step to be checked.</param>
+	public Step CheckNextStep(Step _step) {
+		// Increase step index
+		_step++;
+		ResultsScreenStep targetStep = m_steps[(int)_step];
+
+		// If we're at the last step, we're done!
+		if(_step == Step.FINISHED) {
+			return Step.FINISHED;	// End of recursivity
+		}
+
 		// If the step has no logic assigned, skip it
 		else if(targetStep == null) {
-			CheckNextStep();
-			return;
+			return CheckNextStep(_step);	// Recursive call
 		}
 
 		// If step mustn't be displayed, skip it
 		else if(!targetStep.MustBeDisplayed()) {
-			CheckNextStep();
-			return;
+			return CheckNextStep(_step);	// Recursive call
 		}
 
-		// Launch the target step! We'll receive the OnStepFinished callback when step has finished
+		// This is the next step! Return it
 		else {
-			targetStep.gameObject.SetActive(true);
-			targetStep.Launch();
+			return _step;
 		}
 	}
 
@@ -278,6 +306,6 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 		if(currentStep != null) currentStep.gameObject.SetActive(false);
 
 		// Just check next step
-		CheckNextStep();
+		LaunchNextStep();
 	}
 }
