@@ -13,6 +13,8 @@ public abstract class SocialUtils
 
     public abstract string GetAccessToken();
 
+    public abstract string GetUserName();
+
     public abstract bool IsLoggedIn();
     
     public void GetProfileInfo(Action<string> onGetName, Action<Texture2D> onGetImage)

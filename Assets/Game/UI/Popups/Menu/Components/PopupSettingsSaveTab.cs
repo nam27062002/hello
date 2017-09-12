@@ -172,10 +172,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
         // HSXAnalyticsManager.Instance.loginContext = "OptionsLogin";
 
         OpenLoadingPopup();
-        Action<PersistenceStates.ESyncResult> onDone = delegate (PersistenceStates.ESyncResult result)
+        Action onDone = delegate()
         {
             CloseLoadingPopup();         
-            if (result == PersistenceStates.ESyncResult.Success)
+            if (SocialPlatformManager.SharedInstance.IsLoggedIn())
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                     Log("LOGIN SUCCESSFUL");
@@ -247,9 +247,12 @@ public class PopupSettingsSaveTab : MonoBehaviour
     
     private bool Cloud_IsEnabled
     {
+        get;
+        set;
+        /*
         get
         {
-            return PersistenceFacade.instance.Sync_IsCloudSaveEnabled;
+            return PersistenceFacade.instance.CloudDriver.IsInSync;
         }
 
         set
@@ -257,6 +260,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             PersistenceFacade.instance.Sync_IsCloudSaveEnabled = value;
             Cloud_Refresh();           
         }
+        */
     }
 
     private bool Cloud_IsStateChanging { get; set; }        
@@ -631,7 +635,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void Model_Refresh()
     {
         EState state = EState.NeverLoggedIn;
-        bool isLoggedIn = PersistenceFacade.instance.Social_IsLoggedIn();
+        bool isLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
         UserProfile userProfile = UsersManager.currentUser;
         if (userProfile != null)
         {
@@ -662,7 +666,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             case EState.LoggedIn:
             case EState.LoggedInAndIncentivised:
             {
-                returnValue = PersistenceFacade.instance.Social_IsLoggedIn();
+                returnValue = SocialPlatformManager.SharedInstance.IsLoggedIn();
             }
             break;
 
@@ -679,7 +683,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private bool Model_SaveIsCloudSaveEnabled()
     {
-        return PersistenceFacade.instance.Sync_IsCloudSaveEnabled;        
+        return false;// PersistenceFacade.instance.Sync_IsCloudSaveEnabled;        
     }
     #endregion
 
@@ -720,4 +724,18 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
 
     #endregion    
+
+	#region notifications_settings
+	[SerializeField]
+    private Slider m_notificationsSlider;
+
+    public void Notifications_Init(){
+		m_notificationsSlider.normalizedValue = PlayerPrefs.GetInt( PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
+    }
+
+    public void OnNotificationsSettingChanged(){
+		int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);
+		PlayerPrefs.SetInt( PopupSettings.KEY_SETTINGS_NOTIFICATIONS, v );
+    }
+    #endregion
 }

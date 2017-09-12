@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 408412}
   - component: {fileID: 114282438554060794}
   - component: {fileID: 5476966}
-  - component: {fileID: 135025081421770090}
+  - component: {fileID: 136816588685111482}
   m_Layer: 16
   m_Name: PF_GoblinWarBoatBomb
   m_TagString: Untagged
@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173528}
   m_LocalRotation: {x: 0.00000013155935, y: 0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: 87.86745, y: 19.363478, z: 0}
+  m_LocalPosition: {x: 112.35931, y: 56.950024, z: 1.0306339}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4305692297820980}
@@ -155,7 +155,7 @@ Transform:
   m_GameObject: {fileID: 1822701119228462}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.68838906, y: 0.6883895, z: 0.6883895}
+  m_LocalScale: {x: 0.41737828, y: 0.41737852, z: 0.41737852}
   m_Children: []
   m_Father: {fileID: 408412}
   m_RootOrder: 0
@@ -212,8 +212,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_motionType: 0
   m_chargeTime: 0
-  m_speed: 20
-  m_rotationSpeed: 0
+  m_speed: 40
+  m_rotationSpeed: 40
   m_rotationAxis: 0
   m_maxTime: 0
   m_scaleTime: 1
@@ -375,8 +375,8 @@ MonoBehaviour:
   m_stickOnDragonTime: 0
   m_dieTime: 0
   m_onHitAudio: 
---- !u!135 &135025081421770090
-SphereCollider:
+--- !u!136 &136816588685111482
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -384,6 +384,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.76
+  m_Radius: 1
+  m_Height: 10
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}

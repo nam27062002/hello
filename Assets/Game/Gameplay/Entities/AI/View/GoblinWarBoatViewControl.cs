@@ -25,9 +25,7 @@ public class GoblinWarBoatViewControl : ViewControl {
 		m_cabinAngle = 40f;
 	}
 
-	public override void CustomUpdate() {
-		base.CustomUpdate();
-
+	void LateUpdate() {
 		// lets find the position of the target relative to the cabin
 		Vector3 targetDir = m_targetDummy.position - m_goblinEye.position;
 		targetDir.z = 0f;
@@ -58,7 +56,7 @@ public class GoblinWarBoatViewControl : ViewControl {
 		m_cannon.localRotation = Quaternion.AngleAxis(cannonAngle, Vector3.forward);
 
 		//add rotate the gears (this "move" our cannon)
-		m_gearBig.localRotation = Quaternion.AngleAxis(cannonAngle, Vector3.forward);
-		m_gearSmall.localRotation = Quaternion.AngleAxis(cannonAngle, Vector3.back);
+		m_gearBig.localRotation = Quaternion.AngleAxis(cannonAngle * 3f, Vector3.forward);
+		m_gearSmall.localRotation = Quaternion.AngleAxis(cannonAngle * 3f, Vector3.back);
 	}
 }

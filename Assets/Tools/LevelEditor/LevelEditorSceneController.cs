@@ -52,8 +52,7 @@ namespace LevelEditor {
             ChestManager.SetupUser(UsersManager.currentUser);
             GameStoreManager.SharedInstance.Initialize();
 
-            PersistenceFacade.CreateInstance();
-            PersistenceFacade.instance.Init();
+            PersistenceFacade.instance.Reset();            
             PersistenceFacade.instance.Sync_FromLaunchApplication(null);
             
 			if (LevelEditor.settings.poolLimit == "unlimited") {
@@ -81,7 +80,7 @@ namespace LevelEditor {
 		/// </summary>
 		private IEnumerator Start() {
 
-			while( !PersistenceFacade.instance.Sync_IsFromLaunchApplicationDone)
+			while( !PersistenceFacade.instance.LocalDriver.IsLoadedInGame)
 			{
 				yield return null;
 			}            

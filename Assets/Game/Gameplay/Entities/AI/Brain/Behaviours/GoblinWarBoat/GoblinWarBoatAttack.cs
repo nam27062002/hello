@@ -7,7 +7,7 @@ namespace AI {
 		[System.Serializable]
 		public class GoblinWarBoatAttackData : StateComponentData {
 			public float damage = 25f;
-			public float targetLockSpeed = 5f;
+			public float cannonRotationSpeed = 120f;
 
 			public int consecutiveAttacks = 3;
 			public float attackDelay = 0f;
@@ -19,9 +19,8 @@ namespace AI {
 
 		[CreateAssetMenu(menuName = "Behaviour/GoblinWarBoat/Attack")]
 		public class GoblinWarBoatAttack : StateComponent {
-			private enum AttackState {
-				LockTarget = 0,
-				Aim,
+			private enum AttackState {				
+				Aim = 0,
 				Shoot	
 			}
 
@@ -42,11 +41,11 @@ namespace AI {
 
 			private int m_attacksLeft;
 			private float m_timer;
-			private Vector3 m_targetLockAt;
-
-			private GameObject m_projectile;
 
 			private Transform m_targetDummy;
+			private Transform m_cannonEye;
+
+			private GameObject m_projectile;
 			private Transform m_projectileSpawnPoint;
 
 			private PoolHandler m_poolHandler;
@@ -74,7 +73,7 @@ namespace AI {
 				Messenger.AddListener(GameEvents.GAME_AREA_ENTER, CreatePool);
 
 				m_targetDummy = (m_machine as MachineGoblinWarBoat).targetDummy;
-				m_targetLockAt = m_targetDummy.position;
+				m_cannonEye = (m_machine as MachineGoblinWarBoat).cannonEye;
 
 				m_attacksLeft = m_data.consecutiveAttacks;
 			}
@@ -87,10 +86,6 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Ranged, true);
 				m_pilot.Stop();
 
-				if (m_attacksLeft <= 0)
-					m_attacksLeft =  m_data.consecutiveAttacks;
-				m_timer = 0f;
-
 				m_animEvents.onAttachProjectile += new PreyAnimationEvents.OnAttachprojectile(OnAttachProjectile);
 				m_animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnAnimDealDamage);
 				m_animEvents.onAttackEnd 		+= new PreyAnimationEvents.OnAttackEndDelegate(OnAnimEnd);
@@ -100,7 +95,14 @@ namespace AI {
 				m_onDamageEventDone = true;
 				m_onAttackEndEventDone = true;
 
-				m_attackState = AttackState.LockTarget;
+				Vector3 dummyDir = m_targetDummy.position - m_projectileSpawnPoint.position;
+				dummyDir.Normalize();
+
+				if (m_attacksLeft <= 0)
+					m_attacksLeft =  m_data.consecutiveAttacks;
+				m_timer = m_data.attackDelay;
+
+				m_attackState = AttackState.Aim;
 			}
 
 			protected override void OnExit(State _newState) {
@@ -124,43 +126,30 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				m_timer -= Time.deltaTime;
-				if (m_timer <= 0) {
-					m_timer = 0;
+				if (m_machine.enemy == null) {
+					Transition(OnOutOfRange);
+					return;
+				}
 
-					if (m_machine.enemy == null) {
-						Transition(OnOutOfRange);
-					} else {
-						switch (m_attackState) {
-							case AttackState.LockTarget: {
-									DragonPlayer dragon = InstanceManager.player;
-									Transform target = null;
-									if (m_machine.enemy != null) {
-										target = InstanceManager.player.dragonMotion.GetAttackPointNear(m_machine.position);									
-									}
+				switch (m_attackState) {
+					case AttackState.Aim:
+						m_timer -= Time.deltaTime;
+						if (m_timer > 0) {
+							Vector3 enemyDir = m_machine.enemy.position - m_projectileSpawnPoint.position;
+							enemyDir.z = 0;
+							enemyDir.Normalize();
 
-									if (target != null) {
-										m_targetLockAt = target.position + InstanceManager.player.dragonMotion.velocity * 0.5f;
-									} else {
-										m_targetLockAt = m_targetDummy.position;
-									}
+							Quaternion targetRotation = Quaternion.LookRotation(enemyDir, Vector3.forward);
+							m_cannonEye.rotation = Quaternion.RotateTowards(m_cannonEye.rotation, targetRotation, m_data.cannonRotationSpeed * Time.smoothDeltaTime);
 
-									m_attackState = AttackState.Aim;
-								} break;
-
-							case AttackState.Aim: {
-									m_targetDummy.position = Vector3.Lerp(m_targetDummy.position, m_targetLockAt, m_data.targetLockSpeed * Time.smoothDeltaTime);
-
-									float error = (m_targetLockAt - m_targetDummy.position).sqrMagnitude;
-									if (error < 0.5f) {
-										StartAttack();
-									}
-								} break;
-
-							case AttackState.Shoot:
-								break;
+							m_targetDummy.position = m_projectileSpawnPoint.position + (m_cannonEye.forward * 5f);
+						} else {
+							StartAttack();
 						}
-					}
+						break;
+
+					case AttackState.Shoot:
+						break;
 				}
 			}
 
@@ -194,12 +183,9 @@ namespace AI {
 
 			private void OnAnimDealDamage() {
 				if (!m_onDamageEventDone) {
-					if (m_projectile != null) {					
-						Vector3 shootDir = m_targetLockAt - m_projectileSpawnPoint.position;
-						shootDir.Normalize();
-
+					if (m_projectile != null) {
 						IProjectile projectile = m_projectile.GetComponent<IProjectile>();
-						projectile.ShootAtPosition(m_targetLockAt, shootDir, m_data.damage);
+						projectile.ShootAtPosition(m_cannonEye.position + m_cannonEye.forward * 15f, m_cannonEye.forward, m_data.damage);
 
 						m_projectile = null;
 					}
@@ -210,12 +196,10 @@ namespace AI {
 			private void OnAnimEnd() {
 				if (!m_onAttackEndEventDone) {
 					m_onAttackEndEventDone = true;
-					m_attackState = AttackState.LockTarget;
+					m_attackState = AttackState.Aim;
 
-					// if this prey has to wait more before attacking again, stop the animation
-					if (m_timer > 0) {
-						m_pilot.ReleaseAction(Pilot.Action.Attack);
-					}
+					m_timer = m_data.attackDelay;
+					m_pilot.ReleaseAction(Pilot.Action.Attack);
 
 					if (m_attacksLeft > 0) {
 						if (!m_machine.GetSignal(Signals.Type.Danger)) {		
@@ -230,4 +214,3 @@ namespace AI {
 		}
 	}
 }
-
