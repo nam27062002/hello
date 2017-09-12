@@ -162,8 +162,12 @@ namespace AI {
 			//----------------------------------------------------------------------------------
 			ExtendedInit();
 
-			m_rotation = Quaternion.LookRotation(m_direction, m_upVector);
-			m_targetRotation = m_rotation;
+			ExtendedUpdate();
+			UpdateOrientation();
+			m_rotation = m_targetRotation;
+			m_machineTransform.rotation = m_rotation;
+
+			Debug.Log("ROTATION INIT: " + m_machineTransform.rotation);
 
 			//----------------------------------------------------------------------------------
 			m_dragon = InstanceManager.player.dragonMotion;
@@ -246,8 +250,13 @@ namespace AI {
 					break;
 			}
 
+
+			Debug.Log("ROTATION PRE UPDATE: " + m_machineTransform.rotation);
+
 			m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
 			m_machineTransform.rotation = m_rotation;
+
+			Debug.Log("ROTATION POST UPDATE: " + m_machineTransform.rotation);
 
 			// Check if targeting to bend through that direction
 			if (m_attackTarget) {
