@@ -21,6 +21,7 @@ public class PopupSettings : MonoBehaviour {
 	public const string PATH = "UI/Popups/Menu/PF_PopupSettings";
 
     public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
+	public const string KEY_SETTINGS_NOTIFICATIONS = "SETTINGS_NOTIFICATIONS";
 
     [SerializeField]
     private GameObject m_saveTab;
