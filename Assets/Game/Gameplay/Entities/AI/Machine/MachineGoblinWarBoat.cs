@@ -16,9 +16,14 @@ namespace AI {
 
 
 		public Transform targetDummy { get { return m_targetDummy; } }
+		public Transform cannonEye { get { return m_cannonEye; } }
+
 
 		private Hit m_armorDurability = new Hit();
 		private DragonTier m_minTierToBreak;
+
+		private Quaternion m_rotationCannon;
+
 
 
 		protected override void Awake() {
@@ -39,6 +44,9 @@ namespace AI {
 				m_ground[i].isTrigger = false;
 			}
 
+			m_rotationCannon = Quaternion.LookRotation(Vector3.left, Vector3.forward);
+			m_targetDummy.position = m_rotationCannon * (Vector3.forward * 5f);
+
 			base.Spawn(_spawner);
 		}
 
@@ -46,14 +54,20 @@ namespace AI {
 			base.CustomUpdate();
 
 			if (!GetSignal(Signals.Type.Ranged)) {
-				Vector3 lookAt = m_cannonEye.position;
-				if (direction.x <= 0) { 
-					lookAt += Vector3.left * 2f;
+				Quaternion lookRotation = Quaternion.identity;
+
+				if (GetSignal(Signals.Type.Warning)) {
+					Vector3 enemyDir = enemy.position - m_cannonEye.position;
+					enemyDir.z = 0;
+					enemyDir.Normalize();
+					lookRotation = Quaternion.LookRotation(enemyDir, Vector3.forward);
 				} else {
-					lookAt += Vector3.right * 2f;
+					if (direction.x <= 0) 	lookRotation = Quaternion.LookRotation(Vector3.left + Vector3.up * 0.01f, Vector3.forward);
+					else					lookRotation = Quaternion.LookRotation(Vector3.right + Vector3.up * 0.01f, Vector3.forward);
 				}
 
-				m_targetDummy.position = Vector3.Lerp(m_targetDummy.position, lookAt, Time.smoothDeltaTime * 2f);
+				m_cannonEye.rotation = Quaternion.RotateTowards(m_cannonEye.rotation, lookRotation, 60f * Time.smoothDeltaTime);
+				m_targetDummy.position = m_cannonEye.position + (m_cannonEye.forward * 5f);
 			}
 		}
 
@@ -61,6 +75,7 @@ namespace AI {
 			if (m_armorDurability.count > 0 && !GetSignal(Signals.Type.Burning)) {
 				if (m_armorDurability.count > 0) {
 					if (!m_armorDurability.needBoost || _boost) {
+						ReceiveHit();
 						m_armorDurability.count--;
 						if (m_armorDurability.count <= 0) {
 							for (int i = 0; i < m_ground.Length; ++i) {
