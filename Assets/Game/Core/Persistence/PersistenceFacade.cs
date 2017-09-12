@@ -503,15 +503,14 @@ public class PersistenceFacade
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29Sync+Conflict
     /// </summary>    
     public static void Popups_OpenMergeConfirmation(Action onConfirm)
-    {
-        /*
+    {        
 		PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_WARN_CLOUD_WRONG_CHOICE_NAME";
         config.MessageTid = "TID_SAVE_WARN_CLOUD_WRONG_CHOICE_DESC";                
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-        */
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);       
     }
 
 	public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
@@ -525,7 +524,8 @@ public class PersistenceFacade
         config.ExtraButtonTid = "TID_GEN_UPLOAD";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onRetry;
-        config.OnCancel = onContinue;        
+        config.OnCancel = onContinue;
+        config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);            
 
         /*
@@ -555,6 +555,7 @@ public class PersistenceFacade
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_CORRUPTED_NAME";
         config.MessageTid = msg;
+        config.IsButtonCloseVisible = false;
         config.OnConfirm = onContinue;
 
         if (canOverride)
@@ -577,6 +578,7 @@ public class PersistenceFacade
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
         config.MessageTid = msg;
+        config.IsButtonCloseVisible = false;
         config.OnConfirm = onReset;
 
         if (logInSocialEver)
@@ -610,6 +612,7 @@ public class PersistenceFacade
         config.TitleTid = "TID_SAVE_ERROR_BOTH_SAVE_CORRUPTED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_BOTH_SAVE_CORRUPTED_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.IsButtonCloseVisible = false;
         config.OnConfirm = onReset;
         PopupManager.PopupMessage_Open(config);
 
