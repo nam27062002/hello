@@ -308,8 +308,10 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
     #region popups    
     // This region is responsible for opening the related to persistence popups    
+    // MOVED
     private static bool Popups_IsInited { get; set; }
 
+    // MOVED
     private static void Popups_Init()
     {
         if (!Popups_IsInited)
@@ -319,13 +321,16 @@ public class PersistenceManager : Singleton<PersistenceManager> {
         }
     }
 
+    // MOVED
     private static void Popups_Destroy()
     {
         Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, Popups_OnPopupClosed);
     }
 
+    // MOVED
     private static PopupController Popups_LoadingPopup { get; set; }
 
+    // MOVED
     private static bool Popups_IsLoadingPopupOpen()
     {
         return Popups_LoadingPopup != null;
@@ -333,6 +338,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
     /// <summary>
     /// Opens a popup to make the user wait until the response of a request related to persistence is received
+    /// MOVED
     /// </summary>
     public static void Popups_OpenLoadingPopup()
     {
@@ -342,6 +348,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
         }
     }
 
+    // MOVED
     public static void Popups_CloseLoadingPopup()
     {
         if (Popups_IsLoadingPopupOpen())
@@ -350,6 +357,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
         }
     }
 
+    // MOVED
     private static void Popups_OnPopupClosed(PopupController popup)
     {
         if (popup == Popups_LoadingPopup)
@@ -501,7 +509,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
 
     /// <summary>
     /// This popup is shown when the persistence stored in cloud is corrupted. It's been taken from HSX but it shouldn't be possible because our cloud is managed by our server.
-    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/16%29Cloud+save+corrupted
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/16%29Cloud+save+corrupted    
     /// </summary>    
     public static void Popups_OpenCloudSaveCorruptedError(Action onConfirm)
     {
@@ -602,6 +610,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
     /// This popup is shown when the user clicks on logout button on settings popup
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/12%29Logout
     /// </summary>   
+    /// MOVED
     public static void Popups_OpenLogoutWarning(SocialFacade.Network network, bool cloudSaveEnabled, Action onConfirm, Action onCancel)
 	{        
 		PopupMessage.Config config = PopupMessage.GetConfig();
@@ -705,8 +714,9 @@ public class PersistenceManager : Singleton<PersistenceManager> {
     /// This popup is shown when the game doesn't have access to the cloud server. This is a legacy code from HSX since we'll always have access to the cloud server because it's our server
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/24%29No+access+to+cloud
     /// </summary>    
+    /// MOVED to Popup_OpenErrorWhenSyncing
     public static void Popups_OpenLoadSaveInaccessibleError(Action onConfirm, Action onCancel, Action onExtra)
-    {
+    {        
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_NAME";
         config.MessageTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_DESC";
@@ -782,6 +792,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
     /// <summary>
     /// This popup is shown when both local save and cloud save are corrupted when syncing
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/23%29Local+save+corrupted+and+cloud+save+corrupted
+    /// MOVED to Popup_OpenLocalAndCloudCorrupted()
     /// </summary>    
     public static void Popups_OpenLoadSaveBothCorruptedError(Action onConfirm)
     {
@@ -857,6 +868,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
     /// </summary>
     /// <param name="rewardAmount"></param>
     /// <param name="onConfirm"></param>
+    /// MOVED
     public static void Popups_OpenLoginComplete(int rewardAmount, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -888,7 +900,7 @@ public class PersistenceManager : Singleton<PersistenceManager> {
         PopupMerge pm = pc.GetComponent<PopupMerge>();
         if (pm != null)
         {
-            pm.Setup(conflictState, local, cloud, dismissable, onResolve);
+            //pm.Setup(conflictState, local, cloud, dismissable, onResolve);
         }
     }
 

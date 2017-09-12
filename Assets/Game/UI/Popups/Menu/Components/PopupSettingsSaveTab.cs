@@ -40,7 +40,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
         Model_Init();
         Social_Init();
-        Cloud_Init();
+        Resync_Init();
         User_Init();
         IsShown = false;
     }
@@ -69,6 +69,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         User_Refresh();
         Social_Refresh();
         Resync_Refresh();
+        Cloud_Refresh();
     }
 
     private bool IsLoadingPopupOpen { get; set; }
@@ -172,10 +173,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
         // HSXAnalyticsManager.Instance.loginContext = "OptionsLogin";
 
         OpenLoadingPopup();
-        Action<PersistenceStates.ESyncResult> onDone = delegate (PersistenceStates.ESyncResult result)
+        Action onDone = delegate()
         {
             CloseLoadingPopup();         
-            if (result == PersistenceStates.ESyncResult.Success)
+            if (SocialPlatformManager.SharedInstance.IsLoggedIn())
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                     Log("LOGIN SUCCESSFUL");
@@ -240,43 +241,42 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     #region cloud
     [SerializeField]
-    private GameObject m_cloudEnabledButton;
+    private Slider m_cloudEnableSlider;
+    /*private GameObject m_cloudEnabledButton;
 
     [SerializeField]
-    private GameObject m_cloudDisabledButton;
-    
-    private bool Cloud_IsEnabled
-    {
-        get
-        {
-            return PersistenceFacade.instance.Sync_IsCloudSaveEnabled;
-        }
-
-        set
-        {
-            PersistenceFacade.instance.Sync_IsCloudSaveEnabled = value;
-            Cloud_Refresh();           
-        }
-    }
-
-    private bool Cloud_IsStateChanging { get; set; }        
-
-    private void Cloud_Init()
-    {        
-        Cloud_IsStateChanging = false;
-    }
-
-    private void Cloud_Reset()
-    {        
-        Cloud_IsStateChanging = false;
-    }    
+    private GameObject m_cloudDisabledButton;        
+    */
 
     /// <summary>
     /// Callback called by the player when the user clicks on enable/disable the cloud save
     /// </summary>
     public void Cloud_OnChangeSaveEnable()
-    {
-        Cloud_IsEnabled = !Cloud_IsEnabled;
+    {        
+        bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
+        PersistenceFacade.instance.CloudDriver.Upload_IsEnabled = !isSaveEnabled;
+        Cloud_Refresh();
+        Resync_Refresh();
+
+        /*
+        if (PersistenceFacade.instance.CloudDriver.Upload_IsEnabled)
+        {            
+            Cloud_Refresh();
+            Resync_Refresh();            
+        }
+        else
+        {            
+            Resync_OnCloudSaveSync();
+        }
+        */
+        
+        /*
+        if (!Cloud_IsResyncing)
+        {
+            Cloud_IsResyncing = true;
+            Cloud_Resync();
+        }*/
+        
         /*if (!Cloud_IsStateChanging)
         {
 #if CLOUD_SAVE && (FACEBOOK || WEIBO)
@@ -329,18 +329,31 @@ public class PopupSettingsSaveTab : MonoBehaviour
     
     private void Cloud_Refresh()
     {
-        m_cloudEnabledButton.SetActive(Cloud_IsEnabled);
-        m_cloudDisabledButton.SetActive(!Cloud_IsEnabled);
-    } 
+        bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
+        m_cloudEnableSlider.value = (isSaveEnabled) ? 1 : 0;
+        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();                                    
+    }    
     #endregion
 
     #region resync
     [SerializeField]
     private Button m_resyncButton;
 
+    private bool Resync_IsRunning { get; set; }
+
+    private void Resync_Init()
+    {
+        Resync_IsRunning = false;
+    }
+
+    private void Cloud_Reset()
+    {
+        Resync_IsRunning = false;
+    }
+
     private void Resync_Refresh()
     {
-        m_resyncButton.interactable = Model_SaveIsCloudSaveEnabled();        
+        m_resyncButton.interactable = Model_SaveIsCloudSaveEnabled() && Model_SocialIsLoggedIn();        
     }
 
     private bool Resync_IsEnabled
@@ -354,14 +367,25 @@ public class PopupSettingsSaveTab : MonoBehaviour
         {
             m_resyncButton.interactable = value;
         }
-    }
+    }    
 
     /// <summary>
     /// Callback called by the player when the user clicks on the Sync save data button
     /// </summary>
     public void Resync_OnCloudSaveSync()
     {
-        PersistenceFacade.instance.Sync_FromSettings(null);
+        if (!Resync_IsRunning)
+        {
+            Action onDone = delegate ()
+            {
+                Resync_IsRunning = false;
+                Cloud_Refresh();
+                RefreshView();                
+            };
+
+            Resync_IsRunning = true;
+            PersistenceFacade.instance.Sync_FromSettings(onDone);
+        }
     }
     #endregion
 
@@ -398,17 +422,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private Localizer m_userNotLoggedInRewardText;
 
     [SerializeField]
-    private Localizer m_userPreviouslyLoggedInMessageText;
-
-    private bool User_IsLoggedIn { get; set; }
+    private Localizer m_userPreviouslyLoggedInMessageText;    
 
     private bool User_IsAvatarLoaded { get; set; }
 
     private EState User_LastState { get; set; }
 
     private void User_Init()
-    {
-        User_IsLoggedIn = false;
+    {        
         User_IsAvatarLoaded = false;
 
         // Nothing is shown
@@ -571,11 +592,13 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void User_LoadProfileInfo()
     {
         m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
-
+        
+        /*
         SocialPlatformManager.SharedInstance.GetProfileInfo(
             delegate (string userName)
             {
-                if (!string.IsNullOrEmpty(userName) /*&& User_IsLoggedIn*/ && m_userNameText != null)
+                //if (!string.IsNullOrEmpty(userName) && User_IsLoggedIn && m_userNameText != null)
+                if (!string.IsNullOrEmpty(userName) && m_userNameText != null)
                 {
                     m_userNameText.text = userName;
                 }
@@ -602,7 +625,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
                         }
                     }
                 }
-            });    
+            });  
+            */              
     }
     #endregion
 
@@ -631,7 +655,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void Model_Refresh()
     {
         EState state = EState.NeverLoggedIn;
-        bool isLoggedIn = PersistenceFacade.instance.Social_IsLoggedIn();
+        bool isLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
         UserProfile userProfile = UsersManager.currentUser;
         if (userProfile != null)
         {
@@ -662,7 +686,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             case EState.LoggedIn:
             case EState.LoggedInAndIncentivised:
             {
-                returnValue = PersistenceFacade.instance.Social_IsLoggedIn();
+                returnValue = SocialPlatformManager.SharedInstance.IsLoggedIn();
             }
             break;
 
@@ -679,7 +703,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private bool Model_SaveIsCloudSaveEnabled()
     {
-        return PersistenceFacade.instance.Sync_IsCloudSaveEnabled;        
+        return PersistenceFacade.instance.CloudDriver.Upload_IsEnabled;
     }
     #endregion
 

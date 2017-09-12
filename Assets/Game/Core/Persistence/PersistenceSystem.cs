@@ -286,7 +286,9 @@ public abstract class PersistenceSystem
             }
             catch (Exception e)
             {
-                Debug.LogError("SaveSystem (Load) :: Exception - " + e);
+				if (FeatureSettingsManager.IsDebugEnabled)
+                	PersistenceFacade.LogError("SaveSystem (Load) :: Exception - " + e);
+
                 throw new CorruptedSaveException(e);
             }
         }
@@ -590,9 +592,9 @@ public abstract class PersistenceSystem
         {
             m_persistenceData[GetKey(key, platformSpecific)] = value;
         }
-        else
+        else if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Debug.LogError("SaveSystem (Set) :: Trying to set data before saveData available");
+            PersistenceFacade.LogError("SaveSystem (Set) :: Trying to set data before saveData available");
         }
     }
 
@@ -620,9 +622,9 @@ public abstract class PersistenceSystem
 
             list[index] = value;
         }
-        else
+        else if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Debug.LogWarning("SaveSystem (SetAtIndex) :: Unable to set value at index as key is not an array");
+            PersistenceFacade.LogWarning("SaveSystem (SetAtIndex) :: Unable to set value at index as key is not an array");
         }
 
     }

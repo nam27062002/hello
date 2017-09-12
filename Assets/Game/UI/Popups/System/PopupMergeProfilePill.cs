@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System;
-using System.Collections;
 using TMPro;
 
 public class PopupMergeProfilePill : MonoBehaviour 
@@ -20,7 +18,7 @@ public class PopupMergeProfilePill : MonoBehaviour
 
     public GameObject m_highlightGO;
 
-	public void Setup(ProgressComparatorSystem _progress, ProgressComparatorSystem _progressToCompare, bool _highlight )
+	public void Setup(PersistenceComparatorSystem _progress, PersistenceComparatorSystem _progressToCompare, bool _highlight )
 	{
 		m_profile = _progress.UserProfile;    
         UserProfile _profileToCompare = _progressToCompare.UserProfile;

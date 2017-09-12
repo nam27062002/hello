@@ -22,15 +22,7 @@ public class LoadingSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Loading";
-
-    private static bool s_inSaveLoaderState = false;
-
-    public static bool InSaveLoaderState
-    {
-        get { return s_inSaveLoaderState; }
-    }
-
+	public static readonly string NAME = "SC_Loading";    
 
 	//------------------------------------------------------------------//
 	// CLASS															//
@@ -314,9 +306,8 @@ public class LoadingSceneController : SceneController {
 				HDTrackingManager.Instance.Init();
 				UsersManager.CreateInstance();
 
-		        // Game
-		        PersistenceFacade.CreateInstance();
-		        PersistenceFacade.instance.Init();
+		        // Game		        
+                PersistenceFacade.instance.Reset();
 
 		        DragonManager.CreateInstance(true);
 				LevelManager.CreateInstance(true);
@@ -361,20 +352,17 @@ public class LoadingSceneController : SceneController {
     private void StartLoadFlow()
     {
         if (m_startLoadFlow)
-        {
-            s_inSaveLoaderState = true;
-
+        {            
             m_startLoadFlow = false;
             m_loading = true;
             m_loadingDone = false;
 
             Debug.Log("Started Loading Flow");
 
-            Action<PersistenceStates.ESyncResult> onDone = delegate(PersistenceStates.ESyncResult result)
+            Action onDone = delegate()
             {
                 m_loadingDone = true;
-                m_loading = false;
-                s_inSaveLoaderState = false;
+                m_loading = false;                
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
@@ -382,37 +370,6 @@ public class LoadingSceneController : SceneController {
 
             PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
         }
-    }
-
-    private void OnLoadingFinished()
-    {
-        Debug.Log("OnLoadingFinished - " + m_loading);        
-        if (m_loading)
-        {
-            SaveFacade.Instance.OnLoadComplete -= OnLoadingFinished;
-
-            m_loading = false;
-
-            Action onComplete = delegate ()
-            {
-                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Auth state check complete!");
-
-                s_inSaveLoaderState = false;
-                m_loadingDone = true;                
-            };
-
-            SocialFacade.Network network = SocialManager.GetSelectedSocialNetwork();
-            if (SocialManager.Instance.IsUser(network) && !SaveFacade.Instance.cloudSaveEnabled)
-            {
-            	m_state = State.WAITING_SOCIAL_AUTH;
-                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Check Facebook User Auth State!");
-                SocialManager.Instance.Authenticate(network, onComplete);
-            }
-            else
-            {
-                onComplete();
-            }
-        }
-    }    
+    }   
 }
 
