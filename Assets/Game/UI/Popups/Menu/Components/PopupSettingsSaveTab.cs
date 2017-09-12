@@ -69,6 +69,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         User_Refresh();
         Social_Refresh();
         Resync_Refresh();
+        Cloud_Refresh();
     }
 
     private bool IsLoadingPopupOpen { get; set; }
@@ -240,10 +241,12 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     #region cloud
     [SerializeField]
-    private GameObject m_cloudEnabledButton;
+    private Slider m_cloudEnableSlider;
+    /*private GameObject m_cloudEnabledButton;
 
     [SerializeField]
     private GameObject m_cloudDisabledButton;        
+    */
 
     /// <summary>
     /// Callback called by the player when the user clicks on enable/disable the cloud save
@@ -327,8 +330,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void Cloud_Refresh()
     {
         bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
-        m_cloudEnabledButton.SetActive(isSaveEnabled);
-        m_cloudDisabledButton.SetActive(!isSaveEnabled);
+        m_cloudEnableSlider.value = (isSaveEnabled) ? 1 : 0;
+        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();                                    
     }    
     #endregion
 
