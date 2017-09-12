@@ -898,7 +898,8 @@ public class UserProfile : UserPersistenceSystem
 
 			// A chest should never initially be in the INIT state, nor in the REWARD_PENDING. Validate that.
 			if(dailyChests[i].state == Chest.State.INIT
-			|| dailyChests[i].state == Chest.State.PENDING_REWARD) {
+			//|| dailyChests[i].state == Chest.State.PENDING_REWARD) {	// [AOC] Right now persistence is being reloaded during the game and before the results screen, so this safecheck results in resetting the chests collected during that run
+			) {
 				dailyChests[i].ChangeState(Chest.State.NOT_COLLECTED);
 			}
 		}
