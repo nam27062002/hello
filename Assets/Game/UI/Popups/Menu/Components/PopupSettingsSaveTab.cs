@@ -720,4 +720,18 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
 
     #endregion    
+
+	#region notifications_settings
+	[SerializeField]
+    private Slider m_notificationsSlider;
+
+    public void Notifications_Init(){
+		m_notificationsSlider.normalizedValue = PlayerPrefs.GetInt( PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
+    }
+
+    public void OnNotificationsSettingChanged(){
+		int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);
+		PlayerPrefs.SetInt( PopupSettings.KEY_SETTINGS_NOTIFICATIONS, v );
+    }
+    #endregion
 }

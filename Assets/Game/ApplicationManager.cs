@@ -581,8 +581,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 #if UNITY_ANDROID
         NotificationsManager.SharedInstance.SetNotificationIcons ("", "push_notifications", 0xFFFF0000); 
 #endif
-
-        NotificationsManager.SharedInstance.SetNotificationsEnabled(true);
+		int strLanguageSku = PlayerPrefs.GetInt(PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
+        NotificationsManager.SharedInstance.SetNotificationsEnabled( strLanguageSku > 0 );
     }
     #endregion
 
