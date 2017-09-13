@@ -53,6 +53,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 		Messenger.AddListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
 		Messenger.AddListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
+        Messenger.AddListener<bool>(GameEvents.LOGGED, OnLoggedIn);
     }
 
     public override void Destroy ()
@@ -61,7 +62,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
 		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
-	}
+        Messenger.RemoveListener<bool>(GameEvents.LOGGED, OnLoggedIn);
+    }
 
 	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
 	{
@@ -85,6 +87,20 @@ public class HDTrackingManagerImp : HDTrackingManager
 		
 	}
 
+    private void OnLoggedIn(bool logged)
+    {        
+        if (logged)
+        {
+            // Server uid is stored as soon as log in happens so we'll be able to start TrackingManager when offline
+            PersistencePrefs.ServerUserId = GameSessionManager.SharedInstance.GetUID();            
+        }
+
+        // We need to reinitialize TrackingManager if it has already been initialized, otherwise we simply do nothing since it will be initialize properly 
+        if (IsStartSessionNotified)
+        {
+            InitTrackingManager();
+        }
+    }
 
     private void CheckAndGenerateUserID()
     {
@@ -126,10 +142,10 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // Session counter advanced
-        TrackingPersistenceSystem.SessionCount++;              
+        TrackingPersistenceSystem.SessionCount++;
 
         // Calety needs to be initialized every time a session starts because the session count has changed
-        StartCaletySession();
+        InitTrackingManager();
 
         // Sends the start session event
         Track_StartSessionEvent();        
@@ -185,35 +201,36 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
     }
 
-    private void StartCaletySession()
+    private void InitTrackingManager()
     {
         CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
         if (settingsInstance != null)
         {
             int sessionNumber = TrackingPersistenceSystem.SessionCount;
             string trackingID = TrackingPersistenceSystem.UserID;
-            string userID = (Authenticator.Instance.User != null) ? Authenticator.Instance.User.ID : "";
-            string socialUserID = SocialFacade.Instance.GetSocialIDFromHighestPrecedenceNetwork();
+            string userID = PersistencePrefs.ServerUserId;
+            TrackingManager.ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_ONLINE : TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
 
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Log("SessionNumber = " + sessionNumber + " trackingID = " + trackingID + " userId = " + userID + " socialUserID = " + socialUserID);
+                Log("SessionNumber = " + sessionNumber + " trackingID = " + trackingID + " userId = " + userID + " trackPlatform = " + trackPlatform);
             }
 
             TrackingManager.TrackingConfig kTrackingConfig = new TrackingManager.TrackingConfig();
-            kTrackingConfig.m_eTrackPlatform = TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
+            kTrackingConfig.m_eTrackPlatform = trackPlatform;
             kTrackingConfig.m_strJSONConfigFilePath = "Tracking/TrackingEvents";
             kTrackingConfig.m_strStartSessionEventName = "game.start";
 			kTrackingConfig.m_strEndSessionEventName = "custom.mobile.stop";
             kTrackingConfig.m_strMergeAccountEventName = "MERGE_ACCOUNTS";
             kTrackingConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion();
             kTrackingConfig.m_strTrackingID = trackingID;
+            kTrackingConfig.m_strUserIDOptional = userID;
             kTrackingConfig.m_iSessionNumber = sessionNumber;
             kTrackingConfig.m_iMaxCachedLoggedDays = 3;
 
-            TrackingManager.SharedInstance.Initialise(ref kTrackingConfig);
+            TrackingManager.SharedInstance.Initialise(ref kTrackingConfig);            
         }
-    }    
+    }        
 
     public override void Update()
     {

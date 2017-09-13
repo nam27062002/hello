@@ -107,7 +107,7 @@ public class MenuPlayScreen : MonoBehaviour {
             Refresh();
         });
         */
-        PersistenceFacade.instance.Sync_FromSettings(delegate(PersistenceStates.ESyncResult result)
+        PersistenceFacade.instance.Sync_FromSettings(delegate()
         {
             PersistenceManager.Popups_CloseLoadingPopup();
             Refresh();
@@ -120,7 +120,7 @@ public class MenuPlayScreen : MonoBehaviour {
         m_connectButton.interactable = true;
 
         UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
-        bool socialIsLoggedIn = PersistenceFacade.instance.Social_IsLoggedIn();
+        bool socialIsLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
 
         m_incentivizeRoot.SetActive(socialState != UserProfile.ESocialState.LoggedInAndInventivised);
         m_badge.SetActive(!socialIsLoggedIn);        

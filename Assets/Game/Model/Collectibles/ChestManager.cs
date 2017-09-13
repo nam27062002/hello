@@ -215,7 +215,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	/// </summary>
 	/// <returns>Whether the manager has been initialized.</returns>
 	public static bool IsReady() {
-		return instance.m_user != null && PersistenceFacade.instance.Sync_IsFromLaunchApplicationDone;
+		return instance.m_user != null && PersistenceFacade.instance.LocalDriver.IsLoadedInGame;
 	}
 
 	/// <summary>

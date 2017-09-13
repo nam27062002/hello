@@ -1,91 +1,59 @@
-﻿/// <summary>
-/// This class is responsible for storing some information used to configure <c>PersistenceFacade</c>. It's been created to make debug easier
-/// </summary>
-using System;
-using System.Collections.Generic;
-public class PersistenceFacadeConfig
-{        
-    private Dictionary<PersistenceSyncer.EPurpose, PersistenceSyncOpFactory> CachedFactories { get; set; }
-
-    protected virtual PersistenceSyncOpFactory GetFactory(PersistenceSyncer.EPurpose type)
-    {
-        PersistenceSyncOpFactory returnValue = null;
-        if (CachedFactories != null && CachedFactories.ContainsKey(type))
-        {
-            returnValue = CachedFactories[type];
-        }        
-
-        return returnValue;
-    }
-
-    private void CacheFactory(PersistenceSyncer.EPurpose type, PersistenceSyncOpFactory factory)
-    {
-        if (CachedFactories == null)
-        {
-            CachedFactories = new Dictionary<PersistenceSyncer.EPurpose, PersistenceSyncOpFactory>();
-        }
-
-        if (CachedFactories.ContainsKey(type))
-        {
-            CachedFactories[type] = factory;
-        }
-        else
-        {
-            CachedFactories.Add(type, factory);
-        }
-    }
-
-    public PersistenceSyncOpFactory SyncFromLaunchFactory
-    {
-        get { return GetFactory(PersistenceSyncer.EPurpose.SyncFromLaunch); }    
-        set { CacheFactory(PersistenceSyncer.EPurpose.SyncFromLaunch, value); }    
-    }
-
-    public PersistenceSyncOpFactory SyncFromSettingsFactory
-    {
-        get { return GetFactory(PersistenceSyncer.EPurpose.SyncFromSettings); }
-        set { CacheFactory(PersistenceSyncer.EPurpose.SyncFromSettings, value); }
-    }
-
-    public PersistenceSyncOpFactory SaveFactory
-    {
-        get { return GetFactory(PersistenceSyncer.EPurpose.Save); }
-        set { CacheFactory(PersistenceSyncer.EPurpose.Save, value); }
-    }
-
+﻿public class PersistenceFacadeConfig
+{            
     public PersistenceFacadeConfig()
     {
         Setup();
     }
 
-    protected virtual void Setup()
+    private PersistenceLocalDriver mLocalDriver;
+	public PersistenceLocalDriver LocalDriver
     {
-        // All use the same factory because only one can be called simultaneously        
-        PersistenceSyncOpFactory productionFactory = GetProductionFactory();
-        SetFactoryToAllTypes(productionFactory);        
-    }        
+        get { return mLocalDriver;  }
 
-    protected void SetFactoryToAllTypes(PersistenceSyncOpFactory factory)
-    {
-        // All use the same factory because only one can be called simultaneously
-        int count = Enum.GetValues(typeof(PersistenceSyncer.EPurpose)).Length;
-        for (int i = 0; i < count; i++)
+        set
         {
-            CacheFactory((PersistenceSyncer.EPurpose)i, factory);
+            if (mLocalDriver != null)
+            {
+                mLocalDriver.Destroy();
+            }
+
+            mLocalDriver = value;
         }
     }
 
-    protected PersistenceSyncOpFactory GetProductionFactory()
+    private PersistenceCloudDriver mCloudDriver;
+    public PersistenceCloudDriver CloudDriver
     {
-        // It doesn't need a sync op factory becaused this factory won't be used to get sync operations
-        PersistenceSyncOpFactory syncFactory = new PersistenceSyncOpFactory(true, null);        
-        return new PersistenceSyncOpFactory(true, syncFactory);
+        get { return mCloudDriver; }
+
+        set
+        {
+            if (mCloudDriver != null)
+            {
+                mLocalDriver.Destroy();
+            }
+
+            mCloudDriver = value;
+        }
     }
 
-    #region social    
-    public virtual bool Social_IsLoggedIn()
+    protected virtual void Setup()
+	{
+		LocalDriver = new PersistenceLocalDriver();
+		CloudDriver = new PersistenceCloudDriver();
+		CloudDriver.Setup(LocalDriver);
+	}
+
+    public void Destroy()
     {
-        return SocialPlatformManager.SharedInstance.IsLoggedIn();
+        if (LocalDriver != null)
+        {
+            LocalDriver.Destroy();
+        }
+
+        if (CloudDriver != null)
+        {
+            CloudDriver.Destroy();
+        }
     }
-    #endregion
 }
