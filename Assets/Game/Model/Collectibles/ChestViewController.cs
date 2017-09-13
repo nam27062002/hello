@@ -162,9 +162,11 @@ public class ChestViewController : MonoBehaviour {
 	public void OnLidOpen() {
 		// Launch particle system
 		// ToggleFX(m_openFX, true);
-		GameObject go = m_openParticle.Spawn(transform.position + m_openParticle.offset );
-		if (go)
+		GameObject go = m_openParticle.Spawn(this.transform, m_openParticle.offset);
+		if (go != null) {
+			go.SetLayerRecursively(this.gameObject.layer);
 			go.transform.rotation = transform.rotation;
+		}
 		
 		ToggleFX(m_glowFX, false);
 		// Notify delegates
