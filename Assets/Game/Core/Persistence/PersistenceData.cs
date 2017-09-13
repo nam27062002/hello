@@ -610,7 +610,7 @@ public class PersistenceData
     }
 
     // [DGR] Method added so the default persistence can be merged with the current one
-    public bool Merge(string json)
+    public bool Merge(string json, bool reloadSystems=true)
     {
         bool returnValue = false;
         if (m_data == null)
@@ -623,7 +623,11 @@ public class PersistenceData
             if (returnValue)
             {
                 LoadState = PersistenceStates.ELoadState.OK;
-				Systems_Load();
+
+                if (reloadSystems)
+                {
+                    Systems_Load();
+                }
             }
             else
             {

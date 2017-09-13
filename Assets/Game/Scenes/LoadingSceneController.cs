@@ -362,7 +362,9 @@ public class LoadingSceneController : SceneController {
             Action onDone = delegate()
             {
                 m_loadingDone = true;
-                m_loading = false;                
+                m_loading = false;
+
+                HDTrackingManager.Instance.Notify_ApplicationStart();
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);

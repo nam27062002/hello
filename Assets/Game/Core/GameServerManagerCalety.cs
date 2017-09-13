@@ -771,7 +771,7 @@ public class GameServerManagerCalety : GameServerManager {
 					if(IsLoggedIn()) {
 						Dictionary<string, string> kParams = new Dictionary<string, string>();						
 						kParams["universe"] = parameters["persistence"];
-                        Command_SendCommand(COMMAND_SET_PERSISTENCE);                            
+                        Command_SendCommand(COMMAND_SET_PERSISTENCE, kParams);                            
 					}
 				} break;
 

@@ -75,7 +75,7 @@ public class PopupMerge : MonoBehaviour
 
     private void ShowConfirmationPopup(PersistenceStates.EConflictResult result)
     {
-        PersistenceManager.Popups_OpenMergeConfirmation(
+        PersistenceFacade.Popups_OpenMergeConfirmation(
             delegate ()
             {
                 DismissPopup(result);
