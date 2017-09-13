@@ -133,7 +133,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         //PersistenceManager.Save();
 
-		Device_Destroy();
+        PersistenceFacade.instance.Destroy();
+        Device_Destroy();
         
         m_isAlive = false;
         Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
@@ -265,9 +266,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             else if (Input.GetKeyDown(KeyCode.D))
             {
                 //GameSessionManager.RemoveKeys();
+                //PersistencePrefs.Clear();
             }
         }
 
+        PersistenceFacade.instance.Update();
         HDTrackingManager.Instance.Update();        
 
 		#if UNITY_EDITOR
@@ -331,7 +334,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
 
         // If the persistences are not being synced then we need to make sure the local progress will be stored when going to pause
-        if (!PersistenceFacade.instance.Sync_IsSyncing())
+        if (!PersistenceFacade.instance.Sync_IsSyncing)
         {            
             bool allowGameRestart = true;
             if ((FlowManager.IsInGameScene() && !Game_IsInGame) || Game_IsPaused)
@@ -580,8 +583,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 #if UNITY_ANDROID
         NotificationsManager.SharedInstance.SetNotificationIcons ("", "push_notifications", 0xFFFF0000); 
 #endif
-
-        NotificationsManager.SharedInstance.SetNotificationsEnabled(true);
+		int strLanguageSku = PlayerPrefs.GetInt(PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
+        NotificationsManager.SharedInstance.SetNotificationsEnabled( strLanguageSku > 0 );
     }
     #endregion
 
@@ -649,10 +652,39 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         m_gameCenterListener = new GameCenterListener();
 
-        GameCenterManager.GameCenterItemData[] achievementsData = null;
+        // Load achievements
+		GameCenterManager.GameCenterItemData[] kAchievementsData = null;
+		Dictionary<string, DefinitionNode> kAchievementSKUs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.ACHIEVEMENTS);
+		if (kAchievementSKUs.Count > 0)
+		{
+			kAchievementsData = new GameCenterManager.GameCenterItemData[kAchievementSKUs.Count];
+			int iSKUIdx = 0;
+			foreach(KeyValuePair<string, DefinitionNode> kEntry in kAchievementSKUs)
+			{
+				kAchievementsData[iSKUIdx] = new GameCenterManager.GameCenterItemData();
+				kAchievementsData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
+				if (kEntry.Value.Has ("amount"))
+				{
+					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount");
+				}
+				else
+				{
+					kAchievementsData[iSKUIdx].m_iAmount = 1;
+				}
+
+				kAchievementsData[iSKUIdx].m_strAppleID = kEntry.Value.Get("appleSku");
+				kAchievementsData[iSKUIdx].m_strGoogleID = kEntry.Value.Get("googleSku");
+				kAchievementsData[iSKUIdx].m_strAmazonID = kEntry.Value.Get("amazonSku");
+				iSKUIdx++;
+			}
+		}
+
         GameCenterManager.GameCenterItemData[] leaderboardsData = null;
+
+        // TODO: Load leaderboards
+
         GameCenterManager.SharedInstance.AddGameCenterListener(m_gameCenterListener);
-        GameCenterManager.SharedInstance.Initialise(ref achievementsData, ref leaderboardsData);
+		GameCenterManager.SharedInstance.Initialise(ref kAchievementsData, ref leaderboardsData);
     }
 
     public void GameCenter_Login()

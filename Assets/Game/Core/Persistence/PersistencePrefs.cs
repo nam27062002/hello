@@ -9,17 +9,25 @@ using UnityEngine;
 public class PersistencePrefs
 {
     // If you want to add a new key, please remember to add it to the list defined below so all persistece prefs can be deleted when clearing the persistence
-    public static string KEY_ACTIVE_PROFILE_NAME = "activeProfileName";
+    private static string KEY_ACTIVE_PROFILE_NAME = "activeProfileName";
 
-    public static List<string> KEYS = new List<string>()
-    {
-        KEY_ACTIVE_PROFILE_NAME
-    };
+    // We want the cloud save to stores per device instead of per profile
+    private static string KEY_CLOUD_SAVE_ENABLED = "cloudSaveEnabled";
 
-    public enum EKeys
+    private static string KEY_SOCIAL_PROFILE_NAME = "SocialProfileName";
+
+    // Stored here so TrackingManager can be initialized as soon as possible
+    private static string KEY_SERVER_USER_ID = "serverUserId";
+    
+    private static List<string> KEYS = new List<string>()
     {
-        activeProfileName,
-    }    
+        KEY_ACTIVE_PROFILE_NAME,
+        KEY_CLOUD_SAVE_ENABLED,
+        KEY_SOCIAL_PROFILE_NAME,
+        KEY_SERVER_USER_ID,
+    };        
+
+    public static bool IsDirty = false;
 
     public static void Clear()
     {
@@ -30,9 +38,51 @@ public class PersistencePrefs
         }
     }
 
+    public static void Update()
+    {
+        if (IsDirty)
+        {
+            PlayerPrefs.Save();
+            IsDirty = false;
+        }
+    }
+
     public static string ActiveProfileName
-    {        
+    {
         get { return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE); }
-        set { PlayerPrefs.SetString(KEY_ACTIVE_PROFILE_NAME, value); }
+
+		set { SetString(KEY_ACTIVE_PROFILE_NAME, value); }
+    }
+
+    public static bool IsCloudSaveEnabled
+    {
+        get { return PlayerPrefs.GetInt(KEY_CLOUD_SAVE_ENABLED, 1) == 1; }
+        set { SetInt(KEY_CLOUD_SAVE_ENABLED, (value ? 1: 0)); }
+    }
+    
+    public static string ServerUserId
+    {
+        get { return PlayerPrefs.GetString(KEY_SERVER_USER_ID, null);  }
+        set { SetString(KEY_SERVER_USER_ID, value); }
+    }
+        
+    #region social
+    public static string Social_ProfileName
+    {
+        get { return PlayerPrefs.GetString(KEY_SOCIAL_PROFILE_NAME, null); }
+        set { SetString(KEY_SOCIAL_PROFILE_NAME, value); }
+    }
+    #endregion
+
+    private static void SetInt(string key, int value)
+    {
+        PlayerPrefs.SetInt(key, value);
+        IsDirty = true;
+    }
+
+    private static void SetString(string key, string value)
+    {
+        PlayerPrefs.SetString(key, value);
+        IsDirty = true;
     }
 }

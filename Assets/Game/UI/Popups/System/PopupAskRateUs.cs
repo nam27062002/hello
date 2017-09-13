@@ -10,7 +10,12 @@ public class PopupAskRateUs : MonoBehaviour {
 	public void OnYes()
 	{
 		// Open rate us
-		DeviceUtilsManager.SharedInstance.OpenMarketForRating( Application.identifier );
+#if UNITY_IOS
+		// TODO: store id for this app
+		DeviceUtilsManager.SharedInstance.OpenMarketForRating( "" , true);
+#elif UNITY_ANDROID
+		DeviceUtilsManager.SharedInstance.OpenMarketForRating();
+#endif
 
 		// Set to never ask again
 		Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );

@@ -162,8 +162,10 @@ namespace AI {
 			//----------------------------------------------------------------------------------
 			ExtendedInit();
 
-			m_rotation = Quaternion.LookRotation(m_direction, m_upVector);
-			m_targetRotation = m_rotation;
+			ExtendedUpdate();
+			UpdateOrientation();
+			m_rotation = m_targetRotation;
+			m_machineTransform.rotation = m_rotation;
 
 			//----------------------------------------------------------------------------------
 			m_dragon = InstanceManager.player.dragonMotion;

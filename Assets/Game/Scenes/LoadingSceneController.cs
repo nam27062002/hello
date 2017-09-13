@@ -22,15 +22,7 @@ public class LoadingSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Loading";
-
-    private static bool s_inSaveLoaderState = false;
-
-    public static bool InSaveLoaderState
-    {
-        get { return s_inSaveLoaderState; }
-    }
-
+	public static readonly string NAME = "SC_Loading";    
 
 	//------------------------------------------------------------------//
 	// CLASS															//
@@ -43,11 +35,14 @@ public class LoadingSceneController : SceneController {
 
         public override void onAndroidPermissionPopupNeeded (CaletyConstants.PopupConfig kPopupConfig)
         {
-            Debug.Log ("onAndroidPermissionPopupNeeded: " + kPopupConfig.m_strMessage);
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LoadingSceneController.Log("onAndroidPermissionPopupNeeded: " + kPopupConfig.m_strMessage);
 
 			PopupMessage.Config config = PopupMessage.GetConfig();
             config.TitleTid = kPopupConfig.m_strTitle;
+			config.ShowTitle = !string.IsNullOrEmpty( kPopupConfig.m_strTitle);
 			config.MessageTid = kPopupConfig.m_strMessage;
+			config.HandleBackButton = false;
 
 			m_popupConfig = kPopupConfig;
             if (kPopupConfig.m_kPopupButtons.Count == 2)
@@ -91,7 +86,9 @@ public class LoadingSceneController : SceneController {
 
         public override void onAndroidPermissionsFinished ()
         {
-            Debug.Log ("onAndroidPermissionsFinished");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LoadingSceneController.Log ("onAndroidPermissionsFinished");
+
 			// Close popup and continue
             m_permissionsFinished = true;
         }
@@ -314,9 +311,8 @@ public class LoadingSceneController : SceneController {
 				HDTrackingManager.Instance.Init();
 				UsersManager.CreateInstance();
 
-		        // Game
-		        PersistenceFacade.CreateInstance();
-		        PersistenceFacade.instance.Init();
+		        // Game		        
+                PersistenceFacade.instance.Reset();
 
 		        DragonManager.CreateInstance(true);
 				LevelManager.CreateInstance(true);
@@ -340,7 +336,7 @@ public class LoadingSceneController : SceneController {
 				EntityManager.CreateInstance(true);
 				InstanceManager.CreateInstance(true);
 
-		        GameAds.CreateInstance(true);
+		        GameAds.CreateInstance(false);
 		        GameAds.instance.Init();
                  
             	ControlPanel.CreateInstance();
@@ -361,20 +357,20 @@ public class LoadingSceneController : SceneController {
     private void StartLoadFlow()
     {
         if (m_startLoadFlow)
-        {
-            s_inSaveLoaderState = true;
-
+        {            
             m_startLoadFlow = false;
             m_loading = true;
             m_loadingDone = false;
 
-            Debug.Log("Started Loading Flow");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Started Loading Flow");
 
-            Action<PersistenceStates.ESyncResult> onDone = delegate(PersistenceStates.ESyncResult result)
+            Action onDone = delegate()
             {
                 m_loadingDone = true;
                 m_loading = false;
-                s_inSaveLoaderState = false;
+
+                HDTrackingManager.Instance.Notify_ApplicationStart();
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
@@ -384,35 +380,10 @@ public class LoadingSceneController : SceneController {
         }
     }
 
-    private void OnLoadingFinished()
+    private const string LOG_CHANNEL = "[LOADING] ";
+    public static void Log(string msg)
     {
-        Debug.Log("OnLoadingFinished - " + m_loading);        
-        if (m_loading)
-        {
-            SaveFacade.Instance.OnLoadComplete -= OnLoadingFinished;
-
-            m_loading = false;
-
-            Action onComplete = delegate ()
-            {
-                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Auth state check complete!");
-
-                s_inSaveLoaderState = false;
-                m_loadingDone = true;                
-            };
-
-            SocialFacade.Network network = SocialManager.GetSelectedSocialNetwork();
-            if (SocialManager.Instance.IsUser(network) && !SaveFacade.Instance.cloudSaveEnabled)
-            {
-            	m_state = State.WAITING_SOCIAL_AUTH;
-                Debug.Log("SaveLoaderState (OnLoadingFinished) :: Check Facebook User Auth State!");
-                SocialManager.Instance.Authenticate(network, onComplete);
-            }
-            else
-            {
-                onComplete();
-            }
-        }
-    }    
+        Debug.Log(LOG_CHANNEL + msg);
+    }
 }
 

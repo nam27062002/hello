@@ -76,6 +76,9 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.FEATURE_DEVICE_SETTINGS, new string[] { "Rules/featureDeviceSettings" });
         kDefinitionFiles.Add(DefinitionsCategory.DEVICE_RATING_SETTINGS, new string[] { "Rules/deviceRatingSettings" });
 
+        // Achievements
+		kDefinitionFiles.Add(DefinitionsCategory.ACHIEVEMENTS, new string[] { "Rules/achievementsDefinitions" });
+
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
 

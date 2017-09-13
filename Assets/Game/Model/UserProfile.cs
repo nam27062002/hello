@@ -204,6 +204,12 @@ public class UserProfile : UserPersistenceSystem
 		get{ return m_userMissions; }
 	}
 
+	AchievementsTracker m_achievements;
+	public AchievementsTracker achievements
+	{
+		get{ return m_achievements; }
+	}
+
 	// Eggs
 	private Egg[] m_eggsInventory;
 	public Egg[] eggsInventory {
@@ -282,6 +288,35 @@ public class UserProfile : UserPersistenceSystem
 	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
+    public enum ESocialState
+    {
+        NeverLoggedIn,
+        LoggedIn,
+        LoggedInAndInventivised
+    };
+
+
+    private static List<string> smSocialStatesAsString;
+    private static List<string> SocialStatesAsString
+    {
+        get
+        {
+            if (smSocialStatesAsString == null)
+            {
+                smSocialStatesAsString = new List<string>();
+                int count = Enum.GetValues(typeof(ESocialState)).Length;
+                for (int i = 0; i < count; i++)
+                {
+                    smSocialStatesAsString.Add(((ESocialState)i).ToString());
+                }
+            }
+
+            return smSocialStatesAsString;
+        }
+    }    
+
+    public ESocialState SocialState { get; set; }
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -314,8 +349,20 @@ public class UserProfile : UserPersistenceSystem
 
 		m_wardrobe = new Wardrobe();
 		m_petCollection = new PetCollection();
-		m_userMissions = new UserMissions();      
+		m_userMissions = new UserMissions();
+		m_achievements = new AchievementsTracker();
+
+        SocialState = ESocialState.NeverLoggedIn;
     }
+
+	~UserProfile()
+	{
+		if ( m_achievements != null )
+		{
+			m_achievements.Dispose();
+			m_achievements = null;
+		}
+	}
 
 	/// <summary>
 	/// Return a string representation of this class.
@@ -596,7 +643,7 @@ public class UserProfile : UserPersistenceSystem
         m_saveTimestamp = DateTime.UtcNow;
 
         JSONNode json = ToJson();
-        m_persistenceData.Merge(json.ToString());
+        m_persistenceData.Merge(json.ToString(), false);
     }
 
 	//------------------------------------------------------------------------//
@@ -675,10 +722,24 @@ public class UserProfile : UserPersistenceSystem
         }
         else {
             m_superFuryProgression = 0;
-        }        
+        }
 
-		// Some cheats override profile settings - will be saved with the next Save()
-		if(Prefs.GetBoolPlayer("skipTutorialCheat")) {
+        key = "socialState";
+        SocialState = ESocialState.NeverLoggedIn;
+        if (profile.ContainsKey(key)) {
+            int count = Enum.GetValues(typeof(ESocialState)).Length;
+            string value = profile["socialState"];
+            int index = SocialStatesAsString.IndexOf(value);
+            if (index == -1) {
+                if (FeatureSettingsManager.IsDebugEnabled) 
+                    Debug.LogError("USER_PROFILE: " + value + " is not a valid ESocialState");                
+            } else {
+                SocialState = (ESocialState)index;
+            }
+        }
+
+        // Some cheats override profile settings - will be saved with the next Save()
+        if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
 			UsersManager.currentUser.gamesPlayed = 5;	// Fake the amount of played games to skip some tutorial steps depending on it
 			Prefs.SetBoolPlayer("skipTutorialCheat", false);
@@ -719,6 +780,11 @@ public class UserProfile : UserPersistenceSystem
 		} else {
 			// Clean missions
 			m_userMissions.ClearAllMissions();
+		}
+
+		m_achievements.Initialize();
+		if ( _data.ContainsKey("achievements") ){
+			m_achievements.Load( _data["achievements"] );
 		}
 
 		// Eggs
@@ -784,7 +850,7 @@ public class UserProfile : UserPersistenceSystem
 				}
 				#endif
 			}
-		}
+		}        
 	}
 
 	/// <summary>
@@ -893,6 +959,7 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add("gamesPlayed",m_gamesPlayed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		profile.Add("highScore",m_highScore.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		profile.Add("superFuryProgression",m_superFuryProgression.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+        profile.Add("socialState",SocialStatesAsString[(int)SocialState]);
 
 		data.Add("userProfile", profile);
 
@@ -909,6 +976,7 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("disguises", m_wardrobe.Save());
 		data.Add("pets", m_petCollection.Save());
 		data.Add("missions", m_userMissions.Save());
+		data.Add("achievements", m_achievements.Save());
 
 		data.Add("eggs", SaveEggData());
 		data.Add("chests", SaveChestsData());

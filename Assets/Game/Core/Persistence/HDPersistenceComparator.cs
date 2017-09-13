@@ -6,12 +6,12 @@ public class HDPersistenceComparator : PersistenceComparator
     private PersistenceComparatorSystem m_localProgress = null;
     private PersistenceComparatorSystem m_cloudProgress = null;
 
-    public override PersistenceStates.ConflictState CompareSaves(PersistenceData local, PersistenceData cloud)
+    public override PersistenceStates.EConflictState Compare(PersistenceData local, PersistenceData cloud)
     {
         m_localProgress = null;
         m_cloudProgress = null;
 
-        PersistenceStates.ConflictState state = PersistenceStates.ConflictState.Equal;
+        PersistenceStates.EConflictState state = PersistenceStates.EConflictState.Equal;
 
         if (local != null)
         {
@@ -66,8 +66,8 @@ public class HDPersistenceComparator : PersistenceComparator
                 //Check local save progress and automatically replace with cloud if its a brand new save!
                 if (m_localProgress.dragonsOwned <= 1 && m_localProgress.eggsCollected == 0 && m_cloudProgress.timePlayed == 0 && !m_localProgress.iapPurchaseMade)
                 {
-                    Debug.Log("HDPersistenceComparator (CompareSaves) :: Brand New Save UseCloud");
-                    state = PersistenceStates.ConflictState.UseCloud;
+                    Debug.Log("HDPersistenceComparator (CompareSaves) :: Brand New Save UseLoad");
+                    state = PersistenceStates.EConflictState.UseLocal;
                 }
                 //If dragons and the amount of eggs collected are equal
                 else if (m_localProgress.dragonsOwned == m_cloudProgress.dragonsOwned && m_localProgress.eggsCollected == m_cloudProgress.eggsCollected)
@@ -77,12 +77,12 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (local.Timestamp >= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local time stamp greater UseLocal");
-                            state = PersistenceStates.ConflictState.UseLocal;
+                            state = PersistenceStates.EConflictState.UseLocal;
                         }
                         else if (local.Timestamp < cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud time stamp greater RecommendCloud");
-                            state = PersistenceStates.ConflictState.RecommendCloud;
+                            state = PersistenceStates.EConflictState.RecommendCloud;
                         }
                     }
                     else if (m_localProgress.timePlayed > m_cloudProgress.timePlayed)
@@ -90,12 +90,12 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (local.Timestamp >= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local time played greater UseLocal");
-                            state = PersistenceStates.ConflictState.UseLocal;
+                            state = PersistenceStates.EConflictState.UseLocal;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local time played greater but cloud timestamp newer RecommendLocal");
-                            state = PersistenceStates.ConflictState.RecommendLocal;
+                            state = PersistenceStates.EConflictState.RecommendLocal;
                         }
                     }
                     else if (m_localProgress.timePlayed < m_cloudProgress.timePlayed)
@@ -103,12 +103,12 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (local.Timestamp <= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud time played greater UseCloud");
-                            state = PersistenceStates.ConflictState.UseCloud;
+                            state = PersistenceStates.EConflictState.UseCloud;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local time played greater RecommendCloud");
-                            state = PersistenceStates.ConflictState.RecommendCloud;
+                            state = PersistenceStates.EConflictState.RecommendCloud;
                         }
                     }
                 }
@@ -120,12 +120,12 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (m_localProgress.timePlayed >= m_cloudProgress.timePlayed && local.Timestamp >= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local Eggs Collected greater UseLocal");
-                            state = PersistenceStates.ConflictState.UseLocal;
+                            state = PersistenceStates.EConflictState.UseLocal;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local Eggs Collected greater but time player or timestamp less RecommendLocal");
-                            state = PersistenceStates.ConflictState.RecommendLocal;
+                            state = PersistenceStates.EConflictState.RecommendLocal;
                         }
                     }
                     else
@@ -133,12 +133,12 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (m_localProgress.timePlayed <= m_cloudProgress.timePlayed && local.Timestamp <= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud Eggs Collected greater UseCloud");
-                            state = PersistenceStates.ConflictState.UseCloud;
+                            state = PersistenceStates.EConflictState.UseCloud;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud Eggs Collected greater but time player or timestamp less RecommendCloud");
-                            state = PersistenceStates.ConflictState.RecommendCloud;
+                            state = PersistenceStates.EConflictState.RecommendCloud;
                         }
                     }
                 }
@@ -150,12 +150,12 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (m_localProgress.timePlayed >= m_cloudProgress.timePlayed && local.Timestamp >= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local dragons greater UseLocal");
-                            state = PersistenceStates.ConflictState.UseLocal;
+                            state = PersistenceStates.EConflictState.UseLocal;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local dragons greater but time player or timestamp less RecommendLocal");
-                            state = PersistenceStates.ConflictState.RecommendLocal;
+                            state = PersistenceStates.EConflictState.RecommendLocal;
                         }
                     }
                     else
@@ -163,12 +163,12 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (m_localProgress.timePlayed <= m_cloudProgress.timePlayed && local.Timestamp <= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud dragons greater UseCloud");
-                            state = PersistenceStates.ConflictState.UseCloud;
+                            state = PersistenceStates.EConflictState.UseCloud;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud dragons greater but time player or timestamp less RecommendCloud");
-                            state = PersistenceStates.ConflictState.RecommendCloud;
+                            state = PersistenceStates.EConflictState.RecommendCloud;
                         }
                     }
                 }
@@ -180,18 +180,18 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (m_localProgress.timePlayed >= m_cloudProgress.timePlayed && local.Timestamp >= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local dragons and Eggs Collected greater UseLocal");
-                            state = PersistenceStates.ConflictState.UseLocal;
+                            state = PersistenceStates.EConflictState.UseLocal;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local dragons and Eggs Collected greater but time player or timestamp less RecommendLocal");
-                            state = PersistenceStates.ConflictState.RecommendLocal;
+                            state = PersistenceStates.EConflictState.RecommendLocal;
                         }
                     }
                     else
                     {
                         Debug.Log("HDPersistenceComparator (CompareSaves) :: Local dragons greater but Eggs Collected less UserDecision");
-                        state = PersistenceStates.ConflictState.UserDecision;
+                        state = PersistenceStates.EConflictState.UserDecision;
                     }
                 }
                 //If the local dragons are less
@@ -202,31 +202,31 @@ public class HDPersistenceComparator : PersistenceComparator
                         if (m_localProgress.timePlayed <= m_cloudProgress.timePlayed && local.Timestamp <= cloud.Timestamp)
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud dragons and Eggs Collected greater UseCloud");
-                            state = PersistenceStates.ConflictState.UseCloud;
+                            state = PersistenceStates.EConflictState.UseCloud;
                         }
                         else
                         {
                             Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud dragons and Eggs Collected greater but time player or timestamp less RecommendCloud");
-                            state = PersistenceStates.ConflictState.RecommendCloud;
+                            state = PersistenceStates.EConflictState.RecommendCloud;
                         }
                     }
                     else
                     {
                         Debug.Log("HDPersistenceComparator (CompareSaves) :: cloud dragons greater but Eggs Collected less UserDecision");
-                        state = PersistenceStates.ConflictState.UserDecision;
+                        state = PersistenceStates.EConflictState.UserDecision;
                     }
                 }
             }
             else
             {
                 Debug.Log("HDPersistenceComparator (CompareSaves) :: Cloud save unavailable UseLocal");
-                state = PersistenceStates.ConflictState.UseLocal;
+                state = PersistenceStates.EConflictState.UseLocal;
             }
         }
         else if (m_cloudProgress != null)
         {
             Debug.Log("HDPersistenceComparator (CompareSaves) :: Local save unavailable UseCloud");
-            state = PersistenceStates.ConflictState.UseCloud;
+            state = PersistenceStates.EConflictState.UseCloud;
         }
 
         return state;
