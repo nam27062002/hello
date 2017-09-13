@@ -16,19 +16,19 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the ResultsScreenController_NEW class.
 /// </summary>
-[CustomEditor(typeof(ResultsScreenController_NEW), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(ResultsScreenController), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class ResultsScreenController_NEWEditor : Editor {
+public class ResultsScreenControllerEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private struct StepSetup {
-		public ResultsScreenController_NEW.Step step;
+		public ResultsScreenController.Step step;
 		public bool visible;
 		public bool space;
 		public string comment;
 
-		public StepSetup(ResultsScreenController_NEW.Step _step, bool _visible, bool _space, string _comment) {
+		public StepSetup(ResultsScreenController.Step _step, bool _visible, bool _space, string _comment) {
 			step = _step;
 			visible = _visible;
 			space = _space;
@@ -44,28 +44,28 @@ public class ResultsScreenController_NEWEditor : Editor {
 		get {
 			if(s_stepSetups == null){
 				s_stepSetups = new StepSetup[] {
-					new StepSetup(ResultsScreenController_NEW.Step.INIT, false, false, ""),
+					new StepSetup(ResultsScreenController.Step.INIT, false, false, ""),
 
-					new StepSetup(ResultsScreenController_NEW.Step.INTRO, true, false, "Always, dragon animation"),
-					new StepSetup(ResultsScreenController_NEW.Step.SCORE, true, false, "Always, run score + high score feedback"),
-					new StepSetup(ResultsScreenController_NEW.Step.REWARDS, true, false, "Always, SC earned during the run"),
+					new StepSetup(ResultsScreenController.Step.INTRO, true, false, "Always, dragon animation"),
+					new StepSetup(ResultsScreenController.Step.SCORE, true, false, "Always, run score + high score feedback"),
+					new StepSetup(ResultsScreenController.Step.REWARDS, true, false, "Always, SC earned during the run"),
 
-					new StepSetup(ResultsScreenController_NEW.Step.COLLECTIBLES, true, true, "Always, collected Eggs, Chests, etc."),
-					new StepSetup(ResultsScreenController_NEW.Step.MISSIONS, true, false, "Optional, completed missions"),
+					new StepSetup(ResultsScreenController.Step.COLLECTIBLES, true, true, "Always, collected Eggs, Chests, etc."),
+					new StepSetup(ResultsScreenController.Step.MISSIONS, true, false, "Optional, completed missions"),
 
-					new StepSetup(ResultsScreenController_NEW.Step.XP, true, true, "Always, dragon xp progression"),
+					new StepSetup(ResultsScreenController.Step.XP, true, true, "Always, dragon xp progression"),
 
-					new StepSetup(ResultsScreenController_NEW.Step.TRACKING, true, true, "Logic step, send end of game tracking - before applying the rewards!"),
-					new StepSetup(ResultsScreenController_NEW.Step.APPLY_REWARDS, true, false, "Logic step, apply rewards to the profile"),
+					new StepSetup(ResultsScreenController.Step.TRACKING, true, true, "Logic step, send end of game tracking - before applying the rewards!"),
+					new StepSetup(ResultsScreenController.Step.APPLY_REWARDS, true, false, "Logic step, apply rewards to the profile"),
 
-					new StepSetup(ResultsScreenController_NEW.Step.SKIN_UNLOCKED, true, true, "Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run"),
-					new StepSetup(ResultsScreenController_NEW.Step.DRAGON_UNLOCKED, true, false, "Optional, if a new dragon was unlocked"),
+					new StepSetup(ResultsScreenController.Step.SKIN_UNLOCKED, true, true, "Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run"),
+					new StepSetup(ResultsScreenController.Step.DRAGON_UNLOCKED, true, false, "Optional, if a new dragon was unlocked"),
 
-					new StepSetup(ResultsScreenController_NEW.Step.GLOBAL_EVENT_CONTRIBUTION, true, true, "Optional, if there is an active event and the player has a score to add to it"),
-					new StepSetup(ResultsScreenController_NEW.Step.GLOBAL_EVENT_NO_CONTRIBUTION, true, true, "Optional, if there is an active event but the player didn't score"),
+					new StepSetup(ResultsScreenController.Step.GLOBAL_EVENT_CONTRIBUTION, true, true, "Optional, if there is an active event and the player has a score to add to it"),
+					new StepSetup(ResultsScreenController.Step.GLOBAL_EVENT_NO_CONTRIBUTION, true, true, "Optional, if there is an active event but the player didn't score"),
 
-					new StepSetup(ResultsScreenController_NEW.Step.FINISHED, false, false, ""),
-					new StepSetup(ResultsScreenController_NEW.Step.COUNT, false, false, "")
+					new StepSetup(ResultsScreenController.Step.FINISHED, false, false, ""),
+					new StepSetup(ResultsScreenController.Step.COUNT, false, false, "")
 				};
 			}
 			return s_stepSetups;
@@ -103,7 +103,7 @@ public class ResultsScreenController_NEWEditor : Editor {
 			// Steps array
 			else if(p.name == "m_steps") {
 				// Fixed length, each step has its enum name as label
-				p.arraySize = (int)ResultsScreenController_NEW.Step.COUNT;
+				p.arraySize = (int)ResultsScreenController.Step.COUNT;
 
 				// Group in a foldout
 				p.isExpanded = EditorGUILayout.Foldout(p.isExpanded, p.displayName);

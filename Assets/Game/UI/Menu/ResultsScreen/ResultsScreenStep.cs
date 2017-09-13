@@ -34,7 +34,7 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	[HideInInspector] [SerializeField] public UnityEvent OnFinished = new UnityEvent();
 
 	// Internal
-	protected ResultsScreenController_NEW m_controller = null;
+	protected ResultsScreenController m_controller = null;
 
 	//------------------------------------------------------------------------//
 	// PUBLIC METHODS														  //
@@ -43,7 +43,7 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	/// Initialize this step with the given results screen controller.
 	/// </summary>
 	/// <param name="_controller">The results screen controller that will be triggering this step.</param>
-	public void Init(ResultsScreenController_NEW _controller) {
+	public void Init(ResultsScreenController _controller) {
 		// Store reference
 		m_controller = _controller;
 
