@@ -247,15 +247,13 @@ public class PopupSettingsSaveTab : MonoBehaviour
     [SerializeField]
     private GameObject m_cloudDisabledButton;        
     */
-
+    
     /// <summary>
     /// Callback called by the player when the user clicks on enable/disable the cloud save
     /// </summary>
     public void Cloud_OnChangeSaveEnable()
     {        
-        bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
-        PersistenceFacade.instance.CloudDriver.Upload_IsEnabled = !isSaveEnabled;
-        Cloud_Refresh();
+        PersistenceFacade.instance.CloudDriver.Upload_IsEnabled = m_cloudEnableSlider.value == 1;
         Resync_Refresh();
 
         /*
@@ -329,9 +327,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
     
     private void Cloud_Refresh()
     {
+        Cloud_ChangeValueEnabled = false;
         bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
         m_cloudEnableSlider.value = (isSaveEnabled) ? 1 : 0;
-        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();                                    
+        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();
+        Cloud_ChangeValueEnabled = true;
     }    
     #endregion
 
@@ -376,8 +376,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         if (!Resync_IsRunning)
         {
+            OpenLoadingPopup();
             Action onDone = delegate ()
             {
+                CloseLoadingPopup();
                 Resync_IsRunning = false;
                 Cloud_Refresh();
                 RefreshView();                
