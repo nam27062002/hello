@@ -84,8 +84,11 @@ public class PersistenceFacade
         Sync_IsSyncing = true;
 
         Action onLoadDone = delegate()
-		{	
-			Action<bool> performSync = delegate(bool isSilent)
+		{
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("SYNC: Loading  local DONE! " + LocalData.LoadState);
+
+            Action<bool> performSync = delegate(bool isSilent)
 			{
 				Action<PersistenceStates.ESyncResult> onSyncDone = delegate(PersistenceStates.ESyncResult result)
 				{
@@ -105,7 +108,7 @@ public class PersistenceFacade
 			if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
 			{
 				// TODO
-				bool logInSocialEver = true;
+				bool logInSocialEver = false;
 
 				Action onReset = delegate()
 				{
@@ -138,16 +141,19 @@ public class PersistenceFacade
 					{
 						Config.CloudDriver.Sync(false, true, onConnectDone);
 					};				
-				}
+				}                
 
-				// Lets the user know that local persistence is corrupted. User's options:
-				// 1)Reset local persistence to the default one
-				// 2)Override local persistence with cloud persistence
-				Popup_OpenLocalCorrupted(logInSocialEver, onReset, onConnect);				
+                // Lets the user know that local persistence is corrupted. User's options:
+                // 1)Reset local persistence to the default one
+                // 2)Override local persistence with cloud persistence
+                Popup_OpenLocalCorrupted(logInSocialEver, onReset, onConnect);				
 			}
 			else
 			{
-				Config.LocalDriver.IsLoadedInGame = true;
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Log("Ready lo load local persistence in game ");
+
+                Config.LocalDriver.IsLoadedInGame = true;
 
                 // Since local is already loaded then we consider the operation done. Sync will happen in background
                 if (onDone != null)
@@ -168,6 +174,9 @@ public class PersistenceFacade
                 Config.CloudDriver.Sync(true, true, onSyncDone);                
 			}			
 		};
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("SYNC: Loading local...");
 
 		Config.LocalDriver.Load(onLoadDone);
 	}
@@ -195,6 +204,9 @@ public class PersistenceFacade
 
         if (result == PersistenceStates.ESyncResult.NeedsToReload)
 		{
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(SYNCER) RELOADS THE APP TO LOAD CLOUD PERSISTENCE");
+
             ApplicationManager.instance.NeedsToRestartFlow = true;
         } 
 		else if (onDone != null)
@@ -629,7 +641,7 @@ public class PersistenceFacade
     #endregion
 
     #region log
-    private static bool LOG_USE_COLOR = true;
+    private static bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[Persistence]:";    
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 

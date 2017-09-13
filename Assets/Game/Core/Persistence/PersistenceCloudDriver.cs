@@ -104,7 +104,10 @@ public class PersistenceCloudDriver
 		}
 		set 
 		{
-			mSyncerStep = value;
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(SYNCER) CLOUD " + mSyncerStep.ToString() + " ->  " + value.ToString());
+
+            mSyncerStep = value;
 
 			switch (mSyncerStep)
 			{
@@ -156,7 +159,10 @@ public class PersistenceCloudDriver
 
 	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult> onDone)
 	{
-		Syncer_Reset();
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
+
+        Syncer_Reset();
 		Upload_IsAllowed = false;
 
 		Syncer_OnSyncDone = onDone;
@@ -398,6 +404,9 @@ public class PersistenceCloudDriver
 								
 				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 				{
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD WILL LOAD REMOVE ACCOUNT");
+
                     // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
                     GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
 
@@ -471,8 +480,11 @@ public class PersistenceCloudDriver
 	}
 
 	private void Syncer_PerformDone(PersistenceStates.ESyncResult result)
-	{	
-		Upload_IsAllowed = result == PersistenceStates.ESyncResult.Ok;
+	{
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("(SYNCER) CLOUD DONE " + result.ToString());
+
+        Upload_IsAllowed = result == PersistenceStates.ESyncResult.Ok;
 		IsInSync = Upload_IsAllowed;
 		if (IsInSync)
 		{

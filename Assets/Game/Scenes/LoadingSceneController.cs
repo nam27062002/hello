@@ -35,7 +35,8 @@ public class LoadingSceneController : SceneController {
 
         public override void onAndroidPermissionPopupNeeded (CaletyConstants.PopupConfig kPopupConfig)
         {
-            Debug.Log ("onAndroidPermissionPopupNeeded: " + kPopupConfig.m_strMessage);
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LoadingSceneController.Log("onAndroidPermissionPopupNeeded: " + kPopupConfig.m_strMessage);
 
 			PopupMessage.Config config = PopupMessage.GetConfig();
             config.TitleTid = kPopupConfig.m_strTitle;
@@ -83,7 +84,9 @@ public class LoadingSceneController : SceneController {
 
         public override void onAndroidPermissionsFinished ()
         {
-            Debug.Log ("onAndroidPermissionsFinished");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LoadingSceneController.Log ("onAndroidPermissionsFinished");
+
 			// Close popup and continue
             m_permissionsFinished = true;
         }
@@ -357,7 +360,8 @@ public class LoadingSceneController : SceneController {
             m_loading = true;
             m_loadingDone = false;
 
-            Debug.Log("Started Loading Flow");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Started Loading Flow");
 
             Action onDone = delegate()
             {
@@ -372,6 +376,12 @@ public class LoadingSceneController : SceneController {
 
             PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
         }
-    }   
+    }
+
+    private const string LOG_CHANNEL = "[LOADING]";
+    public static void Log(string msg)
+    {
+        Debug.Log(LOG_CHANNEL + msg);
+    }
 }
 
