@@ -456,6 +456,7 @@ public class PersistenceFacade
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
+        config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
         
         /*
