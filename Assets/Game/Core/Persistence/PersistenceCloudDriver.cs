@@ -364,6 +364,9 @@ public class PersistenceCloudDriver
 				{
                     // Calety is called to override game platform token so the game will log in server with the right account Id when reloading	
                     GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+
+                    // PersistencePrefs are deleted since it has to be overridden by the remove account id
+                    PersistencePrefs.Clear();
                 }
 
 				Action onDone = delegate() 
