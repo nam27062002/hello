@@ -266,20 +266,21 @@ public class SocialPlatformManager : MonoBehaviour
     {
         Login_MergeState = ELoginMergeState.ShowPopupNeeeded;
 
-        // Loads the cloud data from here
+        JSONNode persistenceAsJson = null;
+        
         const string key = "profile";
         if (kCloudAccount != null && kCloudAccount.ContainsKey(key))
-        {
-            JSONNode persistenceAsJson = kCloudAccount[key];
-
-            // Makes sure it's a valid persistence
-            if (persistenceAsJson == null || !persistenceAsJson.ContainsKey("dragons"))
-            {
-                persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
-            }
-            
-            Login_MergePersistence = persistenceAsJson.ToString();                        
+        {            
+            persistenceAsJson = kCloudAccount[key];            
         }
+
+        // Makes sure it's a valid persistence
+        if (persistenceAsJson == null || persistenceAsJson.ToString() == "{}")
+        {
+            persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
+        }
+
+        Login_MergePersistence = persistenceAsJson.ToString();
     }
 
     private void Login_Update()
