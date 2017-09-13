@@ -154,7 +154,7 @@ public class TrackerBase {
 			case "destroy":			return new TrackerDestroy(_params);
 			case "unlock_dragon":	return new TrackerUnlockDragon( _params );
 			case "buy_skins":		return new TrackerBuySkins();
-
+			case "daily_chest":		return new TrackerDailyChests();
 			// Collect is quite special: depending on first parameter, create one of the existing trackers
 			case "collect": {
 				if(_params.Count < 1) return null;

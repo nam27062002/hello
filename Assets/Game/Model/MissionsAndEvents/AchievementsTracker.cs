@@ -2,38 +2,92 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AchievementsTracker : MonoBehaviour {
+public class AchievementsTracker {
 
-	AchievementObjective[] m_objectives = null;
+	Dictionary<string, AchievementObjective> m_objectives = new Dictionary<string, AchievementObjective>();
 	
 	// Use this for initialization
-	void Start () 
+	public void Initialize() 
 	{
 		// Check achievement is not already unlocked!
+		m_objectives.Clear();
 		Dictionary<string, DefinitionNode> kAchievementSKUs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.ACHIEVEMENTS);
 		if (kAchievementSKUs.Count > 0)
 		{
-			m_objectives = new AchievementObjective[ kAchievementSKUs.Count ];
-			int iSKUIdx = 0;
 			foreach(KeyValuePair<string, DefinitionNode> kEntry in kAchievementSKUs)
 			{
-				m_objectives[iSKUIdx] = new AchievementObjective( kEntry.Value );
-				m_objectives[iSKUIdx].OnObjectiveComplete.AddListener (CleanReportedAchievements );
-				iSKUIdx++;
+				AchievementObjective newObjective = new AchievementObjective( kEntry.Value );
+				m_objectives.Add( kEntry.Key, newObjective);
+			}
+		}
+		Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
+	}
+
+	void Destroy()
+	{
+		Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
+	}
+
+	void OnGooglePlayEvent()
+	{
+		if ( ApplicationManager.instance.GameCenter_IsAuthenticated() )
+		{
+			UpdateAchievementsProgress();	
+		}
+	}
+
+	void UpdateAchievementsProgress()
+	{	
+		foreach(KeyValuePair<string, AchievementObjective> kEntry in m_objectives)
+		{
+			if ( !kEntry.Value.reported || kEntry.Value.reportProgress )
+			{
+				kEntry.Value.OnValueChanged();
 			}
 		}
 	}
 
-	void CleanReportedAchievements()
-	{
-		for( int i = 0;i<m_objectives.Length; i++ )
+
+	public void Load(SimpleJSON.JSONNode _data) {
+		// Load current achievement progress
+		SimpleJSON.JSONArray achievements = _data.AsArray;
+		for( int i = 0; i<achievements.Count; ++i )
 		{
-			if ( m_objectives[i] != null && m_objectives[i].reported  )
+			SimpleJSON.JSONNode node = achievements[i];
+			if ( node.ContainsKey("sku") && node.ContainsKey("currentValue") )
 			{
-				// Clean object
-				m_objectives[i] = null;
+				string sku = node["sku"];
+				if (m_objectives.ContainsKey(sku))
+				{
+					if (node["currentValue"].AsInt > m_objectives[sku].currentValue )
+						m_objectives[sku].currentValue = node["currentValue"].AsInt;
+				}
+				else
+				{
+					// ???? no achievement anymore?
+				}
 			}
 		}
+
+		// If logged report finished, just in case
+		if ( ApplicationManager.instance.GameCenter_IsAuthenticated() )
+		{
+			UpdateAchievementsProgress();
+		}
+
+	}
+
+	public SimpleJSON.JSONNode Save() {
+		// Save current achievement progress
+		// Create new object, initialize and return it
+		SimpleJSON.JSONArray achievements = new SimpleJSON.JSONArray();
+		foreach(KeyValuePair<string, AchievementObjective> kEntry in m_objectives){
+			SimpleJSON.JSONClass newNode = new SimpleJSON.JSONClass();
+			newNode.Add("sku", kEntry.Value.achievementSku);
+			newNode.Add("currentValue", kEntry.Value.currentValue);
+			achievements.Add( newNode );
+		}
+		return achievements;
 	}
 
 }

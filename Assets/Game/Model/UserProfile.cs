@@ -204,6 +204,12 @@ public class UserProfile : UserPersistenceSystem
 		get{ return m_userMissions; }
 	}
 
+	AchievementsTracker m_achievements;
+	public AchievementsTracker achievements
+	{
+		get{ return m_achievements; }
+	}
+
 	// Eggs
 	private Egg[] m_eggsInventory;
 	public Egg[] eggsInventory {
@@ -344,6 +350,7 @@ public class UserProfile : UserPersistenceSystem
 		m_wardrobe = new Wardrobe();
 		m_petCollection = new PetCollection();
 		m_userMissions = new UserMissions();
+		m_achievements = new AchievementsTracker();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
@@ -766,6 +773,11 @@ public class UserProfile : UserPersistenceSystem
 			m_userMissions.ClearAllMissions();
 		}
 
+		m_achievements.Initialize();
+		if ( _data.ContainsKey("achievements") ){
+			m_achievements.Load( _data["achievements"] );
+		}
+
 		// Eggs
 		if(_data.ContainsKey("eggs")) {
 			LoadEggData(_data["eggs"] as SimpleJSON.JSONClass);
@@ -955,6 +967,7 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("disguises", m_wardrobe.Save());
 		data.Add("pets", m_petCollection.Save());
 		data.Add("missions", m_userMissions.Save());
+		data.Add("achievements", m_achievements.Save());
 
 		data.Add("eggs", SaveEggData());
 		data.Add("chests", SaveChestsData());

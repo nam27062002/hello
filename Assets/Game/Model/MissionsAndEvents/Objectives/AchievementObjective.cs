@@ -122,23 +122,26 @@ public class AchievementObjective : TrackingObjectiveBase {
 			// Stop tracking
 			m_tracker.enabled = false;
 
-			// Report Achievement
-			if ( m_reportProgress )
+			if ( GameCenterManager.SharedInstance.CheckIfAuthenticated() )
 			{
-				GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)targetValue);
+				// Report Achievement
+				if ( m_reportProgress )
+				{
+					GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)targetValue);
+				}
+				else
+				{
+					GameCenterManager.SharedInstance.ReportAchievement( m_achievementSku );
+				}
+				m_reported = true;
 			}
-			else
-			{
-				GameCenterManager.SharedInstance.ReportAchievement( m_achievementSku );
-			}
-			m_reported = true;
 
 			// Invoke delegate
 			OnObjectiveComplete.Invoke();
 		}
 		else
 		{
-			if ( m_reportProgress )
+			if ( m_reportProgress && GameCenterManager.SharedInstance.CheckIfAuthenticated())
 			{
 				// Report progress
 				GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)currentValue);
