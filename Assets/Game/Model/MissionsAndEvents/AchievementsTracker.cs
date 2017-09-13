@@ -5,7 +5,7 @@ using UnityEngine;
 public class AchievementsTracker {
 
 	Dictionary<string, AchievementObjective> m_objectives = new Dictionary<string, AchievementObjective>();
-	
+	private bool m_initialized = false;
 	// Use this for initialization
 	public void Initialize() 
 	{
@@ -21,12 +21,18 @@ public class AchievementsTracker {
 			}
 		}
 		Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
+		m_initialized = true;
 	}
 
-	void Destroy()
-	{
-		Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
-	}
+	public void Dispose()  // destructor
+    {
+        if (m_initialized)
+        {
+			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
+			m_objectives.Clear();
+			m_initialized = false;
+        }
+    }
 
 	void OnGooglePlayEvent()
 	{
