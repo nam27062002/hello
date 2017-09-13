@@ -634,7 +634,7 @@ public class UserProfile : UserPersistenceSystem
         m_saveTimestamp = DateTime.UtcNow;
 
         JSONNode json = ToJson();
-        m_persistenceData.Merge(json.ToString());
+        m_persistenceData.Merge(json.ToString(), false);
     }
 
 	//------------------------------------------------------------------------//

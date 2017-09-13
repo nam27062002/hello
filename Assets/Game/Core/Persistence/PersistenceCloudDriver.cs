@@ -22,7 +22,22 @@ public class PersistenceCloudDriver
 
 	public PersistenceData Data { get; set; }
 
-	private EState State { get; set; }
+    private EState mState;
+	private EState State
+    {
+        get { return mState; }
+        set
+        {
+            mState = value;
+            switch (mState)
+            {
+                case EState.NotLoggedIn:
+                    Upload_IsAllowed = false;
+                    break;
+            }
+
+        }
+    }
 
 	private PersistenceLocalDriver LocalDriver { get; set; }
 
@@ -31,11 +46,15 @@ public class PersistenceCloudDriver
 	public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
-		Data = new PersistenceData(dataName);
+		Data = new PersistenceData(dataName);        
 		Reset();
 	}
 
-	private void Reset()
+    public void Destroy()
+    {        
+    }
+
+    private void Reset()
 	{
 		IsInSync = false;
 		State = EState.NotLoggedIn;
@@ -53,8 +72,25 @@ public class PersistenceCloudDriver
 		LocalDriver = localDriver;	
 	}
 
-	#region syncer
-	private bool Syncer_IsSilent { get; set; }
+    public void Logout()
+    {
+        ExtendedLogout();
+
+        if (State == EState.LoggedIn)
+        {
+            // Logs out
+            State = EState.NotLoggedIn;
+            IsInSync = false;
+        }
+    }        
+
+    protected virtual void ExtendedLogout()
+    {
+        SocialPlatformManager.SharedInstance.Logout();
+    }
+
+    #region syncer
+    private bool Syncer_IsSilent { get; set; }
 	private bool Syncer_IsAppInit { get; set; }
 	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult> Syncer_OnSyncDone { get; set; }
@@ -240,7 +276,7 @@ public class PersistenceCloudDriver
 			} 
 			else if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 			{
-				// If we need to merge with socil account then we need the user
+				// If we need to merge with social account then we need the user
 				// to choose what to do explicitly, so we recommend cloud if 
 				// cloud persistence is ahead, otherwise we let the user choose.
 				// Anyway it's recommendable to use the cloud because when choosing
@@ -314,7 +350,7 @@ public class PersistenceCloudDriver
 
 			Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
 		}
-	}
+	}    
 
 	private void Syncer_ProcessConflictState(PersistenceStates.EConflictState conflict)
 	{
@@ -362,8 +398,14 @@ public class PersistenceCloudDriver
 								
 				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 				{
-                    // Calety is called to override game platform token so the game will log in server with the right account Id when reloading	
+                    // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
                     GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+
+                    // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
+                    GameSessionManager.SharedInstance.LogOutFromServer(false);
+
+                    // PersistencePrefs are deleted since it has to be overridden by the remove account id
+                    PersistencePrefs.Clear();
                 }
 
 				Action onDone = delegate() 

@@ -196,24 +196,31 @@ public class SocialPlatformManager : MonoBehaviour
         Login_IsLogInReady = true;
         Login_MergeState = ELoginMergeState.Waiting;
 
-        if (isSilent)
+        if (IsLoggedIn())
         {
-            Login_OnLoggedIn(IsLoggedIn());
-
-            // Forces merge process
-            if (IsLoggedIn())
-            {
-                string strUserID = GetUserID();
-                string strUserName = GetUserName();
-                GameSessionManager.SharedInstance.ProcessMergeAccounts(strUserID, strUserName);
-            }            
+            string strUserID = GetUserID();
+            string strUserName = GetUserName();
+            GameSessionManager.SharedInstance.ProcessMergeAccounts(strUserID, strUserName);
         }
         else
         {
-            Login_IsLogInReady = false;
-            Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
-            GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
-        }       
+            if (isSilent)
+            {
+                Login_OnLoggedIn(false);
+            }
+            else
+            {
+                // We need to make sure that a previous incomplete merge is reseted. When a user decides to keep her local account when prompted to merge with 
+                // a different account that has also used the same social account then the user is logges out automatically and we don't want to bother the user
+                // with the same merge popup every time she loads the game. The remove account id that was declined is stored in order to avoid that popup from being shown 
+                // again. We need to reset that variable because the user is expressing explicitly her intention to log in again
+                GameSessionManager.SharedInstance.ResetSocialPlatformCancelState();
+
+                Login_IsLogInReady = false;
+                Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
+                GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
+            }
+        }        
     }
 
     private void Login_OnLoggedInHelper(bool logged)
@@ -259,8 +266,21 @@ public class SocialPlatformManager : MonoBehaviour
     {
         Login_MergeState = ELoginMergeState.ShowPopupNeeeded;
 
-        // Loads the cloud data from here
-        Login_MergePersistence = kCloudAccount.ToString();
+        JSONNode persistenceAsJson = null;
+        
+        const string key = "profile";
+        if (kCloudAccount != null && kCloudAccount.ContainsKey(key))
+        {            
+            persistenceAsJson = kCloudAccount[key];            
+        }
+
+        // Makes sure it's a valid persistence
+        if (persistenceAsJson == null || persistenceAsJson.ToString() == "{}")
+        {
+            persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
+        }
+
+        Login_MergePersistence = persistenceAsJson.ToString();
     }
 
     private void Login_Update()
