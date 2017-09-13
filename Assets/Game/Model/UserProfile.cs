@@ -355,6 +355,15 @@ public class UserProfile : UserPersistenceSystem
         SocialState = ESocialState.NeverLoggedIn;
     }
 
+	~UserProfile()
+	{
+		if ( m_achievements != null )
+		{
+			m_achievements.Dispose();
+			m_achievements = null;
+		}
+	}
+
 	/// <summary>
 	/// Return a string representation of this class.
 	/// </summary>
