@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -24,6 +25,24 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed
+	[SerializeField] private MenuDragonLoader m_preview = null;
+	[SerializeField] private DragControlRotation m_dragControl = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_dragonNameText = null;
+	[SerializeField] private Image m_dragonTierIcon = null;
+	[SerializeField] private GameObject m_newPreysInfo = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_healthText = null;
+	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
+	[Space]
+	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
+	[SerializeField] private TweenSequence m_sequence = null;
+
+	// Internal
+	private DragonData m_dragonData = null;
+	private bool m_dragonUnlocked = false;
 	
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -33,17 +52,148 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		return false;
+		// Has next dragon been unlocked during this run?
+		return m_dragonUnlocked;
 	}
 
 	/// <summary>
-	/// Initialize and launch this step.
+	/// Init this step.
+	/// </summary>
+	override protected void DoInit() {
+		// Get next dragon's data
+		m_dragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+
+		// Has next dragon been unlocked during this run?
+		// IMpossible if there is no next dragon
+		m_dragonUnlocked = false;
+		if(m_dragonData != null) {
+			bool isLocked = m_dragonData.isLocked;
+			bool wasLocked = RewardManager.nextDragonLocked;
+			if(CPResultsScreenTest.testEnabled) {
+				// Testing!
+				isLocked = CPResultsScreenTest.xpFinalDelta < 1f;
+				wasLocked = CPResultsScreenTest.nextDragonLocked;
+			}
+			m_dragonUnlocked = wasLocked && !isLocked;
+		}
+
+		// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
+		if(m_dragonUnlocked) {
+			GameVars.unlockedDragonSku = m_dragonData.def.sku;
+		}
+
+		// Listen to sequence ending
+		m_sequence.OnFinished.AddListener(() => { OnFinished.Invoke(); });
+	}
+
+	/// <summary>
+	/// Launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
+		// Just in case
+		if(m_dragonData == null) {
+			OnFinished.Invoke();
+			return;
+		}
 
+		// Aux vars
+		DefinitionNode def = m_dragonData.def;
+
+		// Dragon name
+		m_dragonNameText.text = def.GetLocalized("tidName");
+
+		// Dragon preview
+		m_preview.LoadDragon(def.sku);
+
+		// Tier info
+		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, m_dragonData.tierDef.GetAsString("icon"));
+
+		// If the unlocked dragon is of different tier as the dragon used to unlocked it, show 'new preys' banner
+		if(m_newPreysInfo != null) {
+			DefinitionNode previousDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, def.GetAsString("previousDragonSku"));
+			if(previousDragonDef != null && previousDragonDef.Get("tier") != m_dragonData.tierDef.sku) {
+				m_newPreysInfo.SetActive(true);
+			} else {
+				m_newPreysInfo.SetActive(false);
+			}
+		}
+
+		// Stats
+		if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(m_dragonData.maxHealth, 0);
+		if(m_energyText != null) m_energyText.text = StringUtils.FormatNumber(m_dragonData.baseEnergy, 0);
+
+		// Price - only SC, dragon is already unlocked!
+		float priceSC = def.GetAsFloat("unlockPriceCoins");
+		m_purchaseButton.SetAmount(priceSC, UserProfile.Currency.SOFT);
+
+		// Start with button hidden
+		m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide(false);
+
+		// Hide tap to continue
+		m_tapToContinue.ForceHide(false);
+
+		// Launch sequence!
+		m_sequence.Launch();
 	}
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Tap to continue has been pressed.
+	/// </summary>
+	public void OnTapToContinue() {
+		// Only if enabled! (to prevent spamming)
+		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
+		if(!m_tapToContinue.visible) return;
+
+		// Hide tap to continue to prevent spamming
+		m_tapToContinue.Hide();
+
+		// Continue sequence
+		m_sequence.Play();
+	}
+
+	/// <summary>
+	/// The button to purchase current skin has been pressed.
+	/// </summary>
+	public void OnPurchaseDragonButton() {
+		// Get price and start purchase flow
+		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_COINS");
+		purchaseFlow.OnSuccess.AddListener(
+			(ResourcesFlow _flow) => {
+				// Just acquire target dragon!
+				// [AOC] Unless testing!
+				if(!CPResultsScreenTest.testEnabled) {
+					m_dragonData.Acquire();
+				}
+
+				// Throw out some fireworks!
+				m_controller.scene.LaunchConfettiFX();
+
+				// Hide the button to prevent spamming
+				m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide();
+
+				// Same with tap to continue
+				m_tapToContinue.ForceHide();
+
+				// Continue with the animation after some delay
+				UbiBCN.CoroutineManager.DelayedCall(() => {
+					m_sequence.Play();
+				}, 1f);
+			}
+		);
+		purchaseFlow.Begin(m_dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, m_dragonData.def);
+	}
+
+	/// <summary>
+	/// Dragon info button has been pressed.
+	/// </summary>
+	public void OnDragonInfoButton() {
+		// Open the dragon info popup initialized with the unlocked dragon info
+		PopupController popup = PopupManager.LoadPopup(PopupDragonInfo.PATH);
+		PopupDragonInfo dragonInfoPopup = popup.GetComponent<PopupDragonInfo>();
+		dragonInfoPopup.Init(m_dragonData);
+		popup.Open();
+	}
 }
