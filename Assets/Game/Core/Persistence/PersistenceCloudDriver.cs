@@ -240,7 +240,7 @@ public class PersistenceCloudDriver
 			} 
 			else if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 			{
-				// If we need to merge with socil account then we need the user
+				// If we need to merge with social account then we need the user
 				// to choose what to do explicitly, so we recommend cloud if 
 				// cloud persistence is ahead, otherwise we let the user choose.
 				// Anyway it's recommendable to use the cloud because when choosing
