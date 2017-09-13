@@ -23,6 +23,7 @@ public class PopupMessage : MonoBehaviour
     public class Config
     {
         public string TitleTid { get; set; }
+		public bool ShowTitle { get; set; }
         public string MessageTid { get; set; } 
         public string[] MessageParams { get; set; }
 
@@ -39,6 +40,8 @@ public class PopupMessage : MonoBehaviour
 
         public string ExtraButtonTid { get; set; }
         public Action OnExtra { get; set; }
+
+		public bool HandleBackButton { get; set; }
 
         public enum EButtonsMode
         {
@@ -60,6 +63,7 @@ public class PopupMessage : MonoBehaviour
         public void Reset()
         {
             TitleTid = null;
+			ShowTitle = true;
             MessageTid = null;
             MessageParams = null;
             TitleText = null;
@@ -70,6 +74,7 @@ public class PopupMessage : MonoBehaviour
             OnCancel = null;
             ButtonMode = EButtonsMode.None;
             IsButtonCloseVisible = true;
+			HandleBackButton = true;
         }
     }
 
@@ -178,6 +183,14 @@ public class PopupMessage : MonoBehaviour
         }
 
         m_config = config;
+
+		PopupBackButtonHandler backHandler =  GetComponent<PopupBackButtonHandler>();
+        if ( backHandler != null )
+        {
+        	backHandler.enabled = m_config.HandleBackButton;
+        }
+
+        m_titleText.enabled = m_config.ShowTitle;
 
         // Tid has priority over the plain text
         if (m_config.TitleTid != null)

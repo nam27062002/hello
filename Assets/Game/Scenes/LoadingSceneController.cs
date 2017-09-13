@@ -40,7 +40,9 @@ public class LoadingSceneController : SceneController {
 
 			PopupMessage.Config config = PopupMessage.GetConfig();
             config.TitleTid = kPopupConfig.m_strTitle;
+			config.ShowTitle = !string.IsNullOrEmpty( kPopupConfig.m_strTitle);
 			config.MessageTid = kPopupConfig.m_strMessage;
+			config.HandleBackButton = false;
 
 			m_popupConfig = kPopupConfig;
             if (kPopupConfig.m_kPopupButtons.Count == 2)
