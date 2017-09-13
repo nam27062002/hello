@@ -362,6 +362,6 @@ public class SocialPlatformManager : MonoBehaviour
     private const string LOG_CHANNEL = "[Social]";
     public static void Log(string msg)
     {
-        Log(LOG_CHANNEL + msg);
+        Debug.Log(LOG_CHANNEL + msg);
     }
 }
