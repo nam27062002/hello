@@ -398,8 +398,11 @@ public class PersistenceCloudDriver
 								
 				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 				{
-                    // Calety is called to override game platform token so the game will log in server with the right account Id when reloading	
+                    // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
                     GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+
+                    // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
+                    GameSessionManager.SharedInstance.LogOutFromServer(false);
 
                     // PersistencePrefs are deleted since it has to be overridden by the remove account id
                     PersistencePrefs.Clear();

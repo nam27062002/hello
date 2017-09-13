@@ -492,7 +492,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
             switch (Model_State)
             {
                 case EState.LoggedIn:
-                case EState.LoggedInAndIncentivised:                                    
+                case EState.LoggedInAndIncentivised:
+                case EState.PreviouslyLoggedIn:
                     m_userLoggedInRoot.SetActive(true);
                     m_userAvatarImage.gameObject.SetActive(false);
                     //m_profileSpinner.SetActive(true);                    
@@ -506,12 +507,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
                     break;
 
+                    /*
                 case EState.PreviouslyLoggedIn:
                     m_userPreviouslyLoggedInRoot.SetActive(true);                                        
                     string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
                     m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, platformName);
                     m_socialMessageText.Localize(TID_CLOUD_DESC, platformName);
-                    break;                
+                    break;     
+                    */           
             }
         }
     }    
@@ -519,8 +522,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void User_LoadProfileInfo()
     {
         m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
-        
-        /*
+                
         SocialPlatformManager.SharedInstance.GetProfileInfo(
             delegate (string userName)
             {
@@ -552,8 +554,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                         }
                     }
                 }
-            });  
-            */              
+            });                           
     }
     #endregion
 
