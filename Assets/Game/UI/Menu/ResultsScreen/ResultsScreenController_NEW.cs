@@ -43,6 +43,9 @@ public class ResultsScreenController_NEW : MonoBehaviour {
 
 	// Other references
 	private ResultsSceneSetup m_scene = null;
+	public ResultsSceneSetup scene {
+		get { return m_scene; }
+	}
 
 	// Internal
 	private Step m_step = Step.INIT;

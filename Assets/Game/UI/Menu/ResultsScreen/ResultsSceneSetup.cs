@@ -44,6 +44,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
 	[SerializeField] private Transform m_eggSlot = null;
 	[SerializeField] private Animator m_goldMountainAnimator = null;
+	[SerializeField] private ParticleSystem m_confettiFX = null;
 
 	[Comment("Sort chest slots from left to right, chests will be spawned from the center depending on how many were collected.\nAlways 5 slots, please.", 10)]
 	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
@@ -216,5 +217,22 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+
+		// Trigger confetti anim
+		LaunchConfettiFX();
+	}
+
+	/// <summary>
+	/// Launches the disguise purchased FX on the selected dragon.
+	/// </summary>
+	public void LaunchConfettiFX() {
+		// Restart effect
+		m_confettiFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+		m_confettiFX.Play(true);
+
+		// Restart SFX
+		string audioId = "hd_unlock_dragon";
+		AudioController.Stop(audioId);
+		AudioController.Play(audioId);
 	}
 }

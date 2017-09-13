@@ -33,6 +33,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
 	[Space]
+	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
 	[SerializeField] private TweenSequence m_sequence = null;
 
 	// Internal
@@ -75,6 +76,9 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+
+		// Hide tap to continue
+		m_tapToContinue.ForceHide(false);
 
 		// Launch sequence!
 		m_sequence.Launch();
@@ -218,5 +222,20 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 		} else {
 			m_eggNotFoundAnim.ForceShow();
 		}
+	}
+
+	/// <summary>
+	/// The tap to continue button has been pressed.
+	/// </summary>
+	public void OnTapToContinue() {
+		// Only if enabled! (to prevent spamming)
+		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
+		if(!m_tapToContinue.visible) return;
+
+		// Hide tap to continue to prevent spamming
+		m_tapToContinue.Hide();
+
+		// Launch end sequence
+		m_sequence.Play();
 	}
 }

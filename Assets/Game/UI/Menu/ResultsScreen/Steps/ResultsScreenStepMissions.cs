@@ -30,6 +30,7 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
 	[Space]
+	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
 	[SerializeField] private TweenSequence m_sequence = null;
 	
 	//------------------------------------------------------------------------//
@@ -105,6 +106,9 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
 
+		// Hide tap to continue
+		m_tapToContinue.ForceHide(false);
+
 		// Launch sequence!
 		m_sequence.Launch();
 	}
@@ -128,5 +132,23 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 			m_controller.totalCoins += _pill.mission.rewardCoins;
 			m_coinsCounter.SetValue(m_controller.totalCoins, true);
 		}, 0.15f);
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The tap to continue button has been pressed.
+	/// </summary>
+	public void OnTapToContinue() {
+		// Only if enabled! (to prevent spamming)
+		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
+		if(!m_tapToContinue.visible) return;
+
+		// Hide tap to continue to prevent spamming
+		m_tapToContinue.Hide();
+
+		// Launch end sequence
+		m_sequence.Play();
 	}
 }

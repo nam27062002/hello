@@ -27,8 +27,7 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 	[SerializeField] private ResultsScreenXPBar m_xpBar = null;
 	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
 	[Space]
-	[SerializeField] private TweenSequence m_showSequence = null;
-	[SerializeField] private TweenSequence m_hideSequence = null;
+	[SerializeField] private TweenSequence m_sequence = null;
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -52,7 +51,7 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 		m_xpBar.OnAnimationFinished.AddListener(OnXpBarAnimFinished);
 
 		// Mark step as finished when finish animation ends
-		m_hideSequence.OnFinished.AddListener(() => { OnFinished.Invoke(); });
+		m_sequence.OnFinished.AddListener(() => { OnFinished.Invoke(); });
 	}
 
 	/// <summary>
@@ -63,7 +62,7 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 		m_tapToContinue.ForceHide(false);
 
 		// Launch show sequence - it should trigger the XP bar when adequate
-		m_showSequence.Launch();
+		m_sequence.Launch();
 	}
 
 	//------------------------------------------------------------------------//
@@ -86,10 +85,8 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 		if(nextStep == ResultsScreenController_NEW.Step.FINISHED) {
 			m_tapToContinue.Show();
 		} else {
-			// Launch end sequence after a delay
-			UbiBCN.CoroutineManager.DelayedCall(() => {
-				m_hideSequence.Launch();
-			}, 0.5f);
+			// Continue with the sequence
+			m_sequence.Play();
 		}
 	}
 
@@ -97,10 +94,14 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 	/// The tap to continue button has been pressed.
 	/// </summary>
 	public void OnTapToContinue() {
+		// Only if enabled! (to prevent spamming)
+		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
+		if(!m_tapToContinue.visible) return;
+
 		// Hide tap to continue to prevent spamming
 		m_tapToContinue.Hide();
 
-		// Launch end sequence
-		m_hideSequence.Launch();
+		// Continue with the sequence
+		m_sequence.Play();
 	}
 }

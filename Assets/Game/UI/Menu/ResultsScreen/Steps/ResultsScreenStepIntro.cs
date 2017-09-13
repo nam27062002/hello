@@ -43,6 +43,9 @@ public class ResultsScreenStepIntro : ResultsScreenStep {
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
+		// Launch dragon intro animation
+		m_controller.scene.LaunchDragonAnim();
+
 		// Just give enough time for the dragon animation to finish
 		UbiBCN.CoroutineManager.DelayedCall(
 			() => {

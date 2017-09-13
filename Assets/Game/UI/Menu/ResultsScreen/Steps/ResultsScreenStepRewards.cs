@@ -26,6 +26,8 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private NumberTextAnimator m_coinsText = null;
+	[Space]
+	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
 	[SerializeField] private TweenSequence m_sequence = null;
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
@@ -61,6 +63,9 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 		// Instantly set total amount of rewarded coins
 		m_coinsText.SetValue(m_controller.coins + m_controller.survivalBonus, false);
 
+		// Hide tap to continue
+		m_tapToContinue.ForceHide(false);
+
 		// Launch sequence!
 		m_sequence.Launch();
 	}
@@ -76,5 +81,20 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 		// Update total rewarded coins and update counter
 		m_controller.totalCoins += m_controller.coins + m_controller.survivalBonus;
 		m_coinsCounter.SetValue(m_controller.totalCoins, true);
+	}
+
+	/// <summary>
+	/// The tap to continue button has been pressed.
+	/// </summary>
+	public void OnTapToContinue() {
+		// Only if enabled! (to prevent spamming)
+		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
+		if(!m_tapToContinue.visible) return;
+
+		// Hide tap to continue to prevent spamming
+		m_tapToContinue.Hide();
+
+		// Launch end sequence
+		m_sequence.Play();
 	}
 }
