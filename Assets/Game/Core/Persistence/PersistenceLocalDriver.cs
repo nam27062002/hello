@@ -17,7 +17,11 @@ public class PersistenceLocalDriver
 		Reset();
 	}
 
-	protected virtual void Reset()
+    public void Destroy()
+    {
+    }
+
+    protected virtual void Reset()
 	{
 		IsLoadedInGame = false;
 		UpdatesAheadOfCloud = 0;

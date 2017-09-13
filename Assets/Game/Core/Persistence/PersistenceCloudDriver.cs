@@ -22,7 +22,22 @@ public class PersistenceCloudDriver
 
 	public PersistenceData Data { get; set; }
 
-	private EState State { get; set; }
+    private EState mState;
+	private EState State
+    {
+        get { return mState; }
+        set
+        {
+            mState = value;
+            switch (mState)
+            {
+                case EState.NotLoggedIn:
+                    Upload_IsAllowed = false;
+                    break;
+            }
+
+        }
+    }
 
 	private PersistenceLocalDriver LocalDriver { get; set; }
 
@@ -31,11 +46,15 @@ public class PersistenceCloudDriver
 	public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
-		Data = new PersistenceData(dataName);
+		Data = new PersistenceData(dataName);        
 		Reset();
 	}
 
-	private void Reset()
+    public void Destroy()
+    {        
+    }
+
+    private void Reset()
 	{
 		IsInSync = false;
 		State = EState.NotLoggedIn;
@@ -53,8 +72,25 @@ public class PersistenceCloudDriver
 		LocalDriver = localDriver;	
 	}
 
-	#region syncer
-	private bool Syncer_IsSilent { get; set; }
+    public void Logout()
+    {
+        ExtendedLogout();
+
+        if (State == EState.LoggedIn)
+        {
+            // Logs out
+            State = EState.NotLoggedIn;
+            IsInSync = false;
+        }
+    }        
+
+    protected virtual void ExtendedLogout()
+    {
+        SocialPlatformManager.SharedInstance.Logout();
+    }
+
+    #region syncer
+    private bool Syncer_IsSilent { get; set; }
 	private bool Syncer_IsAppInit { get; set; }
 	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult> Syncer_OnSyncDone { get; set; }
@@ -314,7 +350,7 @@ public class PersistenceCloudDriver
 
 			Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
 		}
-	}
+	}    
 
 	private void Syncer_ProcessConflictState(PersistenceStates.EConflictState conflict)
 	{

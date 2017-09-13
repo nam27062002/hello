@@ -50,6 +50,10 @@ public class PersistenceFacade
 	public void Destroy()
 	{
 		Popups_Destroy();
+        if (Config != null)
+        {
+            Config.Destroy();
+        }
 	}
 
     public void Reset()

@@ -3,15 +3,57 @@
     public PersistenceFacadeConfig()
     {
         Setup();
-    }      
+    }
 
-	public PersistenceLocalDriver LocalDriver { get; set; }
-	public PersistenceCloudDriver CloudDriver { get; set; }
+    private PersistenceLocalDriver mLocalDriver;
+	public PersistenceLocalDriver LocalDriver
+    {
+        get { return mLocalDriver;  }
 
-	protected virtual void Setup()
+        set
+        {
+            if (mLocalDriver != null)
+            {
+                mLocalDriver.Destroy();
+            }
+
+            mLocalDriver = value;
+        }
+    }
+
+    private PersistenceCloudDriver mCloudDriver;
+    public PersistenceCloudDriver CloudDriver
+    {
+        get { return mCloudDriver; }
+
+        set
+        {
+            if (mCloudDriver != null)
+            {
+                mLocalDriver.Destroy();
+            }
+
+            mCloudDriver = value;
+        }
+    }
+
+    protected virtual void Setup()
 	{
 		LocalDriver = new PersistenceLocalDriver();
 		CloudDriver = new PersistenceCloudDriver();
 		CloudDriver.Setup(LocalDriver);
 	}
+
+    public void Destroy()
+    {
+        if (LocalDriver != null)
+        {
+            LocalDriver.Destroy();
+        }
+
+        if (CloudDriver != null)
+        {
+            CloudDriver.Destroy();
+        }
+    }
 }
