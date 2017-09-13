@@ -5,6 +5,13 @@
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+// [AOC] Chests and eggs are no longer in the 3D scene with the new results screen
+//		 Keep the code just in case
+//#define SHOW_COLLECTIBLES
+
+//----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
@@ -37,6 +44,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
 	[SerializeField] private Transform m_eggSlot = null;
 	[SerializeField] private Animator m_goldMountainAnimator = null;
+	[SerializeField] private ParticleSystem m_confettiFX = null;
 
 	[Comment("Sort chest slots from left to right, chests will be spawned from the center depending on how many were collected.\nAlways 5 slots, please.", 10)]
 	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
@@ -80,6 +88,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// Initialize the scene and leave it ready for the LaunchAnim() call.
 	/// </summary>
 	public void Init() {
+		#if SHOW_COLLECTIBLES
 		// How many chests?
 		int preCollectedChests = 0;
 		int pendingChests = 0;
@@ -187,7 +196,8 @@ public class ResultsSceneSetup : MonoBehaviour {
 		}
 
 		// Hide egg slot
-		m_eggSlot.gameObject.SetActive(false);
+		m_eggSlot.gameObject.SetActive(m_eggFound);
+		#endif
 
 		// Hide dragon slot
 		m_dragonSlot.gameObject.SetActive(false);
@@ -207,69 +217,22 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+
+		// Trigger confetti anim
+		LaunchConfettiFX();
 	}
 
 	/// <summary>
-	/// Setup and launch results animation based on current game stats (RewardManager, etc.).
+	/// Launches the disguise purchased FX on the selected dragon.
 	/// </summary>
-	/// <returns>The total duration of the animation.</returns>
-	/// <param name="_carouselPill">The carousel's pill, used to sync both animations.</param>
-	public float LaunchRewardsAnim(ResultsScreenChestsPill _carouselPill) {
-		// Make things easy with a sequence!
-		Sequence seq = DOTween.Sequence();
-		seq.AppendInterval(_carouselPill.animator.tweenDuration);	// Initial delay (time for the pill to appear)
-		seq.AppendInterval(UIConstants.resultsChestsAndEggMinDuration * 0.5f);	// Extra delay - half here, half by the end of the whole sequence
+	public void LaunchConfettiFX() {
+		// Restart effect
+		m_confettiFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+		m_confettiFX.Play(true);
 
-		// Program animation of selected slots
-		for(int i = 0; i < m_rewardedSlots.Count; i++) {
-			// In order to be able to use inline functions within a loop, we must store looped vars into a copy
-			ResultsSceneChestSlot slot = m_rewardedSlots[i];
-
-			// Launch anim
-			seq.AppendCallback(() => {
-				// Do it
-				slot.gameObject.SetActive(true);
-				slot.LaunchRewardAnim();
-			});
-
-			seq.AppendInterval(UIConstants.resultsChestDuration * 0.4f);	// Arbitrary, to sync with animation
-			seq.AppendCallback(() => {
-				// Update pill
-				_carouselPill.IncreaseChestCount();
-			});
-
-			// Add arbitrary delay (time to finish the animation + delay to next chest)
-			seq.AppendInterval(UIConstants.resultsChestDuration * 0.6f);
-		}
-
-		// Program egg animation (if required!)
-		if(m_eggFound) {
-			// Precompute durations (must add up to 1f)
-			float eggAnimDuration = UIConstants.resultsEggDuration;
-			float inDelay = eggAnimDuration * 0.1f;
-			float inDuration = eggAnimDuration * 0.7f;
-			float outDuration = eggAnimDuration * 0.2f;
-
-			// Initialize
-			float eggSlotScale = m_eggSlot.transform.localScale.x;
-			m_eggSlot.gameObject.SetActive(true);
-			m_eggSlot.transform.SetLocalScale(0f);
-			seq.AppendInterval(inDelay);	// Initial delay
-
-			// Up
-			seq.Append(m_eggSlot.DOScale(eggSlotScale, inDuration * 0.9f).SetEase(Ease.OutBack));
-			seq.Join(m_eggSlot.DOLocalMoveY(0.25f, inDuration * 0.9f).SetRelative(true).SetEase(Ease.OutBack));
-			seq.Join(m_eggSlot.DOBlendableLocalRotateBy(Vector3.up * 360f, inDuration, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
-
-			// Down
-			seq.Append(m_eggSlot.DOLocalMoveY(-0.25f, outDuration).SetRelative(true).SetEase(Ease.OutQuad));
-		}
-
-		// Final delay
-		seq.AppendInterval(UIConstants.resultsChestsAndEggMinDuration * 0.5f);	// Final delay (time to process everything and let the last chest animation finish
-
-		// Done!
-		seq.Play();
-		return seq.Duration();
+		// Restart SFX
+		string audioId = "hd_unlock_dragon";
+		AudioController.Stop(audioId);
+		AudioController.Play(audioId);
 	}
 }

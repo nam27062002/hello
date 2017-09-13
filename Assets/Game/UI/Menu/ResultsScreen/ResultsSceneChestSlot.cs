@@ -33,8 +33,16 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	// Internal
 	private ChestViewController m_chest = null;
 	private GameObject m_rewardObj = null;
+
 	private Chest.RewardData m_rewardData = null;
+	public Chest.RewardData rewardData {
+		get { return m_rewardData; }
+	}
+
 	private Chest.RewardType m_rewardType = Chest.RewardType.SC;	// Default SC
+	public Chest.RewardType rewardType {
+		get { return m_rewardType; }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -50,6 +58,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH);
 		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
 		chestObj.transform.SetParent(this.transform, false);
+		chestObj.SetLayerRecursively(this.gameObject.layer);
 		m_chest = chestObj.GetComponentInChildren<ChestViewController>();
 
 		// Subscribe to chest events
@@ -115,6 +124,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 			GameObject rewardPrefab = Resources.Load<GameObject>(rewardPrefabPath);
 			m_rewardObj = GameObject.Instantiate<GameObject>(rewardPrefab);
 			m_rewardObj.transform.SetParent(this.transform, false);
+			m_rewardObj.SetLayerRecursively(this.gameObject.layer);
 			m_rewardObj.SetActive(false);
 
 			// Set text
@@ -124,10 +134,18 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 				text.text = "+" + StringUtils.FormatNumber(m_rewardData.amount);
 
 				// Make it look to parent camera
+				// [AOC] Make it UI compatible with the new results screen
+				/*
 				ResultsSceneSetup parentScene = GetComponentInParent<ResultsSceneSetup>();
 				LookAt lookAt = text.GetComponent<LookAt>();
 				if(lookAt != null && parentScene != null) {
 					lookAt.lookAtObject = parentScene.camera.transform;
+				}
+				*/
+				Canvas parentCanvas = GetComponentInParent<Canvas>();
+				LookAt lookAt = text.GetComponent<LookAt>();
+				if(lookAt != null && parentCanvas != null) {
+					lookAt.lookAtObject = parentCanvas.worldCamera.transform;
 				}
 			}
 		}
