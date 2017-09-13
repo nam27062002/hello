@@ -187,6 +187,9 @@ public class SocialPlatformManager : MonoBehaviour
 
     public void Login(bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit );
+
         Login_Discard();
 
         Login_IsLogging = true;
@@ -225,6 +228,9 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_OnLoggedInHelper(bool logged)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("(LOGGING) onLogged " + logged);
+
         Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
         Login_OnLoggedIn(logged);
     }
@@ -254,16 +260,25 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_OnMergeSucceeded()
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("(LOGGING) MERGE SUCCEEDED!");
+
         Login_MergeState = ELoginMergeState.Succeeded;
     }
 
     private void Login_OnMergeFailed()
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("(LOGGING) MERGE FAILED!");
+
         Login_MergeState = ELoginMergeState.Failed;
     }
 
     private void Login_OnMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("(LOGGING) MERGE POPUP NEEDED! eType = " + eType + " kCloudAccount = " + kCloudAccount);
+
         Login_MergeState = ELoginMergeState.ShowPopupNeeeded;
 
         JSONNode persistenceAsJson = null;
@@ -313,6 +328,9 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_PerformDone(ELoginResult result)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("(LOGGING) DONE! " + result);
+
         if (Login_OnDone != null)
         {
             Login_OnDone(result, Login_MergePersistence);
@@ -339,5 +357,11 @@ public class SocialPlatformManager : MonoBehaviour
         {
             Login_Update();
         }
+    }
+
+    private const string LOG_CHANNEL = "[Social]";
+    public static void Log(string msg)
+    {
+        Log(LOG_CHANNEL + msg);
     }
 }
