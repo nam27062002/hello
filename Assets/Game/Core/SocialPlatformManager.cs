@@ -359,7 +359,7 @@ public class SocialPlatformManager : MonoBehaviour
         }
     }
 
-    private const string LOG_CHANNEL = "[Social]";
+    private const string LOG_CHANNEL = "[Social] ";
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);

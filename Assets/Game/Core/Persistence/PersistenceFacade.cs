@@ -642,7 +642,7 @@ public class PersistenceFacade
 
     #region log
     private static bool LOG_USE_COLOR = false;
-    private const string LOG_CHANNEL = "[Persistence]:";    
+    private const string LOG_CHANNEL = "[Persistence] ";    
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
     public static void Log(string msg)
