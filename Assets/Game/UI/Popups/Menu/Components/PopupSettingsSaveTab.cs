@@ -326,12 +326,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }   
     
     private void Cloud_Refresh()
-    {
-        Cloud_ChangeValueEnabled = false;
+    {        
         bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
         m_cloudEnableSlider.value = (isSaveEnabled) ? 1 : 0;
-        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();
-        Cloud_ChangeValueEnabled = true;
+        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();     
     }    
     #endregion
 
