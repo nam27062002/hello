@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 103418}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 100.143974, y: -6.5525446, z: -90.91127}
+  m_LocalPosition: {x: -176.16737, y: 115.642265, z: -29.807579}
   m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
   m_Children:
   - {fileID: 4856551726102502}
@@ -676,6 +676,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1528330417022208
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4496080847131722}
+  - component: {fileID: 114119437114930900}
+  m_Layer: 12
+  m_Name: R_Beard
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1537245574272812
 GameObject:
   m_ObjectHideFlags: 1
@@ -746,6 +762,22 @@ GameObject:
   - component: {fileID: 4130776523683388}
   m_Layer: 0
   m_Name: Fire_Dummy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1633663184108210
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4971766303543604}
+  - component: {fileID: 114369576903642730}
+  m_Layer: 12
+  m_Name: L_Beard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1447,6 +1479,8 @@ Transform:
   - {fileID: 4285492387775742}
   - {fileID: 4039141041141400}
   - {fileID: 4973110363640964}
+  - {fileID: 4971766303543604}
+  - {fileID: 4496080847131722}
   m_Father: {fileID: 421236}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1675,6 +1709,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4391483769724722}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4496080847131722
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1528330417022208}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4314950336550126}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4499202887999850
 Transform:
@@ -2140,6 +2187,19 @@ Transform:
   m_Father: {fileID: 4979701305453444}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4971766303543604
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1633663184108210}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4314950336550126}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4973110363640964
 Transform:
   m_ObjectHideFlags: 1
@@ -2271,6 +2331,23 @@ MonoBehaviour:
   - Dragon_LMoustache_3
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
+--- !u!114 &114119437114930900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1528330417022208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_root: {fileID: 4402944356342596}
+  m_partsNames:
+  - Dragon_RBeard_2
+  - Dragon_RBeard_3
+  springSpeed: 10
+  m_upDir: {x: 0, y: -90, z: 0}
 --- !u!114 &114152913688599464
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2335,6 +2412,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 4
+--- !u!114 &114369576903642730
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1633663184108210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_root: {fileID: 4414051837319152}
+  m_partsNames:
+  - Dragon_LBeard_2
+  - Dragon_LBeard_3
+  springSpeed: 10
+  m_upDir: {x: 0, y: -90, z: 0}
 --- !u!114 &114665739452903646
 MonoBehaviour:
   m_ObjectHideFlags: 1
