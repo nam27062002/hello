@@ -26,34 +26,33 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
     private EAdPurpose CurrentAdPurpose { get; set; }
     private float CurrentAdStartTimestamp { get; set; }
 
-    public void Init()
-	{
-		if (FeatureSettingsManager.AreAdsEnabled)
-        {
-            string interstitialId = "af85208c87c746e49cb88646d60a11f9";
-            string rewardId = "242e5f30622549f0ae85de0921842b71";
-            bool isPhone = true;
-            // TODO: Check if tablet
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                if (isPhone)
-                {
-                    interstitialId = "af85208c87c746e49cb88646d60a11f9";
-                    rewardId = "242e5f30622549f0ae85de0921842b71";
-                }
-            }
-            else if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
-                if (isPhone)
-                {
-                    interstitialId = "c3c79080175c42da94013bccf8b0c9a2";
-                    rewardId = "5e6b8e4e20004d2c97c8f3ffd0ed97e2";
-                }
-            }
+	private bool IsInited { get; set; }
 
-            CurrentAdPurpose = EAdPurpose.NONE;
-            CurrentAdStartTimestamp = 0f;
-            AdsManager.SharedInstance.Init(interstitialId, rewardId, true, 30);
+    public void Init() {
+		if (FeatureSettingsManager.AreAdsEnabled) {
+			if (!IsInited)  {
+				IsInited = true;
+
+				string interstitialId = "af85208c87c746e49cb88646d60a11f9";
+				string rewardId = "242e5f30622549f0ae85de0921842b71";
+				bool isPhone = true;
+				// TODO: Check if tablet
+				if (Application.platform == RuntimePlatform.Android) {
+					if (isPhone) {
+						interstitialId = "af85208c87c746e49cb88646d60a11f9";
+						rewardId = "242e5f30622549f0ae85de0921842b71";
+					}
+				} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
+					if (isPhone) {
+						interstitialId = "c3c79080175c42da94013bccf8b0c9a2";
+						rewardId = "5e6b8e4e20004d2c97c8f3ffd0ed97e2";
+					}
+				}
+
+				CurrentAdPurpose = EAdPurpose.NONE;
+				CurrentAdStartTimestamp = 0f;
+				AdsManager.SharedInstance.Init (interstitialId, rewardId, true, 30);
+			}
         }
 	}
 

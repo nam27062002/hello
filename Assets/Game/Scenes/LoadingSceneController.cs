@@ -334,7 +334,7 @@ public class LoadingSceneController : SceneController {
 				EntityManager.CreateInstance(true);
 				InstanceManager.CreateInstance(true);
 
-		        GameAds.CreateInstance(true);
+		        GameAds.CreateInstance(false);
 		        GameAds.instance.Init();
                  
             	ControlPanel.CreateInstance();
@@ -378,7 +378,7 @@ public class LoadingSceneController : SceneController {
         }
     }
 
-    private const string LOG_CHANNEL = "[LOADING]";
+    private const string LOG_CHANNEL = "[LOADING] ";
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);
