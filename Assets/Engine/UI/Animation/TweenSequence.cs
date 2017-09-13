@@ -89,6 +89,10 @@ public class TweenSequence : MonoBehaviour {
 		m_sequence.InsertCallback(m_totalDuration, () => OnFinished.Invoke());	// That way we ensure that the sequence has the expected duration
 	}
 
+	/// <summary>
+	/// Kills the sequence.
+	/// </summary>
+	/// <param name="_restoreValues">If set to <c>true</c> restore values.</param>
 	private void KillSequence(bool _restoreValues) {
 		// Ignore if we have no sequence
 		if(m_sequence == null) return;
@@ -112,6 +116,23 @@ public class TweenSequence : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		KillSequence(false);
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Play the sequence.
+	/// </summary>
+	public void Play() {
+		m_sequence.Play();
+	}
+
+	/// <summary>
+	/// Pause the sequence.
+	/// </summary>
+	public void Pause() {
+		m_sequence.Pause();
 	}
 
 	//------------------------------------------------------------------------//
