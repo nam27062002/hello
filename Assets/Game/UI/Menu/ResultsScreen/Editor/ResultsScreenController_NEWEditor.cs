@@ -61,7 +61,8 @@ public class ResultsScreenController_NEWEditor : Editor {
 					new StepSetup(ResultsScreenController_NEW.Step.SKIN_UNLOCKED, true, true, "Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run"),
 					new StepSetup(ResultsScreenController_NEW.Step.DRAGON_UNLOCKED, true, false, "Optional, if a new dragon was unlocked"),
 
-					new StepSetup(ResultsScreenController_NEW.Step.GLOBAL_EVENT, true, true, "Optional, if there is an active event and the player has a score to add to it"),
+					new StepSetup(ResultsScreenController_NEW.Step.GLOBAL_EVENT_CONTRIBUTION, true, true, "Optional, if there is an active event and the player has a score to add to it"),
+					new StepSetup(ResultsScreenController_NEW.Step.GLOBAL_EVENT_NO_CONTRIBUTION, true, true, "Optional, if there is an active event but the player didn't score"),
 
 					new StepSetup(ResultsScreenController_NEW.Step.FINISHED, false, false, ""),
 					new StepSetup(ResultsScreenController_NEW.Step.COUNT, false, false, "")

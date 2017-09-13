@@ -57,7 +57,7 @@ public class PopupGlobalEventNoContribution : MonoBehaviour {
 
 			// Parse remaining time
 			m_timerText.text = TimeUtils.FormatTime(
-				m_event.remainingTime.TotalSeconds,
+				System.Math.Max(m_event.remainingTime.TotalSeconds, 0),
 				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			);

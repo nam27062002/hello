@@ -48,6 +48,9 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
+		// Never during first run!
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) return false;
+
 		return true;
 	}
 

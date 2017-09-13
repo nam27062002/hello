@@ -41,6 +41,9 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
+		// Never during first run!
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) return false;
+
 		// Display if we have at least one mission with its objective completed
 		for(int i = 0; i < m_pills.Length; ++i) {
 			if(m_pills[i].MustBeDisplayed()) {

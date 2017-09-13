@@ -72,21 +72,15 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 	/// XP Bar animation has finished.
 	/// </summary>
 	private void OnXpBarAnimFinished() {
-		// If there aren't any more steps to be launched, show the "Tap to continue"
+		// Show the "Tap to continue" except when a skin or dragon have been unlocked (go straight to those steps in that case)
 		ResultsScreenController_NEW.Step nextStep = m_controller.CheckNextStep();
-
-		// Ignore TRACKING and APPLY_REWARDS steps
-		while(nextStep == ResultsScreenController_NEW.Step.TRACKING
-		   || nextStep == ResultsScreenController_NEW.Step.APPLY_REWARDS) {
-			nextStep = m_controller.CheckNextStep(nextStep);
-		}
-
-		// Show tap to continue or auto-finish?
-		if(nextStep == ResultsScreenController_NEW.Step.FINISHED) {
-			m_tapToContinue.Show();
-		} else {
+		if(nextStep == ResultsScreenController_NEW.Step.SKIN_UNLOCKED
+		|| nextStep == ResultsScreenController_NEW.Step.DRAGON_UNLOCKED) {
 			// Continue with the sequence
 			m_sequence.Play();
+		} else {
+			// Show tap to continue
+			m_tapToContinue.Show();
 		}
 	}
 

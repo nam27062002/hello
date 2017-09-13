@@ -168,6 +168,9 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
 					m_dragonData.Acquire();
 				}
 
+				// Save!
+				PersistenceFacade.instance.Save_Request(true);
+
 				// Throw out some fireworks!
 				m_controller.scene.LaunchConfettiFX();
 

@@ -260,8 +260,16 @@ public class ResultsScreenXPBar : DragonXPBar {
 		m_disguisesFoldToggle.interactable = false;
 		m_flagsFolded = false;	// Flags should be unfolded by the end of the animation
 
-		// Compute total animation duration and re-adjust speed if need be
+		// How much should we advance?
 		float deltaOffset = m_targetDelta - m_initialDelta;
+
+		// If we don't need to move at all, instantly end animation
+		if(deltaOffset <= 0f) {
+			OnXPAnimEnd();
+			return;
+		}
+
+		// Compute total animation duration and re-adjust speed if need be
 		float speed = UIConstants.resultsXPBarSpeed;
 		float duration = deltaOffset/speed;
 		if(duration < UIConstants.resultsXPBarMinMaxDuration.min) {
@@ -288,7 +296,6 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Return total animation duration
 		// [AOC] We can't use the tween.Duration property because it's a speed base tween, luckily we have already precomputed the duration ^^
 		//return m_xpBarTween.Delay() + duration;
-
 	}
 
 	//------------------------------------------------------------------------//

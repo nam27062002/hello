@@ -166,9 +166,9 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 		endTime = EditorGUI.DelayedFloatField(pos, endTime);
 
 		// Round to 2 decimals
-		startTime = Mathf.Floor(startTime * 100f) / 100f;
+		/*startTime = Mathf.Floor(startTime * 100f) / 100f;
 		endTime = Mathf.Floor(endTime * 100f) / 100f;
-		duration = Mathf.Floor(duration * 100f) / 100f;
+		duration = Mathf.Floor(duration * 100f) / 100f;*/
 
 		// Validate values and apply!!
 		// If end time is out of bounds, move both start and end time (probably duration increased or total sequence duration decreased)
