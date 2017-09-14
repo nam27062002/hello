@@ -107,6 +107,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4576003836605554}
   - component: {fileID: 95580597446025970}
+  - component: {fileID: 114440134585038658}
   m_Layer: 22
   m_Name: view
   m_TagString: Untagged
@@ -479,6 +480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_isPlaceHolder: 0
   m_walkSpeed: 15
   m_runSpeed: 57
   m_minPlaybakSpeed: 1
@@ -686,6 +688,17 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+--- !u!114 &114440134585038658
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1324009409417964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114574968240998206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -763,9 +776,8 @@ MonoBehaviour:
   m_edible:
     m_rotateToMouth: 3
   m_inflammable:
-    m_ashesAsset: 
     m_burningTime: 0
-    m_dissolveTime: 1.5
+    m_canBeDissolved: 1
     m_ashExceptions: []
   m_onSpawnSound: 
   m_airMotion:
