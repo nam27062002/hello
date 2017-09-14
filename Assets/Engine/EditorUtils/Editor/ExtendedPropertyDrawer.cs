@@ -117,10 +117,38 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 	/// advance position.
 	/// </summary>
 	/// <param name="_property">The property to be drawn.</param>
-	protected void DrawAndAdvance(SerializedProperty _property) {
+	/// <param name="_label">Optional custom label to be displayed. Leave null to display the default property label.</param>
+	protected void DrawAndAdvance(SerializedProperty _property, string _label = null) {
+		// Skip if property not valid
+		if(_property == null) return;
+
+		// Figure out label
+		string label = _label;
+		if(_label == null) {
+			label = _property.displayName;
+		}
+
+		// Draw the property!
 		m_pos.height = EditorGUI.GetPropertyHeight(_property);
-		EditorGUI.PropertyField(m_pos, _property, true);
+		EditorGUI.PropertyField(m_pos, _property, new GUIContent(label), true);
 		AdvancePos();
+	}
+
+	/// <summary>
+	/// Draw a property using its default inspector drawer and automatically 
+	/// advance position.
+	/// Custom implementation with just the property name and a custom label.
+	/// </summary>
+	/// <param name="_parentProperty">The root of the property to be drawn.</param>
+	/// <param name="_propertyName">The name of the property to be drawn.</param>
+	/// <param name="_label">Optional custom label to be displayed. Leave null to display the default property label.</param>
+	protected void DrawAndAdvance(SerializedProperty _parentProperty, string _propertyName, string _label) {
+		// Get the property
+		SerializedProperty p = _parentProperty.FindPropertyRelative(_propertyName);
+		if(p == null) return;
+
+		// Use the other method
+		DrawAndAdvance(p, _label);
 	}
 
 	/// <summary>

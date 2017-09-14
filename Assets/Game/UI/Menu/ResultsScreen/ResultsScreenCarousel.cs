@@ -72,7 +72,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 		Debug.Assert(m_chestsPill != null, "Required field!");
 
 		// Subscribe to the OnFinished event on each pill
-		m_missionPill.OnFinished.AddListener(OnPillFinished);
+//		m_missionPill.OnFinished.AddListener(OnPillFinished);
 		m_chestsPill.OnFinished.AddListener(OnPillFinished);
 	}
 
@@ -81,7 +81,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from the OnFinished event on each pill
-		m_missionPill.OnFinished.RemoveListener(OnPillFinished);
+//		m_missionPill.OnFinished.RemoveListener(OnPillFinished);
 		m_chestsPill.OnFinished.RemoveListener(OnPillFinished);
 	}
 
@@ -93,7 +93,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 	/// </summary>
 	public void Init() {
 		// Disable all carousel elements
-		m_missionPill.animator.ForceHide(false);
+//		m_missionPill.animator.ForceHide(false);
 		m_chestsPill.animator.ForceHide(false);
 
 		// Reset current step
@@ -165,7 +165,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 						targetMission = new Mission();
 						targetMission.InitWithParams(
 							missionDef,
-							DefinitionsManager.SharedInstance.GetDefinition(missionDef.Get("type"), DefinitionsCategory.MISSION_TYPES),
+							DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
 							Random.Range(missionDef.GetAsInt("objectiveBaseQuantityMin"), missionDef.GetAsInt("objectiveBaseQuantityMax")),
 							Random.value < 0.5f	// 50% chace
 						);
@@ -184,7 +184,7 @@ public class ResultsScreenCarousel : MonoBehaviour {
 					HideCurrentPill();
 
 					// Show mission pill
-					m_currentPill = m_missionPill;
+//					m_currentPill = m_missionPill;
 					m_currentPill.ShowAndAnimate(hideAnimDuration);	// Add enough delay to let the previous pill hide
 				} else {
 					// Mission doesn't have to be displayed, check next mission or go to idle if last mission

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,7 +21,6 @@ using DG.Tweening;
 /// <summary>
 /// Controls the summary screen xp bar.
 /// </summary>
-[RequireComponent(typeof(ShowHideAnimator))]
 public class ResultsScreenXPBar : DragonXPBar {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -48,6 +48,9 @@ public class ResultsScreenXPBar : DragonXPBar {
 	[SerializeField] private GameObject m_disguisesContainer = null;
 	[SerializeField] private Button m_disguisesFoldToggle = null;
 	[SerializeField] private GameObject m_disguiseUnlockPrefab = null;
+
+	// Events
+	[HideInInspector] public UnityEvent OnAnimationFinished = new UnityEvent();
 
 	// Disguises unlock
 	private List<ResultsScreenDisguiseFlag> m_flags = new List<ResultsScreenDisguiseFlag>();
@@ -219,7 +222,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 			m_infoText.Localize("TID_RESULTS_DRAGON_ALREADY_UNLOCKED", m_nextDragonData.def.GetLocalized("tidName"));	// "Brute already unlocked!"
 		}
 
-		// Custom treatment to disguises markes in this screen
+		// Custom treatment to disguises markers in this screen
 		for(int i = 0; i < m_disguises.Count; i++) {
 			// Re-attach to use aux slider instead of main one
 			m_disguises[i].barMarker.AttachToSlider(m_auxBar, m_disguises[i].delta);
@@ -249,17 +252,24 @@ public class ResultsScreenXPBar : DragonXPBar {
 	/// Launch the animation from the XP at the start of the game to the XP at the end.
 	/// Init() method must have been called first.
 	/// </summary>
-	/// <returns>The estimated total duration of the animation, in seconds.</returns>
-	public float LaunchAnimation() {
+	public void LaunchAnimation() {
 		// Ignore if already animating
-		if(m_xpBarTween != null) return 0f;
+		if(m_xpBarTween != null) return;// 0f;
 
 		// Don't allow to fold/unfold disguises during animation
 		m_disguisesFoldToggle.interactable = false;
 		m_flagsFolded = false;	// Flags should be unfolded by the end of the animation
 
-		// Compute total animation duration and re-adjust speed if need be
+		// How much should we advance?
 		float deltaOffset = m_targetDelta - m_initialDelta;
+
+		// If we don't need to move at all, instantly end animation
+		if(deltaOffset <= 0f) {
+			OnXPAnimEnd();
+			return;
+		}
+
+		// Compute total animation duration and re-adjust speed if need be
 		float speed = UIConstants.resultsXPBarSpeed;
 		float duration = deltaOffset/speed;
 		if(duration < UIConstants.resultsXPBarMinMaxDuration.min) {
@@ -285,8 +295,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 
 		// Return total animation duration
 		// [AOC] We can't use the tween.Duration property because it's a speed base tween, luckily we have already precomputed the duration ^^
-		return m_xpBarTween.Delay() + duration;
-
+		//return m_xpBarTween.Delay() + duration;
 	}
 
 	//------------------------------------------------------------------------//
@@ -372,6 +381,9 @@ public class ResultsScreenXPBar : DragonXPBar {
 			// Disable invisible objects once the sequence is completed
 			.OnComplete(() => {
 				m_lockIcon.SetActive(false);
+
+				// Notify listeners
+				OnAnimationFinished.Invoke();
 			})
 
 			// Go!!!
@@ -473,12 +485,6 @@ public class ResultsScreenXPBar : DragonXPBar {
 	/// Progression bar animation event.
 	/// </summary>
 	public void OnXPAnimEnd() {
-		// If we reached max delta, a dragon has been unlocked!
-		if(newDragonUnlocked) {
-			// Only if next dragon was locked, obviously!
-			LaunchDragonUnlockAnimation();
-		}
-
 		// Stop FX!
 		if(m_receiveFX != null) m_receiveFX.Stop(true);
 
@@ -493,6 +499,15 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Lose tween reference
 		if(m_xpBarTween != null) {
 			m_xpBarTween = null;
+		}
+
+		// If we reached max delta, a dragon has been unlocked!
+		if(newDragonUnlocked) {
+			// Only if next dragon was locked, obviously!
+			LaunchDragonUnlockAnimation();
+		} else {
+			// Notify the listeners that we're done!
+			OnAnimationFinished.Invoke();
 		}
 	}
 }
