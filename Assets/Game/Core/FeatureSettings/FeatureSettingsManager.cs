@@ -1109,6 +1109,15 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 			return Device_CurrentFeatureSettings.GetValueAsLevel5(FeatureSettings.KEY_PARTICLES);
 		}
 	}    
+
+	public int MaxZoomPerformanceCost
+	{
+		get
+		{
+			return Device_CurrentFeatureSettings.GetValueAsInt( FeatureSettings.MAX_ZOOM_COST );
+		}
+	}
+
     #endregion
 
     #region log

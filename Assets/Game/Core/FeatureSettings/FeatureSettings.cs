@@ -65,6 +65,9 @@ public class FeatureSettings
 	// This key decides the quality level used in the particles manager
 	public const string KEY_PARTICLES = "particles";
 
+	// This key decides the quality level used in the particles manager
+	public const string MAX_ZOOM_COST = "max_zoom_cost";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
