@@ -746,10 +746,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}break;
 		}
 
-
-				
-		m_animator.SetFloat("height", m_height);
-
 		UpdateBodyBending();
 
 		if(m_regionManager == null)
