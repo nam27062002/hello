@@ -411,7 +411,7 @@ public class PersistenceCloudDriver
                     GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
 
                     // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
-                    GameSessionManager.SharedInstance.LogOutFromServer(false);
+                    GameServerManager.SharedInstance.LogOut();
 
                     // PersistencePrefs are deleted since it has to be overridden by the remove account id
                     PersistencePrefs.Clear();
