@@ -164,6 +164,10 @@ public class FeatureSettings
 			data = new DataInt(key, EValueType.Level5, (int)ELevel5Values.mid);
 			Datas.Add(key, data);
 
+			// zoom
+			key = MAX_ZOOM_COST;
+			data = new DataInt(key, EValueType.Int, 3);
+			Datas.Add(key, data);
             /*
             // intTest
             key = KEY_INT_TEST;
