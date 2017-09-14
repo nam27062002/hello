@@ -25,6 +25,7 @@ public class PopupBackButtonHandler : BackButtonHandler {
 	}
 
 	public override void Trigger() {
-		OnBackButton.Invoke();
+		if (enabled)
+			OnBackButton.Invoke();
 	}
 }

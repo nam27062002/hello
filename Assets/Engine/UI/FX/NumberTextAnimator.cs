@@ -28,48 +28,48 @@ public class NumberTextAnimator : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed setup
-	[SerializeField] private float m_duration = 0.5f;
+	[SerializeField] protected float m_duration = 0.5f;
 	public float duration {
 		get { return m_duration; }
 		set { m_duration = value; }
 	}
 
 	// Custom actions and events
-	[SerializeField] private Action<NumberTextAnimator> m_customTextSetter = null;
+	[SerializeField] protected Action<NumberTextAnimator> m_customTextSetter = null;
 	public Action<NumberTextAnimator> CustomTextSetter {
 		get { return m_customTextSetter; }
 		set { m_customTextSetter = value; }
 	}
 
-	[SerializeField] private UnityEvent m_onFinished = new UnityEvent();
+	[SerializeField] protected UnityEvent m_onFinished = new UnityEvent();
 	public UnityEvent OnFinished {
 		get { return m_onFinished; }
 	}
 
 	// References
-	private TextMeshProUGUI m_targetTxt;
+	protected TextMeshProUGUI m_targetTxt;
 	public TextMeshProUGUI text {
 		get { return m_targetTxt; }
 	}
 
 	// Value tracking
-	private long m_initialValue = 0;
+	protected long m_initialValue = 0;
 	public long initialValue {
 		get { return m_initialValue; }
 	}
 
-	private long m_finalValue = 0;
+	protected long m_finalValue = 0;
 	public long finalValue {
 		get { return m_finalValue; }
 	}
 
-	private long m_currentValue = 0;
+	protected long m_currentValue = 0;
 	public long currentValue {
 		get { return m_currentValue; }
 	}
 
 	// Internal logic
-	private float m_startTime = 0;
+	protected float m_startTime = 0;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -144,7 +144,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// Apply the given value to the textfield. That way we make sure formatting is always respected.
 	/// </summary>
 	/// <param name="_value">The value to be applied.</param>
-	private void ApplyValue(long _value) {
+	protected void ApplyValue(long _value) {
 		// Get target text component if not yet initialized
 		if(m_targetTxt == null) {
 			m_targetTxt = gameObject.GetComponent<TextMeshProUGUI>();	// Should have one, since we're using the [RequireComponent] tag
@@ -155,12 +155,21 @@ public class NumberTextAnimator : MonoBehaviour {
 		if(m_customTextSetter != null) {
 			m_customTextSetter(this);
 		} else {
-			m_targetTxt.text = StringUtils.FormatNumber(_value);
+			m_targetTxt.text = FormatValue(_value);
 		}
 
 		// If it's the target value, notify listeners
 		if(_value == m_finalValue) {
 			OnFinished.Invoke();
 		}
+	}
+
+	/// <summary>
+	/// Format a given value into the desired format.
+	/// </summary>
+	/// <returns>The formatted string.</returns>
+	/// <param name="_value">The value to be formatted.</param>
+	protected virtual string FormatValue(long _value) {
+		return StringUtils.FormatNumber(_value);
 	}
 }

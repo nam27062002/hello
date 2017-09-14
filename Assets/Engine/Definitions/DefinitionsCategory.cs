@@ -82,5 +82,8 @@ public class DefinitionsCategory
     public const string FEATURE_PROFILE_SETTINGS = "FEATURE_PROFILE_SETTINGS";
     public const string FEATURE_DEVICE_SETTINGS = "FEATURE_DEVICE_SETTINGS";
     public const string DEVICE_RATING_SETTINGS = "DEVICE_RATING_SETTINGS";
+
+    // Achievements
+	public const string ACHIEVEMENTS = "ACHIEVEMENTS";
 };
     

@@ -750,6 +750,7 @@ public class GameServerManagerCalety : GameServerManager {
                     if (FeatureSettingsManager.IsDebugEnabled)
                         Log("Command Auth");
 
+                    //GameSessionManager.SharedInstance.ResetAnonymousPlatformUserID();
                     GameSessionManager.SharedInstance.LogInToServer();                    
                 }
                 break;
@@ -1201,7 +1202,8 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private bool CaletyExtensions_OnGetPersistenceResponse(string strResponse, string strCmd, int iResponseCode) {
 		// [DGR] Server: Default universe
-		if(strResponse == "{}") {
+		if(string.IsNullOrEmpty(strResponse) || strResponse == "{}")
+        {
 			SimpleJSON.JSONNode defaultJson = PersistenceManager.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
 			defaultJson.Add("version", FGOL.Save.SaveGameManager.Instance.Version);
 

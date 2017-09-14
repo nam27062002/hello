@@ -100,7 +100,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 				DragonData nextDragonData = DragonManager.dragonsByOrder[order + 1];
 				if(nextDragonData != null) {
 					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);
-					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay, m_scrollDuration); });
+					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay, m_scrollDuration, true); });
 				}
 			}
 		}
@@ -116,7 +116,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_unlockedDragonSku">Unlocked dragon sku.</param>
 	/// <param name="_initialDelay">Initial delay before launching the unlock animation.</param>
 	/// <param name="_scrollDuration">Use it to sync with scrolling to target dragon.</param>
-	public void LaunchUnlockAnim(string _unlockedDragonSku, float _initialDelay, float _scrollDuration) {
+	/// <param name="_gotoDragonUnlockScreen">Whether to go the DragonUnlockScreen after the animation or not.</param>
+	public void LaunchUnlockAnim(string _unlockedDragonSku, float _initialDelay, float _scrollDuration, bool _gotoDragonUnlockScreen) {
 		// Program lock animation sequence
 		DOTween.Sequence()
 			.AppendCallback(() => {
@@ -165,16 +166,24 @@ public class MenuDragonScreenController : MonoBehaviour {
 				m_lockIcon.GetComponent<ShowHideAnimator>().ForceHide(false, false);
 				m_lockIcon.animator.SetTrigger("idle");
 
-				// Re-enable all disabled ShowConditionally components
+				// Restore all hidden items
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
+					// Leave them hidden if changing screens!
+					if(!_gotoDragonUnlockScreen) {
+						m_toHideOnUnlockAnim[i].Show(true);
+					}
+
+					// Re-enable all disabled ShowConditionally components
 					MenuShowConditionally showConditionally = m_toHideOnUnlockAnim[i].GetComponent<MenuShowConditionally>();
 					if(showConditionally != null) {
 						showConditionally.enabled = true;
 					}
 				}
 
-				// Navigate to dragon unlock screen!
-				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_UNLOCK);
+				// Navigate to dragon unlock screen if required
+				if(_gotoDragonUnlockScreen) {
+					InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_UNLOCK);
+				}
 
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
@@ -193,7 +202,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// If a dragon was just unlocked, prepare a nice unlock animation sequence!
 		if(!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
 			// Do anim!
-			LaunchUnlockAnim(GameVars.unlockedDragonSku, m_initialDelay, m_scrollDuration);
+			LaunchUnlockAnim(GameVars.unlockedDragonSku, m_initialDelay, m_scrollDuration, false);
 
 			// Reset flag
 			GameVars.unlockedDragonSku = string.Empty;

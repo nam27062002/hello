@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.Animations;
+using UnityEditor.SceneManagement;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -37,6 +38,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		DISGUISES_CAPTURE_TOOL = 0,
 		PETS_CAPTURE_TOOL,
 		SPAWNERS_CAPTURE_TOOL,
+		UI_TOOLS_SCENE,
 
 		COUNT
 	}
@@ -88,19 +90,26 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		string[] iconPaths = new string[] {
 			"Assets/Tools/UITools/icon_camera_disguises.png",
 			"Assets/Tools/UITools/icon_camera_pets.png",
-			"Assets/Tools/UITools/icon_camera_yellow.png"
+			"Assets/Tools/UITools/icon_camera_yellow.png",
+			"Assets/Tools/UITools/grid.png"
 		};
 
 		for(int i = 0; i < (int)Icons.COUNT; i++) {
 			Debug.Assert(i < iconPaths.Length, "<color=red>NO ICON PATH DEFINED FOR ICON " + ((Icons)i).ToString() + "</color>");
 			m_icons.Add(AssetDatabase.LoadAssetAtPath<Texture>(iconPaths[i]));
 		}
+
+		// Subscribe to scene open event
+		EditorSceneManager.sceneOpened += OnSceneOpened;
 	}
 
 	/// <summary>
 	/// Window has been closed.
 	/// </summary>
 	private void OnDisable() {
+		// Unsubscribe from scene open event
+		EditorSceneManager.sceneOpened -= OnSceneOpened;
+
 		// Unload icons
 		m_icons.Clear();
 	}
@@ -196,12 +205,23 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			// Add a separator
 			GUILayout.Space(SEPARATOR_SIZE);
 
-			// Multipurpose button 1
-			if(GUILayout.Button(new GUIContent("UI", "UIConstants"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.ShowUIConstants();
+			// UI Tools Scene
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.UI_TOOLS_SCENE], "UI Tools Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				// Aux vars
+				string path = "Assets/Tools/UITools/SC_UITools.unity";
+
+				// Is scene already opened?
+				UnityEngine.SceneManagement.Scene sc = EditorSceneManager.GetSceneByPath(path);
+				if(sc.IsValid()) {
+					// Close it!
+					EditorSceneManager.CloseScene(sc, true);
+				} else {
+					// Open it!
+					EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+				}
 			}
 
-			// Multipurpose button 2
+			// Multipurpose button
 			if(GUILayout.Button(new GUIContent("MR", "Find missing and/or null references in the scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				FindMissingReferencesTool.FindMissingReferences(false/*, 
 					new Type[] { typeof(UnityEngine.Sprite) },
@@ -229,5 +249,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	public void OnInspectorUpdate() {
 		// Force repainting to update with current selection
 		Repaint();
+	}
+
+	/// <summary>
+	/// Callback for when a scene has been opened.
+	/// </summary>
+	/// <param name="_scene">Scene.</param>
+	/// <param name="_mode">Mode.</param>
+	private void OnSceneOpened(UnityEngine.SceneManagement.Scene _scene, OpenSceneMode _mode) {
+		UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
 	}
 }

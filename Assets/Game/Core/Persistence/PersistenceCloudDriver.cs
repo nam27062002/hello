@@ -22,7 +22,22 @@ public class PersistenceCloudDriver
 
 	public PersistenceData Data { get; set; }
 
-	private EState State { get; set; }
+    private EState mState;
+	private EState State
+    {
+        get { return mState; }
+        set
+        {
+            mState = value;
+            switch (mState)
+            {
+                case EState.NotLoggedIn:
+                    Upload_IsAllowed = false;
+                    break;
+            }
+
+        }
+    }
 
 	private PersistenceLocalDriver LocalDriver { get; set; }
 
@@ -31,11 +46,15 @@ public class PersistenceCloudDriver
 	public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
-		Data = new PersistenceData(dataName);
+		Data = new PersistenceData(dataName);        
 		Reset();
 	}
 
-	private void Reset()
+    public void Destroy()
+    {        
+    }
+
+    private void Reset()
 	{
 		IsInSync = false;
 		State = EState.NotLoggedIn;
@@ -53,8 +72,25 @@ public class PersistenceCloudDriver
 		LocalDriver = localDriver;	
 	}
 
-	#region syncer
-	private bool Syncer_IsSilent { get; set; }
+    public void Logout()
+    {
+        ExtendedLogout();
+
+        if (State == EState.LoggedIn)
+        {
+            // Logs out
+            State = EState.NotLoggedIn;
+            IsInSync = false;
+        }
+    }        
+
+    protected virtual void ExtendedLogout()
+    {
+        SocialPlatformManager.SharedInstance.Logout();
+    }
+
+    #region syncer
+    private bool Syncer_IsSilent { get; set; }
 	private bool Syncer_IsAppInit { get; set; }
 	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult> Syncer_OnSyncDone { get; set; }
@@ -68,7 +104,10 @@ public class PersistenceCloudDriver
 		}
 		set 
 		{
-			mSyncerStep = value;
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(SYNCER) CLOUD " + mSyncerStep.ToString() + " ->  " + value.ToString());
+
+            mSyncerStep = value;
 
 			switch (mSyncerStep)
 			{
@@ -120,7 +159,10 @@ public class PersistenceCloudDriver
 
 	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult> onDone)
 	{
-		Syncer_Reset();
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
+
+        Syncer_Reset();
 		Upload_IsAllowed = false;
 
 		Syncer_OnSyncDone = onDone;
@@ -314,7 +356,7 @@ public class PersistenceCloudDriver
 
 			Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
 		}
-	}
+	}    
 
 	private void Syncer_ProcessConflictState(PersistenceStates.EConflictState conflict)
 	{
@@ -362,8 +404,14 @@ public class PersistenceCloudDriver
 								
 				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
 				{
-                    // Calety is called to override game platform token so the game will log in server with the right account Id when reloading	
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD WILL LOAD REMOVE ACCOUNT");
+
+                    // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
                     GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+
+                    // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
+                    GameSessionManager.SharedInstance.LogOutFromServer(false);
 
                     // PersistencePrefs are deleted since it has to be overridden by the remove account id
                     PersistencePrefs.Clear();
@@ -432,8 +480,11 @@ public class PersistenceCloudDriver
 	}
 
 	private void Syncer_PerformDone(PersistenceStates.ESyncResult result)
-	{	
-		Upload_IsAllowed = result == PersistenceStates.ESyncResult.Ok;
+	{
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("(SYNCER) CLOUD DONE " + result.ToString());
+
+        Upload_IsAllowed = result == PersistenceStates.ESyncResult.Ok;
 		IsInSync = Upload_IsAllowed;
 		if (IsInSync)
 		{

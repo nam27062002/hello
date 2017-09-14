@@ -204,6 +204,12 @@ public class UserProfile : UserPersistenceSystem
 		get{ return m_userMissions; }
 	}
 
+	AchievementsTracker m_achievements;
+	public AchievementsTracker achievements
+	{
+		get{ return m_achievements; }
+	}
+
 	// Eggs
 	private Egg[] m_eggsInventory;
 	public Egg[] eggsInventory {
@@ -344,9 +350,19 @@ public class UserProfile : UserPersistenceSystem
 		m_wardrobe = new Wardrobe();
 		m_petCollection = new PetCollection();
 		m_userMissions = new UserMissions();
+		m_achievements = new AchievementsTracker();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
+
+	~UserProfile()
+	{
+		if ( m_achievements != null )
+		{
+			m_achievements.Dispose();
+			m_achievements = null;
+		}
+	}
 
 	/// <summary>
 	/// Return a string representation of this class.
@@ -766,6 +782,11 @@ public class UserProfile : UserPersistenceSystem
 			m_userMissions.ClearAllMissions();
 		}
 
+		m_achievements.Initialize();
+		if ( _data.ContainsKey("achievements") ){
+			m_achievements.Load( _data["achievements"] );
+		}
+
 		// Eggs
 		if(_data.ContainsKey("eggs")) {
 			LoadEggData(_data["eggs"] as SimpleJSON.JSONClass);
@@ -898,7 +919,8 @@ public class UserProfile : UserPersistenceSystem
 
 			// A chest should never initially be in the INIT state, nor in the REWARD_PENDING. Validate that.
 			if(dailyChests[i].state == Chest.State.INIT
-			|| dailyChests[i].state == Chest.State.PENDING_REWARD) {
+			//|| dailyChests[i].state == Chest.State.PENDING_REWARD) {	// [AOC] Right now persistence is being reloaded during the game and before the results screen, so this safecheck results in resetting the chests collected during that run
+			) {
 				dailyChests[i].ChangeState(Chest.State.NOT_COLLECTED);
 			}
 		}
@@ -955,6 +977,7 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("disguises", m_wardrobe.Save());
 		data.Add("pets", m_petCollection.Save());
 		data.Add("missions", m_userMissions.Save());
+		data.Add("achievements", m_achievements.Save());
 
 		data.Add("eggs", SaveEggData());
 		data.Add("chests", SaveChestsData());

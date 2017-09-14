@@ -209,9 +209,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     if (FeatureSettingsManager.IsDebugEnabled)
                         Log("LOGGING OUT... ");
 
-                    OpenLoadingPopup();
-                    SocialPlatformManager.SharedInstance.Logout();
-
+                    //OpenLoadingPopup();                    
+                    PersistenceFacade.instance.CloudDriver.Logout();
+                    RefreshView();
                         /*
                         delegate ()
                         {
@@ -242,11 +242,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
     #region cloud
     [SerializeField]
     private Slider m_cloudEnableSlider;
-    /*private GameObject m_cloudEnabledButton;
-
-    [SerializeField]
-    private GameObject m_cloudDisabledButton;        
-    */
     
     /// <summary>
     /// Callback called by the player when the user clicks on enable/disable the cloud save
@@ -254,75 +249,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     public void Cloud_OnChangeSaveEnable()
     {        
         PersistenceFacade.instance.CloudDriver.Upload_IsEnabled = m_cloudEnableSlider.value == 1;
-        Resync_Refresh();
-
-        /*
-        if (PersistenceFacade.instance.CloudDriver.Upload_IsEnabled)
-        {            
-            Cloud_Refresh();
-            Resync_Refresh();            
-        }
-        else
-        {            
-            Resync_OnCloudSaveSync();
-        }
-        */
-        
-        /*
-        if (!Cloud_IsResyncing)
-        {
-            Cloud_IsResyncing = true;
-            Cloud_Resync();
-        }*/
-        
-        /*if (!Cloud_IsStateChanging)
-        {
-#if CLOUD_SAVE && (FACEBOOK || WEIBO)
-            bool newvalue = !Cloud_IsEnabled;
-            if (newvalue != SaveFacade.Instance.cloudSaveEnabled)
-            {
-                Cloud_IsStateChanging = true;                
-                
-                if (!newvalue)
-                {
-                    PersistenceManager.Popups_OpenCloudDisable(
-                        delegate
-                        {
-                            Cloud_IsEnabled = false;                                                        
-                            Cloud_IsStateChanging = false;
-                        },                        
-                        delegate ()
-                        {
-                            Cloud_IsEnabled = true;
-                            Resync_IsEnabled = true;
-                            Cloud_IsStateChanging = false;
-                        }
-                    );                    
-                }
-                else
-                {
-                    //TODO show confirmation popup if facebook not logged in?                    
-                    // [DGR] ANALYTICS Not supported yet
-                    //HSXAnalyticsManager.Instance.loginContext = "OptionsCloudSave";
-
-                    SaveFacade.Instance.Enable(User.LoginType.Default, 
-                        delegate ()
-                        {
-                            Cloud_IsEnabled = true;
-                            Resync_IsEnabled = true;
-                            Cloud_IsStateChanging = false;
-                        },
-                        delegate ()
-                        {
-                            Cloud_IsEnabled = false;
-                            Resync_IsEnabled = false;                        
-                            Cloud_IsStateChanging = false;
-                        }
-                    );
-                }
-            }
-#endif
-        }  */             
+        Resync_Refresh();    
     }   
     
     private void Cloud_Refresh()
@@ -565,7 +492,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
             switch (Model_State)
             {
                 case EState.LoggedIn:
-                case EState.LoggedInAndIncentivised:                                    
+                case EState.LoggedInAndIncentivised:
+                case EState.PreviouslyLoggedIn:
                     m_userLoggedInRoot.SetActive(true);
                     m_userAvatarImage.gameObject.SetActive(false);
                     //m_profileSpinner.SetActive(true);                    
@@ -579,12 +507,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
                     break;
 
+                    /*
                 case EState.PreviouslyLoggedIn:
                     m_userPreviouslyLoggedInRoot.SetActive(true);                                        
                     string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
                     m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, platformName);
                     m_socialMessageText.Localize(TID_CLOUD_DESC, platformName);
-                    break;                
+                    break;     
+                    */           
             }
         }
     }    
@@ -592,8 +522,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void User_LoadProfileInfo()
     {
         m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
-        
-        /*
+                
         SocialPlatformManager.SharedInstance.GetProfileInfo(
             delegate (string userName)
             {
@@ -625,8 +554,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                         }
                     }
                 }
-            });  
-            */              
+            });                           
     }
     #endregion
 
