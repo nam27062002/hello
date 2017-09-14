@@ -32,8 +32,8 @@ public class BossCameraAffector : MonoBehaviour
 	public bool frameMeAndPlayer;
 	public float radius;
 	public DetectType detectType;
-	[Range(0f, 1f)]
-	public float m_minPerformanceRatingToUse = 0.4f;
+	// [Range(0f, 1f)]
+	// public float m_minPerformanceRatingToUse = 0.4f;
 
 	//--------------------------------------------------------
 	// Private Variables:
@@ -48,6 +48,8 @@ public class BossCameraAffector : MonoBehaviour
 	//--------------------------------------------------------
 	public bool permanentlyDisabled	{ get; private set; }
 
+	public int m_zoomPerformanceCost = 3;
+
 	//--------------------------------------------------------
 	// Unity Lifecycle:
 	//--------------------------------------------------------
@@ -57,14 +59,11 @@ public class BossCameraAffector : MonoBehaviour
 		// initialize the property.
 		permanentlyDisabled = false;
 		// disable this if the performances of the current device are not enough.
-		// TODO (MALH) : Recover this
-		/*
-		if(DeviceQualityManager.devicePerformanceRating < m_minPerformanceRatingToUse)	
+		if(FeatureSettingsManager.instance.MaxZoomPerformanceCost < m_zoomPerformanceCost)	
 		{
 			enabled = false;
 			permanentlyDisabled = true;
 		}
-		*/
 	}
 
 	protected void OnDisable()

@@ -179,10 +179,16 @@ public class GameServerManagerCalety : GameServerManager {
 	#region hungry_dragon_commands
 	private GameSessionDelegate m_delegate;
 
-	/// <summary>
-	/// 
-	/// </summary>
-	protected override void ExtendedConfigure() {        
+    public override void Destroy()
+    {
+        base.Destroy();
+        Login_Destroy();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    protected override void ExtendedConfigure() {        
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 
 		// Init server game details
@@ -232,9 +238,9 @@ public class GameServerManagerCalety : GameServerManager {
     #region login
     private enum ELoginState
     {
-        Logging,
-        Logged,
-        NotLogged
+        LoggingIn,
+        LoggedIn,
+        NotLoggedIn
     };
 
     private ELoginState Login_State { get; set; }               
@@ -243,12 +249,19 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_Init()
     {
-        Login_State = ELoginState.NotLogged;      
+        Messenger.AddListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+
+        Login_State = ELoginState.NotLoggedIn;      
         if (Login_Callbacks != null)
         {
             Login_Callbacks.Clear();
         }  
     }    
+
+    private void Login_Destroy()
+    {
+        Messenger.RemoveListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+    }
 
     public override void Auth(ServerCallback callback)
     {
@@ -262,15 +275,15 @@ public class GameServerManagerCalety : GameServerManager {
             Login_Callbacks.Enqueue(callback);
         }
 
-        if (Login_State == ELoginState.Logged)
+        if (Login_State == ELoginState.LoggedIn)
         {
             Login_OnAuthResponse(null, null);            
         }
         else
         {            
-            if (Login_State == ELoginState.NotLogged)
+            if (Login_State == ELoginState.NotLoggedIn)
             {
-                Login_State = ELoginState.Logging;
+                Login_State = ELoginState.LoggingIn;
                 Commands_EnqueueCommand(ECommand.Auth, null, Login_OnAuthResponse);
             }
         }                
@@ -278,7 +291,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_OnAuthResponse(Error error, ServerResponse response)
     {
-        Login_State = (error == null) ? ELoginState.Logged : ELoginState.NotLogged;        
+        Login_State = (error == null) ? ELoginState.LoggedIn : ELoginState.NotLoggedIn;        
         
         if (Login_Callbacks != null)
         {
@@ -306,7 +319,7 @@ public class GameServerManagerCalety : GameServerManager {
 			if(!m_delegate.m_waitingLoginResponse) {
 				// We need to logout before if already logged in
 				if(GameSessionManager.SharedInstance.IsLogged()) {
-					LogOut(null);
+					LogOut();
 				}
 
 				m_delegate.m_logged = false;
@@ -325,21 +338,32 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void LogOut(ServerCallback callback) {
+	public override void LogOut()
+    {
 		// The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
-		GameSessionManager.SharedInstance.LogOutFromServer(false);
-		if(callback != null) {
-			callback(null, null);
-		}       
+		GameSessionManager.SharedInstance.LogOutFromServer(false);		
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	public override bool IsLoggedIn() {
+	public override bool IsLoggedIn()
+    {
         //return m_delegate.m_logged;
-        return Login_State == ELoginState.Logged;
-	}    
+        return Login_State == ELoginState.LoggedIn;
+	}  
+    
+    private void Login_OnLogged(bool logged)
+    {
+        if (logged && Login_State != ELoginState.LoggedIn)
+        {
+            Login_State = ELoginState.LoggedIn;
+        }
+        else if (!logged && Login_State != ELoginState.NotLoggedIn)
+        {
+            Login_State = ELoginState.NotLoggedIn;
+        }
+    }  
     #endregion
 
     /// <summary>
