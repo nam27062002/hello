@@ -605,11 +605,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         public override void onAuthenticationFailed()
         {
             Debug.Log("GameCenterDelegate onAuthenticationFailed");
+			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_AUTH_FAILED);
         }
 
         public override void onAuthenticationCancelled()
         {
             Debug.Log("GameCenterDelegate onAuthenticationCancelled");
+			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED);
         }
 
         public override void onUnauthenticated()
@@ -689,7 +691,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     public void GameCenter_Login()
     {
+#if !UNITY_EDITOR
 		GameCenterManager.SharedInstance.AuthenticateLocalPlayer();
+#endif
     }
 
     public void GameCenter_LogOut()

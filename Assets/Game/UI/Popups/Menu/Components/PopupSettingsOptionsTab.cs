@@ -25,8 +25,15 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[SerializeField] private GameObject m_googlePlayLogoutButton = null;
 	[SerializeField] private Button m_googlePlayAchievementsButton = null;
 
+#if UNITY_ANDROID
+	const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
+#elif UNITY_IPHONE
+	const string TID_LOGIN_ERROR = "TID_GAME_CENTER_AUTH_ERROR";
+#endif
     // Internal
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
+
+	private PopupController m_loadingPopupController = null;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -125,8 +132,12 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		//UbiBCN.CoroutineManager.DelayedCallByFrames(() => { SelectCurrentLanguage(true); }, 5);
 	}
 
-	public void RefreshGooglePlayView()
-	{
+	public void RefreshGooglePlayView(){
+		if ( m_loadingPopupController != null ){
+			m_loadingPopupController.Close(true);
+			m_loadingPopupController = null;
+		}
+
 		if ( ApplicationManager.instance.GameCenter_IsAuthenticated() ){
 			m_googlePlayLoginButton.SetActive(false);
 			m_googlePlayLogoutButton.SetActive(true);
@@ -138,22 +149,61 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 	}
 
+	public void GooglePlayAuthCancelled(){
+		if ( m_loadingPopupController != null ){
+			m_loadingPopupController.Close(true);
+			m_loadingPopupController = null;
+		}
+	}
+
+	public void GooglePlayAuthFailed(){
+		if ( m_loadingPopupController != null ){
+			m_loadingPopupController.Close(true);
+			m_loadingPopupController = null;
+		}
+
+		// Show generic message there was an error!
+		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+	}
+
 	public void OnShow(){
 		#if UNITY_ANDROID
 			RefreshGooglePlayView();
 			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
 	}
 
 	public void OnHide(){
 		#if UNITY_ANDROID
 			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
 	}
 
 	public void OnGooglePlayLogIn(){
 		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
-			ApplicationManager.instance.GameCenter_Login();
+			// Show curtain and wait for game center response
+			bool createLoading = true;
+
+			if ( !GameCenterManager.SharedInstance.GetAuthenticatingState() )	// if not authenticating
+			{
+				ApplicationManager.instance.GameCenter_Login();
+			}
+
+			if (GameCenterManager.SharedInstance.GetAuthenticatingState())
+			{
+				m_loadingPopupController = PopupManager.PopupLoading_Open();
+			}
+			else
+			{
+				// No curatin -> something failed, we are not authenticating -> tell the player there was an error	
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
+
+
 		}
 	}
 
