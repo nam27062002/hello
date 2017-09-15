@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114301396392353154}
   - component: {fileID: 114307229760288076}
   m_Layer: 0
-  m_Name: SP_PROTO_STATIC_GoblinBoat
+  m_Name: SP_GoblinBoat_Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,7 +60,7 @@ MonoBehaviour:
     height: 2
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Vehicles/PF_GoblinBoat
+  - name: Vehicles/PF_GoblinBoat_Static
     chance: 100
   m_quantity:
     min: 1
@@ -73,6 +73,7 @@ MonoBehaviour:
     max: 1
   m_rails: 1
   m_hasGroupBonus: 0
+  m_eventOnly: 0
   m_minTier: 0
   m_maxTier: 4
   m_checkMaxTier: 0
@@ -80,6 +81,7 @@ MonoBehaviour:
   m_activationTriggers: []
   m_activationKillTriggers: []
   m_deactivationTriggers: []
+  m_deactivationKillTriggers: []
   m_spawnTime:
     min: 210
     max: 210
