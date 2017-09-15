@@ -122,6 +122,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         base.OnDestroy();        
 
         m_isAlive = false;
+
+        GameServerManager.SharedInstance.Destroy();
     }
 
     protected override void OnApplicationQuit()
