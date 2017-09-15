@@ -46,12 +46,12 @@
 
 	fixed4 frag(v2fo i) : SV_Target
 	{
-		return _SilhouetteColor;
+		return _OutlineColor;
 	}
 
 	fixed4 frag2(v2fo i) : SV_Target
 	{
-		return _OutlineColor;
+		return _SilhouetteColor;
 	}
 
 
