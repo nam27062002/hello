@@ -352,6 +352,19 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 552, y: 648, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 110289266}
+--- !u!114 &114193576204771178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c76f63fb7e7294d01aea04ce2c405039, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_impactSound: hd_shieldman_impact
+  m_delay: 0
 --- !u!114 &114278123000976262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1122,7 +1135,8 @@ AnimatorStateMachine:
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114193576204771178}
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
   m_EntryPosition: {x: 372, y: -96, z: 0}
   m_ExitPosition: {x: 372, y: 336, z: 0}

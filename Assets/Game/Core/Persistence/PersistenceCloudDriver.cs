@@ -235,7 +235,7 @@ public class PersistenceCloudDriver
 					Syncer_Step = ESyncSetp.GettingPersistence;
 					break;
 
-				case SocialPlatformManager.ELoginResult.NeedsToMerge:                    
+				case SocialPlatformManager.ELoginResult.NeedsToMerge:                                        
                     Data.LoadFromString(persistenceMerge);                    
                     Syncer_Step = ESyncSetp.Syncing;
 					break;
@@ -263,100 +263,164 @@ public class PersistenceCloudDriver
 	}
 
 	private void Syncer_Sync()
-	{
-		PersistenceStates.ELoadState localState = LocalDriver.Data.LoadState;
-		PersistenceStates.ELoadState cloudState = Data.LoadState;
-		if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.OK)
-		{
-			if (FeatureSettingsManager.IsDebugEnabled)
-				PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Ok");
-
-			PersistenceStates.EConflictState conflictState = Syncer_Comparator.Compare(LocalDriver.Data, Data);
-
-			// If local persistence has already been loaded in game then we need to change
-			// UseLocal for RecommendCloud because we need the user to confirm, so we can reload
-			// the game with the new persistence
-			if (LocalDriver.IsLoadedInGame && conflictState == PersistenceStates.EConflictState.UseCloud)
-			{
-				conflictState = PersistenceStates.EConflictState.RecommendCloud;
-			} 
-			else if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
-			{
-				// If we need to merge with social account then we need the user
-				// to choose what to do explicitly, so we recommend cloud if 
-				// cloud persistence is ahead, otherwise we let the user choose.
-				// Anyway it's recommendable to use the cloud because when choosing
-				// local the user actually logs out so she won't have cloud save
-				if (conflictState == PersistenceStates.EConflictState.UseCloud || 
-					conflictState == PersistenceStates.EConflictState.RecommendCloud)
-				{
-					conflictState = PersistenceStates.EConflictState.RecommendCloud;
-				} 
-				else
-				{
-					conflictState = PersistenceStates.EConflictState.UserDecision;
-				}
-			}
-
-			Syncer_ProcessConflictState(conflictState);
-		} 
-		else if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.Corrupted)
-		{
-			if (FeatureSettingsManager.IsDebugEnabled)
-				PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Corrupted");
-
-			// When merging the user doesn't have access to the cloud persistence unless its platform
-			// id gets overriden by the one to be able to access to the cloud, so this user is not allowed
-			// to correct cloud persistence
-			bool canOverride = Syncer_LogInSocialResult != SocialPlatformManager.ELoginResult.NeedsToMerge;
-
-			Action onContinue = delegate() 
-			{
-				PersistenceStates.EConflictResult result = (canOverride) ? PersistenceStates.EConflictResult.Dismissed : PersistenceStates.EConflictResult.Local;
-				Syncer_ResolveConflict(result);
-			};
-
-			Action onOverride = delegate() 
-			{
-				Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseLocal);
-			};
-
-			PersistenceFacade.Popup_OpenCloudCorrupted(canOverride, onContinue, onOverride);			
-		} 
-		else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
-		{
-			if (FeatureSettingsManager.IsDebugEnabled)
-				PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Ok");
-
-			Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseCloud);
-		} 
-		else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
-		{
-			if (FeatureSettingsManager.IsDebugEnabled)
-				PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Corrupted");
-
-			Action onReset = delegate() 
-			{
-				Action onResetDone = delegate()
-				{
-					// Since cloud persistence is corrupted we need to override cloud persistence with local persistence after resetting it
-					// to the default persistence
-					Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseLocal);
-				};
-
-				LocalDriver.OverrideWithDefault(onResetDone);
-			};
-
-			PersistenceFacade.Popup_OpenLocalAndCloudCorrupted(onReset);
-		}
-		else
-		{
-			if (FeatureSettingsManager.IsDebugEnabled)
-				PersistenceFacade.Log("(Syncer_Sync) :: case not supported");
-
-			Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
-		}
+	{		
+        if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
+        {
+            Syncer_ProcessMerge();            
+        }
+        else
+        {
+            Syncer_ProcessSync();
+        }        
 	}    
+
+    private void Syncer_ProcessSync()
+    {
+        PersistenceStates.ELoadState localState = LocalDriver.Data.LoadState;
+        PersistenceStates.ELoadState cloudState = Data.LoadState;
+
+        if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.OK)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Ok");
+
+            PersistenceStates.EConflictState conflictState = Syncer_Comparator.Compare(LocalDriver.Data, Data);
+
+            // If local persistence has already been loaded in game then we need to change
+            // UseLocal for RecommendCloud because we need the user to confirm, so we can reload
+            // the game with the new persistence
+            if (LocalDriver.IsLoadedInGame && conflictState == PersistenceStates.EConflictState.UseCloud)
+            {
+                conflictState = PersistenceStates.EConflictState.RecommendCloud;
+            }
+            
+            Syncer_ProcessConflictState(conflictState);
+        }
+        else if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.Corrupted)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Corrupted");
+            
+            Action onContinue = delegate ()
+            {                
+                Syncer_ResolveConflict(PersistenceStates.EConflictResult.Dismissed);
+            };
+
+            Action onOverride = delegate ()
+            {
+                Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseLocal);
+            };
+
+            PersistenceFacade.Popup_OpenCloudCorrupted(onContinue, onOverride);
+        }
+        else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Ok");
+
+            Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseCloud);
+        }
+        else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Corrupted");
+
+            Action onReset = delegate ()
+            {
+                Action onResetDone = delegate ()
+                {
+                    // Since cloud persistence is corrupted we need to override cloud persistence with local persistence after resetting it
+                    // to the default persistence
+                    Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseLocal);
+                };
+
+                LocalDriver.OverrideWithDefault(onResetDone);
+            };
+
+            PersistenceFacade.Popup_OpenLocalAndCloudCorrupted(onReset);
+        }
+        else
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                PersistenceFacade.Log("(Syncer_Sync) :: case not supported");
+
+            Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
+        }
+    }
+
+    private void Syncer_ProcessMerge()
+    {
+        PersistenceStates.ELoadState localState = LocalDriver.Data.LoadState;
+        PersistenceStates.ELoadState cloudState = Data.LoadState;        
+        if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.OK)
+        {
+            // Chooses between local and cloud
+            PersistenceFacade.Popup_OpenMergeConflict(Syncer_OnMergeConflictUseLocal, Syncer_OnMergeConflictUseCloud);
+        }
+        else if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.Corrupted)
+        {
+            // Notifies cloud is not an option so confirm to keep playing local
+            PersistenceFacade.Popup_OpenMergeConflictCloudCorrupted(Syncer_OnMergeConflictUseLocal);
+        }
+        else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
+        {
+            // Notifies local is not an option so confirm to override it with cloud
+            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(Syncer_OnMergeConflictUseCloud);
+        }
+        else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
+        {
+            Action onConfirmReset = delegate ()
+            {
+                Action onResetDone = delegate ()
+                {
+                    Syncer_OnMergeConflictUseLocal();
+                };
+
+                LocalDriver.OverrideWithDefault(onResetDone);
+            };                        
+
+            // Neither local and cloud is an option so reset cloud
+            PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(onConfirmReset);
+        }
+        else
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)            
+                PersistenceFacade.Log("(Syncer_Sync) :: case not supported");
+
+            // Dismiss
+            Syncer_OnMergeConflictUseLocal();
+        }
+    }
+
+    private void Syncer_OnMergeConflictUseLocal()
+    {
+        // Merge is solved with local persistence which makes the game log out from social because the social account chosen is linked to a different user
+        // and the user has refused to override her account with the one linked to that social account
+        GameSessionManager.SharedInstance.MergeConfirmAfterPopup(false, true);
+        Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
+    }
+
+    private void Syncer_OnMergeConflictUseCloud()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD!!!");
+
+        // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
+        GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+
+        // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
+        GameServerManager.SharedInstance.LogOut();
+
+        // PersistencePrefs are deleted since it has to be overridden by the remove account id
+        PersistencePrefs.Clear();
+
+        Action onReset = delegate ()
+        {
+            Syncer_PerformDone(PersistenceStates.ESyncResult.NeedsToReload);
+        };
+
+        LocalDriver.Override(Data.ToString(), onReset);
+    }
 
 	private void Syncer_ProcessConflictState(PersistenceStates.EConflictState conflict)
 	{
@@ -368,10 +432,9 @@ public class PersistenceCloudDriver
 			case PersistenceStates.EConflictState.UserDecision:
 			case PersistenceStates.EConflictState.RecommendCloud:
 			case PersistenceStates.EConflictState.RecommendLocal:				
-				// If the user is solving a merge then the decission can't be dismiss
-				bool isDismissable = Syncer_LogInSocialResult != SocialPlatformManager.ELoginResult.NeedsToMerge;
-				PersistenceFacade.Popups_OpenMerge(conflict, Syncer_Comparator.GetLocalProgress() as PersistenceComparatorSystem, 
-			                                   Syncer_Comparator.GetCloudProgress() as PersistenceComparatorSystem, isDismissable, 
+				// If the user is solving a merge then the decission can't be dismiss				
+				PersistenceFacade.Popups_OpenSyncConflict(conflict, Syncer_Comparator.GetLocalProgress() as PersistenceComparatorSystem, 
+			                                   Syncer_Comparator.GetCloudProgress() as PersistenceComparatorSystem, true, 
 			                                   Syncer_ResolveConflict);
 			break;
 
@@ -401,22 +464,7 @@ public class PersistenceCloudDriver
             case PersistenceStates.EConflictResult.Cloud:
 				if (FeatureSettingsManager.IsDebugEnabled)
                 	PersistenceFacade.Log("(ResolveConflict) :: Resolving conflict with cloud save!");
-								
-				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
-				{
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD WILL LOAD REMOVE ACCOUNT");
-
-                    // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
-                    GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
-
-                    // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
-                    GameServerManager.SharedInstance.LogOut();
-
-                    // PersistencePrefs are deleted since it has to be overridden by the remove account id
-                    PersistencePrefs.Clear();
-                }
-
+												
 				Action onDone = delegate() 
 				{
 					PersistenceStates.ESyncResult syncResult = (result == PersistenceStates.EConflictResult.Cloud) ? PersistenceStates.ESyncResult.NeedsToReload : PersistenceStates.ESyncResult.Ok;
@@ -426,18 +474,8 @@ public class PersistenceCloudDriver
 				LocalDriver.Override(Data.ToString(), onDone);							               
                 break;
 
-            case PersistenceStates.EConflictResult.Local:
-				if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
-				{
-                    // Merge is solved with local persistence which makes the game log out from social because the social account chosen is linked to a different user
-                    // and the user has refused to override her account with the one linked to that social account
-                    GameSessionManager.SharedInstance.MergeConfirmAfterPopup(false, true);
-                    Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);                    
-                }
-				else
-				{
-					Syncer_UploadLocalToCloud();
-				}
+            case PersistenceStates.EConflictResult.Local:				
+				Syncer_UploadLocalToCloud();				
                 break;
 
 			default:				
@@ -662,7 +700,7 @@ public class PersistenceCloudDriver
 				LocalDriver.UpdatesAheadOfCloud -= updatesAhead;
 
 				if (FeatureSettingsManager.IsDebugEnabled)
-					PersistenceFacade.Log("Upload load persistence complete (" + LocalDriver.UpdatesAheadOfCloud + ")");
+					PersistenceFacade.Log("Upload load persistence completed (" + LocalDriver.UpdatesAheadOfCloud + ")");
 
 				if (LocalDriver.UpdatesAheadOfCloud < 0)
 				{
@@ -692,7 +730,7 @@ public class PersistenceCloudDriver
 	protected virtual void Upload_Perform(string persistence, Action<bool> onDone)
     {
         GameServerManager.SharedInstance.SetPersistence(persistence, (Error error, GameServerManager.ServerResponse response) =>
-        {
+        {           
             if (onDone != null)
             {
                 onDone(error == null);

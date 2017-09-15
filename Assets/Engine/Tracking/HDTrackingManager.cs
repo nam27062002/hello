@@ -246,7 +246,7 @@ public class HDTrackingManager
 
     public static void LogError(string msg)
     {
-        Debug.LogError("[HDTrackingManager] " + msg);
+        Debug.LogError(LOG_CHANNEL + msg);
     }
 	#endregion
 }
