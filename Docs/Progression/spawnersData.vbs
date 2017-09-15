@@ -91,9 +91,11 @@ End Function
 Function contentInfo(contentSku)
 	REM Set ContentFile	= objFSO.OpenTextFile("D:\Projects\HungryDragon\Assets\Resources\Rules\entityDefinitions.xml")
 	Set ContentFile	= objFSO.OpenTextFile("..\..\Assets\Resources\Rules\entityDefinitions.xml")
+	continueSearch = true
 	Do until ContentFile.AtEndOfStream
 		tmpStr = ContentFile.ReadLine
-		If foundStrMatch(tmpStr,contentSku) = true Then
+		If foundStrMatch(tmpStr,contentSku) = true And continueSearch = true Then
+			continueSearch = false
 			pos = InStr(tmpStr, "rewardHealth=")
 			rewardhp = Replace(Replace(Replace(Mid(tmpStr,pos+13,4),Chr(34),"")," ",""),"r","")
 			pos = InStr(tmpStr, "rewardXp=")
