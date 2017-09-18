@@ -86,6 +86,9 @@ namespace LevelEditor {
 
 		[Separator("Particle Manager", 20)]
 		public string poolLimit = "unlimited";
+
+		[Separator("Spawners", 20)]
+		public bool previewPaths = true;
 	}
 }
 

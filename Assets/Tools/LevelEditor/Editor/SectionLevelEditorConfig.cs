@@ -14,7 +14,7 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 namespace LevelEditor {
 	
-	public class SectionParticleManager : ILevelEditorSection {
+	public class SectionLevelEditorConfig : ILevelEditorSection {
 		//--------------------------------------------------------------------//
 		// CONSTANTS														  //
 		//--------------------------------------------------------------------//
@@ -39,10 +39,10 @@ namespace LevelEditor {
 		public void OnGUI() {
 			// Title - encapsulate in a nice button to make it foldable
 			GUI.backgroundColor = Colors.gray;
-			bool folded = Prefs.GetBoolEditor("LevelEditor.SectionParticleManager.folded", false);
-			if(GUILayout.Button((folded ? "►" : "▼") + " Particle Manager", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true))) {
+			bool folded = Prefs.GetBoolEditor("LevelEditor.SectionLevelEditorConfig.folded", false);
+			if(GUILayout.Button((folded ? "►" : "▼") + " Config", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true))) {
 				folded = !folded;
-				Prefs.SetBoolEditor("LevelEditor.SectionParticleManager.folded", folded);
+				Prefs.SetBoolEditor("LevelEditor.SectionLevelEditorConfig.folded", folded);
 			}
 			GUI.backgroundColor = Colors.white;
 
@@ -50,7 +50,10 @@ namespace LevelEditor {
 			if(!folded) {
 				// Group in a box
 				EditorGUILayout.BeginVertical(LevelEditorWindow.styles.sectionContentStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
-						
+
+					EditorGUILayout.BeginHorizontal(); {
+						GUILayout.Label("Particle Manager");
+					} EditorGUILayout.EndHorizontal();
 					EditorGUILayout.BeginHorizontal(); {
 						// Label
 						GUILayout.Label("Pool limits");
@@ -73,6 +76,15 @@ namespace LevelEditor {
 							AssetDatabase.SaveAssets();
 						}
 					} EditorGUILayoutExt.EndHorizontalSafe();
+
+					EditorGUILayout.Separator();
+					EditorGUILayout.BeginHorizontal(); {
+						GUILayout.Label("Spawners");
+					} EditorGUILayout.EndHorizontal();
+					EditorGUILayout.BeginHorizontal(); {
+						LevelEditor.settings.previewPaths = GUILayout.Toggle(LevelEditor.settings.previewPaths, "Preview Paths");
+					} EditorGUILayout.EndHorizontal();
+
 				} EditorGUILayout.EndVertical();
 			}
 		}
