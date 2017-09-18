@@ -180,11 +180,9 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	//-------------------------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------
 	private void OnDrawGizmosSelected() {
-
-		UpdateFunction(0f);
 		m_centerOffset = -m_target;
 
-		if (m_drawPreview) {
+		if (LevelEditor.LevelEditor.settings.previewPaths && m_drawPreview) {
 			float time = 0;
 			float maxTime = m_previewMaxTime;
 			float step = Mathf.Max(0.1f, m_previewStep);

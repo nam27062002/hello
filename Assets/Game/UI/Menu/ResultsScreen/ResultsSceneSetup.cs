@@ -43,7 +43,6 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[Comment("DragonLoader should be set to \"CURRENT\" mode", 10)]
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
 	[SerializeField] private Transform m_eggSlot = null;
-	[SerializeField] private Animator m_goldMountainAnimator = null;
 	[SerializeField] private ParticleSystem m_confettiFX = null;
 
 	[Comment("Sort chest slots from left to right, chests will be spawned from the center depending on how many were collected.\nAlways 5 slots, please.", 10)]
@@ -211,8 +210,6 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// </summary>
 	public void LaunchDragonAnim() {
 		// Launch gold mountain animation
-        if (m_goldMountainAnimator != null)
-		    m_goldMountainAnimator.SetTrigger("Intro");
 
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
