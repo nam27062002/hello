@@ -148,7 +148,10 @@ public class HDTrackingManagerImp : HDTrackingManager
         InitTrackingManager();
 
         // Sends the start session event
-        Track_StartSessionEvent();        
+        Track_StartSessionEvent();
+
+        // StartSession() is called as soon as the persistence is loaded, wo we need to notify this loading funnel step too
+        Notify_Funnel_Load(FunnelData_Load.Steps._01_persistance);
     }
 
     private void InitSDKs()
