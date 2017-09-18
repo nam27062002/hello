@@ -307,6 +307,12 @@ public class DragonParticleController : MonoBehaviour
 		{
 			OnShieldLost( DamageType.MINE, null);
 		}
+
+		if ( Input.GetKeyDown(KeyCode.T))
+		{
+			SpawnCorpse();
+		}
+
 #endif
 
 	}
@@ -359,18 +365,30 @@ public class DragonParticleController : MonoBehaviour
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			// spawn corpse
 			GameObject corpse = m_corpseHandler.Spawn(null);
-			corpse.transform.CopyFrom(transform);
-			Corpse c = corpse.GetComponent<Corpse>();
-			c.Spawn(false, false);
-			Texture body = null;
-			Texture wings = null;
-			if ( m_dragonEquip.bodyMaterial )
-				body = m_dragonEquip.bodyMaterial.mainTexture;
-			// Not all dragons have wings
-			if ( m_dragonEquip.wingsMaterial )
-				wings = m_dragonEquip.wingsMaterial.mainTexture;
-			c.SwitchDragonTextures(body, wings);
+			if ( corpse != null )
+			{
+				Transform tr = m_dragonEquip.transform.Find("view");
+				if ( tr == null )
+					tr = transform;
+				corpse.transform.CopyFrom(tr);
+				Corpse c = corpse.GetComponent<Corpse>();
+				c.Spawn(false, false);
 
+				DragonEquip equip = corpse.GetComponent<DragonEquip>();
+				if ( equip != null ){
+					equip.dragonSku = m_dragonEquip.dragonSku;
+					equip.EquipDisguise( m_dragonEquip.dragonDisguiseSku );
+				}else{
+					Texture body = null;
+					Texture wings = null;
+					if ( m_dragonEquip.bodyMaterial )
+						body = m_dragonEquip.bodyMaterial.mainTexture;
+					// Not all dragons have wings
+					if ( m_dragonEquip.wingsMaterial )
+						wings = m_dragonEquip.wingsMaterial.mainTexture;
+					c.SwitchDragonTextures(body, wings);
+				}
+			}
 		}
 	}
 
