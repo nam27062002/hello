@@ -180,6 +180,7 @@ public class GuideFunction : MonoBehaviour, IGuideFunction {
 	//-------------------------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------
 	private void OnDrawGizmosSelected() {
+		UpdateFunction(0);
 		m_centerOffset = -m_target;
 
 		if (LevelEditor.LevelEditor.settings.previewPaths && m_drawPreview) {

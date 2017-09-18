@@ -81,6 +81,7 @@ namespace AI {
 							for (int i = 0; i < m_ground.Length; ++i) {
 								m_ground[i].isTrigger = true;
 							}
+							m_viewControl.PlayExplosion();
 							SetSignal(Signals.Type.Destroyed, true);
 						}
 						return true;

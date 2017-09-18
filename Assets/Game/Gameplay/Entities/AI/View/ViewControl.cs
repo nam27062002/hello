@@ -58,6 +58,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	[SeparatorAttribute("Exclamation Mark")]
 	[SerializeField] private Transform m_exclamationTransform;
 
+	[SeparatorAttribute("Water")]
+	[SerializeField] private float m_speedToWaterSplash;
+	[SerializeField] private ParticleData m_waterSplashParticle;
+
+	[SeparatorAttribute("Damage")]
+	[SerializeField] private bool m_showDamageFeedback = false;
+	[SerializeField] private Color m_damageColor = Color.red;
+	[SerializeField] private float m_damageTime = 2f;
+
 	[SeparatorAttribute("Eaten")]
 	[SerializeField] private string m_corpseAsset;
 	[SerializeField] private ParticleData m_onEatenParticle;
@@ -65,10 +74,6 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private bool m_useFrozenParticle = false;
 	[SerializeField] private string m_onEatenAudio;
 	private AudioObject m_onEatenAudioAO;
-
-	[SeparatorAttribute("Water")]
-	[SerializeField] private float m_speedToWaterSplash;
-	[SerializeField] private ParticleData m_waterSplashParticle;
 
 	[SeparatorAttribute("Burn")]
 	[SerializeField] private Transform[] m_firePoints;
@@ -102,6 +107,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	private Renderer[] m_renderers;
 	private Dictionary<int, List<Material>> m_materials;
+	private List<Material> m_materialList;
 
 	private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
@@ -122,6 +128,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected float m_aim;
 
 	private bool m_hitAnimOn;
+	private float m_damageFeedbackTimer;
 
 	private bool m_isExclamationMarkOn;
 	private GameObject m_exclamationMarkOn;
@@ -181,6 +188,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
         // keep the original materials, sometimes it will become Gold!
         m_materials = new Dictionary<int, List<Material>>();
+		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
         
 		m_vertexCount = 0;
@@ -188,8 +196,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 		if (m_renderers != null) {
 			m_rendererCount = m_renderers.Length;
-            int matCount;
-            
+                        
 			for (int i = 0; i < m_rendererCount; i++) {
 				Renderer renderer = m_renderers[i];
 
@@ -206,11 +213,16 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				Material[] materials = renderer.sharedMaterials;
 
 				// Stores the materials of this renderer in a dictionary for direct access//
-				List<Material> materialList = new List<Material>();	
-				materialList.AddRange(materials);
-				m_materials[renderer.GetInstanceID()] = materialList;
+				int renderID = renderer.GetInstanceID();
+				m_materials[renderID] = new List<Material>();
 
-				for (int m = 0; m < materials.Length; ++m) {					
+				for (int m = 0; m < materials.Length; ++m) {
+					Material mat = materials[m]; 
+					if (m_showDamageFeedback) mat = new Material(materials[m]);
+
+					m_materialList.Add(mat);
+					m_materials[renderID].Add(mat);
+
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
 				renderer.sharedMaterials = materials;
@@ -312,6 +324,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_isExclamationMarkOn = false;
 
 		m_aim = 0f;
+		m_damageFeedbackTimer = 0f;
 
 		m_disableAnimatorTimer = 0f;
 		if (m_animator != null) {
@@ -319,19 +332,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_animator.speed = 1f;
 		}
 
-		if (m_entity != null) {
-			Material altMaterial = null;
-
-            if (m_skins.Count > 0) {				
-				for (int i = 0; i < m_skins.Count; i++) {
-					float rnd = UnityEngine.Random.Range(0f, 100f);
-					if (rnd < m_skins[i].m_chance) {
-						altMaterial = m_skins[i].skin;
-						break;
-					}
-				}
-			}
-
+		if (m_entity != null) {			
 			if (!string.IsNullOrEmpty(m_idleAudio))	{
 				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
 			}
@@ -404,7 +405,19 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				switch (_type) {
 					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  break;
 					case MaterialType.FREEZE:	materials[m] = sm_frozenMaterial;  break;						
-					case MaterialType.NORMAL:	materials[m] = m_materials[id][m]; break;
+					case MaterialType.NORMAL: {
+							Material mat = m_materials[id][m]; 
+							if (m_skins.Count > 0) {				
+								for (int s = 0; s < m_skins.Count; s++) {
+									float rnd = UnityEngine.Random.Range(0f, 100f);
+									if (rnd < m_skins[s].m_chance) {
+										mat = m_skins[s].skin;
+										break;
+									}
+								}
+							}
+							materials[m] = mat;
+						}	break;
 				}
 			}
 			m_renderers[i].sharedMaterials = materials;
@@ -485,19 +498,33 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			}
 		}
 
-
-        if (m_freezingLevel > 0)
-        {
+        if (m_freezingLevel > 0) {
 			m_wasFreezing = true;
             SetMaterialType(MaterialType.FREEZE);
-        }
-        else if ( m_wasFreezing )
-        {
+        } else if (m_wasFreezing) {
 			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
 			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
         	m_wasFreezing = false;
         }
+
+		if (m_damageFeedbackTimer > 0f) {
+			m_damageFeedbackTimer -= Time.deltaTime;
+
+			if (m_damageFeedbackTimer <= 0f) {
+				for (int i = 0; i < m_materialList.Count; ++i)	
+					m_materialList[i].DisableKeyword("TINT");
+			}
+
+			Color damageColor = m_damageColor * (m_damageFeedbackTimer / m_damageTime) + Color.white * (1f - (m_damageFeedbackTimer / m_damageTime));
+			SetColorAdd(damageColor);
+		}
     }
+
+	void SetColorAdd(Color _c) {
+		_c.a = 0;
+		for (int i = 0; i < m_materialList.Count; ++i)	
+			m_materialList[i].SetColor("_Tint", _c);
+	}
 
     bool IsEntityGolden()
     {
@@ -684,9 +711,16 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void Hit() {
 		m_hitAnimOn = true;
-		//m_animator.SetTrigger("hit");
+
 		if (m_animator != null)
-			m_animator.Play("Damage");
+			m_animator.SetTrigger("hit");
+		
+		if (m_showDamageFeedback) {
+			m_damageFeedbackTimer = m_damageTime;
+
+			for (int i = 0; i < m_materialList.Count; ++i)	
+				m_materialList[i].EnableKeyword("TINT");
+		}
 	}
 
 	public void Falling(bool _falling) {
@@ -761,6 +795,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Impact() {
 		if (m_animator != null)
 			m_animator.SetTrigger("impact");
+
+		if (m_showDamageFeedback) {
+			m_damageFeedbackTimer = m_damageTime;
+			for (int i = 0; i < m_materialList.Count; ++i)	
+				m_materialList[i].EnableKeyword("TINT");
+		}
 	}
 
 	public void EnterWater(Collider _other, Vector3 impulse) {
