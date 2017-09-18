@@ -1,37 +1,47 @@
 fileFormatVersion: 2
-guid: 4dedd0bb036d74d868c26036fc5db925
-timeCreated: 1464335795
+guid: 2f9907e79dd734f1382a8d0ae8382632
+timeCreated: 1505729414
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Crow_Body
-    100004: Crow_Head
-    100006: Crow_LArm_1
-    100008: Crow_LArm_2
-    100010: Crow_LArm_3
-    100012: Crow_Legs
-    100014: Crow_RArm_1
-    100016: Crow_RArm_2
-    100018: Crow_RArm_3
-    100020: Crow_Tail_1
-    100022: Particle View 001
-    100024: Crow_
+    100002: Vulture_Head
+    100004: Vulture_Hip
+    100006: Vulture_Jaw
+    100008: Vulture_L_Leg1
+    100010: Vulture_L_Leg2
+    100012: Vulture_L_LegAnkle
+    100014: Vulture_L_Wing1
+    100016: Vulture_L_Wing2
+    100018: Vulture_L_Wing3
+    100020: Vulture_Neck
+    100022: Vulture_R_Leg1
+    100024: Vulture_R_Leg2
+    100026: Vulture_R_LegAnkle
+    100028: Vulture_R_Wing1
+    100030: Vulture_R_Wing2
+    100032: Vulture_R_Wing3
+    100034: Vulture_Tail
     400000: //RootNode
-    400002: Crow_Body
-    400004: Crow_Head
-    400006: Crow_LArm_1
-    400008: Crow_LArm_2
-    400010: Crow_LArm_3
-    400012: Crow_Legs
-    400014: Crow_RArm_1
-    400016: Crow_RArm_2
-    400018: Crow_RArm_3
-    400020: Crow_Tail_1
-    400022: Particle View 001
-    400024: Crow_
-    7400000: Flying
+    400002: Vulture_Head
+    400004: Vulture_Hip
+    400006: Vulture_Jaw
+    400008: Vulture_L_Leg1
+    400010: Vulture_L_Leg2
+    400012: Vulture_L_LegAnkle
+    400014: Vulture_L_Wing1
+    400016: Vulture_L_Wing2
+    400018: Vulture_L_Wing3
+    400020: Vulture_Neck
+    400022: Vulture_R_Leg1
+    400024: Vulture_R_Leg2
+    400026: Vulture_R_LegAnkle
+    400028: Vulture_R_Wing1
+    400030: Vulture_R_Wing2
+    400032: Vulture_R_Wing3
+    400034: Vulture_Tail
+    7400000: Glid
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -57,10 +67,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Flying
+      name: Glid
       takeName: Take 001
-      firstFrame: 8
-      lastFrame: 54
+      firstFrame: 0
+      lastFrame: 80
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -83,31 +93,43 @@ ModelImporter:
       transformMask:
       - path: 
         weight: 1
-      - path: Crow_Body
+      - path: Vulture_Hip
         weight: 1
-      - path: Crow_Body/Crow_Head
+      - path: Vulture_Hip/Vulture_L_Leg1
         weight: 1
-      - path: Crow_Body/Crow_LArm_1
+      - path: Vulture_Hip/Vulture_L_Leg1/Vulture_L_Leg2
         weight: 1
-      - path: Crow_Body/Crow_LArm_1/Crow_LArm_2
+      - path: Vulture_Hip/Vulture_L_Leg1/Vulture_L_Leg2/Vulture_L_LegAnkle
         weight: 1
-      - path: Crow_Body/Crow_LArm_1/Crow_LArm_2/Crow_LArm_3
+      - path: Vulture_Hip/Vulture_L_Wing1
         weight: 1
-      - path: Crow_Body/Crow_Legs
+      - path: Vulture_Hip/Vulture_L_Wing1/Vulture_L_Wing2
         weight: 1
-      - path: Crow_Body/Crow_RArm_1
+      - path: Vulture_Hip/Vulture_L_Wing1/Vulture_L_Wing2/Vulture_L_Wing3
         weight: 1
-      - path: Crow_Body/Crow_RArm_1/Crow_RArm_2
+      - path: Vulture_Hip/Vulture_Neck
         weight: 1
-      - path: Crow_Body/Crow_RArm_1/Crow_RArm_2/Crow_RArm_3
+      - path: Vulture_Hip/Vulture_Neck/Vulture_Head
         weight: 1
-      - path: Crow_Body/Crow_Tail_1
+      - path: Vulture_Hip/Vulture_Neck/Vulture_Head/Vulture_Jaw
         weight: 1
-      - path: Particle View 001
+      - path: Vulture_Hip/Vulture_R_Leg1
         weight: 1
-      maskType: 0
+      - path: Vulture_Hip/Vulture_R_Leg1/Vulture_R_Leg2
+        weight: 1
+      - path: Vulture_Hip/Vulture_R_Leg1/Vulture_R_Leg2/Vulture_R_LegAnkle
+        weight: 1
+      - path: Vulture_Hip/Vulture_R_Wing1
+        weight: 1
+      - path: Vulture_Hip/Vulture_R_Wing1/Vulture_R_Wing2
+        weight: 1
+      - path: Vulture_Hip/Vulture_R_Wing1/Vulture_R_Wing2/Vulture_R_Wing3
+        weight: 1
+      - path: Vulture_Hip/Vulture_Tail
+        weight: 1
+      maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 8
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -147,7 +169,7 @@ ModelImporter:
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
-    skeletonHasParents: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1
