@@ -65,6 +65,9 @@ public class FeatureSettings
 	// This key decides the quality level used in the particles manager
 	public const string KEY_PARTICLES = "particles";
 
+	// This key decides the quality level used in the particles manager
+	public const string MAX_ZOOM_COST = "max_zoom_cost";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -161,6 +164,10 @@ public class FeatureSettings
 			data = new DataInt(key, EValueType.Level5, (int)ELevel5Values.mid);
 			Datas.Add(key, data);
 
+			// zoom
+			key = MAX_ZOOM_COST;
+			data = new DataInt(key, EValueType.Int, 3);
+			Datas.Add(key, data);
             /*
             // intTest
             key = KEY_INT_TEST;

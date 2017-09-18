@@ -44,7 +44,7 @@ namespace LevelEditor {
 			new SectionLevels(),
 			new SectionSimulation(),
 			new SectionDragonSpawn(),
-			new SectionParticleManager()
+			new SectionLevelEditorConfig()
 		};
 
 		// Styles
@@ -71,7 +71,7 @@ namespace LevelEditor {
 		public static SectionLevels sectionLevels { get { return instance.m_sections[0] as SectionLevels; }}
 		public static SectionSimulation sectionSimulation { get { return instance.m_sections[1] as SectionSimulation; }}
 		public static SectionDragonSpawn sectionDragonSpawn { get { return instance.m_sections[2] as SectionDragonSpawn; }}
-		public static SectionParticleManager sectionParticleManager { get { return instance.m_sections[3] as SectionParticleManager; }}
+		public static SectionLevelEditorConfig sectionParticleManager { get { return instance.m_sections[3] as SectionLevelEditorConfig; }}
 
 		// Styles shortcut
 		public static Styles styles { get { return instance.m_styles; }}

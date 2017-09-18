@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
@@ -8,64 +8,55 @@ public class ResultsScreenController : MonoBehaviour {
     // CONSTANTS														//
     //------------------------------------------------------------------//
     public const string NAME = "SC_ResultsScreen";
-    private enum State {
-		INIT,
-		WAIT_INTRO,
-		INTRO,
-		RESULTS,
-		PROGRESSION,
-		COLLECTIBLES,
-		CAROUSEL_MISSIONS,
-		FINISHED
-	};
 
-	// Stuff to do before actually going back to the menu
-	// Order matters!
-	private enum ToCheck {
+	// Execution order!
+	public enum Step {
 		INIT = 0,
 
-		APPLY_REWARDS,
-		GLOBAL_EVENT,
+		INTRO,				// Always, dragon animation
+		SCORE,				// Always, run score + high score feedback
+		REWARDS,			// Always, sc earned during the run
+
+		COLLECTIBLES,		// Always, collected Eggs, Chests, etc.
+		MISSIONS,			// Optional, completed missions
+
+		XP,					// Always, dragon xp progression
+
+		TRACKING,			// Logic step, send end of game tracking - before applying the rewards!
+		APPLY_REWARDS,		// Logic step, apply rewards to the profile
+
+		SKIN_UNLOCKED,		// Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run
+		DRAGON_UNLOCKED,	// Optional, if a new dragon was unlocked
+
+		GLOBAL_EVENT_CONTRIBUTION,		// Optional, if there is an active event and the player has a score to add to it
+		GLOBAL_EVENT_NO_CONTRIBUTION,	// Optional, if there is an active event but the player didn't score
+
+		FINISHED,
 
 		COUNT
-	};
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Exposed members
-	[SerializeField] private TextMeshProUGUI m_timeLabel = null;
-	[SerializeField] private NumberTextAnimator m_scoreAnimator = null;
-	[SerializeField] private NumberTextAnimator m_coinsAnimator = null;
-	[SerializeField] private NumberTextAnimator m_bonusCoinsAnimator = null;
+	// Exposed references
+	[SerializeField] private ResultsScreenStep[] m_steps = new ResultsScreenStep[(int)Step.COUNT];
 
-	[Separator]
-	[SerializeField] private Localizer m_highScoreLabel = null;
-	[SerializeField] private GameObject m_newHighScoreDeco = null;
-
-	[Separator]
-	[SerializeField] private ResultsScreenXPBar m_unlockBar = null;
-	[SerializeField] private ResultsScreenCarousel m_carousel = null;
-
-	// Animators
-	[Separator]
-	[SerializeField] private ShowHideAnimator m_popupAnimator = null;
-	[SerializeField] private ShowHideAnimator m_bottomBarAnimator = null;
-	[SerializeField] private ShowHideAnimator m_unlockBarAnimator = null;    
-
-    // References
-    private ResultsSceneSetup m_scene = null;
+	// Other references
+	private ResultsSceneSetup m_scene = null;
+	public ResultsSceneSetup scene {
+		get { return m_scene; }
+	}
 
 	// Internal
-	private State m_state = State.INIT;
-	private float m_timer = 0f;
-	private ToCheck m_toCheck = ToCheck.INIT;
+	private Step m_step = Step.INIT;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Make use of properties to easily add test code without getting it all dirty
-	private long score {
+	// They can be static since they're getting the data from static singletons as well
+	public long score {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.scoreValue;
@@ -75,7 +66,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 	}
 
-	private long coins {
+	public long coins {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.coinsValue;
@@ -85,7 +76,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 	}
 
-	private int survivalBonus {
+	public int survivalBonus {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return (int)CPResultsScreenTest.survivalBonus;
@@ -95,7 +86,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 	}
 
-	private long highScore {
+	public long highScore {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.highScoreValue;
@@ -105,7 +96,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 	}
 
-	private bool isHighScore {
+	public bool isHighScore {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.newHighScore;
@@ -115,7 +106,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 	}
 
-	private float time {
+	public float time {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
 				return CPResultsScreenTest.timeValue;
@@ -125,108 +116,48 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 	}
 
+	private bool m_eggFound = false;
+	public bool eggFound {
+		get { return m_eggFound; }
+	}
+
+	// Accumulated rewards during the results flow
+	private long m_totalCoins = 0;
+	public long totalCoins {
+		get { return m_totalCoins; }
+		set { m_totalCoins = value; }
+	}
+
+	private long m_totalPc = 0;
+	public long totalPc {
+		get { return m_totalPc; }
+		set { m_totalPc = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	void Awake() {
-		// Check required fields
-		Debug.Assert(m_timeLabel != null, "Required field not initialized!");
-		Debug.Assert(m_scoreAnimator != null, "Required field not initialized!");
-		Debug.Assert(m_coinsAnimator != null, "Required field not initialized!");
-		Debug.Assert(m_bonusCoinsAnimator != null, "Required field not initialized!");
-
-		Debug.Assert(m_highScoreLabel != null, "Required field not initialized!");
-		Debug.Assert(m_newHighScoreDeco != null, "Required field not initialized!");
-
-		Debug.Assert(m_carousel != null, "Required field not initialized!");
-	}
-
-    /// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
+	private void Awake() {
+		// Subscribe to the finished event on each step
+		for(int i = 0; i < m_steps.Length; ++i) {
+			if(m_steps[i] != null) {
+				m_steps[i].OnFinished.AddListener(OnStepFinished);
+			}
+		}
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-		// Update timer
-		if(m_timer > 0f) {
-			m_timer -= Time.deltaTime;
-		}
-
-		// Do different stuff depending on current state
-		switch(m_state) {
-			case State.INIT: {
-				// Do nothing
-			} break;
-			case State.WAIT_INTRO: {
-				if (m_timer <= 0){
-					ChangeState( State.INTRO );
-				}
-			}break;
-			case State.INTRO: {
-				// If timer has finished, go to next state!
-				if(m_timer <= 0f) {
-					ChangeState(State.RESULTS);
-				}
-			} break;
-
-			case State.RESULTS: {
-				// If timer has finished, go to next state!
-				if(m_timer <= 0f) {
-					ChangeState(State.PROGRESSION);
-				}
-			} break;
-			
-			case State.PROGRESSION: {
-				// If timer has finished, go to next state!
-				if(m_timer <= 0f) {
-					ChangeState(State.COLLECTIBLES);
-				}
-			} break;
-
-			case State.COLLECTIBLES: {
-				// If timer has finished, go to next state!
-				if(m_timer <= 0f) {
-					ChangeState(State.CAROUSEL_MISSIONS);
-				}
-			} break;
-
-			case State.CAROUSEL_MISSIONS: {
-				// Wait for carousel to finish
-				if(m_carousel.isIdleOrFinished) {
-					ChangeState(State.FINISHED);
-				}
-			} break;
-
-			case State.FINISHED: {
-				// Do nothing
-				if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
-				{
-					// Bo back to the menu
-					TryGoToMenu();
-				}
-			} break;
+		// Unsubscribe from the finished event on each step
+		for(int i = 0; i < m_steps.Length; ++i) {
+			if(m_steps[i] != null) {
+				m_steps[i].OnFinished.RemoveListener(OnStepFinished);
+			}
 		}
 	}
 
@@ -234,337 +165,151 @@ public class ResultsScreenController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialize the screen and leave it ready for the LaunchAnim call.
+	/// Initialize the screen with the given parameters and start the flow.
 	/// </summary>
-	/// <param name="_scene">The 3D scene to be used.</param>
-	public void Init(ResultsSceneSetup _scene) {
-		// Store the 3D scene
+	/// <param name="_scene">Reference to the 3D scene we'll be using.</param>
+	public void StartFlow(ResultsSceneSetup _scene) {
+		// Store the scene reference for future use
 		m_scene = _scene;
 
-		// Go to INIT state
-		ChangeState(State.INIT);
-	}
+		// Setup dark screen
+		ResultsDarkScreen.targetCamera = m_scene.camera;
+		ResultsDarkScreen.Hide(false);
 
-	/// <summary>
-	/// Manual initialization.
-	/// </summary>
-	public void LaunchAnim() {
-		// Just change state
-		ChangeState(State.WAIT_INTRO);
+		// Initialize some internal vars
+		m_totalCoins = UsersManager.currentUser.coins;
+		m_totalPc = UsersManager.currentUser.pc;
+		m_eggFound = false;
+		switch(CPResultsScreenTest.eggMode) {
+			case CPResultsScreenTest.EggTestMode.FOUND: {
+				m_eggFound = true; 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.NOT_FOUND: {
+				m_eggFound = false; 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.RANDOM: {
+				m_eggFound = (Random.Range(0f, 1f) > 0.5f); 
+			} break;
+
+			case CPResultsScreenTest.EggTestMode.NONE: {
+				m_eggFound = CollectiblesManager.egg != null && CollectiblesManager.egg.collected;
+			} break;
+		}
+
+		// Initialize all steps
+		for(int i = 0; i < m_steps.Length; ++i) {
+			if(m_steps[i] != null) {
+				// Tell them we're their parent
+				m_steps[i].Init(this);
+
+				// Start hidden!
+				m_steps[i].gameObject.SetActive(false);
+			}
+		}
+
+		// Launch first step!
+		m_step = Step.INIT;
+		LaunchNextStep();
 	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Change the internal logic state.
+	/// Checks the next step to be displayed and launches it. 
 	/// </summary>
-	/// <param name="_newState">Target state.</param>
-	private void ChangeState(State _newState) {
-		// Different stuff depending on target state
-		switch(_newState) {
-			case State.INIT: {
-				// Tell the 3D scene to reset
-				if(m_scene != null) m_scene.Init();
+	private void LaunchNextStep() {
+		// Find out next step
+		m_step = CheckNextStep();
 
-				// Initialize number animators
-				m_scoreAnimator.SetValue(0, 0);
-				m_coinsAnimator.SetValue(0, 0);
-				m_bonusCoinsAnimator.SetValue(0, 0);
-				m_newHighScoreDeco.SetActive(false);
-
-				// Initialize High Score Label
-				m_highScoreLabel.Localize(m_highScoreLabel.tid, StringUtils.FormatNumber(highScore));
-
-				// Initialize Game time - format to MM:SS
-				m_timeLabel.text = TimeUtils.FormatTime(time, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
-
-				// Hide popup
-				m_popupAnimator.ForceHide(false);
-
-				// Initialize unlock bar
-				m_unlockBar.Init();
-				m_unlockBarAnimator.ForceHide(false);
-
-				// Initialize carousel
-				m_carousel.gameObject.SetActive(true);
-				m_carousel.Init();
-				m_bottomBarAnimator.ForceHide(false);
-			} break;
-
-			case State.WAIT_INTRO: {
-				m_timer = 0.5f;
-			} break;
-
-			case State.INTRO: {
-				// Launch dragon animation
-				m_scene.LaunchDragonAnim();
-
-				// Start timer to next state
-				m_timer = UIConstants.resultsIntroDuration;
-			} break;
-
-			case State.RESULTS: {
-				// Show popup
-				m_popupAnimator.Show();
-
-				// Show bottom bar
-				m_bottomBarAnimator.Show();
-
-				// Compute durations
-				float totalDuration = UIConstants.resultsPanelDuration - m_popupAnimator.tweenDuration;
-				float finalPause = 0.25f;
-				float textAnimationDuration = (totalDuration - finalPause)/3f;	// 3 texts to be filled
-
-				// Launch number animators
-				// Reset
-				m_scoreAnimator.duration = textAnimationDuration;
-				m_coinsAnimator.duration = textAnimationDuration;
-				m_bonusCoinsAnimator.duration = textAnimationDuration;
-				m_scoreAnimator.SetValue(0, false);
-				m_coinsAnimator.SetValue(0, false);
-				m_bonusCoinsAnimator.SetValue(0, false);
-
-				// Animated sequence!
-				int coinsBonus = survivalBonus;
-				Sequence seq = DOTween.Sequence()
-					// Score
-					.AppendInterval(m_popupAnimator.tweenDuration)	// Initial delay, give time for the show animation
-					.AppendCallback(() => { m_scoreAnimator.SetValue(0, score); })
-
-					// High score
-					.AppendInterval(textAnimationDuration * 0.9f)	// Overlap a little bit
-					.AppendCallback(() => {
-						// New High Score animation
-						if(isHighScore) {
-							m_newHighScoreDeco.SetActive(true);
-							m_newHighScoreDeco.transform.localScale = Vector3.zero;
-							m_newHighScoreDeco.transform.DOScale(1f, 0.25f)
-								.SetEase(Ease.OutBack)
-								.SetAutoKill(true)
-								.OnComplete(() => {
-									// TODO!! Play some SFX
-								});
-						}
-					})
-
-					// Bonus coins
-					.AppendInterval(isHighScore ? 0.25f: 0f)
-					.AppendCallback(() => { m_bonusCoinsAnimator.SetValue(0, coinsBonus); })
-
-					// Coins total
-					.AppendInterval(textAnimationDuration * 0.9f)	// Overlap a little bit
-					.AppendCallback(() => { m_coinsAnimator.SetValue(0, coins + coinsBonus); })
-
-					// Final pause
-					.AppendInterval(textAnimationDuration + finalPause);
-
-				// Start timer to next state
-				m_timer = seq.Duration();
-			} break;
-			
-			case State.PROGRESSION: {
-				// Show and animate unlock bar as well
-				// Start timer to next state
-				m_unlockBarAnimator.Show();
-				m_timer = m_unlockBar.LaunchAnimation();
-			} break;
-
-			case State.COLLECTIBLES: {
-				// Launch 3D rewards animations
-				// Start timer to next state
-				m_timer = m_scene.LaunchRewardsAnim(m_carousel.chestsPill);
-
-				// Show chests carousel as well
-				m_carousel.DoChests();
-			} break;
-
-			case State.CAROUSEL_MISSIONS: {
-				// Show missions carousel
-				m_carousel.DoMissions();
-			} break;
-
-			case State.FINISHED: {
-				// Tell carousel to finish as well
-				m_carousel.Finish();
-			} break;
+		// If we're at the last step, go back to menu!
+		if(m_step == Step.FINISHED) {
+			GoToMenu();
+			return;
 		}
 
-		// Store new state
-		m_state = _newState;
+		// Launch the target step! We'll receive the OnStepFinished callback when step has finished
+		ResultsScreenStep targetStep = m_steps[(int)m_step];
+		targetStep.gameObject.SetActive(true);
+		targetStep.Launch();
 	}
 
 	/// <summary>
-	/// Try to go back to the menu. If a popup is pending (chest reward, egg reward), it will be displayed instead.
+	/// Check which step to display next.
 	/// </summary>
-	/// <returns>Whether we're going back to the menu (<c>true</c>) or we've been interrupted by some pending popup (<c>false</c>).</returns>
-	private bool TryGoToMenu() {
-		// Check for any impediment to go to the menu (i.e. pending popups)
-		while((int)m_toCheck < (int)ToCheck.COUNT) {
-			// Check next step
-			++m_toCheck;
-			switch(m_toCheck) {
-				// Apply rewards! This should be done BEFORE any other step requiring the use of currencies (i.e. Global Event contribution)
-				case ToCheck.APPLY_REWARDS: {
-					// Update global stats
-					UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
-
-					// Local mini-tracking event!
-					// Before applying the rewards!
-					EndOfGameTracking();
-
-					// Apply rewards to user profile
-					RewardManager.ApplyEndOfGameRewards();
-
-					// Process Missions: give rewards and generate new missions replacing those completed
-					MissionManager.ProcessMissions();
-
-					// Process collectibles
-					CollectiblesManager.Process();
-
-					// Process unlocked skins for current dragon
-					UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
-
-                    // Save persistence
-                    PersistenceFacade.instance.Save_Request(true);
-                } break;
-
-				// Show global events contribute popup?		// [AOC] TEMP!! Waiting for the new results screen flow to properly integrate this!
-				case ToCheck.GLOBAL_EVENT: {
-					// Never during first run!
-					if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) break;
-
-					// Is there a valid current event to display? Check error codes to know so.
-					GlobalEventManager.ErrorCode canContribute = GlobalEventManager.CanContribute();
-					if((canContribute == GlobalEventManager.ErrorCode.NONE
-					|| canContribute == GlobalEventManager.ErrorCode.OFFLINE
-					|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN)
-					&& GlobalEventManager.currentEvent.objective.enabled
-					&& GlobalEventManager.currentEvent.remainingTime.TotalSeconds > 0	// We check event hasn't finished while playing
-					) {	// [AOC] This will cover cases where the event is active but not enable for this player (i.e. during the tutorial).
-						// Show global event contribution popup
-						// Special one if the player hasn't scored
-						PopupController popup = null;
-						if(GlobalEventManager.currentEvent.objective.currentValue > 0) {
-							popup = PopupManager.OpenPopupInstant(PopupGlobalEventContribution.PATH);
-						} else {
-							popup = PopupManager.OpenPopupInstant(PopupGlobalEventNoContribution.PATH);
-						}
-
-						// When the popup is closed, check next step
-						popup.OnClosePostAnimation.AddListener(OnGoToMenu);
-						return false;	// Break the loop (and the function)
-					}
-				} break;
-			}
-		}
-
-		// Nothing else to show, go back to the menu!
-		if(m_toCheck == ToCheck.COUNT) {
-            // Show loading screen
-			LoadingScreen.Toggle(true, false);
-
-			// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
-			if(m_unlockBar.newDragonUnlocked) {
-				//GameVars.menuInitialScreen = MenuScreens.DRAGON_UNLOCK;
-				//GameVars.menuInitialDragon = m_unlockBar.nextDragonData.def.sku;
-				GameVars.unlockedDragonSku = m_unlockBar.nextDragonData.def.sku;
-			}
-
-			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
-				HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._05_continue_clicked);
-			}
-
-			// Go back to main menu
-			FlowManager.GoToMenu();
-
-			return true;
-		}
-
-		return false;
+	/// <returns>The next step to be displayed. Step.FINISHED if none.</returns>
+	public Step CheckNextStep() {
+		// Just use recursive call
+		return CheckNextStep(m_step);
 	}
 
 	/// <summary>
-	/// Send the end of game tracking events.
+	/// Given a step, check which step to display next.
 	/// </summary>
-	private void EndOfGameTracking() {
-		// Pre-process chests
-		int chestsFound = 0;
-		int totalCollectedChests = ChestManager.collectedChests;
-		long chestsCoinsReward = 0;
-		for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
-			if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
-				// Count chest
-				chestsFound++;
-				totalCollectedChests++;
+	/// <returns>The next step to be displayed. Step.FINISHED if none.</returns>
+	/// <param name="_step">Step to be checked.</param>
+	public Step CheckNextStep(Step _step) {
+		// Increase step index
+		_step++;
+		ResultsScreenStep targetStep = m_steps[(int)_step];
 
-				// Find out reward
-				Chest.RewardData rewardData = ChestManager.GetRewardData(totalCollectedChests);
-				if(rewardData != null && rewardData.type == Chest.RewardType.SC) {
-					chestsCoinsReward += (long)rewardData.amount;
-				}
-			}
+		// If we're at the last step, we're done!
+		if(_step == Step.FINISHED) {
+			return Step.FINISHED;	// End of recursivity
 		}
 
-		// Pre-process missions
-		bool[] missionCompleted = new bool[(int)Mission.Difficulty.COUNT];
-		int [] missionReward = new int[(int)Mission.Difficulty.COUNT];
-		for(int i = 0; i < missionCompleted.Length; i++) {
-			Mission m = MissionManager.GetMission((Mission.Difficulty)i);
-			if(m != null && m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
-				missionCompleted[i] = true;
-				missionReward[i] = m.rewardCoins;
-			} else {
-				missionCompleted[i] = false;
-				missionReward[i] = 0;
-			}
+		// If the step has no logic assigned, skip it
+		else if(targetStep == null) {
+			return CheckNextStep(_step);	// Recursive call
 		}
 
-        if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
-            // Do it!
-            MiniTrackingEngine.TrackEvent(
-                "GAME_ENDED",
-                new TrackingParam("run_nb", UsersManager.currentUser.gamesPlayed),
-                new TrackingParam("time_played", time),
-                new TrackingParam("sc_collected", coins),
-                new TrackingParam("sc_survival_bonus", survivalBonus),
-                new TrackingParam("sc_mission_1", missionReward[0]),
-                new TrackingParam("sc_mission_2", missionReward[1]),
-                new TrackingParam("sc_mission_3", missionReward[2]),
-                new TrackingParam("sc_chests", chestsCoinsReward),
-                new TrackingParam("hc_collected", RewardManager.pc),
-                new TrackingParam("death_cause", RewardManager.deathSource),
-                new TrackingParam("death_type", RewardManager.deathType),
-                new TrackingParam("chests_found", chestsFound),
-				new TrackingParam("egg_found", (CollectiblesManager.egg != null && CollectiblesManager.egg.collected)),
-                new TrackingParam("score_total", score),
-                new TrackingParam("highest_multiplier", RewardManager.maxScoreMultiplier),
-                new TrackingParam("highest_base_multiplier", RewardManager.maxBaseScoreMultiplier),
-                new TrackingParam("hc_revive_used", RewardManager.paidReviveCount),
-                new TrackingParam("ad_revive_used", RewardManager.freeReviveCount),
-                new TrackingParam("xp_earn", RewardManager.xp),
-                new TrackingParam("current_dragon", UsersManager.currentUser.currentDragon),
-                new TrackingParam("current_level", DragonManager.currentDragon.progression.level),
-                new TrackingParam("mission1_completed", missionCompleted[0]),
-                new TrackingParam("mission2_completed", missionCompleted[1]),
-                new TrackingParam("mission3_completed", missionCompleted[2]),
-                new TrackingParam("enterWaterAmount", RewardManager.enterWaterAmount),
-                new TrackingParam("enterSpaceAmount", RewardManager.enterSpaceAmount)
-            );
+		// If step mustn't be displayed, skip it
+		else if(!targetStep.MustBeDisplayed()) {
+			return CheckNextStep(_step);	// Recursive call
+		}
 
-            // Tracking is sent silently after every round
-            MiniTrackingEngine.SendTrackingFile(true, null);
-        }
+		// This is the next step! Return it
+		else {
+			return _step;
+		}
 	}
 
-	//------------------------------------------------------------------//
-	// DELEGATES														//
-	//------------------------------------------------------------------//
 	/// <summary>
-	/// Go back to the main menu, finalizing all the required stuff in the game scene.
+	/// Performed all required actions to go back to the menu.
 	/// </summary>
-	public void OnGoToMenu() {
-		// Use internal method
-		TryGoToMenu();
+	private void GoToMenu() {
+		// Show loading screen
+		LoadingScreen.Toggle(true, false);
+
+		// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
+		// [AOC] TODO!!
+		/*if(m_unlockBar.newDragonUnlocked) {
+			GameVars.unlockedDragonSku = m_unlockBar.nextDragonData.def.sku;
+		}*/
+
+		// Send FTUX tracking event
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._05_continue_clicked);
+		}
+
+		// Go back to main menu
+		FlowManager.GoToMenu();
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The current step has finished.
+	/// </summary>
+	public void OnStepFinished() {
+		// Hide current step
+		ResultsScreenStep currentStep = m_steps[(int)m_step];
+		if(currentStep != null) currentStep.gameObject.SetActive(false);
+
+		// Just check next step
+		LaunchNextStep();
 	}
 }

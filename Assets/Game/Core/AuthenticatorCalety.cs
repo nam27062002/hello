@@ -92,11 +92,11 @@ public class AuthenticatorCalety : Authenticator
 
 	public override void Logout(Action<Error> callback)
     {
-		GameServerManager.SharedInstance.LogOut(
+		/*GameServerManager.SharedInstance.LogOut(
 			(Error _error, GameServerManager.ServerResponse _response) => { 
 				callback(_error); 
 			}
-		);
+		);*/
     }
 
     public override void GetServerTime(Action<Error, string, int> onGetServerTime)

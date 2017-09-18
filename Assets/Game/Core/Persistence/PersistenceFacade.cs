@@ -482,7 +482,7 @@ public class PersistenceFacade
     /// The user is prompted with this popup so she can choose the persistence to keep when there's a conflict between the progress stored in local and the one stored in the cloud
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29Sync+Conflict
     /// </summary>
-    public static void Popups_OpenMerge(PersistenceStates.EConflictState conflictState, PersistenceComparatorSystem local, PersistenceComparatorSystem cloud, bool dismissable, Action<PersistenceStates.EConflictResult> onResolve)
+    public static void Popups_OpenSyncConflict(PersistenceStates.EConflictState conflictState, PersistenceComparatorSystem local, PersistenceComparatorSystem cloud, bool dismissable, Action<PersistenceStates.EConflictResult> onResolve)
 	{
 		PopupController pc = PopupManager.OpenPopupInstant(PopupMerge.PATH);
         PopupMerge pm = pc.GetComponent<PopupMerge>();
@@ -519,7 +519,7 @@ public class PersistenceFacade
     /// This popup is shown when the user doesn't choose the recommended option in sync conflict popup.
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29Sync+Conflict
     /// </summary>    
-    public static void Popups_OpenMergeConfirmation(Action onConfirm)
+    public static void Popups_OpenSyncConfirmation(Action onConfirm)
     {        
 		PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_WARN_CLOUD_WRONG_CHOICE_NAME";
@@ -530,7 +530,52 @@ public class PersistenceFacade
         PopupManager.PopupMessage_Open(config);       
     }
 
-	public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
+    public static void Popup_OpenMergeConflict(Action onLocal, Action onCloud)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
+        config.MessageTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_DESC";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onCloud;
+        config.OnCancel = onLocal;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popup_OpenMergeConflictCloudCorrupted(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
+        config.MessageTid = "You can't use this facebook account because its cloud save is corrupted.";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;        
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popup_OpenMergeConflictLocalCorrupted(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
+        config.MessageTid = "Your local save is corrupted, do you want to override it with the cloud save?";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popup_OpenMergeConflictBothCorrupted(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
+        config.MessageTid = "Both saves are corrupted, reset local save?";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
 	{        
         // UNPH: Two buttons instead of three (upload local save to cloud is not an option. Review the text description)
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -552,7 +597,7 @@ public class PersistenceFacade
         */
     }
 
-	public static void Popup_OpenCloudCorrupted(bool canOverride, Action onContinue, Action onOverride)
+	public static void Popup_OpenCloudCorrupted(Action onContinue, Action onOverride)
 	{
         /*        
 		string msg = (canOverride) ? "Cloud corrupted. Override?" : "Cloud corrupted but inaccessible. Continue locally?";
@@ -567,23 +612,15 @@ public class PersistenceFacade
         */
 
         // UNPH: Add TIDS and add popup Popups_OpenCloudSaveCorruptedError when the cloud was overridden successfully?
-        string msg = (canOverride) ? "Cloud corrupted. Override?" : "Cloud corrupted but inaccessible. Continue locally?";
+        string msg = "Cloud corrupted. Override?";
 
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_CORRUPTED_NAME";
         config.MessageTid = msg;
         config.IsButtonCloseVisible = false;
-        config.OnConfirm = onContinue;
-
-        if (canOverride)
-        {
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-            config.OnCancel = onOverride;
-        }
-        else
-        {
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        }
+        config.OnConfirm = onContinue;        
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnCancel = onOverride;        
 
         PopupManager.PopupMessage_Open(config);
     }
@@ -641,7 +678,7 @@ public class PersistenceFacade
     #endregion
 
     #region log
-    private static bool LOG_USE_COLOR = false;
+    private static bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[Persistence] ";    
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 

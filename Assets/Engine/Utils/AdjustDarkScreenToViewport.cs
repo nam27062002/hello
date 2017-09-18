@@ -27,8 +27,13 @@ public class AdjustDarkScreenToViewport : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	[SerializeField] private bool m_executeInEditMode = false;
 	private MeshRenderer m_renderer = null;
+	public bool m_darkUpdate = true;
 
-    public bool m_darkUpdate = true;
+	private Camera m_camera = null;
+	public Camera targetCamera {
+		get { return m_camera; }
+		set { m_camera = value; }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -78,13 +83,16 @@ public class AdjustDarkScreenToViewport : MonoBehaviour {
         // Skip if component not enabled
         if (!this.isActiveAndEnabled) return;
 
-        // Main camera must be valid
-        Camera cam = null;
-        if (Application.isPlaying) {
-            cam = InstanceManager.sceneController.mainCamera;
-        } else if (m_executeInEditMode) {
-            cam = Camera.main;
-        }
+		// If camera is not manuall defined, try to automatically get one
+		Camera cam = m_camera;
+		if(m_camera == null) {
+	        // Main camera must be valid
+	        if (Application.isPlaying) {
+	            cam = InstanceManager.sceneController.mainCamera;
+	        } else if (m_executeInEditMode) {
+	            cam = Camera.main;
+	        }
+		}
 
         if (cam == null) return;
 

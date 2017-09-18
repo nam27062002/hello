@@ -43,7 +43,7 @@ public class SpartakusViewControl : ViewControl {
 			case SpecialAnims.B:{
 				if ( !string.IsNullOrEmpty( m_onDizzyAudio ) )
 				{
-					m_onDizzyAudioAO = AudioController.Play( m_onJumpAttackAudio, transform );
+					m_onDizzyAudioAO = AudioController.Play( m_onDizzyAudio, transform );
 				}
 			 	m_stars.SetActive(true); 
 			 }break;	// Dizzy start

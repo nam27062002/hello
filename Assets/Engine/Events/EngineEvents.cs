@@ -28,6 +28,8 @@ public enum EngineEvents {
 	LANGUAGE_CHANGED,		// no params
 	DEFINITIONS_LOADED,		// no params
 	GOOGLE_PLAY_STATE_UPDATE,// no params
+	GOOGLE_PLAY_AUTH_FAILED,// no params
+	GOOGLE_PLAY_AUTH_CANCELLED,// no params
 
 	// Store Transactions
 	PURCHASE_SUCCESSFUL,	// string _productSku (TODO: _transactionData? _purchaseId?)

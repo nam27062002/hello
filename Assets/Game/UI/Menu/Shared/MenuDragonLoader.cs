@@ -89,6 +89,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_keepLayers = value; }
 	}
 
+	private bool m_useShadowMaterial = false;
+	public bool useShadowMaterial {
+		get { return m_useShadowMaterial; }
+		set { m_useShadowMaterial = value; RefreshDragon(); }
+	}
+
 	// Debug
 	[SkuList(DefinitionsCategory.DRAGONS, false)]
 	[SerializeField] private string m_placeholderDragonSku = "dragon_classic";	// If the game is not running, we don't have any data on current dragon/skin, so load a placeholder one manually instead
@@ -211,6 +217,9 @@ public class MenuDragonLoader : MonoBehaviour {
 				if(m_removeFresnel) {
 					m_dragonInstance.SetFresnelColor(Color.black);
 				}
+
+				if (m_useShadowMaterial)
+					m_dragonInstance.EnableShadow();
 			}
 		}
 
@@ -281,5 +290,11 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Only care if we're in SELECTED mode
 		if(m_mode != Mode.SELECTED_DRAGON) return;
 		LoadDragon(_sku);
+	}
+
+	public void SetViewPosition( Vector3 position ){
+		Transform _viewTransform = m_dragonInstance.transform.Find("view");
+		Vector3 diff = position - _viewTransform.position;
+		m_dragonInstance.transform.position = m_dragonInstance.transform.position + diff;
 	}
 }

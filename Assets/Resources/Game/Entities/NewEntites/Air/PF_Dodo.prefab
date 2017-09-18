@@ -72,7 +72,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1071864949712974}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.634, z: 0}
+  m_LocalPosition: {x: 0, y: -1.325, z: -0.637}
   m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
   m_Children:
   - {fileID: 4905172684593438}
@@ -86,7 +86,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1798813866645876}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.154, z: 0.03}
+  m_LocalPosition: {x: 121.07611, y: 50.018, z: -0.006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4457122487674204}
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_walkSpeed: 5
   m_runSpeed: 7
   m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 3
+  m_maxPlaybakSpeed: 6
   m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
@@ -376,7 +376,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"boostSpeed":8,"panicSpeed":13,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":3,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"boostSpeed":5,"panicSpeed":5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":3,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Dodo
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
@@ -418,9 +418,9 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_airMotion:
-    m_mass: 10
+    m_mass: 25
     m_defaultUpVector: 0
-    m_orientationSpeed: 340
+    m_orientationSpeed: 90
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 1
@@ -429,8 +429,8 @@ MonoBehaviour:
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
     m_limitVerticalRotation: 1
-    m_faceUpAngle: 345
-    m_faceDownAngle: 15
+    m_faceUpAngle: 340
+    m_faceDownAngle: 20
 --- !u!114 &114461839632195678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -442,7 +442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.000000014901161, y: 0.5972165}
+  offset: {x: -0.018554702, y: -0.07055771}
   radius: 0.8747518
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114644616749238826
@@ -469,8 +469,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.75
-  m_Center: {x: 0, y: 0.4, z: 0.1}
+  m_Radius: 0.84
+  m_Center: {x: 0, y: -0.41, z: -0.44}
 --- !u!137 &137303749200057816
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

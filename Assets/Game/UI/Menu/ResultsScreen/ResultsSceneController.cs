@@ -23,14 +23,11 @@ public class ResultsSceneController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Camera m_mainCamera;
-
-	[Space]	
 	[SerializeField] private GameObject m_resultsUI;
 
 	[Space]
 	[Tooltip("Scene setup where the user's dragon has to be set")]
-	[SerializeField] private ResultsSceneSetup m_resultsScenesetup = null;   
+	[SerializeField] private ResultsSceneSetup m_resultsSceneSetup = null;   
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -43,8 +40,8 @@ public class ResultsSceneController : MonoBehaviour {
 		m_resultsUI.SetActive(false);
 
         // Make sure it's not visible until Show() is called
-        if (m_resultsScenesetup != null) {
-            m_resultsScenesetup.gameObject.SetActive(false);
+        if (m_resultsSceneSetup != null) {
+            m_resultsSceneSetup.gameObject.SetActive(false);
         }
 	}    
 
@@ -63,17 +60,17 @@ public class ResultsSceneController : MonoBehaviour {
 	/// dragon and UI.
 	/// </summary>
 	public void Show() {                			
-        if (m_resultsScenesetup != null) {
-            m_resultsScenesetup.gameObject.SetActive(true);
+        if (m_resultsSceneSetup != null) {
+            m_resultsSceneSetup.gameObject.SetActive(true);
         }
 
         // Activate and initialize UI, turn off Game UI
         // [AOC] TODO!! Nicer transition		
         m_resultsUI.SetActive(true);
-		ResultsScreenController controller = m_resultsUI.GetComponentInChildren<ResultsScreenController>();
-		if(controller != null) {
-			controller.Init(m_resultsScenesetup);
-			controller.LaunchAnim();
+
+		ResultsScreenController controllerNew = m_resultsUI.GetComponentInChildren<ResultsScreenController>();
+		if(controllerNew != null) {
+			controllerNew.StartFlow(m_resultsSceneSetup);
 		}
 
 		// Make sure no slow motion was inherited!

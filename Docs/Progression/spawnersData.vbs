@@ -43,11 +43,16 @@ Next
 Function spawnerInfo()
 	tmpStr = objInputFile.ReadLine
 	substrToFind = "m_entityPrefabList:"
-	If foundStrMatch(tmpStr,substrToFind) = true Then
+	substrToFind2 = "m_entityPrefab:"
+	If foundStrMatch(tmpStr,substrToFind) = true Or foundStrMatch(tmpStr,substrToFind2) = true Then
 		spawner = Replace(CurrentSpawner.Path,"D:\Projects\HungryDragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")
 		REM spawner = Replace(CurrentSpawner.Path,"HungryDragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")
 		spawner = Replace(spawner,".prefab","")
-		prefabFolder = Replace(objInputFile.ReadLine,"- name: ","")
+		If foundStrMatch(tmpStr,substrToFind) = true Then
+			prefabFolder = Replace(objInputFile.ReadLine,"- name: ","")
+		Else
+			prefabFolder = Replace(tmpStr,"m_entityPrefab: ","")
+		End If
 		aux = Replace(Replace(prefabFolder,"/","\")," ","")
 		REM prefabFile = "D:\Projects\HungryDragon\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
 		prefabFile = "..\..\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
@@ -86,9 +91,11 @@ End Function
 Function contentInfo(contentSku)
 	REM Set ContentFile	= objFSO.OpenTextFile("D:\Projects\HungryDragon\Assets\Resources\Rules\entityDefinitions.xml")
 	Set ContentFile	= objFSO.OpenTextFile("..\..\Assets\Resources\Rules\entityDefinitions.xml")
+	continueSearch = true
 	Do until ContentFile.AtEndOfStream
 		tmpStr = ContentFile.ReadLine
-		If foundStrMatch(tmpStr,contentSku) = true Then
+		If foundStrMatch(tmpStr,contentSku) = true And continueSearch = true Then
+			continueSearch = false
 			pos = InStr(tmpStr, "rewardHealth=")
 			rewardhp = Replace(Replace(Replace(Mid(tmpStr,pos+13,4),Chr(34),"")," ",""),"r","")
 			pos = InStr(tmpStr, "rewardXp=")
