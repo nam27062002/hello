@@ -42,6 +42,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 
 	[Comment("DragonLoader should be set to \"CURRENT\" mode", 10)]
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
+	[SerializeField] private Transform m_dragonSlotViewPosition = null;
 	[SerializeField] private Transform m_eggSlot = null;
 	[SerializeField] private ParticleSystem m_confettiFX = null;
 
@@ -54,6 +55,18 @@ public class ResultsSceneSetup : MonoBehaviour {
 	// Internal
 	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 	private bool m_eggFound = false;
+
+	/*	
+	// Test To recolocate the dragons view!
+	public bool recolocate = false; //"run" or "generate" for example
+	void Update()
+	{
+		if (recolocate)
+		{
+			m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
+		}
+	}
+	*/
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -214,6 +227,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+		m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
 
 		// Trigger confetti anim
 		LaunchConfettiFX();

@@ -56119,7 +56119,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400008, guid: 5ded2a9ee5c444fbbbd975967faf1a3e, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2300004, guid: 5ded2a9ee5c444fbbbd975967faf1a3e, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -63231,6 +63231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_camera: {fileID: 585826128}
   m_dragonSlot: {fileID: 2004428625}
+  m_dragonSlotViewPosition: {fileID: 1258440199}
   m_eggSlot: {fileID: 1515284193}
   m_confettiFX: {fileID: 2030689215}
   m_chestSlots:
@@ -63290,6 +63291,7 @@ Transform:
   - {fileID: 54310847}
   - {fileID: 2048113166}
   - {fileID: 585826132}
+  - {fileID: 1258440199}
   - {fileID: 2004428626}
   - {fileID: 2030689213}
   - {fileID: 996798168}
@@ -69657,6 +69659,34 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
+--- !u!1 &1258440198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1258440199}
+  m_Layer: 0
+  m_Name: DragonViewPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1258440199
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1258440198}
+  m_LocalRotation: {x: -0.0000017443031, y: 0.12868431, z: 0.0000006418662, w: 0.9916857}
+  m_LocalPosition: {x: -1.9113276, y: 2.5952177, z: -6.379073}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1187769288}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1285042810
 GameObject:
   m_ObjectHideFlags: 0
@@ -89902,7 +89932,7 @@ Transform:
   m_Children:
   - {fileID: 1692650721}
   m_Father: {fileID: 1187769288}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 180, y: 100.785995, z: 180}
 --- !u!1 &2006123430
 GameObject:
@@ -91009,7 +91039,7 @@ Transform:
   - {fileID: 479844271}
   - {fileID: 1546142292}
   m_Father: {fileID: 1187769288}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!199 &2030689214
 ParticleSystemRenderer:

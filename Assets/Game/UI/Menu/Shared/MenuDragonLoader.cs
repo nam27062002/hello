@@ -291,4 +291,10 @@ public class MenuDragonLoader : MonoBehaviour {
 		if(m_mode != Mode.SELECTED_DRAGON) return;
 		LoadDragon(_sku);
 	}
+
+	public void SetViewPosition( Vector3 position ){
+		Transform _viewTransform = m_dragonInstance.transform.Find("view");
+		Vector3 diff = position - _viewTransform.position;
+		m_dragonInstance.transform.position = m_dragonInstance.transform.position + diff;
+	}
 }
