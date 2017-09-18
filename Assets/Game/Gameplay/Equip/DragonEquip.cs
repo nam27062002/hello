@@ -16,6 +16,8 @@ public class DragonEquip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private bool m_menuMode = false;
+	[SerializeField] private bool m_equipPets = true;
+	[SerializeField] private bool m_equipOnAwake = true;
 
 	// Internal
 	private string m_dragonSku;
@@ -24,6 +26,13 @@ public class DragonEquip : MonoBehaviour {
 		get{ return m_dragonSku; }
 		set{ m_dragonSku = value; }
 	}
+	private string m_dragonDisguiseSku;
+	public string dragonDisguiseSku
+	{
+		get{ return m_dragonDisguiseSku; }
+		set{ m_dragonDisguiseSku = value; }
+	}
+
 	private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
 
 	private bool m_showPets = true;
@@ -52,7 +61,9 @@ public class DragonEquip : MonoBehaviour {
 	private void Awake() {
 		Init();
 		// Equip current disguise
-		EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+		if (m_equipOnAwake){
+			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+		}
 	}
 
 	public void Init()
@@ -78,9 +89,11 @@ public class DragonEquip : MonoBehaviour {
 	private void Start()
 	{
 		// Equip current pets loadout
-		List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
-		for(int i = 0; i < pets.Count; i++) {
-			EquipPet(pets[i], i);
+		if (m_equipPets){
+			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+			for(int i = 0; i < pets.Count; i++) {
+				EquipPet(pets[i], i);
+			}
 		}
 	}
 
@@ -110,11 +123,16 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	/// <param name="_disguiseSku">The disguise to be equipped.</param>
 	public void EquipDisguise(string _disguiseSku) {		
+		m_dragonDisguiseSku = _disguiseSku;
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _disguiseSku);
 		if ( def == null)
 		{
-			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_dragonSku + "_0");	
-			if(def == null) return;
+			m_dragonDisguiseSku = m_dragonSku + "_0";
+			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_dragonDisguiseSku);	
+			if(def == null) {
+				m_dragonDisguiseSku = "";
+				return;
+			}
 		}
 		SetSkin( def.Get("skin") );
 
@@ -139,10 +157,13 @@ public class DragonEquip : MonoBehaviour {
 					GameObject objInstance = Instantiate<GameObject>(prefabObj);
 					Equipable equipable = objInstance.GetComponent<Equipable>();
 					int attackPointIdx = (int)equipable.attachPoint;
-					if ( equipable != null && attackPointIdx < m_attachPoints.Length )
+					if ( equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null )
 					{
-						if (m_attachPoints[attackPointIdx] != null )
-							m_attachPoints[attackPointIdx].EquipAccessory( equipable, this );
+						m_attachPoints[attackPointIdx].EquipAccessory( equipable, this );
+					}
+					else
+					{
+						Destroy( objInstance );
 					}
 				}
 			}
