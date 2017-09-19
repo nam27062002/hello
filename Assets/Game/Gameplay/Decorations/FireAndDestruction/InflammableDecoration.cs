@@ -65,6 +65,22 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 		m_explosionProcHandler = ParticleManager.CreatePool("PF_FireExplosionProc");
 
+		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++) {
+			Material[] materials = renderers[i].sharedMaterials;
+
+			// Stores the materials of this renderer in a dictionary for direct access//
+			m_originalMaterials[renderers[i]] = renderers[i].sharedMaterials;
+
+			for (int m = 0; m < materials.Length; ++m) {
+				materials[m] = null;
+			}
+
+			renderers[i].sharedMaterials = materials;
+		}
+		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
+		m_ashMaterial.renderQueue = 3000;// Force transparent
+
 		m_state = m_nextState = State.Idle;
 	}
 
@@ -103,13 +119,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 			m_fireNodes[i].Init(m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
 		}
 		m_startPosition = transform.position;
-
-		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			m_originalMaterials[renderers[i]] = renderers[i].materials;
-		}
-		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
-		m_ashMaterial.renderQueue = 3000;// Force transparent
 	}
 
 	public void SetupFireNodes() {
