@@ -4,6 +4,7 @@
 // Created by David Germade on 12nd September 2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -51,14 +52,14 @@ public class HUDCloudSyncStatus : MonoBehaviour
         View_UpdateCloudSaveIsEnabled(true);
         
         IsPopupOpen = false;
-        SaveFacade.Instance.OnSyncStatusChanged += OnSyncChange;
+        Messenger.AddListener<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);        
 
-        OnSyncChange(SaveFacade.Instance.synced);
+        OnSyncChange(PersistenceFacade.instance.Sync_IsSynced);
     }
 
     void OnDestroy()
     {
-        SaveFacade.Instance.OnSyncStatusChanged -= OnSyncChange;
+        Messenger.RemoveListener<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);
     }
 
     void Update()
@@ -73,6 +74,11 @@ public class HUDCloudSyncStatus : MonoBehaviour
     {
         if (ClickIsEnabled)
         {
+            Action onSyncDone = delegate ()
+            {
+                PersistenceFacade.Popups_CloseLoadingPopup();
+            };
+
             if (CloudSaveIsSynced)
             {
                 if (!IsPopupOpen)
@@ -82,11 +88,11 @@ public class HUDCloudSyncStatus : MonoBehaviour
                     PersistenceManager.Popups_OpenCloudSync
                     (
                         delegate ()
-                        {
-                            if (SaveFacade.Instance.cloudSaveEnabled)
+                        {                            
+                            if (PersistenceFacade.instance.IsCloudSaveEnabled)                            
                             {
-                                SaveFacade.Instance.verboseMode = true;
-                                SaveFacade.Instance.GoToSaveLoaderState();
+                                PersistenceFacade.Popups_OpenLoadingPopup();
+                                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
                             }
                             else
                             {
@@ -102,8 +108,8 @@ public class HUDCloudSyncStatus : MonoBehaviour
             }
             else
             {
-                SaveFacade.Instance.verboseMode = true;
-                SaveFacade.Instance.GoToSaveLoaderState();
+                PersistenceFacade.Popups_OpenLoadingPopup();
+                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
             }
         }
     }
@@ -116,11 +122,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
 
     private void View_UpdateCloudSaveIsEnabled(bool forced = false)
     {
-        bool isEnabled = false;
-
-#if CLOUD_SAVE && (FACEBOOK || WEIBO)
-        isEnabled = SaveFacade.Instance.cloudSaveEnabled;
-#endif
+        bool isEnabled = PersistenceFacade.instance.IsCloudSaveButtonEnabled;
 
         if (isEnabled != CloudSaveIsEnabled || forced)
         {

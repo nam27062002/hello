@@ -3,27 +3,27 @@ using SimpleJSON;
 using System;
 public class PersistenceCloudDriver
 {
-	private enum ESyncSetp
-	{
-		None,
-		CheckingConnection,
-		LoggingInServer,
-		LoggingInSocial,
-		GettingPersistence,
-		Syncing
-	};	
+    private enum ESyncSetp
+    {
+        None,
+        CheckingConnection,
+        LoggingInServer,
+        LoggingInSocial,
+        GettingPersistence,
+        Syncing
+    };
 
-	private enum EState
-	{
-		NotLoggedIn,
-		Syncing,
-		LoggedIn
-	};
+    private enum EState
+    {
+        NotLoggedIn,
+        Syncing,
+        LoggedIn
+    };
 
-	public PersistenceData Data { get; set; }
+    public PersistenceData Data { get; set; }
 
     private EState mState;
-	private EState State
+    private EState State
     {
         get { return mState; }
         set
@@ -39,9 +39,21 @@ public class PersistenceCloudDriver
         }
     }
 
-	private PersistenceLocalDriver LocalDriver { get; set; }
+    private PersistenceLocalDriver LocalDriver { get; set; }
 
-	public bool IsInSync { get; set; }
+    private bool mIsInSync;
+    public bool IsInSync
+    {
+        get { return mIsInSync; }
+        set
+        {
+            if (mIsInSync != value)
+            {
+                mIsInSync = value;
+                Messenger.Broadcast<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
+            }
+        }
+    }
     
 	public PersistenceCloudDriver()
 	{
@@ -738,7 +750,7 @@ public class PersistenceCloudDriver
 	{
 		int updatesAhead = LocalDriver.UpdatesAheadOfCloud;
 		Action<bool> onUploadDone = delegate(bool success)
-		{
+		{            
 			IsInSync = success;
 			Upload_IsRunning = false;
 
