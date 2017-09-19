@@ -243,7 +243,7 @@ public class PopupMessage : MonoBehaviour
             }
         }
 
-        m_titleText.enabled = m_config.ShowTitle;
+        m_titleText.gameObject.SetActive(m_config.ShowTitle);
 
         // Tid has priority over the plain text
         if (m_config.TitleTid != null)
