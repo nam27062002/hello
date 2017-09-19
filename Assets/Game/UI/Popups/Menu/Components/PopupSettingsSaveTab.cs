@@ -4,9 +4,7 @@
 // Created by David Germade on 30th August 2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
-using FGOL.Authentication;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -41,27 +39,19 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Model_Init();
         Social_Init();
         Resync_Init();
-        User_Init();
-        IsShown = false;
+        User_Init();        
     }
 
     void OnEnable()
-    {
-        IsShown = true;
+    {        
         RefreshView();
     }    
 
     void OnDestroy()
-    {
-        IsShown = false;
+    {        
         Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);
         Messenger.RemoveListener(GameEvents.PERSISTENCE_SYNC_DONE, OnPersistenceSyncDone);        
     }    
-
-    /// <summary>
-    /// Returns whether or not this tab is being shown
-    /// </summary>
-    private bool IsShown { get; set; }
     
     private void RefreshView()
     {
@@ -87,9 +77,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
 
     private void OnSocialLogged(bool logged)
-    {
-        RefreshView();
-
+    {     
         if (IsLoadingPopupOpen)
         {
             CloseLoadingPopup();
@@ -181,7 +169,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 if (FeatureSettingsManager.IsDebugEnabled)
                     Log("LOGIN SUCCESSFUL");
 
-                User_LoadProfileInfo();                
+                // Invalidades User_LastState in order to make sure user's information will be recalculated
+                User_LastState = EState.None;                                
             }
             else
             {
@@ -211,23 +200,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
                     //OpenLoadingPopup();                    
                     PersistenceFacade.instance.CloudDriver.Logout();
-                    RefreshView();
-                        /*
-                        delegate ()
-                        {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Debug.Log("LOGGING OUT COMPLETED");
-
-                            // on logout
-                            PersistenceManager.Popups_CloseLoadingPopup();
-                            User_LoadProfileInfo();
-                            Cloud_DisableCloudSave();                            
-
-                            //  Reenable log in button
-                            m_socialLogoutBtn.SetActive(false);
-                            m_socialEnableBtn.gameObject.SetActive(true);                            
-                        }
-                        );*/
+                    RefreshView();                        
                 },
                 null
             );                                
@@ -370,113 +343,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         User_Init();                
     }
-
-    /*private void User_LoadProfileInfo()
-    {
-        m_userLoggedInRoot.SetActive(false);
-        m_userPreviouslyLoggedInRoot.SetActive(false);
-
-        User_IsAvatarLoaded = false;
-
-        if (Model_SocialIsLoggedIn())
-        {
-            User_IsLoggedIn = true;
-
-            m_userNotLoggedInRoot.SetActive(false);
-            m_userLoggedInRoot.SetActive(true);
-            m_userAvatarImage.gameObject.SetActive(false);
-            //m_profileSpinner.SetActive(true);
-
-            m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
-
-            SocialPlatformManager.SharedInstance.GetProfileInfo(
-                delegate (string userName) 
-                {
-                    if (!string.IsNullOrEmpty(userName) && User_IsLoggedIn && m_userNameText != null)
-                    {
-                        m_userNameText.text = userName;
-                    }
-                }, 
-                delegate (Texture2D profileImage)
-                {
-                    if (IsShown)
-                    {
-                        if (User_IsLoggedIn)
-                        {
-                            if (profileImage != null)
-                            {
-                                User_IsAvatarLoaded = true;
-
-                                Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);                            
-                                m_userAvatarImage.sprite = sprite;                            
-                                m_userAvatarImage.gameObject.SetActive(true);
-                                // m_profileSpinner.SetActive(false);
-                            }
-                            else if (!User_IsAvatarLoaded)
-                            {
-                                //m_profileSpinner.SetActive(false);
-                                m_userAvatarImage.gameObject.SetActive(true);
-                            }
-                        }
-                    }
-                });
-        }
-        else
-        {
-            User_IsLoggedIn = false;                        
-
-            m_userPreviouslyLoggedInRoot.SetActive(false);
-            m_userNotLoggedInRewardText.gameObject.SetActive(false);
-            m_userNotLoggedInMessageText.gameObject.SetActive(false);            
-            
-            switch (Model_State)
-            {
-                //case EState.LoggedIn:
-                   // m_userNotLoggedInRewardText.gameObject.SetActive(true);
-
-                    //if (!Model_SocialWasLoginIncentivised(SocialFacade.Network.Default))
-                    //{
-                       // PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
-                    //}
-                    //else
-                    //{
-                    //    m_userNotLoggedInRewardText.Localize(TID_SOCIAL_PERM_MAINMENU);
-                    //}
-
-                    //break;
-
-                case EState.NeverLoggedIn:
-                    m_userNotLoggedInRewardText.gameObject.SetActive(true);
-                    PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);                    
-                    m_userNotLoggedInMessageText.gameObject.SetActive(true);                    
-                    m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());                                        
-                    //m_spriteBGReceive.SetActive(true);
-                    break;
-                
-                case EState.PreviouslyLoggedIn:
-                    //Activate & Deactivate correspondant widgets for this state
-                    m_userNotLoggedInRewardText.gameObject.SetActive(false);
-                    m_userNotLoggedInMessageText.gameObject.SetActive(false);
-                    //m_spriteBGReceive.SetActive(false);
-                    m_userPreviouslyLoggedInRoot.SetActive(true);
-
-                    string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
-                    m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, platformName);
-                    m_socialMessageText.Localize(TID_CLOUD_DESC, platformName);                    
-
-                    break;
-            }
-
-            m_userNotLoggedInRoot.SetActive(true);
-        }
-    }    
-    */
     
     private void User_Refresh()
     {
-        if (User_LastState != Model_State || true)
+        if (User_LastState != Model_State)
         {
-            bool needsToLoadProfile = Model_HasBeenLoaded(Model_State);// && !Model_HasBeenLoaded(User_LastState);            
+            bool needsToLoadProfile = (Model_HasBeenLoaded(Model_State) && !Model_HasBeenLoaded(User_LastState)) ||
+                                       SocialPlatformManager.SharedInstance.NeedsProfileInfoToBeUpdated();
+
+            bool needsSocialIdToBeUpdated = SocialPlatformManager.SharedInstance.NeedsSocialIdToBeUpdated();
 
             User_LastState = Model_State;
 
@@ -486,7 +361,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
             if (needsToLoadProfile)
             {
-                User_LoadProfileInfo();
+                User_LoadProfileInfo(needsSocialIdToBeUpdated);
             }
 
             switch (Model_State)
@@ -495,7 +370,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 case EState.LoggedInAndIncentivised:
                 case EState.PreviouslyLoggedIn:
                     m_userLoggedInRoot.SetActive(true);
-                    m_userAvatarImage.gameObject.SetActive(false);
+
+                    if (needsSocialIdToBeUpdated)
+                    {
+                        m_userAvatarImage.gameObject.SetActive(false);
+                    }
                     //m_profileSpinner.SetActive(true);                    
                     break;
                 
@@ -519,42 +398,37 @@ public class PopupSettingsSaveTab : MonoBehaviour
         }
     }    
 
-    private void User_LoadProfileInfo()
+    private void User_LoadProfileInfo(bool needsToUpdateSocialId)
     {
-        m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
-                
-        SocialPlatformManager.SharedInstance.GetProfileInfo(
-            delegate (string userName)
-            {
-                //if (!string.IsNullOrEmpty(userName) && User_IsLoggedIn && m_userNameText != null)
-                if (!string.IsNullOrEmpty(userName) && m_userNameText != null)
-                {
-                    m_userNameText.text = userName;
-                }
-            },
-            delegate (Texture2D profileImage)
-            {
-                if (IsShown)
-                {
-                    //if (User_IsLoggedIn)
-                    {
-                        if (profileImage != null)
-                        {
-                            User_IsAvatarLoaded = true;
+        if (needsToUpdateSocialId)
+        {
+            m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
+        }
 
-                            Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
-                            m_userAvatarImage.sprite = sprite;
-                            m_userAvatarImage.gameObject.SetActive(true);
-                            // m_profileSpinner.SetActive(false);
-                        }
-                        else if (!User_IsAvatarLoaded)
-                        {
-                            //m_profileSpinner.SetActive(false);
-                            m_userAvatarImage.gameObject.SetActive(true);
-                        }
-                    }
-                }
-            });                           
+        Action<string, Texture2D> onDone = delegate (string userName, Texture2D profileImage)
+        {            
+            if (!string.IsNullOrEmpty(userName) && m_userNameText != null)
+            {
+                m_userNameText.text = userName;
+            }
+            
+            if (profileImage != null)
+            {
+                User_IsAvatarLoaded = true;
+
+                Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
+                m_userAvatarImage.sprite = sprite;
+                m_userAvatarImage.gameObject.SetActive(true);
+                // m_profileSpinner.SetActive(false);
+            }
+            else if (!User_IsAvatarLoaded)
+            {
+                //m_profileSpinner.SetActive(false);
+                m_userAvatarImage.gameObject.SetActive(true);
+            }                            
+        };
+
+        SocialPlatformManager.SharedInstance.GetProfileInfo(onDone);
     }
     #endregion
 

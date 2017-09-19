@@ -144,9 +144,19 @@ public class SocialPlatformManager : MonoBehaviour
         return m_socialUtils.GetUserName();
     }
 
-    public void GetProfileInfo(Action<string> onGetName, Action<Texture2D> onGetImage)
+    public void GetProfileInfo(Action<string, Texture2D> onDone)
     {
-        m_socialUtils.GetProfileInfo(onGetName, onGetImage);                  
+        m_socialUtils.Profile_GetInfo(onDone);
+    }
+
+    public bool NeedsProfileInfoToBeUpdated()
+    {
+        return m_socialUtils.Profile_NeedsInfoToBeUpdated();
+    }    
+
+    public bool NeedsSocialIdToBeUpdated()
+    {
+        return m_socialUtils.Profile_NeedsSocialIdToBeUpdated();
     }
     //////////////////////////////////////////////////////////////////////////
 
@@ -155,7 +165,9 @@ public class SocialPlatformManager : MonoBehaviour
     {
         Ok,
         Error,
-        NeedsToMerge
+        MergeLocalOrOnlineAccount,
+        MergeDifferentAccountWithProgress,
+        MergeDifferentAccountWithoutProgress
     }
 
     private enum ELoginMergeState
@@ -163,8 +175,10 @@ public class SocialPlatformManager : MonoBehaviour
         Waiting,
         Succeeded,
         Failed,
-        ShowPopupNeeeded
-    }
+        MergeLocalOrOnlineAccount,
+        MergeDifferentAccountWithProgress,
+        MergeDifferentAccountWithoutProgress        
+    }    
 
     private ELoginMergeState Login_MergeState { get; set; }
     private bool Login_IsLogInReady { get; set; }
@@ -279,7 +293,20 @@ public class SocialPlatformManager : MonoBehaviour
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("(LOGGING) MERGE POPUP NEEDED! eType = " + eType + " kCloudAccount = " + kCloudAccount);
 
-        Login_MergeState = ELoginMergeState.ShowPopupNeeeded;
+        switch (eType)
+        {
+            case CaletyConstants.PopupMergeType.POPUP_MERGE_LOCAL_OR_ONLINE_ACCOUNTS:
+                Login_MergeState = ELoginMergeState.MergeLocalOrOnlineAccount;
+                break;
+
+            case CaletyConstants.PopupMergeType.POPUP_MERGE_DIFFERENT_GAMECENTER_ACOUNT_WITH_PROGRESS:
+                Login_MergeState = ELoginMergeState.MergeDifferentAccountWithProgress;
+                break;
+
+            case CaletyConstants.PopupMergeType.POPUP_MERGE_DIFFERENT_GAMECENTER_ACOUNT_WITHOUT_PROGRESS:
+                Login_MergeState = ELoginMergeState.MergeDifferentAccountWithoutProgress;
+                break;
+        }        
 
         JSONNode persistenceAsJson = null;
         
@@ -305,19 +332,28 @@ public class SocialPlatformManager : MonoBehaviour
         {
             if (isLoggedIn)
             {
-                if (Login_MergeState == ELoginMergeState.Failed)
+                ELoginResult result = ELoginResult.Error;
+
+                switch (Login_MergeState)
                 {
-                    // If merge fails then no persistence can be retrieved
-                    Login_PerformDone(ELoginResult.Error);
+                    case ELoginMergeState.Succeeded:
+                        result = ELoginResult.Ok;
+                        break;
+
+                    case ELoginMergeState.MergeLocalOrOnlineAccount:
+                        result = ELoginResult.MergeLocalOrOnlineAccount;
+                        break;
+
+                    case ELoginMergeState.MergeDifferentAccountWithProgress:
+                        result = ELoginResult.MergeDifferentAccountWithProgress;
+                        break;
+
+                    case ELoginMergeState.MergeDifferentAccountWithoutProgress:
+                        result = ELoginResult.MergeDifferentAccountWithoutProgress;
+                        break;
                 }
-                else if (Login_MergeState == ELoginMergeState.ShowPopupNeeeded)
-                {
-                    Login_PerformDone(ELoginResult.NeedsToMerge);
-                }
-                else
-                {
-                    Login_PerformDone(ELoginResult.Ok);
-                }
+
+                Login_PerformDone(result);                
             }
             else
             {
@@ -336,7 +372,7 @@ public class SocialPlatformManager : MonoBehaviour
             Login_OnDone(result, Login_MergePersistence);
         }
 
-        Login_Discard();
+        Login_Discard();        
     }
 
     public void Login_Discard()

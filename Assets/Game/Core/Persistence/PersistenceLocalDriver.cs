@@ -10,6 +10,8 @@ public class PersistenceLocalDriver
 
 	public UserProfile UserProfile { get; set; }
 
+    public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
+
 	public PersistenceLocalDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
@@ -174,8 +176,13 @@ public class PersistenceLocalDriver
         PersistenceFacade.Popups_OpenLoginComplete(rewardAmount, onRewardCollected);        
 	}
 
-	public void NotifyUserHasLoggedIn(Action onDone)
+	public void NotifyUserHasLoggedIn(string socialPlatform, string socialId, Action onDone)
 	{
+        if (TrackingPersistenceSystem != null)
+        {
+            TrackingPersistenceSystem.SetSocialParams(socialPlatform, socialId);
+        }
+
 		// Checks if it's the first time the user logs in, if so then socialState has to be updated
 		if (UserProfile != null && UserProfile.SocialState == UserProfile.ESocialState.NeverLoggedIn)
 		{

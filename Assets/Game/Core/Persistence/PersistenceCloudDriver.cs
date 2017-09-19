@@ -235,7 +235,9 @@ public class PersistenceCloudDriver
 					Syncer_Step = ESyncSetp.GettingPersistence;
 					break;
 
-				case SocialPlatformManager.ELoginResult.NeedsToMerge:                                        
+				case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
+                case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
+                case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
                     Data.LoadFromString(persistenceMerge);                    
                     Syncer_Step = ESyncSetp.Syncing;
 					break;
@@ -260,18 +262,42 @@ public class PersistenceCloudDriver
 		};
 
 		Syncer_ExtendedGetPersistence(onDone);
-	}
+	}    
 
 	private void Syncer_Sync()
-	{		
-        if (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.NeedsToMerge)
+	{
+        switch (Syncer_LogInSocialResult)
         {
-            Syncer_ProcessMerge();            
-        }
-        else
-        {
-            Syncer_ProcessSync();
-        }        
+            case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
+            {
+                Syncer_ProcessMerge();
+            }
+            break;
+
+            case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
+            case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
+            {
+                Action onConfirm = delegate ()
+                {
+                    Syncer_OnMergeConflictUseCloud();
+                };
+
+                Action onCancel = delegate ()
+                {
+                    SocialPlatformManager.SharedInstance.Logout();
+                    Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
+                };
+
+                PersistenceFacade.Popup_OpenMergeWithADifferentAccount(onConfirm, onCancel);
+            }
+            break;            
+
+            default:
+            {
+                Syncer_ProcessSync();         
+            }
+            break;        
+        }                
 	}    
 
     private void Syncer_ProcessSync()
@@ -406,7 +432,25 @@ public class PersistenceCloudDriver
             PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD!!!");
 
         // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
-        GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+        switch (Syncer_LogInSocialResult)
+        {
+            case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
+                GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+                break;
+
+            case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
+                GameSessionManager.SharedInstance.SetAnonymousPlatformUserIDFromMergeOnlineAccount();
+                break;
+
+            case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
+                GameSessionManager.SharedInstance.ResetAnonymousPlatformUserID();
+                break;
+
+            default:
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    PersistenceFacade.LogWarning("No Syncer_LogInSocialResult " + Syncer_LogInSocialResult + " supported");
+                break;
+        }        
 
         // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
         GameServerManager.SharedInstance.LogOut();
@@ -556,7 +600,10 @@ public class PersistenceCloudDriver
 				LocalDriver.ProcessSocialState(onDone);
 			};
 
-			LocalDriver.NotifyUserHasLoggedIn(onUserLoggedIn);
+            SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
+            string socialPlatform = manager.GetPlatformName();
+            string socialId = manager.GetUserID();
+			LocalDriver.NotifyUserHasLoggedIn(socialPlatform, socialId, onUserLoggedIn);
 		} 
 		else
 		{
