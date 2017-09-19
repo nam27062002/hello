@@ -4,6 +4,7 @@
 // Created by David Germade on 12nd September 2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -31,6 +32,8 @@ public class HUDCloudSyncStatus : MonoBehaviour
             sm_clickIsEnabled = value;
         }
     }
+
+    public GameObject mRoot;
 
     private bool CloudSaveIsSynced { get; set; }
 
@@ -73,6 +76,11 @@ public class HUDCloudSyncStatus : MonoBehaviour
     {
         if (ClickIsEnabled)
         {
+            Action onSyncDone = delegate ()
+            {
+                PersistenceFacade.Popups_CloseLoadingPopup();
+            };
+
             if (CloudSaveIsSynced)
             {
                 if (!IsPopupOpen)
@@ -82,10 +90,11 @@ public class HUDCloudSyncStatus : MonoBehaviour
                     PersistenceManager.Popups_OpenCloudSync
                     (
                         delegate ()
-                        {
+                        {                            
                             if (PersistenceFacade.instance.IsCloudSaveEnabled)                            
                             {
-                                PersistenceFacade.instance.Sync_FromSettings(null);
+                                PersistenceFacade.Popups_OpenLoadingPopup();
+                                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
                             }
                             else
                             {
@@ -101,7 +110,8 @@ public class HUDCloudSyncStatus : MonoBehaviour
             }
             else
             {
-                PersistenceFacade.instance.Sync_FromSettings(null);
+                PersistenceFacade.Popups_OpenLoadingPopup();
+                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
             }
         }
     }
@@ -114,12 +124,16 @@ public class HUDCloudSyncStatus : MonoBehaviour
 
     private void View_UpdateCloudSaveIsEnabled(bool forced = false)
     {
-        bool isEnabled = PersistenceFacade.instance.IsCloudSaveButtonEnabled;
+        bool isEnabled = PersistenceFacade.instance.IsCloudSaveAllowed && PersistenceFacade.instance.IsCloudSaveEnabled;
 
         if (isEnabled != CloudSaveIsEnabled || forced)
         {
             CloudSaveIsEnabled = isEnabled;
-            this.gameObject.SetActive(CloudSaveIsEnabled);
+
+            if (mRoot != null)
+            {
+                mRoot.gameObject.SetActive(CloudSaveIsEnabled);
+            }            
         }
     }
 

@@ -24,7 +24,7 @@ public class TrackerBuySkins : TrackerBase {
 	/// </summary>
 	public TrackerBuySkins() {
 		// Subscribe to external events
-		Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		//Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
 	}
 
 	/// <summary>
@@ -32,7 +32,7 @@ public class TrackerBuySkins : TrackerBase {
 	/// </summary>
 	~TrackerBuySkins() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		//Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
 	}
 
 	//------------------------------------------------------------------------//

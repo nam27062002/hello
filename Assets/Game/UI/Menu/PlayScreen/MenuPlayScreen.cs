@@ -50,9 +50,9 @@ public class MenuPlayScreen : MonoBehaviour {
         if (m_socialNetwork == SocialFacade.Network.Default)
         {
             m_socialNetwork = SocialManager.GetSelectedSocialNetwork();
-        }               
-
-		Refresh();
+        }
+        
+        Refresh();
     }
 	
 	/// <summary>
@@ -74,6 +74,10 @@ public class MenuPlayScreen : MonoBehaviour {
 			HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
 			m_showLegalPopup = false;
 		}
+
+        if (NeedsToRefresh()) {
+            Refresh();
+        }
 	}
 
 	/// <summary>
@@ -113,24 +117,27 @@ public class MenuPlayScreen : MonoBehaviour {
             Refresh();
         });
     }
-   
+
+    private bool SocialIsLoggedIn { get; set; }
+
+    private bool NeedsToRefresh()
+    {
+        return SocialIsLoggedIn != SocialPlatformManager.SharedInstance.IsLoggedIn();
+    }
+
     private void Refresh()
     {
-#if CLOUD_SAVE && (WEIBO || FACEBOOK)        
         m_connectButton.interactable = true;
 
         UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
-        bool socialIsLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
+        SocialIsLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
 
         m_incentivizeRoot.SetActive(socialState != UserProfile.ESocialState.LoggedInAndInventivised);
-        m_badge.SetActive(!socialIsLoggedIn);        
-
-#else
-        m_badge.SetActive(false);
-#endif
+        m_badge.SetActive(!SocialIsLoggedIn);        
 
 		m_showLegalPopup = PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION;
-    }
+    }    
+    
    	
     //------------------------------------------------------------------//
     // CALLBACKS														//
