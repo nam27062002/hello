@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 86.27951, y: 0.10456705, z: 16.573574}
+  m_LocalPosition: {x: 65.12114, y: 5.446512, z: -14.295332}
   m_LocalScale: {x: 1.54, y: 1.54, z: 1.54}
   m_Children:
   - {fileID: 4807580802722984}
@@ -74,6 +74,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_menuMode: 1
+  m_equipPets: 1
+  m_equipOnAwake: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -306,6 +308,23 @@ GameObject:
   m_Name: Dragon_LArm_Digit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1114303712939510
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4036425557161102}
+  - component: {fileID: 114781242322653584}
+  - component: {fileID: 114453023098230884}
+  m_Layer: 12
+  m_Name: wrist_L
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1152,6 +1171,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1814628151847630
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4724002237774354}
+  - component: {fileID: 114026440760573974}
+  - component: {fileID: 114177757210780396}
+  m_Layer: 12
+  m_Name: wrist_R
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1816516775087916
 GameObject:
   m_ObjectHideFlags: 1
@@ -1486,6 +1522,19 @@ Transform:
   m_Father: {fileID: 4228495414613920}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4036425557161102
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1114303712939510}
+  m_LocalRotation: {x: -0.49065214, y: -0.77182674, z: 0.33437726, w: -0.2274552}
+  m_LocalPosition: {x: 0.5246398, y: 0.7150241, z: 1.3615311}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4807580802722984}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4036554245995054
 Transform:
   m_ObjectHideFlags: 1
@@ -1767,7 +1816,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4807580802722984}
-  m_RootOrder: 7
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4267539239455240
 Transform:
@@ -1788,7 +1837,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1857063217559848}
-  m_LocalRotation: {x: -0.729685, y: -0.13468345, z: 0.027240619, w: 0.6698344}
+  m_LocalRotation: {x: -0.72968507, y: -0.13468346, z: 0.027240619, w: 0.66983443}
   m_LocalPosition: {x: -0.5160918, y: -0.000000059604645, z: 0.00000011920929}
   m_LocalScale: {x: 1.000003, y: 0.99999565, z: 1.0000021}
   m_Children:
@@ -2020,7 +2069,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4807580802722984}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4507557467175868
 Transform:
@@ -2369,6 +2418,19 @@ Transform:
   m_Father: {fileID: 4326430828199002}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4724002237774354
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1814628151847630}
+  m_LocalRotation: {x: 0.49065217, y: 0.7718269, z: 0.3343771, w: -0.22745481}
+  m_LocalPosition: {x: 0.4925517, y: 0.7398995, z: -1.336359}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4807580802722984}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4731806835291614
 Transform:
   m_ObjectHideFlags: 1
@@ -2468,6 +2530,8 @@ Transform:
   - {fileID: 4537131613921192}
   - {fileID: 4830643916502466}
   - {fileID: 4528900930219350}
+  - {fileID: 4036425557161102}
+  - {fileID: 4724002237774354}
   - {fileID: 4484682748621084}
   - {fileID: 4251463660005282}
   m_Father: {fileID: 480186}
@@ -2709,6 +2773,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114026440760573974
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1814628151847630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 24
 --- !u!114 &114030452742951480
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2745,6 +2821,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 0
+--- !u!114 &114177757210780396
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1814628151847630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_RArm_2
+  m_parentRoot: {fileID: 480186}
+  m_worldPositionStays: 1
 --- !u!114 &114180488782224202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2794,6 +2884,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8e40bc0f188741ec85c749c34469a45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114453023098230884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1114303712939510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_LArm_2
+  m_parentRoot: {fileID: 480186}
+  m_worldPositionStays: 1
 --- !u!114 &114464902128784450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2846,6 +2950,18 @@ MonoBehaviour:
   m_parentName: Dragon_Hip
   m_parentRoot: {fileID: 480186}
   m_worldPositionStays: 1
+--- !u!114 &114781242322653584
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1114303712939510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 25
 --- !u!114 &114801267415912370
 MonoBehaviour:
   m_ObjectHideFlags: 1
