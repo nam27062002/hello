@@ -71,16 +71,16 @@ public class PersistenceFacade
 		Config.CloudDriver.Update();    
 	}
 
+    public bool IsCloudSaveAllowed
+    {
+        get { return CloudDriver.Upload_IsAllowed; }
+    }
+
     public bool IsCloudSaveEnabled
     {
         get { return CloudDriver.Upload_IsEnabled; }
         set { CloudDriver.Upload_IsEnabled = value; }
-    }
-
-    public bool IsCloudSaveButtonEnabled
-    {
-        get { return LocalDriver != null && LocalDriver.UserProfile != null && LocalDriver.UserProfile.SocialState != UserProfile.ESocialState.NeverLoggedIn; }
-    }
+    }   
 
 	#region sync
     public bool Sync_IsSyncing { get; set; }
@@ -99,22 +99,7 @@ public class PersistenceFacade
         Action onLoadDone = delegate()
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
-                Log("SYNC: Loading  local DONE! " + LocalData.LoadState);
-
-            Action<bool> performSync = delegate(bool isSilent)
-			{
-				Action<PersistenceStates.ESyncResult> onSyncDone = delegate(PersistenceStates.ESyncResult result)
-				{
-					if (!Config.LocalDriver.IsLoadedInGame)
-					{
-						Config.LocalDriver.IsLoadedInGame = true;
-					}
-
-					Sync_OnDone(result, onDone);
-				};
-
-				Config.CloudDriver.Sync(isSilent, true, onSyncDone);
-			};
+                Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
 
 			// If local persistence is corrupted then we need to offer the chance to override it with cloud persistence
 			// if the user has logged in ever.

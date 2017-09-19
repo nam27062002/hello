@@ -712,7 +712,7 @@ public class PersistenceCloudDriver
     
     #region upload
     private bool Upload_IsRunning { get; set; }
-	private bool Upload_IsAllowed { get; set; }
+	public bool Upload_IsAllowed { get; set; }
 
     public bool Upload_IsEnabled
     {

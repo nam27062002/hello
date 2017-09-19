@@ -33,6 +33,8 @@ public class HUDCloudSyncStatus : MonoBehaviour
         }
     }
 
+    public GameObject mRoot;
+
     private bool CloudSaveIsSynced { get; set; }
 
     private bool CloudSaveIsEnabled { get; set; }
@@ -122,12 +124,16 @@ public class HUDCloudSyncStatus : MonoBehaviour
 
     private void View_UpdateCloudSaveIsEnabled(bool forced = false)
     {
-        bool isEnabled = PersistenceFacade.instance.IsCloudSaveButtonEnabled;
+        bool isEnabled = PersistenceFacade.instance.IsCloudSaveAllowed && PersistenceFacade.instance.IsCloudSaveEnabled;
 
         if (isEnabled != CloudSaveIsEnabled || forced)
         {
             CloudSaveIsEnabled = isEnabled;
-            this.gameObject.SetActive(CloudSaveIsEnabled);
+
+            if (mRoot != null)
+            {
+                mRoot.gameObject.SetActive(CloudSaveIsEnabled);
+            }            
         }
     }
 

@@ -109,8 +109,7 @@ public class LoadingSceneController : SceneController {
 	// Internal
 	private float timer = 0;
 
-    private bool m_startLoadFlow = true;
-    private bool m_loading = false;
+    private bool m_startLoadFlow = true;    
     private bool m_loadingDone = false;
 
 
@@ -359,8 +358,7 @@ public class LoadingSceneController : SceneController {
     {
         if (m_startLoadFlow)
         {            
-            m_startLoadFlow = false;
-            m_loading = true;
+            m_startLoadFlow = false;            
             m_loadingDone = false;
 
             if (FeatureSettingsManager.IsDebugEnabled)
@@ -368,8 +366,7 @@ public class LoadingSceneController : SceneController {
 
             Action onDone = delegate()
             {
-                m_loadingDone = true;
-                m_loading = false;
+                m_loadingDone = true;                
 
                 HDTrackingManager.Instance.Notify_ApplicationStart();
 
