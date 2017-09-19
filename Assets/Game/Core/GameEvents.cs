@@ -131,7 +131,7 @@ public enum GameEvents {
     // Social Platform Manager Events
     SOCIAL_LOGGED,				// params: bool	
 	
-    PERSISTENCE_SYNC_DONE,
+    PERSISTENCE_SYNC_CHANGED,   // paramas: bool (whether or not local and cloud persistences are synced)
 
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params

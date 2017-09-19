@@ -33,8 +33,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private void Init()
     {
-        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);
-        Messenger.AddListener(GameEvents.PERSISTENCE_SYNC_DONE, OnPersistenceSyncDone);
+        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);        
 
         Model_Init();
         Social_Init();
@@ -49,8 +48,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     void OnDestroy()
     {        
-        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);
-        Messenger.RemoveListener(GameEvents.PERSISTENCE_SYNC_DONE, OnPersistenceSyncDone);        
+        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);        
     }    
     
     private void RefreshView()
@@ -82,12 +80,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         {
             CloseLoadingPopup();
         }
-    }
-
-    private void OnPersistenceSyncDone()
-    {
-        RefreshView();
-    }
+    }    
 
     #region social
     // This region is responsible for handling social stuff
@@ -221,7 +214,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     /// </summary>
     public void Cloud_OnChangeSaveEnable()
     {        
-        PersistenceFacade.instance.CloudDriver.Upload_IsEnabled = m_cloudEnableSlider.value == 1;
+        PersistenceFacade.instance.IsCloudSaveEnabled = m_cloudEnableSlider.value == 1;
         Resync_Refresh();    
     }   
     
@@ -505,7 +498,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private bool Model_SaveIsCloudSaveEnabled()
     {
-        return PersistenceFacade.instance.CloudDriver.Upload_IsEnabled;
+        return PersistenceFacade.instance.IsCloudSaveEnabled;
     }
     #endregion
 
