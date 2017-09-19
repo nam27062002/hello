@@ -51,14 +51,14 @@ public class HUDCloudSyncStatus : MonoBehaviour
         View_UpdateCloudSaveIsEnabled(true);
         
         IsPopupOpen = false;
-        SaveFacade.Instance.OnSyncStatusChanged += OnSyncChange;
+        Messenger.AddListener<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);        
 
-        OnSyncChange(SaveFacade.Instance.synced);
+        OnSyncChange(PersistenceFacade.instance.Sync_IsSynced);
     }
 
     void OnDestroy()
     {
-        SaveFacade.Instance.OnSyncStatusChanged -= OnSyncChange;
+        Messenger.RemoveListener<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);
     }
 
     void Update()
@@ -83,10 +83,9 @@ public class HUDCloudSyncStatus : MonoBehaviour
                     (
                         delegate ()
                         {
-                            if (SaveFacade.Instance.cloudSaveEnabled)
+                            if (PersistenceFacade.instance.IsCloudSaveEnabled)                            
                             {
-                                SaveFacade.Instance.verboseMode = true;
-                                SaveFacade.Instance.GoToSaveLoaderState();
+                                PersistenceFacade.instance.Sync_FromSettings(null);
                             }
                             else
                             {
@@ -102,8 +101,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
             }
             else
             {
-                SaveFacade.Instance.verboseMode = true;
-                SaveFacade.Instance.GoToSaveLoaderState();
+                PersistenceFacade.instance.Sync_FromSettings(null);
             }
         }
     }
@@ -116,11 +114,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
 
     private void View_UpdateCloudSaveIsEnabled(bool forced = false)
     {
-        bool isEnabled = false;
-
-#if CLOUD_SAVE && (FACEBOOK || WEIBO)
-        isEnabled = SaveFacade.Instance.cloudSaveEnabled;
-#endif
+        bool isEnabled = PersistenceFacade.instance.IsCloudSaveButtonEnabled;
 
         if (isEnabled != CloudSaveIsEnabled || forced)
         {

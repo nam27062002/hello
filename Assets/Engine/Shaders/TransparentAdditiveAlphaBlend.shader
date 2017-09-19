@@ -47,9 +47,6 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend"
 
 			float4 _MainTex_ST;
 
-#ifdef CUSTOMPARTICLESYSTEM
-			float4 _VColor;
-#endif
 			float4 _TintColor;
 			float _ABOffset;
 
@@ -64,11 +61,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend"
 
 			fixed4 frag(v2f i) : COLOR
 			{
-#ifdef CUSTOMPARTICLESYSTEM
-				float4 tint = _VColor * 0.5;
-#else
 				float4 tint = _TintColor;
-#endif
 				float4 tex = tex2D(_MainTex, i.texcoord) * tint;
 				float luminance = clamp(dot(tex, float4(0.2126, 0.7152, 0.0722, 0.0)) * tex.a * _ABOffset, 0.0, 1.0);
 				float4 one = float4(1, 1, 1, 1);

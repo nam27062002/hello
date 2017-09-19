@@ -1,6 +1,6 @@
 public class TrackingPersistenceSystem : PersistenceSystem
 {
-    private const string PARAM_ACCOUNT_ID = "accID";
+    private const string PARAM_SERVER_USER_ID = "accID";
     private const string PARAM_ADS_COUNT = "adsCount";
     private const string PARAM_ADS_SESSIONS = "adsSessions";
     private const string PARAM_GAME_ROUND_COUNT = "gameRoundCount";
@@ -59,16 +59,16 @@ public class TrackingPersistenceSystem : PersistenceSystem
     }
 
     // Id in our server. It must be 0 if the user has never logged in
-    public int AccountID
+    public string ServerUserID
     {
         get
         {
-            return Cache_GetInt(PARAM_ACCOUNT_ID);
+            return Cache_GetString(PARAM_SERVER_USER_ID);
         }
 
         set
         {
-            Cache_SetInt(PARAM_ACCOUNT_ID, value);
+            Cache_SetString(PARAM_SERVER_USER_ID, value);
         }
     }
 
@@ -195,9 +195,9 @@ public class TrackingPersistenceSystem : PersistenceSystem
         dataString = new CacheDataString(key, "");
         Cache_AddData(key, dataString);
 
-        key = PARAM_ACCOUNT_ID;
-        dataInt = new CacheDataInt(key, 0);
-        Cache_AddData(key, dataInt);
+        key = PARAM_SERVER_USER_ID;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
 
         key = PARAM_SESSION_COUNT;
         dataInt = new CacheDataInt(key, 0);
@@ -262,19 +262,9 @@ public class TrackingPersistenceSystem : PersistenceSystem
         return false;
     }    
 
-    public void SetSocialParams(string socialPlatform, string socialID, string accId)
-    {
+    public void SetSocialParams(string socialPlatform, string socialID)
+    {        
         SocialPlatform = socialPlatform;
-        SocialID = socialID;
-
-        // Try to convert it to an int value since the parameter of the DNA event requires an int value
-        if (string.IsNullOrEmpty(accId))
-        {
-            AccountID = 0;
-        }
-        else
-        {
-            AccountID = int.Parse(accId);
-        }
+        SocialID = socialID;       
     }
 }

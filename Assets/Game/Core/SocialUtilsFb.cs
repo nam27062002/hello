@@ -36,7 +36,7 @@ public class SocialUtilsFb : SocialUtils
         return FacebookManager.SharedInstance.IsLoggedIn();
     }
 
-    public override void GetProfileInfo(Action<Dictionary<string, string>> onGetProfileInfo)
+    protected override void GetProfileInfo(Action<Dictionary<string, string>> onGetProfileInfo)
     {
         if (FB.IsInitialized && FB.IsLoggedIn)
         {
@@ -73,7 +73,7 @@ public class SocialUtilsFb : SocialUtils
         }
     }
 
-    protected override void ExtendedGetProfilePicture(string socialID, Action<Texture2D> onGetProfilePicture, Action<string, Texture2D, Action<Texture2D>> callback, int width = 256, int height = 256)
+    protected override void ExtendedGetProfilePicture(string socialID, Action<Texture2D, bool> onGetProfilePicture, int width = 256, int height = 256)
     {
         string url = string.Format("/{0}/picture?width={1}&height={2}&redirect=false&type=normal", socialID, width, height);
 
@@ -89,12 +89,15 @@ public class SocialUtilsFb : SocialUtils
                     {
                         if (pictureInfo.ContainsKey("url") && (!pictureInfo.ContainsKey("is_silhouette") || !(bool)pictureInfo["is_silhouette"]))
                         {
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                                Log("SocialUtilsFb :: (GetProfilePicture) Profile image " + pictureInfo["url"] + " requested");
+
                             ImageRequest request = new ImageRequest();
                             request.Get(pictureInfo["url"] as string, delegate (Error error, Texture2D texture)
                             {
                                 if (error == null)
                                 {
-                                    callback(socialID, texture, onGetProfilePicture);
+                                    onGetProfilePicture(texture, false);                                    
                                 }
                                 else
                                 {
@@ -102,7 +105,7 @@ public class SocialUtilsFb : SocialUtils
                                         Log("SocialUtilsFb :: (GetProfilePicture) Error getting image: " + error);
 
                                     // no need to fire the callback because there is nothing to cache.
-                                    onGetProfilePicture(null);
+                                    onGetProfilePicture(null, true);
                                 }
                             });
                         }
@@ -111,7 +114,7 @@ public class SocialUtilsFb : SocialUtils
                             if (FeatureSettingsManager.IsDebugEnabled)
                                 Log("SocialUtilsFb :: (GetProfilePicture) Invalid image!");
 
-                            onGetProfilePicture(null);
+                            onGetProfilePicture(null, false);
                         }
                     }
                     else
@@ -119,7 +122,7 @@ public class SocialUtilsFb : SocialUtils
                         if (FeatureSettingsManager.IsDebugEnabled)
                             LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
 
-                        onGetProfilePicture(null);
+                        onGetProfilePicture(null, true);
                     }
                 }
                 else
@@ -127,7 +130,7 @@ public class SocialUtilsFb : SocialUtils
                     if (FeatureSettingsManager.IsDebugEnabled)
                         LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
 
-                    onGetProfilePicture(null);
+                    onGetProfilePicture(null, true);
                 }
             }
             else
@@ -135,7 +138,7 @@ public class SocialUtilsFb : SocialUtils
                 if (FeatureSettingsManager.IsDebugEnabled)
                     LogWarning("SocialUtilsFb :: (GetProfilePicture) Error getting facebook profile picture: " + (result.Error != null ? result.Error : "NONE"));
 
-                onGetProfilePicture(null);
+                onGetProfilePicture(null, true);
             }
         });
     }
