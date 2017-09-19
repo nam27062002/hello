@@ -56,7 +56,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 	private bool m_eggFound = false;
 
-	/*	
+	/*
 	// Test To recolocate the dragons view!
 	public bool recolocate = false; //"run" or "generate" for example
 	void Update()
@@ -64,6 +64,11 @@ public class ResultsSceneSetup : MonoBehaviour {
 		if (recolocate)
 		{
 			m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
+			m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
+			if ( m_dragonSlot.dragonSku == "dragon_chinese" || m_dragonSlot.dragonSku == "dragon_reptile" || m_dragonSlot.dragonSku == "dragon_balrog")
+			{
+				m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
+			}
 		}
 	}
 	*/
@@ -228,6 +233,11 @@ public class ResultsSceneSetup : MonoBehaviour {
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
 		m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
+		m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
+		if ( m_dragonSlot.dragonSku == "dragon_chinese" || m_dragonSlot.dragonSku == "dragon_reptile" || m_dragonSlot.dragonSku == "dragon_balrog")
+		{
+			m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
+		}
 
 		// Trigger confetti anim
 		LaunchConfettiFX();
