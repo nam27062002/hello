@@ -42,7 +42,8 @@ public class LoadingSceneController : SceneController {
             config.TitleTid = kPopupConfig.m_strTitle;
 			config.ShowTitle = !string.IsNullOrEmpty( kPopupConfig.m_strTitle);
 			config.MessageTid = kPopupConfig.m_strMessage;
-			config.HandleBackButton = false;
+            // This popup ignores back button and stays open so the user makes a decision
+            config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
 
 			m_popupConfig = kPopupConfig;
             if (kPopupConfig.m_kPopupButtons.Count == 2)
