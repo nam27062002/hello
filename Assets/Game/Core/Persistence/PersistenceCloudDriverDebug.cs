@@ -49,7 +49,7 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 				// We need to do it only once because the flow might make the game
 				// reload so we don't want this to be send again
 				IsMergeEnabled = false;				
-				onDone(SocialPlatformManager.ELoginResult.NeedsToMerge, PersistenceAsString);
+				onDone(SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount, PersistenceAsString);
 			}
 			else
 			{
