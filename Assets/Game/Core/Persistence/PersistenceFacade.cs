@@ -71,16 +71,16 @@ public class PersistenceFacade
 		Config.CloudDriver.Update();    
 	}
 
+    public bool IsCloudSaveAllowed
+    {
+        get { return CloudDriver.Upload_IsAllowed; }
+    }
+
     public bool IsCloudSaveEnabled
     {
         get { return CloudDriver.Upload_IsEnabled; }
         set { CloudDriver.Upload_IsEnabled = value; }
-    }
-
-    public bool IsCloudSaveButtonEnabled
-    {
-        get { return LocalDriver != null && LocalDriver.UserProfile != null && LocalDriver.UserProfile.SocialState != UserProfile.ESocialState.NeverLoggedIn; }
-    }
+    }   
 
 	#region sync
     public bool Sync_IsSyncing { get; set; }
