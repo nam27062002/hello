@@ -14,7 +14,9 @@ public class PersistencePrefs
     // We want the cloud save to stores per device instead of per profile
     private static string KEY_CLOUD_SAVE_ENABLED = "cloudSaveEnabled";
 
-    private static string KEY_SOCIAL_PROFILE_NAME = "SocialProfileName";
+    private static string KEY_SOCIAL_ID = "socialId";
+
+    private static string KEY_SOCIAL_PROFILE_NAME = "socialProfileName";
 
     // Stored here so TrackingManager can be initialized as soon as possible
     private static string KEY_SERVER_USER_ID = "serverUserId";
@@ -23,6 +25,7 @@ public class PersistencePrefs
     {
         KEY_ACTIVE_PROFILE_NAME,
         KEY_CLOUD_SAVE_ENABLED,
+        KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SERVER_USER_ID,
     };        
@@ -65,8 +68,32 @@ public class PersistencePrefs
         get { return PlayerPrefs.GetString(KEY_SERVER_USER_ID, null);  }
         set { SetString(KEY_SERVER_USER_ID, value); }
     }
-        
+
+    public static int ServerUserIdAsInt
+    {
+        get
+        {
+            int returnValue = 0;
+            string userId = ServerUserId;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                if (!int.TryParse(userId, out returnValue))
+                {
+                    returnValue = 0;
+                }
+            }
+
+            return returnValue;
+        }        
+    }
+
     #region social
+    public static string Social_Id
+    {
+        get { return PlayerPrefs.GetString(KEY_SOCIAL_ID, null); }
+        set { SetString(KEY_SOCIAL_ID, value); }
+    }
+
     public static string Social_ProfileName
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_PROFILE_NAME, null); }
