@@ -32,7 +32,8 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 	}
 
 	SubShader{
-		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
+		Tags{ "ForceNoShadowCasting" = "True" "Queue" = "AlphaTest" "RenderType" = "TransparentCutout"}
+//		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase"}
 		//	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
 //		Cull back
 		ColorMask RGBA

@@ -71,8 +71,21 @@ public class PersistenceFacade
 		Config.CloudDriver.Update();    
 	}
 
+    public bool IsCloudSaveAllowed
+    {
+        get { return CloudDriver.Upload_IsAllowed; }
+    }
+
+    public bool IsCloudSaveEnabled
+    {
+        get { return CloudDriver.Upload_IsEnabled; }
+        set { CloudDriver.Upload_IsEnabled = value; }
+    }   
+
 	#region sync
     public bool Sync_IsSyncing { get; set; }
+
+    public bool Sync_IsSynced { get { return CloudDriver.IsInSync; } }
 
     private void Sync_Reset()
     {
@@ -598,9 +611,8 @@ public class PersistenceFacade
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_NAME";
         config.MessageTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_DESC";
-        config.ConfirmButtonTid = "TID_GEN_CONTINUE";
-        config.CancelButtonTid = "TID_GEN_RETRY";
-        config.ExtraButtonTid = "TID_GEN_UPLOAD";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
+        config.CancelButtonTid = "TID_GEN_CONTINUE";        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onRetry;
         config.OnCancel = onContinue;
