@@ -222,14 +222,12 @@ if $RESET_GIT; then
 
   # Remove untracked files and directories.
   git clean -fd
-fi
-# Change branch
-git fetch
-git checkout "${BRANCH}"
 
-# Update branch
-print_builder "Pulling Branch ${BRANCH}"
-git pull origin "${BRANCH}"
+  cd Calety
+  git reset --hard  
+  git clean -fd  
+  cd..
+fi
 
 # Update calety
 print_builder "Updating Calety"
@@ -237,6 +235,14 @@ cd Calety
 git checkout "${CALETY_BRANCH}"
 git pull
 cd ..
+
+# Change branch
+git fetch
+git checkout "${BRANCH}"
+
+# Update branch
+print_builder "Pulling Branch ${BRANCH}"
+git pull origin "${BRANCH}"
 
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
