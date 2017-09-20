@@ -214,6 +214,17 @@ UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile -nographics -
 # Move to project path
 cd "${PROJECT_PATH}"
 
+cd Calety
+if $RESET_GIT; then
+  git reset --hard  
+  git clean -fd  
+fi
+# Update calety
+print_builder "Updating Calety"
+git checkout "${CALETY_BRANCH}"
+git pull
+cd ..
+
 if $RESET_GIT; then
   print_builder "Reset Git"
   # Update git
@@ -222,19 +233,7 @@ if $RESET_GIT; then
 
   # Remove untracked files and directories.
   git clean -fd
-
-  cd Calety
-  git reset --hard  
-  git clean -fd  
-  cd..
 fi
-
-# Update calety
-print_builder "Updating Calety"
-cd Calety
-git checkout "${CALETY_BRANCH}"
-git pull
-cd ..
 
 # Change branch
 git fetch
