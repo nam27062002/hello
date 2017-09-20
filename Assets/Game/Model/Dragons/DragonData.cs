@@ -87,6 +87,7 @@ public class DragonData : IUISelectorItem {
 
 	private List<string> m_shadowFromDragons = new List<string>();
 	private List<string> m_revealFromDragons = new List<string>();
+	public List<string> revealFromDragons { get { return m_revealFromDragons; } }
 
 	// Debug
 	private float m_scaleOffset = 0f;
@@ -181,35 +182,34 @@ public class DragonData : IUISelectorItem {
 		if (m_owned) return LockState.OWNED;
 
 		// b) Is dragon hidden or shadowed?
-		bool mayBeHidden = m_shadowFromDragons.Count > 0;
+		bool mayBeShadowed = m_revealFromDragons.Count > 0;
+		if (mayBeShadowed) {
+			if (!m_revealed) {
+				bool readyToReveal = true;
+				for (int i = 0; i < m_revealFromDragons.Count; ++i) {
+					readyToReveal = readyToReveal && DragonManager.IsDragonOwned(m_revealFromDragons[i]);
+				}
 
-		if (mayBeHidden) {
-			if (m_teased) {
-				bool mayBeShadowed = m_revealFromDragons.Count > 0;
+				if (readyToReveal) {
+					return LockState.REVEAL;
+				} else {
+					bool mayBeHidden = m_shadowFromDragons.Count > 0;
+					if (mayBeHidden) {
+						if (!m_teased) {
+							bool redayToTease = true;
+							for (int i = 0; i < m_shadowFromDragons.Count; ++i) {
+								redayToTease = redayToTease && DragonManager.IsDragonOwned(m_shadowFromDragons[i]);
+							}
 
-				if (mayBeShadowed) {
-					if (!m_revealed) {
-						bool readyToReveal = true;
-						for (int i = 0; i < m_revealFromDragons.Count; ++i) {
-							readyToReveal = readyToReveal && DragonManager.IsDragonOwned(m_revealFromDragons[i]);
+							if (redayToTease) 	return LockState.TEASE;
+							else 				return LockState.HIDDEN;
 						}
-
-						if (readyToReveal)	return LockState.REVEAL;
-						else 				return LockState.SHADOW;
-						
 					}
+					return LockState.SHADOW;
 				}
-			} else {
-				bool redayToTease = true;
-				for (int i = 0; i < m_shadowFromDragons.Count; ++i) {
-					redayToTease = redayToTease && DragonManager.IsDragonOwned(m_shadowFromDragons[i]);
-				}
-
-				if (redayToTease) 	return LockState.TEASE;
-				else 				return LockState.HIDDEN;
 			}
-		}
-
+		}		
+			
 		// c) Is dragon locked?
         // Dragon is considered locked if THE previous dragon is not maxed out
         int order = GetOrder();
