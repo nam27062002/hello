@@ -233,6 +233,8 @@ if $RESET_GIT; then
 
   # Remove untracked files and directories.
   git clean -fd
+
+  git submodule update
 fi
 
 # Change branch
