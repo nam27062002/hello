@@ -50,6 +50,15 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	/// </summary>
 	/// <param name="_event">Data related to the event.</param>
 	public void OnPointerClick(PointerEventData _event) {
+		string sku = InstanceManager.menuSceneController.selectedDragon;
+		DragonData data = DragonManager.GetDragonData(sku);
+
+		if (data.GetLockState() == DragonData.LockState.SHADOW) {
+			string[] replacements = new string[1];
+			replacements[0] = data.revealFromDragons[0];
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_UNKNOWN_MESSAGE", replacements), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+		} 
+
 		// Trigger bounce animation
 		m_animator.SetTrigger("bounce");
 

@@ -185,7 +185,7 @@ public class DragonXPBar : MonoBehaviour {
 				switch(_data.GetLockState()) {
 					case DragonData.LockState.SHADOW:
 					case DragonData.LockState.REVEAL:
-						m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN");
+						m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN_NAME");
 						break;
 					default:
 						m_dragonNameText.Localize(_data.def.GetAsString("tidName"));
