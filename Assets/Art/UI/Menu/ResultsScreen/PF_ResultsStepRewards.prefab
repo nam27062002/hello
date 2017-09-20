@@ -156,7 +156,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224204608310763226}
   - component: {fileID: 222830497064201826}
-  - component: {fileID: 114629297483472794}
+  - component: {fileID: 114403211655967314}
   - component: {fileID: 114645161317650960}
   - component: {fileID: 114298401508034064}
   - component: {fileID: 114031424990731480}
@@ -1347,6 +1347,25 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114403211655967314
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1386517700734284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 304338c269e82499c92f1c33bd0247a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_duration: 1.5
+  m_onFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  m_currency: 0
+  m_alignment: 1
 --- !u!114 &114449015609893106
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1541,23 +1560,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114629297483472794
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1386517700734284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7be9f59bb0dcd40a7b620ec7cb4b3371, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_duration: 1.5
-  m_onFinished:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114645161317650960
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1615,7 +1617,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  m_coinsText: {fileID: 114629297483472794}
+  m_coinsText: {fileID: 114403211655967314}
   m_tapToContinue: {fileID: 114402154302479590}
   m_sequence: {fileID: 114364604203755446}
   m_coinsCounter: {fileID: 114795370873212568}
@@ -2365,7 +2367,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 300, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224437670998855992
