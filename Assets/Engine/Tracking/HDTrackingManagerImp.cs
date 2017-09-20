@@ -102,7 +102,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         // We need to reinitialize TrackingManager if it has already been initialized, otherwise we simply do nothing since it will be initialize properly 
         if (IsStartSessionNotified)
         {
-            InitTrackingManager();
+            //InitTrackingManager();
         }
     }
 
@@ -216,7 +216,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             int sessionNumber = TrackingPersistenceSystem.SessionCount;
             string trackingID = TrackingPersistenceSystem.UserID;
             string userID = PersistencePrefs.ServerUserId;
-            TrackingManager.ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_ONLINE : TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
+            //TrackingManager.ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_ONLINE : TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
+            TrackingManager.ETrackPlatform trackPlatform = TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_ONLINE;
+            //TrackingManager.ETrackPlatform trackPlatform = TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
 
             if (FeatureSettingsManager.IsDebugEnabled)
             {
