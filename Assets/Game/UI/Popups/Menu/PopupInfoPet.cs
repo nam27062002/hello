@@ -87,11 +87,22 @@ public class PopupInfoPet : MonoBehaviour {
 		// Disable selection change events
 		m_scroller.enableEvents = false;
 
+		int defaultIndex = 0;
+		List<PetScrollerItem> scrollItems = new List<PetScrollerItem>();
+		foreach (DefinitionNode def in _scrollDefs) {
+			PetScrollerItem item;
+			item.def = def;
+			scrollItems.Add(item);
+
+			if (def == _petDef)
+				defaultIndex = scrollItems.Count - 1;
+		}
+
 		// Init list of pets to scroll around
-		m_scroller.Init(_scrollDefs);
+		m_scroller.Init(scrollItems);
 
 		// Select target def
-		m_scroller.SelectItem(_petDef);
+		m_scroller.SelectItem(scrollItems[defaultIndex]);
 
 		// Initialize with currently selected pet
 		Refresh();
@@ -105,7 +116,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// </summary>
 	private void Refresh() {
 		// Only if current def is valid
-		DefinitionNode petDef = m_scroller.selectedItem;
+		DefinitionNode petDef = m_scroller.selectedItem.def;
 		if(petDef == null) return;
 
 		// Load 3D preview
@@ -169,8 +180,8 @@ public class PopupInfoPet : MonoBehaviour {
 		}
 
 		// Update arrows visibility
-		m_arrowAnimPrev.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem != m_scroller.items.First());	// At least 2 pets and selected pet is not the first one
-		m_arrowanimNext.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem != m_scroller.items.Last());	// At least 2 pets and selected pet is not the last one
+		m_arrowAnimPrev.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem.def != m_scroller.items.First().def);	// At least 2 pets and selected pet is not the first one
+		m_arrowanimNext.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem.def != m_scroller.items.Last().def);	// At least 2 pets and selected pet is not the last one
 	}
 
 	//------------------------------------------------------------------------//
@@ -278,7 +289,7 @@ public class PopupInfoPet : MonoBehaviour {
 			if(petsScreen == null) return;
 
 			// Tell it to scroll to the target pet!
-			petsScreen.ScrollToPet(m_scroller.selectedItem.sku, false, 0.15f);
+			petsScreen.ScrollToPet(m_scroller.selectedItem.def.sku, false, 0.15f);
 		}
 	}
 }

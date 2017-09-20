@@ -16,12 +16,16 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------//
 // CLASSES																//
 //----------------------------------------------------------------------//
+public interface IUISelectorItem {
+	bool CanBeSelected();
+}
+
 /// <summary>
 /// Simple component to select between a list of elements by sweeping with the finger.
 /// Simpler implementation than a full-featured scroll list.
 /// Since it's a generic class, it can't be used directly, requires an implementation for specific types.
 /// </summary>
-public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler where T : IUISelectorItem {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -120,8 +124,10 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	/// </summary>
 	/// <param name="_idx">Index of the item to be selected.</param>
 	public void SelectItem(int _idx) {
-		// Use internal method
-		SelectItemInternal(_idx, false);
+		if (m_items[_idx].CanBeSelected()) {
+			// Use internal method
+			SelectItemInternal(_idx, false);
+		}
 	}
 
 	/// <summary>
@@ -130,13 +136,18 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	public void SelectNextItem() {
 		// Figure out next item's index
 		bool looped = false;
-		int newSelectedIdx = m_selectedIdx + 1;
-		if(newSelectedIdx >= m_items.Count) {
-			// Loop allowed?
-			if(!m_loop) return;
-			newSelectedIdx = 0;
-			looped = true;
-		}
+
+		int newSelectedIdx = m_selectedIdx;
+
+		do {
+			newSelectedIdx++;
+			if (newSelectedIdx >= m_items.Count) {
+				// Loop allowed?
+				if (!m_loop) return;
+				newSelectedIdx = 0;
+				looped = true;
+			}
+		} while (!m_items[newSelectedIdx].CanBeSelected());
 
 		// Change selection
 		SelectItemInternal(newSelectedIdx, looped);
@@ -148,13 +159,17 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	public void SelectPreviousItem()  {
 		// Figure out previous item's index
 		bool looped = false;
-		int newSelectedIdx = m_selectedIdx - 1;
-		if(newSelectedIdx < 0) {
-			// Loop allowed?
-			if(!m_loop) return;
-			newSelectedIdx = m_items.Count - 1;
-			looped = true;
-		}
+		int newSelectedIdx = m_selectedIdx;
+
+		do {
+			newSelectedIdx--;
+			if(newSelectedIdx < 0) {
+				// Loop allowed?
+				if(!m_loop) return;
+				newSelectedIdx = m_items.Count - 1;
+				looped = true;
+			}
+		} while (!m_items[newSelectedIdx].CanBeSelected());
 
 		// Change selection
 		SelectItemInternal(newSelectedIdx, looped);

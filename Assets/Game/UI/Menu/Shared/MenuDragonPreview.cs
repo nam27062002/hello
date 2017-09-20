@@ -39,8 +39,6 @@ public class MenuDragonPreview : MonoBehaviour {
 		"fly"
 	};
 
-	private static Material sm_silhouetteMaterialBody = null;
-	private static Material sm_silhouetteMaterialWings = null;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -75,12 +73,6 @@ public class MenuDragonPreview : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		m_animator = GetComponentInChildren<Animator>();
-
-		//-------------------------------------
-		if (sm_silhouetteMaterialBody == null) 	sm_silhouetteMaterialBody  = new Material(Resources.Load("Game/Materials/DragonSilhouette") as Material);
-		if (sm_silhouetteMaterialWings == null) sm_silhouetteMaterialWings = new Material(Resources.Load("Game/Materials/DragonSilhouette") as Material);
-		//-------------------------------------
-
 		m_renderers = GetComponentsInChildren<Renderer>();
 		m_materials = new Dictionary<int, List<Material>>();
 
@@ -120,34 +112,6 @@ public class MenuDragonPreview : MonoBehaviour {
 					mats[j].SetColor("_FresnelColor", col);
 				}
 			}
-		}
-	}
-
-	public void EnableShadow() {		
-		for (int i = 0; i < m_renderers.Length; i++) {
-			int id = m_renderers[i].GetInstanceID();
-			Material[] materials = m_renderers[i].sharedMaterials;
-			for (int m = 0; m < materials.Length; m++) {
-				string shaderName = m_materials[id][m].shader.name;
-				if (shaderName.Contains("Dragon/Wings")) {
-					materials[m] = sm_silhouetteMaterialWings;
-				} else if (shaderName.Contains("Dragon/Body")) {
-					materials[m] = sm_silhouetteMaterialBody;
-				}
-			}
-			m_renderers[i].sharedMaterials = materials;
-		}
-	}
-
-	public void DisableShadow() {
-		// Restore materials
-		for (int i = 0; i < m_renderers.Length; i++) {
-			int id = m_renderers[i].GetInstanceID();
-			Material[] materials = m_renderers[i].sharedMaterials;
-			for (int m = 0; m < materials.Length; m++) {
-				materials[m] = m_materials[id][m];
-			}
-			m_renderers[i].sharedMaterials = materials;
 		}
 	}
 }

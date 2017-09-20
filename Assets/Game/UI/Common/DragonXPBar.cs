@@ -181,7 +181,18 @@ public class DragonXPBar : MonoBehaviour {
 		// Things to update only when target dragon has changed
 		if(m_dragonData != _data) {
 			// Dragon Name
-			if(m_dragonNameText != null) m_dragonNameText.Localize(_data.def.GetAsString("tidName"));
+			if(m_dragonNameText != null) {
+				switch(_data.GetLockState()) {
+					case DragonData.LockState.SHADOW:
+					case DragonData.LockState.REVEAL:
+						m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN");
+						break;
+					default:
+						m_dragonNameText.Localize(_data.def.GetAsString("tidName"));
+						break;
+				}
+			}
+
 			if(m_dragonDescText != null) m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
 			
 			// Bar separators and markers
