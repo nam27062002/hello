@@ -90,6 +90,7 @@ public enum GameEvents {
 	TICKET_COLLECTED_FAIL,			// no params
 
 	// Dragon collection events
+	DRAGON_TEASED,				// params: DragonData _data
 	DRAGON_ACQUIRED,			// params: DragonData _data
 	DRAGON_LEVEL_UP,			// params: DragonData _data
 

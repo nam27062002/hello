@@ -55,6 +55,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	[Comment("Leave target dragon sku empty to use the current <color=green>selected</color> dragon on the menu as target.")]
 	[SkuList(DefinitionsCategory.DRAGONS, true)]
 	[SerializeField] private string m_targetDragonSku = "";
+	[SerializeField] private bool m_showIfShadow = false;
 	[SerializeField] private bool m_showIfLocked = false;
 	[SerializeField] private bool m_showIfAvailable = false;
 	[SerializeField] private bool m_showIfOwned = true;
@@ -153,20 +154,21 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		// Ownership status
 		switch(dragon.lockState) {
+			case DragonData.LockState.TEASE:		show = m_showIfShadow;		break;
+			case DragonData.LockState.SHADOW:		show = m_showIfShadow;		break;
 			case DragonData.LockState.LOCKED:		show = m_showIfLocked;		break;
 			case DragonData.LockState.AVAILABLE:	show = m_showIfAvailable;	break;
 			case DragonData.LockState.OWNED:		show = m_showIfOwned;		break;
 		}
 
 		// Dragon ID (overrides ownership status)
-		int dragonIdx = dragon.def.GetAsInt("order");
 		switch(m_hideForDragons) {
 			case HideForDragons.IGNORE:	break;	// Nothing to change
-			case HideForDragons.FIRST:	show &= (dragonIdx != 0);	break;
-			case HideForDragons.LAST:	show &= (dragonIdx != (DragonManager.dragonsByOrder.Count - 1));	break;
+			case HideForDragons.FIRST:	show &= !DragonManager.IsFirstDragon(dragon.def.sku);	break;
+			case HideForDragons.LAST:	show &= !DragonManager.IsLastDragon(dragon.def.sku);	break;
 			case HideForDragons.FIRST_AND_LAST:	{
-				show &= (dragonIdx != 0);
-				show &= (dragonIdx != (DragonManager.dragonsByOrder.Count - 1));
+				show &= !DragonManager.IsFirstDragon(dragon.def.sku);
+				show &= !DragonManager.IsLastDragon(dragon.def.sku);
 			} break;
 			case HideForDragons.ALL:	show = false;	break;	// Force hiding
 			case HideForDragons.NONE:	show = true;	break;	// Force showing

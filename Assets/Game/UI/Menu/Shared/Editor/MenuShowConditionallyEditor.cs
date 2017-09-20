@@ -93,6 +93,7 @@ public class MenuShowConditionallyEditor : Editor {
 
 			// Draw all ownership properties
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_targetDragonSku"), true);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfShadow"), true);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfLocked"), true);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfAvailable"), true);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_showIfOwned"), true);
