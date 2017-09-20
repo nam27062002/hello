@@ -51,7 +51,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
 				CurrentAdPurpose = EAdPurpose.NONE;
 				CurrentAdStartTimestamp = 0f;
-				AdsManager.SharedInstance.Init (interstitialId, rewardId, true, 30);
+				MopubAdsManager.SharedInstance.Init (interstitialId, rewardId, true, 30);
 			}
         }
 	}
@@ -68,16 +68,17 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 		}
 
         m_onInterstitialCallback = callback;
-		AdsManager.SharedInstance.PlayNotRewarded(OnInsterstitialResult, 5);
+		MopubAdsManager.SharedInstance.PlayNotRewarded(OnInsterstitialResult, 5);
 	}
 
-	private void OnInsterstitialResult(AdsManager.EPlayResult result)
+	private void OnInsterstitialResult(MopubAdsManager.EPlayResult result)
 	{
 		if (m_onInterstitialCallback != null){
-			m_onInterstitialCallback(result == AdsManager.EPlayResult.PLAYED );	
+			m_onInterstitialCallback(result == MopubAdsManager.EPlayResult.PLAYED );	
 			m_onInterstitialCallback = null;
 		}
 	}
+
 
 	public void ShowRewarded(EAdPurpose adPurpose, OnPlayVideoCallback callback)
 	{
@@ -99,23 +100,24 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), true, TRACK_AD_PROVIDER_ID);
 
 		// Request Ad
-		AdsManager.SharedInstance.PlayRewarded(OnRewardedResult, 5);
+		MopubAdsManager.SharedInstance.PlayRewarded(OnRewardedResult, 5);
 	}
 
-	private void OnRewardedResult(AdsManager.EPlayResult result)
+	private void OnRewardedResult(MopubAdsManager.EPlayResult result)
 	{        
         if ( m_onRewardedCallback != null ){
-			m_onRewardedCallback(result == AdsManager.EPlayResult.PLAYED );
+			m_onRewardedCallback(result == MopubAdsManager.EPlayResult.PLAYED );
 			m_onRewardedCallback = null;
 		}
 
         // Ad has been finished is tracked
-        bool videoWatched = result == AdsManager.EPlayResult.PLAYED;
+		bool videoWatched = result == MopubAdsManager.EPlayResult.PLAYED;
         int duration = (int)(Time.unscaledTime - CurrentAdStartTimestamp);
         HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), videoWatched, false, duration, TRACK_AD_PROVIDER_ID);
 
         CurrentAdPurpose = EAdPurpose.NONE;
     }
+
 
     #region track
     private const string TRACK_AD_PROVIDER_ID = "MoPub";
