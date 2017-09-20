@@ -214,6 +214,17 @@ UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile -nographics -
 # Move to project path
 cd "${PROJECT_PATH}"
 
+cd Calety
+if $RESET_GIT; then
+  git reset --hard  
+  git clean -fd  
+fi
+# Update calety
+print_builder "Updating Calety"
+git checkout "${CALETY_BRANCH}"
+git pull
+cd ..
+
 if $RESET_GIT; then
   print_builder "Reset Git"
   # Update git
@@ -222,7 +233,10 @@ if $RESET_GIT; then
 
   # Remove untracked files and directories.
   git clean -fd
+
+  git submodule update
 fi
+
 # Change branch
 git fetch
 git checkout "${BRANCH}"
@@ -230,13 +244,6 @@ git checkout "${BRANCH}"
 # Update branch
 print_builder "Pulling Branch ${BRANCH}"
 git pull origin "${BRANCH}"
-
-# Update calety
-print_builder "Updating Calety"
-cd Calety
-git checkout "${CALETY_BRANCH}"
-git pull
-cd ..
 
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"

@@ -469,6 +469,8 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Immediately equip it!
 				OnEquipButton();
 
+				Messenger.Broadcast<string>(GameEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
+
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDisguisePurchasedFX();
 			}

@@ -55,7 +55,7 @@ public class DragonEquip : MonoBehaviour {
 	}
 
 
-	private Renderer[] m_renderers;
+	private List<Renderer> m_renderers = new List<Renderer>();
 	private Dictionary<int, List<Material>> m_materials;
 
 
@@ -73,18 +73,26 @@ public class DragonEquip : MonoBehaviour {
 
 		Transform view = transform.Find("view");
 		if (view != null) {
-			m_renderers = view.GetComponentsInChildren<Renderer>();
+			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 			m_materials = new Dictionary<int, List<Material>>();
 
-			if (m_renderers != null) {
-				for (int i = 0; i < m_renderers.Length; i++) {
-					Renderer renderer = m_renderers[i];
+			if (renderers != null) {
+				for (int i = 0; i < renderers.Length; i++) {
+					Renderer renderer = renderers[i];
 					Material[] materials = renderer.sharedMaterials;
 
-					// Stores the materials of this renderer in a dictionary for direct access//
-					List<Material> materialList = new List<Material>();	
-					materialList.AddRange(materials);						
-					m_materials[renderer.GetInstanceID()] = materialList;
+					if ( materials[0] != null )
+					{
+						string name = materials[0].shader.name;
+						if ( name.Contains("Dragon/Wings") || name.Contains("Dragon/Body"))
+						{
+							m_renderers.Add( renderer );
+							// Stores the materials of this renderer in a dictionary for direct access//
+							List<Material> materialList = new List<Material>();	
+							materialList.AddRange(materials);						
+							m_materials[renderer.GetInstanceID()] = materialList;
+						}
+					}
 				}
 			}
 		}
@@ -153,7 +161,7 @@ public class DragonEquip : MonoBehaviour {
 		m_dragonDisguiseSku = "shadow";
 
 		// Set Skin
-		for (int i = 0; i < m_renderers.Length; i++) {
+		for (int i = 0; i < m_renderers.Count; i++) {
 			int id = m_renderers[i].GetInstanceID();
 			Material[] materials = m_renderers[i].sharedMaterials;
 			for (int m = 0; m < materials.Length; m++) {
@@ -374,7 +382,7 @@ public class DragonEquip : MonoBehaviour {
 		m_bodyMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_body");
 		m_wingsMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_wings");
 
-		for (int i = 0; i < m_renderers.Length; i++) {
+		for (int i = 0; i < m_renderers.Count; i++) {
 			int id = m_renderers[i].GetInstanceID();
 			Material[] materials = m_renderers[i].sharedMaterials;
 			for (int m = 0; m < materials.Length; m++) {
