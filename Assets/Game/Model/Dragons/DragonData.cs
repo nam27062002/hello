@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /// Every dragon ID must be linked to one DragonData in the DragonManager prefab.
 /// </summary>
 [Serializable]
-public class DragonData {
+public class DragonData : IUISelectorItem {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -30,6 +30,10 @@ public class DragonData {
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
 	public enum LockState {
 		ANY = -1,	// Any of the below states
+		HIDDEN,		// Player must purchase the target Dragons to be able to see the Shadow of this dragon
+		TEASE,		// Requirements to see the shadow of this dragon have been completed
+		SHADOW,		// Player must purchase the target Dragons to reveal this dragon
+		REVEAL,		// Requirements to reveal this dragon have been completed
 		LOCKED,		// Previous tier hasn't been completed
 		AVAILABLE,	// Previous tier has been completed but the dragon hasn't been purchased
 		OWNED		// Dragon has been purchased and can be used
@@ -49,9 +53,14 @@ public class DragonData {
 
 	// Progression
 	[SerializeField] private bool m_owned = false;
+	[SerializeField] private bool m_teased = false;
+	[SerializeField] private bool m_revealed = false;
+
 	public LockState lockState { get { return GetLockState(); }}
 	public bool isLocked { get { return lockState == LockState.LOCKED; }}
 	public bool isOwned { get { return m_owned; }}
+	public bool isTeased { get { return m_teased; }}
+	public bool isRevealed { get { return m_revealed; }}
 
 	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}
@@ -79,6 +88,10 @@ public class DragonData {
 		set { m_disguise = value; } 
 	}
 
+	private List<string> m_shadowFromDragons = new List<string>();
+	private List<string> m_revealFromDragons = new List<string>();
+	public List<string> revealFromDragons { get { return m_revealFromDragons; } }
+
 	// Debug
 	private float m_scaleOffset = 0f;
 
@@ -94,8 +107,21 @@ public class DragonData {
 		m_def = _def;
 		m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, _def.GetAsString("tier"));
 		m_tier = (DragonTier)m_tierDef.GetAsInt("order");
+
 		// Progression
 		m_progression = new DragonProgression(this);
+
+		string shadowFromDragons = m_def.GetAsString("shadowFromDragon");
+		if (!string.IsNullOrEmpty(shadowFromDragons)) {
+			m_shadowFromDragons.AddRange(shadowFromDragons.Split(';'));
+		}
+		m_teased = m_shadowFromDragons.Count == 0;
+
+		string revealFromDragons = m_def.GetAsString("revealFromDragon");
+		if (!string.IsNullOrEmpty(revealFromDragons)) {
+			m_revealFromDragons.AddRange(revealFromDragons.Split(';'));
+		}
+		m_revealed = m_revealFromDragons.Count == 0;
 
 		// Stats
 		m_healthRange = m_def.GetAsRange("health");
@@ -110,6 +136,11 @@ public class DragonData {
 		// Other values
 		m_scaleOffset = 0;
 	}
+
+	public bool CanBeSelected() {
+		return GetLockState() > LockState.HIDDEN;
+	}
+
 
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
@@ -151,20 +182,63 @@ public class DragonData {
 	/// <returns>The lock state for this dragon.</returns>
 	public LockState GetLockState() {
 		// a) Is dragon owned?
-		if(m_owned) return LockState.OWNED;
+		if (m_owned) return LockState.OWNED;
 
-        // b) Is dragon locked?
+		// b) Is dragon hidden or shadowed?
+		bool mayBeShadowed = m_revealFromDragons.Count > 0;
+		if (mayBeShadowed) {
+			if (!m_revealed) {
+				bool readyToReveal = true;
+				for (int i = 0; i < m_revealFromDragons.Count; ++i) {
+					readyToReveal = readyToReveal && DragonManager.IsDragonOwned(m_revealFromDragons[i]);
+				}
+
+				if (readyToReveal) {
+					return LockState.REVEAL;
+				} else {
+					bool mayBeHidden = m_shadowFromDragons.Count > 0;
+					if (mayBeHidden) {
+						if (!m_teased) {
+							bool redayToTease = true;
+							for (int i = 0; i < m_shadowFromDragons.Count; ++i) {
+								redayToTease = redayToTease && DragonManager.IsDragonOwned(m_shadowFromDragons[i]);
+							}
+
+							if (redayToTease) 	return LockState.TEASE;
+							else 				return LockState.HIDDEN;
+						}
+					}
+					return LockState.SHADOW;
+				}
+			}
+		}		
+			
+		// c) Is dragon locked?
         // Dragon is considered locked if THE previous dragon is not maxed out
         int order = GetOrder();
-		if(order > 0) {		// First dragon should always be owned
+		if (order > 0) {		// First dragon should always be owned
 			// Check previous dragon's progression
-			if(!DragonManager.dragonsByOrder[order - 1].progression.isMaxLevel) {
+			if (!DragonManager.dragonsByOrder[order - 1].progression.isMaxLevel) {
 				return LockState.LOCKED;
 			}
 		}
 
-		// c) Dragon available for to purchase with SC
+		// d) Dragon available for to purchase with SC
 		return LockState.AVAILABLE;
+	}
+
+	public void Tease() {
+		m_teased = true;
+
+		PersistenceFacade.instance.Save_Request();
+
+		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_TEASED, this);
+	}
+
+	public void Reveal() {
+		m_teased = true;
+		m_revealed = true;
+		PersistenceFacade.instance.Save_Request();
 	}
 
 	/// <summary>
@@ -188,6 +262,9 @@ public class DragonData {
 	public void ResetLoadedData()
 	{	
 		m_owned = false;
+		m_teased = m_shadowFromDragons.Count == 0;
+		m_revealed = m_revealFromDragons.Count == 0;
+
 		m_progression.Load(0,0);
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
 		m_pets = Enumerable.Repeat(string.Empty, m_tierDef.GetAsInt("maxPetEquipped", 0)).ToList();	// Use Linq to easily fill the list with the default value
@@ -206,6 +283,8 @@ public class DragonData {
 
 		// Just read values from persistence object
 		m_owned = _data["owned"].AsBool;
+		m_teased = _data["teased"].AsBool;
+		m_revealed = _data["revealed"].AsBool;
 
 		progression.Load(_data["xp"].AsFloat, _data["level"].AsInt);
 
@@ -228,7 +307,7 @@ public class DragonData {
 		}
 
 	}
-	
+
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
@@ -240,6 +319,8 @@ public class DragonData {
 
 		data.Add("sku", def.sku);
 		data.Add("owned", m_owned.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("teased", m_teased.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("revealed", m_revealed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("xp", progression.xp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("level", progression.level.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("disguise", m_disguise);

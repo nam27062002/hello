@@ -11,6 +11,8 @@ public class DragonEquip : MonoBehaviour {
 	private const string PET_PREFAB_PATH_GAME = "Game/Equipable/Pets/";
 	private const string PET_PREFAB_PATH_MENU = "UI/Menu/Pets/";
 
+	private static Material sm_silhouetteMaterial = null;
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -52,6 +54,12 @@ public class DragonEquip : MonoBehaviour {
 		get { return m_wingsMaterial; }
 	}
 
+
+	private Renderer[] m_renderers;
+	private Dictionary<int, List<Material>> m_materials;
+
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -59,7 +67,30 @@ public class DragonEquip : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		//-------------------------------------
+		if (sm_silhouetteMaterial == null) 	sm_silhouetteMaterial  = new Material(Resources.Load("Game/Materials/DragonSilhouette") as Material);
+		//-------------------------------------
+
+		Transform view = transform.Find("view");
+		if (view != null) {
+			m_renderers = view.GetComponentsInChildren<Renderer>();
+			m_materials = new Dictionary<int, List<Material>>();
+
+			if (m_renderers != null) {
+				for (int i = 0; i < m_renderers.Length; i++) {
+					Renderer renderer = m_renderers[i];
+					Material[] materials = renderer.sharedMaterials;
+
+					// Stores the materials of this renderer in a dictionary for direct access//
+					List<Material> materialList = new List<Material>();	
+					materialList.AddRange(materials);						
+					m_materials[renderer.GetInstanceID()] = materialList;
+				}
+			}
+		}
+
 		Init();
+
 		// Equip current disguise
 		if (m_equipOnAwake){
 			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
@@ -86,10 +117,9 @@ public class DragonEquip : MonoBehaviour {
 
 	}
 
-	private void Start()
-	{
+	private void Start() {
 		// Equip current pets loadout
-		if (m_equipPets){
+		if (m_equipPets) {
 			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
 			for(int i = 0; i < pets.Count; i++) {
 				EquipPet(pets[i], i);
@@ -118,6 +148,30 @@ public class DragonEquip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+
+	public void EquipDisguiseShadow() {
+		m_dragonDisguiseSku = "shadow";
+
+		// Set Skin
+		for (int i = 0; i < m_renderers.Length; i++) {
+			int id = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].sharedMaterials;
+			for (int m = 0; m < materials.Length; m++) {
+				materials[m] = sm_silhouetteMaterial;
+			}
+			m_renderers[i].sharedMaterials = materials;
+		}
+
+		// Remove old body parts
+		for( int i = 0; i<m_attachPoints.Length; i++ )
+		{
+			if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
+			{
+				m_attachPoints[i].Unequip(true);
+			}
+		}
+	}
+
 	/// <summary>
 	/// Equip the disguise with the given sku.
 	/// </summary>
@@ -320,24 +374,19 @@ public class DragonEquip : MonoBehaviour {
 		m_bodyMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_body");
 		m_wingsMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_wings");
 
-		Transform view = transform.Find("view");
-		if(view != null) {
-			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
-			for(int i = 0; i < renderers.Length; i++) {
-				Renderer r = renderers[i];
-				Material[] mats = Application.isPlaying ? r.materials : r.sharedMaterials;
-				for(int j = 0; j < mats.Length; j++) {
-					if(mats[j].shader.name.Contains("Dragon/Wings")) {
-						mats[j] = m_wingsMaterial;
-					}
-					else if(mats[j].shader.name.Contains("Dragon/Body")) {
-						mats[j] = m_bodyMaterial;
-					}
+		for (int i = 0; i < m_renderers.Length; i++) {
+			int id = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].sharedMaterials;
+			for (int m = 0; m < materials.Length; m++) {
+				string shaderName = m_materials[id][m].shader.name;
+				if (shaderName.Contains("Dragon/Wings")) {
+					materials[m] = m_wingsMaterial;
+				} else if (shaderName.Contains("Dragon/Body")) {
+					materials[m] = m_bodyMaterial;
 				}
-				r.materials = mats;
 			}
+			m_renderers[i].sharedMaterials = materials;
 		}
-
 	}
 
 	/// <summary>

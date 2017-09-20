@@ -24,7 +24,7 @@ public class TrackerDailyChests : TrackerBase {
 	/// </summary>
 	public TrackerDailyChests() {
 		// Subscribe to external events
-		Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		Messenger.AddListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
 	}
 
 	/// <summary>
@@ -32,7 +32,7 @@ public class TrackerDailyChests : TrackerBase {
 	/// </summary>
 	~TrackerDailyChests() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
 	}
 
 	//------------------------------------------------------------------------//
@@ -46,7 +46,7 @@ public class TrackerDailyChests : TrackerBase {
 	/// A chest has been collected.
 	/// </summary>
 	/// <param name="_chest">The collected chest.</param>
-	private void OnChestCollected(Chest _chest) {
+	private void OnChestCollected(CollectibleChest _chest) {
 		// Just increase counter
 		currentValue = ChestManager.collectedAndPendingChests;
 	}

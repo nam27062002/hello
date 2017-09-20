@@ -307,12 +307,12 @@ public class HUDMessage : MonoBehaviour {
 			switch(m_repeatType) {
 				case RepeatType.IGNORE: {
 					return true; 
-				} break;
+				} 
 
 				case RepeatType.RESTART_TIMER: {
 					m_timer = m_messageDuration;
 					return true;
-				} break;
+				} 
 
 				case RepeatType.RESTART_ANIM: {
 					force = true;

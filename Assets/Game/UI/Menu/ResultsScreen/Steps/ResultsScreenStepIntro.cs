@@ -25,6 +25,9 @@ public class ResultsScreenStepIntro : ResultsScreenStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed Setup
+	[Comment("Dragon Launch delay")]
+	[SerializeField] private float m_dragonLaunchDelay = 0.5f;
+
 	[Comment("Sync with dragon intro anim duration")]
 	[SerializeField] private float m_duration = 1f;
 	
@@ -44,7 +47,13 @@ public class ResultsScreenStepIntro : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Launch dragon intro animation
-		m_controller.scene.LaunchDragonAnim();
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				m_controller.scene.LaunchDragonAnim();
+			},
+			m_dragonLaunchDelay,
+			false
+		);
 
 		// Just give enough time for the dragon animation to finish
 		UbiBCN.CoroutineManager.DelayedCall(
