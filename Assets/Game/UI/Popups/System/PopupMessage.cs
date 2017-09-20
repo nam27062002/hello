@@ -39,9 +39,19 @@ public class PopupMessage : MonoBehaviour
         public Action OnCancel { get; set; }
 
         public string ExtraButtonTid { get; set; }
-        public Action OnExtra { get; set; }
+        public Action OnExtra { get; set; }		
 
-		public bool HandleBackButton { get; set; }
+        public enum EBackButtonStratety
+        {
+            None, // Back button is ignored and the popup stays open
+            PerformConfirm,
+            PerformCancel,
+            PerformExtra,
+            Close,
+            Default // Default configuration: If close button is visible then the popup is just closed, if there's only one button then that button is performed. If there are several buttons then cancel is performed.             
+        }
+
+        public EBackButtonStratety BackButtonStrategy { get; set; }
 
         public enum EButtonsMode
         {
@@ -73,8 +83,10 @@ public class PopupMessage : MonoBehaviour
             CancelButtonTid = "TID_GEN_CANCEL";
             OnCancel = null;
             ButtonMode = EButtonsMode.None;
-            IsButtonCloseVisible = true;
-			HandleBackButton = true;
+            IsButtonCloseVisible = true;			
+
+            // By default the popup stays open when the back button is pressed
+            BackButtonStrategy = EBackButtonStratety.Default;
         }
     }
 
@@ -183,14 +195,55 @@ public class PopupMessage : MonoBehaviour
         }
 
         m_config = config;
-
-		PopupBackButtonHandler backHandler =  GetComponent<PopupBackButtonHandler>();
+        
+        PopupBackButtonHandlerWithAction backHandler =  GetComponent<PopupBackButtonHandlerWithAction>();
         if ( backHandler != null )
         {
-        	backHandler.enabled = m_config.HandleBackButton;
+            Config.EBackButtonStratety backButtonStrategy = m_config.BackButtonStrategy;
+            if (backButtonStrategy == Config.EBackButtonStratety.Default)
+            {
+                if (m_config.IsButtonCloseVisible)
+                {
+                    backButtonStrategy = Config.EBackButtonStratety.Close;
+                }
+                else
+                {
+                    if (config.ButtonMode == Config.EButtonsMode.Confirm)
+                    {
+                        backButtonStrategy = Config.EBackButtonStratety.PerformConfirm;
+                    }
+                    else
+                    {
+                        backButtonStrategy = Config.EBackButtonStratety.PerformCancel;
+                    }
+                }
+            }
+
+            switch (backButtonStrategy)
+            {
+                case Config.EBackButtonStratety.None:
+                    backHandler.OnBackButton = null;
+                    break;
+
+                case Config.EBackButtonStratety.PerformConfirm:
+                    backHandler.OnBackButton = OnConfirm;
+                    break;
+
+                case Config.EBackButtonStratety.PerformCancel:
+                    backHandler.OnBackButton = OnCancel;
+                    break;
+
+                case Config.EBackButtonStratety.PerformExtra:
+                    backHandler.OnBackButton = OnExtra;
+                    break;
+
+                case Config.EBackButtonStratety.Close:
+                    backHandler.OnBackButton = Close;
+                    break;                
+            }
         }
 
-        m_titleText.enabled = m_config.ShowTitle;
+        m_titleText.gameObject.SetActive(m_config.ShowTitle);
 
         // Tid has priority over the plain text
         if (m_config.TitleTid != null)

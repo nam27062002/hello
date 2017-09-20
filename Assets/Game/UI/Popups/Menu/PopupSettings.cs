@@ -102,4 +102,8 @@ public class PopupSettings : MonoBehaviour {
 		// Open the credits popup
 		PopupManager.OpenPopupInstant(PopupCredits.PATH);
 	}
+
+	public void OnCommentsButton(){
+		MiscUtils.SendFeedbackEmail();
+	}
 }

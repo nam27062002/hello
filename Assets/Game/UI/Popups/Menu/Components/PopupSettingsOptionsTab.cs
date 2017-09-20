@@ -186,8 +186,6 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	public void OnGooglePlayLogIn(){
 		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
 			// Show curtain and wait for game center response
-			bool createLoading = true;
-
 			if ( !GameCenterManager.SharedInstance.GetAuthenticatingState() )	// if not authenticating
 			{
 				ApplicationManager.instance.GameCenter_Login();

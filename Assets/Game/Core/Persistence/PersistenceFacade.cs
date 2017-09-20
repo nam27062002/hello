@@ -71,8 +71,21 @@ public class PersistenceFacade
 		Config.CloudDriver.Update();    
 	}
 
+    public bool IsCloudSaveAllowed
+    {
+        get { return CloudDriver.Upload_IsAllowed; }
+    }
+
+    public bool IsCloudSaveEnabled
+    {
+        get { return CloudDriver.Upload_IsEnabled; }
+        set { CloudDriver.Upload_IsEnabled = value; }
+    }   
+
 	#region sync
     public bool Sync_IsSyncing { get; set; }
+
+    public bool Sync_IsSynced { get { return CloudDriver.IsInSync; } }
 
     private void Sync_Reset()
     {
@@ -86,22 +99,7 @@ public class PersistenceFacade
         Action onLoadDone = delegate()
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
-                Log("SYNC: Loading  local DONE! " + LocalData.LoadState);
-
-            Action<bool> performSync = delegate(bool isSilent)
-			{
-				Action<PersistenceStates.ESyncResult> onSyncDone = delegate(PersistenceStates.ESyncResult result)
-				{
-					if (!Config.LocalDriver.IsLoadedInGame)
-					{
-						Config.LocalDriver.IsLoadedInGame = true;
-					}
-
-					Sync_OnDone(result, onDone);
-				};
-
-				Config.CloudDriver.Sync(isSilent, true, onSyncDone);
-			};
+                Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
 
 			// If local persistence is corrupted then we need to offer the chance to override it with cloud persistence
 			// if the user has logged in ever.
@@ -244,6 +242,7 @@ public class PersistenceFacade
         LocalData.Systems_RegisterSystem(LocalDriver.UserProfile);
         
         TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        LocalDriver.TrackingPersistenceSystem = trackingSystem;
         if (trackingSystem != null)
         {
             LocalData.Systems_RegisterSystem(trackingSystem);
@@ -535,6 +534,8 @@ public class PersistenceFacade
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
         config.MessageTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_DESC";
+        string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+        config.MessageParams = new string[] { platformName, platformName };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onCloud;
         config.OnCancel = onLocal;
@@ -575,15 +576,28 @@ public class PersistenceFacade
         PopupManager.PopupMessage_Open(config);
     }
 
+    public static void Popup_OpenMergeWithADifferentAccount(Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
+        config.MessageTid = "TID_SAVE_WARN_CLOUD_SWITCH_DESC";
+        string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+        config.MessageParams = new string[] { platformName };
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;
+        config.OnCancel = onCancel;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }    
+
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
 	{        
         // UNPH: Two buttons instead of three (upload local save to cloud is not an option. Review the text description)
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_NAME";
         config.MessageTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_DESC";
-        config.ConfirmButtonTid = "TID_GEN_CONTINUE";
-        config.CancelButtonTid = "TID_GEN_RETRY";
-        config.ExtraButtonTid = "TID_GEN_UPLOAD";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
+        config.CancelButtonTid = "TID_GEN_CONTINUE";        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onRetry;
         config.OnCancel = onContinue;

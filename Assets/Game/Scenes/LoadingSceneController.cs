@@ -42,7 +42,8 @@ public class LoadingSceneController : SceneController {
             config.TitleTid = kPopupConfig.m_strTitle;
 			config.ShowTitle = !string.IsNullOrEmpty( kPopupConfig.m_strTitle);
 			config.MessageTid = kPopupConfig.m_strMessage;
-			config.HandleBackButton = false;
+            // This popup ignores back button and stays open so the user makes a decision
+            config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
 
 			m_popupConfig = kPopupConfig;
             if (kPopupConfig.m_kPopupButtons.Count == 2)
@@ -108,8 +109,7 @@ public class LoadingSceneController : SceneController {
 	// Internal
 	private float timer = 0;
 
-    private bool m_startLoadFlow = true;
-    private bool m_loading = false;
+    private bool m_startLoadFlow = true;    
     private bool m_loadingDone = false;
 
 
@@ -358,8 +358,7 @@ public class LoadingSceneController : SceneController {
     {
         if (m_startLoadFlow)
         {            
-            m_startLoadFlow = false;
-            m_loading = true;
+            m_startLoadFlow = false;            
             m_loadingDone = false;
 
             if (FeatureSettingsManager.IsDebugEnabled)
@@ -367,8 +366,7 @@ public class LoadingSceneController : SceneController {
 
             Action onDone = delegate()
             {
-                m_loadingDone = true;
-                m_loading = false;
+                m_loadingDone = true;                
 
                 HDTrackingManager.Instance.Notify_ApplicationStart();
 

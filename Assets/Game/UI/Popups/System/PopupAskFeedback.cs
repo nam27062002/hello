@@ -8,9 +8,6 @@ public class PopupAskFeedback : MonoBehaviour {
 
 	public const string PATH = "UI/Popups/Message/PF_PopupAskFeedback";
 
-	const string SUPPORT_EMAIL_ADDRESS = "hungrydragon-support@ubisoft.com";
-	const string SUPPORT_EMAIL_SUBJECT = "Hungry Dragon Feedback";
-
 	public void OnNeverAskAgain()
 	{
 		// Set to never ask again
@@ -24,9 +21,7 @@ public class PopupAskFeedback : MonoBehaviour {
 		Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
 
 		// Open feedback link/email
-		string subject = SUPPORT_EMAIL_SUBJECT;
-        string mailSubject = WWW.EscapeURL(subject).Replace("+", "%20");
-        Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject); // + "&body=" + body);
+		MiscUtils.SendFeedbackEmail();
 
 		GetComponent<PopupController>().Close(true);
 	}

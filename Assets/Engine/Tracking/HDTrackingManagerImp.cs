@@ -92,7 +92,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (logged)
         {
             // Server uid is stored as soon as log in happens so we'll be able to start TrackingManager when offline
-            PersistencePrefs.ServerUserId = GameSessionManager.SharedInstance.GetUID();            
+            PersistencePrefs.ServerUserId = GameSessionManager.SharedInstance.GetUID();         
+            if (TrackingPersistenceSystem != null)
+            {
+                TrackingPersistenceSystem.ServerUserID = PersistencePrefs.ServerUserId;
+            }   
         }
 
         // We need to reinitialize TrackingManager if it has already been initialized, otherwise we simply do nothing since it will be initialize properly 
@@ -976,12 +980,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_AddParamServerAccID(TrackingManager.TrackingEvent e)
     {
-        int value = 0;
-        if (TrackingPersistenceSystem != null)
-        {
-            value = TrackingPersistenceSystem.AccountID;
-        }
-
+        int value = PersistencePrefs.ServerUserIdAsInt;        
         e.SetParameterValue(TRACK_PARAM_IN_GAME_ID, value);
     }    
 
