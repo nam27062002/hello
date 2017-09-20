@@ -25,6 +25,7 @@ public class TrackerBuySkins : TrackerBase {
 	public TrackerBuySkins() {
 		// Subscribe to external events
 		//Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		Messenger.AddListener<string>(GameEvents.SKIN_ACQUIRED, OnSkinAcquired);
 	}
 
 	/// <summary>
@@ -32,7 +33,7 @@ public class TrackerBuySkins : TrackerBase {
 	/// </summary>
 	~TrackerBuySkins() {
 		// Unsubscribe from external events
-		//Messenger.RemoveListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		Messenger.RemoveListener<string>(GameEvents.SKIN_ACQUIRED, OnSkinAcquired);
 	}
 
 	//------------------------------------------------------------------------//
@@ -46,7 +47,7 @@ public class TrackerBuySkins : TrackerBase {
 	/// A chest has been collected.
 	/// </summary>
 	/// <param name="_chest">The collected chest.</param>
-	private void OnChestCollected(Chest _chest) {
+	private void OnSkinAcquired(string _skinSku) {
 		// Just increase counter
 		currentValue++;
 	}
