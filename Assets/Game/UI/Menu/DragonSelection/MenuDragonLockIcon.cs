@@ -54,8 +54,9 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 		DragonData data = DragonManager.GetDragonData(sku);
 
 		if (data.GetLockState() == DragonData.LockState.SHADOW) {
+			DragonData needDragonData = DragonManager.GetDragonData(data.revealFromDragons[0]);
 			string[] replacements = new string[1];
-			replacements[0] = data.revealFromDragons[0];
+			replacements[0] = LocalizationManager.SharedInstance.Localize(needDragonData.def.GetAsString("tidName"));
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_UNKNOWN_MESSAGE", replacements), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		} 
 

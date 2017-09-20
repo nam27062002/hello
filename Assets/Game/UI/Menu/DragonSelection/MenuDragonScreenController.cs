@@ -229,7 +229,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 				preview.equip.EquipDisguiseShadow();
 
 				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
-				slot.animator.Show(true);
+				slot.animator.ForceShow(true);
 
 				DragonManager.GetDragonData(_teaseDragonSku).Tease();
 			})
@@ -252,6 +252,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				// Lock all input
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+				if (!DragonManager.GetDragonData(_revealDragonSku).isTeased) {
+					MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
+					slot.animator.ForceHide(false);
+				}
 			})
 			.AppendInterval(0.1f)	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -259,8 +263,14 @@ public class MenuDragonScreenController : MonoBehaviour {
 			})
 			.AppendInterval(1f)	// Avoid 0 duration
 			.AppendCallback(() => {
+				if (!DragonManager.GetDragonData(_revealDragonSku).isTeased) {
+					MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
+					slot.animator.ForceShow(true);
+				}
+
 				MenuDragonPreview preview = InstanceManager.menuSceneController.dragonScroller.GetDragonPreview(_revealDragonSku);
 				preview.equip.EquipDisguise("");
+
 				DragonManager.GetDragonData(_revealDragonSku).Reveal();
 			})
 			.AppendInterval(2f)

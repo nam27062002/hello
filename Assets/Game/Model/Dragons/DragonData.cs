@@ -55,9 +55,12 @@ public class DragonData : IUISelectorItem {
 	[SerializeField] private bool m_owned = false;
 	[SerializeField] private bool m_teased = false;
 	[SerializeField] private bool m_revealed = false;
+
 	public LockState lockState { get { return GetLockState(); }}
 	public bool isLocked { get { return lockState == LockState.LOCKED; }}
 	public bool isOwned { get { return m_owned; }}
+	public bool isTeased { get { return m_teased; }}
+	public bool isRevealed { get { return m_revealed; }}
 
 	[SerializeField] private DragonProgression m_progression = null;	// Will be exposed via a custom editor
 	public DragonProgression progression { get { return m_progression; }}
@@ -233,6 +236,7 @@ public class DragonData : IUISelectorItem {
 	}
 
 	public void Reveal() {
+		m_teased = true;
 		m_revealed = true;
 		PersistenceFacade.instance.Save_Request();
 	}
