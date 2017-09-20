@@ -219,7 +219,7 @@ public class MenuDragonLoader : MonoBehaviour {
 				}
 
 				if (m_useShadowMaterial)
-					m_dragonInstance.EnableShadow();
+					m_dragonInstance.equip.EquipDisguiseShadow();
 			}
 		}
 

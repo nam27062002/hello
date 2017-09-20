@@ -91,6 +91,7 @@ public class MenuDragonPaginator : TabSystem {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
+		Messenger.AddListener<DragonData>(GameEvents.DRAGON_TEASED, OnDragonTeased);
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 
 		// Make sure selected tab is the right one
@@ -102,6 +103,7 @@ public class MenuDragonPaginator : TabSystem {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_TEASED, OnDragonTeased);
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
@@ -118,6 +120,12 @@ public class MenuDragonPaginator : TabSystem {
 	private void Initialize() {
 		// Reset all buttons
 		for(int i = 0; i < m_tabButtons.Count; i++) {
+			List<DragonData> dragons = DragonManager.GetDragonsByTier((DragonTier)i, true);
+			if (dragons.Count > 0) {
+				m_tabButtons[i].GetComponent<NavigationShowHideAnimator>().Show(false);
+			} else {
+				m_tabButtons[i].GetComponent<NavigationShowHideAnimator>().Hide(false);
+			}
 			m_tabButtons[i].SetSelected(false, false);
 		}
 
@@ -144,6 +152,10 @@ public class MenuDragonPaginator : TabSystem {
 		// Luckily, tier indexes match the order of the buttons, so we can do this really fast
 		DragonTier selectedTier = DragonManager.GetDragonData(_sku).tier;
 		GoToScreen((int)selectedTier, NavigationScreen.AnimType.NONE);
+	}
+
+	private void OnDragonTeased(DragonData _data) {
+		m_tabButtons[(int)_data.tier].GetComponent<NavigationShowHideAnimator>().Show(true);
 	}
 
 	/// <summary>

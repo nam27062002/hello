@@ -969,8 +969,7 @@ public class UserProfile : UserPersistenceSystem
 		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
 		{
 			DragonData dragonData = pair.Value;
-			if ( dragonData.isOwned || !dragonData.isLocked )
-				dragons.Add( dragonData.Save() );
+			dragons.Add( dragonData.Save() );
 		}
 		data.Add( "dragons", dragons );
 

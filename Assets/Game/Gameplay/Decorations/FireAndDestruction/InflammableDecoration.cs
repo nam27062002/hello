@@ -39,7 +39,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	protected DeviceOperatorSpawner m_operatorSpawner;
 	private Vector3 m_startPosition;
 
-	private Dictionary<Renderer, Material[]> m_originalMaterials = new Dictionary<Renderer, Material[]>();
+	private Renderer[] m_renderers;
+	private Dictionary<int, List<Material>> m_originalMaterials = new Dictionary<int, List<Material>>();
 	private Material m_ashMaterial;
 
 	private Decoration m_entity;
@@ -65,18 +66,24 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 		m_explosionProcHandler = ParticleManager.CreatePool("PF_FireExplosionProc");
 
-		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			Material[] materials = renderers[i].sharedMaterials;
+		m_view = transform.Find("view").gameObject;
+		m_viewBurned = transform.Find("view_burned").gameObject;
+
+		m_renderers = m_view.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < m_renderers.Length; i++) {
+			Material[] materials = m_renderers[i].sharedMaterials;
 
 			// Stores the materials of this renderer in a dictionary for direct access//
-			m_originalMaterials[renderers[i]] = renderers[i].sharedMaterials;
+			int renderID = m_renderers[i].GetInstanceID();
+			m_originalMaterials[renderID] = new List<Material>();
+			m_originalMaterials[renderID].AddRange(materials);
 
-			for (int m = 0; m < materials.Length; ++m) {
-				materials[m] = null;
+			for (int m = 0; m < materials.Length; ++m) {				
+				//TODO
+				//materials[m] = null;
 			}
 
-			renderers[i].sharedMaterials = materials;
+			m_renderers[i].sharedMaterials = materials;
 		}
 		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
 		m_ashMaterial.renderQueue = 3000;// Force transparent
@@ -112,8 +119,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
 		m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
 
-		m_view = transform.Find("view").gameObject;
-		m_viewBurned = transform.Find("view_burned").gameObject;
 
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Init(m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
@@ -269,25 +274,25 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	}
 
 	private void ResetViewMaterials() {
-		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			if (m_originalMaterials.ContainsKey(renderers[i])) {
-				renderers[i].materials = m_originalMaterials[renderers[i]];
+		for (int i = 0; i < m_renderers.Length; i++) {
+			int renderID = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].materials;
+			for (int m = 0; m < materials.Length; ++m) {
+				materials[m] = m_originalMaterials[renderID][m];
 			}
+			m_renderers[i].materials = materials;
 		}
 	}
 
 	private void SwitchViewToDissolve() {
-		Renderer[] renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < renderers.Length; i++) {
-			if (m_originalMaterials.ContainsKey(renderers[i])) {
-				Material[] materials = renderers[i].materials;
-				for (int m = 0; m < materials.Length; m++) {
-					m_ashMaterial.SetTexture("_MainTex", materials[m].mainTexture);
-					materials[m] = m_ashMaterial;
-				}
-				renderers[i].materials = materials;
+		for (int i = 0; i < m_renderers.Length; i++) {
+			int renderID = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].materials;
+			for (int m = 0; m < materials.Length; m++) {
+				m_ashMaterial.SetTexture("_MainTex", materials[m].mainTexture);
+				materials[m] = m_ashMaterial;
 			}
+			m_renderers[i].materials = materials;
 		}
 		m_ashMaterial.SetFloat("_BurnLevel", 0);
 	}

@@ -77,6 +77,45 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	//------------------------------------------------------------------//
 	// DRAGON DATA GETTERS												//
 	//------------------------------------------------------------------//
+
+	public static bool IsDragonOwned(string _sku) {
+		DragonData data = null;
+		if(instance.m_dragonsBySku.TryGetValue(_sku, out data)) {
+			return data.isOwned;
+		}
+		return false;
+	}
+
+	public static bool IsFirstDragon(string _sku) {
+		DragonData data = GetDragonData(_sku);
+		int order = data.GetOrder();
+
+		if (order == 0) {
+			return true;
+		} else {
+			bool isFirst = true;
+			for (int i = order - 1; order >= 0; --order) {
+				isFirst = isFirst && (dragonsByOrder[i].GetLockState() <= DragonData.LockState.TEASE);
+			}
+			return isFirst;
+		}
+	}
+
+	public static bool IsLastDragon(string _sku) {
+		DragonData data = GetDragonData(_sku);
+		int order = data.GetOrder();
+
+		if (order == dragonsByOrder.Count - 1) {
+			return true;
+		} else {
+			bool isLast = true;
+			for (int i = order + 1; order < dragonsByOrder.Count; ++order) {
+				isLast = isLast && (instance.m_dragonsByOrder[i].GetLockState() <= DragonData.LockState.TEASE);
+			}
+			return isLast;
+		}
+	}
+
 	/// <summary>
 	/// Given a dragon sku, get its current data.
 	/// </summary>
@@ -129,14 +168,16 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	/// <returns>The data of the dragons at the given tier.</returns>
 	/// <param name="_tier">The tier to look for.</param>
-	public static List<DragonData> GetDragonsByTier(DragonTier _tier) {
+	public static List<DragonData> GetDragonsByTier(DragonTier _tier, bool _discardHidden = false) {
 		// Iterate the dragons list looking for those belonging to the target tier
 		List<DragonData> list = new List<DragonData>();
 		foreach(KeyValuePair<string, DragonData> kvp in instance.m_dragonsBySku) {
 			// Does this dragon belong to the target tier?
 			if(kvp.Value.tier == _tier) {
 				// Yes!! Add it to the list
-				list.Add(kvp.Value);
+				if (!_discardHidden || kvp.Value.lockState > DragonData.LockState.TEASE) {
+					list.Add(kvp.Value);
+				}
 			}
 		}
 		return list;

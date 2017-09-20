@@ -12,9 +12,14 @@ using UnityEngine;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
+public struct PetScrollerItem : IUISelectorItem {
+	public DefinitionNode def;
+	public bool CanBeSelected() { return true; }
+}
+
 /// <summary>
 /// Auxiliar class to help with the scrolling logic.
 /// </summary>
-public class PopupInfoPetScroller : UISelectorTemplate<DefinitionNode> { 
+public class PopupInfoPetScroller : UISelectorTemplate<PetScrollerItem> { 
 	
 }
