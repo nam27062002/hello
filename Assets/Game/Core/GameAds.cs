@@ -33,19 +33,48 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 			if (!IsInited)  {
 				IsInited = true;
 
-				string interstitialId = "af85208c87c746e49cb88646d60a11f9";
-				string rewardId = "242e5f30622549f0ae85de0921842b71";
-				bool isPhone = true;
+				string interstitialId = "";
+				string rewardId = "";
 				// TODO: Check if tablet
-				if (Application.platform == RuntimePlatform.Android) {
-					if (isPhone) {
-						interstitialId = "af85208c87c746e49cb88646d60a11f9";
-						rewardId = "242e5f30622549f0ae85de0921842b71";
+				bool isPhone = !MiscUtils.IsDeviceTablet();
+				if ( UnityEngine.Debug.isDebugBuild )
+				{
+					if (Application.platform == RuntimePlatform.Android) {
+						if (isPhone) {
+							rewardId = "242e5f30622549f0ae85de0921842b71";
+							interstitialId = "af85208c87c746e49cb88646d60a11f9";
+						}else{
+							rewardId = "b83b87dab28b42a98abace9b7a3a8c15";
+							interstitialId = "03a11207d6ff4e70a11ddaf63b12ef8a";
+						}
+					} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
+						if (isPhone) {
+							rewardId = "5e6b8e4e20004d2c97c8f3ffd0ed97e2";
+							interstitialId = "c3c79080175c42da94013bccf8b0c9a2";
+						}else{
+							rewardId = "1ff446d39b244c25ab7fa62638d592fb";
+							interstitialId = "3ee1afec3ef5468ab65d65e3dc85025a";	
+						}
 					}
-				} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
-					if (isPhone) {
-						interstitialId = "c3c79080175c42da94013bccf8b0c9a2";
-						rewardId = "5e6b8e4e20004d2c97c8f3ffd0ed97e2";
+				}
+				else
+				{
+					if (Application.platform == RuntimePlatform.Android) {
+						if (isPhone) {
+							rewardId = "f572e1fc37274ac6a8eb45bfecdd65c8";
+							interstitialId = "a45750f42c864575b54afeb96a408818";
+						}else{
+							rewardId = "4248c1e6ec54409e9935b4ae08887e2b";
+							interstitialId = "5bbda1a7d3634cbf9281e6f2104c9134";
+						}
+					} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
+						if (isPhone) {
+							rewardId = "0d4a0085682948748fc8b162e8cbbae8";
+							interstitialId = "bf6b94c26863449e9347369bdb31362e";
+						}else{
+							rewardId = "31188271f9ab404cb2346472a9e93d8d";
+							interstitialId = "203f4feba4104e88a400519d731589ed";
+						}
 					}
 				}
 

@@ -13,4 +13,12 @@ public class MiscUtils {
         string mailSubject = WWW.EscapeURL(subject).Replace("+", "%20");
         Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject); // + "&body=" + body);
 	}
+
+	public static bool IsDeviceTablet()
+    {
+        float screenWidth = Screen.width / Screen.dpi;
+        float screenHeight = Screen.height / Screen.dpi;
+        float diagonalInches = Mathf.Sqrt(Mathf.Pow(screenWidth, 2) + Mathf.Pow(screenHeight, 2));
+        return diagonalInches > 6.5f;
+    }
 }
