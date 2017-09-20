@@ -23,11 +23,12 @@ public class FogManager : MonoBehaviour
 		}
 
 
+		/*
 		public List<float> m_alphaTimes = new List<float>();
 		public List<float> m_alphaValues = new List<float>();
 		public List<float> m_colorTimes = new List<float>();
 		public List<Color> m_colorValues = new List<Color>();
-
+		*/
 		public void CreateTexture()
 		{
 			m_texture = new Texture2D(TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
@@ -67,7 +68,7 @@ public class FogManager : MonoBehaviour
 			Shader.SetGlobalTexture("_FogTexture", texture);
 		}
 
-
+		/*
 		public void SaveKeys()
 	    {
 	    	m_alphaTimes.Clear();
@@ -104,7 +105,7 @@ public class FogManager : MonoBehaviour
 			}
 			m_fogGradient.SetKeys(colors, alphas);
 	    }
-
+	    */
 	}
 
 

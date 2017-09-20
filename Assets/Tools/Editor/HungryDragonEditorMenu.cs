@@ -86,7 +86,7 @@ public class HungryDragonEditorMenu
     {
         DeleteEmptyFolders.DeleteFolders();
     }
-
+    /*
 	[MenuItem("Hungry Dragon/Tools/Fog Area Save Gradients", false, 1)]
     public static void FogAreaSave()
     {
@@ -139,7 +139,7 @@ public class HungryDragonEditorMenu
 		}
 		EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
     }
-
+    */
 
     /// <summary>
     /// Simple content viewer.
