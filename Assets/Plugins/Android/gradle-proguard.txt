@@ -1,3 +1,17 @@
 -keep class bitter.jnibridge.* { *; }
 -keep class com.unity3d.* { *; }
 -keep class org.fmod.* { *; }
+-keep class com.sina.weibo.sdk.** { *; }
+
+-keepclassmembers class com.mopub.** { public *; }
+-keep public class com.mopub.**
+-keep public class android.webkit.JavascriptInterface {}
+
+-keep class * extends com.mopub.mobileads.CustomEventBanner {}
+-keepclassmembers class com.mopub.mobileads.CustomEventBannerAdapter {!private !public !protected *;}
+-keep class * extends com.mopub.mobileads.CustomEventInterstitial {}
+-keep class * extends com.mopub.mobileads.CustomEventNative {}
+
+-dontwarn com.vungle.**
+-keep class com.vungle.** { *; }
+-keep class javax.inject.*
