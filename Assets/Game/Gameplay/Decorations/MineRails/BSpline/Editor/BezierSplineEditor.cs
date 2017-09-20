@@ -11,9 +11,16 @@ namespace BSpline {
 		private const float HANDLE_SIZE = 0.04f;
 		private const float PICK_SIZE = 0.06f;
 
-		private static Color[] modeColors = {
-			Color.white,
-			Color.yellow,
+		private static Color nodeColor = Colors.silver;
+		private static Color[] modeColorsLeft = {
+			Colors.paleGreen,
+			Colors.paleYellow,
+			Colors.aqua
+		};
+
+		private static Color[] modeColorsRight = {
+			Colors.olive,
+			Colors.gold,
 			Color.cyan
 		};
 
@@ -136,14 +143,24 @@ namespace BSpline {
 
 		private Vector3 ShowPoint(int _index) {
 			Vector3 point = m_handleTransform.TransformPoint(m_spline.GetControlPoint(_index));
-			float size = HandleUtility.GetHandleSize(point) * 2f;
+			float size = HandleUtility.GetHandleSize(point) * 4f;
 
 			if (_index == 0) {
 				size *= 2f;
 			}
 
-			Handles.color = modeColors[(int)m_spline.GetControlPointMode(_index)];
-			if (Handles.Button(point, m_handleRotation, size * HANDLE_SIZE, size * PICK_SIZE, Handles.DotHandleCap)) {
+			bool isNode = _index % 3 == 0;
+			bool isLeftControl = !isNode && ((_index + 1) % 3 == 0);
+			bool isRightControl = !isNode && ((_index - 1) % 3 == 0);
+
+			Handles.CapFunction capf = Handles.CubeHandleCap;
+			if (!isNode) capf = Handles.SphereHandleCap;
+
+			if (isNode) 		Handles.color = nodeColor;
+			if (isLeftControl)	Handles.color = modeColorsLeft[(int)m_spline.GetControlPointMode(_index)];
+			if (isRightControl)	Handles.color = modeColorsRight[(int)m_spline.GetControlPointMode(_index)];
+
+			if (Handles.Button(point, m_handleRotation, size * HANDLE_SIZE, size * PICK_SIZE, capf)) {
 				m_selectedIndex = _index;
 				Repaint();
 			}
