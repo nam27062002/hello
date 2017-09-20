@@ -29,11 +29,9 @@ android {
 
 	compileSdkVersion **APIVERSION**
 	buildToolsVersion '**BUILDTOOLS**'
-
 	dexOptions {
 		javaMaxHeapSize "4g"
 	}
-	
 	defaultConfig {
 		targetSdkVersion **TARGETSDKVERSION**
 		multiDexEnabled true
@@ -45,13 +43,14 @@ android {
 **SIGN**
 	buildTypes {
 		debug {
-			jniDebuggable true
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '../../Assets/Plugins/Android/gradle-proguard.txt'
 			multiDexKeepProguard file('../../Assets/Plugins/Android/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
 		release {
 			minifyEnabled false
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '../../Assets/Plugins/Android/Android/gradle-proguard.txt'
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '../../Assets/Plugins/Android/gradle-proguard.txt'
 			multiDexKeepProguard file('../../Assets/Plugins/Android/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
