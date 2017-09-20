@@ -80,7 +80,11 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Hide dragon slot
+		m_dragonSlot.gameObject.SetActive(false);
 
+		if ( InstanceManager.fogManager != null )
+			InstanceManager.fogManager.ForceAttributes( m_fog );
 	}
 
 	/// <summary>
@@ -216,11 +220,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		m_eggSlot.gameObject.SetActive(m_eggFound);
 		#endif
 
-		// Hide dragon slot
-		m_dragonSlot.gameObject.SetActive(false);
 
-		if ( InstanceManager.fogManager != null )
-			InstanceManager.fogManager.ForceAttributes( m_fog );
 	}
 
 	/// <summary>
