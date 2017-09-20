@@ -26,6 +26,7 @@ using DG.Tweening;
 /// <summary>
 /// Setup to define a 3D area in the level to use for the results screen.
 /// </summary>
+[ExecuteInEditMode]
 public class ResultsSceneSetup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -56,22 +57,35 @@ public class ResultsSceneSetup : MonoBehaviour {
 	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 	private bool m_eggFound = false;
 
-	/*
+
 	// Test To recolocate the dragons view!
+	[Comment("Only to test the editor")]
 	public bool recolocate = false; //"run" or "generate" for example
 	void Update()
 	{
-		if (recolocate)
+		if ( !Application.isPlaying )
 		{
-			m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
-			m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
-			if ( m_dragonSlot.dragonSku == "dragon_chinese" || m_dragonSlot.dragonSku == "dragon_reptile" || m_dragonSlot.dragonSku == "dragon_balrog")
+			if (recolocate)
 			{
-				m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
+				m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
+				m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
+				if ( m_dragonSlot.dragonSku == "dragon_chinese" || m_dragonSlot.dragonSku == "dragon_reptile" || m_dragonSlot.dragonSku == "dragon_balrog")
+				{
+					m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
+				}
 			}
+
+			if ( m_fog.texture == null )
+			{
+				m_fog.CreateTexture();
+				Shader.SetGlobalTexture("_FogTexture", m_fog.texture);
+			}
+			m_fog.RefreshTexture();
+			Shader.SetGlobalFloat("_FogStart", m_fog.m_fogStart);
+			Shader.SetGlobalFloat("_FogEnd", m_fog.m_fogEnd);
 		}
 	}
-	*/
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -80,11 +94,14 @@ public class ResultsSceneSetup : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Hide dragon slot
-		m_dragonSlot.gameObject.SetActive(false);
+		if (Application.isPlaying )
+		{
+			// Hide dragon slot
+			m_dragonSlot.gameObject.SetActive(false);
 
-		if ( InstanceManager.fogManager != null )
-			InstanceManager.fogManager.ForceAttributes( m_fog );
+			if ( InstanceManager.fogManager != null )
+				InstanceManager.fogManager.ForceAttributes( m_fog );
+		}
 	}
 
 	/// <summary>
