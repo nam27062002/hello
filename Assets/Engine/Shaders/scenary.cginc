@@ -25,13 +25,13 @@ struct v2f {
 #endif
 
 #ifdef DARKEN
-		HG_DARKEN(4)
+	HG_DARKEN(4)
 #endif
 
 #ifdef DYNAMIC_SHADOWS
-		LIGHTING_COORDS(2, 3)
+	LIGHTING_COORDS(2, 3)
 #endif
-		float3 normalWorld : NORMAL;
+	float3 normalWorld : NORMAL;
 
 #ifdef NORMALMAP
 	float3 tangentWorld : TANGENT;

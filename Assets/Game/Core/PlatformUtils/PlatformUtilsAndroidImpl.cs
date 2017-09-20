@@ -39,12 +39,9 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 	public override void ShareImage(string filename, string caption)
 	{
-		if(!filename.StartsWith("file://"))
-		{
-			filename = "file://" + filename;
-		}
 		Debug.Log ("Trying to share " + filename);
 #if !UNITY_EDITOR
+
 		//instantiate the class Intent
 		AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
 		
@@ -53,12 +50,15 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		
 		//call setAction setting ACTION_SEND as parameter
 		intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
-		
+
+		// create file
+		AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
+
+		AndroidJavaObject currentActivity = GetCurrentActivity();
+
 		//instantiate the class Uri
-		AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
-		
-		//instantiate the object Uri with the parse of the url's file
-		AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse",filename);
+		AndroidJavaClass fileProvider = new AndroidJavaClass("android.support.v4.content.FileProvider");
+		AndroidJavaObject uriObject = fileProvider.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
 		
 		//call putExtra with the uri object of the file
 		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
@@ -66,8 +66,6 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		
 		//set the type of file
 		intentObject.Call<AndroidJavaObject>("setType", "image/jpeg");
-
-		AndroidJavaObject currentActivity = GetCurrentActivity();
 		
 		//call the activity with our Intent
 		currentActivity.Call("startActivity", intentObject);

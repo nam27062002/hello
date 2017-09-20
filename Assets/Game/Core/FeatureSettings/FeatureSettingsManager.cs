@@ -1100,6 +1100,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool IsLockEffectEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_LOCK_EFFECT);
+        }
+    }
+
     public bool IsFogOnDemandEnabled { get; set; }    
 
 	public FeatureSettings.ELevel5Values Particles
