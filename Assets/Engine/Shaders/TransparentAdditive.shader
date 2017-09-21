@@ -16,7 +16,7 @@ Shader "Hungry Dragon/TransparentAdditive"
 	}
 
 	Category{
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		Blend SrcAlpha One
 		Cull Off
 		Lighting Off
