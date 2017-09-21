@@ -151,6 +151,11 @@ public class MenuPetPreview : MonoBehaviour {
 				m_rarityGlow.SetActive(true);
 			}
 
+            foreach (Renderer rend in m_renderers)
+            {
+                rend.material.renderQueue = 3060;   //Draw pet just after particle glow effect
+            }
+
             if (rarity == "epic")
             {
 //                setFresnelColor(EPIC_COLOR);
