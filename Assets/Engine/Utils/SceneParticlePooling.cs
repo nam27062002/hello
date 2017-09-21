@@ -79,7 +79,13 @@ public class SceneParticlePooling : MonoBehaviour
                     Manager_CullingGroup.SetBoundingSpheres(Manager_BoundingSpheres);
                     Manager_CullingGroup.onStateChanged += Manager_OnStateChanged;
                 }
-				Manager_CullingGroup.targetCamera = Camera.main;
+
+                if (Camera.main != null)
+                    Manager_CullingGroup.targetCamera = Camera.main;
+                else if (InstanceManager.gameCamera != null)
+                    Manager_CullingGroup.targetCamera = Camera.main;
+                else
+                    Debug.LogError("No Camera Found");
 
                 Manager_CullingGroup.SetBoundingSphereCount(Manager_Items.Count);
 
@@ -213,8 +219,11 @@ public class SceneParticlePooling : MonoBehaviour
 
     void OnEnable()
     {
-        Init();
-        Manager_AddItem(this);
+        if ( Camera.main != null || InstanceManager.gameCamera != null)
+        { 
+            Init();
+            Manager_AddItem(this);
+        }
     }
 
 
