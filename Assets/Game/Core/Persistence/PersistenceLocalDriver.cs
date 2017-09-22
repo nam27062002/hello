@@ -279,6 +279,8 @@ public class PersistenceLocalDriver
 
 	public void NotifyUserHasLoggedIn(string socialPlatform, string socialId, Action onDone)
 	{
+        PersistencePrefs.Social_Id = socialId;
+
         if (TrackingPersistenceSystem != null)
         {
             PersistencePrefs.Social_Id = socialId;
