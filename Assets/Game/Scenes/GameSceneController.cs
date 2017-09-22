@@ -149,6 +149,8 @@ public class GameSceneController : GameSceneControllerBase {
 		// Call parent
 		base.Awake();
 
+		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
 		// Make sure loading screen is visible
 		LoadingScreen.Toggle(true, false);
 
@@ -389,6 +391,9 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
+
+		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         Track_RoundStart();
 
         // Reset timer
@@ -410,6 +415,8 @@ public class GameSceneController : GameSceneControllerBase {
     /// End the current game. Wont reset the stats so they can be used.
     /// <param name="_quitGame">Whether or not the game is ended because the user has quit.</param>
     public void EndGame(bool _quitGame) {    
+		Screen.sleepTimeout = SleepTimeout.SystemSetting;
+
         //
         // Tracking
         //
