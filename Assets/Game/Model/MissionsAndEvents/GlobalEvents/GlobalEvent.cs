@@ -173,7 +173,7 @@ public partial class GlobalEvent {
 	public void RefreshLeaderboardPosition(GlobalEventUserData _data) {
 		// Check whether the player is in the leaderboard
 		bool sort = false;
-		if ( m_leaderboard.Count < _data.position || _data.position < 0){
+		if ( m_leaderboard.Count <= _data.position || _data.position < 0){
 			// if I'm not in the leaderboard -> check if I have to be
 			int index = leaderboard.Count - 1;
 
