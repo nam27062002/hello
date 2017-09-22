@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FGOL.Save;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 public class PersistenceUtils
@@ -111,7 +112,7 @@ public class PersistenceUtils
         if (File.Exists(path))
         {                  
             PersistenceData _persistenceData = new PersistenceData(_profileName);
-            _persistenceData.Load();
+            _persistenceData.Load(SaveUtilities.GetSavePath(_profileName));
             string profileJSONStr = _persistenceData.ToString();
             data = SimpleJSON.JSON.Parse(profileJSONStr) as SimpleJSON.JSONClass;
         }
@@ -170,6 +171,6 @@ public class PersistenceUtils
         // The file needs to be encrypted and compressed in order to make it work as it will work on production
         PersistenceData _persistenceData = new PersistenceData(_profileName);
         _persistenceData.Merge(_data.ToString());
-        _persistenceData.Save();
+        _persistenceData.Save(SaveUtilities.GetSavePath(_profileName));
     }
 }

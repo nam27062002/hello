@@ -12,7 +12,8 @@ public class PersistenceStates
     {
         OK,
         PermissionError,
-        DiskSpace        
+        DiskSpace,
+        Corrupted        
     }
 
     public enum EConflictState
