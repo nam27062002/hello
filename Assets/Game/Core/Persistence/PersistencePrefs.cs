@@ -20,6 +20,9 @@ public class PersistencePrefs
 
     // Stored here so TrackingManager can be initialized as soon as possible
     private static string KEY_SERVER_USER_ID = "serverUserId";
+
+    // Index to the latest save path stored.
+    private static string KEY_SAVEPATHS_LATEST_INDEX = "savePathsLatestIndex";
     
     private static List<string> KEYS = new List<string>()
     {
@@ -28,6 +31,7 @@ public class PersistencePrefs
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SERVER_USER_ID,
+        KEY_SAVEPATHS_LATEST_INDEX
     };        
 
     public static bool IsDirty = false;
@@ -85,6 +89,12 @@ public class PersistencePrefs
 
             return returnValue;
         }        
+    }
+
+    public static int SavePathsLatestIndex
+    {
+        get { return PlayerPrefs.GetInt(KEY_SAVEPATHS_LATEST_INDEX, 0); }
+        set { SetInt(KEY_SAVEPATHS_LATEST_INDEX, value); }
     }
 
     #region social

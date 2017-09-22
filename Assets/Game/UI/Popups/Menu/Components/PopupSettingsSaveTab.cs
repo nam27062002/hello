@@ -208,7 +208,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     #region cloud
     [SerializeField]
     private Slider m_cloudEnableSlider;
-    
+
+    [SerializeField]
+    private Button m_cloudEnableButton;
+
     /// <summary>
     /// Callback called by the player when the user clicks on enable/disable the cloud save
     /// </summary>
@@ -222,7 +225,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {        
         bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
         m_cloudEnableSlider.value = (isSaveEnabled) ? 1 : 0;
-        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();     
+
+        bool isOn = Model_SocialIsLoggedIn();
+        m_cloudEnableSlider.interactable = isOn;
+        m_cloudEnableButton.interactable = isOn;
     }    
     #endregion
 
