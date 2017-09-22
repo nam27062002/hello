@@ -101,6 +101,11 @@ public class PersistenceCloudDriver
         SocialPlatformManager.SharedInstance.Logout();
     }
 
+    public bool IsLoggedIn
+    {
+        get { return State == EState.LoggedIn; }
+    }
+
     #region syncer
     private bool Syncer_IsSilent { get; set; }
 	private bool Syncer_IsAppInit { get; set; }
