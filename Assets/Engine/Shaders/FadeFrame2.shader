@@ -73,7 +73,7 @@ Shader "Hungry Dragon/FadeEffect2"
 	//				i.color.a = 1.0f;
 					float s = sin(_Time.y * _RotSpeed * -it);
 					float c = cos(_Time.y * _RotSpeed * it);
-					uv -= float2(0.5, 0.4) * it;
+					uv -= aspect * 0.5;
 					uv = float2(uv.x * c + uv.y * s, uv.x * s - uv.y * c);
 					uv += 0.5;
 					fixed4 tx = tex2D(_MainTex, uv);
