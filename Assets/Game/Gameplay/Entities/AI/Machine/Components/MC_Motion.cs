@@ -57,10 +57,10 @@ namespace AI {
 				m_machineTransform.rotation = m_rotation; }
 		}
 
-		private Vector3 m_groundSensorOffset;
+		private float m_groundSensorOffset;
 		public Vector3 position {
 			get { return m_groundSensor.position; }
-			set { m_machineTransform.position = value + m_groundSensorOffset; }
+			set { m_machineTransform.position = value + (m_upVector * m_groundSensorOffset); }
 		}
 
 		private Vector3 m_lastPosition;
@@ -141,7 +141,7 @@ namespace AI {
 				case UpVector.Back: 	m_upVector = Vector3.back;		break;
 			}
 
-			m_groundSensorOffset = (m_machineTransform.position - m_groundSensor.position);
+			m_groundSensorOffset = (m_machineTransform.position - m_groundSensor.position).magnitude;
 
 			m_direction = Vector3.back;
 			m_velocity = Vector3.zero;

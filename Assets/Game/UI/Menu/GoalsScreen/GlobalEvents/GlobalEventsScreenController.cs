@@ -178,7 +178,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Get latest event data
 		// [AOC] TODO!! Figure out the best place to do so to avoid spamming
 		GlobalEventManager.RequestCurrentEventData();
-		BusyScreen.Show(this);
+		// BusyScreen.Show(this);
 	}
 
 	/// <summary>
@@ -191,7 +191,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 				// If there is no event, instantly refresh the screen. Otherwise wait for the EVENT_STATE response
 				if(GlobalEventManager.currentEvent == null) {
 					Refresh();
-					BusyScreen.Hide(this);
+					// BusyScreen.Hide(this);
 				} else {
 					SelectPanel();
 				}
@@ -199,7 +199,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 			case GlobalEventManager.RequestType.EVENT_STATE: {
 				Refresh();
-				BusyScreen.Hide(this);
+				// BusyScreen.Hide(this);
 			} break;
 		}
 	}

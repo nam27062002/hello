@@ -1,3 +1,4 @@
+using FGOL.Save;
 using System;
 public class PersistenceLocalDriver
 {
@@ -6,11 +7,27 @@ public class PersistenceLocalDriver
 	// Amount of updates that the local persistence is ahead of the cloud persistence
 	public int UpdatesAheadOfCloud { get; set; }
 
-	public PersistenceData Data { get; set; }
+    private PersistenceData mData;
+	public PersistenceData Data
+    {
+        get { return mData; }
+        set
+        {
+            mData = value;
+            if (mData == null)
+            {
+                SavePaths_Reset();
+            }
+            else
+            {
+                SavePaths_Generate(mData.Key);
+            }
+        }
+    }
 
 	public UserProfile UserProfile { get; set; }
 
-    public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
+    public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }    
 
 	public PersistenceLocalDriver()
 	{
@@ -31,18 +48,52 @@ public class PersistenceLocalDriver
 		ExtendedReset();
 	}
 
-	protected virtual void ExtendedReset() {}
+	protected virtual void ExtendedReset() {}    
 
-	public void Load(Action onDone)
+    public void Load(Action onDone)
 	{
 		ExtendedLoad();
 		OnLoadDone(onDone);
 	}
 
 	protected virtual void ExtendedLoad()
-	{
-		Data.Load();
-	}
+	{        
+        int currentIndex = SavePaths_LatestIndex;
+        int latestIndex = SavePaths_LatestIndex;
+        string savePath;
+
+        // Tries different paths until no paths are left or one of them contains a file that exists and it's not corrupted
+        for (int i = 0; i < SAVE_PATHS_COUNT; i++)
+        {            
+            savePath = SavePaths_GetPathAtIndex(currentIndex);
+            Data.Load(savePath);
+
+            // Checks if it's a valid one, if so then it
+            if (SavePaths_IsAValidLoadState(Data.LoadState))            
+            {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    PersistenceFacade.Log("File at index " + currentIndex + " with path " + savePath + " has been loaded with state " + Data.LoadState);
+                }
+
+                if (currentIndex != latestIndex)
+                {
+                    SavePaths_LatestIndex = currentIndex;
+                }
+
+                // No more iterations are needed
+                break;
+            }
+            else
+            {                
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    PersistenceFacade.LogWarning("File at index " + currentIndex + " with path " + savePath + " is not valid: " + Data.LoadState);
+
+                // Updates the index for the next iteration
+                currentIndex = SavePaths_GetPreviousIndexToIndex(currentIndex);
+            }
+        }                
+    }
 
 	protected void OnLoadDone(Action onDone)
 	{
@@ -80,6 +131,26 @@ public class PersistenceLocalDriver
 	{
 		Data.LoadFromString(persistence);
 
+        // Overrides all files except the one that is going to be overridden by Save(onDone) below
+        // They all need to be overridden becuase their values are not valid anymore, otherwise the user could be able to load an old persistence
+        // if the latest file got corrupted
+        if (SAVE_PATHS_MULTIPLE_ENABLED)
+        {
+            int index = SavePaths_GetNextIndexToLatestIndex();
+
+            string savePath;
+
+            // all files have to be overridden because the current value is not valid anymore
+            for (int i = 0; i < SAVE_PATHS_COUNT; i++)
+            {
+                if (i != index)
+                {
+                    savePath = SavePaths_GetPathAtIndex(i);
+                    Data.Save(savePath);
+                }
+            }
+        }
+
         // Saves the new local persistence. 
 		Save(onDone);
 	}
@@ -111,7 +182,33 @@ public class PersistenceLocalDriver
 
 	protected virtual void ExtendedSave()
 	{
-		Data.Save();
+        // It's not saved in the latest path in order to prevent it from gettomg corrupted if something goes wrong        
+        int index = SavePaths_GetNextIndexToLatestIndex();
+        string savePath = SavePaths_GetPathAtIndex(index);
+        Data.Save(savePath);        
+
+        if (SAVE_PATHS_MULTIPLE_ENABLED)
+        {            
+            if (Data.SaveState == PersistenceStates.ESaveState.OK)
+            {
+                // Loads it again to make sure it's been saved correctly
+                if (SavePaths_Verify(savePath))
+                {
+                    // Since the file has been loaded successfully we can consider it the latest valid one
+                    SavePaths_LatestIndex = index;
+
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        PersistenceFacade.Log("Local persistence successfully saved to " + savePath + " with state = " + Data.SaveState);
+                }
+                else
+                {
+                    Data.SaveState = PersistenceStates.ESaveState.Corrupted;
+
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        PersistenceFacade.LogError("Error when saving local persistence to " + savePath);                    
+                }
+            }            
+        }
 	}
 
 	private void OnSaveDone(Action onDone)
@@ -130,6 +227,10 @@ public class PersistenceLocalDriver
 			case PersistenceStates.ESaveState.PermissionError:
 				PersistenceFacade.Popups_OpenLocalSavePermissionError(onRetry);
 			break;
+
+            case PersistenceStates.ESaveState.Corrupted:
+                PersistenceFacade.Popups_OpenLocalSaveCorruptedError(onRetry);
+                break;
 
 			default:
 				if (IsLoadedInGame)
@@ -178,8 +279,11 @@ public class PersistenceLocalDriver
 
 	public void NotifyUserHasLoggedIn(string socialPlatform, string socialId, Action onDone)
 	{
+        PersistencePrefs.Social_Id = socialId;
+
         if (TrackingPersistenceSystem != null)
         {
+            PersistencePrefs.Social_Id = socialId;
             TrackingPersistenceSystem.SetSocialParams(socialPlatform, socialId);
         }
 
@@ -195,8 +299,96 @@ public class PersistenceLocalDriver
 		}
 	}
 
-	public void Update()
-	{
-		;
-	}	
+    public void Update() {}
+
+    #region SavePaths
+    private const bool SAVE_PATHS_MULTIPLE_ENABLED = true;
+    private const int SAVE_PATHS_COUNT = (SAVE_PATHS_MULTIPLE_ENABLED) ? 2 : 1;
+
+    private string[] mSavePaths;    
+
+    private void SavePaths_Reset()
+    {
+        if (mSavePaths != null)
+        {
+            for (int i = 0; i < SAVE_PATHS_COUNT; i++)
+            {
+                mSavePaths[i] = null;
+            }
+        }
+    }
+
+    private void SavePaths_Generate(string key)
+    {        
+        if (mSavePaths == null)
+        {
+            mSavePaths = new string[SAVE_PATHS_COUNT];
+        }
+
+        string name;
+        for (int i = 0; i  < SAVE_PATHS_COUNT; i++)
+        {
+            name = key;
+            if (SAVE_PATHS_MULTIPLE_ENABLED)
+            {
+                name += "_" + i;
+            }
+
+            mSavePaths[i] = SaveUtilities.GetSavePath(name);
+        }
+    }
+
+    private int SavePaths_LatestIndex
+    {
+        get { return (SAVE_PATHS_MULTIPLE_ENABLED) ? PersistencePrefs.SavePathsLatestIndex : 0; }
+        set { PersistencePrefs.SavePathsLatestIndex = value; }
+    }
+
+    private int SavePaths_GetNextIndexToLatestIndex()
+    {
+        return (SavePaths_LatestIndex + 1) % SAVE_PATHS_COUNT;
+    }
+
+    private int SavePaths_GetPreviousIndexToIndex(int index)
+    {
+        int returnValue = index - 1;
+        if (returnValue < 0)
+        {
+            returnValue = SAVE_PATHS_COUNT - 1;
+        }
+
+        return returnValue;
+    }
+
+    private string SavePaths_GetLatestPath
+    {
+        get { return SavePaths_GetPathAtIndex(SavePaths_LatestIndex); }
+    }
+
+    private string SavePaths_GetPathAtIndex(int index)
+    {
+        return (mSavePaths == null) ? null : mSavePaths[index]; 
+    }
+
+    private bool SavePaths_IsAValidLoadState(PersistenceStates.ELoadState state)
+    {
+        return state != PersistenceStates.ELoadState.Corrupted && state != PersistenceStates.ELoadState.NotFound;
+    }
+
+    private PersistenceData SavePaths_Data { get; set; }
+    private bool SavePaths_Verify(string path)
+    {
+        if (SavePaths_Data == null)
+        {
+            SavePaths_Data = new PersistenceData(path);
+        }
+        else
+        {
+            SavePaths_Data.Reset();
+        }
+
+        SavePaths_Data.Load(path);
+        return SavePaths_Data.LoadState == PersistenceStates.ELoadState.OK;
+    }
+    #endregion
 }

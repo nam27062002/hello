@@ -94,6 +94,9 @@ public enum GameEvents {
 	DRAGON_ACQUIRED,			// params: DragonData _data
 	DRAGON_LEVEL_UP,			// params: DragonData _data
 
+	// Dragon skin events
+	SKIN_ACQUIRED,			// params: string _skin_sku
+
 	// Menu events
 	MENU_DRAGON_SELECTED,		 // params: string _selectedDragonSku	// [AOC] Triggered when the dragon hovered in the dragon selection screen changes
 	MENU_DRAGON_CONFIRMED,		 // params: string _confirmedDragonSku	// [AOC] Triggered when the dragon hovered on the menu is valid to be used in gameplay (UserProfile.currentDragon updated)

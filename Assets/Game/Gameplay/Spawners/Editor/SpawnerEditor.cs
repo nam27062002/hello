@@ -42,6 +42,7 @@ public class SpawnerEditor : Editor {
     private SerializedProperty m_speedFactorRangeProp = null;
     private SerializedProperty m_scaleProp = null;
     private SerializedProperty m_spawnTimeProp = null;
+    private SerializedProperty m_groupBonus = null; 
 
 
     // Warning messages
@@ -78,6 +79,8 @@ public class SpawnerEditor : Editor {
         m_speedFactorRangeProp = serializedObject.FindProperty("m_speedFactorRange");
         m_scaleProp = serializedObject.FindProperty("m_scale");
         m_spawnTimeProp = serializedObject.FindProperty("m_spawnTime");
+
+        m_groupBonus = serializedObject.FindProperty("m_hasGroupBonus");
 
         // Do an initial check for errors
         CheckForErrors();
@@ -211,6 +214,13 @@ public class SpawnerEditor : Editor {
 								max.intValue = min.intValue;
 							}
                         }
+
+                        if (p.name == m_quantityProp.name)
+                        {
+                            m_groupBonus.boolValue = ovMin >= 5;
+                        }
+
+
 /*                        else
 						{
 							if (max.intValue < min.intValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))

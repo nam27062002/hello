@@ -167,11 +167,11 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 			}
 
 			if (m_respawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
-				if (!m_camera.IsInsideActivationMinArea(area.bounds)) {
+				if (!m_camera.IsInsideActivationMaxArea(area.bounds)) {
 					Destroy(gameObject);
 				}
 			} else if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
-				bool isInsideActivationArea = m_camera.IsInsideActivationArea(area.bounds);
+				bool isInsideActivationArea = m_camera.IsInsideActivationMinArea(area.bounds);
 				if (isInsideActivationArea) {
 					m_state = State.Respawning;
 					return true;
