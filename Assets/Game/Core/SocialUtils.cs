@@ -249,7 +249,10 @@ public abstract class SocialUtils
         if (IsLoggedIn())
         {
             string socialId = GetSocialID();
-            
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Profile_LoadInfo socialId = " + socialId + " Cache.SocialId = " + Cache.SocialId);
+
             if (socialId != Cache.SocialId)
             {
                 Cache.Invalidate();
@@ -322,7 +325,7 @@ public abstract class SocialUtils
     #endregion        
 
     #region log
-    private static string LOG_CHANNEL = "Social";
+    private static string LOG_CHANNEL = "[SocialUtils] ";
     public static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;

@@ -169,11 +169,19 @@ public class GameServerManager
 	/// </summary>
 	/// <returns>The estimated server time.</returns>
 	public DateTime GetEstimatedServerTime() {
-		// Calety already manages this, just convert it to a nice DateTime object.
-		double unixTimestamp = ServerManager.SharedInstance.GetServerTime();	// Seconds since 1970
-		long timestamp = (long)unixTimestamp * 1000;
-		return TimeUtils.TimestampToDate( timestamp );
+        // Calety already manages this, just convert it to a nice DateTime object.		
+        long timestamp = GetEstimatedServerTimeAsLong();
+        return TimeUtils.TimestampToDate( timestamp );
 	}
+
+    /// <summary>
+    /// Get an estimation of the current server time in milliseconds by using the last known server time
+    /// </summary>
+    /// <returns>The estimated server time in milliseconds</returns>
+    public long GetEstimatedServerTimeAsLong() {
+        double unixTimestamp = ServerManager.SharedInstance.GetServerTime();    // Seconds since 1970
+        return (long)unixTimestamp * 1000;
+    }
 
     //------------------------------------------------------------------------//
     // LOGIN																  //

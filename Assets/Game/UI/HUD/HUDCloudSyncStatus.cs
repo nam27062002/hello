@@ -87,7 +87,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
                 {
                     IsPopupOpen = true;
 
-                    PersistenceManager.Popups_OpenCloudSync
+                    PersistenceFacade.Popups_OpenCloudSync
                     (
                         delegate ()
                         {                            

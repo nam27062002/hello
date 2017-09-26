@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace AI {
 	namespace Behaviour {
 		[System.Serializable]
 		public class AttackTurnAroundData : StateComponentData {			
 			public float damage = 5f;
+			public string weaponA;
+			public string weaponB;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Attack Turn Around")]
@@ -15,9 +17,8 @@ namespace AI {
 			private static string OnTurnAroundEnd = "onTurnAroundEnd";
 
 
-			private IMeleeWeapon m_meleeWeapon;
+			private List<IMeleeWeapon> m_meleeWeapons;
 			private AttackTurnAroundData m_data;
-
 			private PreyAnimationEvents m_animEvents;
 
 
@@ -32,10 +33,20 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackTurnAroundData>();
-				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
+
+				m_meleeWeapons = new List<IMeleeWeapon>();
+
+				if (!string.IsNullOrEmpty(m_data.weaponA)) {
+					m_meleeWeapons.Add(m_pilot.FindComponentRecursive<IMeleeWeapon>(m_data.weaponA));
+				}
+
+				if (!string.IsNullOrEmpty(m_data.weaponB)) {
+					m_meleeWeapons.Add(m_pilot.FindComponentRecursive<IMeleeWeapon>(m_data.weaponB));
+				}
+
 				m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
 
-				m_meleeWeapon.enabled = false;
+				OnDisableWeapon();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
@@ -59,16 +70,22 @@ namespace AI {
 			}
 
 			private void OnAnimDealDamage() {
-				m_meleeWeapon.damage = m_data.damage;
+				for (int i = 0; i < m_meleeWeapons.Count; ++i) {
+					m_meleeWeapons[i].damage = m_data.damage;
+				}
 				OnEnableWeapon();
 			}
 
 			private void OnEnableWeapon() {
-				m_meleeWeapon.enabled = true;
+				for (int i = 0; i < m_meleeWeapons.Count; ++i) {
+					m_meleeWeapons[i].enabled = true;
+				}
 			}
 
 			private void OnDisableWeapon() {
-				m_meleeWeapon.enabled = false;
+				for (int i = 0; i < m_meleeWeapons.Count; ++i) {
+					m_meleeWeapons[i].enabled = false;
+				}
 			}
 
 			private void OnAnimEnd() {
