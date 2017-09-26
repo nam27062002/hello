@@ -118,6 +118,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected bool m_boost;
 	protected bool m_scared;
 	protected bool m_panic; //bite and hold state
+	protected bool m_upsideDown;
 	protected bool m_falling;
 	protected bool m_jumping;
 	protected bool m_attack;
@@ -313,6 +314,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_boost = false;
 		m_scared = false;
 		m_panic = false;
+		m_upsideDown = false;
 		m_falling = false;
 		m_jumping = false;
 		m_attack = false;
@@ -688,6 +690,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			}
 			if (m_animator != null)
 				m_animator.SetBool("scared", _scared);
+		}
+	}
+
+	public void UpsideDown(bool _upsideDown) {
+		if (m_upsideDown != _upsideDown) {
+			m_upsideDown = _upsideDown;
+			m_animator.SetBool("upside down", _upsideDown);
 		}
 	}
 
