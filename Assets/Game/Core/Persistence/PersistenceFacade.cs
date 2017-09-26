@@ -200,6 +200,9 @@ public class PersistenceFacade
 	{
         Sync_IsSyncing = false;
 
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("(SYNCER) Sync_OnDone result = " + result);
+
         if (result == PersistenceStates.ESyncResult.NeedsToReload)
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
@@ -311,6 +314,9 @@ public class PersistenceFacade
     /// </summary>
     public static void Popups_OpenLoadingPopup()
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Popups_OpenLoadingPopup canOpen = " + (!Popups_IsLoadingPopupOpen()));
+
         if (!Popups_IsLoadingPopupOpen())
         {			
             Popups_LoadingPopup = PopupManager.PopupLoading_Open();
@@ -319,6 +325,9 @@ public class PersistenceFacade
 
     public static void Popups_CloseLoadingPopup()
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Popups_CloseLoadingPopup IsOpen = " + Popups_IsLoadingPopupOpen());
+
         if (Popups_IsLoadingPopupOpen())
         {			
             Popups_LoadingPopup.Close(true);
@@ -327,6 +336,9 @@ public class PersistenceFacade
 	
     private static void Popups_OnPopupClosed(PopupController popup)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Popups_OnPopupClosed canClose = " + (popup == Popups_LoadingPopup));
+
         if (popup == Popups_LoadingPopup)
         {
             Popups_LoadingPopup = null;
