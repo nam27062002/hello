@@ -322,7 +322,7 @@ public abstract class SocialUtils
     #endregion        
 
     #region log
-    private static string LOG_CHANNEL = "Social";
+    private static string LOG_CHANNEL = "[SocialUtils] ";
     public static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
