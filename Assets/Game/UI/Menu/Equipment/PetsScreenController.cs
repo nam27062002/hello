@@ -192,6 +192,14 @@ public class PetsScreenController : MonoBehaviour {
 			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
 		}
 
+		for( int i = m_defs.Count - 1; i >= 0; --i )
+		{
+			if ( m_defs[i].GetAsBool("hidden") )
+			{
+				m_defs.RemoveAt(i);
+			}
+		}
+
 		// Sort them!
 		// Category order: same as filter buttons
 		Dictionary<string, int> filterOrder = new Dictionary<string, int>();

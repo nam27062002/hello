@@ -11,7 +11,7 @@ Shader "Hungry Dragon/FadeEffect"
 	SubShader
 	{
 
-		Tags{ "ForceSupported" = "True" "RenderType" = "Overlay" }
+		Tags{ "Queue" = "Overlay" "ForceSupported" = "True" "RenderType" = "Overlay" }
 
 		Lighting Off
 		Blend SrcAlpha OneMinusSrcAlpha

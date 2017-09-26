@@ -115,6 +115,15 @@ namespace Metagame {
 					List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", raritySku);
 					DefinitionNode petDef = null;
 
+					// Remove all hidden and event only pets
+					for( int i = petDefs.Count - 1; i >= 0; --i )
+					{
+						if ( petDefs[i].GetAsBool("hidden") || petDefs[i].GetAsBool("eventOnly") )
+						{
+							petDefs.RemoveAt(i);
+						}
+					}
+
 					// a) Forcing a specific sku from cheats?
 					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
 						// Get that specific pet!
