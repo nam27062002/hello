@@ -60,6 +60,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public delegate void OnHiccupEvent();
 	public OnHiccupEvent onHiccupEvent;
 
+	// Grunt
+	public string m_gruntSound;
+	[Range(0f, 100.0f)]
+	public float m_gruntToEatProbability = 5;
+
+
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
@@ -189,6 +195,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void EatStartEvent()
 	{
+		if ( Random.Range(0.0f, 100.0f) < m_gruntToEatProbability )
+		{
+			PlaySound(m_gruntSound);
+		}
+
 		PlaySound(m_eatSound);
 	}
 
@@ -211,7 +222,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void HiccupEvent()
 	{
-		PlaySound( m_hitSound );
+		PlaySound( m_hiccupSound );
 		if ( onHiccupEvent != null)
 			onHiccupEvent();
 	}
