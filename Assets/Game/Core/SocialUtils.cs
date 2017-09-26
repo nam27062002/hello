@@ -249,7 +249,10 @@ public abstract class SocialUtils
         if (IsLoggedIn())
         {
             string socialId = GetSocialID();
-            
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Profile_LoadInfo socialId = " + socialId + " Cache.SocialId = " + Cache.SocialId);
+
             if (socialId != Cache.SocialId)
             {
                 Cache.Invalidate();
