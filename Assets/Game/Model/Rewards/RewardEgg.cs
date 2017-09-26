@@ -115,10 +115,10 @@ namespace Metagame {
 					List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", raritySku);
 					DefinitionNode petDef = null;
 
-					// Remove all hidden pets
+					// Remove all hidden and event only pets
 					for( int i = petDefs.Count - 1; i >= 0; --i )
 					{
-						if ( petDefs[i].GetAsBool("hidden") )
+						if ( petDefs[i].GetAsBool("hidden") || petDefs[i].GetAsBool("eventOnly") )
 						{
 							petDefs.RemoveAt(i);
 						}
