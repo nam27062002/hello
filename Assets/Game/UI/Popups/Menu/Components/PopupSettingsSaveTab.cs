@@ -142,7 +142,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Action onDone = delegate()
         {
             CloseLoadingPopup();         
-            if (SocialPlatformManager.SharedInstance.IsLoggedIn())
+            if (Model_SocialIsLoggedIn())
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                     Log("LOGIN SUCCESSFUL");
@@ -441,7 +441,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void Model_Refresh()
     {
         EState state = EState.NeverLoggedIn;
-        bool isLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
+        bool isLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
         UserProfile userProfile = UsersManager.currentUser;
         if (userProfile != null)
         {
@@ -472,7 +472,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             case EState.LoggedIn:
             case EState.LoggedInAndIncentivised:
             {
-                returnValue = SocialPlatformManager.SharedInstance.IsLoggedIn();
+                returnValue = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
             }
             break;
 

@@ -160,17 +160,16 @@ public class PersistenceFacade
                     onDone();
                 }
 
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app whe she last played
+                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
                 {
-                    if (!Config.LocalDriver.IsLoadedInGame)
+                    Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
                     {
-                        Config.LocalDriver.IsLoadedInGame = true;
-                    }
+                        Sync_OnDone(result, null);
+                    };
 
-                    Sync_OnDone(result, null);
-                };
-
-                Config.CloudDriver.Sync(true, true, onSyncDone);                
+                    Config.CloudDriver.Sync(true, true, onSyncDone);
+                }
 			}			
 		};
 

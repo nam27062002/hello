@@ -35,7 +35,6 @@ public class PersistenceCloudDriver
                     Upload_IsAllowed = false;
                     break;
             }
-
         }
     }
 
@@ -99,6 +98,8 @@ public class PersistenceCloudDriver
     public void Logout()
     {
         ExtendedLogout();
+
+        PersistencePrefs.Social_WasLoggedInWhenQuit = false;
 
         if (State == EState.LoggedIn)
         {
