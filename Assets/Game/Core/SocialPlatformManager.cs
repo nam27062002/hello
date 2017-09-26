@@ -201,6 +201,10 @@ public class SocialPlatformManager : MonoBehaviour
 
     public void Login(bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
     {
+        // Forced to false because when Calety is called with true some flow can be performed that doesn't trigger any callback which would lead
+        // this login flow to stay waiting forever
+        isAppInit = false;
+
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + IsLoggedIn() + " SocialId = " + PersistencePrefs.Social_Id);
 
