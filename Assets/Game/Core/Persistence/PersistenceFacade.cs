@@ -83,6 +83,8 @@ public class PersistenceFacade
     }   
 
 	#region sync
+    public long Sync_LatestSyncTime { get { return CloudDriver.LatestSyncTime; } }
+
     public bool Sync_IsSyncing { get; set; }
 
     public bool Sync_IsSynced { get { return CloudDriver.IsInSync; } }
@@ -687,13 +689,56 @@ public class PersistenceFacade
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onReset;
-        PopupManager.PopupMessage_Open(config);
-
-        /*
-        Popup popup = FlowController.Instance.OpenPopup("Local and cloud are corrupted. Reset them to default?");
-		popup.AddButton("Reset", onReset, true);
-        */
+        PopupManager.PopupMessage_Open(config);        
 	}
+
+    /// <summary>
+    /// This popup is shown when the user clicks on cloud sync icon on hud or on sync button on settings and the synchronization went ok    
+    /// </summary>
+    public static void Popups_OpenCloudSyncedSuccessfully(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
+        
+        config.MessageTid = "TID_SAVE_CLOUD_ACTIVE_DESC";            
+        DateTime lastUpload = GameServerManager.SharedInstance.GetEstimatedServerTime();
+        string lastUploadStr = lastUpload.ToString("F");
+        config.MessageParams = new string[] { lastUploadStr };
+
+        config.ConfirmButtonTid = "TID_GEN_CONTINUE";        
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
+
+        long lastUploadTime = instance.Sync_LatestSyncTime;
+        if (lastUploadTime > 0)
+        {
+            config.MessageTid = "TID_SAVE_CLOUD_ACTIVE_DESC";
+            DateTime lastUpload = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            lastUpload = lastUpload.AddMilliseconds(lastUploadTime).ToLocalTime();
+            string lastUploadStr = lastUpload.ToString("F");
+            config.MessageParams = new string[] { lastUploadStr };
+        }
+        else
+        {
+            config.MessageTid = "TID_SAVE_CLOUD_SAVE_ACTIVE_DESC";
+        }
+
+        config.ConfirmButtonTid = "TID_SAVE_CLOUD_SAVE_SYNC_NOW";
+        config.CancelButtonTid = "TID_GEN_CONTINUE";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;
+        config.OnCancel = onCancel;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
     #endregion
 
     #region log

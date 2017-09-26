@@ -32,9 +32,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
 
     private void Init()
-    {
-        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);        
-
+    {        
         Model_Init();
         Social_Init();
         Resync_Init();
@@ -44,12 +42,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     void OnEnable()
     {        
         RefreshView();
-    }    
-
-    void OnDestroy()
-    {        
-        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);        
-    }    
+    }            
     
     private void RefreshView()
     {
@@ -72,14 +65,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         IsLoadingPopupOpen = false;
         PersistenceFacade.Popups_CloseLoadingPopup();
-    }
-
-    private void OnSocialLogged(bool logged)
-    {     
-        if (IsLoadingPopupOpen)
-        {
-            CloseLoadingPopup();
-        }
     }    
 
     #region social
@@ -274,7 +259,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         if (!Resync_IsRunning)
         {
             OpenLoadingPopup();
-            Action onDone = delegate ()
+            Action onDone = delegate()
             {
                 CloseLoadingPopup();
                 Resync_IsRunning = false;
@@ -285,7 +270,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             Resync_IsRunning = true;
             PersistenceFacade.instance.Sync_FromSettings(onDone);
         }
-    }
+    }    
     #endregion
 
     #region user

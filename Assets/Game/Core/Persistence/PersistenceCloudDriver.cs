@@ -50,12 +50,23 @@ public class PersistenceCloudDriver
             if (mIsInSync != value)
             {
                 mIsInSync = value;
+
+                if (mIsInSync)
+                {
+                    LatestSyncTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+                }
+
                 Messenger.Broadcast<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
             }
         }
     }
-    
-	public PersistenceCloudDriver()
+
+    /// <summary>
+    /// Returns the time (milliseconds since 1970) at the latest successful synchronization
+    /// </summary>
+    public long LatestSyncTime { get; set; }    
+
+    public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
 		Data = new PersistenceData(dataName);        
@@ -70,8 +81,9 @@ public class PersistenceCloudDriver
 	{
 		IsInSync = false;
 		State = EState.NotLoggedIn;
+        LatestSyncTime = 0;
 
-		Syncer_Reset();
+        Syncer_Reset();
 		Upload_Reset();
 
 		ExtendedReset();
