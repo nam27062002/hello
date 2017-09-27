@@ -134,7 +134,12 @@ public class PersistenceData
             m_deviceName = SystemInfo.deviceModel;
         }
 
-        m_modifiedTime = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        // Makes sure that the date doesn't go backwards
+        int newModifiedTime = (int)(GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000);        
+        if (newModifiedTime >= m_modifiedTime)
+        {
+            m_modifiedTime = newModifiedTime;
+        }
 
         m_data["deviceName"] = m_deviceName;
         m_data["modifiedTime"] = m_modifiedTime;
