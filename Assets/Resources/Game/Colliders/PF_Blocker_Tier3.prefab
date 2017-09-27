@@ -43,7 +43,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 804fcf7e84b9d074185db2c49db3fa5c, type: 2}
+  - {fileID: 2100000, guid: 2ac85f4f1e012c7419a097ffeabf01c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -68,21 +68,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 160766}
-  m_Mesh: {fileID: 4300000, guid: c2e234e6e78a24d1dbe6a6b36d4c3bb3, type: 3}
---- !u!64 &6412230
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1363612444948474}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 1
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: c2e234e6e78a24d1dbe6a6b36d4c3bb3, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 75f910ae3830aec468bd1fee7d6c05d2, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -123,8 +109,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4179107262380996}
   - component: {fileID: 114099013974481482}
-  - component: {fileID: 6412230}
   - component: {fileID: 114714819731338518}
+  - component: {fileID: 65389087110178712}
   m_Layer: 11
   m_Name: PF_Blocker_Tier3
   m_TagString: Untagged
@@ -167,9 +153,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363612444948474}
-  m_LocalRotation: {x: 0.7474518, y: -0.66430974, z: -0.0021542849, w: 0.0019461833}
-  m_LocalPosition: {x: 246.68298, y: 204.49127, z: 0}
-  m_LocalScale: {x: 1.1153306, y: 0.78579247, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -530.3, y: -106.9, z: -45.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 466452}
   - {fileID: 4467675998838376}
@@ -190,6 +176,18 @@ Transform:
   m_Father: {fileID: 4179107262380996}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &65389087110178712
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363612444948474}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7, y: 16, z: 5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114099013974481482
 MonoBehaviour:
   m_ObjectHideFlags: 1
