@@ -9,65 +9,53 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
-  m_Name: PufferBirdBrain
+  m_Name: SlimePinkBrain
   m_EditorClassIdentifier: 
   m_states:
   - m_name: Wander
     m_componentAssets:
-    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
-    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+    - {fileID: 11400000, guid: 28d783e8dd0ba43138f23fe983e63a2c, type: 2}
     - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
   - m_name: Passive Damage Mode
     m_componentAssets:
     - {fileID: 11400000, guid: 080c4e55e747348a187702de86d62a3d, type: 2}
     - {fileID: 11400000, guid: 0d92bde620e0a4867ab617665d4cc759, type: 2}
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
     - {fileID: 11400000, guid: a859a47b5965f458cb93d889e9a730e9, type: 2}
     - {fileID: 11400000, guid: 15a25ed0d6b1f46bea5039e70b4c333a, type: 2}
-    - {fileID: 11400000, guid: 59190b4a9ea404468af59f266800c360, type: 2}
-    - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
-  - m_name: Evasion
-    m_componentAssets:
-    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
-    - {fileID: 11400000, guid: cdc2a30fcd81a46a88bcf06ba5b18f47, type: 2}
-    - {fileID: 11400000, guid: f5add648be9ed4fea927e8987afbd296, type: 2}
     - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
   - m_name: Wander Fire Rush
     m_componentAssets:
-    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
     - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
   - m_name: Wander Gold
     m_componentAssets:
-    - {fileID: 11400000, guid: c3cc5aa177cca487db32b94a5d86fb6a, type: 2}
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
   - m_name: Gold Check
     m_componentAssets:
     - {fileID: 11400000, guid: e5a625a304bda459a9ddb1f830945e2d, type: 2}
   m_transitionData:
   - to: 1
-    id: onEnemyInRange
-    from: 0
-  - to: 3
-    id: onFuryOn
+    id: onTimeFinished
     from: 0
   - to: 2
-    id: onTimeFinished
-    from: 1
-  - to: 3
     id: onFuryOn
-    from: 1
+    from: 0
   - to: 0
     id: onTimeFinished
-    from: 2
-  - to: 3
+    from: 1
+  - to: 2
     id: onFuryOn
-    from: 2
-  - to: 4
-    id: isGolden
-    from: 5
-  - to: 0
-    id: notGolden
-    from: 5
+    from: 1
   - to: 0
     id: onFuryOff
-    from: 3
-  m_firstState_A: 5
-  m_firstState_B: 5
+    from: 2
+  - to: 3
+    id: isGolden
+    from: 4
+  - to: 0
+    id: notGolden
+    from: 4
+  m_firstState_A: 4
+  m_firstState_B: 4
