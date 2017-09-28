@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	private static Material sm_goldenMaterial = null;
-	private static Material sm_frozenMaterial = null;
 
     public static float FREEZE_TIME = 1.0f;
 
@@ -107,7 +106,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	private Renderer[] m_renderers;
 	private Dictionary<int, List<Material>> m_materials;
+	private Dictionary<int, List<Material>> m_materialsFrozen;
 	private List<Material> m_materialList;
+
 
 	private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
@@ -171,7 +172,6 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     protected virtual void Awake() {
 		//----------------------------
 		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_Golden") as Material);
-		if (sm_frozenMaterial == null) sm_frozenMaterial = new Material(Resources.Load("Game/Materials/NPC_Frozen") as Material);
 		//---------------------------- 
 
 		m_entity = GetComponent<Entity>();
@@ -189,6 +189,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
         // keep the original materials, sometimes it will become Gold!
         m_materials = new Dictionary<int, List<Material>>();
+		m_materialsFrozen = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
         
@@ -216,13 +217,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				// Stores the materials of this renderer in a dictionary for direct access//
 				int renderID = renderer.GetInstanceID();
 				m_materials[renderID] = new List<Material>();
+				m_materialsFrozen[renderID] = new List<Material>();
 
 				for (int m = 0; m < materials.Length; ++m) {
-					Material mat = materials[m]; 
+					Material mat = materials[m];
 					if (m_showDamageFeedback) mat = new Material(materials[m]);
 
 					m_materialList.Add(mat);
 					m_materials[renderID].Add(mat);
+					m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
 
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
@@ -405,8 +408,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			Material[] materials = m_renderers[i].sharedMaterials;
 			for (int m = 0; m < materials.Length; m++) {
 				switch (_type) {
-					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  break;
-					case MaterialType.FREEZE:	materials[m] = sm_frozenMaterial;  break;						
+					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  		 break;
+					case MaterialType.FREEZE:	materials[m] = m_materialsFrozen[id][m]; break;						
 					case MaterialType.NORMAL: {
 							Material mat = m_materials[id][m]; 
 							if (m_skins.Count > 0) {				
