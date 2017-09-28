@@ -227,7 +227,8 @@ public class MenuDragonScroller : MonoBehaviour {
 		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
 			// Use slot's ShowHideAnimator
 			// Show always if it's the selected dragon!
-			kvp.Value.animator.Set(showAll || kvp.Key == InstanceManager.menuSceneController.selectedDragon);
+			DragonData data = DragonManager.GetDragonData(kvp.Key);
+			kvp.Value.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || kvp.Key == InstanceManager.menuSceneController.selectedDragon);
 		}
 	}
 }
