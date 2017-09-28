@@ -156,7 +156,8 @@ public class FogManager : MonoBehaviour
 
 	void Awake()
 	{
-		InstanceManager.fogManager = this;
+		if (Application.isPlaying)
+			InstanceManager.fogManager = this;
 
 		m_texture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
 		m_texture.filterMode = FilterMode.Bilinear;

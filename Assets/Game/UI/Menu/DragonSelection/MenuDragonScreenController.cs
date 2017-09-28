@@ -216,6 +216,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				// Lock all input
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+				InstanceManager.menuSceneController.hud.animator.ForceHide();
+
 				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
 				slot.animator.ForceHide(false);
 			})
@@ -230,12 +232,13 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
 				slot.animator.ForceShow(true);
-
-				DragonManager.GetDragonData(_teaseDragonSku).Tease();
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
+				InstanceManager.menuSceneController.hud.animator.ForceShow();
+
+				DragonManager.GetDragonData(_teaseDragonSku).Tease();
 				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
 				m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
 
@@ -252,6 +255,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				// Lock all input
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+				InstanceManager.menuSceneController.hud.animator.ForceHide();
+
 				if (!DragonManager.GetDragonData(_revealDragonSku).isTeased) {
 					MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
 					slot.animator.ForceHide(false);
@@ -270,12 +275,13 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				MenuDragonPreview preview = InstanceManager.menuSceneController.dragonScroller.GetDragonPreview(_revealDragonSku);
 				preview.equip.EquipDisguise("");
-
-				DragonManager.GetDragonData(_revealDragonSku).Reveal();
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {			
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
+				InstanceManager.menuSceneController.hud.animator.ForceShow();
+			
+				DragonManager.GetDragonData(_revealDragonSku).Reveal();
 				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
 				m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
 

@@ -48,7 +48,10 @@ public class MenuDragonSlot : MonoBehaviour {
 			return m_animator;
 		}
 	}
-	
+
+	private DragonData.LockState m_currentState = DragonData.LockState.HIDDEN;
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -58,13 +61,15 @@ public class MenuDragonSlot : MonoBehaviour {
 	private void Awake() {
 		m_dragonLoader = GetComponentInChildren<MenuDragonLoader>();
 		m_dragonData = DragonManager.GetDragonData(m_dragonLoader.dragonSku);
+
+		m_currentState = m_dragonData.lockState;
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-
+		
 	}
 
 	/// <summary>
@@ -72,9 +77,17 @@ public class MenuDragonSlot : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		if (m_dragonData != null) {
-			if (m_dragonData.lockState == DragonData.LockState.SHADOW 
-			||  m_dragonData.lockState == DragonData.LockState.REVEAL) {
-				m_dragonLoader.useShadowMaterial = true;
+			DragonData.LockState newState = m_dragonData.lockState;
+
+			if (m_currentState != newState) {
+				if (newState == DragonData.LockState.SHADOW ||  newState == DragonData.LockState.REVEAL) {
+					m_dragonLoader.useShadowMaterial = true;
+				} else if (newState == DragonData.LockState.HIDDEN || newState == DragonData.LockState.TEASE) {
+					m_dragonLoader.useShadowMaterial = true;
+					m_animator.ForceHide(false);
+				}
+
+				m_currentState = newState;
 			}
 		}
 	}

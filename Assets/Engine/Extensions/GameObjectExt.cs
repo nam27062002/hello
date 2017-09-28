@@ -63,6 +63,16 @@ public static class GameObjectExt {
 	}
 
 	/// <summary>
+	/// Set the layer to an object.
+	/// </summary>
+	/// <param name="_obj">The object we're changing.</param>
+	/// <param name="_layerMask">The layer mask to be applied.</param>
+	public static void SetLayer(this GameObject _obj, int _layerMask) {
+		// Apply the layer to the object itself
+		_obj.layer = _layerMask;
+	}
+
+	/// <summary>
 	/// Set the layer to an object and all its children.
 	/// </summary>
 	/// <param name="_obj">The object we're changing.</param>

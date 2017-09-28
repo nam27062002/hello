@@ -211,7 +211,13 @@ public class UI3DLoader : MonoBehaviour {
 		m_loadedInstance = GameObject.Instantiate<GameObject>(_prefabObj, m_container.transform, false);
 		if(m_loadedInstance != null) {
 			// Apply layer
-			m_loadedInstance.SetLayerRecursively(m_container.gameObject.layer);
+			Renderer[] renderers = m_loadedInstance.transform.GetComponentsInChildren<Renderer>(false);
+			for (int i = 0; i < renderers.Length; ++i) {
+				Renderer renderer = renderers[i];
+				if (renderer.GetType() == typeof(SkinnedMeshRenderer) || renderer.GetType() == typeof(MeshRenderer)) {
+					renderer.gameObject.SetLayer(m_container.gameObject.layer);
+				}
+			}
 
 			// Reset position
 			m_loadedInstance.transform.localPosition = Vector3.zero;

@@ -46,6 +46,11 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		instance.__PreBuild();
 	}
 
+	public static void Rebuild(){
+		instance.__Rebuild();
+	}
+
+
 	public static ParticleHandler CreatePool(ParticleData _data) {
 		return instance.__CreatePool(_data.name, _data.path);
 	}
@@ -111,57 +116,97 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	private void __PreBuild() {
 		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
-				string category = "";
-
-				if (m_poolLimits == PoolLimits.LoadedArea) {
-					category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
-				} else if (m_poolLimits == PoolLimits.LevelEditor) {
-					category = LevelEditor.LevelEditor.settings.poolLimit;
-				}
-
-				List<DefinitionNode> poolSizes = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
+				List<DefinitionNode> poolSizes = GetPoolSizesForCurrentArea();
 				for (int i = 0; i < poolSizes.Count; i++) {
 					DefinitionNode def = poolSizes[i];
-					PoolContainer pc = null;
-
-					if (m_pools.ContainsKey(def.sku)) {
-						pc = m_pools[def.sku];
-					} else {
-						pc = new PoolContainer();
-						pc.handler = new ParticleHandler();
-
-						m_pools.Add(def.sku, pc);
-					}
-
-					// default values
-					pc.version = "Master/";
-					pc.size = def.GetAsInt("count");
-
-					// npew read the current profile
-					switch(FeatureSettingsManager.instance.Particles) {
-						case FeatureSettings.ELevel5Values.very_low:							
-						case FeatureSettings.ELevel5Values.low:
-							if (def.GetAsBool("lowVersion")) {
-								pc.version = "Low/";
-							}
-							pc.size = def.GetAsInt("countLow", pc.size);
-							break;
-
-						case FeatureSettings.ELevel5Values.high:
-							if (def.GetAsBool("highVersion")) {
-								pc.version = "High/";
-							}
-							pc.size = def.GetAsInt("countHigh", pc.size);
-							break;
-							
-						case FeatureSettings.ELevel5Values.very_high:
-							if (def.GetAsBool("veryHighVersion")) {
-								pc.version = "VeryHigh/";
-							}
-							pc.size = def.GetAsInt("countVeryHigh", pc.size);
-							break;
-					}
+					ResetPoolContainerSize(def);
 				}
+			}
+		}
+	}
+
+	protected List<DefinitionNode> GetPoolSizesForCurrentArea(){
+		string category = "";
+		if (m_poolLimits == PoolLimits.LoadedArea) {
+			category = "PARTICLE_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
+		} else if (m_poolLimits == PoolLimits.LevelEditor) {
+			category = LevelEditor.LevelEditor.settings.poolLimit;
+		}
+		List<DefinitionNode> poolSizes = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
+		return poolSizes;
+	}
+
+	private PoolContainer ResetPoolContainerSize( DefinitionNode def ){
+		PoolContainer pc = null;
+		if (m_pools.ContainsKey(def.sku)) {
+			pc = m_pools[def.sku];
+		} else {
+			pc = new PoolContainer();
+			pc.handler = new ParticleHandler();
+
+			m_pools.Add(def.sku, pc);
+		}
+
+		// default values
+		pc.version = "Master/";
+		pc.size = def.GetAsInt("count");
+
+		// npew read the current profile
+		switch(FeatureSettingsManager.instance.Particles) {
+			case FeatureSettings.ELevel5Values.very_low:							
+			case FeatureSettings.ELevel5Values.low:
+				if (def.GetAsBool("lowVersion")) {
+					pc.version = "Low/";
+				}
+				pc.size = def.GetAsInt("countLow", pc.size);
+				break;
+
+			case FeatureSettings.ELevel5Values.high:
+				if (def.GetAsBool("highVersion")) {
+					pc.version = "High/";
+				}
+				pc.size = def.GetAsInt("countHigh", pc.size);
+				break;
+				
+			case FeatureSettings.ELevel5Values.very_high:
+				if (def.GetAsBool("veryHighVersion")) {
+					pc.version = "VeryHigh/";
+				}
+				pc.size = def.GetAsInt("countVeryHigh", pc.size);
+				break;
+		}
+		return pc;
+	}
+
+
+	/// <summary>
+	/// Rebuild. When changin area, this funcion makes the proper changes to adapt to the area
+	/// </summary>
+	private void __Rebuild() {
+		if (m_poolLimits != PoolLimits.Unlimited) {
+			if (LevelManager.currentLevelData != null) {
+				Dictionary<string, PoolContainer> toDelete = new Dictionary<string, PoolContainer>( m_pools );
+				List<DefinitionNode> poolSizes = GetPoolSizesForCurrentArea();
+				for (int i = 0; i < poolSizes.Count; i++) {
+					DefinitionNode def = poolSizes[i];
+					PoolContainer pc = ResetPoolContainerSize(def);
+					if ( pc.pool != null ){
+						pc.pool.Resize( pc.size );
+					}
+					// Remove from to delete list!
+					toDelete.Remove( def.sku );
+				}
+				foreach(KeyValuePair<string, PoolContainer> pair in toDelete) {
+					PoolContainer pc = m_pools[pair.Key];
+					if (pc.pool != null) {
+						m_iterator.Remove(pc.pool);
+						pc.pool.Clear();
+						pc.pool = null;
+						pc.handler.Invalidate();
+					}
+					m_pools.Remove(pair.Key);
+				}
+				toDelete.Clear();
 			}
 		}
 	}

@@ -51,6 +51,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	private DeltaTimer m_timer = new DeltaTimer();
 	private State m_state = State.IDLE;
 	private float m_targetDelta = 0f;
+	private float m_lastDelta = 1f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -78,7 +79,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	private void FixedUpdate() {
 		// Only if running
 		switch(m_state) {
 			case State.IDLE: {
@@ -102,7 +103,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_timer.Start(m_backDuration * 1000);
 				} else {
 					// Timer not finished, scroll
-					m_scroller.cameraAnimator.delta = m_timer.GetDelta(m_ease);
+					m_scroller.cameraAnimator.delta = m_timer.GetDelta(m_ease) * m_lastDelta;
 				}
 			} break;
 
@@ -140,7 +141,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					PersistenceFacade.instance.Save_Request();
                 } else {
 					// Timer not finished, scroll
-					m_scroller.cameraAnimator.delta = Mathf.Lerp(1f, m_targetDelta, m_timer.GetDelta(m_ease));	// [AOC] Reverse scroll!
+					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_lastDelta, m_targetDelta, m_timer.GetDelta(m_ease));	// [AOC] Reverse scroll!
 				}
 			} break;
 		}
@@ -165,7 +166,10 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			m_scroller.cameraAnimator.delta = 0f;
 
 			// Start timer
-			m_timer.Start(m_delay * 1000);
+			m_timer.Start(m_delay * 1000 * 0.5f);
+
+			// Last dragon delta, next dragons are locked until player progress further in the game
+			m_lastDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(6);
 
 			// Toggle state!
 			m_state = State.DELAY;

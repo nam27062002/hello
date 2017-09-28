@@ -55,7 +55,9 @@ uniform float4 _SpecularColor;
 #ifdef FRESNEL
 uniform float _FresnelPower;
 uniform float4 _FresnelColor;
+#ifdef FREEZE
 uniform float4 _FresnelColor2;
+#endif
 #endif
 
 #if defined (TINT) || defined (CUSTOM_TINT)
@@ -172,7 +174,10 @@ fixed4 frag(v2f i) : SV_Target
 #ifdef FRESNEL
 	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
 //	col.xyz *= lerp(_FresnelColor2.xyz, _FresnelColor.xyz, fresnel);
+
+#ifdef FREEZE
 	col.xyz *= _FresnelColor2.xyz;
+#endif
 	col.xyz += _FresnelColor.xyz * fresnel;
 
 #endif
