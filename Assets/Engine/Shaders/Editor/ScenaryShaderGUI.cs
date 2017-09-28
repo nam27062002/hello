@@ -71,8 +71,12 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         readonly public static string lightmapContrastText = "Lightmap contrast";
 
-        readonly public static string blendModeText = "Blend Mode";
+        readonly public static string blendModeText = "Blend mode";
         readonly public static string renderQueueText = "Render queue";
+
+        readonly public static string cullModeText = "Cull mode";
+        readonly public static string cullWarningText = "Warning! You have activated double sided in opaque object.";
+
 
     }
 
@@ -96,6 +100,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_darkenDistance;
 
     MaterialProperty mp_BlendMode;
+    MaterialProperty mp_DoubleSided;
 
     MaterialProperty mp_EmissivePower;
     MaterialProperty mp_BlinkTimeMultiplier;
@@ -193,6 +198,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_Cull = FindProperty("_Cull", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
+        mp_DoubleSided = FindProperty("_DoubleSided", props);
     }
 
     private bool featureSet(MaterialProperty feature, string label)
@@ -275,6 +281,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         int blendMode = (int)mp_BlendMode.floatValue;
         if (EditorGUI.EndChangeCheck())
         {
+            mp_DoubleSided.floatValue = blendMode == 0 ? 0.0f : 1.0f;
             setBlendMode(material, blendMode);
         }
         if (blendMode == 2)
@@ -342,6 +349,25 @@ internal class ScenaryShaderGUI : ShaderGUI {
                     material.shaderKeywords = null;
                 }
         */
+        if (mp_BlendMode.floatValue == 0.0f)
+        {
+
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+            materialEditor.ShaderProperty(mp_DoubleSided, Styles.cullModeText);
+            EditorGUILayout.EndVertical();
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                material.SetFloat("_Cull", mp_DoubleSided.floatValue == 1.0f ? (float)UnityEngine.Rendering.CullMode.Off : (float)UnityEngine.Rendering.CullMode.Back);
+            }
+
+            if (mp_Cull.floatValue == (float)UnityEngine.Rendering.CullMode.Off)
+            {
+                EditorGUILayout.HelpBox(Styles.cullWarningText, MessageType.Warning);
+            }
+        }
+
 
         EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
         EditorGUILayout.LabelField(Styles.renderQueueText);

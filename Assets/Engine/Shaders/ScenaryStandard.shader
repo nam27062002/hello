@@ -54,6 +54,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
 		[Enum(Opaque, 0, Transparent, 1, CutOff, 2)] _BlendMode("Blend mode", Float) = 0.0
+		[Enum(SingleSided, 0, DoubleSided, 1)] _DoubleSided("Double sided", Float) = 0.0
 		[HideInInspector] _ZWrite("__zw", Float) = 1.0
 
 		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
