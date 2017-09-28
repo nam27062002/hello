@@ -100,7 +100,18 @@ public class ResultsSceneSetup : MonoBehaviour {
 			m_dragonSlot.gameObject.SetActive(false);
 
 			if ( InstanceManager.fogManager != null )
+			{
 				InstanceManager.fogManager.ForceAttributes( m_fog );
+			}
+			else
+			{
+				if (m_fog.texture == null)
+				{
+					m_fog.CreateTexture();
+					m_fog.RefreshTexture();
+				}
+				m_fog.FogSetup();
+			}
 		}
 	}
 
