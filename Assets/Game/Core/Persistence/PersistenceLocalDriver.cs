@@ -205,7 +205,7 @@ public class PersistenceLocalDriver
                     Data.SaveState = PersistenceStates.ESaveState.Corrupted;
 
                     if (FeatureSettingsManager.IsDebugEnabled)
-                        PersistenceFacade.LogError("Error when saving local persistence to " + savePath);                    
+                        PersistenceFacade.LogError("Error when saving local persistence to " + savePath + " LoadState = " + SavePaths_Data.LoadState);                    
                 }
             }            
         }

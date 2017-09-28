@@ -68,7 +68,7 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 	/// </summary>
 	private void Update() {		
 		// Back button pressed?
-		if (Input.GetKeyUp(KeyCode.Escape)) {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
 			if (!InputLocker.locked) {
 				if (m_handlers.Count > 0) {
 					m_handlers.Last().Trigger();

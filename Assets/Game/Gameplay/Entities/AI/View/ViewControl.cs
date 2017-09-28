@@ -14,7 +14,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     [Serializable]
 	public class SkinData {
 		public Material skin;
-		[Range(0f, 100f)] public float m_chance = 0f;
+		[Range(0f, 100f)] public float chance = 0f;
 	}
 
 	public enum SpecialAnims {
@@ -97,7 +97,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private AudioObject m_idleAudioAO;
 
 	[SeparatorAttribute("Skin")]
-	[SerializeField] private List<SkinData> m_skins = new List<SkinData>();
+	[SerializeField] protected List<SkinData> m_skins = new List<SkinData>();
 
 
 	//-----------------------------------------------
@@ -412,7 +412,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 							if (m_skins.Count > 0) {				
 								for (int s = 0; s < m_skins.Count; s++) {
 									float rnd = UnityEngine.Random.Range(0f, 100f);
-									if (rnd < m_skins[s].m_chance) {
+									if (rnd < m_skins[s].chance) {
 										mat = m_skins[s].skin;
 										break;
 									}
@@ -425,6 +425,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_renderers[i].sharedMaterials = materials;
 		}
     }
+
+	protected void RefreshMaterial() {
+		SetMaterialType(m_materialType);
+	}
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type) {
 		CheckMaterialType(IsEntityGolden(), _active, _type);
