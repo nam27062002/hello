@@ -251,6 +251,8 @@ public class DragonData : IUISelectorItem {
 
 		// Just change owned status
 		m_owned = true;
+		m_teased = true;
+		m_revealed = true;
 
 		// Dispatch global event
 		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_ACQUIRED, this);
