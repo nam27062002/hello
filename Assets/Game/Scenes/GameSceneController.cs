@@ -281,7 +281,7 @@ public class GameSceneController : GameSceneControllerBase {
                                                                   
                                 m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
 
-								ParticleManager.PreBuild();
+								ParticleManager.Rebuild();
 
 								if ( m_switchingAreaTasks != null )
 								{
@@ -702,7 +702,7 @@ public class GameSceneController : GameSceneControllerBase {
     {
     	if ( LevelManager.currentArea != _nextArea && !m_switchingArea)
     	{
-			ParticleManager.Clear();
+			// ParticleManager.Clear();
 			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
