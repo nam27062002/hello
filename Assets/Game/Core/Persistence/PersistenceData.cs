@@ -188,7 +188,7 @@ public class PersistenceData
 
 #if UNITY_IPHONE && !UNITY_EDITOR
                 //Mark file as not being a file to backup
-                UnityEngine.iOS.Device.SetNoBackupFlag(m_savePath);
+                UnityEngine.iOS.Device.SetNoBackupFlag(savePath);
 #endif
 
                 //If we successfully wrote to disk delete playerprefs backup
