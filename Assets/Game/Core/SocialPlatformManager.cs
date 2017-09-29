@@ -158,6 +158,14 @@ public class SocialPlatformManager : MonoBehaviour
     {
         return m_socialUtils.Profile_NeedsSocialIdToBeUpdated();
     }
+
+    public void InvalidateCachedSocialInfo()
+    {
+        if (m_socialUtils != null && m_socialUtils.Cache != null)
+        {
+            m_socialUtils.Cache.Invalidate();
+        }
+    }
     //////////////////////////////////////////////////////////////////////////
 
     #region login    

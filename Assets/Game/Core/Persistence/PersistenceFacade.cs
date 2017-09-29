@@ -753,7 +753,7 @@ public class PersistenceFacade
     #endregion
 
     #region log
-    private static bool LOG_USE_COLOR = true;
+    private static bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[Persistence] ";    
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
