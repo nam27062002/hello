@@ -346,6 +346,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
 		SetMaterialType(GetMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type));
 
+		if (m_showDamageFeedback) {
+			for (int i = 0; i < m_materialList.Count; ++i)	
+				m_materialList[i].DisableKeyword("TINT");
+		}
+
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
 

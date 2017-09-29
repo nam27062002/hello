@@ -143,7 +143,7 @@ public class SpawnerBg : AbstractSpawner {
             // Respawn on cooldown?
 
             // Check activation area
-            if (m_newCamera != null && m_newCamera.IsInsideBackgroundActivationArea(transform.position)) {
+			if (m_newCamera != null && m_newCamera.IsInsideActivationMaxArea(area.bounds)) {
                 return true;
             }
         }

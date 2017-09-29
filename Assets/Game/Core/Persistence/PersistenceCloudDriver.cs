@@ -243,8 +243,8 @@ public class PersistenceCloudDriver
 			}
 			else
 			{
-				Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
-			}
+                Syncer_ProcessNoConnectionError();
+            }
 		};
 
 		Syncer_ExtendedLogInServer(onDone);
@@ -700,7 +700,7 @@ public class PersistenceCloudDriver
         {
             if (onDone != null)
             {
-                onDone(GameServerManager.SharedInstance.IsLoggedIn());
+                onDone(GameServerManager.SharedInstance.IsLoggedIn());                
             }
         });
     }
