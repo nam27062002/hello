@@ -27,7 +27,6 @@ Shader "Hungry Dragon/FadeEffect"
 			
 			#include "UnityCG.cginc"
 
-
 			#define PI 3.14159265359
 			#define RADIUS 0.5
 			#define REVOLUTIONS 3.0
@@ -36,7 +35,6 @@ Shader "Hungry Dragon/FadeEffect"
 
 			#define WIDTH 0.00175
 			#define THRESHOLD 0.35
-
 
 			float spiral(float2 uv, float w, float t, float a)
 			{
@@ -74,9 +72,6 @@ Shader "Hungry Dragon/FadeEffect"
 
 				return s;
 			}
-
-
-
 
 			struct appdata
 			{
