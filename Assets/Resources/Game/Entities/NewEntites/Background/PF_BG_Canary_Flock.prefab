@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 114000010256084602}
   - component: {fileID: 54000012378199642}
   m_Layer: 22
-  m_Name: PF_BG_Canary
+  m_Name: PF_BG_Canary_Flock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -464,12 +464,12 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: 17be5771a8e654a079d3db7f077859e6, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 304158c95287142fb9790e7a5f470070, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false}]'
-  m_databaseKey: PF_BG_Canary 1
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"separation":1.5,"oscillationSpeed":0.25,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_databaseKey: PF_BG_Canary_Flock
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 0

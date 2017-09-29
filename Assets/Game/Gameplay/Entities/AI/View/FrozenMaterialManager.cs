@@ -31,6 +31,7 @@ public class FrozenMaterialManager : Singleton<FrozenMaterialManager> {
 		Material frozenMat = new Material(_source);
 
 		frozenMat.EnableKeyword("FRESNEL");
+		frozenMat.EnableKeyword("FREEZE");
 		frozenMat.EnableKeyword("MATCAP");
 		frozenMat.SetColor("_FresnelColor", new Color(114.0f / 255.0f, 248.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
 		frozenMat.SetColor("_FresnelColor2", new Color(186.0f / 255.0f, 144.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
