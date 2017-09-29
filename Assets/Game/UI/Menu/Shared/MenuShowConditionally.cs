@@ -83,6 +83,10 @@ public class MenuShowConditionally : MonoBehaviour {
 		get { return InstanceManager.menuSceneController.screensController.currentMenuScreen; }
 	}
 
+
+	private Coroutine m_coroutine;
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -97,6 +101,8 @@ public class MenuShowConditionally : MonoBehaviour {
 		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+
+		m_coroutine = null;
 	}
 
 	/// <summary>
@@ -226,8 +232,16 @@ public class MenuShowConditionally : MonoBehaviour {
 			m_targetAnimator.Hide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
 
 			// Program the animation to the target state in sync with the dragon scroll animation (more or less)
-			StartCoroutine(LaunchDelayedAnimation(_show, _useAnims));
+			if (m_coroutine != null) {
+				StopCoroutine(m_coroutine);
+				m_coroutine = null;
+			}
+			m_coroutine = StartCoroutine(LaunchDelayedAnimation(_show, _useAnims));
 		} else {
+			if (m_coroutine != null) {
+				StopCoroutine(m_coroutine);
+				m_coroutine = null;
+			}
 			m_targetAnimator.Set(_show, _useAnims);
 		}
 	}
@@ -307,6 +321,8 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		// Do it! (If still enabled!)
 		if(this.enabled) m_targetAnimator.Set(_toShow, _useAnims);
+
+		m_coroutine = null;
 	}
 }
 
