@@ -82,7 +82,7 @@ namespace AI {
 				}
 
 				if (m_data.speed > 0f) {
-					m_timer = (m_machine.position - m_target).magnitude / m_pilot.speed;
+					m_timer = (m_machine.position - m_target).magnitude / (m_pilot.speed * 2f);
 				} else {
 					m_timer = 1f;
 				}

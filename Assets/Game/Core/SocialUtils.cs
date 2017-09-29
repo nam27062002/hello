@@ -325,11 +325,22 @@ public abstract class SocialUtils
     #endregion        
 
     #region log
+    private static bool LOG_USE_COLOR = false;
     private static string LOG_CHANNEL = "[SocialUtils] ";
+    private static string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
+
     public static void Log(string msg)
     {
-        msg = LOG_CHANNEL + msg;
-        Debug.Log(msg);
+        if (LOG_USE_COLOR)
+        {
+            msg = LOG_CHANNEL_COLOR + msg + " </color>";
+        }
+        else
+        {
+            msg = LOG_CHANNEL + msg;
+        }
+
+        Debug.Log(msg);        
     }
 
     public static void LogWarning(string msg)
