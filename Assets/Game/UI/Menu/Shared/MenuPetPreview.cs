@@ -79,7 +79,7 @@ public class MenuPetPreview : MonoBehaviour {
         for (int c = 0; c < m_renderers.Length; c++)
         {
             Material m = m_renderers[c].material;
-            m.SetFloat("_Fresnel", 1.0f);
+            m.SetFloat("_Fresnel", 3.0f);
             m.SetColor("_FresnelColor", col);
         }
     }
