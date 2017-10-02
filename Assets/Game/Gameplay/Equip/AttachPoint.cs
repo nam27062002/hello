@@ -74,4 +74,10 @@ public class AttachPoint : MonoBehaviour {
 			}
 		}
 	}
+
+	public void HideAccessory()
+	{
+		if ( m_item != null )
+			m_item.gameObject.SetActive(false);
+	}
 }
