@@ -26,7 +26,7 @@ public abstract class BackButtonHandler : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	private void OnDestroy() {
-		if ( Application.isPlaying )
+		if ( ApplicationManager.IsAlive )
 			Unregister();
 	}
 
@@ -45,7 +45,8 @@ public abstract class BackButtonHandler : MonoBehaviour {
 	/// Unregister from the manager.
 	/// </summary>
 	protected void Unregister() {
-		BackButtonManager.Unregister(this);
+		if ( ApplicationManager.IsAlive )
+			BackButtonManager.Unregister(this);
 	}
 
 	/// <summary>
