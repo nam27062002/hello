@@ -63,6 +63,9 @@ public class MenuDragonSlot : MonoBehaviour {
 		m_dragonData = DragonManager.GetDragonData(m_dragonLoader.dragonSku);
 
 		m_currentState = m_dragonData.lockState;
+		if (m_currentState <= DragonData.LockState.REVEAL) {
+			m_dragonLoader.useShadowMaterial = true;
+		}
 	}
 
 	/// <summary>
