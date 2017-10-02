@@ -26,7 +26,8 @@ public abstract class BackButtonHandler : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	private void OnDestroy() {
-		Unregister();
+		if ( Application.isPlaying )
+			Unregister();
 	}
 
 
