@@ -258,26 +258,28 @@ public class PopupDragonInfo : MonoBehaviour {
 			m_scrollSequence = null;
 		}
 
-		// Do it!
-		m_scrollSequence = DOTween.Sequence()
-			// Out
-			.Append(m_panel.transform.DOLocalMoveX(-m_scrollAnimOffset, m_scrollAnimDuration).SetEase(Ease.InCubic))
-			.Join(m_panel.transform.DOScale(0f, m_scrollAnimDuration).SetEase(Ease.InExpo))
+		if (m_panel != null) {
+			// Do it!
+			m_scrollSequence = DOTween.Sequence()
+				// Out
+				.Append(m_panel.transform.DOLocalMoveX(-m_scrollAnimOffset, m_scrollAnimDuration).SetEase(Ease.InCubic))
+				.Join(m_panel.transform.DOScale(0f, m_scrollAnimDuration).SetEase(Ease.InExpo))
 
-			// Refresh once hidden
-			.AppendCallback(Refresh)
+				// Refresh once hidden
+				.AppendCallback(Refresh)
 
-			// In
-			.Append(m_panel.transform.DOLocalMoveX(m_scrollAnimOffset, 0.01f))	// [AOC] Super-dirty: super-fast teleport to new position, no other way than via tween
-			.Append(m_panel.transform.DOLocalMoveX(0f, m_scrollAnimDuration).SetEase(Ease.OutCubic))
-			.Join(m_panel.transform.DOScale(1f, m_scrollAnimDuration).SetEase(Ease.OutExpo))
+				// In
+				.Append(m_panel.transform.DOLocalMoveX(m_scrollAnimOffset, 0.01f))	// [AOC] Super-dirty: super-fast teleport to new position, no other way than via tween
+				.Append(m_panel.transform.DOLocalMoveX(0f, m_scrollAnimDuration).SetEase(Ease.OutCubic))
+				.Join(m_panel.transform.DOScale(1f, m_scrollAnimDuration).SetEase(Ease.OutExpo))
 
-			// Start paused
-			.SetAutoKill(false)
-			.Pause()
-			.OnStepComplete(() => {
-				ToggleLoaders();
-			});
+				// Start paused
+				.SetAutoKill(false)
+				.Pause()
+				.OnStepComplete(() => {
+					ToggleLoaders();
+				});
+		}
 	}
 
 	//------------------------------------------------------------------------//

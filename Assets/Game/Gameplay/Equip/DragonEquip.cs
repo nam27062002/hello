@@ -534,6 +534,19 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
+	public void HideResultsEquipment(){
+		for( int i = (int)Equipable.AttachPoint.Head_1; i<m_attachPoints.Length; i++ ){
+			if (m_attachPoints[i] != null && m_attachPoints[i].item != null)
+			{
+				if ( !m_attachPoints[i].item.showOnResults )
+				{
+					// HIDE
+					m_attachPoints[i].HideAccessory();
+				}
+			}
+		}
+	}
+
 	/// <summary>
 	/// Get one of the attach points for this dragon equip.
 	/// </summary>

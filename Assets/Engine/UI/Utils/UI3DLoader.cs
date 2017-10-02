@@ -219,6 +219,10 @@ public class UI3DLoader : MonoBehaviour {
 				}
 			}
 
+			// Remove dangerous scripts
+			CollisionEventForwarding cef = m_loadedInstance.FindComponentRecursive<CollisionEventForwarding>();
+			GameObject.Destroy(cef);
+
 			// Reset position
 			m_loadedInstance.transform.localPosition = Vector3.zero;
 
