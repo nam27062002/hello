@@ -66,7 +66,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 
 		// Focus curent language
-		//SelectCurrentLanguage(false);
+		SelectCurrentLanguage(false);
 
 		// Disable google play group if not available
 #if UNITY_ANDROID
@@ -128,8 +128,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// The popup has just finished open.
 	/// </summary>
 	public void OnOpenPostAnimation() {
-		SelectCurrentLanguage(true);
-		//UbiBCN.CoroutineManager.DelayedCallByFrames(() => { SelectCurrentLanguage(true); }, 5);
+		// SelectCurrentLanguage(false);
+		// UbiBCN.CoroutineManager.DelayedCallByFrames(() => { SelectCurrentLanguage(true); }, 5);
 	}
 
 	public void RefreshGooglePlayView(){

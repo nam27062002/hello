@@ -67,49 +67,8 @@ public class FogManager : MonoBehaviour
 			Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
 			Shader.SetGlobalTexture("_FogTexture", texture);
 		}
-
-		/*
-		public void SaveKeys()
-	    {
-	    	m_alphaTimes.Clear();
-	    	m_alphaValues.Clear();
-	    	for( int i = 0; i<m_fogGradient.alphaKeys.Length; i++ )
-	    	{
-	    		m_alphaTimes.Add( m_fogGradient.alphaKeys[i].time );
-				m_alphaValues.Add( m_fogGradient.alphaKeys[i].alpha );
-	    	}
-
-			m_colorTimes.Clear();
-	    	m_colorValues.Clear();
-	    	for( int i = 0; i<m_fogGradient.colorKeys.Length; i++ )
-	    	{
-				m_colorTimes.Add( m_fogGradient.colorKeys[i].time );
-				m_colorValues.Add( m_fogGradient.colorKeys[i].color );
-	    	}
-	    }
-
-		public void LoadKeys()
-	    {
-	    	GradientAlphaKey[] alphas = m_fogGradient.alphaKeys;
-	    	GradientColorKey[] colors = m_fogGradient.colorKeys;
-			for( int i = 0; i<m_alphaTimes.Count; i++ )
-			{
-				alphas[i].alpha = m_alphaValues[i];
-				alphas[i].time = m_alphaTimes[i];
-			}
-
-			for( int i = 0; i<m_colorTimes.Count; i++ )
-			{
-				colors[i].color = m_colorValues[i];
-				colors[i].time = m_colorTimes[i];
-			}
-			m_fogGradient.SetKeys(colors, alphas);
-	    }
-	    */
 	}
 
-
-	private bool m_ready = false;
 
 	public enum FogBlendMode
 	{
@@ -196,20 +155,6 @@ public class FogManager : MonoBehaviour
 		}
 	}
 
-	IEnumerator Start()
-	{
-		if ( Application.isPlaying )
-		{
-			while( !InstanceManager.gameSceneControllerBase.IsLevelLoaded())
-			{
-				yield return null;
-			}
-		}
-
-		// Find all ambient nodes
-		// RefillQuadtree();
-		m_ready = true;
-	}
 
 	void OnDestroy()
 	{
@@ -242,7 +187,7 @@ public class FogManager : MonoBehaviour
 			{
 				bool toDestroy = true;
 				// if this generated is not from the activated area list
-				for( int j = 0; j<m_activeFogAreaList.Count && !toDestroy; j++ )
+				for( int j = 0; j<m_activeFogAreaList.Count && toDestroy; j++ )
 				{
 					// if we are using it we dont destory it
 					if ( m_generatedAttributes[i].texture == m_activeFogAreaList[j].m_attributes.texture )
@@ -438,11 +383,6 @@ public class FogManager : MonoBehaviour
 		m_start = m_tmpStart = m_selectedAttributes.m_fogStart;
 		m_end = m_tmpEnd = m_selectedAttributes.m_fogEnd;
 		m_blitLerpValue = 1;
-	}
-
-	public bool IsReady()
-	{
-		return m_ready;
 	}
 
 
