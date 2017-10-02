@@ -11,6 +11,7 @@ public class BreakableBehaviour : MonoBehaviour
 	[SerializeField] private bool m_destroyOnBreak = true;
 
 	[SerializeField] private ParticleData m_onBreakParticle;
+	[SerializeField] private string m_corpseAsset;
 	[SerializeField] private string m_onBreakAudio;
 
 	[SerializeField] private Transform m_view;
@@ -20,6 +21,7 @@ public class BreakableBehaviour : MonoBehaviour
 
 	private int m_remainingHits;
 
+	private ParticleHandler m_corpseHandler;
 
 	private Wobbler m_wobbler;
 	private Collider m_collider;
@@ -36,6 +38,9 @@ public class BreakableBehaviour : MonoBehaviour
 
 	void Start() {		
 		m_onBreakParticle.CreatePool();
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+		}
 			
 		m_initialViewPos = m_view.localPosition;
 	}
@@ -133,6 +138,16 @@ public class BreakableBehaviour : MonoBehaviour
 			{
 				scaler.m_scale = transform.lossyScale.x;
 				scaler.DoScale();
+			}
+		}
+
+		// spawn corpse
+		if (m_corpseHandler != null) {
+			// spawn corpse
+			GameObject corpse = m_corpseHandler.Spawn(null);
+			if (corpse != null) {
+				corpse.transform.CopyFrom(transform);
+				corpse.GetComponent<Corpse>().Spawn(false, true);
 			}
 		}
 	
