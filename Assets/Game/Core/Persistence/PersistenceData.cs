@@ -12,12 +12,11 @@ using System.Collections.Generic;
 public class PersistenceData
 {
     public const int HeaderVersion = 3;
-    public const int ReservedDiskSpace = 1024 * 1024;
+    public const int ReservedDiskSpace = 512 * 1024;
 
     private const string VersionKey = "version";
     private const string PurchasesKey = "purchases";
-
-    private string m_savePath = null;
+    
     private string m_key = null;
 
     private JSONNestedKeyValueStore m_data = null;
@@ -26,15 +25,12 @@ public class PersistenceData
     private byte[] m_cryptoIV = null;
 
     private int m_modifiedTime = 0;
-    private string m_deviceName = null;
-
-    public PersistenceData(string key) : this(SaveUtilities.GetSavePath(key), key) { }
+    private string m_deviceName = null;    
 
 	public List<PersistenceSystem> Systems { get; set; }
 
-    public PersistenceData(string savePath, string key)
-    {
-        m_savePath = savePath;
+    public PersistenceData(string key)
+    {        
         m_key = key;
 
 		Reset ();
@@ -59,11 +55,7 @@ public class PersistenceData
     public string Key
     {
         get { return m_key; }
-        set
-        {
-            m_key = value;
-            m_savePath = SaveUtilities.GetSavePath(m_key);
-        }
+        set { m_key = value; }
     }
 
     public string Version
@@ -124,7 +116,7 @@ public class PersistenceData
 
     public PersistenceStates.ESaveState SaveState { get; set; }
 
-    public PersistenceStates.ESaveState Save(bool backUpOnFail = true)
+    public PersistenceStates.ESaveState Save(string savePath, bool backUpOnFail = true)
 	{
 		Systems_Save();
 
@@ -142,7 +134,12 @@ public class PersistenceData
             m_deviceName = SystemInfo.deviceModel;
         }
 
-        m_modifiedTime = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        // Makes sure that the date doesn't go backwards
+        int newModifiedTime = (int)(GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000);        
+        if (newModifiedTime >= m_modifiedTime)
+        {
+            m_modifiedTime = newModifiedTime;
+        }
 
         m_data["deviceName"] = m_deviceName;
         m_data["modifiedTime"] = m_modifiedTime;
@@ -164,7 +161,7 @@ public class PersistenceData
 
             try
             {
-                using (FileStream fs = new FileStream(m_savePath, FileMode.Create, FileAccess.Write))
+                using (FileStream fs = new FileStream(savePath, FileMode.Create, FileAccess.Write))
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
@@ -191,7 +188,7 @@ public class PersistenceData
 
 #if UNITY_IPHONE && !UNITY_EDITOR
                 //Mark file as not being a file to backup
-                UnityEngine.iOS.Device.SetNoBackupFlag(m_savePath);
+                UnityEngine.iOS.Device.SetNoBackupFlag(savePath);
 #endif
 
                 //If we successfully wrote to disk delete playerprefs backup
@@ -305,24 +302,24 @@ public class PersistenceData
         return stream;
     }
 
-    public PersistenceStates.ELoadState Load()
+    public PersistenceStates.ELoadState Load(string savePath)
     {
         LoadState = PersistenceStates.ELoadState.NotFound;
 
-        if (File.Exists(m_savePath))
+        if (File.Exists(savePath))
         {
             try
             {
-                using (MemoryStream ms = SaveUtilities.GetUnpaddedSaveData(m_savePath))
+                using (MemoryStream ms = SaveUtilities.GetUnpaddedSaveData(savePath))
                 {
-                    LoadState = LoadFromStream(ms);
+                    LoadState = LoadFromStream(savePath, ms);
                 }
             }
             catch (UnauthorizedAccessException e)
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                 {
-                    PersistenceFacade.LogError("Permissions error when loading file at path: " + m_savePath);
+                    PersistenceFacade.LogError("Permissions error when loading file at path: " + savePath);
                     DebugUtils.LogException(e);
                 }
 
@@ -331,13 +328,13 @@ public class PersistenceData
             catch (FileNotFoundException)
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
-                    PersistenceFacade.LogWarning("No save file found at path: " + m_savePath);
+                    PersistenceFacade.LogWarning("No save file found at path: " + savePath);
             }
             catch (Exception e)
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                 {
-                    PersistenceFacade.LogError("Exception when loading file at path: " + m_savePath);
+                    PersistenceFacade.LogError("Exception when loading file at path: " + savePath);
                     DebugUtils.LogException(e);
                 }
 
@@ -346,7 +343,7 @@ public class PersistenceData
         }
         else if (FeatureSettingsManager.IsDebugEnabled)
         {
-            PersistenceFacade.LogWarning("No save file found at path: " + m_savePath);
+            PersistenceFacade.LogWarning("No save file found at path: " + savePath);
         }
 
 
@@ -362,7 +359,7 @@ public class PersistenceData
                 {
                     using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(prefSaveString)))
                     {
-                        LoadState = LoadFromStream(ms);
+                        LoadState = LoadFromStream(savePath, ms);
                     }
                 }
                 catch (Exception e)
@@ -410,7 +407,7 @@ public class PersistenceData
         else
         {
             if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.LogWarning("Trying to load invalid JSON file at path: " + m_savePath);
+                PersistenceFacade.LogWarning("Invalid JSON " + data);
 
             LoadState = PersistenceStates.ELoadState.Corrupted;
         }
@@ -418,7 +415,7 @@ public class PersistenceData
         return LoadState;
     }
 
-    public PersistenceStates.ELoadState LoadFromStream(Stream stream)
+    public PersistenceStates.ELoadState LoadFromStream(string savePath, Stream stream)
     {
         LoadState = PersistenceStates.ELoadState.Corrupted;
 
@@ -510,7 +507,7 @@ public class PersistenceData
                         else
                         {
                             if (FeatureSettingsManager.IsDebugEnabled)
-                                Debug.LogWarning("Trying to load invalid JSON file at path: " + m_savePath);
+                                Debug.LogWarning("Trying to load invalid JSON file at path: " + savePath);
 
                             LoadState = PersistenceStates.ELoadState.Corrupted;
                         }
@@ -523,20 +520,13 @@ public class PersistenceData
             //TODO determine exception types and see if any are recoverable!
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Debug.LogWarning("Exception when parsing file from stream");
-                Debug.LogWarning(e);
+                Debug.LogError("Exception when parsing file from stream");
+                Debug.LogError(e);
             }
         }
 
         return LoadState;
-    }
-
-    public void UpdateSavePathAndKey(string savePath, string newKey)
-    {
-        m_savePath = savePath;
-        m_key = newKey;
-        GenerateEncryptionKey();
-    }
+    }        
 
     private bool IsValidFile(Stream stream, ref byte[] contentBytes)
     {

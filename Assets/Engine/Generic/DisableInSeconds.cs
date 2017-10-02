@@ -13,6 +13,9 @@ public class DisableInSeconds : MonoBehaviour {
 	public float activeTime { set { m_activeTime = value; m_activeTimer = m_activeTime; } }
 	[SerializeField] private PoolType m_returnTo = PoolType.PoolManager;
 	[SerializeField] private bool m_disableOnInvisible = true;
+	[SerializeField] private bool m_alwaysActive = true;
+
+	private bool m_active = false;
 
 	private float m_activeTimer;
 	private ParticleControl m_particleControl;
@@ -22,6 +25,8 @@ public class DisableInSeconds : MonoBehaviour {
 
 
     void Start() {
+		m_active = false;
+
 		// lets grab the particle system if it exists. 
 		m_particleControl = GetComponent<ParticleControl>();
 
@@ -34,33 +39,39 @@ public class DisableInSeconds : MonoBehaviour {
 		}
 	}
 
+	public void Activate() {
+		m_active = true;
+	}
+
 	void OnEnable() {
 		m_activeTimer = m_activeTime;
 	}
 
 	void OnDisable() {
-		if (m_activeTime > 0f) {
-			Disable();
-		}
+		Disable();
 	}
 
 	void Update() {
-		m_activeTimer -= Time.deltaTime;
-		if (m_activeTimer < 0f) {
-			if (m_particleControl != null) {
-                // we are disabling a particle system
-				bool isStopped = m_particleControl.Stop();
-				if (isStopped) {
-                    Disable();
-                }
-            } else {
-                // it's a simple game object
-                Disable();
-            }
-        }
+		if (m_alwaysActive || m_active) {
+			m_activeTimer -= Time.deltaTime;
+			if (m_activeTimer < 0f) {
+				if (m_particleControl != null) {
+	                // we are disabling a particle system
+					bool isStopped = m_particleControl.Stop();
+					if (isStopped) {
+	                    Disable();
+	                }
+	            } else {
+	                // it's a simple game object
+	                Disable();
+	            }
+	        }
+		}
     }
 
 	private void Disable() {
+		m_active = false;
+
 		switch(m_returnTo) {
 			case PoolType.PoolManager: 	
 			case PoolType.UIPoolManager:	

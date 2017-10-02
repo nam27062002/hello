@@ -77,6 +77,9 @@ public class SocialUtilsFb : SocialUtils
     {
         string url = string.Format("/{0}/picture?width={1}&height={2}&redirect=false&type=normal", socialID, width, height);
 
+        if (FeatureSettingsManager.IsDebugEnabled)
+            LogWarning("SocialUtilsFb :: (GetProfilePicture) gettint URL " + url);
+
         FB.API(url, HttpMethod.GET, delegate (IGraphResult result)
         {
             if (result != null && string.IsNullOrEmpty(result.Error))

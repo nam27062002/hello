@@ -14,12 +14,25 @@ public class LockEffectMenu : MonoBehaviour {
     private RenderTexture m_replaceRenderTexture;
     private RenderTexture m_backupTexture;
 
-    private Camera origCamera;
-    private Camera shaderCamera;
+    private Camera m_origCamera;
+    private Camera m_shaderCamera;
+
+
+    private void setPreCameraData(Camera origCamera)
+    {
+        m_shaderCamera.CopyFrom(origCamera);
+        m_shaderCamera.backgroundColor = Color.clear;
+        m_shaderCamera.clearFlags = CameraClearFlags.SolidColor;
+        m_shaderCamera.renderingPath = RenderingPath.Forward;
+        m_shaderCamera.targetTexture = m_replaceRenderTexture;
+//        m_shaderCamera.rect = normalizedRect;
+//        m_shaderCamera.cullingMask = shaderCullingMask;
+    }
+
 
     void Awake()
     {
-        origCamera = GetComponent<Camera>();
+        m_origCamera = GetComponent<Camera>();
         if (!FeatureSettingsManager.instance.IsLockEffectEnabled)
         {
             Destroy(this);
@@ -41,13 +54,13 @@ public class LockEffectMenu : MonoBehaviour {
 
     public void OnEnable()
     {
-        m_replaceRenderTexture = new RenderTexture((int)(origCamera.pixelWidth), (int)(origCamera.pixelHeight), 16, RenderTextureFormat.ARGB32);
+        m_replaceRenderTexture = new RenderTexture((int)(m_origCamera.pixelWidth), (int)(m_origCamera.pixelHeight), 16, RenderTextureFormat.ARGB32);
         m_replaceRenderTexture.wrapMode = TextureWrapMode.Clamp;
         m_replaceRenderTexture.useMipMap = false;
         m_replaceRenderTexture.filterMode = FilterMode.Bilinear;
         m_replaceRenderTexture.Create();
 
-        m_backupTexture = new RenderTexture((int)(origCamera.pixelWidth), (int)(origCamera.pixelHeight), 16, RenderTextureFormat.ARGB32);
+        m_backupTexture = new RenderTexture((int)(m_origCamera.pixelWidth), (int)(m_origCamera.pixelHeight), 16, RenderTextureFormat.ARGB32);
         m_backupTexture.wrapMode = TextureWrapMode.Clamp;
         m_backupTexture.useMipMap = false;
         m_backupTexture.filterMode = FilterMode.Bilinear;
@@ -55,38 +68,35 @@ public class LockEffectMenu : MonoBehaviour {
 
         m_effectMaterial.SetTexture("_Lock", m_replaceRenderTexture);
 
-        shaderCamera = new GameObject("Lock Effect", typeof(Camera)).GetComponent<Camera>();
-        shaderCamera.gameObject.hideFlags = HideFlags.HideAndDontSave;
+        m_shaderCamera = new GameObject("Lock Effect", typeof(Camera)).GetComponent<Camera>();
+        m_shaderCamera.gameObject.hideFlags = HideFlags.HideAndDontSave;
+
+        setPreCameraData(m_origCamera);
+
     }
 
 
     public void OnDisable()
     {
         m_effectMaterial.mainTexture = null;
-        origCamera.targetTexture = null;
-        DestroyObject(shaderCamera);
+        m_origCamera.targetTexture = null;
+        DestroyObject(m_shaderCamera);
     }
+
 
 
 
     public void OnPreRender()
     {
-        shaderCamera.CopyFrom(origCamera);
-        shaderCamera.backgroundColor = Color.clear;
-        shaderCamera.clearFlags = CameraClearFlags.SolidColor;
-        shaderCamera.renderingPath = RenderingPath.Forward;
-        shaderCamera.targetTexture = m_replaceRenderTexture;
-//        shaderCamera.rect = normalizedRect;
-//        shaderCamera.cullingMask = shaderCullingMask;
-        shaderCamera.RenderWithShader(m_replaceShader, "Lock");
+        setPreCameraData(m_origCamera);
+        m_shaderCamera.RenderWithShader(m_replaceShader, "Lock");
     }
 
     public void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        //        m_effectDilateMaterial
+//        m_effectDilateMaterial
         RenderTexture ta = m_replaceRenderTexture;
         RenderTexture tb = m_backupTexture;
-
 
         m_effectDilateMaterial.SetFloat("_DilateDecay", m_maskDecay);
 
@@ -98,9 +108,19 @@ public class LockEffectMenu : MonoBehaviour {
             tb = tmp;
         }
 
-
-
         Graphics.Blit(source, destination, m_effectMaterial);
+    }
+
+
+    void setFreezeMaterial(Material mat)
+    {
+        mat.EnableKeyword("FRESNEL");
+        mat.EnableKeyword("FREEZE");
+        mat.EnableKeyword("MATCAP");
+        mat.SetColor("_FresnelColor", new Color(114.0f / 255.0f, 248.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
+        mat.SetColor("_FresnelColor2", new Color(186.0f / 255.0f, 144.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
+        mat.SetFloat("_FresnelPower", 0.91f);
+        mat.SetColor("_GoldColor", new Color(179.0f / 255.0f, 250.0f / 255.0f, 254.0f / 255.0f, 64.0f / 255.0f));
     }
 
 }

@@ -137,7 +137,9 @@ namespace UbiBCN
 					GameObject containerObj = GameObject.Find(ISingleton.PARENT_OBJECT_NAME);
 					if(containerObj == null) {
 						containerObj = new GameObject(ISingleton.PARENT_OBJECT_NAME);
-						GameObject.DontDestroyOnLoad(containerObj);	// Persist throughout scene changes
+						if (Application.isPlaying) {
+							GameObject.DontDestroyOnLoad(containerObj);	// Persist throughout scene changes
+						}
 					}
 					
 					// Is there a pre-made prefab for this class in the Resources folder?

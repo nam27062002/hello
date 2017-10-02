@@ -28,11 +28,13 @@ public class BreakableBehaviour : MonoBehaviour
 	private float m_destroyTimer;
 
 	//----------------------------------------------------------------------
-
-	void Start() {
+	void Awake()
+	{
 		if (m_view == null)
 			m_view = transform.Find("view");
-		
+	}
+
+	void Start() {		
 		m_onBreakParticle.CreatePool();
 			
 		m_initialViewPos = m_view.localPosition;
@@ -74,38 +76,47 @@ public class BreakableBehaviour : MonoBehaviour
 	void OnCollisionEnter(Collision collision) {
 		if (collision.transform.CompareTag("Player")) {
 			DragonPlayer player = collision.transform.gameObject.GetComponent<DragonPlayer>();
-			DragonTier tier = player.GetTierWhenBreaking();
-
-			float value = Mathf.Max(0.1f, Vector3.Dot( collision.contacts[0].normal, player.dragonMotion.direction));
-
-			Vector3 pushVector = Vector3.zero;
-
-			if (tier >= m_tierNoTurboBreak) {
-				m_remainingHits--;
-			} else if (tier >= m_tierWithTurboBreak) {
-				DragonBoostBehaviour boost = collision.transform.gameObject.GetComponent<DragonBoostBehaviour>();	
-
-				if (boost.IsBoostActive())	{
-					m_remainingHits--;
-					pushVector = -collision.contacts[0].normal * value;
-				} else {
-					// Message : You need boost!
-					Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
-
-				}
-			} else {
-				// Message: You need a bigger dragon
-				Messenger.Broadcast(GameEvents.BREAK_OBJECT_BIGGER_DRAGON);
-				value *= 0.5f;
-			}
-
-			if (m_remainingHits <= 0) 
+			if ( player.changingArea )
 			{
-				Break(pushVector);
+				float value = Mathf.Max(0.1f, Vector3.Dot( collision.contacts[0].normal, player.dragonMotion.direction));
+				Vector3 pushVector = -collision.contacts[0].normal * value;
+				Break( pushVector );
 			}
 			else
 			{
-				Shake();
+				DragonTier tier = player.GetTierWhenBreaking();
+
+				float value = Mathf.Max(0.1f, Vector3.Dot( collision.contacts[0].normal, player.dragonMotion.direction));
+
+				Vector3 pushVector = Vector3.zero;
+
+				if (tier >= m_tierNoTurboBreak) {
+					m_remainingHits--;
+				} else if (tier >= m_tierWithTurboBreak) {
+					DragonBoostBehaviour boost = collision.transform.gameObject.GetComponent<DragonBoostBehaviour>();	
+
+					if (boost.IsBoostActive())	{
+						m_remainingHits--;
+						pushVector = -collision.contacts[0].normal * value;
+					} else {
+						// Message : You need boost!
+						Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
+
+					}
+				} else {
+					// Message: You need a bigger dragon
+					Messenger.Broadcast(GameEvents.BREAK_OBJECT_BIGGER_DRAGON);
+					value *= 0.5f;
+				}
+
+				if (m_remainingHits <= 0) 
+				{
+					Break(pushVector);
+				}
+				else
+				{
+					Shake();
+				}
 			}
 		}
 	}

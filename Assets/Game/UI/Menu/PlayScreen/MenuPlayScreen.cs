@@ -122,15 +122,15 @@ public class MenuPlayScreen : MonoBehaviour {
 
     private bool NeedsToRefresh()
     {
-        return SocialIsLoggedIn != SocialPlatformManager.SharedInstance.IsLoggedIn();
+        return SocialIsLoggedIn != PersistenceFacade.instance.CloudDriver.IsLoggedIn;
     }
-
+    
     private void Refresh()
     {
         m_connectButton.interactable = true;
 
         UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
-        SocialIsLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
+        SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
 
         m_incentivizeRoot.SetActive(socialState != UserProfile.ESocialState.LoggedInAndInventivised);
         m_badge.SetActive(!SocialIsLoggedIn);        

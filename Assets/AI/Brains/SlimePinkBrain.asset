@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
+  m_Name: SlimePinkBrain
+  m_EditorClassIdentifier: 
+  m_states:
+  - m_name: Wander
+    m_componentAssets:
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+    - {fileID: 11400000, guid: 28d783e8dd0ba43138f23fe983e63a2c, type: 2}
+    - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
+  - m_name: Passive Damage Mode
+    m_componentAssets:
+    - {fileID: 11400000, guid: 080c4e55e747348a187702de86d62a3d, type: 2}
+    - {fileID: 11400000, guid: 0d92bde620e0a4867ab617665d4cc759, type: 2}
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+    - {fileID: 11400000, guid: a859a47b5965f458cb93d889e9a730e9, type: 2}
+    - {fileID: 11400000, guid: 15a25ed0d6b1f46bea5039e70b4c333a, type: 2}
+    - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
+  - m_name: Wander Fire Rush
+    m_componentAssets:
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+    - {fileID: 11400000, guid: a1cd5ba9c4b194e039053a04b96f1fcd, type: 2}
+  - m_name: Wander Gold
+    m_componentAssets:
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+  - m_name: Gold Check
+    m_componentAssets:
+    - {fileID: 11400000, guid: e5a625a304bda459a9ddb1f830945e2d, type: 2}
+  m_transitionData:
+  - to: 1
+    id: onTimeFinished
+    from: 0
+  - to: 2
+    id: onFuryOn
+    from: 0
+  - to: 0
+    id: onTimeFinished
+    from: 1
+  - to: 2
+    id: onFuryOn
+    from: 1
+  - to: 0
+    id: onFuryOff
+    from: 2
+  - to: 3
+    id: isGolden
+    from: 4
+  - to: 0
+    id: notGolden
+    from: 4
+  m_firstState_A: 4
+  m_firstState_B: 4

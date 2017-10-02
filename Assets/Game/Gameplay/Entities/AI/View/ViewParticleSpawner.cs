@@ -11,6 +11,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 	private Transform m_parent;
 	private GameObject[] m_particleSytems;
+	private DisableInSeconds[] m_disableInSeconds;
 
 	private bool m_spawned;
 
@@ -20,6 +21,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 		m_parent = transform;
 		m_particleSytems = new GameObject[m_particleDatas.Length];
+		m_disableInSeconds = new DisableInSeconds[m_particleDatas.Length];
 
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
 			m_particleDatas[i].CreatePool();
@@ -29,7 +31,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 	}
 
 	void OnDisable() {
-		Return();
+		ForceReturn();
 	}
 
 	void Update() {
@@ -57,13 +59,33 @@ public class ViewParticleSpawner : MonoBehaviour {
 	
 	void Spawn() {
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
-			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent);
+			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, Vector3.zero, false);
+			if (m_particleSytems[i] != null) {
+				m_disableInSeconds[i] = m_particleSytems[i].GetComponent<DisableInSeconds>();
+			}
 		}
 
 		m_spawned = true;
 	}
 
 	void Return() {
+		for (int i = 0; i < m_particleSytems.Length; ++i) {
+			if (m_particleSytems[i] != null) {
+				if (m_disableInSeconds[i] != null) {
+					m_disableInSeconds[i].Activate();
+				} else {
+					m_particleDatas[i].ReturnInstance(m_particleSytems[i]);
+				}
+			}
+
+			m_particleSytems[i] = null;
+			m_disableInSeconds[i] = null;
+		}
+
+		m_spawned = false;
+	}
+
+	void ForceReturn() {
 		for (int i = 0; i < m_particleSytems.Length; ++i) {
 			if (m_particleSytems[i] != null) {
 				m_particleDatas[i].ReturnInstance(m_particleSytems[i]);

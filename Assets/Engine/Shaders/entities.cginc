@@ -16,7 +16,7 @@ struct v2f
 	float3 halfDir : TEXCOORD7;
 #endif	
 
-#ifdef FRESNEL
+#if defined(FRESNEL) || defined(FREEZE)
 	float3 viewDir : VECTOR;
 #endif
 
@@ -26,7 +26,7 @@ struct v2f
 	float3 binormalWorld : TEXCOORD5;
 #endif
 
-#if defined(MATCAP)
+#if defined(MATCAP) || defined(FREEZE)
 	float2 cap : TEXCOORD1;
 #endif
 
@@ -36,7 +36,7 @@ uniform sampler2D _MainTex;
 uniform float4 _MainTex_ST;
 uniform float4 _MainTex_TexelSize;
 
-#if defined(MATCAP)
+#if defined(MATCAP) || defined (FREEZE)
 uniform sampler2D _MatCap;
 uniform float4 _GoldColor;
 #endif
@@ -52,9 +52,15 @@ uniform float _SpecularPower;
 uniform float4 _SpecularColor;
 #endif
 
-#ifdef FRESNEL
+#if defined(FRESNEL) || defined(FREEZE)
+
 uniform float _FresnelPower;
+
 uniform float4 _FresnelColor;
+#ifdef FREEZE
+uniform float4 _FresnelColor2;
+#endif
+
 #endif
 
 #if defined (TINT) || defined (CUSTOM_TINT)
@@ -105,13 +111,13 @@ v2f vert(appdata_t v)
 	o.halfDir = normalize(lightDirection + viewDirection);
 #endif
 
-#ifdef FRESNEL
+#if defined(FRESNEL) || defined(FREEZE)
 	o.viewDir = viewDirection;
 #endif
 
 	o.color = v.color;
 
-#ifdef MATCAP
+#if defined(MATCAP) || defined(FREEZE)
 	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
 	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
 	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
@@ -126,6 +132,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 col = tex2D(_MainTex, i.uv);
 //	fixed specMask = col.a;
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+
 #if defined (EMISSIVE)
 	fixed emmisiveMask = col.a;
 #elif  defined (EMISSIVE_COLOR)
@@ -168,14 +175,18 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 //				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
 
-#ifdef FRESNEL
+#if defined(FRESNEL) || defined(FREEZE)
 	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
-	col.xyz += fresnel * _FresnelColor.xyz;
-//	col.xyz = lerp(col, _FresnelColor, fresnel).xyz;
+//	col.xyz *= lerp(_FresnelColor2.xyz, _FresnelColor.xyz, fresnel);
 
+#ifdef FREEZE
+	col.xyz *= _FresnelColor2.xyz;
 #endif
 
-#if defined(MATCAP)
+	col.xyz += _FresnelColor.xyz * fresnel;
+#endif
+
+#if defined(MATCAP) || defined (FREEZE)
 	fixed4 mc = tex2D(_MatCap, i.cap) * _GoldColor; // _FresnelColor;
 
 //	col = (col + ((mc*2.0) - 0.5));

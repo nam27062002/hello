@@ -34,10 +34,10 @@ public class ParticleHandler {
 
 
 	//-------------------------------------------------//
-	public GameObject Spawn(ParticleData _data, Vector3 _at = default(Vector3)) {
+	public GameObject Spawn(ParticleData _data, Vector3 _at = default(Vector3), bool _prewarm = true) {
 		if (m_isValid) {
 			GameObject system = m_pool.Get(true);
-			StartSystem(system, null, _data, _at);
+			StartSystem(system, null, _data, _at, _prewarm);
 			return system;
 		}
 		if (_data != null){
@@ -48,10 +48,10 @@ public class ParticleHandler {
 		return null;
 	}
 
-	public GameObject Spawn(ParticleData _data, Transform _parent, Vector3 _offset = default(Vector3)) {
+	public GameObject Spawn(ParticleData _data, Transform _parent, Vector3 _offset = default(Vector3), bool _prewarm = true) {
 		if (m_isValid) {
 			GameObject system = m_pool.Get(true);
-			StartSystem(system, _parent, _data, _offset);
+			StartSystem(system, _parent, _data, _offset, _prewarm);
 			return system;
 		}
 		if (_data != null){
@@ -72,7 +72,7 @@ public class ParticleHandler {
 
 
 	//-------------------------------------------------//
-	private void StartSystem(GameObject _system, Transform _parent, ParticleData _data, Vector3 _at) {
+	private void StartSystem(GameObject _system, Transform _parent, ParticleData _data, Vector3 _at, bool _prewarm) {
 		// Skip if system is not valid
 		if (_system != null) {
 			// Setup system's transform
@@ -89,7 +89,7 @@ public class ParticleHandler {
 			// Restart all particle systems within the instance
 			ParticleControl pc = _system.GetComponent<ParticleControl>();
 			if (pc != null) {
-				pc.Play(_data);
+				pc.Play(_data, _prewarm);
 			}
 		}
 	}

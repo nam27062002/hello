@@ -81,9 +81,9 @@ public class ParticleData {
 		return null;
 	}
 
-	public GameObject Spawn(Transform _parent, Vector3 _offset = default(Vector3)) {
+	public GameObject Spawn(Transform _parent, Vector3 _offset = default(Vector3), bool _prewarm = true) {
 		if (m_handler != null) {
-			return m_handler.Spawn(this, _parent, _offset);
+			return m_handler.Spawn(this, _parent, _offset, _prewarm);
 		}
 		return null;
 	}

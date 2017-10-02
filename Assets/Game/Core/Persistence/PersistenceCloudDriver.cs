@@ -35,7 +35,6 @@ public class PersistenceCloudDriver
                     Upload_IsAllowed = false;
                     break;
             }
-
         }
     }
 
@@ -50,12 +49,23 @@ public class PersistenceCloudDriver
             if (mIsInSync != value)
             {
                 mIsInSync = value;
+
+                if (mIsInSync)
+                {
+                    LatestSyncTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+                }
+
                 Messenger.Broadcast<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
             }
         }
     }
-    
-	public PersistenceCloudDriver()
+
+    /// <summary>
+    /// Returns the time (milliseconds since 1970) at the latest successful synchronization
+    /// </summary>
+    public long LatestSyncTime { get; set; }    
+
+    public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
 		Data = new PersistenceData(dataName);        
@@ -70,8 +80,9 @@ public class PersistenceCloudDriver
 	{
 		IsInSync = false;
 		State = EState.NotLoggedIn;
+        LatestSyncTime = 0;
 
-		Syncer_Reset();
+        Syncer_Reset();
 		Upload_Reset();
 
 		ExtendedReset();
@@ -88,6 +99,8 @@ public class PersistenceCloudDriver
     {
         ExtendedLogout();
 
+        PersistencePrefs.Social_WasLoggedInWhenQuit = false;
+
         if (State == EState.LoggedIn)
         {
             // Logs out
@@ -99,6 +112,11 @@ public class PersistenceCloudDriver
     protected virtual void ExtendedLogout()
     {
         SocialPlatformManager.SharedInstance.Logout();
+    }
+
+    public bool IsLoggedIn
+    {
+        get { return State == EState.LoggedIn; }
     }
 
     #region syncer
@@ -225,8 +243,8 @@ public class PersistenceCloudDriver
 			}
 			else
 			{
-				Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
-			}
+                Syncer_ProcessNoConnectionError();
+            }
 		};
 
 		Syncer_ExtendedLogInServer(onDone);
@@ -467,8 +485,11 @@ public class PersistenceCloudDriver
         // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
         GameServerManager.SharedInstance.LogOut();
 
-        // PersistencePrefs are deleted since it has to be overridden by the remove account id
+        // PersistencePrefs are deleted since it has to be overridden by the remote account id
         PersistencePrefs.Clear();
+
+        // Cache is invalidated in order to make sure that the new account's information will be requested
+        SocialPlatformManager.SharedInstance.InvalidateCachedSocialInfo();
 
         Action onReset = delegate ()
         {
@@ -679,7 +700,7 @@ public class PersistenceCloudDriver
         {
             if (onDone != null)
             {
-                onDone(GameServerManager.SharedInstance.IsLoggedIn());
+                onDone(GameServerManager.SharedInstance.IsLoggedIn());                
             }
         });
     }

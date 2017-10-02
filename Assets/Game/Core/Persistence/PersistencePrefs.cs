@@ -18,8 +18,14 @@ public class PersistencePrefs
 
     private static string KEY_SOCIAL_PROFILE_NAME = "socialProfileName";
 
+    // Whether or not the user was logged in the social platform when she quit
+    private static string KEY_SOCIAL_LOGGED_IN_WHEN_QUIT = "socialWasLoggedInWhenQuit";
+
     // Stored here so TrackingManager can be initialized as soon as possible
     private static string KEY_SERVER_USER_ID = "serverUserId";
+
+    // Index to the latest save path stored.
+    private static string KEY_SAVEPATHS_LATEST_INDEX = "savePathsLatestIndex";
     
     private static List<string> KEYS = new List<string>()
     {
@@ -27,7 +33,9 @@ public class PersistencePrefs
         KEY_CLOUD_SAVE_ENABLED,
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
+        KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
         KEY_SERVER_USER_ID,
+        KEY_SAVEPATHS_LATEST_INDEX
     };        
 
     public static bool IsDirty = false;
@@ -61,7 +69,7 @@ public class PersistencePrefs
     {
         get { return PlayerPrefs.GetInt(KEY_CLOUD_SAVE_ENABLED, 1) == 1; }
         set { SetInt(KEY_CLOUD_SAVE_ENABLED, (value ? 1: 0)); }
-    }
+    }    
     
     public static string ServerUserId
     {
@@ -87,6 +95,12 @@ public class PersistencePrefs
         }        
     }
 
+    public static int SavePathsLatestIndex
+    {
+        get { return PlayerPrefs.GetInt(KEY_SAVEPATHS_LATEST_INDEX, 0); }
+        set { SetInt(KEY_SAVEPATHS_LATEST_INDEX, value); }
+    }
+
     #region social
     public static string Social_Id
     {
@@ -98,6 +112,12 @@ public class PersistencePrefs
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_PROFILE_NAME, null); }
         set { SetString(KEY_SOCIAL_PROFILE_NAME, value); }
+    }
+
+    public static bool Social_WasLoggedInWhenQuit
+    {
+        get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 1) == 1; }
+        set { SetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, (value ? 1 : 0)); }
     }
     #endregion
 

@@ -264,6 +264,11 @@ public class CPProgressionCheats : MonoBehaviour {
             for (i = 0; i < count; i++) {
                 if (!dragons[i].isOwned) {
                     dragons[i].Acquire();
+
+					if (InstanceManager.menuSceneController is MenuSceneController) {
+						MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(dragons[i].def.sku);
+						slot.animator.ForceShow(false);
+					}
                 }
             }
 

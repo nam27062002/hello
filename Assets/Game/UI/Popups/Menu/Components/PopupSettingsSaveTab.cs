@@ -32,9 +32,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
 
     private void Init()
-    {
-        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);        
-
+    {        
         Model_Init();
         Social_Init();
         Resync_Init();
@@ -44,12 +42,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     void OnEnable()
     {        
         RefreshView();
-    }    
-
-    void OnDestroy()
-    {        
-        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLogged);        
-    }    
+    }            
     
     private void RefreshView()
     {
@@ -72,14 +65,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         IsLoadingPopupOpen = false;
         PersistenceFacade.Popups_CloseLoadingPopup();
-    }
-
-    private void OnSocialLogged(bool logged)
-    {     
-        if (IsLoadingPopupOpen)
-        {
-            CloseLoadingPopup();
-        }
     }    
 
     #region social
@@ -157,7 +142,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Action onDone = delegate()
         {
             CloseLoadingPopup();         
-            if (SocialPlatformManager.SharedInstance.IsLoggedIn())
+            if (Model_SocialIsLoggedIn())
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                     Log("LOGIN SUCCESSFUL");
@@ -208,7 +193,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     #region cloud
     [SerializeField]
     private Slider m_cloudEnableSlider;
-    
+
+    [SerializeField]
+    private Button m_cloudEnableButton;
+
     /// <summary>
     /// Callback called by the player when the user clicks on enable/disable the cloud save
     /// </summary>
@@ -222,7 +210,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {        
         bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
         m_cloudEnableSlider.value = (isSaveEnabled) ? 1 : 0;
-        m_cloudEnableSlider.interactable = Model_SocialIsLoggedIn();     
+
+        bool isOn = Model_SocialIsLoggedIn();
+        m_cloudEnableSlider.interactable = isOn;
+        m_cloudEnableButton.interactable = isOn;
     }    
     #endregion
 
@@ -268,7 +259,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         if (!Resync_IsRunning)
         {
             OpenLoadingPopup();
-            Action onDone = delegate ()
+            Action onDone = delegate()
             {
                 CloseLoadingPopup();
                 Resync_IsRunning = false;
@@ -279,7 +270,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             Resync_IsRunning = true;
             PersistenceFacade.instance.Sync_FromSettings(onDone);
         }
-    }
+    }    
     #endregion
 
     #region user
@@ -450,7 +441,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void Model_Refresh()
     {
         EState state = EState.NeverLoggedIn;
-        bool isLoggedIn = SocialPlatformManager.SharedInstance.IsLoggedIn();
+        bool isLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
         UserProfile userProfile = UsersManager.currentUser;
         if (userProfile != null)
         {
@@ -481,7 +472,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             case EState.LoggedIn:
             case EState.LoggedInAndIncentivised:
             {
-                returnValue = SocialPlatformManager.SharedInstance.IsLoggedIn();
+                returnValue = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
             }
             break;
 
@@ -522,23 +513,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Debug.LogError(LOG_CHANNEL + message);
     }
     #endregion
-
-
-    #region customersupport
-    // This region is responsible for handling customer support stuff
-
-   
-
-   
-
-    public void OpenCustomerSupport()
-    {
-        //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
-		CSTSManager.SharedInstance.OpenView(LocalizationManager.SharedInstance.Culture.Name, false);	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.;
-        HDTrackingManager.Instance.Notify_CustomerSupportRequested();
-    }
-
-    #endregion    
 
 	#region notifications_settings
 	[SerializeField]

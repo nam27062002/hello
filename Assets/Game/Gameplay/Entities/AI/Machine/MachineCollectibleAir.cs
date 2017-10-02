@@ -18,7 +18,7 @@ namespace AI {
 		public Vector3 target			{ get { return m_pilot.target; } }
 		public Transform enemy { 
 			get {
-				if ((GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {
+				if (m_sensor != null && (GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {
 					return m_sensor.enemy;
 				} else {
 					return null;
@@ -111,7 +111,11 @@ namespace AI {
 		}
 
 		public bool GetSignal(Signals.Type _signal) {
-			return m_signals.GetValue(_signal);
+			if (m_signals != null) {
+				return m_signals.GetValue(_signal);
+			} else {
+				return false;
+			}
 		}
 
 		public object[] GetSignalParams(Signals.Type _signal) {

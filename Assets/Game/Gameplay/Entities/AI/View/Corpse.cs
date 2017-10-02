@@ -13,7 +13,6 @@ public class Corpse : MonoBehaviour {
 
 	//------------------------------------
 	private static Material sm_goldenMaterial = null;
-	private static Material sm_frozenMaterial = null;
 
 
 	//------------------------------------
@@ -39,7 +38,6 @@ public class Corpse : MonoBehaviour {
 	void Awake() {
 		//----------------------------
 		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenTransparent") as Material);
-		if (sm_frozenMaterial == null) sm_frozenMaterial = new Material(Resources.Load("Game/Materials/NPC_FrozenTransparent") as Material);
 		//---------------------------- 
 
 		m_spawned = false;

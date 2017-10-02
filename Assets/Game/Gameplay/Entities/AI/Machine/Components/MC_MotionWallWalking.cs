@@ -257,6 +257,8 @@ namespace AI {
 			m_heightFromGround = 0f;
 			m_viewControl.Height(0f);
 
+			m_viewControl.UpsideDown(m_groundNormal.y < -0.5);
+
 			m_onGround = true;
 		}
 

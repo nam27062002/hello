@@ -7,14 +7,13 @@ using System.Collections.Generic;
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	private static Material sm_goldenMaterial = null;
-	private static Material sm_frozenMaterial = null;
 
     public static float FREEZE_TIME = 1.0f;
 
     [Serializable]
 	public class SkinData {
 		public Material skin;
-		[Range(0f, 100f)] public float m_chance = 0f;
+		[Range(0f, 100f)] public float chance = 0f;
 	}
 
 	public enum SpecialAnims {
@@ -97,7 +96,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private AudioObject m_idleAudioAO;
 
 	[SeparatorAttribute("Skin")]
-	[SerializeField] private List<SkinData> m_skins = new List<SkinData>();
+	[SerializeField] protected List<SkinData> m_skins = new List<SkinData>();
 
 
 	//-----------------------------------------------
@@ -107,7 +106,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	private Renderer[] m_renderers;
 	private Dictionary<int, List<Material>> m_materials;
+	private Dictionary<int, List<Material>> m_materialsFrozen;
 	private List<Material> m_materialList;
+
 
 	private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
@@ -118,6 +119,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected bool m_boost;
 	protected bool m_scared;
 	protected bool m_panic; //bite and hold state
+	protected bool m_upsideDown;
 	protected bool m_falling;
 	protected bool m_jumping;
 	protected bool m_attack;
@@ -170,7 +172,6 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     protected virtual void Awake() {
 		//----------------------------
 		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_Golden") as Material);
-		if (sm_frozenMaterial == null) sm_frozenMaterial = new Material(Resources.Load("Game/Materials/NPC_Frozen") as Material);
 		//---------------------------- 
 
 		m_entity = GetComponent<Entity>();
@@ -188,6 +189,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
         // keep the original materials, sometimes it will become Gold!
         m_materials = new Dictionary<int, List<Material>>();
+		m_materialsFrozen = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
         
@@ -215,13 +217,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				// Stores the materials of this renderer in a dictionary for direct access//
 				int renderID = renderer.GetInstanceID();
 				m_materials[renderID] = new List<Material>();
+				m_materialsFrozen[renderID] = new List<Material>();
 
 				for (int m = 0; m < materials.Length; ++m) {
-					Material mat = materials[m]; 
+					Material mat = materials[m];
 					if (m_showDamageFeedback) mat = new Material(materials[m]);
 
 					m_materialList.Add(mat);
 					m_materials[renderID].Add(mat);
+					m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
 
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
@@ -313,6 +317,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_boost = false;
 		m_scared = false;
 		m_panic = false;
+		m_upsideDown = false;
 		m_falling = false;
 		m_jumping = false;
 		m_attack = false;
@@ -340,6 +345,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
 		SetMaterialType(GetMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type));
+
+		if (m_showDamageFeedback) {
+			for (int i = 0; i < m_materialList.Count; ++i)	
+				m_materialList[i].DisableKeyword("TINT");
+		}
 
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -403,14 +413,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			Material[] materials = m_renderers[i].sharedMaterials;
 			for (int m = 0; m < materials.Length; m++) {
 				switch (_type) {
-					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  break;
-					case MaterialType.FREEZE:	materials[m] = sm_frozenMaterial;  break;						
+					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  		 break;
+					case MaterialType.FREEZE:	materials[m] = m_materialsFrozen[id][m]; break;						
 					case MaterialType.NORMAL: {
 							Material mat = m_materials[id][m]; 
 							if (m_skins.Count > 0) {				
 								for (int s = 0; s < m_skins.Count; s++) {
 									float rnd = UnityEngine.Random.Range(0f, 100f);
-									if (rnd < m_skins[s].m_chance) {
+									if (rnd < m_skins[s].chance) {
 										mat = m_skins[s].skin;
 										break;
 									}
@@ -423,6 +433,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_renderers[i].sharedMaterials = materials;
 		}
     }
+
+	protected void RefreshMaterial() {
+		SetMaterialType(m_materialType);
+	}
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type) {
 		CheckMaterialType(IsEntityGolden(), _active, _type);
@@ -688,6 +702,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			}
 			if (m_animator != null)
 				m_animator.SetBool("scared", _scared);
+		}
+	}
+
+	public void UpsideDown(bool _upsideDown) {
+		if (m_upsideDown != _upsideDown) {
+			m_upsideDown = _upsideDown;
+			m_animator.SetBool("upside down", _upsideDown);
 		}
 	}
 

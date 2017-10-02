@@ -23,7 +23,7 @@ public class ParticleControl : MonoBehaviour {
         m_initialized = true;
 	}
 
-	public void Play(ParticleData _data = null) {
+	public void Play(ParticleData _data = null, bool _prewarm = true) {
         if (!m_initialized) {
             FindSystems();
 		}
@@ -54,7 +54,7 @@ public class ParticleControl : MonoBehaviour {
 			ParticleSystem.EmissionModule em = system.emission;
 			em.enabled = true;
 
-			if (main.prewarm) {
+			if (main.prewarm && _prewarm) {
 				system.Simulate(1f, false);
 			}
 

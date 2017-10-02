@@ -158,6 +158,14 @@ public class SocialPlatformManager : MonoBehaviour
     {
         return m_socialUtils.Profile_NeedsSocialIdToBeUpdated();
     }
+
+    public void InvalidateCachedSocialInfo()
+    {
+        if (m_socialUtils != null && m_socialUtils.Cache != null)
+        {
+            m_socialUtils.Cache.Invalidate();
+        }
+    }
     //////////////////////////////////////////////////////////////////////////
 
     #region login    
@@ -201,8 +209,12 @@ public class SocialPlatformManager : MonoBehaviour
 
     public void Login(bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
     {
+        // Forced to false because when Calety is called with true some flow can be performed that doesn't trigger any callback which would lead
+        // this login flow to stay waiting forever
+        isAppInit = false;
+
         if (FeatureSettingsManager.IsDebugEnabled)
-            Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit );
+            Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + IsLoggedIn() + " SocialId = " + PersistencePrefs.Social_Id);
 
         Login_Discard();
 
@@ -210,11 +222,45 @@ public class SocialPlatformManager : MonoBehaviour
         Login_OnDone = onDone;
         Login_AddMergeListeners();
 
-        Login_IsLogInReady = true;
+        Login_IsLogInReady = false;
         Login_MergeState = ELoginMergeState.Waiting;
 
+        if (isSilent)
+        {
+            bool neverLoggedIn = string.IsNullOrEmpty(PersistencePrefs.Social_Id);
+
+#if UNITY_EDITOR
+            // We want to prevent developers from seeing social login popup every time the game is started since editor doesn't cache the social token
+            neverLoggedIn = true;
+#endif
+
+            // If the user has never logged in then we should just marked as not loggedIn
+            if (neverLoggedIn)
+            {
+                Login_OnLoggedIn(false);
+            }
+        }
+        else
+        {
+            // We need to make sure that a previous incomplete merge is reseted. When a user decides to keep her local account when prompted to merge with 
+            // a different account that has also used the same social account then the user is logges out automatically and we don't want to bother the user
+            // with the same merge popup every time she loads the game. The remove account id that was declined is stored in order to avoid that popup from being shown 
+            // again. We need to reset that variable because the user is expressing explicitly her intention to log in again
+            GameSessionManager.SharedInstance.ResetSocialPlatformCancelState();
+        }
+
+        if (!Login_IsLogInReady)
+        {
+            Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
+            GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
+        }
+
+        /*
         if (IsLoggedIn())
         {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("LOGGING IN ALREADY LOGGED IN ProcessMergeAccounts manual call Logged in server " + GameSessionManager.SharedInstance.IsLogged());
+
             string strUserID = GetUserID();
             string strUserName = GetUserName();
             GameSessionManager.SharedInstance.ProcessMergeAccounts(strUserID, strUserName);
@@ -237,7 +283,8 @@ public class SocialPlatformManager : MonoBehaviour
                 Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
                 GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
             }
-        }        
+        }  
+        */      
     }
 
     private void Login_OnLoggedInHelper(bool logged)

@@ -83,6 +83,8 @@ public class PersistenceFacade
     }   
 
 	#region sync
+    public long Sync_LatestSyncTime { get { return CloudDriver.LatestSyncTime; } }
+
     public bool Sync_IsSyncing { get; set; }
 
     public bool Sync_IsSynced { get { return CloudDriver.IsInSync; } }
@@ -102,11 +104,10 @@ public class PersistenceFacade
                 Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
 
 			// If local persistence is corrupted then we need to offer the chance to override it with cloud persistence
-			// if the user has logged in ever.
+			// if the user has ever logged in the social network
 			if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
-			{
-				// TODO
-				bool logInSocialEver = false;
+			{				
+				bool logInSocialEver = !string.IsNullOrEmpty(PersistencePrefs.Social_Id);
 
 				Action onReset = delegate()
 				{
@@ -139,12 +140,12 @@ public class PersistenceFacade
 					{
 						Config.CloudDriver.Sync(false, true, onConnectDone);
 					};				
-				}                
+				}
 
                 // Lets the user know that local persistence is corrupted. User's options:
                 // 1)Reset local persistence to the default one
                 // 2)Override local persistence with cloud persistence
-                Popup_OpenLocalCorrupted(logInSocialEver, onReset, onConnect);				
+                Popups_OpenLoadLocalCorruptedError(logInSocialEver, onReset, onConnect);				
 			}
 			else
 			{
@@ -159,17 +160,16 @@ public class PersistenceFacade
                     onDone();
                 }
 
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app whe she last played
+                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
                 {
-                    if (!Config.LocalDriver.IsLoadedInGame)
+                    Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
                     {
-                        Config.LocalDriver.IsLoadedInGame = true;
-                    }
+                        Sync_OnDone(result, null);
+                    };
 
-                    Sync_OnDone(result, null);
-                };
-
-                Config.CloudDriver.Sync(true, true, onSyncDone);                
+                    Config.CloudDriver.Sync(true, true, onSyncDone);
+                }
 			}			
 		};
 
@@ -199,6 +199,9 @@ public class PersistenceFacade
 	private void Sync_OnDone(PersistenceStates.ESyncResult result, Action onDone)
 	{
         Sync_IsSyncing = false;
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            PersistenceFacade.Log("(SYNCER) Sync_OnDone result = " + result);
 
         if (result == PersistenceStates.ESyncResult.NeedsToReload)
 		{
@@ -311,6 +314,9 @@ public class PersistenceFacade
     /// </summary>
     public static void Popups_OpenLoadingPopup()
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Popups_OpenLoadingPopup canOpen = " + (!Popups_IsLoadingPopupOpen()));
+
         if (!Popups_IsLoadingPopupOpen())
         {			
             Popups_LoadingPopup = PopupManager.PopupLoading_Open();
@@ -319,6 +325,9 @@ public class PersistenceFacade
 
     public static void Popups_CloseLoadingPopup()
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Popups_CloseLoadingPopup IsOpen = " + Popups_IsLoadingPopupOpen());
+
         if (Popups_IsLoadingPopupOpen())
         {			
             Popups_LoadingPopup.Close(true);
@@ -327,30 +336,64 @@ public class PersistenceFacade
 	
     private static void Popups_OnPopupClosed(PopupController popup)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Popups_OnPopupClosed canClose = " + (popup == Popups_LoadingPopup));
+
         if (popup == Popups_LoadingPopup)
         {
             Popups_LoadingPopup = null;
         }
     }
 
+
+    ////
+    // PENDING
+    /// 1)Popups_OpenLoadLocalCorruptedError:
+    ///   En caso de que el usuario haya tenido cloud alguna vez pregunta: Local corrupted. Log in to override it with cloud or rset the local?, pero podrían ponerse 
+    ///   dos popups distintos. 
+    /// 
+    ///  Con un solo popup tids TO ADD:
+    ///   -Local corrupted. Log in to override with cloud? (Popups_OpenLoadLocalCorruptedError) ?
+    ///   -Log in to cloud (button)
+    ///   -Reset (button)
+    /// 
+    ///  Con un solo popup tids TO DELETE:
+    ///  -TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC   
+    /// 
+    // TO ADD:    
+    /// 
+    /// TO DELETE:
+    /// 
+
     /// <summary>
-    /// This popup is shown when the local save is corrupted when the game was going to continue locally
+    /// This popup is shown when the local save is corrupted
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/20%29Local+save+corrupted
     /// </summary>
     /// <param name="cloudEver">Whether or not the user has synced with server</param>    
-    public static void Popups_OpenLoadSaveCorruptedError(bool cloudEver, Action onConfirm)
-	{ 
-		// UNPH		
-		PopupMessage.Config config = PopupMessage.GetConfig();
+    public static void Popups_OpenLoadLocalCorruptedError(bool cloudEver, Action onReset, Action onOverride)
+	{        
+        string msg = (cloudEver) ? "Local corrupted. Log in to override with cloud or reset local?" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
+        PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
-        config.MessageTid = (cloudEver) ? "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
+        config.MessageTid = msg;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);                
+        config.OnConfirm = onReset;        
 
-        //Popup popup = FlowController.Instance.OpenPopup("Local save corrupted. Reset?");
-		//popup.AddButton("Ok", onConfirm, true);
+        if (cloudEver)
+        {
+            config.ConfirmButtonTid = "Reset";
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+            config.OnCancel = onOverride;
+            config.CancelButtonTid = "Log in to cloud";
+        }
+        else
+        {
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        }
+
+        // Back button is disabled in order to make sure that the user is ware when making such an important decision
+        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+        PopupManager.PopupMessage_Open(config);        
 	}
 
 	/// <summary>
@@ -375,13 +418,13 @@ public class PersistenceFacade
     }
 
 	/// <summary>
-    /// This popup is shown when starting the game if there's no free disk space to store the local save
+    /// This popup is shown when an error arises when saving because there's no free disk space to store the local save
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/27%29No+disk+space
     /// </summary>    
     public static void Popups_OpenLocalSaveDiskOutOfSpaceError(Action onConfirm)
     {					
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_ERROR_DISABLED_NAME";
+        config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_DISABLED_SPACE_DESC";
         config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
@@ -396,26 +439,36 @@ public class PersistenceFacade
     }
 
     /// <summary>
-    /// This popup is shown when starting the game if there's no access to disk to store the local save.
+    /// This popup is shown when an error arises when saving because there's no access to disk to store the local save.
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/28%29No+disk+access
     /// </summary>    
     public static void Popups_OpenLocalSavePermissionError(Action onConfirm)
     {			
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_ERROR_DISABLED_NAME";
+        config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_DISABLED_ACCESS_DESC";
         config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-     	
-        /*
-		Popup popup = FlowController.Instance.OpenPopup("No permission to save local persistence. Try again?");
-		popup.AddButton("Retry", onConfirm, true);
-        */
+        PopupManager.PopupMessage_Open(config);     	        
     }
 
+    /// <summary>
+    /// This popup is shown when an error arises because the persistence saved is corrupted
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/28%29No+disk+access
+    /// </summary>    
+    public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
+        config.MessageTid = "Corrupted progress saved. Please, retry";
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
 
     /// <summary>
     /// This popup is shown when there's no internet connection
@@ -637,42 +690,7 @@ public class PersistenceFacade
         config.OnCancel = onOverride;        
 
         PopupManager.PopupMessage_Open(config);
-    }
-
-	public static void Popup_OpenLocalCorrupted(bool logInSocialEver, Action onReset, Action onOverride)
-	{
-        // UNPH : Add tids
-        string msg = (logInSocialEver) ? "Local corrupted. Log in to override with cloud?" : "Local corrupted. Reset?";
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
-        config.MessageTid = msg;
-        config.IsButtonCloseVisible = false;
-        config.OnConfirm = onReset;
-
-        if (logInSocialEver)
-        {
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-            config.OnCancel = onOverride;
-        }
-        else
-        {
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        }
-
-        PopupManager.PopupMessage_Open(config);
-
-        /*
-        string msg = (logInSocialEver) ? "Local corrupted. Log in to override with cloud?" : "Local corrupted. Reset?";        
-		Popup popup = FlowController.Instance.OpenPopup(msg);
-
-		if (logInSocialEver)
-		{
-			popup.AddButton("Override", onOverride, true);
-		}
-
-		popup.AddButton("Reset", onReset, true);
-        */
-    }
+    }	
 
     public static void Popup_OpenLocalAndCloudCorrupted(Action onReset)
 	{
@@ -682,17 +700,60 @@ public class PersistenceFacade
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onReset;
-        PopupManager.PopupMessage_Open(config);
-
-        /*
-        Popup popup = FlowController.Instance.OpenPopup("Local and cloud are corrupted. Reset them to default?");
-		popup.AddButton("Reset", onReset, true);
-        */
+        PopupManager.PopupMessage_Open(config);        
 	}
+
+    /// <summary>
+    /// This popup is shown when the user clicks on cloud sync icon on hud or on sync button on settings and the synchronization went ok    
+    /// </summary>
+    public static void Popups_OpenCloudSyncedSuccessfully(Action onConfirm)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
+        
+        config.MessageTid = "TID_SAVE_CLOUD_ACTIVE_DESC";            
+        DateTime lastUpload = GameServerManager.SharedInstance.GetEstimatedServerTime();
+        string lastUploadStr = lastUpload.ToString("F");
+        config.MessageParams = new string[] { lastUploadStr };
+
+        config.ConfirmButtonTid = "TID_GEN_CONTINUE";        
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
+
+        long lastUploadTime = instance.Sync_LatestSyncTime;
+        if (lastUploadTime > 0)
+        {
+            config.MessageTid = "TID_SAVE_CLOUD_ACTIVE_DESC";
+            DateTime lastUpload = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            lastUpload = lastUpload.AddMilliseconds(lastUploadTime).ToLocalTime();
+            string lastUploadStr = lastUpload.ToString("F");
+            config.MessageParams = new string[] { lastUploadStr };
+        }
+        else
+        {
+            config.MessageTid = "TID_SAVE_CLOUD_SAVE_ACTIVE_DESC";
+        }
+
+        config.ConfirmButtonTid = "TID_SAVE_CLOUD_SAVE_SYNC_NOW";
+        config.CancelButtonTid = "TID_GEN_CONTINUE";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;
+        config.OnCancel = onCancel;
+        config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
     #endregion
 
     #region log
-    private static bool LOG_USE_COLOR = true;
+    private static bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[Persistence] ";    
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 

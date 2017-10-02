@@ -7,8 +7,10 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 	
-//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
+		_FresnelColor2("Fresnel color 2 (RGB)", Color) = (0, 0, 0, 0)
+		_GoldColor("Gold color (RGB)", Color) = (0, 0, 0, 0)
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -32,11 +34,12 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#pragma vertex vert
 			#pragma fragment frag
 
-
+			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 			#pragma multi_compile __ TINT
-			//			#pragma glsl_no_auto_normalization
+//			#pragma glsl_no_auto_normalization
 //			#pragma fragmentoption ARB_precision_hint_fastest
-//			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+			#pragma multi_compile __ MATCAP
+			#pragma multi_compile __ FRESNEL
 
 			#define HG_ENTITIES
 
@@ -59,6 +62,9 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 //			#define FRESNEL
 //			#define MATCAP
 			#define OPAQUEALPHA
+
+//			#define FRESNEL
+//			#define FREEZE
 
 			#include "entities.cginc"
 			ENDCG
