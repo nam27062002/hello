@@ -28,11 +28,13 @@ public class BreakableBehaviour : MonoBehaviour
 	private float m_destroyTimer;
 
 	//----------------------------------------------------------------------
-
-	void Start() {
+	void Awake()
+	{
 		if (m_view == null)
 			m_view = transform.Find("view");
-		
+	}
+
+	void Start() {		
 		m_onBreakParticle.CreatePool();
 			
 		m_initialViewPos = m_view.localPosition;
