@@ -356,7 +356,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(422, -239, 0f),
 
         //---------------------- Dark area ----------------------
-        new Vector3(-604, 100, 0f),
+        new Vector3(-625, 100, 0f),
         new Vector3(-663, 92, 0f),
         new Vector3(-736, 107),
     };

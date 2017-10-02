@@ -77,6 +77,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_showPets = value; }
 	}
 
+	[SerializeField] private bool m_hideResultsEquipment = false;
+	public bool hideResultsEquipment {
+		get { return m_hideResultsEquipment; }
+		set { m_hideResultsEquipment = value; }
+	}
+
 	[SerializeField] private bool m_removeFresnel = false;
 	public bool removeFresnel {
 		get { return m_removeFresnel; }
@@ -211,6 +217,9 @@ public class MenuDragonLoader : MonoBehaviour {
 
 					// Toggle pets
 					equip.TogglePets(m_showPets, false);
+
+					if (m_hideResultsEquipment)
+						equip.HideResultsEquipment();
 				}
 
 				// Remove fresnel if required
