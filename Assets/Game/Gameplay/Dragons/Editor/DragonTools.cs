@@ -7,7 +7,7 @@ using System.Text;
 public class DragonTools 
 {
 
-	[MenuItem("Hungry Dragon/Dragon Tools/Replace Dragon Preafab View")]
+	[MenuItem("Hungry Dragon/Dragon Tools/Replace Dragon Prefab View")]
 	static void ReplaceSelectedView()
 	{
 		if (Selection.activeObject != null)
