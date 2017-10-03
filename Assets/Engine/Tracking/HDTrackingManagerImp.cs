@@ -4,7 +4,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-
+using System;
 public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
@@ -79,7 +79,6 @@ public class HDTrackingManagerImp : HDTrackingManager
         string houstonTransactionID = _storeTransactionID;
         string promotionType = null; // Not implemented yet            
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
-
 	}
 
 	private void OnPurchaseFailed(string _sku) 
@@ -518,6 +517,27 @@ public class HDTrackingManagerImp : HDTrackingManager
 	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
 		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
 	}
+
+    public override void Notify_SocialAuthentication()
+    {
+        // This event has to be send only once per user
+        if (TrackingPersistenceSystem != null && !TrackingPersistenceSystem.SocialAuthSent)
+        {
+            Action<SocialUtils.ProfileInfo> onDone = delegate (SocialUtils.ProfileInfo info)
+            {
+                if (info != null)
+                {
+                    string provider = SocialPlatformManager.SharedInstance.GetPlatformName();
+                    string gender = info.Gender;
+                    int birthday = info.YearOfBirth;                                                            
+                    TrackingPersistenceSystem.SocialAuthSent = true;
+                    Track_SocialAuthentication(provider, birthday, gender);
+                }
+            };
+
+            SocialPlatformManager.SharedInstance.GetProfileInfo(onDone);           
+        }
+    }
 #endregion
 
 #region track	
@@ -863,6 +883,24 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
+    private void Track_SocialAuthentication(string provider, int yearOfBirth, string gender)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_SocialAuthentication provider = " + provider + " yearOfBirth = " + yearOfBirth + " gender = " + gender);
+        }
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.authentication");
+        if (e != null)
+        {
+            e.SetParameterValue(TRACK_PARAM_PROVIDER, provider);
+            e.SetParameterValue(TRACK_PARAM_YEAR_OF_BIRTH, yearOfBirth);
+            e.SetParameterValue(TRACK_PARAM_GENDER, gender);            
+
+            Track_SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -888,6 +926,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
+    private const string TRACK_PARAM_GENDER                     = "gender";
     private const string TRACK_PARAM_HC_EARNED                  = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
@@ -933,8 +972,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_XP                         = "xp";
+    private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";
 
-	private void Track_SendEvent(TrackingManager.TrackingEvent e)
+    private void Track_SendEvent(TrackingManager.TrackingEvent e)
 	{
 		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
 		#if !UNITY_EDITOR

@@ -225,6 +225,11 @@ public class HDTrackingManager
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
 	public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
+
+    /// <summary>
+    /// The user has logged in the social platform
+    /// </summary>    
+    public virtual void Notify_SocialAuthentication() {}
     #endregion
 
     #region log

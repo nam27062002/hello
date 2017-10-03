@@ -31,7 +31,7 @@ public class PersistenceFacade
 		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-		//userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Error_GetPersistence;
+        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Launch_Local_Corrupted_Cloud_Corrupted;
         if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
             Config = new PersistenceFacadeConfigDebug(userCaseId);
@@ -107,7 +107,7 @@ public class PersistenceFacade
 			// if the user has ever logged in the social network
 			if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
 			{				
-				bool logInSocialEver = !string.IsNullOrEmpty(PersistencePrefs.Social_Id);
+				bool logInSocialEver = !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId);
 
 				Action onReset = delegate()
 				{

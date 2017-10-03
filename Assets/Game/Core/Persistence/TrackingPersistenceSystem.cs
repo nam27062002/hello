@@ -15,6 +15,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
     /// Whether or not this is the first time the game is loaded ever
     /// </summary>
     private const string PARAM_FIRST_LOADING = "firstLoading";
+    private const string PARAM_SOCIAL_AUTH_SENT = "socialAuthSent";    
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -178,6 +179,19 @@ public class TrackingPersistenceSystem : PersistenceSystem
         }
     }
 
+    public bool SocialAuthSent
+    {
+        get
+        {
+            return Cache_GetBool(PARAM_SOCIAL_AUTH_SENT);
+        }
+
+        set
+        {
+            Cache_SetBool(PARAM_SOCIAL_AUTH_SENT, value);
+        }
+    }
+
     public TrackingPersistenceSystem()
     {
         m_systemName = "Tracking";
@@ -237,6 +251,10 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
         key = PARAM_FIRST_LOADING;
         dataBool = new CacheDataBool(key, true);
+        Cache_AddData(key, dataBool);
+
+        key = PARAM_SOCIAL_AUTH_SENT;
+        dataBool = new CacheDataBool(key, false);
         Cache_AddData(key, dataBool);
 
         Reset();

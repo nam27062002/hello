@@ -279,12 +279,11 @@ public class PersistenceLocalDriver
 
 	public void NotifyUserHasLoggedIn(string socialPlatform, string socialId, Action onDone)
 	{
-        PersistencePrefs.Social_Id = socialId;
+        Prefs_SocialId = socialId;
         PersistencePrefs.Social_WasLoggedInWhenQuit = true;
 
         if (TrackingPersistenceSystem != null)
-        {
-            PersistencePrefs.Social_Id = socialId;
+        {            
             TrackingPersistenceSystem.SetSocialParams(socialPlatform, socialId);
         }
 
@@ -390,6 +389,14 @@ public class PersistenceLocalDriver
 
         SavePaths_Data.Load(path);
         return SavePaths_Data.LoadState == PersistenceStates.ELoadState.OK;
+    }
+    #endregion
+
+    #region prefs
+    public virtual string Prefs_SocialId
+    {
+        get { return PersistencePrefs.Social_Id; }
+        set { PersistencePrefs.Social_Id = value; }
     }
     #endregion
 }

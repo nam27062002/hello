@@ -222,6 +222,17 @@
                 "etl"
             ]
         },
+		 "custom.player.authentication": {
+            "Parameters": [
+                {"provider": {"Status": "OK"}},
+                {"yearOfBirth": {"Status": "OK"}},
+				{"gender": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
         "game.start": {
             "Parameters": [
                 {"acq_marketing_id": {"Status": "OK"}},
@@ -544,6 +555,14 @@
         "deathCause": {
             "Type": "STRING:125",
             "Values": []
-        }
+        },
+		"yearOfBirth": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"gender": {
+            "Type": "STRING:125",
+            "Values": []
+        },
     }
 }

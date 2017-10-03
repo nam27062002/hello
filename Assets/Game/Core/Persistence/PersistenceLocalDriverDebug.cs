@@ -51,6 +51,16 @@ public class PersistenceLocalDriverDebug : PersistenceLocalDriver
 		}
 	}
 
+    #region prefs
+    private string mPrefsSocialId;
+
+    public override string Prefs_SocialId
+    {
+        get { return mPrefsSocialId; }
+        set { mPrefsSocialId = value; }
+    }
+    #endregion
+
     /*
 	private int KeyPressed { get; set; }
 	// UNGTK
