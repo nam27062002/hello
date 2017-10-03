@@ -409,12 +409,7 @@ public class PersistenceFacade
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-        
-        /*
-		Popup popup = FlowController.Instance.OpenPopup("No permission to load local persistence. Try again?");
-		popup.AddButton("Retry", onConfirm, true);
-        */
+        PopupManager.PopupMessage_Open(config);                
     }
 
 	/// <summary>
@@ -430,12 +425,7 @@ public class PersistenceFacade
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-     	
-        /*
-		Popup popup = FlowController.Instance.OpenPopup("No space to save local persistence. Try again?");
-		popup.AddButton("Retry", onConfirm, true);
-        */
+        PopupManager.PopupMessage_Open(config);     
     }
 
     /// <summary>
@@ -483,12 +473,7 @@ public class PersistenceFacade
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-        
-        /*
-		Popup popup = FlowController.Instance.OpenPopup("No connection.");
-		popup.AddButton("Ok", onConfirm, true);
-        */
+        PopupManager.PopupMessage_Open(config);              
     }
 
     public static void Popups_OpenLoginComplete(int rewardAmount, Action onConfirm)
@@ -499,12 +484,7 @@ public class PersistenceFacade
         config.MessageParams = new string[] { rewardAmount + "" };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
-        PopupManager.PopupMessage_Open(config);
-        
-        /*
-		Popup popup = FlowController.Instance.OpenPopup("Login completed. +15gems");
-		popup.AddButton("Ok", onConfirm, true);
-        */
+        PopupManager.PopupMessage_Open(config);                
     }
 
     /// <summary>
@@ -521,13 +501,7 @@ public class PersistenceFacade
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-        
-        /*
-		Popup popup = FlowController.Instance.OpenPopup("Are you sure you want to logout?");
-		popup.AddButton("Ok", onConfirm, true);
-		popup.AddButton("Cancel", onCancel, true);
-        */
+        PopupManager.PopupMessage_Open(config);               
     }
 
 	/// <summary>
@@ -541,30 +515,7 @@ public class PersistenceFacade
         if (pm != null)
         {
             pm.Setup(conflictState, local, cloud, dismissable, onResolve);
-        }
-        
-        /*
-		Action onUseLocal = delegate() {
-			onResolve (PersistenceStates.EConflictResult.Local);
-		};
-
-		Action onUseCloud = delegate() {
-			onResolve (PersistenceStates.EConflictResult.Cloud);
-		};
-
-		Action onDismiss = delegate() {
-			onResolve (PersistenceStates.EConflictResult.Dismissed);
-		};
-
-		Popup popup = FlowController.Instance.OpenPopup ("Merge: Local: " + local.dragonsOwned + " Cloud: " + cloud.dragonsOwned);
-		popup.AddButton ("UseLocal", onUseLocal, true);
-		popup.AddButton ("UseCloud", onUseCloud, true);
-
-		if (dismissable)
-		{
-			popup.AddButton ("Dismiss", onDismiss, true);
-		}
-        */
+        }               
     }
 
     /// <summary>
@@ -655,29 +606,11 @@ public class PersistenceFacade
         config.OnConfirm = onRetry;
         config.OnCancel = onContinue;
         config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);            
-
-        /*
-		Popup popup = FlowController.Instance.OpenPopup("Error when syncing. Retry?");
-		popup.AddButton("Retry", onRetry, true); 
-		popup.AddButton("Continue", onContinue, true);
-        */
+        PopupManager.PopupMessage_Open(config);                   
     }
 
 	public static void Popup_OpenCloudCorrupted(Action onContinue, Action onOverride)
-	{
-        /*        
-		string msg = (canOverride) ? "Cloud corrupted. Override?" : "Cloud corrupted but inaccessible. Continue locally?";
-		
-		Popup popup = FlowController.Instance.OpenPopup(msg);
-		if (canOverride)
-		{
-			popup.AddButton("Override", onOverride, true);
-		}
-
-		popup.AddButton("Continue", onContinue, true);
-        */
-
+	{       
         // UNPH: Add TIDS and add popup Popups_OpenCloudSaveCorruptedError when the cloud was overridden successfully?
         string msg = "Cloud corrupted. Override?";
 

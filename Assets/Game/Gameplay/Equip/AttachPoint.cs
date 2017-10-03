@@ -49,30 +49,13 @@ public class AttachPoint : MonoBehaviour {
 		}
 	}
 
-	public void EquipAccessory( Equipable _accesory, DragonEquip _dragonEquip ) {
+	public void EquipAccessory( Equipable _accesory ) {
 		m_item = _accesory;
 		m_item.transform.parent = transform;
 		m_item.transform.localPosition = Vector3.zero;
 		m_item.transform.localScale = Vector3.one;
 		m_item.transform.localRotation = Quaternion.identity;
 		m_item.gameObject.SetLayerRecursively(transform.gameObject.layer);
-		ScaleEquipableParticle scaler = _accesory.GetComponentInChildren<ScaleEquipableParticle>();
-		if ( scaler != null )
-		{
-			scaler.Setup();
-			if ( scaler.m_addToBodyParts )
-			{
-				DragonParticleController particleController = _dragonEquip.GetComponentInChildren<DragonParticleController>();
-				if ( particleController )
-				{
-					DragonParticleController.BodyParticle bParticle = new DragonParticleController.BodyParticle();
-					bParticle.m_stopInsideWater = scaler.m_stopInsideWater;
-					bParticle.m_stopWhenDead = scaler.m_stopWhenDead;
-					bParticle.m_particleReference = scaler.GetComponentInChildren<ParticleSystem>();
-					particleController.m_bodyParticles.Add( bParticle );
-				}
-			}
-		}
 	}
 
 	public void HideAccessory()

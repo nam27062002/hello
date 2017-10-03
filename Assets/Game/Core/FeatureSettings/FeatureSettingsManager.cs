@@ -1009,11 +1009,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         get
         {
             // Makes sure that WIO scenes won't be loaded on PRODUCTION
-            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+            /*ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
             return (kServerConfig != null &&
                     kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION &&
                     kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_STAGE &&
                     kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC);         
+                    */
+            return false;
         }
     }
 
