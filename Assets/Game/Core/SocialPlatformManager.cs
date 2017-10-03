@@ -227,8 +227,9 @@ public class SocialPlatformManager : MonoBehaviour
         // this login flow to stay waiting forever
         isAppInit = false;
 
+        string socialId = PersistenceFacade.instance.LocalDriver.Prefs_SocialId;
         if (FeatureSettingsManager.IsDebugEnabled)
-            Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + IsLoggedIn() + " SocialId = " + PersistencePrefs.Social_Id);
+            Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + IsLoggedIn() + " SocialId = " + socialId);
 
         Login_Discard();
 
@@ -241,7 +242,7 @@ public class SocialPlatformManager : MonoBehaviour
 
         if (isSilent)
         {
-            bool neverLoggedIn = string.IsNullOrEmpty(PersistencePrefs.Social_Id);
+            bool neverLoggedIn = string.IsNullOrEmpty(socialId);
 
 #if UNITY_EDITOR
             // We want to prevent developers from seeing social login popup every time the game is started since editor doesn't cache the social token
@@ -447,7 +448,7 @@ public class SocialPlatformManager : MonoBehaviour
         }
     }
     #endregion
-
+   
     public void Update()
     {
         if (Login_IsLogging)
