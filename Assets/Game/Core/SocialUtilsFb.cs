@@ -36,23 +36,67 @@ public class SocialUtilsFb : SocialUtils
         return FacebookManager.SharedInstance.IsLoggedIn();
     }
 
-    protected override void GetProfileInfo(Action<Dictionary<string, string>> onGetProfileInfo)
+    public override void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo)
     {
         if (FB.IsInitialized && FB.IsLoggedIn)
         {
-            FB.API("/me", HttpMethod.GET, delegate (IGraphResult response)
-            {
+            ProfileInfo profileInfo = null;
+
+            FB.API("/me?fields=id,first_name,last_name,gender,email,age_range", HttpMethod.GET, delegate (IGraphResult response)
+            {                
                 if (string.IsNullOrEmpty(response.Error))
                 {
-                    Dictionary<string, string> profileInfo = new Dictionary<string, string>();
+                    profileInfo = new ProfileInfo();
 
                     foreach (KeyValuePair<string, object> pair in response.ResultDictionary)
                     {
-                        string value = pair.Value as string;
-
-                        if (value != null)
+                        if (pair.Key == "age_range")
                         {
-                            profileInfo.Add(pair.Key, value);
+                            Dictionary<string, object> age_range = pair.Value as Dictionary<string, object>;
+                            if (age_range != null)
+                            {
+                                int min = 0;
+                                int max = 0;
+
+                                string key = "min";                                
+                                if (age_range.ContainsKey(key))
+                                {
+                                    min = Convert.ToInt32(age_range[key]);
+                                }
+
+                                key = "max";
+                                if (age_range.ContainsKey(key))
+                                {                                    
+                                    max = Convert.ToInt32(age_range[key]);
+                                }                                
+
+                                int ageAsInt = min;
+                                if (max > 0)
+                                {
+                                    if (min > 0)
+                                    {
+                                        ageAsInt = (min + max) / 2;
+                                    }
+                                    else
+                                    {
+                                        ageAsInt = max;
+                                    }
+                                }
+
+                                int birthday = GameServerManager.SharedInstance.GetEstimatedServerTime().Year - ageAsInt;
+
+                                //profileInfo.Add("age_range_min", min + "");
+                                //profileInfo.Add("age_range_max", max + "");                                
+                                profileInfo.YearOfBirth = birthday;
+                            }
+                        }
+                        else
+                        {
+                            string value = pair.Value as string;
+                            if (value != null)
+                            {
+                                profileInfo.SetValueAsString(pair.Key, value);
+                            }
                         }
                     }
 

@@ -9,8 +9,8 @@ public abstract class SocialUtils
     {
         public string SocialId
         {
-            get { return PersistencePrefs.Social_Id; }
-            set { PersistencePrefs.Social_Id = value; }
+            get { return PersistenceFacade.instance.LocalDriver.Prefs_SocialId; }
+            set { PersistenceFacade.instance.LocalDriver.Prefs_SocialId = value; }
         }
 
         public string ProfileName
@@ -168,7 +168,66 @@ public abstract class SocialUtils
 
     public abstract bool IsLoggedIn();            
 
-    protected abstract void GetProfileInfo(Action<Dictionary<string, string>> onGetProfileInfo);
+    public class ProfileInfo
+    {
+        public const string KEY_ID = "id";
+        public const string KEY_FIRST_NAME = "first_name";
+        public const string KEY_LAST_NAME = "last_name";
+        public const string KEY_GENDER = "gender";
+        public const string KEY_EMAIL = "email";
+
+        public ProfileInfo()
+        {
+            Reset();
+        }
+
+        private Dictionary<string, string> ValuesAsString { get; set; }
+
+        public void SetValueAsString(string key, string value)
+        {
+            if (ValuesAsString == null)
+            {
+                ValuesAsString = new Dictionary<string, string>();
+            }
+
+            if (ValuesAsString.ContainsKey(key))
+            {
+                ValuesAsString[key] = value;
+            }
+            else
+            {
+                ValuesAsString.Add(key, value);
+            }
+        }
+
+        public string GetValueAsString(string key)
+        {
+            return (ValuesAsString != null && ValuesAsString.ContainsKey(key)) ? ValuesAsString[key] : null;
+        }
+
+        public void Reset()
+        {
+            if (ValuesAsString != null)
+            {
+                ValuesAsString.Clear();
+            }
+
+            YearOfBirth = 0;
+        }
+
+        public string Id                    { get { return GetValueAsString(KEY_ID); } }
+        public string FirstName             { get { return GetValueAsString(KEY_FIRST_NAME); } }
+        public string LastName              { get { return GetValueAsString(KEY_LAST_NAME); } }
+        public string Gender                { get { return GetValueAsString(KEY_GENDER); } }
+        public string Email                 { get { return GetValueAsString(KEY_EMAIL); } }
+        public int YearOfBirth              { get; set; }
+    }
+
+    /// <summary>
+    /// Request the user's profile information to the social platform. Cached information is not retrieved
+    /// </summary>
+    /// <param name="onGetProfileInfo"></param>
+    public abstract void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo);
     
     protected void GetProfilePicture(string socialID, Action<Texture2D, bool> onGetProfilePicture, int width = 256, int height = 256)
     {
@@ -214,9 +273,13 @@ public abstract class SocialUtils
         }
 
         return returnValue;
-    }
+    }    
 
-    public void Profile_GetInfo(Action<string, Texture2D> onDone)
+    /// <summary>
+    /// Returns user's first name and picture. If these data are cached then they are used instead of requesting them to the social platform.
+    /// </summary>
+    /// <param name="onDone"></param>
+    public void Profile_GetSimpleInfo(Action<string, Texture2D> onDone)
     {
         // Only one request should be processed
         if (Profile_OnGetInfoDone != null && FeatureSettingsManager.IsDebugEnabled)
@@ -299,14 +362,9 @@ public abstract class SocialUtils
             }
         };
 
-        GetProfileInfo(delegate (Dictionary<string, string> profileInfo)
-        {
-            string profileName = null;
-            if (profileInfo != null && profileInfo.ContainsKey("name"))
-            {
-                profileName = profileInfo["name"];
-            }
-            Cache.ProfileName = profileName;
+        GetProfileInfoFromPlatform(delegate (ProfileInfo profileInfo)
+        {           
+            Cache.ProfileName = (profileInfo != null) ? profileInfo.FirstName : null;
             profileIsNameReady = true;
             onReady();
         });
