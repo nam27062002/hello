@@ -630,10 +630,12 @@ public class PersistenceCloudDriver
 		{
 			Action onUserLoggedIn = delegate()
 			{
-				LocalDriver.ProcessSocialState(onDone);
+				LocalDriver.ProcessSocialState(onDone);                
 			};
 
             SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
+            HDTrackingManager.Instance.Notify_SocialAuthentication();
+
             string socialPlatform = manager.GetPlatformName();
             string socialId = manager.GetUserID();
 			LocalDriver.NotifyUserHasLoggedIn(socialPlatform, socialId, onUserLoggedIn);

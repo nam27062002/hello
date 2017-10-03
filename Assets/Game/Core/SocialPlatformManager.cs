@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using SimpleJSON;
 using System;
+using System.Collections.Generic;
 public class SocialPlatformManager : MonoBehaviour
 {
 
@@ -144,9 +145,22 @@ public class SocialPlatformManager : MonoBehaviour
         return m_socialUtils.GetUserName();
     }
 
-    public void GetProfileInfo(Action<string, Texture2D> onDone)
+    /// <summary>
+    /// Returns user's profile information.
+    /// </summary>
+    /// <param name=""></param>
+    public void GetProfileInfo(Action<SocialUtils.ProfileInfo> onDone)
     {
-        m_socialUtils.Profile_GetInfo(onDone);
+        m_socialUtils.GetProfileInfoFromPlatform(onDone);
+    }
+
+    /// <summary>
+    /// Returns the user's first name and her picture.
+    /// </summary>
+    /// <param name="onDone"></param>
+    public void GetSimpleProfileInfo(Action<string, Texture2D> onDone)
+    {
+        m_socialUtils.Profile_GetSimpleInfo(onDone);        
     }
 
     public bool NeedsProfileInfoToBeUpdated()

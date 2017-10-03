@@ -412,7 +412,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             }                            
         };
 
-        SocialPlatformManager.SharedInstance.GetProfileInfo(onDone);
+        SocialPlatformManager.SharedInstance.GetSimpleProfileInfo(onDone);
     }
     #endregion
 
