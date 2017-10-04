@@ -34,6 +34,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
 
 	private PopupController m_loadingPopupController = null;
+	private bool m_dirty = false;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -65,8 +66,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			m_pills.Add(pill);
 		}
 
-		// Focus curent language
-		SelectCurrentLanguage(false);
+		if (m_pills.Count == 1) {
+			m_languageScrollList.enabled = false;
+		}
+
+		m_dirty = true;
 
 		// Disable google play group if not available
 #if UNITY_ANDROID
@@ -80,6 +84,14 @@ public class PopupSettingsOptionsTab : MonoBehaviour
     void OnDestroy(){
 		Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
     }
+
+	void Update() {
+		if (m_dirty) {
+			// Focus curent language
+			SelectCurrentLanguage(false);
+			m_dirty = false;
+		}
+	}
 
 	/// <summary>
 	/// Focus the currently selected language.
@@ -173,6 +185,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
 			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
+
+		m_dirty = true;
 	}
 
 	public void OnHide(){
