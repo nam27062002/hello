@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 225000013469517432}
   - component: {fileID: 114615126237243354}
   - component: {fileID: 114400321218219590}
+  - component: {fileID: 114408334029119218}
   m_Layer: 5
   m_Name: PF_PopupInfoDragonBonus
   m_TagString: Untagged
@@ -95,7 +96,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224000010593596090}
   - component: {fileID: 222000010223131798}
-  - component: {fileID: 114000013982414528}
   - component: {fileID: 114000011504845374}
   m_Layer: 5
   m_Name: Message_description
@@ -571,6 +571,17 @@ MonoBehaviour:
           m_StringArgument: hd_popup_open
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 114408334029119218}
+        m_MethodName: OnOpenPreAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   OnOpenPostAnimation:
@@ -775,22 +786,6 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
---- !u!114 &114000013982414528
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000013597792330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: TID_EVENT_BONUS_DRAGON_INFO_MESSAGE
-  m_caseType: 0
-  m_replacements:
-  - '#FFB712'
-  - '#78FD36'
 --- !u!114 &114002269236787578
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1120,6 +1115,19 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+--- !u!114 &114408334029119218
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010013748420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ae1367017f2e4321bf851ceb422eb3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_icon: {fileID: 114754380225840088}
+  m_text: {fileID: 114000011504845374}
 --- !u!114 &114415718654871208
 MonoBehaviour:
   m_ObjectHideFlags: 1
