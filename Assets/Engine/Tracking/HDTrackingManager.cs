@@ -227,9 +227,14 @@ public class HDTrackingManager
 	public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
 
     /// <summary>
-    /// The user has logged in the social platform
+    /// The user has logged in the social platform.
     /// </summary>    
     public virtual void Notify_SocialAuthentication() {}
+
+    /// <summary>
+    /// The user has closed the legal popup.
+    /// </summary>
+    public virtual void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted) {}
     #endregion
 
     #region log

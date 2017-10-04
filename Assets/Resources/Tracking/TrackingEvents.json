@@ -222,11 +222,23 @@
                 "etl"
             ]
         },
-		 "custom.player.authentication": {
+		"custom.player.authentication": {
             "Parameters": [
                 {"provider": {"Status": "OK"}},
                 {"yearOfBirth": {"Status": "OK"}},
 				{"gender": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.game.legalpopup": {
+            "Parameters": [
+                {"nbViews": {"Status": "OK"}},
+                {"legalPopupType": {"Status": "OK"}},
+				{"duration": {"Status": "OK"}},
+				{"accepted": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -564,5 +576,21 @@
             "Type": "STRING:125",
             "Values": []
         },
+		"nbViews": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"legalPopupType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"duration": {
+            "Type": "INT:4",
+            "Values": []
+        },		
+		"accepted": {
+            "Type": "INT:4",
+            "Values": []
+        },				
     }
 }
