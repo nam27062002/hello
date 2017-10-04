@@ -205,11 +205,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
 		if(def == null) return;	// Shouldn't happen
 
-		// Show feedback
-		UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_EVENT_BONUS_DRAGON_INFO_MESSAGE", def.GetLocalized("tidName")),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);
+		PopupManager.OpenPopupInstant(PopupInfoDragonBonus.PATH);
 	}
 }
