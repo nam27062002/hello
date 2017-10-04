@@ -76,6 +76,10 @@ public class DragonPartFollow : MonoBehaviour {
 		if ( m_numParts != m_partsNames.Count )
 			DragonPartFollowSetup();
 		float scale = (m_root.lossyScale.x / m_startScale);
+
+		float delta = Time.deltaTime;
+		delta = Mathf.Min( delta, 1/15.0f);
+
 		for( int i = 0; i<m_numParts; i++ )
 		{
 			Transform follow;
@@ -108,7 +112,7 @@ public class DragonPartFollow : MonoBehaviour {
 			Transform partTransform = m_parts[i];
 			Vector3 dir = (partInfo.m_previousPos - follow.position).normalized;
 			Vector3 wanterDir = follow.TransformDirection( partInfo.m_direction );
-			Vector3 finalDir = Vector3.Slerp( dir, wanterDir, Time.deltaTime * springSpeed);
+			Vector3 finalDir = Vector3.Slerp( dir, wanterDir, delta * springSpeed);
 			partTransform.position = follow.position + finalDir * partInfo.m_distance * scale;
 
 			partTransform.LookAt( follow, follow.up );
