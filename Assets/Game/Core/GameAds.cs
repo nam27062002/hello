@@ -80,7 +80,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
 				CurrentAdPurpose = EAdPurpose.NONE;
 				CurrentAdStartTimestamp = 0f;
-				MopubAdsManager.SharedInstance.Init (interstitialId, rewardId, true, 30);
+				MopubAdsManager.SharedInstance.Init (interstitialId, false, rewardId, true, 30);
 			}
         }
 	}
