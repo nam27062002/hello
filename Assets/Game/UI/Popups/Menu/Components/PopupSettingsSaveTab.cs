@@ -525,6 +525,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     public void OnNotificationsSettingChanged(){
 		int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);
 		PlayerPrefs.SetInt( PopupSettings.KEY_SETTINGS_NOTIFICATIONS, v );
+        NotificationsManager.SharedInstance.SetNotificationsEnabled(v > 0);
     }
     #endregion
 }
