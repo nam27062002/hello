@@ -518,13 +518,13 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	[SerializeField]
     private Slider m_notificationsSlider;
 
-    public void Notifications_Init(){
-		m_notificationsSlider.normalizedValue = PlayerPrefs.GetInt( PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
+    public void Notifications_Init(){        
+        m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
     }
 
     public void OnNotificationsSettingChanged(){
-		int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);
-		PlayerPrefs.SetInt( PopupSettings.KEY_SETTINGS_NOTIFICATIONS, v );
+        int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);        
+        HDNotificationsManager.instance.SetNotificationsEnabled(v > 0);        
     }
     #endregion
 }
