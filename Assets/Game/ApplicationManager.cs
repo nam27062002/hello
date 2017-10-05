@@ -582,12 +582,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {        
         NotificationsManager.SharedInstance.Initialise();
 
-        // [DGR] TODO: icons has to be created and located in the right folder
+        // [DGR] TODO: icon has to be created and located in the right folder
 #if UNITY_ANDROID
         NotificationsManager.SharedInstance.SetNotificationIcons ("", "push_notifications", 0xFFFF0000); 
 #endif
-		int strLanguageSku = PlayerPrefs.GetInt(PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
-        NotificationsManager.SharedInstance.SetNotificationsEnabled( strLanguageSku > 0 );
+		int notificationsEnabled = PlayerPrefs.GetInt(PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
+        NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0 );
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Notifications enabled = " + notificationsEnabled);
     }
     #endregion
 
@@ -1064,6 +1067,25 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Debug_TestPersistenceSave()
     {
         PersistenceFacade.instance.Save_Request();
+    }
+
+    private const string LOG_CHANNEL = "[ApplicationManager]";
+    private void Log(string msg)
+    {
+        msg = LOG_CHANNEL + msg;
+        Debug.Log(msg);
+    }
+
+    private void LogWarning(string msg)
+    {
+        msg = LOG_CHANNEL + msg;
+        Debug.LogWarning(msg);
+    }
+
+    private void LogError(string msg)
+    {
+        msg = LOG_CHANNEL + msg;
+        Debug.LogError(msg);
     }
     #endregion
 }
