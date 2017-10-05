@@ -250,6 +250,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
 					}
+					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
 			})
@@ -300,6 +301,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
 					}
+					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
 			})
