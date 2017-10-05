@@ -207,7 +207,7 @@ public class FogManager : MonoBehaviour
 		}
 	}
 
-	void Update()
+	public void Update()
 	{
 		if ( Application.isPlaying && m_active)
 		{

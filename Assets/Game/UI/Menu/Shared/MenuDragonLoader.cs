@@ -111,6 +111,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		get { return m_dragonInstance; }
 	}
 
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -128,20 +129,8 @@ public class MenuDragonLoader : MonoBehaviour {
 	private void OnEnable() {
 		// Initialize loaded dragon (unless using MANUAL mode)
 		if(m_mode != Mode.MANUAL) RefreshDragon();
-
-		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_CONFIRMED, OnDragonConfirmed);
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
-	/// <summary>
-	/// The component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_CONFIRMED, OnDragonConfirmed);
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-	}
 
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
@@ -281,26 +270,6 @@ public class MenuDragonLoader : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// The current dragon has changed.
-	/// </summary>
-	/// <param name="_sku">The sku of the new dragon.</param>
-	public void OnDragonConfirmed(string _sku) {
-		// Only care if we're in CURRENT mode
-		if(m_mode != Mode.CURRENT_DRAGON) return;
-		LoadDragon(_sku);
-	}
-
-	/// <summary>
-	/// The selected dragon has changed.
-	/// </summary>
-	/// <param name="_sku">The sku of the new dragon.</param>
-	public void OnDragonSelected(string _sku) {
-		// Only care if we're in SELECTED mode
-		if(m_mode != Mode.SELECTED_DRAGON) return;
-		LoadDragon(_sku);
-	}
-
 	public void SetViewPosition( Vector3 position ){
 		Transform _viewTransform = m_dragonInstance.transform.Find("view");
 		Vector3 diff = position - _viewTransform.position;

@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -649,6 +650,10 @@ public class GameSceneController : GameSceneControllerBase {
 	}
 
     private void OnResultsSceneLoaded() {        
+
+		Scene scene = SceneManager.GetSceneByName( ResultsScreenController.NAME );
+		SceneManager.SetActiveScene(scene);
+
 		// Hide loading screen
 		LoadingScreen.Toggle(false, false);
 

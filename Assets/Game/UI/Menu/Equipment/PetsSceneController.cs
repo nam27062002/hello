@@ -26,6 +26,8 @@ public class PetsSceneController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private MenuDragonLoader m_dragonLoader;
+
 	[SerializeField] private Transform[] m_petAnchors = null;
 	public Transform[] petAnchors { 
 		get { return m_petAnchors; }
@@ -110,6 +112,8 @@ public class PetsSceneController : MonoBehaviour {
 	public void OnShowPreAnimation() {
 		// Store target dragon
 		m_dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);	// Selected dragon
+
+		m_dragonLoader.RefreshDragon();
 
 		// Adjust anchor positions based on dragon's slots amount so they look centered to 0
 		int numSlots = m_dragonData.pets.Count;
