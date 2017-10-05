@@ -921,7 +921,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (e != null)
         {
             e.SetParameterValue(TRACK_PARAM_NB_VIEWS, nbViews);
-            e.SetParameterValue(TRACK_PARAM_LEGAL_POPUP_TYPE, "Classical");
+            Track_AddParamString(e, TRACK_PARAM_LEGAL_POPUP_TYPE, "Classical");
             e.SetParameterValue(TRACK_PARAM_DURATION, duration);
             Track_AddParamBool(e, TRACK_PARAM_ACCEPTED, hasBeenAccepted);            
 
