@@ -22,6 +22,12 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 
 	public void EatEvent()
 	{
+
+	}
+
+	public void CameraShake()
+	{
+		Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, 0.5f, 0.25f);
 	}
 
 

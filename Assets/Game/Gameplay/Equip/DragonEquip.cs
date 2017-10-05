@@ -7,7 +7,7 @@ public class DragonEquip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const string SKIN_PATH = "Game/Equipable/Skins/";
+	public const string SKIN_PATH = "Game/Equipable/Skins/";
 	private const string PET_PREFAB_PATH_GAME = "Game/Equipable/Pets/";
 	private const string PET_PREFAB_PATH_MENU = "UI/Menu/Pets/";
 
@@ -79,17 +79,17 @@ public class DragonEquip : MonoBehaviour {
 			if (renderers != null) {
 				for (int i = 0; i < renderers.Length; i++) {
 					Renderer renderer = renderers[i];
-					Material[] materials = renderer.sharedMaterials;
+					Material material = renderer.material;
 
-					if ( materials[0] != null )
+					if ( material != null )
 					{
-						string name = materials[0].shader.name;
+						string name = material.shader.name;
 						if ( name.Contains("Dragon/Wings") || name.Contains("Dragon/Body"))
 						{
 							m_renderers.Add( renderer );
 							// Stores the materials of this renderer in a dictionary for direct access//
 							List<Material> materialList = new List<Material>();	
-							materialList.AddRange(materials);						
+							materialList.AddRange(renderer.materials);
 							m_materials[renderer.GetInstanceID()] = materialList;
 						}
 					}
