@@ -94,6 +94,8 @@ ModelImporter:
     100172: Fire_Dummy
     100174: SuctionPoint
     100176: SwallowPoint
+    100178: Dragon_Font_LArm_IKTarget
+    100180: Dragon_Front_RArm_IKTarget
     400000: Dragon_Back_Hip
     400002: Dragon_Back_Spine
     400004: //RootNode
@@ -183,6 +185,8 @@ ModelImporter:
     400172: Fire_Dummy
     400174: SuctionPoint
     400176: SwallowPoint
+    400178: Dragon_Font_LArm_IKTarget
+    400180: Dragon_Front_RArm_IKTarget
     7400000: ResultScreenIntro
     7400002: ResultScreenLoop
     9500000: //RootNode
@@ -213,7 +217,7 @@ ModelImporter:
       name: ResultScreenIntro
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 10
+      lastFrame: 110
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -232,7 +236,14 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.19883041
+        functionName: CameraShake
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -418,15 +429,15 @@ ModelImporter:
     - serializedVersion: 16
       name: ResultScreenLoop
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 10
+      firstFrame: 110
+      lastFrame: 265
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
