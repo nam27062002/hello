@@ -219,6 +219,8 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 
 			if (m_pools.ContainsKey(_prefabName)) {
 				container = m_pools[_prefabName];
+				if ( container.size <= 0 )
+					container.size = 1;
 			} else {
 				container = new PoolContainer();
 				container.handler = new ParticleHandler();
