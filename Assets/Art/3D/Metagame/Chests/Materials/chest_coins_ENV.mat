@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_DragonEvil_Corpse_1
-  m_Shader: {fileID: 4800000, guid: eb00c5160d1aabb4098203518eeae4ea, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: chest_coins_ENV
+  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
+  m_ShaderKeywords: FOG OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -19,7 +19,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 9215bd0c2662a42ea84f59a94db2a360, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -34,19 +34,23 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 19020747fa6ab4858b9b1219aba0c215, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 9ed17bd4a13d549a58fb60b11ba2f826, type: 3}
+        m_Texture: {fileID: 2800000, guid: 19535f78d94cf427e9977d189c6fd418, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MatCap:
+        m_Texture: {fileID: 2800000, guid: fc83aa10b2d1264459fc18fe1ea152d9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -58,39 +62,50 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ReflectionMap:
+    - _SecondTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - VertexColor: 0
+    - _BlendMode: 0
+    - _BlinkTimeMultiplier: 2
     - _BumpScale: 1
+    - _Cull: 2
+    - _CutOff: 0.5
     - _Cutoff: 0.5
+    - _DarkenDistance: 20
+    - _DarkenPosition: 0
     - _DetailNormalMapScale: 1
+    - _DoubleSided: 0
     - _DstBlend: 0
-    - _EmissionScaleUI: 0
-    - _Fresnel: 2.63
+    - _EmissivePower: 1
+    - _EnableAutomaticBlend: 0
+    - _EnableBlendTexture: 0
+    - _EnableCutoff: 0
+    - _EnableDarken: 0
+    - _EnableEmissiveBlink: 0
+    - _EnableFog: 1
+    - _EnableLightmapContrast: 0
+    - _EnableNormalMap: 0
+    - _EnableOpaqueAlpha: 1
+    - _EnableSpecular: 0
+    - _GlossMapScale: 1
     - _Glossiness: 0.5
-    - _InnerLightAdd: 0
+    - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1
+    - _NormalStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0
-    - _SecondLightIntensity: 0.47
-    - _SpecExponent: 16.6
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SpecularPower: 3
     - _SrcBlend: 1
+    - _StencilMask: 10
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _AmbientAdd: {r: 0.10980392, g: 0.05490196, b: 0.05490196, a: 0}
-    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - _ColorAdd: {r: 0.04411763, g: 0.003892733, b: 0.003892733, a: 0}
-    - _ColorMultiply: {r: 0.8308824, g: 0.81255406, b: 0.81255406, a: 1}
+    - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0.3897059, g: 0.3659125, b: 0.26649007, a: 1}
-    - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SecondLightColor: {r: 0.26666668, g: 0.26666668, b: 0.26666668, a: 0}
-    - _SecondLightDir: {r: -0.54, g: -1.16, b: -0.26, a: 0.45}
-    - _Tint: {r: 1, g: 1, b: 1, a: 0}
+    - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
