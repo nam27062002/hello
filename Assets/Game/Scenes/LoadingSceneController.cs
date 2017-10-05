@@ -349,6 +349,9 @@ public class LoadingSceneController : SceneController {
 				ApplicationManager.instance.GameCenter_Login();
 #endif
 
+                HDNotificationsManager.CreateInstance();
+                HDNotificationsManager.instance.Initialise();
+
                 StartLoadFlow();
           	}break;
         }
