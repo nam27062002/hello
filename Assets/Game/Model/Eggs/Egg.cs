@@ -191,7 +191,7 @@ public class Egg {
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
 
 				// Schedule local notification!
-                NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationDuration.TotalSeconds));
+                HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationDuration.TotalSeconds));
            	} break;
 
 			// Opening
