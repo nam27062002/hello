@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4301365850573892}
   - component: {fileID: 137193920381690374}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: low_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,7 +35,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4927534334574404}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Mucus_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51,7 +51,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4666257081071246}
   - component: {fileID: 95565296269781356}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,10 +71,9 @@ GameObject:
   - component: {fileID: 114389728045514394}
   - component: {fileID: 114926092756141240}
   - component: {fileID: 135988244375781024}
-  - component: {fileID: 135635765850876950}
   - component: {fileID: 54756509201626368}
   - component: {fileID: 114536853369661980}
-  m_Layer: 16
+  m_Layer: 21
   m_Name: PF_SlimePink
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +88,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4428905623053040}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: groundSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,6 +104,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4960214319833660}
   - component: {fileID: 114544383383283308}
+  - component: {fileID: 135530066303321374}
+  - component: {fileID: 114776101038716246}
   m_Layer: 16
   m_Name: Poison
   m_TagString: Untagged
@@ -132,7 +133,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1448014202897300}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 130.397, y: 55.270462, z: 0}
+  m_LocalPosition: {x: 137.47751, y: 38.03008, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4666257081071246}
@@ -311,6 +312,31 @@ MonoBehaviour:
   m_sku: Slime
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
+--- !u!114 &114776101038716246
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1696941249362700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ec28088696d843d1a86f4d065110df8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_receiver: {fileID: 1448014202897300}
+  m_onCollisionEnter: 0
+  m_onCollisionStay: 0
+  m_onCollisionExit: 0
+  m_onTriggerEnter: 1
+  m_onTriggerStay: 1
+  m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114842981424736860
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -328,9 +354,9 @@ MonoBehaviour:
   m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 5cd450ba7150f4333908c614665bde04, type: 2}
   m_railSeparation:
-    min: 0.5
-    max: 1
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":5,"max":20},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"seconds":{"min":6,"max":10},"dataType":"AI.Behaviour.TimerRangedData","editorFolded":false},{"damage":50,"type":1,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false},{"seconds":6,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"action":4096,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"tier":4,"dataType":"AI.Behaviour.OverrideEdibleValueData","editorFolded":false}]'
+    min: -1.25
+    max: 1.25
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":0,"max":0},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"seconds":{"min":6,"max":10},"dataType":"AI.Behaviour.TimerRangedData","editorFolded":false},{"damage":50,"type":1,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false},{"seconds":6,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"action":4096,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"tier":4,"dataType":"AI.Behaviour.OverrideEdibleValueData","editorFolded":false}]'
   m_databaseKey: PF_SlimePink
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -596,12 +622,12 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1.25
   m_poisonParticleTransform: {fileID: 4960214319833660}
---- !u!135 &135635765850876950
+--- !u!135 &135530066303321374
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1448014202897300}
+  m_GameObject: {fileID: 1696941249362700}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
