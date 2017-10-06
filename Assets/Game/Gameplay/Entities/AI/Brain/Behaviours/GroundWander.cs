@@ -24,6 +24,7 @@ namespace AI {
 
 			private float m_side;
 
+			private bool m_hasIdleState;
 			private float m_idleTimer;
 			private float m_sideTimer;
 
@@ -54,38 +55,47 @@ namespace AI {
 
 				m_side = (Random.Range(0f, 1f) < 0.4f)? -1 : 1;
 
+				m_hasIdleState = m_data.timeToIdle.min > 0f;
 				m_idleTimer = m_data.timeToIdle.GetRandom();
 				m_sideTimer = m_data.timeToChangeDirection.GetRandom();
 			}
 
 			protected override void OnUpdate() {
 				m_pilot.SetMoveSpeed(m_data.speed);
-				m_idleTimer -= Time.deltaTime;
 
-				if (m_idleTimer > 0f) {
-					Vector3 direction = m_machine.groundDirection;
-					direction.z = 0f;
-
-					Vector3 target = m_machine.position + direction * m_side * 1.5f;
-
-					m_sideTimer -= Time.deltaTime;
-					if (m_sideTimer <= 0 || ShouldChangeDirection(target)) {
-						m_side *= -1;
-						m_sideTimer = m_data.timeToChangeDirection.GetRandom();
+				if (m_hasIdleState) {
+					m_idleTimer -= Time.deltaTime;
+					if (m_idleTimer > 0f) {
+						DoWander();
+					} else {
+						m_idleTimer = 0f;
+						m_pilot.SlowDown(true);
+						float distanceToTarget = (m_pilot.target - m_machine.position).sqrMagnitude;
+						if (distanceToTarget <= 2f || distanceToTarget > m_distanceToTarget) {
+							Transition(OnRest);
+						}
+						m_distanceToTarget = distanceToTarget;
 					}
-
-					m_distanceToTarget =  (target - m_machine.position).sqrMagnitude;
-
-					m_pilot.GoTo(target);
 				} else {
-					m_idleTimer = 0f;
-					m_pilot.SlowDown(true);
-					float distanceToTarget = (m_pilot.target - m_machine.position).sqrMagnitude;
-					if (distanceToTarget <= 2f || distanceToTarget > m_distanceToTarget) {
-						Transition(OnRest);
-					}
-					m_distanceToTarget = distanceToTarget;
+					DoWander();
 				}
+			}
+
+			private void DoWander() {
+				Vector3 direction = m_machine.groundDirection;
+				direction.z = 0f;
+
+				Vector3 target = m_machine.position + direction * m_side * 1.5f;
+
+				m_sideTimer -= Time.deltaTime;
+				if (m_sideTimer <= 0 || ShouldChangeDirection(target)) {
+					m_side *= -1;
+					m_sideTimer = m_data.timeToChangeDirection.GetRandom();
+				}
+
+				m_distanceToTarget =  (target - m_machine.position).sqrMagnitude;
+
+				m_pilot.GoTo(target);
 			}
 
 			private bool ShouldChangeDirection(Vector3 _pos) {
