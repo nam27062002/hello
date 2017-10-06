@@ -224,11 +224,12 @@ public class MenuDragonScroller : MonoBehaviour {
 		// If the new screen is not the dragon selection screen, hide all dragons except the selected one
 		// To prevent seeing the head/tail of the previous/next dragons in pets/disguises/photo screens.
 		bool showAll = (_evtData.toScreenIdx == (int)MenuScreens.DRAGON_SELECTION);
+		bool animate = _evtData.fromScreenIdx != (int)MenuScreens.PLAY;
 		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
 			// Use slot's ShowHideAnimator
 			// Show always if it's the selected dragon!
 			DragonData data = DragonManager.GetDragonData(kvp.Key);
-			kvp.Value.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || kvp.Key == InstanceManager.menuSceneController.selectedDragon);
+			kvp.Value.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || kvp.Key == InstanceManager.menuSceneController.selectedDragon, animate);
 		}
 	}
 }

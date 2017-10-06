@@ -102,6 +102,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			if ( InstanceManager.fogManager != null )
 			{
 				InstanceManager.fogManager.ForceAttributes( m_fog );
+				InstanceManager.fogManager.Update();
 			}
 			else
 			{
