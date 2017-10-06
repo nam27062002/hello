@@ -1279,7 +1279,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224436162820890494}
   - component: {fileID: 114423353268454690}
-  - component: {fileID: 114535174979864614}
   m_Layer: 5
   m_Name: VerticalLayout
   m_TagString: Untagged
@@ -5344,18 +5343,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
---- !u!114 &114535174979864614
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1558122099853706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a9395d97d8656d40baddf55f0b6655a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Overlay: 1
 --- !u!114 &114538261646121908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5672,6 +5659,7 @@ MonoBehaviour:
   m_anim: 0
   m_resetDragonScale: 1
   m_showPets: 0
+  m_hideResultsEquipment: 0
   m_removeFresnel: 1
   m_keepLayers: 0
   m_placeholderDragonSku: dragon_classic
@@ -7043,6 +7031,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_menuMode: 1
+  m_equipPets: 1
+  m_equipOnAwake: 1
 --- !u!114 &114836505083507194
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8175,7 +8165,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -16.779297, y: -17.597168}
+  m_AnchoredPosition: {x: -17, y: -17.5}
   m_SizeDelta: {x: 0, y: 120}
   m_Pivot: {x: 1, y: 1}
 --- !u!224 &224090269514698626
@@ -8780,8 +8770,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 125, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: -470}
+  m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224816032217486550
 RectTransform:

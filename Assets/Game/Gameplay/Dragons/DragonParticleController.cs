@@ -371,23 +371,15 @@ public class DragonParticleController : MonoBehaviour
 				if ( tr == null )
 					tr = transform;
 				corpse.transform.CopyFrom(tr);
-				Corpse c = corpse.GetComponent<Corpse>();
-				c.Spawn(false, false);
+				corpse.transform.localScale = m_dragonEquip.transform.localScale;
 
-				DragonEquip equip = corpse.GetComponent<DragonEquip>();
+
+				DragonCorpse equip = corpse.GetComponent<DragonCorpse>();
 				if ( equip != null ){
-					equip.dragonSku = m_dragonEquip.dragonSku;
-					equip.EquipDisguise( m_dragonEquip.dragonDisguiseSku );
-				}else{
-					Texture body = null;
-					Texture wings = null;
-					if ( m_dragonEquip.bodyMaterial )
-						body = m_dragonEquip.bodyMaterial.mainTexture;
-					// Not all dragons have wings
-					if ( m_dragonEquip.wingsMaterial )
-						wings = m_dragonEquip.wingsMaterial.mainTexture;
-					c.SwitchDragonTextures(body, wings);
+					equip.EquipDisguise( m_dragonEquip.dragonSku,m_dragonEquip.dragonDisguiseSku );
+					equip.Spawn(false);
 				}
+
 			}
 		}
 	}
