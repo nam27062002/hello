@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FlyAnimState : StateMachineBehaviour {
+public class RandomizeAnimStartFrame : StateMachineBehaviour {
 	private bool m_randomizeFrame = true;
 	 
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state

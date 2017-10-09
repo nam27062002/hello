@@ -17,7 +17,14 @@ public class AttachPoint : MonoBehaviour {
 		if(m_item == null) return;
 
 		if(_destroyItem) {
-			GameObject.Destroy(m_item.gameObject);
+			if ( Application.isPlaying )
+			{
+				GameObject.Destroy(m_item.gameObject);
+			}
+			else
+			{
+				GameObject.DestroyImmediate(m_item.gameObject);
+			}
 		}
 		m_item = null;
 	}
