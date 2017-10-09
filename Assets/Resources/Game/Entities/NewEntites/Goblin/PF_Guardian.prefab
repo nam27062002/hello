@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4880726547240966}
   - component: {fileID: 114246830796204986}
   m_Layer: 21
-  m_Name: firePoint (7)
+  m_Name: SmokePoint01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 4123537405202554}
   - component: {fileID: 114940713762393002}
   m_Layer: 21
-  m_Name: firePoint (6)
+  m_Name: SmokePoint02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -361,11 +361,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1792547270548192}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.19, y: 5.958, z: -2.727}
+  m_LocalPosition: {x: -1.42, y: 6.34, z: -2.37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4786410787579920}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4213986744036346
 Transform:
@@ -556,8 +556,8 @@ Transform:
   - {fileID: 4815254293126706}
   - {fileID: 4673730134176424}
   - {fileID: 4668033124170770}
-  - {fileID: 4123537405202554}
   - {fileID: 4880726547240966}
+  - {fileID: 4123537405202554}
   m_Father: {fileID: 4889497157332238}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -581,11 +581,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1120089371728446}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.21, y: 5.609, z: -2.022}
+  m_LocalPosition: {x: 1.32, y: 6.34, z: -2.37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4786410787579920}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4889497157332238
 Transform:
@@ -594,7 +594,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 11.54, y: -7.24, z: 10.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4584511614542920}
@@ -1266,7 +1266,7 @@ MonoBehaviour:
     min: 2
     max: 3
   m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":10,"max":16},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":7,"max":35},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":60,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":1,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":3,"arrivalRadius":1,"hasGuardState":true,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"damage":40,"weaponA":"weapon","weaponB":"weapon_alt","dataType":"AI.Behaviour.AttackTurnAroundData","editorFolded":false},{"speed":2.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
-  m_databaseKey: PF_Guardian
+  m_databaseKey: PF_Guardian (1)
 --- !u!135 &135070716903426124
 SphereCollider:
   m_ObjectHideFlags: 1
