@@ -21,6 +21,8 @@ GameObject:
   - component: {fileID: 4457012502524920}
   - component: {fileID: 198314428255425812}
   - component: {fileID: 199903907548754420}
+  - component: {fileID: 114996909611331336}
+  - component: {fileID: 114593424135514126}
   m_Layer: 0
   m_Name: PS_MachineSmoke
   m_TagString: Untagged
@@ -41,6 +43,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114593424135514126
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1635126543845806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 0
+  m_returnTo: 1
+  m_disableOnInvisible: 0
+  m_alwaysActive: 0
+--- !u!114 &114996909611331336
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1635126543845806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198314428255425812
 ParticleSystem:
   m_ObjectHideFlags: 1
