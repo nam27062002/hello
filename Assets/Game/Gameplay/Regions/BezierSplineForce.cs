@@ -88,7 +88,7 @@ namespace Assets.Code.Game.Spline
 					//Lerp a decreasing factor that we will multiply to the current force to simulate that the current affects us less and less
 					float outOfCurrentFactor = 0;
 					if (timeToLerpForceAfterExit > 0)
-						Mathf.Lerp ( 1.0f, 0.0f, ( currentTimeOutsideCurrent )/ timeToLerpForceAfterExit );
+						outOfCurrentFactor = Mathf.Lerp ( 1.0f, 0.0f, ( currentTimeOutsideCurrent )/ timeToLerpForceAfterExit );
 					velocity *= outOfCurrentFactor;
 					currentTimeOutsideCurrent += Time.fixedDeltaTime;
 
