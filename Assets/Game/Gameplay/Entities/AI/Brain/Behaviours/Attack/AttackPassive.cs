@@ -32,7 +32,7 @@ namespace AI {
 				m_dragon = InstanceManager.player.dragonHealthBehaviour;
 				m_timer = 0;
 
-				DragonTier dragonTier = InstanceManager.player.GetComponent<DragonPlayer>().data.tier;
+				DragonTier dragonTier = InstanceManager.player.data.tier;
 				Entity entity = m_pilot.GetComponent<Entity>();
 				m_enabled = !entity.IsEdible(dragonTier);
 			}
