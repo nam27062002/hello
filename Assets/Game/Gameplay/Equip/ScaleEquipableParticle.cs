@@ -8,10 +8,29 @@ public class ScaleEquipableParticle : MonoBehaviour {
 
 	void Start()
 	{
-		Setup();
-		if ( m_addToBodyParts )
+		Transform _tr;
+		DragonEquip _dragonEquip = GetComponentInParent<DragonEquip>();
+		if ( _dragonEquip )
 		{
-			DragonEquip _dragonEquip = GetComponentInParent<DragonEquip>();
+			_tr = _dragonEquip.transform;
+		}
+		else
+		{
+			DragonCorpse _corpse = GetComponentInParent<DragonCorpse>();
+			if ( _corpse )
+			{
+				_tr = _corpse.transform;
+			}
+			else
+			{
+				_tr = transform;
+			}
+		}
+		Setup( _tr );
+
+
+		if ( m_addToBodyParts && _dragonEquip)
+		{
 			DragonParticleController particleController = _dragonEquip.GetComponentInChildren<DragonParticleController>();
 			if ( particleController )
 			{
@@ -24,12 +43,12 @@ public class ScaleEquipableParticle : MonoBehaviour {
 		}
 	}
 
-	public void Setup()
+	public void Setup( Transform _tr )
 	{
 		ParticleScaler scaler = GetComponentInChildren<ParticleScaler>();
 		scaler.m_scaleOrigin = ParticleScaler.ScaleOrigin.TRANSFORM_SCALE;
 		scaler.m_whenScale = ParticleScaler.WhenScale.ENABLE;
-		scaler.m_transform = GetComponentInParent<DragonEquip>().transform;
+		scaler.m_transform = _tr;
 		scaler.DoScale();
 	}
 
