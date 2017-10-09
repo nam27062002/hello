@@ -56,7 +56,11 @@ public class DragonCorpse : MonoBehaviour {
 			m_forceDirection.Add(dir);
 		}
 		m_blood.CreatePool();
+		GetReferences();
+	}
 
+	public void GetReferences( bool editMode = false )
+	{
 		// Store attach points sorted to match AttachPoint enum
 		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
 		for(int i = 0; i < points.Length; i++) {
@@ -64,14 +68,22 @@ public class DragonCorpse : MonoBehaviour {
 		}
 
 		Transform view = transform.Find("view");
+		m_originalMaterials.Clear();
 		if (view != null) {
 			m_renderers = view.GetComponentsInChildren<Renderer>();
 			for( int i = 0; i<m_renderers.Length; ++i )
 			{
-				m_originalMaterials.Add( m_renderers[i].material );
+				if ( Application.isPlaying )
+				{
+					m_originalMaterials.Add( m_renderers[i].material );
+				}
+				else
+				{
+					m_originalMaterials.Add( m_renderers[i].sharedMaterial );
+				}
+
 			}
 		}
-
 		m_deathShader = Shader.Find("Hungry Dragon/Dragon/Death");
 	}
 
@@ -139,15 +151,7 @@ public class DragonCorpse : MonoBehaviour {
 			}
 			m_fadeMaterials.Clear();
 			SetSkin( dragonSku, def.Get("skin") );
-
-			// Remove old body parts
-			for( int i = 0; i<m_attachPoints.Length; i++ )
-			{
-				if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
-				{
-					m_attachPoints[i].Unequip(true);
-				}
-			}
+			RemoveAccessories();
 
 			// Now body parts!
 			List<string> bodyParts = def.GetAsList<string>("body_parts");
@@ -164,24 +168,27 @@ public class DragonCorpse : MonoBehaviour {
 						if ( equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null )
 						{
 							m_attachPoints[attackPointIdx].EquipAccessory( equipable );
-							Transform tr =  equipable.transform.Find("view");
-							if (tr != null)
+							if ( Application.isPlaying )	// if playing switch to death shaders, if not, in editor, we dont need it
 							{
-								Renderer[] renderers = tr.GetComponentsInChildren<Renderer>();
-								if ( renderers != null && renderers.Length > 0 )
+								Transform tr =  equipable.transform.Find("view");
+								if (tr != null)
 								{
-									// Get Materials and change shader to wing if necesarry
-									// Then add those materials to the fade material list
-									for( int j = 0; j<renderers.Length; ++j )
+									Renderer[] renderers = tr.GetComponentsInChildren<Renderer>();
+									if ( renderers != null && renderers.Length > 0 )
 									{
-										Renderer r = renderers[j];
-										for( int k = 0; k<r.materials.Length; ++k )
+										// Get Materials and change shader to wing if necesarry
+										// Then add those materials to the fade material list
+										for( int j = 0; j<renderers.Length; ++j )
 										{
-											string shaderName = r.materials[k].shader.name;
-											if (shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body"))
+											Renderer r = renderers[j];
+											for( int k = 0; k<r.materials.Length; ++k )
 											{
-												r.materials[k].shader = m_deathShader;
-												m_fadeMaterials.Add( r.materials[k] );
+												string shaderName = r.materials[k].shader.name;
+												if (shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body"))
+												{
+													r.materials[k].shader = m_deathShader;
+													m_fadeMaterials.Add( r.materials[k] );
+												}
 											}
 										}
 									}
@@ -190,7 +197,14 @@ public class DragonCorpse : MonoBehaviour {
 						}
 						else
 						{
-							Destroy( objInstance );
+							if ( Application.isPlaying )
+							{
+								Destroy( objInstance );
+							}
+							else
+							{	
+								DestroyImmediate( objInstance );
+							}
 						}
 					}
 				}
@@ -211,9 +225,12 @@ public class DragonCorpse : MonoBehaviour {
 		}
 
 		Material wingsMaterial = new Material( Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_wings"));
-		wingsMaterial.shader = m_deathShader;
 		Material bodyMaterial = new Material (Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_body"));
-		bodyMaterial.shader = m_deathShader;
+		if ( Application.isPlaying )
+		{
+			wingsMaterial.shader = m_deathShader;
+			bodyMaterial.shader = m_deathShader;
+		}
 		m_fadeMaterials.Add( wingsMaterial );
 		m_fadeMaterials.Add( bodyMaterial );
 		for (int i = 0; i < m_renderers.Length; i++) {
@@ -251,6 +268,34 @@ public class DragonCorpse : MonoBehaviour {
 			Color tint = m_fadeMaterials[i].GetColor("_Tint");
 			tint.a = alpha;
 			m_fadeMaterials[i].SetColor("_Tint", tint);
+		}
+	}
+
+	public void RemoveAccessories()
+	{
+		// Remove old body parts
+		for( int i = 0; i<m_attachPoints.Length; i++ )
+		{
+			if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
+			{
+				m_attachPoints[i].Unequip(true);
+			}
+		}
+	}
+
+	public void CleanSkin()
+	{
+		string _name = "dragon_empty";
+
+		Material wingsMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_wings");
+		Material bodyMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_body");
+		for (int i = 0; i < m_renderers.Length; i++) {
+			string shaderName = m_originalMaterials[i].shader.name;
+			if (shaderName.Contains("Dragon/Wings")) {
+				m_renderers[i].material = wingsMaterial;
+			} else if (shaderName.Contains("Dragon/Body")) {
+				m_renderers[i].material = bodyMaterial;
+			}
 		}
 	}
 }

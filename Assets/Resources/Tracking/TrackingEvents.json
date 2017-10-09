@@ -142,7 +142,9 @@
                 {"fireRushNb": {"Status": "OK"}},
                 {"superFireRushNb": {"Status": "OK"}},
                 {"hcRevive": {"Status": "OK"}},
-                {"adRevive": {"Status": "OK"}}
+                {"adRevive": {"Status": "OK"}},
+				{"scEarned": {"Status": "OK"}},
+				{"hcEarned": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -285,6 +287,22 @@
             "Values": []
         },
         "hcRevive": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"score": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"deathInCurrentRunNb": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"scEarned": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"hcEarned": {
             "Type": "INT:4",
             "Values": []
         },

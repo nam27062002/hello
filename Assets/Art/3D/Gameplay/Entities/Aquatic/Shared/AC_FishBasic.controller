@@ -13,7 +13,7 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -95,7 +95,6 @@ AnimatorState:
   m_Transitions: []
   m_StateMachineBehaviours:
   - {fileID: 11489734}
-  - {fileID: 114000012693677570}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -178,20 +177,6 @@ MonoBehaviour:
   m_glidingTime:
     min: 4
     max: 6
---- !u!114 &114000012693677570
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33a18afd7d5b442ba959b2ce0843b663, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_timeToGlide:
-    min: 10
-    max: 15
 --- !u!1101 &1101000010001156218
 AnimatorStateTransition:
   m_ObjectHideFlags: 3
