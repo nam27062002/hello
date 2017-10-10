@@ -10,181 +10,92 @@ Material:
   m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
   m_ShaderKeywords: _EMISSION _NORMALMAP
   m_LightmapFlags: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2010
   stringTagMap: {}
+  disabledShaderPasses: []
   m_SavedProperties:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TexEnvs:
-    - first:
-        name: _BumpMap
-      second:
-        m_Texture: {fileID: 2800000, guid: c9cd142e4d473ec4b83c10d846a9559a, type: 3}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 6d48e0d72ced0eb468e0bbbd048611b5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
+    - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
+    - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
+    - _DetailNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailTex
-      second:
+    - _DetailTex:
         m_Texture: {fileID: 2800000, guid: c5504928e025a3747a32c8249ffa121c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
-        m_Texture: {fileID: 2800000, guid: 6fca149feab4ed349bde6f62e0ac2d37, type: 3}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 20bd06e00491eeb4f9caf48745373f71, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
+    - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
+    - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
+    - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ReflectionMap
-      second:
+    - _ReflectionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _Alpha_as_depth
-      second: 0
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
-        name: _Fresnel
-      second: 10
-    - first:
-        name: _GlossMapScale
-      second: 1
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _GlossyReflections
-      second: 1
-    - first:
-        name: _InnerLightAdd
-      second: 0
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _NormalStrenght
-      second: 1
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _ReflectionAmount
-      second: 0
-    - first:
-        name: _SmoothnessTextureChannel
-      second: 0
-    - first:
-        name: _SpecExponent
-      second: 30.48
-    - first:
-        name: _SpecularHighlights
-      second: 1
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _StencilMask
-      second: 10
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _ZWrite
-      second: 1
+    - _Alpha_as_depth: 0
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EmissionScaleUI: 0
+    - _Fresnel: 10
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _InnerLightAdd: 0
+    - _Metallic: 0
+    - _Mode: 0
+    - _NormalStrenght: 1
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _ReflectionAmount: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecExponent: 30.48
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _StencilMask: 10
+    - _UVSec: 0
+    - _ZWrite: 1
     m_Colors:
-    - first:
-        name: _AmbientAdd
-      second: {r: 0.03676468, g: 0.014508252, b: 0.002432957, a: 0}
-    - first:
-        name: _Color
-      second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - first:
-        name: _ColorAdd
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _ColorMultiply
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _FresnelColor
-      second: {r: 0.44290656, g: 0.45455194, b: 0.4705882, a: 1}
-    - first:
-        name: _InnerLightColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _SecondLightColor
-      second: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
-    - first:
-        name: _SecondLightDir
-      second: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
-    - first:
-        name: _Tint
-      second: {r: 1, g: 1, b: 1, a: 1}
+    - _AmbientAdd: {r: 0.03676468, g: 0.014508252, b: 0.002432957, a: 0}
+    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+    - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
+    - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 0.44290656, g: 0.45455194, b: 0.4705882, a: 1}
+    - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SecondLightColor: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
+    - _SecondLightDir: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}

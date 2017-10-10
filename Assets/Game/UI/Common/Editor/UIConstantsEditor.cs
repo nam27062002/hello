@@ -26,7 +26,6 @@ public class UIConstantsEditor : CategorizedEditor {
 	private const string CAT_COLORS = "Colors";
 	private const string CAT_RARITIES = "Rarities";
 	private const string CAT_ASSET_PATHS = "Asset paths in Resources";
-	private const string CAT_POWER_COLORS = "Power Colors";
 	private const string CAT_ANIMATION_SETUPS = "Animation Setups";
 	private const string CAT_OTHERS = "Others";
 
@@ -46,7 +45,6 @@ public class UIConstantsEditor : CategorizedEditor {
 		m_categories[CAT_COLORS] = new Category(CAT_COLORS);
 		m_categories[CAT_RARITIES] = new Category(CAT_RARITIES);
 		m_categories[CAT_ASSET_PATHS] = new Category(CAT_ASSET_PATHS);
-		m_categories[CAT_POWER_COLORS] = new Category(CAT_POWER_COLORS);
 		m_categories[CAT_ANIMATION_SETUPS] = new Category(CAT_ANIMATION_SETUPS);
 		m_categories[CAT_OTHERS] = new Category(CAT_OTHERS);
 
@@ -103,7 +101,6 @@ public class UIConstantsEditor : CategorizedEditor {
 		DoCategory(CAT_RARITIES);
 		DoCategory(CAT_TMP_SHORTCUTS);
 		DoCategory(CAT_ASSET_PATHS);
-		DoCategory(CAT_POWER_COLORS);
 		DoCategory(CAT_ANIMATION_SETUPS);
 		DoCategory(CAT_OTHERS);
 

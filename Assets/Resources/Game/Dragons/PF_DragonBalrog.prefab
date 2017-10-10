@@ -544,8 +544,8 @@ MonoBehaviour:
     type: 2}
   m_cloudTrailAnchor: {fileID: 481560}
   m_spaceEnterSplash:
-    name: PS_DiveIn
-    path: Water
+    name: 
+    path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -581,8 +581,8 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_spaceExitSplash:
-    name: PS_DiveOut
-    path: Water
+    name: 
+    path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -629,7 +629,7 @@ MonoBehaviour:
   m_skimmingDistance: 3
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
-  m_corpseAsset: PF_DragonClassicCorpse
+  m_corpseAsset: PF_DragonBalrogCorpse
   m_hiccupParticle: Dragon/PS_hiccups
   m_hiccupAnchor: {fileID: 0}
   m_shieldParticle:
@@ -880,6 +880,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_menuMode: 0
+  m_equipPets: 1
+  m_equipOnAwake: 1
 --- !u!114 &11459072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2584,7 +2586,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.0652905, y: 0.56140924, z: 0.04449692, w: 0.8237578}
+  m_LocalRotation: {x: -0.085326314, y: -0.7146596, z: -0.08855837, w: 0.6885772}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5276,6 +5278,8 @@ MonoBehaviour:
     type: 2}
   m_waterDeepToSnapshot: 4
   m_hiccupSound: 
+  m_gruntSound: 
+  m_gruntToEatProbability: 5
 --- !u!114 &114480955019122160
 MonoBehaviour:
   m_ObjectHideFlags: 1

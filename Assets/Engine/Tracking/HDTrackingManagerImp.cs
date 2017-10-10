@@ -537,6 +537,15 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             SocialPlatformManager.SharedInstance.GetProfileInfo(onDone);           
         }
+    }    
+
+    public override void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted)
+    {
+        int nbViews = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.TotalLegalVisits : 0;
+
+        // The current time is accumulated
+        nbViews++;
+        Track_LegalPopupClosed(nbViews, duration, hasBeenAccepted);
     }
 #endregion
 
@@ -901,10 +910,30 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private void Track_LegalPopupClosed(int nbViews, int duration, bool hasBeenAccepted)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_LegalPopupClosed nbViews = " + nbViews + " duration = " + duration + " hasBeenAccepted = " + hasBeenAccepted);
+        }
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.legalpopup");
+        if (e != null)
+        {
+            e.SetParameterValue(TRACK_PARAM_NB_VIEWS, nbViews);
+            Track_AddParamString(e, TRACK_PARAM_LEGAL_POPUP_TYPE, "Classical");
+            e.SetParameterValue(TRACK_PARAM_DURATION, duration);
+            Track_AddParamBool(e, TRACK_PARAM_ACCEPTED, hasBeenAccepted);            
+
+            Track_SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
+    private const string TRACK_PARAM_ACCEPTED                   = "accepted";
     private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
     private const string TRACK_PARAM_AD_REVIVE                  = "adRevive";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
@@ -920,6 +949,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_DELTA_XP                   = "deltaXp";
     private const string TRACK_PARAM_DRAGON_PROGRESSION         = "dragonProgression";
     private const string TRACK_PARAM_DRAGON_SKIN                = "dragonSkin";
+    private const string TRACK_PARAM_DURATION                   = "duration";
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
@@ -938,12 +968,14 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ITEM                       = "item";
     private const string TRACK_PARAM_ITEM_ID                    = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
+    private const string TRACK_PARAM_LEGAL_POPUP_TYPE           = "legalPopupType";
     private const string TRACK_PARAM_MAX_REACHED                = "maxReached";
     private const string TRACK_PARAM_MAX_XP                     = "maxXp";
     private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
+    private const string TRACK_PARAM_NB_VIEWS                   = "nbViews";
     private const string TRACK_PARAM_PET1                       = "pet1";
     private const string TRACK_PARAM_PET2                       = "pet2";
     private const string TRACK_PARAM_PET3                       = "pet3";

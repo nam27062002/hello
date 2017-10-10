@@ -41,10 +41,9 @@ GameObject:
   - component: {fileID: 114936245893518294}
   - component: {fileID: 114029562522687476}
   - component: {fileID: 135908989521048960}
-  - component: {fileID: 135665576280561840}
   - component: {fileID: 54983046190278370}
   - component: {fileID: 114599001096254080}
-  m_Layer: 16
+  m_Layer: 21
   m_Name: PF_SlimeGreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,6 +60,8 @@ GameObject:
   - component: {fileID: 4303449897139690}
   - component: {fileID: 114639534491506066}
   - component: {fileID: 114680344640624328}
+  - component: {fileID: 135899582121060056}
+  - component: {fileID: 114844593974648114}
   m_Layer: 16
   m_Name: Poison
   m_TagString: Untagged
@@ -76,7 +77,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4572441842262954}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Mucus_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4645137636940698}
   - component: {fileID: 137079305205350618}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: low_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +108,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4663745608040778}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: groundSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +124,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4350518155183286}
   - component: {fileID: 95944473291443274}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,7 +218,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1282978617482752}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -5.55, z: 0}
+  m_LocalPosition: {x: 124.83319, y: 37.897667, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4350518155183286}
@@ -271,8 +272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isPlaceHolder: 0
-  m_walkSpeed: 2
-  m_runSpeed: 2
+  m_walkSpeed: 1.5
+  m_runSpeed: 1.5
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
@@ -526,9 +527,9 @@ MonoBehaviour:
   m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 76679fb054b184b1ba79b044aaf7c2d5, type: 2}
   m_railSeparation:
-    min: 0.5
-    max: 1
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":5,"max":20},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"damage":50,"type":1,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false}]'
+    min: -1.25
+    max: 1.25
+  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":0,"max":0},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"damage":50,"type":1,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false}]'
   m_databaseKey: PF_SlimeGreen
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -589,7 +590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_view: {fileID: 137079305205350618}
   m_particleDatas:
-  - name: PS_ToxicWormSmoke
+  - name: PS_PoisonSmoke
     path: 
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
@@ -624,7 +625,32 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    scale: 1.5
+    scale: 1
+--- !u!114 &114844593974648114
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1362058073666684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ec28088696d843d1a86f4d065110df8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_receiver: {fileID: 1282978617482752}
+  m_onCollisionEnter: 0
+  m_onCollisionStay: 0
+  m_onCollisionExit: 0
+  m_onTriggerEnter: 1
+  m_onTriggerStay: 1
+  m_onTriggerExit: 1
+  m_onMouseDown: 0
+  m_onMouseDrag: 0
+  m_onMouseUp: 0
+  m_onMouseUpAsButton: 0
+  m_onMouseEnter: 0
+  m_onMouseExit: 0
+  m_onMouseOver: 0
 --- !u!114 &114936245893518294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -661,18 +687,18 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_wallWalkingMotion:
-    m_mass: 1
+    m_mass: 120
     m_defaultUpVector: 0
-    m_orientationSpeed: 120
+    m_orientationSpeed: 60
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
---- !u!135 &135665576280561840
+--- !u!135 &135899582121060056
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1282978617482752}
+  m_GameObject: {fileID: 1362058073666684}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1

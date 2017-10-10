@@ -142,7 +142,9 @@
                 {"fireRushNb": {"Status": "OK"}},
                 {"superFireRushNb": {"Status": "OK"}},
                 {"hcRevive": {"Status": "OK"}},
-                {"adRevive": {"Status": "OK"}}
+                {"adRevive": {"Status": "OK"}},
+				{"scEarned": {"Status": "OK"}},
+				{"hcEarned": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -222,11 +224,23 @@
                 "etl"
             ]
         },
-		 "custom.player.authentication": {
+		"custom.player.authentication": {
             "Parameters": [
                 {"provider": {"Status": "OK"}},
                 {"yearOfBirth": {"Status": "OK"}},
 				{"gender": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.game.legalpopup": {
+            "Parameters": [
+                {"nbViews": {"Status": "OK"}},
+                {"legalPopupType": {"Status": "OK"}},
+				{"duration": {"Status": "OK"}},
+				{"accepted": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -273,6 +287,22 @@
             "Values": []
         },
         "hcRevive": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"score": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"deathInCurrentRunNb": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"scEarned": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"hcEarned": {
             "Type": "INT:4",
             "Values": []
         },
@@ -564,5 +594,21 @@
             "Type": "STRING:125",
             "Values": []
         },
+		"nbViews": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"legalPopupType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"duration": {
+            "Type": "INT:4",
+            "Values": []
+        },		
+		"accepted": {
+            "Type": "INT:4",
+            "Values": []
+        },				
     }
 }

@@ -291,12 +291,15 @@ public class LevelManager : Singleton<LevelManager> {
             returnValue.Add(sceneName);
         }
 
-		List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
-		for (int i = 0; i < gameplayWip.Count; i++)
-        {
-			string sceneName = GetRealSceneName(gameplayWip[i]);
-            returnValue.Add(sceneName);
-        }
+		if (FeatureSettingsManager.IsWIPScenesEnabled)
+		{
+			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+			for (int i = 0; i < gameplayWip.Count; i++)
+	        {
+				string sceneName = GetRealSceneName(gameplayWip[i]);
+	            returnValue.Add(sceneName);
+	        }
+		}
 
         return returnValue;
     }

@@ -11,11 +11,13 @@ public class TrackingPersistenceSystem : PersistenceSystem
     private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
     private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
     private const string PARAM_USER_ID = "userID";
-    /// <summary>
-    /// Whether or not this is the first time the game is loaded ever
-    /// </summary>
+    
+    /// Whether or not this is the first time the game is loaded ever    
     private const string PARAM_FIRST_LOADING = "firstLoading";
-    private const string PARAM_SOCIAL_AUTH_SENT = "socialAuthSent";    
+    private const string PARAM_SOCIAL_AUTH_SENT = "socialAuthSent";
+
+    // Amount of times the user has closed the legal popup so far
+    private const string PARAM_TOTAL_LEGAL_VISITS = "totalLegalVisits";
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -192,6 +194,19 @@ public class TrackingPersistenceSystem : PersistenceSystem
         }
     }
 
+    public int TotalLegalVisits
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_LEGAL_VISITS);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_LEGAL_VISITS, value);
+        }
+    }
+
     public TrackingPersistenceSystem()
     {
         m_systemName = "Tracking";
@@ -236,11 +251,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
         key = PARAM_ADS_COUNT;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
-
-        key = PARAM_TOTAL_STORE_VISITS;
-        dataInt = new CacheDataInt(key, 0);
-        Cache_AddData(key, dataInt);
-
+        
         key = PARAM_ADS_COUNT;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
@@ -256,6 +267,10 @@ public class TrackingPersistenceSystem : PersistenceSystem
         key = PARAM_SOCIAL_AUTH_SENT;
         dataBool = new CacheDataBool(key, false);
         Cache_AddData(key, dataBool);
+
+        key = PARAM_TOTAL_LEGAL_VISITS;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);        
 
         Reset();
     }

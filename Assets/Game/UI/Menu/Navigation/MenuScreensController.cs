@@ -208,6 +208,10 @@ public class MenuScreensController : NavigationScreenSystem {
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
 			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams, OnCameraTweenCompleted);
+
+			// Lock input to prevent weird flow cases when interrupting a screen transition
+			// See https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-620
+			InputLocker.Lock();
 		} else {
 			// No animation, instantly notify game the screen transition has been completed
 			Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)_newScreenIdx);
@@ -222,6 +226,9 @@ public class MenuScreensController : NavigationScreenSystem {
 	/// Use it to track actual screen changes.
 	/// </summary>
 	private void OnCameraTweenCompleted() {
+		// Transition finished, unlock input!
+		InputLocker.Unlock();
+
 		// Notify game the screen transition has been completed
 		Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)this.currentScreenIdx);
 	}

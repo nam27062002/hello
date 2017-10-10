@@ -73,8 +73,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, Game_OnPaused);
         Messenger.AddListener(GameEvents.GAME_ENDED, Game_OnEnded);        
 
-        Notifications_Init();
-
 		Device_Init();
 
         GameCenter_Init();
@@ -575,21 +573,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {        
         FeatureSettingsManager.instance.IsFogOnDemandEnabled = true;
     }
-    #endregion
-
-    #region
-    private void Notifications_Init()
-    {        
-        NotificationsManager.SharedInstance.Initialise();
-
-        // [DGR] TODO: icons has to be created and located in the right folder
-#if UNITY_ANDROID
-        NotificationsManager.SharedInstance.SetNotificationIcons ("", "push_notifications", 0xFFFF0000); 
-#endif
-		int strLanguageSku = PlayerPrefs.GetInt(PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
-        NotificationsManager.SharedInstance.SetNotificationsEnabled( strLanguageSku > 0 );
-    }
-    #endregion
+    #endregion   
 
     #region game_center
     // This region is responsible for handling login to the platform (game center or google play)
@@ -1028,7 +1012,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     public void Debug_ScheduleNotification()
     {
-        NotificationsManager.SharedInstance.ScheduleNotification("sku.not.01", "A ver que pasa...", "Action", 5);
+        HDNotificationsManager.instance.ScheduleNotification("sku.not.01", "A ver que pasa...", "Action", 5);
     }
 
     private void Debug_OnLevelReset()
@@ -1064,6 +1048,25 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Debug_TestPersistenceSave()
     {
         PersistenceFacade.instance.Save_Request();
+    }
+
+    private const string LOG_CHANNEL = "[ApplicationManager]";
+    private void Log(string msg)
+    {
+        msg = LOG_CHANNEL + msg;
+        Debug.Log(msg);
+    }
+
+    private void LogWarning(string msg)
+    {
+        msg = LOG_CHANNEL + msg;
+        Debug.LogWarning(msg);
+    }
+
+    private void LogError(string msg)
+    {
+        msg = LOG_CHANNEL + msg;
+        Debug.LogError(msg);
     }
     #endregion
 }

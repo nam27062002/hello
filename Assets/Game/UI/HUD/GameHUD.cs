@@ -68,35 +68,62 @@ public class GameHUD : MonoBehaviour {
     	}
     }
 
+	void Unpause(){
+		m_paused = false;
+	}
+
     /// <summary>
     /// Callback for the pause button.
     /// </summary>
     public void OnPauseButton() {
-		// Open pause popup
+		// Skip if already paused (don't stack popups pausing the game)
+		// https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-619
+		if(m_paused) return;
+
+		// Open the popup
 		m_paused = true;
 		PopupController popupController = PopupManager.OpenPopupInstant(PopupPause.PATH);
-		popupController.OnClosePostAnimation.AddListener(Unpaused);
+
+		// Be aware for when it's closed
+		// Prevent adding callback twice!
+		popupController.OnClosePostAnimation.RemoveListener(Unpause);
+		popupController.OnClosePostAnimation.AddListener(Unpause);
 	}
 
-	void Unpaused(){
-		m_paused = false;
-	}
 	/// <summary>
 	/// Callback for the map button.
 	/// </summary>
 	public void OnMapButton() {
+		// Skip if already paused (don't stack popups pausing the game)
+		// https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-619
+		if(m_paused) return;
+
+		// Open the popup
 		m_paused = true;
 		PopupController popupController = PopupManager.OpenPopupInstant(PopupInGameMap.PATH);
-		popupController.OnClosePostAnimation.AddListener(Unpaused);
+
+		// Be aware for when it's closed
+		// Prevent adding callback twice!
+		popupController.OnClosePostAnimation.RemoveListener(Unpause);
+		popupController.OnClosePostAnimation.AddListener(Unpause);
 	}
 
 	/// <summary>
 	/// Callback for the missions button.
 	/// </summary>
 	public void OnMissionsButton() {
+		// Skip if already paused (don't stack popups pausing the game)
+		// https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-619
+		if(m_paused) return;
+
+		// Open the popup
 		m_paused = true;
 		PopupController popupController = PopupManager.OpenPopupInstant(PopupInGameMissions.PATH);
-		popupController.OnClosePostAnimation.AddListener(Unpaused);
+
+		// Be aware for when it's closed
+		// Prevent adding callback twice!
+		popupController.OnClosePostAnimation.RemoveListener(Unpause);
+		popupController.OnClosePostAnimation.AddListener(Unpause);
 	}
 
 #region debug
