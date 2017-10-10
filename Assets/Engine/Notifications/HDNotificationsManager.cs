@@ -9,7 +9,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 
             // [DGR] TODO: icon has to be created and located in the right folder
 #if UNITY_ANDROID
-            NotificationsManager.SharedInstance.SetNotificationIcons("", "push_notifications", 0xFFFF0000);
+            NotificationsManager.SharedInstance.SetNotificationIcons("", "push_notifications", 0x00000000);
 #endif
 
             //int notificationsEnabled = PlayerPrefs.GetInt(PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
@@ -35,6 +35,12 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     {
         Log("ScheduleNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU + " strBody = " + strBody + " strAction = " + strAction + " iTimeLeft = " + iTimeLeft);
         NotificationsManager.SharedInstance.ScheduleNotification(strSKU, strBody, strAction, iTimeLeft);
+    }
+
+    public void CancelNotification(string strSKU)
+    {
+		Log("CancelNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU);
+    	NotificationsManager.SharedInstance.CancelNotification(strSKU);
     }
 
     #region log
