@@ -2080,8 +2080,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		    m_impulse.z = 0;
 		    m_impulse = m_impulse.normalized * magnitude;
 		    m_rbody.velocity = m_impulse;
+			m_prevImpulse.y = m_impulse.y;
         }
-		m_prevImpulse.y = m_impulse.y;
 		m_impulse -= m_impulse * 0.05f;
     }
 
