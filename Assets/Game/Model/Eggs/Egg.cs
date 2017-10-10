@@ -199,6 +199,9 @@ public class Egg {
 				// If no reward was generated, do it now
 				GenerateReward();
 			} break;
+			case State.READY:{
+				HDNotificationsManager.instance.CancelNotification("sku.not.01");
+			}break;
 		}
 
 		// Broadcast game event
