@@ -277,200 +277,23 @@ public class DragonPowerUp : MonoBehaviour {
 		// Short or long description?
 		string fieldId = _short ? "tidDescShort" : "tidDesc";
 
-		// Every power type has a different format
-		switch(_powerDef.GetAsString("type")) {
-			case "hp_increase":	 {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
-			} break;
-
-			case "boost_increase": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_BOOST.ToHexString("#"));
-			} break;
-
-			case "fury_increase": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
-			} break;
-
-			case "more_xp": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param1"), 0), UIConstants.POWER_COLOR_XP.ToHexString("#"));
-			} break;
-
-			case "dive": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-			} break;
-			
-			case "avoid": {
-				// Check sub type with param one
-				string subtype = _powerDef.Get("param1");
-				int numHits = _powerDef.GetAsInt("param2");
-				switch(subtype) {
-					case "mine": {
-						return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-					} break;
-
-					case "poison": {
-						return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-					} break;
-
-					default: {
-						return _powerDef.GetLocalized(fieldId);
-					} break;
-				}
-			} break;
-
-			case "lower_damage": {
-				// Check sub type with param one
-				string subtype = _powerDef.Get("param1");
-				int numHits = _powerDef.GetAsInt("param2");
-				switch(subtype) {
-					case "mine": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_MINE.ToHexString("#"));
-					} break;
-
-					case "poison": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-					} break;
-
-					case "arrows": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-					} break;
-
-					default: {
-						return _powerDef.GetLocalized(fieldId);
-					} break;
-				}
-			} break;
-
+		// Color and format based on type
+		string type = _powerDef.GetAsString("type");
+		Color color = GetColor(type);
+		switch(type) {
+			// Powers with custom formats
+			case "lower_damage":
 			case "lower_damage_origin": {
-				// Check sub type with param one
-				string subtype = _powerDef.Get("param1");
-				int numHits = _powerDef.GetAsInt("param2");
-				switch(subtype) {
-					case "EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier4": {
-						return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(numHits), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-					} break;
-
-                    default: {
-                        return _powerDef.GetLocalized(fieldId);
-                    }break;
-                    }
-                } break;
-
-			case "eat": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
-			} break;
-
-			case "cage_breaker": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-			} break;
-
-			case "immune_trash": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-			} break;
-
-			case "explode_mine": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-			} break;
-
-			case "alcohol_resistance": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-			} break;
-
-			case "lives": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param2")), color.ToHexString("#"));
 			} break;
 
 			case "dragonram": {
-				if (_short)
-					return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-				else
-					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_WATER.ToHexString("#"));
+				if(_short) {
+					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
+				} else {
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), color.ToHexString("#"));
+				}
 			} break;
-
-			case "bomb": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-			} break;
-
-			case "dog": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-			} break;
-
-			case "phoenix": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-			} break;
-
-			case "stun": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-			} break;
-
-			case "findBonus": {
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-			} break;
-
-            case "fury_size_increase":
-                {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
-            }break;
-
-            case "fury_duration":
-                {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
-                }break;
-
-            case "speed_increase":
-                {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_SPEED.ToHexString("#"));
-                }break;
-
-			case "unlimited_boost":
-			{
-				return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_SPEED.ToHexString("#"));
-			}break;
-
-            case "reduce_life_drain":
-                {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_POISON.ToHexString("#"));
-                }break;
-
-            case "more_coin":
-                {
-					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_GOLD.ToHexString("#"));
-                }break;
-
-            case "score_increase":
-                {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_SCORE.ToHexString("#"));
-                }break;
-
-            case "food_increase":
-                {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_FOOD.ToHexString("#"));
-                }break;
-
-            case "freeze_aura":
-                {
-                    return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_WATER.ToHexString("#"));
-                }break;
-
-            case "fireball":
-                {
-                    return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_FIRE.ToHexString("#"));
-                }break;
-
-            case "magnet":
-                {
-                    return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_MAGNETIC.ToHexString("#"));
-                }break;
-
-            case "vacuum":
-                {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
-                }break;
-
-            case "faster_boost":
-                {
-                    return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), UIConstants.POWER_COLOR_BOOST.ToHexString("#"));
-                }break;
 
 			case "prey_hp_boost": {
 				/*
@@ -481,14 +304,34 @@ public class DragonPowerUp : MonoBehaviour {
 				*/
 
 				// [AOC] As of 05/07/2017, entity names are included in the TID (i.e. "Increased %U0 health on eating Birds")
-				if (_short)
-					return _powerDef.GetLocalized(fieldId, UIConstants.POWER_COLOR_VACUUM.ToHexString("#"));
-				else
-					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
+				if(_short) {
+					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
+				} else {
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), color.ToHexString("#"));
+				}
 			} break;
 
+			// Powers with 1 int parameter
+			case "hp_increase":
+			case "boost_increase":
+			case "fury_increase": 
+			case "more_xp":
+			case "fury_size_increase":
+			case "fury_duration":
+			case "speed_increase":
+			case "reduce_life_drain":
+			case "more_coin":
+			case "score_increase":
+			case "food_increase":
+			case "vacuum":
+			case "faster_boost":
+			{
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), color.ToHexString("#"));
+			} break;
+
+			// Rest of powers (no params)
 			default: {
-				return _powerDef.GetLocalized(fieldId);
+				return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
 			} break;
 		}
 
@@ -504,102 +347,92 @@ public class DragonPowerUp : MonoBehaviour {
 		// Check definition
 		if(_powerDef == null) return Color.white;
 
-		// Every power type has a different format
-		switch(_powerDef.GetAsString("type")) {
-			case "hp_increase":	 {
-				return UIConstants.POWER_COLOR_HEALTH;
+		// Get the color for this power type
+		string type = _powerDef.GetAsString("type");
+		return GetColor(type);
+	}
+
+	/// <summary>
+	/// Gets the special color assigned to the given power type.
+	/// </summary>
+	/// <returns>The color assigned to the power's type.</returns>
+	/// <param name="_type">Power type to be consulted.</param>
+	public static Color GetColor(string _type) {
+		// As of 09/10/2017, we're matching each power's color with the color of the pet category it belongs to
+		switch(_type) {
+			// Eat
+			case "eat":
+			case "vacuum":
+			case "prey_hp_boost":
+			{
+				return UIConstants.PET_CATEGORY_EAT;
 			} break;
 
-			case "boost_increase": {
-				return UIConstants.POWER_COLOR_BOOST;
+			// Health
+			case "food_increase":
+			case "hp_increase":
+			{
+				return UIConstants.PET_CATEGORY_HEALTH;
 			} break;
 
-			case "fury_size_increase": {
-				return UIConstants.POWER_COLOR_FIRE;
+			// Speed
+			case "boost_increase":
+			case "speed_increase":
+			case "faster_boost":
+			case "unlimited_boost":
+			{
+				return UIConstants.PET_CATEGORY_SPEED;
 			} break;
 
-			case "magnetic": {
-				return UIConstants.POWER_COLOR_MAGNETIC;
+			// Score
+			case "more_coin":
+			case "more_xp":
+			case "score_increase":
+			{
+				return UIConstants.PET_CATEGORY_SCORE;
 			} break;
 
-			case "vacuum": {
-				return UIConstants.POWER_COLOR_VACUUM;
+			// Fire
+			case "fury_size_increase":
+			case "fury_duration":
+			case "fireball":
+			{
+				return UIConstants.PET_CATEGORY_FIRE;
 			} break;
 
-			case "freeze_aura": {
-				return UIConstants.POWER_COLOR_WATER;
+			// Defense
+			case "avoid":
+			case "trash_eater":
+			case "lower_damage":
+			case "lower_damage_origin":
+			case "explode_mine":
+			case "reduce_life_drain":
+			case "immune_trash":
+			case "alcohol_resistance":
+			case "cage_breaker":
+			{
+				return UIConstants.PET_CATEGORY_DEFENSE;
 			} break;
 
-			case "fury_duration_increase": {
-				return UIConstants.POWER_COLOR_FIRE;
+			// Special
+			case "lives":
+			case "dragonram":
+			case "magnet":
+			case "freeze_aura":
+			case "dive":
+			case "phoenix":
+			case "dog":
+			case "bomb":
+			case "stun":
+			case "findBonus":
+			{
+				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;
 
-			case "lower_damage": {
-				return UIConstants.POWER_COLOR_FIRE;
-			} break;
-
-			case "dive": {
-				return UIConstants.POWER_COLOR_WATER;
-			} break;
-
-			case "avoid": {
-				// Check sub type with param one
-				string subtype = _powerDef.Get("param1");
-				int numHits = _powerDef.GetAsInt("param2");
-				switch(subtype) {
-					case "mine": {
-						return UIConstants.POWER_COLOR_MINE;
-					} break;
-
-					case "poison": {
-						return UIConstants.POWER_COLOR_POISON;
-					} break;
-
-					default: {
-						return Color.white;
-					} break;
-				}
-			} break;
-
-			case "lives": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
-			case "dragonram": {
-				return UIConstants.POWER_COLOR_OBSTACLE;
-			} break;
-
-			case "preyHpBoost": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
-			case "speed_increase": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
-			case "reduce_life_drain": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
-			case "more_coin": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
-			case "score_increase": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
-			case "food_increase": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
-			case "fireball": {
-				return UIConstants.POWER_COLOR_HEALTH;
-			} break;
-
+			// Default or unknown
 			default: {
-				return Color.white;
-			} break;
+				return UIConstants.PET_CATEGORY_DEFAULT;
+			}
 		}
 
 		return Color.white;

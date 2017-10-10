@@ -13,7 +13,7 @@ public class DragonCorpseEditor : Editor {
 
 	public void Awake() {
 		m_target = (DragonCorpse)target;
-		m_target.GetReferences(true);
+		m_target.GetReferences();
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
 			ContentManager.InitContent(true);

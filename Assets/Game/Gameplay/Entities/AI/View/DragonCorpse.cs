@@ -59,7 +59,7 @@ public class DragonCorpse : MonoBehaviour {
 		GetReferences();
 	}
 
-	public void GetReferences( bool editMode = false )
+	public void GetReferences()
 	{
 		// Store attach points sorted to match AttachPoint enum
 		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
@@ -223,8 +223,11 @@ public class DragonCorpse : MonoBehaviour {
 		if(_name == null || _name.Equals("default") || _name.Equals("")) {
 			_name = dragonSku + "_0";		// Default skin, all dragons should have it
 		}
-
-		Material wingsMaterial = new Material( Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_wings"));
+			// Not all dragons have wings
+		Material wingsMaterial = null;
+		Material originalWing = Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_wings");
+		if ( originalWing )
+			wingsMaterial = new Material( originalWing );
 		Material bodyMaterial = new Material (Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_body"));
 		if ( Application.isPlaying )
 		{

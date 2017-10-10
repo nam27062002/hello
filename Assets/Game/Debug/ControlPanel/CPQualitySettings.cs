@@ -449,10 +449,15 @@ public class CPQualitySettings : MonoBehaviour
         {
             // Sets the current option
             string currentValue = FeatureSettingsManager.instance.Device_Model;
-            int index = m_deviceNames.IndexOf(currentValue);
-            if (index == -1)
+            // int index = m_deviceNames.IndexOf(currentValue);
+			int index = m_deviceNames.Count - 1;;
+            if ( !string.IsNullOrEmpty(currentValue) )
             {
-                index = m_deviceNames.Count - 1;
+	            for( int i = 0 ; i < m_deviceNames.Count; i++ )
+	            {
+	            	if ( currentValue.Contains( m_deviceNames[i] ) )
+	                	index = i;
+	            }
             }
 
             m_deviceDropDown.value = index;

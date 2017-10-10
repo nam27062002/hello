@@ -41,6 +41,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	[SerializeField] private DamageType m_damageType = DamageType.NORMAL;
 	[SerializeField] private float m_radius = 0f;
 	[SerializeField] private float m_knockback = 0f;
+	[SerializeField] private DragonTier m_knockbackTier = DragonTier.TIER_4;
 
 	[SeparatorAttribute("Visual")]
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
@@ -381,22 +382,29 @@ public class Projectile : MonoBehaviour, IProjectile {
 	}
 
 	public void Explode(bool _triggeredByPlayer) {
+		DragonPlayer player = InstanceManager.player;
+
 		// dealing damage
+		float actualKnockback = m_knockback;
+		if (player.data.tier > m_knockbackTier) {
+			actualKnockback = 0f;
+		}
+
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
-			m_explosive.Explode(transform, m_knockback, _triggeredByPlayer);
+			m_explosive.Explode(transform, actualKnockback, _triggeredByPlayer);
 		} else {
 			if (_triggeredByPlayer) {
-				if (m_knockback > 0) {
-					DragonMotion dragonMotion = InstanceManager.player.dragonMotion;
+				if (actualKnockback > 0) {
+					DragonMotion dragonMotion = player.dragonMotion;
 
 					Vector3 knockBackDirection = dragonMotion.transform.position - m_trasnform.position;
 					knockBackDirection.z = 0f;
 					knockBackDirection.Normalize();
 
-					dragonMotion.AddForce(knockBackDirection * m_knockback);
+					dragonMotion.AddForce(knockBackDirection * actualKnockback);
 				}
 
-				InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
+				player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
 			}
 
 			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
