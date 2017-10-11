@@ -215,8 +215,17 @@ public class ResultsScreenController : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
-	// INTERNAL METHODS														  //
+	// STEP CONTROL METHODS													  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the controller of a specific step.
+	/// </summary>
+	/// <returns>The step controller.</returns>
+	/// <param name="_step">Step whose controller we want.</param>
+	public ResultsScreenStep GetStep(Step _step) {
+		return m_steps[(int)_step];
+	}
+
 	/// <summary>
 	/// Checks the next step to be displayed and launches it. 
 	/// </summary>
