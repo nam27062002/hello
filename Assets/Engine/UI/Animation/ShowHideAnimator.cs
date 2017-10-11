@@ -151,6 +151,11 @@ public class ShowHideAnimator : MonoBehaviour {
 					} else {
 						m_state = State.HIDDEN;
 					}
+
+					// If hidden, disable interactability
+					if(m_canvasGroup != null) {
+						m_canvasGroup.interactable = false;
+					}
 				}
 			}
 			return m_state == State.VISIBLE; 
@@ -414,6 +419,11 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_canvasGroup == null) {
 			// Try to fetch an existing canvas, create a new one if not found
 			m_canvasGroup = this.gameObject.ForceGetComponent<CanvasGroup>();
+
+			// If hidden, disable interactability
+			if(m_state == State.HIDDEN) {
+				m_canvasGroup.interactable = false;
+			}
 		}
 
 		// Create new sequence
@@ -497,6 +507,11 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// In any case, make sure the object is active
 		gameObject.SetActive(true);
+
+		// ...and interactable
+		if(m_canvasGroup != null) {
+			m_canvasGroup.interactable = true;
+		}
 
 		// If dirty, re-create the tween (will be destroyed if not needed)
 		if(m_isDirty) RecreateTween();
@@ -734,6 +749,11 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Optionally disable object after the hide animation has finished
 		if(m_disableAfterHide) {
 			gameObject.SetActive(false);
+		}
+
+		// If hidden, object should never be interactable
+		if(m_canvasGroup != null) {
+			m_canvasGroup.interactable = false;
 		}
 	}
 

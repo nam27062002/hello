@@ -156,9 +156,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 
 					// If the element has a ShowConditionally component, disable to override its behaviour
-					MenuShowConditionally showConditionally = m_toHideOnUnlockAnim[i].GetComponent<MenuShowConditionally>();
-					if(showConditionally != null) {
-						showConditionally.enabled = false;
+					MenuShowConditionally[] showConditionally = m_toHideOnUnlockAnim[i].GetComponentsInChildren<MenuShowConditionally>();
+					for(int j = 0; j < showConditionally.Length; ++j) {
+						showConditionally[j].enabled = false;
 					}
 				}
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
@@ -193,11 +193,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 					}
 
 					// Re-enable all disabled ShowConditionally components
-					MenuShowConditionally showConditionally = m_toHideOnUnlockAnim[i].GetComponent<MenuShowConditionally>();
-					if(showConditionally != null) {
-						showConditionally.enabled = true;
+					MenuShowConditionally[] showConditionally = m_toHideOnUnlockAnim[i].GetComponentsInChildren<MenuShowConditionally>();
+					for(int j = 0; j < showConditionally.Length; ++j) {
+						showConditionally[j].enabled = true;
+						showConditionally[j].OnDragonSelected(_unlockedDragonSku);
 					}
 				}
+
+				// Restore HUD
+				InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 
 				// Navigate to dragon unlock screen if required
 				if(_gotoDragonUnlockScreen) {
