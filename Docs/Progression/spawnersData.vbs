@@ -69,7 +69,12 @@ Function spawnerInfo()
 End Function
 
 Function entityInfo()
+	On Error Resume Next
 	Set EntityFile = objFSO.OpenTextFile(prefabFile)
+	If Err.Number <> 0 Then
+		WScript.Echo "Error: " & prefabFile
+		Err.Clear
+	End If
 	substrToFind = "m_sku:"
 	substrToFind_1 = "damage"+Chr(34)
 	entityInfo = ""
