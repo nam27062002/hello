@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 54000010715511648}
   - component: {fileID: 135482728026469896}
   m_Layer: 21
-  m_Name: PF_RatSmall
+  m_Name: PF_RatSmall_Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,10 +77,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isPlaceHolder: 0
-  m_walkSpeed: 5.5
-  m_runSpeed: 5.5
+  m_walkSpeed: 5
+  m_runSpeed: 5
   m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 1.5
+  m_maxPlaybakSpeed: 1
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
@@ -911,7 +911,7 @@ Transform:
   m_GameObject: {fileID: 1452514459161128}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.00019979477, y: 0.019, z: -0.296}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4813138916812070}
   - {fileID: 4820931842575550}
@@ -1282,18 +1282,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 10
+  m_blendSpeedFactor: 8
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 538eb56e133744a4aa09733374f137e1, type: 2}
   m_railSeparation:
     min: 0.5
-    max: 1.5
-  m_serializedJson: '[{"speed":5.5,"timeToIdle":{"min":2,"max":8},"timeToChangeDirection":{"min":2,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":5},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
-  m_databaseKey: PF_RatSmall
+    max: 1
+  m_serializedJson: '[{"speed":5.5,"timeToIdle":{"min":5000,"max":5000},"timeToChangeDirection":{"min":2,"max":5},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":0,"max":0},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
+  m_databaseKey: PF_RatSmall_Wall
   m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 2
+  m_avoidDistanceAttenuation: 3
   m_avoidCollisions: 0
   m_avoidWater: 0
 --- !u!135 &135482728026469896
