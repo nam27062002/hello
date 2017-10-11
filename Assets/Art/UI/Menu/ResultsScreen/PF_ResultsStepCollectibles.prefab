@@ -539,7 +539,6 @@ GameObject:
   - component: {fileID: 114706317505651814}
   - component: {fileID: 114436983921770348}
   - component: {fileID: 114433528765854498}
-  - component: {fileID: 114364504042372210}
   m_Layer: 5
   m_Name: PF_ResultsStepCollectibles
   m_TagString: Untagged
@@ -12236,33 +12235,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114364504042372210
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1130378542314134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cb311cd3ec894a7fb34b8ac4a8a3af9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnBackButton:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114706317505651814}
-        m_MethodName: OnTapToContinue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114383173245881558
 MonoBehaviour:
   m_ObjectHideFlags: 1
