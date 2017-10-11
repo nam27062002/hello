@@ -64,6 +64,9 @@ public class PopupCredits : MonoBehaviour {
 	// Internal
 	private Tween m_tween = null;
 	private List<PopupController> m_popupsToRestore = new List<PopupController>();
+
+	private bool m_autoClosePending = false;
+	private float m_autoCloseTimer = -1f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -145,13 +148,24 @@ public class PopupCredits : MonoBehaviour {
 	private void Update() {
 		// Unfortunately, we have no easy way to detect drag events on the scroll list
 		// To work around that, just pause the scroll animation whenever we have a finger touching the screen
-		if(m_tween != null) {
-			if(Input.GetMouseButtonDown(0)) {
-				m_tween.Kill();
-				m_tween = null;
+		// Unless waiting to end!
+		if(!m_autoClosePending) {
+			if(m_tween != null) {
+				if(Input.GetMouseButtonDown(0)) {
+					m_tween.Kill();
+					m_tween = null;
+				}
+			} else if(!Input.GetMouseButton(0) && Mathf.Abs(m_scroll.velocity.y) <= m_inertiaThreshold) {
+				CreateTween();	// Re-create to start from current pos
 			}
-		} else if(!Input.GetMouseButton(0) && Mathf.Abs(m_scroll.velocity.y) <= m_inertiaThreshold) {
-			CreateTween();	// Re-create to start from current pos
+		} else {
+			// Update autoclose timer
+			if(m_autoCloseTimer > 0f) {
+				m_autoCloseTimer -= Time.deltaTime;
+				if(m_autoCloseTimer <= 0f) {
+					this.GetComponent<PopupController>().Close(true);
+				}
+			}
 		}
 	}
 
@@ -169,17 +183,24 @@ public class PopupCredits : MonoBehaviour {
 			m_tween = null;
 		}
 
+		// Don't do it if auto close is pending
+		if(m_autoClosePending) return;
+
 		// We want a constant speed regardless of the content size
 		float normalizedSpeed = m_scrollSpeed / m_scroll.content.sizeDelta.y;
 		m_tween = m_scroll.DOVerticalNormalizedPos(0f, normalizedSpeed)
 			.SetSpeedBased()
 			.SetRecyclable(true)
 			.OnComplete(() => {
-				// Auto-close popup once animation is completed!
-				UbiBCN.CoroutineManager.DelayedCall(
-					() => { GetComponent<PopupController>().Close(true); },
-					m_finalPause
-				);
+				// Don't allow scrolling back - this can be discussed, no big deal though
+				m_scroll.vertical = false;
+
+				// Auto-close popup after some delay
+				if(!m_autoClosePending) {
+					// Only reset timer once! (for some unknown reason, OnComplete can be invoked several times :s)
+					m_autoClosePending = true;
+					m_autoCloseTimer = m_finalPause;
+				}
 			})
 			.Play();
 	}
@@ -213,6 +234,11 @@ public class PopupCredits : MonoBehaviour {
 
 		// Reset scroll position
 		m_scroll.verticalNormalizedPosition = 1f;
+		m_scroll.vertical = true;
+
+		// Reset auto-close settings
+		m_autoClosePending = false;
+		m_autoCloseTimer = m_finalPause;
 	}
 
 	/// <summary>
@@ -239,12 +265,13 @@ public class PopupCredits : MonoBehaviour {
 		for(int i = 0; i < m_popupsToRestore.Count; ++i) {
 			m_popupsToRestore[i].Open();
 		}
+		m_popupsToRestore.Clear();
 	}
 
 	/// <summary>
 	/// The popup has been closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
-
+		
 	}
 }
