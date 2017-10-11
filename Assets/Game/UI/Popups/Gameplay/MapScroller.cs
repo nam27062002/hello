@@ -99,7 +99,7 @@ public class MapScroller : MonoBehaviour {
 		adjuster.targetRectTransform = m_scrollRect.viewport;
 
 		// Set initial zoom or keep zoom level between openings?
-		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, true)) {
+		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, false)) {
 			SetZoom(m_initialZoom); 
 		}
 
