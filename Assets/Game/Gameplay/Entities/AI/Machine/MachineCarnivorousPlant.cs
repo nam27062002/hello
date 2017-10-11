@@ -14,11 +14,13 @@ namespace AI {
 		private Transform m_transform;
 		private Transform m_eye; // for aiming purpose
 
+		private Vector3 m_upVector;
+
 		private Signals m_signals;
 
-		public Vector3 eye						{ get { return m_eye.position; } }
-		public Vector3 target					{ get { return Vector3.zero; } }
-		public virtual Vector3 upVector 		{ get { return Vector3.up; } set {} }
+		public Vector3 eye		{ get { return m_eye.position; } }
+		public Vector3 target	{ get { return Vector3.zero; } }
+		public Vector3 upVector { get { return m_upVector; } set {} }
 
 		public Transform enemy { 
 			get {
@@ -30,16 +32,16 @@ namespace AI {
 			}
 		}
 
-		public bool isPetTarget 				{ get { return false; } set {} }
-		public virtual float lastFallDistance 	{ get { return 0f; } }
-		public virtual bool isKinematic 		{ get { return false; } set {} }
+		public bool isPetTarget 		{ get { return false; } set {} }
+		public float lastFallDistance 	{ get { return 0f; } }
+		public bool isKinematic 		{ get { return false; } set {} }
 
-		public virtual Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
-		public virtual Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
-		public virtual Vector3 direction 		{ get { return Vector3.zero; } }
-		public virtual Vector3 groundDirection	{ get { return Vector3.right; } }
-		public virtual Vector3 velocity			{ get { return Vector3.zero; } }
-		public virtual Vector3 angularVelocity	{ get { return Vector3.zero; } }
+		public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
+		public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
+		public Vector3 direction 		{ get { return Vector3.zero; } }
+		public Vector3 groundDirection	{ get { return Vector3.right; } }
+		public Vector3 velocity			{ get { return Vector3.zero; } }
+		public Vector3 angularVelocity	{ get { return Vector3.zero; } }
 
 		public float biteResistance { get { return 0; } }
 		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
@@ -79,10 +81,15 @@ namespace AI {
 		public void Spawn(ISpawner _spawner) {
 			m_signals.Init();
 			m_sensor.Init();
+
 			if (InstanceManager.player != null)	{
 				DragonPlayer player = InstanceManager.player;
 				m_sensor.SetupEnemy(player.dragonEatBehaviour.mouth, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
 			}
+
+			m_upVector = Vector3.up;
+			FindUpVector();
+			m_transform.rotation = Quaternion.LookRotation(Vector3.forward, m_upVector);
 		}
 
 		public void Activate() {
@@ -149,7 +156,7 @@ namespace AI {
 				targetDir.z = 0f;
 
 				targetDir.Normalize();
-				Vector3 cross = Vector3.Cross(targetDir, Vector3.up);
+				Vector3 cross = Vector3.Cross(targetDir, m_upVector);
 				float aim = cross.z;
 
 				// blend between attack directions
@@ -157,7 +164,29 @@ namespace AI {
 			}
 		}
 
+		private void FindUpVector() {
+			RaycastHit[] hit = new RaycastHit[4];
+			bool[] hasHit = new bool[4];
+			int groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 
+			hasHit[0] = Physics.Raycast(position, Vector3.down,  out hit[0], 10f, groundMask);
+			hasHit[1] = Physics.Raycast(position, Vector3.up,	 out hit[1], 10f, groundMask);
+			hasHit[2] = Physics.Raycast(position, Vector3.right, out hit[2], 10f, groundMask);
+			hasHit[3] = Physics.Raycast(position, Vector3.left,  out hit[3], 10f, groundMask);
+
+			float d = 99999f;
+			for (int i = 0; i < 4; i++) {
+				if (hasHit[i]) {
+					if (hit[i].distance < d) {
+						d = hit[i].distance;
+
+						m_upVector = hit[i].normal;
+					}
+				}
+			}
+		}
+
+		/**************************************************************************************************************/
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 		public virtual void CheckCollisions(bool _value) {}
 		public virtual void FaceDirection(bool _value) {}
