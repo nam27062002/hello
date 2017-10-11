@@ -235,6 +235,14 @@ public class HDTrackingManager
     /// The user has closed the legal popup.
     /// </summary>
     public virtual void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted) {}
+
+    /// <summary>
+    /// Notifies the dragon unlocked.
+    /// </summary>
+    /// <param name="dragon_sku">Dragon sku.</param>
+	/// <param name="order">Dragon oder</param>
+    public virtual void Notify_DragonUnlocked( string dragon_sku, int order ) {}
+
     #endregion
 
     #region log

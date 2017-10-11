@@ -379,6 +379,15 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained)
     {
+    	if ( TrackingPersistenceSystem.GameRoundCount == 2 )
+    	{
+			// TODO: af_tutorial_completion
+    	}
+		else if (TrackingPersistenceSystem.GameRoundCount == 10)
+		{
+			// TODO: af_first_10_runs_completed
+		}
+
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained);
@@ -426,8 +435,12 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (TrackingPersistenceSystem != null)
         {
             TrackingPersistenceSystem.TotalPurchases++;
+			if ( TrackingPersistenceSystem.TotalPurchases == 1 )
+	        {
+				// TODO: af_first_purchase
+	        }
         }
-
+      
         Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice);
     }
 
@@ -443,6 +456,23 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
         UserProfile.Currency moneyCurrency, int moneyPrice, int amountBalance)
     {
+
+    	if ( economyGroup == EEconomyGroup.BUY_EGG )
+    	{
+			if (TrackingPersistenceSystem != null)
+	        {
+	            TrackingPersistenceSystem.EggPurchases++;
+				if ( TrackingPersistenceSystem.EggPurchases == 1 )
+				{
+					// TODO: af_1_egg_bought
+				}
+				else if ( TrackingPersistenceSystem.EggPurchases == 5 )
+				{
+					// TODO: af_5_egg_bought
+				}
+	        }
+    	}
+
         Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, Track_UserCurrencyToString(moneyCurrency), moneyPrice, amountBalance);
     }
 
@@ -497,6 +527,11 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Session_IsAdSession = true;
                 TrackingPersistenceSystem.AdsSessions++;
             }
+
+            if ( TrackingPersistenceSystem.AdsCount == 1 )
+            {
+				// TODO: af_first_ad_shown
+            }
         }
 
         Track_AdFinished(adType, adIsLoaded, maxReached, adViewingDuration, provider);
@@ -547,6 +582,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         nbViews++;
         Track_LegalPopupClosed(nbViews, duration, hasBeenAccepted);
     }
+
+	public override void Notify_DragonUnlocked( string dragon_sku, int order )
+	{
+		// TODO: Track af_X_dragon_unlocked where X is order and only send 2 to 7
+	}
 #endregion
 
 #region track	
@@ -633,6 +673,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 			Track_SendEvent(e);
         }
+
+		// TODO: af_purchase
     }
 
     private void Track_PurchaseWithResourcesCompleted(string economyGroup, string itemID, int itemQuantity, string promotionType, 
@@ -757,6 +799,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_AdFinished adType = " + adType + " adIsLoaded = " + adIsLoaded + " maxReached = " + maxReached + 
                 " adViewingDuration = " + adViewingDuration + " provider = " + provider);
         }
+
+		// TODO: af_ad_shown
         
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
         if (e != null)

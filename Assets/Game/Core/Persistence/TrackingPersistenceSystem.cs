@@ -9,6 +9,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
     private const string PARAM_SOCIAL_PLATFORM = "socialPlatform";
     private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";
     private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
+	private const string PARAM_TOTAL_EGG_PURCHASES = "totalEggPurchases";
     private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
     private const string PARAM_USER_ID = "userID";
     
@@ -126,6 +127,19 @@ public class TrackingPersistenceSystem : PersistenceSystem
         set
         {
             Cache_SetInt(PARAM_TOTAL_PURCHASES, value);
+        }
+    }
+
+	public int EggPurchases
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_EGG_PURCHASES);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_EGG_PURCHASES, value);
         }
     }
 
