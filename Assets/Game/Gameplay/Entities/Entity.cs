@@ -20,6 +20,8 @@ public class Entity : IEntity {
 		get{ return m_hideNeedTierMessage; }
 	}
 
+	public float lastTargetedTime{get;set;}
+
 	[SerializeField] private bool m_dieOutsideFrustum = true;
 	public bool dieOutsideFrustum {
 		get { return m_dieOutsideFrustum; }
