@@ -69,20 +69,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 160766}
   m_Mesh: {fileID: 4300000, guid: c2e234e6e78a24d1dbe6a6b36d4c3bb3, type: 3}
---- !u!64 &6412230
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1363612444948474}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 1
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: c2e234e6e78a24d1dbe6a6b36d4c3bb3, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -123,8 +109,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4179107262380996}
   - component: {fileID: 114099013974481482}
-  - component: {fileID: 6412230}
   - component: {fileID: 114714819731338518}
+  - component: {fileID: 65711941307514986}
   m_Layer: 11
   m_Name: PF_Blocker_Tier0
   m_TagString: Untagged
@@ -155,7 +141,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363612444948474}
   m_LocalRotation: {x: 0.7474518, y: -0.66430974, z: -0.0021542849, w: 0.0019461833}
-  m_LocalPosition: {x: 29.8, y: 197, z: -1.3}
+  m_LocalPosition: {x: -232.52696, y: 79.507355, z: -1.3}
   m_LocalScale: {x: 1.1153306, y: 0.78579247, z: 1}
   m_Children:
   - {fileID: 466452}
@@ -190,6 +176,18 @@ Transform:
   m_Father: {fileID: 4179107262380996}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &65711941307514986
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363612444948474}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 17, y: 5.1, z: 5.45}
+  m_Center: {x: 1.92, y: -1.07, z: -2.06}
 --- !u!114 &114099013974481482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -201,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8845233bc93a243879832d2842686764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_unbreakableBlocker: 1
   m_tierWithTurboBreak: 0
   m_tierNoTurboBreak: 0
   m_hitCount: 1
@@ -243,6 +242,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
+  m_corpseAsset: 
   m_onBreakAudio: Rocks
   m_view: {fileID: 466452}
   m_activateOnDestroy: {fileID: 0}
