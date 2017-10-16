@@ -10,15 +10,7 @@
                 "dna",
                 "etl"
             ]
-        },
-        "af_purchase": {
-            "Parameters": [
-                {"af_def_logPurchase": {"Status": ""}},
-                {"af_def_currency": {"Status": ""}},
-                {"af_quantity": {"Status": ""}}
-            ],
-            "APIs": ["appsflyer"]
-        },
+        },        
         "custom.game.ad.start": {
             "Parameters": [
                 {"nbAdsLtd": {"Status": "OK"}},
@@ -265,13 +257,41 @@
                 "etl"
             ]
         },
-        "fb_Purchased": {
+		"af_purchase": {
             "Parameters": [
-                {"fb_def_logPurchase": {"Status": ""}},
-                {"fb_def_currency": {"Status": ""}}
+                {"af_def_logPurchase": {"Status": "OK"}},
+                {"af_def_currency": {"Status": "OK"}},
+                {"af_quantity": {"Status": "OK"}}
+            ],
+            "APIs": ["appsflyer"]
+        },
+        "fb_purchase": {
+            "Parameters": [
+                {"fb_def_logPurchase": {"Status": "OK"}},
+                {"fb_def_currency": {"Status": "OK"}}
             ],
             "APIs": ["facebook"]
-        }
+        },
+		"af_tutorial_completion": {
+            "Parameters": [                
+            ],
+            "APIs": ["appsflyer"]
+        },
+		"fb_tutorial_completion": {
+            "Parameters": [                
+            ],
+            "APIs": ["facebook"]
+        },
+		"af_first_10_runs_completed": {
+            "Parameters": [                
+            ],
+            "APIs": ["appsflyer"]
+        },
+		"fb_first_10_runs_completed": {
+            "Parameters": [                
+            ],
+            "APIs": ["facebook"]
+        },
     },
     "ParameterValues": {
         "fireRushNb": {

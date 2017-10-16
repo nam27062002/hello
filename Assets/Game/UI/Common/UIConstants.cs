@@ -122,7 +122,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_missionIconsPath; }
 	}
 
-	[SerializeField] private string m_eggIconsPath = "UI/Metagame/Missions/";
+	[SerializeField] private string m_eggIconsPath = "UI/Metagame/Eggs/";
 	public static string EGG_ICONS_PATH {
 		get { return instance.m_eggIconsPath; }
 	}
