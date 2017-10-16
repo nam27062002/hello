@@ -32,11 +32,6 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 		get { return m_parentEvent; }
 	}
 
-	private DefinitionNode m_typeDef = null;
-	public DefinitionNode typeDef {
-		get { return m_typeDef; }
-	}
-
 	private string m_icon = "";
 	public string icon {
 		get { return m_icon; }
