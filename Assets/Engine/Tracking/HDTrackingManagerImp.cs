@@ -474,7 +474,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             TrackingPersistenceSystem.TotalPurchases++;
 			if ( TrackingPersistenceSystem.TotalPurchases == 1 )
 	        {
-				// TODO: af_first_purchase
+                // first purchase
+                Track_FirstPurchase();
 	        }
         }
       
@@ -784,7 +785,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 			Track_SendEvent(e);
         }
-
     }
 
     private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance)
@@ -1076,6 +1076,28 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // fb_first_10_runs_completed
         e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_10_runs_completed");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_FirstPurchase()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_FirstPurchase");
+        }
+
+        // af_first_purchase
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_purchase");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_purchase
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_purchase");
         if (e != null)
         {
             Track_SendEvent(e);
