@@ -39,7 +39,7 @@ public class SimulatorSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
-		ControlPanel.CreateInstance();
+	//	ControlPanel.CreateInstance();
 	}
 
 	/// <summary>

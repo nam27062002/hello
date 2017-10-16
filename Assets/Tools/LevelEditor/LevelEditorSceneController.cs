@@ -72,7 +72,7 @@ namespace LevelEditor {
             // Call parent
             base.Awake();
 
-			ControlPanel.CreateInstance();
+			//ControlPanel.CreateInstance();
 		}
 
 		/// <summary>
