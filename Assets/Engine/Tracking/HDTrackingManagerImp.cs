@@ -277,7 +277,50 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-#region notify    
+    #region notify   
+    private bool Notify_MeetsEventRequirements(string e)
+    {
+        bool returnValue = false;
+        switch (e)
+        {
+            case TRACK_EVENT_TUTORIAL_COMPLETION:
+                returnValue = TrackingPersistenceSystem.GameRoundCount >= 2 && !Track_HasEventBeenSent(e);
+                break;
+
+            case TRACK_EVENT_FIRST_10_RUNS_COMPLETED:
+                returnValue = TrackingPersistenceSystem.GameRoundCount >= 10 && !Track_HasEventBeenSent(e);
+                break;
+        }
+
+        return returnValue;
+    }
+
+    private void Notify_ProcessEvent(string e)
+    {
+        switch (e)
+        {
+            case TRACK_EVENT_TUTORIAL_COMPLETION:
+                // tutorial completion
+                Track_TutorialCompletion();
+                TrackingPersistenceSystem.NotifyEventSent(e);                
+                break;
+
+            case TRACK_EVENT_FIRST_10_RUNS_COMPLETED:
+                // first 10 runs completed
+                Track_First10RunsCompleted();
+                TrackingPersistenceSystem.NotifyEventSent(e);                
+                break;
+        }
+    }
+
+    private void Notify_CheckAndProcessEvent(string e)
+    {
+        if (Notify_MeetsEventRequirements(e))
+        {
+            Notify_ProcessEvent(e);            
+        }
+    }
+
     public override void Notify_ApplicationStart()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -379,14 +422,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained)
     {
-    	if ( TrackingPersistenceSystem.GameRoundCount == 2 )
-    	{
-			// TODO: af_tutorial_completion
-    	}
-		else if (TrackingPersistenceSystem.GameRoundCount == 10)
-		{
-			// TODO: af_first_10_runs_completed
-		}
+        Notify_CheckAndProcessEvent(TRACK_EVENT_TUTORIAL_COMPLETION);
+        Notify_CheckAndProcessEvent(TRACK_EVENT_FIRST_10_RUNS_COMPLETED);        
 
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
@@ -587,9 +624,17 @@ public class HDTrackingManagerImp : HDTrackingManager
 	{
 		// TODO: Track af_X_dragon_unlocked where X is order and only send 2 to 7
 	}
-#endregion
+    #endregion
 
-#region track	
+    #region track	
+    private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
+    private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
+
+    private bool Track_HasEventBeenSent(string e)
+    {
+        return TrackingPersistenceSystem != null && TrackingPersistenceSystem.HasEventAlreadyBeenSent(e);
+    }    
+
     private void Track_StartSessionEvent()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -989,6 +1034,50 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_DURATION, duration);
             Track_AddParamBool(e, TRACK_PARAM_ACCEPTED, hasBeenAccepted);            
 
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_TutorialCompletion()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_TutorialCompletion");
+        }
+
+        // af_tutorial_completion
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_tutorial_completion");
+        if (e != null)
+        {            
+            Track_SendEvent(e);
+        }
+
+        // fb_tutorial_completion
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_tutorial_completion");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_First10RunsCompleted()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_First10RunsCompleted");
+        }
+
+        // af_first_10_runs_completed
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_10_runs_completed");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_10_runs_completed
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_10_runs_completed");
+        if (e != null)
+        {
             Track_SendEvent(e);
         }
     }
