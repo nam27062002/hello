@@ -358,9 +358,7 @@ public class Spawner : AbstractSpawner {
 
 			if (rand <= prob) {
 				break;
-			} 
-
-			rand -= prob;
+			}
 		}
 
 		return i;

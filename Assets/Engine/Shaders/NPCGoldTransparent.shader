@@ -38,7 +38,7 @@ Shader "Hungry Dragon/NPC/NPC Gold Transparent"
 				{
 					v2f o;
 					o.pos = UnityObjectToClipPos (v.vertex);
-					half2 capCoord;
+//					half2 capCoord;
 					
 					float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
 					worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);

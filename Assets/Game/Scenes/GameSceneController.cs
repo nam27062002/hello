@@ -670,7 +670,9 @@ public class GameSceneController : GameSceneControllerBase {
         ResultsSceneController resultsSceneController = FindObjectOfType<ResultsSceneController>();
         if (resultsSceneController != null) {
             resultsSceneController.Show();
-        }               
+		} else {
+			Debug.LogError("<color=red>RESULTS SCENE CONTROLLER NOT FOUND!</color>");
+		}
     }
 
     //------------------------------------------------------------------//

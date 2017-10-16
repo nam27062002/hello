@@ -20,6 +20,9 @@ public class TrackingPersistenceSystem : PersistenceSystem
     // Amount of times the user has closed the legal popup so far
     private const string PARAM_TOTAL_LEGAL_VISITS = "totalLegalVisits";
 
+    // Events sent that should be sent only once.
+    private const string PARAM_EVENTS_ALREADY_SENT = "eventsAlreadySent";
+
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
     {
@@ -221,6 +224,32 @@ public class TrackingPersistenceSystem : PersistenceSystem
         }
     }
 
+    public bool HasEventAlreadyBeenSent(string e)
+    {
+        string value = Cache_GetString(PARAM_EVENTS_ALREADY_SENT);
+        return (string.IsNullOrEmpty(value)) ? false : value.Contains(e);
+    }
+
+    public void NotifyEventSent(string e)
+    {
+        // Makes sure that it's not already been added
+        if (!HasEventAlreadyBeenSent(e))
+        {
+            string key = PARAM_EVENTS_ALREADY_SENT;
+            string value = Cache_GetString(key);
+            if (string.IsNullOrEmpty(value))
+            {
+                value = e;
+            }
+            else
+            {
+                value += "," + e;
+            }
+
+            Cache_SetString(key, value);
+        }
+    }
+
     public TrackingPersistenceSystem()
     {
         m_systemName = "Tracking";
@@ -284,7 +313,15 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
         key = PARAM_TOTAL_LEGAL_VISITS;
         dataInt = new CacheDataInt(key, 0);
-        Cache_AddData(key, dataInt);        
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_EGG_PURCHASES;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_EVENTS_ALREADY_SENT;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
 
         Reset();
     }

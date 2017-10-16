@@ -277,7 +277,54 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-#region notify    
+    #region notify   
+    private bool Notify_MeetsEventRequirements(string e)
+    {
+        bool returnValue = false;
+        switch (e)
+        {
+            case TRACK_EVENT_TUTORIAL_COMPLETION:
+                // We need to check whether or not the event has already been sent because TrackingPersistenceSystem.GameRoundCount is advanced when a run starts
+                // but this condition is checked when the run finishes so the event is still sent even though a crash happened between the run start and the run end
+                returnValue = TrackingPersistenceSystem.GameRoundCount >= 2 && !Track_HasEventBeenSent(e);
+                break;
+
+            case TRACK_EVENT_FIRST_10_RUNS_COMPLETED:
+                // We need to check whether or not the event has already been sent because TrackingPersistenceSystem.GameRoundCount is advanced when a run starts
+                // but this condition is checked when the run finishes so the event is still sent even though a crash happened between the run start and the run end
+                returnValue = TrackingPersistenceSystem.GameRoundCount >= 10 && !Track_HasEventBeenSent(e);
+                break;
+        }
+
+        return returnValue;
+    }
+
+    private void Notify_ProcessEvent(string e)
+    {
+        switch (e)
+        {
+            case TRACK_EVENT_TUTORIAL_COMPLETION:
+                // tutorial completion
+                Track_TutorialCompletion();
+                TrackingPersistenceSystem.NotifyEventSent(e);                
+                break;
+
+            case TRACK_EVENT_FIRST_10_RUNS_COMPLETED:
+                // first 10 runs completed
+                Track_First10RunsCompleted();
+                TrackingPersistenceSystem.NotifyEventSent(e);                
+                break;
+        }
+    }
+
+    private void Notify_CheckAndProcessEvent(string e)
+    {
+        if (Notify_MeetsEventRequirements(e))
+        {
+            Notify_ProcessEvent(e);            
+        }
+    }
+
     public override void Notify_ApplicationStart()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -379,14 +426,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained)
     {
-    	if ( TrackingPersistenceSystem.GameRoundCount == 2 )
-    	{
-			// TODO: af_tutorial_completion
-    	}
-		else if (TrackingPersistenceSystem.GameRoundCount == 10)
-		{
-			// TODO: af_first_10_runs_completed
-		}
+        Notify_CheckAndProcessEvent(TRACK_EVENT_TUTORIAL_COMPLETION);
+        Notify_CheckAndProcessEvent(TRACK_EVENT_FIRST_10_RUNS_COMPLETED);        
 
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
@@ -437,7 +478,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             TrackingPersistenceSystem.TotalPurchases++;
 			if ( TrackingPersistenceSystem.TotalPurchases == 1 )
 	        {
-				// TODO: af_first_purchase
+                // first purchase
+                Track_FirstPurchase();
 	        }
         }
       
@@ -464,12 +506,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 	            TrackingPersistenceSystem.EggPurchases++;
 				if ( TrackingPersistenceSystem.EggPurchases == 1 )
 				{
-					// TODO: af_1_egg_bought
+                    // 1 egg bought
+                    Track_1EggBought();
 				}
 				else if ( TrackingPersistenceSystem.EggPurchases == 5 )
 				{
-					// TODO: af_5_egg_bought
-				}
+                    // 5 eggs bought
+                    Track_5EggBought();
+                }
 	        }
     	}
 
@@ -530,7 +574,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             if ( TrackingPersistenceSystem.AdsCount == 1 )
             {
-				// TODO: af_first_ad_shown
+                // first ad shown
+                Track_FirstAdShown();
             }
         }
 
@@ -585,11 +630,23 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	public override void Notify_DragonUnlocked( string dragon_sku, int order )
 	{
-		// TODO: Track af_X_dragon_unlocked where X is order and only send 2 to 7
-	}
-#endregion
+        // Track af_X_dragon_unlocked where X is the dragon level (dragon level is order + 1). Only dragon levels between 2 to 7 have to be tracked
+        if (order >= 1 && order <= 6)
+        {
+            Track_DragonUnlocked(order + 1);
+        }
+    }
+    #endregion
 
-#region track	
+    #region track	
+    private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
+    private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
+
+    private bool Track_HasEventBeenSent(string e)
+    {
+        return TrackingPersistenceSystem != null && TrackingPersistenceSystem.HasEventAlreadyBeenSent(e);
+    }    
+
     private void Track_StartSessionEvent()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -739,7 +796,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 			Track_SendEvent(e);
         }
-
     }
 
     private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance)
@@ -818,9 +874,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Log("Track_AdFinished adType = " + adType + " adIsLoaded = " + adIsLoaded + " maxReached = " + maxReached + 
                 " adViewingDuration = " + adViewingDuration + " provider = " + provider);
-        }
-
-		// TODO: af_ad_shown
+        }		
         
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
         if (e != null)
@@ -832,6 +886,20 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
 
 			Track_SendEvent(e);
+        }
+
+        // af_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_ad_shown");
+        if (e != null)
+        {            
+            Track_SendEvent(e);
+        }
+
+        // fb_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
         }
     }
 
@@ -989,6 +1057,162 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_DURATION, duration);
             Track_AddParamBool(e, TRACK_PARAM_ACCEPTED, hasBeenAccepted);            
 
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_TutorialCompletion()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_TutorialCompletion");
+        }
+
+        // af_tutorial_completion
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_tutorial_completion");
+        if (e != null)
+        {            
+            Track_SendEvent(e);
+        }
+
+        // fb_tutorial_completion
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_tutorial_completion");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_First10RunsCompleted()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_First10RunsCompleted");
+        }
+
+        // af_first_10_runs_completed
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_10_runs_completed");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_10_runs_completed
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_10_runs_completed");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_FirstPurchase()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_FirstPurchase");
+        }
+
+        // af_first_purchase
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_purchase");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_purchase
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_purchase");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_FirstAdShown()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_FirstAdShown");
+        }
+
+        // af_first_ad_shown
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_1EggBought()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_1EggBought");
+        }
+
+        // af_1_egg_bought
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_1_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_1_egg_bought
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_1_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_5EggBought()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_5EggBought");
+        }
+
+        // af_5_egg_bought
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_5_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_5_egg_bought
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_5_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_DragonUnlocked(int order)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_DragonUnlocked order " + order);
+        }
+
+        string eventName = "_" + order + "_dragon_unlocked";
+
+        // af_X_dragon_unlocked
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af" + eventName);
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_X_dragon_unlocked
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb" + eventName);
+        if (e != null)
+        {
             Track_SendEvent(e);
         }
     }

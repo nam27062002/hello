@@ -13,19 +13,18 @@ struct v2f {
 	float2 lmap : TEXCOORD1;
 #endif	
 
-
 #ifdef BLEND_TEXTURE	
 	float2 texcoord2 : TEXCOORD2;
+#endif
+
+#ifdef EMISSIVE_REFLECTIVE
+	float2 cap : TEXCOORD4;
 #endif
 
 	float4 color : COLOR;
 
 #ifdef FOG	
 	HG_FOG_COORDS(3)
-#endif
-
-#ifdef DARKEN
-	HG_DARKEN(4)
 #endif
 
 #ifdef DYNAMIC_SHADOWS
@@ -78,14 +77,14 @@ uniform float _CutOff;
 HG_FOG_VARIABLES
 #endif
 
-#ifdef DARKEN
-uniform float _DarkenPosition;
-uniform float _DarkenDistance;
-#endif
-
-#ifdef EMISSIVEBLINK
+#if defined(EMISSIVE_BLINK)
 uniform float _EmissivePower;
 uniform float _BlinkTimeMultiplier;
+
+#elif defined(EMISSIVE_REFLECTIVE)
+uniform sampler2D _ReflectionMap;
+uniform float4 _ReflectionColor;
+uniform float _ReflectionAmount;
 #endif
 
 float4 getCustomVertexColor(inout appdata_t v)
@@ -118,7 +117,7 @@ v2f vert (appdata_t v)
 #endif
 
 
-#if defined (FOG) || defined (DARKEN) || defined (SPECULAR)
+#if defined (FOG) || defined (SPECULAR)
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 #endif
 
@@ -126,15 +125,20 @@ v2f vert (appdata_t v)
 	HG_TRANSFER_FOG(o, worldPos);	// Fog
 #endif
 
-#ifdef DARKEN
-	HG_TRANSFER_DARKEN(o, worldPos);
+#ifdef EMISSIVE_REFLECTIVE
+//	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
+//	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
+//	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
+	float s = sin(_Time.y * 3.0 + o.vertex.x * 24.0 * o.vertex.y * 32.0);
+	float c = cos(_Time.y * 2.0 + o.vertex.y * 24.0 + o.vertex.x * 32.0);
+	o.cap = normalize(float2(s, c));
 #endif
 
 #ifdef DYNAMIC_SHADOWS
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
 
-#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
@@ -165,10 +169,6 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef DEBUG
 	return fixed4(1.0, 0.0, 1.0, 1.0);
 #endif	
-
-//#ifdef DARKEN
-//	return fixed4(0.0, 0.0, 1.0, 1.0);
-//#endif
 
 	fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 
@@ -202,13 +202,17 @@ fixed4 frag (v2f i) : SV_Target
 	col *= i.color;
 #endif	
 
+#if defined(EMISSIVE_REFLECTIVE)
+	fixed4 mc = tex2D(_ReflectionMap, i.cap) * _ReflectionColor * 3.0;
+	col = lerp(col, mc, _ReflectionAmount);
+#endif
 
 #ifdef DYNAMIC_SHADOWS
 	float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 	col *= attenuation;
 #endif
 
-#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
 #endif
@@ -227,12 +231,13 @@ fixed4 frag (v2f i) : SV_Target
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
 
-#ifdef EMISSIVEBLINK
+#if defined(EMISSIVE_BLINK)
 	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
 	col *= intensity;
+
 #endif
 
-#if defined(FOG) && !defined(EMISSIVEBLINK)
+#if defined(FOG) && !defined(EMISSIVE_BLINK)
 
 #if defined (LIGHTMAP_ON)
 
@@ -243,20 +248,17 @@ fixed4 frag (v2f i) : SV_Target
 	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif
+#endif	//  LIGHTMAPCONTRAST
 
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif
+#endif	// LIGHTMAP_ON
 
-#endif	
-/*
-#ifdef DARKEN
-	HG_APPLY_DARKEN(i, col);	//darken
-#endif
-*/
+#endif	// defined(FOG) && !defined(EMISSIVE_BLINK)
+
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
 	return col;
 }
+
