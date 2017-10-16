@@ -68,6 +68,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string enableEmissiveBlink = "Enable emissive blink";
         readonly public static string emissivePowerText = "Emissive power";
         readonly public static string blinkTimeMultiplierText = "Blink time multiplier";
+        readonly public static string emissionTypeText = "Emission type";
 
         readonly public static string lightmapContrastText = "Lightmap contrast";
 
@@ -121,7 +122,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EnableFog;
     MaterialProperty mp_EnableDarken;
 
-    MaterialProperty mp_EnableEmissiveBlink;
+//    MaterialProperty mp_EnableEmissiveBlink;
     MaterialProperty mp_EnableLightmapContrast;
 
     /// <summary>
@@ -129,6 +130,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     /// </summary>
 
     MaterialProperty mp_VertexcolorMode;
+    MaterialProperty mp_EmissionType;
 
     MaterialEditor m_materialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
@@ -189,12 +191,13 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_EnableFog = FindProperty("_EnableFog", props);
         mp_EnableDarken = FindProperty("_EnableDarken", props);
 
-        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
+//        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
         mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
 
         /// Enum Material PProperties
 
         mp_VertexcolorMode = FindProperty("VertexColor", props);
+        mp_EmissionType = FindProperty("Emissive", props);
         mp_Cull = FindProperty("_Cull", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
@@ -331,8 +334,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
         }
 */
         featureSet(mp_VertexcolorMode, Styles.vertexColorModeText);
+        featureSet(mp_EmissionType, Styles.emissionTypeText);
 
-        if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
+//        if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
+        if (mp_EmissionType.floatValue == 1.0f)
         {
             materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
             materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);

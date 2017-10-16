@@ -83,7 +83,7 @@ uniform float _DarkenPosition;
 uniform float _DarkenDistance;
 #endif
 
-#ifdef EMISSIVEBLINK
+#if defined(EMISSIVE_BLINK)
 uniform float _EmissivePower;
 uniform float _BlinkTimeMultiplier;
 #endif
@@ -134,7 +134,7 @@ v2f vert (appdata_t v)
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
 
-#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
@@ -208,7 +208,7 @@ fixed4 frag (v2f i) : SV_Target
 	col *= attenuation;
 #endif
 
-#if defined(LIGHTMAP_ON) && !defined(EMISSIVEBLINK)
+#if defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
 #endif
@@ -227,12 +227,12 @@ fixed4 frag (v2f i) : SV_Target
 	col = col + (specular * specMask * i.color * _LightColor0);
 #endif	
 
-#ifdef EMISSIVEBLINK
+#if defined(EMISSIVE_BLINK)
 	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
 	col *= intensity;
 #endif
 
-#if defined(FOG) && !defined(EMISSIVEBLINK)
+#if defined(FOG) && !defined(EMISSIVE_BLINK)
 
 #if defined (LIGHTMAP_ON)
 
@@ -243,20 +243,23 @@ fixed4 frag (v2f i) : SV_Target
 	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif
+#endif	//  LIGHTMAPCONTRAST
 
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif
+#endif	// LIGHTMAP_ON
 
-#endif	
+#endif	// defined(FOG) && !defined(EMISSIVE_BLINK)
+
 /*
 #ifdef DARKEN
 	HG_APPLY_DARKEN(i, col);	//darken
 #endif
 */
+
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
 	return col;
 }
+
