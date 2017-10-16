@@ -1,10 +1,14 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnable {
 	
 	private Animator m_animator;
-	private AudioObject m_onCollectAudioAO;
+
+	private Renderer[] m_renderers;
+	private Dictionary<int, List<Material>> m_materials;
+	private List<Material> m_materialList;
 
 	private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
@@ -18,15 +22,18 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
     protected virtual void Awake() {
 		m_animator = transform.FindComponentRecursive<Animator>();
 		m_animator.logWarnings = false;
-		
+
+		m_materials = new Dictionary<int, List<Material>>();
+		m_materialList = new List<Material>();
+		m_renderers = GetComponentsInChildren<Renderer>();
+
 		m_vertexCount = 0;
 		m_rendererCount = 0;
 
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		if (renderers != null) {
-			m_rendererCount = renderers.Length;
+		if (m_renderers != null) {
+			m_rendererCount = m_renderers.Length;
 			for (int i = 0; i < m_rendererCount; i++) {
-				Renderer renderer = renderers[i];
+				Renderer renderer = m_renderers[i];
 
 				// Keep the vertex count (for DEBUG)
 				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
@@ -37,42 +44,42 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 						m_vertexCount += filter.sharedMesh.vertexCount;
 					}
 				}
+
+				Material[] materials = renderer.sharedMaterials;
+
+				// Stores the materials of this renderer in a dictionary for direct access//
+				int renderID = renderer.GetInstanceID();
+				m_materials[renderID] = new List<Material>();
+
+				for (int m = 0; m < materials.Length; ++m) {
+					Material mat = materials[m];
+
+					m_materialList.Add(mat);
+					m_materials[renderID].Add(mat);
+
+					materials[m] = null; // remove all materials to avoid instantiation.
+				}
+				renderer.sharedMaterials = materials;
 			}
 		}
     }
 
 	public void Spawn(ISpawner _spawner) {
-	}
-
-    void OnDestroy() {
-    	RemoveAudios();
-    }
-
-    public void PreDisable() {
-		RemoveAudios();
-    }
-
-    private void RemoveAudios() {
-		if (ApplicationManager.IsAlive) {
-			RemoveAudioParent(m_onCollectAudioAO);
-		}
-    }
-
-	protected void RemoveAudioParent(AudioObject ao) {
-		if (ao != null && ao.transform.parent == transform) {
-			ao.transform.parent = null;		
+		// Restore materials
+		for (int i = 0; i < m_renderers.Length; i++) {
+			int id = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].sharedMaterials;
+			for (int m = 0; m < materials.Length; m++) {				
+				materials[m] = m_materials[id][m];
+			}
+			m_renderers[i].sharedMaterials = materials;
 		}
 	}
 
-	public void CustomUpdate() {
+    void OnDestroy() { }
+    public void PreDisable() { }
+	public void CustomUpdate() { }
 
-	}
-
-	public void Attack(bool _attack) {
-		m_animator.SetBool("attack", _attack);
-	}
-
-	public void Aim(float _blendFactor) {		
-		m_animator.SetFloat("aim", _blendFactor);
-	}
+	public void Attack(bool _attack) { m_animator.SetBool("attack", _attack); }
+	public void Aim(float _blendFactor) { m_animator.SetFloat("aim", _blendFactor); }
 }
