@@ -630,8 +630,12 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	public override void Notify_DragonUnlocked( string dragon_sku, int order )
 	{
-		// TODO: Track af_X_dragon_unlocked where X is order and only send 2 to 7
-	}
+        // Track af_X_dragon_unlocked where X is the dragon level (dragon level is order + 1). Only dragon levels between 2 to 7 have to be tracked
+        if (order >= 1 && order <= 6)
+        {
+            Track_DragonUnlocked(order + 1);
+        }
+    }
     #endregion
 
     #region track	
@@ -1183,6 +1187,30 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // fb_5_egg_bought
         e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_5_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_DragonUnlocked(int order)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_DragonUnlocked order " + order);
+        }
+
+        string eventName = "_" + order + "_dragon_unlocked";
+
+        // af_X_dragon_unlocked
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af" + eventName);
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_X_dragon_unlocked
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb" + eventName);
         if (e != null)
         {
             Track_SendEvent(e);
