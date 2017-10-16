@@ -568,7 +568,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             if ( TrackingPersistenceSystem.AdsCount == 1 )
             {
-				// TODO: af_first_ad_shown
+                // first ad shown
+                Track_FirstAdShown();
             }
         }
 
@@ -863,9 +864,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Log("Track_AdFinished adType = " + adType + " adIsLoaded = " + adIsLoaded + " maxReached = " + maxReached + 
                 " adViewingDuration = " + adViewingDuration + " provider = " + provider);
-        }
-
-		// TODO: af_ad_shown
+        }		
         
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
         if (e != null)
@@ -877,6 +876,20 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
 
 			Track_SendEvent(e);
+        }
+
+        // af_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_ad_shown");
+        if (e != null)
+        {            
+            Track_SendEvent(e);
+        }
+
+        // fb_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
         }
     }
 
@@ -1098,6 +1111,28 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // fb_first_purchase
         e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_purchase");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_FirstAdShown()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_FirstAdShown");
+        }
+
+        // af_first_ad_shown
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_ad_shown");
         if (e != null)
         {
             Track_SendEvent(e);
