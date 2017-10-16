@@ -284,10 +284,14 @@ public class HDTrackingManagerImp : HDTrackingManager
         switch (e)
         {
             case TRACK_EVENT_TUTORIAL_COMPLETION:
+                // We need to check whether or not the event has already been sent because TrackingPersistenceSystem.GameRoundCount is advanced when a run starts
+                // but this condition is checked when the run finishes so the event is still sent even though a crash happened between the run start and the run end
                 returnValue = TrackingPersistenceSystem.GameRoundCount >= 2 && !Track_HasEventBeenSent(e);
                 break;
 
             case TRACK_EVENT_FIRST_10_RUNS_COMPLETED:
+                // We need to check whether or not the event has already been sent because TrackingPersistenceSystem.GameRoundCount is advanced when a run starts
+                // but this condition is checked when the run finishes so the event is still sent even though a crash happened between the run start and the run end
                 returnValue = TrackingPersistenceSystem.GameRoundCount >= 10 && !Track_HasEventBeenSent(e);
                 break;
         }
