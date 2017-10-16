@@ -22,12 +22,13 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float EVENT_COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
+	private const float COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private TextMeshProUGUI m_chestsCountdownText = null;
 	[SerializeField] private TextMeshProUGUI m_eventCountdownText = null;
 	[SerializeField] private TabSystem m_tabs = null;
 	public TabSystem tabs {
@@ -35,7 +36,7 @@ public class GoalsScreenController : MonoBehaviour {
 	}
 
 	// Internal
-	private float m_eventCountdownUpdateTimer = 0f;
+	private float m_countdownUpdateTimer = 0f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -44,20 +45,28 @@ public class GoalsScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Make sure event timer will be updated
-		m_eventCountdownUpdateTimer = 0f;
+		// Make sure timers will be updated
+		m_countdownUpdateTimer = 0f;
 	}
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-		// Update countdown at intervals
-		m_eventCountdownUpdateTimer -= Time.deltaTime;
-		if(m_eventCountdownUpdateTimer <= 0f) {
+		// Update countdowns at intervals
+		m_countdownUpdateTimer -= Time.deltaTime;
+		if(m_countdownUpdateTimer <= 0f) {
 			// Reset timer
-			m_eventCountdownUpdateTimer = EVENT_COUNTDOWN_UPDATE_INTERVAL;
+			m_countdownUpdateTimer = COUNTDOWN_UPDATE_INTERVAL;
 
+			// Chests timer
+			m_chestsCountdownText.text = TimeUtils.FormatTime(
+				ChestManager.timeToReset.TotalSeconds,
+				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				2
+			);
+
+			// Event Timer
 			// Show countdown only if there is an active event
 			GlobalEvent evt = GlobalEventManager.currentEvent;
 			bool showTimer = evt != null && evt.isActive;
