@@ -199,6 +199,7 @@ namespace AI {
 						d = hit[i].distance;
 
 						m_upVector = hit[i].normal;
+						position = hit[i].point;
 					}
 				}
 			}

@@ -1,30 +1,28 @@
 fileFormatVersion: 2
 guid: c9b996f7a4d444606b4dc346171423bc
-timeCreated: 1507708803
+timeCreated: 1508151093
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
-    100002: CarnivourusPlantBody_1
-    100004: CarnivourusPlantBody_2
-    100006: CarnivourusPlantBody_3
-    100008: CarnivourusPlantBody_4
-    100010: CarnivourusPlantBody_5
-    100012: CarnivourusPlantHead
-    100014: CarnivourusPlantJaw_1
-    100016: CarnivourusPlantJaw_2
-    100018: CarnivourusPlantRoot
+    100002: CarnivourusPlantCtrsHead
+    100004: CarnivourusPlantHead
+    100006: CarnivourusPlantL_Jaw
+    100008: CarnivourusPlantR_Jaw
+    100010: CarnivourusPlantRoot
+    100012: CarnivourusPlantSpine1
+    100014: CarnivourusPlantSpine2
+    100016: CarnivourusPlantSpine3
     400000: //RootNode
-    400002: CarnivourusPlantBody_1
-    400004: CarnivourusPlantBody_2
-    400006: CarnivourusPlantBody_3
-    400008: CarnivourusPlantBody_4
-    400010: CarnivourusPlantBody_5
-    400012: CarnivourusPlantHead
-    400014: CarnivourusPlantJaw_1
-    400016: CarnivourusPlantJaw_2
-    400018: CarnivourusPlantRoot
+    400002: CarnivourusPlantCtrsHead
+    400004: CarnivourusPlantHead
+    400006: CarnivourusPlantL_Jaw
+    400008: CarnivourusPlantR_Jaw
+    400010: CarnivourusPlantRoot
+    400012: CarnivourusPlantSpine1
+    400014: CarnivourusPlantSpine2
+    400016: CarnivourusPlantSpine3
     7400000: Attack_Left
     9500000: //RootNode
   materials:
@@ -74,21 +72,21 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.10927153
+      - time: 0
         functionName: AttackStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.14071856
+      - time: 0.16766468
         functionName: AttackDealDamage
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.4251497
+      - time: 0.41916168
         functionName: AttackEnd
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -100,21 +98,19 @@ ModelImporter:
         weight: 1
       - path: CarnivourusPlantRoot
         weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1
+      - path: CarnivourusPlantRoot/CarnivourusPlantSpine1
         weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1/CarnivourusPlantBody_2
+      - path: CarnivourusPlantRoot/CarnivourusPlantSpine1/CarnivourusPlantSpine2
         weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1/CarnivourusPlantBody_2/CarnivourusPlantBody_3
+      - path: CarnivourusPlantRoot/CarnivourusPlantSpine1/CarnivourusPlantSpine2/CarnivourusPlantSpine3
         weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1/CarnivourusPlantBody_2/CarnivourusPlantBody_3/CarnivourusPlantBody_4
+      - path: CarnivourusPlantRoot/CarnivourusPlantSpine1/CarnivourusPlantSpine2/CarnivourusPlantSpine3/CarnivourusPlantCtrsHead
         weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1/CarnivourusPlantBody_2/CarnivourusPlantBody_3/CarnivourusPlantBody_4/CarnivourusPlantBody_5
+      - path: CarnivourusPlantRoot/CarnivourusPlantSpine1/CarnivourusPlantSpine2/CarnivourusPlantSpine3/CarnivourusPlantCtrsHead/CarnivourusPlantHead
         weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1/CarnivourusPlantBody_2/CarnivourusPlantBody_3/CarnivourusPlantBody_4/CarnivourusPlantBody_5/CarnivourusPlantHead
+      - path: CarnivourusPlantRoot/CarnivourusPlantSpine1/CarnivourusPlantSpine2/CarnivourusPlantSpine3/CarnivourusPlantCtrsHead/CarnivourusPlantHead/CarnivourusPlantL_Jaw
         weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1/CarnivourusPlantBody_2/CarnivourusPlantBody_3/CarnivourusPlantBody_4/CarnivourusPlantBody_5/CarnivourusPlantHead/CarnivourusPlantJaw_1
-        weight: 1
-      - path: CarnivourusPlantRoot/CarnivourusPlantBody_1/CarnivourusPlantBody_2/CarnivourusPlantBody_3/CarnivourusPlantBody_4/CarnivourusPlantBody_5/CarnivourusPlantHead/CarnivourusPlantJaw_2
+      - path: CarnivourusPlantRoot/CarnivourusPlantSpine1/CarnivourusPlantSpine2/CarnivourusPlantSpine3/CarnivourusPlantCtrsHead/CarnivourusPlantHead/CarnivourusPlantR_Jaw
         weight: 1
       maskType: 3
       maskSource: {instanceID: 0}
