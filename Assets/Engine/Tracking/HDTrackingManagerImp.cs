@@ -653,6 +653,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 " itemID = " + itemID + " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice);
         }        
                 
+        // iap event
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap");
         if (e != null)
         {            
@@ -674,7 +675,26 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
         }
 
-		// TODO: af_purchase
+        // af_purchase event
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_purchase");
+        if (e != null)
+        {            
+            Track_AddParamString(e, TRACK_PARAM_AF_DEF_CURRENCY, moneyCurrencyCode);
+            e.SetParameterValue(TRACK_PARAM_AF_DEF_LOGPURCHASE, moneyPrice);
+            e.SetParameterValue(TRACK_PARAM_AF_DEF_QUANTITY, 1);            
+
+            Track_SendEvent(e);
+        }
+
+        // fb_purchase event
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_purchase");
+        if (e != null)
+        {
+            Track_AddParamString(e, TRACK_PARAM_FB_DEF_CURRENCY, moneyCurrencyCode);
+            e.SetParameterValue(TRACK_PARAM_FB_DEF_LOGPURCHASE, moneyPrice);            
+
+            Track_SendEvent(e);
+        }
     }
 
     private void Track_PurchaseWithResourcesCompleted(string economyGroup, string itemID, int itemQuantity, string promotionType, 
@@ -982,6 +1002,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AD_REVIVE                  = "adRevive";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
     private const string TRACK_PARAM_AD_VIEWING_DURATION        = "adViewingDuration";
+    private const string TRACK_PARAM_AF_DEF_CURRENCY            = "af_def_currency";
+    private const string TRACK_PARAM_AF_DEF_LOGPURCHASE         = "af_def_logPurchase";
+    private const string TRACK_PARAM_AF_DEF_QUANTITY            = "af_quantity";
     private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";                
     private const string TRACK_PARAM_CURRENCY                   = "currency";
@@ -997,6 +1020,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
+    private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
+    private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
