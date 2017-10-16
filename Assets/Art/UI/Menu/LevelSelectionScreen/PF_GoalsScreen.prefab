@@ -22027,6 +22027,7 @@ MonoBehaviour:
   m_icon: {fileID: 114929825641809146}
   m_rewardText: {fileID: 114416593085761682}
   m_targetText: {fileID: 0}
+  m_showNameForEggsAndPets: 1
 --- !u!114 &114386226165876570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -24876,7 +24877,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: d59c05cfbf061c744a59e733ab49c740, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ef865cfa40d95ad4c8f2b59ef6a457cf, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -25665,6 +25666,7 @@ MonoBehaviour:
   m_icon: {fileID: 114524132670519228}
   m_rewardText: {fileID: 114887343159651462}
   m_targetText: {fileID: 0}
+  m_showNameForEggsAndPets: 0
 --- !u!114 &114565426249888458
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -31258,6 +31260,7 @@ MonoBehaviour:
   m_icon: {fileID: 114901200382598734}
   m_rewardText: {fileID: 114891603326420510}
   m_targetText: {fileID: 0}
+  m_showNameForEggsAndPets: 1
 --- !u!114 &114778005884980552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -32039,6 +32042,7 @@ MonoBehaviour:
   m_icon: {fileID: 114679063627158298}
   m_rewardText: {fileID: 114710263060367918}
   m_targetText: {fileID: 0}
+  m_showNameForEggsAndPets: 1
 --- !u!114 &114836875056186186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -33119,7 +33123,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 50
+  m_text: x2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
@@ -33146,24 +33150,24 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 40
-  m_fontSizeMax: 50
+  m_fontSizeMin: 30
+  m_fontSizeMax: 60
   m_fontStyle: 0
-  m_textAlignment: 258
+  m_textAlignment: 514
   m_isAlignmentEnumConverted: 1
-  m_characterSpacing: 0
+  m_characterSpacing: -2
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -5
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 3
   m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
@@ -34187,7 +34191,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: d59c05cfbf061c744a59e733ab49c740, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3987773dfa118634e8e78efb41bb3be6, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -35299,6 +35303,7 @@ MonoBehaviour:
   m_icon: {fileID: 114775388245890272}
   m_rewardText: {fileID: 114539785197266156}
   m_targetText: {fileID: 0}
+  m_showNameForEggsAndPets: 1
 --- !u!114 &114983315954133452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -77036,10 +77041,10 @@ RectTransform:
   m_Father: {fileID: 224054899828191428}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100}
-  m_SizeDelta: {x: 0, y: 100}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 30, y: -30}
+  m_SizeDelta: {x: 93, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224174649815078822
 RectTransform:
@@ -80259,8 +80264,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 150, y: 150}
+  m_AnchoredPosition: {x: 0, y: 11}
+  m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224604540298151502
 RectTransform:

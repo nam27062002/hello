@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AI {
 	public class MachineCarnivorousPlant : MonoBehaviour, IMachine, ISpawnable {
 		[SerializeField] protected MachineSensor m_sensor = new MachineSensor();
-
+		[SerializeField] protected MachineInflammable m_inflammable = new MachineInflammable();
 
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 
@@ -55,6 +55,7 @@ namespace AI {
 			m_entity = GetComponent<IEntity>();	
 
 			m_sensor.Attach(this, m_entity, m_pilot);
+			m_inflammable.Attach(this, m_entity, m_pilot);
 
 			m_signals = new Signals(this);
 			m_signals.Init();
@@ -81,6 +82,7 @@ namespace AI {
 		public void Spawn(ISpawner _spawner) {
 			m_signals.Init();
 			m_sensor.Init();
+			m_inflammable.Init();
 
 			if (InstanceManager.player != null)	{
 				DragonPlayer player = InstanceManager.player;
@@ -104,6 +106,12 @@ namespace AI {
 			Invoke("Activate", duration);
 		}
 
+		public void OnTrigger(string _trigger, object[] _param = null) {
+			if (_trigger == SignalTriggers.OnDestroyed) {
+				m_entity.Disable(true);
+			} 
+		}
+
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
 			m_signals.SetValue(_signal, _activated, _params);
 		}
@@ -123,29 +131,39 @@ namespace AI {
 			m_sensor.Disable(_seconds);
 		}
 
-		public virtual bool Burn(Transform _transform) {
-			//TODO
-			return false; 
+		public bool Burn(Transform _transform) {
+			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
+				if (!GetSignal(Signals.Type.Burning)) {
+					ReceiveDamage(9999f);
+					m_inflammable.Burn(_transform);
+				}
+				return true;
+			}
+			return false;
 		}
 
 		public bool IsDead() {
-			//TODO
-			return false; 
+			return m_entity.health <= 0 || m_signals.GetValue(Signals.Type.Destroyed);
 		}
 
 		public bool IsDying() {
-			//TODO
-			return false; 
+			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
 		public void CustomUpdate() {
-			m_sensor.Update();
+			m_inflammable.Update();
 
-			if (m_pilot.IsActionPressed(Pilot.Action.Attack)) {
-				UpdateAim();
-				m_viewControl.Attack(true);
-			} else {
+			if (IsDying() || IsDead()) {
 				m_viewControl.Attack(false);
+			} else {
+				m_sensor.Update();
+
+				if (m_pilot.IsActionPressed(Pilot.Action.Attack)) {
+					UpdateAim();
+					m_viewControl.Attack(true);
+				} else {
+					m_viewControl.Attack(false);
+				}
 			}
 		}
 
@@ -186,8 +204,9 @@ namespace AI {
 			}
 		}
 
+
 		/**************************************************************************************************************/
-		public void OnTrigger(string _trigger, object[] _param = null) {}
+
 		public virtual void CheckCollisions(bool _value) {}
 		public virtual void FaceDirection(bool _value) {}
 		public bool HasCorpse() { return false; }

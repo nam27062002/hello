@@ -267,6 +267,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			// Top percentile reward
 			//eventData.Add("topReward", CreateEventRewardData(0.01f, "pet", "pet_24", -1));
 			eventData.Add("topReward", CreateEventRewardData(0.01f, Metagame.RewardGoldenFragments.TYPE_CODE, "", 20));
+			//eventData.Add("topReward", CreateEventRewardData(0.01f, Metagame.RewardEgg.TYPE_CODE, "egg_premium", 1));
 
 			// Bonuses
 			eventData.Add("bonusDragon", "dragon_reptile");
