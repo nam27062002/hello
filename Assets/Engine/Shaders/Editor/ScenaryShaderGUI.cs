@@ -54,8 +54,11 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string specularPowerText = "Specular Power";
         readonly public static string specularDirText = "Specular direction";
 
+        readonly public static string reflectionColorText = "Reflection color";
+        readonly public static string reflectionAmountText = "Reflection amount";
+        readonly public static string reflectionMapText = "Reflection map";
+
         readonly public static string enableFogText = "Enable Fog";
-        readonly public static string enableDarkenText = "Enable Darken";
 
         readonly public static string automaticBlendingText = "Automatic blending";
         readonly public static string overlayColorText = "Vertex Color Tint";
@@ -106,6 +109,11 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EmissivePower;
     MaterialProperty mp_BlinkTimeMultiplier;
 
+    MaterialProperty mp_reflectionColor;
+    MaterialProperty mp_reflectionAmount;
+    MaterialProperty mp_reflectionMap;
+
+
     MaterialProperty mp_Cull;
 
 
@@ -120,7 +128,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
     MaterialProperty mp_EnableCutoff;
     MaterialProperty mp_EnableFog;
-    MaterialProperty mp_EnableDarken;
 
 //    MaterialProperty mp_EnableEmissiveBlink;
     MaterialProperty mp_EnableLightmapContrast;
@@ -138,7 +145,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
     readonly static string kw_blendTexture = "BLEND_TEXTURE";
     readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
     readonly static string kw_fog = "FOG";
-    readonly static string kw_darken = "DARKEN";
     readonly static string kw_normalmap = "NORMALMAP";
     readonly static string kw_specular = "SPECULAR";
     readonly static string kw_cutOff = "CUTOFF";
@@ -179,6 +185,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_EmissivePower = FindProperty("_EmissivePower", props);
         mp_BlinkTimeMultiplier = FindProperty("_BlinkTimeMultiplier", props);
 
+        mp_reflectionColor = FindProperty("_ReflectionColor", props);
+        mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
+        mp_reflectionMap = FindProperty("_ReflectionMap", props);
+
         /// Toggle Material Properties
 
         mp_EnableBlendTexture = FindProperty("_EnableBlendTexture", props);
@@ -189,7 +199,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         mp_EnableCutoff = FindProperty("_EnableCutoff", props);
         mp_EnableFog = FindProperty("_EnableFog", props);
-        mp_EnableDarken = FindProperty("_EnableDarken", props);
 
 //        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
         mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
@@ -326,21 +335,32 @@ internal class ScenaryShaderGUI : ShaderGUI {
         }
 
         featureSet(mp_EnableFog, Styles.enableFogText);
-/*
-        if(featureSet(mp_EnableDarken, Styles.enableDarkenText))
-        {
-            materialEditor.ShaderProperty(mp_darkenPosition, Styles.darkenPositionText);
-            materialEditor.ShaderProperty(mp_darkenDistance, Styles.darkenDistanceText);
-        }
-*/
+
         featureSet(mp_VertexcolorMode, Styles.vertexColorModeText);
         featureSet(mp_EmissionType, Styles.emissionTypeText);
 
 //        if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
+        switch((int)mp_EmissionType.floatValue)
+        {
+            case 0:         //Emission none
+            default:
+                break;
+
+            case 1:         //Emission blink
+                materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
+                materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
+                break;
+
+            case 2:         //Emission reflective
+                materialEditor.ShaderProperty(mp_reflectionMap, Styles.reflectionMapText);
+                materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
+                materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+                
+                break;
+
+        }
         if (mp_EmissionType.floatValue == 1.0f)
         {
-            materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
-            materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
         }
         /*
                 if (featureSet(mp_EnableLightmapContrast, Styles.lightmapContrastText))
@@ -481,11 +501,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
             else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken")
             {
                 mat.shader = shader;
-                mat.SetFloat("_EnableDarken", 1.0f);
                 mat.SetFloat("_EnableFog", 1.0f);
                 mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
 
-                mat.EnableKeyword("DARKEN");
                 mat.EnableKeyword("FOG");
                 mat.EnableKeyword("OPAQUEALPHA");
 
@@ -585,13 +603,11 @@ internal class ScenaryShaderGUI : ShaderGUI {
             {
                 mat.shader = shader;
                 mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableDarken", 1.0f);
                 mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
                 mat.SetFloat("_EnableBlendTexture", 1.0f);
                 mat.SetFloat("_EnableAutomaticBlend", 1.0f);
 
                 mat.EnableKeyword("FOG");
-                mat.EnableKeyword("DARKEN");
                 mat.EnableKeyword("OPAQUEALPHA");
                 mat.EnableKeyword("BLEND_TEXTURE");
                 mat.EnableKeyword("CUSTOM_VERTEXCOLOR");
@@ -640,12 +656,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 mat.shader = shader;
                 mat.SetFloat("_EnableFog", 1.0f);
                 mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("_EnableDarken", 1.0f);
                 mat.SetFloat("_EnableBlendTexture", 1.0f);
 
                 mat.EnableKeyword("FOG");
                 mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("DARKEN");
                 mat.EnableKeyword("BLEND_TEXTURE");
 
                 setBlendMode(mat, 0);   //Opaque
