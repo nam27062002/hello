@@ -315,6 +315,10 @@ public class TrackingPersistenceSystem : PersistenceSystem
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 
+        key = PARAM_TOTAL_EGG_PURCHASES;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
         key = PARAM_EVENTS_ALREADY_SENT;
         dataString = new CacheDataString(key, "");
         Cache_AddData(key, dataString);

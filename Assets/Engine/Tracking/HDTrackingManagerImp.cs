@@ -506,12 +506,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 	            TrackingPersistenceSystem.EggPurchases++;
 				if ( TrackingPersistenceSystem.EggPurchases == 1 )
 				{
-					// TODO: af_1_egg_bought
+                    // 1 egg bought
+                    Track_1EggBought();
 				}
 				else if ( TrackingPersistenceSystem.EggPurchases == 5 )
 				{
-					// TODO: af_5_egg_bought
-				}
+                    // 5 eggs bought
+                    Track_5EggBought();
+                }
 	        }
     	}
 
@@ -1137,6 +1139,50 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // fb_first_ad_shown
         e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_1EggBought()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_1EggBought");
+        }
+
+        // af_1_egg_bought
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_1_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_1_egg_bought
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_1_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_5EggBought()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_5EggBought");
+        }
+
+        // af_5_egg_bought
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_5_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_5_egg_bought
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_5_egg_bought");
         if (e != null)
         {
             Track_SendEvent(e);
