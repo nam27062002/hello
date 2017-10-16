@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114854378644620086}
   - component: {fileID: 114254064663040940}
   m_Layer: 0
-  m_Name: SP_GroundSmallFood_Dark
+  m_Name: SP_Unka
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1913308816413266}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 133.84995, y: 36.737587, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -52,8 +52,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0963732833adc4829bf26faf14b513f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  size: {x: 6, y: 8}
+  offset: {x: 0.32997513, y: 0}
+  size: {x: 15.45919, y: 8}
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114854378644620086
 MonoBehaviour:
@@ -72,10 +72,14 @@ MonoBehaviour:
     y: 0
     width: 2
     height: 2
-  m_mixEntities: 0
+  m_mixEntities: 1
   m_entityPrefabList:
-  - name: Monster/PF_GroundSmallFood_Dark
-    chance: 100
+  - name: Goblin/PF_UnkasGarlicHead
+    chance: 33
+  - name: Goblin/PF_UnkasPumpkinHead
+    chance: 33
+  - name: Goblin/PF_UnkasWoodHead
+    chance: 33
   m_quantity:
     min: 1
     max: 1
@@ -85,7 +89,7 @@ MonoBehaviour:
   m_scale:
     min: 1
     max: 1
-  m_rails: 1
+  m_rails: 3
   m_hasGroupBonus: 0
   m_eventOnly: 0
   m_minTier: 0
