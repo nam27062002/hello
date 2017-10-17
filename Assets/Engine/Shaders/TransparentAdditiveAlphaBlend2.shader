@@ -95,9 +95,9 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 				col.a = clamp(tex.g * _OpacitySaturation * i.color.w, 0.0, 1.0);
 #endif
 
-				float lerpValue = tex.r * i.particledata.y * _AlphaMultiplier;
+				float lerpValue = clamp(tex.r * i.particledata.y * _AlphaMultiplier, 0.0, 1.0);
 #if COLOR_RAMP
-				col.xyz = tex2D(_ColorRamp, float2(lerpValue, 0.0)) * i.color.xyz * col.a * _EmissionSaturation;
+				col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * i.color.xyz * col.a * _EmissionSaturation;
 #else
 				col.xyz = lerp(_BasicColor.xyz * i.color.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif
