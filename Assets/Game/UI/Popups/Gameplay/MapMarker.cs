@@ -36,6 +36,7 @@ public class MapMarker : MonoBehaviour {
 	[SerializeField] private Type m_type = Type.DECO;
 	[Space]
 	[SerializeField] private bool m_rotateWithObject = true;
+	[SerializeField] private bool m_zoomCompensation = true;
 
 	// Whether to show the marker or not (i.e. set to false when egg has been collected)
 	private bool m_showMarker = true;
@@ -254,8 +255,12 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	/// <param name="_zoomFactor">Percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer.</param>
 	private void OnMapZoomChanged(float _zoomFactor) {
-		// Update zoom correction factor
-		m_zoomScaleFactor = _zoomFactor;
+		// Update zoom correction factor (if setup to do so)
+		if(m_zoomCompensation) {
+			m_zoomScaleFactor = _zoomFactor;
+		} else {
+			m_zoomScaleFactor = 1f;
+		}
 
 		// Refresh marker
 		UpdateMarker();
