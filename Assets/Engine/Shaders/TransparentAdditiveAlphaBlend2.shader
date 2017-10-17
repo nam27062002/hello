@@ -10,11 +10,12 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 		_ColorRamp("Color Ramp", 2D) = "white" {}
 		_EmissionSaturation("Emission saturation", Range(0.0, 8.0)) = 1.0
 		_OpacitySaturation("Opacity saturation", Range(0.0, 8.0)) = 1.0
-		_AlphaMultiplier("Alpha multiplier", Range(0.0, 8.0)) = 1.0
+		_ColorMultiplier("Color multiplier", Range(0.0, 8.0)) = 1.0
 		[Toggle(DISSOLVE)] _EnableDissolve("Enable alpha dissolve", Float) = 0
 		[Toggle(COLOR_RAMP)] _EnableColorRamp("Enable color ramp", Float) = 0
+		[Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
 
-		_DissolveStep("DissolveStep.xy / Emission saturation.z", Vector) = (0.0, 1.0, 0.0, 0.0)
+		_DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 //		[Enum(Additive, 1, AlphaBlend, 10)] _BlendMode("Blend mode", Float) = 10
 	}
@@ -38,6 +39,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 			#pragma fragment frag
 			#pragma multi_compile _ DISSOLVE
 			#pragma multi_compile _ COLOR_RAMP
+			#pragma multi_compile _ APPLY_RGB_COLOR_VERTEX
 			//			#pragma multi_compile_particles
 
 			#include "UnityCG.cginc"
@@ -71,7 +73,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 #ifdef DISSOLVE
 			float4 _DissolveStep;
 #endif
-			float _AlphaMultiplier;
+			float _ColorMultiplier;
 
 			v2f vert(appdata_t v)
 			{
@@ -89,19 +91,25 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 				float4 col;
 
 				float ramp = -1.0 + (i.particledata.x * 2.0);
+
+#ifdef APPLY_RGB_COLOR_VERTEX
+				float4 vcolor = i.color;
+#else
+				float4 vcolor = float4(1.0, 1.0, 1.0, i.color.w);
+#endif
+
 #ifdef DISSOLVE
-				col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, tex.b + ramp) * _OpacitySaturation * i.color.w, 0.0, 1.0);
+				col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, tex.b + ramp) * _OpacitySaturation * vcolor.w, 0.0, 1.0);
 #else
-				col.a = clamp(tex.g * _OpacitySaturation * i.color.w, 0.0, 1.0);
+				col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0);
 #endif
 
-				float lerpValue = clamp(tex.r * i.particledata.y * _AlphaMultiplier, 0.0, 1.0);
+				float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier, 0.0, 1.0);
 #if COLOR_RAMP
-				col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * i.color.xyz * col.a * _EmissionSaturation;
+				col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * col.a * _EmissionSaturation;
 #else
-				col.xyz = lerp(_BasicColor.xyz * i.color.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
+				col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif
-
 				return col;
 			}
 			ENDCG
