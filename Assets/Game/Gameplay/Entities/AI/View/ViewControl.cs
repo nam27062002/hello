@@ -80,12 +80,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	[SerializeField] private string m_onBurnAudio;
 
 	[SeparatorAttribute("Explode")]
-	[SerializeField] private ParticleData m_explosionParticles; // this will explode when burning
+	[SerializeField] private ParticleData m_explosionParticles;
 	[SerializeField] private string m_onExplosionAudio;
+	[SerializeField] private bool m_explodeWhenBurned = true;
 
 	[SeparatorAttribute("More Audios")]
 	[SerializeField] protected string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
+	[SerializeField] protected string m_onAttackDealDamageAudio;
+	private AudioObject m_onAttackDealDamageAudioAO;
 	protected Vector3 m_attackTargetPosition;
 	public Vector3 attackTargetPosition { get { return m_attackTargetPosition; } set { m_attackTargetPosition = value; } }
 	[SerializeField] private string m_onScaredAudio;
@@ -293,7 +296,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_onAttackAudioAO.Stop();
 	}
 
-	protected virtual void animEventsOnAttackDealDamage(){}
+	protected virtual void animEventsOnAttackDealDamage(){
+		if (!string.IsNullOrEmpty(m_onAttackDealDamageAudio)){
+			m_onAttackDealDamageAudioAO = AudioController.Play( m_onAttackDealDamageAudio, transform );
+		}
+	}
 
 
 	void onStartAnim(int stateNameHash) {
@@ -386,6 +393,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			// Return parented audio objects if needed
 			RemoveAudioParent( m_idleAudioAO );
 			RemoveAudioParent( m_onAttackAudioAO );
+			RemoveAudioParent( m_onAttackDealDamageAudioAO );
 			RemoveAudioParent( m_onEatenAudioAO );
 
 			RemoveAudioParent( m_onScaredAudioAO );
@@ -696,9 +704,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (m_scared != _scared) {
 			m_scared = _scared;
-			if ( !string.IsNullOrEmpty(m_onScaredAudio) )
-			{
-				m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+			if ( _scared ){
+				if ( !string.IsNullOrEmpty(m_onScaredAudio)){
+					m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+				}
+			}else{
+				if ( m_onScaredAudioAO != null && m_onScaredAudioAO.IsPlaying() && m_onScaredAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop ){
+					m_onScaredAudioAO.Stop();
+				}
 			}
 			if (m_animator != null)
 				m_animator.SetBool("scared", _scared);
@@ -722,8 +735,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				if (m_animator != null)
 					m_animator.speed = 0f;
 			} else {
-				if ( !string.IsNullOrEmpty(m_onPanicAudio) )
-					m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+				if ( _panic ){
+					if ( !string.IsNullOrEmpty(m_onPanicAudio) )
+						m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+				}else{
+					if ( m_onPanicAudioAO != null && m_onPanicAudioAO.IsPlaying() && m_onPanicAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+						m_onPanicAudioAO.Stop();
+				}
 				if (m_animator != null)
 					m_animator.SetBool("holded", _panic);
 			}
@@ -881,11 +899,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_idleAudioAO.Stop();
 		}
 
-		if (!_eaten) {
+		bool other = !_eaten && !_burned;
+
+		// if burned or explode for no reason
+		if ( (m_explodeWhenBurned && _burned) ||  other) {
 			PlayExplosion();
 		}
 
-		if (!_burned) {
+		// if eaten or not burned
+		if ( _eaten || other ){
 			if (m_corpseHandler != null) {
 				// spawn corpse
 				GameObject corpse = m_corpseHandler.Spawn(null);

@@ -360,6 +360,7 @@ GameObject:
   - component: {fileID: 222532332753912114}
   - component: {fileID: 114846419183939880}
   - component: {fileID: 114807051642610296}
+  - component: {fileID: 114019767276755332}
   m_Layer: 5
   m_Name: Completed
   m_TagString: Untagged
@@ -657,6 +658,7 @@ GameObject:
   - component: {fileID: 222174211409425344}
   - component: {fileID: 114506459966368008}
   - component: {fileID: 114707238995894510}
+  - component: {fileID: 114055285671010384}
   m_Layer: 5
   m_Name: Completed
   m_TagString: Untagged
@@ -837,6 +839,7 @@ GameObject:
   - component: {fileID: 222082052936754368}
   - component: {fileID: 114040274370580004}
   - component: {fileID: 114429909110630150}
+  - component: {fileID: 114751777819693574}
   m_Layer: 5
   m_Name: Completed
   m_TagString: Untagged
@@ -1043,7 +1046,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1692914317530010
 GameObject:
   m_ObjectHideFlags: 1
@@ -1440,6 +1443,20 @@ MonoBehaviour:
   m_canvasRenderer: {fileID: 222724451143081582}
   m_TextComponent: {fileID: 114372951578183076}
   m_materialReferenceIndex: 1
+--- !u!114 &114019767276755332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150597438117398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_MISSION_COMPLETED
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114023439245540450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1790,6 +1807,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114055285671010384
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1342243557334952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_MISSION_COMPLETED
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114059349468665598
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4107,6 +4138,20 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114751777819693574
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1533074967768542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_MISSION_COMPLETED
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114753861649934602
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5515,8 +5560,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 40}
-  m_SizeDelta: {x: 0, y: -120}
+  m_AnchoredPosition: {x: 0, y: 45}
+  m_SizeDelta: {x: 0, y: -110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224004107041479528
 RectTransform:
@@ -5569,8 +5614,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 40}
-  m_SizeDelta: {x: 0, y: -120}
+  m_AnchoredPosition: {x: 0, y: 45}
+  m_SizeDelta: {x: 0, y: -110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224035723953539736
 RectTransform:
@@ -6279,8 +6324,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 40}
-  m_SizeDelta: {x: 0, y: -120}
+  m_AnchoredPosition: {x: 0, y: 45}
+  m_SizeDelta: {x: 0, y: -110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224495874823672338
 RectTransform:
@@ -6792,7 +6837,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 50}
-  m_SizeDelta: {x: 0, y: 50}
+  m_SizeDelta: {x: 390.74, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224876396274987130
 RectTransform:
