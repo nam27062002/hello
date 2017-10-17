@@ -86,6 +86,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	[SeparatorAttribute("More Audios")]
 	[SerializeField] protected string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
+	[SerializeField] protected string m_onAttackDealDamageAudio;
+	private AudioObject m_onAttackDealDamageAudioAO;
 	protected Vector3 m_attackTargetPosition;
 	public Vector3 attackTargetPosition { get { return m_attackTargetPosition; } set { m_attackTargetPosition = value; } }
 	[SerializeField] private string m_onScaredAudio;
@@ -293,7 +295,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_onAttackAudioAO.Stop();
 	}
 
-	protected virtual void animEventsOnAttackDealDamage(){}
+	protected virtual void animEventsOnAttackDealDamage(){
+		if (!string.IsNullOrEmpty(m_onAttackDealDamageAudio)){
+			m_onAttackDealDamageAudioAO = AudioController.Play( m_onAttackDealDamageAudio, transform );
+		}
+	}
 
 
 	void onStartAnim(int stateNameHash) {
@@ -386,6 +392,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			// Return parented audio objects if needed
 			RemoveAudioParent( m_idleAudioAO );
 			RemoveAudioParent( m_onAttackAudioAO );
+			RemoveAudioParent( m_onAttackDealDamageAudioAO );
 			RemoveAudioParent( m_onEatenAudioAO );
 
 			RemoveAudioParent( m_onScaredAudioAO );
