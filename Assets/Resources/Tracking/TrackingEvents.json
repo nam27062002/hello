@@ -169,8 +169,9 @@
                 {"playerProgress": {"Status": "OK"}},
                 {"moneyCurrency": {"Status": "OK"}},
                 {"moneyIAP": {"Status": "OK"}},
+				{"moneyUSD": {"Status": "OK"}}
                 {"totalPurchases": {"Status": "OK"}},
-                {"totalStoreVisits": {"Status": "OK"}}
+                {"totalStoreVisits": {"Status": "OK"}}				
             ],
             "APIs": [
                 "dna",
@@ -588,6 +589,10 @@
             "Type": "FLOAT",
             "Values": []
         },
+		"moneyUSD": {
+            "Type": "INT",
+            "Values": []
+        },		
         "isPayingSession": {
             "Type": "INT:4",
             "Values": []
