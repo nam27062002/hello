@@ -188,7 +188,8 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 				if(spawnerUsed) continue;
 
 				// Check whether it's a valid spawner (filter by dragon tier)
-				if(spawner.requiredTier <= currentTier) {
+				//if(spawner.requiredTier <= currentTier) {
+				if (currentTier >= spawner.requiredTier && currentTier <= spawner.maxTier) {
 					validSpawners.Add(spawner);
 				} else {
 					toRemove.Add(spawner);
@@ -250,7 +251,10 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 			List<GameObject> filteredCollectibles = new List<GameObject>();
 			if(_filterTier) {
 				DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
-				filteredCollectibles = allCollectibles.Where((GameObject _go) => { return _go.GetComponent<T>().requiredTier <= currentTier; }).ToList();
+				filteredCollectibles = allCollectibles.Where((GameObject _go) => { 
+					T c = _go.GetComponent<T>();
+					return currentTier >= c.requiredTier && currentTier <= c.maxTier;
+				}).ToList();
 			} else {
 				filteredCollectibles = allCollectibles.Select((GameObject _go) => { return _go; }).ToList();
 			}
