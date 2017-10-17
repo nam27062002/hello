@@ -53,6 +53,7 @@ public class SlimePinkViewControl : ViewControl {
 						m_poisonParticles = ps.GetComponent<DisableInSeconds>();
 						m_poisonParticles.activeTime = 0f;
 					}
+					animEventsOnAttackStart();
 				} break;
 		}
 	}
@@ -70,6 +71,7 @@ public class SlimePinkViewControl : ViewControl {
 					m_poisonParticles.Activate();
 					m_poisonParticles = null; 
 				}
+				animEventsOnAttackEnd();
 			break;
 		}
 	}

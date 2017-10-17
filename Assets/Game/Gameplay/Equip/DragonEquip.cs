@@ -56,7 +56,7 @@ public class DragonEquip : MonoBehaviour {
 
 
 	private List<Renderer> m_renderers = new List<Renderer>();
-	private Dictionary<int, List<Material>> m_materials;
+	private Dictionary<int, List<Material>> m_materials = new Dictionary<int, List<Material>>();
 
 
 
@@ -71,15 +71,32 @@ public class DragonEquip : MonoBehaviour {
 		if (sm_silhouetteMaterial == null) 	sm_silhouetteMaterial  = new Material(Resources.Load("Game/Materials/DragonSilhouette") as Material);
 		//-------------------------------------
 
+		Init();
+
+		// Equip current disguise
+		if (m_equipOnAwake){
+			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+		}
+	}
+
+	public void CacheRenderesAndMaterials()
+	{
+		m_renderers.Clear();
 		Transform view = transform.Find("view");
 		if (view != null) {
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
-			m_materials = new Dictionary<int, List<Material>>();
+			m_materials.Clear();
 
 			if (renderers != null) {
 				for (int i = 0; i < renderers.Length; i++) {
 					Renderer renderer = renderers[i];
-					Material material = renderer.material;
+					Material material;
+					if ( Application.isPlaying )
+					{
+						material = renderer.material;
+					}else{
+						material = renderer.sharedMaterial;	
+					}
 
 					if ( material != null )
 					{
@@ -89,24 +106,35 @@ public class DragonEquip : MonoBehaviour {
 							m_renderers.Add( renderer );
 							// Stores the materials of this renderer in a dictionary for direct access//
 							List<Material> materialList = new List<Material>();	
-							materialList.AddRange(renderer.materials);
+
+							if ( Application.isPlaying ){
+								materialList.AddRange(renderer.materials);
+							}else
+							{
+								materialList.AddRange(renderer.sharedMaterials);
+							}
+
 							m_materials[renderer.GetInstanceID()] = materialList;
 						}
 					}
 				}
 			}
 		}
+	}
 
-		Init();
-
-		// Equip current disguise
-		if (m_equipOnAwake){
-			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+	public void CacheAttachPoints()
+	{
+		// Store attach points sorted to match AttachPoint enum
+		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
+		for(int i = 0; i < points.Length; i++) {
+			m_attachPoints[(int)points[i].point] = points[i];
 		}
 	}
 
 	public void Init()
 	{
+		CacheRenderesAndMaterials();
+		CacheAttachPoints();
 		// Get assigned dragon sku - from Player for in-game dragons, from DragonPreview for menu dragons
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		if(player != null && player.data != null) {
@@ -116,13 +144,6 @@ public class DragonEquip : MonoBehaviour {
 			if ( preview != null )
 				m_dragonSku = preview.sku;
 		}
-
-		// Store attach points sorted to match AttachPoint enum
-		AttachPoint[] points = GetComponentsInChildren<AttachPoint>();
-		for(int i = 0; i < points.Length; i++) {
-			m_attachPoints[(int)points[i].point] = points[i];
-		}
-
 	}
 
 	private void Start() {
@@ -201,14 +222,7 @@ public class DragonEquip : MonoBehaviour {
 		}
 		SetSkin( def.Get("skin") );
 
-		// Remove old body parts
-		for( int i = 0; i<m_attachPoints.Length; i++ )
-		{
-			if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
-			{
-				m_attachPoints[i].Unequip(true);
-			}
-		}
+		RemoveAccessories();
 
 		// Now body parts!
 		List<string> bodyParts = def.GetAsList<string>("body_parts");
@@ -228,7 +242,14 @@ public class DragonEquip : MonoBehaviour {
 					}
 					else
 					{
-						Destroy( objInstance );
+						if ( Application.isPlaying )
+						{
+							Destroy( objInstance );
+						}
+						else
+						{	
+							DestroyImmediate( objInstance );
+						}
 					}
 				}
 			}
@@ -385,12 +406,19 @@ public class DragonEquip : MonoBehaviour {
 		m_bodyMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_body");
 		m_wingsMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_wings");
 
+		bool lockEffect = false;
+		if ( Application.isPlaying )
+		{
+			lockEffect = FeatureSettingsManager.instance.IsLockEffectEnabled;
+		}
+
 		for (int i = 0; i < m_renderers.Count; i++) {
 			int id = m_renderers[i].GetInstanceID();
-			Material[] materials = m_renderers[i].materials;
-			for (int m = 0; m < materials.Length; m++) {
-				string shaderName = m_materials[id][m].shader.name;
-				if (FeatureSettingsManager.instance.IsLockEffectEnabled) {
+			List<Material> materials = m_materials[id];
+			int count = materials.Count;
+			for (int m = 0; m < count; m++) {
+				string shaderName = materials[m].shader.name;
+				if (lockEffect) {
 					materials[m].SetOverrideTag("Lock", "");
 				} 
 				if (shaderName.Contains("Dragon/Wings")) {
@@ -399,7 +427,42 @@ public class DragonEquip : MonoBehaviour {
 					materials[m] = m_bodyMaterial;
 				}
 			}
-			m_renderers[i].materials = materials;
+			m_renderers[i].materials = materials.ToArray();
+		}
+	}
+
+
+	public void RemoveAccessories()
+	{
+		// Remove old body parts
+		for( int i = 0; i<m_attachPoints.Length; i++ )
+		{
+			if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
+			{
+				m_attachPoints[i].Unequip(true);
+			}
+		}
+	}
+
+	public void CleanSkin()
+	{
+		string _name = "dragon_empty";
+
+		Material wingsMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_wings");
+		Material bodyMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_body");
+
+		for (int i = 0; i < m_renderers.Count; i++) {
+			int id = m_renderers[i].GetInstanceID();
+			List<Material> materials = m_materials[id];
+			for (int m = 0; m < materials.Count; m++) {
+				string shaderName = materials[m].shader.name;
+				if (shaderName.Contains("Dragon/Wings")) {
+					materials[m] = wingsMaterial;
+				} else if (shaderName.Contains("Dragon/Body")) {
+					materials[m] = bodyMaterial;
+				}
+			}
+			m_renderers[i].materials = materials.ToArray();
 		}
 	}
 
