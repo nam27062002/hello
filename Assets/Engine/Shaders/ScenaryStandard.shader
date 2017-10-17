@@ -24,6 +24,10 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_EmissivePower("Emissive Power", Float) = 1.0
 		_BlinkTimeMultiplier("Blink time multiplier", Float) = 2.0
 
+		_ReflectionColor("Reflection color", Color) = (1.0, 1.0, 0.0, 1.0)
+		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 1.0
+		_ReflectionMap("Reflection map", 2D) = "white" {}
+
 //		_StencilMask("Stencil Mask", int) = 10
 
 		[Toggle(BLEND_TEXTURE)] _EnableBlendTexture("Enable Blend Texture", Float) = 0
@@ -33,7 +37,6 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
 		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
-		[Toggle(DARKEN)] _EnableDarken("Enable darken", Float) = 0
 //		[Toggle(EMISSIVEBLINK)] _EnableEmissiveBlink("Enable emissive blink", Float) = 0
 		[Toggle(REFLECTIVE)] _EnableReflective("Enable reflective", Float) = 0
 		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
@@ -82,7 +85,6 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma multi_compile __ SPECULAR
 				#pragma multi_compile __ NORMALMAP
 				#pragma multi_compile __ FOG
-				#pragma multi_compile __ DARKEN
 				#pragma multi_compile __ CUTOFF
 				#pragma multi_compile __ OPAQUEALFA
 				#pragma multi_compile __ REFLECTIVE

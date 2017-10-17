@@ -168,7 +168,6 @@ internal class DragonShaderGUI : ShaderGUI {
     readonly static string kw_blendTexture = "BLEND_TEXTURE";
     readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
     readonly static string kw_fog = "FOG";
-    readonly static string kw_darken = "DARKEN";
     readonly static string kw_normalmap = "NORMALMAP";
     readonly static string kw_specular = "SPECULAR";
     readonly static string kw_cutOff = "CUTOFF";
