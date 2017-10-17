@@ -80,8 +80,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	[SerializeField] private string m_onBurnAudio;
 
 	[SeparatorAttribute("Explode")]
-	[SerializeField] private ParticleData m_explosionParticles; // this will explode when burning
+	[SerializeField] private ParticleData m_explosionParticles;
 	[SerializeField] private string m_onExplosionAudio;
+	[SerializeField] private bool m_explodeWhenBurned = true;
 
 	[SeparatorAttribute("More Audios")]
 	[SerializeField] protected string m_onAttackAudio;
@@ -888,11 +889,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_idleAudioAO.Stop();
 		}
 
-		if (!_eaten) {
+		bool other = !_eaten && !_burned;
+
+		// if burned or explode for no reason
+		if ( (m_explodeWhenBurned && _burned) ||  other) {
 			PlayExplosion();
 		}
 
-		if (!_burned) {
+		// if eaten or not burned
+		if ( _eaten || other ){
 			if (m_corpseHandler != null) {
 				// spawn corpse
 				GameObject corpse = m_corpseHandler.Spawn(null);
