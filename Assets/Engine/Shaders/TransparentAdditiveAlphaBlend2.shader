@@ -7,10 +7,12 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 		_BasicColor("Basic Color", Color) = (0.5,0.5,0.5,0.5)
 		_SaturatedColor("Saturated Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
+		_ColorRamp("Color Ramp", 2D) = "white" {}
 		_EmissionSaturation("Emission saturation", Range(0.0, 8.0)) = 1.0
 		_OpacitySaturation("Opacity saturation", Range(0.0, 8.0)) = 1.0
 		_AlphaMultiplier("Alpha multiplier", Range(0.0, 8.0)) = 1.0
 		[Toggle(DISSOLVE)] _EnableDissolve("Enable alpha dissolve", Float) = 0
+		[Toggle(COLOR_RAMP)] _EnableColorRamp("Enable color ramp", Float) = 0
 
 		_DissolveStep("DissolveStep.xy / Emission saturation.z", Vector) = (0.0, 1.0, 0.0, 0.0)
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
@@ -35,6 +37,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile _ DISSOLVE
+			#pragma multi_compile _ COLOR_RAMP
 			//			#pragma multi_compile_particles
 
 			#include "UnityCG.cginc"
@@ -55,11 +58,19 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
+#ifdef COLOR_RAMP
+			sampler2D _ColorRamp;
+			float4 _ColorRamp_ST;
+#endif
+
 			float4 _BasicColor;
 			float4 _SaturatedColor;
-			float _OpacitySaturation;
 			float _EmissionSaturation;
+			float _OpacitySaturation;
+
+#ifdef DISSOLVE
 			float4 _DissolveStep;
+#endif
 			float _AlphaMultiplier;
 
 			v2f vert(appdata_t v)
@@ -84,7 +95,13 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 				col.a = clamp(tex.g * _OpacitySaturation * i.color.w, 0.0, 1.0);
 #endif
 
-				col.xyz = lerp(_BasicColor.xyz * i.color.xyz, _SaturatedColor, tex.r * i.color.a * _AlphaMultiplier) * col.a * _EmissionSaturation;
+				float lerpValue = tex.r * i.particledata.y * _AlphaMultiplier;
+#if COLOR_RAMP
+				col.xyz = tex2D(_ColorRamp, float2(lerpValue, 0.0)) * i.color.xyz * col.a * _EmissionSaturation;
+#else
+				col.xyz = lerp(_BasicColor.xyz * i.color.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
+#endif
+
 				return col;
 			}
 			ENDCG
