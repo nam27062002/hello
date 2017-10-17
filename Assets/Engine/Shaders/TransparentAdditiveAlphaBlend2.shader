@@ -9,6 +9,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 		_MainTex("Particle Texture", 2D) = "white" {}
 		_EmissionSaturation("Emission saturation", Range(0.0, 8.0)) = 1.0
 		_OpacitySaturation("Opacity saturation", Range(0.0, 8.0)) = 1.0
+		_AlphaMultiplier("Alpha multiplier", Range(0.0, 8.0)) = 1.0
 		[Toggle(DISSOLVE)] _EnableDissolve("Enable alpha dissolve", Float) = 0
 
 		_DissolveStep("DissolveStep.xy / Emission saturation.z", Vector) = (0.0, 1.0, 0.0, 0.0)
@@ -59,6 +60,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 			float _OpacitySaturation;
 			float _EmissionSaturation;
 			float4 _DissolveStep;
+			float _AlphaMultiplier;
 
 			v2f vert(appdata_t v)
 			{
@@ -82,7 +84,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 				col.a = clamp(tex.g * _OpacitySaturation * i.color.w, 0.0, 1.0);
 #endif
 
-				col.xyz = lerp(_BasicColor.xyz * i.color.xyz, _SaturatedColor, tex.r ) * col.a * _EmissionSaturation;
+				col.xyz = lerp(_BasicColor.xyz * i.color.xyz, _SaturatedColor, tex.r * i.color.a * _AlphaMultiplier) * col.a * _EmissionSaturation;
 				return col;
 			}
 			ENDCG
