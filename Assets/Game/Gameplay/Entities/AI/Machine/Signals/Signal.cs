@@ -90,6 +90,8 @@ namespace AI {
 		public void SetValue(Type _signal, bool _value, object[] _params = null) {
 			bool enabled = (m_value & _signal) != 0;
 
+			m_params[_signal] = _params;
+
 			if (enabled != _value) {
 				if (_value == true) {
 					m_value |= _signal;

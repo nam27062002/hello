@@ -704,9 +704,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (m_scared != _scared) {
 			m_scared = _scared;
-			if ( !string.IsNullOrEmpty(m_onScaredAudio) )
-			{
-				m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+			if ( _scared ){
+				if ( !string.IsNullOrEmpty(m_onScaredAudio)){
+					m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+				}
+			}else{
+				if ( m_onScaredAudioAO != null && m_onScaredAudioAO.IsPlaying() && m_onScaredAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop ){
+					m_onScaredAudioAO.Stop();
+				}
 			}
 			if (m_animator != null)
 				m_animator.SetBool("scared", _scared);
@@ -730,8 +735,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				if (m_animator != null)
 					m_animator.speed = 0f;
 			} else {
-				if ( !string.IsNullOrEmpty(m_onPanicAudio) )
-					m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+				if ( _panic ){
+					if ( !string.IsNullOrEmpty(m_onPanicAudio) )
+						m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+				}else{
+					if ( m_onPanicAudioAO != null && m_onPanicAudioAO.IsPlaying() && m_onPanicAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+						m_onPanicAudioAO.Stop();
+				}
 				if (m_animator != null)
 					m_animator.SetBool("holded", _panic);
 			}
