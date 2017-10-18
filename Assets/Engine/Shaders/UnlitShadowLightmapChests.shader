@@ -31,9 +31,9 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap (Chests)"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma multi_compile __ LIGHTMAP_ON
-				#pragma multi_compile __ FOG
-				#pragma multi_compile __ OPAQUEALFA
+//				#pragma multi_compile __ LIGHTMAP_ON
+//				#pragma multi_compile __ FOG
+//				#pragma multi_compile __ OPAQUEALFA
 //				#pragma glsl_no_auto_normalization
 //				#pragma fragmentoption ARB_precision_hint_fastest
 
