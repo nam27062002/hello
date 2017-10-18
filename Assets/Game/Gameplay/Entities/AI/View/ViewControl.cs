@@ -503,10 +503,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 			if (m_animator.enabled) {
 				if (m_hasNavigationLayer) {
-					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
+					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, Time.deltaTime, 0.2f);
 					m_animator.SetFloat("direction X", m_currentBlendX);
 
-					m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
+					m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, Time.deltaTime, 0.2f);
 					m_animator.SetFloat("direction Y", m_currentBlendY);
 				}
 
@@ -704,9 +704,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (m_scared != _scared) {
 			m_scared = _scared;
-			if ( !string.IsNullOrEmpty(m_onScaredAudio) )
-			{
-				m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+			if ( _scared ){
+				if ( !string.IsNullOrEmpty(m_onScaredAudio)){
+					m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+				}
+			}else{
+				if ( m_onScaredAudioAO != null && m_onScaredAudioAO.IsPlaying() && m_onScaredAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop ){
+					m_onScaredAudioAO.Stop();
+				}
 			}
 			if (m_animator != null)
 				m_animator.SetBool("scared", _scared);
@@ -730,8 +735,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				if (m_animator != null)
 					m_animator.speed = 0f;
 			} else {
-				if ( !string.IsNullOrEmpty(m_onPanicAudio) )
-					m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+				if ( _panic ){
+					if ( !string.IsNullOrEmpty(m_onPanicAudio) )
+						m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+				}else{
+					if ( m_onPanicAudioAO != null && m_onPanicAudioAO.IsPlaying() && m_onPanicAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+						m_onPanicAudioAO.Stop();
+				}
 				if (m_animator != null)
 					m_animator.SetBool("holded", _panic);
 			}

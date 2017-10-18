@@ -158,7 +158,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":1.4,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":2,"panicSpeed":2,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"seconds":3,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"seconds":6,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"damage":8,"type":0,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false},{"action":8,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"tier":4,"dataType":"AI.Behaviour.OverrideEdibleValueData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.45,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":2,"panicSpeed":2,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"seconds":3,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"seconds":6,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"damage":8,"type":0,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false},{"action":8,"dataType":"AI.Behaviour.ActivateActionData","editorFolded":false},{"tier":2,"dataType":"AI.Behaviour.OverrideEdibleValueData","editorFolded":false}]'
   m_databaseKey: PF_PufferBird
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
@@ -469,9 +469,11 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: hd_pufferbird_attack
-  m_onScaredAudio: hd_pufferbird_attack
-  m_onPanicAudio: hd_pufferbird_attack
+  m_onAttackDealDamageAudio: 
+  m_onScaredAudio: 
+  m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
 --- !u!136 &136587502423916270

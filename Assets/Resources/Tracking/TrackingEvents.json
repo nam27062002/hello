@@ -169,8 +169,9 @@
                 {"playerProgress": {"Status": "OK"}},
                 {"moneyCurrency": {"Status": "OK"}},
                 {"moneyIAP": {"Status": "OK"}},
+				{"moneyUSD": {"Status": "OK"}}
                 {"totalPurchases": {"Status": "OK"}},
-                {"totalStoreVisits": {"Status": "OK"}}
+                {"totalStoreVisits": {"Status": "OK"}}				
             ],
             "APIs": [
                 "dna",
@@ -250,7 +251,12 @@
                 {"pushNotif": {"Status": "OK"}},
                 {"SubVersion": {"Status": "OK"}},
                 {"typeNotif": {"Status": "OK"}},
-                {"InGameId": {"Status": "OK"}}
+                {"InGameId": {"Status": "OK"}},
+				{"localTime": {"Status": "OK"}},
+				{"language": {"Status": "OK"}},
+				{"country": {"Status": "OK"}},
+				{"connectionType": {"Status": "OK"}},
+				{"userTimezone": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -588,6 +594,10 @@
             "Type": "FLOAT",
             "Values": []
         },
+		"moneyUSD": {
+            "Type": "INT",
+            "Values": []
+        },		
         "isPayingSession": {
             "Type": "INT:4",
             "Values": []
@@ -740,5 +750,25 @@
             "Type": "INT:4",
             "Values": []
         },				
+		"localTime": {
+            "Type": "TRACK_LOCAL_TIME",
+            "Values": []
+        },				
+		"language": {
+            "Type": "STRING:125",
+            "Values": []
+        },				
+		"country": {
+            "Type": "TRACK_COUNTRY_CODE",
+            "Values": []
+        },				
+		"connectionType": {
+            "Type": "TRACK_CONNECTION",
+            "Values": []
+        },				
+		"userTimezone": {
+            "Type": "STRING:125",
+            "Values": []
+        },
     }
 }

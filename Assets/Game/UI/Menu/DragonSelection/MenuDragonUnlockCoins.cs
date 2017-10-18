@@ -78,8 +78,10 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 				// Just acquire target dragon!
 				dragonData.Acquire();
 
-				// Throw out some fireworks!
-				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
+                HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
+
+                // Throw out some fireworks!
+                InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
 
 				// Trigger SFX
 				AudioController.Play("hd_unlock_dragon");

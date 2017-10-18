@@ -75,10 +75,20 @@ public class HDTrackingManagerImp : HDTrackingManager
             moneyPrice = product.m_fLocalisedPriceValue;
         }
 
+        int moneyUSD = 0;
+        if (!string.IsNullOrEmpty(_sku))
+        {
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
+            if (def != null)
+            {
+                moneyUSD = Convert.ToInt32(def.GetAsFloat("price") * 100f);
+            }
+        }
+
         // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
         string houstonTransactionID = _storeTransactionID;
         string promotionType = null; // Not implemented yet            
-        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
+        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
 	}
 
 	private void OnPurchaseFailed(string _sku) 
@@ -469,7 +479,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <param name="promotionType">Promotion type if there was one</param>
     /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
     /// <param name="moneyPrice">Price paid by the user in her currency</param>
-    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice)
+    /// <param name="moneyUSD">Price paid by the user in cents of dollar</param>
+    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD)
     {
         Session_IsPayingSession = true;
 
@@ -483,7 +494,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	        }
         }
       
-        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice);
+        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
     }
 
     /// <summary>
@@ -663,6 +674,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamServerAccID(e);
             // "" is sent because Calety doesn't support this yet
             Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
+            Track_AddParamLanguage(e);
+            Track_AddParamUserTimezone(e);
             Track_SendEvent(e);
         }
     }    
@@ -702,12 +715,12 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice)
+    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_IAPCompleted storeTransactionID = " + storeTransactionID + " houstonTransactionID = " + houstonTransactionID + 
-                " itemID = " + itemID + " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice);
+            Log("Track_IAPCompleted storeTransactionID = " + storeTransactionID + " houstonTransactionID = " + houstonTransactionID + " itemID = " + itemID + 
+                " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice + " moneyUSD = " + moneyUSD);
         }        
                 
         // iap event
@@ -720,6 +733,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_PROMOTION_TYPE, promotionType);
             Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrencyCode);            
             e.SetParameterValue(TRACK_PARAM_MONEY_IAP, moneyPrice);
+
+            // moneyPrice in cents of dollar
+            e.SetParameterValue(TRACK_PARAM_MONEY_USD, moneyUSD);
 
             Track_AddParamPlayerProgress(e);
 
@@ -1220,6 +1236,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
+
+    // Please, respect the alphabetic order
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_ACCEPTED                   = "accepted";
     private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
@@ -1261,11 +1279,13 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ITEM                       = "item";
     private const string TRACK_PARAM_ITEM_ID                    = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
+    private const string TRACK_PARAM_LANGUAGE                   = "language";
     private const string TRACK_PARAM_LEGAL_POPUP_TYPE           = "legalPopupType";
     private const string TRACK_PARAM_MAX_REACHED                = "maxReached";
     private const string TRACK_PARAM_MAX_XP                     = "maxXp";
     private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
+    private const string TRACK_PARAM_MONEY_USD                  = "moneyUSD";    
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS                   = "nbViews";
@@ -1290,12 +1310,13 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_STORE_TRANSACTION_ID       = "storeTransactionID";
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
-    private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";
+    private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
     private const string TRACK_PARAM_TOTAL_DURATION             = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
+    private const string TRACK_PARAM_USER_TIMEZONE              = "userTime<one";
     private const string TRACK_PARAM_XP                         = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";
 
@@ -1498,6 +1519,31 @@ public class HDTrackingManagerImp : HDTrackingManager
     private string Track_CoordinatesToString(Vector3 coord)
     {
         return "x=" + coord.x.ToString("0.0") + ", y=" + coord.y.ToString("0.0");
+    }
+
+    private void Track_AddParamLanguage(TrackingManager.TrackingEvent e)
+    {
+        string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();        
+        Track_AddParamString(e, TRACK_PARAM_LANGUAGE, language);
+    }
+
+    private void Track_AddParamUserTimezone(TrackingManager.TrackingEvent e)
+    {
+        string value = "ERROR";
+
+        try
+        {
+            TimeZoneInfo localZone = TimeZoneInfo.Local;
+            if (localZone != null)
+                value = localZone.StandardName;            
+        }
+        catch (System.TimeZoneNotFoundException ex)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LogError("Local time zone couldn't be retrieved " + ex.ToString());
+        }
+
+        Track_AddParamString(e, TRACK_PARAM_USER_TIMEZONE, value);
     }
 #endregion
 

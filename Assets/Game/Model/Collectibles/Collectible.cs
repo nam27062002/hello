@@ -33,6 +33,9 @@ public abstract class Collectible : MonoBehaviour {
 	[SerializeField] protected DragonTier m_requiredTier = DragonTier.TIER_0;
 	public DragonTier requiredTier { get { return m_requiredTier; }}
 
+	[SerializeField] protected DragonTier m_maxTier = DragonTier.COUNT;
+	public DragonTier maxTier { get { return m_maxTier; }}
+
 	[Space]
 	[SerializeField] protected MapMarker m_mapMarker = null;
 

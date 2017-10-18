@@ -36,7 +36,10 @@ public class ResultsScreenXPBar : DragonXPBar {
 
 	[Separator("FX")]
 	[SerializeField] private ParticleSystem m_receiveFX = null;
+	[SerializeField] private string m_receiveFXSound = "";
+	private AudioObject m_receiveFXSoundAO = null;
 	[SerializeField] private ParticleSystem m_levelUpFX = null;
+	[SerializeField] private string m_levelUpFXSound = "";
 
 	[Separator("Next Dragon")]
 	[SerializeField] private GameObject m_nextDragonRoot = null;
@@ -293,6 +296,12 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Show FX!
 		if(m_receiveFX != null) m_receiveFX.Play(true);
 
+		// Start sound!!!!
+		if ( !string.IsNullOrEmpty(m_receiveFXSound) ){
+			m_receiveFXSoundAO = AudioController.Play(m_receiveFXSound);
+		}
+
+
 		// Return total animation duration
 		// [AOC] We can't use the tween.Duration property because it's a speed base tween, luckily we have already precomputed the duration ^^
 		//return m_xpBarTween.Delay() + duration;
@@ -464,6 +473,9 @@ public class ResultsScreenXPBar : DragonXPBar {
 			}
 
 			// [AOC] TODO!! Some SFX?
+			if ( !string.IsNullOrEmpty( m_levelUpFXSound ) ){
+				AudioController.Play(m_levelUpFXSound);
+			}
 
 			// Check if a disguise has been unlocked!
 			for(int i = 0; i < m_disguises.Count; i++) {
@@ -487,6 +499,11 @@ public class ResultsScreenXPBar : DragonXPBar {
 	public void OnXPAnimEnd() {
 		// Stop FX!
 		if(m_receiveFX != null) m_receiveFX.Stop(true);
+
+		// Stop XP sound!
+		if ( m_receiveFXSoundAO != null ){
+			m_receiveFXSoundAO.Stop();
+		}
 
 		// Allow to fold/unfold disguises
 		m_disguisesFoldToggle.interactable = true;
