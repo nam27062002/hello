@@ -30,6 +30,8 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	[SerializeField] private Image m_icon = null;
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[SerializeField] private TextMeshProUGUI m_targetText = null;
+	[Space]
+	[SerializeField] private bool m_showNameForEggsAndPets = true;	// [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -112,38 +114,49 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 
 		// Set reward icon and text
 		// Based on type
+		string rewardText = string.Empty;
+		Sprite iconSprite = null;
 		Metagame.Reward reward = _rewardSlot.reward;
 		if (reward is Metagame.RewardPet) {
 			// Get the pet preview
 			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
 			if(petDef != null) {
-				if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
-				if(m_rewardText != null) m_rewardText.text = petDef.GetLocalized("tidName");
+				iconSprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
+				rewardText = petDef.GetLocalized("tidName");
 			} else {
 				// (shouldn't happen)
-				if(m_icon != null) m_icon.sprite = null;
-				if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_PET");
+				iconSprite = null;
+				rewardText = LocalizationManager.SharedInstance.Localize("TID_PET");
 			}
+
+			// [AOC] Don't show name for some specific cases
+			if(!m_showNameForEggsAndPets) rewardText = string.Empty;
 		} else if (reward is Metagame.RewardEgg) {
 			// Get the egg definition
 			DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, reward.sku);
 			if(eggDef != null) {
-				if(m_icon != null) m_icon.sprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
-				if(m_rewardText != null) m_rewardText.text = eggDef.GetLocalized("tidName");
+				iconSprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
+				rewardText = eggDef.GetLocalized("tidName");
 			} else {
 				// (shouldn't happen) Use generic
-				if(m_icon != null) m_icon.sprite = null;
-				if(m_rewardText != null) m_rewardText.text = LocalizationManager.SharedInstance.Localize("TID_EGG");
+				iconSprite = null;
+				rewardText = LocalizationManager.SharedInstance.Localize("TID_EGG");
 			}
+
+			// [AOC] Don't show name for some specific cases
+			if(!m_showNameForEggsAndPets) rewardText = string.Empty;
 		} else if (reward is Metagame.RewardCurrency) {
 			// Get the icon linked to this currency
-			if(m_icon != null) m_icon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(reward.currency));
-			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(reward.amount, 0);
+			iconSprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(reward.currency));
+			rewardText = StringUtils.FormatNumber(reward.amount, 0);
 		} else {
-			if(m_icon != null) m_icon.sprite = null;
-			if(m_rewardText != null) m_rewardText.text = StringUtils.FormatNumber(reward.amount, 0);
+			iconSprite = null;
+			rewardText = "Unknown reward type";
 		}
 
+		// Apply
+		if(m_icon != null) m_icon.sprite = iconSprite;
+		if(m_rewardText != null) m_rewardText.text = rewardText;
 
 		// Set target text
 		if(m_targetText != null) {

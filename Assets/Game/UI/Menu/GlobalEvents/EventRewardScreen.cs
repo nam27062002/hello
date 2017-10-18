@@ -40,6 +40,7 @@ public class EventRewardScreen : MonoBehaviour {
 	// Individual elements references
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
+	[SerializeField] private Image m_eventIcon = null;
 	[SerializeField] private Localizer m_topRewardText = null;
 
 	// Internal references
@@ -251,6 +252,9 @@ public class EventRewardScreen : MonoBehaviour {
 		// Perform different stuff depending on new step
 		switch(nextStep) {
 			case Step.INTRO: {
+				// Set event icon
+				m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.icon);
+
 				// Clear 3D scene
 				m_sceneController.Clear();
 

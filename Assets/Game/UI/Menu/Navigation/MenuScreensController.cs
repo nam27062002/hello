@@ -212,6 +212,9 @@ public class MenuScreensController : NavigationScreenSystem {
 			// Lock input to prevent weird flow cases when interrupting a screen transition
 			// See https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-620
 			InputLocker.Lock();
+
+			// [AOC] We can't rely on the OnCameraTweenCompleted being called (tween could be manually interrupted by some other components using the camera), so make sure the input gets unlocked after some delay
+			UbiBCN.CoroutineManager.DelayedCall(() => { InputLocker.Unlock(); }, 0.15f, false);
 		} else {
 			// No animation, instantly notify game the screen transition has been completed
 			Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)_newScreenIdx);

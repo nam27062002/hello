@@ -7,14 +7,14 @@ public class TrollViewControl : ViewControl {
 	[SerializeField] protected string[] m_attackAudios;
 	private AudioObject m_currentAttackAudio;
 
-	protected virtual void Awake() {
+	protected override void Awake() {
 		base.Awake();
 		if (m_animEvents != null) {
 			m_animEvents.onAttackEventId += OnAttackId;
 		}
 	}
 
-	protected virtual void RemoveAudios()
+	protected override void RemoveAudios()
     {
     	base.RemoveAudios();
 		if ( ApplicationManager.IsAlive )

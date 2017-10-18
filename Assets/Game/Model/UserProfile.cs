@@ -266,6 +266,19 @@ public class UserProfile : UserPersistenceSystem
 		set{ m_dailyRemoveMissionAdUses = value; }
 	}
 
+	// Skip Mission Ads
+	private DateTime m_skipMissionAdTimestamp;
+	public DateTime skipMissionAdTimestamp {
+		get{ return m_skipMissionAdTimestamp; }
+		set{ m_skipMissionAdTimestamp = value; }
+	}
+
+	private int m_skipMissionAdUses = 0;
+	public int skipMissionAdUses {
+		get{ return m_skipMissionAdUses; }
+		set{ m_skipMissionAdUses = value; }
+	}
+
 	// Map upgrades
 	private DateTime m_mapResetTimestamp;
 	public DateTime mapResetTimestamp {
@@ -819,7 +832,17 @@ public class UserProfile : UserPersistenceSystem
 		}
 		else
 		{
-			m_dailyRemoveMissionAdTimestamp = DateTime.UtcNow;
+			m_dailyRemoveMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
+		}
+
+		m_skipMissionAdUses = 0;
+		if(_data.ContainsKey("skipMissionAdTimestamp")) {
+			m_skipMissionAdTimestamp = DateTime.Parse(_data["skipMissionAdTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
+			if(_data.ContainsKey("skipMissionAdUses")) {
+				m_skipMissionAdUses = _data["skipMissionAdUses"].AsInt;
+			}
+		} else {
+			m_skipMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
 		}
 
 		// Map upgrades
@@ -984,6 +1007,8 @@ public class UserProfile : UserPersistenceSystem
 		// Daily remove missions with ads
 		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("skipMissionAdTimestamp", m_skipMissionAdTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("skipMissionAdUses", m_skipMissionAdUses.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 
 		// Map upgrades
 		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));

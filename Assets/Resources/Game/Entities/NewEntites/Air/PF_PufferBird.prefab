@@ -58,6 +58,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4045164333906590}
   - component: {fileID: 95658488811627300}
+  - component: {fileID: 114338771330716452}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -226,6 +227,17 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 350
     m_faceDownAngle: 10
+--- !u!114 &114338771330716452
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1806658527208360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114351024798018882
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -457,9 +469,11 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: hd_pufferbird_attack
-  m_onScaredAudio: hd_pufferbird_attack
-  m_onPanicAudio: hd_pufferbird_attack
+  m_onAttackDealDamageAudio: 
+  m_onScaredAudio: 
+  m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
 --- !u!136 &136587502423916270

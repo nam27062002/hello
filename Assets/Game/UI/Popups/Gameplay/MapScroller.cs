@@ -31,7 +31,13 @@ public class MapScroller : MonoBehaviour {
 	[InfoBox("Zoom units represent how many world units fit in the map camera's viewport (vertically)")]
 	[SerializeField] private float m_initialZoom = 100f;
 	[SerializeField] private Range m_zoomRange = new Range(40f, 400f);
-	[SerializeField] [Range(0, 1f)] private float m_zoomSpeed = 0.5f;
+	[SerializeField] [Range(0f, 1f)] private float m_zoomSpeed = 0.5f;
+
+	[Space]
+	[Tooltip("Compensate the zoom speed when using mouse")]
+	[SerializeField] private float m_mouseZoomSpeedFactor = 3f;
+	[Tooltip("Applied when using Shift + Mouse Wheel, to compensate Magic Mouse Super-scroll-speed")]
+	[SerializeField] private float m_slowZoomModifierFactor = 0.33f;
 
 	// Internal references
 	private Camera m_camera = null;
@@ -99,7 +105,7 @@ public class MapScroller : MonoBehaviour {
 		adjuster.targetRectTransform = m_scrollRect.viewport;
 
 		// Set initial zoom or keep zoom level between openings?
-		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, true)) {
+		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, false)) {
 			SetZoom(m_initialZoom); 
 		}
 
@@ -180,7 +186,15 @@ public class MapScroller : MonoBehaviour {
 			// If mouse wheel has been scrolled
 			if(Input.mouseScrollDelta.sqrMagnitude > Mathf.Epsilon) {
 				// Change orthographic size based on mouse wheel
-				newZoom += Input.mouseScrollDelta.y * zoomSpeed;
+				float zoomOffset = Input.mouseScrollDelta.y * zoomSpeed * m_mouseZoomSpeedFactor;
+
+				// Apply slow zoom correction if Shift is pressed
+				if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+					zoomOffset *= m_slowZoomModifierFactor;
+				}
+
+				// Apply offset to current zoom
+				newZoom += zoomOffset;
 
 				// Mark dirty
 				zoomChanged = true;

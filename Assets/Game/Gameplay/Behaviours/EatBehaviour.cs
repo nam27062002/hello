@@ -853,7 +853,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 				Entity entity = m_checkEntities[e];
 				if (entity.IsEdible())
 				{
-					
 					// if not player check that it can be eaten
 					if ( !m_isPlayer )
 					{
@@ -866,8 +865,8 @@ public abstract class EatBehaviour : MonoBehaviour {
 					}
 					else
 					{
-						if ( entity.hideNeedTierMessage && !entity.IsEdible( m_tier ) )
-							continue;	
+						if ( (entity.hideNeedTierMessage || (Time.time - entity.lastTargetedTime <= 1f)) && !entity.IsEdible( m_tier ) && !eatEverything)
+							continue;		
 					}
 
 					// Start bite attempt
@@ -880,6 +879,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 						circleCenter.z = 0;
 						if (MathUtils.TestArcVsCircle( arcOrigin, arcAngle, arcRadius, dir, circleCenter, entity.circleArea.radius))
 						{
+							entity.lastTargetedTime = Time.time;
 							StartAttackTarget( entity.transform );
 							break;
 						}

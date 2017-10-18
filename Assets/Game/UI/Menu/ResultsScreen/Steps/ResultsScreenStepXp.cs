@@ -72,10 +72,9 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 	/// XP Bar animation has finished.
 	/// </summary>
 	private void OnXpBarAnimFinished() {
-		// Show the "Tap to continue" except when a skin or dragon have been unlocked (go straight to those steps in that case)
-		ResultsScreenController.Step nextStep = m_controller.CheckNextStep();
-		if(nextStep == ResultsScreenController.Step.SKIN_UNLOCKED
-		|| nextStep == ResultsScreenController.Step.DRAGON_UNLOCKED) {
+		// Show the "Tap to continue" except when a skin or dragon have been unlocked (go straight to next step in that case)
+		if(m_controller.GetStep(ResultsScreenController.Step.DRAGON_UNLOCKED).MustBeDisplayed()
+		|| m_controller.GetStep(ResultsScreenController.Step.SKIN_UNLOCKED).MustBeDisplayed()) {
 			// Continue with the sequence
 			m_sequence.Play();
 		} else {

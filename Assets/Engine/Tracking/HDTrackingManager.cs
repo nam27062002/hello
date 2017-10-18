@@ -166,7 +166,8 @@ public class HDTrackingManager
     /// <param name="promotionType">Promotion type if there is one, otherwise <c>null</c></param>
     /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
     /// <param name="moneyPrice">Price paid by the user in her currency</param>
-    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice) {}
+    /// <param name="moneyUSD">Price paid by the user in cents of dollar</param>
+    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD) {}
 
     /// <summary>
     /// Called when the user completed a purchase by using game resources (either soft currency or hard currency)
@@ -235,6 +236,14 @@ public class HDTrackingManager
     /// The user has closed the legal popup.
     /// </summary>
     public virtual void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted) {}
+
+    /// <summary>
+    /// Notifies the dragon unlocked.
+    /// </summary>
+    /// <param name="dragon_sku">Dragon sku.</param>
+	/// <param name="order">Dragon oder</param>
+    public virtual void Notify_DragonUnlocked( string dragon_sku, int order ) {}
+
     #endregion
 
     #region log

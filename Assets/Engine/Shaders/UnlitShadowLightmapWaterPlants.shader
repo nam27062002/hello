@@ -25,15 +25,15 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 			cull off
 			ZWrite On
 
+
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
 
-				#pragma multi_compile __ FOG
-				#pragma multi_compile __ DARKEN
-				#pragma multi_compile __ CUTOFF
-				#pragma multi_compile __ OPAQUEALFA
-				#pragma multi_compile __ LIGHTMAP_ON
+//				#pragma multi_compile __ FOG
+//				#pragma multi_compile __ CUTOFF
+//				#pragma multi_compile __ OPAQUEALFA
+//				#pragma multi_compile __ LIGHTMAP_ON
 
 				#define HG_SCENARY
 
@@ -42,7 +42,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 //				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
-				#define FOG
+//				#define FOG
 				#define CUSTOM_VERTEXPOSITION
 				#define OPAQUEALPHA
 

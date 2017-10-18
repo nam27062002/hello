@@ -3297,6 +3297,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_name: controlPanelTab
   m_allowBackToThisScreen: 1
+  OnShow:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  OnHide:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   m_tabEnabled: 1
 --- !u!114 &114086305038379062
 MonoBehaviour:
@@ -3312,7 +3322,7 @@ MonoBehaviour:
   m_id:
     id: MAP_ZOOM_RESET
   m_label: {fileID: 0}
-  m_defaultValue: 1
+  m_defaultValue: 0
   m_toggle: {fileID: 114539979461375260}
 --- !u!114 &114087641277718544
 MonoBehaviour:

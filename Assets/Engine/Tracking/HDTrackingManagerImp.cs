@@ -75,10 +75,20 @@ public class HDTrackingManagerImp : HDTrackingManager
             moneyPrice = product.m_fLocalisedPriceValue;
         }
 
+        int moneyUSD = 0;
+        if (!string.IsNullOrEmpty(_sku))
+        {
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
+            if (def != null)
+            {
+                moneyUSD = Convert.ToInt32(def.GetAsFloat("price") * 100f);
+            }
+        }
+
         // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
         string houstonTransactionID = _storeTransactionID;
         string promotionType = null; // Not implemented yet            
-        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice);
+        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
 	}
 
 	private void OnPurchaseFailed(string _sku) 
@@ -277,7 +287,54 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-#region notify    
+    #region notify   
+    private bool Notify_MeetsEventRequirements(string e)
+    {
+        bool returnValue = false;
+        switch (e)
+        {
+            case TRACK_EVENT_TUTORIAL_COMPLETION:
+                // We need to check whether or not the event has already been sent because TrackingPersistenceSystem.GameRoundCount is advanced when a run starts
+                // but this condition is checked when the run finishes so the event is still sent even though a crash happened between the run start and the run end
+                returnValue = TrackingPersistenceSystem.GameRoundCount >= 2 && !Track_HasEventBeenSent(e);
+                break;
+
+            case TRACK_EVENT_FIRST_10_RUNS_COMPLETED:
+                // We need to check whether or not the event has already been sent because TrackingPersistenceSystem.GameRoundCount is advanced when a run starts
+                // but this condition is checked when the run finishes so the event is still sent even though a crash happened between the run start and the run end
+                returnValue = TrackingPersistenceSystem.GameRoundCount >= 10 && !Track_HasEventBeenSent(e);
+                break;
+        }
+
+        return returnValue;
+    }
+
+    private void Notify_ProcessEvent(string e)
+    {
+        switch (e)
+        {
+            case TRACK_EVENT_TUTORIAL_COMPLETION:
+                // tutorial completion
+                Track_TutorialCompletion();
+                TrackingPersistenceSystem.NotifyEventSent(e);                
+                break;
+
+            case TRACK_EVENT_FIRST_10_RUNS_COMPLETED:
+                // first 10 runs completed
+                Track_First10RunsCompleted();
+                TrackingPersistenceSystem.NotifyEventSent(e);                
+                break;
+        }
+    }
+
+    private void Notify_CheckAndProcessEvent(string e)
+    {
+        if (Notify_MeetsEventRequirements(e))
+        {
+            Notify_ProcessEvent(e);            
+        }
+    }
+
     public override void Notify_ApplicationStart()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -379,6 +436,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained)
     {
+        Notify_CheckAndProcessEvent(TRACK_EVENT_TUTORIAL_COMPLETION);
+        Notify_CheckAndProcessEvent(TRACK_EVENT_FIRST_10_RUNS_COMPLETED);        
+
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained);
@@ -419,16 +479,22 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <param name="promotionType">Promotion type if there was one</param>
     /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
     /// <param name="moneyPrice">Price paid by the user in her currency</param>
-    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice)
+    /// <param name="moneyUSD">Price paid by the user in cents of dollar</param>
+    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD)
     {
         Session_IsPayingSession = true;
 
         if (TrackingPersistenceSystem != null)
         {
             TrackingPersistenceSystem.TotalPurchases++;
+			if ( TrackingPersistenceSystem.TotalPurchases == 1 )
+	        {
+                // first purchase
+                Track_FirstPurchase();
+	        }
         }
-
-        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice);
+      
+        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
     }
 
     /// <summary>
@@ -443,6 +509,25 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
         UserProfile.Currency moneyCurrency, int moneyPrice, int amountBalance)
     {
+
+    	if ( economyGroup == EEconomyGroup.BUY_EGG )
+    	{
+			if (TrackingPersistenceSystem != null)
+	        {
+	            TrackingPersistenceSystem.EggPurchases++;
+				if ( TrackingPersistenceSystem.EggPurchases == 1 )
+				{
+                    // 1 egg bought
+                    Track_1EggBought();
+				}
+				else if ( TrackingPersistenceSystem.EggPurchases == 5 )
+				{
+                    // 5 eggs bought
+                    Track_5EggBought();
+                }
+	        }
+    	}
+
         Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, Track_UserCurrencyToString(moneyCurrency), moneyPrice, amountBalance);
     }
 
@@ -497,6 +582,12 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Session_IsAdSession = true;
                 TrackingPersistenceSystem.AdsSessions++;
             }
+
+            if ( TrackingPersistenceSystem.AdsCount == 1 )
+            {
+                // first ad shown
+                Track_FirstAdShown();
+            }
         }
 
         Track_AdFinished(adType, adIsLoaded, maxReached, adViewingDuration, provider);
@@ -547,9 +638,26 @@ public class HDTrackingManagerImp : HDTrackingManager
         nbViews++;
         Track_LegalPopupClosed(nbViews, duration, hasBeenAccepted);
     }
-#endregion
 
-#region track	
+	public override void Notify_DragonUnlocked( string dragon_sku, int order )
+	{
+        // Track af_X_dragon_unlocked where X is the dragon level (dragon level is order + 1). Only dragon levels between 2 to 7 have to be tracked
+        if (order >= 1 && order <= 6)
+        {
+            Track_DragonUnlocked(order + 1);
+        }
+    }
+    #endregion
+
+    #region track	
+    private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
+    private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
+
+    private bool Track_HasEventBeenSent(string e)
+    {
+        return TrackingPersistenceSystem != null && TrackingPersistenceSystem.HasEventAlreadyBeenSent(e);
+    }    
+
     private void Track_StartSessionEvent()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -605,14 +713,15 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice)
+    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_IAPCompleted storeTransactionID = " + storeTransactionID + " houstonTransactionID = " + houstonTransactionID + 
-                " itemID = " + itemID + " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice);
+            Log("Track_IAPCompleted storeTransactionID = " + storeTransactionID + " houstonTransactionID = " + houstonTransactionID + " itemID = " + itemID + 
+                " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice + " moneyUSD = " + moneyUSD);
         }        
                 
+        // iap event
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap");
         if (e != null)
         {            
@@ -623,6 +732,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrencyCode);            
             e.SetParameterValue(TRACK_PARAM_MONEY_IAP, moneyPrice);
 
+            // moneyPrice in cents of dollar
+            e.SetParameterValue(TRACK_PARAM_MONEY_USD, moneyUSD);
+
             Track_AddParamPlayerProgress(e);
 
             if (TrackingPersistenceSystem != null)
@@ -632,6 +744,27 @@ public class HDTrackingManagerImp : HDTrackingManager
             }
 
 			Track_SendEvent(e);
+        }
+
+        // af_purchase event
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_purchase");
+        if (e != null)
+        {            
+            Track_AddParamString(e, TRACK_PARAM_AF_DEF_CURRENCY, moneyCurrencyCode);
+            e.SetParameterValue(TRACK_PARAM_AF_DEF_LOGPURCHASE, moneyPrice);
+            e.SetParameterValue(TRACK_PARAM_AF_DEF_QUANTITY, 1);            
+
+            Track_SendEvent(e);
+        }
+
+        // fb_purchase event
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_purchase");
+        if (e != null)
+        {
+            Track_AddParamString(e, TRACK_PARAM_FB_DEF_CURRENCY, moneyCurrencyCode);
+            e.SetParameterValue(TRACK_PARAM_FB_DEF_LOGPURCHASE, moneyPrice);            
+
+            Track_SendEvent(e);
         }
     }
 
@@ -677,7 +810,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 			Track_SendEvent(e);
         }
-
     }
 
     private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance)
@@ -756,7 +888,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Log("Track_AdFinished adType = " + adType + " adIsLoaded = " + adIsLoaded + " maxReached = " + maxReached + 
                 " adViewingDuration = " + adViewingDuration + " provider = " + provider);
-        }
+        }		
         
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
         if (e != null)
@@ -768,6 +900,20 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
 
 			Track_SendEvent(e);
+        }
+
+        // af_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_ad_shown");
+        if (e != null)
+        {            
+            Track_SendEvent(e);
+        }
+
+        // fb_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
         }
     }
 
@@ -929,6 +1075,162 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private void Track_TutorialCompletion()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_TutorialCompletion");
+        }
+
+        // af_tutorial_completion
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_tutorial_completion");
+        if (e != null)
+        {            
+            Track_SendEvent(e);
+        }
+
+        // fb_tutorial_completion
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_tutorial_completion");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_First10RunsCompleted()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_First10RunsCompleted");
+        }
+
+        // af_first_10_runs_completed
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_10_runs_completed");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_10_runs_completed
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_10_runs_completed");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_FirstPurchase()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_FirstPurchase");
+        }
+
+        // af_first_purchase
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_purchase");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_purchase
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_purchase");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_FirstAdShown()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_FirstAdShown");
+        }
+
+        // af_first_ad_shown
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_first_ad_shown
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_first_ad_shown");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_1EggBought()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_1EggBought");
+        }
+
+        // af_1_egg_bought
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_1_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_1_egg_bought
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_1_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_5EggBought()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_5EggBought");
+        }
+
+        // af_5_egg_bought
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_5_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_5_egg_bought
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb_5_egg_bought");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_DragonUnlocked(int order)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_DragonUnlocked order " + order);
+        }
+
+        string eventName = "_" + order + "_dragon_unlocked";
+
+        // af_X_dragon_unlocked
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af" + eventName);
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
+        // fb_X_dragon_unlocked
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("fb" + eventName);
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -938,6 +1240,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AD_REVIVE                  = "adRevive";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
     private const string TRACK_PARAM_AD_VIEWING_DURATION        = "adViewingDuration";
+    private const string TRACK_PARAM_AF_DEF_CURRENCY            = "af_def_currency";
+    private const string TRACK_PARAM_AF_DEF_LOGPURCHASE         = "af_def_logPurchase";
+    private const string TRACK_PARAM_AF_DEF_QUANTITY            = "af_quantity";
     private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";                
     private const string TRACK_PARAM_CURRENCY                   = "currency";
@@ -953,6 +1258,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
+    private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
+    private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
@@ -973,6 +1280,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_MAX_XP                     = "maxXp";
     private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
+    private const string TRACK_PARAM_MONEY_USD                  = "moneyUSD";    
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS                   = "nbViews";

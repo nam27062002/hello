@@ -1246,7 +1246,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
-  m_onEatenAudio: hd_troll_dead
+  m_onEatenAudio: hd_miner_guardian_dead
   m_firePoints:
   - {fileID: 4466478989168704}
   - {fileID: 4213986744036346}
@@ -1328,18 +1328,17 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     scale: 1
-  m_onExplosionAudio: 
+  m_onExplosionAudio: hd_miner_guardian_dead
+  m_explodeWhenBurned: 0
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: hd_miner_guardian_idle
   m_skins: []
   m_attackAudios:
-  - 
   - hd_miner_guardian_turn
-  - hd_miner_guardian_turn
-  - hd_miner_guardian_turn
-  - hd_miner_guardian_turn
+  - hd_miner_guardian_attack
 --- !u!114 &114790175815496570
 MonoBehaviour:
   m_ObjectHideFlags: 1

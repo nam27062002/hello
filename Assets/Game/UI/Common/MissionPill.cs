@@ -222,7 +222,7 @@ public class MissionPill : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Determines whether the yser can pay to remove this mission with ads.
+	/// Determines whether the user can pay to remove this mission with ads.
 	/// </summary>
 	/// <returns><c>true</c> if the user can pay to remove the mission with ads; otherwise, <c>false</c>.</returns>
 	private bool CanPayRemoveMissionWithAds()
@@ -418,8 +418,41 @@ public class MissionPill : MonoBehaviour {
 	public void OnSkipTimeWithAd() {
 		if(m_mission == null) return;
 
+		// Check "daily" limit (not actually daily)
+		bool canSkipWithAd = true;
+		DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+		if(_def != null) {
+			int usesPerDay = _def.GetAsInt("maxAdsSkipMissions", 0);
+			double cooldownHours = _def.GetAsDouble("cooldownAdsSkipMissions", 24);
+			if(usesPerDay > 0) {
+				// If timestamp has passed, reset ad count
+				DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+				if(serverTime >= UsersManager.currentUser.skipMissionAdTimestamp) {
+					UsersManager.currentUser.skipMissionAdTimestamp = serverTime.AddHours(cooldownHours);
+					UsersManager.currentUser.skipMissionAdUses = 0;
+				}
+
+				// Check remaining uses
+				if(UsersManager.currentUser.skipMissionAdUses >= usesPerDay) {
+					// Limit reached!
+					canSkipWithAd = false;
+
+					// Show error message
+					TimeSpan remainingTime = UsersManager.currentUser.skipMissionAdTimestamp - serverTime;
+					UIFeedbackText errorText = UIFeedbackText.CreateAndLaunch(
+						LocalizationManager.SharedInstance.Localize("TID_AD_LIMIT_ERROR", TimeUtils.FormatTime(remainingTime.TotalSeconds, TimeUtils.EFormat.WORDS, 1)), 
+						new Vector2(0.5f, 0.33f), 
+						PopupManager.canvas.transform as RectTransform
+					);
+					errorText.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+				}
+			}
+		}
+
 		// Show Ad!
-		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.SKIP_MISSION_COOLDOWN, OnSkipTimeAdClosed);
+		if(canSkipWithAd) {
+			PopupAdBlocker.Launch(true, GameAds.EAdPurpose.SKIP_MISSION_COOLDOWN, OnSkipTimeAdClosed);
+		}
 	}
 
 	/// <summary>
@@ -428,6 +461,7 @@ public class MissionPill : MonoBehaviour {
 	private void OnSkipTimeAdClosed(bool _success) {
 		// Do it!
 		if(_success) {
+			UsersManager.currentUser.skipMissionAdUses++;
 			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);
 	        PersistenceFacade.instance.Save_Request();
 		}

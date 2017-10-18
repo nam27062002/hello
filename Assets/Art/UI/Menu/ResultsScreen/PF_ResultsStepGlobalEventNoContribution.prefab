@@ -328,7 +328,6 @@ GameObject:
   - component: {fileID: 114939455303500056}
   - component: {fileID: 114565804096126742}
   - component: {fileID: 114991001128756058}
-  - component: {fileID: 114316504741846394}
   m_Layer: 5
   m_Name: PF_ResultsStepGlobalEventNoContribution
   m_TagString: Untagged
@@ -875,33 +874,6 @@ MonoBehaviour:
   m_tid: TID_EVENT_NO_CONTRIBUTION
   m_caseType: 0
   m_replacements: []
---- !u!114 &114316504741846394
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1786775333441986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cb311cd3ec894a7fb34b8ac4a8a3af9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnBackButton:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114939455303500056}
-        m_MethodName: OnTapToContinue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114345009851812058
 MonoBehaviour:
   m_ObjectHideFlags: 1

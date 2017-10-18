@@ -322,7 +322,6 @@ GameObject:
   - component: {fileID: 114674749381502950}
   - component: {fileID: 114364604203755446}
   - component: {fileID: 114647956835096760}
-  - component: {fileID: 114449015609893106}
   m_Layer: 5
   m_Name: PF_ResultsStepRewards
   m_TagString: Untagged
@@ -1366,33 +1365,6 @@ MonoBehaviour:
       PublicKeyToken=null
   m_currency: 0
   m_alignment: 1
---- !u!114 &114449015609893106
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1821697137097948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cb311cd3ec894a7fb34b8ac4a8a3af9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnBackButton:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114674749381502950}
-        m_MethodName: OnTapToContinue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114462256240392562
 MonoBehaviour:
   m_ObjectHideFlags: 1
