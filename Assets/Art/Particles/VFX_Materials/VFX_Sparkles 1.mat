@@ -8,8 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: VFX_Sparkles 1
   m_Shader: {fileID: 4800000, guid: bf72659a8d2b2494ab4c73b54fd7287f, type: 3}
-  m_ShaderKeywords: _INVERTED_ON _SLIDERCONTROLINSTEADOFZTESTING_ON _USECUSTOMDATAWFORPRECOLORED_ON
-    _USECUSTOMDATAZFORDISSOLVE_ON _USELERPINSTEDOFTINT_ON
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX _INVERTED_ON _SLIDERCONTROLINSTEADOFZTESTING_ON
+    _USECUSTOMDATAWFORPRECOLORED_ON _USECUSTOMDATAZFORDISSOLVE_ON _USELERPINSTEDOFTINT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -74,14 +74,16 @@ Material:
     m_Floats:
     - _AlphaMultiplier: 1.24
     - _BumpScale: 1
+    - _ColorMultiplier: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmountTest: 1
     - _DissolveSmoothStepMax: 1
     - _DissolveSmoothStepMin: 0
     - _DstBlend: 0
-    - _EmissionSaturation: 2
+    - _EmissionSaturation: 4
     - _EnableColorRamp: 0
+    - _EnableColorVertex: 1
     - _EnableDissolve: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -90,7 +92,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OpacitySaturation: 4
+    - _OpacitySaturation: 2
     - _Parallax: 0.02
     - _PreColoredSaturation: 1.24
     - _PreLerpColor: 1.34

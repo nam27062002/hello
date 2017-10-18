@@ -503,10 +503,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 			if (m_animator.enabled) {
 				if (m_hasNavigationLayer) {
-					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
+					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, Time.deltaTime, 0.2f);
 					m_animator.SetFloat("direction X", m_currentBlendX);
 
-					m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
+					m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, Time.deltaTime, 0.2f);
 					m_animator.SetFloat("direction Y", m_currentBlendY);
 				}
 

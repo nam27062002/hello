@@ -169,6 +169,7 @@ namespace LevelEditor {
 		private void StartGame() {
 			LevelManager.SetCurrentLevel(LevelEditor.settings.levelSku);
 
+			ParticleManager.PreBuild();
 			PoolManager.Build();
 
 			// Reset dragon stats
