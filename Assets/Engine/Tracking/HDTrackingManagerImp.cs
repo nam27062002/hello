@@ -1522,26 +1522,33 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     private void Track_AddParamLanguage(TrackingManager.TrackingEvent e)
-    {
-        string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();        
+    {        
+        string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();
+        string value = language;
+        if (string.IsNullOrEmpty(language))
+        {
+            value = "ERROR";
+        }
+        else
+        {
+            // We need to separate language from country (en-GB)
+            string[] tokens = language.Split('-');
+            if (tokens != null && tokens.Length > 1)
+            {
+                language = tokens[0];
+            }
+        }
+
         Track_AddParamString(e, TRACK_PARAM_LANGUAGE, language);
     }
 
     private void Track_AddParamUserTimezone(TrackingManager.TrackingEvent e)
     {
         string value = "ERROR";
-
-        try
-        {
-            TimeZoneInfo localZone = TimeZoneInfo.Local;
-            if (localZone != null)
-                value = localZone.StandardName;            
-        }
-        catch (System.TimeZoneNotFoundException ex)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LogError("Local time zone couldn't be retrieved " + ex.ToString());
-        }
+                  
+        TimeZone localZone = TimeZone.CurrentTimeZone;
+        if (localZone != null)
+            value = localZone.StandardName;        
 
         Track_AddParamString(e, TRACK_PARAM_USER_TIMEZONE, value);
     }
