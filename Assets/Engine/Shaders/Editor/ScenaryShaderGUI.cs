@@ -57,6 +57,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string reflectionColorText = "Reflection color";
         readonly public static string reflectionAmountText = "Reflection amount";
         readonly public static string reflectionMapText = "Reflection map";
+        readonly public static string reflectionAdviceText = "Reflection can be controled by painting object alfa vertex color: \n 0.0 = no reflect \n 1.0 = reflect";
 
         readonly public static string enableFogText = "Enable Fog";
 
@@ -360,7 +361,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
             case 2:         //Emission reflective
                 materialEditor.ShaderProperty(mp_reflectionMap, Styles.reflectionMapText);
                 materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
-                materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);                
+                materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+                EditorGUILayout.HelpBox(Styles.reflectionAdviceText, MessageType.Info);                
                 break;
 
             case 3:         //Lightmap contrast

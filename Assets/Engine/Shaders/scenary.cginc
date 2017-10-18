@@ -247,7 +247,7 @@ fixed4 frag (v2f i) : SV_Target
 #endif	
 
 #if defined(EMISSIVE_BLINK)
-	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
+	float intensity = 1.3 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
 	col *= intensity;
 
 #endif
