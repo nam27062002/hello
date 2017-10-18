@@ -24,12 +24,13 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_EmissivePower("Emissive Power", Float) = 1.0
 		_BlinkTimeMultiplier("Blink time multiplier", Float) = 2.0
 
-		_ReflectionColor("Reflection color", Color) = (1.0, 1.0, 0.0, 1.0)
+//		_ReflectionColor("Reflection color", Color) = (1.0, 1.0, 0.0, 1.0)
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 1.0
 		_ReflectionMap("Reflection map", 2D) = "white" {}
 
 		_LightmapContrastIntensity("Lightmap contrast intensity", Range(0.0, 5.0)) = 1.3
 		_LightmapContrastMargin("Lightmap contrast margin", Range(0.0, 6.0)) = 0.5
+		_LightmapContrastPhase("Lightmap contrast phase", Float) = 2.0
 
 //		_StencilMask("Stencil Mask", int) = 10
 

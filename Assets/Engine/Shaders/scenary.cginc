@@ -82,12 +82,13 @@ uniform float _BlinkTimeMultiplier;
 
 #elif defined(EMISSIVE_REFLECTIVE)
 uniform sampler2D _ReflectionMap;
-uniform float4 _ReflectionColor;
+//uniform float4 _ReflectionColor;
 uniform float _ReflectionAmount;
 
 #elif defined(EMISSIVE_LIGHTMAPCONTRAST)
 uniform float _LightmapContrastIntensity;
 uniform float _LightmapContrastMargin;
+uniform float _LightmapContrastPhase;
 #endif
 
 float4 getCustomVertexColor(inout appdata_t v)
@@ -209,7 +210,8 @@ fixed4 frag (v2f i) : SV_Target
 	float c = cos(_Time.y * 2.0 + i.texcoord.x * 10.0 + i.texcoord.y * 10.0);
 	float s = sin(_Time.y * 2.0 + i.texcoord.x * 10.0 + i.texcoord.y * 10.0);
 	float2 uvc = i.texcoord + float2(s, c) * 0.2;
-	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
+//	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
+	fixed4 mc = tex2D(_ReflectionMap, uvc) * 3.0;
 	col = lerp(col, mc, _ReflectionAmount * i.color.a);
 #endif
 
@@ -219,11 +221,11 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 
-#if defined(EMISSIVE_LIGHTMAPCONTRAST)
+#if defined(LIGHTMAP_ON) && defined(EMISSIVE_LIGHTMAPCONTRAST)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	fixed lmintensity = (lm.r + lm.g + lm.b) - _LightmapContrastMargin;
 //	col.rgb *= lm * _LightmapContrastIntensity * (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)) * (lm.r + lm.g + lm.b);
-	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity * (sin(_Time.y * 2.0) + 1.0)));
+	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity * (sin(_Time.y * _LightmapContrastPhase) + 1.0)));
 //	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity));
 
 #elif defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
