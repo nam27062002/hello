@@ -251,6 +251,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float m_dragonGravityModifier = 0.3f;
     public float m_dragonAirGravityModifier = 0.3f;
 	public float m_dragonAirExpMultiplier = 0.1f;
+	public float m_dragonAirExtraGravityModifier = 0.5f;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
 	//------------------------------------------------------------------//
@@ -1298,7 +1299,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
     {
         Vector3 impulse = Vector3.zero;
         m_controls.GetImpulse(1, ref impulse);
-        //Vector3 origImpulse = impulse;
         if (boostSpeedMultiplier > 1)
         {
             if (impulse == Vector3.zero)
@@ -1310,65 +1310,38 @@ public class DragonMotion : MonoBehaviour, IMotion {
         {
             m_directionWhenBoostPressed = m_direction;
         }
-        //if (impulse != Vector3.zero)
+
+        impulse.Scale(new Vector3(0.5f, 0, 1));
+        Vector3 gravityAcceleration = Vector3.zero;
+		gravityAcceleration = Vector3.down * 9.81f * m_dragonAirGravityModifier;
+		float distance = (transform.position.y - m_startParabolicPosition.y);
+		if (distance > 0) {
+			gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
+		}
+
+		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
+        Vector3 acceleration = gravityAcceleration + dragonAcceleration;
+
+        m_impulse = m_rbody.velocity;
+        if (m_impulse.y > m_prevImpulse.y)
         {
-            // http://stackoverflow.com/questions/667034/simple-physics-based-movement
-
-            impulse.Scale(new Vector3(0.5f, 0, 1));
-            //impulse.y = 0;
-            //impulse.Normalize();
-            Vector3 gravityAcceleration = Vector3.zero;
-                //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
-			gravityAcceleration = Vector3.down * 9.81f * m_dragonAirGravityModifier;// * m_dragonMass;
-			float distance = (transform.position.y - m_startParabolicPosition.y);
-			if (distance > 0) {
-				gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
-			}
-
-			Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
-			/*//TONI
-			if (m_boostSpeedMultiplier > 1)
-				gravityAcceleration *= 2.5f;
-			//TONI
-          */
-            Vector3 acceleration = gravityAcceleration + dragonAcceleration;
-
-            // stroke's Drag
-            m_impulse = m_rbody.velocity;
-      
-            if (m_impulse.y > m_prevImpulse.y)
-            {
-                m_impulse.y = m_prevImpulse.y;
-            }
-
-            Vector3 impulseCapped = m_impulse;
-            //if (impulseCapped.y < 0)
-                impulseCapped.y = 0;
-            
-            float impulseMag = impulseCapped.magnitude;
-
-
-
-            //Vector3 mimpulseback = m_impulse;
-            m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
-            
-            m_prevImpulse = m_impulse;
-
-            m_direction = m_impulse.normalized;
-            // m_direction.y = m_rbody.velocity.normalized.y;
-            //RotateToDirection(origImpulse);
-            //RotateToDirection(mimpulseback.normalized);
-            //m_rbody.velocity = m_impulse;
-
-            //m_direction = m_impulse.normalized;
-            RotateToDirection(m_impulse.normalized);
-
+            m_impulse.y = m_prevImpulse.y;
         }
-        /*else
+        	// if going down push harder
+        if ( m_impulse.y <= 0 )
         {
-            ComputeImpulseToZero(_deltaTime);
-            ChangeState(State.Idle);
-        }*/
+			acceleration += Vector3.down * 9.81f * m_dragonAirExtraGravityModifier;
+        }
+
+        Vector3 impulseCapped = m_impulse;
+      	impulseCapped.y = 0;
+            
+        float impulseMag = impulseCapped.magnitude;
+        m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime);	// drag only on x coordinate
+        m_prevImpulse = m_impulse;
+        m_direction = m_impulse.normalized;
+
+        RotateToDirection(m_impulse.normalized);
 
         ApplyExternalForce();
 

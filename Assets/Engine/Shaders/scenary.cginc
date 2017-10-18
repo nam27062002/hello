@@ -16,11 +16,11 @@ struct v2f {
 #ifdef BLEND_TEXTURE	
 	float2 texcoord2 : TEXCOORD2;
 #endif
-
+/*
 #ifdef EMISSIVE_REFLECTIVE
 	float2 cap : TEXCOORD4;
 #endif
-
+*/
 	float4 color : COLOR;
 
 #ifdef FOG	
@@ -124,16 +124,16 @@ v2f vert (appdata_t v)
 #ifdef FOG	
 	HG_TRANSFER_FOG(o, worldPos);	// Fog
 #endif
-
+/*
 #ifdef EMISSIVE_REFLECTIVE
 //	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
 //	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
 //	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
 	float s = sin(_Time.y * 3.0 + o.vertex.x * 24.0 * o.vertex.y * 32.0);
 	float c = cos(_Time.y * 2.0 + o.vertex.y * 24.0 + o.vertex.x * 32.0);
-	o.cap = normalize(float2(s, c));
+	o.cap = v.texcoord;//normalize(float2(s, c));
 #endif
-
+*/
 #ifdef DYNAMIC_SHADOWS
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
@@ -203,7 +203,10 @@ fixed4 frag (v2f i) : SV_Target
 #endif	
 
 #if defined(EMISSIVE_REFLECTIVE)
-	fixed4 mc = tex2D(_ReflectionMap, i.cap) * _ReflectionColor * 3.0;
+	float c = cos(_Time.y * 2.0 + i.texcoord.x * 10.0 + i.texcoord.y * 10.0);
+	float s = sin(_Time.y * 2.0 + i.texcoord.x * 10.0 + i.texcoord.y * 10.0);
+	float2 uvc = i.texcoord + float2(s, c) * 0.2;
+	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
 	col = lerp(col, mc, _ReflectionAmount);
 #endif
 

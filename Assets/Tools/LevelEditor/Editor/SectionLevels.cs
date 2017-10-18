@@ -678,19 +678,25 @@ namespace LevelEditor {
 		public void OnLoadLevel( string levelName )
 		{
 			// Load the new level scene and store reference to the level object
+			Debug.Log(levelName + " loaded");
 			EditorSceneManager.OpenScene(assetDirForCurrentMode + "/" + levelName, OpenSceneMode.Additive);
 			activeLevels = new List<Level>();
 			switch(LevelEditor.settings.selectedMode) {
 				case LevelEditorSettings.Mode.SPAWNERS:		activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeSpawners>());		break;
 				case LevelEditorSettings.Mode.COLLISION:	activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeCollision>());	break;
 				case LevelEditorSettings.Mode.ART:			activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeArt>());			break;
-				case LevelEditorSettings.Mode.SOUND:			activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeSound>());			break;
+				case LevelEditorSettings.Mode.SOUND:		activeLevels.AddRange(Object.FindObjectsOfType<LevelTypeSound>());			break;
 			}
-			
-			// Focus the level object in the hierarchy and ping the opened scene in the project window
-			Selection.activeObject = activeLevels[0].gameObject;
-			for( int i = 0; i<activeLevels.Count;i++ )
-				EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + activeLevels[i].gameObject.scene.name + ".unity"));
+
+			// Level Type component must be on the scene!
+			if(activeLevels.Count > 0) {
+				// Focus the level object in the hierarchy and ping the opened scene in the project window
+				Selection.activeObject = activeLevels[0].gameObject;
+				for( int i = 0; i<activeLevels.Count;i++ )
+					EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + activeLevels[i].gameObject.scene.name + ".unity"));
+			} else {
+				Debug.Log("<color=yellow>Didn't find LevelType component in scene " + levelName + "!</color>");
+			}
 		}
 
 		/// <summary>

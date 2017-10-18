@@ -34,12 +34,12 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
-			#pragma multi_compile __ TINT
+//			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+//			#pragma multi_compile __ TINT
 //			#pragma glsl_no_auto_normalization
 //			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma multi_compile __ MATCAP
-			#pragma multi_compile __ FRESNEL
+//			#pragma multi_compile __ MATCAP
+//			#pragma multi_compile __ FRESNEL
 
 			#define HG_ENTITIES
 
