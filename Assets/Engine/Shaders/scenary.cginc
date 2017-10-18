@@ -3,7 +3,7 @@
 #pragma exclude_renderers d3d11
 
 
-//#define LIGHTMAPCONTRAST
+//#define EMISSIVE_LIGHTMAPCONTRAST
 
 struct v2f {
 	float4 vertex : SV_POSITION;
@@ -51,12 +51,11 @@ sampler2D _SecondTexture;
 float4 _SecondTexture_ST;
 #endif
 
+/*
 #ifdef LIGHTMAP_ON
 float _LightmapIntensity;
 #endif
-
-
-
+*/
 
 #ifdef NORMALMAP
 uniform sampler2D _NormalTex;
@@ -85,6 +84,10 @@ uniform float _BlinkTimeMultiplier;
 uniform sampler2D _ReflectionMap;
 uniform float4 _ReflectionColor;
 uniform float _ReflectionAmount;
+
+#elif defined(EMISSIVE_LIGHTMAPCONTRAST)
+uniform float _LightmapContrastIntensity;
+uniform float _LightmapContrastMargin;
 #endif
 
 float4 getCustomVertexColor(inout appdata_t v)
@@ -207,7 +210,7 @@ fixed4 frag (v2f i) : SV_Target
 	float s = sin(_Time.y * 2.0 + i.texcoord.x * 10.0 + i.texcoord.y * 10.0);
 	float2 uvc = i.texcoord + float2(s, c) * 0.2;
 	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
-	col = lerp(col, mc, _ReflectionAmount);
+	col = lerp(col, mc, _ReflectionAmount * i.color.a);
 #endif
 
 #ifdef DYNAMIC_SHADOWS
@@ -215,9 +218,18 @@ fixed4 frag (v2f i) : SV_Target
 	col *= attenuation;
 #endif
 
-#if defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
-	fixed3 lm = DecodeLightmap (UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
+
+#if defined(EMISSIVE_LIGHTMAPCONTRAST)
+	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
+	fixed lmintensity = (lm.r + lm.g + lm.b) - _LightmapContrastMargin;
+//	col.rgb *= lm * _LightmapContrastIntensity * (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)) * (lm.r + lm.g + lm.b);
+	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity * (sin(_Time.y * 2.0) + 1.0)));
+//	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity));
+
+#elif defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
+	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
+
 #endif
 
 #ifdef NORMALMAP
@@ -240,24 +252,33 @@ fixed4 frag (v2f i) : SV_Target
 
 #endif
 
+/*
 #if defined(FOG) && !defined(EMISSIVE_BLINK)
 
 #if defined (LIGHTMAP_ON)
 
-#ifdef LIGHTMAPCONTRAST
+#ifdef EMISSIVE_LIGHTMAPCONTRAST
 	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
 	lm -= 0.5;
-	float lmi = 0.0f;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * _LightmapIntensity * (1.0 + (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)));
+//	float lmi = 0.0f;// (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * _LightmapContrastIntensity * (1.0 + (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)));
+//	float lmi = (0.2126 * lm.r + 0.7152 * lm.g + 0.0722 * lm.b) * _LightmapContrastIntensity * (1.0 + (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)));
+	float lmi = (lm.r + lm.g + lm.b) * _LightmapContrastIntensity * (1.0 + (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)));
 	col.rgb = lerp((col).rgb, fogCol.rgb, clamp(fogCol.a - lmi, 0.0, 1.0));
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif	//  LIGHTMAPCONTRAST
+#endif	//  EMISSIVE_LIGHTMAPCONTRAST
 
 #else
 	HG_APPLY_FOG(i, col);	// Fog
 #endif	// LIGHTMAP_ON
 
 #endif	// defined(FOG) && !defined(EMISSIVE_BLINK)
+*/
+
+#if defined(FOG) && !defined(EMISSIVE_BLINK)
+	HG_APPLY_FOG(i, col);	// Fog
+#endif
+
 
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
