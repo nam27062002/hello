@@ -9,8 +9,6 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderMass;
 	public Slider m_sliderFricction;
 	public Slider m_sliderGravity;
-	public Slider m_sliderWaterEnterMultiplier;
-	public Slider m_sliderWaterCollisionMultiplier;
 	public TMP_Dropdown m_eatTypeDropDown;	
 	private DragonMotion m_motion;
 
