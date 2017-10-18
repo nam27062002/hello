@@ -50,10 +50,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	};
 	ChangeAreaState m_changeAreaState;
 
-	public static float m_waterImpulseMultiplier = 0.75f;
-	public static float m_onWaterCollisionMultiplier = 0.5f;
-    public static bool m_outerSpaceUsePhysics = true;
-
     //------------------------------------------------------------------//
     // MEMBERS															//
     //------------------------------------------------------------------//
@@ -197,21 +193,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private Vector2 m_currentBackBend;
 
 	// Parabolic movement
-	[Header("Parabolic Movement")]
-	[SerializeField] private float m_parabolicMovementConstant = 10;
-	public float parabolicMovementConstant
-	{
-		get { return m_parabolicMovementConstant; }
-		set { m_parabolicMovementConstant = value; }
-	}
-	[SerializeField] private float m_parabolicMovementAdd = 10;
-	public float parabolicMovementAdd
-	{
-		get { return m_parabolicMovementAdd; }
-		set { m_parabolicMovementAdd = value; }
-	}
 	private Vector3 m_startParabolicPosition;
-	public float m_parabolicXControl = 10;
 
 	[Space]
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
@@ -933,28 +915,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			case State.InsideWater:
 			case State.ExitingWater:
 			{
-				//if (m_canMoveInsideWater)
-				{
-					UpdateWaterMovement(Time.fixedDeltaTime);
-				}
-				/*else
-				{
-					float distance = m_startParabolicPosition.y - transform.position.y;
-					UpdateParabolicMovement( 1, distance);
-				}*/
+				UpdateWaterMovement(Time.fixedDeltaTime);	
 			}break;
 			case State.OuterSpace:
 			case State.ExitingSpace:
 		    {
-                if (m_outerSpaceUsePhysics)
-                {
-                    UpdateSpaceMovement(Time.fixedDeltaTime);
-                }
-                else
-                { 
-                    float distance = transform.position.y - m_startParabolicPosition.y;
-                    UpdateParabolicMovement(Time.fixedDeltaTime, -1, distance);
-                }
+                UpdateSpaceMovement(Time.fixedDeltaTime);
 			}break;
 			case State.Intro:
 			{
@@ -1347,31 +1313,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
         m_rbody.velocity = m_impulse;
     }
-
-    private void UpdateParabolicMovement( float _deltaTime, float sign, float distance)
-	{
-		Vector3 impulse = Vector3.zero;
-		m_controls.GetImpulse(_deltaTime * GetTargetForceMultiplier(), ref impulse);
-
-		// check collision with ground, only down?
-		float moveValue = sign * (m_parabolicMovementConstant + ( m_parabolicMovementAdd * distance ));
-		m_impulse.y += _deltaTime * moveValue;
-		/*
-		float abs = Mathf.Abs( moveValue ) * 10;
-#if DEBUG
-		if ( m_impulse.y < -abs || m_impulse.y > abs )
-			Debug.LogWarning("Possible Movement error!");
-#endif
-		m_impulse.y = Mathf.Clamp( m_impulse.y, -abs, abs);
-		*/
-
-		m_impulse.x += impulse.x * m_parabolicXControl;
-        m_impulse.x = Mathf.Clamp(m_impulse.x, -m_parabolicXControl * 1, m_parabolicXControl * 1);
-
-		m_direction = m_impulse.normalized;
-		RotateToDirection( m_impulse );
-		m_rbody.velocity = m_impulse;
-	}
 
 	private void UpdateIdleMovement(float _deltaTime) {
 
@@ -2014,11 +1955,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		{
 			case State.InsideWater:
 			{
-				if ( m_impulse.y < 0 )	// if going deep
-				{
-					//m_impulse = m_impulse * m_onWaterCollisionMultiplier;	
-                    //m_impulse = m_impulse * 8;	
-				}
 			}break;
 
 			case State.OuterSpace: {
