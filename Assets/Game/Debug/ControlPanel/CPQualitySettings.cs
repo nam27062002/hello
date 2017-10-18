@@ -314,6 +314,8 @@ public class CPQualitySettings : MonoBehaviour
     public TextMeshProUGUI m_gfxMemoryRating;
     public TextMeshProUGUI m_calculatedRating;
     public TextMeshProUGUI m_rating;
+    public TextMeshProUGUI m_deviceFrequency;
+    public TextMeshProUGUI m_supportInstancing;
 
     private void Quality_Setup()
     {
@@ -356,6 +358,18 @@ public class CPQualitySettings : MonoBehaviour
         {
             m_rating.text = "" + FeatureSettingsManager.instance.Device_CurrentRating;
         }
+
+        if (m_deviceFrequency != null)
+        {
+            m_deviceFrequency.text = "" + SystemInfo.processorFrequency;
+        }
+
+        if (m_supportInstancing != null)
+        {
+            m_supportInstancing.text = SystemInfo.supportsInstancing ? "true": "false";
+        }
+
+
     }
     #endregion    
 
