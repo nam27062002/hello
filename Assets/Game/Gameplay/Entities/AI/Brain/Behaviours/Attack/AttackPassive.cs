@@ -31,7 +31,9 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<AttackPassiveData>();
 				m_dragon = InstanceManager.player.dragonHealthBehaviour;
 				m_timer = 0;
+			}
 
+			protected override void OnEnter(State _oldState, object[] _param){
 				DragonTier dragonTier = InstanceManager.player.data.tier;
 				Entity entity = m_pilot.GetComponent<Entity>();
 				m_enabled = !entity.IsEdible(dragonTier);

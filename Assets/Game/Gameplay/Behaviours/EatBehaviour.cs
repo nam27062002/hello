@@ -851,7 +851,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 			for (int e = 0; e < m_numCheckEntities; e++) 
 			{
 				Entity entity = m_checkEntities[e];
-				if (entity.IsEdible())
+				if (entity.transform != transform && entity.IsEdible())
 				{
 					// if not player check that it can be eaten
 					if ( !m_isPlayer )

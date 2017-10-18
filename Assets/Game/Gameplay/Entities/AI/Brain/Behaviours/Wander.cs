@@ -81,16 +81,13 @@ namespace AI {
 					m_target = m_pilot.area.RandomInside();
 				}
 
+
 				if (m_pilot.IsActionPressed(Pilot.Action.Avoid)) {
-					m_timer = 0.5f;
+					m_timer = 0.25f;
 				} else if (m_data.speed > 0f) {
 					m_timer = (m_machine.position - m_target).magnitude / m_pilot.speed;
 				} else {
 					m_timer = 1f;
-				}
-
-				if (m_pilot.IsActionPressed(Pilot.Action.Avoid)) {
-					m_timer *= 0.75f;
 				}
 			}
 		}
