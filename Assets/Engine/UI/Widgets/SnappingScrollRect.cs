@@ -222,6 +222,20 @@ public class SnappingScrollRect : ScrollRect {
 		// If new selection is null, do nothing
 		if(m_selectedPoint == null) return;
 
+		if (!snapAfterDragging) {
+			if (horizontal) {
+				if (content.rect.size.x <= viewport.rect.size.x) {
+					return;
+				}
+			}
+
+			if (vertical) {
+				if (content.rect.size.y <= viewport.rect.size.y) {
+					return;
+				}
+			}
+		}
+
 		// Stop inertia
 		velocity = Vector2.zero;
 
@@ -231,6 +245,36 @@ public class SnappingScrollRect : ScrollRect {
 		if(!horizontal) offset.x = 0;	// Ignore locked scrolling directions
 		if(!vertical) offset.y = 0;		// Ignore locked scrolling directions
 		Vector2 targetContentPos = content.anchoredPosition - offset;
+
+		if (!snapAfterDragging) {
+			if (horizontal) {
+				float viewportSize = viewport.rect.size.x * 0.5f;
+				float contentSize = content.rect.size.x * 0.5f;
+				float contentPos = Mathf.Abs(targetContentPos.x);
+
+				if ((contentSize - contentPos) < viewportSize) {
+					if (targetContentPos.x < 0) {
+						targetContentPos.x = viewportSize - contentSize;
+					} else {
+						targetContentPos.x = contentSize - viewportSize;
+					}
+				}
+			}
+
+			if (vertical) {
+				float viewportSize = viewport.rect.size.y * 0.5f;
+				float contentSize = content.rect.size.y * 0.5f;
+				float contentPos = Mathf.Abs(targetContentPos.y);
+
+				if ((contentSize - contentPos) < viewportSize) {
+					if (targetContentPos.y < 0) {
+						targetContentPos.y = viewportSize - contentSize;
+					} else {
+						targetContentPos.y = contentSize - viewportSize;
+					}
+				}
+			}
+		}
 
 		// Move content to the target position
 		if(_animate) {
