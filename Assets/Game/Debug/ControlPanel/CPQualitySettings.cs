@@ -315,7 +315,7 @@ public class CPQualitySettings : MonoBehaviour
     public TextMeshProUGUI m_calculatedRating;
     public TextMeshProUGUI m_rating;
     public TextMeshProUGUI m_deviceFrequency;
-    public TextMeshProUGUI m_supportInstancing;
+    public TextMeshProUGUI m_shaderLevel;
 
     private void Quality_Setup()
     {
@@ -364,9 +364,9 @@ public class CPQualitySettings : MonoBehaviour
             m_deviceFrequency.text = "" + SystemInfo.processorFrequency;
         }
 
-        if (m_supportInstancing != null)
+        if (m_shaderLevel != null)
         {
-            m_supportInstancing.text = SystemInfo.supportsInstancing ? "true": "false";
+            m_shaderLevel.text = "" + SystemInfo.graphicsShaderLevel;
         }
 
 
