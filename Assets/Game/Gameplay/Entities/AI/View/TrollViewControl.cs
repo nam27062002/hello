@@ -19,7 +19,7 @@ public class TrollViewControl : ViewControl {
     	base.RemoveAudios();
 		if ( ApplicationManager.IsAlive )
     	{
-			RemoveAudioParent( m_currentAttackAudio );
+			RemoveAudioParent( ref m_currentAttackAudio );
 		}
     }
 
@@ -36,6 +36,7 @@ public class TrollViewControl : ViewControl {
 	{
 		if ( m_currentAttackAudio != null && m_currentAttackAudio.IsPlaying() )
 			m_currentAttackAudio.Stop();
+		RemoveAudioParent( ref m_currentAttackAudio );
 	}
 	
 }
