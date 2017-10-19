@@ -27,9 +27,17 @@ public static class EditorGUILayoutExt {
 	/// <param name="_separator">The separator to be drawn.</param>
 	/// <param name="_orientation">Orientation of the separator. Use horizontal separators for vertical layouts and viceversa.</param>
 	/// <param name="_thickness">Size of the separator line, in pixels. Will override separator's size property if bigger.</param>
-	public static void Separator(SeparatorAttribute _separator = null, SeparatorAttribute.Orientation _orientation = SeparatorAttribute.Orientation.HORIZONTAL, float _thickness = 1f) {
+	public static void Separator() {
+		EditorGUILayoutExt.Separator(new SeparatorAttribute());
+	}
+
+	public static void Separator(SeparatorAttribute _separator, SeparatorAttribute.Orientation _orientation = SeparatorAttribute.Orientation.HORIZONTAL, float _thickness = 1f) {
 		if(_separator == null) _separator = new SeparatorAttribute();
 		SeparatorAttributeEditor.DrawSeparator(_separator, _orientation, _thickness);
+	}
+
+	public static void Separator(string _label, SeparatorAttribute.Orientation _orientation = SeparatorAttribute.Orientation.HORIZONTAL, float _thickness = 1f) {
+		EditorGUILayoutExt.Separator(new SeparatorAttribute(_label), _orientation, _thickness);
 	}
 
 	/// <summary>
@@ -245,6 +253,38 @@ public static class EditorGUILayoutExt {
 			GUI.enabled = wasEnabled;
 			EditorGUIUtility.labelWidth += 10f;	// Restore label width
 		} EditorGUILayoutExt.EndHorizontalSafe();
+	}
+
+	/// <summary>
+	/// Customization of the MinMaxSlider showing textfields with the actual values.
+	/// </summary>
+	/// <param name="_label">Label to be displayed.</param>
+	/// <param name="_minValue">Current minimum value.</param>
+	/// <param name="_maxValue">Current maximum value.</param>
+	/// <param name="_minLimit">Minimum limit.</param>
+	/// <param name="_maxLimit">Maximum limit.</param>
+	/// <param name="_options">Options.</param>
+	public static void MinMaxSliderWithLabels(GUIContent _label, ref float _minValue, ref float _maxValue, float _minLimit, float _maxLimit, params GUILayoutOption[] _options) {
+		// Aux vars
+		const float TEXT_WIDTH = 35f;
+
+		// Group into an horizontal layout
+		EditorGUILayout.BeginHorizontal(_options);
+
+		// Label
+		EditorGUILayout.PrefixLabel(_label);
+
+		// Min value
+		_minValue = EditorGUILayout.DelayedFloatField(_minValue, GUILayout.Width(TEXT_WIDTH));
+
+		// Slider
+		EditorGUILayout.MinMaxSlider(ref _minValue, ref _maxValue, _minLimit, _maxLimit);
+
+		// Max value
+		_maxValue = EditorGUILayout.DelayedFloatField(_maxValue, GUILayout.Width(TEXT_WIDTH));
+
+		// Close layout
+		EditorGUILayout.EndHorizontal();
 	}
 
 	//------------------------------------------------------------------//
