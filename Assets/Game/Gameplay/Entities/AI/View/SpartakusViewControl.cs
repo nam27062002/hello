@@ -44,10 +44,17 @@ public class SpartakusViewControl : ViewControl {
 				if ( !string.IsNullOrEmpty( m_onDizzyAudio ) )
 				{
 					m_onDizzyAudioAO = AudioController.Play( m_onDizzyAudio, transform );
+					if ( m_onDizzyAudioAO != null )
+						m_onDizzyAudioAO.completelyPlayedDelegate = OnDizzyFinished;
 				}
 			 	m_stars.SetActive(true); 
 			 }break;	// Dizzy start
 		}
+	}
+
+	void OnDizzyFinished(AudioObject ao)
+	{
+		RemoveAudioParent( ref m_onDizzyAudioAO);
 	}
 
 	protected override void OnSpecialAnimationExit(SpecialAnims _anim) {
@@ -62,11 +69,9 @@ public class SpartakusViewControl : ViewControl {
 		base.RemoveAudios();
 		if ( ApplicationManager.IsAlive )
     	{
-			RemoveAudioParent( m_onJumpAttackAudioAO );
-			RemoveAudioParent( m_onReceptionAudioAO );
-			if ( m_onDizzyAudioAO != null && m_onDizzyAudioAO.IsPlaying() && m_onDizzyAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
-				m_onDizzyAudioAO.Stop();
-			RemoveAudioParent( m_onDizzyAudioAO );
+			RemoveAudioParent( ref m_onJumpAttackAudioAO );
+			RemoveAudioParent( ref m_onReceptionAudioAO );
+			RemoveAudioParent( ref m_onDizzyAudioAO );
     	}
 	}
 
@@ -94,8 +99,7 @@ public class SpartakusViewControl : ViewControl {
 			if (m_timer <= 0f) {
 				m_stars.SetActive(false);
 				// Dizzy end
-				if ( m_onDizzyAudioAO != null && m_onDizzyAudioAO.IsPlaying() && m_onDizzyAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
-					m_onDizzyAudioAO.Stop();
+				RemoveAudioParent( ref m_onDizzyAudioAO );
 			}
 		}
 	}
