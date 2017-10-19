@@ -287,13 +287,22 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     }
 
 	protected virtual void animEventsOnAttackStart() {
-		if (!string.IsNullOrEmpty(m_onAttackAudio))
+		if (!string.IsNullOrEmpty(m_onAttackAudio)){
 			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform );
+			if (m_onAttackAudioAO != null )
+				m_onAttackAudioAO.completelyPlayedDelegate = OnAttackAudioCompleted;
+		}
 	}
 
 	protected virtual void animEventsOnAttackEnd() {
 		if ( m_onAttackAudioAO != null && m_onAttackAudioAO.IsPlaying() && m_onAttackAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
 			m_onAttackAudioAO.Stop();
+			RemoveAudioParent( ref m_onAttackAudioAO );
+	}
+
+	void OnAttackAudioCompleted(AudioObject ao)
+	{
+		RemoveAudioParent( ref m_onAttackAudioAO);
 	}
 
 	protected virtual void animEventsOnAttackDealDamage(){
@@ -387,26 +396,31 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
     protected virtual void RemoveAudios() {
 		if (ApplicationManager.IsAlive) {
-	        if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying())
+	        if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying()){
 				m_idleAudioAO.Stop();
+			}
 
 			// Return parented audio objects if needed
-			RemoveAudioParent( m_idleAudioAO );
-			RemoveAudioParent( m_onAttackAudioAO );
-			RemoveAudioParent( m_onAttackDealDamageAudioAO );
-			RemoveAudioParent( m_onEatenAudioAO );
+			RemoveAudioParent( ref m_idleAudioAO );
+			RemoveAudioParent( ref m_onAttackAudioAO );
+			RemoveAudioParent( ref m_onAttackDealDamageAudioAO );
+			RemoveAudioParent( ref m_onEatenAudioAO );
 
-			RemoveAudioParent( m_onScaredAudioAO );
-			RemoveAudioParent( m_onPanicAudioAO );
+			RemoveAudioParent( ref m_onScaredAudioAO );
+			RemoveAudioParent( ref m_onPanicAudioAO );
 		}
     }
 
-	protected void RemoveAudioParent(AudioObject ao)
+	protected void RemoveAudioParent(ref AudioObject ao)
 	{
 		if ( ao != null && ao.transform.parent == transform )
 		{
-			ao.transform.parent = null;		
+			ao.transform.parent = null;	
+			ao.completelyPlayedDelegate = null;
+			if ( ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+				ao.Stop();
 		}
+		ao = null;
 	}
 
     public void SetMaterialType(MaterialType _type) {
@@ -707,15 +721,23 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if ( _scared ){
 				if ( !string.IsNullOrEmpty(m_onScaredAudio)){
 					m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+					if ( m_onScaredAudioAO != null )
+						m_onScaredAudioAO.completelyPlayedDelegate = OnScaredAudioEnded;
 				}
 			}else{
 				if ( m_onScaredAudioAO != null && m_onScaredAudioAO.IsPlaying() && m_onScaredAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop ){
 					m_onScaredAudioAO.Stop();
+					RemoveAudioParent( ref m_onScaredAudioAO);
 				}
 			}
 			if (m_animator != null)
 				m_animator.SetBool("scared", _scared);
 		}
+	}
+
+	void OnScaredAudioEnded( AudioObject ao)
+	{
+		RemoveAudioParent( ref m_onScaredAudioAO);
 	}
 
 	public void UpsideDown(bool _upsideDown) {
@@ -738,14 +760,21 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				if ( _panic ){
 					if ( !string.IsNullOrEmpty(m_onPanicAudio) )
 						m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+						if ( m_onPanicAudioAO != null )
+							m_onPanicAudioAO.completelyPlayedDelegate = OnPanicAudioEnded;
 				}else{
 					if ( m_onPanicAudioAO != null && m_onPanicAudioAO.IsPlaying() && m_onPanicAudioAO.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
 						m_onPanicAudioAO.Stop();
+						RemoveAudioParent( ref m_onPanicAudioAO);
 				}
 				if (m_animator != null)
 					m_animator.SetBool("holded", _panic);
 			}
 		}
+	}
+
+	void OnPanicAudioEnded( AudioObject ao){
+		RemoveAudioParent( ref m_onPanicAudioAO );
 	}
 
 	public void Hit() {
@@ -897,6 +926,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying()) {
 			m_idleAudioAO.Stop();
+			RemoveAudioParent( ref m_idleAudioAO);
 		}
 
 		bool other = !_eaten && !_burned;
@@ -948,8 +978,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void Burn(float _burnAnimSeconds) {
-		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying())
+		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying()){
 			m_idleAudioAO.Stop();
+			RemoveAudioParent( ref m_idleAudioAO );
+		}
 
 		if (!m_explosionParticles.IsValid()) {
 			if (m_burnParticle.IsValid()) {
