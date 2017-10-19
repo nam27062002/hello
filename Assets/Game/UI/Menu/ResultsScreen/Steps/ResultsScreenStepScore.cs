@@ -91,7 +91,7 @@ public class ResultsScreenStepScore : ResultsScreenStep {
 	/// <summary>
 	/// The tap to continue button has been pressed.
 	/// </summary>
-	public void OnTapToContinue() {
+	public void OnTapToContinue()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        {
 		// Only if enabled! (to prevent spamming)
 		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
 		if(!m_tapToContinue.visible) return;

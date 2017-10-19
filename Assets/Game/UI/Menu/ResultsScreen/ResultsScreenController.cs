@@ -42,6 +42,11 @@ public class ResultsScreenController : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private ResultsScreenStep[] m_steps = new ResultsScreenStep[(int)Step.COUNT];
 
+	[SerializeField] private ResultsScreenSummary m_summary = null;
+	public ResultsScreenSummary summary {
+		get { return m_summary; }
+	}
+
 	// Other references
 	private ResultsSceneSetup m_scene = null;
 	public ResultsSceneSetup scene {

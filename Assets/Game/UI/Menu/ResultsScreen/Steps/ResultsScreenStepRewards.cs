@@ -77,10 +77,18 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 	/// Transfer coins from main screen to counter.
 	/// </summary>
 	public void OnCoinsTransfer() {
-		// [AOC] TODO!! Show nice FX!
 		// Update total rewarded coins and update counter
 		m_controller.totalCoins += m_controller.coins + m_controller.survivalBonus;
 		m_coinsCounter.SetValue(m_controller.totalCoins, true);
+
+		// Show nice FX!
+		CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
+			CurrencyTransferFX.COINS,
+			this.GetComponentInParent<Canvas>().transform,
+			m_coinsText.transform.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
+			m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
+		);
+		fx.totalDuration = m_coinsCounter.duration;	// Match the text animator duration (more or less)
 	}
 
 	/// <summary>
