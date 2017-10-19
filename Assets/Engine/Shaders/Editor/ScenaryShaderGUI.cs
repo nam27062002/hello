@@ -54,9 +54,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string specularPowerText = "Specular Power";
         readonly public static string specularDirText = "Specular direction";
 
-        readonly public static string reflectionColorText = "Reflection color";
+//        readonly public static string reflectionColorText = "Reflection color";
         readonly public static string reflectionAmountText = "Reflection amount";
         readonly public static string reflectionMapText = "Reflection map";
+        readonly public static string reflectionAdviceText = "Reflection can be controled by painting object alfa vertex color: \n 0.0 = no reflect \n 1.0 = reflect";
 
         readonly public static string enableFogText = "Enable Fog";
 
@@ -73,7 +74,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string blinkTimeMultiplierText = "Blink time multiplier";
         readonly public static string emissionTypeText = "Emission type";
 
-        readonly public static string lightmapContrastText = "Lightmap contrast";
+        readonly public static string lightmapContrastIntensityText = "Intensity";
+        readonly public static string lightmapContrastMarginText = "Threshold";
+        readonly public static string lightmapContrastPhaseText = "Phase";
 
         readonly public static string blendModeText = "Blend mode";
         readonly public static string renderQueueText = "Render queue";
@@ -90,7 +93,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_mainTexture;
 
     MaterialProperty mp_blendTexture;
-    MaterialProperty mp_lightmapIntensity;
+    MaterialProperty mp_lightmapContrastIntensity;
+    MaterialProperty mp_lightmapContrastMargin;
+    MaterialProperty mp_lightmapContrastPhase;
 
     MaterialProperty mp_normalTexture;
     MaterialProperty mp_normalStrength;
@@ -109,7 +114,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EmissivePower;
     MaterialProperty mp_BlinkTimeMultiplier;
 
-    MaterialProperty mp_reflectionColor;
+//    MaterialProperty mp_reflectionColor;
     MaterialProperty mp_reflectionAmount;
     MaterialProperty mp_reflectionMap;
 
@@ -130,7 +135,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EnableFog;
 
 //    MaterialProperty mp_EnableEmissiveBlink;
-    MaterialProperty mp_EnableLightmapContrast;
+//    MaterialProperty mp_EnableLightmapContrast;
 
     /// <summary>
     /// Enum Material PProperties
@@ -185,9 +190,13 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_EmissivePower = FindProperty("_EmissivePower", props);
         mp_BlinkTimeMultiplier = FindProperty("_BlinkTimeMultiplier", props);
 
-        mp_reflectionColor = FindProperty("_ReflectionColor", props);
+//        mp_reflectionColor = FindProperty("_ReflectionColor", props);
         mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
         mp_reflectionMap = FindProperty("_ReflectionMap", props);
+
+        mp_lightmapContrastIntensity = FindProperty("_LightmapContrastIntensity", props);
+        mp_lightmapContrastMargin = FindProperty("_LightmapContrastMargin", props);
+        mp_lightmapContrastPhase = FindProperty("_LightmapContrastPhase", props);
 
         /// Toggle Material Properties
 
@@ -201,7 +210,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_EnableFog = FindProperty("_EnableFog", props);
 
 //        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
-        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
+//        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
 
         /// Enum Material PProperties
 
@@ -353,21 +362,19 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
             case 2:         //Emission reflective
                 materialEditor.ShaderProperty(mp_reflectionMap, Styles.reflectionMapText);
-                materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
+//                materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
                 materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+                EditorGUILayout.HelpBox(Styles.reflectionAdviceText, MessageType.Info);                
+                break;
+
+            case 3:         //Lightmap contrast
+                materialEditor.ShaderProperty(mp_lightmapContrastIntensity, Styles.lightmapContrastIntensityText);
+                materialEditor.ShaderProperty(mp_lightmapContrastMargin, Styles.lightmapContrastMarginText);
+                materialEditor.ShaderProperty(mp_lightmapContrastPhase, Styles.lightmapContrastPhaseText);
                 
                 break;
 
         }
-        if (mp_EmissionType.floatValue == 1.0f)
-        {
-        }
-        /*
-                if (featureSet(mp_EnableLightmapContrast, Styles.lightmapContrastText))
-                {
-                    materialEditor.
-                }
-        */
         /*
                 if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
                 {
