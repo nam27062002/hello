@@ -16,11 +16,11 @@ struct v2f {
 #ifdef BLEND_TEXTURE	
 	float2 texcoord2 : TEXCOORD2;
 #endif
-/*
+
 #ifdef EMISSIVE_REFLECTIVE
-	float2 cap : TEXCOORD4;
+	float reflectionData : TEXCOORD4;
 #endif
-*/
+
 	float4 color : COLOR;
 
 #ifdef FOG	
@@ -120,6 +120,10 @@ v2f vert (appdata_t v)
 	o.color = v.color;
 #endif
 
+#ifdef EMISSIVE_REFLECTIVE
+	o.reflectionData = v.color.a;
+#endif
+
 
 #if defined (FOG) || defined (SPECULAR)
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
@@ -212,7 +216,7 @@ fixed4 frag (v2f i) : SV_Target
 	float2 uvc = i.texcoord + float2(s, c) * 0.2;
 //	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
 	fixed4 mc = tex2D(_ReflectionMap, uvc) * 3.0;
-	col = lerp(col, mc, _ReflectionAmount * i.color.a);
+	col = lerp(col, mc, _ReflectionAmount * i.reflectionData);
 #endif
 
 #ifdef DYNAMIC_SHADOWS
