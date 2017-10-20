@@ -177,9 +177,9 @@ public static class EditorGUILayoutExt {
 		EditorGUILayout.BeginHorizontal(_options); {
 			// Label (if not empty)
 			if(_label != "") {
-				GUILayout.Label(_label);
+				EditorGUILayout.PrefixLabel(_label);
 			}
-			
+
 			// XYZ values
 			EditorGUIUtility.labelWidth = 15;
 			_value.x = EditorGUILayout.FloatField("X", _value.x);
@@ -188,6 +188,34 @@ public static class EditorGUILayoutExt {
 			EditorGUIUtility.labelWidth = 0;
 		} EditorGUILayoutExt.EndHorizontalSafe();
 		
+		return _value;
+	}
+
+	/// <summary>
+	/// Custom editor for the Quaternion type.
+	/// </summary>
+	/// <returns>The value entered by the user.</returns>
+	/// <param name="_label">Label to display before the field. Leave empty for no label.</param>
+	/// <param name="_value">The value to edit.</param>
+	/// <param name="_options">An optional list of layout options that specify extra layouting properties. Any values passed in here will override settings defined by the style. See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight, GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
+	public static Quaternion QuaternionField(string _label, Quaternion _value, params GUILayoutOption[] _options) {
+		// Group everything in an horizontal layout
+		// Apply custom options here - may not work with all options
+		EditorGUILayout.BeginHorizontal(_options); {
+			// Label (if not empty)
+			if(_label != "") {
+				EditorGUILayout.PrefixLabel(_label);
+			}
+
+			// XYZ values
+			EditorGUIUtility.labelWidth = 15;
+			_value.x = EditorGUILayout.FloatField("X", _value.x);
+			_value.y = EditorGUILayout.FloatField("Y", _value.y);
+			_value.z = EditorGUILayout.FloatField("Z", _value.z);
+			_value.w = EditorGUILayout.FloatField("W", _value.w);
+			EditorGUIUtility.labelWidth = 0;
+		} EditorGUILayoutExt.EndHorizontalSafe();
+
 		return _value;
 	}
 
