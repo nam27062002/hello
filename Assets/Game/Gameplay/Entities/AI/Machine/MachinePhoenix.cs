@@ -12,13 +12,17 @@ namespace AI {
 
 		//--------------------------------------------------
 		private bool m_phoenixActive = false;
-		private Material m_phoenixMaterial;
+		private Material m_phoenixMaterial = null;
 		//--------------------------------------------------
 		protected override void Awake() {
 			base.Awake();
-			m_phoenixMaterial = m_bodyRenderer.material;
 			DeactivateFire();
 		}
+
+		void Start(){
+			m_phoenixMaterial = m_bodyRenderer.material;
+		}
+
 
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
@@ -64,18 +68,21 @@ namespace AI {
 
 		IEnumerator FireTo( float _targetValue )
 		{
-			float startValue = m_phoenixMaterial.GetFloat("_FireAmount");
-			float timer = 0;
-			float duration = 0.5f;
-			while( timer < duration )
+			if ( m_phoenixMaterial != null )
 			{
-				yield return null;
-				timer += Time.deltaTime;
-				float delta = timer / duration;
+				float startValue = m_phoenixMaterial.GetFloat("_FireAmount");
+				float timer = 0;
+				float duration = 0.5f;
+				while( timer < duration )
+				{
+					yield return null;
+					timer += Time.deltaTime;
+					float delta = timer / duration;
 
-				m_phoenixMaterial.SetFloat("_FireAmount", Mathf.Lerp(startValue, _targetValue, delta));
+					m_phoenixMaterial.SetFloat("_FireAmount", Mathf.Lerp(startValue, _targetValue, delta));
+				}
+				m_phoenixMaterial.SetFloat("_FireAmount", _targetValue);
 			}
-			m_phoenixMaterial.SetFloat("_FireAmount", _targetValue);
 		}
 	}
 }
