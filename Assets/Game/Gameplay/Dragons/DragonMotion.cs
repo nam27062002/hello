@@ -1123,8 +1123,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
         }
         else
         {
-            m_directionWhenBoostPressed = m_direction;
+        	m_directionWhenBoostPressed = m_direction;
         }
+        
 		if ( impulse != Vector3.zero )
 		{
 			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
@@ -1274,12 +1275,16 @@ public class DragonMotion : MonoBehaviour, IMotion {
         }
         else
         {
-            m_directionWhenBoostPressed = m_direction;
+        	m_directionWhenBoostPressed = m_direction;
         }
+
+        float yGravityModifier = impulse.y;
+        if ( yGravityModifier > 0 )
+        	yGravityModifier = 0;
 
         impulse.Scale(new Vector3(0.5f, 0, 1));
         Vector3 gravityAcceleration = Vector3.zero;
-		gravityAcceleration = Vector3.down * 9.81f * m_dragonAirGravityModifier;
+		gravityAcceleration = Vector3.down * 9.81f * (m_dragonAirGravityModifier + m_dragonAirGravityModifier * -yGravityModifier);
 		float distance = (transform.position.y - m_startParabolicPosition.y);
 		if (distance > 0) {
 			gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;

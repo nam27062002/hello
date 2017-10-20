@@ -82,6 +82,7 @@ GameObject:
   - component: {fileID: 22474756}
   - component: {fileID: 22265908}
   - component: {fileID: 11454808}
+  - component: {fileID: 114893293547583464}
   m_Layer: 5
   m_Name: DragonSkinIcon
   m_TagString: Untagged
@@ -333,6 +334,11 @@ MonoBehaviour:
   m_equippedTextColor: {r: 1, g: 1, b: 1, a: 1}
   m_getNowTextColor: {r: 1, g: 0.82555145, b: 0.42647058, a: 1}
   m_lockedTextColor: {r: 0.96470594, g: 0.57254905, b: 0.2784314, a: 1}
+  m_shadowEffect:
+    brightness: -0.8
+    saturation: -0.7
+    contrast: -0.6
+  m_colorFX: {fileID: 114893293547583464}
 --- !u!222 &22212196
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -1058,6 +1064,23 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 1
+--- !u!114 &114893293547583464
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_alpha: 1
+  m_brightness: 0
+  m_saturation: 0
+  m_contrast: 0
 --- !u!114 &114925969648182814
 MonoBehaviour:
   m_ObjectHideFlags: 1

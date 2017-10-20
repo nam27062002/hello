@@ -293,7 +293,7 @@ public class SnappingScrollRect : ScrollRect {
 				.SetAutoKill(true)
 				.SetRecyclable(true)	// [AOC] By making it recyclable, we do a "pooling" of this tween type, avoiding creating memory garbage
 				.OnStart(() => {
-					this.movementType = MovementType.Unrestricted;
+					//this.movementType = MovementType.Unrestricted;
 				})
 				.OnKill(() => {
 					this.movementType = originalMovementType;
