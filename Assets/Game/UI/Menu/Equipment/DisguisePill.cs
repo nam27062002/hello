@@ -29,6 +29,14 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	// Resources constants
 	private const string NOTIFICATION_PREFAB_PATH = "UI/Common/PF_UINotificationFlag";
 
+
+	[System.Serializable]
+	private class SkinShadowEffect {
+		public float brightness = -0.8f;
+		public float saturation = -0.7f;
+		public float contrast   = -0.6f;  
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -38,6 +46,9 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	[SerializeField] private Color m_equippedTextColor = Color.white;
 	[SerializeField] private Color m_getNowTextColor = Colors.gray;
 	[SerializeField] private Color m_lockedTextColor = Color.red;
+	[Space]
+	[SerializeField] private SkinShadowEffect m_shadowEffect;
+	[SerializeField] private UIColorFX m_colorFX;
 
 	// Events
 	public DisguisePillEvent OnPillClicked = new DisguisePillEvent();
@@ -125,10 +136,14 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 		// Locked?
 		if (locked) {
-			m_icon.color = Color.gray;// Locked
+			m_colorFX.brightness = m_shadowEffect.brightness;
+			m_colorFX.saturation = m_shadowEffect.saturation;
+			m_colorFX.contrast   = m_shadowEffect.contrast;
 			m_lockIconAnim.gameObject.SetActive(true);
 		} else {
-			m_icon.color = Color.white;// Unlocked
+			m_colorFX.brightness = 0f;
+			m_colorFX.saturation = 0f; 
+			m_colorFX.contrast   = 0f;
 			m_lockIconAnim.gameObject.SetActive(false);
 		}
 

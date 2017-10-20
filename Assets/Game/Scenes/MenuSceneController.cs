@@ -142,6 +142,11 @@ public class MenuSceneController : SceneController {
 		// Request latest global event data
 		GlobalEventManager.RequestCurrentEventData();
 
+			// wait one tick
+		yield return null;
+
+		CheckRatingFlow();
+
 		// Test mode
 		yield return new WaitForSeconds(5.0f);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
@@ -151,45 +156,45 @@ public class MenuSceneController : SceneController {
 			OnDragonSelected("dragon_classic");
 			OnPlayButton();
 		}
-		else
-		{
-			CheckRatingFlow();
-		}
+
 	}
 
-	protected void CheckRatingFlow()
+	public static string RATING_DRAGON = "dragon_crocodile";
+	public static void CheckRatingFlow()
 	{
-		// Check we come form a run!
-		// Check if we need to make the player rate the game
-		if ( Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true))
+		DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
+		if ( data.GetLockState() > DragonData.LockState.LOCKED )
 		{
-			if ( GameSceneManager.prevScene.CompareTo(ResultsScreenController.NAME) == 0 || GameSceneManager.prevScene.CompareTo(GameSceneController.NAME) == 0)
+			// Check if first time here!
+			bool _checked = Prefs.GetBoolPlayer( Prefs.RATE_CHECK_DRAGON, false );
+			if ( _checked )
 			{
-				string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
-				System.DateTime futureDate = System.DateTime.Now;
-				if (!System.DateTime.TryParse(dateStr, out futureDate))
-					futureDate = System.DateTime.Now;
-				if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
+				// Check we come form a run!
+				// Check if we need to make the player rate the game
+				if ( Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true))
 				{
-					DragonData data = DragonManager.GetDragonData("dragon_crocodile");
-					if ( data.GetLockState() != DragonData.LockState.LOCKED )
+					if ( GameSceneManager.prevScene.CompareTo(ResultsScreenController.NAME) == 0 || GameSceneManager.prevScene.CompareTo(GameSceneController.NAME) == 0)
 					{
-						// Check if first time here!
-						bool _checked = Prefs.GetBoolPlayer( Prefs.RATE_CHECK_DRAGON, false );
-						if ( _checked )
+						string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
+						System.DateTime futureDate = System.DateTime.Now;
+						if (!System.DateTime.TryParse(dateStr, out futureDate))
+							futureDate = System.DateTime.Now;
+						if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
 						{
 							// Start Asking!
-							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
-						}
-						else
-						{
-							// Next time we will
-							Prefs.SetBoolPlayer( Prefs.RATE_CHECK_DRAGON, true );
+							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );			
 						}
 					}
 				}
 			}
+			else
+			{
+				// Next time we will
+				Prefs.SetBoolPlayer( Prefs.RATE_CHECK_DRAGON, true );
+			}
 		}
+
+
 	}
 
 	protected override void OnDestroy() {
