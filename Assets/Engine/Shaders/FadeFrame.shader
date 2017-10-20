@@ -6,6 +6,8 @@ Shader "Hungry Dragon/FadeEffect"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_Tint ("Color", Color) = (1,1,1,1)
+		_RotSpeed("Rotation Speed", Float) = 0.25
+
 //		_Intensity ("Intensity", float) = 1
 	}
 	SubShader
@@ -98,13 +100,31 @@ Shader "Hungry Dragon/FadeEffect"
 			
 			sampler2D _MainTex;
 
+			float _RotSpeed;
+
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 //				i.color.a = 1.0f;
 				float w = WIDTH * (1.0 - i.color.a);
 				float t = THRESHOLD * (1.0 - i.color.a);
-				float s = spiral(i.uv, w, t, i.color.a);
-				fixed4 col = fixed4(0.0, 0.0, 0.0, s);
+				float sp = spiral(i.uv, w, t, i.color.a);
+				fixed4 col = fixed4(0.0, 0.0, 0.0, sp);
+
+				float2 aspect = float2(1.0, _ScreenParams.y / _ScreenParams.x);
+				float2 uv = i.uv * aspect;
+				//				i.color.a = 1.0f;
+				float s = sin(_Time.y * _RotSpeed) * 4.0;
+				float c = cos(_Time.y * _RotSpeed) * 4.0;
+				uv -= aspect * 0.5;
+				uv = float2(uv.x * c + uv.y * s, uv.x * s - uv.y * c);
+				uv += 0.5;
+				fixed4 tx = tex2D(_MainTex, uv);
+				col.rgb += fixed3(tx.a, tx.a, tx.a);
+
+
+
+
 				return col;
 			}
 			ENDCG
