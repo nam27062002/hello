@@ -28,7 +28,8 @@ namespace AI {
 				Flee = 0,
 				Flee_Panic,
 				Panic,
-				Slow_Down
+				Slow_Down,
+				Slow_Down_Panic
 			}
 
 
@@ -146,14 +147,15 @@ namespace AI {
 						case FleeState.Flee:
 						case FleeState.Flee_Panic:
 							if (!warning) {
-								ChangeState(FleeState.Slow_Down); 
+								if (m_fleeState == FleeState.Flee) 	ChangeState(FleeState.Slow_Down);
+								else 								ChangeState(FleeState.Slow_Down_Panic);
 							} else {
 								m_dragonVisibleTimer -= Time.deltaTime;
 								if (m_dragonVisibleTimer <= 0f) {
 									if (danger) ChangeState(FleeState.Flee_Panic);
 									else 		ChangeState(FleeState.Flee);
 
-									m_dragonVisibleTimer = 5f;
+									m_dragonVisibleTimer = 1f;
 								}
 							}
 
@@ -198,13 +200,16 @@ namespace AI {
 								ChangeState(FleeState.Flee_Panic);
 							}
 							break;
-
+													
 						case FleeState.Slow_Down:
+						case FleeState.Slow_Down_Panic:
 							if (warning) ChangeState(FleeState.Flee);
 
-							m_pilot.SetMoveSpeed(0);
-
-							if (m_pilot.speed < 1) Transition(OnIdleAlert);							
+							m_panicTimer -= Time.deltaTime;
+							if (m_panicTimer <= 0) {
+								m_pilot.SetMoveSpeed(0);
+								if (m_pilot.speed < 1) Transition(OnIdleAlert);							
+							}
 							break;
 					}
 
@@ -234,12 +239,12 @@ namespace AI {
 
 					switch(_nextState) {
 						case FleeState.Flee:
-							m_dragonVisibleTimer = 5f;
+							m_dragonVisibleTimer = 1f;
 							m_pilot.SetMoveSpeed(m_data.speed);
 							break;
 
 						case FleeState.Flee_Panic:
-							m_dragonVisibleTimer = 5f;
+							m_dragonVisibleTimer = 1f;
 							m_pilot.SetMoveSpeed(m_data.speed);
 							m_pilot.PressAction(Pilot.Action.Scared); 
 							break;
@@ -249,8 +254,14 @@ namespace AI {
 							m_pilot.Stop();
 							m_pilot.PressAction(Pilot.Action.Scared); 
 							break;
-
+													
 						case FleeState.Slow_Down:
+							m_panicTimer = 1.5f;
+							break;
+
+						case FleeState.Slow_Down_Panic:
+							m_panicTimer = 1.5f;
+							m_pilot.PressAction(Pilot.Action.Scared);
 							break;
 					}
 

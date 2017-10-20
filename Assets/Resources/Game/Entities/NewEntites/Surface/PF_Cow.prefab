@@ -891,7 +891,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139278}
-  m_LocalRotation: {x: 0.6985103, y: -0.69814473, z: -0.15504153, w: 0.025289714}
+  m_LocalRotation: {x: 0.6985102, y: -0.6981447, z: -0.15504152, w: 0.02528971}
   m_LocalPosition: {x: 0.16254486, y: 0.106924586, z: 0.27912664}
   m_LocalScale: {x: 1.0000013, y: 0.9999998, z: 0.99999887}
   m_Children:
@@ -1014,7 +1014,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.5
-  m_serializedJson: '[{"restTime":{"min":4,"max":7},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":false,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"speed":5.5,"timeToIdle":{"min":2.5,"max":4.5},"timeToChangeDirection":{"min":4,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":4,"max":7},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":false,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"speed":5.5,"timeToIdle":{"min":2.5,"max":4.5},"timeToChangeDirection":{"min":4,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":0,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Cow
 --- !u!114 &11485410
 MonoBehaviour:
@@ -1039,6 +1039,47 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_exclamationTransform: {fileID: 0}
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
+  m_showDamageFeedback: 0
+  m_damageColor: {r: 1, g: 0, b: 0, a: 1}
+  m_damageTime: 2
   m_corpseAsset: PF_CowCorpse
   m_onEatenParticle:
     name: PS_Blood_Explosion
@@ -1115,44 +1156,6 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onEatenAudio: hd_cow_dead
-  m_speedToWaterSplash: 0
-  m_waterSplashParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
@@ -1230,7 +1233,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: hd_cow_alert
   m_onPanicAudio: hd_cow_alert
   m_idleAudio: 
