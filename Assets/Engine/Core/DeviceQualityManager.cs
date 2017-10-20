@@ -185,10 +185,12 @@ public class DeviceQualityManager
     private void Device_Clear()
     {
         Device_CalculatedRating = 0f;
+        Device_CalculatedRatingExt = 0f;
     }
 
-    public float Device_CalculatedRating { get; set; }    
+    public float Device_CalculatedRating { get; set; }
     #endregion
+    public float Device_CalculatedRatingExt { get; set; }
 
     #region log
     private const string PREFIX = "DeviceQualityManager:";
