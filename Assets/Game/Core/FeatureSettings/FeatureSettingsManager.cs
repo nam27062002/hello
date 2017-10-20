@@ -4,7 +4,7 @@
 // Created by David Germade
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
-//#define FREQFORMULA
+#define FREQFORMULA
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
