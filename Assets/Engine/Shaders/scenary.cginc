@@ -18,7 +18,7 @@ struct v2f {
 #endif
 
 #ifdef EMISSIVE_REFLECTIVE
-	float reflectionData : TEXCOORD4;
+	float3 reflectionData : TEXCOORD4;
 #endif
 
 	float4 color : COLOR;
@@ -59,7 +59,7 @@ float _LightmapIntensity;
 
 #ifdef NORMALMAP
 uniform sampler2D _NormalTex;
-uniform float4 _NormalTex_ST;
+//uniform float4 _NormalTex_ST;
 uniform float _NormalStrength;
 #endif
 
@@ -82,6 +82,7 @@ uniform float _BlinkTimeMultiplier;
 
 #elif defined(EMISSIVE_REFLECTIVE)
 uniform sampler2D _ReflectionMap;
+uniform float4 _ReflectionMap_ST;
 //uniform float4 _ReflectionColor;
 uniform float _ReflectionAmount;
 
@@ -121,9 +122,9 @@ v2f vert (appdata_t v)
 #endif
 
 #ifdef EMISSIVE_REFLECTIVE
-	o.reflectionData = v.color.a;
+	o.reflectionData.xy = TRANSFORM_TEX(v.texcoord, _ReflectionMap);
+	o.reflectionData.z = v.color.a;
 #endif
-
 
 #if defined (FOG) || defined (SPECULAR)
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
@@ -211,12 +212,12 @@ fixed4 frag (v2f i) : SV_Target
 #endif	
 
 #if defined(EMISSIVE_REFLECTIVE)
-	float c = cos(_Time.y * 2.0 + i.texcoord.x * 10.0 + i.texcoord.y * 10.0);
-	float s = sin(_Time.y * 2.0 + i.texcoord.x * 10.0 + i.texcoord.y * 10.0);
-	float2 uvc = i.texcoord + float2(s, c) * 0.2;
+	float c = cos(_Time.y * 4.0 + i.reflectionData.x * 4.0 + i.reflectionData.y * 4.0);
+	float s = sin(_Time.y * 4.0 + i.reflectionData.x * 4.0 + i.reflectionData.y * 4.0);
+	float2 uvc = i.reflectionData.xy + float2(s, c) * 0.09;
 //	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
 	fixed4 mc = tex2D(_ReflectionMap, uvc) * 3.0;
-	col = lerp(col, mc, _ReflectionAmount * i.reflectionData);
+	col = lerp(col, mc, _ReflectionAmount * i.reflectionData.z);
 #endif
 
 #ifdef DYNAMIC_SHADOWS
