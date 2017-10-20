@@ -72,7 +72,7 @@ public class Actions {
 				rand -= act.probability;
 			}
 		}
-		return null;
+		return GetDefaultAction();
 
 	}
 
