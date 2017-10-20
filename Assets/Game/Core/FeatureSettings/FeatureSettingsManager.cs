@@ -4,6 +4,7 @@
 // Created by David Germade
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
+//#define FREQFORMULA
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -332,10 +333,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         int processorCount = SystemInfo.processorCount;        
         int graphicsMemorySize = SystemInfo.graphicsMemorySize;
+        int cpuFreq = SystemInfo.processorFrequency;
 
         Dictionary<string, DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DEVICE_RATING_SETTINGS);        
         List<DeviceSettings> cpuCoresData = new List<DeviceSettings>();
-        List<DeviceSettings> gpuMemoryData = new List<DeviceSettings>();        
+        List<DeviceSettings> gpuMemoryData = new List<DeviceSettings>();
+        List<DeviceSettings> cpuFreqData = new List<DeviceSettings>();
 
         DeviceSettings data;
         string key;
@@ -353,13 +356,22 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("gpuMemoryBoundary"));
                 gpuMemoryData.Add(data);
-            }            
+            }
+
+            key = "cpuFreqRating";
+            if (pair.Value.Has(key))
+            {
+                data = new DeviceSettings(pair.Value.GetAsFloat(key), pair.Value.GetAsFloat("cpuFreqBoundary"));
+                cpuFreqData.Add(data);
+            }
+
         }
 
         // Lists are sorted in ascendent order of rating        
         cpuCoresData.Sort(DeviceSettings.Sort);
-        gpuMemoryData.Sort(DeviceSettings.Sort);        
-       
+        gpuMemoryData.Sort(DeviceSettings.Sort);
+        cpuFreqData.Sort(DeviceSettings.Sort);
+
         Device_MemoryRating = 1.0f;        
        
         // cpu rating
@@ -381,19 +393,37 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 Device_GfxMemoryRating = ds.Rating;
                 break;
             }
-        }       
+        }
+
+        Device_CPUFreqRating = 1.0f;
+        foreach (DeviceSettings ds in cpuFreqData)
+        {
+            if (cpuFreq <= ds.Boundary)
+            {
+                Device_CPUFreqRating = ds.Rating;
+                break;
+            }
+        }
 
         float shaderMultiplier = 1.0f;
         if (SystemInfo.graphicsShaderLevel == 20)
         {
             shaderMultiplier = 0.0f;
-        }              
+        }
 
+
+#if FREQFORMULA
+        finalDeviceRating = Device_CPUFreqRating;
+#else
         finalDeviceRating = ((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier;
+#endif
+
         finalDeviceRating = Mathf.Clamp(finalDeviceRating, 0.0f, 1.0f);
+
 
         Log("Graphics memory size = " + graphicsMemorySize + " gpuMemQualityLevel = " + Device_GfxMemoryRating +
            "Num cores = " + processorCount + " cpuQualityRating = " + Device_CPUCoresRating +
+           "CPU Freq = " + cpuFreq + " cpuFreqRating = " + Device_CPUFreqRating + 
            "Shader multiplier = " + shaderMultiplier + 
            "Device rating = " + finalDeviceRating);       
 
@@ -407,10 +437,19 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return m_deviceQualityManager.Device_CalculatedRating;
         }
     }
+    public float Device_CalculatedRatingExt
+    {
+        get
+        {
+            return m_deviceQualityManager.Device_CalculatedRatingExt;
+        }
+    }
+
 
     public float Device_CPUCoresRating { get; private set; }
     public float Device_MemoryRating { get; private set; }
     public float Device_GfxMemoryRating { get; private set; }
+    public float Device_CPUFreqRating { get; private set; }
 
     public float Device_CurrentRating
     {
