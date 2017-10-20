@@ -339,7 +339,7 @@ public class LoadingSceneController : SceneController {
 		        GameAds.CreateInstance(false);
 		        GameAds.instance.Init();
                  
-            	ControlPanel.CreateInstance();
+            	//ControlPanel.CreateInstance();
                 DragonManager.SetupUser(UsersManager.currentUser);
                 MissionManager.SetupUser(UsersManager.currentUser);
                 EggManager.SetupUser(UsersManager.currentUser);
