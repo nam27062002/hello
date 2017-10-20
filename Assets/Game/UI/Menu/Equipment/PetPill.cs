@@ -29,16 +29,22 @@ public class PetPill : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
+	private const string UNLOCK_EFFECT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPill_FX";
 
 	public class PetPillEvent : UnityEvent<PetPill> { }
+
+	[System.Serializable]
+	private class PetShadowEffect {
+		public float brightness = 0f;
+		public float saturation = 0f;
+		public float contrast   = 0f; 
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Image m_preview = null;
-	[SerializeField] private GameObject m_lockIcon = null;
-	[SerializeField] private GameObject m_lockIconSpecial = null;
 	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
 	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
 	[Space]
@@ -52,18 +58,15 @@ public class PetPill : MonoBehaviour {
 		get { return m_frameColorFX; }
 	}
 
-	[SerializeField] private Color m_lockedColor = new Color(0.5f, 0.5f, 0.5f);
-	[SerializeField] private Color m_equippedColor = Colors.orange;
+	[SerializeField] private PetShadowEffect m_shadowEffect;
+	[SerializeField] private UIColorFX m_colorFX;
+
 
 	// Internal
 	private DefinitionNode m_def = null;
 	public DefinitionNode def {
 		get { return m_def; }
 	}
-
-	private GameObject m_currentLockIcon = null;
-	private Animator m_currentLockIconAnim = null;
-	private bool m_waitingForUnlockAnim = false;
 
 	private GameObject m_tutorialHighlightFX = null;
 
@@ -201,17 +204,6 @@ public class PetPill : MonoBehaviour {
 			}
 		}
 
-		// Lock icons
-		// Different lock icon for special pets
-		if(m_special) {
-			m_currentLockIcon = m_lockIconSpecial;
-		} else {
-			m_currentLockIcon = m_lockIcon;
-		}
-		m_lockIcon.SetActive(!m_special);
-		m_lockIconSpecial.SetActive(m_special);
-		m_currentLockIconAnim = m_currentLockIcon.GetComponent<Animator>();
-
 		// Rarity icon
 		int rarityInt = (int)rarity;
 		for(int i = 0; i < m_rarityDecorations.Length; i++) {
@@ -238,11 +230,6 @@ public class PetPill : MonoBehaviour {
 		m_locked = !petCollection.IsPetUnlocked(m_def.sku);
 		m_slot = UsersManager.currentUser.GetPetSlot(m_dragonData.def.sku, m_def.sku);
 
-		// Lock icon (unless waiting for animation)
-		if(!m_waitingForUnlockAnim) {
-			m_currentLockIcon.SetActive(m_locked);
-		}
-
 		// Hide power icon for locked special pets
 		if(m_powerIcon != null) {
 			bool isSpecialAndLocked = m_special && m_locked;
@@ -258,7 +245,17 @@ public class PetPill : MonoBehaviour {
 		if(m_equippedPowerFrame != null) m_equippedPowerFrame.SetActive(equipped);
 
 		// Tone down pet preview when locked for better contrast with the lock icon
-		m_preview.color = m_locked ? m_lockedColor : Color.white;
+		m_preview.color = Color.white;
+
+		if (m_locked) {
+			m_colorFX.brightness = m_shadowEffect.brightness;
+			m_colorFX.saturation = m_shadowEffect.saturation;
+			m_colorFX.contrast   = m_shadowEffect.contrast;
+		} else {
+			m_colorFX.brightness = 0f;
+			m_colorFX.saturation = 0f; 
+			m_colorFX.contrast   = 0f;
+		}
 	}
 
 	/// <summary>
@@ -266,19 +263,15 @@ public class PetPill : MonoBehaviour {
 	/// Refresh() shouldn't be called between this call and LaunchUnlockAnim();
 	/// </summary>
 	public void PrepareUnlockAnim() {
-		m_currentLockIcon.SetActive(true);
-		m_currentLockIconAnim.SetTrigger("idle");
-		m_waitingForUnlockAnim = true;
+		//PF_PetPill_FX
+		GameObject prefab = Resources.Load<GameObject>(PetPill.UNLOCK_EFFECT_PREFAB_PATH);
+		GameObject.Instantiate<GameObject>(prefab, this.transform, false);
 	}
 
 	/// <summary>
 	/// Show the unlock animation.
 	/// </summary>
-	public void LaunchUnlockAnim() {
-		m_currentLockIcon.SetActive(true);	// Just in case
-		m_currentLockIconAnim.SetTrigger("unlock");
-		m_waitingForUnlockAnim = false;
-
+	public void LaunchUnlockAnim() {		
 		// If equip tutorial is not yet completed, show highlight around the pill!
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PETS_EQUIP)) {
 			// Give enough time for the unlock animation to finish
@@ -291,6 +284,10 @@ public class PetPill : MonoBehaviour {
 				1f 	// Sync with animation!
 			);
 		}
+
+		m_colorFX.brightness = 0f;
+		m_colorFX.saturation = 0f; 
+		m_colorFX.contrast   = 0f;
 	}
 
 	/// <summary>
@@ -309,12 +306,6 @@ public class PetPill : MonoBehaviour {
 	/// The pill has been tapped.
 	/// </summary>
 	public void OnTap() {
-		// If locked, show some feedback
-		if(locked) {
-			// Small animation on the lock icon
-			m_currentLockIconAnim.SetTrigger("bounce");
-		}
-
 		// Propagate the event
 		OnPillTapped.Invoke(this);
 	}

@@ -53,12 +53,12 @@ public class KamikazeViewControl : ViewControl {
 		}
 	}
 
-	protected virtual void RemoveAudios()
+	protected override void RemoveAudios()
     {
     	base.RemoveAudios();
 		if ( ApplicationManager.IsAlive )
     	{
-			RemoveAudioParent( m_dashAudioGO );
+			RemoveAudioParent( ref m_dashAudioGO );
 		}
     }
 }
