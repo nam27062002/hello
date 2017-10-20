@@ -35,9 +35,9 @@ public class PetPill : MonoBehaviour {
 
 	[System.Serializable]
 	private class PetShadowEffect {
-		public float brightness = 0f;
-		public float saturation = 0f;
-		public float contrast   = 0f; 
+		public float brightness = -0.8f;
+		public float saturation = -0.7f;
+		public float contrast   = -0.6f; 
 	}
 
 	//------------------------------------------------------------------------//
