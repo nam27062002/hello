@@ -414,8 +414,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
 #if FREQFORMULA
         finalDeviceRating = Device_CPUFreqRating;
+        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier, 0.0f, 1.0f);
 #else
         finalDeviceRating = ((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier;
+        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(Device_CPUFreqRating, 0.0f, 1.0f);
 #endif
 
         finalDeviceRating = Mathf.Clamp(finalDeviceRating, 0.0f, 1.0f);
