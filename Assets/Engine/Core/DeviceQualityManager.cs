@@ -192,6 +192,9 @@ public class DeviceQualityManager
     #endregion
     public float Device_CalculatedRatingExt { get; set; }
 
+    public bool Device_UsingRatingFormula { get; set; }
+
+
     #region log
     private const string PREFIX = "DeviceQualityManager:";
 

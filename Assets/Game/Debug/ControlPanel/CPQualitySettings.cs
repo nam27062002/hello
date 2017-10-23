@@ -313,6 +313,7 @@ public class CPQualitySettings : MonoBehaviour
     public TextMeshProUGUI m_gfxMemory;
     public TextMeshProUGUI m_gfxMemoryRating;
     public TextMeshProUGUI m_calculatedRating;
+    public TextMeshProUGUI m_usingFormula;
     public TextMeshProUGUI m_rating;
     public TextMeshProUGUI m_deviceFrequency;
     public TextMeshProUGUI m_shaderLevel;
@@ -351,7 +352,14 @@ public class CPQualitySettings : MonoBehaviour
 
         if (m_calculatedRating != null)
         {
-            m_calculatedRating.text = "" + FeatureSettingsManager.instance.Device_CalculatedRating;
+            m_calculatedRating.text = (FeatureSettingsManager.instance.Device_UsingRatingFormula) ?
+                "old:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3"):
+                "old:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3");
+        }
+
+        if (m_usingFormula != null)
+        {
+            m_usingFormula.text = (FeatureSettingsManager.instance.Device_UsingRatingFormula) ? "new" : "old";
         }
 
         if (m_rating != null)
