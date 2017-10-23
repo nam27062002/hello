@@ -54,6 +54,13 @@ public class EggView : MonoBehaviour {
 		get { return m_readyBehaviour; }
 	}
 
+	// Setup
+	private bool m_forceIdleFX = false;
+	public bool forceIdleFX {
+		get { return m_forceIdleFX; }
+		set { m_forceIdleFX = value; Refresh(); }
+	}
+
 	// Internal references
 	private Animator m_animator = null;
 
@@ -201,14 +208,8 @@ public class EggView : MonoBehaviour {
 			m_animator.SetInteger("rarity", (int)Metagame.Reward.Rarity.COMMON);
 		}
 
-		// Idle FX - disabled after tapping the egg
+		// Idle FX - depends on the egg state
 		if(m_idleFX != null) {
-			/*
-			bool hide = (state == Egg.State.OPENING && step > 0);
-			hide |= state == Egg.State.COLLECTED;
-			m_idleFX.SetActive(!hide);
-			*/
-			// This works for both eggs:
 			bool show = false;
 			switch(state) {
 				case Egg.State.READY: {
@@ -220,8 +221,8 @@ public class EggView : MonoBehaviour {
 				} break;
 
 				case Egg.State.SHOWROOM: {
-					// Only for premium eggs
-					if(m_eggData != null && m_eggData.def.sku == Egg.SKU_PREMIUM_EGG) {
+					// Only for premium eggs (or if forced)
+					if(m_forceIdleFX || (m_eggData != null && m_eggData.def.sku == Egg.SKU_PREMIUM_EGG)) {
 						show = true;
 					}
 				} break;

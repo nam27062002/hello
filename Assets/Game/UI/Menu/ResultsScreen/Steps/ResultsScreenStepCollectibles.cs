@@ -7,9 +7,12 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+#define USING_3D_SCENE
+
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -55,6 +58,23 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	}
 
 	/// <summary>
+	/// Initialize the step.
+	/// </summary>
+	override protected void DoInit() {
+		#if USING_3D_SCENE
+		// Grab slots from the 3D scene
+		m_chestSlots = new ResultsSceneChestSlot[m_controller.scene.chestSlots.Length];
+		System.Array.Copy(m_controller.scene.chestSlots, m_chestSlots, m_chestSlots.Length);
+
+		// Start with everything hidden
+		for(int i = 0; i < m_chestSlots.Length; ++i) {
+			m_chestSlots[i].gameObject.SetActive(false);
+		}
+		m_controller.scene.eggSlot.gameObject.SetActive(false);
+		#endif
+	}
+
+	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
@@ -66,9 +86,11 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Initialize chests. Can't do it in the DoInit call because we need the chest slots to be active!
 		InitChests();
 
+		#if !USING_3D_SCENE
 		// Hide both egg anims
 		m_eggFoundAnim.ForceHide(false);
 		m_eggNotFoundAnim.ForceHide(false);
+		#endif
 
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
@@ -175,6 +197,9 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 					if(sortedChests[i].state == Chest.State.PENDING_REWARD) {
 						m_rewardedSlots.Add(m_chestSlots[i]);
 					}
+
+					// Start hidden
+					m_chestSlots[i].gameObject.SetActive(false);
 				}
 			} break;
 		}
@@ -188,23 +213,20 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// </summary>
 	public void OnChestRewardCheck() {
 		// Does the current chest have a reward?
-		ResultsSceneChestSlot currentChest = m_chestSlots[m_checkedChests];
-		if(m_rewardedSlots.Contains(currentChest)) {
-			// Display reward animation!
-			currentChest.LaunchRewardAnim();
-
+		ResultsSceneChestSlot targetChest = m_chestSlots[m_checkedChests];
+		if(m_rewardedSlots.Contains(targetChest)) {
 			// Increase reward counters
 			// PC or coins?
-			switch(currentChest.rewardType) {
+			switch(targetChest.rewardType) {
 				case Chest.RewardType.SC: {
 					// Update total rewarded coins and update counter
-					m_controller.totalCoins += currentChest.rewardData.amount;
+					m_controller.totalCoins += targetChest.rewardData.amount;
 					m_coinsCounter.SetValue(m_controller.totalCoins, true);
 				} break;
 
 				case Chest.RewardType.PC: {
 					// Update total rewarded coins and update counter
-					m_controller.totalPc += currentChest.rewardData.amount;
+					m_controller.totalPc += targetChest.rewardData.amount;
 					m_pcCounter.SetValue(m_controller.totalPc, true);
 				} break;
 			}
@@ -214,6 +236,10 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 			m_pendingRewardChests--;
 		}
 
+		// Trigger animation!
+		targetChest.gameObject.SetActive(true);
+		targetChest.LaunchResultsAnim(true);
+
 		// Increase counter
 		m_checkedChests++;
 	}
@@ -222,19 +248,26 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// Trigger the rewarded egg anim (if needed).
 	/// </summary>
 	public void OnEggRewardCheck() {
+		#if USING_3D_SCENE
+		if(m_controller.eggFound) {
+			// Trigger animation!
+			m_controller.scene.eggSlot.gameObject.SetActive(true);
+			m_controller.scene.eggSlot.LaunchResultsAnim();
+		}
+		#else
 		if(m_controller.eggFound) {
 			// Trigger animation
 			m_eggFoundAnim.ForceShow();
 
 			// Show custom egg VFX
 			MenuEggLoader egg = m_eggFoundAnim.GetComponentInChildren<MenuEggLoader>();
-			Debug.Log("<color=lime>EGG FOUND! " + egg + "</color>");
 			if(egg != null) {
-				egg.eggView.idleFX.SetActive(true);
+				egg.eggView.idleFX.SetActive(true);	// [AOC] TODO!! Not working :(
 			}
 		} else {
 			m_eggNotFoundAnim.ForceShow();
 		}
+		#endif
 	}
 
 	/// <summary>
@@ -242,5 +275,14 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// </summary>
 	public void DoSummary() {
 		m_controller.summary.ShowCollectibles(m_collectedChests, m_controller.eggFound ? 1 : 0);
+	}
+
+	/// <summary>
+	/// Hide the given rewards.
+	/// </summary>
+	public void HideRewards() {
+		for(int i = 0; i < m_chestSlots.Length; ++i) {
+			m_chestSlots[i].HideResultsReward();
+		}
 	}
 }
