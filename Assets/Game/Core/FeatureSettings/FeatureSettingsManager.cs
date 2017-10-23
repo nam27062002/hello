@@ -510,7 +510,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     #endregion    
 
     #region rules
-    private const string RULES_DEFAULT_SKU = "L0";
+//    private const string RULES_DEFAULT_SKU = "L0";
+    private const string RULES_DEFAULT_SKU = "common";    
 
     private const string KEY_PHYSICS_MAX_RATING = "physicsMaxRating";
 
