@@ -177,7 +177,7 @@ public class HungryDragonEditorMenu
         TimeScaler.ShowWindow();
     }
 
-    /// <summary>
+	/// <summary>
     /// Preview of all Ease functions.
     /// </summary>
     [MenuItem("Hungry Dragon/Tools/Ease Preview Tool", false, 51)]
@@ -185,6 +185,15 @@ public class HungryDragonEditorMenu
     {
         EasePreviewTool.ShowWindow();
     }
+
+	/// <summary>
+	/// Show extended transform data.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Transform View Tool", false, 52)]
+	public static void TransformViewWindow()
+	{
+		TransformViewTool.ShowWindow();
+	}
 
     /// <summary>
     /// Custom toolbar for the project.

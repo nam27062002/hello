@@ -57,9 +57,9 @@ public class ViewParticleSpawner : MonoBehaviour {
 		}
 	}
 	
-	void Spawn() {
+	protected virtual void Spawn() {
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
-			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, Vector3.zero, false);
+			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, Vector3.zero, true);
 			if (m_particleSytems[i] != null) {
 				m_disableInSeconds[i] = m_particleSytems[i].GetComponent<DisableInSeconds>();
 			}
@@ -68,7 +68,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 		m_spawned = true;
 	}
 
-	void Return() {
+	protected virtual void Return() {
 		for (int i = 0; i < m_particleSytems.Length; ++i) {
 			if (m_particleSytems[i] != null) {
 				if (m_disableInSeconds[i] != null) {
@@ -85,7 +85,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 		m_spawned = false;
 	}
 
-	void ForceReturn() {
+	protected virtual void ForceReturn() {
 		for (int i = 0; i < m_particleSytems.Length; ++i) {
 			if (m_particleSytems[i] != null) {
 				m_particleDatas[i].ReturnInstance(m_particleSytems[i]);
