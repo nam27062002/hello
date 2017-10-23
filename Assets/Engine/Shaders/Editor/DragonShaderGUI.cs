@@ -450,7 +450,7 @@ internal class DragonShaderGUI : ShaderGUI
     /// <summary>
     /// Seek for old scenary shaders and change by new scenary standard material
     /// </summary>
-    [MenuItem("Tools/Scenary/Replace old dragon shaders")]
+    [MenuItem("Tools/Dragon/Replace old dragon shaders")]
     public static void ReplaceOldScenaryShaders()
     {
         Debug.Log("Obtaining material list");
@@ -467,6 +467,7 @@ internal class DragonShaderGUI : ShaderGUI
         for (int c = 0; c < materialList.Length; c++)
         {
             Material mat = materialList[c];
+            bool fix = false;
 
             // UnlitShadowLightmap.shader
             if (mat.shader.name == "Hungry Dragon/Dragon/Body")
@@ -484,6 +485,7 @@ internal class DragonShaderGUI : ShaderGUI
                 setBlendMode(mat, 0);   //Opaque
                 EditorUtility.SetDirty(mat);
                 sChanged++;
+                fix = true;
             }
             else if (mat.shader.name == "Hungry Dragon/Dragon/Wings (Transparent)")
             {
@@ -501,10 +503,14 @@ internal class DragonShaderGUI : ShaderGUI
                 setBlendMode(mat, 1);   //Transparent
                 EditorUtility.SetDirty(mat);
                 sChanged++;
+                fix = true;
 
             }
 
-
+            if (fix)
+            {
+                Debug.Log("Material: " + mat.name + " fixed.");
+            }
         }
 
         Debug.Log(sChanged + " materials changed.");
