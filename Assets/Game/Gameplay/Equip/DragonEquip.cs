@@ -533,7 +533,8 @@ public class DragonEquip : MonoBehaviour {
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
 
 				// Show rarity glow only on Pets menu
-				petPreview.ToggleRarityGlow((InstanceManager.menuSceneController.screensController.currentScreenIdx == (int)MenuScreens.PETS));
+				if (InstanceManager.menuSceneController != null)
+					petPreview.ToggleRarityGlow((InstanceManager.menuSceneController.screensController.currentScreenIdx == (int)MenuScreens.PETS));
 			} else {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();
