@@ -61,9 +61,6 @@ public class Entity : IEntity {
 	private FeedbackData m_feedbackData = new FeedbackData();
 	public FeedbackData feedbackData { get { return m_feedbackData; }}
 
-	private bool m_isGolden = false;
-	public bool isGolden { get { return m_isGolden; } }
-
 	private bool m_isPC = false;
 	public bool isPC { get { return m_isPC; } }
 
@@ -153,10 +150,8 @@ public class Entity : IEntity {
 
 		if (InstanceManager.player != null) {
 			DragonTier tier = InstanceManager.player.data.tier;
-			m_isGolden = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= goldenChance));
 			m_isPC = ((edibleFromTier <= tier) && (Random.Range(0f, 1f) <= pcChance));
 		} else {
-			m_isGolden = false;
 			m_isPC = false;
 		}
 
@@ -171,6 +166,22 @@ public class Entity : IEntity {
 
         m_spawned = true;
     }
+
+	public override void SetGolden(Spawner.EntityGoldMode _mode) {
+		switch (_mode) {
+			case Spawner.EntityGoldMode.Normal:
+				m_isGolden = false;
+				break;
+
+			case Spawner.EntityGoldMode.Gold:
+				m_isGolden = true;
+				break;
+
+			case Spawner.EntityGoldMode.ReRoll:
+				m_isGolden = ((edibleFromTier <= InstanceManager.player.data.tier) && (Random.Range(0f, 1f) <= goldenChance));
+				break;
+		}
+	}
 
     public override void Disable(bool _destroyed) {		
 		if (m_viewControl != null)
