@@ -29,6 +29,7 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed setup
 	[SerializeField] private bool m_darkScreen = false;
+	[SerializeField] private Color m_darkScreenColor = Colors.WithAlpha(Color.black, 0.5f);
 
 	// Events
 	[HideInInspector] [SerializeField] public UnityEvent OnFinished = new UnityEvent();
@@ -43,7 +44,7 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	/// Initialize this step with the given results screen controller.
 	/// </summary>
 	/// <param name="_controller">The results screen controller that will be triggering this step.</param>
-	public void Init(ResultsScreenController _controller) {
+	public virtual void Init(ResultsScreenController _controller) {
 		// Store reference
 		m_controller = _controller;
 
@@ -54,13 +55,33 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
-	public void Launch() {
+	public virtual void Launch() {
 		// Common stuff
 		// Toggle dark screen
-		ResultsDarkScreen.Set(m_darkScreen);
+		if(m_darkScreen) {
+			// Apply custom color
+			ResultsDarkScreen.instance.color = m_darkScreenColor;
+			ResultsDarkScreen.Show();
+		} else {
+			ResultsDarkScreen.Hide();
+		}
 
 		// Custom launch implementation
 		DoLaunch();
+	}
+
+	/// <summary>
+	/// Shows the summary.
+	/// </summary>
+	public virtual void ShowSummary() {
+		m_controller.summary.GetComponent<ShowHideAnimator>().Show();
+	}
+
+	/// <summary>
+	/// Hides the summary.
+	/// </summary>
+	public virtual void HideSummary() {
+		m_controller.summary.GetComponent<ShowHideAnimator>().Hide();
 	}
 
 	//------------------------------------------------------------------------//
