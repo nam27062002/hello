@@ -11,9 +11,12 @@ public class ViewParticleSpawnerAndSound : ViewParticleSpawner {
 		base.Spawn();
 		if ( !string.IsNullOrEmpty( m_sound ) )
 		{
-			m_idleAudioAO = AudioController.Play(m_sound, transform);
-			if (m_idleAudioAO != null )
-				m_idleAudioAO.completelyPlayedDelegate = OnIdleCompleted;
+			if ( m_idleAudioAO == null || !m_idleAudioAO.IsPlaying() )
+			{
+				m_idleAudioAO = AudioController.Play(m_sound, transform);
+				if (m_idleAudioAO != null )
+					m_idleAudioAO.completelyPlayedDelegate = OnIdleCompleted;
+			}
 		}
 	}
 

@@ -17,7 +17,7 @@ using DG.Tweening;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepScore : ResultsScreenStep {
+public class ResultsScreenStepScore : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,13 +26,12 @@ public class ResultsScreenStepScore : ResultsScreenStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Space]
 	[SerializeField] private NumberTextAnimator m_scoreText = null;
 	[SerializeField] private Localizer m_highScoreText = null;
 	[Space]
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
-	[SerializeField] private TweenSequence m_sequence;
 	[SerializeField] private TweenSequence m_newHighScoreAnim = null;
-	
+
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -42,14 +41,6 @@ public class ResultsScreenStepScore : ResultsScreenStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		return true;
-	}
-
-	/// <summary>
-	/// Initialize and launch this step.
-	/// </summary>
-	override protected void DoInit() {
-		// Notify when sequence is finished
-		m_sequence.OnFinished.AddListener(() => OnFinished.Invoke());
 	}
 
 	/// <summary>
@@ -65,12 +56,13 @@ public class ResultsScreenStepScore : ResultsScreenStep {
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);
+	}
 
-		// Hide tap to continue
-		m_tapToContinue.ForceHide(false);
-
-		// Launch sequence!
-		m_sequence.Launch();
+	/// <summary>
+	/// Called when skip is triggered.
+	/// </summary>
+	override protected void OnSkip() {
+		// Nothing to do for now
 	}
 
 	//------------------------------------------------------------------------//
@@ -89,17 +81,20 @@ public class ResultsScreenStepScore : ResultsScreenStep {
 	}
 
 	/// <summary>
-	/// The tap to continue button has been pressed.
+	/// Do the summary line for this step. Connect in the sequence.
 	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
+	public void DoSummary() {
+		m_controller.summary.ShowScore(m_controller.score);
+	}
 
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
+	/// <summary>
+	/// Show the run duration in the summary
+	/// </summary>
+	override public void ShowSummary() {
+		// Show time group
+		m_controller.summary.ShowTime(m_controller.time, false);
 
-		// Launch end sequence
-		m_sequence.Play();
+		// Call parent
+		base.ShowSummary();
 	}
 }

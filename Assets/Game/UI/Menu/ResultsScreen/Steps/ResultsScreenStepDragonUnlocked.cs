@@ -17,7 +17,7 @@ using TMPro;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
+public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,6 +26,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Space]
 	[SerializeField] private MenuDragonLoader m_preview = null;
 	[SerializeField] private DragControlRotation m_dragControl = null;
 	[Space]
@@ -36,9 +37,6 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
-	[Space]
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
-	[SerializeField] private TweenSequence m_sequence = null;
 
 	// Internal
 	private DragonData m_dragonData = null;
@@ -84,9 +82,6 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
 
 			HDTrackingManager.Instance.Notify_DragonUnlocked( m_dragonData.def.sku, m_dragonData.GetOrder() );
 		}
-
-		// Listen to sequence ending
-		m_sequence.OnFinished.AddListener(() => { OnFinished.Invoke(); });
 	}
 
 	/// <summary>
@@ -131,31 +126,11 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenStep {
 
 		// Start with button hidden
 		m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide(false);
-
-		// Hide tap to continue
-		m_tapToContinue.ForceHide(false);
-
-		// Launch sequence!
-		m_sequence.Launch();
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Tap to continue has been pressed.
-	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
-
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
-
-		// Continue sequence
-		m_sequence.Play();
-	}
 
 	/// <summary>
 	/// The button to purchase current skin has been pressed.

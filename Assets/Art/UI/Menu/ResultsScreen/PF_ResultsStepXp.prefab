@@ -1785,9 +1785,10 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  m_xpBar: {fileID: 114876483208599812}
+  m_skipAllowed: 1
   m_tapToContinue: {fileID: 114695098740469882}
   m_sequence: {fileID: 114714036759632996}
+  m_xpBar: {fileID: 114876483208599812}
 --- !u!114 &114589273635923558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2200,6 +2201,36 @@ MonoBehaviour:
         m_Calls: []
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
+  - name: Hide Summary
+    type: 0
+    target: {fileID: 224350967371626072}
+    startTime: 1
+    endTime: 1.25
+    from: 0
+    ease: 9
+    floatValue: 0
+    vectorValue: {x: 0, y: 300, z: 0}
+    OnStart:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114580949393279252}
+          m_MethodName: HideSummary
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    OnEnd:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
   OnFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -2449,7 +2480,9 @@ MonoBehaviour:
   m_infoText: {fileID: 114714263134540874}
   m_secondaryXPBar: {fileID: 114850775110038196}
   m_receiveFX: {fileID: 198840010110136648}
+  m_receiveFXSound: 
   m_levelUpFX: {fileID: 198076422677047618}
+  m_levelUpFXSound: 
   m_nextDragonRoot: {fileID: 1448761961159796}
   m_nextDragonIcon: {fileID: 114637895155166574}
   m_dragonUnlockFX: {fileID: 1498801575093154}

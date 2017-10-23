@@ -1953,20 +1953,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4f6208e1f5be43609e51e6ad89fc6c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_darkScreen: 1
+  m_darkScreen: 0
   OnFinished:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  m_skipAllowed: 1
+  m_tapToContinue: {fileID: 114243483185916148}
+  m_sequence: {fileID: 114657456346342108}
   m_pills:
   - {fileID: 114666522138796684}
   - {fileID: 114707549786980948}
   - {fileID: 114059349468665598}
   m_coinsCounter: {fileID: 114027643330456868}
   m_pcCounter: {fileID: 114487221481616812}
-  m_tapToContinue: {fileID: 114243483185916148}
-  m_sequence: {fileID: 114657456346342108}
 --- !u!114 &114133889769934830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3489,7 +3490,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 100
+  m_Spacing: 20
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -3832,7 +3833,7 @@ MonoBehaviour:
   - name: Mission2
     type: 1
     target: {fileID: 224922670756424380}
-    startTime: 0.75
+    startTime: 0.84424084
     endTime: 1
     from: 0
     ease: 9
@@ -3856,10 +3857,59 @@ MonoBehaviour:
     from: 0
     ease: 9
     floatValue: 0
-    vectorValue: {x: 0, y: 600, z: 0}
+    vectorValue: {x: -1160, y: -80, z: 0}
     OnStart:
       m_PersistentCalls:
         m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    OnEnd:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - name: Mission2
+    type: 2
+    target: {fileID: 224922670756424380}
+    startTime: 0.75
+    endTime: 1
+    from: 0
+    ease: 9
+    floatValue: 0
+    vectorValue: {x: 0, y: 0, z: 0}
+    OnStart:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    OnEnd:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - name: Do Summary
+    type: 0
+    target: {fileID: 0}
+    startTime: 1
+    endTime: 1
+    from: 0
+    ease: 9
+    floatValue: 0
+    vectorValue: {x: -1100, y: -80, z: 0}
+    OnStart:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114105253126944212}
+          m_MethodName: DoSummary
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
     OnEnd:
@@ -6914,8 +6964,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -280, y: -650}
+  m_AnchoredPosition: {x: 200, y: 0}
+  m_SizeDelta: {x: -400, y: -650}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224926266006042148
 RectTransform:

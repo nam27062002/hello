@@ -36,6 +36,9 @@ public class ResultsScreenMissionPill : MonoBehaviour {
 	[SerializeField] private Image m_missionIcon = null;
 	[SerializeField] private TextMeshProUGUI m_missionText = null;
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
+	public TextMeshProUGUI rewardText {
+		get { return m_rewardText; }
+	}
 
 	// Internal
 	private Mission m_mission = null;
