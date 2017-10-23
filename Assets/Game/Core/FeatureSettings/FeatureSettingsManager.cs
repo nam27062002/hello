@@ -411,15 +411,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             shaderMultiplier = 0.0f;
         }
 
-
 #if FREQFORMULA
         finalDeviceRating = Device_CPUFreqRating;
+        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier, 0.0f, 1.0f);
+        m_deviceQualityManager.Device_UsingRatingFormula = true;
 #else
         finalDeviceRating = ((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier;
+        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(Device_CPUFreqRating, 0.0f, 1.0f);
+        m_deviceQualityManager.Device_UsingRatingFormula = false;
 #endif
 
         finalDeviceRating = Mathf.Clamp(finalDeviceRating, 0.0f, 1.0f);
-
 
         Log("Graphics memory size = " + graphicsMemorySize + " gpuMemQualityLevel = " + Device_GfxMemoryRating +
            "Num cores = " + processorCount + " cpuQualityRating = " + Device_CPUCoresRating +
@@ -445,6 +447,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool Device_UsingRatingFormula
+    {
+        get
+        {
+            return m_deviceQualityManager.Device_UsingRatingFormula;
+        }
+    }
 
     public float Device_CPUCoresRating { get; private set; }
     public float Device_MemoryRating { get; private set; }
@@ -510,7 +519,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     #endregion    
 
     #region rules
-    private const string RULES_DEFAULT_SKU = "L0";
+//    private const string RULES_DEFAULT_SKU = "L0";
+    private const string RULES_DEFAULT_SKU = "common";    
 
     private const string KEY_PHYSICS_MAX_RATING = "physicsMaxRating";
 
