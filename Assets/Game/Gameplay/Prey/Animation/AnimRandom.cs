@@ -12,4 +12,11 @@ public class AnimRandom : StateMachineBehaviour {
 		animator.SetBool(m_versionATriggerKey, rnd <= 50);
 		animator.SetBool(m_versionBTriggerKey, rnd > 50);
 	}
+
+	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+		float rnd = Random.Range(0, 100);
+		animator.SetBool(m_versionATriggerKey, rnd <= 50);
+		animator.SetBool(m_versionBTriggerKey, rnd > 50);
+	}
+
 }
