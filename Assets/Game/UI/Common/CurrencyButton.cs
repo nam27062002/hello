@@ -26,9 +26,15 @@ public class CurrencyButton : AnimatedButton {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Space]
 	[SerializeField] private TextMeshProUGUI m_amountText = null;
 	public TextMeshProUGUI amountText {
 		get { return m_amountText; }
+	}
+
+	[SerializeField] private Text m_amountTextUnity = null;		// [AOC] Alternative version for Unity textfields, useful for real-currency
+	public Text amountTextUnity {
+		get { return m_amountTextUnity; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -44,11 +50,17 @@ public class CurrencyButton : AnimatedButton {
 	/// <param name="_amount">The amount to be displayed.</param>
 	/// <param name="_currency">The curency to be displayed.</param>
 	public void SetAmount(string _amountText, UserProfile.Currency _currency) {
-		// Skip if amount text is not set
-		if(m_amountText == null) return;
-
 		// Set text (UIConstants makes it easy for us!)
-		m_amountText.text = UIConstants.GetIconString(_amountText, UIConstants.GetCurrencyIcon(_currency), UIConstants.IconAlignment.LEFT);
+		string text = UIConstants.GetIconString(_amountText, UIConstants.GetCurrencyIcon(_currency), UIConstants.IconAlignment.LEFT);
+
+		// Update any defined textfield
+		if(m_amountText != null) {
+			m_amountText.text = text;
+		}
+
+		if(m_amountTextUnity != null) {
+			m_amountTextUnity.text = text;
+		}
 	}
 
 	/// <summary>

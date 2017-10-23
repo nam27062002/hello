@@ -38,6 +38,9 @@ MonoBehaviour:
     m_componentAssets:
     - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
     - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Go home No sensor
+    m_componentAssets:
+    - {fileID: 11400000, guid: e297899b9d2164e92b9b43ae98ec9b5f, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -57,7 +60,7 @@ MonoBehaviour:
   - to: 2
     id: onEnemyInRange
     from: 1
-  - to: 6
+  - to: 8
     id: onGoBackHome
     from: 2
   - to: 5
@@ -87,6 +90,9 @@ MonoBehaviour:
   - to: 2
     id: onEnemyInRange
     from: 7
+  - to: 0
+    id: onBackAtHome
+    from: 8
   - to: 3
     id: onFallDown
     from: -1

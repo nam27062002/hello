@@ -155,6 +155,9 @@ namespace AI {
 								isInsideMinArea = false;
 							}
 						}
+					} else {
+						isInsideMaxArea = false;
+						isInsideMinArea = false;
 					}
 				} else {
 					isInsideSightArea = false;

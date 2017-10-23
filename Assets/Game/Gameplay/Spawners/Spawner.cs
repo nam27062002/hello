@@ -52,7 +52,13 @@ public class Spawner : AbstractSpawner {
 	public enum SpawnPointSeparation {
 		Sphere = 0,
 		Line
-	}	
+	}
+
+	public enum EntityGoldMode {
+		Normal = 0,
+		Gold,
+		ReRoll
+	}
 
 	//-----------------------------------------------
 	// Properties
@@ -112,6 +118,8 @@ public class Spawner : AbstractSpawner {
 	private int[] m_poolHandlerIndex;
 
 	private string[] m_entitySku;
+	private EntityGoldMode[] m_entityGoldMode;
+
 	private float m_pcProbCoefA;
 	private float m_pcProbCoefB;
 
@@ -183,9 +191,11 @@ public class Spawner : AbstractSpawner {
 				if (m_entityPrefabList != null && m_entityPrefabList.Length > 0 && rnd <= m_activationChance) {
 
 					m_entitySku = new string[GetMaxEntities()];
+					m_entityGoldMode = new EntityGoldMode[GetMaxEntities()];
 					m_poolHandlerIndex = new int[GetMaxEntities()];
 					for (int i = 0; i < m_entitySku.Length; i++) {
 						m_entitySku[i] = "";
+						m_entityGoldMode[i] = EntityGoldMode.ReRoll;
 						m_poolHandlerIndex[i] = 0;
 					}
 
@@ -371,6 +381,9 @@ public class Spawner : AbstractSpawner {
 			originPos += RandomStartDisplacement((int)index); // don't let multiple entities spawn on the same point
 		}
 
+		spawning.SetGolden(m_entityGoldMode[index]);
+		m_entityGoldMode[index] = (spawning.isGolden)? EntityGoldMode.Gold : EntityGoldMode.Normal;
+
 		spawning.transform.position = originPos;
 		spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
 	}
@@ -404,6 +417,11 @@ public class Spawner : AbstractSpawner {
 				Reward reward = new Reward();
 				reward.score = (int)(m_groupBonus * EntitiesKilled);
 				Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+			}
+
+			// Reroll the Golden chance
+			for (int i = 0; i < m_entityGoldMode.Length; ++i) {
+				m_entityGoldMode[i] = EntityGoldMode.ReRoll;
 			}
 
 			m_respawnCount++;
