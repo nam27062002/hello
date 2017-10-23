@@ -42,6 +42,7 @@ namespace AI {
 			MachineSensor m_sensor;
 
 			private PetSearchShootTargetData m_data;
+			EatBehaviour m_eatBehaviour;
 
 
 			public override StateComponentData CreateData() {
@@ -59,6 +60,7 @@ namespace AI {
 				m_transitionParam = new object[1];
 
 				m_collidersMask = 1<<LayerMask.NameToLayer("Ground") | 1<<LayerMask.NameToLayer("Obstacle");
+				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
 				base.OnInitialise();
 
@@ -98,8 +100,14 @@ namespace AI {
 							{
 								case CheckType.Edible:
 								{
-									// isViable = entity.IsEdible( m_data.shootingTier );
-									isViable = entity.edibleFromTier >= m_data.minValidTier && entity.edibleFromTier <= m_data.maxValidTier;
+									if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
+									{
+										EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction( entity.sku );
+										if ( specialAction != EatBehaviour.SpecialEatAction.CannotEat )		
+										{
+											isViable = true;
+										}
+									}
 								}break;
 								case CheckType.Burnable:
 								{
