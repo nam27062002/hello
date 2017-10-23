@@ -23,8 +23,6 @@ public class DragonEquipEditor : Editor {
 		// Cache some important data
 		List<string> skus = new List<string>();
 		List<string> dragons = new List<string>();
-		skus.Add("clean");
-		dragons.Add("clean");
 		Dictionary<string, DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DISGUISES);
 		foreach( KeyValuePair<string, DefinitionNode> pair in defs)
 		{
@@ -40,28 +38,18 @@ public class DragonEquipEditor : Editor {
     {
         DrawDefaultInspector();
 
-		int oldIdx = m_selectedDisguise;
+		if(GUILayout.Button("Clean Disguise"))  {
+			// Remove all accessories and set the skin to empty materials!
+			m_target.RemoveAccessories();
+			m_target.CleanSkin();
+		}
 
 		// Display list and store new index
-		m_selectedDisguise = EditorGUILayout.Popup("Disguise", oldIdx, m_disguiseOptions);
-
-		// Special case: if nothing is selected, select first option
-		if(m_selectedDisguise < 0 && m_disguiseOptions.Length > 0) m_selectedDisguise = 0;
-
-		// If dragon has changed, store new value and update disguises list
-		if(oldIdx != m_selectedDisguise && m_disguiseOptions.Length > 0) {
-			string disguiseStr = m_disguiseOptions[m_selectedDisguise];
-			if ( disguiseStr.CompareTo("clean") == 0 )
-			{
-				// Remove all accessories and set the skin to empty materials!
-				m_target.RemoveAccessories();
-				m_target.CleanSkin();
-			}
-			else
-			{
-				m_target.dragonSku = m_disguiseDragons[ m_selectedDisguise ];
-				m_target.EquipDisguise( disguiseStr);
-			}
+		m_selectedDisguise = EditorGUILayout.Popup("Disguise", m_selectedDisguise, m_disguiseOptions);
+		if ( GUILayout.Button("Equip Disguise" ))
+		{
+			m_target.dragonSku = m_disguiseDragons[ m_selectedDisguise ];
+			m_target.EquipDisguise( m_disguiseOptions[ m_selectedDisguise ] );
 		}
     }
 }
