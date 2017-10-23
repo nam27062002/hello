@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepMissions : ResultsScreenStep {
+public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -25,13 +25,16 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed
+	[Space]
 	[SerializeField] private ResultsScreenMissionPill[] m_pills = new ResultsScreenMissionPill[(int)Mission.Difficulty.COUNT];
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
-	[Space]
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
-	[SerializeField] private TweenSequence m_sequence = null;
+
+	// Internal
+	private int m_completedMissions = 0;
+	private List<CurrencyTransferFX> m_currencyFX = new List<CurrencyTransferFX>();
 	
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -45,18 +48,16 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) return false;
 
 		// Display if we have at least one mission with its objective completed
-		for(int i = 0; i < m_pills.Length; ++i) {
-			if(m_pills[i].MustBeDisplayed()) {
-				return true;
-			}
-		}
-		return false;
+		return (m_completedMissions > 0);
 	}
 
 	/// <summary>
 	/// Initialize this step.
 	/// </summary>
 	override protected void DoInit() {
+		// Reset some vars
+		m_completedMissions = 0;
+
 		// Initialize pills
 		for(int i = 0; i < m_pills.Length; ++i) {
 			// Check cheats!
@@ -90,15 +91,16 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 			// Assign mission to each pill
 			m_pills[i].InitFromMission(targetMission);
 
+			// Show this mission? 
+			bool show = m_pills[i].MustBeDisplayed();
+			if(show) m_completedMissions++;	// Keep count of completed missions
+
 			// Disable pill if it mustn't be displayed
-			m_pills[i].gameObject.SetActive(m_pills[i].MustBeDisplayed());
+			m_pills[i].gameObject.SetActive(show);
 
 			// Start hidden
 			m_pills[i].animator.ForceHide(false);
 		}
-
-		// Notify when sequence is finished
-		m_sequence.OnFinished.AddListener(() => OnFinished.Invoke());
 	}
 
 	/// <summary>
@@ -108,12 +110,21 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+	}
 
-		// Hide tap to continue
-		m_tapToContinue.ForceHide(false);
+	/// <summary>
+	/// Called when skip is triggered.
+	/// </summary>
+	override protected void OnSkip() {
+		// Instantly finish counter texts animations
+		m_coinsCounter.SetValue(m_controller.totalCoins, false);
+		m_pcCounter.SetValue(m_controller.totalPc, false);
 
-		// Launch sequence!
-		m_sequence.Launch();
+		// Kill active transfer fx's
+		for(int i = 0; i < m_currencyFX.Count; ++i) {
+			m_currencyFX[i].KillFX();
+		}
+		m_currencyFX.Clear();
 	}
 
 	//------------------------------------------------------------------------//
@@ -132,8 +143,20 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 		// Update total rewarded coins and update counter
 		// [AOC] Give it some delay!
 		UbiBCN.CoroutineManager.DelayedCall(() => {
+			// Update counter
 			m_controller.totalCoins += _pill.mission.rewardCoins;
 			m_coinsCounter.SetValue(m_controller.totalCoins, true);
+
+			// Show some coins flying around!
+			CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
+				CurrencyTransferFX.COINS,
+				this.GetComponentInParent<Canvas>().transform,
+				_pill.rewardText.transform.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
+				m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
+			);
+			fx.totalDuration = m_coinsCounter.duration * 0.5f;	// Match the text animator duration (more or less)
+			fx.OnFinish.AddListener(() => { m_currencyFX.Remove(fx); });
+			m_currencyFX.Add(fx);
 		}, 0.15f);
 	}
 
@@ -141,17 +164,9 @@ public class ResultsScreenStepMissions : ResultsScreenStep {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The tap to continue button has been pressed.
+	/// Do the summary line for this step. Connect in the sequence.
 	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
-
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
-
-		// Launch end sequence
-		m_sequence.Play();
+	public void DoSummary() {
+		m_controller.summary.ShowMissions(m_completedMissions);
 	}
 }

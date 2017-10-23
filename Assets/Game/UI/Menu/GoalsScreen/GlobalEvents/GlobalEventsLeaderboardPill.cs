@@ -30,7 +30,7 @@ public class GlobalEventsLeaderboardPill : MonoBehaviour {
 	[Tooltip("Special colors for top positions!")]
 	[SerializeField] private Color[] m_positionTextColors = new Color[4];
 	[SerializeField] private RemoteImageLoader m_picture = null;
-	[SerializeField] private TextMeshProUGUI m_nameText = null;
+	[SerializeField] private Text m_nameText = null;
 	[SerializeField] private TextMeshProUGUI m_scoreText = null;
 	
 	//------------------------------------------------------------------------//
@@ -110,7 +110,7 @@ public class GlobalEventsLeaderboardPill : MonoBehaviour {
 		m_picture.Load(_data.pictureUrl);
 
 		// Set name
-		if(m_nameText != null) m_nameText.text = _data.name;	// [AOC] TODO!! Special characters support
+		if(m_nameText != null) m_nameText.text = _data.name;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 
 		// Set score
 		m_scoreText.text = StringUtils.FormatBigNumber(_data.score);

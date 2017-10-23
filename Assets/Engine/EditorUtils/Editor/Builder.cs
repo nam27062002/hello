@@ -399,7 +399,7 @@ public class Builder : MonoBehaviour
 			CaletySettings.UpdatePlayerSettings (ref settingsInstance);
 			EditorUtility.SetDirty( settingsInstance );
 			AssetDatabase.SaveAssets();
-			if (clonedSettings.CheckAndroidManifestUpdateNeeded (ref settingsInstance))
+			// if (clonedSettings.CheckAndroidManifestUpdateNeeded (ref settingsInstance))
 			{
 				NetworkManager.DestroyInstance ();
 				GameContext.DestroyInstance ();

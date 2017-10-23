@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_GlowPSAdditive
   m_Shader: {fileID: 4800000, guid: bf72659a8d2b2494ab4c73b54fd7287f, type: 3}
-  m_ShaderKeywords: _EMISSION
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -61,13 +61,15 @@ Material:
     m_Floats:
     - _AlphaMultiplier: 1
     - _BumpScale: 1
+    - _ColorMultiplier: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EmissionSaturation: 3.96
+    - _EmissionSaturation: 1.2
     - _EmissivePower: 1
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
+    - _EnableColorVertex: 1
     - _EnableDissolve: 0
     - _EnableEmissivePower: 0
     - _GlossMapScale: 1
@@ -77,7 +79,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OpacitySaturation: 1.44
+    - _OpacitySaturation: 8
     - _Parallax: 0.02
     - _PreLerpSat: 1
     - _SmoothnessTextureChannel: 0

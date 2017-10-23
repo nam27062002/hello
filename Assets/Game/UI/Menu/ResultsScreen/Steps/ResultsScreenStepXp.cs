@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepXp : ResultsScreenStep {
+public class ResultsScreenStepXp : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -24,10 +24,8 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SerializeField] private ResultsScreenXPBar m_xpBar = null;
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
 	[Space]
-	[SerializeField] private TweenSequence m_sequence = null;
+	[SerializeField] private ResultsScreenXPBar m_xpBar = null;
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -49,20 +47,6 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 
 		// Listen to the xp bar anim finish
 		m_xpBar.OnAnimationFinished.AddListener(OnXpBarAnimFinished);
-
-		// Mark step as finished when finish animation ends
-		m_sequence.OnFinished.AddListener(() => { OnFinished.Invoke(); });
-	}
-
-	/// <summary>
-	/// Launch this step.
-	/// </summary>
-	override protected void DoLaunch() {
-		// Hide "Tap to Continue"
-		m_tapToContinue.ForceHide(false);
-
-		// Launch show sequence - it should trigger the XP bar when adequate
-		m_sequence.Launch();
 	}
 
 	//------------------------------------------------------------------------//
@@ -81,20 +65,5 @@ public class ResultsScreenStepXp : ResultsScreenStep {
 			// Show tap to continue
 			m_tapToContinue.Show();
 		}
-	}
-
-	/// <summary>
-	/// The tap to continue button has been pressed.
-	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
-
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
-
-		// Continue with the sequence
-		m_sequence.Play();
 	}
 }
