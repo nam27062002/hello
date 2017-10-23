@@ -11,12 +11,14 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using System.IO;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
-internal class DragonShaderGUI : ShaderGUI {
-    
+internal class DragonShaderGUI : ShaderGUI
+{
+
     //------------------------------------------------------------------------//
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
@@ -34,42 +36,42 @@ internal class DragonShaderGUI : ShaderGUI {
 
     private static class Styles
     {
-/*
-        _MainTex ("Base (RGB)", 2D) = "white" {}
-        _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+        /*
+                _MainTex ("Base (RGB)", 2D) = "white" {}
+                _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
-        _BumpMap ("Normal Map (RGB)", 2D) = "white" {}
-        _NormalStrenght("Normal Strenght", float) = 1.0
+                _BumpMap ("Normal Map (RGB)", 2D) = "white" {}
+                _NormalStrenght("Normal Strenght", float) = 1.0
 
-        _DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
+                _DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
 
-        _Tint("Color Multiply", Color) = (1,1,1,1)
-        _ColorAdd("Color Add", Color) = (0,0,0,0)
+                _Tint("Color Multiply", Color) = (1,1,1,1)
+                _ColorAdd("Color Add", Color) = (0,0,0,0)
 
-        _InnerLightAdd("Inner Light Add", float) = 0.0
-        _InnerLightColor("Inner Light Color", Color) = (1,1,1,1)
+                _InnerLightAdd("Inner Light Add", float) = 0.0
+                _InnerLightColor("Inner Light Color", Color) = (1,1,1,1)
 
-        _SpecExponent("Specular Exponent", float) = 1.0
-        _Fresnel("Fresnel factor", Range(0, 10)) = 1.5
-        _FresnelColor("Fresnel Color", Color) = (1,1,1,1)
-        _AmbientAdd("Ambient Add", Color) = (0,0,0,0)
-        _SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
-        _SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
+                _SpecExponent("Specular Exponent", float) = 1.0
+                _Fresnel("Fresnel factor", Range(0, 10)) = 1.5
+                _FresnelColor("Fresnel Color", Color) = (1,1,1,1)
+                _AmbientAdd("Ambient Add", Color) = (0,0,0,0)
+                _SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
+                _SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
-        _ReflectionMap("Reflection Map", Cube) = "white" {}
-        _ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+                _ReflectionMap("Reflection Map", Cube) = "white" {}
+                _ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
 
-        _InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
-        _InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
+                _InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
+                _InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
 
-        // Blending state
-        [HideInInspector] _Mode("__mode", Float) = 0.0
-        [HideInInspector] _SrcBlend("__src", Float) = 1.0
-        [HideInInspector] _DstBlend("__dst", Float) = 0.0
-        [HideInInspector] _ZWrite("__zw", Float) = 1.0
+                // Blending state
+                [HideInInspector] _Mode("__mode", Float) = 0.0
+                [HideInInspector] _SrcBlend("__src", Float) = 1.0
+                [HideInInspector] _DstBlend("__dst", Float) = 0.0
+                [HideInInspector] _ZWrite("__zw", Float) = 1.0
 
-        _StencilMask("Stencil Mask", int) = 10
-*/
+                _StencilMask("Stencil Mask", int) = 10
+        */
         readonly public static string mainTextureText = "Main Texture";
         readonly public static string detailTextureText = "Detail Texture";
         readonly public static string normalTextureText = "Normal Texture";
@@ -115,6 +117,7 @@ internal class DragonShaderGUI : ShaderGUI {
 
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string renderQueueText = "Render queue";
+        readonly public static string stencilMaskText = "Stencil mask";
 
     }
     MaterialProperty mp_mainTexture;
@@ -143,7 +146,7 @@ internal class DragonShaderGUI : ShaderGUI {
     MaterialProperty mp_innerLightWaveSpeed;
 
     MaterialProperty mp_BlendMode;
-
+    MaterialProperty mp_stencilMask;
 
     /// <summary>
     /// Toggle Material Properties
@@ -216,6 +219,8 @@ internal class DragonShaderGUI : ShaderGUI {
         mp_fireAmount = FindProperty("_FireAmount", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
+
+        mp_stencilMask = FindProperty("_StencilMask", props);
 
         /// Toggle Material Properties
 
@@ -300,7 +305,7 @@ internal class DragonShaderGUI : ShaderGUI {
         featureSet(mp_FxLayer, Styles.additionalFXLayerText);
         int fxLayer = (int)mp_FxLayer.floatValue;
 
-        switch(fxLayer)
+        switch (fxLayer)
         {
             case 1:     //FXLayer_Reflection
                 EditorGUILayout.HelpBox(Styles.reflectionLayerText, MessageType.Info);
@@ -318,7 +323,7 @@ internal class DragonShaderGUI : ShaderGUI {
         featureSet(mp_SelfIlluminate, Styles.selfIluminationText);
         int selfIluminateMode = (int)mp_SelfIlluminate.floatValue;
 
-        switch(selfIluminateMode)
+        switch (selfIluminateMode)
         {
             case 0:     //SELFILUMINATE_NORMAL
                 EditorGUILayout.HelpBox(Styles.normalSelfIluminationText, MessageType.Info);
@@ -346,6 +351,8 @@ internal class DragonShaderGUI : ShaderGUI {
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
+
+        featureSet(mp_stencilMask, Styles.stencilMaskText);
 
 
         /*
@@ -401,20 +408,29 @@ internal class DragonShaderGUI : ShaderGUI {
                 material.SetFloat("_ZWrite", 1.0f);
                 ///                material.renderQueue = 2000;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
+
+                material.SetFloat("_EnableDoubleSided", 0.0f);
+                material.SetFloat("_EnableCutoff", 0.0f);
                 material.DisableKeyword("CUTOFF");
-                Debug.Log("Blend mode opaque");
+                material.DisableKeyword("DOUBLESIDED");
+//                Debug.Log("Blend mode opaque");
                 break;
 
             case 1:
-                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetOverrideTag("RenderType", "TransparentCutout");
+//                material.SetOverrideTag("RenderType", "Transparent");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 //                material.renderQueue = 3000;
-                material.SetFloat("_ZWrite", 0.0f);
+                material.SetFloat("_ZWrite", 1.0f);
+                //                material.SetFloat("_ZWrite", 0.0f);
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+
+                material.SetFloat("_EnableDoubleSided", 1.0f);
+                material.SetFloat("_EnableCutoff", 1.0f);                
                 material.EnableKeyword("CUTOFF");
                 material.EnableKeyword("DOUBLESIDED");
-                Debug.Log("Blend mode transparent");
+//                Debug.Log("Blend mode transparent");
                 break;
 
             case 2:
@@ -425,10 +441,73 @@ internal class DragonShaderGUI : ShaderGUI {
                 //                material.renderQueue = 2500;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
 
-                Debug.Log("Blend mode cutout");
+//                Debug.Log("Blend mode cutout");
                 break;
         }
 
     }
 
+    /// <summary>
+    /// Seek for old scenary shaders and change by new scenary standard material
+    /// </summary>
+    [MenuItem("Tools/Scenary/Replace old dragon shaders")]
+    public static void ReplaceOldScenaryShaders()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Dragon/Dragon standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+
+            // UnlitShadowLightmap.shader
+            if (mat.shader.name == "Hungry Dragon/Dragon/Body")
+            {
+                mat.shader = shader;
+
+                mat.SetFloat("_EnableNormalMap", 1.0f);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                mat.EnableKeyword("NORMALMAP");
+                mat.EnableKeyword("SPECULAR");
+                mat.EnableKeyword("FRESNEL");
+
+                setBlendMode(mat, 0);   //Opaque
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Wings (Transparent)")
+            {
+                mat.shader = shader;
+
+                mat.SetFloat("_EnableNormalMap", 1.0f);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                mat.EnableKeyword("NORMALMAP");
+                mat.EnableKeyword("SPECULAR");
+                mat.EnableKeyword("FRESNEL");
+
+
+                setBlendMode(mat, 1);   //Transparent
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+
+            }
+
+
+        }
+
+        Debug.Log(sChanged + " materials changed.");
+
+    }
 }

@@ -92,10 +92,10 @@ v2f vert(appdata_t v)
 	float s = sign(dot(o.normalWorld, o.viewDir));
 	o.normalWorld *= s;
 
-#ifdef NORMALMAP
+//#ifdef NORMALMAP
 //	o.tangentWorld *= s;
 //	o.binormalWorld *= s;
-#endif
+//#endif
 
 #endif
 	return o;
