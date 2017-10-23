@@ -6788,11 +6788,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_darkScreen: 1
+  m_darkScreenColor: {r: 0, g: 0, b: 0, a: 0.8627451}
   OnFinished:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  m_skipAllowed: 1
+  m_tapToContinue: {fileID: 114348599885695594}
+  m_sequence: {fileID: 114631458522460464}
   m_preview: {fileID: 114617966012176674}
   m_dragControl: {fileID: 114372913045760138}
   m_dragonNameText: {fileID: 114736570909780528}
@@ -6801,8 +6805,6 @@ MonoBehaviour:
   m_healthText: {fileID: 114195296965865962}
   m_energyText: {fileID: 114879358807328914}
   m_purchaseButton: {fileID: 114693451624253098}
-  m_tapToContinue: {fileID: 114348599885695594}
-  m_sequence: {fileID: 114631458522460464}
 --- !u!114 &114909298602485304
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7736,10 +7738,10 @@ RectTransform:
   m_Father: {fileID: 224610695412937486}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 266.5, y: -50}
-  m_SizeDelta: {x: 0, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224347826384590688
 RectTransform:

@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepRewards : ResultsScreenStep {
+public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -25,13 +25,16 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private NumberTextAnimator m_coinsText = null;
 	[Space]
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
-	[SerializeField] private TweenSequence m_sequence = null;
+	[SerializeField] private NumberTextAnimator m_coinsText = null;
+	[SerializeField] private Localizer m_survivalBonusText = null;
+	[SerializeField] private Transform m_coinsSpawnPoint = null;
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
+
+	// Internal
+	private CurrencyTransferFX m_coinsFX = null;
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -47,27 +50,34 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
-	override protected void DoInit() {
-		// Notify when sequence is finished
-		m_sequence.OnFinished.AddListener(() => OnFinished.Invoke());
-	}
-
-	/// <summary>
-	/// Initialize and launch this step.
-	/// </summary>
 	override protected void DoLaunch() {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
 
+		// Update total coins
+		m_controller.totalCoins += m_controller.coins + m_controller.survivalBonus;
+
 		// Instantly set total amount of rewarded coins
 		m_coinsText.SetValue(m_controller.coins + m_controller.survivalBonus, false);
+		m_survivalBonusText.Localize(
+			m_survivalBonusText.tid,
+			StringUtils.FormatNumber(m_controller.survivalBonus)
+		);
+	}
 
-		// Hide tap to continue
-		m_tapToContinue.ForceHide(false);
+	/// <summary>
+	/// Called when skip is triggered.
+	/// </summary>
+	override protected void OnSkip() {
+		// Instantly finish counter texts animations
+		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 
-		// Launch sequence!
-		m_sequence.Launch();
+		// Kill transfer FX (if any)
+		if(m_coinsFX != null) {
+			m_coinsFX.KillFX();
+			m_coinsFX = null;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -77,32 +87,24 @@ public class ResultsScreenStepRewards : ResultsScreenStep {
 	/// Transfer coins from main screen to counter.
 	/// </summary>
 	public void OnCoinsTransfer() {
-		// Update total rewarded coins and update counter
-		m_controller.totalCoins += m_controller.coins + m_controller.survivalBonus;
+		// Update counter
 		m_coinsCounter.SetValue(m_controller.totalCoins, true);
 
 		// Show nice FX!
-		CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
+		m_coinsFX = CurrencyTransferFX.LoadAndLaunch(
 			CurrencyTransferFX.COINS,
 			this.GetComponentInParent<Canvas>().transform,
-			m_coinsText.transform.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
+			m_coinsSpawnPoint.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
 			m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
 		);
-		fx.totalDuration = m_coinsCounter.duration;	// Match the text animator duration (more or less)
+		m_coinsFX.totalDuration = m_coinsCounter.duration * 0.5f;	// Match the text animator duration (more or less)
+		m_coinsFX.OnFinish.AddListener(() => { m_coinsFX = null; });
 	}
 
 	/// <summary>
-	/// The tap to continue button has been pressed.
+	/// Do the summary line for this step. Connect in the sequence.
 	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
-
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
-
-		// Launch end sequence
-		m_sequence.Play();
+	public void DoSummary() {
+		m_controller.summary.ShowCoins(m_controller.coins + m_controller.survivalBonus);
 	}
 }

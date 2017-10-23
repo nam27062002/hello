@@ -214,6 +214,9 @@ public class ResultsScreenController : MonoBehaviour {
 			}
 		}
 
+		// Initialize summary as well
+		m_summary.InitSummary();
+
 		// Launch first step!
 		m_step = Step.INIT;
 		LaunchNextStep();

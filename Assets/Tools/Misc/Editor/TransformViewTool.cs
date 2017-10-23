@@ -45,23 +45,31 @@ public class TransformViewTool : EditorWindow {
 		if(t == null) {
 			EditorGUILayout.HelpBox("No object selected", MessageType.Error);
 		} else {
+			// We have issues with precision when assigning local and global stuff at the same time, so disable edition for now
+			EditorGUI.BeginChangeCheck();
+			GUI.enabled = false;
+
 			// Position
-			t.localPosition = EditorGUILayoutExt.Vector3Field("Local Position", t.localPosition);
-			t.position = EditorGUILayoutExt.Vector3Field("Global Position", t.position);
+			EditorGUILayoutExt.Vector3Field("Local Position", t.localPosition);
+			EditorGUILayoutExt.Vector3Field("Global Position", t.position);
 
 			// Rotation
 			EditorGUILayout.Space();
-			t.localEulerAngles = EditorGUILayoutExt.Vector3Field("Local Euler", t.localEulerAngles);
-			t.eulerAngles = EditorGUILayoutExt.Vector3Field("Global Euler", t.eulerAngles);
-			t.localRotation = EditorGUILayoutExt.QuaternionField("Local Rotation", t.localRotation);
-			t.rotation = EditorGUILayoutExt.QuaternionField("Global Rotation", t.rotation);
+			EditorGUILayoutExt.Vector3Field("Local Euler", t.localEulerAngles);
+			EditorGUILayoutExt.Vector3Field("Global Euler", t.eulerAngles);
+			EditorGUILayoutExt.QuaternionField("Local Rotation", t.localRotation);
+			EditorGUILayoutExt.QuaternionField("Global Rotation", t.rotation);
 
 			// Scale
 			EditorGUILayout.Space();
-			t.localScale = EditorGUILayoutExt.Vector3Field("Local Scale", t.localScale);
-			GUI.enabled = false;
+			EditorGUILayoutExt.Vector3Field("Local Scale", t.localScale);
 			EditorGUILayoutExt.Vector3Field("Lossy Scale", t.lossyScale);
+
+			// Only apply changes to selection if we actually detect a change
 			GUI.enabled = true;
+			if(EditorGUI.EndChangeCheck()) {
+				Selection.activeTransform.CopyFrom(t);
+			}
 		}
 	}
 

@@ -9,7 +9,10 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+
 using DG.Tweening;
+
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -109,6 +112,14 @@ public class CurrencyTransferFX : MonoBehaviour {
 		set { m_amplitudeEase = value; }
 	}
 
+	// Events
+	public UnityEvent OnStart = new UnityEvent();
+	public UnityEvent OnStop = new UnityEvent();
+	public UnityEvent OnPause = new UnityEvent();
+	public UnityEvent OnResume = new UnityEvent();
+	public UnityEvent OnFinish = new UnityEvent();
+	public UnityEvent OnKill = new UnityEvent();
+
 	// Particle Pools
 	private PoolHandler m_pool = null;
 	private List<Tween> m_activeTweens = new List<Tween>();
@@ -161,6 +172,9 @@ public class CurrencyTransferFX : MonoBehaviour {
 		// Check total timer
 		m_activeTime += Time.deltaTime;
 		if(m_activeTime >= m_totalDuration) {
+			// Notify listeners
+			OnFinish.Invoke();
+
 			// Stop emitting! Will be auto-killed if configured.
 			StopFX();
 			return;
@@ -195,6 +209,9 @@ public class CurrencyTransferFX : MonoBehaviour {
 		m_active = true;
 		m_autoKillPending = false;
 
+		// Notify listeners
+		OnStart.Invoke();
+
 		// Spawn the first particle!
 		Spawn();
 	}
@@ -210,6 +227,9 @@ public class CurrencyTransferFX : MonoBehaviour {
 		if(m_autoKill) {
 			m_autoKillPending = true;
 		}
+
+		// Notify listeners
+		OnStop.Invoke();
 	}
 
 	/// <summary>
@@ -218,6 +238,9 @@ public class CurrencyTransferFX : MonoBehaviour {
 	public void PauseFX() {
 		// That will do it
 		m_active = false;
+
+		// Notify listeners
+		OnPause.Invoke();
 	}
 
 	/// <summary>
@@ -226,6 +249,9 @@ public class CurrencyTransferFX : MonoBehaviour {
 	public void ResumeFX() {
 		// Activate, but don't reset timer.
 		m_active = true;
+
+		// Notify listeners
+		OnResume.Invoke();
 	}
 
 	/// <summary>
@@ -245,8 +271,11 @@ public class CurrencyTransferFX : MonoBehaviour {
 		m_activeTweens.Clear();
 		m_activeTweensLock = false;
 
+		// Notify listeners
+		OnKill.Invoke();
+
 		// Destroy ourselves
-		// [AOC] TODO!! Allow the option to not-self destroy (for effects that might be constantly spawning
+		// [AOC] TODO!! Allow the option to not-self destroy (for effects that might be constantly spawning)
 		GameObject.Destroy(this.gameObject);
 	}
 

@@ -32,6 +32,9 @@ public class EggView : MonoBehaviour {
 	}
 
 	[SerializeField] private GameObject m_idleFX = null;
+	public GameObject idleFX {
+		get { return m_idleFX; }
+	}
 
 	// Data - can be null
 	private Egg m_eggData = null;
