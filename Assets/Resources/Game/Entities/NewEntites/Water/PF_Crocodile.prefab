@@ -118,7 +118,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1162076771494958}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.01, z: 0.146}
+  m_LocalPosition: {x: 0, y: -0.05000067, z: 0.7739999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4323204027554342}
@@ -131,7 +131,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1936677295318468}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.84, y: 0, z: 0}
+  m_LocalPosition: {x: 387.64047, y: -78.978, z: 0.011}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4162778207430378}
@@ -146,8 +146,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1231937224778454}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.636, z: -1.437}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.939, z: -0.132}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4470878974235010}
   m_Father: {fileID: 4142369587710010}
@@ -160,7 +160,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1552070471804830}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.299}
+  m_LocalPosition: {x: 0, y: 0.1269986, z: 1.638}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4648280917301724}
@@ -188,7 +188,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1056746145254892}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0.316}
+  m_LocalPosition: {x: 0, y: -0.149, z: 1.003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4323204027554342}
@@ -262,9 +262,9 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_waterMotion:
-    m_mass: 1
+    m_mass: 15
     m_defaultUpVector: 0
-    m_orientationSpeed: 360
+    m_orientationSpeed: 240
     m_spawnsInsideWater: 1
 --- !u!114 &114185850136965936
 MonoBehaviour:
@@ -278,15 +278,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 1
-  m_eatDistance: 0.74
-  m_eatDetectionRadiusMultiplier: 2.75
-  m_eatDetectionSpeedRadiusMultiplier: 0.15
+  m_eatDistance: 1.5
+  m_eatDetectionRadiusMultiplier: 4
+  m_eatDetectionSpeedRadiusMultiplier: 0.3
   m_holdingBloodParticle:
     name: PS_Blood_Explosion
     path: Blood
     offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeStartColor: 1
+    startColor: {r: 1, g: 0, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -378,11 +378,11 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: 4f9b057e9309c47f588d24b01c78688b, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 8b5af2942e113474ab478d8d8fe9e787, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":15,"duration":1.5,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":3,"max":4},"onFailShutdown":{"min":5,"max":7},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"separation":2,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":3,"max":4},"onFailShutdown":{"min":5,"max":7},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"separation":2,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":0,"max":0},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
   m_databaseKey: PF_Crocodile
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 2.5
@@ -419,7 +419,7 @@ MonoBehaviour:
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 2
   m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 0
+  m_hasNavigationLayer: 1
   m_hasRotationLayer: 0
   m_animA: latch
   m_animB: 
@@ -619,7 +619,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: hd_crocodile_attack
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -636,7 +638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0.008194447, y: -0.010550022}
-  radius: 0.6362381
+  radius: 0.89691925
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!136 &136799113426216680
 CapsuleCollider:

@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 135000013338795870}
   - component: {fileID: 114000013147041998}
   m_Layer: 28
-  m_Name: PF_PetMorly_35
+  m_Name: PF_PetMorly_30
   m_TagString: Pet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_attachPoint: 0
+  m_showOnResults: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -382,7 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4b01ef8e8b54b638ddb530e3150fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: pet_35
+  m_sku: pet_30
 --- !u!114 &114000011637225726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -394,6 +395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_isPlaceHolder: 0
   m_walkSpeed: 1
   m_runSpeed: 2
   m_minPlaybakSpeed: 1
@@ -405,6 +407,47 @@ MonoBehaviour:
   m_animB: 
   m_animC: 
   m_exclamationTransform: {fileID: 0}
+  m_speedToWaterSplash: 0
+  m_waterSplashParticle:
+    name: 
+    path: 
+    offset: {x: 0, y: 0, z: 0}
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    scale: 1
+  m_showDamageFeedback: 0
+  m_damageColor: {r: 1, g: 0, b: 0, a: 1}
+  m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
     name: 
@@ -481,44 +524,6 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onEatenAudio: 
-  m_speedToWaterSplash: 0
-  m_waterSplashParticle:
-    name: 
-    path: 
-    offset: {x: 0, y: 0, z: 0}
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    scale: 1
   m_firePoints: []
   m_burnParticle:
     name: 
@@ -596,7 +601,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -621,7 +628,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_serializedJson: '[{"petChaseSku":"morly","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"petWanderSku":"morly","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"morly","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"action":4096,"dataType":"AI.Behaviour.OnMineHitData","editorFolded":false}]'
-  m_databaseKey: PF_PetMorly_35
+  m_databaseKey: PF_PetMorly_30
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
@@ -814,6 +821,8 @@ MonoBehaviour:
   m_insideWaterSnapshot: {fileID: 0}
   m_waterDeepToSnapshot: 0
   m_hiccupSound: 
+  m_gruntSound: 
+  m_gruntToEatProbability: 5
 --- !u!114 &114939678677864780
 MonoBehaviour:
   m_ObjectHideFlags: 1
