@@ -29,10 +29,23 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references, all required
+	[SerializeField] private bool m_uiMode = false;
 
 	// Internal
-	private ChestViewController m_chest = null;
+	private Chest m_chest = null;
+	public Chest chest {
+		get { return m_chest; }
+	}
+
+	private ChestViewController m_chestView = null;
+	public ChestViewController chestView {
+		get { return m_chestView; }
+	}
+
 	private GameObject m_rewardObj = null;
+	public GameObject rewardObj {
+		get { return m_rewardObj; }
+	}
 
 	private Chest.RewardData m_rewardData = null;
 	public Chest.RewardData rewardData {
@@ -59,11 +72,11 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);
 		chestObj.transform.SetParent(this.transform, false);
 		chestObj.SetLayerRecursively(this.gameObject.layer);
-		m_chest = chestObj.GetComponentInChildren<ChestViewController>();
+		m_chestView = chestObj.GetComponentInChildren<ChestViewController>();
 
 		// Subscribe to chest events
-		m_chest.OnChestOpen.AddListener(OnChestOpened);
-		m_chest.OnChestAnimLanded.AddListener(OnChestLanded);
+		m_chestView.OnChestOpen.AddListener(OnChestOpened);
+		m_chestView.OnChestAnimLanded.AddListener(OnChestLanded);
 	}
 
 	//------------------------------------------------------------------------//
@@ -76,6 +89,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// <param name="_chestRewardData">The reward linked to this chest.</param>
 	public void InitFromChest(Chest _chest, Chest.RewardData _chestRewardData) {
 		// Store data for further use
+		m_chest = _chest;
 		m_rewardData = _chestRewardData;
 		m_rewardType = (m_rewardData != null) ? m_rewardData.type : Chest.RewardType.SC;
 
@@ -90,12 +104,12 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 		switch(_chest.state) {
 			// Already collected, open lid instantly
 			case Chest.State.COLLECTED: {
-				m_chest.Open(_chestRewardData == null ? Chest.RewardType.SC : _chestRewardData.type, true);
+				m_chestView.Open(_chestRewardData == null ? Chest.RewardType.SC : _chestRewardData.type, true);
 			} break;
 
 			// Rest of states: lid closed, wait for manual animation trigger
 			default: {
-				m_chest.Close();
+				m_chestView.Close();
 			} break;
 		}
 	}
@@ -103,9 +117,10 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// <summary>
 	/// Setup and start animation with the chest info provided in the InitFromChest() method.
 	/// </summary>
-	public void LaunchRewardAnim() {
+	/// <param name="_doIntro">Whether to also launch the intro animation or not.</param>
+	public void LaunchResultsAnim(bool _doIntro) {
 		// Skip reward setup if def is not valid
-		if(m_rewardData != null) {
+		if(m_rewardData != null && m_chest.state == Chest.State.PENDING_REWARD) {	// Only for chests pending reward!
 			// Aux vars
 			string rewardPrefabPath = COINS_REWARD_PREFAB;	// [AOC] Let's show coins by default (debug purposes)
 
@@ -134,35 +149,43 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 				text.text = "+" + StringUtils.FormatNumber(m_rewardData.amount);
 
 				// Make it look to parent camera
-				// [AOC] Make it UI compatible with the new results screen
-				/*
-				ResultsSceneSetup parentScene = GetComponentInParent<ResultsSceneSetup>();
-				LookAt lookAt = text.GetComponent<LookAt>();
-				if(lookAt != null && parentScene != null) {
-					lookAt.lookAtObject = parentScene.camera.transform;
-				}
-				*/
-				Canvas parentCanvas = GetComponentInParent<Canvas>();
-				LookAt lookAt = text.GetComponent<LookAt>();
-				if(lookAt != null && parentCanvas != null) {
-					lookAt.lookAtObject = parentCanvas.worldCamera.transform;
+				// [AOC] Make it UI compatible for the new results screen
+				if(m_uiMode) {
+					Canvas parentCanvas = GetComponentInParent<Canvas>();
+					LookAt lookAt = text.GetComponent<LookAt>();
+					if(lookAt != null && parentCanvas != null) {
+						lookAt.lookAtObject = parentCanvas.worldCamera.transform;
+					}
+				} else {
+					ResultsSceneSetup parentScene = GetComponentInParent<ResultsSceneSetup>();
+					LookAt lookAt = text.GetComponent<LookAt>();
+					if(lookAt != null && parentScene != null) {
+						lookAt.lookAtObject = parentScene.camera.transform;
+					}
 				}
 			}
 		}
 
 		// Launch animation sequence
-		// Different layouts!
-		switch(CPResultsScreenTest.chestsLayout) {
-			case CPResultsScreenTest.ChestsLayout.ONLY_COLLECTED_CHESTS: {
-				// Fall from sky
-				m_chest.ResultsAnim();
-			} break;
-
-			case CPResultsScreenTest.ChestsLayout.FULL_PROGRESSION: {
-				// Just open
-				m_chest.Open(m_rewardType, false);
-			} break;
+		// Show intro anim?
+		if(_doIntro) {
+			// Fall from the sky
+			m_chestView.ResultsAnim();
+		} else {
+			// Just open
+			m_chestView.Open(m_rewardType, false);
 		}
+	}
+
+	/// <summary>
+	/// Hides and destroys reward object.
+	/// </summary>
+	public void HideResultsReward() {
+		// Skip if reward object is not created
+		if(m_rewardObj == null) return;
+
+		// Use the animator!
+		m_rewardObj.GetComponent<Animator>().SetTrigger("out");
 	}
 
 	//------------------------------------------------------------------------//
@@ -183,7 +206,9 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	/// Event to sync with the animation.
 	/// </summary>
 	public void OnChestLanded() {
-		// Launch the open animation
-		m_chest.Open(m_rewardType, false);
+		// Launch the open animation (except for non-collected chests)
+		if(m_chest != null && m_chest.collected) {
+			m_chestView.Open(m_rewardType, false);
+		}
 	}
 }

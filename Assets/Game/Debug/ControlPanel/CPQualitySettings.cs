@@ -313,7 +313,10 @@ public class CPQualitySettings : MonoBehaviour
     public TextMeshProUGUI m_gfxMemory;
     public TextMeshProUGUI m_gfxMemoryRating;
     public TextMeshProUGUI m_calculatedRating;
+    public TextMeshProUGUI m_usingFormula;
     public TextMeshProUGUI m_rating;
+    public TextMeshProUGUI m_deviceFrequency;
+    public TextMeshProUGUI m_shaderLevel;
 
     private void Quality_Setup()
     {
@@ -349,13 +352,32 @@ public class CPQualitySettings : MonoBehaviour
 
         if (m_calculatedRating != null)
         {
-            m_calculatedRating.text = "" + FeatureSettingsManager.instance.Device_CalculatedRating;
+            m_calculatedRating.text = (FeatureSettingsManager.instance.Device_UsingRatingFormula) ?
+                "old:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3"):
+                "old:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3");
+        }
+
+        if (m_usingFormula != null)
+        {
+            m_usingFormula.text = (FeatureSettingsManager.instance.Device_UsingRatingFormula) ? "new" : "old";
         }
 
         if (m_rating != null)
         {
             m_rating.text = "" + FeatureSettingsManager.instance.Device_CurrentRating;
         }
+
+        if (m_deviceFrequency != null)
+        {
+            m_deviceFrequency.text = "" + SystemInfo.processorFrequency;
+        }
+
+        if (m_shaderLevel != null)
+        {
+            m_shaderLevel.text = "" + SystemInfo.graphicsShaderLevel;
+        }
+
+
     }
     #endregion    
 
