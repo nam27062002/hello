@@ -46,6 +46,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
 	private float m_globalEatingHpBoost = 0;
 
+	public float m_damageAnimationThreshold = 0;	// to check if hit animation can play when Recieve Damage
+	public float m_dotAnimationThreshold = 0;	// To check if hit animation can play when ReceiveDamageOverTime
 
 	//-----------------------------------------------
 	// Methods
@@ -68,6 +70,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_sessionStartHealthDrainTime = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainTime"); // 45
 		m_sessionStartHealthDrainModifier = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainModifier");// 0.5
         m_healthDrainPerSecondInSpace = m_dragon.data.def.GetAsFloat("healthDrainSpacePlus");
+
+		m_damageAnimationThreshold = m_dragon.data.def.GetAsFloat("damageAnimationThreshold", 0);
+		m_dotAnimationThreshold = m_dragon.data.def.GetAsFloat("dotAnimationThreshold", 0);
 
         m_damageMultiplier = 0;
 	}
@@ -130,7 +135,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_amount">The total amount of damage to be applied. Will be modified based on dragon's current health percentage.</param>
 	/// <param name="_type">Type of damage to be applied.</param> 
 	/// <param name="_source">The source of the damage, optional.</param> 
-	/// <param name="_hitAnimation">Whether to trigger the hit animation or not.</param>
+	/// <param name="_hitAnimation">Whether to trigger the hit animation or not. If the damage is not bigger than hit animation threshold, animation will no play</param>
+	/// <param name="_damageOrigin">Damage origin identifier.Example: entity sku</param>	
 	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true, string _damageOrigin = "") {
 		if(enabled) {
 			if ( m_dragon.IsInvulnerable() )
@@ -153,7 +159,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			}
 
 			// Play animation?
-			if(_hitAnimation) PlayHitAnimation(_type);
+			if(_hitAnimation && _amount >= m_damageAnimationThreshold) {
+				PlayHitAnimation(_type);
+			}
 
 			// Apply damage
 			float damage = GetModifiedDamageForCurrentHealth(_amount);
@@ -210,7 +218,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_dots.Add(newDot);
 
 		// Do feedback animation
-		PlayHitAnimation( _type );
+		if ( _dps >= m_dotAnimationThreshold ){
+			PlayHitAnimation( _type );
+		}
 	}
 
 
