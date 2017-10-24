@@ -169,6 +169,7 @@ public class ChestViewController : MonoBehaviour {
 		}
 		
 		ToggleFX(m_glowFX, false);
+
 		// Notify delegates
 		OnChestOpenEvent.Invoke();
 	}

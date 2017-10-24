@@ -176,17 +176,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	// -------------------------------------------------------------------------
 	// Results animation setup
 	#region ResultsAnimSetup
-	[SerializeField] private float m_resultsIntroDuration = 0.25f;
-	public static float resultsIntroDuration {
-		get { return instance.m_resultsIntroDuration; }
-	}
-	
-	[Tooltip("In seconds, will be increased in the case of high score")]
-	[SerializeField] private float m_resultsPanelDuration = 1f;
-	public static float resultsPanelDuration {
-		get { return instance.m_resultsPanelDuration; }
-	}
-	
 	[Tooltip("Units per second, the whole bar is 1 unit")]
 	[SerializeField] private float m_resultsXPBarSpeed = 0.15f;
 	public static float resultsXPBarSpeed {
@@ -197,16 +186,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private Range m_resultsXPBarMinMaxDuration = new Range(1f, 3f);
 	public static Range resultsXPBarMinMaxDuration {
 		get { return instance.m_resultsXPBarMinMaxDuration; }
-	}
-
-	[SerializeField] private float m_resultsChestsAndEggMinDuration = 1f;
-	public static float resultsChestsAndEggMinDuration {
-		get { return instance.m_resultsChestsAndEggMinDuration; }
-	}
-
-	[SerializeField] private float m_resultsChestDuration = 0.5f;
-	public static float resultsChestDuration {
-		get { return instance.m_resultsChestDuration; }
 	}
 
 	[SerializeField] private float m_resultsEggDuration = 1f;

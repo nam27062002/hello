@@ -114,8 +114,8 @@ Shader "Hungry Dragon/FadeEffect"
 				float2 aspect = float2(1.0, _ScreenParams.y / _ScreenParams.x);
 				float2 uv = i.uv * aspect;
 				//				i.color.a = 1.0f;
-				float s = sin(_Time.y * _RotSpeed) * 4.0;
-				float c = cos(_Time.y * _RotSpeed) * 4.0;
+				float s = sin(_Time.y * _RotSpeed) * 8.0;
+				float c = cos(_Time.y * _RotSpeed) * 8.0;
 				uv -= aspect * 0.5;
 				uv = float2(uv.x * c + uv.y * s, uv.x * s - uv.y * c);
 				uv += 0.5;

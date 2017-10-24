@@ -44,6 +44,8 @@ public class ResultsDarkScreen : UbiBCN.SingletonMonoBehaviour<ResultsDarkScreen
 		set { m_fadeDuration = value; }
 	}
 
+	[SerializeField] private int m_renderQueueOverride = 3080;
+
 	// Internal
 	// A single dark screen shared among all cameras
 	private static MeshRenderer m_screen = null;
@@ -56,6 +58,9 @@ public class ResultsDarkScreen : UbiBCN.SingletonMonoBehaviour<ResultsDarkScreen
 				GameObject screenInstance = GameObject.Instantiate<GameObject>(screenPrefab);
 				screenInstance.hideFlags = HideFlags.DontSave;
 				m_screen = screenInstance.GetComponent<MeshRenderer>();
+
+				// Override material's render priority
+				m_screen.material.renderQueue = instance.m_renderQueueOverride;
 
 				// Move to target camera's hierarchy
 				instance.LinkToCamera();
