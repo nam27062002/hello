@@ -210,6 +210,14 @@ public class UserMissions {
 			// 3. Get all mission definitions matching the selected type
 			List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
 
+			// 3.1. Filter out missions based on current max dragon tier unlocked
+			missionDefs = missionDefs.FindAll(
+				(DefinitionNode _def) => { 
+					return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked);	// Ignore missions meant for bigger tiers
+				}
+			);
+			DebugUtils.Assert(missionDefs.Count > 0, "<color=red>NO VALID MISSIONS FOUND!!!!</colo>");	// Just in case
+
 			// 4. Select a random mission based on weight (as we just did with the mission type)
 			// 4.1. Compute total weight
 			totalWeight = 0f;
