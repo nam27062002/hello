@@ -815,10 +815,16 @@ public class UserProfile : UserPersistenceSystem
 		if(_data.ContainsKey("chests")) {
 			LoadChestsData(_data["chests"] as SimpleJSON.JSONClass);
 		} else {
+			// Defaults
 			for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
 				dailyChests[i] = new Chest();
 			}
-			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+			//m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// That will reset to 24hrs from now
+			// Reset timestamp to 00:00 of local time (but using server timezone!)
+			DateTime midnight = DateTime.Today.AddDays(1);
+			TimeSpan toMidnight = midnight - DateTime.Now;	// Local
+			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 		}
 
 		// Daily mission Ads
