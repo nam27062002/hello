@@ -16,7 +16,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Attributes
 	//-----------------------------------------------
 	private DragonPlayer m_dragon;
-	private Animator m_animator;
+	private DragonAnimationEvents m_animator;
 
 	private GameSceneControllerBase m_gameController;
 
@@ -36,7 +36,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private float m_sessionStartHealthDrainTime;
 	private float m_sessionStartHealthDrainModifier;
 
-	private int m_damageAnimState;
+
 
 	// Power ups modifiers
 	private float m_drainReduceModifier = 0;
@@ -58,7 +58,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		
-		m_animator = transform.Find("view").GetComponent<Animator>();
+		m_animator = transform.Find("view").GetComponent<DragonAnimationEvents>();
+
 		m_gameController = InstanceManager.gameSceneControllerBase;
 
 		// Shark related values
@@ -69,9 +70,6 @@ public class DragonHealthBehaviour : MonoBehaviour {
         m_healthDrainPerSecondInSpace = m_dragon.data.def.GetAsFloat("healthDrainSpacePlus");
 
         m_damageMultiplier = 0;
-
-		//
-		m_damageAnimState = Animator.StringToHash("BaseLayer.Damage");
 	}
 		
 	// Update is called once per frame
@@ -155,7 +153,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			}
 
 			// Play animation?
-			if(_hitAnimation) PlayHitAnimation();
+			if(_hitAnimation) PlayHitAnimation(_type);
 
 			// Apply damage
 			float damage = GetModifiedDamageForCurrentHealth(_amount);
@@ -212,7 +210,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_dots.Add(newDot);
 
 		// Do feedback animation
-		PlayHitAnimation();
+		PlayHitAnimation( _type );
 	}
 
 
@@ -252,13 +250,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		return damage;
 	}
 
-	private void PlayHitAnimation() {
+	private void PlayHitAnimation( DamageType _type ) {
 		if ( m_animator != null )
 		{
-			AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-			if (stateInfo.fullPathHash != m_damageAnimState) {
-				m_animator.SetTrigger("damage");// receive damage?
-			}
+			m_animator.PlayHitAnimation( _type );
 		}
 	}
 
