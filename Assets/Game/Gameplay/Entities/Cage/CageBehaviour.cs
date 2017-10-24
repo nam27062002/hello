@@ -14,6 +14,8 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	[SerializeField] private GameObject m_view;
 	[SerializeField] private GameObject[] m_viewDestroyed;
 	[SerializeField] private ParticleData m_onBreakParticle;
+	[SerializeField] private ParticleData m_onHitParticle;
+	[SerializeField] private bool m_hitParticleFaceDragonDirection = false;
 	[SerializeField] private string m_onBreakSound;
 	[SerializeField] private string m_onCollideSound;
 	[SerializeField] public Transform m_centerTarget;
@@ -53,6 +55,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_initialViewPos = m_view.transform.localPosition;
 
 		m_onBreakParticle.CreatePool();
+		m_onHitParticle.CreatePool();
 
 		m_currentHits = new Hit();
 	}
@@ -110,6 +113,13 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 										Break();
 										playCollideSound = false;
 									} else {
+										GameObject ps = m_onHitParticle.Spawn();
+										if (ps != null) {
+											ps.transform.position = collision.contacts[0].point;// m_view.transform.TransformPoint(m_onHitParticle.offset);
+											if (m_hitParticleFaceDragonDirection) {
+												FaceDragon(ps, dragonMotion);
+											}
+										}
 										if (m_wobbler != null) {
 											m_wobbler.enabled = true;
 											m_wobbler.StartWobbling(m_view.transform, m_initialViewPos);
@@ -171,5 +181,16 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		for (int c = 0; c < colliders.Length; c++) {
 			colliders[c].isTrigger = !_value;
 		}
+	}
+
+	private void FaceDragon(GameObject _ps, DragonMotion _dragonMotion) {		
+		Vector3 dir = _dragonMotion.direction;
+		dir.z = 0;
+		dir.Normalize();
+
+		float angle = Vector3.Angle(Vector3.up, dir);
+		angle = Mathf.Min(angle, 60f);
+		angle *= Mathf.Sign(Vector3.Cross(Vector3.up, dir).z);
+		_ps.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 	}
 }
