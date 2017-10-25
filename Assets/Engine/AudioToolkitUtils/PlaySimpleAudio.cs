@@ -10,8 +10,12 @@ namespace UbiBCN{
 		}
 
 		public void Play(string _id) {
-			if ( !string.IsNullOrEmpty(_id) )
+			if(!string.IsNullOrEmpty(_id)) {
+				DebugUtils.Log("SFX <color=magenta>" + _id + "</color>", this);
 				AudioController.Play(_id);
+			} else {
+				DebugUtils.Log("SFX <color=red>NULL!</color>", this);
+			}
 		}
 	}
 }
