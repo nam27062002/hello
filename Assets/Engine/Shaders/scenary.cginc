@@ -147,7 +147,7 @@ v2f vert (appdata_t v)
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
 
-#if defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
+#if defined(LIGHTMAP_ON) //&& !defined(EMISSIVE_BLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
