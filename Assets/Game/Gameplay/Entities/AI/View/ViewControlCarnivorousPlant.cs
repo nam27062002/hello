@@ -16,6 +16,12 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	private int m_rendererCount;
 	public int rendererCount { get { return m_rendererCount; } }
 
+	[SerializeField] protected string m_onAttackAudio;
+	private AudioObject m_onAttackAudioAO;
+	[SerializeField] private string m_onBurnAudio;
+
+	protected PreyAnimationEvents m_animEvents;
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
@@ -62,7 +68,20 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 				renderer.sharedMaterials = materials;
 			}
 		}
+
+		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
+		if (m_animEvents != null) {
+			m_animEvents.onAttackStart += animEventsOnAttackStart;
+		}
     }
+
+	protected virtual void animEventsOnAttackStart() {
+		if (!string.IsNullOrEmpty(m_onAttackAudio)){
+			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform );
+			if (m_onAttackAudioAO != null )
+				m_onAttackAudioAO.completelyPlayedDelegate = OnAttackAudioCompleted;
+		}
+	}
 
 	public void Spawn(ISpawner _spawner) {
 		// Restore materials
@@ -76,10 +95,43 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 		}
 	}
 
-    void OnDestroy() { }
-    public void PreDisable() { }
+    void OnDestroy() {
+		RemoveAudioParent( ref m_onAttackAudioAO );
+    }
+
+    public void PreDisable() {
+    	RemoveAudioParent( ref m_onAttackAudioAO );
+    }
 	public void CustomUpdate() { }
 
-	public void Attack(bool _attack) { m_animator.SetBool("attack", _attack); }
+	public void Attack(bool _attack) { 
+		m_animator.SetBool("attack", _attack); 
+	}
+
+	void OnAttackAudioCompleted(AudioObject ao)
+	{
+		RemoveAudioParent( ref m_onAttackAudioAO);
+	}
+
+	protected void RemoveAudioParent(ref AudioObject ao)
+	{
+		if ( ao != null && ao.transform.parent == transform )
+		{
+			ao.transform.parent = null;	
+			ao.completelyPlayedDelegate = null;
+			if ( ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+				ao.Stop();
+		}
+		ao = null;
+	}
+
+	public void Burn(float _burnAnimSeconds) {
+		if (!string.IsNullOrEmpty(m_onBurnAudio)) {
+			AudioController.Play(m_onBurnAudio, transform.position);
+		}
+	}
+
 	public void Aim(float _blendFactor) { m_animator.SetFloat("aim", _blendFactor); }
+
+
 }

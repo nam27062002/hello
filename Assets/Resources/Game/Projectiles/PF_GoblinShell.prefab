@@ -10,9 +10,9 @@ GameObject:
   - component: {fileID: 408412}
   - component: {fileID: 114282438554060794}
   - component: {fileID: 5476966}
-  - component: {fileID: 136816588685111482}
+  - component: {fileID: 136655417498653124}
   m_Layer: 16
-  m_Name: PF_GoblinWarBoatBomb
+  m_Name: PF_GoblinShell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,11 +24,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173528}
-  m_LocalRotation: {x: 0.00000013155935, y: 0, z: -0.00000008193444, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4971138796923682}
+  - {fileID: 4704898547776362}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -130,16 +130,16 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 173528}
   m_IsPrefabParent: 1
---- !u!1 &1159905948695320
+--- !u!1 &1604181035879494
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4971138796923682}
-  - component: {fileID: 33083467426854278}
-  - component: {fileID: 23651978582604524}
+  - component: {fileID: 4704898547776362}
+  - component: {fileID: 33442349552123982}
+  - component: {fileID: 23625953458313158}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -147,25 +147,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4971138796923682
+--- !u!4 &4704898547776362
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1159905948695320}
-  m_LocalRotation: {x: -0.00000013155935, y: -0, z: 0.00000008193444, w: 1}
+  m_GameObject: {fileID: 1604181035879494}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 408412}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23651978582604524
+--- !u!23 &23625953458313158
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1159905948695320}
+  m_GameObject: {fileID: 1604181035879494}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -173,7 +173,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 232f2cff103ad90478ae45c204f73d21, type: 2}
+  - {fileID: 2100000, guid: 5140bc5c2e3cd7742a507cde9cef8c89, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -192,13 +192,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33083467426854278
+--- !u!33 &33442349552123982
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1159905948695320}
-  m_Mesh: {fileID: 4300000, guid: d98b09283f003b34c8d80192af1e1a5a, type: 3}
+  m_GameObject: {fileID: 1604181035879494}
+  m_Mesh: {fileID: 4300000, guid: 8f9704c8adf353f4cbf52d40a22376a9, type: 3}
 --- !u!114 &114282438554060794
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -212,15 +212,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_motionType: 0
   m_chargeTime: 0
-  m_speed: 40
-  m_rotationSpeed: 40
-  m_rotationAxis: 0
+  m_speed: 20
+  m_rotationSpeed: 50
+  m_rotationAxis: 2
   m_maxTime: 0
   m_scaleTime: 1
   m_stopAtTarget: 1
   m_defaultDamage: 15
   m_damageType: 4
-  m_radius: 2.5
+  m_radius: 5
   m_knockback: 2
   m_knockbackTier: 3
   m_activateOnShoot: []
@@ -376,7 +376,7 @@ MonoBehaviour:
   m_stickOnDragonTime: 0
   m_dieTime: 0
   m_onHitAudio: 
---- !u!136 &136816588685111482
+--- !u!136 &136655417498653124
 CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -385,7 +385,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 1
-  m_Height: 10
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.6
+  m_Height: 1.6
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: -0.09}
