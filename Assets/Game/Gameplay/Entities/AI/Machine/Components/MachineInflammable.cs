@@ -26,7 +26,8 @@ namespace AI {
 		[SerializeField] private bool m_canBeDissolved = true;
 		[SerializeField] private List<Renderer> m_ashExceptions = new List<Renderer>();
 
-		public float burningTime { get { return m_burningTime; } }
+		private float m_actualBurningTime = 0;
+		public float burningTime { get { return m_actualBurningTime; } }
 
 		//-----------------------------------------------
 		//
@@ -68,7 +69,7 @@ namespace AI {
 			return m_renderers;
 		}
 
-		public void Burn(Transform _transform) {
+		public void Burn(Transform _transform, bool instant = false) {
 			// raise flags
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
@@ -80,7 +81,14 @@ namespace AI {
 			Reward reward = m_entity.GetOnKillReward(true);
 			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);
 
-			m_timer = m_burningTime;
+			if ( instant )
+			{
+				m_actualBurningTime = 0;
+			}
+			else
+			{
+				m_actualBurningTime = m_burningTime;
+			}
 			m_nextState = State.Burning;
 		}
 
@@ -110,7 +118,7 @@ namespace AI {
 		private void ChangeState() {
 			switch(m_nextState) {
 				case State.Burning:
-					m_timer = m_burningTime;
+					m_timer = m_actualBurningTime;
 					break;
 
 				case State.Burned:					

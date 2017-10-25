@@ -78,8 +78,8 @@ namespace AI {
 			return false;
 		}
 
-		public override bool Burn(Transform _transform) {			
-			if (base.Burn(_transform)) {				
+		public override bool Burn(Transform _transform, bool instant = false) {			
+			if (base.Burn(_transform, instant)) {				
 				if (m_passengersSpawner != null) {
 					m_passengersSpawner.PassengersBurn();
 				}
