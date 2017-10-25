@@ -88,14 +88,14 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#pragma multi_compile __ SILHOUETTE
-			#pragma shader_feature  __ NORMALMAP
-			#pragma shader_feature  __ SPECULAR
-			#pragma shader_feature  __ FRESNEL
-			#pragma shader_feature  __ CUTOFF
-			#pragma shader_feature  __ DOUBLESIDED
+			#pragma multi_compile  __ NORMALMAP
+			#pragma multi_compile  __ SPECULAR
+			#pragma multi_compile  __ FRESNEL
+			#pragma multi_compile  __ CUTOFF
+			#pragma multi_compile  __ DOUBLESIDED
 
-			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
-			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
+			#pragma multi_compile SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
+			#pragma multi_compile FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"

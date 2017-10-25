@@ -122,9 +122,6 @@ Shader "Hungry Dragon/FadeEffect"
 				fixed4 tx = tex2D(_MainTex, uv);
 				col.rgb += fixed3(tx.a, tx.a, tx.a);
 
-
-
-
 				return col;
 			}
 			ENDCG
