@@ -24,7 +24,7 @@ namespace AI {
 			protected ChargeData m_data;
 
 			private Vector3 m_target;
-
+			private Entity m_entity;
 			private float m_speed;
 			private float m_elapsedTime;
 			private IMeleeWeapon m_meleeWeapon;
@@ -41,6 +41,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
 
+				m_entity = m_pilot.GetComponent<Entity>(); 
 				m_data = m_pilot.GetComponentData<ChargeData>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
 
@@ -52,6 +53,7 @@ namespace AI {
 				base.OnEnter(oldState, param);
 
 				m_meleeWeapon.damage = m_data.damage;
+				m_meleeWeapon.entity = m_entity;
 				m_meleeWeapon.enabled = true;
 
 				m_speed = 0;
