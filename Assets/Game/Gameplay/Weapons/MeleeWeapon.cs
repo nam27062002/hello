@@ -26,7 +26,7 @@ public class MeleeWeapon : IMeleeWeapon {
 		for (int i = 0; i < m_trailParticles.Length; i++) {
 			if (m_trailParticles[i] != null) {
 				ParticleSystem.EmissionModule em = m_trailParticles[i].emission;
-				if (em.enabled && m_trailParticles[i].loop) {
+				if (em.enabled && m_trailParticles[i].main.loop) {
 					em.enabled = false;
 					m_trailParticles[i].Stop();
 				}
@@ -46,7 +46,7 @@ public class MeleeWeapon : IMeleeWeapon {
 
 			dragonMotion.AddForce(knockBack);
 		}
-		InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType);
+		InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, null, true, m_entity.sku, m_entity);
 	}
 
 }

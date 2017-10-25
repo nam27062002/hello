@@ -131,11 +131,11 @@ namespace AI {
 			m_sensor.Disable(_seconds);
 		}
 
-		public bool Burn(Transform _transform) {
+		public bool Burn(Transform _transform, bool instant = false) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform);
+					m_inflammable.Burn(_transform, instant);
 				}
 				return true;
 			}

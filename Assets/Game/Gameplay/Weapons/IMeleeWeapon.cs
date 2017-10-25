@@ -11,6 +11,9 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	protected float m_damage;
 	public float damage { set { m_damage = value; } }
 
+	protected Entity m_entity;
+	public Entity entity { set { m_entity = value; } }
+
 	private float m_timer;
 	private float m_timerPosition;
 	protected Vector3 m_lastPosition;
