@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepSkinUnlocked : ResultsScreenStep {
+public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -27,15 +27,13 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Space]
 	[SerializeField] private MenuDragonLoader m_preview = null;
 	[SerializeField] private DragControlRotation m_dragControl = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_skinNameText = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
-	[Space]
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
-	[SerializeField] private TweenSequence m_sequence = null;
 
 	// Internal
 	private List<DefinitionNode> m_skinsToProcess = new List<DefinitionNode>();
@@ -107,9 +105,6 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenStep {
 
 		// Reset processed skins counter
 		m_processedSkins = 0;
-
-		// Listen to sequence ending
-		m_sequence.OnFinished.AddListener(OnHidePostAnimation);
 	}
 
 	/// <summary>
@@ -141,36 +136,15 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenStep {
 
 		// Start with button hidden
 		m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide(false);
-
-		// Hide tap to continue
-		m_tapToContinue.ForceHide(false);
-
-		// Launch sequence!
-		m_sequence.Launch();
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Tap to continue has been pressed.
-	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
-
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
-
-		// Continue sequence
-		m_sequence.Play();
-	}
-
-	/// <summary>
 	/// Hide animation has finished.
 	/// </summary>
-	public void OnHidePostAnimation() {
+	override protected void OnSequenceFinished() {
 		// Mark current skin as processed
 		m_processedSkins++;
 

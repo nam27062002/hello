@@ -42,6 +42,11 @@ public class ResultsScreenController : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private ResultsScreenStep[] m_steps = new ResultsScreenStep[(int)Step.COUNT];
 
+	[SerializeField] private ResultsScreenSummary m_summary = null;
+	public ResultsScreenSummary summary {
+		get { return m_summary; }
+	}
+
 	// Other references
 	private ResultsSceneSetup m_scene = null;
 	public ResultsSceneSetup scene {
@@ -208,6 +213,9 @@ public class ResultsScreenController : MonoBehaviour {
 				m_steps[i].gameObject.SetActive(false);
 			}
 		}
+
+		// Initialize summary as well
+		m_summary.InitSummary();
 
 		// Launch first step!
 		m_step = Step.INIT;

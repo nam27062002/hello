@@ -60,6 +60,13 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		m_allowBurnable = 0;
 	}
 
+	protected bool m_isGolden = false;
+	public bool isGolden { get { return m_isGolden; } }
+
+	public virtual void SetGolden(Spawner.EntityGoldMode _mode) {
+		m_isGolden = false;
+	}
+
 	protected bool m_isOnScreen = false;
 	public bool isOnScreen { get { return m_isOnScreen; } }
 

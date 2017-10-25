@@ -28,7 +28,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private AudioObject m_starvingSoundAO;
 
 	public string m_hitSound;
-
+	public string m_poisonHitSound;
 
 	public string m_enterWaterSound;
 	public string m_enterWaterWithSplashSound;
@@ -65,6 +65,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 	[Range(0f, 100.0f)]
 	public float m_gruntToEatProbability = 5;
 
+	private DamageType m_lastDamageType = DamageType.NONE;
+	public DamageType lastDamageType{get{return m_lastDamageType;} set{m_lastDamageType = value;}}
+
+	private int m_damageAnimState;
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
@@ -80,6 +84,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 			behaviours[i].onStateEnter += onStateEnter;
 			behaviours[i].onStateExit += onStateExit;
 		}
+
+		m_damageAnimState = Animator.StringToHash("BaseLayer.Damage");
 	}
 
 	void OnDisable() {
@@ -247,9 +253,29 @@ public class DragonAnimationEvents : MonoBehaviour {
 			onEatEndEvent();
 	}
 
+	public void PlayHitAnimation( DamageType _type )
+	{
+		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+		if (stateInfo.fullPathHash != m_damageAnimState) {
+			m_animator.SetTrigger("damage");// receive damage?
+			m_lastDamageType = _type;
+		}
+	}
+
 	public void HitEvent()
 	{
-		PlaySound( m_hitSound );
+		switch(m_lastDamageType)
+		{
+			case DamageType.POISON:
+			{
+				PlaySound( m_poisonHitSound );
+			}break;
+			default:{
+				PlaySound( m_hitSound );
+			}break;
+		}
+
+
 	}
 
 	public void HiccupEvent()

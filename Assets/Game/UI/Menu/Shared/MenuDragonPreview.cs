@@ -60,6 +60,9 @@ public class MenuDragonPreview : MonoBehaviour {
 
 	// Internal
 	private Animator m_animator = null;
+	public Animator animator{
+		get{return m_animator;}	
+	}
 
 	private Renderer[] m_renderers;
 	private Dictionary<int, List<Material>> m_materials;

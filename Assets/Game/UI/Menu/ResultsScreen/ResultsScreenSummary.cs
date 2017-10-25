@@ -1,0 +1,191 @@
+// ResultsScreenSummary.cs
+// Hungry Dragon
+// 
+// Created by Alger Ortín Castellví on 19/10/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using DG.Tweening;
+
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
+/// <summary>
+/// Small summary for the results screen
+/// </summary>
+public class ResultsScreenSummary : MonoBehaviour {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	[Separator("Textfields")]
+	[SerializeField] private TextMeshProUGUI m_timeText = null;
+	[SerializeField] private TextMeshProUGUI m_scoreText = null;
+	[SerializeField] private TextMeshProUGUI m_coinsText = null;
+	[SerializeField] private TextMeshProUGUI m_chestsText = null;
+	[SerializeField] private TextMeshProUGUI m_eggsText = null;
+	[SerializeField] private TextMeshProUGUI m_missionsText = null;
+
+	[Separator("Animators")]
+	[SerializeField] private ShowHideAnimator m_timeAnim = null;
+	[SerializeField] private ShowHideAnimator m_scoreAnim = null;
+	[SerializeField] private ShowHideAnimator m_coinsAnim = null;
+	[SerializeField] private ShowHideAnimator m_collectiblesAnim = null;
+	[SerializeField] private ShowHideAnimator m_missionsAnim = null;
+	
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+
+	//------------------------------------------------------------------------//
+	// PUBLIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the summary.
+	/// </summary>
+	public void InitSummary() {
+		// Disable all root objects
+		m_timeAnim.transform.parent.gameObject.SetActive(false);
+		m_scoreAnim.transform.parent.gameObject.SetActive(false);
+		m_coinsAnim.transform.parent.gameObject.SetActive(false);
+		m_collectiblesAnim.transform.parent.gameObject.SetActive(false);
+		m_missionsAnim.transform.parent.gameObject.SetActive(false);
+
+		// Reset the animations
+		m_timeAnim.ForceHide(false);
+		m_scoreAnim.ForceHide(false);
+		m_coinsAnim.ForceHide(false);
+		m_collectiblesAnim.ForceHide(false);
+		m_missionsAnim.ForceHide(false);
+
+		// Start hidden
+		this.GetComponent<ShowHideAnimator>().ForceHide(false);
+	}
+
+	/// <summary>
+	/// Show the time slot.
+	/// </summary>
+	/// <param name="_timeSeconds">Time to be displayed (seconds).</param>
+	/// <param name="_animate">Animate slot?.</param>
+	public void ShowTime(float _timeSeconds, bool _animate = true) {
+		// Set text
+		m_timeText.text = TimeUtils.FormatTime(
+			_timeSeconds, 
+			TimeUtils.EFormat.DIGITS, 2, 
+			TimeUtils.EPrecision.MINUTES
+		);
+		
+		// Activate root object
+		m_timeAnim.transform.parent.gameObject.SetActive(true);
+
+		// Trigger animation!
+		m_timeAnim.ForceShow(_animate);
+	}
+
+	/// <summary>
+	/// Show the score slot.
+	/// </summary>
+	/// <param name="_score">Score to be displayed.</param>
+	public void ShowScore(long _score) {
+		// Set text
+		m_scoreText.text = StringUtils.FormatNumber(_score);
+
+		// Activate root object
+		m_scoreAnim.transform.parent.gameObject.SetActive(true);
+
+		// Trigger animation!
+		m_scoreAnim.ForceShow(true);
+	}
+
+	/// <summary>
+	/// Show the coins slot.
+	/// </summary>
+	/// <param name="_coins">Number of collected coins.</param>
+	public void ShowCoins(long _coins) {
+		// Set text
+		m_coinsText.text = StringUtils.FormatNumber(_coins);
+
+		// Activate root object
+		m_coinsAnim.transform.parent.gameObject.SetActive(true);
+
+		// Trigger animation!
+		m_coinsAnim.ForceShow(true);
+	}
+
+	/// <summary>
+	/// Show the collectibles slot.
+	/// </summary>
+	/// <param name="_chests">Number of collected chests.</param>
+	/// <param name="_eggs">Number of collected eggs.</param>
+	public void ShowCollectibles(int _chests, int _eggs) {
+		// Set texts
+		SetChests(_chests, false);
+		SetEgg(_eggs, false);
+
+		// Activate root object
+		m_collectiblesAnim.transform.parent.gameObject.SetActive(true);
+
+		// Trigger animation!
+		m_collectiblesAnim.ForceShow(true);
+	}
+
+	/// <summary>
+	/// Show the missions slot.
+	/// </summary>
+	/// <param name="_missions">Number of completed missions.</param>
+	public void ShowMissions(int _missions) {
+		// Set text
+		m_missionsText.text = StringUtils.FormatNumber(_missions);
+
+		// Activate root object
+		m_missionsAnim.transform.parent.gameObject.SetActive(true);
+
+		// Trigger animation!
+		m_missionsAnim.ForceShow(true);
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Set the amount of chests to the counter with some flashy FX.
+	/// </summary>
+	/// <param name="_collectedChests">Total collected chests to be displayed.</param>
+	/// <param name="_showFX">Whether to show some fx or not.</param> 
+	public void SetChests(int _collectedChests, bool _showFX = true) {
+		// [AOC] TODO!! Show some FX!
+		// Set text
+		m_chestsText.text = LocalizationManager.SharedInstance.Localize(
+			"TID_FRACTION",
+			StringUtils.FormatNumber(_collectedChests),
+			StringUtils.FormatNumber(ChestManager.NUM_DAILY_CHESTS)
+		);
+	}
+
+	/// <summary>
+	/// Set the amount of eggs to the counter with some flashy FX.
+	/// </summary>
+	/// <param name="_collectedChests">Total collected eggs to be displayed.</param>
+	/// <param name="_showFX">Whether to show some fx or not.</param> 
+	public void SetEgg(int _collectedEggs, bool _showFX = true) {
+		// [AOC] TODO!! Show some FX!
+		// Set text
+		m_eggsText.text = LocalizationManager.SharedInstance.Localize(
+			"TID_FRACTION",
+			StringUtils.FormatNumber(_collectedEggs),
+			StringUtils.FormatNumber(1)
+		);
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+}

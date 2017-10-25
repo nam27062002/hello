@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepIntro : ResultsScreenStep {
+public class ResultsScreenStepIntro : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -24,13 +24,7 @@ public class ResultsScreenStepIntro : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed Setup
-	[Comment("Dragon Launch delay")]
-	[SerializeField] private float m_dragonLaunchDelay = 0.5f;
 
-	[Comment("Sync with dragon intro anim duration")]
-	[SerializeField] private float m_duration = 1f;
-	
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -46,27 +40,16 @@ public class ResultsScreenStepIntro : ResultsScreenStep {
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
-		// Launch dragon intro animation
-		UbiBCN.CoroutineManager.DelayedCall(
-			() => {
-				m_controller.scene.LaunchDragonAnim();
-			},
-			m_dragonLaunchDelay,
-			false
-		);
-
-		// Just give enough time for the dragon animation to finish
-		UbiBCN.CoroutineManager.DelayedCall(
-			() => {
-				// Mark as finished!
-				OnFinished.Invoke();
-			},
-			m_duration,
-			false
-		);
+		// Nothing to do for now
 	}
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Trigger the dragon animation.
+	/// </summary>
+	public void LaunchDragonAnim() {
+		m_controller.scene.LaunchDragonAnim();
+	}
 }

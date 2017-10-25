@@ -7,18 +7,22 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: VFX_RocketMokeyGlow 1
-  m_Shader: {fileID: 4800000, guid: b985e9b06f3e83f47bcbda6c26e7022e, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: bf72659a8d2b2494ab4c73b54fd7287f, type: 3}
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3065
+  m_CustomRenderQueue: 3060
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorRamp:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -57,15 +61,21 @@ Material:
     m_Floats:
     - _ABOffset: 0
     - _BumpScale: 1
+    - _ColorMultiplier: 0.17
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EmissionSaturation: 2
+    - _EnableColorRamp: 0
+    - _EnableColorVertex: 1
+    - _EnableDissolve: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _OpacitySaturation: 2
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -74,7 +84,10 @@ Material:
     - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
+    - _BasicColor: {r: 0.53676474, g: 0.53676474, b: 0.53676474, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SaturatedColor: {r: 1, g: 0.91034484, b: 0.61764705, a: 0.5}
     - _TintColor: {r: 1, g: 0.5955882, b: 0.5955882, a: 1}
     - _VColor: {r: 1, g: 1, b: 1, a: 1}

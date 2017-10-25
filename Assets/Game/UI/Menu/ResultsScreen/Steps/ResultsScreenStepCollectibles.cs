@@ -7,9 +7,12 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+#define USING_3D_SCENE
+
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -17,7 +20,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepCollectibles : ResultsScreenStep {
+public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,17 +29,17 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Space]
 	[SerializeField] private ShowHideAnimator m_eggFoundAnim = null;
 	[SerializeField] private ShowHideAnimator m_eggNotFoundAnim = null;
 	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
-	[Space]
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
-	[SerializeField] private TweenSequence m_sequence = null;
 
 	// Internal
+	private int m_collectedChests = 0;
+	private int m_pendingRewardChests = 0;
 	private int m_checkedChests = 0;
 	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 
@@ -55,11 +58,20 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	}
 
 	/// <summary>
-	/// Initialize and launch this step.
+	/// Initialize the step.
 	/// </summary>
 	override protected void DoInit() {
-		// Notify when sequence is finished
-		m_sequence.OnFinished.AddListener(() => OnFinished.Invoke());
+		#if USING_3D_SCENE
+		// Grab slots from the 3D scene
+		m_chestSlots = new ResultsSceneChestSlot[m_controller.scene.chestSlots.Length];
+		System.Array.Copy(m_controller.scene.chestSlots, m_chestSlots, m_chestSlots.Length);
+
+		// Start with everything hidden
+		for(int i = 0; i < m_chestSlots.Length; ++i) {
+			m_chestSlots[i].gameObject.SetActive(false);
+		}
+		m_controller.scene.eggSlot.gameObject.SetActive(false);
+		#endif
 	}
 
 	/// <summary>
@@ -67,24 +79,31 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Reset internal vars
+		m_collectedChests = 0;
+		m_pendingRewardChests = 0;
 		m_checkedChests = 0;
 
 		// Initialize chests. Can't do it in the DoInit call because we need the chest slots to be active!
 		InitChests();
 
+		#if !USING_3D_SCENE
 		// Hide both egg anims
 		m_eggFoundAnim.ForceHide(false);
 		m_eggNotFoundAnim.ForceHide(false);
+		#endif
 
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+	}
 
-		// Hide tap to continue
-		m_tapToContinue.ForceHide(false);
-
-		// Launch sequence!
-		m_sequence.Launch();
+	/// <summary>
+	/// Called when skip is triggered.
+	/// </summary>
+	override protected void OnSkip() {
+		// Instantly finish counter texts animations
+		m_coinsCounter.SetValue(m_controller.totalCoins, false);
+		m_pcCounter.SetValue(m_controller.totalPc, false);
 	}
 
 	//------------------------------------------------------------------------//
@@ -95,9 +114,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	/// </summary>
 	private void InitChests() {
 		// How many chests?
-		int preCollectedChests = 0;
-		int pendingChests = 0;
-		int collectedAndPendingChests = 0;
+		int collectedAndPending = 0;
 		List<Chest> sortedChests = new List<Chest>();
 		List<Chest> sourceChests = ChestManager.sortedChests;
 		if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.NONE) {
@@ -106,35 +123,35 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 				sortedChests.Add(sourceChests[i]);
 				switch(sourceChests[i].state) {
 					case Chest.State.COLLECTED: {
-						preCollectedChests++; 
+						m_collectedChests++; 
 					} break;
 
 					case Chest.State.PENDING_REWARD: {
-						pendingChests++; 
+						m_pendingRewardChests++; 
 					}break;
 				}
 			}
-			collectedAndPendingChests = preCollectedChests + pendingChests;
+			collectedAndPending = m_collectedChests + m_pendingRewardChests;
 		} else {
 			// [AOC] DEBUG ONLY!!
-			pendingChests = CPResultsScreenTest.chestsMode - CPResultsScreenTest.ChestTestMode.FIXED_0;
+			m_pendingRewardChests = CPResultsScreenTest.chestsMode - CPResultsScreenTest.ChestTestMode.FIXED_0;
 			if(CPResultsScreenTest.chestsMode == CPResultsScreenTest.ChestTestMode.RANDOM) {
-				pendingChests = Random.Range(0, 5);
+				m_pendingRewardChests = Random.Range(0, 5);
 			}
 
 			// Adjust number of previously collected chests to prevent overflowing max chests
-			preCollectedChests = ChestManager.collectedChests;
-			collectedAndPendingChests = preCollectedChests + pendingChests;
-			if(collectedAndPendingChests > ChestManager.NUM_DAILY_CHESTS) {
-				collectedAndPendingChests = ChestManager.NUM_DAILY_CHESTS;
-				preCollectedChests = collectedAndPendingChests - pendingChests;
+			m_collectedChests = ChestManager.collectedChests;
+			collectedAndPending = m_collectedChests + m_pendingRewardChests;
+			if(collectedAndPending > ChestManager.NUM_DAILY_CHESTS) {
+				collectedAndPending = ChestManager.NUM_DAILY_CHESTS;
+				m_collectedChests = collectedAndPending - m_pendingRewardChests;
 			}
 
 			// Either reuse actual chest or create a fake new one
 			for(int i = 0; i < sourceChests.Count; i++) {
-				if(i < preCollectedChests) {
+				if(i < m_collectedChests) {
 					sortedChests.Add(sourceChests[i]);
-				} else if(i < collectedAndPendingChests) {
+				} else if(i < collectedAndPending) {
 					Chest newChest = new Chest();
 					newChest.ChangeState(Chest.State.PENDING_REWARD);
 					sortedChests.Add(newChest);
@@ -151,10 +168,11 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 		switch(CPResultsScreenTest.chestsLayout) {
 			// Option A) Show the chests in the center, left to right
 			case CPResultsScreenTest.ChestsLayout.ONLY_COLLECTED_CHESTS: {
+				/*
 				m_rewardedSlots.Clear();
-				int startIdx = (Mathf.CeilToInt(m_chestSlots.Length/2f) - Mathf.FloorToInt(pendingChests/2f)) - 1;	// -1 for 0-based index
-				int endIdx = startIdx + pendingChests;
-				int chestIdx = preCollectedChests + 1;
+				int startIdx = (Mathf.CeilToInt(m_chestSlots.Length/2f) - Mathf.FloorToInt(m_collectedChests/2f)) - 1;	// -1 for 0-based index
+				int endIdx = startIdx + m_collectedChests;
+				int chestIdx = m_preCollectedChests + 1;
 				for(int i = startIdx; i < endIdx; i++) {
 					m_rewardedSlots.Add(m_chestSlots[i]);
 					m_chestSlots[i].InitFromChest(sortedChests[chestIdx], ChestManager.GetRewardData(chestIdx + 1));
@@ -164,6 +182,8 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 				for(int i = 0; i < m_chestSlots.Length; i++) {
 					m_chestSlots[i].gameObject.SetActive(false);
 				}
+				*/
+				Debug.Log("<color=red>ONLY_COLLECTED_CHESTS layout not implemented in the new results screen</color>");
 			} break;
 
 			// Option B) Show the daily chest progression, linear order (0-1-2-3-4) left to right
@@ -172,11 +192,14 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 				m_rewardedSlots.Clear();
 				for(int i = 0; i < m_chestSlots.Length; i++) {
 					// Initialize based on chest state
-					Debug.Log("<color=red>Initializing chest " + i + ": " + sortedChests[i].state + "</color>");
+					//Debug.Log("<color=orange>Initializing chest " + i + ": " + sortedChests[i].state + "</color>");
 					m_chestSlots[i].InitFromChest(sortedChests[i], ChestManager.GetRewardData(i + 1));
 					if(sortedChests[i].state == Chest.State.PENDING_REWARD) {
 						m_rewardedSlots.Add(m_chestSlots[i]);
 					}
+
+					// Start hidden
+					m_chestSlots[i].gameObject.SetActive(false);
 				}
 			} break;
 		}
@@ -190,27 +213,32 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	/// </summary>
 	public void OnChestRewardCheck() {
 		// Does the current chest have a reward?
-		ResultsSceneChestSlot currentChest = m_chestSlots[m_checkedChests];
-		if(m_rewardedSlots.Contains(currentChest)) {
-			// Display reward animation!
-			currentChest.LaunchRewardAnim();
-
+		ResultsSceneChestSlot targetChest = m_chestSlots[m_checkedChests];
+		if(m_rewardedSlots.Contains(targetChest)) {
 			// Increase reward counters
 			// PC or coins?
-			switch(currentChest.rewardType) {
+			switch(targetChest.rewardType) {
 				case Chest.RewardType.SC: {
 					// Update total rewarded coins and update counter
-					m_controller.totalCoins += currentChest.rewardData.amount;
+					m_controller.totalCoins += targetChest.rewardData.amount;
 					m_coinsCounter.SetValue(m_controller.totalCoins, true);
 				} break;
 
 				case Chest.RewardType.PC: {
 					// Update total rewarded coins and update counter
-					m_controller.totalPc += currentChest.rewardData.amount;
+					m_controller.totalPc += targetChest.rewardData.amount;
 					m_pcCounter.SetValue(m_controller.totalPc, true);
 				} break;
 			}
+
+			// Update counters
+			m_collectedChests++;
+			m_pendingRewardChests--;
 		}
+
+		// Trigger animation!
+		targetChest.gameObject.SetActive(true);
+		targetChest.LaunchResultsAnim(true);
 
 		// Increase counter
 		m_checkedChests++;
@@ -220,25 +248,41 @@ public class ResultsScreenStepCollectibles : ResultsScreenStep {
 	/// Trigger the rewarded egg anim (if needed).
 	/// </summary>
 	public void OnEggRewardCheck() {
+		#if USING_3D_SCENE
 		if(m_controller.eggFound) {
+			// Trigger animation!
+			m_controller.scene.eggSlot.gameObject.SetActive(true);
+			m_controller.scene.eggSlot.LaunchResultsAnim();
+		}
+		#else
+		if(m_controller.eggFound) {
+			// Trigger animation
 			m_eggFoundAnim.ForceShow();
+
+			// Show custom egg VFX
+			MenuEggLoader egg = m_eggFoundAnim.GetComponentInChildren<MenuEggLoader>();
+			if(egg != null) {
+				egg.eggView.idleFX.SetActive(true);	// [AOC] TODO!! Not working :(
+			}
 		} else {
 			m_eggNotFoundAnim.ForceShow();
 		}
+		#endif
 	}
 
 	/// <summary>
-	/// The tap to continue button has been pressed.
+	/// Do the summary line for this step. Connect in the sequence.
 	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
+	public void DoSummary() {
+		m_controller.summary.ShowCollectibles(m_collectedChests, m_controller.eggFound ? 1 : 0);
+	}
 
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
-
-		// Launch end sequence
-		m_sequence.Play();
+	/// <summary>
+	/// Hide the given rewards.
+	/// </summary>
+	public void HideRewards() {
+		for(int i = 0; i < m_chestSlots.Length; ++i) {
+			m_chestSlots[i].HideResultsReward();
+		}
 	}
 }

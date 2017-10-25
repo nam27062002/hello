@@ -18,7 +18,7 @@ using DG.Tweening;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepGlobalEventNoContribution : ResultsScreenStep {
+public class ResultsScreenStepGlobalEventNoContribution : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -28,12 +28,10 @@ public class ResultsScreenStepGlobalEventNoContribution : ResultsScreenStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Space]
 	[SerializeField] private Image m_eventIcon = null;
 	[SerializeField] private TextMeshProUGUI m_descriptionText = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
-	[Space]
-	[SerializeField] private ShowHideAnimator m_tapToContinue = null;
-	[SerializeField] private TweenSequence m_sequence;
 
 	// Internal logic
 	private GlobalEvent m_event = null;
@@ -75,9 +73,6 @@ public class ResultsScreenStepGlobalEventNoContribution : ResultsScreenStep {
 	override protected void DoInit() {
 		// Get event data!
 		m_event = GlobalEventManager.currentEvent;
-
-		// Notify when sequence is finished
-		m_sequence.OnFinished.AddListener(() => OnFinished.Invoke());
 	}
 
 	/// <summary>
@@ -98,12 +93,6 @@ public class ResultsScreenStepGlobalEventNoContribution : ResultsScreenStep {
 			// Event description
 			m_descriptionText.text = m_event.objective.GetDescription();
 		}
-
-		// Hide tap to continue
-		m_tapToContinue.ForceHide(false);
-
-		// Launch sequence!
-		m_sequence.Launch();
 	}
 
 	//------------------------------------------------------------------------//
@@ -134,18 +123,4 @@ public class ResultsScreenStepGlobalEventNoContribution : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The tap to continue button has been pressed.
-	/// </summary>
-	public void OnTapToContinue() {
-		// Only if enabled! (to prevent spamming)
-		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
-		if(!m_tapToContinue.visible) return;
-
-		// Hide tap to continue to prevent spamming
-		m_tapToContinue.Hide();
-
-		// Launch end sequence
-		m_sequence.Play();
-	}
 }
