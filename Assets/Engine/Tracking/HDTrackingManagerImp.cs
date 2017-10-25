@@ -434,14 +434,14 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
-        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained)
+        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained, float boostTime, int mapUsage)
     {
         Notify_CheckAndProcessEvent(TRACK_EVENT_TUTORIAL_COMPLETION);
         Notify_CheckAndProcessEvent(TRACK_EVENT_FIRST_10_RUNS_COMPLETED);        
 
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
-            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained);
+            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);
     }
 
     public override void Notify_RunEnd(int dragonXp, int timePlayed, int score, string deathType, string deathSource, Vector3 deathCoordinates)
@@ -963,7 +963,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     public void Track_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         string deathType, string deathSource, string deathCoordinates, int chestsFound, int eggFound,
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
-        int scGained, int hcGained)
+        int scGained, int hcGained, int boostTimeMs, int mapUsage)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
@@ -973,7 +973,9 @@ public class HDTrackingManagerImp : HDTrackingManager
                 " chestsFound = " + chestsFound + " eggFound = " + eggFound + 
                 " highestMultiplier = " + highestMultiplier + " highestBaseMultiplier = " + highestBaseMultiplier + 
                 " furyRushNb = " + furyRushNb + " superFireRushNb = " + superFireRushNb + " hcRevive = " + hcRevive + " adRevive = " + adRevive + 
-                " scGained = " + scGained + " hcGained = " + hcGained);
+                " scGained = " + scGained + " hcGained = " + hcGained + 
+				" boostTimeMs = " + boostTimeMs + " mapUsage = " + mapUsage
+                );
         }
 
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.end");
@@ -1002,6 +1004,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_AD_REVIVE, adRevive);
             e.SetParameterValue(TRACK_PARAM_SC_EARNED, scGained);
             e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
+
+            // TODO: Add parameters for boost time and map usage
 
             Track_SendEvent(e);
         }
