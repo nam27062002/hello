@@ -49,6 +49,8 @@ public class Entity : IEntity {
 
 	private bool m_isEdibleByZ;
 	private bool m_isEdible;
+	public bool isEdibleContent { get { return m_isEdible; } }
+
 	private DragonTier m_edibleFromTier = 0;
 	public override DragonTier edibleFromTier { get { return m_edibleFromTier; } set { m_edibleFromTier = value; } }
 
