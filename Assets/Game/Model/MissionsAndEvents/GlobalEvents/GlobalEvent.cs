@@ -92,8 +92,19 @@ public partial class GlobalEvent {
 
 	// Timestamps
 	private DateTime m_teasingStartTimestamp = new DateTime();
+	public DateTime teasingStartTimestamp {
+		get { return m_teasingStartTimestamp; }
+	}
+
 	private DateTime m_startTimestamp = new DateTime();
+	public DateTime startTimestamp {
+		get { return m_startTimestamp; }
+	}
+
 	private DateTime m_endTimestamp = new DateTime();
+	public DateTime endTimestamp {
+		get { return m_endTimestamp; }
+	}
 
 	public TimeSpan remainingTime {	// Dynamic, depending on current state
 		get { 

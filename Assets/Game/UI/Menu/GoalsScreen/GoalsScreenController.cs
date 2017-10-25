@@ -12,6 +12,8 @@ using UnityEngine.UI;
 
 using TMPro;
 
+using System;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -28,8 +30,13 @@ public class GoalsScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private TextMeshProUGUI m_chestsCountdownText = null;
+	[SerializeField] private GameObject m_eventActiveGroup = null;
+	[SerializeField] private GameObject m_eventInactiveGroup = null;
 	[SerializeField] private TextMeshProUGUI m_eventCountdownText = null;
+	[SerializeField] private Slider m_eventCountdownSlider = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_chestsCountdownText = null;
+	[Space]
 	[SerializeField] private TabSystem m_tabs = null;
 	public TabSystem tabs {
 		get { return m_tabs; }
@@ -66,24 +73,30 @@ public class GoalsScreenController : MonoBehaviour {
 				2
 			);
 
-			// Event Timer
-			// Show countdown only if there is an active event
+			// Refresh visible event button based on event state
 			GlobalEvent evt = GlobalEventManager.currentEvent;
-			bool showTimer = evt != null && evt.isActive;
-			m_eventCountdownText.transform.parent.gameObject.SetActive(showTimer);
-			if(showTimer) {
+			bool validEvent = evt != null && evt.isActive;
+			m_eventActiveGroup.SetActive(validEvent);
+			m_eventInactiveGroup.SetActive(!validEvent);
+
+			// Event Timer - only if active
+			if(validEvent) {
+				// Timer text
 				m_eventCountdownText.text = TimeUtils.FormatTime(
 					evt.remainingTime.TotalSeconds,
 					TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
 					2
 				);
 
+				// Timer bar
+				TimeSpan totalSpan = evt.endTimestamp - evt.startTimestamp;
+				m_eventCountdownSlider.value = 1f - (float)(evt.remainingTime.TotalSeconds/totalSpan.TotalSeconds);
+
+				// If time has finished, request new data
 				if (GlobalEventManager.currentEvent.remainingTime.TotalSeconds <= 0 ){
 					GlobalEventManager.RequestCurrentEventState();
 				}
 			}
-
-
 		}
 	}
 
