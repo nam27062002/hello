@@ -647,6 +647,17 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_DragonUnlocked(order + 1);
         }
     }
+
+    public override void Notify_LoadingAreaStart( string original_area, string destination_area )
+    {
+    	// TODO: Track start
+    }
+
+	public override void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration )
+	{
+		// TODO: Track end
+	}
+
     #endregion
 
     #region track	

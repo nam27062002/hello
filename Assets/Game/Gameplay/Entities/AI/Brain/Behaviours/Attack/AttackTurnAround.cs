@@ -17,6 +17,7 @@ namespace AI {
 			private static string OnTurnAroundEnd = "onTurnAroundEnd";
 
 
+			private Entity m_entity;
 			private List<IMeleeWeapon> m_meleeWeapons;
 			private AttackTurnAroundData m_data;
 			private PreyAnimationEvents m_animEvents;
@@ -44,6 +45,7 @@ namespace AI {
 					m_meleeWeapons.Add(m_pilot.FindComponentRecursive<IMeleeWeapon>(m_data.weaponB));
 				}
 
+				m_entity = m_pilot.GetComponent<Entity>();
 				m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
 
 				OnDisableWeapon();
@@ -72,6 +74,7 @@ namespace AI {
 			private void OnAnimDealDamage() {
 				for (int i = 0; i < m_meleeWeapons.Count; ++i) {
 					m_meleeWeapons[i].damage = m_data.damage;
+					m_meleeWeapons[i].entity = m_entity;
 				}
 				OnEnableWeapon();
 			}

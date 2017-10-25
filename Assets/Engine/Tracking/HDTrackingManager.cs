@@ -244,6 +244,20 @@ public class HDTrackingManager
 	/// <param name="order">Dragon oder</param>
     public virtual void Notify_DragonUnlocked( string dragon_sku, int order ) {}
 
+    /// <summary>
+    /// Notifies the loading area start.
+    /// </summary>
+    /// <param name="original_area">Original area.</param>
+    /// <param name="destination_area">Destination area.</param>
+    public virtual void Notify_LoadingAreaStart( string original_area, string destination_area ){}
+
+    /// <summary>
+    /// Notifies the loading area end.
+    /// </summary>
+    /// <param name="original_area">Original area.</param>
+    /// <param name="destination_area">Destination area.</param>
+	public virtual void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration ){}
+
     #endregion
 
     #region log

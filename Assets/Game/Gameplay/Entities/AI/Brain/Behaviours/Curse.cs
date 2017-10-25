@@ -13,9 +13,11 @@ namespace AI {
 		public class Curse : StateComponent {
 
 			private CurseData m_data;
+			private Entity m_entity;
 			private DragonHealthBehaviour m_dragon;
 			private float m_timer;
 			private bool m_enabled;
+
 
 			public override StateComponentData CreateData() {
 				return new CurseData();
@@ -31,8 +33,8 @@ namespace AI {
 				m_timer = 0;
 
 				DragonTier dragonTier = InstanceManager.player.GetComponent<DragonPlayer>().data.tier;
-				Entity entity = m_pilot.GetComponent<Entity>();
-				m_enabled = !entity.IsEdible(dragonTier);
+				m_entity = m_pilot.GetComponent<Entity>();
+				m_enabled = !m_entity.IsEdible(dragonTier);
 			}
 
 			protected override void OnUpdate() {
@@ -48,7 +50,7 @@ namespace AI {
 						if (m_machine.GetSignal(Signals.Type.Trigger)) {
 							object[] param = m_machine.GetSignalParams(Signals.Type.Trigger);
 							if (param != null && param.Length > 0 && ((GameObject)param[0]).CompareTag("Player")) {
-								m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.POISON, m_pilot.transform);
+								m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.NORMAL, m_pilot.transform, true, m_entity.sku, m_entity);
 								m_timer = 1.0f;
 							}
 						}

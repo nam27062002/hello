@@ -213,7 +213,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 					if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 						AI.IMachine machine =  m_checkEntities[i].machine;
 						if (machine != null) {
-							machine.Burn(transform);
+							machine.Burn(transform, m_type == Type.Mega);
 						}
 					} else {
 						// Show message saying I cannot burn it

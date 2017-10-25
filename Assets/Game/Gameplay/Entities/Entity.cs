@@ -50,7 +50,7 @@ public class Entity : IEntity {
 	private bool m_isEdibleByZ;
 	private bool m_isEdible;
 	private DragonTier m_edibleFromTier = 0;
-	public DragonTier edibleFromTier { get { return m_edibleFromTier; } set { m_edibleFromTier = value; } }
+	public override DragonTier edibleFromTier { get { return m_edibleFromTier; } set { m_edibleFromTier = value; } }
 
 	private bool m_canBeGrabbed;
 	private DragonTier m_grabFromTier = 0;

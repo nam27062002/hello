@@ -218,7 +218,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Initialize info text
 		// Special case for last dragon
 		if(m_nextDragonData == null) {
-			m_infoText.Localize("All dragons unlocked!");	// "All dragons unlocked!"
+			m_infoText.Localize("TID_GUI_ALL_DRAGONS_UNLOCKED");	// "All dragons unlocked!"
 		} else if(m_nextDragonLocked) {
 			m_infoText.Localize("TID_RESULTS_TO_UNLOCK_NEXT_DRAGON", m_nextDragonData.def.GetLocalized("tidName"));	// "To unlock Brute:"
 		} else {
