@@ -12,6 +12,7 @@ namespace AI {
 		public class AttackMelee : Attack {
 		
 			private IMeleeWeapon m_meleeWeapon;
+			private Entity m_entity;
 
 
 			public override StateComponentData CreateData() {
@@ -24,6 +25,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackMeleeData>();
+				m_entity = m_pilot.GetComponent<Entity>(); 
 				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
 
 				m_meleeWeapon.enabled = false;
@@ -34,6 +36,7 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) {
 				base.OnEnter(_oldState, _param);
 				m_meleeWeapon.damage = ((AttackMeleeData)m_data).damage;
+				m_meleeWeapon.entity = m_entity;
 				m_meleeWeapon.enabled = false;
 
 				m_animEvents.onEnableWeapon += new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);

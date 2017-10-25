@@ -137,7 +137,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_source">The source of the damage, optional.</param> 
 	/// <param name="_hitAnimation">Whether to trigger the hit animation or not. If the damage is not bigger than hit animation threshold, animation will no play</param>
 	/// <param name="_damageOrigin">Damage origin identifier.Example: entity sku</param>	
-	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true, string _damageOrigin = "") {
+	public void ReceiveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true, string _damageOrigin = "", Entity _entity = null) {
 		if(enabled) {
 			if ( m_dragon.IsInvulnerable() )
 				return;
@@ -169,6 +169,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 			// Notify game
 			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
+
+			if (_entity != null && !_entity.IsEdible(m_dragon.data.tier)) {
+				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
+			}
 		}
 	}
 
@@ -179,7 +183,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	/// <param name="_duration">Total duration.</param>
 	/// <param name="_type">Type of damage to be applied. If a DOT of a different type is being applied, type will be override.</param> 
 	/// <param name="_reset">Whether to override current DOT or accumulate it.</param>
-	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, Transform _source = null, bool _reset = true, string _damageOrigin = "") {
+	public void ReceiveDamageOverTime(float _dps, float _duration, DamageType _type, Transform _source = null, bool _reset = true, string _damageOrigin = "", Entity _entity = null) {
 
 		if ( m_dragon.IsInvulnerable() )
 			return;
@@ -220,6 +224,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		// Do feedback animation
 		if ( _dps >= m_dotAnimationThreshold ){
 			PlayHitAnimation( _type );
+		}
+
+		if (_entity != null && !_entity.IsEdible(m_dragon.data.tier)) {
+			Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
 		}
 	}
 
