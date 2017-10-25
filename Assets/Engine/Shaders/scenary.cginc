@@ -185,9 +185,7 @@ fixed4 frag (v2f i) : SV_Target
 	clip(col.a - _CutOff);
 #endif
 
-#ifdef SPECULAR
-	float specMask = col.w;
-#endif
+	float diffuseAlpha = col.w;
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
@@ -233,7 +231,7 @@ fixed4 frag (v2f i) : SV_Target
 	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity * (sin(_Time.y * _LightmapContrastPhase) + 1.0)));
 //	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity));
 
-#elif defined(LIGHTMAP_ON) && !defined(EMISSIVE_BLINK)
+#elif defined(LIGHTMAP_ON)// && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
 
@@ -250,11 +248,12 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef SPECULAR
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
-	col = col + (specular * specMask * i.color * _LightColor0);
+	col = col + (specular * diffuseAlpha * i.color * _LightColor0);
 #endif	
 
 #if defined(EMISSIVE_BLINK)
-	float intensity = 1.3 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
+//	float intensity = 1.3 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
+	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
 	col *= intensity;
 
 #endif
@@ -282,7 +281,7 @@ fixed4 frag (v2f i) : SV_Target
 #endif	// defined(FOG) && !defined(EMISSIVE_BLINK)
 */
 
-#if defined(FOG) && !defined(EMISSIVE_BLINK)
+#if defined(FOG)// && !defined(EMISSIVE_BLINK)
 	HG_APPLY_FOG(i, col);	// Fog
 #endif
 
