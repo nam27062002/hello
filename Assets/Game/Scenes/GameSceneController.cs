@@ -140,6 +140,9 @@ public class GameSceneController : GameSceneControllerBase {
 
     private SwitchAsyncScenes m_switchAsyncScenes = new SwitchAsyncScenes();
 
+    TrackerBoostTime m_boostTimeTracker;
+    TrackerMapUsage m_mapUsageTracker;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -149,6 +152,9 @@ public class GameSceneController : GameSceneControllerBase {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
+
+		m_boostTimeTracker = new TrackerBoostTime();
+		m_mapUsageTracker = new TrackerMapUsage();
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -741,6 +747,9 @@ public class GameSceneController : GameSceneControllerBase {
             }
         }
 
+		m_boostTimeTracker.SetValue(0, false);
+		m_mapUsageTracker.SetValue(0, false);
+
         HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
     }
 
@@ -772,7 +781,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc);
+            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
     }
 
     private void Track_RunEnd(bool _quitGame) {
