@@ -46,7 +46,6 @@ namespace AI {
 		public float biteResistance { get { return 0; } }
 		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
 
-
 		protected void Awake() {
 			m_transform = transform;
 			m_eye = m_transform.Find("eye");
@@ -79,6 +78,8 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.OnDestroyed);
 		}
 
+
+
 		public void Spawn(ISpawner _spawner) {
 			m_signals.Init();
 			m_sensor.Init();
@@ -109,7 +110,9 @@ namespace AI {
 		public void OnTrigger(string _trigger, object[] _param = null) {
 			if (_trigger == SignalTriggers.OnDestroyed) {
 				m_entity.Disable(true);
-			} 
+			} else if ( _trigger == SignalTriggers.OnBurning ){
+				m_viewControl.Burn(m_inflammable.burningTime);
+			}
 		}
 
 		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
