@@ -147,7 +147,7 @@ public class DragonTint : MonoBehaviour
 
 		// Other color
 		Color otherColor = Color.black;
-		if ( m_health.HasDOT() )
+		if ( m_health.HasDOT(DamageType.POISON) )
 		{
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_curseColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;
