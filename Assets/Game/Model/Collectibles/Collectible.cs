@@ -62,8 +62,14 @@ public abstract class Collectible : MonoBehaviour {
 
 		// Also make sure the object has the right tag
 		this.gameObject.tag = GetTag();
+	}
 
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	protected void Start() {
 		// Start in the IDLE state
+		// Don't do this on the Awake call, since it would disable the nested MapMarker before it's properly awaken, resulting in issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-573
 		SetState(State.IDLE);
 	}
 
@@ -80,7 +86,9 @@ public abstract class Collectible : MonoBehaviour {
 		GetComponent<Collider>().enabled = active;
 
 		// Map marker
-		if(m_mapMarker != null) m_mapMarker.showMarker = active;
+		if(m_mapMarker != null) {
+			m_mapMarker.showMarker = active;
+		}
 
 		// FX
 		if(m_idleFX != null) {
