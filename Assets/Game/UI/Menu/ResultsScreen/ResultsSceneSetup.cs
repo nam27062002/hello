@@ -164,8 +164,8 @@ public class ResultsSceneSetup : MonoBehaviour {
 		m_confettiFX.Play(true);
 
 		// Restart SFX
-		string audioId = "hd_unlock_dragon";
+		/*string audioId = "hd_unlock_dragon";
 		AudioController.Stop(audioId);
-		AudioController.Play(audioId);
+		AudioController.Play(audioId);*/
 	}
 }
