@@ -137,8 +137,12 @@ public class GameSceneController : GameSceneControllerBase {
 
 	// Internal
 	private float m_timer = -1;	// Misc use
+	private float m_loadingTimer = 0;
 
     private SwitchAsyncScenes m_switchAsyncScenes = new SwitchAsyncScenes();
+
+    TrackerBoostTime m_boostTimeTracker;
+    TrackerMapUsage m_mapUsageTracker;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -149,6 +153,9 @@ public class GameSceneController : GameSceneControllerBase {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
+
+		m_boostTimeTracker = new TrackerBoostTime();
+		m_mapUsageTracker = new TrackerMapUsage();
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -543,6 +550,10 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.DELAY: {
 				// Reset timer
 				m_timer = INITIAL_DELAY;
+
+				// Notify loadGameplay start
+				HDTrackingManager.Instance.Notify_LoadingGameplayStart();
+				m_loadingTimer = Time.time;
 			} break;
 
 			case EStates.LOADING_LEVEL: {
@@ -584,6 +595,9 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Make dragon playable!
 				InstanceManager.player.playable = true;
+
+				// TODO: Notify loadGameplay end
+				HDTrackingManager.Instance.Notify_LoadingGameplayEnd( Time.time - m_loadingTimer );
 			} break;
 
 			case EStates.FINISHED: {
@@ -741,6 +755,9 @@ public class GameSceneController : GameSceneControllerBase {
             }
         }
 
+		m_boostTimeTracker.SetValue(0, false);
+		m_mapUsageTracker.SetValue(0, false);
+
         HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
     }
 
@@ -772,7 +789,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc);
+            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
     }
 
     private void Track_RunEnd(bool _quitGame) {

@@ -136,9 +136,11 @@ public class HDTrackingManager
     /// <param name="adRevive">Amount of times the user paid by watching an ad to revive her dragon druring the round.</param>
     /// <param name="scGained">Amount of soft currency gained during the round.</param>
     /// <param name="hcGained">Amount of hard currency gained during the round.</param>
+	/// <param name="boostTime">Amount of time the player was using boost during the round in seconds.</param>
+    /// <param name="mapUsage">Numer of time the player opened the map.</param>
     public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
-        int scGained, int hcGained) {}
+        int scGained, int hcGained, float boostTime, int mapUsage) {}
 
     /// <summary>
     /// Called when a run finished (because of death or quit game). Remember that a round is composed of at least one run, but it can have more than one if after a run
@@ -243,6 +245,17 @@ public class HDTrackingManager
     /// <param name="dragon_sku">Dragon sku.</param>
 	/// <param name="order">Dragon oder</param>
     public virtual void Notify_DragonUnlocked( string dragon_sku, int order ) {}
+
+    /// <summary>
+    /// Notifies the loading gameplay started.
+    /// </summary>
+	public virtual void Notify_LoadingGameplayStart(){}
+
+	/// <summary>
+	/// Notifies the loading gameplay end.
+	/// </summary>
+	/// <param name="loading_duration">Loading duration in seconds.</param>
+	public virtual void Notify_LoadingGameplayEnd(  float loading_duration ){}
 
     /// <summary>
     /// Notifies the loading area start.

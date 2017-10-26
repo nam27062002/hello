@@ -34,6 +34,10 @@ public class MapMarker : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Type m_type = Type.DECO;
+	public Type type {
+		get { return m_type; }
+	}
+
 	[Space]
 	[SerializeField] private bool m_rotateWithObject = true;
 	[SerializeField] private bool m_zoomCompensation = true;
@@ -156,7 +160,9 @@ public class MapMarker : MonoBehaviour {
 	/// Set the position of the marker relative to its reference transform.
 	/// </summary>
 	protected virtual void UpdatePosition() {
-		GetMarkerTransform().localPosition = Vector3.zero;
+		Transform t = GetMarkerTransform();
+		t.localPosition = Vector3.zero;
+		t.position = t.position + new Vector3(0f, 0f, -5f);
 	}
 
 	/// <summary>
