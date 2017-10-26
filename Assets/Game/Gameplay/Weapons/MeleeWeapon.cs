@@ -46,7 +46,7 @@ public class MeleeWeapon : IMeleeWeapon {
 
 			dragonMotion.AddForce(knockBack);
 		}
-		InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, null, true, m_entity.sku, m_entity);
+		InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, m_transform, true, m_entity.sku, m_entity);
 	}
 
 }

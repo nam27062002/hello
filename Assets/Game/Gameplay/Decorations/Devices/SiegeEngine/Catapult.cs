@@ -56,6 +56,8 @@ public class Catapult : SimpleDevice {
 	private float m_hAngle;
 	private float m_timer;
 
+
+	private Transform m_transform;
 	private Animator m_animator;
 	private PreyAnimationEvents m_animEvents;
 
@@ -69,6 +71,7 @@ public class Catapult : SimpleDevice {
 
 	// Use this for initialization
 	void Start () {
+		m_transform = transform;
 		m_ammo = new GameObject[m_extraProjectiles.Length + 1];
 		m_ammoPoolHandlers = new PoolHandler[m_ammoList.Length];
 
@@ -232,7 +235,7 @@ public class Catapult : SimpleDevice {
 				Vector3 direction = DirectionFromAngles(m_vAngle + m_extraProjectiles[i].vAngleOffset, 
 														m_hAngle + m_extraProjectiles[i].hAngleOffset);
 
-				catapultAmmo.ShootTowards(direction, m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, m_damage);
+				catapultAmmo.ShootTowards(direction, m_initialVelocity + m_extraProjectiles[i].initialVelocityOffset, m_damage, m_transform);
 
 				m_ammo[i] = null;
 			}
@@ -242,7 +245,7 @@ public class Catapult : SimpleDevice {
 			Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
 			Vector3 direction = DirectionFromAngles(m_vAngle, m_hAngle);
 
-			catapultAmmo.ShootTowards(direction, m_initialVelocity, m_damage);
+			catapultAmmo.ShootTowards(direction, m_initialVelocity, m_damage, m_transform);
 
 			m_ammo[i] = null;
 		}

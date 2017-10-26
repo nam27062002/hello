@@ -185,7 +185,7 @@ namespace AI {
 				if (!m_onDamageEventDone) {
 					if (m_projectile != null) {
 						IProjectile projectile = m_projectile.GetComponent<IProjectile>();
-						projectile.ShootAtPosition(m_cannonEye.position + m_cannonEye.forward * 15f, m_cannonEye.forward, m_data.damage);
+						projectile.ShootAtPosition(m_cannonEye.position + m_cannonEye.forward * 15f, m_cannonEye.forward, m_data.damage, m_machine.transform);
 
 						m_projectile = null;
 					}
