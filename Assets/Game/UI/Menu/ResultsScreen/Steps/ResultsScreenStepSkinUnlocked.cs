@@ -207,4 +207,14 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			purchaseFlow.Begin(priceSC, UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.ACQUIRE_DISGUISE, def);
 		}
 	}
+
+	// Callback to rescale particles
+	public void PreviewScaledFinished()
+	{
+		ParticleScaler[] scalers = m_preview.GetComponentsInChildren<ParticleScaler>();
+		for( int i = 0;i<scalers.Length; ++i )
+		{
+			scalers[i].DoScale();
+		}
+	}
 }
