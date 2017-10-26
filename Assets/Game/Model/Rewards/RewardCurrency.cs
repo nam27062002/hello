@@ -12,10 +12,10 @@ namespace Metagame {
 	/// Base abstract class for all currency rewards.
 	/// </summary>
 	public abstract class RewardCurrency : Reward {
-        private HDTrackingManager.EEconomyGroup EconomyGroup { get; set; }
+		protected HDTrackingManager.EEconomyGroup EconomyGroup { get; set; }
 
-		public RewardCurrency() {			
-			
+		public RewardCurrency(string _source) {			
+			m_source = _source;
 		}
 
 		protected void Init(string _type, long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) {
@@ -36,7 +36,7 @@ namespace Metagame {
 	public class RewardSoftCurrency : RewardCurrency {
 		public const string TYPE_CODE = "sc";
 
-		public RewardSoftCurrency(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) : base() {
+		public RewardSoftCurrency(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) : base(_source) {
 			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.SOFT;
 		}
@@ -48,7 +48,7 @@ namespace Metagame {
 	public class RewardHardCurrency : RewardCurrency {		
 		public const string TYPE_CODE = "pc";
 
-		public RewardHardCurrency(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) : base() {
+		public RewardHardCurrency(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) : base(_source) {
 			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.HARD;
 		}
@@ -60,7 +60,7 @@ namespace Metagame {
 	public class RewardGoldenFragments : RewardCurrency {
 		public const string TYPE_CODE = "gf";
 
-		public RewardGoldenFragments(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) : base() {
+		public RewardGoldenFragments(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) : base(_source) {
 			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
 		}
@@ -69,7 +69,7 @@ namespace Metagame {
 			base.DoCollect();
 
 			if (EggManager.goldenEggCompleted) {
-				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG);
+				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG, EconomyGroup.ToString());
 				UsersManager.currentUser.rewardStack.Push(reward);
 			}
 		}

@@ -281,8 +281,10 @@ public abstract class CaptureTool : MonoBehaviour {
 		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it
 
 		// Aux vars
-		int width = Screen.width;
-		int height = Screen.height;
+		int width = 3000;
+		int height = (int)(width/m_mainCamera.aspect);	// [AOC] Keep aspect ratio!
+		int croppedW = width;
+		int croppedH = height;
 
 		// Configure read rectangle area
 		// Adjust if cropping
@@ -301,23 +303,23 @@ public abstract class CaptureTool : MonoBehaviour {
 
 			// Change read rectangle
 			readRect = new Rect(
-				viewportCorners[0].x * Screen.width,
-				viewportCorners[0].y * Screen.height,
-				(viewportCorners[2].x - viewportCorners[0].x) * Screen.width,
-				(viewportCorners[1].y - viewportCorners[0].y) * Screen.height
+				viewportCorners[0].x * width,
+				viewportCorners[0].y * height,
+				(viewportCorners[2].x - viewportCorners[0].x) * width,
+				(viewportCorners[1].y - viewportCorners[0].y) * height
 			);
 
 			// Update vars
-			width = Mathf.RoundToInt(readRect.width);
-			height = Mathf.RoundToInt(readRect.height);
+			croppedW = Mathf.RoundToInt(readRect.width);
+			croppedH = Mathf.RoundToInt(readRect.height);
 		}
 
 		// If the texture is not created, do it now
 		// If the screen size has changed, just resize the texture
 		if(m_picture == null) {
-			m_picture = new Texture2D(width, height, TextureFormat.ARGB32, false);
-		} else if(m_picture.width != width || m_picture.height != height) {
-			m_picture.Resize(width, height);
+			m_picture = new Texture2D(croppedW, croppedH, TextureFormat.ARGB32, false);
+		} else if(m_picture.width != croppedW || m_picture.height != croppedH) {
+			m_picture.Resize(croppedW, croppedH);
 		}
 
 		// Hide all UI elements
@@ -365,7 +367,7 @@ public abstract class CaptureTool : MonoBehaviour {
 				m_mainCamera.backgroundColor = Colors.transparentBlack;
 
 				// Create a temporal render texture and render the current camera viewport to it
-				RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 32, RenderTextureFormat.ARGB32);
+				RenderTexture rt = new RenderTexture(width, height, 32, RenderTextureFormat.ARGB32);
 				m_mainCamera.targetTexture = rt;
 				m_mainCamera.Render();
 				RenderTexture.active = rt;
