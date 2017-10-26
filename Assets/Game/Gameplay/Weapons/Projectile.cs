@@ -60,6 +60,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private PoolHandler m_poolHandler;
 
+	private Transform m_source;
+
 	private Vector3 m_startPosition;
 	private Vector3 m_lastPosition;
 	private Vector3 m_position;
@@ -169,7 +171,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_state = State.Idle;
 	}
 
-	public void Shoot(Transform _target, Vector3 _direction, float _damage) {
+	public void Shoot(Transform _target, Vector3 _direction, float _damage, Transform _source) {
+		m_source = _source;
+
 		m_target = _target;
 		m_targetPosition = m_target.position;
 
@@ -182,7 +186,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 		DoShoot(m_speed, _damage);
 	}
 
-	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage, Transform _source) {
+		m_source = _source;
+
 		m_direction = _direction;
 
 		m_distanceToTarget = float.MaxValue;
@@ -193,7 +199,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 	}
 
 	// Shoots At world position _pos
-	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage) {
+	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage, Transform _source) {
+		m_source = _source;
+
 		m_target = null;
 		m_targetPosition = _target;
 
@@ -404,7 +412,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 					dragonMotion.AddForce(knockBackDirection * actualKnockback);
 				}
 
-				player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
+				player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, m_source);
 			}
 
 			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
