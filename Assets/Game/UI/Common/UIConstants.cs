@@ -194,6 +194,15 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 	#endregion
 
+	// -------------------------------------------------------------------------
+	// Other constants
+	#region OtherConstants
+	[SerializeField] private float m_mapMarkersDepth = -50f;
+	public static float MAP_MARKERS_DEPTH {
+		get { return instance.m_mapMarkersDepth; }
+	}
+	#endregion
+
 	//------------------------------------------------------------------------//
 	// NON-STATIC MEMBERS													  //
 	//------------------------------------------------------------------------//
