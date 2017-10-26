@@ -231,8 +231,20 @@ public class HungryDragonEditorMenu
         // Pick selected prefab adn check that it's valid
         for (int i = 0; i < Selection.gameObjects.Length; i++)
         {
+			// Aux vars
+			GameObject entityPrefab = Selection.gameObjects[i];
+
+			// Show progress bar
+			if(EditorUtility.DisplayCancelableProgressBar(
+				"Generating Spawner Icons...",
+				i + "/" + Selection.gameObjects.Length + ": " + entityPrefab.name,
+				(float)i/(float)Selection.gameObjects.Length
+			)) {
+				// Cancel pressed, break loop!
+				break;
+			}
+
             // Check that prefab corresponds to an entity
-            GameObject entityPrefab = Selection.gameObjects[i];
             if (entityPrefab.GetComponent<Entity>() == null)
             {
                 EditorUtility.DisplayDialog("Error", "Selected prefab " + entityPrefab.name + " doesn't have the Entity component.", "Skip It");
@@ -247,10 +259,12 @@ public class HungryDragonEditorMenu
                 SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite, myPath + ".png");
             }
 
-
             // Generate icon for the selected prefab
             // SpawnerIconGeneratorEditor.GenerateIcon(entityPrefab, Colors.transparentWhite);
         }
+
+		// Clear progress bar
+		EditorUtility.ClearProgressBar();
     }
 
     /// <summary>

@@ -616,8 +616,8 @@ public class GameSceneController : GameSceneControllerBase {
                 // Show loading screen
 				LoadingScreen.Toggle(true, false);
 
-                // Disable dragon and entities!
-                InstanceManager.player.gameObject.SetActive(false);
+				// Disable dragon and entities!
+     			InstanceManager.player.gameObject.SetActive(false);
 
                 // Clear pools to save memory for the results screen
                 ClearGame();
@@ -635,7 +635,7 @@ public class GameSceneController : GameSceneControllerBase {
                   
                     int count = gos.Length;
                     for (int i = 0; i < count; i++) {                        
-                        if (gos[i] != gameObject && gos[i] != mainCameraGO && gos[i] != uiRoot) {                            
+                        if (gos[i] != gameObject && gos[i] != mainCameraGO && gos[i] != uiRoot && gos[i] != InstanceManager.player.gameObject ) {
                             Destroy(gos[i]);                                                                                     
                         }
                     }
@@ -647,34 +647,39 @@ public class GameSceneController : GameSceneControllerBase {
                 string[] tokens;
                 for (int i = 0; i < scenesToUnload.Count;) {
                     tokens = scenesToUnload[i].Split('_');
-                    if (tokens.Length > 1 && tokens[0] == "SP")
+                    if (tokens.Length > 1 && tokens[0].CompareTo("SP") == 0){
                         scenesToUnload.RemoveAt(i);
-                    else
+                    }else{
                         i++;
+					}
                 }
                                                      
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
-                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded);
+                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded, OnScenesUnloaded);
             } break;
         }
 		
 		// Store new state
 		m_state = _newState;
 	}
+	private void OnScenesUnloaded()
+	{
+		// This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
+        if (uiRoot != null) {
+            uiRoot.SetActive(false);
+        }
+		DestroyImmediate( InstanceManager.player.gameObject );
+		InstanceManager.player = null;
+	}
 
-    private void OnResultsSceneLoaded() {        
+    private void OnResultsSceneLoaded() {
 
 		Scene scene = SceneManager.GetSceneByName( ResultsScreenController.NAME );
 		SceneManager.SetActiveScene(scene);
 
 		// Hide loading screen
 		LoadingScreen.Toggle(false, false);
-
-        // This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
-        if (uiRoot != null) {
-            uiRoot.SetActive(false);
-        }
 
         // We don't need it anymore as the results screen scene, which has its own AudioListener, has been loaded completely
         if (mainCamera != null) {
