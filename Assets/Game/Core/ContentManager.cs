@@ -17,7 +17,12 @@ public class ContentManager
 
 		// Settings
 		kDefinitionFiles.Add(DefinitionsCategory.LOCALIZATION, new string[]{"Rules/localizationDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{"Rules/gameSettings", "Rules/dragonSettings", "Rules/initialSettings"});
+		kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{
+			"Rules/gameSettings", 
+			"Rules/dragonSettings", 
+			"Rules/initialSettings", 
+			"Rules/missingRessourcesVariablesDefinitions"
+		});
 		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[]{"Rules/PM_level_0_area1"});
 		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[]{"Rules/PM_level_0_area2"});
 		kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[]{"Rules/PM_level_0_area3"});
@@ -62,7 +67,6 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.CHEST_REWARDS, new string[]{"Rules/chestRewardDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[]{"Rules/rarityDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[]{"Rules/hungryLettersDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
 
 		// Disguises
 		kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[]{"Rules/disguisesDefinitions"});
@@ -79,6 +83,10 @@ public class ContentManager
 
         // Achievements
 		kDefinitionFiles.Add(DefinitionsCategory.ACHIEVEMENTS, new string[] { "Rules/achievementsDefinitions" });
+
+		// Economy
+		kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
 
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
