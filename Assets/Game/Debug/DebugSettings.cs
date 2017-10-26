@@ -33,6 +33,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public const string SHOW_COLLISIONS					        = "SHOW_COLLISIONS";
     public const string RESOLUTION_FACTOR                       = "RESOLUTION_FACTOR";
     public const string SHOW_SPEED						        = "SHOW_SPEED";
+	public const string SHOW_ALL_COLLECTIBLES					= "SHOW_ALL_COLLECTIBLES";
 
 	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";  
 	public const string VERTICAL_ORIENTATION		 		    = "VERTICAL_ORIENTATION";
