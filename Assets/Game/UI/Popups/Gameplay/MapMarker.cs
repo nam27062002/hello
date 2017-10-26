@@ -162,7 +162,7 @@ public class MapMarker : MonoBehaviour {
 	protected virtual void UpdatePosition() {
 		Transform t = GetMarkerTransform();
 		t.localPosition = Vector3.zero;
-		t.position = t.position + new Vector3(0f, 0f, -5f);
+		t.position = t.position + new Vector3(0f, 0f, UIConstants.MAP_MARKERS_DEPTH);
 	}
 
 	/// <summary>
