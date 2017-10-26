@@ -247,6 +247,17 @@ public class HDTrackingManager
     public virtual void Notify_DragonUnlocked( string dragon_sku, int order ) {}
 
     /// <summary>
+    /// Notifies the loading gameplay started.
+    /// </summary>
+	public virtual void Notify_LoadingGameplayStart(){}
+
+	/// <summary>
+	/// Notifies the loading gameplay end.
+	/// </summary>
+	/// <param name="loading_duration">Loading duration in seconds.</param>
+	public virtual void Notify_LoadingGameplayEnd(  float loading_duration ){}
+
+    /// <summary>
     /// Notifies the loading area start.
     /// </summary>
     /// <param name="original_area">Original area.</param>
