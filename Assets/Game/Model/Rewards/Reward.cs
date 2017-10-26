@@ -47,11 +47,10 @@ namespace Metagame {
 		public static string RarityToSku(Rarity _rarity) {
 			// We could double-check with content, but it's much faster if we hardcode it (and these skus are not supposed to change)
 			switch(_rarity) {
-				case Rarity.COMMON:		return "common";		break;
-				case Rarity.RARE:		return "rare";			break;
-				case Rarity.EPIC:		return "epic";			break;
-				case Rarity.SPECIAL:	return "special";		break;
-				default:				return string.Empty;	break;
+				case Rarity.COMMON:		return "common";
+				case Rarity.RARE:		return "rare";
+				case Rarity.EPIC:		return "epic";
+				case Rarity.SPECIAL:	return "special";
 			}
 			return string.Empty;
 		}
@@ -60,7 +59,7 @@ namespace Metagame {
 		/// Constructor from json data.
 		/// </summary>
 		/// <param name="_data">Data to be parsed.</param>
-		public static Reward CreateFromJson(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup) {			
+		public static Reward CreateFromJson(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
 			string type = _data["type"];
 			type = type.ToLower();
 			
@@ -70,7 +69,7 @@ namespace Metagame {
 			else if(_data.ContainsKey("amount")) 
 				data = _data["amount"];
 
-			return CreateFromTypeCode(type, data, _economyGroup);
+			return CreateFromTypeCode(type, data, _economyGroup, _source);
 		}
 
 		/// <summary>
@@ -79,23 +78,23 @@ namespace Metagame {
 		/// <returns>A reward.</returns>
 		/// <param name="_typeCode">Type code.</param>
 		/// <param name="_data">Data.</param>
-		public static Reward CreateFromTypeCode(string _typeCode, string _data, HDTrackingManager.EEconomyGroup _economyGroup) {			
+		public static Reward CreateFromTypeCode(string _typeCode, string _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
 			switch(_typeCode) {
-				case RewardSoftCurrency.TYPE_CODE:	 return CreateTypeSoftCurrency(long.Parse(_data), _economyGroup);
-				case RewardHardCurrency.TYPE_CODE:	 return CreateTypeHardCurrency(long.Parse(_data), _economyGroup);
-				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments(int.Parse(_data), Rarity.COMMON, _economyGroup);
-				case RewardEgg.TYPE_CODE:			 return CreateTypeEgg(_data);
-				case RewardPet.TYPE_CODE:			 return CreateTypePet(_data);
+				case RewardSoftCurrency.TYPE_CODE:	  return CreateTypeSoftCurrency(long.Parse(_data), _economyGroup, _source);
+				case RewardHardCurrency.TYPE_CODE:	  return CreateTypeHardCurrency(long.Parse(_data), _economyGroup, _source);
+				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments(int.Parse(_data), Rarity.COMMON, _economyGroup, _source);
+				case RewardEgg.TYPE_CODE:			  return CreateTypeEgg(_data, _source);
+				case RewardPet.TYPE_CODE:			  return CreateTypePet(_data, _source);
 			}
 			return null;
 		}
 
-		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup) { return new RewardSoftCurrency(_amount, Rarity.COMMON, _economyGroup); }
-		public static RewardHardCurrency CreateTypeHardCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup) { return new RewardHardCurrency(_amount, Rarity.COMMON, _economyGroup); }
-		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) { return new RewardGoldenFragments(_amount, _rarity, _economyGroup); }
-		public static RewardEgg CreateTypeEgg(string _sku) 								{ return new RewardEgg(_sku); }
-		public static RewardPet CreateTypePet(string _sku)								{ return new RewardPet(_sku); }
-		public static RewardPet CreateTypePet(DefinitionNode _def)						{ return new RewardPet(_def); }
+		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source)						{ return new RewardSoftCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
+		public static RewardHardCurrency CreateTypeHardCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 						{ return new RewardHardCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
+		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 	{ return new RewardGoldenFragments(_amount, _rarity, _economyGroup, _source); }
+		public static RewardEgg CreateTypeEgg(string _sku, string _source) 				{ return new RewardEgg(_sku, _source); }
+		public static RewardPet CreateTypePet(string _sku, string _source)				{ return new RewardPet(_sku, _source); }
+		public static RewardPet CreateTypePet(DefinitionNode _def, string _source)		{ return new RewardPet(_def, _source); }
 		#endregion
 
 		//------------------------------------------------------------------------//
@@ -125,6 +124,9 @@ namespace Metagame {
 		// Sku of the rewarded item, if any
 		protected string m_sku = "";
 		public string sku { get { return m_sku; }}
+
+		protected string m_source = "";
+		public string source { get { return m_source; } }
 
 		// Definition of the rewarded item, if any
 		protected DefinitionNode m_def = null;
