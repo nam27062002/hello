@@ -639,6 +639,22 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_LegalPopupClosed(nbViews, duration, hasBeenAccepted);
     }
 
+	public override void Notify_Pet(string _sku, string _source) 
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_Pet " + _sku + " from " + _source);
+		}
+
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.pet");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_PETNAME, _sku);
+			Track_AddParamString(e, TRACK_PARAM_SOURCE_OF_PET, _source);
+			Track_SendEvent(e);
+		}
+	}
+
 	public override void Notify_DragonUnlocked( string dragon_sku, int order )
 	{
         // Track af_X_dragon_unlocked where X is the dragon level (dragon level is order + 1). Only dragon levels between 2 to 7 have to be tracked
@@ -1318,6 +1334,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PET2                       = "pet2";
     private const string TRACK_PARAM_PET3                       = "pet3";
     private const string TRACK_PARAM_PET4                       = "pet4";
+	private const string TRACK_PARAM_PETNAME                    = "petName";
     private const string TRACK_PARAM_PLAYER_ID                  = "playerID";
     private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
     private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
@@ -1329,6 +1346,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SCORE                      = "score";
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
+	private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
 	private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
 	private const string TRACK_PARAM_STEP_NAME	                = "stepName";
 	private const string TRACK_PARAM_STOP_CAUSE                 = "stopCause";

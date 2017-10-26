@@ -239,6 +239,13 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted) {}
 
+	/// <summary>
+	/// The user got a new Pet!
+	/// </summary>
+	/// <param name="_sku">Pet sku.</param>
+	/// <param name="_source">Where did the Pet come from?.</param>
+	public virtual void Notify_Pet(string _sku, string _source) {}
+
     /// <summary>
     /// Notifies the dragon unlocked.
     /// </summary>

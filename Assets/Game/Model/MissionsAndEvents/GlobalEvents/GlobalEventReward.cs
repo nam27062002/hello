@@ -42,7 +42,7 @@ public partial class GlobalEvent {
 		/// <param name="_data">Data to be parsed.</param>
 		public RewardSlot(SimpleJSON.JSONNode _data) {
 			// Reward data
-			reward = Metagame.Reward.CreateFromJson(_data, HDTrackingManager.EEconomyGroup.REWARD_GLOBAL_EVENT);
+			reward = Metagame.Reward.CreateFromJson(_data, HDTrackingManager.EEconomyGroup.REWARD_GLOBAL_EVENT, GlobalEventManager.currentEvent.name);
 
 			// [AOC] Going to hell!
 			// 		 Mini-hack: if reward is gold fragments, tweak its rarity so displayed reward looks cooler

@@ -55,7 +55,8 @@ namespace Metagame {
 		/// Constructor from egg sku.
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
-		public RewardEgg(string _sku) {
+		public RewardEgg(string _sku, string _source) {
+			m_source = _source;
 			Build(_sku);	// This will generate a random reward following the gacha rules
 		}
 
@@ -164,7 +165,7 @@ namespace Metagame {
 
 					// Create the egg reward!
 					if(petDef != null) {
-						m_reward = CreateTypePet(petDef);
+						m_reward = CreateTypePet(petDef, m_sku);
 						Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
 					} else {
 						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + "!" + "</color>");
