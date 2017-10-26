@@ -656,8 +656,12 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns>The tier when breaking.</returns>
 	public DragonTier GetTierWhenBreaking()
 	{
-		DragonTier ret = m_data.tier + m_tierIncreaseBreak;
-		return ret;
+		int ret = (int)m_data.tier + m_tierIncreaseBreak;
+		if ( ret >= (int)DragonTier.COUNT )
+		{
+			ret = (int)(DragonTier.COUNT - 1);
+		}
+		return (DragonTier)ret;
 	}
 
 	public void SetOnBreakIncrease( int increase )
