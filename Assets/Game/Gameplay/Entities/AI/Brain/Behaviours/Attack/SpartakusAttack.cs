@@ -54,6 +54,7 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<SpartakusAttackData>();
 				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
 				m_meleeWeapon.damage = m_data.damage;
+				m_meleeWeapon.entity = m_pilot.GetComponent<Entity>();
 				m_meleeWeapon.enabled = false;
 			}
 

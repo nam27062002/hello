@@ -648,6 +648,16 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+	public override void Notify_LoadingGameplayStart()
+	{
+		// TODO: Track
+	}
+
+	public override void Notify_LoadingGameplayEnd(  float loading_duration )
+	{
+		// TODO: Track
+	}
+
     public override void Notify_LoadingAreaStart( string original_area, string destination_area )
     {
     	// TODO: Track start

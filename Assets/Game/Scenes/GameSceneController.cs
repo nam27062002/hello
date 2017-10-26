@@ -137,6 +137,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 	// Internal
 	private float m_timer = -1;	// Misc use
+	private float m_loadingTimer = 0;
 
     private SwitchAsyncScenes m_switchAsyncScenes = new SwitchAsyncScenes();
 
@@ -549,6 +550,10 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.DELAY: {
 				// Reset timer
 				m_timer = INITIAL_DELAY;
+
+				// Notify loadGameplay start
+				HDTrackingManager.Instance.Notify_LoadingGameplayStart();
+				m_loadingTimer = Time.time;
 			} break;
 
 			case EStates.LOADING_LEVEL: {
@@ -590,6 +595,9 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Make dragon playable!
 				InstanceManager.player.playable = true;
+
+				// TODO: Notify loadGameplay end
+				HDTrackingManager.Instance.Notify_LoadingGameplayEnd( Time.time - m_loadingTimer );
 			} break;
 
 			case EStates.FINISHED: {

@@ -170,7 +170,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			// Notify game
 			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
 
-			if (_entity != null && _entity.IsEdible() && !(_entity.IsEdible(m_dragon.data.tier) || _entity.CanBeHolded(m_dragon.data.tier))) {
+			if (_entity != null && _entity.isEdibleContent && !(_entity.IsEdible(m_dragon.data.tier) || _entity.CanBeHolded(m_dragon.data.tier))) {
 				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
 			}
 		}
@@ -226,7 +226,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			PlayHitAnimation( _type );
 		}
 
-		if (_entity != null && _entity.IsEdible() && !(_entity.IsEdible(m_dragon.data.tier) || _entity.CanBeHolded(m_dragon.data.tier))) {
+		if (_entity != null && _entity.isEdibleContent && !(_entity.IsEdible(m_dragon.data.tier) || _entity.CanBeHolded(m_dragon.data.tier))) {
 			Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
 		}
 	}
