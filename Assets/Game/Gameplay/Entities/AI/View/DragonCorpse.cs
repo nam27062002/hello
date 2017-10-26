@@ -231,10 +231,13 @@ public class DragonCorpse : MonoBehaviour {
 		Material bodyMaterial = new Material (Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_body"));
 		if ( Application.isPlaying )
 		{
-			wingsMaterial.shader = m_deathShader;
+			if ( wingsMaterial )
+				wingsMaterial.shader = m_deathShader;
 			bodyMaterial.shader = m_deathShader;
-		}
-		m_fadeMaterials.Add( wingsMaterial );
+
+		}		
+		if ( wingsMaterial )
+			m_fadeMaterials.Add( wingsMaterial );
 		m_fadeMaterials.Add( bodyMaterial );
 		for (int i = 0; i < m_renderers.Length; i++) {
 			string shaderName = m_originalMaterials[i].shader.name;
