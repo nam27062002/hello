@@ -124,7 +124,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private void OnLevelUp(DragonData _data) 
 	{
 		PlaySound(m_levelUpSound);
-		m_animator.SetTrigger("LevelUp");
+		// m_animator.SetTrigger("LevelUp");
 	}
 
 	private void OnHealthModifierChanged(DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier)

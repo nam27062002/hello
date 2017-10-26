@@ -29,6 +29,10 @@ public class SwitchAsyncScenes
             switch (mState)
             {
                 case EState.UNLOADING_SCENES:
+					if (OnUnload != null)
+                    {
+						OnUnload();
+                    }
                     Resources.UnloadUnusedAssets();
                     System.GC.Collect();
                     break;
@@ -76,6 +80,7 @@ public class SwitchAsyncScenes
     private bool DelayActivationScenes { get; set; }
 
     private System.Action OnDone { get; set; }
+	private System.Action OnUnload { get; set; }
 
     public SwitchAsyncScenes()
     {
@@ -97,12 +102,13 @@ public class SwitchAsyncScenes
         OnDone = null;
     }
 
-    public void Perform(List<string> scenesToUnload, List<string> scenesToLoad, bool delayActivationScenes, System.Action onDone=null)
+    public void Perform(List<string> scenesToUnload, List<string> scenesToLoad, bool delayActivationScenes, System.Action onDone=null, System.Action onUnload=null)
     {
         ScenesToUnload = scenesToUnload;
         ScenesToLoad = scenesToLoad;
         DelayActivationScenes = delayActivationScenes;
         OnDone = onDone;
+		OnUnload = onUnload;
         State = EState.UNLOADING_SCENES;
     }
 
@@ -125,7 +131,7 @@ public class SwitchAsyncScenes
                 }
 
                 if (done)
-                {                                               
+                {                                      
                     State = EState.LOADING_SCENES;
                 }
             }

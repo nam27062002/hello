@@ -583,7 +583,10 @@ public class DragonPlayer : MonoBehaviour {
 	private void OnLevelUp(DragonData _data) {
 		// Assume it's this dragon
 		// Make sure the dragon has the scale according to its level
-		gameObject.transform.localScale = Vector3.one * data.scale;
+		// gameObject.transform.localScale = Vector3.one * data.scale;
+		gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
+		if (m_breathBehaviour.IsFuryOn())
+			m_breathBehaviour.RecalculateSize();
 
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );

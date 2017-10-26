@@ -56,7 +56,8 @@ public class HUDMessage : MonoBehaviour {
 		DRUNK,
 		KEY_FOUND,
 		KEY_LIMIT,
-		BREAK_OBJECT_SHALL_NOT_PASS
+		BREAK_OBJECT_SHALL_NOT_PASS,
+		DAMAGE_RECEIVED
 	}
 
 	// How to react with consecutive triggers
@@ -188,7 +189,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.HEALTH_EATMORE:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_CRITICAL:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
-			//case Type.POISON:				Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
+			//case Type.POISON:				break;
 			case Type.SHIELD_MINE_LOST:		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
 			case Type.SHIELD_POISON_LOST:	Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
@@ -205,6 +206,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.DRUNK:				Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.AddListener(GameEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(GameEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
+			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 		}
 	}
 
@@ -219,7 +221,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.HEALTH_EATMORE:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
-			//case Type.POISON:				Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);	break;
+			//case Type.POISON:				break;
 			case Type.SHIELD_MINE_LOST:		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
 			case Type.SHIELD_POISON_LOST:	Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
@@ -236,6 +238,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.DRUNK:				Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.RemoveListener(GameEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(GameEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
+			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 		}
 	}
 
@@ -515,9 +518,18 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_type">Type of damage.</param>
 	/// <param name="_source">Source of the damage (optional).</param>
 	private void OnDamageReceived(float _damage, DamageType _type, Transform _source) {
-		// For now we're only interested in the type
-		if(_type == DamageType.POISON) {
-			Show();
+		if (_source != null && !m_visible) {
+			// For now we're only interested in the type
+			Entity entity = _source.GetComponent<Entity>();
+			if (entity != null) {
+				// Yes!! Show a message?
+				string msg = entity.feedbackData.GetFeedback(FeedbackData.Type.DAMAGE);
+				if(!String.IsNullOrEmpty(msg)) {
+					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+					text.text = msg;
+					Show();
+				}
+			}
 		}
 	}
 
