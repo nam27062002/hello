@@ -505,6 +505,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15467f0022fed4eb987a8de2bafce36d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_damageAnimationThreshold: 0
+  m_dotAnimationThreshold: 0
 --- !u!114 &11434386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5953,8 +5955,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 0.1
-  m_eatDistance: 2.1
-  m_eatDetectionRadiusMultiplier: 3.25
+  m_eatDistance: 1.9
+  m_eatDetectionRadiusMultiplier: 3.1
   m_eatDetectionSpeedRadiusMultiplier: 0.1
   m_holdingBloodParticle:
     name: PS_Blood_Explosion
@@ -6539,6 +6541,7 @@ MonoBehaviour:
   m_levelUpSound: Level_Up
   m_starvingSound: 
   m_hitSound: Dragon_Impact
+  m_poisonHitSound: 
   m_enterWaterSound: Dragon_Water_In_Soft
   m_enterWaterWithSplashSound: Dragon_Water_In_Hard
   m_exitWaterSound: Dragon_Water_Out_Soft
