@@ -136,7 +136,9 @@
                 {"hcRevive": {"Status": "OK"}},
                 {"adRevive": {"Status": "OK"}},
 				{"scEarned": {"Status": "OK"}},
-				{"hcEarned": {"Status": "OK"}}
+				{"hcEarned": {"Status": "OK"}},
+				{"boostTime": {"Status": "OK"}},
+				{"mapUsedNB": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -154,6 +156,27 @@
                 {"deathType": {"Status": "OK"}},
                 {"deathCause": {"Status": "OK"}},
                 {"deathCoordinates": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+ 		"custom.gameplay.loadArea": {
+            "Parameters": [
+                {"originalArea": {"Status": "OK"}},
+                {"newArea": {"Status": "OK"}},
+                {"action": {"Status": "OK"}},
+                {"loadingTime": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+ 		"custom.gameplay.loadGameplay": {
+            "Parameters": [
+                {"loadingTime": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -263,6 +286,26 @@
                 "etl"
             ]
         },
+		"custom.player.infopopup" : {
+			"Parameters": [
+				{"popupName": {"Status": "OK"}},
+				{"action": {"Status": "OK"}}
+			],
+			"APIs": [
+				"dna",
+				"etl",
+			]
+		},
+		"custom.player.pet" : {
+			"Parameters": [
+				{"petName": {"Status": "OK"}},
+				{"sourceOfPet": {"Status": "OK"}}
+			],
+			"APIs": [
+				"dna",
+				"etl",
+			]
+		},
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -439,6 +482,14 @@
             "Values": []
         },
 		"hcEarned": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"boostTime": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"mapUsedNB": {
             "Type": "INT:4",
             "Values": []
         },
@@ -770,5 +821,34 @@
             "Type": "STRING:125",
             "Values": []
         },
+		"popupName": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"action": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"loadingTime": {
+			"Type": "INT:4",
+			"Values": []
+		},
+		"originalArea": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"newArea": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"petName": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"sourceOfPet": {
+			"Type": "STRING:125",
+			"Values": []
+		}
+
     }
 }

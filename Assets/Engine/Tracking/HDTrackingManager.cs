@@ -276,7 +276,15 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="original_area">Original area.</param>
     /// <param name="destination_area">Destination area.</param>
+	/// <param name="area_loading_duration">Duration in seconds.</param>
 	public virtual void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration ){}
+
+	/// <summary>
+	/// The player has opened an info popup.
+	/// </summary>
+	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
+	/// <param name="_action">How was this popup opened? One of "Automatic", "Info_button" or "Settings".</param>
+	public virtual void Notify_InfoPopup(string _popupName, string _action) {}
 
     #endregion
 
