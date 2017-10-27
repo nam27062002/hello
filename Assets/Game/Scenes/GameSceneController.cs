@@ -165,6 +165,10 @@ public class GameSceneController : GameSceneControllerBase {
 		// Check whether the tutorial popup must be displayed
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
 			|| DebugSettings.isPlayTest) {
+			// Tracking
+			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
+			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
 			// Open popup
 			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
