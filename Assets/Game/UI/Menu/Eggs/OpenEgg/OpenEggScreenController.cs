@@ -207,7 +207,11 @@ public class OpenEggScreenController : MonoBehaviour {
 					if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
 						// Show popup after some extra delay
 						UbiBCN.CoroutineManager.DelayedCall(
-							() => { 
+							() => {
+								// Tracking
+								string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
+								HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
 								PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
 								UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
 							},

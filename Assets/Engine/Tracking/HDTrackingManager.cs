@@ -298,9 +298,15 @@ public class HDTrackingManager
 	/// The player has opened an info popup.
 	/// </summary>
 	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
-	/// <param name="_action">How was this popup opened? One of "Automatic", "Info_button" or "Settings".</param>
+	/// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
 	public virtual void Notify_InfoPopup(string _popupName, string _action) {}
 
+	/// <summary>
+	/// Notifies the missions.
+	/// </summary>
+	/// <param name="_mission">Mission.</param>
+	/// <param name="_action">Action.</param>
+	public virtual void Notify_Missions(Mission _mission, EActionsMission _action) {}
     #endregion
 
     #region log

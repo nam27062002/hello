@@ -373,6 +373,10 @@ public class EventRewardScreen : MonoBehaviour {
 					// Show popup after some extra delay
 					UbiBCN.CoroutineManager.DelayedCall(
 						() => { 
+							// Tracking
+							string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
+							HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
 							PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
 							UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
 						},

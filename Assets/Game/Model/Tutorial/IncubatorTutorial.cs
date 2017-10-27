@@ -58,6 +58,10 @@ public class IncubatorTutorial : MonoBehaviour {
 		if(m_showPending && InstanceManager.menuSceneController.screensController.currentMenuScreen == MenuScreens.DRAGON_SELECTION) {
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
+					// Tracking
+					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoEgg.PATH);
+					HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
 					// Open popup
 					PopupManager.OpenPopupInstant(PopupInfoEgg.PATH);
 

@@ -205,6 +205,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
 		if(def == null) return;	// Shouldn't happen
 
+		// Tracking
+		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoDragonBonus.PATH);
+		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
+
 		PopupManager.OpenPopupInstant(PopupInfoDragonBonus.PATH);
 	}
 }
