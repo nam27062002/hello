@@ -41,6 +41,9 @@ public class HDTrackingManager
     public virtual void Init() {}
     public virtual void Destroy() {}
 
+    public virtual string GetTrackingID() { return null; }
+    public virtual string GetDNAProfileID() { return null;  }
+
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
@@ -74,6 +77,18 @@ public class HDTrackingManager
 	public enum EFunnels
 	{
 		LOAD_GAME = 0
+	};
+
+	public enum EActionsMission
+	{		
+		new_immediate,
+		skip_pay,
+		skip_ad,
+		new_pay,
+		new_ad,
+		new_mix,
+		new_wait,
+		done
 	};
 
     public static string EconomyGroupToString(EEconomyGroup group)
