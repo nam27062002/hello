@@ -298,6 +298,12 @@ public class HDTrackingManager
 	/// <param name="_action">How was this popup opened? One of "Automatic", "Info_button" or "Settings".</param>
 	public virtual void Notify_InfoPopup(string _popupName, string _action) {}
 
+	/// <summary>
+	/// Notifies the missions.
+	/// </summary>
+	/// <param name="_mission">Mission.</param>
+	/// <param name="_action">Action.</param>
+	public virtual void Notify_Missions(Mission _mission, EActionsMission _action) {}
     #endregion
 
     #region log
