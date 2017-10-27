@@ -76,6 +76,18 @@ public class HDTrackingManager
 		LOAD_GAME = 0
 	};
 
+	public enum EActionsMission
+	{		
+		new_immediate,
+		skip_pay,
+		skip_ad,
+		new_pay,
+		new_ad,
+		new_mix,
+		new_wait,
+		done
+	};
+
     public static string EconomyGroupToString(EEconomyGroup group)
     {
         return group.ToString();
