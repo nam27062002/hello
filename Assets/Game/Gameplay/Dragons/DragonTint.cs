@@ -31,7 +31,7 @@ public class DragonTint : MonoBehaviour
 	// Damage
 	public Color m_damageColor = Color.red;
 	float m_damageTimer = 0;
-	float m_damageTotalTime = 0.5f;
+	float m_damageTotalTime = 0.8f;
 
 	// Fury Timer
 	float m_furyTimer = 0;

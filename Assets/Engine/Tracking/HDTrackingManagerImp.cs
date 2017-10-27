@@ -65,7 +65,27 @@ public class HDTrackingManagerImp : HDTrackingManager
         Messenger.RemoveListener<bool>(GameEvents.LOGGED, OnLoggedIn);
     }
 
-	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
+    public override string GetTrackingID()
+    {
+        string returnValue = null;
+        if (TrackingPersistenceSystem != null)
+        {
+            returnValue = TrackingPersistenceSystem.UserID;
+        }
+
+        return returnValue;
+    }
+
+    public override string GetDNAProfileID()
+    {
+#if !UNITY_EDITOR
+        return DNAManager.SharedInstance.GetProfileID();
+#else
+        return null;
+#endif
+    }
+
+    private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
 	{
         StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(_sku);
         string moneyCurrencyCode = null;
@@ -706,10 +726,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// The player has opened an info popup.
 	/// </summary>
 	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
-	/// <param name="_action">How was this popup opened? One of "Automatic", "Info_button" or "Settings".</param>
+	/// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
 	override public void Notify_InfoPopup(string _popupName, string _action) {
+		Log("Info Popup - popup: " + _popupName + ", action: " + _action);
 		if(FeatureSettingsManager.IsDebugEnabled) {
-			Log("Info Popup - popup: " + _popupName + ", action: " + _action);
 		}
 
 		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.infopopup");
@@ -1340,7 +1360,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     // Please, respect the alphabetic order
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_ACCEPTED                   = "accepted";
-	private const string TRACK_PARAM_ACTION						= "action";			// "Automatic", "Info_button" or "Settings"
+	private const string TRACK_PARAM_ACTION						= "action";			// "automatic", "info_button" or "settings"
     private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
     private const string TRACK_PARAM_AD_REVIVE                  = "adRevive";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";

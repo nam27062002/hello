@@ -41,6 +41,9 @@ public class HDTrackingManager
     public virtual void Init() {}
     public virtual void Destroy() {}
 
+    public virtual string GetTrackingID() { return null; }
+    public virtual string GetDNAProfileID() { return null;  }
+
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
@@ -295,7 +298,7 @@ public class HDTrackingManager
 	/// The player has opened an info popup.
 	/// </summary>
 	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
-	/// <param name="_action">How was this popup opened? One of "Automatic", "Info_button" or "Settings".</param>
+	/// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
 	public virtual void Notify_InfoPopup(string _popupName, string _action) {}
 
 	/// <summary>
