@@ -136,7 +136,9 @@
                 {"hcRevive": {"Status": "OK"}},
                 {"adRevive": {"Status": "OK"}},
 				{"scEarned": {"Status": "OK"}},
-				{"hcEarned": {"Status": "OK"}}
+				{"hcEarned": {"Status": "OK"}},
+				{"boostTime": {"Status": "OK"}},
+				{"mapUsedNB": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -263,6 +265,16 @@
                 "etl"
             ]
         },
+		"custom.player.infopopup" : {
+			"Parameters": [
+				{"popupName": {"Status": "OK"}},
+				{"action": {"Status": "OK"}}
+			],
+			"APIs": [
+				"dna",
+				"etl",
+			]
+		},
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -439,6 +451,14 @@
             "Values": []
         },
 		"hcEarned": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"boostTime": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"mapUsedNB": {
             "Type": "INT:4",
             "Values": []
         },
@@ -770,5 +790,13 @@
             "Type": "STRING:125",
             "Values": []
         },
+		"popupName": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"action": {
+			"Type": "STRING:125",
+			"Values": []
+		}
     }
 }

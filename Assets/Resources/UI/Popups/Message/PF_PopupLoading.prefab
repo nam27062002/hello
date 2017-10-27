@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 225000011566683882}
   - component: {fileID: 114874177112480822}
   - component: {fileID: 114005886636707268}
+  - component: {fileID: 114222833659996230}
   m_Layer: 5
   m_Name: PF_PopupLoading
   m_TagString: Untagged
@@ -774,6 +775,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114222833659996230
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012699222212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e9d7cb2b52341ae96764925899c7db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnBackButton:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114593141377405248
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -955,7 +972,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1000, y: 620}
+  m_SizeDelta: {x: 1200, y: 620}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000011840058416
 RectTransform:

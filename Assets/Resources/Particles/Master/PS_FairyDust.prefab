@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 198208703854061198}
   - component: {fileID: 199462320902606206}
   m_Layer: 0
-  m_Name: Glow
+  m_Name: NEWGLOW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,8 +73,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 18.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4308000039335654}
   - {fileID: 4956085325319978}
+  - {fileID: 4308000039335654}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -86,10 +86,10 @@ Transform:
   m_GameObject: {fileID: 1329888085472182}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000005}
   m_Children: []
   m_Father: {fileID: 4190291298115372}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4956085325319978
 Transform:
@@ -102,7 +102,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000005}
   m_Children: []
   m_Father: {fileID: 4190291298115372}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114468370937710678
 MonoBehaviour:
@@ -205,7 +205,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -2054563691
+  randomSeed: -2106170621
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6363,8 +6363,8 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6c6e4f18e41c07a4580c0f4ff883a5d4, type: 2}
-  - {fileID: 2100000, guid: 6c6e4f18e41c07a4580c0f4ff883a5d4, type: 2}
+  - {fileID: 2100000, guid: d4fbc0ce01d3c3b4c8659ddc41f45e59, type: 2}
+  - {fileID: 2100000, guid: d4fbc0ce01d3c3b4c8659ddc41f45e59, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

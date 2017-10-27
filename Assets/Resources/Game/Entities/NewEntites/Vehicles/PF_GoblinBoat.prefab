@@ -646,7 +646,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1345061615926690}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 116.21624, y: 66.137924, z: 14.097543}
+  m_LocalPosition: {x: 140.67622, y: 47.378365, z: 14.097543}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4135066035403444}
@@ -1114,7 +1114,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.5, z: 0}
   m_Axis: {x: 1, y: 1, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 1.512703, y: 5.5633965, z: -10.389608}
+  m_ConnectedAnchor: {x: 1.5126953, y: 5.5633965, z: -10.389608}
   m_UseSpring: 0
   m_Spring:
     spring: 10000
@@ -1146,7 +1146,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.5, z: 0}
   m_Axis: {x: 1, y: 1, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.076301575, y: 3.7622945, z: 9.993007}
+  m_ConnectedAnchor: {x: 0.076293945, y: 3.7622983, z: 9.993007}
   m_UseSpring: 0
   m_Spring:
     spring: 10000
@@ -1263,13 +1263,13 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_airMotion:
-    m_mass: 1
+    m_mass: 100
     m_defaultUpVector: 0
-    m_orientationSpeed: 35
+    m_orientationSpeed: 20
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 1
-    m_rollAngle: 15
+    m_rollAngle: 35
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -1290,7 +1290,7 @@ MonoBehaviour:
       needBoost: 0
     m_keyList: 0000000001000000020000000300000004000000
   m_ground:
-  - {fileID: 65921364670197034}
+  - {fileID: 0}
 --- !u!114 &114330321222012006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1566,7 +1566,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: hd_goblinboat
@@ -1670,10 +1672,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 3.65
-  m_Height: 12.66
+  m_Radius: 4.55
+  m_Height: 15.06
   m_Direction: 2
-  m_Center: {x: 0, y: 2.26, z: 0}
+  m_Center: {x: 0, y: 1.48, z: 0}
 --- !u!136 &136991103173057444
 CapsuleCollider:
   m_ObjectHideFlags: 1
