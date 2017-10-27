@@ -671,17 +671,35 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	public override void Notify_LoadingGameplayEnd(  float loading_duration )
 	{
-		// TODO: Track
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadGameplay");
+		if(e != null) {
+			e.SetParameterValue(TRACK_PARAM_LOADING_TIME, (int)(loading_duration * 1000.0f));
+			Track_SendEvent(e);
+		}
 	}
 
     public override void Notify_LoadingAreaStart( string original_area, string destination_area )
     {
-    	// TODO: Track start
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadArea");
+		if(e != null) {
+			Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
+			Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
+			Track_AddParamString(e, TRACK_PARAM_ACTION, "started");
+			e.SetParameterValue(TRACK_PARAM_LOADING_TIME, 0);
+			Track_SendEvent(e);
+		}
     }
 
 	public override void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration )
 	{
-		// TODO: Track end
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadArea");
+		if(e != null) {
+			Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
+			Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
+			Track_AddParamString(e, TRACK_PARAM_ACTION, "started");
+			e.SetParameterValue(TRACK_PARAM_LOADING_TIME, (int)(area_loading_duration * 1000.0f));
+			Track_SendEvent(e);
+		}
 	}
 
 	/// <summary>
@@ -1048,8 +1066,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_AD_REVIVE, adRevive);
             e.SetParameterValue(TRACK_PARAM_SC_EARNED, scGained);
             e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
+			e.SetParameterValue(TRACK_PARAM_BOOST_TIME, boostTimeMs);
+            e.SetParameterValue(TRACK_PARAM_MAP_USAGE, mapUsage);
 
-            // TODO: Add parameters for boost time and map usage
 
             Track_SendEvent(e);
         }
@@ -1308,7 +1327,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AF_DEF_LOGPURCHASE         = "af_def_logPurchase";
     private const string TRACK_PARAM_AF_DEF_QUANTITY            = "af_quantity";
     private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
-    private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";                
+    private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";      
+	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";          
     private const string TRACK_PARAM_CURRENCY                   = "currency";
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
     private const string TRACK_PARAM_DEATH_CAUSE                = "deathCause";
@@ -1341,6 +1361,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
     private const string TRACK_PARAM_LANGUAGE                   = "language";
     private const string TRACK_PARAM_LEGAL_POPUP_TYPE           = "legalPopupType";
+	private const string TRACK_PARAM_LOADING_TIME               = "loadingTime";
+	private const string TRACK_PARAM_MAP_USAGE                  = "mapUsedNB";
     private const string TRACK_PARAM_MAX_REACHED                = "maxReached";
     private const string TRACK_PARAM_MAX_XP                     = "maxXp";
     private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
@@ -1349,6 +1371,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS                   = "nbViews";
+	private const string TRACK_PARAM_NEW_AREA                   = "newArea";
+	private const string TRACK_PARAM_ORIGINAL_AREA              = "originalArea";
     private const string TRACK_PARAM_PET1                       = "pet1";
     private const string TRACK_PARAM_PET2                       = "pet2";
     private const string TRACK_PARAM_PET3                       = "pet3";
