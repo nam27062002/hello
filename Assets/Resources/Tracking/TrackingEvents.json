@@ -162,6 +162,27 @@
                 "etl"
             ]
         },
+ 		"custom.gameplay.loadArea": {
+            "Parameters": [
+                {"originalArea": {"Status": "OK"}},
+                {"newArea": {"Status": "OK"}},
+                {"action": {"Status": "OK"}},
+                {"loadingTime": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+ 		"custom.gameplay.loadGameplay": {
+            "Parameters": [
+                {"loadingTime": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
         "custom.player.iap": {
             "Parameters": [
                 {"storeTransactionID": {"Status": "OK"}},
@@ -269,6 +290,16 @@
 			"Parameters": [
 				{"popupName": {"Status": "OK"}},
 				{"action": {"Status": "OK"}}
+			],
+			"APIs": [
+				"dna",
+				"etl",
+			]
+		},
+		"custom.player.pet" : {
+			"Parameters": [
+				{"petName": {"Status": "OK"}},
+				{"sourceOfPet": {"Status": "OK"}}
 			],
 			"APIs": [
 				"dna",
@@ -797,6 +828,27 @@
 		"action": {
 			"Type": "STRING:125",
 			"Values": []
+		},
+		"loadingTime": {
+			"Type": "INT:4",
+			"Values": []
+		},
+		"originalArea": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"newArea": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"petName": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"sourceOfPet": {
+			"Type": "STRING:125",
+			"Values": []
 		}
+
     }
 }

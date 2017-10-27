@@ -276,6 +276,7 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="original_area">Original area.</param>
     /// <param name="destination_area">Destination area.</param>
+	/// <param name="area_loading_duration">Duration in seconds.</param>
 	public virtual void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration ){}
 
 	/// <summary>
