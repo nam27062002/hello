@@ -263,6 +263,16 @@
                 "etl"
             ]
         },
+		"custom.player.infopopup" : {
+			"Parameters": [
+				{"popupName": {"Status": "OK"}},
+				{"action": {"Status": "OK"}}
+			],
+			"APIs": [
+				"dna",
+				"etl",
+			]
+		},
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -770,5 +780,13 @@
             "Type": "STRING:125",
             "Values": []
         },
+		"popupName": {
+			"Type": "STRING:125",
+			"Values": []
+		},
+		"action": {
+			"Type": "STRING:125",
+			"Values": []
+		}
     }
 }

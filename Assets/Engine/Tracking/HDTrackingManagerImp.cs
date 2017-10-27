@@ -684,6 +684,24 @@ public class HDTrackingManagerImp : HDTrackingManager
 		// TODO: Track end
 	}
 
+	/// <summary>
+	/// The player has opened an info popup.
+	/// </summary>
+	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
+	/// <param name="_action">How was this popup opened? One of "Automatic", "Info_button" or "Settings".</param>
+	override public void Notify_InfoPopup(string _popupName, string _action) {
+		if(FeatureSettingsManager.IsDebugEnabled) {
+			Log("Info Popup - popup: " + _popupName + ", action: " + _action);
+		}
+
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.infopopup");
+		if(e != null) {
+			Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName);
+			Track_AddParamString(e, TRACK_PARAM_ACTION, _action);
+			Track_SendEvent(e);
+		}
+	}
+
     #endregion
 
     #region track	
@@ -1282,6 +1300,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     // Please, respect the alphabetic order
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_ACCEPTED                   = "accepted";
+	private const string TRACK_PARAM_ACTION						= "action";			// "Automatic", "Info_button" or "Settings"
     private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
     private const string TRACK_PARAM_AD_REVIVE                  = "adRevive";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
@@ -1340,6 +1359,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_PETNAME                    = "petName";
     private const string TRACK_PARAM_PLAYER_ID                  = "playerID";
     private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
+	private const string TRACK_PARAM_POPUP_NAME					= "popupName";
     private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
