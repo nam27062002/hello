@@ -65,7 +65,27 @@ public class HDTrackingManagerImp : HDTrackingManager
         Messenger.RemoveListener<bool>(GameEvents.LOGGED, OnLoggedIn);
     }
 
-	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
+    public override string GetTrackingID()
+    {
+        string returnValue = null;
+        if (TrackingPersistenceSystem != null)
+        {
+            returnValue = TrackingPersistenceSystem.UserID;
+        }
+
+        return returnValue;
+    }
+
+    public override string GetDNAProfileID()
+    {
+#if !UNITY_EDITOR
+        return DNAManager.SharedInstance.GetProfileID();
+#else
+        return null;
+#endif
+    }
+
+    private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
 	{
         StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(_sku);
         string moneyCurrencyCode = null;
