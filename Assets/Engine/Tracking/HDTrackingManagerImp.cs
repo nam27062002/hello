@@ -1030,8 +1030,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_AD_REVIVE, adRevive);
             e.SetParameterValue(TRACK_PARAM_SC_EARNED, scGained);
             e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
+			e.SetParameterValue(TRACK_PARAM_BOOST_TIME, boostTimeMs);
+            e.SetParameterValue(TRACK_PARAM_MAP_USAGE, mapUsage);
 
-            // TODO: Add parameters for boost time and map usage
 
             Track_SendEvent(e);
         }
@@ -1310,6 +1311,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
     private const string TRACK_PARAM_GENDER                     = "gender";
     private const string TRACK_PARAM_HC_EARNED                  = "hcEarned";
+	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";
+    private const string TRACK_PARAM_MAP_USAGE                  = "mapUsedNB";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
