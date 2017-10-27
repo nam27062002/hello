@@ -41,6 +41,9 @@ public class HDTrackingManager
     public virtual void Init() {}
     public virtual void Destroy() {}
 
+    public virtual string GetTrackingID() { return null; }
+    public virtual string GetDNAProfileID() { return null;  }
+
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
