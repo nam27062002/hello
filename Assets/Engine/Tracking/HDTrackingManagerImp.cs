@@ -728,8 +728,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
 	/// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
 	override public void Notify_InfoPopup(string _popupName, string _action) {
-		Log("Info Popup - popup: " + _popupName + ", action: " + _action);
 		if(FeatureSettingsManager.IsDebugEnabled) {
+			Log("Info Popup - popup: " + _popupName + ", action: " + _action);
 		}
 
 		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.infopopup");
