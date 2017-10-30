@@ -1053,14 +1053,14 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("globalEvents", eventsData);
 
 		// Pending rewards
+		SimpleJSON.JSONArray rewardsData = new SimpleJSON.JSONArray();
 		if(m_rewards.Count > 0) {
 			// The foreach loop will grab the elements at the top of the stack first
-			SimpleJSON.JSONArray rewardsData = new SimpleJSON.JSONArray();
 			foreach(Metagame.Reward r in m_rewards) {
 				rewardsData.Add(r.ToJson());
 			}
-			data.Add("rewards", rewardsData);
 		}
+		data.Add("rewards", rewardsData);
 
 		// Return it
 		return data;
