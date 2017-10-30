@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: chest_gems
-  m_Shader: {fileID: 4800000, guid: f5d01bbba3dd4e94a9d60ae9526d5186, type: 3}
-  m_ShaderKeywords: EMISSIVE_NONE OPAQUEALPHA VERTEXCOLOR_NONE
+  m_Name: chest_ingame
+  m_Shader: {fileID: 4800000, guid: 1f4ced784bec8fd438d70008da842cca, type: 3}
+  m_ShaderKeywords: EMISSIVE_NONE NORMALMAP OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -39,11 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 691fe83a526344b3c9f2d67020b9ba37, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MatCap:
-        m_Texture: {fileID: 2800000, guid: fc83aa10b2d1264459fc18fe1ea152d9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 833408ff4a6434346af735ea89cd9666, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -51,7 +47,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a07932faaff015449813cba7106b8044, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -94,7 +90,7 @@ Material:
     - _EnableLightmapContrast: 0
     - _EnableNormalMap: 0
     - _EnableOpaqueAlpha: 1
-    - _EnableSpecular: 0
+    - _EnableSpecular: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -109,7 +105,7 @@ Material:
     - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularPower: 3
+    - _SpecularPower: 15
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
@@ -117,4 +113,4 @@ Material:
     m_Colors:
     - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
+    - _SpecularDir: {r: -0.7, g: 4.31, b: -0.44, a: 0}

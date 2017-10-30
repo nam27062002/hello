@@ -27,6 +27,9 @@ public class ChestViewController : MonoBehaviour {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed references
+	[SerializeField] private GameObject m_goldRewardView = null;
+	[SerializeField] private GameObject m_gemsRewardView = null;
+	[Space]
     [SerializeField] private GameObject m_glowFX = null;
 	[SerializeField] private ParticleData m_openParticle = null;
 	// [SerializeField] private ParticleData m_dustParticle = null;
@@ -63,8 +66,8 @@ public class ChestViewController : MonoBehaviour {
 		// Get references (from FBX names)
 		// Respect enum name
 		m_rewardViews = new GameObject[] {
-			this.FindObjectRecursive("Gold"),
-			this.FindObjectRecursive("Gems")
+			m_goldRewardView,
+			m_gemsRewardView
 		};
 
 		m_openParticle.CreatePool();
