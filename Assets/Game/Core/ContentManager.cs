@@ -79,8 +79,7 @@ public class ContentManager
         get
         {
 #if UNITY_EDITOR
-            //return false;
-            return true;
+            return false;            
 #else
             return true;
 #endif
