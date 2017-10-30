@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4.1381e-38, g: 3.54781e-40, b: 4.138071e-38, a: 1}
+  m_IndirectSpecularColor: {r: 4.1381e-38, g: 3.6416e-40, b: 4.138071e-38, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -208,7 +208,7 @@ Transform:
   m_LocalScale: {x: 117.53277, y: 99.999626, z: 99.999626}
   m_Children: []
   m_Father: {fileID: 1736240193}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &405355823
 MeshRenderer:
@@ -494,76 +494,6 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 7a9eb30f589b90841ba42c964150baaf, type: 3}
   m_PrefabInternal: {fileID: 1364582389}
---- !u!1001 &1528712358
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1736240193}
-    m_Modifications:
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -263.21753
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -80.88511
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 94.58328
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.00000004371139
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2300004, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: ab8ebde0ee30a6247bfc1a16e0ec7f58, type: 2}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_Name
-      value: L1_village_vine_billboard (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-      propertyPath: m_Layer
-      value: 2
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-  m_IsPrefabParent: 0
---- !u!4 &1528712359 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400000, guid: 31ca013eb47d517488ccaebc080572da, type: 3}
-  m_PrefabInternal: {fileID: 1528712358}
 --- !u!1 &1736240192
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,7 +519,6 @@ Transform:
   m_LocalPosition: {x: -305.08252, y: 89.98511, z: 491.7167}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1528712359}
   - {fileID: 1832540338}
   - {fileID: 405355822}
   - {fileID: 1738692746}
@@ -774,7 +703,7 @@ Transform:
   m_LocalScale: {x: 152.84628, y: 99.99979, z: 99.99979}
   m_Children: []
   m_Father: {fileID: 1736240193}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1832540339
 MeshRenderer:

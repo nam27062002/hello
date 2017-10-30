@@ -25,9 +25,9 @@ public class PopupUpgrade : MonoBehaviour
     public void OnConfirm()
     {
 		#if UNITY_IOS
-			DeviceUtilsManager.SharedInstance.OpenMarketForRating( "" , true);
+			Application.OpenURL("itms-apps://itunes.apple.com/app/idYOUR_ID");
 		#elif UNITY_ANDROID
-			DeviceUtilsManager.SharedInstance.OpenMarketForRating();
+			Application.OpenURL ("market://details?id="+Application.identifier);
 		#endif
     }
 
