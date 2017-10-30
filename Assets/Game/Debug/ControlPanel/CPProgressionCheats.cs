@@ -69,10 +69,6 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Reset some managers
 		GlobalEventManager.ClearCurrentEvent();
 
-		// Reset dragons
-		OnResetAllDragons();
-		OnResetAllPets();
-
         // Clear persistence and sets the default persistence
         PersistenceFacade.instance.LocalDriver.OverrideWithDefault(null);
 

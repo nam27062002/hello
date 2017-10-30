@@ -118,9 +118,7 @@ public class PersistenceData
 
     public PersistenceStates.ESaveState Save(string savePath, bool backUpOnFail = true)
 	{
-        m_data.Clear();
-
-        Systems_Save();
+		Systems_Save();
 
         SaveState = PersistenceStates.ESaveState.DiskSpace;
 

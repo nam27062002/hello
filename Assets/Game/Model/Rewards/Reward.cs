@@ -59,39 +59,15 @@ namespace Metagame {
 		/// Constructor from json data.
 		/// </summary>
 		/// <param name="_data">Data to be parsed.</param>
-		public static Reward CreateFromJson(SimpleJSON.JSONNode _data) {	
-			// Parse economy group (if any)
-			string key = "economyGroup";
-			HDTrackingManager.EEconomyGroup parsedEconomyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN;
-			if(_data.ContainsKey(key)) {
-				 parsedEconomyGroup = HDTrackingManager.StringToEconomyGroup(_data[key]);
-			}
-
-			// Parse source
-			key = "source";
-			string parsedSource = "";
-			if(_data.ContainsKey(key)) {
-				parsedSource = _data[key];
-			}
-
-			// Use the parametrized method
-			return CreateFromJson(_data, parsedEconomyGroup, parsedSource);
-		}
-
-		/// <summary>
-		/// Constructor from json data, with economy group and source manually set.
-		/// </summary>
-		/// <param name="_data">Data to be parsed.</param>
 		public static Reward CreateFromJson(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
 			string type = _data["type"];
 			type = type.ToLower();
 			
 			string data = "";
-			if(_data.ContainsKey("sku")) {
+			if(_data.ContainsKey("sku")) 	
 				data = _data["sku"];
-			} else if(_data.ContainsKey("amount")) {
+			else if(_data.ContainsKey("amount")) 
 				data = _data["amount"];
-			}
 
 			return CreateFromTypeCode(type, data, _economyGroup, _source);
 		}
@@ -193,9 +169,6 @@ namespace Metagame {
 			} else {
 				DoCollect();
 			}
-
-			// Save persistence to prevent opening this reward twice in case of interruption
-			PersistenceFacade.instance.Save_Request(true);
 		}
 
 		/// <summary>
@@ -220,35 +193,6 @@ namespace Metagame {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.Reward"/>.</returns>
 		public override string ToString() {			
 			return "[" + GetType() + ": " + m_amount + "]";
-		}
-
-		/// <summary>
-		/// Create and return a persistence save data json initialized with this reward's data. 
-		/// </summary>
-		/// <returns>A new data json to be stored to persistence.</returns>
-		public SimpleJSON.JSONNode ToJson() {
-			// Create new object, initialize and return it
-			SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-
-			// Reward type
-			data.Add("type", type);
-
-			// Sku and amount - sku prevails
-			if(!string.IsNullOrEmpty(sku)) {
-				data.Add("sku", sku);
-			} else {
-				data.Add("amount", amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-			}
-
-			// Source
-			data.Add("source", source);
-
-			// Economy group (only for currency rewards)
-			if(this is Metagame.RewardCurrency) {
-				data.Add("economyGroup", HDTrackingManager.EconomyGroupToString((this as Metagame.RewardCurrency).EconomyGroup));
-			}
-
-			return data;
 		}
 	}
 }

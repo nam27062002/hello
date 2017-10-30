@@ -11,7 +11,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using TMPro;
-using System.Text.RegularExpressions;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -113,7 +112,6 @@ public class LoadingSceneController : SceneController {
     private bool m_startLoadFlow = true;    
     private bool m_loadingDone = false;
 
-    private float m_stateDuration = 0;
 
     private enum State
     {
@@ -121,8 +119,6 @@ public class LoadingSceneController : SceneController {
     	WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
-        WAITING_FOR_RULES,
-        SHOWING_UPGRADE_POPUP,
     	COUNT
     }
     private State m_state = State.NONE;
@@ -137,7 +133,6 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
-		CacheServerManager.SharedInstance.Init();
 		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!"); 
@@ -156,16 +151,15 @@ public class LoadingSceneController : SceneController {
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now
         timer = 0;
-        m_stateDuration = 0;
 
         // [AOC] This is a safe place to instantiate all the singletons
         //		 Do it now so we have it under control
         //		 Add all the new created singletons
         // Content and persistence
-        //DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
+		//DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
 
 
-#if UNITY_ANDROID
+		#if UNITY_ANDROID
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             if (settingsInstance != null)
             {
@@ -196,17 +190,10 @@ public class LoadingSceneController : SceneController {
 
 				if(!AndroidPermissionsManager.SharedInstance.CheckDangerousPermissions ()) {
                     // Application.targetFrameRate = 10;
-					SetState(State.WAITING_ANDROID_PERMISSIONS);
+					m_state = State.WAITING_ANDROID_PERMISSIONS;
 				}else{
                     // Load persistence
-                    if ( NeedsUpgrade() )
-                    {
-						SetState(State.SHOWING_UPGRADE_POPUP);
-                    }
-                    else
-                    {
-                    	SetState(State.WAITING_FOR_RULES);
-                    }
+                    SetState(State.WAITING_SAVE_FACADE);								        
 			        // TEST
 			        /*
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
@@ -268,24 +255,9 @@ public class LoadingSceneController : SceneController {
     			if ( m_androidPermissionsListener.m_permissionsFinished )
     			{  
                     // Load persistence        
-                    if ( NeedsUpgrade() )
-                    {
-						SetState(State.SHOWING_UPGRADE_POPUP);
-                    }
-                    else
-                    {
-						SetState(State.WAITING_FOR_RULES);
-                    }
-
+                    SetState(State.WAITING_SAVE_FACADE);                        
     			}
     		}break;
-            case State.WAITING_FOR_RULES:
-            {
-                if (ContentManager.ready)
-                {
-                    SetState(State.WAITING_SAVE_FACADE);
-                }
-            }break;
     		default:
     		{
 				// Update load progress
@@ -317,21 +289,10 @@ public class LoadingSceneController : SceneController {
 
     private void SetState(State state)
     {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            float deltaTime = Time.timeSinceLevelLoad - m_stateDuration;
-            m_stateDuration = Time.timeSinceLevelLoad;
-            Log(m_state + " -> " + state + " time = " + deltaTime);
-        }
-
         m_state = state;
 
         switch (state)
         {
-        	case State.SHOWING_UPGRADE_POPUP:
-        	{
-        		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
-        	}break;
             case State.WAITING_SAVE_FACADE:
             {
 				// [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
@@ -394,23 +355,6 @@ public class LoadingSceneController : SceneController {
                 StartLoadFlow();
           	}break;
         }
-    }
-
-    private bool NeedsUpgrade()
-    {
-    	bool ret = false;
-		Match match = Regex.Match(Application.version, @"([0-9]+)\.([0-9]+)\.?([0-9]+)?");
-		if ( match.Success )
-		{
-			int[] cachedVersion = CacheServerManager.SharedInstance.versionNumber;
-			for( int i = 0; i<match.Groups.Count-1 && !ret; ++i)
-			{
-				string v = match.Groups[i+1].Value;
-				if ( !string.IsNullOrEmpty(v) && int.Parse( v ) < cachedVersion[i] )
-					ret = true;
-			}
-		}
-    	return ret;
     }
         
     private void StartLoadFlow()

@@ -41,9 +41,7 @@ public class EventRewardScreen : MonoBehaviour {
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
 	[SerializeField] private Image m_eventIcon = null;
-	[Space]
 	[SerializeField] private Localizer m_topRewardText = null;
-	[SerializeField] private GlobalEventsRewardInfo m_topRewardInfo = null;
 
 	// Internal references
 	private RewardSceneController m_sceneController = null;
@@ -105,26 +103,6 @@ public class EventRewardScreen : MonoBehaviour {
 		// Store current event for faster access
 		m_event = GlobalEventManager.currentEvent;
 
-		// Stack all rewards into the pending rewards stack
-		// Add reward to the stack - In the right order!
-		if(m_event != null) {
-			// Top contribution reward
-			if(m_event.topContributor) {
-				UsersManager.currentUser.rewardStack.Push(m_event.topContributorsRewardSlot.reward);
-			}
-
-			// Global rewards
-			for(int i = m_event.rewardLevel - 1; i >= 0; --i) {
-				UsersManager.currentUser.rewardStack.Push(m_event.rewardSlots[i].reward);
-			}
-
-			// Immediately save persistence in case the rewards opening gets interrupted
-			PersistenceFacade.instance.Save_Request(true);
-
-			// Mark event as collected
-			m_event.FinishRewardCollection();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
-		}
-
 		// Initialize progress bar
 		m_givenGlobalRewards = 0;
 		if(m_event != null) {
@@ -165,7 +143,7 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_sceneController == null) {
 			MenuSceneController sceneController = InstanceManager.menuSceneController;
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
-			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.EVENT_REWARD);
+			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.REWARD);
 			if (menuScene != null) {
 				// Get scene controller and initialize
 				m_sceneController = menuScene.GetComponent<RewardSceneController>();
@@ -290,6 +268,9 @@ public class EventRewardScreen : MonoBehaviour {
 			} break;
 
 			case Step.GLOBAL_REWARD: {
+				// Add reward to the stack
+				UsersManager.currentUser.rewardStack.Push(m_event.rewardSlots[m_givenGlobalRewards].reward);
+
 				// Animate progress bar
 				m_progressBar.RefreshProgress(m_event.rewardSlots[m_givenGlobalRewards].targetPercentage, 0.5f);
 
@@ -325,9 +306,6 @@ public class EventRewardScreen : MonoBehaviour {
 					StringUtils.FormatNumber(topPercentile, 2)
 				);
 
-				// Initialize reward info
-				m_topRewardInfo.InitFromReward(m_event.topContributorsRewardSlot);
-
 				// Change state after some delay
 				UbiBCN.CoroutineManager.DelayedCall(
 					() => {
@@ -338,11 +316,17 @@ public class EventRewardScreen : MonoBehaviour {
 			} break;
 
 			case Step.TOP_REWARD: {
+				// Add reward to the stack
+				UsersManager.currentUser.rewardStack.Push(m_event.topContributorsRewardSlot.reward);
+
 				// Tell the scene to open the next reward (should be already stacked)
 				m_sceneController.OpenReward();
 			} break;
 
 			case Step.FINISH: {
+				// Mark event as collected
+				m_event.FinishRewardCollection();	// [AOC] TODO!! Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
+
 				// Purge event list
 				GlobalEventManager.ClearRewardedEvents();
 				GlobalEventManager.ClearCurrentEvent();
@@ -422,7 +406,7 @@ public class EventRewardScreen : MonoBehaviour {
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
 		// Leaving this screen
-		if(_from == MenuScreens.EVENT_REWARD && _to != MenuScreens.EVENT_REWARD) {
+		if(_from == MenuScreens.REWARD && _to != MenuScreens.REWARD) {
 			// Launch all the hide animations that are not automated
 			// Restore HUD
 			InstanceManager.menuSceneController.hud.animator.Show();
@@ -439,7 +423,7 @@ public class EventRewardScreen : MonoBehaviour {
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
-		if(_to == MenuScreens.EVENT_REWARD) {
+		if(_to == MenuScreens.REWARD) {
 			// Hide HUD!
 			InstanceManager.menuSceneController.hud.animator.Hide();
 
@@ -462,7 +446,7 @@ public class EventRewardScreen : MonoBehaviour {
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionEnd(MenuScreens _from, MenuScreens _to) {
 		// Entering this screen
-		if(_to == MenuScreens.EVENT_REWARD) {
+		if(_to == MenuScreens.REWARD) {
 			// Enable drag control
 			m_rewardDragController.gameObject.SetActive(m_rewardDragController.target != null);
 		}

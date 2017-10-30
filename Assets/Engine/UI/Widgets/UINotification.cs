@@ -25,13 +25,6 @@ public class UINotification : ShowHideAnimator {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SerializeField] private Vector3 m_targetScale = new Vector3(1f, 1.5f, 1f);
-	[SerializeField] private float m_pauseDuration = 1.5f;
-	[SerializeField] private float m_scaleUpDuration = 0.15f;
-	[SerializeField] private float m_scaleDownDuration = 1f;
-	[SerializeField] private Ease m_scaleUpEase = Ease.InCubic;
-	[SerializeField] private Ease m_scaleDownEase = Ease.OutBounce;
-
 	private Sequence m_idleSequence = null;
 	
 	//------------------------------------------------------------------------//
@@ -47,9 +40,9 @@ public class UINotification : ShowHideAnimator {
 		// Create sequence
 		m_idleSequence = DOTween.Sequence()
 			.SetLoops(-1, LoopType.Restart)
-			.AppendInterval(m_pauseDuration)
-			.Append(transform.DOScale(m_targetScale, m_scaleUpDuration).SetEase(m_scaleUpEase))
-			.Append(transform.DOScale(1f, m_scaleDownDuration).SetEase(m_scaleDownEase))
+			.AppendInterval(1.5f)
+			.Append(transform.DOScale(1.25f, 0.15f).SetEase(Ease.InCubic))
+			.Append(transform.DOScale(1f, 1f).SetEase(Ease.OutBounce))
 			.Pause();
 	}
 

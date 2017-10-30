@@ -34,7 +34,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
 
-	private MenuScreens m_goToScreen = MenuScreens.NONE;
+	private bool m_goToGlobalEventRewardScreen;
 	private DragonData m_dragonToTease = null;
 	private DragonData m_dragonToReveal = null;
 
@@ -61,32 +61,21 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Check dragons to tease
+		m_goToGlobalEventRewardScreen = false;
+
+		GlobalEvent ge = GlobalEventManager.currentEvent;
+		if (ge != null) {
+			ge.UpdateState();
+			if (ge.isRewardAvailable) {
+				m_goToGlobalEventRewardScreen = true;
+			}
+		}
+
 		m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
 		m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
 
 		// Subscribe to external events.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
-
-		// Check whether we need to move to another screen
-		// Check order is relevant!
-		m_goToScreen = MenuScreens.NONE;
-
-		// Check pending rewards
-		if(UsersManager.currentUser.rewardStack.Count > 0) {
-			m_goToScreen = MenuScreens.PENDING_REWARD;
-			return;
-		}
-
-		// Check global events rewards
-		GlobalEvent ge = GlobalEventManager.currentEvent;
-		if (ge != null) {
-			ge.UpdateState();
-			if (ge.isRewardAvailable) {
-				m_goToScreen = MenuScreens.EVENT_REWARD;
-				return;
-			}
-		}
 	}
 
 	/// <summary>
@@ -101,25 +90,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		// Do we have a screen change pending?
-		if(m_goToScreen != MenuScreens.NONE) {
-			// Which screen?
-			switch(m_goToScreen) {
-				case MenuScreens.EVENT_REWARD: {
-					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.EVENT_REWARD).GetComponent<EventRewardScreen>();
-					scr.StartFlow();
-					InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.EVENT_REWARD);
-				} break;
-
-				case MenuScreens.PENDING_REWARD: {
-					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.PENDING_REWARD).GetComponent<PendingRewardScreen>();
-					scr.StartFlow();
-					InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.PENDING_REWARD);
-				} break;
-			}
-
-			// Clear var
-			m_goToScreen = MenuScreens.NONE;
+		if (m_goToGlobalEventRewardScreen) {
+			EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.REWARD).GetComponent<EventRewardScreen>();
+			scr.StartFlow();
+			InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.REWARD);
+			m_goToGlobalEventRewardScreen = false;
 			return;
 		}
 

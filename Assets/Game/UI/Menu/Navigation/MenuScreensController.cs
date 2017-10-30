@@ -26,8 +26,7 @@ public enum MenuScreens {
 	OPEN_EGG,
 	PHOTO,
 	DRAGON_UNLOCK,
-	EVENT_REWARD,
-	PENDING_REWARD,
+	REWARD,
 
 	COUNT
 };

@@ -656,12 +656,7 @@ public class UserProfile : UserPersistenceSystem
         m_saveTimestamp = DateTime.UtcNow;
 
         JSONNode json = ToJson();
-		m_persistenceData.Merge(json.ToString(), false);
-
-		#if UNITY_EDITOR
-		JsonFormatter fmt = new JsonFormatter();
-		Debug.Log("<color=cyan>SAVING USER PROFILE:</color> " + fmt.PrettyPrint(json.ToString()));
-		#endif
+        m_persistenceData.Merge(json.ToString(), false);
     }
 
 	//------------------------------------------------------------------------//
@@ -884,21 +879,7 @@ public class UserProfile : UserPersistenceSystem
 				}
 				#endif
 			}
-		}
-
-		// Pending rewards
-		key = "rewards";
-		m_rewards.Clear();
-		if(_data.ContainsKey(key)) {
-			// Parse json array
-			// Reverse iterate to respect the stack order
-			SimpleJSON.JSONArray rewardsData = _data[key].AsArray;
-			for(int i = rewardsData.Count - 1; i >= 0 ; --i) {
-				// Create new reward with the given data
-				Metagame.Reward r = Metagame.Reward.CreateFromJson(rewardsData[i]);
-				m_rewards.Push(r);
-			}
-		}
+		}        
 	}
 
 	/// <summary>
@@ -1051,16 +1032,6 @@ public class UserProfile : UserPersistenceSystem
 			#endif
 		}
 		data.Add("globalEvents", eventsData);
-
-		// Pending rewards
-		SimpleJSON.JSONArray rewardsData = new SimpleJSON.JSONArray();
-		if(m_rewards.Count > 0) {
-			// The foreach loop will grab the elements at the top of the stack first
-			foreach(Metagame.Reward r in m_rewards) {
-				rewardsData.Add(r.ToJson());
-			}
-		}
-		data.Add("rewards", rewardsData);
 
 		// Return it
 		return data;

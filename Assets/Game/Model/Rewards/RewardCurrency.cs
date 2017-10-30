@@ -12,7 +12,7 @@ namespace Metagame {
 	/// Base abstract class for all currency rewards.
 	/// </summary>
 	public abstract class RewardCurrency : Reward {
-		public HDTrackingManager.EEconomyGroup EconomyGroup { get; set; }
+		protected HDTrackingManager.EEconomyGroup EconomyGroup { get; set; }
 
 		public RewardCurrency(string _source) {			
 			m_source = _source;

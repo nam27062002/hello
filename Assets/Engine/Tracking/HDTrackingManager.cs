@@ -48,8 +48,6 @@ public class HDTrackingManager
 
     public enum EEconomyGroup
     {
-		UNKNOWN = -1,
-
         REMOVE_MISSION,
         SKIP_MISSION,
         UNLOCK_MAP,
@@ -97,14 +95,6 @@ public class HDTrackingManager
     {
         return group.ToString();
     }
-
-	public static EEconomyGroup StringToEconomyGroup(string _str) {
-		try {
-			return (EEconomyGroup)System.Enum.Parse(typeof(EEconomyGroup), _str);
-		} catch(System.ArgumentException _e) {
-			return EEconomyGroup.UNKNOWN;
-		}
-	}
 
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
