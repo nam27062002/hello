@@ -281,7 +281,10 @@ namespace FGOL.Save
 
 		public static string GetSavePath(string userID)
 		{            
-			return Path.Combine(FGOL.Plugins.Native.NativeBinding.Instance.GetPersistentDataPath(), userID + ".sav");
+            string path = userID + ".sav";
+            return FileUtils.GetDeviceStoragePath(path, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+
+            //return Path.Combine(FGOL.Plugins.Native.NativeBinding.Instance.GetPersistentDataPath(), userID + ".sav");
 		}
 
         public static string CalculateMD5Hash(byte[] input)
