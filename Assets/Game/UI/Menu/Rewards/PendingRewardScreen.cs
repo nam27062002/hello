@@ -1,9 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EventRewardScreen : MonoBehaviour {	
+public class PendingRewardScreen : MonoBehaviour {	
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -15,10 +15,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private enum Step {
 		INIT = 0,
 		INTRO,
-		GLOBAL_REWARD,		// As much times as needed
-		NO_GLOBAL_REWARD,	// When the global score hasn't reached the threshold for the minimum reward, show a special screen
-		TOP_REWARD_INTRO,	// When the player has been classified for the top reward
-		TOP_REWARD,			// When the player has been classified for the top reward
+		REWARD,		// As many times as needed
 		FINISH
 	}
 
@@ -27,9 +24,7 @@ public class EventRewardScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Step screens
 	[SerializeField] private ShowHideAnimator m_introScreen = null;
-	[SerializeField] private ShowHideAnimator m_globalRewardScreen = null;
-	[SerializeField] private ShowHideAnimator m_noGlobalRewardScreen = null;
-	[SerializeField] private ShowHideAnimator m_topRewardIntroScreen = null;
+	[SerializeField] private ShowHideAnimator m_rewardScreen = null;
 
 	// Other references
 	[Space]
@@ -37,22 +32,12 @@ public class EventRewardScreen : MonoBehaviour {
 	[SerializeField] private RewardInfoUI m_rewardInfo = null;
 	[SerializeField] private DragControlRotation m_rewardDragController = null;
 
-	// Individual elements references
-	[Space]
-	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
-	[SerializeField] private Image m_eventIcon = null;
-	[Space]
-	[SerializeField] private Localizer m_topRewardText = null;
-	[SerializeField] private GlobalEventsRewardInfo m_topRewardInfo = null;
-
 	// Internal references
 	private RewardSceneController m_sceneController = null;
 
 	// Internal logic
-	private GlobalEvent m_event;
 	private Step m_step;
 	private State m_state;
-	private int m_givenGlobalRewards;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -93,7 +78,7 @@ public class EventRewardScreen : MonoBehaviour {
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Start the reward flow with current event in the manager.
+	/// Start the pending rewards flow.
 	/// </summary>
 	public void StartFlow() {
 		// Make sure all required references are set
@@ -101,36 +86,6 @@ public class EventRewardScreen : MonoBehaviour {
 
 		// Clear 3D scene
 		m_sceneController.Clear();
-
-		// Store current event for faster access
-		m_event = GlobalEventManager.currentEvent;
-
-		// Stack all rewards into the pending rewards stack
-		// Add reward to the stack - In the right order!
-		if(m_event != null) {
-			// Top contribution reward
-			if(m_event.topContributor) {
-				UsersManager.currentUser.rewardStack.Push(m_event.topContributorsRewardSlot.reward);
-			}
-
-			// Global rewards
-			for(int i = m_event.rewardLevel - 1; i >= 0; --i) {
-				UsersManager.currentUser.rewardStack.Push(m_event.rewardSlots[i].reward);
-			}
-
-			// Immediately save persistence in case the rewards opening gets interrupted
-			PersistenceFacade.instance.Save_Request(true);
-
-			// Mark event as collected
-			m_event.FinishRewardCollection();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
-		}
-
-		// Initialize progress bar
-		m_givenGlobalRewards = 0;
-		if(m_event != null) {
-			m_progressBar.RefreshRewards(m_event);
-		}
-		m_progressBar.RefreshProgress(0);
 
 		// Set initial state
 		m_step = Step.INIT;
@@ -165,7 +120,7 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_sceneController == null) {
 			MenuSceneController sceneController = InstanceManager.menuSceneController;
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
-			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.EVENT_REWARD);
+			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.PENDING_REWARD);
 			if (menuScene != null) {
 				// Get scene controller and initialize
 				m_sceneController = menuScene.GetComponent<RewardSceneController>();
@@ -188,10 +143,8 @@ public class EventRewardScreen : MonoBehaviour {
 	/// <param name="_step">Step whose screen we want.</param>
 	private ShowHideAnimator GetScreen(Step _step) {
 		switch(_step) {
-			case Step.INTRO:			return m_introScreen;			break;
-			case Step.GLOBAL_REWARD:	return m_globalRewardScreen;	break;
-			case Step.NO_GLOBAL_REWARD:	return m_noGlobalRewardScreen;	break;
-			case Step.TOP_REWARD_INTRO: return m_topRewardIntroScreen;	break;
+			case Step.INTRO:	return m_introScreen;		break;
+			case Step.REWARD:	return m_rewardScreen;		break;
 		}
 		return null;
 	}
@@ -218,43 +171,16 @@ public class EventRewardScreen : MonoBehaviour {
 		Step nextStep = Step.INTRO;
 		switch(m_step) {
 			case Step.INTRO: {
-				// Do we have global rewards?
-				if(m_event.rewardLevel > 0) {
-					nextStep = Step.GLOBAL_REWARD;
-				} else {
-					nextStep = Step.NO_GLOBAL_REWARD;
-				}
+				nextStep = Step.REWARD;
 			} break;
 
-			case Step.GLOBAL_REWARD: {
+			case Step.REWARD: {
 				// There are still rewards to collect?
-				if(m_givenGlobalRewards < m_event.rewardLevel) {
-					nextStep = Step.GLOBAL_REWARD;
-				} else {
-					// No! Has top reward?
-					if(m_event.topContributor) {
-						nextStep = Step.TOP_REWARD_INTRO;
-					} else {
-						nextStep = Step.FINISH;
-					}
-				}
-			} break;
-
-			case Step.NO_GLOBAL_REWARD: {
-				// Has top reward?
-				if(m_event.topContributor) {
-					nextStep = Step.TOP_REWARD_INTRO;
+				if(UsersManager.currentUser.rewardStack.Count > 0) {
+					nextStep = Step.REWARD;
 				} else {
 					nextStep = Step.FINISH;
 				}
-			} break;
-
-			case Step.TOP_REWARD_INTRO: {
-				nextStep = Step.TOP_REWARD;
-			} break;
-
-			case Step.TOP_REWARD: {
-				nextStep = Step.FINISH;
 			} break;
 		}
 
@@ -267,16 +193,13 @@ public class EventRewardScreen : MonoBehaviour {
 		ShowScreen(m_step);
 
 		// Only display reward UI in target steps
-		bool showRewardUI = (nextStep == Step.GLOBAL_REWARD || nextStep == Step.TOP_REWARD);
+		bool showRewardUI = (nextStep == Step.REWARD);
 		m_rewardInfo.showHideAnimator.Set(showRewardUI);
 		m_rewardDragController.gameObject.SetActive(showRewardUI);
 
 		// Perform different stuff depending on new step
 		switch(nextStep) {
 			case Step.INTRO: {
-				// Set event icon
-				m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.icon);
-
 				// Clear 3D scene
 				m_sceneController.Clear();
 
@@ -289,70 +212,12 @@ public class EventRewardScreen : MonoBehaviour {
 				);
 			} break;
 
-			case Step.GLOBAL_REWARD: {
-				// Animate progress bar
-				m_progressBar.RefreshProgress(m_event.rewardSlots[m_givenGlobalRewards].targetPercentage, 0.5f);
-
-				// Tell the scene to open the next reward (should be already stacked)
-				m_sceneController.OpenReward();
-
-				// Increase global reward level
-				m_givenGlobalRewards++;
-			} break;
-
-			case Step.NO_GLOBAL_REWARD: {
-				// Clear 3D scene
-				m_sceneController.Clear();
-
-				// Restore tap to continue after some delay
-				UbiBCN.CoroutineManager.DelayedCall(
-					() => { 
-						m_state = State.IDLE;
-						m_tapToContinue.Show(); 
-					}, 
-					0.5f
-				);
-			} break;
-
-			case Step.TOP_REWARD_INTRO: {
-				// Clear 3D scene
-				m_sceneController.Clear();
-
-				// Initialize text
-				float topPercentile = m_event.topContributorsRewardSlot.targetPercentage * 100f;
-				m_topRewardText.Localize(
-					m_topRewardText.tid, 
-					StringUtils.FormatNumber(topPercentile, 2)
-				);
-
-				// Initialize reward info
-				m_topRewardInfo.InitFromReward(m_event.topContributorsRewardSlot);
-
-				// Change state after some delay
-				UbiBCN.CoroutineManager.DelayedCall(
-					() => {
-						m_state = State.IDLE;
-					},
-					0.5f
-				);
-			} break;
-
-			case Step.TOP_REWARD: {
+			case Step.REWARD: {
 				// Tell the scene to open the next reward (should be already stacked)
 				m_sceneController.OpenReward();
 			} break;
 
 			case Step.FINISH: {
-				// Purge event list
-				GlobalEventManager.ClearRewardedEvents();
-				GlobalEventManager.ClearCurrentEvent();
-
-				// Request new event data
-				GlobalEventManager.TMP_RequestCustomizer();
-
-				// Save!
-				PersistenceFacade.instance.Save_Request();
-
 				// Go back to main screen
 				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_SELECTION);
 			} break;
@@ -422,7 +287,7 @@ public class EventRewardScreen : MonoBehaviour {
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
 		// Leaving this screen
-		if(_from == MenuScreens.EVENT_REWARD && _to != MenuScreens.EVENT_REWARD) {
+		if(_from == MenuScreens.PENDING_REWARD && _to != MenuScreens.PENDING_REWARD) {
 			// Launch all the hide animations that are not automated
 			// Restore HUD
 			InstanceManager.menuSceneController.hud.animator.Show();
@@ -439,7 +304,7 @@ public class EventRewardScreen : MonoBehaviour {
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
-		if(_to == MenuScreens.EVENT_REWARD) {
+		if(_to == MenuScreens.PENDING_REWARD) {
 			// Hide HUD!
 			InstanceManager.menuSceneController.hud.animator.Hide();
 
@@ -462,7 +327,7 @@ public class EventRewardScreen : MonoBehaviour {
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionEnd(MenuScreens _from, MenuScreens _to) {
 		// Entering this screen
-		if(_to == MenuScreens.EVENT_REWARD) {
+		if(_to == MenuScreens.PENDING_REWARD) {
 			// Enable drag control
 			m_rewardDragController.gameObject.SetActive(m_rewardDragController.target != null);
 		}
