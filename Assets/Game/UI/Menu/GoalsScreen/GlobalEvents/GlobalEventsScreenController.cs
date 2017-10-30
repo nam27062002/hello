@@ -101,9 +101,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 		if ( GlobalEventManager.currentEvent != null ){
 			if (GlobalEventManager.currentEvent.isRewardAvailable){
-				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.REWARD).GetComponent<EventRewardScreen>();
+				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.EVENT_REWARD).GetComponent<EventRewardScreen>();
 				scr.StartFlow();
-				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.REWARD);
+				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.EVENT_REWARD);
 				return;
 			}
 		}

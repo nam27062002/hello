@@ -575,11 +575,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {		
 		/*
 		{
-			r: [
-				"SC:100",
-				"SC:200"
-			],
-			top: "SC:50"
+			r: "2",
+			top: "true"
 		}
 */
 		ServerResponse res = new ServerResponse();
