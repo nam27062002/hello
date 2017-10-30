@@ -5947,6 +5947,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.x
       value: -0.112
       objectReference: {fileID: 0}
+    - target: {fileID: 11404662, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
+      propertyPath: m_maxTier
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
   m_IsPrefabParent: 0
@@ -7202,7 +7206,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4864159227260786, guid: 9f9eb6a900c8247c5b862f70d7ccb85a, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 153.48
+      value: 154.82
       objectReference: {fileID: 0}
     - target: {fileID: 4864159227260786, guid: 9f9eb6a900c8247c5b862f70d7ccb85a, type: 2}
       propertyPath: m_LocalPosition.z
@@ -8404,7 +8408,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1280521353}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8550,6 +8555,34 @@ Transform:
   m_PrefabParentObject: {fileID: 4864159227260786, guid: 9f9eb6a900c8247c5b862f70d7ccb85a,
     type: 2}
   m_PrefabInternal: {fileID: 1274515555}
+--- !u!1 &1280521352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1280521353}
+  m_Layer: 0
+  m_Name: InstanceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1280521353
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1280521352}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1243253543}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1284814005 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4000011034451204, guid: ba354f669694649edbb833d5924d7f4b,
@@ -9901,6 +9934,10 @@ Prefab:
     - target: {fileID: 401194, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0.279
+      objectReference: {fileID: 0}
+    - target: {fileID: 11404662, guid: 565e403669d5f4202a7416794ea28c37, type: 2}
+      propertyPath: m_maxTier
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 565e403669d5f4202a7416794ea28c37, type: 2}

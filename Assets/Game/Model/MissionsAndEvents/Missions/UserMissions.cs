@@ -87,6 +87,8 @@ public class UserMissions {
 			// Is mission completed?
 			Mission m = GetMission((Mission.Difficulty)i);
 			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
+				HDTrackingManager.Instance.Notify_Missions(m, HDTrackingManager.EActionsMission.done);
+
 				// Give reward
 				coinsToReward += m.rewardCoins;
 
@@ -127,13 +129,13 @@ public class UserMissions {
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
 	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
-	public void SkipMission(Mission.Difficulty _difficulty, float _seconds) {
+	public void SkipMission(Mission.Difficulty _difficulty, float _seconds, bool _useAd, bool _useHC) {
 		// Get mission and check that it is in cooldown state
 		Mission m = GetMission(_difficulty);
 		if(m == null) return;
 
 		// Let mission handle it
-		m.SkipCooldownTimer(_seconds);
+		m.SkipCooldownTimer(_seconds, _useAd, _useHC);
 	}
 
 	//------------------------------------------------------------------//

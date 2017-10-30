@@ -306,6 +306,23 @@
 				"etl",
 			]
 		},
+		 "custom.player.missions": {
+            "Parameters": [
+                {"missionType": {"Status": "OK"}},
+                {"missionTarget": {"Status": "OK"}},
+                {"missionDifficulty": {"Status": "OK"}},
+                {"missionValue": {"Status": "OK"}},
+                {"action": {"Status": "OK"}},
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"maxXP": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}},                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -849,6 +866,21 @@
 			"Type": "STRING:125",
 			"Values": []
 		}
-
+		"missionType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"missionTarget": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"missionDifficulty": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"missionValue": {
+            "Type": "STRING:125",
+            "Values": []
+        },
     }
 }

@@ -726,7 +726,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// The player has opened an info popup.
 	/// </summary>
 	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
-	/// <param name="_action">How was this popup opened? One of "Automatic", "Info_button" or "Settings".</param>
+	/// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
 	override public void Notify_InfoPopup(string _popupName, string _action) {
 		if(FeatureSettingsManager.IsDebugEnabled) {
 			Log("Info Popup - popup: " + _popupName + ", action: " + _action);
@@ -740,6 +740,28 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
+	public override void Notify_Missions(Mission _mission, EActionsMission _action) 
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_Missions " + _action.ToString());
+		}        
+
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.missions");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_MISSION_TYPE, _mission.def.Get("type"));
+			Track_AddParamString(e, TRACK_PARAM_MISSION_TARGET, _mission.def.Get("params"));
+			Track_AddParamString(e, TRACK_PARAM_MISSION_DIFFICULTY, _mission.difficulty.ToString());
+			Track_AddParamString(e, TRACK_PARAM_MISSION_VALUE, StringUtils.FormatBigNumber(_mission.objective.targetValue));
+			Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString()); 
+			Track_AddParamSessionsCount(e);
+			Track_AddParamRunsAmount(e);
+			Track_AddParamHighestDragonXp(e);
+			Track_AddParamPlayerProgress(e);
+			Track_SendEvent(e);
+		}
+	}
     #endregion
 
     #region track	
@@ -1338,7 +1360,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     // Please, respect the alphabetic order
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_ACCEPTED                   = "accepted";
-	private const string TRACK_PARAM_ACTION						= "action";			// "Automatic", "Info_button" or "Settings"
+	private const string TRACK_PARAM_ACTION						= "action";			// "automatic", "info_button" or "settings"
     private const string TRACK_PARAM_AD_IS_AVAILABLE            = "adIsAvailable";
     private const string TRACK_PARAM_AD_REVIVE                  = "adRevive";
     private const string TRACK_PARAM_ADS_TYPE                   = "adsType";
@@ -1384,8 +1406,12 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_LOADING_TIME               = "loadingTime";
 	private const string TRACK_PARAM_MAP_USAGE                  = "mapUsedNB";
     private const string TRACK_PARAM_MAX_REACHED                = "maxReached";
-    private const string TRACK_PARAM_MAX_XP                     = "maxXp";
-    private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
+	private const string TRACK_PARAM_MAX_XP                     = "maxXp";
+	private const string TRACK_PARAM_MISSION_DIFFICULTY			= "missionDifficulty";
+	private const string TRACK_PARAM_MISSION_TARGET				= "missionTarget";
+	private const string TRACK_PARAM_MISSION_TYPE				= "missionType";
+	private const string TRACK_PARAM_MISSION_VALUE				= "missionValue";
+	private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
     private const string TRACK_PARAM_MONEY_USD                  = "moneyUSD";    
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
