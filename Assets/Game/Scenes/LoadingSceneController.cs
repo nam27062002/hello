@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using TMPro;
+using System.Text.RegularExpressions;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -121,6 +122,7 @@ public class LoadingSceneController : SceneController {
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
         WAITING_FOR_RULES,
+        SHOWING_UPGRADE_POPUP,
     	COUNT
     }
     private State m_state = State.NONE;
@@ -135,6 +137,7 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+		CacheServerManager.SharedInstance.Init();
 		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!"); 
@@ -193,10 +196,17 @@ public class LoadingSceneController : SceneController {
 
 				if(!AndroidPermissionsManager.SharedInstance.CheckDangerousPermissions ()) {
                     // Application.targetFrameRate = 10;
-					m_state = State.WAITING_ANDROID_PERMISSIONS;
+					SetState(State.WAITING_ANDROID_PERMISSIONS);
 				}else{
                     // Load persistence
-                    SetState(State.WAITING_FOR_RULES);								        
+                    if ( NeedsUpgrade() )
+                    {
+						SetState(State.SHOWING_UPGRADE_POPUP);
+                    }
+                    else
+                    {
+                    	SetState(State.WAITING_FOR_RULES);
+                    }
 			        // TEST
 			        /*
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
@@ -258,7 +268,15 @@ public class LoadingSceneController : SceneController {
     			if ( m_androidPermissionsListener.m_permissionsFinished )
     			{  
                     // Load persistence        
-                    SetState(State.WAITING_FOR_RULES);                        
+                    if ( NeedsUpgrade() )
+                    {
+						SetState(State.SHOWING_UPGRADE_POPUP);
+                    }
+                    else
+                    {
+						SetState(State.WAITING_FOR_RULES);
+                    }
+
     			}
     		}break;
             case State.WAITING_FOR_RULES:
@@ -310,6 +328,10 @@ public class LoadingSceneController : SceneController {
 
         switch (state)
         {
+        	case State.SHOWING_UPGRADE_POPUP:
+        	{
+        		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
+        	}break;
             case State.WAITING_SAVE_FACADE:
             {
 				// [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
@@ -372,6 +394,23 @@ public class LoadingSceneController : SceneController {
                 StartLoadFlow();
           	}break;
         }
+    }
+
+    private bool NeedsUpgrade()
+    {
+    	bool ret = false;
+		Match match = Regex.Match(Application.version, @"([0-9]+)\.([0-9]+)\.?([0-9]+)?");
+		if ( match.Success )
+		{
+			int[] cachedVersion = CacheServerManager.SharedInstance.versionNumber;
+			for( int i = 0; i<match.Groups.Count-1 && !ret; ++i)
+			{
+				string v = match.Groups[i+1].Value;
+				if ( !string.IsNullOrEmpty(v) && int.Parse( v ) < cachedVersion[i] )
+					ret = true;
+			}
+		}
+    	return ret;
     }
         
     private void StartLoadFlow()
