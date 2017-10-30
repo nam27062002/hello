@@ -85,6 +85,11 @@ public class Mission {
 	public TimeSpan cooldownRemaining { get { return cooldownDuration - cooldownElapsed; }}
 	public float cooldownProgress { get { return Mathf.InverseLerp(0f, (float)cooldownDuration.TotalSeconds, (float)cooldownElapsed.TotalSeconds); }}
 
+	// Did player use Ads or HC to skip time?
+	private bool m_skipTimeWithAds;
+	private bool m_skipTimeWithHC;
+	private bool m_cooldownNotified;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -108,6 +113,10 @@ public class Mission {
 		// Create and initialize new objective
 		m_objective = new MissionObjective(this, m_def, m_typeDef, _targetValue, _singleRun);
 		m_objective.OnObjectiveComplete.AddListener(OnObjectiveComplete);
+
+		m_skipTimeWithAds = false;
+		m_skipTimeWithHC = false;
+		m_cooldownNotified = false;
 	}
 
 	/// <summary>
@@ -121,6 +130,10 @@ public class Mission {
 		
 		m_def = null;
 		m_typeDef = null;
+
+		m_skipTimeWithAds = false;
+		m_skipTimeWithHC = false;
+		m_cooldownNotified = false;
 	}
 
 	/// <summary>
@@ -148,6 +161,13 @@ public class Mission {
 				// Start objective
 				m_objective.enabled = true;
 			} break;
+
+			case State.ACTIVATION_PENDING: {
+					if (!m_cooldownNotified) {
+						HDTrackingManager.Instance.Notify_Missions(this, HDTrackingManager.EActionsMission.new_wait);
+						m_cooldownNotified = true;
+					}
+			} break;
 		}
 
 		// Change state
@@ -167,7 +187,7 @@ public class Mission {
 	/// Mission state wont change, even if cooldown is completed.
 	/// </summary>
 	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
-	public void SkipCooldownTimer(float _seconds) {
+	public void SkipCooldownTimer(float _seconds, bool _useAd, bool _useHC) {
 		// Nothing to do if mission is not on cooldown
 		if(state != Mission.State.COOLDOWN) return;
 
@@ -176,8 +196,27 @@ public class Mission {
 			_seconds = (float)cooldownRemaining.TotalSeconds;
 		}
 
+
+		m_skipTimeWithAds = _useAd;
+		m_skipTimeWithHC = _useHC;
+
 		// Do it!
 		m_cooldownStartTimestamp = m_cooldownStartTimestamp.AddSeconds(-_seconds);	// Simulate that cooldown started earlier than it actually did
+
+		if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_cooldownStartTimestamp).TotalMinutes >= MissionManager.GetCooldownPerDifficulty(m_difficulty)) {
+			if (_useAd || _useHC) {
+				if (m_skipTimeWithAds && m_skipTimeWithHC) {
+					HDTrackingManager.Instance.Notify_Missions(this, HDTrackingManager.EActionsMission.new_mix);
+					m_cooldownNotified = true;
+				} else if (m_skipTimeWithAds) {
+					HDTrackingManager.Instance.Notify_Missions(this, HDTrackingManager.EActionsMission.new_ad);
+					m_cooldownNotified = true;
+				} else if (m_skipTimeWithHC) {
+					HDTrackingManager.Instance.Notify_Missions(this, HDTrackingManager.EActionsMission.new_pay);
+					m_cooldownNotified = true;
+				}
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
