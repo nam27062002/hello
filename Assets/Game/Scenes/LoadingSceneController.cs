@@ -112,6 +112,7 @@ public class LoadingSceneController : SceneController {
     private bool m_startLoadFlow = true;    
     private bool m_loadingDone = false;
 
+    private float m_stateDuration = 0;
 
     private enum State
     {
@@ -119,6 +120,7 @@ public class LoadingSceneController : SceneController {
     	WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
+        WAITING_FOR_RULES,
     	COUNT
     }
     private State m_state = State.NONE;
@@ -151,15 +153,16 @@ public class LoadingSceneController : SceneController {
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now
         timer = 0;
+        m_stateDuration = 0;
 
         // [AOC] This is a safe place to instantiate all the singletons
         //		 Do it now so we have it under control
         //		 Add all the new created singletons
         // Content and persistence
-		//DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
+        //DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
 
 
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             if (settingsInstance != null)
             {
@@ -193,7 +196,7 @@ public class LoadingSceneController : SceneController {
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
 				}else{
                     // Load persistence
-                    SetState(State.WAITING_SAVE_FACADE);								        
+                    SetState(State.WAITING_FOR_RULES);								        
 			        // TEST
 			        /*
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
@@ -255,9 +258,16 @@ public class LoadingSceneController : SceneController {
     			if ( m_androidPermissionsListener.m_permissionsFinished )
     			{  
                     // Load persistence        
-                    SetState(State.WAITING_SAVE_FACADE);                        
+                    SetState(State.WAITING_FOR_RULES);                        
     			}
     		}break;
+            case State.WAITING_FOR_RULES:
+            {
+                if (ContentManager.ready)
+                {
+                    SetState(State.WAITING_SAVE_FACADE);
+                }
+            }break;
     		default:
     		{
 				// Update load progress
@@ -289,6 +299,13 @@ public class LoadingSceneController : SceneController {
 
     private void SetState(State state)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            float deltaTime = Time.timeSinceLevelLoad - m_stateDuration;
+            m_stateDuration = Time.timeSinceLevelLoad;
+            Log(m_state + " -> " + state + " time = " + deltaTime);
+        }
+
         m_state = state;
 
         switch (state)
