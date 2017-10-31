@@ -72,7 +72,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 142316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50, y: 100, z: 0}
+  m_LocalPosition: {x: 0, y: 100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000011745252438}
@@ -1350,6 +1350,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4796776238355710}
+  - component: {fileID: 114147065452774190}
   m_Layer: 0
   m_Name: PF_ChestView(Clone)
   m_TagString: Untagged
@@ -2580,6 +2581,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4418675518455262}
+  - component: {fileID: 114419383739535594}
   m_Layer: 0
   m_Name: PF_ChestView(Clone)
   m_TagString: Untagged
@@ -2818,6 +2820,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4361700666602682}
+  - component: {fileID: 114478532840114468}
   m_Layer: 0
   m_Name: PF_ChestView(Clone)
   m_TagString: Untagged
@@ -3585,6 +3588,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4691179756789536}
+  - component: {fileID: 114298525572790788}
   m_Layer: 0
   m_Name: PF_ChestView(Clone)
   m_TagString: Untagged
@@ -3872,6 +3876,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4241719673428610}
+  - component: {fileID: 114503545378874036}
   m_Layer: 0
   m_Name: PF_ChestView(Clone)
   m_TagString: Untagged
@@ -3931,7 +3936,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013265796208}
-  m_LocalRotation: {x: -0, y: -0.00015503987, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0.00015502403, z: -0, w: 1}
   m_LocalPosition: {x: 0.018644333, y: 0, z: -0.13368702}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -10360,8 +10365,8 @@ MonoBehaviour:
   - {fileID: 212055512236493586}
   - {fileID: 212628978682221182}
   m_xRange:
-    min: -180
-    max: 230
+    min: -230
+    max: 180
   m_yRange:
     min: 14.599998
     max: 160.2
@@ -10809,6 +10814,18 @@ MonoBehaviour:
   livePreview: 1
   drawGizmos: 1
   gizmoColor: {r: 0.41068316, g: 0, b: 1, a: 0.49803922}
+--- !u!114 &114147065452774190
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1238059653114826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeTime: 0
 --- !u!114 &114162038360999696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10903,6 +10920,54 @@ MonoBehaviour:
   m_mode: 0
   m_screens: 02000000
   m_restartShowAnimation: 0
+--- !u!114 &114298525572790788
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1884230959623972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeTime: 0
+--- !u!114 &114419383739535594
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1523322470336326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeTime: 0
+--- !u!114 &114478532840114468
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1575691991732320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeTime: 0
+--- !u!114 &114503545378874036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1980220454363898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeTime: 0
 --- !u!114 &114573712146653056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10937,6 +11002,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531ea0f3e519948eeabd145240a210cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_goldRewardView: {fileID: 0}
+  m_gemsRewardView: {fileID: 0}
   m_glowFX: {fileID: 0}
   m_openParticle:
     name: PS_ChestOpenLoop
@@ -11010,6 +11077,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531ea0f3e519948eeabd145240a210cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_goldRewardView: {fileID: 0}
+  m_gemsRewardView: {fileID: 0}
   m_glowFX: {fileID: 0}
   m_openParticle:
     name: PS_ChestOpenLoop
@@ -11069,6 +11138,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531ea0f3e519948eeabd145240a210cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_goldRewardView: {fileID: 0}
+  m_gemsRewardView: {fileID: 0}
   m_glowFX: {fileID: 0}
   m_openParticle:
     name: PS_ChestOpenLoop
@@ -11128,6 +11199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531ea0f3e519948eeabd145240a210cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_goldRewardView: {fileID: 0}
+  m_gemsRewardView: {fileID: 0}
   m_glowFX: {fileID: 0}
   m_openParticle:
     name: PS_ChestOpenLoop
@@ -11199,6 +11272,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531ea0f3e519948eeabd145240a210cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_goldRewardView: {fileID: 0}
+  m_gemsRewardView: {fileID: 0}
   m_glowFX: {fileID: 0}
   m_openParticle:
     name: PS_ChestOpenLoop

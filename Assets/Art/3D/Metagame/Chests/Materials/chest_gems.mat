@@ -7,14 +7,13 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: chest_gems
-  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: FOG OPAQUEALPHA VERTEXCOLOR_NONE
+  m_Shader: {fileID: 4800000, guid: f5d01bbba3dd4e94a9d60ae9526d5186, type: 3}
+  m_ShaderKeywords: EMISSIVE_NONE OPAQUEALPHA VERTEXCOLOR_NONE
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -43,6 +42,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 691fe83a526344b3c9f2d67020b9ba37, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MatCap:
+        m_Texture: {fileID: 2800000, guid: fc83aa10b2d1264459fc18fe1ea152d9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -59,11 +62,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ReflectionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SecondTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Emissive: 0
     - VertexColor: 0
     - _BlendMode: 0
     - _BlinkTimeMultiplier: 2
@@ -74,6 +82,7 @@ Material:
     - _DarkenDistance: 20
     - _DarkenPosition: 0
     - _DetailNormalMapScale: 1
+    - _DoubleSided: 0
     - _DstBlend: 0
     - _EmissivePower: 1
     - _EnableAutomaticBlend: 0
@@ -81,7 +90,7 @@ Material:
     - _EnableCutoff: 0
     - _EnableDarken: 0
     - _EnableEmissiveBlink: 0
-    - _EnableFog: 1
+    - _EnableFog: 0
     - _EnableLightmapContrast: 0
     - _EnableNormalMap: 0
     - _EnableOpaqueAlpha: 1
@@ -89,15 +98,20 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _LightmapContrastIntensity: 1.3
+    - _LightmapContrastMargin: 0.5
+    - _LightmapContrastPhase: 2
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpecularPower: 3
     - _SrcBlend: 1
+    - _StencilMask: 10
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
