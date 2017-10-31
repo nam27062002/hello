@@ -24,29 +24,76 @@ public class CacheServerManager {
     }
     #endregion
 
+
+	private const string OBSOLETE_KEY = "OBSOLETE_VERSION";
+
+    // String with version the cache is using
     string m_usingVersion;
-    int[] m_minValidVersion;
+    // if at some point server says this game needs an update we save the version we were using
+    int[] m_obsoleteVersion;
+
+
 	public void Init(string version)
     {
-		m_usingVersion = version;
+		SetUsingVersion(version);
+		LoadObsoleteVersion();
+		ClearOldVersions();
+    }
 
-		// Get Saved Min Version
-		string minversion = PlayerPrefs.GetString("MIN_VERSION", "");
-		m_minValidVersion = VersionStrToInts( minversion );
-		if ( m_minValidVersion == null )
+    public void SetUsingVersion( string version)
+    {
+		m_usingVersion = version;
+		string dirFolder = FileUtils.GetDeviceStoragePath ("/cachedVersions/" + m_usingVersion, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		if ( !Directory.Exists(dirFolder) )
 		{
-			m_minValidVersion = new int[]{0,0,0};	
+			Directory.CreateDirectory( dirFolder );	
+		}
+		string cachedIndex = FileUtils.GetDeviceStoragePath ("/cachedVersions.txt", CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		bool append = true;
+		if ( File.Exists( cachedIndex ) )
+		{
+			string[] lines = File.ReadAllLines( cachedIndex );
+			for( int i = 0; i<lines.Length && append; ++i )
+			{
+				append = lines[i].CompareTo( m_usingVersion ) != 0;
+			}
+		}
+
+		if ( append )
+		{
+			using (StreamWriter sw = File.AppendText(cachedIndex)) 
+	        {
+	            sw.WriteLine( m_usingVersion );
+	        }	
+	   	}
+
+    }
+
+    private void LoadObsoleteVersion()
+    {
+		// Get Saved Min Version
+		string out_of_date_version = PlayerPrefs.GetString(OBSOLETE_KEY, "");
+		m_obsoleteVersion = VersionStrToInts( out_of_date_version );
+		if ( m_obsoleteVersion == null )
+		{
+			m_obsoleteVersion = new int[]{0,0,0};	
 		}
     }
 
-    public void SetMinValidVersion( string v )
+    public void SaveCurrentVersionAsObsolete()
     {
-		PlayerPrefs.SetString("MIN_VERSION",v);
+		SetVersionAsObsolete( m_usingVersion );
+    }
+
+    public void SetVersionAsObsolete( string v )
+    {
+		PlayerPrefs.SetString(OBSOLETE_KEY,v);
+		LoadObsoleteVersion();
     }
 
     private void ClearOldVersions()
     {
-		string cachedIndex = Application.persistentDataPath + "/cachedVersions.txt";
+		string cachedIndex = FileUtils.GetDeviceStoragePath ("/cachedVersions.txt", CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
 		if ( File.Exists( cachedIndex ) )
 		{
 			int[] usingVersion = VersionStrToInts(m_usingVersion);
@@ -58,7 +105,7 @@ public class CacheServerManager {
                     if ( IsVersionOlder( VersionStrToInts( line ) , usingVersion) )
                     {
                     	// Clean files
-                    	string dirFolder = Application.persistentDataPath + "/cachedVersions/" + line;
+						string dirFolder = FileUtils.GetDeviceStoragePath ("/cachedVersions/" + line, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
                     	if ( Directory.Exists( dirFolder ) )
                     	{
                     		Directory.Delete( dirFolder, true);
@@ -71,9 +118,9 @@ public class CacheServerManager {
     }
 
 
-    public int[] minValidVersion
+    public int[] obsoleteVersion
     {
-    	get{return m_minValidVersion;}
+    	get{return m_obsoleteVersion;}
     }
 
 	/// <summary>
@@ -140,4 +187,63 @@ public class CacheServerManager {
     	}
     	return false;
     }
+
+	/// <summary>
+	/// Determines if version v1 is older or equal to version v2. Versions are array of numbers being index 0 major to the rest
+	/// </summary>
+	/// <returns><c>true</c> if version v1 older than v2; otherwise, <c>false</c>.</returns>
+	/// <param name="v1">V1.</param>
+	/// <param name="v2">V2.</param>
+	public static  bool IsVersionOlderOrEqual( int[] v1, int[] v2)
+	{
+		if ( v1 != null && v2 != null )
+    	{
+	    	for( int i = 0;i<v1.Length && i<v2.Length; i++ )
+	    	{
+	    		if ( v1[i] > v2[i] )
+	    			return false;
+	    	}
+			return true;
+    	}
+    	return false;
+	}
+
+
+	public bool GameNeedsUpdate()
+	{
+		int[] appVersion = CacheServerManager.VersionStrToInts( m_usingVersion );
+		return CacheServerManager.IsVersionOlderOrEqual( appVersion, m_obsoleteVersion );
+	}
+
+	#region saving_and_loading
+
+	string GetFilePath( string key )
+	{
+		string path = FileUtils.GetDeviceStoragePath ("/cachedVersions/" + m_usingVersion + "/" + key, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		return path;
+	}
+
+	public void SetVariable( string key, string value)
+	{
+		File.WriteAllText( GetFilePath( key ) , value);	
+	}
+
+	public string GetVariable( string key )
+	{
+		string ret = File.ReadAllText( GetFilePath( key )  );
+		return ret;
+	}
+
+	public bool HasKey( string key )
+	{
+		return File.Exists( GetFilePath( key )  );
+	}
+
+	public void DeleteKey( string key )
+	{
+		File.Delete( GetFilePath( key )  );
+	}
+
+	#endregion
+
 }

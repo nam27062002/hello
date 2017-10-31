@@ -72,6 +72,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 {
                     Rules_OnLoaded();
                     State_Timer = 0f;
+
                     State = EState.WaitingToCheckConnection;                    
                 }                
                 break;
@@ -172,15 +173,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     // The response for the quality settings request can be null if the server doesn't have that information. If so then the client has to provide the server with that information.
     // In order to be allowed to do so the user has to be logged. 
 
-    /// <summary>
-    /// Key for the latest settings received from server
+	/// <summary>
+    /// Key for cache server manager
     /// </summary>
-    private string SERVER_KEY_SETTINGS_DATA_CACHED = "fSettings_data";
-
-    /// <summary>
-    /// Key for the version of the game when the latest settings were stored.
-    /// </summary>
-    private string SERVER_KEY_SETTINGS_VERSION_CACHED = "fSettings_version";
+	private string CACHE_SERVER_KEY = "fSettings_data";
 
     private float SERVER_TIME_TO_WAIT_BETWEEN_CONNECTION_CHECKS = 5f;
 
@@ -218,6 +214,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 string qualitySettings = response["response"] as string;                
                 if (qualitySettings != null)
                 {                    
+					CacheServerManager.SharedInstance.SetVariable(CACHE_SERVER_KEY, qualitySettings);
                     JSONNode json = JSONNode.Parse(qualitySettings);
                     Server_QualitySettingsJSONToApply = FormatJSON(json);                    
                 }
@@ -232,14 +229,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 if (Server_QualitySettingsJSONToApply == null)
                 {
                     State = EState.Done;
-                    Server_ClearCache();                                                                
                 }
                 else
                 {
-                    // If needs to be stored in the mobile cache so it can be applied next time the user starts the game just in case she's playing offline
-                    string currentVersion = ServerManager.SharedInstance.GetServerConfig().m_strClientVersion;
-                    Server_CacheData(currentVersion, Server_QualitySettingsJSONToApply.ToString());
-
                     State = EState.WaitingToApplyServerResponse;                    
                 }
             }
@@ -288,39 +280,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Server_ResetUploadQualitySettings();
     }   
     
-    /// <summary>
-    /// Returns the JSON received from server that is stored in the device cache
-    /// </summary>
-    /// <returns></returns>
-    private JSONNode Server_GetCachedJSON()
-    {
-        JSONNode returnValue = null;
-        
-        string raw = PlayerPrefs.GetString(SERVER_KEY_SETTINGS_DATA_CACHED);
-        if (!string.IsNullOrEmpty(raw))
-        {            
-            returnValue = JSON.Parse(raw);
-        }
-
-        return returnValue;
-    }     
-
-    private string Server_GetVersionCachedJSON()
-    {
-        return PlayerPrefs.GetString(SERVER_KEY_SETTINGS_VERSION_CACHED);
-    }
-
-    private void Server_ClearCache()
-    {
-        PlayerPrefs.DeleteKey(SERVER_KEY_SETTINGS_VERSION_CACHED);
-        PlayerPrefs.DeleteKey(SERVER_KEY_SETTINGS_DATA_CACHED);
-    }
-
-    private void Server_CacheData(string version, string data)
-    {
-        PlayerPrefs.SetString(SERVER_KEY_SETTINGS_VERSION_CACHED, version);
-        PlayerPrefs.SetString(SERVER_KEY_SETTINGS_DATA_CACHED, data);
-    }
     #endregion
 
     #region device
@@ -628,21 +587,19 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         m_deviceQualityManager.Device_CalculatedRating = rating;
 
         Device_CurrentFeatureSettings = CreateFeatureSettings();
-
-        // Checks if the latest server settings cached are still valid
-        string serverLastVersion = Server_GetVersionCachedJSON();
-        if (!string.IsNullOrEmpty(serverLastVersion))
-        {
-            string currentVersion = ServerManager.SharedInstance.GetServerConfig().m_strClientVersion;
-            if (!currentVersion.Equals(serverLastVersion))
-            {
-                Server_ClearCache();
-            }
+		if (ISApplyFeatureSettingsAllowed())
+		{
+			if (Server_QualitySettingsJSONToApply != null)
+	        {
+				SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), Server_QualitySettingsJSONToApply);                    
+	        }
+			else if ( CacheServerManager.SharedInstance.HasKey(CACHE_SERVER_KEY) )
+	        {
+	    		string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_KEY);
+				JSONNode json = JSON.Parse(value);
+				SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), json);
+	        }
         }
-
-        // Retrieves the latest configuration received from server to apply it since the user might be playing offline
-        JSONNode serverJSON = Server_GetCachedJSON();        
-        SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), serverJSON);
     }
     #endregion
 

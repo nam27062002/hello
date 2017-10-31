@@ -93,6 +93,14 @@ public class HDTrackingManager
 		done
 	};
 
+	public enum EEventMultiplier
+	{
+		none,
+		golden_key,
+		ad,
+		hc_payment
+	};
+
     public static string EconomyGroupToString(EEconomyGroup group)
     {
         return group.ToString();
@@ -108,7 +116,9 @@ public class HDTrackingManager
 
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
-             
+
+    public virtual void SaveOfflineUnsentEvents() { }
+
     public virtual void Update()
     {        
     }
@@ -317,6 +327,12 @@ public class HDTrackingManager
 	/// <param name="_mission">Mission.</param>
 	/// <param name="_action">Action.</param>
 	public virtual void Notify_Missions(Mission _mission, EActionsMission _action) {}
+
+
+
+	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}
+
+
     #endregion
 
     #region log
