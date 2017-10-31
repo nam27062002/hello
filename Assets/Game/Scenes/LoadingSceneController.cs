@@ -137,7 +137,7 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
-		CacheServerManager.SharedInstance.Init();
+		CacheServerManager.SharedInstance.Init(Application.version);
 		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!"); 
@@ -398,19 +398,8 @@ public class LoadingSceneController : SceneController {
 
     private bool NeedsUpgrade()
     {
-    	bool ret = false;
-		Match match = Regex.Match(Application.version, @"([0-9]+)\.([0-9]+)\.?([0-9]+)?");
-		if ( match.Success )
-		{
-			int[] cachedVersion = CacheServerManager.SharedInstance.versionNumber;
-			for( int i = 0; i<match.Groups.Count-1 && !ret; ++i)
-			{
-				string v = match.Groups[i+1].Value;
-				if ( !string.IsNullOrEmpty(v) && int.Parse( v ) < cachedVersion[i] )
-					ret = true;
-			}
-		}
-    	return ret;
+		int[] appVersion = CacheServerManager.VersionStrToInts( Application.version );
+		return CacheServerManager.IsVersionOlder( appVersion, CacheServerManager.SharedInstance.minValidVersion);
     }
         
     private void StartLoadFlow()
