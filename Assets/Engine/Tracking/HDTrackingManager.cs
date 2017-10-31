@@ -116,7 +116,9 @@ public class HDTrackingManager
 
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
-             
+
+    public virtual void SaveOfflineUnsentEvents() { }
+
     public virtual void Update()
     {        
     }
