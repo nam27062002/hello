@@ -396,11 +396,12 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					// Attempt to do the contribution (we may have lost connectivity)
 					GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
 						m_bonusDragon ? 2f : 1f,
-						m_keyBonus ? 2f : 1f
+						m_keyBonus ? 2f : 1f,
+						m_keyPurchased
 					);
 					if(res == GlobalEventManager.ErrorCode.NONE) {
 						// Success! Wait for the confirmation from the server
-						BusyScreen.Show(this);
+						BusyScreen.Show(this);						
 					} else {
 						// We can't contribute! Refresh panel
 						InitPanel(true, false);
