@@ -81,7 +81,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		bool activate = Input.GetKey(KeyCode.X) || m_controls.action;
+		bool activate = Input.GetKey(KeyCode.X) || m_controls.action || m_dragon.changingArea;
 
 		//if (m_insideWater)
 		//	activate = false;
@@ -89,7 +89,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		if (activate) {
 			if (m_ready) {
 				m_ready = false;
-				if (m_dragon.energy > m_energyRequiredToBoost) {
+				if (m_dragon.energy > m_energyRequiredToBoost || m_dragon.changingArea) {
 					StartBoost();
 				}
 			}
@@ -144,7 +144,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	public bool IsDraining() {
 		// Don't drain energy if cheat is enabled or dragon fury is on, or super size, or pet infinite boost
-		return !(DebugSettings.infiniteBoost || m_dragon.IsFuryOn() || m_superSizeInfiniteBoost || m_petInfiniteBoost);
+		return !(DebugSettings.infiniteBoost || m_dragon.IsFuryOn() || m_superSizeInfiniteBoost || m_petInfiniteBoost || m_dragon.changingArea);
 	}
 
 	public bool IsBoostActive()
