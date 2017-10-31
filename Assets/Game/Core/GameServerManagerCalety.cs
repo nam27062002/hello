@@ -142,6 +142,7 @@ public class GameServerManagerCalety : GameServerManager {
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onNewAppVersionNeeded() {
 			Debug.TaggedLog(tag, "onNewAppVersionNeeded");
+			CacheServerManager.SharedInstance.SaveCurrentVersionAsObsolete();
 			IsNewAppVersionNeeded = true;
 		}
 
