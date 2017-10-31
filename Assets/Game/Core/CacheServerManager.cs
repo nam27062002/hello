@@ -49,10 +49,24 @@ public class CacheServerManager {
 			Directory.CreateDirectory( dirFolder );	
 		}
 		string cachedIndex = FileUtils.GetDeviceStoragePath ("/cachedVersions.txt", CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
-		using (StreamWriter sw = File.AppendText(cachedIndex)) 
-        {
-            sw.WriteLine( m_usingVersion );
-        }
+		bool append = true;
+		if ( File.Exists( cachedIndex ) )
+		{
+			string[] lines = File.ReadAllLines( cachedIndex );
+			for( int i = 0; i<lines.Length && append; ++i )
+			{
+				append = lines[i].CompareTo( m_usingVersion ) != 0;
+			}
+		}
+
+		if ( append )
+		{
+			using (StreamWriter sw = File.AppendText(cachedIndex)) 
+	        {
+	            sw.WriteLine( m_usingVersion );
+	        }	
+	   	}
+
     }
 
     private void LoadObsoleteVersion()
