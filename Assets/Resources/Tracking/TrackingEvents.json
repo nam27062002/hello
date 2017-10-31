@@ -323,6 +323,23 @@
                 "etl"
             ]
         },
+		"custom.global.event.rundone": {
+            "Parameters": [
+                {"evntID": {"Status": "OK"}},
+                {"eventType": {"Status": "OK"}},
+                {"scoreRun": {"Status": "OK"}},
+                {"scoreTotal": {"Status": "OK"}},
+                {"multiplier": {"Status": "OK"}},
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"maxXP": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}},                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -879,6 +896,26 @@
             "Values": []
         },
 		"missionValue": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"evntID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"eventType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"scoreRun": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"scoreTotal": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"multiplier": {
             "Type": "STRING:125",
             "Values": []
         },

@@ -237,7 +237,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// <returns>Whether the contribution has been applied or not and why.</returns>
 	/// <param name="_bonusDragonMultiplier">Apply bonus dragon multiplier?</param>
 	/// <param name="_keysMultiplier">Apply keys multiplier? Transaction must have been performed already.</param>
-	public static ErrorCode Contribute(float _bonusDragonMultiplier, float _keysMultiplier, bool _spentHC) {
+	public static ErrorCode Contribute(float _bonusDragonMultiplier, float _keysMultiplier, bool _spentHC, bool _viewAD) {
 		// Can the user contribute to the current event?
 		ErrorCode err = CanContribute();
 		if(err != ErrorCode.NONE) return err;
@@ -266,8 +266,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 						// Track here!
 						HDTrackingManager.EEventMultiplier mult = HDTrackingManager.EEventMultiplier.none;
 						if (_keysMultiplier > 1) {
-							if (_spentHC) mult = HDTrackingManager.EEventMultiplier.hc_payment;
-							else 		  mult = HDTrackingManager.EEventMultiplier.golden_key;
+							if (_spentHC) 		mult = HDTrackingManager.EEventMultiplier.hc_payment;
+							else if (_viewAD)	mult = HDTrackingManager.EEventMultiplier.ad;
+							else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
 						}
 						HDTrackingManager.Instance.Notify_GlobalEventRunDone(instance.m_currentEvent.id, instance.m_currentEvent.objective.typeDef.sku, contribution, playerData.score, mult);
 						//

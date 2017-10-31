@@ -81,6 +81,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	private bool m_bonusDragon = false;
 	private bool m_keyBonus = false;
 	private bool m_keyPurchased = false;
+	private bool m_keyFromAds = false;
 	private DefinitionNode m_keyShopPackDef = null;
 	
 	//------------------------------------------------------------------------//
@@ -397,7 +398,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
 						m_bonusDragon ? 2f : 1f,
 						m_keyBonus ? 2f : 1f,
-						m_keyPurchased
+						m_keyPurchased,
+						m_keyFromAds
 					);
 					if(res == GlobalEventManager.ErrorCode.NONE) {
 						// Success! Wait for the confirmation from the server
@@ -492,6 +494,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			true, 
 			GameAds.EAdPurpose.RESULTS_GET_KEY,
 			(bool _success) => {
+				m_keyFromAds = true;
 				// Add keys and consume them instantly (for tracking purposes)
 				ulong keysAmount = 1;
 				UsersManager.currentUser.EarnCurrency(
