@@ -37,6 +37,7 @@ public class CacheServerManager {
     {
 		SetUsingVersion(version);
 		LoadObsoleteVersion();
+		ClearOldVersions();
     }
 
     public void SetUsingVersion( string version)
@@ -48,7 +49,10 @@ public class CacheServerManager {
 			Directory.CreateDirectory( dirFolder );	
 		}
 		string cachedIndex = FileUtils.GetDeviceStoragePath ("/cachedVersions.txt", CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
-		File.AppendText( m_usingVersion + "\n");	// if file does not exist this functions it's supposed to create it
+		using (StreamWriter sw = File.AppendText(cachedIndex)) 
+        {
+            sw.WriteLine( m_usingVersion );
+        }
     }
 
     private void LoadObsoleteVersion()
