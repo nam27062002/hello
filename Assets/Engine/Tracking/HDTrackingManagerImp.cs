@@ -85,6 +85,13 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
     }
 
+    public override void SaveOfflineUnsentEvents()
+    {
+#if !UNITY_EDITOR
+        DNAManager.SharedInstance.SaveOfflineUnsentEvents();
+#endif
+    }
+
     private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
 	{
         StoreManager.StoreProduct product = GameStoreManager.SharedInstance.GetStoreProduct(_sku);
@@ -202,7 +209,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void InitDNA(CaletySettings settingsInstance)
     {
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-#if !UNITY_EDITOR        
+#if !UNITY_EDITOR
         if (settingsInstance != null)
         {
             UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
@@ -229,7 +236,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string strAppsFlyerPlatformID = settingsInstance.GetBundleID();
 #else
         string strAppsFlyerPlatformID = "";
-#endif        
+#endif
         AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, TrackingPersistenceSystem.UserID);
 
 #if UNITY_ANDROID
@@ -307,7 +314,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    #region notify   
+#region notify   
     private bool Notify_MeetsEventRequirements(string e)
     {
         bool returnValue = false;
@@ -626,7 +633,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
 	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
-		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
+        // This step has to be sent only within the first session
+        if (TrackingPersistenceSystem.SessionCount == 1) {
+            Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
+        }
 	}
 
     public override void Notify_SocialAuthentication()
@@ -762,9 +772,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
-    #endregion
+#endregion
 
-    #region track	
+#region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
@@ -1456,9 +1466,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_SendEvent(TrackingManager.TrackingEvent e)
 	{
 		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-		#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 		TrackingManager.SharedInstance.SendEvent(e);
-		#endif
+#endif
 	}
 
     private void Track_AddParamSubVersion(TrackingManager.TrackingEvent e)
