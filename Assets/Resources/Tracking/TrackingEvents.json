@@ -315,7 +315,40 @@
                 {"action": {"Status": "OK"}},
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
-				{"maxXP": {"Status": "OK"}},
+				{"maxXp": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}},                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.global.event.rundone": {
+            "Parameters": [
+                {"evntID": {"Status": "OK"}},
+                {"eventType": {"Status": "OK"}},
+                {"scoreRun": {"Status": "OK"}},
+                {"scoreTotal": {"Status": "OK"}},
+                {"multiplier": {"Status": "OK"}},
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"maxXp": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}},                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.global.event.reward": {
+            "Parameters": [
+                {"evntID": {"Status": "OK"}},
+                {"eventType": {"Status": "OK"}},
+                {"rewardTier": {"Status": "OK"}},
+                {"scoreTotal": {"Status": "OK"}},
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"maxXp": {"Status": "OK"}},
 				{"playerProgress": {"Status": "OK"}},                
             ],
             "APIs": [
@@ -865,7 +898,7 @@
 		"sourceOfPet": {
 			"Type": "STRING:125",
 			"Values": []
-		}
+		},
 		"missionType": {
             "Type": "STRING:125",
             "Values": []
@@ -882,5 +915,29 @@
             "Type": "STRING:125",
             "Values": []
         },
+		"evntID": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"eventType": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"scoreRun": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"scoreTotal": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"multiplier": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"rewardTier": {
+            "Type": "STRING:125",
+            "Values": []
+        }
     }
 }
