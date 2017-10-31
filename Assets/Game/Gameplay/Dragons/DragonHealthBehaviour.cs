@@ -10,6 +10,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		public float dps = 0f;
 		public DamageType type = DamageType.NONE;
 		public float timer = 0f;
+        public Transform source = null;
 	}
 
 	//-----------------------------------------------
@@ -95,7 +96,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			for(int i = m_dots.Count - 1; i >= 0; i--) {
 				// Apply damage
 				float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
-				ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, null, false);		// No hit animation!
+				ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, m_dots[i].source, false);		// No hit animation!
 
 				// Update timer and check for dot finish
 				m_dots[i].timer -= Time.deltaTime;
@@ -219,7 +220,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		newDot.dps = _dps;
 		newDot.timer = _duration;
 		newDot.type = _type;
-		m_dots.Add(newDot);
+        newDot.source = _source;
+        m_dots.Add(newDot);
 
 		// Do feedback animation
 		if ( _dps >= m_dotAnimationThreshold ){

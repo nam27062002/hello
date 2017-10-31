@@ -136,8 +136,8 @@ abstract public class TouchControls : MonoBehaviour {
 			TouchState touchState = GameInput.CheckTouchState(0);            
 			//Debug.Log("Got touchState 0 = " + touchState.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
 			if(touchState == TouchState.pressed)
-			{
-				if (m_registerFirstTouch) {
+			{                
+                if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) && m_registerFirstTouch) {
 					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._03_game_started);
 					m_registerFirstTouch = false;
 				}
