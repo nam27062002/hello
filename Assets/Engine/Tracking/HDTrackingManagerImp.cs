@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
@@ -772,7 +772,30 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
-#endregion
+
+	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_GlobalEventRunDone");
+		}   
+	
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.rundone");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
+			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_RUN, _runScore.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_MULTIPLIER, _mulitplier.ToString());
+			Track_AddParamSessionsCount(e);
+			Track_AddParamRunsAmount(e);
+			Track_AddParamHighestDragonXp(e);
+			Track_AddParamPlayerProgress(e);
+			Track_SendEvent(e);
+		}
+	}
+    #endregion
 
 #region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
@@ -1394,6 +1417,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
+	private const string TRACK_PARAM_EVENT_ID 					= "evntID";
+	private const string TRACK_PARAM_EVENT_MULTIPLIER 			= "multiplier";
+	private const string TRACK_PARAM_EVENT_SCORE_RUN 			= "scoreRun";
+	private const string TRACK_PARAM_EVENT_SCORE_TOTAL 			= "scoreTotal";
+	private const string TRACK_PARAM_EVENT_TYPE 				= "eventType";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
