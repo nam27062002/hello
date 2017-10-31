@@ -127,6 +127,7 @@ public class LoadingSceneController : SceneController {
     }
     private State m_state = State.NONE;
 	private AndroidPermissionsListener m_androidPermissionsListener = null;
+	private string m_buildVersion;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -137,7 +138,16 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
-		CacheServerManager.SharedInstance.Init(Application.version);
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		if ( settingsInstance )
+		{
+			m_buildVersion = settingsInstance.GetClientBuildVersion();
+		}
+		else
+		{
+			m_buildVersion = Application.version;
+		}
+		CacheServerManager.SharedInstance.Init(m_buildVersion);
 		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!"); 
@@ -199,7 +209,7 @@ public class LoadingSceneController : SceneController {
 					SetState(State.WAITING_ANDROID_PERMISSIONS);
 				}else{
                     // Load persistence
-                    if ( NeedsUpgrade() )
+                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
                     {
 						SetState(State.SHOWING_UPGRADE_POPUP);
                     }
@@ -268,7 +278,7 @@ public class LoadingSceneController : SceneController {
     			if ( m_androidPermissionsListener.m_permissionsFinished )
     			{  
                     // Load persistence        
-                    if ( NeedsUpgrade() )
+                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
                     {
 						SetState(State.SHOWING_UPGRADE_POPUP);
                     }
@@ -396,11 +406,7 @@ public class LoadingSceneController : SceneController {
         }
     }
 
-    private bool NeedsUpgrade()
-    {
-		int[] appVersion = CacheServerManager.VersionStrToInts( Application.version );
-		return CacheServerManager.IsVersionOlder( appVersion, CacheServerManager.SharedInstance.minValidVersion);
-    }
+
         
     private void StartLoadFlow()
     {

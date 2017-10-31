@@ -63,6 +63,8 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 
 		LevelManager.SetCurrentLevel(null);
 
+        HDTrackingManager.Instance.SaveOfflineUnsentEvents();
+
         // Change scene
         GameSceneManager.SwitchScene(nextScene);
     }
@@ -70,7 +72,9 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Navigate to the game scene.
 	/// </summary>
-	public static void GoToGame() {        
+	public static void GoToGame() {
+        HDTrackingManager.Instance.SaveOfflineUnsentEvents();
+
         instance.SwitchScene(GameSceneController.NAME);
 	}
 
