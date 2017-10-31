@@ -795,6 +795,30 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
+
+	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score) 
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_GlobalEventReward eventId: " + _eventId + " eventType: " + _eventType + " rewardTier: " + _rewardTier + " score: " + _score );
+		}   
+	
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.reward");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
+			Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+
+			// Common stuff
+			Track_AddParamSessionsCount(e);
+			Track_AddParamRunsAmount(e);
+			Track_AddParamHighestDragonXp(e);
+			Track_AddParamPlayerProgress(e);
+			Track_SendEvent(e);
+		}
+	}
     #endregion
 
 #region track	
@@ -1469,6 +1493,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
+	private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
     private const string TRACK_PARAM_SCORE                      = "score";
