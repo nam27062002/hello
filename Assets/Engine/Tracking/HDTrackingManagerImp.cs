@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
@@ -1215,7 +1215,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			e.SetParameterValue(TRACK_PARAM_STEP_NAME, _step);
 			e.SetParameterValue(TRACK_PARAM_STEP_DURATION, _stepDuration);
 			e.SetParameterValue(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
-			e.SetParameterValue(TRACK_PARAM_FIRST_LOAD, _fistLoad);	
+            Track_AddParamBool(e, TRACK_PARAM_FIRST_LOAD, _fistLoad);	
 			
 			Track_SendEvent(e);
 		}

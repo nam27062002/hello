@@ -12,12 +12,19 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 [RequireComponent(typeof(PopupController))]
 public class PopupUpgrade : MonoBehaviour
 {
 
     public const string PATH = "UI/Popups/Message/PF_PopupUpgrade";
+    public TextMeshProUGUI m_verion;
+
+    void Awake()
+    {
+		m_verion.text = GameSettings.internalVersion.ToString() + " ("+ ServerManager.SharedInstance.GetRevisionVersion() +")";
+    }
 
     /// <summary>
     /// Method called when the user clicks on any Confirm buttom. It's called by the editor
