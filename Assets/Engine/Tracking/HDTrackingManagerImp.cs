@@ -773,7 +773,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
-	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
+	public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
@@ -785,8 +785,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 		{
 			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
 			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
-			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_RUN, _runScore.ToString());
-			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_RUN, _runScore.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_RUN, _runScore);
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
 			Track_AddParamString(e, TRACK_PARAM_EVENT_MULTIPLIER, _mulitplier.ToString());
 			Track_AddParamSessionsCount(e);
 			Track_AddParamRunsAmount(e);
@@ -796,7 +798,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
-	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score) 
+	public override void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score) 
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
@@ -809,7 +811,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
 			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
 			Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
-			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
 
 			// Common stuff
 			Track_AddParamSessionsCount(e);
