@@ -726,7 +726,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		if(e != null) {
 			Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
 			Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
-			Track_AddParamString(e, TRACK_PARAM_ACTION, "started");
+			Track_AddParamString(e, TRACK_PARAM_ACTION, "finished");
 			e.SetParameterValue(TRACK_PARAM_LOADING_TIME, (int)(area_loading_duration * 1000.0f));
 			Track_SendEvent(e);
 		}
@@ -773,7 +773,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
-	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
+	public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
@@ -785,8 +785,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 		{
 			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
 			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
-			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_RUN, _runScore.ToString());
-			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_RUN, _runScore.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_RUN, _runScore);
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
 			Track_AddParamString(e, TRACK_PARAM_EVENT_MULTIPLIER, _mulitplier.ToString());
 			Track_AddParamSessionsCount(e);
 			Track_AddParamRunsAmount(e);
@@ -796,7 +798,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
-	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score) 
+	public override void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) 
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
@@ -809,7 +811,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
 			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
 			Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
-			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
+			Track_AddParamBool( e, TRACK_PARAM_EVENT_TOP_CONTRIBUTOR, _topContributor);
 
 			// Common stuff
 			Track_AddParamSessionsCount(e);
@@ -1507,6 +1511,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
     private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
+	private const string TRACK_PARAM_EVENT_TOP_CONTRIBUTOR		= "topContributor";
     private const string TRACK_PARAM_TOTAL_DURATION             = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
