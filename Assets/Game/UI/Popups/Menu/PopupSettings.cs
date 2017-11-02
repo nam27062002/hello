@@ -28,6 +28,8 @@ public class PopupSettings : MonoBehaviour {
 	[SerializeField]
     private GameObject m_3dTouch;
 
+	[SerializeField] private Localizer m_versionText = null;
+
     void Awake()
     {
         if (m_saveTab != null)
@@ -44,6 +46,9 @@ public class PopupSettings : MonoBehaviour {
 			m_3dTouch.SetActive( PlatformUtils.Instance.InputPressureSupprted());
 		}
         CS_Init();
+
+		// Set version number
+		m_versionText.Localize(m_versionText.tid, GameSettings.internalVersion.ToString());
     }
 
 	public void CS_Init()

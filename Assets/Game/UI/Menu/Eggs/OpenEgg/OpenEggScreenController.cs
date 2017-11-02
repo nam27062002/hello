@@ -120,7 +120,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Push the egg reward to the stack!
 		if(_egg.rewardData == null) _egg.GenerateReward();	// Generate a reward if the egg hasn't one
-		UsersManager.currentUser.rewardStack.Push(_egg.rewardData);
+		UsersManager.currentUser.PushReward(_egg.rewardData);
 
 		// Save current profile state in case the open egg flow is interrupted
 		PersistenceFacade.instance.Save_Request(true);
