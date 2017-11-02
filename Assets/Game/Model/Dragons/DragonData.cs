@@ -81,11 +81,17 @@ public class DragonData : IUISelectorItem {
 	public List<string> pets { get { return m_pets; } }
 
 	// Disguise
+	// [AOC] We need 2 of these: the temporal disguise (i.e. for preview only) and the actual equipped disguise (the one that will be persisted)
 	[SerializeField] private string m_disguise;
-	public string diguise 
-	{ 
+	public string diguise { 
 		get { return m_disguise; } 
 		set { m_disguise = value; } 
+	}
+
+	[SerializeField] private string m_persistentDisguise;
+	public string persistentDisguise { 
+		get { return m_persistentDisguise; } 
+		set { m_persistentDisguise = value; } 
 	}
 
 	private List<string> m_shadowFromDragons = new List<string>();
@@ -291,10 +297,12 @@ public class DragonData : IUISelectorItem {
 		progression.Load(_data["xp"].AsFloat, _data["level"].AsInt);
 
 		// Disguise
-		if ( _data.ContainsKey("disguise") )
-			m_disguise = _data["disguise"];
-		else
-			m_disguise = GetDefaultDisguise(sku).sku;
+		if ( _data.ContainsKey("disguise") ) {
+			m_persistentDisguise = _data["disguise"];
+		} else {
+			m_persistentDisguise = GetDefaultDisguise(sku).sku;
+		}
+		m_disguise = m_persistentDisguise;
 
 		// Pets
 		// We must have all the slots, enforce list's size
@@ -325,7 +333,7 @@ public class DragonData : IUISelectorItem {
 		data.Add("revealed", m_revealed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("xp", progression.xp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
 		data.Add("level", progression.level.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("disguise", m_disguise);
+		data.Add("disguise", m_persistentDisguise);
 
 
 		SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
