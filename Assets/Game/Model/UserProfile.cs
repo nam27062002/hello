@@ -1150,7 +1150,8 @@ public class UserProfile : UserPersistenceSystem
 	/// <returns><c>true</c> if the disguise was different from the one previously equiped by the dragon, <c>false</c> otherwise.</returns>
 	/// <param name="_dragonSku">Dragon sku.</param>
 	/// <param name="_disguiseSku">Disguise sku.</param>
-	public bool EquipDisguise( string _dragonSku, string _disguiseSku)
+	/// <param name="_persistent">Whether the equipped disguised is to be persisted or is just for preview.</param>
+	public bool EquipDisguise(string _dragonSku, string _disguiseSku, bool _persistent)
 	{
 		bool ret = false;
 		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
@@ -1159,6 +1160,12 @@ public class UserProfile : UserPersistenceSystem
 			{
 				ret = true;
 				m_dragonsBySku[_dragonSku].diguise = _disguiseSku;
+			}
+
+			// Persist?
+			if(_persistent) {
+				m_dragonsBySku[_dragonSku].persistentDisguise = _disguiseSku;
+				PersistenceFacade.instance.Save_Request();
 			}
 		}
 		return ret;

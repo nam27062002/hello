@@ -183,7 +183,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 					UsersManager.currentUser.wardrobe.SetSkinState(_flow.itemDef.sku, Wardrobe.SkinState.OWNED);
 
 					// Immediately equip it!
-					UsersManager.currentUser.EquipDisguise(DragonManager.currentDragon.def.sku, def.sku);
+					UsersManager.currentUser.EquipDisguise(DragonManager.currentDragon.def.sku, def.sku, true);
 				}
 
 				// Throw out some fireworks!

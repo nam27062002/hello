@@ -171,8 +171,32 @@ public class CPProgressionCheats : MonoBehaviour {
 		data.progression.AddXp(amount, true);
 		UIFeedbackText.CreateAndLaunch("+" + amount, new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
 
-		// Process unlocked skins for current dragon
-		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
+		// Refresh skin state for this dragon
+		Wardrobe wardrobe = UsersManager.currentUser.wardrobe;
+		List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", data.def.sku);
+		for(int i = 0; i < skinDefs.Count; i++) {
+			// Should the skin be unlocked?
+			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
+			bool unlocked = (data.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
+
+			// Apply new state based on lock status
+			Wardrobe.SkinState oldState = wardrobe.GetSkinState(skinDefs[i].sku);
+			Wardrobe.SkinState newState = Wardrobe.SkinState.LOCKED;
+			if(unlocked) {
+				// Depends on previous state
+				switch(oldState) {
+					case Wardrobe.SkinState.OWNED: newState = Wardrobe.SkinState.OWNED; break;
+					case Wardrobe.SkinState.LOCKED: newState = Wardrobe.SkinState.NEW; break;
+					case Wardrobe.SkinState.NEW: newState = Wardrobe.SkinState.NEW; break;
+					case Wardrobe.SkinState.AVAILABLE: newState = Wardrobe.SkinState.AVAILABLE; break;
+				}
+			} else {
+				newState = Wardrobe.SkinState.LOCKED;
+			}
+
+			// Apply new state
+			wardrobe.SetSkinState(skinDefs[i].sku, newState);
+		}
 
         // Save persistence
         PersistenceFacade.instance.Save_Request(false);
@@ -233,8 +257,32 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Set xp
 		data.progression.SetXp_DEBUG(_xp);
 
-		// Process unlocked skins for current dragon
-		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
+		// Refresh skin state for this dragon
+		Wardrobe wardrobe = UsersManager.currentUser.wardrobe;
+		List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", data.def.sku);
+		for(int i = 0; i < skinDefs.Count; i++) {
+			// Should the skin be unlocked?
+			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
+			bool unlocked = (data.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
+
+			// Apply new state based on lock status
+			Wardrobe.SkinState oldState = wardrobe.GetSkinState(skinDefs[i].sku);
+			Wardrobe.SkinState newState = Wardrobe.SkinState.LOCKED;
+			if(unlocked) {
+				// Depends on previous state
+				switch(oldState) {
+					case Wardrobe.SkinState.OWNED: newState = Wardrobe.SkinState.OWNED; break;
+					case Wardrobe.SkinState.LOCKED: newState = Wardrobe.SkinState.NEW; break;
+					case Wardrobe.SkinState.NEW: newState = Wardrobe.SkinState.NEW; break;
+					case Wardrobe.SkinState.AVAILABLE: newState = Wardrobe.SkinState.AVAILABLE; break;
+				}
+			} else {
+				newState = Wardrobe.SkinState.LOCKED;
+			}
+
+			// Apply new state
+			wardrobe.SetSkinState(skinDefs[i].sku, newState);
+		}
 
         // Save persistence
         PersistenceFacade.instance.Save_Request(false);

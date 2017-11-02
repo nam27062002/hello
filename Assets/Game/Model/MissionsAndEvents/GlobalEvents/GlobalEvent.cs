@@ -248,7 +248,7 @@ public partial class GlobalEvent {
 		globalEventUserData.rewardCollected = true;
 
 		// Track global event Reward
-		HDTrackingManager.Instance.Notify_GlobalEventReward(id, objective.typeDef.sku, m_rewardLevel, globalEventUserData.score);
+		HDTrackingManager.Instance.Notify_GlobalEventReward(id, objective.typeDef.sku, m_rewardLevel, globalEventUserData.score, m_topContributor);
 		m_state = State.REWARD_COLLECTED;
 	}
 	//--------------------------------------------------------------------------------------------------------------
