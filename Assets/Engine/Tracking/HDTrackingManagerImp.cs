@@ -87,7 +87,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void SaveOfflineUnsentEvents()
     {
-#if !UNITY_EDITOR
+    // TODO: To make it work on IOS. It's not used on IOS because it was crashing
+#if !UNITY_EDITOR && !UNITY_IOS
         DNAManager.SharedInstance.SaveOfflineUnsentEvents();
 #endif
     }
@@ -189,8 +190,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // Sends the start session event
         Track_StartSessionEvent();
-
-        // StartSession() is called as soon as the persistence is loaded, wo we need to notify this loading funnel step too
+        
         Notify_Funnel_Load(FunnelData_Load.Steps._01_persistance);
     }
 
