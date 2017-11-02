@@ -118,8 +118,16 @@ public class PopupSettings : MonoBehaviour {
 	public void OpenCustomerSupport()
     {
         //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
-		CSTSManager.SharedInstance.OpenView(LocalizationManager.SharedInstance.Culture.Name, false);	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.;
-        HDTrackingManager.Instance.Notify_CustomerSupportRequested();
+		if (Application.internetReachability != NetworkReachability.NotReachable)
+		{
+			CSTSManager.SharedInstance.OpenView(LocalizationManager.SharedInstance.Culture.Name, false);	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.;
+	        HDTrackingManager.Instance.Notify_CustomerSupportRequested();
+        }
+        else
+        {
+			string str = LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION");
+        	UIFeedbackText.CreateAndLaunch(str, new Vector2(0.5f, 0.5f), GetComponentInParent<Canvas>().transform as RectTransform);
+        }
     }
 
 	public void OnBackButton()
