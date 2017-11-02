@@ -726,7 +726,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		if(e != null) {
 			Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
 			Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
-			Track_AddParamString(e, TRACK_PARAM_ACTION, "started");
+			Track_AddParamString(e, TRACK_PARAM_ACTION, "finished");
 			e.SetParameterValue(TRACK_PARAM_LOADING_TIME, (int)(area_loading_duration * 1000.0f));
 			Track_SendEvent(e);
 		}
