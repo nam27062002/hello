@@ -332,7 +332,7 @@ public class HDTrackingManager
 
 	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}
 
-	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score) {}
+	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) {}
 
     #endregion
 
