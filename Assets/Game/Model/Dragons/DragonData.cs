@@ -136,7 +136,8 @@ public class DragonData : IUISelectorItem {
 
 		// Items
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
-		m_pets = new List<string>();
+        m_persistentDisguise = m_disguise;
+        m_pets = new List<string>();
 		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);	// Enforce pets list size to number of slots
 
 		// Other values
