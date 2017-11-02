@@ -70,7 +70,7 @@ namespace Metagame {
 
 			if (EggManager.goldenEggCompleted) {
 				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG, EconomyGroup.ToString());
-				UsersManager.currentUser.rewardStack.Push(reward);
+				UsersManager.currentUser.PushReward(reward);
 			}
 		}
 	}
