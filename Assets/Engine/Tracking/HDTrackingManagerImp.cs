@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
@@ -82,6 +82,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         return DNAManager.SharedInstance.GetProfileID();
 #else
         return null;
+#endif
+    }
+
+    public override void SaveOfflineUnsentEvents()
+    {
+#if !UNITY_EDITOR
+        DNAManager.SharedInstance.SaveOfflineUnsentEvents();
 #endif
     }
 
@@ -202,7 +209,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void InitDNA(CaletySettings settingsInstance)
     {
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-#if !UNITY_EDITOR        
+#if !UNITY_EDITOR
         if (settingsInstance != null)
         {
             UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
@@ -229,7 +236,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string strAppsFlyerPlatformID = settingsInstance.GetBundleID();
 #else
         string strAppsFlyerPlatformID = "";
-#endif        
+#endif
         AppsFlyerManager.SharedInstance.Initialise("m2TXzMjM53e5MCwGasukoW", strAppsFlyerPlatformID, TrackingPersistenceSystem.UserID);
 
 #if UNITY_ANDROID
@@ -307,7 +314,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    #region notify   
+#region notify   
     private bool Notify_MeetsEventRequirements(string e)
     {
         bool returnValue = false;
@@ -626,7 +633,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
 	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
-		Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
+        // This step has to be sent only within the first session
+        if (TrackingPersistenceSystem.SessionCount == 1) {
+            Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
+        }
 	}
 
     public override void Notify_SocialAuthentication()
@@ -762,9 +772,56 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
+
+	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_GlobalEventRunDone");
+		}   
+	
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.rundone");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
+			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_RUN, _runScore.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_MULTIPLIER, _mulitplier.ToString());
+			Track_AddParamSessionsCount(e);
+			Track_AddParamRunsAmount(e);
+			Track_AddParamHighestDragonXp(e);
+			Track_AddParamPlayerProgress(e);
+			Track_SendEvent(e);
+		}
+	}
+
+	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score) 
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_GlobalEventReward eventId: " + _eventId + " eventType: " + _eventType + " rewardTier: " + _rewardTier + " score: " + _score );
+		}   
+	
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.reward");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_EVENT_ID, _eventId.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_TYPE, _eventType);
+			Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
+			Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+
+			// Common stuff
+			Track_AddParamSessionsCount(e);
+			Track_AddParamRunsAmount(e);
+			Track_AddParamHighestDragonXp(e);
+			Track_AddParamPlayerProgress(e);
+			Track_SendEvent(e);
+		}
+	}
     #endregion
 
-    #region track	
+#region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
@@ -1384,6 +1441,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
+	private const string TRACK_PARAM_EVENT_ID 					= "evntID";
+	private const string TRACK_PARAM_EVENT_MULTIPLIER 			= "multiplier";
+	private const string TRACK_PARAM_EVENT_SCORE_RUN 			= "scoreRun";
+	private const string TRACK_PARAM_EVENT_SCORE_TOTAL 			= "scoreTotal";
+	private const string TRACK_PARAM_EVENT_TYPE 				= "eventType";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
@@ -1431,6 +1493,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
+	private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
     private const string TRACK_PARAM_SCORE                      = "score";
@@ -1456,9 +1519,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_SendEvent(TrackingManager.TrackingEvent e)
 	{
 		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-		#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 		TrackingManager.SharedInstance.SendEvent(e);
-		#endif
+#endif
 	}
 
     private void Track_AddParamSubVersion(TrackingManager.TrackingEvent e)

@@ -68,7 +68,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			{
 				m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
 				m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
-				if ( m_dragonSlot.dragonSku == "dragon_chinese" || m_dragonSlot.dragonSku == "dragon_reptile" || m_dragonSlot.dragonSku == "dragon_balrog")
+				if ( m_dragonSlot.dragonSku == "dragon_chinese" || m_dragonSlot.dragonSku == "dragon_balrog")
 				{
 					m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
 				}
@@ -146,7 +146,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 		m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
 		m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
-		if ( m_dragonSlot.dragonSku == "dragon_chinese" || m_dragonSlot.dragonSku == "dragon_reptile" || m_dragonSlot.dragonSku == "dragon_balrog")
+		if ( m_dragonSlot.dragonSku == "dragon_chinese" ||  m_dragonSlot.dragonSku == "dragon_balrog")
 		{
 			m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
 		}

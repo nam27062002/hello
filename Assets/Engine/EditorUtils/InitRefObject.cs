@@ -10,4 +10,5 @@ public class InitRefObject : ScriptableObject {
 	public List<GameObject> m_objects = new List<GameObject>();
 	public TMPro.TMP_Settings m_textSettings;
 	public List<Material> m_materials = new List<Material>();
+	public TextAsset m_assetsLut;
 }
