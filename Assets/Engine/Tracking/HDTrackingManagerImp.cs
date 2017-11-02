@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
@@ -726,7 +726,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		if(e != null) {
 			Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
 			Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
-			Track_AddParamString(e, TRACK_PARAM_ACTION, "started");
+			Track_AddParamString(e, TRACK_PARAM_ACTION, "finished");
 			e.SetParameterValue(TRACK_PARAM_LOADING_TIME, (int)(area_loading_duration * 1000.0f));
 			Track_SendEvent(e);
 		}
@@ -772,7 +772,58 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
-#endregion
+
+	public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_GlobalEventRunDone");
+		}   
+	
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.rundone");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_GLOBAL_EVENT_ID, _eventId.ToString());
+			Track_AddParamString(e, TRACK_PARAM_GLOBAL_EVENT_TYPE, _eventType);
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_RUN, _runScore.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_RUN, _runScore);
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
+			Track_AddParamString(e, TRACK_PARAM_EVENT_MULTIPLIER, _mulitplier.ToString());
+			Track_AddParamSessionsCount(e);
+			Track_AddParamRunsAmount(e);
+			Track_AddParamHighestDragonXp(e);
+			Track_AddParamPlayerProgress(e);
+			Track_SendEvent(e);
+		}
+	}
+
+	public override void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) 
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_GlobalEventReward eventId: " + _eventId + " eventType: " + _eventType + " rewardTier: " + _rewardTier + " score: " + _score );
+		}   
+	
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.reward");
+		if (e != null)
+		{
+			Track_AddParamString(e, TRACK_PARAM_GLOBAL_EVENT_ID, _eventId.ToString());
+			Track_AddParamString(e, TRACK_PARAM_GLOBAL_EVENT_TYPE, _eventType);
+			Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
+			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
+			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
+			Track_AddParamBool( e, TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR, _topContributor);
+
+			// Common stuff
+			Track_AddParamSessionsCount(e);
+			Track_AddParamRunsAmount(e);
+			Track_AddParamHighestDragonXp(e);
+			Track_AddParamPlayerProgress(e);
+			Track_SendEvent(e);
+		}
+	}
+    #endregion
 
 #region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
@@ -1367,7 +1418,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     // Params
     // -------------------------------------------------------------    
 
-    // Please, respect the alphabetic order
+    // Please, respect the alphabetic order, string order
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_ACCEPTED                   = "accepted";
 	private const string TRACK_PARAM_ACTION						= "action";			// "automatic", "info_button" or "settings"
@@ -1400,6 +1451,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
     private const string TRACK_PARAM_GENDER                     = "gender";
+	private const string TRACK_PARAM_GLOBAL_EVENT_ID 			= "glbEventID";
+	private const string TRACK_PARAM_GLOBAL_EVENT_TYPE 			= "glbEventType";
     private const string TRACK_PARAM_HC_EARNED                  = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
@@ -1423,7 +1476,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_MISSION_VALUE				= "missionValue";
 	private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
-    private const string TRACK_PARAM_MONEY_USD                  = "moneyUSD";    
+    private const string TRACK_PARAM_MONEY_USD                  = "moneyUSD"; 
+	private const string TRACK_PARAM_EVENT_MULTIPLIER 			= "multiplier";
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS                   = "nbViews";
@@ -1441,9 +1495,12 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
+	private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
     private const string TRACK_PARAM_SCORE                      = "score";
+	private const string TRACK_PARAM_EVENT_SCORE_RUN 			= "scoreRun";
+	private const string TRACK_PARAM_EVENT_SCORE_TOTAL 			= "scoreTotal";
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
 	private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
@@ -1454,6 +1511,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
     private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
+	private const string TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR		= "topContributor";	
     private const string TRACK_PARAM_TOTAL_DURATION             = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";

@@ -519,7 +519,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.ChangingArea:
 				{
-					HDTrackingManager.Instance.Notify_LoadingAreaEnd(m_previousArea,LevelManager.currentArea, m_switchAreaStart - Time.time);
+					HDTrackingManager.Instance.Notify_LoadingAreaEnd(m_previousArea,LevelManager.currentArea, Time.time - m_switchAreaStart);
 					// if fury not active
 					m_dragon.changingArea = false;
 					m_eatBehaviour.ResumeEating();
