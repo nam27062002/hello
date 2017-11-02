@@ -202,6 +202,8 @@ public class CacheServerManager {
 	    	{
 	    		if ( v1[i] > v2[i] )
 	    			return false;
+				else if (v1[i] < v2[i])
+					return true;
 	    	}
 			return true;
     	}
