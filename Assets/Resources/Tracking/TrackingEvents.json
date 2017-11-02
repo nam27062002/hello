@@ -346,6 +346,7 @@
                 {"eventType": {"Status": "OK"}},
                 {"rewardTier": {"Status": "OK"}},
                 {"scoreTotal": {"Status": "OK"}},
+				{"topContributor": {"Status": "OK"}},
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
 				{"maxXp": {"Status": "OK"}},
@@ -924,11 +925,11 @@
             "Values": []
         },
 		"scoreRun": {
-            "Type": "STRING:125",
+            "Type": "INT:4",
             "Values": []
         },
 		"scoreTotal": {
-            "Type": "STRING:125",
+            "Type": "INT:4",
             "Values": []
         },
 		"multiplier": {
@@ -937,6 +938,10 @@
         },
 		"rewardTier": {
             "Type": "STRING:125",
+            "Values": []
+        },
+		"topContributor": {
+            "Type": "INT:4",
             "Values": []
         }
     }
