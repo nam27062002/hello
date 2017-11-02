@@ -346,6 +346,7 @@
                 {"eventType": {"Status": "OK"}},
                 {"rewardTier": {"Status": "OK"}},
                 {"scoreTotal": {"Status": "OK"}},
+				{"topContributor": {"Status": "OK"}},
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
 				{"maxXp": {"Status": "OK"}},
@@ -937,6 +938,10 @@
         },
 		"rewardTier": {
             "Type": "STRING:125",
+            "Values": []
+        },
+		"topContributor": {
+            "Type": "INT:4",
             "Values": []
         }
     }

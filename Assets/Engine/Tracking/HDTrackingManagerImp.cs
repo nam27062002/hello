@@ -798,7 +798,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
-	public override void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score) 
+	public override void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) 
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
@@ -813,6 +813,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
 			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
 			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
+			Track_AddParamBool( e, TRACK_PARAM_EVENT_TOP_CONTRIBUTOR, _topContributor);
 
 			// Common stuff
 			Track_AddParamSessionsCount(e);
@@ -1510,6 +1511,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
     private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
+	private const string TRACK_PARAM_EVENT_TOP_CONTRIBUTOR		= "topContributor";
     private const string TRACK_PARAM_TOTAL_DURATION             = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
