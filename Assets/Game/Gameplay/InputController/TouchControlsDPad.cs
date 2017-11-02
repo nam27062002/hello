@@ -40,7 +40,7 @@ public class TouchControlsDPad : TouchControls {
 	private RectTransform m_dpadBoostRectTransform = null;
 
 	// [AOC] D-Pad setup and logic
-	private Mode m_dPadMode = Mode.FOLLOW_CUSTOM; 
+	private Mode m_dPadMode = Mode.FIXED; 
 	private float m_dPadThreshold = 4.5f;
 	private float m_dPadSmoothFactor = 0.5f;
 	private float m_dPadBreakTolerance = 0.1f*5;
