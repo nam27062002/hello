@@ -48,7 +48,7 @@ public class PopupSettings : MonoBehaviour {
         CS_Init();
 
 		// Set version number
-		m_versionText.Localize(m_versionText.tid, GameSettings.internalVersion.ToString());
+		m_versionText.Localize(m_versionText.tid, GameSettings.internalVersion.ToString() + " ("+ ServerManager.SharedInstance.GetRevisionVersion() +")");
     }
 
 	public void CS_Init()
