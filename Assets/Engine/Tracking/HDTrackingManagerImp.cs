@@ -87,7 +87,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void SaveOfflineUnsentEvents()
     {
-#if !UNITY_EDITOR
+    // TODO: To make it work on IOS. It's not used on IOS because it was crashing
+#if !UNITY_EDITOR && !UNITY_IOS
         DNAManager.SharedInstance.SaveOfflineUnsentEvents();
 #endif
     }
@@ -189,8 +190,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // Sends the start session event
         Track_StartSessionEvent();
-
-        // StartSession() is called as soon as the persistence is loaded, wo we need to notify this loading funnel step too
+        
         Notify_Funnel_Load(FunnelData_Load.Steps._01_persistance);
     }
 
@@ -813,7 +813,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
 			// Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
 			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
-			Track_AddParamBool( e, TRACK_PARAM_EVENT_TOP_CONTRIBUTOR, _topContributor);
+			Track_AddParamBool( e, TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR, _topContributor);
 
 			// Common stuff
 			Track_AddParamSessionsCount(e);
@@ -1418,7 +1418,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     // Params
     // -------------------------------------------------------------    
 
-    // Please, respect the alphabetic order
+    // Please, respect the alphabetic order, string order
     private const string TRACK_PARAM_AB_TESTING                 = "abtesting";
     private const string TRACK_PARAM_ACCEPTED                   = "accepted";
 	private const string TRACK_PARAM_ACTION						= "action";			// "automatic", "info_button" or "settings"
@@ -1445,17 +1445,14 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
-	private const string TRACK_PARAM_GLOBAL_EVENT_ID 			= "glbEventID";
-	private const string TRACK_PARAM_EVENT_MULTIPLIER 			= "multiplier";
-	private const string TRACK_PARAM_EVENT_SCORE_RUN 			= "scoreRun";
-	private const string TRACK_PARAM_EVENT_SCORE_TOTAL 			= "scoreTotal";
-	private const string TRACK_PARAM_GLOBAL_EVENT_TYPE 			= "glbEventType";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
     private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
     private const string TRACK_PARAM_GENDER                     = "gender";
+	private const string TRACK_PARAM_GLOBAL_EVENT_ID 			= "glbEventID";
+	private const string TRACK_PARAM_GLOBAL_EVENT_TYPE 			= "glbEventType";
     private const string TRACK_PARAM_HC_EARNED                  = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
@@ -1479,7 +1476,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_MISSION_VALUE				= "missionValue";
 	private const string TRACK_PARAM_MONEY_CURRENCY             = "moneyCurrency";
     private const string TRACK_PARAM_MONEY_IAP                  = "moneyIAP";
-    private const string TRACK_PARAM_MONEY_USD                  = "moneyUSD";    
+    private const string TRACK_PARAM_MONEY_USD                  = "moneyUSD"; 
+	private const string TRACK_PARAM_EVENT_MULTIPLIER 			= "multiplier";
     private const string TRACK_PARAM_NB_ADS_LTD                 = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION             = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS                   = "nbViews";
@@ -1501,6 +1499,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
     private const string TRACK_PARAM_SCORE                      = "score";
+	private const string TRACK_PARAM_EVENT_SCORE_RUN 			= "scoreRun";
+	private const string TRACK_PARAM_EVENT_SCORE_TOTAL 			= "scoreTotal";
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
 	private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
@@ -1511,7 +1511,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
     private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
-	private const string TRACK_PARAM_EVENT_TOP_CONTRIBUTOR		= "topContributor";
+	private const string TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR		= "topContributor";	
     private const string TRACK_PARAM_TOTAL_DURATION             = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
