@@ -1446,5 +1446,27 @@ public class UserProfile : UserPersistenceSystem
 
         return returnValue;
     }
+
+	//------------------------------------------------------------------------//
+	// REWARDS MANAGEMENT													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Push a reward to the stack.
+	/// </summary>
+	/// <param name="_reward">Reward to be pushed.</param>
+	public void PushReward(Metagame.Reward _reward) {
+		rewardStack.Push(_reward);
+		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
+	}
+
+	/// <summary>
+	/// Pop a reward from the stack.
+	/// </summary>
+	/// <returns>The popped reward.</returns>
+	public Metagame.Reward PopReward() {
+		Metagame.Reward r = rewardStack.Pop();
+		Debug.Log("<color=red>POP " + r.GetType().Name + "</color>");
+		return r;
+	}
 }
 

@@ -238,7 +238,8 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	public void OpenReward() {
 		// Get most recent reward in the stack
-		m_currentReward = UsersManager.currentUser.rewardStack.Pop();
+		// Don't pop immediately, the Reward.Collect() will do it
+		m_currentReward = UsersManager.currentUser.rewardStack.Peek();
 
 		// Hide UI reward elements
 		m_rewardInfoUI.SetRewardType(string.Empty);

@@ -180,7 +180,7 @@ namespace Metagame {
 		override protected void DoCollect() {
 			// Push the egg's reward to the stack
 			if (m_reward != null) {
-				UsersManager.currentUser.rewardStack.Push(m_reward);
+				UsersManager.currentUser.PushReward(m_reward);
 			}
 		}
 	}

@@ -110,12 +110,12 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_event != null) {
 			// Top contribution reward
 			if(m_event.topContributor) {
-				UsersManager.currentUser.rewardStack.Push(m_event.topContributorsRewardSlot.reward);
+				UsersManager.currentUser.PushReward(m_event.topContributorsRewardSlot.reward);
 			}
 
 			// Global rewards
 			for(int i = m_event.rewardLevel - 1; i >= 0; --i) {
-				UsersManager.currentUser.rewardStack.Push(m_event.rewardSlots[i].reward);
+				UsersManager.currentUser.PushReward(m_event.rewardSlots[i].reward);
 			}
 
 			// Immediately save persistence in case the rewards opening gets interrupted

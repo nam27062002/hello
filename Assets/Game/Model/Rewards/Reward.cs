@@ -188,6 +188,14 @@ namespace Metagame {
 		/// Collect the reward! If the reward is going to be replaced, collect the replacement instead.
 		/// </summary>
 		public virtual void Collect() {
+			// If we're at the top of the stack, remove ourselves!
+			// Before invoking the DoCollect(), which may add new rewards to the stack!
+			if(UsersManager.currentUser.rewardStack.Count > 0
+			&& UsersManager.currentUser.rewardStack.Peek() == this) {
+				UsersManager.currentUser.PopReward();
+			}
+
+			// If the reward is going to be replaced, collect the replacement instead.
 			if(m_replacement != null) {
 				m_replacement.Collect();
 			} else {
