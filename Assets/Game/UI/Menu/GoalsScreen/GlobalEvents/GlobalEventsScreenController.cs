@@ -100,7 +100,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	public void Refresh() {
 
 		if ( GlobalEventManager.currentEvent != null ){
-			if (GlobalEventManager.currentEvent.isRewardAvailable){
+			// By checking isRewardAvailable, we make sure the event is finished
+			// By checking the reward level, we make sure that the rewards have been received from server!
+			if (GlobalEventManager.currentEvent.isRewardAvailable && GlobalEventManager.currentEvent.rewardLevel > -1) {
 				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.EVENT_REWARD).GetComponent<EventRewardScreen>();
 				scr.StartFlow();
 				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.EVENT_REWARD);
@@ -197,6 +199,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 				}
 			} break;
 
+			case GlobalEventManager.RequestType.EVENT_REWARDS:
 			case GlobalEventManager.RequestType.EVENT_STATE: {
 				Refresh();
 				// BusyScreen.Hide(this);
