@@ -87,9 +87,13 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void SaveOfflineUnsentEvents()
     {
-    // TODO: To make it work on IOS. It's not used on IOS because it was crashing
-#if !UNITY_EDITOR && !UNITY_IOS
-        DNAManager.SharedInstance.SaveOfflineUnsentEvents();
+#if !UNITY_EDITOR
+		// Makes sure DNAManager is initialised in order to prevent a crash if it's not initialised.
+		// TODO: To delete this if when latest Calety is merged into hungrydragon branch
+		if (DNAManager.SharedInstance.CheckIfInitialised())
+		{    		
+        	DNAManager.SharedInstance.SaveOfflineUnsentEvents();
+		}
 #endif
     }
 

@@ -737,6 +737,9 @@ public class GameSceneController : GameSceneControllerBase {
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
 			m_switchState = SwitchingAreaSate.UNLOADING_SCENES;
+
+			// Disable everything?
+			LevelManager.DisableCurrentArea();
 			m_switchingAreaTasks = LevelManager.UnloadCurrentArea();
 		}
     }
