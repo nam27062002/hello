@@ -135,7 +135,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			if ( starving ){
 				m_starvingSoundAO = AudioController.Play(m_starvingSound, transform);
 			}else{
-				if ( m_starvingSoundAO.IsPlaying() )
+				if (m_starvingSoundAO != null && m_starvingSoundAO.IsPlaying() )
 				{
 					m_starvingSoundAO.Stop();
 					m_starvingSoundAO = null;

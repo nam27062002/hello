@@ -3452,7 +3452,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1993470344566620}
-  m_LocalRotation: {x: -0.729685, y: -0.13468345, z: 0.027240597, w: 0.6698344}
+  m_LocalRotation: {x: -0.72968507, y: -0.13468346, z: 0.027240599, w: 0.66983443}
   m_LocalPosition: {x: -0.5160918, y: -0.000000059604645, z: 0.00000011920929}
   m_LocalScale: {x: 1.000003, y: 0.99999565, z: 1.0000021}
   m_Children:
@@ -5751,8 +5751,8 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 1
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
+      MinTimeBetweenPlayCalls: 0
+      MaxInstanceCount: 1
       Delay: 0
       RandomVolume: 0
       RandomPitch: 0
@@ -5767,7 +5767,7 @@ MonoBehaviour:
         DisableOtherSubitems: 0
         ItemModeAudioID: 
         Clip: {fileID: 8300000, guid: 740154a65cc4f2e4c8101f3ac1fc4ea2, type: 3}
-        Volume: 1
+        Volume: 0.5
         PitchShift: 0
         Pan2D: 0
         Delay: 0
@@ -5776,8 +5776,8 @@ MonoBehaviour:
         RandomDelay: 0
         ClipStopTime: 0
         ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
+        FadeIn: 2
+        FadeOut: 5
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
