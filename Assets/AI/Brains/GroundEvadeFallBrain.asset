@@ -24,6 +24,9 @@ MonoBehaviour:
   - m_name: On hit ground
     m_componentAssets:
     - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
+  - m_name: At Action Point
+    m_componentAssets:
+    - {fileID: 11400000, guid: 0b2979f264b4247bbbb9776a76223711, type: 2}
   m_transitionData:
   - to: 1
     id: onEnemyInSight
@@ -31,12 +34,18 @@ MonoBehaviour:
   - to: 0
     id: onIdleAlert
     from: 1
+  - to: 4
+    id: onActionPoint
+    from: 1
   - to: 3
     id: OnGround
     from: 2
   - to: 1
     id: onRecover
     from: 3
+  - to: 0
+    id: onCalm
+    from: 4
   - to: 2
     id: onFallDown
     from: -1
