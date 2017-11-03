@@ -65,7 +65,7 @@ namespace Metagame {
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
 		private void Build(string _sku) {
-			Debug.Log("<color=purple>Building egg with sku " + _sku + "</color>");
+			//Debug.Log("<color=purple>Building egg with sku " + _sku + "</color>");
 
 			// Internal initializer
 			base.Init(TYPE_CODE);
@@ -88,7 +88,7 @@ namespace Metagame {
 		/// </summary>
 		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category). Leave empty to generate a random reward following the gacha rules.</param>
 		private void BuildReward() {
-			Debug.Log("<color=purple>Building egg reward!</color>");
+			//Debug.Log("<color=purple>Building egg reward!</color>");
 
 			// Get the reward definition
 			DefinitionNode rewardTypeDef = null;
@@ -166,7 +166,15 @@ namespace Metagame {
 					// Create the egg reward!
 					if(petDef != null) {
 						m_reward = CreateTypePet(petDef, m_sku);
-						Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
+						#if UNITY_EDITOR
+						string[] colorTags = {
+							"<color=#ffffff>",
+							"<color=#00ffff>",
+							"<color=#ffaa00>"
+						};
+						Debug.Log("EGG REWARD GENERATED: " + colorTags[(int)m_reward.rarity] + m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "") + "</color>");
+						//Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
+						#endif
 					} else {
 						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + "!" + "</color>");
 					}
