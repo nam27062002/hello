@@ -70,7 +70,7 @@ namespace LevelEditor {
 		/// First update.
 		/// </summary>
 		void Start() {
-		
+			ControlPanel.CreateInstance();
 		}
 		
 		/// <summary>
