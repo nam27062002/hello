@@ -87,7 +87,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void SaveOfflineUnsentEvents()
     {
-#if !UNITY_EDITOR
+		// TODO: To fix in Calety the crash that happens on iOS
+#if !UNITY_EDITOR && !UNITY_IOS
 		// Makes sure DNAManager is initialised in order to prevent a crash if it's not initialised.
 		// TODO: To delete this if when latest Calety is merged into hungrydragon branch
 		if (DNAManager.SharedInstance.CheckIfInitialised())
