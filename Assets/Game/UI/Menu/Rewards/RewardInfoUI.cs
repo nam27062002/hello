@@ -165,8 +165,9 @@ public class RewardInfoUI : MonoBehaviour {
 
 			// Golden Fragments
 			case Metagame.RewardGoldenFragments.TYPE_CODE: {
-				// Title
-				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_FRAGMENT", StringUtils.FormatNumber(_rewardData.amount));	// %U0 Golden Egg Fragments
+				// Title - singular?
+				string tid = (_rewardData.amount == 1) ? "TID_EGG_REWARD_FRAGMENT_SING" : "TID_EGG_REWARD_FRAGMENT";
+				m_goldenFragmentTitle.Localize(tid, StringUtils.FormatNumber(_rewardData.amount));	// %U0 Golden Egg Fragments
 
 				// Fragments counter
 				m_goldenEggCompletedInfo.Set(false, false);	// Will be activated after the animation, if needed
