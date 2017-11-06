@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -124,6 +125,20 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		}
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			instance.m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("droprate"));
+		}
+
+		// Restore saved random state from preferences so the distribution is respected
+		// Only if we have a state saved!
+		if(PlayerPrefs.HasKey("EggManager.RandomState.s0")) {
+			// [AOC] GOING TO HELL!! Random.State is a private struct that can't be easily serialized, so use reflection to do so.
+			// We know the internal structure of Random.State thanks to unofficial UnityDecompiled repo (https://github.com/MattRix/UnityDecompiled/blob/master/UnityEngine/UnityEngine/Random.cs)
+			UnityEngine.Random.State s = instance.m_rewardDropRate.randomState;
+			for(int i = 0; i < 4; ++i) {
+				FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+				prop.SetValue(s, PlayerPrefs.GetInt("EggManager.RandomState.s" + i));
+				Debug.Log("<color=magenta>Restoring RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
+			}
+			instance.m_rewardDropRate.randomState = s;
 		}
 
 		// Initialize required golden egg fragments requirements
@@ -247,7 +262,18 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			case CPGachaTest.RewardChanceMode.DEFAULT: {
 				// [AOC] Force common pet during tutorial
 				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+					// Get a weighted element
 					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+
+					// Save random state to preferences so the distribution is respected
+					// [AOC] GOING TO HELL!! Random.State is a private struct that can't be easily serialized, so use reflection to do so.
+					// We know the internal structure of Random.State thanks to unofficial UnityDecompiled repo (https://github.com/MattRix/UnityDecompiled/blob/master/UnityEngine/UnityEngine/Random.cs)
+					UnityEngine.Random.State s = instance.m_rewardDropRate.randomState;
+					for(int i = 0; i < 4; ++i) {
+						FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+						PlayerPrefs.SetInt("EggManager.RandomState.s" + i, (int)prop.GetValue(s));
+						Debug.Log("<color=magenta>Saving RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
+					}
 				} else {
 					rewardSku = "pet_common";
 				}

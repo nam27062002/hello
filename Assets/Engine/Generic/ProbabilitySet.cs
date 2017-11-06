@@ -86,6 +86,20 @@ public class ProbabilitySet {
 		get { return m_elements.Count; }
 	}
 
+	// Random state followed by this set, to make sure the probability distribution is respected
+	[SerializeField] private UnityEngine.Random.State m_randomState = new UnityEngine.Random.State();
+	public UnityEngine.Random.State randomState {
+		get { 
+			if(!m_randomStateInitialized) {
+				m_randomState = UnityEngine.Random.state;
+				m_randomStateInitialized = true;
+			}
+			return m_randomState; 
+		}
+		set { m_randomState = value; }
+	}
+	private bool m_randomStateInitialized = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -288,10 +302,19 @@ public class ProbabilitySet {
 	/// </summary>
 	/// <returns>The index of the selected element.</returns>
 	public int GetWeightedRandomElementIdx() {
+		// To make sure distribution is respected, keep track of the random state so other users of UnityEngine.Random don't interfere with our distribution
+		UnityEngine.Random.State stateBackup = UnityEngine.Random.state;
+		UnityEngine.Random.state = randomState;
+
 		// Select a random value [0..1]
+		float targetValue = UnityEngine.Random.Range(0f, 1f);
+
+		// Save new random state and restore previous one
+		randomState = UnityEngine.Random.state;
+		UnityEngine.Random.state = stateBackup;
+
 		// Since the weights of all elements sum exactly 1, iterate through elements until the selected value is reached
 		// This should match weighted probability distribution
-		float targetValue = UnityEngine.Random.Range(0f, 1f);
 		for(int i = 0; i < m_elements.Count; i++) {
 			targetValue -= m_elements[i].probability;
 			if(targetValue <= 0f) return i;
