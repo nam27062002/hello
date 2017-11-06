@@ -54,10 +54,14 @@ public class Entity : IEntity {
 	public override DragonTier edibleFromTier { get { return m_edibleFromTier; } set { m_edibleFromTier = value; } }
 
 	private bool m_canBeGrabbed;
+	public bool canBeGrabbed { get{ return m_canBeGrabbed; } }
 	private DragonTier m_grabFromTier = 0;
+	public DragonTier grabFromTier { get { return m_grabFromTier; } }
 
 	private bool m_canBeLatchedOn;
+	public bool canBeLatchedOn { get{ return m_canBeLatchedOn; } }
 	private DragonTier m_latchFromTier = 0;
+	public DragonTier latchFromTier { get { return m_latchFromTier; } }
 
 	private FeedbackData m_feedbackData = new FeedbackData();
 	public FeedbackData feedbackData { get { return m_feedbackData; }}
