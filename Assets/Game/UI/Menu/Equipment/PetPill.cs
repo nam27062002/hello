@@ -120,6 +120,9 @@ public class PetPill : MonoBehaviour {
 	// Events
 	public PetPillEvent OnPillTapped = new PetPillEvent();
 
+	// Internal logic
+	private bool m_tapAllowed = true;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -134,6 +137,9 @@ public class PetPill : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Reset internal logic
+		m_tapAllowed = true;
+
 		// Subscribe to external events
 		Messenger.AddListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 
@@ -306,8 +312,15 @@ public class PetPill : MonoBehaviour {
 	/// The pill has been tapped.
 	/// </summary>
 	public void OnTap() {
+		// Ignore if tap is not allowed
+		if(!m_tapAllowed) return;
+
 		// Propagate the event
 		OnPillTapped.Invoke(this);
+
+		// Ignore tap for a while to prevent spamming
+		m_tapAllowed = false;
+		UbiBCN.CoroutineManager.DelayedCall(() => m_tapAllowed = true, 0.25f);
 	}
 
 	/// <summary>
