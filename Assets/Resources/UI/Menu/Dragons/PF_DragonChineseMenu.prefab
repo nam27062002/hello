@@ -62,6 +62,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_menuMode: 1
+  m_equipPets: 1
+  m_equipOnAwake: 1
 --- !u!114 &11468726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -306,7 +308,7 @@ GameObject:
   - component: {fileID: 4514846849231902}
   - component: {fileID: 114179764893400980}
   - component: {fileID: 114417760552060304}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -338,7 +340,7 @@ GameObject:
   - component: {fileID: 4913254791787404}
   - component: {fileID: 114277382624334278}
   - component: {fileID: 114056118948726866}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: neck
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -460,7 +462,7 @@ GameObject:
   - component: {fileID: 4262214185269904}
   - component: {fileID: 114277627478293982}
   - component: {fileID: 114369325552581466}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: chest
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -520,7 +522,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4078950310267648}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: points
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -550,7 +552,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4262473011635614}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -581,7 +583,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4503763976762708}
   - component: {fileID: 114917653607987128}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: pet_2
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -750,7 +752,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4479883265010370}
   - component: {fileID: 114152458654549274}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: pet_3
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -1113,7 +1115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4585766076358920}
   - component: {fileID: 114251907662752302}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: pet_1
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -1234,7 +1236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4749797522749544}
   - component: {fileID: 114622395952090872}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: pet_0
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -2625,6 +2627,7 @@ SkinnedMeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   serializedVersion: 2
   m_Quality: 0

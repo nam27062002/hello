@@ -301,6 +301,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 					m_trasnform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeed, axis) * m_trasnform.rotation;
 				}
+			} else {
+				Die();
 			}
 		} else if (m_state == State.Stuck_On_Player) {
 			m_timer -= Time.deltaTime;

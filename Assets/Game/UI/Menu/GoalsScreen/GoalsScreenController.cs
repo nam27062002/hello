@@ -79,6 +79,12 @@ public class GoalsScreenController : MonoBehaviour {
 			m_eventActiveGroup.SetActive(validEvent);
 			m_eventInactiveGroup.SetActive(!validEvent);
 
+			// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+			//		 Luckily for us Unity provides us with the right tools to rebuild it
+			//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+			HorizontalOrVerticalLayoutGroup layout = m_eventActiveGroup.transform.GetComponentInParent<HorizontalOrVerticalLayoutGroup>();
+			LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
+
 			// Event Timer - only if active
 			if(validEvent) {
 				// Timer text
