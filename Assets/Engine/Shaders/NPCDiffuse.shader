@@ -38,6 +38,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#pragma multi_compile __ TINT
 //			#pragma multi_compile __ MATCAP
 //			#pragma multi_compile __ FRESNEL
+			#pragma multi_compile __ FREEZE
 
 			#define HG_ENTITIES
 
