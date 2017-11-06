@@ -743,6 +743,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // The config received from server has to override the profile
         if (serverSettingsJSON != null)
         {
+			// Makes sure that it has the correct format
+			serverSettingsJSON = FormatJSON(serverSettingsJSON);
+
             // Checks if the rating has been overriden for this device
             if (serverSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
