@@ -771,7 +771,7 @@ public class GameSceneController : GameSceneControllerBase {
         int dragonXp = 0;
         int dragonProgress = 0;
         string dragonSkin = null;
-        List<string> pets = null;
+		List<string> trackPets = new List<string>();
         if (InstanceManager.player != null) {
             DragonData dragonData = InstanceManager.player.data;
             if (dragonData != null) {
@@ -781,18 +781,32 @@ public class GameSceneController : GameSceneControllerBase {
 
                 dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
 
-                // TODO: use trackSku instead of sku
                 dragonSkin = dragonData.diguise;
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DISGUISES, dragonSkin);
+				if ( def != null)
+				{
+					dragonSkin = def.GetAsString("trackingSku", dragonSkin);
+				}
 
-                // TODO: use trackSkus instead of skus
-                pets = dragonData.pets;
+				List<string> pets = dragonData.pets;
+                for( int i = 0; i<pets.Count; ++i )
+                {
+                	string toTrack = pets[i];
+					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.PETS, pets[i]);
+					if ( petDef != null )
+					{
+						toTrack = petDef.GetAsString("trackingName", toTrack);
+					}
+					trackPets.Add( toTrack );
+                }
+
             }
         }
 
 		m_boostTimeTracker.SetValue(0, false);
 		m_mapUsageTracker.SetValue(0, false);
 
-        HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, trackPets);
     }
 
     private void Track_RoundEnd() {
