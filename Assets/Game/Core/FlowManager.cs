@@ -45,6 +45,8 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 		// Make sure we don't carry any cached popup into the game scene
 		PopupManager.Clear();
 
+		FrozenMaterialManager.CleanFrozenMaterials();
+
 		// Change scene
 		GameSceneManager.SwitchScene(_nextScene);
 	}
