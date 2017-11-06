@@ -772,7 +772,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamString(e, TRACK_PARAM_MISSION_VALUE, StringUtils.FormatBigNumber(_mission.objective.targetValue));
 			Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString()); 
 			Track_AddParamSessionsCount(e);
-			// Track_AddParamRunsAmount(e);
 			Track_AddParamGameRoundCount(e);
 			Track_AddParamHighestDragonXp(e);
 			Track_AddParamPlayerProgress(e);
@@ -798,7 +797,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
 			Track_AddParamString(e, TRACK_PARAM_EVENT_MULTIPLIER, _mulitplier.ToString());
 			Track_AddParamSessionsCount(e);
-			Track_AddParamRunsAmount(e);
+			Track_AddParamGameRoundCount(e);
 			Track_AddParamHighestDragonXp(e);
 			Track_AddParamPlayerProgress(e);
 			Track_SendEvent(e);
@@ -824,7 +823,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 			// Common stuff
 			Track_AddParamSessionsCount(e);
-			Track_AddParamRunsAmount(e);
+			Track_AddParamGameRoundCount(e);
 			Track_AddParamHighestDragonXp(e);
 			Track_AddParamPlayerProgress(e);
 			Track_SendEvent(e);
