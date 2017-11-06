@@ -998,7 +998,14 @@ public abstract class EatBehaviour : MonoBehaviour {
 					else 
 					{
 						if (m_isPlayer && !entity.hideNeedTierMessage)
-							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, entity.edibleFromTier, entity.sku);
+						{
+							DragonTier tier = entity.edibleFromTier;
+							if ( entity.canBeGrabbed && entity.grabFromTier < tier )
+								tier = entity.grabFromTier;
+							if ( entity.canBeLatchedOn && entity.latchFromTier < tier )
+								tier = entity.latchFromTier;
+							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, tier, entity.sku);
+						}
 					}
 				}
 			}                       
