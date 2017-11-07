@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4000011377450084}
   - component: {fileID: 114000010819930914}
   m_Layer: 0
-  m_Name: AudioController_Menu
+  m_Name: AudioController_Common
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,7 @@ MonoBehaviour:
     _parentCategoryName: 
     AudioObjectPrefab: {fileID: 0}
     AudioItems:
-    - Name: hd_arrow_left
+    - Name: UI_Click
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
       Volume: 1
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 1
+      MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
       RandomPitch: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
         Probability: 1
         DisableOtherSubitems: 0
         ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 4a615d54ea9922e40a89e4c1d6b450cd, type: 3}
+        Clip: {fileID: 8300000, guid: e2454217581403a499ed1f6ac1d16d62, type: 3}
         Volume: 1
         PitchShift: 0
         Pan2D: 0
@@ -108,46 +108,7 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: hd_arrow_right
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 1
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 01919fa85b3af864abcb6359bb0cd136, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: UI_Dragon Size
+    - Name: UI_MissionsPanel
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -157,85 +118,7 @@ MonoBehaviour:
       DestroyOnLoad: 1
       Volume: 0.8
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 01919fa85b3af864abcb6359bb0cd136, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: UI_WoodPanel
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: a214c924cf6a5fe4a9d94bee798974e6, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0.72
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: UI_Light FX
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
+      MinTimeBetweenPlayCalls: 1
       MaxInstanceCount: 1
       Delay: 0
       RandomVolume: 0
@@ -250,26 +133,7 @@ MonoBehaviour:
         Probability: 1
         DisableOtherSubitems: 0
         ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 2a90c554821dac84e9b21e5577f47c19, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 1
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings:
-        - RandomPitch
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 32b255818ace5d74e9a9f652671d3258, type: 3}
+        Clip: {fileID: 8300000, guid: 287a2c83fe472914294e2df2bfdda410, type: 3}
         Volume: 1
         PitchShift: 0
         Pan2D: 0
@@ -283,11 +147,32 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
+    - Name: UI_MissionsPanel_2
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
         ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: e518e4bd2afe97e458a26891961c6b5b, type: 3}
+        Clip: {fileID: 8300000, guid: 3c1e51fbacb53e240a6a9b063b874dc3, type: 3}
         Volume: 1
         PitchShift: 0
         Pan2D: 0
@@ -301,7 +186,163 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: UI_Chests
+    - Name: UI_Buy
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 92d323527a67d094e86858e3af4c5a5a, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: hd_back
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 3f57d8c0a86325d41b1fd68e20c567fe, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: hd_popup_open
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: ca661033e31f29e479b3d2c1616eeae4, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: hd_popup_close
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: c47bb431cd9659c40844d76f6a11ea6a, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: hd_folder
       Loop: 0
       loopSequenceCount: 0
       loopSequenceOverlap: 0
@@ -326,391 +367,7 @@ MonoBehaviour:
         Probability: 1
         DisableOtherSubitems: 0
         ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: df6120137686d2348b9fdb22e000909b, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_unlock_dragon
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: caa504e9864b2b844b3507a53f389ea6, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_padlock
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 6a4beaaa5624d66449be7c5f3503db48, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_play
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 0.8
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 9696dea795122cd4db67bc76619e8112, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_egg_reward
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 4b6ab9259db80a74abc5416c9564b279, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_pet_selection
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 1
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: a05ee1990f539364fbbb24a70e69bddc, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 2ffd33039c7501d4e9e1708a363362eb, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: ec12b92c98737ab48861b1f27d6a4c2b, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_flag
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 0.8
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 2
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: fd3b2f7682833814186d37d2d411b2d7, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 2
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: d0bc4f7940164aa4c8fbd912105bae61, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 2
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 51e58b34c3139fd43b21fe59973403a6, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 2
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_pet_add
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 1
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 2
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: a00d1b92823720548b97d3d5a2c494ee, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 2
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
-    - Name: hd_pet_unload
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 1
-      Volume: 0.9
-      SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 78f3d5d45488b5049beee2a3d398a9ff, type: 3}
+        Clip: {fileID: 8300000, guid: f8dda87b5ea5afb46baf57d259a222cd, type: 3}
         Volume: 1
         PitchShift: 0
         Pan2D: 0
@@ -781,12 +438,12 @@ MonoBehaviour:
   shufflePlaylist: 0
   crossfadePlaylist: 0
   delayBetweenPlaylistTracks: 1
-  _isAdditionalAudioController: 0
+  _isAdditionalAudioController: 1
   _audioDisabled: 0
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 5
+    currentItemIndex: 4
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
