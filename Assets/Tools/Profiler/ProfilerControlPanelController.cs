@@ -515,6 +515,16 @@ public class ProfilerControlPanelController : MonoBehaviour
             ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);
         }
     }
+
+    public void Test_ToggleBakedLights(bool value)
+    {
+        ApplicationManager.instance.Debug_DisableBakedLights(value);
+    }
+    public void Test_ToggleColliders(bool value)
+    {
+        ApplicationManager.instance.Debug_DisableColliders(value);
+    }
+
     #endregion
 
     #region Scene
