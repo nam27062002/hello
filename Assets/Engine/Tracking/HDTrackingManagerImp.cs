@@ -685,7 +685,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.pet");
 		if (e != null)
 		{
-			Track_AddParamString(e, TRACK_PARAM_PETNAME, _sku);
+			string trackingName = Translate_PetSkuToTrackingName( _sku );
+			Track_AddParamString(e, TRACK_PARAM_PETNAME, trackingName);
 			Track_AddParamString(e, TRACK_PARAM_SOURCE_OF_PET, _source);
 			Track_SendEvent(e);
 		}
@@ -772,7 +773,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamString(e, TRACK_PARAM_MISSION_VALUE, StringUtils.FormatBigNumber(_mission.objective.targetValue));
 			Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString()); 
 			Track_AddParamSessionsCount(e);
-			Track_AddParamRunsAmount(e);
+			Track_AddParamGameRoundCount(e);
 			Track_AddParamHighestDragonXp(e);
 			Track_AddParamPlayerProgress(e);
 			Track_SendEvent(e);
@@ -797,7 +798,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			e.SetParameterValue(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
 			Track_AddParamString(e, TRACK_PARAM_EVENT_MULTIPLIER, _mulitplier.ToString());
 			Track_AddParamSessionsCount(e);
-			Track_AddParamRunsAmount(e);
+			Track_AddParamGameRoundCount(e);
 			Track_AddParamHighestDragonXp(e);
 			Track_AddParamPlayerProgress(e);
 			Track_SendEvent(e);
@@ -823,7 +824,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 			// Common stuff
 			Track_AddParamSessionsCount(e);
-			Track_AddParamRunsAmount(e);
+			Track_AddParamGameRoundCount(e);
 			Track_AddParamHighestDragonXp(e);
 			Track_AddParamPlayerProgress(e);
 			Track_SendEvent(e);
@@ -1125,8 +1126,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamGameRoundCount(e);
             e.SetParameterValue(TRACK_PARAM_XP, dragonXp);
             e.SetParameterValue(TRACK_PARAM_DRAGON_PROGRESSION, dragonProgression);            
-            Track_AddParamString(e, TRACK_PARAM_DRAGON_SKIN, dragonSkin);
-            Track_AddParamPets(e, pets);            
+			string trackingSku = Translate_DragonDisguiseSkuToTrackingSku( dragonSkin );
+			Track_AddParamString(e, TRACK_PARAM_DRAGON_SKIN, trackingSku);
+            Track_AddParamPets(e, pets);
 			Track_SendEvent(e);
         }
     }
@@ -1653,10 +1655,20 @@ public class HDTrackingManagerImp : HDTrackingManager
                 pet4 = pets[3];
             }
         }
-
+        if ( !string.IsNullOrEmpty( pet1 ) )
+        	pet1 = Translate_PetSkuToTrackingName( pet1 );
         Track_AddParamString(e, TRACK_PARAM_PET1, pet1);
+
+		if ( !string.IsNullOrEmpty( pet2 ) )
+        	pet2 = Translate_PetSkuToTrackingName( pet2 );
         Track_AddParamString(e, TRACK_PARAM_PET2, pet2);
+
+		if ( !string.IsNullOrEmpty( pet3 ) )
+        	pet3 = Translate_PetSkuToTrackingName( pet3 );
         Track_AddParamString(e, TRACK_PARAM_PET3, pet3);
+
+		if ( !string.IsNullOrEmpty( pet4 ) )
+        	pet4 = Translate_PetSkuToTrackingName( pet4 );
         Track_AddParamString(e, TRACK_PARAM_PET4, pet4);
     }
 
@@ -1760,6 +1772,31 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_AddParamString(e, TRACK_PARAM_USER_TIMEZONE, value);
     }
 #endregion
+
+#region translate
+	public string Translate_PetSkuToTrackingName( string _petSku  )
+	{
+		string ret = _petSku;
+		DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.PETS, _petSku);
+		if ( petDef != null )
+		{
+			ret = petDef.GetAsString("trackingName", _petSku);
+		}
+		return ret;
+	}
+
+	public string Translate_DragonDisguiseSkuToTrackingSku( string _disguiseSku )
+	{
+		string ret = _disguiseSku;
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DISGUISES, _disguiseSku);
+		if ( def != null)
+		{
+			ret = def.GetAsString("trackingSku", _disguiseSku);
+		}
+		return ret;
+	}
+#endregion
+
 
 #region session
     // This region is responsible for storing data generated during the current session. These data don't need to be persisted.

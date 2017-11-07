@@ -81,8 +81,9 @@ public class GameSceneController : GameSceneControllerBase {
 	}
 
 	// Pause management
-	private bool m_paused = false;
 	private float m_timeScaleBackup = 1f;	// When going to pause, store timescale to be restored later on
+	private int m_pauseStacks = 0;
+	private bool m_paused = false;
 	public bool paused {
 		get { return m_paused; }
 	}
@@ -440,7 +441,7 @@ public class GameSceneController : GameSceneControllerBase {
         Track_RoundEnd();
 
         // Make sure game is not paused
-        PauseGame(false);
+        PauseGame(false, true);
 
 		// Change state
 		ChangeState(EStates.FINISHED);
@@ -455,25 +456,46 @@ public class GameSceneController : GameSceneControllerBase {
 	/// <summary>
 	/// Pause/resume
 	/// </summary>
-	/// <param name="_bPause">Whether to pause the game or resume it.</param>
-	public void PauseGame(bool _bPause) {
+	/// <param name="_pause">Whether to pause the game or resume it.</param>
+	/// <param name="_force">Ignore stacks.</param>
+	public void PauseGame(bool _pause, bool _force) {
 		// Only allowed in specific states
 		if(state == EStates.RUNNING || state == EStates.COUNTDOWN) {
-			m_paused = _bPause;
-			if(_bPause) {
-				// Store current timescale and set it to 0
-				m_timeScaleBackup = Time.timeScale;
-				Time.timeScale = 0.0f;
+			//m_paused = _bPause;
+			if(_pause) {
+				// If not paused, pause!
+				if(!m_paused || _force) {
+					// Store current timescale and set it to 0
+					// Not if already paused, otherwise resume wont work!
+					if(!m_paused) m_timeScaleBackup = Time.timeScale;
+					Time.timeScale = 0.0f;
 
-				// Notify the game
-				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
+					// Notify the game
+					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
+				}
+
+				// Increase stack
+				m_pauseStacks++;
 			} else {
-				// Restore previous timescale
-				Time.timeScale = m_timeScaleBackup;
+				// Decrease stack (or reset if forcing)
+				if(_force) {
+					m_pauseStacks = 0;
+				} else {
+					m_pauseStacks = Mathf.Max(m_pauseStacks - 1, 0);	// At least 0!
+				}
 
-				// Notify the game
-				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
+				// If empty stack, restore gameplay!
+				if(m_pauseStacks == 0) {
+					// Restore previous timescale
+					Time.timeScale = m_timeScaleBackup;
+
+					// Notify the game
+					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
+				}
 			}
+
+			// Update logic flag
+			m_paused = (m_pauseStacks > 0);
 		}
 	}
 
@@ -749,7 +771,7 @@ public class GameSceneController : GameSceneControllerBase {
         int dragonXp = 0;
         int dragonProgress = 0;
         string dragonSkin = null;
-        List<string> pets = null;
+		List<string> pets = null;
         if (InstanceManager.player != null) {
             DragonData dragonData = InstanceManager.player.data;
             if (dragonData != null) {
@@ -758,19 +780,15 @@ public class GameSceneController : GameSceneControllerBase {
                 }
 
                 dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
-
-                // TODO: use trackSku instead of sku
                 dragonSkin = dragonData.diguise;
-
-                // TODO: use trackSkus instead of skus
-                pets = dragonData.pets;
+				pets = dragonData.pets;
             }
         }
 
 		m_boostTimeTracker.SetValue(0, false);
 		m_mapUsageTracker.SetValue(0, false);
 
-        HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
     }
 
     private void Track_RoundEnd() {
