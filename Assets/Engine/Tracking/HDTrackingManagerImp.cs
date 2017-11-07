@@ -86,10 +86,27 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
     }
 
-    public override void SaveOfflineUnsentEvents()
+    public override void GoToGame()
     {
-		// TODO: To fix in Calety the crash that happens on iOS
-		// It crashes on Android too so it's disabled for now
+        // Unsent events are stored during the loading because it can be a heavy stuff
+        SaveOfflineUnsentEvents();
+
+        // Session is not allowed to be recreated during game because it could slow it down
+        UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(false);
+    }
+
+    public override void GoToMenu()
+    {
+        // Unsent events are stored during the loading because it can be a heavy stuff
+        SaveOfflineUnsentEvents();
+
+        UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(true);
+    }
+
+    private void SaveOfflineUnsentEvents()
+    {
+        // TODO: To fix in Calety the crash that happens on iOS
+        // It crashes on Android too so it's disabled for now
 #if !UNITY_EDITOR && !UNITY_IOS && false
 		// Makes sure DNAManager is initialised in order to prevent a crash if it's not initialised.
 		// TODO: To delete this if when latest Calety is merged into hungrydragon branch
