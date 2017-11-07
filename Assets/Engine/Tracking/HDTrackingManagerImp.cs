@@ -3,8 +3,9 @@
 /// </summary>
 
 using UnityEngine;
-using System.Collections.Generic;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 public class HDTrackingManagerImp : HDTrackingManager
 {    
     private enum EState
@@ -178,8 +179,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         CheckAndGenerateUserID();
 
-        InitSDKs();
-
         Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
 
         // It has to be true only in the first loading
@@ -194,11 +193,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Calety needs to be initialized every time a session starts because the session count has changed
         InitTrackingManager();
 
+		InitSDKs();
+
         // Sends the start session event
         Track_StartSessionEvent();
-        
-        Notify_Funnel_Load(FunnelData_Load.Steps._01_persistance);
-    }
+
+        Notify_Funnel_Load(FunnelData_Load.Steps._01_persistance);    
+    }    
 
     private void InitSDKs()
     {
@@ -212,26 +213,33 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void InitDNA(CaletySettings settingsInstance)
-    {
-        // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-#if !UNITY_EDITOR
-        if (settingsInstance != null)
-        {
-            UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
-            if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-            {
-                kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
-            }
+	private void InitDNA(CaletySettings settingsInstance)
+	{
+		// DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
+		#if !UNITY_EDITOR        
+		if (settingsInstance != null)
+		{
+		string strDNAGameVersion = "UAT";
+		UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
+		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
+		{
+		kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
+		strDNAGameVersion = "Full";
+		}
 
-#if UNITY_ANDROID
-            DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionAndroidGplay, kDNAEnvironment);
-#elif UNITY_IOS
-			DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), settingsInstance.m_strVersionIOS, kDNAEnvironment);
-#endif
-        }
-#endif
-    }
+		List<string> kEventNameFilters = new List<string> ();
+		kEventNameFilters.Add ("custom");
+
+		List<string> kDNACachedEventIDs = TrackingManager.SharedInstance.GetEventIDsByAPI (TrackingManager.ETrackAPIs.E_TRACK_API_DNA, kEventNameFilters);
+
+		#if UNITY_ANDROID
+		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.GetClientBuildVersion(), strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+		#elif UNITY_IOS
+		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+		#endif
+		}
+		#endif
+	}
 
     private void InitAppsFlyer(CaletySettings settingsInstance)
     {
