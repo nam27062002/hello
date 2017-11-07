@@ -92,7 +92,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         SaveOfflineUnsentEvents();
 
         // Session is not allowed to be recreated during game because it could slow it down
-        UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(false);
+        SetRetrySessionCreationIsEnabled(false);
     }
 
     public override void GoToMenu()
@@ -100,8 +100,16 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Unsent events are stored during the loading because it can be a heavy stuff
         SaveOfflineUnsentEvents();
 
-        UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(true);
+        SetRetrySessionCreationIsEnabled(true);
     }
+
+	private void SetRetrySessionCreationIsEnabled(bool value)
+	{
+		// UbiservicesManager is not called from the editor because it doesn’t work on Mac
+#if !UNITY_EDITOR
+		UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(value);
+#endif
+	}
 
     private void SaveOfflineUnsentEvents()
     {
