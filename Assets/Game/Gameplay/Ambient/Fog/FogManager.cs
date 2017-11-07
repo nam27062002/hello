@@ -96,6 +96,7 @@ public class FogManager : MonoBehaviour
 	bool m_updateTmpTexture = false;
 
 	bool m_firstTime = true;
+	public bool firstTime{ get{return m_firstTime;} set{m_firstTime = value;} }
 
 	float m_transitionTimer = 0;
 	FogAttributes m_lastSelectedAttributes;
