@@ -39,7 +39,12 @@ public class ParticleControl : MonoBehaviour {
 			if (_data != null) {
 				if (_data.changeStartColor) {					
 					ParticleSystem.MinMaxGradient gradient = main.startColor;
-					gradient.color = _data.startColor;
+					if ( gradient.mode == ParticleSystemGradientMode.TwoColors ){
+						gradient.colorMin = _data.startColor;
+						gradient.colorMax = _data.startColorTwo;
+					}else{
+						gradient.color = _data.startColor;
+					}
 					main.startColor = gradient;
 				}
 
