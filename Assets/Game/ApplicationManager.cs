@@ -775,6 +775,51 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
     }
 
+    private bool Debug_IsBakedLightsDisabled { get; set; }
+    private List<Light> m_lightList = null;
+    private void disableBakedLights(bool value)
+    {
+        for (int c = 0; c < m_lightList.Count; c++)
+        {
+            m_lightList[c].gameObject.SetActive(value);
+        }
+    }
+
+    public void Debug_DisableBakedLights(bool value)
+    {
+        if (m_lightList == null)
+        {
+            m_lightList = GameObjectExt.FindObjectsOfType<Light>(true);
+        }
+        Debug_IsBakedLightsDisabled = value; //!Debug_IsBakedLightsDisabled;
+        disableBakedLights(Debug_IsBakedLightsDisabled);
+    }
+
+    private bool Debug_IsCollidersDisabled { get; set; }
+    private List<MeshCollider> m_CollidersList = null;
+    private void disableColliders(bool value)
+    {
+        for (int c = 0; c < m_CollidersList.Count; c++)
+        {
+            m_CollidersList[c].gameObject.SetActive(value);
+        }
+    }
+
+    public void Debug_DisableColliders(bool value)
+    {
+        if (m_CollidersList == null)
+        {
+            m_CollidersList = GameObjectExt.FindObjectsOfType<MeshCollider>(true);
+        }
+        Debug_IsCollidersDisabled = value; //!Debug_IsCollidersDisabled;
+        disableColliders(Debug_IsCollidersDisabled);
+    }
+
+
+
+
+
+
     public void Debug_TestQualitySettings()
     {
         FeatureSettingsManager.instance.Debug_Test();
