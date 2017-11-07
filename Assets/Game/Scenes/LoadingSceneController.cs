@@ -235,12 +235,26 @@ public class LoadingSceneController : SceneController {
             }
             else
             {
-                // Load persistence        
-                SetState(State.WAITING_SAVE_FACADE);				
+				// Load persistence
+                if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+                {
+					SetState(State.SHOWING_UPGRADE_POPUP);
+                }
+                else
+                {
+                	SetState(State.WAITING_FOR_RULES);
+                }
             }
         #else
-			// Load persistence        
-            SetState(State.WAITING_SAVE_FACADE);				
+			// Load persistence
+            if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+            {
+				SetState(State.SHOWING_UPGRADE_POPUP);
+            }
+            else
+            {
+            	SetState(State.WAITING_FOR_RULES);
+            }			
         #endif
     }
 

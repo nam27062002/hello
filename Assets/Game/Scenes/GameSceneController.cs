@@ -546,10 +546,10 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.player.StartIntroMovement();
 
 				// Spawn collectibles
-				CollectiblesManager.OnLevelLoaded();              
+				CollectiblesManager.OnLevelLoaded();
 
-				// Hide loading screen
-				LoadingScreen.Toggle(false);
+				// Wait one frame!
+				StartCoroutine( OneFrameAfterActivation() );
 
                 // Notify the game
                 Messenger.Broadcast(GameEvents.GAME_STARTED);
@@ -689,6 +689,15 @@ public class GameSceneController : GameSceneControllerBase {
 		// Store new state
 		m_state = _newState;
 	}
+
+	IEnumerator OneFrameAfterActivation()
+	{
+		yield return null;
+		InstanceManager.fogManager.firstTime = true;
+		// Hide loading screen
+		LoadingScreen.Toggle(false);
+	}
+
 	private void OnScenesUnloaded()
 	{
 		// This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
