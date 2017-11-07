@@ -211,27 +211,40 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// The Facebook button has been pressed.
 	/// </summary>
 	public void OnFacebookButton() {
-		Application.OpenURL("https://www.facebook.com/HungryDragonGame");
+		OpenUrlDelayed("https://www.facebook.com/HungryDragonGame");
 	}
 
 	/// <summary>
 	/// The Twitter button has been pressed.
 	/// </summary>
 	public void OnTwitterButton() {
-		Application.OpenURL("https://twitter.com/_HungryDragon");
+		OpenUrlDelayed("https://twitter.com/_HungryDragon");
 	}
 
 	/// <summary>
 	/// The Instagram button has been pressed.
 	/// </summary>
 	public void OnInstagramButton() {
-		Application.OpenURL("https://www.instagram.com/hungrydragongame");
+		OpenUrlDelayed("https://www.instagram.com/hungrydragongame");
 	}
 
 	/// <summary>
 	/// The Web button has been pressed.
 	/// </summary>
 	public void OnWebButton() {
-		Application.OpenURL("http://blog.ubi.com/");
+		OpenUrlDelayed("http://blog.ubi.com/");
+	}
+
+	/// <summary>
+	/// Opens the URL after a short delay.
+	/// </summary>
+	/// <param name="_url">URL to be opened.</param>
+	private void OpenUrlDelayed(string _url) {
+		// Add some delay to give enough time for SFX to be played before losing focus
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				Application.OpenURL(_url);
+			}, 0.15f
+		);
 	}
 }
