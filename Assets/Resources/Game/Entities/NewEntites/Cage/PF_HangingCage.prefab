@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 54905465135701724}
   - component: {fileID: 114643981114982816}
   - component: {fileID: 136642685165160794}
-  m_Layer: 21
+  m_Layer: 30
   m_Name: cage_broken_bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -738,7 +738,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4235390503443686}
-  m_Layer: 29
+  m_Layer: 30
   m_Name: cage_broken_top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -903,7 +903,7 @@ GameObject:
   - component: {fileID: 4981111574488020}
   - component: {fileID: 33299964439294002}
   - component: {fileID: 23922925197775040}
-  m_Layer: 24
+  m_Layer: 30
   m_Name: model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -917,7 +917,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012592393062}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 133.82065, y: 42.391296, z: -14.118107}
+  m_LocalPosition: {x: 130.63795, y: 49.044964, z: -14.118107}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000013145674594}
@@ -1400,8 +1400,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1123729654183110}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.792999, z: 0}
-  m_LocalScale: {x: 0.01509979, y: 0.01509979, z: 0.01509979}
+  m_LocalPosition: {x: 0, y: -3.625999, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4750221989085142}
   m_Father: {fileID: 4000010924104132}
@@ -1511,8 +1511,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1382253769397932}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -285.05, z: 0}
-  m_LocalScale: {x: 1.000014, y: 1.000014, z: 1.000014}
+  m_LocalPosition: {x: 0, y: -4.53, z: 0}
+  m_LocalScale: {x: 0.01509979, y: 0.01509979, z: 0.01509979}
   m_Children: []
   m_Father: {fileID: 4564096958857498}
   m_RootOrder: 0
@@ -2544,13 +2544,13 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1123729654183110}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 100
   m_Drag: 0.1
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!54 &54939127104354138
 Rigidbody:
@@ -2848,7 +2848,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.102002025, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.10199821, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2880,7 +2880,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0.17, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.09599793, z: 0}
+  m_ConnectedAnchor: {x: 0, y: -0.096001744, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -3256,10 +3256,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 69.82
-  m_Height: 164.2
+  m_Radius: 1.24
+  m_Height: 3.32
   m_Direction: 1
-  m_Center: {x: 0, y: -223.2, z: 0}
+  m_Center: {x: 0, y: -3.19, z: 0}
 --- !u!138 &138101909686635560
 FixedJoint:
   m_ObjectHideFlags: 1
