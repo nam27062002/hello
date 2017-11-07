@@ -215,6 +215,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
         m_cloudEnableSlider.interactable = isOn;
         m_cloudEnableButton.interactable = isOn;
     }    
+
+	public void Cloud_OnToggle() {
+		if(m_cloudEnableSlider.value > 0) {
+			m_cloudEnableSlider.value = 0;
+		} else {
+			m_cloudEnableSlider.value = 1;
+		}
+		Cloud_OnChangeSaveEnable();
+	}
     #endregion
 
     #region resync
@@ -526,5 +535,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
         int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);        
         HDNotificationsManager.instance.SetNotificationsEnabled(v > 0);        
     }
+
+	public void Notifications_OnToggle() {
+		bool newValue = !(HDNotificationsManager.instance.GetNotificationsEnabled());
+		HDNotificationsManager.instance.SetNotificationsEnabled(newValue);
+		Notifications_Init();
+	}
     #endregion
 }

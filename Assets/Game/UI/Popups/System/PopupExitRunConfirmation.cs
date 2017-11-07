@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PopupController))]
-public class PopupExitRunConfirmation : MonoBehaviour {
+public class PopupExitRunConfirmation : PopupPauseBase {
 
 	public const string PATH = "UI/Popups/Message/PF_PopupConfirmationExitRun";
 

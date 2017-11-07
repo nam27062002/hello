@@ -149,7 +149,7 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
     /// <param name="dragonProgression">Progression of the current dragon. It's calculated the same way as playerProgression is but it's done for the dragon chosen by the user to play this round</param>
-    /// <param name="dragonSkin">Track id of the skin chosen by the user to play the current round.</param>
+    /// <param name="dragonSkin">Sku of the skin chosen by the user to play the current round.</param>
     /// <param name="pets">List with the track ids of the pets equipped to play the current round. Null if no pets are equipped.</param>    
     public virtual void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {}
 

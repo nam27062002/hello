@@ -40,7 +40,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	public enum RequestType {
 		EVENT_DATA,
 		EVENT_STATE,
-		EVENT_LEADERBOARD
+		EVENT_LEADERBOARD,
+		EVENT_REWARDS
 	}
 
 	//------------------------------------------------------------------------//
@@ -608,6 +609,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				Debug.Log("<color=purple>EVENT REWARD</color>\n" + responseJson.ToString(4));
 				m_currentEvent.UpdateRewardLevelFromJson(responseJson);
 			}
+
+			// Notify game
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_REWARDS);
 		}
 	}
 }

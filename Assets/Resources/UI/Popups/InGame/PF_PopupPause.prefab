@@ -185,6 +185,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224874316561310210}
   - component: {fileID: 114211387717459114}
+  - component: {fileID: 114211654954400380}
   m_Layer: 5
   m_Name: ContainerAnim
   m_TagString: Untagged
@@ -654,6 +655,7 @@ GameObject:
   - component: {fileID: 114349814560927950}
   - component: {fileID: 95334319563664898}
   - component: {fileID: 114034118185799656}
+  - component: {fileID: 114142364115330980}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -1512,6 +1514,7 @@ GameObject:
   - component: {fileID: 114662817421467068}
   - component: {fileID: 95057799199543576}
   - component: {fileID: 114741592753489622}
+  - component: {fileID: 114855711997356748}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -1633,6 +1636,7 @@ GameObject:
   - component: {fileID: 114284351176730450}
   - component: {fileID: 95028706571346500}
   - component: {fileID: 114673335132453892}
+  - component: {fileID: 114371057714339342}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -1788,6 +1792,7 @@ GameObject:
   - component: {fileID: 225100889091948146}
   - component: {fileID: 114272849955961774}
   - component: {fileID: 114431131246729932}
+  - component: {fileID: 114726058509690978}
   m_Layer: 5
   m_Name: PF_PopupPause
   m_TagString: Untagged
@@ -2299,6 +2304,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224756890809453866}
   - component: {fileID: 114516984195481568}
+  - component: {fileID: 114026848057798786}
   m_Layer: 5
   m_Name: ContainerAnim
   m_TagString: Untagged
@@ -3602,6 +3608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224302736409855290}
   - component: {fileID: 114652288615849962}
+  - component: {fileID: 114154609205672986}
   m_Layer: 5
   m_Name: ContainerAnim
   m_TagString: Untagged
@@ -3811,6 +3818,7 @@ GameObject:
   - component: {fileID: 114270938195738648}
   - component: {fileID: 95278969425040724}
   - component: {fileID: 114578377438560482}
+  - component: {fileID: 114908721524521940}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -5053,6 +5061,18 @@ MonoBehaviour:
   m_tid: TID_SETTINGS_OFF
   m_caseType: 1
   m_replacements: []
+--- !u!114 &114026848057798786
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1499641785137610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114034118185799656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5569,13 +5589,13 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 114146588413682166}
         m_MethodName: Play
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114155039673809438}
@@ -5872,7 +5892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_audioId: 
+  m_audioId: hd_back
 --- !u!114 &114098870267928816
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5884,7 +5904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_audioId: 
+  m_audioId: UI_Click
 --- !u!114 &114099917069737332
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6591,6 +6611,18 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
+--- !u!114 &114142364115330980
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1167318431102304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114146588413682166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6723,6 +6755,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114154609205672986
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1838702731139646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114155039673809438
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7426,7 +7470,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114211654954400380}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_MissionsPanel
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -7444,6 +7499,18 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114211654954400380
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1037973647446988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114213856590056390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8107,7 +8174,18 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114908721524521940}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114272247269382040
@@ -8239,7 +8317,18 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114371057714339342}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114293028346582756
@@ -8721,6 +8810,8 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 1
   m_verticalPivot: 0.5
+  m_useCustomReferenceSize: 0
+  m_customReferenceSize: 200
 --- !u!114 &114321711920333520
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9726,7 +9817,18 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114142364115330980}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114352817402205614
@@ -9844,13 +9946,13 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 114482172821091310}
         m_MethodName: Play
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: hd_folder
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -9869,6 +9971,18 @@ MonoBehaviour:
   m_tid: TID_MISSIONS_NEXT_MISSION_IN
   m_caseType: 0
   m_replacements: []
+--- !u!114 &114371057714339342
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1370497033712350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114372697323215918
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9880,7 +9994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_audioId: 
+  m_audioId: UI_Click
 --- !u!114 &114373956147965176
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10203,6 +10317,8 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 1
   m_verticalPivot: 0.5
+  m_useCustomReferenceSize: 0
+  m_customReferenceSize: 200
 --- !u!114 &114410457618756184
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11392,7 +11508,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114026848057798786}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_MissionsPanel_2
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -11753,15 +11880,15 @@ MonoBehaviour:
   OnOpenPreAnimation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: RestartShow
-        m_Mode: 1
+      - m_Target: {fileID: 114726058509690978}
+        m_MethodName: Play
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: hd_popup_open
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
@@ -11774,15 +11901,15 @@ MonoBehaviour:
   OnClosePreAnimation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: Hide
-        m_Mode: 6
+      - m_Target: {fileID: 114726058509690978}
+        m_MethodName: Play
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: hd_popup_close
           m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
@@ -12789,7 +12916,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_audioId: 
+  m_audioId: UI_Click
 --- !u!114 &114616024956128810
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12831,13 +12958,13 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 114106718061053924}
         m_MethodName: Play
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: hd_folder
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -13334,7 +13461,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114154609205672986}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_MissionsPanel
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -13478,7 +13616,18 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114855711997356748}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114666826823825856
@@ -13809,6 +13958,8 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 1
   m_verticalPivot: 0.5
+  m_useCustomReferenceSize: 0
+  m_customReferenceSize: 200
 --- !u!114 &114688513494169928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14262,6 +14413,18 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114726058509690978
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392950148690272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114727255549245728
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15589,6 +15752,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114855711997356748
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1340628058267146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114858991402331986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16911,6 +17086,18 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114908721524521940
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1890114051107452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114910205228494028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17403,7 +17590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_audioId: 
+  m_audioId: UI_Click
 --- !u!114 &114966453634165734
 MonoBehaviour:
   m_ObjectHideFlags: 1
