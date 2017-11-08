@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
+Shader "Hungry Dragon/Particles/Transparent Particles Premultiply"
 {
 	Properties
 	{
@@ -16,21 +16,20 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 		[Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
 
 		_DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
-		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 //		[Enum(Additive, 1, AlphaBlend, 10)] _BlendMode("Blend mode", Float) = 10
+//		[BlendMode] _BlendMode("Blend Mode", Vector) = (1.0, 0.0, 0.0, 0.0)
+//		[BlendMode] _BlendMode("Blend Mode", Float) = 0.0
+		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
 	SubShader
 	{
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-		//		Blend SrcAlpha One // Additive blending
-//		Blend SrcAlpha OneMinusSrcAlpha // Alpha blend
-//		Blend SrcAlpha[_BlendMode]
-		Blend One OneMinusSrcAlpha
+		Blend SrcAlpha OneMinusSrcAlpha
 		Cull Off
 		Lighting Off
 		ZWrite Off
-		ZTest[_ZTest]
+		ZTest [_ZTest]
 
 		Pass
 		{
