@@ -25,8 +25,6 @@ public class CacheServerManager {
     #endregion
 
 
-	private const string OBSOLETE_KEY = "OBSOLETE_VERSION";
-
     // String with version the cache is using
     string m_usingVersion;
     // if at some point server says this game needs an update we save the version we were using
@@ -72,7 +70,12 @@ public class CacheServerManager {
     private void LoadObsoleteVersion()
     {
 		// Get Saved Min Version
-		string out_of_date_version = PlayerPrefs.GetString(OBSOLETE_KEY, "");
+		string path = FileUtils.GetDeviceStoragePath ("/obsolete", CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		string out_of_date_version = "";
+		if ( File.Exists(path) )
+		{
+			out_of_date_version = File.ReadAllText(path);
+		}
 		m_obsoleteVersion = VersionStrToInts( out_of_date_version );
 		if ( m_obsoleteVersion == null )
 		{
@@ -87,7 +90,8 @@ public class CacheServerManager {
 
     public void SetVersionAsObsolete( string v )
     {
-		PlayerPrefs.SetString(OBSOLETE_KEY,v);
+		string path = FileUtils.GetDeviceStoragePath ("/obsolete", CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		File.WriteAllText(path, v);
 		LoadObsoleteVersion();
     }
 
