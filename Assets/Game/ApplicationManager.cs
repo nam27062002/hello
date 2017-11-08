@@ -787,7 +787,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         for (int c = 0; c < m_lightList.Count; c++)
         {
-            m_lightList[c].gameObject.SetActive(value);
+            if (m_lightList[c].type != LightType.Directional)
+            {
+                m_lightList[c].gameObject.SetActive(value);
+            }
         }
     }
 
