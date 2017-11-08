@@ -514,4 +514,9 @@ public class CPProgressionCheats : MonoBehaviour {
     {
 		PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
     }
+
+    public void OnResetAchievements()
+    {
+    	ApplicationManager.instance.GameCenter_ResetAchievements();
+    }
 }

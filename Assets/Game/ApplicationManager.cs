@@ -697,6 +697,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
     	GameCenterManager.SharedInstance.ShowAchievements();
     }
+
+	public void GameCenter_ResetAchievements()
+    {
+    	GameCenterManager.SharedInstance.ResetAchievements();
+    }
+
     #endregion
 
     #region debug
