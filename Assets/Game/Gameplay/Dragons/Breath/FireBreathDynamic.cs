@@ -35,7 +35,7 @@ public class FireBreathDynamic : MonoBehaviour
 
 
     // consts
-    public static readonly float CURRENT_DRAGONBABY_REFERENCEVALUE = 2.1985f;
+	public static readonly float CURRENT_DRAGONBABY_REFERENCEVALUE = 2.68f; //2.1985f;
     public static readonly float CURRENT_DRAGONCLASSIC_REFERENCEVALUE = 5.535f;
 
     // Mesh cache
