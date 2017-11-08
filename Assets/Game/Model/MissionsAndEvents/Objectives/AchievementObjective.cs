@@ -38,6 +38,8 @@ public class AchievementObjective : TrackingObjectiveBase {
 	protected bool m_reportProgress = false;
 	public bool reportProgress { get { return m_reportProgress; }}
 
+	private int m_stepSize = 1;
+	private int m_lastStep = -1;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -61,6 +63,7 @@ public class AchievementObjective : TrackingObjectiveBase {
 		m_singleRun = _achievementDef.GetAsBool("singleRun");
 		m_reportProgress = _achievementDef.GetAsBool("resportProgress");
 		m_achievementSku = _achievementDef.sku;
+		m_stepSize = _achievementDef.GetAsInt("stepSize", 1);
 
 		// Use parent's initializer
 		int _targetValue = _achievementDef.GetAsInt("amount", 1);
@@ -127,7 +130,7 @@ public class AchievementObjective : TrackingObjectiveBase {
 				// Report Achievement
 				if ( m_reportProgress )
 				{
-					GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)targetValue);
+					GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)(targetValue / m_stepSize));
 				}
 				else
 				{
@@ -141,10 +144,15 @@ public class AchievementObjective : TrackingObjectiveBase {
 		}
 		else
 		{
-			if ( m_reportProgress && GameCenterManager.SharedInstance.CheckIfAuthenticated())
+			if ( m_reportProgress && GameCenterManager.SharedInstance.CheckIfAuthenticated() )
 			{
-				// Report progress
-				GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)currentValue);
+				int newStep = (int)(currentValue / m_stepSize);
+				if ( newStep != m_lastStep)
+				{
+					// Report progress
+					GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , newStep);
+				}
+				m_lastStep = newStep;
 			}
 		}
 	}
