@@ -777,6 +777,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private bool Debug_IsBakedLightsDisabled { get; set; }
     private List<Light> m_lightList = null;
+    private List<MeshRenderer> m_renderers = null;
     private void disableBakedLights(bool value)
     {
         for (int c = 0; c < m_lightList.Count; c++)
@@ -786,6 +787,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 m_lightList[c].gameObject.SetActive(value);
             }
         }
+
+        for (int c = 0; c < m_renderers.Count; c++)
+        {
+            m_renderers[c].receiveShadows = value;
+            m_renderers[c].shadowCastingMode = value ? UnityEngine.Rendering.ShadowCastingMode.On : UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+
     }
 
     public void Debug_DisableBakedLights(bool value)
@@ -794,7 +802,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             m_lightList = GameObjectExt.FindObjectsOfType<Light>(true);
         }
-        Debug_IsBakedLightsDisabled = value; //!Debug_IsBakedLightsDisabled;
+
+        if (m_renderers == null)
+        {
+            m_renderers = GameObjectExt.FindObjectsOfType<MeshRenderer>(true);
+
+        }
+        Debug_IsBakedLightsDisabled = !Debug_IsBakedLightsDisabled;
         disableBakedLights(Debug_IsBakedLightsDisabled);
     }
 
@@ -814,7 +828,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             m_CollidersList = GameObjectExt.FindObjectsOfType<MeshCollider>(true);
         }
-        Debug_IsCollidersDisabled = value; //!Debug_IsCollidersDisabled;
+        Debug_IsCollidersDisabled = !Debug_IsCollidersDisabled;
         disableColliders(Debug_IsCollidersDisabled);
     }
 

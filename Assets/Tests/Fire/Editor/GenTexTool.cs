@@ -99,7 +99,8 @@ public class Perlin : TextureGenBase
     public float m_seed = 1.0f;
     //
 
-    public Perlin()
+//    public Perlin()
+    public void OnEnable()
     {
         serializedName = "PerlinPrefs";
     }
@@ -194,7 +195,8 @@ public class Voronoi : TextureGenBase
     public float m_Scale = 8.0f;
 
 
-    public Voronoi()
+    //    public Voronoi()
+    public void OnEnable()
     {
         serializedName = "VoronoiPrefs";
     }
