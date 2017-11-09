@@ -63,11 +63,13 @@ abstract public class TouchControls : MonoBehaviour {
 
         // Subscribe to external events
         Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
+		Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, OnPause);
     }
 	
     public virtual void OnDestroy() {
         // Unsubscribe from external events
         Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);        
+		Messenger.RemoveListener<bool>(GameEvents.GAME_PAUSED, OnPause);
     }
 
 	private void ResetTouchValues()
@@ -269,11 +271,21 @@ abstract public class TouchControls : MonoBehaviour {
         }
     }
 
-    /// <summary>
+	/// <summary>
     /// Subclasses of this class just have to override this method to handle change of preferences
     /// </summary>
     /// <param name="id"></param>
     protected virtual void OnPrefChangedExtended(string id) {}
+
+	private void OnPause(bool _pause) {
+		if(_pause) {
+			ResetTouchValues();
+			SetRender(false);
+			this.gameObject.SetActive(false);
+		} else {
+			this.gameObject.SetActive(true);
+		}
+	}
 
     public void Set3DTouch( bool use3DTouch, float pressure )
     {
