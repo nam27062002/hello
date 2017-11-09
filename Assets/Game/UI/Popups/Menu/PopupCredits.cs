@@ -14,6 +14,7 @@ using TMPro;
 using DG.Tweening;
 
 using System;
+using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
@@ -86,11 +87,26 @@ public class PopupCredits : MonoBehaviour {
 		TextAsset creditsText = Resources.Load<TextAsset>(SOURCE_PATH);
 		string text = creditsText.text;
 
+		// Remove commented lines
+		StringBuilder sb = new StringBuilder();
+		using(StringReader sr = new StringReader(text)) {
+			// Read line by line
+			string line;
+			while((line = sr.ReadLine()) != null) {
+				// Does line start with "//"?
+				if(!line.StartsWith("//")) {
+					// No! Valid line
+					sb.AppendLine(line);
+				}
+			}
+		}
+		text = sb.ToString();
+
 		// Apply styles
 		TextStyle style;
 		string openTag;
 		string closeTag;
-		StringBuilder sb = new StringBuilder();
+		sb.Length = 0;	// Reuse string builder
 		for(int i = 0; i < m_styles.Count; ++i) {
 			style = m_styles[i];
 
