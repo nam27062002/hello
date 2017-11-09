@@ -83,10 +83,6 @@ public class GameSceneController : GameSceneControllerBase {
 	// Pause management
 	private float m_timeScaleBackup = 1f;	// When going to pause, store timescale to be restored later on
 	private int m_pauseStacks = 0;
-	private bool m_paused = false;
-	public bool paused {
-		get { return m_paused; }
-	}
 
 	// Level loading
 	private AsyncOperation[] m_levelLoadingTasks = null;

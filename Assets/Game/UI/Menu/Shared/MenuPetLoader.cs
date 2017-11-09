@@ -163,9 +163,7 @@ public class MenuPetLoader : MonoBehaviour {
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
 
 				// Show rarity glow if required
-				if(m_showRarityGlow) {
-					petPreview.ToggleRarityGlow(true);
-				}
+				petPreview.ToggleRarityGlow(m_showRarityGlow);
 
 				// Reset scale if required
 				if(m_resetScale) {
