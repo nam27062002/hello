@@ -33,6 +33,7 @@ public class LoadingSceneController : SceneController {
     	public bool m_permissionsFinished = false;
         private PopupController m_confirmPopup = null;
 		private CaletyConstants.PopupConfig m_popupConfig;
+		private bool m_actionsAllowed = true;
 
         public override void onAndroidPermissionPopupNeeded (CaletyConstants.PopupConfig kPopupConfig)
         {
@@ -67,6 +68,9 @@ public class LoadingSceneController : SceneController {
 	            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
             }
 
+			// Allow actions
+			m_actionsAllowed = true;
+
             // The user is not allowed to close this popup
             config.IsButtonCloseVisible = false;
 			m_confirmPopup = PopupManager.PopupMessage_Open(config);			
@@ -74,16 +78,40 @@ public class LoadingSceneController : SceneController {
 
         void onConfirm()
         {
-			AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[0];
-			button.m_pOnResponse();
-			m_confirmPopup = null;
+			// Ignore if actions are not allowed
+			if(!m_actionsAllowed) return;
+
+			// Ignore further actions (prevent spamming)
+			m_actionsAllowed = false;
+
+			// Add some delay to give enough time for SFX to be played before losing focus
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[0];
+					button.m_pOnResponse();
+					m_confirmPopup = null;
+					m_actionsAllowed = true;
+				}, 0.15f
+			);
         }
 
         void onCancel()
         {
-			AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[1];
-			button.m_pOnResponse();
-			m_confirmPopup = null;
+			// Ignore if actions are not allowed
+			if(!m_actionsAllowed) return;
+
+			// Ignore further actions (prevent spamming)
+			m_actionsAllowed = false;
+
+			// Add some delay to give enough time for SFX to be played before losing focus
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[1];
+					button.m_pOnResponse();
+					m_confirmPopup = null;
+					m_actionsAllowed = true;
+				}, 0.15f
+			);
         }
 
         public override void onAndroidPermissionsFinished ()
@@ -93,6 +121,7 @@ public class LoadingSceneController : SceneController {
 
 			// Close popup and continue
             m_permissionsFinished = true;
+			m_actionsAllowed = true;
         }
     }
 
