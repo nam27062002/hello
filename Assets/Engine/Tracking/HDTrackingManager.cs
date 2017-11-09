@@ -329,6 +329,16 @@ public class HDTrackingManager
 	/// <param name="_action">Action.</param>
 	public virtual void Notify_Missions(Mission _mission, EActionsMission _action) {}
 
+	/// <summary>
+	/// Notifies the settings open. When settings popup opens
+	/// </summary>
+	public virtual void Notify_SettingsOpen(){}
+
+	/// <summary>
+	/// Notifies the settings close. When settings popup closed
+	/// </summary>
+	public virtual void Notify_SettingsClose(){}
+
 
 
 	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}

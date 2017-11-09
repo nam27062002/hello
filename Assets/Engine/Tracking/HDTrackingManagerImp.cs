@@ -25,6 +25,17 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private bool AreSDKsInitialised { get; set; }    
 
+    private enum EPlayingMode
+    {
+    	NONE,
+    	TUTORIAL,
+    	PVE,
+    	SETTINGS
+    };
+
+    private EPlayingMode m_playingMode = EPlayingMode.NONE;
+    private float m_playingModeStartTime;
+
     public HDTrackingManagerImp()
     {
 		m_loadFunnel = new FunnelData_Load();
@@ -222,6 +233,11 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // Sends the start session event
         Track_StartSessionEvent();
+
+		if ( Session_IsFirstTime )
+		{
+			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
+        }
 
         Notify_Funnel_Load(FunnelData_Load.Steps._01_persistance);    
     }    
@@ -463,6 +479,11 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Log(str);
         }
+
+        if ( m_playingMode != EPlayingMode.NONE )
+        {
+        	Track_EndPlayingMode( false );
+        }
         
         if (TrackingPersistenceSystem != null)
         {
@@ -495,6 +516,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         // One more game round
         TrackingPersistenceSystem.GameRoundCount++;
 
+        if ( m_playingMode == EPlayingMode.NONE )
+        {
+        	Track_StartPlayingMode( EPlayingMode.PVE );
+        }
+
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
     }
@@ -504,6 +530,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Notify_CheckAndProcessEvent(TRACK_EVENT_TUTORIAL_COMPLETION);
         Notify_CheckAndProcessEvent(TRACK_EVENT_FIRST_10_RUNS_COMPLETED);        
+
+        if ( m_playingMode == EPlayingMode.PVE )
+        {
+        	Track_EndPlayingMode(true);
+        }
 
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
@@ -676,6 +707,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (TrackingPersistenceSystem.SessionCount == 1) {
             Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
         }
+
+        if ( _step == FunnelData_FirstUX.Steps.Count - 1 && m_playingMode == EPlayingMode.TUTORIAL )
+        {
+        	Track_EndPlayingMode( true );
+        }
 	}
 
     public override void Notify_SocialAuthentication()
@@ -811,6 +847,18 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamPlayerProgress(e);
 			Track_SendEvent(e);
 		}
+	}
+
+	public override void Notify_SettingsOpen()
+	{
+		if ( m_playingMode == EPlayingMode.NONE )
+			Track_StartPlayingMode( EPlayingMode.SETTINGS );
+	}
+
+	public override void Notify_SettingsClose()
+	{
+		if ( m_playingMode == EPlayingMode.SETTINGS )
+			Track_EndPlayingMode( true );
 	}
 
 	public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
@@ -1455,6 +1503,67 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    void Track_StartPlayingMode( EPlayingMode _mode )
+    {
+    	m_playingMode = _mode;
+    	m_playingModeStartTime = Time.time;
+
+		if (FeatureSettingsManager.IsDebugEnabled)
+        {
+			Log("Track_StartPlayingMode playingMode = " + _mode );
+        }
+    }
+
+	void Track_EndPlayingMode( bool _isSuccess )
+	{
+		if ( m_playingMode != EPlayingMode.NONE )
+		{
+			string playingModeStr = "";
+			string rank = "";
+			switch( m_playingMode )
+			{
+				case EPlayingMode.TUTORIAL:
+				{
+					playingModeStr = "Tutorial";
+					rank = m_firstUXFunnel.currentStep + "-" + m_firstUXFunnel.stepCount;
+				}break;
+				case EPlayingMode.PVE:
+				{
+					playingModeStr = "PvE";
+					int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
+					rank = value.ToString();
+				}break;
+				case EPlayingMode.SETTINGS:
+				{
+					playingModeStr = "Settings";
+				}break;
+			}
+			int isSuccess = _isSuccess ? 1 : 0;
+			int duration = (int)(Time.time - m_playingModeStartTime);
+
+			// Track
+			if (FeatureSettingsManager.IsDebugEnabled)
+	        {
+				Log("Track_EndPlayingMode playingMode = " + m_playingMode + " rank = " + rank + " isSuccess = " + isSuccess + " duration = " + duration);
+	        }
+
+			TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.mode");
+	        if (e != null)
+	        {			
+				e.SetParameterValue( TRACK_PARAM_PLAYING_MODE, playingModeStr);
+	        	if ( !string.IsNullOrEmpty( rank ) )
+					e.SetParameterValue( TRACK_PARAM_RANK, rank);
+				e.SetParameterValue( TRACK_PARAM_IS_SUCCESS, isSuccess);
+				e.SetParameterValue( TRACK_PARAM_DURATION, duration);
+	          	
+	            Track_SendEvent(e);
+	        }
+
+			m_playingMode = EPlayingMode.NONE;
+		}
+
+	}
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -1502,6 +1611,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
     private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";
+	private const string TRACK_PARAM_IS_SUCCESS					= "isSuccess";
     private const string TRACK_PARAM_ITEM                       = "item";
     private const string TRACK_PARAM_ITEM_ID                    = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
@@ -1531,11 +1641,13 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_PETNAME                    = "petName";
     private const string TRACK_PARAM_PLAYER_ID                  = "playerID";
     private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
+	private const string TRACK_PARAM_PLAYING_MODE				= "playingMode";
 	private const string TRACK_PARAM_POPUP_NAME					= "popupName";
     private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
+	private const string TRACK_PARAM_RANK						= "rank";
 	private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
