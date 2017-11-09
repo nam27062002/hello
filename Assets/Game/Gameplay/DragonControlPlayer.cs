@@ -107,6 +107,9 @@ public class DragonControlPlayer : MonoBehaviour {
 		moving = false;
 		action = false;
 
+		// [AOC] Nothing to do if paused
+		if(InstanceManager.gameSceneControllerBase.paused) return;
+
 		if(!m_useTiltControl) {
 			if(touchControls != null) {
 				touchControls.UpdateTouchControls();

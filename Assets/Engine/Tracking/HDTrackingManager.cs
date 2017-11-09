@@ -116,8 +116,9 @@ public class HDTrackingManager
 
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
-
-    public virtual void SaveOfflineUnsentEvents() { }
+    
+    public virtual void GoToGame() {}
+    public virtual void GoToMenu() {}
 
     public virtual void Update()
     {        
@@ -149,7 +150,7 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
     /// <param name="dragonProgression">Progression of the current dragon. It's calculated the same way as playerProgression is but it's done for the dragon chosen by the user to play this round</param>
-    /// <param name="dragonSkin">Track id of the skin chosen by the user to play the current round.</param>
+    /// <param name="dragonSkin">Sku of the skin chosen by the user to play the current round.</param>
     /// <param name="pets">List with the track ids of the pets equipped to play the current round. Null if no pets are equipped.</param>    
     public virtual void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {}
 
@@ -327,6 +328,16 @@ public class HDTrackingManager
 	/// <param name="_mission">Mission.</param>
 	/// <param name="_action">Action.</param>
 	public virtual void Notify_Missions(Mission _mission, EActionsMission _action) {}
+
+	/// <summary>
+	/// Notifies the settings open. When settings popup opens
+	/// </summary>
+	public virtual void Notify_SettingsOpen(){}
+
+	/// <summary>
+	/// Notifies the settings close. When settings popup closed
+	/// </summary>
+	public virtual void Notify_SettingsClose(){}
 
 
 

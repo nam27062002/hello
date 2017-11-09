@@ -208,13 +208,22 @@ public class PopupSettingsSaveTab : MonoBehaviour
     
     private void Cloud_Refresh()
     {        
+		bool isOn = Model_SocialIsLoggedIn();
         bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
-        m_cloudEnableSlider.value = (isSaveEnabled) ? 1 : 0;
 
-        bool isOn = Model_SocialIsLoggedIn();
+		m_cloudEnableSlider.value = (isSaveEnabled && isOn) ? 1 : 0;
         m_cloudEnableSlider.interactable = isOn;
         m_cloudEnableButton.interactable = isOn;
     }    
+
+	public void Cloud_OnToggle() {
+		if(m_cloudEnableSlider.value > 0) {
+			m_cloudEnableSlider.value = 0;
+		} else {
+			m_cloudEnableSlider.value = 1;
+		}
+		Cloud_OnChangeSaveEnable();
+	}
     #endregion
 
     #region resync
@@ -526,5 +535,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
         int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);        
         HDNotificationsManager.instance.SetNotificationsEnabled(v > 0);        
     }
+
+	public void Notifications_OnToggle() {
+		if(m_notificationsSlider.value > 0) {
+			m_notificationsSlider.value = 0;
+		} else {
+			m_notificationsSlider.value = 1;
+		}
+		OnNotificationsSettingChanged();
+	}
     #endregion
 }

@@ -45,6 +45,8 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 		// Make sure we don't carry any cached popup into the game scene
 		PopupManager.Clear();
 
+		FrozenMaterialManager.CleanFrozenMaterials();
+
 		// Change scene
 		GameSceneManager.SwitchScene(_nextScene);
 	}
@@ -63,7 +65,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 
 		LevelManager.SetCurrentLevel(null);
 
-        HDTrackingManager.Instance.SaveOfflineUnsentEvents();
+        HDTrackingManager.Instance.GoToMenu();
 
         // Change scene
         GameSceneManager.SwitchScene(nextScene);
@@ -73,7 +75,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// Navigate to the game scene.
 	/// </summary>
 	public static void GoToGame() {
-        HDTrackingManager.Instance.SaveOfflineUnsentEvents();
+        HDTrackingManager.Instance.GoToGame();
 
         instance.SwitchScene(GameSceneController.NAME);
 	}

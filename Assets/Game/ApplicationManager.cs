@@ -697,6 +697,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
     	GameCenterManager.SharedInstance.ShowAchievements();
     }
+
+	public void GameCenter_ResetAchievements()
+    {
+    	GameCenterManager.SharedInstance.ResetAchievements();
+    }
+
     #endregion
 
     #region debug
@@ -774,6 +780,68 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
         Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
     }
+
+    private bool Debug_IsBakedLightsDisabled { get; set; }
+    private List<Light> m_lightList = null;
+    private List<MeshRenderer> m_renderers = null;
+    private void disableBakedLights(bool value)
+    {
+        for (int c = 0; c < m_lightList.Count; c++)
+        {
+            if (m_lightList[c].type != LightType.Directional)
+            {
+                m_lightList[c].gameObject.SetActive(value);
+            }
+        }
+
+        for (int c = 0; c < m_renderers.Count; c++)
+        {
+            m_renderers[c].receiveShadows = value;
+            m_renderers[c].shadowCastingMode = value ? UnityEngine.Rendering.ShadowCastingMode.On : UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+
+    }
+
+    public void Debug_DisableBakedLights(bool value)
+    {
+        if (m_lightList == null)
+        {
+            m_lightList = GameObjectExt.FindObjectsOfType<Light>(true);
+        }
+
+        if (m_renderers == null)
+        {
+            m_renderers = GameObjectExt.FindObjectsOfType<MeshRenderer>(true);
+
+        }
+        Debug_IsBakedLightsDisabled = !Debug_IsBakedLightsDisabled;
+        disableBakedLights(Debug_IsBakedLightsDisabled);
+    }
+
+    private bool Debug_IsCollidersDisabled { get; set; }
+    private List<MeshCollider> m_CollidersList = null;
+    private void disableColliders(bool value)
+    {
+        for (int c = 0; c < m_CollidersList.Count; c++)
+        {
+            m_CollidersList[c].gameObject.SetActive(value);
+        }
+    }
+
+    public void Debug_DisableColliders(bool value)
+    {
+        if (m_CollidersList == null)
+        {
+            m_CollidersList = GameObjectExt.FindObjectsOfType<MeshCollider>(true);
+        }
+        Debug_IsCollidersDisabled = !Debug_IsCollidersDisabled;
+        disableColliders(Debug_IsCollidersDisabled);
+    }
+
+
+
+
+
 
     public void Debug_TestQualitySettings()
     {

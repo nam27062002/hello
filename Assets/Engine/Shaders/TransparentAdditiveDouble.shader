@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/TransparentAdditiveDouble"
+﻿Shader "Hungry Dragon/Particles/Transparent Additive Double"
 {
 
 	Properties{

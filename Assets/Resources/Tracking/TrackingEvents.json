@@ -192,7 +192,7 @@
                 {"playerProgress": {"Status": "OK"}},
                 {"moneyCurrency": {"Status": "OK"}},
                 {"moneyIAP": {"Status": "OK"}},
-				{"moneyUSD": {"Status": "OK"}}
+				{"moneyUSD": {"Status": "OK"}},
                 {"totalPurchases": {"Status": "OK"}},
                 {"totalStoreVisits": {"Status": "OK"}}				
             ],
@@ -293,7 +293,7 @@
 			],
 			"APIs": [
 				"dna",
-				"etl",
+				"etl"
 			]
 		},
 		"custom.player.pet" : {
@@ -303,7 +303,7 @@
 			],
 			"APIs": [
 				"dna",
-				"etl",
+				"etl"
 			]
 		},
 		 "custom.player.missions": {
@@ -316,7 +316,19 @@
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
 				{"maxXp": {"Status": "OK"}},
-				{"playerProgress": {"Status": "OK"}},                
+				{"playerProgress": {"Status": "OK"}}                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.player.mode": {
+            "Parameters": [
+                {"playingMode": {"Status": "OK"}},
+                {"rank": {"Status": "OK"}},
+                {"isSuccess": {"Status": "OK"}},
+                {"duration": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -333,7 +345,7 @@
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
 				{"maxXp": {"Status": "OK"}},
-				{"playerProgress": {"Status": "OK"}},                
+				{"playerProgress": {"Status": "OK"}}                
             ],
             "APIs": [
                 "dna",
@@ -350,7 +362,7 @@
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
 				{"maxXp": {"Status": "OK"}},
-				{"playerProgress": {"Status": "OK"}},                
+				{"playerProgress": {"Status": "OK"}}                
             ],
             "APIs": [
                 "dna",
@@ -697,7 +709,7 @@
             "Values": []
         },
 		"moneyUSD": {
-            "Type": "INT",
+            "Type": "INT:4",
             "Values": []
         },		
         "isPayingSession": {
@@ -941,6 +953,18 @@
             "Values": []
         },
 		"topContributor": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"playingMode": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"rank": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"isSuccess": {
             "Type": "INT:4",
             "Values": []
         }
