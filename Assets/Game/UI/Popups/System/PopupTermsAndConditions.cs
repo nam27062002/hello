@@ -29,17 +29,30 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 	public void OnPrivacyPolicyButton() {
 		string privacyPolicyUrl = "https://legal.ubi.com/privacypolicy/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		Application.OpenURL(privacyPolicyUrl);
+		OpenUrlDelayed(privacyPolicyUrl);
 	}
 
 	public void OnEulaButton() {
-		string privacyPolicyUrl = "https://legal.ubi.com/eula/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		Application.OpenURL(privacyPolicyUrl);
+		string eulaUrl = "https://legal.ubi.com/eula/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
+		OpenUrlDelayed(eulaUrl);
 	}
 
 	public void OnTermsOfUseButton() {
-		string privacyPolicyUrl = "https://legal.ubi.com/termsofuse/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		Application.OpenURL(privacyPolicyUrl);
+		string touUrl = "https://legal.ubi.com/termsofuse/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
+		OpenUrlDelayed(touUrl);
+	}
+
+	/// <summary>
+	/// Opens the URL after a short delay.
+	/// </summary>
+	/// <param name="_url">URL to be opened.</param>
+	private void OpenUrlDelayed(string _url) {
+		// Add some delay to give enough time for SFX to be played before losing focus
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				Application.OpenURL(_url);
+			}, 0.15f
+		);
 	}
 
 	public void OnAccept() {
