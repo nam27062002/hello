@@ -442,7 +442,8 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
         if (ControlPanel.instance != null)
         {
-            ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
+            ControlPanel.instance.IsFPSEnabled = newValue;
+//            ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
         }
     }
     #endregion
