@@ -1169,7 +1169,7 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_TIME = "/api/server/time";
 	private const string COMMAND_GET_PERSISTENCE = "/api/persistence/get";
 	private const string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
-	private const string COMMAND_GET_QUALITY_SETTINGS = "/api/adq/settings";
+	private const string COMMAND_GET_QUALITY_SETTINGS = "/api/aquality/settings";
 	private const string COMMAND_SET_QUALITY_SETTINGS = "/api/quality/upload";
 	private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
