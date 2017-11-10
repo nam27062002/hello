@@ -94,6 +94,11 @@ public abstract class TrackingObjectiveBase {
 		m_typeDef = _typeDef;
 		m_tidDesc = _tidDesc;
 		m_tidTarget = _tidTarget;
+
+		// Make sure complete event is valid
+		if(OnObjectiveComplete == null) {
+			OnObjectiveComplete = new UnityEvent();
+		}
 	}
 
 	/// <summary>

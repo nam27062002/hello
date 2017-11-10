@@ -30,6 +30,8 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	// Exposed members
 	[SerializeField] private Localizer m_titleText = null;
 	[SerializeField] private ScrollRect m_scrollList = null;
+	[SerializeField] private GameObject m_loadingIcon = null;
+	[SerializeField] private GameObject m_scrollGroup = null;
 	[Space]
 	[SerializeField] private GameObject m_pillPrefab = null;
 	[SerializeField] private GameObject m_playerPillPrefab = null;
@@ -62,7 +64,8 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-
+		// Init title
+		if(m_titleText != null) m_titleText.Localize(m_titleText.tid, StringUtils.FormatNumber(m_maxPills));
 	}
 
 	/// <summary>
@@ -71,6 +74,12 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED, OnLeaderboardUpdated);
+
+		// Show loading widget
+		ToggleLoading(true);
+
+		// Request leaderboard!
+		GlobalEventManager.RequestCurrentEventLeaderboard(false);
 	}
 
 	/// <summary>
@@ -106,9 +115,6 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		// Get current event
 		GlobalEvent evt = GlobalEventManager.currentEvent;
 		if(evt == null) return;
-
-		// Title
-		if(m_titleText != null) m_titleText.Localize(m_titleText.tid, StringUtils.FormatNumber(m_maxPills));
 
 		// If pills list not yet initialized, do it now!
 		if(m_pills == null) {
@@ -287,6 +293,15 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 		_rt.offsetMax = new Vector2(0f, _rt.offsetMax.y);
 	}
 
+	/// <summary>
+	/// Toggle loading icon on/off.
+	/// </summary>
+	/// <param name="_toggle">Whether to toggle loading icon on or off.</param>
+	private void ToggleLoading(bool _toggle) {
+		m_loadingIcon.SetActive(_toggle);
+		m_scrollGroup.SetActive(!_toggle);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -294,6 +309,10 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	/// We have new data for the current event!
 	/// </summary>
 	public void OnLeaderboardUpdated() {
+		// Hide loading widget
+		ToggleLoading(false);
+
+		// Refresh list
 		Refresh();
 	}
 
