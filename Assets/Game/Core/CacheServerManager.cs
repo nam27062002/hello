@@ -83,6 +83,15 @@ public class CacheServerManager {
 		}
     }
 
+	public void RemoveObsoleteVersion()
+	{
+		string path = FileUtils.GetDeviceStoragePath ("/obsolete", CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		if ( File.Exists( path ) )
+		{
+			File.Delete( path );
+		}
+	}
+
     public void SaveCurrentVersionAsObsolete()
     {
 		SetVersionAsObsolete( m_usingVersion );

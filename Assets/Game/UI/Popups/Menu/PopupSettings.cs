@@ -49,6 +49,20 @@ public class PopupSettings : MonoBehaviour {
 
 		// Set version number
 		m_versionText.Localize(m_versionText.tid, GameSettings.internalVersion.ToString() + " ("+ ServerManager.SharedInstance.GetRevisionVersion() +")");
+
+		PopupController controller = GetComponent<PopupController>();
+		controller.OnOpenPostAnimation.AddListener( OnOpenAnimation );
+		controller.OnClosePreAnimation.AddListener( OnCloseAnimation );
+    }
+
+    private void OnOpenAnimation()
+    {
+    	HDTrackingManager.Instance.Notify_SettingsOpen();
+    }
+
+    private void OnCloseAnimation()
+    {
+		HDTrackingManager.Instance.Notify_SettingsClose();
     }
 
 	public void CS_Init()
