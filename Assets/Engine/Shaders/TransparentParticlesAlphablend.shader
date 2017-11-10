@@ -16,6 +16,10 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 		[Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
 
 		_DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
+
+		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
+		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
+
 //		[Enum(Additive, 1, AlphaBlend, 10)] _BlendMode("Blend mode", Float) = 10
 //		[BlendMode] _BlendMode("Blend Mode", Vector) = (1.0, 0.0, 0.0, 0.0)
 //		[BlendMode] _BlendMode("Blend Mode", Float) = 0.0
@@ -39,6 +43,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 			#pragma multi_compile _ DISSOLVE
 			#pragma multi_compile _ COLOR_RAMP
 			#pragma multi_compile _ APPLY_RGB_COLOR_VERTEX
+			#pragma multi_compile _ AUTOMATICPANNING
 			//			#pragma multi_compile_particles
 
 			#include "UnityCG.cginc"
@@ -72,6 +77,10 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 #ifdef DISSOLVE
 			float4 _DissolveStep;
 #endif
+
+#ifdef AUTOMATICPANNING
+			float2 _Panning;
+#endif
 			float _ColorMultiplier;
 
 			v2f vert(appdata_t v)
@@ -79,6 +88,9 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
+#ifdef AUTOMATICPANNING
+				v.texcoord.xy += _Panning * _Time.yy;
+#endif
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
 				o.particledata = v.texcoord.zw;
 				return o;
