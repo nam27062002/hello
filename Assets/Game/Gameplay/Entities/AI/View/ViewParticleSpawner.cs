@@ -9,6 +9,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 	private GameCamera m_camera;
 
+	private Bounds m_bounds; // view bounds
 	private Transform m_parent;
 	private GameObject[] m_particleSytems;
 	private DisableInSeconds[] m_disableInSeconds;
@@ -27,6 +28,8 @@ public class ViewParticleSpawner : MonoBehaviour {
 			m_particleDatas[i].CreatePool();
 		}
 
+		m_bounds = m_view.bounds;
+
 		m_spawned = false;
 	}
 
@@ -38,11 +41,11 @@ public class ViewParticleSpawner : MonoBehaviour {
 		// Show / Hide fire effect if thfis node is inside Camera or not
 		bool isInsideActivationMaxArea = false;
 
-		if (m_view != null) {
-			isInsideActivationMaxArea = m_view.isVisible;
-		} else {
-			if(m_camera != null) {
-				isInsideActivationMaxArea = m_camera.IsInsideFrustrum(m_parent.position);
+		if (m_camera != null) {
+			if (m_view != null) {
+				isInsideActivationMaxArea = m_camera.IsInsideCameraFrustrum(m_view.bounds);
+			} else {			
+				isInsideActivationMaxArea = m_camera.IsInsideCameraFrustrum(m_parent.position);
 			}
 		}
 

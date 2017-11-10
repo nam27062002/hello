@@ -6,7 +6,7 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	[SerializeField] protected DamageType m_damageType = DamageType.NORMAL;
 
 	protected Transform m_transform;
-	private Collider m_weapon;
+	private Collider[] m_weapon;
 
 	protected float m_damage;
 	public float damage { set { m_damage = value; } }
@@ -21,11 +21,13 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 
 	void Awake() {
 		m_transform = transform;
-		m_weapon = GetComponent<Collider>();
+		m_weapon = GetComponents<Collider>();
 	}
 
 	void OnEnable() {
-		m_weapon.enabled = true;
+		for (int i = 0; i < m_weapon.Length; ++i) {
+			m_weapon[i].enabled = true;
+		}
 		m_lastPosition = m_transform.position;
 
 		m_timer = 0;
@@ -35,8 +37,9 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	}
 
 	void OnDisable() {
-		m_weapon.enabled = false;
-
+		for (int i = 0; i < m_weapon.Length; ++i) {
+			m_weapon[i].enabled = false;
+		}
 		OnDisabled();
 	}
 

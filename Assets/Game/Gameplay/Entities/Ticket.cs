@@ -22,7 +22,7 @@ public class Ticket : Entity {
 			}
 		} else {
 			if (m_isOnScreen) {
-				m_wasVisibleByPlayer = m_newCamera.IsInsideFrustrum(m_bounds.bounds.bounds);
+				m_wasVisibleByPlayer = m_newCamera.IsInside2dFrustrum(m_bounds.bounds.bounds);
 			}
 		}
 	}
