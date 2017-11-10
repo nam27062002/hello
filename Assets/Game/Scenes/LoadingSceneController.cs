@@ -238,7 +238,7 @@ public class LoadingSceneController : SceneController {
 					SetState(State.WAITING_ANDROID_PERMISSIONS);
 				}else{
                     // Load persistence
-                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate())
                     {
 						SetState(State.SHOWING_UPGRADE_POPUP);
                     }
@@ -430,7 +430,27 @@ public class LoadingSceneController : SceneController {
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
 
-                StartLoadFlow();
+
+				ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+            	if (kServerConfig != null && kServerConfig.m_eBuildEnvironment == CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
+            	{
+					Debug.Log("Is Production!! Store: " + GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
+            		// Check if build is from store
+					if ( GameStoreManager.SharedInstance.AppWasDownloadedFromStore() )	// Game Store Manager needs to be initialized before checking
+            		{	
+            			StartLoadFlow();
+            		}
+            		else
+            		{
+						SetState(State.SHOWING_UPGRADE_POPUP);
+            		}
+            	}
+            	else
+            	{
+					StartLoadFlow();	
+            	}
+
+                
           	}break;
         }
     }
