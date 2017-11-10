@@ -47,7 +47,6 @@ public class CPStats : MonoBehaviour {
 #endif
 
         m_FpsLabel.text = "FPS: ";
-		m_ScreenSize.text = "Screen Size: " + Screen.width + "x"+ Screen.height;
 		m_LevelName.text = "Scene Name: "+ SceneManager.GetActiveScene().name;
 		m_ControlPanel = GetComponentInParent<ControlPanel>();
 
@@ -57,6 +56,7 @@ public class CPStats : MonoBehaviour {
 	private void Update()
 	{
 		m_FpsLabel.text = "FPS: " + m_ControlPanel.GetFPS();
+        m_ScreenSize.text = "Screen Size: " + Screen.width + "x" + Screen.height;
 
         if (NotificationsManager.SharedInstance != null)
         {
