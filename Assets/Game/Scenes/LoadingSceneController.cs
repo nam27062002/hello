@@ -438,7 +438,10 @@ public class LoadingSceneController : SceneController {
                 ChestManager.SetupUser(UsersManager.currentUser);
                 GameStoreManager.SharedInstance.Initialize();
 #if UNITY_ANDROID
-				ApplicationManager.instance.GameCenter_Login();
+				if ( ApplicationManager.instance.GameCenter_LoginOnStart() )
+				{
+					ApplicationManager.instance.GameCenter_Login();
+				}
 #endif
 
                 HDNotificationsManager.CreateInstance();

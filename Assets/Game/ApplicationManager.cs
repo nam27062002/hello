@@ -24,6 +24,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// </summary>
     private const long SocialNetworkReauthTime = 120;
 
+    private const string GC_ON_START_KEY = "gc_on_start";
+
     private static bool m_isAlive = true;
     public static bool IsAlive {
         get { return m_isAlive; }
@@ -584,6 +586,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             Debug.Log("GameCenterDelegate onAuthenticationFinished");
 
+			#if UNITY_ANDROID	
+			// On android if player login we make sure it will try at start again
+			CacheServerManager.SharedInstance.DeleteKey(GC_ON_START_KEY, false);
+			#endif
+
             GameCenterManager.SharedInstance.RequestUserToken(); // Async process
 
 			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_STATE_UPDATE);
@@ -598,6 +605,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         public override void onAuthenticationCancelled()
         {
             Debug.Log("GameCenterDelegate onAuthenticationCancelled");
+			#if UNITY_ANDROID	
+			// On android if player cancells the authentication we will not ask again
+			CacheServerManager.SharedInstance.SetVariable(GC_ON_START_KEY, "false" , false);
+			#endif
 			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED);
         }
 
@@ -701,6 +712,16 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	public void GameCenter_ResetAchievements()
     {
     	GameCenterManager.SharedInstance.ResetAchievements();
+    }
+
+    public bool GameCenter_LoginOnStart()
+    {
+    	bool ret = true;
+		if ( CacheServerManager.SharedInstance.HasKey(GC_ON_START_KEY, false) )
+    	{
+    		ret = false;
+    	}
+    	return ret;
     }
 
     #endregion
