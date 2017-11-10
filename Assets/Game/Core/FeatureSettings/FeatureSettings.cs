@@ -71,6 +71,9 @@ public class FeatureSettings
 	// This key decides the quality level used in the particles manager
 	public const string MAX_ZOOM_COST = "max_zoom_cost";
 
+    // This key decides the resolution factor, screen size is multiplied by this float value
+    public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -176,6 +179,13 @@ public class FeatureSettings
 			key = MAX_ZOOM_COST;
 			data = new DataInt(key, EValueType.Int, 3);
 			Datas.Add(key, data);
+
+            // resolution factor
+            key = KEY_RESOLUTION_FACTOR;
+            data = new DataFloat(key, 1.0f);
+            Datas.Add(key, data);
+
+
             /*
             // intTest
             key = KEY_INT_TEST;

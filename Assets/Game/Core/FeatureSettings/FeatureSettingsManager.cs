@@ -846,6 +846,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         FeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(FeatureSettings.KEY_SHADERS_LEVEL);
         Shaders_ApplyQuality(shadersLevel);
 
+        float resolutionFactor = settings.GetValueAsFloat(FeatureSettings.KEY_RESOLUTION_FACTOR);
+        int width = (int)((float)Screen.width * resolutionFactor);
+        int height = (int)((float)Screen.height * resolutionFactor);
+
+        Screen.SetResolution(width, height, true);
+
         Log("Device Rating:" + settings.Rating);
         Log("Profile:" + settings.Profile);
         Log(Device_GetInfo());
