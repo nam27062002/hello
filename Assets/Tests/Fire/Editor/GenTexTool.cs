@@ -287,7 +287,7 @@ public class GenTexTool : EditorWindow {
     TexFormats texFormat = TexFormats.RGBA;
     string textureName = "test.png";
 
-    TextureGenBase currentTexGen = new Perlin();
+    TextureGenBase currentTexGen = null;// = new Perlin();
 
     public int selectedTab = 0;
     public string[] toolbarOptions = new string[] { "Perlin Noise", "Voronoise", "Gradients" };
@@ -315,19 +315,23 @@ public class GenTexTool : EditorWindow {
 	/// The editor has been enabled - target object selected.
 	/// </summary>
 	private void OnEnable() {
+//        if (currentTexGen == null)
+        {
+            currentTexGen = CreateInstance<Perlin>();
+        }
     }
 
 	/// <summary>
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
+        DestroyObject(currentTexGen);
+    }
 
-	}
-
-	/// <summary>
-	/// Called 100 times per second on all visible windows.
-	/// </summary>
-	public void Update() {
+    /// <summary>
+    /// Called 100 times per second on all visible windows.
+    /// </summary>
+    public void Update() {
 		
 	}
 
