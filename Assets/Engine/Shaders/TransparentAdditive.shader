@@ -12,7 +12,6 @@ Shader "Hungry Dragon/Particles/Transparent Additive"
 		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
 
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
-
 	}
 
 	Category{
