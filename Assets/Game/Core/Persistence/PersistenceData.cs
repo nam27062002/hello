@@ -233,16 +233,8 @@ public class PersistenceData
     {
 #if UNITY_EDITOR
         return true;
-#else
-        // It should always return false except when debugging that can be changed to true
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }      
+#else        
+        return false;              
 #endif
     }    
 
