@@ -47,10 +47,14 @@ public class GameHUD : MonoBehaviour {
             Debug_OnDestroy();
     }    
 
-    bool CanPause(){
+    bool CanPause(){		
     	if (!m_paused){
 			if (m_pauseButton.IsInteractable()){
-				return m_pauseButton.IsInteractable();
+				if (InstanceManager.gameSceneController.state == GameSceneController.EStates.RUNNING) {
+					if (!InstanceManager.player.changingArea) {
+						return m_pauseButton.IsInteractable();
+					}
+				}
 			}
 			return false;
     	}
