@@ -506,15 +506,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private IEnumerator Device_Update()
     {
-        Device_Resolution = new Vector2(Screen.width, Screen.height);
+        Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
         Device_Orientation = Input.deviceOrientation;
 
         while (IsAlive)
         {
             // Check for a Resolution Change
-            if (Device_Resolution.x != Screen.width || Device_Resolution.y != Screen.height)
+            if (Device_Resolution.x != Screen.currentResolution.width || Device_Resolution.y != Screen.currentResolution.height)
             {
-                Device_Resolution = new Vector2(Screen.width, Screen.height);
+                Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
                 Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);
             }
 
