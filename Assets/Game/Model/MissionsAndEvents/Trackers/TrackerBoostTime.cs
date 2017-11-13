@@ -39,15 +39,25 @@ public class TrackerBoostTime : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerBoostTime() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+
+		// Call parent
+		base.Clear();
+	}
+
 	/// <summary>
 	/// Round a value according to specific rules defined for every tracker type.
 	/// Typically used for target values.

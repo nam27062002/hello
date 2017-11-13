@@ -331,6 +331,7 @@ public class Mission {
 	/// </summary>
 	private void OnObjectiveComplete() {
 		// Dispatch global game event
+		DebugUtils.Log("<color=green>MISSION COMPLETED!</color>\n" + m_def.sku + " | " + m_objective.currentValue + "/" + m_objective.targetValue + " | " + m_difficulty);
 		Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, this);
 	}
 }

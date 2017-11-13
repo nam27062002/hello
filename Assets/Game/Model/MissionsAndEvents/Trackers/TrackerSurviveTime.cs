@@ -36,13 +36,23 @@ public class TrackerSurviveTime : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerSurviveTime() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+
+		// Call parent
+		base.Clear();
+	}
+
 	/// <summary>
 	/// Localizes and formats a value according to this tracker's type
 	/// (i.e. "52", "500 meters", "10 minutes").

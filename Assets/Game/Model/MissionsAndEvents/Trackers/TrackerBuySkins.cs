@@ -32,13 +32,22 @@ public class TrackerBuySkins : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerBuySkins() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.SKIN_ACQUIRED, OnSkinAcquired);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string>(GameEvents.SKIN_ACQUIRED, OnSkinAcquired);
+
+		// Call parent
+		base.Clear();
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

@@ -111,7 +111,8 @@ public abstract class TrackingObjectiveBase {
 
 		// Unsubscribe from events
 		if(m_tracker != null) {
-			m_tracker.OnValueChanged.RemoveListener(OnValueChanged);
+			m_tracker.Clear();
+			m_tracker = null;	// Lose reference so it gets garbage-collected
 		}
 	}
 
