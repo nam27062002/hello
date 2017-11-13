@@ -132,8 +132,12 @@ public class GameCameraDebug : MonoBehaviour {
                 }
             }
 
-            int width = (int)((float)m_width * vf);
-            int height = (int)((float)m_height * vf);
+
+            float rFactor = vf / (float)m_height;
+
+
+            int width = (int)((float)m_width * rFactor);
+            int height = (int)((float)m_height * rFactor);
 
             Screen.SetResolution(width, height, true);
 
