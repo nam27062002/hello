@@ -506,15 +506,28 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private IEnumerator Device_Update()
     {
+#if UNITY_EDITOR
+        Device_Resolution = new Vector2(Screen.width, Screen.height);
+#else
         Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+#endif
+
         Device_Orientation = Input.deviceOrientation;
 
         while (IsAlive)
         {
+
+#if UNITY_EDITOR
+            // Check for a Resolution Change
+            if (Device_Resolution.x != Screen.width || Device_Resolution.y != Screen.height)
+            {
+                Device_Resolution = new Vector2(Screen.width, Screen.height);
+#else
             // Check for a Resolution Change
             if (Device_Resolution.x != Screen.currentResolution.width || Device_Resolution.y != Screen.currentResolution.height)
             {
                 Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+#endif
                 Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);
             }
 
@@ -537,9 +550,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
         }
     }
-    #endregion
+#endregion
 
-    #region memory_profiler
+#region memory_profiler
     private bool m_memoryProfilerIsEnabled = false;
     private bool MemoryProfiler_IsEnabled
     {
@@ -575,9 +588,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {        
         FeatureSettingsManager.instance.IsFogOnDemandEnabled = true;
     }
-    #endregion   
+#endregion
 
-    #region game_center
+#region game_center
     // This region is responsible for handling login to the platform (game center or google play)
 
     private class GameCenterListener : GameCenterManager.GameCenterListenerBase
@@ -586,10 +599,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             Debug.Log("GameCenterDelegate onAuthenticationFinished");
 
-			#if UNITY_ANDROID	
+#if UNITY_ANDROID
 			// On android if player login we make sure it will try at start again
 			CacheServerManager.SharedInstance.DeleteKey(GC_ON_START_KEY, false);
-			#endif
+#endif
 
             GameCenterManager.SharedInstance.RequestUserToken(); // Async process
 
@@ -605,10 +618,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         public override void onAuthenticationCancelled()
         {
             Debug.Log("GameCenterDelegate onAuthenticationCancelled");
-			#if UNITY_ANDROID	
+#if UNITY_ANDROID
 			// On android if player cancells the authentication we will not ask again
 			CacheServerManager.SharedInstance.SetVariable(GC_ON_START_KEY, "false" , false);
-			#endif
+#endif
 			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED);
         }
 
@@ -724,9 +737,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	return ret;
     }
 
-    #endregion
+#endregion
 
-    #region debug
+#region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
@@ -1178,6 +1191,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         msg = LOG_CHANNEL + msg;
         Debug.LogError(msg);
     }
-    #endregion
+#endregion
 }
 
