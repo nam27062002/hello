@@ -820,7 +820,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             m_renderers[c].receiveShadows = value;
             m_renderers[c].shadowCastingMode = value ? UnityEngine.Rendering.ShadowCastingMode.On : UnityEngine.Rendering.ShadowCastingMode.Off;
         }
-
     }
 
     public void Debug_DisableBakedLights(bool value)
@@ -861,6 +860,28 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
 
 
+	//---------------------------------------------------------------------------------------------------
+	public void Debug_DisableMeshesAt(float _distance) {
+		if (m_renderers == null) {
+			m_renderers = GameObjectExt.FindObjectsOfType<MeshRenderer>(true);
+		}
+
+		GameCamera camera = Camera.main.GetComponent<GameCamera>();
+		if (camera != null) {
+			Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+			for (int i = 0; i < m_renderers.Count; ++i) {
+				bool isActive = true;
+				if (_distance > 0f) {
+					if (!GeometryUtility.TestPlanesAABB(planes, m_renderers[i].bounds)) {					
+						float dist = Vector3.Distance(m_renderers[i].bounds.center, camera.position);
+						isActive = dist < _distance;
+					}
+				}
+				m_renderers[i].gameObject.SetActive(isActive);
+			}
+		}
+	}
+	//---------------------------------------------------------------------------------------------------
 
 
 
