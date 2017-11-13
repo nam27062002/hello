@@ -31,13 +31,22 @@ public class TrackerDailyChests : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerDailyChests() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+
+		// Call parent
+		base.Clear();
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

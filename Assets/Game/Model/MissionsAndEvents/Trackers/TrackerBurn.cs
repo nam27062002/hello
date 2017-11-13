@@ -42,13 +42,23 @@ public class TrackerBurn : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerBurn() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurn);
+
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurn);
+
+		// Call parent
+		base.Clear();
+	}
+
 	/// <summary>
 	/// Round a value according to specific rules defined for every tracker type.
 	/// Typically used for target values.

@@ -32,13 +32,23 @@ public class TrackerGold : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerGold() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+
+		// Call parent
+		base.Clear();
+	}
+
 	/// <summary>
 	/// Round a value according to specific rules defined for every tracker type.
 	/// Typically used for target values.

@@ -39,14 +39,23 @@ public class TrackerDistance : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerDistance() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+
+		// Call parent
+		base.Clear();
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
