@@ -122,9 +122,6 @@ public class AchievementObjective : TrackingObjectiveBase {
 			// Cap value to target value
 			m_tracker.SetValue(Mathf.Min(currentValue, (float)targetValue), false);
 
-			// Stop tracking
-			m_tracker.enabled = false;
-
 			if ( GameCenterManager.SharedInstance.CheckIfAuthenticated() )
 			{
 				// Report Achievement
@@ -137,10 +134,13 @@ public class AchievementObjective : TrackingObjectiveBase {
 					GameCenterManager.SharedInstance.ReportAchievement( m_achievementSku );
 				}
 				m_reported = true;
-			}
 
-			// Invoke delegate
-			OnObjectiveComplete.Invoke();
+				// Stop tracking
+				m_tracker.enabled = false;
+
+				// Invoke delegate
+				OnObjectiveComplete.Invoke();
+			}
 		}
 		else
 		{
