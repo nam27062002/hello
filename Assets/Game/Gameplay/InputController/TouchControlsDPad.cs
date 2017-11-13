@@ -37,7 +37,10 @@ public class TouchControlsDPad : TouchControls {
 	private RectTransform m_dPadDotRectTransform = null;
 
 	private RectTransform m_dPadBoostContainerRectTransform = null;
-	private RectTransform m_dpadBoostRectTransform = null;
+	private RectTransform m_dPadBoostRectTransform = null;
+
+	private UIColorFX m_dPadBoostColorFX = null;
+	private bool m_dPadBoostFollow = true;
 
 	// [AOC] D-Pad setup and logic
 	private Mode m_dPadMode = Mode.FIXED; 
@@ -74,9 +77,12 @@ public class TouchControlsDPad : TouchControls {
 		m_dPadContainerRectTransform = m_dPadRectTransform.parent as RectTransform;
 		m_dPadContainerRectTransform.anchoredPosition = Vector2.zero;	// Make sure it's centered to its anchors, which we will be moving around!
 
-		m_dpadBoostRectTransform = m_dpadBoost.transform as RectTransform;
-		m_dPadBoostContainerRectTransform = m_dpadBoostRectTransform.parent as RectTransform;
+		m_dPadBoostRectTransform = m_dpadBoost.transform as RectTransform;
+		m_dPadBoostContainerRectTransform = m_dPadBoostRectTransform.parent as RectTransform;
 		m_dPadBoostContainerRectTransform.anchoredPosition = Vector2.zero;	// Make sure it's centered to its anchors, which we will be moving around!
+
+		m_dPadBoostColorFX = m_dpadBoost.FindComponentRecursive<UIColorFX>();
+		OnBoost(false);
 
 		m_debugText = m_dPadContainerRectTransform.FindComponentRecursive<TextMeshProUGUI>();	// Optional
         if (!DEBUG && m_debugText != null) {                        
@@ -98,6 +104,7 @@ public class TouchControlsDPad : TouchControls {
 		m_dPadThreshold = Prefs.GetFloatPlayer(DebugSettings.DPAD_THRESHOLD, m_dPadThreshold);
 		m_dPadSmoothFactor = Prefs.GetFloatPlayer(DebugSettings.DPAD_SMOOTH_FACTOR, m_dPadSmoothFactor);
 		m_dPadClampDot = Prefs.GetBoolPlayer(DebugSettings.DPAD_CLAMP_DOT, m_dPadClampDot);
+		m_dPadBoostFollow = Prefs.GetBoolPlayer(DebugSettings.BOOST_PAD_FOLLOW, m_dPadBoostFollow);
 			
 		// Start hidden
 		m_dpadObj.SetActive(false);
@@ -106,7 +113,17 @@ public class TouchControlsDPad : TouchControls {
 		if(m_debugText != null) m_debugText.gameObject.SetActive(false);		
 
 		m_lastArrowAngle = 0f;
+
+		// Subscribe to external events
+		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 	}	
+
+	override public void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+
+		base.OnDestroy();
+	}
 	
 	override public void SetRender(bool enable)
 	{
@@ -224,7 +241,12 @@ public class TouchControlsDPad : TouchControls {
 		} 
 		else 
 		{
-			Vector3 touchPos = m_initialTouch2Pos;
+			Vector3 touchPos;
+			if(m_dPadBoostFollow) {
+				touchPos = m_currentTouch2Pos;		// [AOC] Follow touch position
+			} else {
+				touchPos = m_initialTouch2Pos;	// [AOC] Stay in initial position
+			}
 			FitInScreen(ref touchPos);
 			Vector2 correctedDPadPos = new Vector2(
 				(touchPos.x / Screen.width),
@@ -425,5 +447,14 @@ public class TouchControlsDPad : TouchControls {
 		else if(_prefId == DebugSettings.DPAD_CLAMP_DOT) {
 			m_dPadClampDot = Prefs.GetBoolPlayer(DebugSettings.DPAD_CLAMP_DOT, m_dPadClampDot);
 		}
+	}
+
+	/// <summary>
+	/// Boost has been toggled.
+	/// </summary>
+	/// <param name="_boostOn">Boost on or off?.</param>
+	protected void OnBoost(bool _boostOn) {
+		// Set touch color
+		m_dPadBoostColorFX.saturation = _boostOn ? 0f : -1f;
 	}
 }
