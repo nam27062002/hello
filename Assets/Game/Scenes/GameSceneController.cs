@@ -40,6 +40,8 @@ public class GameSceneController : GameSceneControllerBase {
 	};
 
 	bool m_switchingArea = false;
+	public bool isSwitchingArea { get { return m_switchingArea; } }
+
 	string m_nextArea = "";
 	public enum SwitchingAreaSate
 	{
