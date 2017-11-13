@@ -50,6 +50,10 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public const string DPAD_THRESHOLD 					        = "DPAD_THRESHOLD";
 	public const string DPAD_BREAK_TOLERANCE			        = "DPAD_BREAK_TOLERANCE";
 	public const string DPAD_CLAMP_DOT 					        = "DPAD_CLAMP_DOT";
+
+	public const string BOOST_PAD_FOLLOW				        = "BOOST_PAD_FOLLOW";
+	public const string BOOST_AUTO_RESTART				        = "BOOST_AUTO_RESTART";			// Auto-restart boost if still holding and bar has refilled
+
 	public const string TILT_CONTROL_DEBUG_UI					= "TILT_CONTROL_DEBUG_UI";
 
 	public const string SHOW_MISSING_TIDS				        = "SHOW_MISSING_TIDS";
