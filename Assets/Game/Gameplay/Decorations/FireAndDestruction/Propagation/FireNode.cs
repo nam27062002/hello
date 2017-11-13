@@ -46,9 +46,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 
 	// Use this for initialization
-	void Start() {
+	void Awake() {
 		m_transform = transform;
+	}
 
+	void Start() {
 		m_rect = new Rect((Vector2)m_transform.position, Vector2.zero);
 		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
 		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
