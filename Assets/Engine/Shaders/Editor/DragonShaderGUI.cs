@@ -167,15 +167,15 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialEditor m_materialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
-    readonly static string kw_blendTexture = "BLEND_TEXTURE";
-    readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
-    readonly static string kw_fog = "FOG";
+//    readonly static string kw_blendTexture = "BLEND_TEXTURE";
+//    readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
+//    readonly static string kw_fog = "FOG";
     readonly static string kw_normalmap = "NORMALMAP";
     readonly static string kw_specular = "SPECULAR";
     readonly static string kw_cutOff = "CUTOFF";
     readonly static string kw_doubleSided = "DOUBLESIDED";
     readonly static string kw_emissiveBlink = "EMISSIVEBLINK";
-    readonly static string kw_opaqueAlpha = "OPAQUEALPHA";
+//    readonly static string kw_opaqueAlpha = "OPAQUEALPHA";
     readonly static string kw_fresnel = "FRESNEL";
 
     private GUISkin editorSkin;
@@ -403,6 +403,8 @@ internal class DragonShaderGUI : ShaderGUI
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 SetKeyword(material, kw_cutOff, false);
                 SetKeyword(material, kw_doubleSided, false);
+                material.SetFloat("_EnableCutoff", 0.0f);
+                material.SetFloat("_EnableDoublesided", 0.0f);
                 //                material.DisableKeyword("CUTOFF");
                 Debug.Log("Blend mode opaque");
                 break;
@@ -416,6 +418,8 @@ internal class DragonShaderGUI : ShaderGUI
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 SetKeyword(material, kw_cutOff, true);
                 SetKeyword(material, kw_doubleSided, true);
+                material.SetFloat("_EnableCutoff", 1.0f);
+                material.SetFloat("_EnableDoublesided", 1.0f);
                 Debug.Log("Blend mode transparent");
                 break;
 /*

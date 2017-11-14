@@ -53,6 +53,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(FRESNEL)] _EnableFresnel("Enable fresnel", Float) = 1.0
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cutoff", Float) = 0
+		[Toggle(DOUBLESIDED)] _EnableDoublesided("Enable doublesided", Float) = 0
 		[Toggle(SILHOUETTE)] _EnableSilhouette("Enable silhouette", Float) = 0
 
 		/// Enum Material Properties
