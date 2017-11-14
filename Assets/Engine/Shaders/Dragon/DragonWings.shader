@@ -32,7 +32,7 @@ Shader "Hungry Dragon/Dragon/Wings (Transparent)" {
 	}
 
 	SubShader{
-		Tags{ "ForceNoShadowCasting" = "True" "Queue" = "AlphaTest" "RenderType" = "TransparentCutout"}
+		Tags{"Queue" = "AlphaTest" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
 //		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" "LightMode" = "ForwardBase"}
 		//	Tags{ "Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" "LightMode" = "ForwardBase" }
 //		Cull back

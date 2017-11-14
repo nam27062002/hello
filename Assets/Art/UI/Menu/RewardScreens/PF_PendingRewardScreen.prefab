@@ -270,6 +270,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224206028694040948}
   - component: {fileID: 114420576044507232}
+  - component: {fileID: 114186618524578098}
   m_Layer: 5
   m_Name: Decoration
   m_TagString: Untagged
@@ -2132,6 +2133,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114186618524578098
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1210288062482916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114189019420446214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2491,16 +2504,19 @@ MonoBehaviour:
     - pc
     - gf
   m_petRarityTitle: {fileID: 114256894735356242}
-  m_petPower: {fileID: 0}
+  m_petPower: {fileID: 114023829787904176}
   m_goldenFragmentTitle: {fileID: 114206000880264446}
   m_goldenFragmentCounter: {fileID: 114608959628930386}
   m_goldenFragmentCounterText: {fileID: 114885092541134068}
   m_goldenEggCompletedInfo: {fileID: 114695447542866842}
   m_goldenEggAllCollectedInfo: {fileID: 114673183645788760}
   m_goldenFragmentCounterFX: {fileID: 198053530364593380}
+  m_goldenFragmentsSFX: UI_Buy
   m_goldFragmentsCounterDelay: 1
   m_scTitle: {fileID: 114764514764144316}
+  m_scSFX: UI_Buy
   m_pcTitle: {fileID: 114759017552514330}
+  m_pcSFX: UI_Buy
   OnAnimFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -3126,7 +3142,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114186618524578098}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Light FX
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -4239,6 +4266,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114690617024319356}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UIClick
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -20858,10 +20896,10 @@ RectTransform:
   m_Father: {fileID: 224508698565856896}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 261.995, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 261.995, y: -75}
+  m_SizeDelta: {x: 0, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224752561113878688
 RectTransform:

@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -53,6 +54,11 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_dragonName = null;
 	[SerializeField] private Localizer m_dragonDesc = null;
 	[SerializeField] private Image m_dragonTierIcon = null;
+
+	[Separator("Egg Reward Mode")]
+	[SerializeField] private Localizer m_eggRewardName = null;
+	[SerializeField] private TextMeshProUGUI m_eggRewardDesc = null;
+	[SerializeField] private Image m_eggRewardIcon = null;
 
 	// Public properties
 	private Mode m_mode = Mode.DRAGON;
@@ -231,7 +237,39 @@ public class PhotoScreenController : MonoBehaviour {
 			} break;
 
 			case Mode.EGG_REWARD: {
-				// Nothing to do for now
+				// Defaults
+				m_eggRewardName.gameObject.SetActive(true);
+				m_eggRewardDesc.gameObject.SetActive(true);
+				m_eggRewardIcon.gameObject.SetActive(true);
+
+				// Depends on reward type
+				MenuScreenScene scene3D = InstanceManager.menuSceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
+				switch(currentReward.type) {
+					case Metagame.RewardPet.TYPE_CODE: {
+						// Aux vars
+						DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, currentReward.def.Get("rarity"));
+						DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, currentReward.def.GetAsString("powerup"));
+
+						// Pet name
+						m_eggRewardName.Localize(
+							m_eggRewardName.tid,
+							currentReward.def.GetLocalized("tidName"),
+							UIConstants.GetRarityColor(currentReward.rarity).ToHexString("#", false),
+							currentReward.rarity == Metagame.Reward.Rarity.COMMON ? "" : "(" + rarityDef.GetLocalized("tidName") + ")"	// Don't show for common
+						);
+
+						// Power description and icon
+						m_eggRewardDesc.text = DragonPowerUp.GetDescription(powerDef, false);	// Custom formatting depending on powerup type, already localized
+						m_eggRewardIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + powerDef.GetAsString("icon"));
+					} break;
+
+					default: {
+						m_eggRewardName.gameObject.SetActive(false);
+						m_eggRewardDesc.gameObject.SetActive(false);
+						m_eggRewardIcon.gameObject.SetActive(false);
+					} break;
+				}
 			} break;
 		}
 
