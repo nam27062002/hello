@@ -18,7 +18,6 @@ Shader "Hungry Dragon/Waterfall"
 	}
 
 	SubShader {
-//		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque"  "LightMode" = "ForwardBase" }
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 //		LOD 100
 		Lighting Off
@@ -29,13 +28,12 @@ Shader "Hungry Dragon/Waterfall"
 
 		Pass {  
 			Blend SrcAlpha OneMinusSrcAlpha
-//			Fog{ Color(0, 0, 0, 0) }
 
 			Stencil
 			{
 				Ref[_StencilMask]
 				Comp NotEqual
-				//				Pass DecrWrap//keep
+//				Pass DecrWrap//keep
 			}
 
 			CGPROGRAM
@@ -44,7 +42,6 @@ Shader "Hungry Dragon/Waterfall"
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
-//				#include "Lighting.cginc"
 				#include "HungryDragon.cginc"
 
 				struct appdata_t {
@@ -91,7 +88,6 @@ Shader "Hungry Dragon/Waterfall"
 //					_FogStart = -12.0;
 //					o.fogCoord = float2(saturate((worldPos.z - _FogStart) / (_FogEnd - _FogStart)), 0.5);
 
-
 					return o;
 				}
 
@@ -104,7 +100,6 @@ Shader "Hungry Dragon/Waterfall"
 					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
 					fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
-//					blend.xyz *= blend.a;
 					col = lerp(col, blend, i.color.w);
 
 					fixed3 one = fixed3(1, 1, 1);
@@ -112,22 +107,9 @@ Shader "Hungry Dragon/Waterfall"
 
 					fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
 					float intensity = smoothstep(0.0, _ZLimit, i.fogCoord.x);
-					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a * intensity);// *(i.fogCoord.x * 1.2));
+					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a * intensity);
 
-//					col.rgb += i.color.rgb;
-//					col.rgb *= 0.5;
-//					fixed3 one = fixed4(1, 1, 1, 1);
-//					col.rgb += col.rgb - 0.5; // one - 2.0 * (one - i.color.rgb) * (one - col.rgb);	// Overlay
-					//					col.w *= 1.0 - i.color.w;
-//					return col;
-
-//					fixed4 one = fixed4(1, 1, 1, 1);
-//					col = one - 2.0 * (one - i.color * 0.75) * (one - col);	// Overlay
-//					col.a *= 0.5;
-
-//					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col.a *= _BackColor.a;
-//					HG_APPLY_FOG(i, col);	// Fog
 
 					return col;
 				}
@@ -148,12 +130,10 @@ Shader "Hungry Dragon/Waterfall"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-//			#pragma multi_compile_fog
 			#pragma multi_compile_fwdbase
 
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
-//			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
 			struct appdata_t {
@@ -197,13 +177,7 @@ Shader "Hungry Dragon/Waterfall"
 				fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
 				col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
 				fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
-				//					blend.xyz *= blend.a;
 				col = lerp(col, blend, i.color.w);
-				//					col.w *= 1.0 - i.color.w;
-				//					return col;
-
-//				fixed3 one = fixed3(1, 1, 1);
-//				col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
 				fixed saturate = (col.r + 0.7152 * col.g + 0.0722 * col.b) * col.a * 0.5;
 
 				fixed4 fcol = _BackColor;
