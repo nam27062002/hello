@@ -98,7 +98,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#include "Lighting.cginc"
 			#include "../HungryDragon.cginc"
 
-			#define FRESNEL
+//			#define FRESNEL
 
 			#if LOW_DETAIL_ON
 			#undef NORMALMAP

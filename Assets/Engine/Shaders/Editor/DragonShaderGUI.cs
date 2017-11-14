@@ -11,12 +11,14 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+using System.IO;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
-internal class DragonShaderGUI : ShaderGUI {
-    
+internal class DragonShaderGUI : ShaderGUI
+{
+
     //------------------------------------------------------------------------//
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
@@ -34,42 +36,42 @@ internal class DragonShaderGUI : ShaderGUI {
 
     private static class Styles
     {
-/*
-        _MainTex ("Base (RGB)", 2D) = "white" {}
-        _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+        /*
+                _MainTex ("Base (RGB)", 2D) = "white" {}
+                _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
-        _BumpMap ("Normal Map (RGB)", 2D) = "white" {}
-        _NormalStrenght("Normal Strenght", float) = 1.0
+                _BumpMap ("Normal Map (RGB)", 2D) = "white" {}
+                _NormalStrenght("Normal Strenght", float) = 1.0
 
-        _DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
+                _DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
 
-        _Tint("Color Multiply", Color) = (1,1,1,1)
-        _ColorAdd("Color Add", Color) = (0,0,0,0)
+                _Tint("Color Multiply", Color) = (1,1,1,1)
+                _ColorAdd("Color Add", Color) = (0,0,0,0)
 
-        _InnerLightAdd("Inner Light Add", float) = 0.0
-        _InnerLightColor("Inner Light Color", Color) = (1,1,1,1)
+                _InnerLightAdd("Inner Light Add", float) = 0.0
+                _InnerLightColor("Inner Light Color", Color) = (1,1,1,1)
 
-        _SpecExponent("Specular Exponent", float) = 1.0
-        _Fresnel("Fresnel factor", Range(0, 10)) = 1.5
-        _FresnelColor("Fresnel Color", Color) = (1,1,1,1)
-        _AmbientAdd("Ambient Add", Color) = (0,0,0,0)
-        _SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
-        _SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
+                _SpecExponent("Specular Exponent", float) = 1.0
+                _Fresnel("Fresnel factor", Range(0, 10)) = 1.5
+                _FresnelColor("Fresnel Color", Color) = (1,1,1,1)
+                _AmbientAdd("Ambient Add", Color) = (0,0,0,0)
+                _SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
+                _SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
 
-        _ReflectionMap("Reflection Map", Cube) = "white" {}
-        _ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+                _ReflectionMap("Reflection Map", Cube) = "white" {}
+                _ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
 
-        _InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
-        _InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
+                _InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
+                _InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
 
-        // Blending state
-        [HideInInspector] _Mode("__mode", Float) = 0.0
-        [HideInInspector] _SrcBlend("__src", Float) = 1.0
-        [HideInInspector] _DstBlend("__dst", Float) = 0.0
-        [HideInInspector] _ZWrite("__zw", Float) = 1.0
+                // Blending state
+                [HideInInspector] _Mode("__mode", Float) = 0.0
+                [HideInInspector] _SrcBlend("__src", Float) = 1.0
+                [HideInInspector] _DstBlend("__dst", Float) = 0.0
+                [HideInInspector] _ZWrite("__zw", Float) = 1.0
 
-        _StencilMask("Stencil Mask", int) = 10
-*/
+                _StencilMask("Stencil Mask", int) = 10
+        */
         readonly public static string mainTextureText = "Main Texture";
         readonly public static string detailTextureText = "Detail Texture";
         readonly public static string normalTextureText = "Normal Texture";
@@ -171,7 +173,10 @@ internal class DragonShaderGUI : ShaderGUI {
     readonly static string kw_normalmap = "NORMALMAP";
     readonly static string kw_specular = "SPECULAR";
     readonly static string kw_cutOff = "CUTOFF";
+    readonly static string kw_doubleSided = "DOUBLESIDED";
     readonly static string kw_emissiveBlink = "EMISSIVEBLINK";
+    readonly static string kw_opaqueAlpha = "OPAQUEALPHA";
+    readonly static string kw_fresnel = "FRESNEL";
 
     private GUISkin editorSkin;
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
@@ -267,19 +272,21 @@ internal class DragonShaderGUI : ShaderGUI {
         materialEditor.TextureProperty(mp_detailTexture, Styles.detailTextureText, false);
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
 
-        bool normalMap = mp_normalTexture.textureValue != null as Texture;
+        bool bNormalMap = mp_normalTexture.textureValue != null as Texture;
 
-        if (EditorGUI.EndChangeCheck())
-        {
-            SetKeyword(material, kw_normalmap, normalMap);
-            EditorUtility.SetDirty(material);
-            Debug.Log("EnableNormalMap " + (normalMap));
-            //            DebugKeywords(material);
-        }
-
+        SetKeyword(material, kw_normalmap, bNormalMap);
+        /*
+                if (EditorGUI.EndChangeCheck())
+                {
+                    SetKeyword(material, kw_normalmap, normalMap);
+        //            EditorUtility.SetDirty(material);
+        //            Debug.Log("EnableNormalMap " + (normalMap));
+                    //            DebugKeywords(material);
+                }
+        */
         EditorGUI.BeginChangeCheck();
 
-        if (normalMap)
+        if (bNormalMap)
         {
             materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
         }
@@ -300,7 +307,7 @@ internal class DragonShaderGUI : ShaderGUI {
         featureSet(mp_FxLayer, Styles.additionalFXLayerText);
         int fxLayer = (int)mp_FxLayer.floatValue;
 
-        switch(fxLayer)
+        switch (fxLayer)
         {
             case 1:     //FXLayer_Reflection
                 EditorGUILayout.HelpBox(Styles.reflectionLayerText, MessageType.Info);
@@ -318,7 +325,7 @@ internal class DragonShaderGUI : ShaderGUI {
         featureSet(mp_SelfIlluminate, Styles.selfIluminationText);
         int selfIluminateMode = (int)mp_SelfIlluminate.floatValue;
 
-        switch(selfIluminateMode)
+        switch (selfIluminateMode)
         {
             case 0:     //SELFILUMINATE_NORMAL
                 EditorGUILayout.HelpBox(Styles.normalSelfIluminationText, MessageType.Info);
@@ -354,13 +361,6 @@ internal class DragonShaderGUI : ShaderGUI {
                     material.shaderKeywords = null;
                 }
         */
-    }
-
-    static void SetMaterialKeywords(Material material)
-    {
-        // Note: keywords must be based on Material value not on MaterialProperty due to multi-edit & material animation
-        // (MaterialProperty value might come from renderer material property block)
-        SetKeyword(material, "NORMALMAP", material.GetTexture("_BumpMap"));
     }
 
     static void SetKeyword(Material m, string keyword, bool state)
@@ -401,7 +401,9 @@ internal class DragonShaderGUI : ShaderGUI {
                 material.SetFloat("_ZWrite", 1.0f);
                 ///                material.renderQueue = 2000;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
-                material.DisableKeyword("CUTOFF");
+                SetKeyword(material, kw_cutOff, false);
+                SetKeyword(material, kw_doubleSided, false);
+                //                material.DisableKeyword("CUTOFF");
                 Debug.Log("Blend mode opaque");
                 break;
 
@@ -412,11 +414,11 @@ internal class DragonShaderGUI : ShaderGUI {
                 //                material.renderQueue = 3000;
                 material.SetFloat("_ZWrite", 0.0f);
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
-                material.EnableKeyword("CUTOFF");
-                material.EnableKeyword("DOUBLESIDED");
+                SetKeyword(material, kw_cutOff, true);
+                SetKeyword(material, kw_doubleSided, true);
                 Debug.Log("Blend mode transparent");
                 break;
-
+/*
             case 2:
                 material.SetOverrideTag("RenderType", "TransparentCutout");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
@@ -424,11 +426,72 @@ internal class DragonShaderGUI : ShaderGUI {
                 material.SetFloat("_ZWrite", 1.0f);
                 //                material.renderQueue = 2500;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+                material.EnableKeyword("CUTOFF");
+                material.EnableKeyword("DOUBLESIDED");
 
                 Debug.Log("Blend mode cutout");
                 break;
+*/
         }
 
     }
 
+
+
+    /// <summary>
+    /// Seek for old scenary shaders and change by new scenary standard material
+    /// </summary>
+    [MenuItem("Tools/Dragon/Replace old dragon shaders")]
+    public static void ReplaceOldScenaryShaders()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Dragon/Dragon standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+
+            // DragonBody.shader
+            if (mat.shader.name == "Hungry Dragon/Dragon/Body")
+            {
+                mat.shader = shader;
+
+                setBlendMode(mat, 0);   //Opaque
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // UnlitShadowLightmapDarken.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Wings (Transparent)")
+            {
+                mat.shader = shader;
+
+                setBlendMode(mat, 1);   //Transparent
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+        }
+
+        Debug.Log(sChanged + " materials changed.");
+
+    }
 }
