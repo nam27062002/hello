@@ -35,6 +35,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 	// Internal
 	private int m_completedMissions = 0;
 	private List<CurrencyTransferFX> m_currencyFX = new List<CurrencyTransferFX>();
+	private List<Mission> m_fakeMissions = new List<Mission>();
 	
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -85,6 +86,9 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 					// Mark mission as completed
 					targetMission.objective.enabled = true;
 					targetMission.objective.currentValue = targetMission.objective.targetValue;	// This will do it
+
+					// Store to delete them afterwards
+					m_fakeMissions.Add(targetMission);
 				}
 			}
 
@@ -125,6 +129,17 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 			m_currencyFX[i].KillFX();
 		}
 		m_currencyFX.Clear();
+	}
+
+	/// <summary>
+	/// Default destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Clear temp created missions, if any
+		for(int i = 0; i < m_fakeMissions.Count; ++i) {
+			m_fakeMissions[i].Clear();
+		}
+		m_fakeMissions.Clear();
 	}
 
 	//------------------------------------------------------------------------//
