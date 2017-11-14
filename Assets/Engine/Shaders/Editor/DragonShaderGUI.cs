@@ -36,42 +36,6 @@ internal class DragonShaderGUI : ShaderGUI
 
     private static class Styles
     {
-        /*
-                _MainTex ("Base (RGB)", 2D) = "white" {}
-                _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-
-                _BumpMap ("Normal Map (RGB)", 2D) = "white" {}
-                _NormalStrenght("Normal Strenght", float) = 1.0
-
-                _DetailTex ("Detail (RGB)", 2D) = "white" {} // r -> inner light, g -> specular
-
-                _Tint("Color Multiply", Color) = (1,1,1,1)
-                _ColorAdd("Color Add", Color) = (0,0,0,0)
-
-                _InnerLightAdd("Inner Light Add", float) = 0.0
-                _InnerLightColor("Inner Light Color", Color) = (1,1,1,1)
-
-                _SpecExponent("Specular Exponent", float) = 1.0
-                _Fresnel("Fresnel factor", Range(0, 10)) = 1.5
-                _FresnelColor("Fresnel Color", Color) = (1,1,1,1)
-                _AmbientAdd("Ambient Add", Color) = (0,0,0,0)
-                _SecondLightDir("Second Light dir", Vector) = (0,0,-1,0)
-                _SecondLightColor("Second Light Color", Color) = (0.0, 0.0, 0.0, 0.0)
-
-                _ReflectionMap("Reflection Map", Cube) = "white" {}
-                _ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
-
-                _InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
-                _InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
-
-                // Blending state
-                [HideInInspector] _Mode("__mode", Float) = 0.0
-                [HideInInspector] _SrcBlend("__src", Float) = 1.0
-                [HideInInspector] _DstBlend("__dst", Float) = 0.0
-                [HideInInspector] _ZWrite("__zw", Float) = 1.0
-
-                _StencilMask("Stencil Mask", int) = 10
-        */
         readonly public static string mainTextureText = "Main Texture";
         readonly public static string detailTextureText = "Detail Texture";
         readonly public static string normalTextureText = "Normal Texture";
@@ -354,7 +318,7 @@ internal class DragonShaderGUI : ShaderGUI
         }
         EditorGUILayout.EndHorizontal();
 
-        if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
+        if (GUILayout.Button("Log keywords", editorSkin.customStyles[0]))
         {
             //            material.shaderKeywords = null;
             DebugKeywords(material);
@@ -473,6 +437,7 @@ internal class DragonShaderGUI : ShaderGUI
             if (mat.shader.name == "Hungry Dragon/Dragon/Body")
             {
                 mat.shader = shader;
+                mat.shaderKeywords = null;
 
                 setBlendMode(mat, 0);   //Opaque
 
@@ -491,6 +456,7 @@ internal class DragonShaderGUI : ShaderGUI
             else if (mat.shader.name == "Hungry Dragon/Dragon/Wings (Transparent)")
             {
                 mat.shader = shader;
+                mat.shaderKeywords = null;
 
                 setBlendMode(mat, 1);   //Transparent
 
