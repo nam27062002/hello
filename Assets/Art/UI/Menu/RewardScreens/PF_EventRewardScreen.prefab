@@ -355,6 +355,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224604900829844026}
   - component: {fileID: 114563447703138344}
+  - component: {fileID: 114369789454010358}
   m_Layer: 5
   m_Name: NoGlobalRewardScreen
   m_TagString: Untagged
@@ -559,6 +560,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224206028694040948}
   - component: {fileID: 114420576044507232}
+  - component: {fileID: 114218649625660820}
   m_Layer: 5
   m_Name: Decoration
   m_TagString: Untagged
@@ -577,6 +579,7 @@ GameObject:
   - component: {fileID: 222090786349085436}
   - component: {fileID: 114632537243329658}
   - component: {fileID: 114719538515601288}
+  - component: {fileID: 114662720375987842}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -693,6 +696,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224991706580025868}
   - component: {fileID: 114225286707827234}
+  - component: {fileID: 114134536154055068}
   m_Layer: 5
   m_Name: Decoration
   m_TagString: Untagged
@@ -3244,6 +3248,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114134536154055068
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1250281518408294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114145224930295544
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3933,6 +3949,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114218649625660820
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1210288062482916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114219020326745074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4218,7 +4246,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114134536154055068}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Light FX
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -4368,9 +4407,12 @@ MonoBehaviour:
   m_goldenEggCompletedInfo: {fileID: 114695447542866842}
   m_goldenEggAllCollectedInfo: {fileID: 114673183645788760}
   m_goldenFragmentCounterFX: {fileID: 198053530364593380}
+  m_goldenFragmentsSFX: UI_Buy
   m_goldFragmentsCounterDelay: 1
   m_scTitle: {fileID: 114764514764144316}
+  m_scSFX: UI_Buy
   m_pcTitle: {fileID: 114759017552514330}
+  m_pcSFX: UI_Buy
   OnAnimFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -5205,6 +5247,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114369789454010358
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1133657733094652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114371075763842678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5616,7 +5670,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114218649625660820}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Light FX
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -6546,7 +6611,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114369789454010358}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Light FX
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -7227,6 +7303,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 114662720375987842}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114646515244645786
@@ -7277,6 +7364,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114690617024319356}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -7396,6 +7494,18 @@ MonoBehaviour:
   m_tid: TID_EVENT_REWARDS_EVENT_ENDED
   m_caseType: 1
   m_replacements: []
+--- !u!114 &114662720375987842
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1210673622517804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114673183645788760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8071,6 +8181,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114448740133334466}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UIClick
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,

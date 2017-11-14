@@ -56,14 +56,17 @@ public class RewardInfoUI : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_goldenEggCompletedInfo = null;
 	[SerializeField] private ShowHideAnimator m_goldenEggAllCollectedInfo = null;
 	[SerializeField] private ParticleSystem m_goldenFragmentCounterFX = null;
+	[SerializeField] private string m_goldenFragmentsSFX = "";
 	[Space]
 	[SerializeField] private float m_goldFragmentsCounterDelay = 3f;
 
 	[SeparatorAttribute("SC Reward")]
 	[SerializeField] private Localizer m_scTitle = null;
+	[SerializeField] private string m_scSFX = "";
 
 	[SeparatorAttribute("PC Reward")]
 	[SerializeField] private Localizer m_pcTitle = null;
+	[SerializeField] private string m_pcSFX = "";
 
 	// Events
 	[Separator("Events")]
@@ -265,4 +268,28 @@ public class RewardInfoUI : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+
+	//------------------------------------------------------------------------//
+	// ANIMATION EVENTS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Animation event.
+	/// </summary>
+	public void OnRewardSCIn() {
+		AudioController.Play(m_scSFX);
+	}
+
+	/// <summary>
+	/// Animation event.
+	/// </summary>
+	public void OnRewardPCIn() {
+		AudioController.Play(m_pcSFX);
+	}
+
+	/// <summary>
+	/// Animation event.
+	/// </summary>
+	public void OnRewardGoldenFragmentsIn() {
+		AudioController.Play(m_goldenFragmentsSFX);
+	}
 }

@@ -64,7 +64,6 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 	SubShader {
 		Tags { "Queue"="Geometry+10" "RenderType"="Opaque" "LightMode"="ForwardBase" }
-		Cull Back
 	//	LOD 100
 		ColorMask RGBA
 	
@@ -78,8 +77,10 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 				ZFail keep
 			}
 
+			Cull[_Cull]
+			Blend[_SrcBlend][_DstBlend]
+			ZWrite[_ZWrite]
 			ztest less
-			ZWrite On
 
 			CGPROGRAM
 			#pragma vertex vert
