@@ -153,11 +153,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         string houstonTransactionID = _storeTransactionID;
         string promotionType = null; // Not implemented yet            
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
+
+        Session_IsNotifyOnPauseEnabled = true;
 	}
 
 	private void OnPurchaseFailed(string _sku) 
 	{
-		
+        Session_IsNotifyOnPauseEnabled = true;	
 	}
 
     private void OnLoggedIn(bool logged)
@@ -249,31 +251,34 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	private void InitDNA(CaletySettings settingsInstance)
 	{
-		// DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-		#if !UNITY_EDITOR        
+        string clientVersion = settingsInstance.GetClientBuildVersion();
+
+        // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
+#if !UNITY_EDITOR
 		if (settingsInstance != null)
 		{
 		string strDNAGameVersion = "UAT";
 		UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
 		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
 		{
-		kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
-		strDNAGameVersion = "Full";
+            kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
+		    strDNAGameVersion = "PROD";
 		}
 
+        strDNAGameVersion = clientVersion + "_" + strDNAGameVersion;
 		List<string> kEventNameFilters = new List<string> ();
 		kEventNameFilters.Add ("custom");
 
 		List<string> kDNACachedEventIDs = TrackingManager.SharedInstance.GetEventIDsByAPI (TrackingManager.ETrackAPIs.E_TRACK_API_DNA, kEventNameFilters);
 
-		#if UNITY_ANDROID
-		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.GetClientBuildVersion(), strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
-		#elif UNITY_IOS
-		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
-		#endif
+#if UNITY_ANDROID
+		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+#elif UNITY_IOS
+		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+#endif
 		}
-		#endif
-	}
+#endif
+    }
 
     private void InitAppsFlyer(CaletySettings settingsInstance)
     {
@@ -424,39 +429,57 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_ApplicationEnd()
-    {
+    {         
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationEnd");
+            Log("Notify_ApplicationEnd Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        Notify_SessionEnd(ESeassionEndReason.app_closed);
+        if (Session_IsNotifyOnPauseEnabled)
+        {
+            Notify_SessionEnd(ESeassionEndReason.app_closed);
 
-        IsStartSessionNotified = false;
-        State = EState.WaitingForSessionStart;       
+            IsStartSessionNotified = false;
+            State = EState.WaitingForSessionStart;
+        }
     }
 
     public override void Notify_ApplicationPaused()
-    {
+    {        
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationPaused");
+            Log("Notify_ApplicationPaused Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        Notify_SessionEnd(ESeassionEndReason.no_activity);
+        if (Session_IsNotifyOnPauseEnabled)
+        {
+            Notify_SessionEnd(ESeassionEndReason.no_activity);
+        }
     }
 
     public override void Notify_ApplicationResumed()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationResumed");
+            Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        // If the dna session had been started then it has to be restarted
-        if (Session_AnyRoundsStarted)
-        {            
-            Track_MobileStartEvent();
+        if (Session_IsNotifyOnPauseEnabled)
+        {
+            // If the dna session had been started then it has to be restarted
+            if (Session_AnyRoundsStarted)
+            {
+                Track_MobileStartEvent();
+            }
+        }
+        else
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled forced to true");
+            }
+            
+            mSession_IsNotifyOnPauseEnabled = true;
         }
     }
 
@@ -560,6 +583,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    public override void Notify_IAPStarted()
+    {
+        // The app is paused when the iap popup is shown. According to BI session closed event shouldn't be sent when the app is paused to perform an iap and 
+        // session started event shouldn't be sent when the app is resumed once the iap is completed
+        Session_IsNotifyOnPauseEnabled = false;
+    }
+
     /// <summary>
     /// /// Called when the user completed an in app purchase.    
     /// </summary>
@@ -651,6 +681,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider=null)
     {
         Track_AdStarted(adType, rewardType, adIsAvailable, provider);
+
+        // The app is paused when an ad is played. According to BI session closed event shouldn't be sent when the app is paused to play an ad and 
+        // session started event shouldn't be sent when the app is resumed once the ad is over
+        Session_IsNotifyOnPauseEnabled = false;
     }
 
     /// <summary>
@@ -681,6 +715,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         Track_AdFinished(adType, adIsLoaded, maxReached, adViewingDuration, provider);
+
+        Session_IsNotifyOnPauseEnabled = true;
     }
 
 	/// <summary>
@@ -1984,6 +2020,30 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     private bool Session_IsFirstTime { get; set; }
 
+    private bool mSession_IsNotifyOnPauseEnabled;
+
+    /// <summary>
+    /// Whether or not the session is allowed to notify on pause/resume. This is used to avoid session paused/resumed events when the user
+    /// goes to background because an ad or a purchase is being performed since those actions are considered part of the game
+    /// </summary>
+    private bool Session_IsNotifyOnPauseEnabled
+    {
+        get
+        {
+            return mSession_IsNotifyOnPauseEnabled;
+        }
+
+        set
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("Session_IsNotifyOnPauseEnabled = " + mSession_IsNotifyOnPauseEnabled + " -> " + value);
+            }
+
+            mSession_IsNotifyOnPauseEnabled = value;            
+        }
+    }
+
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
@@ -1995,6 +2055,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathSource = null;
         Session_LastDeathCoordinates = null;
         Session_IsFirstTime = false;
+        Session_IsNotifyOnPauseEnabled = true;
      }
 #endregion
 
