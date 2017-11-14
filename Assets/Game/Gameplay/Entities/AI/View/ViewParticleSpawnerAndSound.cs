@@ -9,12 +9,14 @@ public class ViewParticleSpawnerAndSound : ViewParticleSpawner {
 
 	override protected void Spawn() {
 		base.Spawn();
-		if ( !string.IsNullOrEmpty( m_sound ) )
-		{
-			if ( m_idleAudioAO == null || !m_idleAudioAO.IsPlaying() )
-			{
+		SpawnSound();
+	}
+
+	private void SpawnSound() {
+		if (!string.IsNullOrEmpty(m_sound)) {
+			if (m_idleAudioAO == null || !m_idleAudioAO.IsPlaying()) {
 				m_idleAudioAO = AudioController.Play(m_sound, transform);
-				if (m_idleAudioAO != null )
+				if (m_idleAudioAO != null)
 					m_idleAudioAO.completelyPlayedDelegate = OnIdleCompleted;
 			}
 		}
@@ -30,20 +32,25 @@ public class ViewParticleSpawnerAndSound : ViewParticleSpawner {
 		{
 			ao.transform.parent = null;	
 			ao.completelyPlayedDelegate = null;
-			if ( ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop )
+			if (ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
 				ao.Stop();
 		}
 		ao = null;
 	}
 
-	override protected void Return() {
-		base.Return();
-		RemoveAudioParent( ref m_idleAudioAO );
+	override protected void CancelReturn() {
+		base.CancelReturn();
+		SpawnSound();
+	}
+
+	override protected void StopAndReturn() {
+		base.StopAndReturn();
+		RemoveAudioParent(ref m_idleAudioAO);
 	}
 	 
 	override protected void ForceReturn(){
 		base.ForceReturn();
-		RemoveAudioParent( ref m_idleAudioAO );
+		RemoveAudioParent(ref m_idleAudioAO);
 	}
 
 }

@@ -6,15 +6,20 @@ public class ViewParticleSpawner : MonoBehaviour {
 	[SerializeField] private Renderer m_view;
 	[SerializeField] private ParticleData[] m_particleDatas;
 
+	private enum State {
+		Idle = 0,
+		Spawned,
+		Return
+	}
 
 	private GameCamera m_camera;
 
-	private Bounds m_bounds; // view bounds
 	private Transform m_parent;
 	private GameObject[] m_particleSytems;
-	private DisableInSeconds[] m_disableInSeconds;
+	private ParticleControl[] m_particleControl;
 
-	private bool m_spawned;
+	private State m_state;
+
 
 	// Use this for initialization
 	void Awake () {
@@ -22,15 +27,13 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 		m_parent = transform;
 		m_particleSytems = new GameObject[m_particleDatas.Length];
-		m_disableInSeconds = new DisableInSeconds[m_particleDatas.Length];
+		m_particleControl = new ParticleControl[m_particleDatas.Length];
 
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
 			m_particleDatas[i].CreatePool();
 		}
 
-		m_bounds = m_view.bounds;
-
-		m_spawned = false;
+		m_state = State.Idle;
 	}
 
 	void OnDisable() {
@@ -49,14 +52,26 @@ public class ViewParticleSpawner : MonoBehaviour {
 			}
 		}
 
-		if (isInsideActivationMaxArea) {
-			if (!m_spawned) {
-				Spawn();
-			}
-		} else {
-			if (m_spawned) {
-				Return();
-			}
+		switch (m_state) {
+			case State.Idle:
+				if (isInsideActivationMaxArea) {
+					Spawn();
+				}
+				break;
+
+			case State.Spawned:
+				if (!isInsideActivationMaxArea) {
+					m_state = State.Return;
+				}
+				break;
+
+			case State.Return:
+				if (isInsideActivationMaxArea) {
+					CancelReturn();
+				} else {
+					StopAndReturn();
+				}
+				break;
 		}
 	}
 	
@@ -64,28 +79,33 @@ public class ViewParticleSpawner : MonoBehaviour {
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
 			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, Vector3.zero, true);
 			if (m_particleSytems[i] != null) {
-				m_disableInSeconds[i] = m_particleSytems[i].GetComponent<DisableInSeconds>();
+				m_particleControl[i] = m_particleSytems[i].GetComponent<ParticleControl>();
 			}
 		}
 
-		m_spawned = true;
+		m_state = State.Spawned;
 	}
 
-	protected virtual void Return() {
-		for (int i = 0; i < m_particleSytems.Length; ++i) {
-			if (m_particleSytems[i] != null) {
-				if (m_disableInSeconds[i] != null) {
-					m_disableInSeconds[i].Activate();
-				} else {
-					m_particleDatas[i].ReturnInstance(m_particleSytems[i]);
-				}
+	protected virtual void CancelReturn() {
+		for (int i = 0; i < m_particleControl.Length; ++i) {
+			if (m_particleControl[i] != null) {
+				m_particleControl[i].Play(m_particleDatas[i]);
 			}
+		}
+		m_state = State.Spawned;
+	}
 
-			m_particleSytems[i] = null;
-			m_disableInSeconds[i] = null;
+	protected virtual void StopAndReturn() {
+		bool areStopped = true;
+		for (int i = 0; i < m_particleControl.Length; ++i) {
+			if (m_particleControl[i] != null) {
+				areStopped = areStopped && m_particleControl[i].Stop();
+			}
 		}
 
-		m_spawned = false;
+		if (areStopped) {
+			ForceReturn();
+		}
 	}
 
 	protected virtual void ForceReturn() {
@@ -94,8 +114,8 @@ public class ViewParticleSpawner : MonoBehaviour {
 				m_particleDatas[i].ReturnInstance(m_particleSytems[i]);
 			}
 			m_particleSytems[i] = null;
+			m_particleControl[i] = null;
 		}
-
-		m_spawned = false;
+		m_state = State.Idle;
 	}
 }

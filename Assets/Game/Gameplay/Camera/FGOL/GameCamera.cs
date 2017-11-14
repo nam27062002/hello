@@ -1344,34 +1344,7 @@ public class GameCamera : MonoBehaviour
 	}
 
 	public bool IsInsideCameraFrustrum(Bounds _bounds) {
-		Vector3 p = Vector3.zero;
-		for (int i = 0; i < m_frustumPlanes.Length; ++i) {
-			p.x = _bounds.min.x; 	p.y = _bounds.min.y;	p.z = _bounds.min.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-
-			p.x = _bounds.min.x; 	p.y = _bounds.min.y;	p.z = _bounds.max.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-
-			p.x = _bounds.min.x; 	p.y = _bounds.max.y;	p.z = _bounds.min.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-
-			p.x = _bounds.max.x; 	p.y = _bounds.min.y;	p.z = _bounds.min.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-
-			p.x = _bounds.min.x; 	p.y = _bounds.max.y;	p.z = _bounds.max.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-
-			p.x = _bounds.max.x; 	p.y = _bounds.min.y;	p.z = _bounds.max.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-
-			p.x = _bounds.max.x; 	p.y = _bounds.max.y;	p.z = _bounds.min.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-
-			p.x = _bounds.max.x; 	p.y = _bounds.max.y;	p.z = _bounds.max.z;
-			if (!m_frustumPlanes[i].GetSide(p)) return true;
-		}
-
-		return false;
+		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, _bounds);
 	}
 
     private bool HasBoss() {
