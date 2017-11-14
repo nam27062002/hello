@@ -15,12 +15,11 @@ public class ActionPoint : MonoBehaviour, IQuadTreeItem {
 
 
 	void Awake() {
+		ActionPointManager.instance.Register(this);
 		m_boundingRect = new Rect(transform.position - Vector3.one * m_radius, Vector2.one * m_radius * 2f);
 	}
 
 	void Start() {
-		ActionPointManager.instance.Register(this);
-
 		m_members = 0;
 	}
 

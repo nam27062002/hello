@@ -132,6 +132,9 @@ public class GameCamera : MonoBehaviour
 	public FastBounds2D 		deactivationRectBG { get { return m_deactivationBG; }}
 
 
+	private Plane[] m_frustumPlanes;
+
+
 	private int					m_pixelWidth = 640;
 	private int					m_pixelHeight = 480;
 	private float				m_pixelAspectX = 1.333f;
@@ -235,6 +238,7 @@ public class GameCamera : MonoBehaviour
 	{
 		m_transform = transform;
 		m_unityCamera = GetComponent<Camera>();
+		m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
 
 		m_slowmoBreachTrigger = GetComponentInChildren<SlowmoBreachTrigger>();
@@ -631,6 +635,7 @@ public class GameCamera : MonoBehaviour
 		}
 		*/
 
+		m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
 	}
 
 
@@ -1322,12 +1327,24 @@ public class GameCamera : MonoBehaviour
 	}
 
 
-	public bool IsInsideFrustrum(Vector3 _point) {
+	public bool IsInside2dFrustrum(Vector3 _point) {
 		return m_screenWorldBounds.Contains(_point);
 	}
 
-	public bool IsInsideFrustrum(Bounds _bounds) {
+	public bool IsInside2dFrustrum(Bounds _bounds) {
 		return m_screenWorldBounds.Intersects(_bounds);
+	}
+
+	public bool IsInsideCameraFrustrum(Vector3 _p) {
+		for (int i = 0; i < m_frustumPlanes.Length; ++i) {
+			if (!m_frustumPlanes[i].GetSide(_p)) return true;
+		}
+
+		return false;
+	}
+
+	public bool IsInsideCameraFrustrum(Bounds _bounds) {
+		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, _bounds);
 	}
 
     private bool HasBoss() {

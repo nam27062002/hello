@@ -1,4 +1,13 @@
-﻿using UnityEngine;
+﻿// DeleteEmptyFolders.cs
+// Hungry Dragon
+// 
+// Created by Alger Ortín Castellví on 06/02/2017.
+// Copyright (c) 2017 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------//
+// INCLUDES																//
+//----------------------------------------------------------------------//
+using UnityEngine;
 using System.Collections;
 using UnityEditor;
 using System.Text;
@@ -6,12 +15,32 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-// Utility script which deletes all empty folders under Assets folder
+//----------------------------------------------------------------------//
+// CLASSES																//
+//----------------------------------------------------------------------//
+/// <summary>
+/// Utility script which deletes all empty folders under Assets folder
+/// </summary>
 public class DeleteEmptyFolders : EditorWindow {
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
 	private static List<string> m_foldersToDelete;
 	private static Vector2 m_scrollPos;
 	private static StringBuilder m_sb = new StringBuilder();
 
+	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Delete all empty folders in the Assets folder.
+	/// Feel free to comment attribute out or define your own menu path.
+	/// </summary>
+	[MenuItem("Tools/Delete Empty Folders", false)]
 	public static void DeleteFolders() {
 		m_foldersToDelete = new List<string>();
 		m_scrollPos = Vector2.zero;
@@ -24,26 +53,32 @@ public class DeleteEmptyFolders : EditorWindow {
 		window.Show();
 	}
 
-	// Recursively scans for empty folders and add them to a list
-	private static void GetEmptyFolders(string path) {
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Recursively scans a folder for empty folders and add them to a list.
+	/// </summary>
+	/// <param name="_path">Path to be scanned.</param>
+	private static void GetEmptyFolders(string _path) {
 		// Add exceptions
-		string[] directories = Directory.GetDirectories(path)
+		string[] directories = Directory.GetDirectories(_path)
 			.Where((string _name) => {
 				return (!_name.Contains("Plugins")
 					 && !_name.Contains("Calety"));
 			}).ToArray();
 
 		// Don't consider meta files as files
-		string[] files = Directory.GetFiles(path).Where(
-			(string _path) => {
-				return (!_path.Contains(".meta")
-					&& !_path.Contains(".DS_Store"));
+		string[] files = Directory.GetFiles(_path).Where(
+			(string _filePath) => {
+				return (!_filePath.Contains(".meta")
+					&& !_filePath.Contains(".DS_Store"));
 			}
 		).ToArray();
 
 		// Debug
 		string prefix = m_sb.ToString();
-		Debug.Log(prefix + path + " <color=yellow>" + directories.Length + " DIRS, " + files.Length + " FILES</color>");
+		Debug.Log(prefix + _path + " <color=yellow>" + directories.Length + " DIRS, " + files.Length + " FILES</color>");
 		if(false) {
 			for(int i = 0; i < directories.Length; i++) {
 				Debug.Log(prefix + "\t<color=yellow>" + directories[i] + "</color>");
@@ -68,12 +103,17 @@ public class DeleteEmptyFolders : EditorWindow {
 		// 2. There are only empty folders within this folder and no other files - also considered an empty folder
 		if((directories.Length == 0) && (files.Length == 0) || ((files.Length == 0) && directories.Length > 0 && AreAllEmpty(directories))) {
 			Debug.Log(prefix + "<color=green>EMPTY!</color>");
-			m_foldersToDelete.Add(path);
+			m_foldersToDelete.Add(_path);
 		}
 	}
 
-	// Checks if all given folders are within empty folders list
-	// Please note that this method will function properly only if inner folders are scanned before the parents - see above recursive method order of operation
+	/// <summary>
+	/// Checks if all given folders are within empty folders list.
+	/// Please note that this method will function properly only if inner folders 
+	/// are scanned before the parents - see above recursive method order of operation.
+	/// </summary>
+	/// <returns>Whether all the given directories are empty or not.</returns>
+	/// <param name="directories">Directories to be checked.</param>
 	private static bool AreAllEmpty(string[] directories) {
 		for(int i = 0; i < directories.Length; i++) {
 			if(!m_foldersToDelete.Contains(directories[i])) {
@@ -84,7 +124,9 @@ public class DeleteEmptyFolders : EditorWindow {
 		return true;
 	}
 
-	// Immidiate mode GUI
+	/// <summary>
+	/// Update the inspector window.
+	/// </summary>
 	private void OnGUI() {
 		// Refresh button
 		if(GUILayout.Button("Refresh", GUILayout.Width(100f))) {

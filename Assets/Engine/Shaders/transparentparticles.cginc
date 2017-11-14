@@ -23,7 +23,7 @@ float4 _TintColor;
 float _EmissivePower;
 #endif
 
-#if AUTOMATICPANNING
+#ifdef AUTOMATICPANNING
 float4 _Panning;
 #endif
 
@@ -33,10 +33,10 @@ v2f vert (appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.color = v.color;
 
-
-#if AUTOMATICPANNING
+#ifdef AUTOMATICPANNING
 	v.texcoord += _Panning.xy * _Time.y;
 #endif
+
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
 	return o;
@@ -47,12 +47,6 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef DEBUG
 	return fixed4(1.0, 0.0, 1.0, 1.0);
 #endif	
-
-
-#if AUTOMATICPANNING
-//	i.texcoord += _Panning.xy * _Time.y;
-#endif
-
 
 #ifdef EMISSIVEPOWER
 	half4 prev = i.color * tex2D(_MainTex, i.texcoord) * _EmissivePower;

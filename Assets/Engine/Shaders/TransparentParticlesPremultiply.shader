@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
+Shader "Hungry Dragon/Particles/Transparent Particles Premultiply"
 {
 	Properties
 	{
@@ -16,21 +16,24 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 		[Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
 
 		_DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
-		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
+
+		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
+		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
+
 //		[Enum(Additive, 1, AlphaBlend, 10)] _BlendMode("Blend mode", Float) = 10
+//		[BlendMode] _BlendMode("Blend Mode", Vector) = (1.0, 0.0, 0.0, 0.0)
+//		[BlendMode] _BlendMode("Blend Mode", Float) = 0.0
+		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
 	SubShader
 	{
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-		//		Blend SrcAlpha One // Additive blending
-//		Blend SrcAlpha OneMinusSrcAlpha // Alpha blend
-//		Blend SrcAlpha[_BlendMode]
 		Blend One OneMinusSrcAlpha
 		Cull Off
 		Lighting Off
 		ZWrite Off
-		ZTest[_ZTest]
+		ZTest [_ZTest]
 
 		Pass
 		{
@@ -40,6 +43,7 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 			#pragma multi_compile _ DISSOLVE
 			#pragma multi_compile _ COLOR_RAMP
 			#pragma multi_compile _ APPLY_RGB_COLOR_VERTEX
+			#pragma multi_compile _ AUTOMATICPANNING
 			//			#pragma multi_compile_particles
 
 			#include "UnityCG.cginc"
@@ -73,6 +77,10 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 #ifdef DISSOLVE
 			float4 _DissolveStep;
 #endif
+
+#ifdef AUTOMATICPANNING
+			float2 _Panning;
+#endif
 			float _ColorMultiplier;
 
 			v2f vert(appdata_t v)
@@ -80,6 +88,9 @@ Shader "Hungry Dragon/Transparent Additive AlphaBlend 2"
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
+#ifdef AUTOMATICPANNING
+				v.texcoord.xy += _Panning * _Time.yy;
+#endif
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
 				o.particledata = v.texcoord.zw;
 				return o;

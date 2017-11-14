@@ -35,7 +35,18 @@ public class TrackerMapUsage : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerMapUsage() {
+		
+	}
+
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
+
+		// Call parent
+		base.Clear();
 	}
 
 	private void OnPopupOpened(PopupController _popup) {

@@ -22,6 +22,7 @@ abstract public class TouchControls : MonoBehaviour {
 	protected Vector2 m_sharkDesiredVel = Vector2.zero;
 	protected bool m_decelerate = false;
 
+	protected Vector3 m_currentTouch2Pos = Vector3.zero;
 	protected Vector3 m_initialTouch2Pos = Vector3.zero;
 	
 	protected TouchState m_currentTouchState2 = TouchState.none;
@@ -63,11 +64,13 @@ abstract public class TouchControls : MonoBehaviour {
 
         // Subscribe to external events
         Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
+		Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, OnPause);
     }
 	
     public virtual void OnDestroy() {
         // Unsubscribe from external events
         Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);        
+		Messenger.RemoveListener<bool>(GameEvents.GAME_PAUSED, OnPause);
     }
 
 	private void ResetTouchValues()
@@ -76,12 +79,13 @@ abstract public class TouchControls : MonoBehaviour {
 		m_currentTouchPos = Vector3.zero;
 		m_initialTouchPos = Vector3.zero;
 		m_initialTouchPosWorldSpace = Vector3.zero;
-		m_initialTouch2Pos = Vector3.zero;
 		m_diffVecNorm = Vector3.zero;
 		m_diffVec = Vector3.zero;
 		m_sharkDesiredVel = Vector2.zero;
 		m_decelerate = false;
-		
+
+		m_currentTouch2Pos = Vector3.zero;
+		m_initialTouch2Pos = Vector3.zero;
 		m_currentTouchState2 = TouchState.none;
 	}
 	
@@ -106,9 +110,17 @@ abstract public class TouchControls : MonoBehaviour {
 
 	protected void RefreshCurrentTouchPos()
 	{
-		m_currentTouchPos.x = GameInput.touchPosition[0].x;
-		m_currentTouchPos.y = GameInput.touchPosition[0].y;
-		m_currentTouchPos.z = 0;
+		m_currentTouchPos.Set(
+			GameInput.touchPosition[0].x,
+			GameInput.touchPosition[0].y,
+			0
+		);
+
+		m_currentTouch2Pos.Set(
+			GameInput.touchPosition[1].x,
+			GameInput.touchPosition[1].y,
+			0
+		);
 	}
 	
 	virtual public void SetRender(bool enable)
@@ -269,11 +281,21 @@ abstract public class TouchControls : MonoBehaviour {
         }
     }
 
-    /// <summary>
+	/// <summary>
     /// Subclasses of this class just have to override this method to handle change of preferences
     /// </summary>
     /// <param name="id"></param>
     protected virtual void OnPrefChangedExtended(string id) {}
+
+	private void OnPause(bool _pause) {
+		if(_pause) {
+			ResetTouchValues();
+			SetRender(false);
+			this.gameObject.SetActive(false);
+		} else {
+			this.gameObject.SetActive(true);
+		}
+	}
 
     public void Set3DTouch( bool use3DTouch, float pressure )
     {

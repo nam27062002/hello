@@ -14,7 +14,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
 		_LightColor("Light Color", Color) = (1, 1, 1, 1)
 		_NormalStrength("Normal Strength", float) = 3
-		_SpecularPower( "Specular Power", float ) = 1
+		_SpecularPower( "Specular Power", float ) = 30.0
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
 		_FresnelInitialColor("Fresnel initial (RGB)", Color) = (0, 0, 0, 0)

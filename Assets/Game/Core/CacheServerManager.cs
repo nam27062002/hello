@@ -24,8 +24,7 @@ public class CacheServerManager {
     }
     #endregion
 
-
-	private const string OBSOLETE_KEY = "OBSOLETE_VERSION";
+    private const string OBSOLETE_KEY = "obsolete";
 
     // String with version the cache is using
     string m_usingVersion;
@@ -71,14 +70,22 @@ public class CacheServerManager {
 
     private void LoadObsoleteVersion()
     {
-		// Get Saved Min Version
-		string out_of_date_version = PlayerPrefs.GetString(OBSOLETE_KEY, "");
+		string out_of_date_version = "";
+		if ( HasKey(OBSOLETE_KEY, false) )
+		{
+			out_of_date_version = GetVariable( OBSOLETE_KEY, false );
+		}
 		m_obsoleteVersion = VersionStrToInts( out_of_date_version );
 		if ( m_obsoleteVersion == null )
 		{
 			m_obsoleteVersion = new int[]{0,0,0};	
 		}
     }
+
+	public void RemoveObsoleteVersion()
+	{
+		DeleteKey( OBSOLETE_KEY, false);
+	}
 
     public void SaveCurrentVersionAsObsolete()
     {
@@ -87,7 +94,7 @@ public class CacheServerManager {
 
     public void SetVersionAsObsolete( string v )
     {
-		PlayerPrefs.SetString(OBSOLETE_KEY,v);
+		SetVariable(OBSOLETE_KEY, v, false);
 		LoadObsoleteVersion();
     }
 
@@ -219,31 +226,41 @@ public class CacheServerManager {
 
 	#region saving_and_loading
 
-	string GetFilePath( string key )
+	string GetFilePath( string key, bool versioned )
 	{
-		string path = FileUtils.GetDeviceStoragePath ("/cachedVersions/" + m_usingVersion + "/" + key, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		string path = "";
+		if ( versioned )
+		{
+			path = FileUtils.GetDeviceStoragePath ("/cachedVersions/" + m_usingVersion + "/" + key, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		}
+		else
+		{
+			path = FileUtils.GetDeviceStoragePath ( key, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+		}
 		return path;
 	}
 
-	public void SetVariable( string key, string value)
+	public void SetVariable( string key, string value, bool versioned = true)
 	{
-		File.WriteAllText( GetFilePath( key ) , value);	
+		File.WriteAllText( GetFilePath( key, versioned ) , value);	
 	}
 
-	public string GetVariable( string key )
+	public string GetVariable( string key, bool versioned = true )
 	{
-		string ret = File.ReadAllText( GetFilePath( key )  );
+		string ret = File.ReadAllText( GetFilePath( key, versioned )  );
 		return ret;
 	}
 
-	public bool HasKey( string key )
+	public bool HasKey( string key, bool versioned = true )
 	{
-		return File.Exists( GetFilePath( key )  );
+		return File.Exists( GetFilePath( key, versioned )  );
 	}
 
-	public void DeleteKey( string key )
+	public void DeleteKey( string key, bool versioned = true )
 	{
-		File.Delete( GetFilePath( key )  );
+		string path = GetFilePath( key, versioned );
+		if ( File.Exists( path ) )
+			File.Delete( path );
 	}
 
 	#endregion

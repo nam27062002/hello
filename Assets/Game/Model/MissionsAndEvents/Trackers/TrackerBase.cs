@@ -65,6 +65,15 @@ public class TrackerBase {
 	// OVERRIDE CANDIDATE METHODS											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	public virtual void Clear() {
+		// Remove any listener
+		OnValueChanged.RemoveAllListeners();
+		OnValueChanged = null;
+	}
+
+	/// <summary>
 	/// Localizes and formats the description according to this tracker's type
 	/// (i.e. "Eat 52 birds", "Dive 500m", "Survive 10 minutes").
 	/// </summary>

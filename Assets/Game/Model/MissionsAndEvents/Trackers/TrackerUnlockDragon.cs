@@ -41,13 +41,22 @@ public class TrackerUnlockDragon : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerUnlockDragon() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquire);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquire);
+
+		// Call parent
+		base.Clear();
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

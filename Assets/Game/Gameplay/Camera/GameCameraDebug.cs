@@ -114,18 +114,34 @@ public class GameCameraDebug : MonoBehaviour {
     /// </summary>
     /// <param name="_id">ID of the changed setting.</param>
     /// <param name="_newValue">New value of the setting.</param>
+    private float[] validFactors = new float[] { 360.0f, 720.0f, 1080.0f };
     private void OnDebugSettingChangedResolutionFactor(string _id, float _newValue)
     {
         // Show collisions cheat?
         if (_id == DebugSettings.RESOLUTION_FACTOR)
         {
+            _newValue = Mathf.Clamp(_newValue, validFactors[0], validFactors[2]);
+            float vf = validFactors[2];
 
-            int width = (int)((float)m_width * _newValue);
-            int height = (int)((float)m_height * _newValue);
+            for (int c = 0; c < validFactors.Length; c++)
+            {
+                if (validFactors[c] > _newValue)
+                {
+                    vf = validFactors[c - 1];
+                    break;
+                }
+            }
+
+
+            float rFactor = vf / (float)m_height;
+
+
+            int width = (int)((float)m_width * rFactor);
+            int height = (int)((float)m_height * rFactor);
 
             Screen.SetResolution(width, height, true);
 
-            Debug.Log("Resolution Factor = " + _newValue);
+            Debug.Log("Resolution Factor = " + vf);
         }
     }
 

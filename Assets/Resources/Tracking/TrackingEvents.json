@@ -323,6 +323,18 @@
                 "etl"
             ]
         },
+		"custom.player.mode": {
+            "Parameters": [
+                {"playingMode": {"Status": "OK"}},
+                {"rank": {"Status": "OK"}},
+                {"isSuccess": {"Status": "OK"}},
+                {"duration": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"custom.global.event.rundone": {
             "Parameters": [
                 {"glbEventID": {"Status": "OK"}},
@@ -941,6 +953,18 @@
             "Values": []
         },
 		"topContributor": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"playingMode": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"rank": {
+            "Type": "STRING:125",
+            "Values": []
+        },
+		"isSuccess": {
             "Type": "INT:4",
             "Values": []
         }

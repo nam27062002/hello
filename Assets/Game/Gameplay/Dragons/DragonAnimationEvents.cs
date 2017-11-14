@@ -177,6 +177,44 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
+	public void IdleStart()
+	{
+		if (!string.IsNullOrEmpty(m_wingsIdleSound))
+		{
+			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
+			if ( m_wingsIdleSoundAO != null )
+				m_wingsIdleSoundAO.completelyPlayedDelegate = OnWigsIdleCompleted;
+		}
+	}
+
+	public void IdleEnd()
+	{
+		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
+		{
+			m_wingsIdleSoundAO.Stop();
+			m_wingsFlyingSoundAO = null;
+		}
+	}
+
+	public void FlyStart()
+	{
+		if (!string.IsNullOrEmpty(m_wingsFlyingSound))
+		{
+			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
+			if ( m_wingsFlyingSoundAO != null )
+				m_wingsFlyingSoundAO.completelyPlayedDelegate = OnWingsFlyingSoundCompleted;
+		}
+	}
+
+	public void FlyEnd()
+	{
+		if (m_wingsFlyingSoundAO != null && m_wingsFlyingSoundAO.IsPlaying())
+		{
+			m_wingsFlyingSoundAO.Stop();
+			m_wingsFlyingSoundAO = null;
+		}
+	}
+
 	public void WingsIdleSound()
 	{
 		// tell particle controller

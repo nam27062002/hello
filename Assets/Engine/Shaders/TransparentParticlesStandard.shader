@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Hungry Dragon/Transparent particle standard"
+Shader "Hungry Dragon/Particles/Transparent particle standard"
 {
 	Properties
 	{

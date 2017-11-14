@@ -168,9 +168,27 @@ public class PhotoScreenController : MonoBehaviour {
 		// Restore HUD as well
 		InstanceManager.menuSceneController.hud.gameObject.SetActive(true);
 
+		// Figure out default message dependin on mode
+		string shareTid = "";
+		switch(m_mode) {
+			case Mode.DRAGON: {
+				shareTid = "TID_IMAGE_CAPTION";
+			} break;
+
+			case Mode.EGG_REWARD: {
+				MenuScreenScene scene3D = InstanceManager.menuSceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
+				switch(currentReward.type) {
+					case Metagame.RewardPet.TYPE_CODE: {
+						shareTid = "TID_IMAGE_CAPTION_PET";
+					} break;
+				}
+			} break;
+		}
+
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
-		popup.Init(m_picture);
+		popup.Init(m_picture, shareTid);
 	}
 
 	/// <summary>
@@ -243,7 +261,8 @@ public class PhotoScreenController : MonoBehaviour {
 			case Mode.EGG_REWARD: {
 				// Initialize with egg reward view
 				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
-				currentMode.dragControl.target = scene3D.GetComponent<RewardSceneController>().rewardView.transform;
+				RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
+				currentMode.dragControl.target = sceneController.rewardView.transform;
 			} break;
 		}
 

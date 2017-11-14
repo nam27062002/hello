@@ -186,7 +186,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		switch(_requestType) {
 			case GlobalEventManager.RequestType.EVENT_STATE: {
 				// Chain with leaderboard request
-				GlobalEventManager.RequestCurrentEventLeaderboard(false);
+				//GlobalEventManager.RequestCurrentEventLeaderboard(false);
 				// BusyScreen.Show(this);
 			} break;
 

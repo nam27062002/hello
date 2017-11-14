@@ -43,7 +43,6 @@ public class EventRewardScreen : MonoBehaviour {
 	[SerializeField] private Image m_eventIcon = null;
 	[Space]
 	[SerializeField] private Localizer m_topRewardText = null;
-	[SerializeField] private GlobalEventsRewardInfo m_topRewardInfo = null;
 
 	// Internal references
 	private RewardSceneController m_sceneController = null;
@@ -324,9 +323,6 @@ public class EventRewardScreen : MonoBehaviour {
 					m_topRewardText.tid, 
 					StringUtils.FormatNumber(topPercentile, 2)
 				);
-
-				// Initialize reward info
-				m_topRewardInfo.InitFromReward(m_event.topContributorsRewardSlot);
 
 				// Change state after some delay
 				UbiBCN.CoroutineManager.DelayedCall(
