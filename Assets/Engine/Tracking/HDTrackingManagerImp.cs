@@ -153,11 +153,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         string houstonTransactionID = _storeTransactionID;
         string promotionType = null; // Not implemented yet            
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
+
+        Session_IsNotifyOnPauseEnabled = true;
 	}
 
 	private void OnPurchaseFailed(string _sku) 
 	{
-		
+        Session_IsNotifyOnPauseEnabled = true;	
 	}
 
     private void OnLoggedIn(bool logged)
@@ -470,6 +472,15 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Track_MobileStartEvent();
             }
         }
+        else
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled forced to true");
+            }
+            
+            mSession_IsNotifyOnPauseEnabled = true;
+        }
     }
 
     private void Notify_SessionEnd(ESeassionEndReason reason)
@@ -570,6 +581,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             TrackingPersistenceSystem.TotalStoreVisits++;
         }
+    }
+
+    public override void Notify_IAPStarted()
+    {
+        // The app is paused when the iap popup is shown. According to BI session closed event shouldn't be sent when the app is paused to perform an iap and 
+        // session started event shouldn't be sent when the app is resumed once the iap is completed
+        Session_IsNotifyOnPauseEnabled = false;
     }
 
     /// <summary>
@@ -2002,11 +2020,29 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     private bool Session_IsFirstTime { get; set; }
 
+    private bool mSession_IsNotifyOnPauseEnabled;
+
     /// <summary>
     /// Whether or not the session is allowed to notify on pause/resume. This is used to avoid session paused/resumed events when the user
     /// goes to background because an ad or a purchase is being performed since those actions are considered part of the game
     /// </summary>
-    private bool Session_IsNotifyOnPauseEnabled { get; set; }
+    private bool Session_IsNotifyOnPauseEnabled
+    {
+        get
+        {
+            return mSession_IsNotifyOnPauseEnabled;
+        }
+
+        set
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("Session_IsNotifyOnPauseEnabled = " + mSession_IsNotifyOnPauseEnabled + " -> " + value);
+            }
+
+            mSession_IsNotifyOnPauseEnabled = value;            
+        }
+    }
 
     private void Session_Reset()
     {
