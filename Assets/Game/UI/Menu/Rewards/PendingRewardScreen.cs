@@ -236,6 +236,9 @@ public class PendingRewardScreen : MonoBehaviour {
 		// Ignore if we're still animating some step (prevent spamming)
 		if(m_state == State.ANIMATING) return;
 
+		// SFX
+		AudioController.Play("UI_Click");
+
 		// Next step!
 		AdvanceStep();
 	}

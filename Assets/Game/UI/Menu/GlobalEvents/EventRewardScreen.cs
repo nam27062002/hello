@@ -289,6 +289,9 @@ public class EventRewardScreen : MonoBehaviour {
 			} break;
 
 			case Step.GLOBAL_REWARD: {
+				// SFX
+				AudioController.Play("UI_Light FX");
+
 				// Animate progress bar
 				m_progressBar.RefreshProgress(m_event.rewardSlots[m_givenGlobalRewards].targetPercentage, 0.5f);
 
@@ -366,6 +369,9 @@ public class EventRewardScreen : MonoBehaviour {
 	public void OnContinueButton() {
 		// Ignore if we're still animating some step (prevent spamming)
 		if(m_state == State.ANIMATING) return;
+
+		// SFX
+		AudioController.Play("UI_Click");
 
 		// Next step!
 		AdvanceStep();
