@@ -195,6 +195,8 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_StoreVisited() {}
 
+    public virtual void Notify_IAPStarted() {}
+
     /// <summary>
     /// /// Called when the user completed an in app purchase.    
     /// </summary>

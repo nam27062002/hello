@@ -453,8 +453,12 @@ public class LoadingSceneController : SceneController {
             	if (kServerConfig != null && kServerConfig.m_eBuildEnvironment == CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
             	{
 					Debug.Log("Is Production!! Store: " + GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
-            		// Check if build is from store
-					if ( GameStoreManager.SharedInstance.AppWasDownloadedFromStore() )	// Game Store Manager needs to be initialized before checking
+
+#if UNITY_EDITOR
+                    StartLoadFlow();
+#else
+                    // Check if build is from store
+                    if ( GameStoreManager.SharedInstance.AppWasDownloadedFromStore() )	// Game Store Manager needs to be initialized before checking
             		{	
             			StartLoadFlow();
             		}
@@ -462,7 +466,8 @@ public class LoadingSceneController : SceneController {
             		{
 						SetState(State.SHOWING_UPGRADE_POPUP);
             		}
-            	}
+#endif
+                    }
             	else
             	{
 					StartLoadFlow();	
