@@ -63,7 +63,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 	}
 
 	SubShader {
-		Tags { "Queue"="Geometry+10" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
+		Tags { "Queue"="Geometry+10" "RenderType"="Opaque" "LightMode"="ForwardBase" }
 		Cull Back
 	//	LOD 100
 		ColorMask RGBA
@@ -86,7 +86,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma fragment frag
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
-			#pragma multi_compile __ SILHOUETTE
+			#pragma shader_feature  __ SILHOUETTE
 			#pragma shader_feature  __ NORMALMAP
 			#pragma shader_feature  __ SPECULAR
 			#pragma shader_feature  __ FRESNEL

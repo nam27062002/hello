@@ -354,6 +354,12 @@ internal class DragonShaderGUI : ShaderGUI
         }
         EditorGUILayout.EndHorizontal();
 
+        if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
+        {
+            //            material.shaderKeywords = null;
+            DebugKeywords(material);
+        }
+
 
         /*
                 if (GUILayout.Button("Reset keywords"))
@@ -410,11 +416,11 @@ internal class DragonShaderGUI : ShaderGUI
                 break;
 
             case 1:
-                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetOverrideTag("RenderType", "TransparentCutout");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 //                material.renderQueue = 3000;
-                material.SetFloat("_ZWrite", 0.0f);
+                material.SetFloat("_ZWrite", 1.0f);
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 SetKeyword(material, kw_cutOff, true);
                 SetKeyword(material, kw_doubleSided, true);
