@@ -13,6 +13,7 @@ Shader "Hungry Dragon/Waterfall"
 		_BlendTex("Blend (RGB)", 2D) = "white" {}
 		_WaterSpeed("Speed: ", Float) = 0.5
 		_BackColor("Back Color: ", Color) = (0.0, 0.0, 0.0, 0.0)
+		_ZLimit("Fog Z limit", Range(0.0, 0.3)) = 0.0
 		_StencilMask("Stencil Mask: ", int) = 10
 	}
 
@@ -59,6 +60,7 @@ Shader "Hungry Dragon/Waterfall"
 					float2 uv : TEXCOORD0;
 					float2 uv2:TEXCOORD1;
 					float4 color : COLOR;
+					HG_FOG_COORDS(2)
 				};
 
 				sampler2D _MainTex;
@@ -69,6 +71,8 @@ Shader "Hungry Dragon/Waterfall"
 				float4 _BlendTex_ST;
 				float _WaterSpeed;
 				fixed4 _BackColor;
+				HG_FOG_VARIABLES
+				float _ZLimit;
 
 
 				v2f vert (appdata_t v) 
@@ -78,10 +82,15 @@ Shader "Hungry Dragon/Waterfall"
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 					o.uv2 = TRANSFORM_TEX(v.uv2, _BlendTex);
-//					o.viewDir = o.vertex - _WorldSpaceCameraPos;
 
 					o.color = v.color;
-//					TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
+
+					float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+					HG_TRANSFER_FOG(o, worldPos);	// Fog
+//					float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
+//					_FogStart = -12.0;
+//					o.fogCoord = float2(saturate((worldPos.z - _FogStart) / (_FogEnd - _FogStart)), 0.5);
+
 
 					return o;
 				}
@@ -97,7 +106,19 @@ Shader "Hungry Dragon/Waterfall"
 					fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
 //					blend.xyz *= blend.a;
 					col = lerp(col, blend, i.color.w);
-//					col.w *= 1.0 - i.color.w;
+
+					fixed3 one = fixed3(1, 1, 1);
+					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
+
+					fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
+					float intensity = smoothstep(0.0, _ZLimit, i.fogCoord.x);
+					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a * intensity);// *(i.fogCoord.x * 1.2));
+
+//					col.rgb += i.color.rgb;
+//					col.rgb *= 0.5;
+//					fixed3 one = fixed4(1, 1, 1, 1);
+//					col.rgb += col.rgb - 0.5; // one - 2.0 * (one - i.color.rgb) * (one - col.rgb);	// Overlay
+					//					col.w *= 1.0 - i.color.w;
 //					return col;
 
 //					fixed4 one = fixed4(1, 1, 1, 1);
@@ -106,6 +127,7 @@ Shader "Hungry Dragon/Waterfall"
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 					col.a *= _BackColor.a;
+//					HG_APPLY_FOG(i, col);	// Fog
 
 					return col;
 				}
