@@ -427,39 +427,48 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_ApplicationEnd()
-    {
+    {         
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationEnd");
+            Log("Notify_ApplicationEnd Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        Notify_SessionEnd(ESeassionEndReason.app_closed);
+        if (Session_IsNotifyOnPauseEnabled)
+        {
+            Notify_SessionEnd(ESeassionEndReason.app_closed);
 
-        IsStartSessionNotified = false;
-        State = EState.WaitingForSessionStart;       
+            IsStartSessionNotified = false;
+            State = EState.WaitingForSessionStart;
+        }
     }
 
     public override void Notify_ApplicationPaused()
-    {
+    {        
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationPaused");
+            Log("Notify_ApplicationPaused Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        Notify_SessionEnd(ESeassionEndReason.no_activity);
+        if (Session_IsNotifyOnPauseEnabled)
+        {
+            Notify_SessionEnd(ESeassionEndReason.no_activity);
+        }
     }
 
     public override void Notify_ApplicationResumed()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationResumed");
+            Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        // If the dna session had been started then it has to be restarted
-        if (Session_AnyRoundsStarted)
-        {            
-            Track_MobileStartEvent();
+        if (Session_IsNotifyOnPauseEnabled)
+        {
+            // If the dna session had been started then it has to be restarted
+            if (Session_AnyRoundsStarted)
+            {
+                Track_MobileStartEvent();
+            }
         }
     }
 
@@ -654,6 +663,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider=null)
     {
         Track_AdStarted(adType, rewardType, adIsAvailable, provider);
+
+        // The app is paused when an ad is played. According to BI session closed event shouldn't be sent when the app is paused to play an ad and 
+        // session started event shouldn't be sent when the app is resumed once the ad is over
+        Session_IsNotifyOnPauseEnabled = false;
     }
 
     /// <summary>
@@ -684,6 +697,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         Track_AdFinished(adType, adIsLoaded, maxReached, adViewingDuration, provider);
+
+        Session_IsNotifyOnPauseEnabled = true;
     }
 
 	/// <summary>
@@ -1987,6 +2002,12 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     private bool Session_IsFirstTime { get; set; }
 
+    /// <summary>
+    /// Whether or not the session is allowed to notify on pause/resume. This is used to avoid session paused/resumed events when the user
+    /// goes to background because an ad or a purchase is being performed since those actions are considered part of the game
+    /// </summary>
+    private bool Session_IsNotifyOnPauseEnabled { get; set; }
+
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
@@ -1998,6 +2019,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathSource = null;
         Session_LastDeathCoordinates = null;
         Session_IsFirstTime = false;
+        Session_IsNotifyOnPauseEnabled = true;
      }
 #endregion
 
