@@ -32,6 +32,7 @@ public class PopupPhotoShare : MonoBehaviour {
 
 	// Internal
 	private Texture2D m_photo = null;
+	private string m_captionTid = "";
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -59,12 +60,14 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// Initialize the popup with the given photo.
 	/// </summary>
 	/// <param name="_photo">The photo that has been taken.</param>
-	public void Init(Texture2D _photo) {
+	/// <param name="_captionTid">The caption to be posted.</param>
+	public void Init(Texture2D _photo, string _captionTid) {
 		// Skip if given photo is not valid
 		if(_photo == null) return;
 
-		// Store photo for future use
+		// Store photo and caption for future use
 		m_photo = _photo;
+		m_captionTid = _captionTid;
 
 		CreateScreenshotFile();
 
@@ -95,16 +98,11 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// </summary>
 	public void OnShareButton() 
 	{
-
-		// [AOC] TODO!! Share Flow
-		/*UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			new Vector2(0.5f, 0.5f),
-			(RectTransform)this.GetComponentInParent<Canvas>().transform
-		);*/
-
-		// DO NOT REMOVE
+		// Share Flow - DO NOT REMOVE!
 		string filePath = Application.temporaryCachePath + "/Screenshot.png";
-	    PlatformUtils.Instance.ShareImage( filePath, LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION"));
+	    PlatformUtils.Instance.ShareImage( 
+			filePath, 
+			string.IsNullOrEmpty(m_captionTid) ? string.Empty : LocalizationManager.SharedInstance.Localize(m_captionTid)
+		);
 	}
 }
