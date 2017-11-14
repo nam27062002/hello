@@ -16,7 +16,6 @@ abstract public class TouchControls : MonoBehaviour {
 	protected TouchState m_currentTouchState = TouchState.none;
 	protected Vector3 m_currentTouchPos = Vector3.zero;
 	protected Vector3 m_initialTouchPos = Vector3.zero;
-	protected Vector3 m_initialTouchPosWorldSpace = Vector3.zero;
 	protected Vector3 m_diffVecNorm = Vector3.zero;
 	protected Vector3 m_diffVec = Vector3.zero;
 	protected Vector2 m_sharkDesiredVel = Vector2.zero;
@@ -78,7 +77,6 @@ abstract public class TouchControls : MonoBehaviour {
 		m_currentTouchState = TouchState.none;
 		m_currentTouchPos = Vector3.zero;
 		m_initialTouchPos = Vector3.zero;
-		m_initialTouchPosWorldSpace = Vector3.zero;
 		m_diffVecNorm = Vector3.zero;
 		m_diffVec = Vector3.zero;
 		m_sharkDesiredVel = Vector2.zero;

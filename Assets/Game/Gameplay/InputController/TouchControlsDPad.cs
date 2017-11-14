@@ -359,9 +359,8 @@ public class TouchControlsDPad : TouchControls {
 			}
 		}
 
-		float speedDampenMult = 1.0f;
 		m_speedDampenMult = radiusCovered / m_radiusToCheck;
-		m_speedDampenMult = Mathf.Clamp(speedDampenMult, 0.0f, 1.0f);
+		m_speedDampenMult = Mathf.Clamp(m_speedDampenMult, 0.0f, 1.0f);
 
 		float change2 = (m_diffVecNorm - m_prevDiffVector).sqrMagnitude;
         if((change2 > (m_tolerance * m_tolerance)) && m_frameCounter >= m_numFramesForDirChange)
