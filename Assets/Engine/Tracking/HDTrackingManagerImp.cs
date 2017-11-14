@@ -249,31 +249,34 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	private void InitDNA(CaletySettings settingsInstance)
 	{
-		// DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-		#if !UNITY_EDITOR        
+        string clientVersion = settingsInstance.GetClientBuildVersion();
+
+        // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
+#if !UNITY_EDITOR
 		if (settingsInstance != null)
 		{
 		string strDNAGameVersion = "UAT";
 		UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
 		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
 		{
-		kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
-		strDNAGameVersion = "Full";
+            kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
+		    strDNAGameVersion = "Full";
 		}
 
+        strDNAGameVersion = clientVersion + "_" + strDNAGameVersion;
 		List<string> kEventNameFilters = new List<string> ();
 		kEventNameFilters.Add ("custom");
 
 		List<string> kDNACachedEventIDs = TrackingManager.SharedInstance.GetEventIDsByAPI (TrackingManager.ETrackAPIs.E_TRACK_API_DNA, kEventNameFilters);
 
-		#if UNITY_ANDROID
-		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", settingsInstance.GetClientBuildVersion(), strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
-		#elif UNITY_IOS
-		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", settingsInstance.GetClientBuildVersion(), strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
-		#endif
+#if UNITY_ANDROID
+		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+#elif UNITY_IOS
+		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+#endif
 		}
-		#endif
-	}
+#endif
+    }
 
     private void InitAppsFlyer(CaletySettings settingsInstance)
     {
