@@ -6,20 +6,24 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_bug_0_body
-  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
+  m_Name: water_mix_waterfall_front 1
+  m_Shader: {fileID: 4800000, guid: 1c8e402466f5e694bbfa39823bbaafc5, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2010
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BlendTex:
+        m_Texture: {fileID: 2800000, guid: 96fb1d7c2cddd2f4eb961ea295ac8a84, type: 3}
+        m_Scale: {x: 3.5, y: 1.5}
+        m_Offset: {x: 0.85, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: e0b17c70b7603c84ea51acc2212358be, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -35,16 +39,16 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: c707114c0f79c420180e280cbb96b663, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 1879db14f00af3d42b0daf50aeeb92fe, type: 3}
+        m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 526b595de81913f43a1cb4e7baa1d6fd, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 50596e23a7cdcf4468cef5fa63f955da, type: 3}
+        m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -58,34 +62,48 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SecondTex:
+        m_Texture: {fileID: 2800000, guid: 6744c5b41790509438512bf68995890c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SecondTexture:
+        m_Texture: {fileID: 2800000, guid: cbaa17aad74348741956133e9c59bd66, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EmissionScaleUI: 0
-    - _Fresnel: 7.01
+    - _Far: 500
+    - _FixedTransp: 0
+    - _GlossMapScale: 1
     - _Glossiness: 0.5
-    - _InnerLightAdd: 0
+    - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1
+    - _Near: 200
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _SpecExponent: 6.68
+    - _Shininess: 0.078125
+    - _SmoothnessTextureChannel: 0
+    - _SpecIntensity: 0.5
+    - _SpecularHighlights: 1
+    - _SpeedX1: 1
+    - _SpeedX2: 1
+    - _SpeedY1: 1
+    - _SpeedY2: 1
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _WaterSpeed: 0.5
+    - _WaveAmplitude: 50
+    - _Width: 2000
     - _ZWrite: 1
     m_Colors:
-    - _AmbientAdd: {r: 0.04411763, g: 0.04411763, b: 0.04411763, a: 0}
-    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - _ColorAdd: {r: 0.03676468, g: 0.03676468, b: 0.03676468, a: 0}
-    - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
+    - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BackColor: {r: 0.04455017, g: 0.6688671, b: 0.75735295, a: 0.516}
+    - _Color: {r: 0.22388624, g: 0.43854588, b: 0.74264705, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0.12894681, g: 0.17390528, b: 0.3897059, a: 1}
-    - _InnerLightColor: {r: 0.23063776, g: 0.1919334, b: 0.52205884, a: 1}
-    - _SecondLightColor: {r: 0.23615918, g: 0.48038426, b: 0.7647059, a: 0}
-    - _SecondLightDir: {r: -16.1, g: -76.15, b: -3.05, a: -63.37}
-    - _Tint: {r: 0.8161765, g: 0.8161765, b: 0.8161765, a: 1}
+    - _LightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _LightDir: {r: 1, g: 1, b: 1, a: 1}
