@@ -407,6 +407,7 @@ public class LoadingSceneController : SceneController {
 				GameSceneManager.CreateInstance(true);
 				FlowManager.CreateInstance(true);
 				PoolManager.CreateInstance(true);
+				ActionPointManager.CreateInstance(true);
 				ParticleManager.CreateInstance(true);
 				FirePropagationManager.CreateInstance(true);
 				SpawnerManager.CreateInstance(true);
