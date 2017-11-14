@@ -471,6 +471,9 @@ internal class DragonShaderGUI : ShaderGUI
 
                 SetKeyword(mat, kw_fresnel, true);
 
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
@@ -485,6 +488,9 @@ internal class DragonShaderGUI : ShaderGUI
                 SetKeyword(mat, kw_specular, true);
 
                 SetKeyword(mat, kw_fresnel, true);
+
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
 
                 EditorUtility.SetDirty(mat);
                 sChanged++;
