@@ -138,7 +138,9 @@ internal class DragonShaderGUI : ShaderGUI
     readonly static string kw_emissiveBlink = "EMISSIVEBLINK";
     readonly static string kw_fresnel = "FRESNEL";
     readonly static string kw_reflection = "FXLAYER_REFLECTION";
-    readonly static string kw_autoInnerLight = "SELFILLUMINATE_AUTOINNERLIGHT";    
+    readonly static string kw_autoInnerLight = "SELFILLUMINATE_AUTOINNERLIGHT";
+    readonly static string kw_blinkLights = "SELFILLUMINATE_BLINKLIGHTS";
+    readonly static string kw_fire = "FXLAYER_FIRE";
 
     private GUISkin editorSkin;
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
@@ -493,6 +495,91 @@ internal class DragonShaderGUI : ShaderGUI
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
+            // DragonBodyReptilus.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Body reptilus")
+            {
+                changeMaterial(mat, shader, 0);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+                SetKeyword(mat, kw_fresnel, true);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_blinkLights, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonDeath.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Death")
+            {
+                changeMaterial(mat, shader, 1);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonDeathChinese.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Death Chinese")
+            {
+                changeMaterial(mat, shader, 1);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_reflection, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonPetPhoenix.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/PetPhoenix")
+            {
+                changeMaterial(mat, shader, 0);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+                SetKeyword(mat, kw_fresnel, true);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_fire, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonWingsDevil.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Wings Devil (Transparent)")
+            {
+                changeMaterial(mat, shader, 1);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_autoInnerLight, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+
         }
 
         Debug.Log(sChanged + " materials changed.");
