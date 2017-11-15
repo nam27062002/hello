@@ -151,13 +151,14 @@ public class GameStoreManagerCalety : GameStoreManager
     		// string item = GameSkuToPlatformSku( _sku );
 			if ( !string.IsNullOrEmpty( _sku ) )
     		{
+                HDTrackingManager.Instance.Notify_IAPStarted();
 				StoreManager.SharedInstance.RequestProduct (_sku);
     		}
     	}
 #endif
     }
 
-	public override bool AppWasDownloadedFromStore()
+    public override bool AppWasDownloadedFromStore()
 	{
 		return StoreManager.SharedInstance.AppWasDownloadedFromStore();
 	}
