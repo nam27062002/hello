@@ -262,10 +262,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
 		{
             kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
-		    strDNAGameVersion = "PROD";
+		    strDNAGameVersion = "Full";
+            clientVersion += "_PROD";
 		}
-
-        strDNAGameVersion = clientVersion + "_" + strDNAGameVersion;
+        
 		List<string> kEventNameFilters = new List<string> ();
 		kEventNameFilters.Add ("custom");
 
@@ -317,8 +317,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             TrackingManager.TrackingConfig kTrackingConfig = new TrackingManager.TrackingConfig();
             kTrackingConfig.m_eTrackPlatform = trackPlatform;
             kTrackingConfig.m_strJSONConfigFilePath = "Tracking/TrackingEvents";
-            kTrackingConfig.m_strStartSessionEventName = "game.start";
-			kTrackingConfig.m_strEndSessionEventName = "custom.mobile.stop";
+            kTrackingConfig.m_strStartSessionEventName = "custom.etl.session.start";
+			kTrackingConfig.m_strEndSessionEventName = "custom.etl.session.end";
             kTrackingConfig.m_strMergeAccountEventName = "MERGE_ACCOUNTS";
             kTrackingConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion();
             kTrackingConfig.m_strTrackingID = trackingID;
@@ -432,16 +432,14 @@ public class HDTrackingManagerImp : HDTrackingManager
     {         
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationEnd Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
+            Log("Notify_ApplicationEnd");
         }
+        
+        Notify_SessionEnd(ESeassionEndReason.app_closed);
+        Track_EtlEndEvent();
 
-        if (Session_IsNotifyOnPauseEnabled)
-        {
-            Notify_SessionEnd(ESeassionEndReason.app_closed);
-
-            IsStartSessionNotified = false;
-            State = EState.WaitingForSessionStart;
-        }
+        IsStartSessionNotified = false;
+        State = EState.WaitingForSessionStart;        
     }
 
     public override void Notify_ApplicationPaused()
@@ -449,12 +447,14 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Notify_ApplicationPaused Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
-        }
+        }        
 
         if (Session_IsNotifyOnPauseEnabled)
         {
             Notify_SessionEnd(ESeassionEndReason.no_activity);
         }
+
+        Track_EtlEndEvent();
     }
 
     public override void Notify_ApplicationResumed()
@@ -463,6 +463,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
+
+        Track_EtlStartEvent();
 
         if (Session_IsNotifyOnPauseEnabled)
         {
@@ -956,7 +958,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Track_StartSessionEvent");
-        }        
+        }
         
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
         if (e != null)
@@ -971,6 +973,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamUserTimezone(e);
             Track_SendEvent(e);
         }
+
+        Track_EtlStartEvent();
     }    
 
     private void Track_ApplicationEndEvent(string stopCause)
@@ -1005,6 +1009,34 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamAbTesting(e);
             Track_AddParamPlayerProgress(e);         
 			Track_SendEvent(e);
+        }        
+    }
+
+    private void Track_EtlStartEvent()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_EtlStartEvent");
+        }
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.etl.session.start");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_EtlEndEvent()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_EtlEndEvent");
+        }
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.etl.session.end");
+        if (e != null)
+        {
+            Track_SendEvent(e);
         }
     }
 

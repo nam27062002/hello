@@ -199,7 +199,8 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// Egg Test Scene
 			if(GUILayout.Button(new GUIContent("00", "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene("Assets/Art/3D/Metagame/Eggs/3D_Egg_001/SC_EggTest.unity", true);
+				//HungryDragonEditorMenu.OpenScene("Assets/Art/3D/Metagame/Eggs/3D_Egg_001/SC_EggTest.unity", true);
+				HungryDragonEditorMenu.OpenScene("Assets/Tests/SC_NewEggTest.unity", true);
 			}
 
 			// Add a separator

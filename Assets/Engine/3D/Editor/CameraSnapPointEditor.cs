@@ -167,6 +167,7 @@ public class CameraSnapPointEditor : Editor {
 			EditorGUI.indentLevel++;
 			m_targetSnapPoint.darkScreenDistance = EditorGUILayout.FloatField("Distance", m_targetSnapPoint.darkScreenDistance);
 			m_targetSnapPoint.darkScreenColor = EditorGUILayout.ColorField("Color", m_targetSnapPoint.darkScreenColor);
+			m_targetSnapPoint.darkScreenRenderQueue = EditorGUILayout.IntField("Render Queue", m_targetSnapPoint.darkScreenRenderQueue);
 			EditorGUI.indentLevel--;
 		} EditorGUILayout.EndToggleGroup();
 

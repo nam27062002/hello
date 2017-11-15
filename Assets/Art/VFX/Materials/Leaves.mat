@@ -11,163 +11,91 @@ Material:
   m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
     GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
   m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
+  disabledShaderPasses: []
   m_SavedProperties:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TexEnvs:
-    - first:
-        name: _BumpMap
-      second:
+    - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
+    - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
+    - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
+    - _DetailNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
-        m_Texture: {fileID: 2800000, guid: 9d8e72c915cba5c4b873ee77a4264774, type: 3}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: a5d686aa22ecadb428db6ec2fefe49b1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MaskTex1
-      second:
+    - _MaskTex1:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MaskTex2
-      second:
+    - _MaskTex2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
+    - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
+    - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
+    - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _BlendA
-      second: 5
-    - first:
-        name: _BlendB
-      second: 10
-    - first:
-        name: _BlendC
-      second: 5
-    - first:
-        name: _BlendD
-      second: 1
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _InvFade
-      second: 1
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Overlay
-      second: 2
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _ShineLightScale
-      second: 1
-    - first:
-        name: _ShineRandomMax
-      second: 0
-    - first:
-        name: _ShineRandomScale
-      second: 0
-    - first:
-        name: _ShineScale
-      second: 0
-    - first:
-        name: _ShineShadowScale
-      second: 1
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _ZWrite
-      second: 1
+    - _BlendA: 5
+    - _BlendB: 10
+    - _BlendC: 5
+    - _BlendD: 1
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EmissivePower: 1
+    - _EnableAutomaticPanning: 0
+    - _EnableEmissivePower: 0
+    - _Glossiness: 0.5
+    - _InvFade: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Overlay: 2
+    - _Parallax: 0.02
+    - _ShineLightScale: 1
+    - _ShineRandomMax: 0
+    - _ShineRandomScale: 0
+    - _ShineScale: 0
+    - _ShineShadowScale: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZTest: 2
+    - _ZWrite: 1
     m_Colors:
-    - first:
-        name: _Center
-      second: {r: 0, g: -0.097, b: 1.536, a: 0}
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _Scaling
-      second: {r: 1, g: 1, b: 1, a: 0}
-    - first:
-        name: _ShineColor
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _TintColor
-      second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _Center: {r: 0, g: -0.097, b: 1.536, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _Scaling: {r: 1, g: 1, b: 1, a: 0}
+    - _ShineColor: {r: 1, g: 1, b: 1, a: 1}
+    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

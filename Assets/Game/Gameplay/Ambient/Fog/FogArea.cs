@@ -58,9 +58,8 @@ public class FogArea : MonoBehaviour
 		}
 	}
 
-	void OnDrawGizmosSelected()
-	{
-		if ( m_attributes.texture == null )
+	public void EditorFogSetup() {
+		if (m_attributes.texture == null)
 		{
 			if (m_fogManager == null )
 			{
@@ -75,7 +74,7 @@ public class FogArea : MonoBehaviour
 				m_attributes.CreateTexture();	
 			}
 		}
-			
+
 		m_attributes.RefreshTexture();
 
 		if (!Application.isPlaying )
@@ -84,6 +83,11 @@ public class FogArea : MonoBehaviour
 			Shader.SetGlobalFloat("_FogEnd", m_attributes.m_fogEnd);
 			Shader.SetGlobalTexture("_FogTexture", m_attributes.texture);
 		}
+	}
+
+	void OnDrawGizmosSelected()
+	{
+		EditorFogSetup();
 
 		if (m_drawInside)
 		{
