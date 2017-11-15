@@ -12,7 +12,11 @@ public class MiscUtils {
 		string version = GameSettings.internalVersion.ToString() + "("+ ServerManager.SharedInstance.GetRevisionVersion() +")";
 		string subject = SUPPORT_EMAIL_SUBJECT + " " + version;
         string mailSubject = WWW.EscapeURL(subject).Replace("+", "%20");
-        Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject); // + "&body=" + body);
+
+		string body = "\n\n\n\n" + HDTrackingManager.Instance.GetDNAProfileID();
+		body = WWW.EscapeURL(body).Replace("+", "%20");
+
+		Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject + "&body=" + body);
 	}
 
 	public static bool IsDeviceTablet()
