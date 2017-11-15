@@ -540,6 +540,8 @@ public class RewardSceneController : MonoBehaviour {
 
 		// Explosion FX
 		// Match material with the egg shell!
+		// [AOC] No longer needed!
+		/*
 		if(m_explosionFX != null) {
 			// Find egg shell material
 			Renderer[] renderers = m_eggView.GetComponentsInChildren<Renderer>();
@@ -555,6 +557,7 @@ public class RewardSceneController : MonoBehaviour {
 
 			m_explosionFX.Play();
 		}
+		*/
 
 		// Trigger SFX
 		AudioController.Play(m_eggExplosionSFX);
@@ -622,7 +625,7 @@ public class RewardSceneController : MonoBehaviour {
 		if(_egg == eggData) {
 			// Launch animation!
 			// Delay to sync with the egg anim
-			UbiBCN.CoroutineManager.DelayedCall(LaunchEggExplosionAnim, 1.75f, false);
+			UbiBCN.CoroutineManager.DelayedCall(LaunchEggExplosionAnim, UIConstants.openEggExplosionDuration, false);
 		}
 	}
 

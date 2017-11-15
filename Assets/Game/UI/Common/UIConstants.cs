@@ -162,6 +162,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	// -------------------------------------------------------------------------
 	// Open Egg animation setup
 	#region OpenEggAnimSetup
+	[SerializeField] private float m_openEggExplosionDuration = 3.6f;	// Sync with actual animation
+	public static float openEggExplosionDuration {
+		get { return instance.m_openEggExplosionDuration; }
+	}
+
 	[SerializeField] private float m_openEggSpinIntensity = 50f;
 	public static float openEggSpinIntensity {
 		get { return instance.m_openEggSpinIntensity; }

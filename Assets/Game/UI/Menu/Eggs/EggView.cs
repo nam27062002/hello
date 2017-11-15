@@ -260,7 +260,7 @@ public class EggView : MonoBehaviour {
 			if(_to == Egg.State.COLLECTED) {
 				// Increase intensity over time
 				// Super-easy to do with DOTween library!
-				DOVirtual.Float(1f, UIConstants.openEggSpinIntensity, 1.75f, 
+				DOVirtual.Float(1f, UIConstants.openEggSpinIntensity, UIConstants.openEggExplosionDuration, 
 					(float _value) => { m_animator.SetFloat("intensity", _value); }
 				)
 				.SetEase(UIConstants.openEggSpinEase)
