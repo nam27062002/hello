@@ -366,6 +366,7 @@ internal class DragonShaderGUI : ShaderGUI
         {
             case 0:
                 material.SetOverrideTag("RenderType", "Opaque");
+                material.SetOverrideTag("Queue", "Geometry");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetFloat("_ZWrite", 1.0f);
@@ -381,6 +382,7 @@ internal class DragonShaderGUI : ShaderGUI
 
             case 1:
                 material.SetOverrideTag("RenderType", "TransparentCutout");
+                material.SetOverrideTag("Queue", "AlphaTest");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 //                material.renderQueue = 3000;
@@ -410,7 +412,13 @@ internal class DragonShaderGUI : ShaderGUI
 
     }
 
-
+    public static void changeMaterial(Material mat, Shader _newShader, int blendMode)
+    {
+        int rQueue = mat.renderQueue;
+        mat.shader = _newShader;
+        mat.shaderKeywords = null;
+        setBlendMode(mat, blendMode);
+    }
 
     /// <summary>
     /// Seek for old scenary shaders and change by new scenary standard material
@@ -436,16 +444,11 @@ internal class DragonShaderGUI : ShaderGUI
             // DragonBody.shader
             if (mat.shader.name == "Hungry Dragon/Dragon/Body")
             {
-                mat.shader = shader;
-                mat.shaderKeywords = null;
-
-                setBlendMode(mat, 0);   //Opaque
+                changeMaterial(mat, shader, 0);
 
                 SetKeyword(mat, kw_normalmap, true);
                 SetKeyword(mat, kw_specular, true);
-
                 SetKeyword(mat, kw_fresnel, true);
-
                 mat.SetFloat("_EnableSpecular", 1.0f);
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
@@ -455,10 +458,7 @@ internal class DragonShaderGUI : ShaderGUI
             // UnlitShadowLightmapDarken.shader
             else if (mat.shader.name == "Hungry Dragon/Dragon/Wings (Transparent)")
             {
-                mat.shader = shader;
-                mat.shaderKeywords = null;
-
-                setBlendMode(mat, 1);   //Transparent
+                changeMaterial(mat, shader, 1);
 
                 SetKeyword(mat, kw_normalmap, true);
                 SetKeyword(mat, kw_specular, true);
