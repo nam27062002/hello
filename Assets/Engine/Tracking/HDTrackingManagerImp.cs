@@ -262,10 +262,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
 		{
             kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
-		    strDNAGameVersion = "PROD";
+		    strDNAGameVersion = "Full";
+            clientVersion += "_PROD";
 		}
-
-        strDNAGameVersion = clientVersion + "_" + strDNAGameVersion;
+        
 		List<string> kEventNameFilters = new List<string> ();
 		kEventNameFilters.Add ("custom");
 
