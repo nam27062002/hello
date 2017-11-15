@@ -96,8 +96,13 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// <param name="_oldDragon">Data of the previously selected dragon.</param>
 	/// <param name="_newDragon">Data of the new dragon.</param>
 	public void OnSelectedDragonChanged(DragonData _oldDragon, DragonData _newDragon) {
-		// Notify game
-		if(_newDragon != null) Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);
+		if(_newDragon != null) {
+			// Notify game
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);
+
+			// Play some SFX!
+			AudioController.Play("hd_arrow_left");
+		}
 	}
 
 	/// <summary>
