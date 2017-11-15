@@ -33,7 +33,8 @@ namespace Metagame {
 		/// Constructor from pet sku.
 		/// </summary>
 		/// <param name="_sku">Pet sku.</param>
-		public RewardPet(string _sku) {
+		public RewardPet(string _sku, string _source) {
+			m_source = _source;
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
 			InitFrom(def);
 		}
@@ -42,7 +43,8 @@ namespace Metagame {
 		/// Constructor from pet definition.
 		/// </summary>
 		/// <param name="_def">Pet definition.</param>
-		public RewardPet(DefinitionNode _def) {
+		public RewardPet(DefinitionNode _def, string _source) {
+			m_source = _source;
 			InitFrom(_def);
 		}
 
@@ -76,10 +78,10 @@ namespace Metagame {
 				// Have all golden eggs been collected?
 				if (EggManager.allGoldenEggsCollected) {
 					// Yes! Give coins rather than golden egg fragments (based on rarity)
-					m_replacement = Metagame.Reward.CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"), HDTrackingManager.EEconomyGroup.PET_DUPLICATED);
+					m_replacement = Metagame.Reward.CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"), HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);
 				} else {
 					// No! Give golden egg fragments based on rarity
-					m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity, HDTrackingManager.EEconomyGroup.PET_DUPLICATED);
+					m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity, HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);
 				}
 			} 
 		}
@@ -89,6 +91,8 @@ namespace Metagame {
 		/// </summary>
 		override protected void DoCollect() {
 			UsersManager.currentUser.petCollection.UnlockPet(m_sku);
+
+			HDTrackingManager.Instance.Notify_Pet(m_sku, m_source);
 		}
 	}
 }

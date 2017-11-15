@@ -182,6 +182,7 @@ public class RewardSceneController : MonoBehaviour {
 			Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
 		}
 
+		// Hide any reward
 		HideAllRewards();
 		m_rewardView = null;
 
@@ -238,7 +239,8 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	public void OpenReward() {
 		// Get most recent reward in the stack
-		m_currentReward = UsersManager.currentUser.rewardStack.Pop();
+		// Don't pop immediately, the Reward.Collect() will do it
+		m_currentReward = UsersManager.currentUser.rewardStack.Peek();
 
 		// Hide UI reward elements
 		m_rewardInfoUI.SetRewardType(string.Empty);
@@ -629,7 +631,6 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnEggExplosionAnimFinished() {
 		// Open the reward inside the egg, which has been pushed into the stack by the egg view
-		m_currentReward = null;
 		OpenReward();
 	}
 
@@ -646,9 +647,6 @@ public class RewardSceneController : MonoBehaviour {
 				return;
 			}
 		}
-
-		// Nullify current reward
-		m_currentReward = null;
 
 		// Notify external script
 		OnAnimFinished.Invoke();
@@ -676,6 +674,9 @@ public class RewardSceneController : MonoBehaviour {
 			if(_to != MenuScreens.PHOTO) {
 				// Clear the scene
 				Clear();
+
+				// Nullify reward reference
+				m_currentReward = null;
 
 				// Restore default camera snap point for the photo screen
 				InstanceManager.menuSceneController.screensController.cameraSnapPoints[(int)MenuScreens.PHOTO] = m_originalPhotoCameraSnapPoint;

@@ -101,7 +101,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private Vector3 m_impulse;
 	private float m_impulseMagnitude = 0;
     private Vector3 m_prevImpulse;
-
 	private Vector3 m_direction;
     private Vector3 m_directionWhenBoostPressed;
     private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
@@ -297,6 +296,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		get{ return m_hitBounds; }
 	}
+
+	string m_previousArea = "";
+	float m_switchAreaStart;
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -516,6 +519,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.ChangingArea:
 				{
+					HDTrackingManager.Instance.Notify_LoadingAreaEnd(m_previousArea,LevelManager.currentArea, Time.time - m_switchAreaStart);
 					// if fury not active
 					m_dragon.changingArea = false;
 					m_eatBehaviour.ResumeEating();
@@ -629,9 +633,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.ChangingArea:
 				{
+					m_previousArea = LevelManager.currentArea;
+					m_switchAreaStart = Time.time;
+					HDTrackingManager.Instance.Notify_LoadingAreaStart( m_previousArea, m_destinationArea);
 					m_changeAreaState = ChangeAreaState.Enter;
 					m_eatBehaviour.PauseEating();
-
 					// Send event to tell pets we are leaging the area
 					Messenger.Broadcast(GameEvents.PLAYER_LEAVING_AREA);
 				}break;
@@ -1309,7 +1315,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
             
         float impulseMag = impulseCapped.magnitude;
         m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime);	// drag only on x coordinate
-        m_prevImpulse = m_impulse;
         m_direction = m_impulse.normalized;
 
         RotateToDirection(m_impulse.normalized);
@@ -1993,10 +1998,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_impulse = m_impulse - Vector3.Dot( m_impulse, normal) * normal;
 		    m_impulse.z = 0;
 		    m_impulse = m_impulse.normalized * magnitude;
-		    m_rbody.velocity = m_impulse;
-			m_prevImpulse.y = m_impulse.y;
+			// m_prevImpulse.y = m_impulse.y;
+        }
+        else{
+        	if ( normal.y <= -0.85f )
+        		m_impulse.y = 0;
         }
 		m_impulse -= m_impulse * 0.05f;
+		m_rbody.velocity = m_impulse;
     }
 
     private bool IsAliveState()

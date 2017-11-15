@@ -365,6 +365,7 @@ public class MissionPill : MonoBehaviour {
 		purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
 				// Just do it
+				HDTrackingManager.Instance.Notify_Missions(m_mission, HDTrackingManager.EActionsMission.skip_pay);
 				MissionManager.RemoveMission(m_missionDifficulty);
                 PersistenceFacade.instance.Save_Request();
             }
@@ -397,6 +398,8 @@ public class MissionPill : MonoBehaviour {
 	{
 		if ( done )
 		{
+			HDTrackingManager.Instance.Notify_Missions(m_mission, HDTrackingManager.EActionsMission.skip_ad);
+
 			UsersManager.currentUser.dailyRemoveMissionAdUses++;
 			MissionManager.RemoveMission(m_missionDifficulty);
             PersistenceFacade.instance.Save_Request();
@@ -406,7 +409,9 @@ public class MissionPill : MonoBehaviour {
 	/// <summary>
 	/// Ad popup has been closed.
 	/// </summary>
-	private void OnRemoveMissionAdClosed() {
+	private void OnRemoveMissionAdClosed() {		
+		HDTrackingManager.Instance.Notify_Missions(m_mission, HDTrackingManager.EActionsMission.skip_ad);
+			
 		UsersManager.currentUser.dailyRemoveMissionAdUses++;
 		MissionManager.RemoveMission(m_missionDifficulty);
         PersistenceFacade.instance.Save_Request();
@@ -462,7 +467,7 @@ public class MissionPill : MonoBehaviour {
 		// Do it!
 		if(_success) {
 			UsersManager.currentUser.skipMissionAdUses++;
-			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD);
+			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD, true, false);
 	        PersistenceFacade.instance.Save_Request();
 		}
     }
@@ -479,7 +484,7 @@ public class MissionPill : MonoBehaviour {
         purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
 				// Just do it
-				MissionManager.SkipMission(m_missionDifficulty, -1f);
+				MissionManager.SkipMission(m_missionDifficulty, -1f, false, true);
                 PersistenceFacade.instance.Save_Request();
             }
 		);

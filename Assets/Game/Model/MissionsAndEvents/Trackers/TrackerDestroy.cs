@@ -43,14 +43,24 @@ public class TrackerDestroy : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroy);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnDestroy);
+		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroy);
+
+		// Call parent
+		base.Clear();
+	}
+
 	/// <summary>
 	/// Round a value according to specific rules defined for every tracker type.
 	/// Typically used for target values.

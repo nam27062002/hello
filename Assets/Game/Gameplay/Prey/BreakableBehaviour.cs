@@ -115,7 +115,7 @@ public class BreakableBehaviour : MonoBehaviour
 						}
 					} else {
 						// Message: You need a bigger dragon
-						Messenger.Broadcast(GameEvents.BREAK_OBJECT_BIGGER_DRAGON);
+						Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_tierWithTurboBreak, "");
 						value *= 0.5f;
 					}
 

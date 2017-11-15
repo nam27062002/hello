@@ -34,50 +34,14 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public class ServerResponse : Dictionary<string, object> {
-		/// <summary>
-		/// Nice string output.
-		/// </summary>
-		override public string ToString() {
-			// Special case if empty
-			int remaining = this.Count;
-			if(remaining == 0) return "{ }";
-
-			// Json-like formatting
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("{");
-			foreach(KeyValuePair<string, object> kvp in this) {
-				// Add entry
-				sb.Append("    \"").Append(kvp.Key).Append("\" : ");
-
-				// Special case for strings, surraund with quotation marks
-				if(kvp.Value.GetType() == typeof(string)) {
-					sb.Append("\"").Append(kvp.Value.ToString()).Append("\"");
-				} else {
-					sb.Append(kvp.Value.ToString());
-				}
-				remaining--;
-
-				// If not last one, add separator
-				if(remaining > 0) sb.Append(",");
-
-				// New line
-				sb.AppendLine();
-			}
-			sb.AppendLine("}");
-
-			return sb.ToString();
-		}
-	}
-
-	//public class ServerCallback : Action<FGOL.Server.Error, ServerResponse> {}
-	//public class ServerCallbackNoResponse : Action<FGOL.Server.Error> {}
-	public delegate void ServerCallback(FGOL.Server.Error _error, ServerResponse _response);
-	public delegate void ServerCallbackNoResponse(FGOL.Server.Error _error);
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	public Button m_targetButton = null;
+	public List<SelectableButton> m_tabButtons = new List<SelectableButton>();
+
+	private int m_selectedIdx = -1;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -86,14 +50,18 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		
+		for(int i = 0; i < m_tabButtons.Count; ++i) {
+			int screenIdx = i;	// Issue with lambda expressions and iterations, see http://answers.unity3d.com/questions/791573/46-ui-how-to-apply-onclick-handler-for-button-gene.html
+			m_tabButtons[i].button.onClick.AddListener(() => SelectTab(screenIdx));
+			m_tabButtons[i].SetSelected(false);
+		}
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		
+		SelectTab(-1);
 	}
 
 	/// <summary>
@@ -114,14 +82,7 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		DoCallback(OnServerResponse);
-	}
-
-	private void DoCallback(ServerCallback _callback) {
-		ServerResponse response = new ServerResponse();
-		response["param0"] = "response param 0";
-		response["param1"] = 4;
-		_callback(new FGOL.Server.FileNotFoundError(), response);
+		
 	}
 
 	/// <summary>
@@ -131,12 +92,35 @@ public class AOCQuickTest : MonoBehaviour {
 
 	}
 
+	public void SelectTab(int _idx) {
+		// Unselect button for the current screen
+		if(m_selectedIdx >= 0) {
+			// Button is disabled if tab is not enabled
+			m_tabButtons[m_selectedIdx].SetSelected(false);
+		}
+			
+		if(_idx >= 0 && _idx < m_tabButtons.Count) {
+			m_selectedIdx = _idx;
+		} else {
+			m_selectedIdx = -1;
+		}
+
+		// Select button for newly selected screen
+		if(m_selectedIdx >= 0) {
+			m_tabButtons[m_selectedIdx].SetSelected(true);
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	private void OnServerResponse(FGOL.Server.Error _error, ServerResponse _response) {
-		Debug.Log("<color=cyan>Received server response!</color>\n" +
-			"<color=red>Error:\n" + _error.message + "</color>\n" +
-			"<color=yellow>Response:\n" + _response.ToString() + "</color>");
+	public void ToggleButton(bool _toggle) {
+		m_targetButton.interactable = _toggle;
+
+		UbiBCN.CoroutineManager.DelayedCall(() => { m_targetButton.gameObject.SetActive(_toggle); }, 1);
+	}
+
+	public void OnButtonClick() {
+		DebugUtils.Log("CLICK!", m_targetButton);
 	}
 }

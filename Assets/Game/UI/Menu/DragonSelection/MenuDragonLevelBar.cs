@@ -65,6 +65,10 @@ public class MenuDragonLevelBar : DragonXPBar {
 	/// Info button has been pressed.
 	/// </summary>
 	public void OnInfoButton() {
+		// Tracking
+		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupDragonInfo.PATH);
+		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
+
 		// Open the dragon info popup and initialize it with the current dragon's data
 		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
 		popup.Init(m_dragonData);

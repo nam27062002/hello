@@ -73,6 +73,9 @@ public class Startup {
 				}
 			}
 
+			// Assets lut
+			referencesObject.m_assetsLut = (TextAsset)Resources.Load("AssetsLUT/assetsLUT");
+
 			// Save value
 			EditorUtility.SetDirty( referencesObject );
 		}

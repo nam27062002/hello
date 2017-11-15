@@ -38,6 +38,12 @@ public class GameSceneControllerBase : SceneController {
 		get { return m_mapUnlocked; }
 	}
 
+	// Handled by heirs
+	protected bool m_paused = false;
+	public bool paused {
+		get { return m_paused; }
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

@@ -421,11 +421,11 @@ public class ParticleScaler : MonoBehaviour
 			case ScaleOrigin.DRAGON_SIZE:
 			{
 				if (InstanceManager.player != null)
-					Scale(InstanceManager.player.transform.localScale.x);
+					Scale(InstanceManager.player.transform.lossyScale.x);
 			}break;
 			case ScaleOrigin.TRANSFORM_SCALE:
 			{
-				Scale( m_transform.localScale.x );
+				Scale( m_transform.lossyScale.x );
 			}break;
 			case ScaleOrigin.ATTRIBUTE_SCALE:
 			{

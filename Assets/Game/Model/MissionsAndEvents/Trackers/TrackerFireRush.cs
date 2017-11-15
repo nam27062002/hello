@@ -31,13 +31,22 @@ public class TrackerFireRush : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerFireRush() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
+		
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Finalizer method. Leave the tracker ready for garbage collection.
+	/// </summary>
+	override public void Clear() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
+
+		// Call parent
+		base.Clear();
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

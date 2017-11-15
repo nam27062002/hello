@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: VFX_Impact
+  m_Shader: {fileID: 4800000, guid: f8c292fcd31822d479cb17bf9feb1c58, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ColorRamp:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 2800000, guid: e4afbdd8f46f9e041b16646bbfeff240, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 12c9df0e9fd52e849a5f44a0054d175e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BlendMode: 10
+    - _ColorMultiplier: 1
+    - _EmissionSaturation: 1
+    - _EnableColorRamp: 0
+    - _EnableColorVertex: 0
+    - _EnableDissolve: 0
+    - _OpacitySaturation: 2
+    - _ZTest: 2
+    m_Colors:
+    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _DissolveStep: {r: 0.2, g: 1, b: 0, a: 0}
+    - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 public class HUDFading : MonoBehaviour {
 
@@ -35,6 +36,11 @@ public class HUDFading : MonoBehaviour {
 		m_blackImage =  GetComponent<Image>();
 		m_blackImage.enabled = false;
 		m_text.SetActive(false);
+		TextMeshProUGUI label = m_text.GetComponent<TextMeshProUGUI>();
+		if ( label != null )
+		{
+			label.fontMaterial.renderQueue = 4000;
+		}
 		m_color.a = 0;
 		enabled = false;
 

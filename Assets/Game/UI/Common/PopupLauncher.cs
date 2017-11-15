@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.Events;
+using System.IO;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -21,6 +22,13 @@ public class PopupLauncher : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	[System.Serializable] public class PopupEvent : UnityEvent<PopupController> { };
+
+	protected enum TrackingAction {
+		NONE,
+		INFO_POPUP_AUTO,
+		INFO_POPUP_IBUTTON,
+		INFO_POPUP_SETTINGS
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -29,6 +37,8 @@ public class PopupLauncher : MonoBehaviour {
 	[FileList("Resources/UI/Popups", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] protected string m_popupPath = "";
 	[SerializeField] protected float m_delay = 0f;
+	[Space]
+	[SerializeField] protected TrackingAction m_trackingAction = TrackingAction.NONE;
 
 	// Internal
 	protected PopupController m_popup = null;
@@ -112,7 +122,48 @@ public class PopupLauncher : MonoBehaviour {
 		OnPopupInit.Invoke(m_popup);
 
 		// Open (apply delay)
-		UbiBCN.CoroutineManager.DelayedCall(() => m_popup.Open(), m_delay);
+		if(m_delay > 0f) {
+			UbiBCN.CoroutineManager.DelayedCall(() => DoOpen(), m_delay);
+		} else {
+			DoOpen();
+		}
+	}
+
+	/// <summary>
+	/// Executes the popup open method and tracking event.
+	/// </summary>
+	private void DoOpen() {
+		// Send tracking event (if any)
+		DoTracking();
+
+		// Open popup
+		m_popup.Open();
+	}
+
+	/// <summary>
+	/// Sends the defined tracking action.
+	/// </summary>
+	private void DoTracking() {
+		// Ignore if none
+		if(m_trackingAction == TrackingAction.NONE) return;
+
+		// Aux vars
+		string popupName = Path.GetFileNameWithoutExtension(m_popupPath);
+
+		// Which event to send?
+		switch(m_trackingAction) {
+			case TrackingAction.INFO_POPUP_AUTO: {
+				HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+			} break;
+
+			case TrackingAction.INFO_POPUP_IBUTTON: {
+				HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
+			} break;
+
+			case TrackingAction.INFO_POPUP_SETTINGS: {
+				HDTrackingManager.Instance.Notify_InfoPopup(popupName, "settings");
+			} break;
+		}
 	}
 
 	//------------------------------------------------------------------------//

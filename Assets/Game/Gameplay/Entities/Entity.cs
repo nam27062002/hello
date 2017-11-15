@@ -49,14 +49,19 @@ public class Entity : IEntity {
 
 	private bool m_isEdibleByZ;
 	private bool m_isEdible;
+
 	private DragonTier m_edibleFromTier = 0;
-	public DragonTier edibleFromTier { get { return m_edibleFromTier; } set { m_edibleFromTier = value; } }
+	public override DragonTier edibleFromTier { get { return m_edibleFromTier; } set { m_edibleFromTier = value; } }
 
 	private bool m_canBeGrabbed;
+	public bool canBeGrabbed { get{ return m_canBeGrabbed; } }
 	private DragonTier m_grabFromTier = 0;
+	public DragonTier grabFromTier { get { return m_grabFromTier; } }
 
 	private bool m_canBeLatchedOn;
+	public bool canBeLatchedOn { get{ return m_canBeLatchedOn; } }
 	private DragonTier m_latchFromTier = 0;
+	public DragonTier latchFromTier { get { return m_latchFromTier; } }
 
 	private FeedbackData m_feedbackData = new FeedbackData();
 	public FeedbackData feedbackData { get { return m_feedbackData; }}
@@ -249,6 +254,10 @@ public class Entity : IEntity {
 
 	public bool CanBeLatchedOn( DragonTier _tier){
 		return allowEdible && m_isEdibleByZ && m_canBeLatchedOn && m_latchFromTier <= _tier;
+	}
+
+	public bool hasToShowTierNeeded(DragonTier _tier) {
+		return m_isEdible && !((m_edibleFromTier <= _tier) || (m_canBeGrabbed && m_grabFromTier <= _tier) || (m_canBeLatchedOn && m_latchFromTier <= _tier));
 	}
 
 	override public bool CanBeSmashed() {

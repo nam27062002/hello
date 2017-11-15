@@ -48,8 +48,19 @@ public class Chest {
 			if(def != null) {
 				amount = _def.GetAsInt("amount");
 				switch(_def.Get("type")) {
-					case "coins": 	type = RewardType.SC;	break;
-					case "pc":		type = RewardType.PC;	break;
+					case "coins": {
+						type = RewardType.SC;
+
+						// [AOC] Scale the SC reward based on maxed dragon owned using same scaling factor as mission rewards
+						DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
+						if(rewardScaleFactorDef != null) {
+							amount = Mathf.RoundToInt(((float)amount) * rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier"));
+						}
+					} break;
+
+					case "pc": {
+						type = RewardType.PC;
+					} break;
 				}
 			}
 		}

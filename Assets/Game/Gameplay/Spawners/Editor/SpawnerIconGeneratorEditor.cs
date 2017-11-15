@@ -238,12 +238,25 @@ public class SpawnerIconGeneratorEditor : Editor {
 		string prefabsPath =  resourcesPath + IEntity.ENTITY_PREFABS_PATH;
 
 		string[] files = Directory.GetFiles(prefabsPath, "*.prefab", SearchOption.AllDirectories);
-		foreach (string f in files) 
-		{
-			string name = f.Substring(resourcesPath.Length);
+		for(int i = 0; i < files.Length; ++i) {
+			string name = files[i].Substring(resourcesPath.Length);
 			name = name.Substring(0, name.Length - (".prefab").Length);
+
+			// Show progress bar
+			if(EditorUtility.DisplayCancelableProgressBar(
+				"Generating Spawner Icons...",
+				i + "/" + files.Length + ": " + name,
+				(float)i/(float)files.Length
+			)) {
+				// Cancel pressed, break loop!
+				break;
+			}
+
 			GameObject go = Resources.Load<GameObject>( name );
 			GenerateIcon(go, _backgroundColor, name + ".png");
 		}
+
+		// Clear progress bar
+		EditorUtility.ClearProgressBar();
 	}
 }

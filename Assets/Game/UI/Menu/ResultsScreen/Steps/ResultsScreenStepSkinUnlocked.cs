@@ -183,7 +183,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 					UsersManager.currentUser.wardrobe.SetSkinState(_flow.itemDef.sku, Wardrobe.SkinState.OWNED);
 
 					// Immediately equip it!
-					UsersManager.currentUser.EquipDisguise(DragonManager.currentDragon.def.sku, def.sku);
+					UsersManager.currentUser.EquipDisguise(DragonManager.currentDragon.def.sku, def.sku, true);
 				}
 
 				// Throw out some fireworks!
@@ -195,6 +195,9 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 				// Same with tap to continue
 				m_tapToContinue.ForceHide();
 
+				// Message to track skin
+				Messenger.Broadcast<string>(GameEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
+
 				// Continue with the animation after some delay
 				UbiBCN.CoroutineManager.DelayedCall(() => {
 					m_sequence.Play();
@@ -205,6 +208,16 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			purchaseFlow.Begin(pricePC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.ACQUIRE_DISGUISE, def);
 		} else {
 			purchaseFlow.Begin(priceSC, UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.ACQUIRE_DISGUISE, def);
+		}
+	}
+
+	// Callback to rescale particles
+	public void PreviewScaledFinished()
+	{
+		ParticleScaler[] scalers = m_preview.GetComponentsInChildren<ParticleScaler>();
+		for( int i = 0;i<scalers.Length; ++i )
+		{
+			scalers[i].DoScale();
 		}
 	}
 }

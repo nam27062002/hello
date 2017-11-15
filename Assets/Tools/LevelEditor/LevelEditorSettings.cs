@@ -70,6 +70,7 @@ namespace LevelEditor {
 		[SkuList(DefinitionsCategory.DRAGONS)]
 		public string testDragon = "";	// Dragon with which to test the level
 		public bool useIntro = true;
+		public bool spawnAtCameraPos = false;
 		public string levelSku = "";
 
 		[Separator("Ground Settings", 20)]

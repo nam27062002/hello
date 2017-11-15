@@ -177,7 +177,7 @@ namespace AI {
 			return Quaternion.identity;
 		}
 
-		public virtual bool Burn(Transform _transform) {
+		public virtual bool Burn(Transform _transform, bool instant = false) {
 			
 			return false;
 		}

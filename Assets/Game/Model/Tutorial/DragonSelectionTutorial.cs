@@ -131,7 +131,14 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_scroller.FocusDragon(UsersManager.currentUser.currentDragon, true);
 
 					// Show tier info popup
-					UbiBCN.CoroutineManager.DelayedCall(() => PopupManager.OpenPopupInstant(PopupInfoTiers.PATH), 0.25f);
+					UbiBCN.CoroutineManager.DelayedCall(() => {
+						// Tracking
+						string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoTiers.PATH);
+						HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
+						// Open popup
+						PopupManager.OpenPopupInstant(PopupInfoTiers.PATH);
+					}, 0.25f);
 
 					// Update tutorial flag and save persistence
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);

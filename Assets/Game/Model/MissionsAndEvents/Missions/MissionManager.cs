@@ -186,12 +186,12 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
 	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
-	public static void SkipMission(Mission.Difficulty _difficulty, float _seconds) {
+	public static void SkipMission(Mission.Difficulty _difficulty, float _seconds, bool _useAd, bool _useHC) {
 		// Nothing to do if not initialized
 		if(instance.m_user == null) return;
 
 		// UserMissions will take care of it
-		instance.m_user.userMissions.SkipMission(_difficulty, _seconds);
+		instance.m_user.userMissions.SkipMission(_difficulty, _seconds, _useAd, _useHC);
 
 		// Instantly check if mission has changed state
 		bool gaming = InstanceManager.gameSceneController != null;

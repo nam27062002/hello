@@ -28,7 +28,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private AudioObject m_starvingSoundAO;
 
 	public string m_hitSound;
-
+	public string m_poisonHitSound;
 
 	public string m_enterWaterSound;
 	public string m_enterWaterWithSplashSound;
@@ -65,6 +65,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 	[Range(0f, 100.0f)]
 	public float m_gruntToEatProbability = 5;
 
+	private DamageType m_lastDamageType = DamageType.NONE;
+	public DamageType lastDamageType{get{return m_lastDamageType;} set{m_lastDamageType = value;}}
+
+	private int m_damageAnimState;
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
@@ -80,6 +84,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 			behaviours[i].onStateEnter += onStateEnter;
 			behaviours[i].onStateExit += onStateExit;
 		}
+
+		m_damageAnimState = Animator.StringToHash("BaseLayer.Damage");
 	}
 
 	void OnDisable() {
@@ -118,7 +124,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private void OnLevelUp(DragonData _data) 
 	{
 		PlaySound(m_levelUpSound);
-		m_animator.SetTrigger("LevelUp");
+		// m_animator.SetTrigger("LevelUp");
 	}
 
 	private void OnHealthModifierChanged(DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier)
@@ -129,7 +135,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			if ( starving ){
 				m_starvingSoundAO = AudioController.Play(m_starvingSound, transform);
 			}else{
-				if ( m_starvingSoundAO.IsPlaying() )
+				if (m_starvingSoundAO != null && m_starvingSoundAO.IsPlaying() )
 				{
 					m_starvingSoundAO.Stop();
 					m_starvingSoundAO = null;
@@ -168,6 +174,44 @@ public class DragonAnimationEvents : MonoBehaviour {
 		{
 			m_wingsWindSoundAO.Stop();
 			m_wingsWindSoundAO = null;
+		}
+	}
+
+	public void IdleStart()
+	{
+		if (!string.IsNullOrEmpty(m_wingsIdleSound))
+		{
+			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
+			if ( m_wingsIdleSoundAO != null )
+				m_wingsIdleSoundAO.completelyPlayedDelegate = OnWigsIdleCompleted;
+		}
+	}
+
+	public void IdleEnd()
+	{
+		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
+		{
+			m_wingsIdleSoundAO.Stop();
+			m_wingsFlyingSoundAO = null;
+		}
+	}
+
+	public void FlyStart()
+	{
+		if (!string.IsNullOrEmpty(m_wingsFlyingSound))
+		{
+			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
+			if ( m_wingsFlyingSoundAO != null )
+				m_wingsFlyingSoundAO.completelyPlayedDelegate = OnWingsFlyingSoundCompleted;
+		}
+	}
+
+	public void FlyEnd()
+	{
+		if (m_wingsFlyingSoundAO != null && m_wingsFlyingSoundAO.IsPlaying())
+		{
+			m_wingsFlyingSoundAO.Stop();
+			m_wingsFlyingSoundAO = null;
 		}
 	}
 
@@ -247,9 +291,29 @@ public class DragonAnimationEvents : MonoBehaviour {
 			onEatEndEvent();
 	}
 
+	public void PlayHitAnimation( DamageType _type )
+	{
+		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+		if (stateInfo.fullPathHash != m_damageAnimState) {
+			m_animator.SetTrigger("damage");// receive damage?
+			m_lastDamageType = _type;
+		}
+	}
+
 	public void HitEvent()
 	{
-		PlaySound( m_hitSound );
+		switch(m_lastDamageType)
+		{
+			case DamageType.POISON:
+			{
+				PlaySound( m_poisonHitSound );
+			}break;
+			default:{
+				PlaySound( m_hitSound );
+			}break;
+		}
+
+
 	}
 
 	public void HiccupEvent()

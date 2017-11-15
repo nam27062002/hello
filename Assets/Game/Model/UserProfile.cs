@@ -656,7 +656,12 @@ public class UserProfile : UserPersistenceSystem
         m_saveTimestamp = DateTime.UtcNow;
 
         JSONNode json = ToJson();
-        m_persistenceData.Merge(json.ToString(), false);
+		m_persistenceData.Merge(json.ToString(), false);
+
+		#if UNITY_EDITOR
+		JsonFormatter fmt = new JsonFormatter();
+		Debug.Log("<color=cyan>SAVING USER PROFILE:</color> " + fmt.PrettyPrint(json.ToString()));
+		#endif
     }
 
 	//------------------------------------------------------------------------//
@@ -815,10 +820,16 @@ public class UserProfile : UserPersistenceSystem
 		if(_data.ContainsKey("chests")) {
 			LoadChestsData(_data["chests"] as SimpleJSON.JSONClass);
 		} else {
+			// Defaults
 			for(int i = 0; i < ChestManager.NUM_DAILY_CHESTS; i++) {
 				dailyChests[i] = new Chest();
 			}
-			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+			//m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// That will reset to 24hrs from now
+			// Reset timestamp to 00:00 of local time (but using server timezone!)
+			DateTime midnight = DateTime.Today.AddDays(1);
+			TimeSpan toMidnight = midnight - DateTime.Now;	// Local
+			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 		}
 
 		// Daily mission Ads
@@ -873,7 +884,21 @@ public class UserProfile : UserPersistenceSystem
 				}
 				#endif
 			}
-		}        
+		}
+
+		// Pending rewards
+		key = "rewards";
+		m_rewards.Clear();
+		if(_data.ContainsKey(key)) {
+			// Parse json array
+			// Reverse iterate to respect the stack order
+			SimpleJSON.JSONArray rewardsData = _data[key].AsArray;
+			for(int i = rewardsData.Count - 1; i >= 0 ; --i) {
+				// Create new reward with the given data
+				Metagame.Reward r = Metagame.Reward.CreateFromJson(rewardsData[i]);
+				m_rewards.Push(r);
+			}
+		}
 	}
 
 	/// <summary>
@@ -1027,6 +1052,16 @@ public class UserProfile : UserPersistenceSystem
 		}
 		data.Add("globalEvents", eventsData);
 
+		// Pending rewards
+		SimpleJSON.JSONArray rewardsData = new SimpleJSON.JSONArray();
+		if(m_rewards.Count > 0) {
+			// The foreach loop will grab the elements at the top of the stack first
+			foreach(Metagame.Reward r in m_rewards) {
+				rewardsData.Add(r.ToJson());
+			}
+		}
+		data.Add("rewards", rewardsData);
+
 		// Return it
 		return data;
 	}
@@ -1115,7 +1150,8 @@ public class UserProfile : UserPersistenceSystem
 	/// <returns><c>true</c> if the disguise was different from the one previously equiped by the dragon, <c>false</c> otherwise.</returns>
 	/// <param name="_dragonSku">Dragon sku.</param>
 	/// <param name="_disguiseSku">Disguise sku.</param>
-	public bool EquipDisguise( string _dragonSku, string _disguiseSku)
+	/// <param name="_persistent">Whether the equipped disguised is to be persisted or is just for preview.</param>
+	public bool EquipDisguise(string _dragonSku, string _disguiseSku, bool _persistent)
 	{
 		bool ret = false;
 		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
@@ -1124,6 +1160,12 @@ public class UserProfile : UserPersistenceSystem
 			{
 				ret = true;
 				m_dragonsBySku[_dragonSku].diguise = _disguiseSku;
+			}
+
+			// Persist?
+			if(_persistent) {
+				m_dragonsBySku[_dragonSku].persistentDisguise = _disguiseSku;
+				PersistenceFacade.instance.Save_Request();
 			}
 		}
 		return ret;
@@ -1404,5 +1446,27 @@ public class UserProfile : UserPersistenceSystem
 
         return returnValue;
     }
+
+	//------------------------------------------------------------------------//
+	// REWARDS MANAGEMENT													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Push a reward to the stack.
+	/// </summary>
+	/// <param name="_reward">Reward to be pushed.</param>
+	public void PushReward(Metagame.Reward _reward) {
+		rewardStack.Push(_reward);
+		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
+	}
+
+	/// <summary>
+	/// Pop a reward from the stack.
+	/// </summary>
+	/// <returns>The popped reward.</returns>
+	public Metagame.Reward PopReward() {
+		Metagame.Reward r = rewardStack.Pop();
+		Debug.Log("<color=red>POP " + r.GetType().Name + "</color>");
+		return r;
+	}
 }
 

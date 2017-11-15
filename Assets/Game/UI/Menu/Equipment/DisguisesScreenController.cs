@@ -216,6 +216,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Init pill
 				DefinitionNode def = defList[i];
 				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku), spr);
+				m_pills[i].name = def.sku;	// [AOC] For debug purposes
 
 				// Is it the currently equipped disguise?
 				if(def.sku == currentDisguise) {
@@ -249,7 +250,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Restore equiped disguise on target dragon
 		bool newEquip = false;
 		if(m_equippedPill != null) {
-			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_equippedPill.def.sku);
+			newEquip = UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_equippedPill.def.sku, true);
 		}
 
 		// Broadcast message
@@ -263,6 +264,29 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Hide header
 		m_title.GetComponent<ShowHideAnimator>().Hide();
+	}
+
+	/// <summary>
+	/// Performs all the logic to mark selected pill as equipped.
+	/// </summary>
+	/// <returns>Whether the pill cpuld be equipped or not (valid selected pill? owned skin?)</returns>
+	private bool EquipSelectedPill() {
+		// Is current pill valid and equippable?
+		if(m_selectedPill == null) return false;
+		if(!m_selectedPill.owned) return false;
+
+		// Yeah! Equip
+		// Refresh previous equipped pill
+		if(m_equippedPill != null) {
+			m_equippedPill.Equip(false);
+		} 
+
+		// Refresh and store new equipped pill
+		m_selectedPill.Equip(true);
+		m_equippedPill = m_selectedPill;
+
+		// Everything ok!
+		return true;
 	}
 
 	//------------------------------------------------------------------------//
@@ -400,10 +424,11 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_selectedPill = _pill;
 
 		// Equip button or auto-equip? Check settings
+		bool persist = false;
 		if(Prefs.GetBoolPlayer(DebugSettings.MENU_DISGUISES_AUTO_EQUIP, true)) {
 			// If selected disguise is owned and not already equipped, equip it
 			if(_pill.owned && _pill != m_equippedPill) {
-				OnEquipButton();
+				persist = EquipSelectedPill();
 			}
 		} else {
 			// Show equip button?
@@ -417,16 +442,16 @@ public class DisguisesScreenController : MonoBehaviour {
 			}
 		}
 
-		// Apply selected disguise to dragon preview
-		if(UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_selectedPill.def.sku)) {
-			// Notify game
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
-		}
-
 		// Remove "new" flag from the skin
 		if(_pill.state == Wardrobe.SkinState.NEW) {
 			m_wardrobe.SetSkinState(_pill.def.sku, Wardrobe.SkinState.AVAILABLE);
 			_pill.SetState(Wardrobe.SkinState.AVAILABLE);
+		}
+
+		// Apply selected disguise to dragon preview
+		if(UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_selectedPill.def.sku, persist)) {
+			// Notify game
+			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
 	}
 
@@ -457,18 +482,21 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Change selected pill state
 				m_selectedPill.SetState(Wardrobe.SkinState.OWNED);
 
-                // Save!
-                PersistenceFacade.instance.Save_Request(true);
-
                 // Show some nice FX
                 // Let's re-select the skin for now
                 DisguisePill pill = m_selectedPill;
 				m_selectedPill = null;
 				OnPillClicked(pill);
 
-				// Immediately equip it!
-				OnEquipButton();
+				// Immediately equip it if auto_equip is not enabled!
+				if(!Prefs.GetBoolPlayer(DebugSettings.MENU_DISGUISES_AUTO_EQUIP, true)) {
+					OnEquipButton();
+				}
 
+				// Save!
+				PersistenceFacade.instance.Save_Request(true);
+
+				// Notify game
 				Messenger.Broadcast<string>(GameEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
 
 				// Throw out some fireworks!
@@ -486,19 +514,10 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Equip button has been pressed.
 	/// </summary>
 	public void OnEquipButton() {
-		// Is current pill valid and equippable?
-		if(m_selectedPill == null) return;
-		if(!m_selectedPill.owned) return;
+		// Equip selected pill!
+		if(!EquipSelectedPill()) return;
 
-		// Yeah! Equip
-		// Refresh previous equipped pill
-		if(m_equippedPill != null) {
-			m_equippedPill.Equip(false);
-		} 
-
-		// Refresh and store new equipped pill
-		m_selectedPill.Equip(true);
-		m_equippedPill = m_selectedPill;
+		// Save persistence
         PersistenceFacade.instance.Save_Request();
 
         // Hide button!

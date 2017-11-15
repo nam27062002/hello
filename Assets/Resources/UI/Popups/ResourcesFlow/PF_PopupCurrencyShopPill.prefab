@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 114372602918401918}
   - component: {fileID: 114738799625964316}
   - component: {fileID: 114964590517344146}
+  - component: {fileID: 114406053261017946}
   m_Layer: 5
   m_Name: ButtonPC
   m_TagString: Untagged
@@ -221,6 +222,7 @@ GameObject:
   - component: {fileID: 114486477192320008}
   - component: {fileID: 114232277967766954}
   - component: {fileID: 114891133440333372}
+  - component: {fileID: 114485478773154286}
   m_Layer: 5
   m_Name: ButtonDollars
   m_TagString: Untagged
@@ -957,6 +959,18 @@ MonoBehaviour:
   m_animator: {fileID: 114258678034028210}
   m_amountText: {fileID: 114308411412651696}
   m_amountTextUnity: {fileID: 0}
+--- !u!114 &114406053261017946
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1059522344560734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114420239218333380
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1157,6 +1171,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 114485478773154286}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114484055657904102
@@ -1186,6 +1211,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114485478773154286
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1389084498685060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114486477192320008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1447,7 +1484,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: mejor oferta
+  m_text: MEJOR OFERTA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: ac7c0658756714744bb4af943129b7ca, type: 2}
@@ -1456,8 +1493,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4285321983
-  m_fontColor: {r: 1, g: 0.82555145, b: 0.42647058, a: 1}
+    rgba: 4286703103
+  m_fontColor: {r: 1, g: 0.8992313, b: 0.50735295, a: 1}
   m_enableVertexGradient: 0
   m_fontColorGradient:
     topLeft: {r: 1, g: 0.82555145, b: 0.42647058, a: 1}
@@ -1474,7 +1511,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 54.5
+  m_fontSize: 50
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1519,7 +1556,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 1
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -1576,10 +1613,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.0021367073
-      value: 0.014828205
-      inSlope: 5.988688
-      outSlope: 5.988688
+      time: 0.0022863802
+      value: -1.3077571
+      inSlope: 8.408505
+      outSlope: 8.408505
       tangentMode: 0
     - serializedVersion: 2
       time: 0.5021367
@@ -1588,16 +1625,18 @@ MonoBehaviour:
       outSlope: 0.000008808936
       tangentMode: 0
     - serializedVersion: 2
-      time: 1.0021367
-      value: 0.014828205
-      inSlope: -5.589126
-      outSlope: -5.589126
+      time: 0.98208666
+      value: -1.2385592
+      inSlope: -8.24517
+      outSlope: -8.24517
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_curveScale: 0.3
-  m_verticalPivot: 0.5
+  m_curveScale: 0.2
+  m_verticalPivot: 0.221
+  m_useCustomReferenceSize: 0
+  m_customReferenceSize: 200
 --- !u!114 &114774112584543276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1705,6 +1744,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114406053261017946}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -2066,7 +2116,7 @@ RectTransform:
   m_GameObject: {fileID: 1400235556076558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.99840003, y: 0.99840003, z: 0.9984001}
+  m_LocalScale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
   m_Children:
   - {fileID: 224343602963046414}
   - {fileID: 224444933220111802}
@@ -2394,7 +2444,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -4.999962, y: 0}
+  m_AnchoredPosition: {x: -4.999962, y: 12}
   m_SizeDelta: {x: -310.0001, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224937575028047742

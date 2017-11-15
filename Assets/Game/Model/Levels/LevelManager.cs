@@ -184,6 +184,22 @@ public class LevelManager : Singleton<LevelManager> {
 		return loadingTasks;
 	}   
 
+	public static void DisableCurrentArea()
+	{
+		
+		for( int i = 0;i< m_currentAreaScenes.Count; i++ )
+		{
+			Scene s = SceneManager.GetSceneByName(m_currentAreaScenes[i]);
+			if (s != null)
+			{
+				GameObject[] gos = s.GetRootGameObjects();
+				for( int j = 0; j<gos.Length; ++j )
+					gos[j].SetActive(false);
+			}
+		}
+
+	}
+
     public static List<AsyncOperation> UnloadCurrentArea()
 	{
 		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();

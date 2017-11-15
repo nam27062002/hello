@@ -38,8 +38,14 @@ public class CurvedText : MonoBehaviour {
 	[Range(0f, 1f)]
 	[SerializeField] private float m_verticalPivot = 0.5f;
 
+	[SerializeField] private bool m_useCustomReferenceSize = false;
+	[SerializeField] private float m_customReferenceSize = 200f;
+
 	// Internal refs
 	private TMP_Text m_text = null;
+	public TMP_Text text {
+		get { return m_text; }
+	}
 
 	// Aux vars
 	private bool m_dirty = true;
@@ -122,7 +128,7 @@ public class CurvedText : MonoBehaviour {
 	/// <summary>
 	/// Apply the curve to the text.
 	/// </summary>
-	private void Apply() {
+	public void Apply() {
 		// Generate the default mesh to modify it
 		m_text.ForceMeshUpdate();	// [AOC] Do it before resetting the dirty flag! Otherwise the TEXT_CHANGED event will be instantly called resulting in an infinite refresh -_-
 
@@ -131,10 +137,17 @@ public class CurvedText : MonoBehaviour {
 
 		// Gather some aux data
 		int characterCount = textInfo.characterCount;
-		if (characterCount == 0) return;
+		if(characterCount == 0) return;
 
 		// Do some aux vars shared between all characters
 		Range boundsX = new Range(m_text.bounds.min.x, m_text.bounds.max.x);
+
+		// Override bounds?
+		if(m_useCustomReferenceSize) {
+			float center = boundsX.center;
+			boundsX.min = center - m_customReferenceSize/2f;
+			boundsX.max = center + m_customReferenceSize/2f;
+		}
 
 		// In order to have the same curvature regardless of the number of characters, compute correction factor
 		float correctedCurveScale = m_curveScale * 0.1f * boundsX.distance;	// [AOC] In order to have easier tunable numbers in the inspector, curve scale is multiplier by 10
@@ -210,6 +223,11 @@ public class CurvedText : MonoBehaviour {
 
 		// Upload the mesh with the revised information
 		m_text.UpdateVertexData();
+
+		// Mark the object as dirty in the editor so it gets repainted
+		#if UNITY_EDITOR
+			UnityEditor.EditorUtility.SetDirty(m_text);
+		#endif
 
 		// No longer dirty!
 		m_dirty = false;

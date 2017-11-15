@@ -59,11 +59,11 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public GameStoreManagerCalety () 
 	{
+		m_storeListener = new CaletyGameStoreListener();
 	}
 
 	public override void Initialize()
 	{
-		m_storeListener = new CaletyGameStoreListener();
 		StoreManager.SharedInstance.AddListener (m_storeListener);
 		CacheStoreSkus();	    
 		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);
@@ -151,11 +151,17 @@ public class GameStoreManagerCalety : GameStoreManager
     		// string item = GameSkuToPlatformSku( _sku );
 			if ( !string.IsNullOrEmpty( _sku ) )
     		{
+                HDTrackingManager.Instance.Notify_IAPStarted();
 				StoreManager.SharedInstance.RequestProduct (_sku);
     		}
     	}
 #endif
     }
+
+    public override bool AppWasDownloadedFromStore()
+	{
+		return StoreManager.SharedInstance.AppWasDownloadedFromStore();
+	}
 
     IEnumerator SimulatePurchase( string _sku)
     {

@@ -9,7 +9,8 @@ public class MiscUtils {
 
 	public static void SendFeedbackEmail(){
 		// Open feedback link/email
-		string subject = SUPPORT_EMAIL_SUBJECT;
+		string version = GameSettings.internalVersion.ToString() + "("+ ServerManager.SharedInstance.GetRevisionVersion() +")";
+		string subject = SUPPORT_EMAIL_SUBJECT + " " + version;
         string mailSubject = WWW.EscapeURL(subject).Replace("+", "%20");
         Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject); // + "&body=" + body);
 	}

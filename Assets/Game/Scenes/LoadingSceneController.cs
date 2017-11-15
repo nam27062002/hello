@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using TMPro;
+using System.Text.RegularExpressions;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -32,6 +33,7 @@ public class LoadingSceneController : SceneController {
     	public bool m_permissionsFinished = false;
         private PopupController m_confirmPopup = null;
 		private CaletyConstants.PopupConfig m_popupConfig;
+		private bool m_actionsAllowed = true;
 
         public override void onAndroidPermissionPopupNeeded (CaletyConstants.PopupConfig kPopupConfig)
         {
@@ -66,6 +68,9 @@ public class LoadingSceneController : SceneController {
 	            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
             }
 
+			// Allow actions
+			m_actionsAllowed = true;
+
             // The user is not allowed to close this popup
             config.IsButtonCloseVisible = false;
 			m_confirmPopup = PopupManager.PopupMessage_Open(config);			
@@ -73,16 +78,40 @@ public class LoadingSceneController : SceneController {
 
         void onConfirm()
         {
-			AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[0];
-			button.m_pOnResponse();
-			m_confirmPopup = null;
+			// Ignore if actions are not allowed
+			if(!m_actionsAllowed) return;
+
+			// Ignore further actions (prevent spamming)
+			m_actionsAllowed = false;
+
+			// Add some delay to give enough time for SFX to be played before losing focus
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[0];
+					button.m_pOnResponse();
+					m_confirmPopup = null;
+					m_actionsAllowed = true;
+				}, 0.15f
+			);
         }
 
         void onCancel()
         {
-			AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[1];
-			button.m_pOnResponse();
-			m_confirmPopup = null;
+			// Ignore if actions are not allowed
+			if(!m_actionsAllowed) return;
+
+			// Ignore further actions (prevent spamming)
+			m_actionsAllowed = false;
+
+			// Add some delay to give enough time for SFX to be played before losing focus
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					AndroidPermissionsManager.AndroidPermissionsPopupButton button = (AndroidPermissionsManager.AndroidPermissionsPopupButton) m_popupConfig.m_kPopupButtons[1];
+					button.m_pOnResponse();
+					m_confirmPopup = null;
+					m_actionsAllowed = true;
+				}, 0.15f
+			);
         }
 
         public override void onAndroidPermissionsFinished ()
@@ -92,6 +121,7 @@ public class LoadingSceneController : SceneController {
 
 			// Close popup and continue
             m_permissionsFinished = true;
+			m_actionsAllowed = true;
         }
     }
 
@@ -112,6 +142,7 @@ public class LoadingSceneController : SceneController {
     private bool m_startLoadFlow = true;    
     private bool m_loadingDone = false;
 
+    private float m_stateDuration = 0;
 
     private enum State
     {
@@ -119,10 +150,13 @@ public class LoadingSceneController : SceneController {
     	WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
+        WAITING_FOR_RULES,
+        SHOWING_UPGRADE_POPUP,
     	COUNT
     }
     private State m_state = State.NONE;
 	private AndroidPermissionsListener m_androidPermissionsListener = null;
+	private string m_buildVersion;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -133,6 +167,16 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+		if ( settingsInstance )
+		{
+			m_buildVersion = settingsInstance.GetClientBuildVersion();
+		}
+		else
+		{
+			m_buildVersion = Application.version;
+		}
+		CacheServerManager.SharedInstance.Init(m_buildVersion);
 		ContentManager.InitContent();
 		// Check required references
 		DebugUtils.Assert(m_loadingTxt != null, "Required component!"); 
@@ -151,15 +195,16 @@ public class LoadingSceneController : SceneController {
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now
         timer = 0;
+        m_stateDuration = 0;
 
         // [AOC] This is a safe place to instantiate all the singletons
         //		 Do it now so we have it under control
         //		 Add all the new created singletons
         // Content and persistence
-		//DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
+        //DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
 
 
-		#if UNITY_ANDROID
+#if UNITY_ANDROID
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             if (settingsInstance != null)
             {
@@ -190,10 +235,17 @@ public class LoadingSceneController : SceneController {
 
 				if(!AndroidPermissionsManager.SharedInstance.CheckDangerousPermissions ()) {
                     // Application.targetFrameRate = 10;
-					m_state = State.WAITING_ANDROID_PERMISSIONS;
+					SetState(State.WAITING_ANDROID_PERMISSIONS);
 				}else{
                     // Load persistence
-                    SetState(State.WAITING_SAVE_FACADE);								        
+                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate())
+                    {
+						SetState(State.SHOWING_UPGRADE_POPUP);
+                    }
+                    else
+                    {
+                    	SetState(State.WAITING_FOR_RULES);
+                    }
 			        // TEST
 			        /*
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
@@ -212,12 +264,26 @@ public class LoadingSceneController : SceneController {
             }
             else
             {
-                // Load persistence        
-                SetState(State.WAITING_SAVE_FACADE);				
+				// Load persistence
+                if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+                {
+					SetState(State.SHOWING_UPGRADE_POPUP);
+                }
+                else
+                {
+                	SetState(State.WAITING_FOR_RULES);
+                }
             }
         #else
-			// Load persistence        
-            SetState(State.WAITING_SAVE_FACADE);				
+			// Load persistence
+            if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+            {
+				SetState(State.SHOWING_UPGRADE_POPUP);
+            }
+            else
+            {
+            	SetState(State.WAITING_FOR_RULES);
+            }			
         #endif
     }
 
@@ -255,9 +321,24 @@ public class LoadingSceneController : SceneController {
     			if ( m_androidPermissionsListener.m_permissionsFinished )
     			{  
                     // Load persistence        
-                    SetState(State.WAITING_SAVE_FACADE);                        
+                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+                    {
+						SetState(State.SHOWING_UPGRADE_POPUP);
+                    }
+                    else
+                    {
+						SetState(State.WAITING_FOR_RULES);
+                    }
+
     			}
     		}break;
+            case State.WAITING_FOR_RULES:
+            {
+                if (ContentManager.ready)
+                {
+                    SetState(State.WAITING_SAVE_FACADE);
+                }
+            }break;
     		default:
     		{
 				// Update load progress
@@ -289,10 +370,21 @@ public class LoadingSceneController : SceneController {
 
     private void SetState(State state)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            float deltaTime = Time.timeSinceLevelLoad - m_stateDuration;
+            m_stateDuration = Time.timeSinceLevelLoad;
+            Log(m_state + " -> " + state + " time = " + deltaTime);
+        }
+
         m_state = state;
 
         switch (state)
         {
+        	case State.SHOWING_UPGRADE_POPUP:
+        	{
+        		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
+        	}break;
             case State.WAITING_SAVE_FACADE:
             {
 				// [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
@@ -329,6 +421,7 @@ public class LoadingSceneController : SceneController {
 				GameSceneManager.CreateInstance(true);
 				FlowManager.CreateInstance(true);
 				PoolManager.CreateInstance(true);
+				ActionPointManager.CreateInstance(true);
 				ParticleManager.CreateInstance(true);
 				FirePropagationManager.CreateInstance(true);
 				SpawnerManager.CreateInstance(true);
@@ -346,16 +439,46 @@ public class LoadingSceneController : SceneController {
                 ChestManager.SetupUser(UsersManager.currentUser);
                 GameStoreManager.SharedInstance.Initialize();
 #if UNITY_ANDROID
-				ApplicationManager.instance.GameCenter_Login();
+				if ( ApplicationManager.instance.GameCenter_LoginOnStart() )
+				{
+					ApplicationManager.instance.GameCenter_Login();
+				}
 #endif
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
 
-                StartLoadFlow();
+
+				ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+            	if (kServerConfig != null && kServerConfig.m_eBuildEnvironment == CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
+            	{
+					Debug.Log("Is Production!! Store: " + GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
+
+#if UNITY_EDITOR
+                    StartLoadFlow();
+#else
+                    // Check if build is from store
+                    if ( GameStoreManager.SharedInstance.AppWasDownloadedFromStore() )	// Game Store Manager needs to be initialized before checking
+            		{	
+            			StartLoadFlow();
+            		}
+            		else
+            		{
+						SetState(State.SHOWING_UPGRADE_POPUP);
+            		}
+#endif
+                    }
+            	else
+            	{
+					StartLoadFlow();	
+            	}
+
+                
           	}break;
         }
     }
+
+
         
     private void StartLoadFlow()
     {

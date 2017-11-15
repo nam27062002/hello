@@ -8,11 +8,13 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 #define ENABLE_ASSERTS
+#define ENABLE_LOG
 
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -139,4 +141,38 @@ public class DebugUtils {
         return returnValue;
 
     }
+
+	#if !ENABLE_LOG || PRODUCTION
+	[Conditional("FALSE")]
+	#endif
+	public static void Log(string _text, UnityEngine.Object _context = null) {
+		// Smart string memory usage
+		StringBuilder ss = new StringBuilder();
+
+		// Dim color for prefix
+		ss.Append("<color=white>");
+
+		// Time tag
+		System.TimeSpan t = System.TimeSpan.FromSeconds(Time.time);
+		//string.Format("{0:D2}:{1:D2}.{2:D3}", t.TotalMinutes, t.Seconds, t.Milliseconds);
+		ss.Append("[")
+			.AppendFormat("{0:D2}:{1:D2}.{2:D3}", (int)t.TotalMinutes, t.Seconds, t.Milliseconds)
+			//.Append(System.TimeSpan.FromSeconds(Time.time).ToString(@"mm\:ss\.fff"))
+			.Append("] ");
+
+		// Context name
+		if(_context != null) {
+			ss.Append(_context.name)
+				.Append(": ");
+		}
+
+		// End color tag
+		ss.Append("</color>");
+
+		// Text
+		ss.Append(_text);
+			
+		// Log!
+		Debug.Log(ss.ToString(), _context);
+	}
 }

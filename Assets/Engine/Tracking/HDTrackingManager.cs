@@ -41,10 +41,15 @@ public class HDTrackingManager
     public virtual void Init() {}
     public virtual void Destroy() {}
 
+    public virtual string GetTrackingID() { return null; }
+    public virtual string GetDNAProfileID() { return null;  }
+
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
     {
+		UNKNOWN = -1,
+
         REMOVE_MISSION,
         SKIP_MISSION,
         UNLOCK_MAP,
@@ -76,14 +81,45 @@ public class HDTrackingManager
 		LOAD_GAME = 0
 	};
 
+	public enum EActionsMission
+	{		
+		new_immediate,
+		skip_pay,
+		skip_ad,
+		new_pay,
+		new_ad,
+		new_mix,
+		new_wait,
+		done
+	};
+
+	public enum EEventMultiplier
+	{
+		none,
+		golden_key,
+		ad,
+		hc_payment
+	};
+
     public static string EconomyGroupToString(EEconomyGroup group)
     {
         return group.ToString();
     }
 
+	public static EEconomyGroup StringToEconomyGroup(string _str) {
+		try {
+			return (EEconomyGroup)System.Enum.Parse(typeof(EEconomyGroup), _str);
+		} catch(System.ArgumentException _e) {
+			return EEconomyGroup.UNKNOWN;
+		}
+	}
+
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
-             
+    
+    public virtual void GoToGame() {}
+    public virtual void GoToMenu() {}
+
     public virtual void Update()
     {        
     }
@@ -114,7 +150,7 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="dragonXp">Xp of the dragon chosen by the user to play the current round.</param>
     /// <param name="dragonProgression">Progression of the current dragon. It's calculated the same way as playerProgression is but it's done for the dragon chosen by the user to play this round</param>
-    /// <param name="dragonSkin">Track id of the skin chosen by the user to play the current round.</param>
+    /// <param name="dragonSkin">Sku of the skin chosen by the user to play the current round.</param>
     /// <param name="pets">List with the track ids of the pets equipped to play the current round. Null if no pets are equipped.</param>    
     public virtual void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {}
 
@@ -136,9 +172,11 @@ public class HDTrackingManager
     /// <param name="adRevive">Amount of times the user paid by watching an ad to revive her dragon druring the round.</param>
     /// <param name="scGained">Amount of soft currency gained during the round.</param>
     /// <param name="hcGained">Amount of hard currency gained during the round.</param>
+	/// <param name="boostTime">Amount of time the player was using boost during the round in seconds.</param>
+    /// <param name="mapUsage">Numer of time the player opened the map.</param>
     public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
-        int scGained, int hcGained) {}
+        int scGained, int hcGained, float boostTime, int mapUsage) {}
 
     /// <summary>
     /// Called when a run finished (because of death or quit game). Remember that a round is composed of at least one run, but it can have more than one if after a run
@@ -156,6 +194,8 @@ public class HDTrackingManager
     /// Called when the user opens the app store
     /// </summary>
     public virtual void Notify_StoreVisited() {}
+
+    public virtual void Notify_IAPStarted() {}
 
     /// <summary>
     /// /// Called when the user completed an in app purchase.    
@@ -237,12 +277,75 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted) {}
 
+	/// <summary>
+	/// The user got a new Pet!
+	/// </summary>
+	/// <param name="_sku">Pet sku.</param>
+	/// <param name="_source">Where did the Pet come from?.</param>
+	public virtual void Notify_Pet(string _sku, string _source) {}
+
     /// <summary>
     /// Notifies the dragon unlocked.
     /// </summary>
     /// <param name="dragon_sku">Dragon sku.</param>
 	/// <param name="order">Dragon oder</param>
     public virtual void Notify_DragonUnlocked( string dragon_sku, int order ) {}
+
+    /// <summary>
+    /// Notifies the loading gameplay started.
+    /// </summary>
+	public virtual void Notify_LoadingGameplayStart(){}
+
+	/// <summary>
+	/// Notifies the loading gameplay end.
+	/// </summary>
+	/// <param name="loading_duration">Loading duration in seconds.</param>
+	public virtual void Notify_LoadingGameplayEnd(  float loading_duration ){}
+
+    /// <summary>
+    /// Notifies the loading area start.
+    /// </summary>
+    /// <param name="original_area">Original area.</param>
+    /// <param name="destination_area">Destination area.</param>
+    public virtual void Notify_LoadingAreaStart( string original_area, string destination_area ){}
+
+    /// <summary>
+    /// Notifies the loading area end.
+    /// </summary>
+    /// <param name="original_area">Original area.</param>
+    /// <param name="destination_area">Destination area.</param>
+	/// <param name="area_loading_duration">Duration in seconds.</param>
+	public virtual void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration ){}
+
+	/// <summary>
+	/// The player has opened an info popup.
+	/// </summary>
+	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
+	/// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
+	public virtual void Notify_InfoPopup(string _popupName, string _action) {}
+
+	/// <summary>
+	/// Notifies the missions.
+	/// </summary>
+	/// <param name="_mission">Mission.</param>
+	/// <param name="_action">Action.</param>
+	public virtual void Notify_Missions(Mission _mission, EActionsMission _action) {}
+
+	/// <summary>
+	/// Notifies the settings open. When settings popup opens
+	/// </summary>
+	public virtual void Notify_SettingsOpen(){}
+
+	/// <summary>
+	/// Notifies the settings close. When settings popup closed
+	/// </summary>
+	public virtual void Notify_SettingsClose(){}
+
+
+
+	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}
+
+	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) {}
 
     #endregion
 

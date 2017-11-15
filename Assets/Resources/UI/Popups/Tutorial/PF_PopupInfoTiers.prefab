@@ -3103,14 +3103,14 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 75
+  m_fontSize: 60
   m_fontSizeBase: 75
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 36
+  m_fontSizeMax: 60
   m_fontStyle: 0
-  m_textAlignment: 514
+  m_textAlignment: 4098
   m_isAlignmentEnumConverted: 1
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3428,7 +3428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.7490196}
+  m_Color: {r: 0.007785467, g: 0.094917044, b: 0.11764705, a: 0.753}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3506,6 +3506,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_menuMode: 1
+  m_equipPets: 1
+  m_equipOnAwake: 1
 --- !u!114 &114112079475004682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4126,12 +4128,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mode: 2
   m_dragonSku: dragon_classic
-  m_disguiseSku: 
+  m_disguiseSku: dragon_classic_0
   m_anim: 4
   m_resetDragonScale: 1
   m_showPets: 0
+  m_hideResultsEquipment: 0
   m_removeFresnel: 1
   m_keepLayers: 0
+  m_useResultsScreen: 0
   m_placeholderDragonSku: dragon_classic
 --- !u!114 &114675678292442740
 MonoBehaviour:
@@ -4996,10 +5000,10 @@ RectTransform:
   m_Father: {fileID: 224000010615425268}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -10}
-  m_SizeDelta: {x: 0, y: 90}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -7.5}
+  m_SizeDelta: {x: 0, y: -15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000011541814836
 RectTransform:
@@ -5272,7 +5276,7 @@ RectTransform:
   m_GameObject: {fileID: 1500400028482796}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 157.56483, y: 157.56483, z: 157.56483}
+  m_LocalScale: {x: 131.69896, y: 131.69896, z: 131.69896}
   m_Children:
   - {fileID: 4824432351639640}
   m_Father: {fileID: 224982315096204190}
@@ -5280,7 +5284,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.90670246, y: -120.21876}
+  m_AnchoredPosition: {x: -0.9088632, y: -120.217705}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224480763060842486

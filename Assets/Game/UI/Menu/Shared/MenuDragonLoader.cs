@@ -95,6 +95,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_keepLayers = value; }
 	}
 
+	[SerializeField] private bool m_useResultsScreen = false;
+	public bool useResultsScreen {
+		get { return m_useResultsScreen; }
+		set { m_useResultsScreen = value; }
+	}
+
 	private bool m_useShadowMaterial = false;
 	public bool useShadowMaterial {
 		get { return m_useShadowMaterial; }
@@ -170,8 +176,11 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Load selected dragon
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
 		if(def != null) {
+			string prefabColumn = "menuPrefab";
+			if (  m_useResultsScreen )
+				prefabColumn = "resultsPrefab";
 			// Instantiate the prefab and add it as child of this object
-			GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));
+			GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
 			if(dragonPrefab != null) {
 				GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
 				newInstance.transform.SetParent(this.transform, false);

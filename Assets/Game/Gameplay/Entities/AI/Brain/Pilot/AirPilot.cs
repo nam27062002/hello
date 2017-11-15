@@ -6,7 +6,7 @@ namespace AI {
 		private static float DOT_END = -0.7f;
 		private static float DOT_START = -0.99f;
 
-		private const int CollisionCheckPools = 4;
+		private const int CollisionCheckPools = 20;
 		private static uint NextCollisionCheckID = 0;
 
 		[SerializeField] private bool m_preciseDestArrival = false;
@@ -164,12 +164,12 @@ namespace AI {
 				}
 
 				if (isInsideWater) {
-					m_collisionAvoidFactor = 10f;
+					m_collisionAvoidFactor = 15f;
 					m_collisionNormal = Vector3.up;
 					m_collisionNormal.z = 0f;
 				} else if (Physics.Linecast(m_machine.position, m_machine.position + (m_direction * distanceCheck), out ground, layerMask)) {
 					// 2- calc a big force to move away from the ground	
-					m_collisionAvoidFactor = (distanceCheck / ground.distance) * 5f;
+					m_collisionAvoidFactor = (distanceCheck / ground.distance) * 10f;
 					m_collisionNormal = ground.normal;
 					m_collisionNormal.z = 0f;
 				} else {

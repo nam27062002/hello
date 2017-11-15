@@ -56,14 +56,17 @@ public class RewardInfoUI : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_goldenEggCompletedInfo = null;
 	[SerializeField] private ShowHideAnimator m_goldenEggAllCollectedInfo = null;
 	[SerializeField] private ParticleSystem m_goldenFragmentCounterFX = null;
+	[SerializeField] private string m_goldenFragmentsSFX = "";
 	[Space]
 	[SerializeField] private float m_goldFragmentsCounterDelay = 3f;
 
 	[SeparatorAttribute("SC Reward")]
 	[SerializeField] private Localizer m_scTitle = null;
+	[SerializeField] private string m_scSFX = "";
 
 	[SeparatorAttribute("PC Reward")]
 	[SerializeField] private Localizer m_pcTitle = null;
+	[SerializeField] private string m_pcSFX = "";
 
 	// Events
 	[Separator("Events")]
@@ -165,8 +168,9 @@ public class RewardInfoUI : MonoBehaviour {
 
 			// Golden Fragments
 			case Metagame.RewardGoldenFragments.TYPE_CODE: {
-				// Title
-				m_goldenFragmentTitle.Localize("TID_EGG_REWARD_FRAGMENT", StringUtils.FormatNumber(_rewardData.amount));	// %U0 Golden Egg Fragments
+				// Title - singular?
+				string tid = (_rewardData.amount == 1) ? "TID_EGG_REWARD_FRAGMENT_SING" : "TID_EGG_REWARD_FRAGMENT";
+				m_goldenFragmentTitle.Localize(tid, StringUtils.FormatNumber(_rewardData.amount));	// %U0 Golden Egg Fragments
 
 				// Fragments counter
 				m_goldenEggCompletedInfo.Set(false, false);	// Will be activated after the animation, if needed
@@ -264,4 +268,28 @@ public class RewardInfoUI : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+
+	//------------------------------------------------------------------------//
+	// ANIMATION EVENTS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Animation event.
+	/// </summary>
+	public void OnRewardSCIn() {
+		AudioController.Play(m_scSFX);
+	}
+
+	/// <summary>
+	/// Animation event.
+	/// </summary>
+	public void OnRewardPCIn() {
+		AudioController.Play(m_pcSFX);
+	}
+
+	/// <summary>
+	/// Animation event.
+	/// </summary>
+	public void OnRewardGoldenFragmentsIn() {
+		AudioController.Play(m_goldenFragmentsSFX);
+	}
 }

@@ -251,7 +251,7 @@ public class Egg {
 	/// </summary>
 	public void GenerateReward() {
 		if(m_rewardData != null) return;
-		m_rewardData = Metagame.Reward.CreateTypeEgg(m_def.sku) as Metagame.RewardEgg;
+		m_rewardData = Metagame.Reward.CreateTypeEgg(m_def.sku, "") as Metagame.RewardEgg;
 		m_rewardData.egg = this;
 	}
 

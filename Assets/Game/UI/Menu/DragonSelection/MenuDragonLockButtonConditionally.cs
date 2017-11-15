@@ -28,6 +28,7 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
 	// Setup
+	[SerializeField] private bool m_lockIfShadowed = false;
 	[SerializeField] private bool m_lockIfLocked = false;
 	[SerializeField] private bool m_lockIfAvailable = false;
 	[SerializeField] private bool m_lockIfOwned = false;
@@ -95,6 +96,10 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 
 		// Ownership status
 		switch(dragon.lockState) {
+			case DragonData.LockState.TEASE:	
+			case DragonData.LockState.SHADOW:
+			case DragonData.LockState.REVEAL:
+													toLock = m_lockIfShadowed;  break;
 			case DragonData.LockState.LOCKED:		toLock = m_lockIfLocked;	break;
 			case DragonData.LockState.AVAILABLE:	toLock = m_lockIfAvailable;	break;
 			case DragonData.LockState.OWNED:		toLock = m_lockIfOwned;		break;

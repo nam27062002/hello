@@ -1,15 +1,28 @@
 fileFormatVersion: 2
-guid: 711bb188404025a4bb08abc21fbea8cb
-timeCreated: 1504249927
+guid: 320721980062a4be480ca4b2b7b237c7
+timeCreated: 1509375613
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
+    100000: CATRigLWing1
+    100002: CATRigLWing2
+    100004: CATRigRWing1
+    100006: CATRigRWing2
+    100008: //RootNode
+    100010: Ticket
+    100012: ticket_geo
+    400000: CATRigLWing1
+    400002: CATRigLWing2
+    400004: CATRigRWing1
+    400006: CATRigRWing2
+    400008: //RootNode
+    400010: Ticket
+    400012: ticket_geo
     4300000: ticket_geo
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: ticket_geo
   materials:
     importMaterials: 0
     materialName: 0
@@ -18,7 +31,7 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -32,11 +45,53 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 28
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Ticket
+        weight: 1
+      - path: Ticket/CATRigLWing1
+        weight: 1
+      - path: Ticket/CATRigLWing1/CATRigLWing2
+        weight: 1
+      - path: Ticket/CATRigRWing1
+        weight: 1
+      - path: Ticket/CATRigRWing1/CATRigRWing2
+        weight: 1
+      - path: ticket_geo
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.01
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -74,7 +129,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

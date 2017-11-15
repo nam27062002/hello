@@ -136,7 +136,9 @@
                 {"hcRevive": {"Status": "OK"}},
                 {"adRevive": {"Status": "OK"}},
 				{"scEarned": {"Status": "OK"}},
-				{"hcEarned": {"Status": "OK"}}
+				{"hcEarned": {"Status": "OK"}},
+				{"boostTime": {"Status": "OK"}},
+				{"mapUsedNB": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -160,6 +162,27 @@
                 "etl"
             ]
         },
+ 		"custom.gameplay.loadArea": {
+            "Parameters": [
+                {"originalArea": {"Status": "OK"}},
+                {"newArea": {"Status": "OK"}},
+                {"action": {"Status": "OK"}},
+                {"loadingTime": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+ 		"custom.gameplay.loadGameplay": {
+            "Parameters": [
+                {"loadingTime": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
         "custom.player.iap": {
             "Parameters": [
                 {"storeTransactionID": {"Status": "OK"}},
@@ -169,7 +192,7 @@
                 {"playerProgress": {"Status": "OK"}},
                 {"moneyCurrency": {"Status": "OK"}},
                 {"moneyIAP": {"Status": "OK"}},
-				{"moneyUSD": {"Status": "OK"}}
+				{"moneyUSD": {"Status": "OK"}},
                 {"totalPurchases": {"Status": "OK"}},
                 {"totalStoreVisits": {"Status": "OK"}}				
             ],
@@ -257,6 +280,89 @@
 				{"country": {"Status": "OK"}},
 				{"connectionType": {"Status": "OK"}},
 				{"userTimezone": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.player.infopopup" : {
+			"Parameters": [
+				{"popupName": {"Status": "OK"}},
+				{"action": {"Status": "OK"}}
+			],
+			"APIs": [
+				"dna",
+				"etl"
+			]
+		},
+		"custom.player.pet" : {
+			"Parameters": [
+				{"petName": {"Status": "OK"}},
+				{"sourceOfPet": {"Status": "OK"}}
+			],
+			"APIs": [
+				"dna",
+				"etl"
+			]
+		},
+		 "custom.player.missions": {
+            "Parameters": [
+                {"missionType": {"Status": "OK"}},
+                {"missionTarget": {"Status": "OK"}},
+                {"missionDifficulty": {"Status": "OK"}},
+                {"missionValue": {"Status": "OK"}},
+                {"action": {"Status": "OK"}},
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"maxXp": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}}                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.player.mode": {
+            "Parameters": [
+                {"playingMode": {"Status": "OK"}},
+                {"rank": {"Status": "OK"}},
+                {"isSuccess": {"Status": "OK"}},
+                {"duration": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.global.event.rundone": {
+            "Parameters": [
+                {"glbEventID": {"Status": "OK"}},
+                {"glbEventType": {"Status": "OK"}},
+                {"scoreRun": {"Status": "OK"}},
+                {"scoreTotal": {"Status": "OK"}},
+                {"multiplier": {"Status": "OK"}},
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"maxXp": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}}                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.global.event.reward": {
+            "Parameters": [
+                {"glbEventID": {"Status": "OK"}},
+                {"glbEventType": {"Status": "OK"}},
+                {"rewardTier": {"Status": "OK"}},
+                {"scoreTotal": {"Status": "OK"}},
+				{"topContributor": {"Status": "OK"}},
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"maxXp": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}}                
             ],
             "APIs": [
                 "dna",
@@ -442,16 +548,24 @@
             "Type": "INT:4",
             "Values": []
         },
+		"boostTime": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"mapUsedNB": {
+            "Type": "INT:4",
+            "Values": []
+        },
         "pushNotif": {
             "Type": "TRACK_DNA_PUSH_NOTIF",
             "Values": []
         },
         "ecoGroup": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "dragonSkin": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "isLoaded": {
@@ -471,7 +585,7 @@
             "Values": []
         },
         "stopCause": {
-            "Type": "STRING:125",
+            "Type": "STRING:60",
             "Values": []
         },
         "highestMultiplier": {
@@ -479,7 +593,7 @@
             "Values": []
         },
         "typeNotif": {
-            "Type": "STRING:125",
+            "Type": "STRING:75",
             "Values": []
         },
         "fb_def_logPurchase": {
@@ -487,7 +601,7 @@
             "Values": []
         },
         "abtesting": {
-            "Type": "STRING:125",
+            "Type": "STRING:50",
             "Values": []
         },
         "sessionPlaytime": {
@@ -523,7 +637,7 @@
             "Values": []
         },
         "item": {
-            "Type": "STRING:125",
+            "Type": "STRING:60",
             "Values": []
         },
         "fb_def_currency": {
@@ -563,31 +677,31 @@
             "Values": []
         },
         "playerID": {
-            "Type": "STRING:125",
+            "Type": "STRING:80",
             "Values": []
         },
         "pet3": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "pet4": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "providerAuth": {
-            "Type": "STRING:125",
+            "Type": "STRING:25",
             "Values": []
         },
         "pet1": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "rewardType": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "pet2": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "moneyIAP": {
@@ -595,7 +709,7 @@
             "Values": []
         },
 		"moneyUSD": {
-            "Type": "INT",
+            "Type": "INT:4",
             "Values": []
         },		
         "isPayingSession": {
@@ -603,7 +717,7 @@
             "Values": []
         },
         "itemID": {
-            "Type": "STRING:125",
+            "Type": "STRING:70",
             "Values": []
         },
         "maxXp": {
@@ -631,7 +745,7 @@
             "Values": []
         },
         "stepName": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "acq_marketing_id": {
@@ -639,7 +753,7 @@
             "Values": []
         },
         "adsType": {
-            "Type": "STRING:125",
+            "Type": "STRING:80",
             "Values": []
         },
         "highestBaseMultiplier": {
@@ -651,7 +765,7 @@
             "Values": []
         },
         "currency": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
         "firstLoad": {
@@ -667,7 +781,7 @@
             "Values": []
         },
         "promotionType": {
-            "Type": "STRING:125",
+            "Type": "STRING:80",
             "Values": []
         },
         "adViewingDuration": {
@@ -687,7 +801,7 @@
             "Values": []
         },
         "deathType": {
-            "Type": "STRING:125",
+            "Type": "STRING:30",
             "Values": []
         },
         "adIsAvailable": {
@@ -695,11 +809,11 @@
             "Values": []
         },
         "SubVersion": {
-            "Type": "STRING:125",
+            "Type": "STRING:80",
             "Values": []
         },
         "playerProgress": {
-            "Type": "STRING:125",
+            "Type": "STRING:4",
             "Values": []
         },
         "stepDuration": {
@@ -715,15 +829,15 @@
             "Values": []
         },
         "moneyCurrency": {
-            "Type": "STRING:125",
+            "Type": "STRING:4",
             "Values": []
         },
         "deathCoordinates": {
-            "Type": "STRING:125",
+            "Type": "STRING:30",
             "Values": []
         },
         "deathCause": {
-            "Type": "STRING:125",
+            "Type": "STRING:45",
             "Values": []
         },
 		"yearOfBirth": {
@@ -731,7 +845,7 @@
             "Values": []
         },
 		"gender": {
-            "Type": "STRING:125",
+            "Type": "STRING:2",
             "Values": []
         },
 		"nbViews": {
@@ -739,7 +853,7 @@
             "Values": []
         },
 		"legalPopupType": {
-            "Type": "STRING:125",
+            "Type": "STRING:15",
             "Values": []
         },
 		"duration": {
@@ -755,7 +869,7 @@
             "Values": []
         },				
 		"language": {
-            "Type": "STRING:125",
+            "Type": "STRING:2",
             "Values": []
         },				
 		"country": {
@@ -767,8 +881,92 @@
             "Values": []
         },				
 		"userTimezone": {
-            "Type": "STRING:125",
+            "Type": "STRING:80",
             "Values": []
         },
+		"popupName": {
+			"Type": "STRING:45",
+			"Values": []
+		},
+		"action": {
+			"Type": "STRING:40",
+			"Values": []
+		},
+		"loadingTime": {
+			"Type": "INT:4",
+			"Values": []
+		},
+		"originalArea": {
+			"Type": "STRING:45",
+			"Values": []
+		},
+		"newArea": {
+			"Type": "STRING:45",
+			"Values": []
+		},
+		"petName": {
+			"Type": "STRING:45",
+			"Values": []
+		},
+		"sourceOfPet": {
+			"Type": "STRING:45",
+			"Values": []
+		},
+		"missionType": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"missionTarget": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"missionDifficulty": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"missionValue": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"glbEventID": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"glbEventType": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"scoreRun": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"scoreTotal": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"multiplier": {
+            "Type": "STRING:5",
+            "Values": []
+        },
+		"rewardTier": {
+            "Type": "STRING:5",
+            "Values": []
+        },
+		"topContributor": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"playingMode": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"rank": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"isSuccess": {
+            "Type": "INT:4",
+            "Values": []
+        }
     }
 }

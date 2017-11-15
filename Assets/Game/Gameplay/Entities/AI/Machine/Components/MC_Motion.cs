@@ -351,22 +351,23 @@ namespace AI {
 				Vector3 cross = Vector3.Cross(targetDir, Vector3.right);
 				float aim = cross.z * -1;
 
-				//between aim [0.9 - 1 - 0.9] we'll rotate the model
-				//for testing purpose, it'll go from 90 to 270 degrees and back. Aim value 1 is 180 degrees of rotation
-				float absAim = Mathf.Abs(aim);
-
+				// Z
 				float angleSide = 90f;
 				if (targetDir.x < 0) {
 					angleSide = 270f;
 				}
-				float angle = angleSide;
 
-				if (absAim >= 0.6f) {
-					angle = (((absAim - 0.6f) / (1f - 0.6f)) * (180f - angleSide)) + angleSide;
-				}
+				targetDir = target.position - m_eye.position;
+				targetDir.y = 0f;
+				targetDir.Normalize();
+
+				cross = Vector3.Cross(targetDir, Vector3.right);
+				float aimZ = cross.y * -1;
+				float angleZ = (((aimZ - 0f) / (1f - 0f)) * (180f - angleSide)) + angleSide;
 
 				// face target
-				m_targetRotation = Quaternion.Euler(0, angle, 0);
+				m_targetRotation = Quaternion.Euler(0, angleZ, 0);
+
 				m_pilot.SetDirection(m_targetRotation * Vector3.forward, true);
 
 				// blend between attack directions

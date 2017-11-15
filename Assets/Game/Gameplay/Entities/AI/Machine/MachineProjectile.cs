@@ -130,10 +130,10 @@ namespace AI {
 		}
 
 		// Being burned
-		public bool Burn(Transform _transform) {
+		public bool Burn(Transform _transform, bool instant = false) {
 			if (!IsDying()) {
 				m_beingBurned = true;
-				m_inflammable.Burn(_transform);
+				m_inflammable.Burn(_transform, instant);
 			}
 			return false;
 		}

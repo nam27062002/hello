@@ -203,10 +203,11 @@ public class PopupDragonInfo : MonoBehaviour {
 			// Tier description
 			// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
 			// multiplier during <color=%U4>Fire Rush</color>
+			int numPets = dragonData.pets.Count;	// Dragon data has as many slots as defined for this dragon
 			m_tierInfoText.Localize("TID_DRAGON_INFO_TIER_DESCRIPTION", 
 				UIConstants.GetSpriteTag(tierIcon),
-				m_highlightTextColor.ToHexString("#"),
-				StringUtils.FormatNumber(dragonData.pets.Count),	// Dragon data has as many slots as defined for this dragon
+				(numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")),	// Singular/Plural
+				StringUtils.FormatNumber(numPets),	
 				"x" + StringUtils.FormatNumber(dragonData.def.GetAsFloat("furyScoreMultiplier", 2), 0),
 				m_fireRushTextColor.ToHexString("#")
 			);

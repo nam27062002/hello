@@ -32,6 +32,9 @@ public abstract class ResultsScreenSequenceStep : ResultsScreenStep {
 	[SerializeField] protected ShowHideAnimator m_tapToContinue = null;
 	[SerializeField] protected TweenSequence m_sequence;
 
+	// Internal
+	private bool m_skipped = false;
+
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
@@ -53,6 +56,9 @@ public abstract class ResultsScreenSequenceStep : ResultsScreenStep {
 	override public void Launch() {
 		// Call parent
 		base.Launch();
+
+		// Internal vars
+		m_skipped = false;
 
 		// If skip if allowed, show tap to continue from the start. Otherwise hide it and must be displayed manually.
 		if(m_skipAllowed) {
@@ -104,6 +110,12 @@ public abstract class ResultsScreenSequenceStep : ResultsScreenStep {
 		// [AOC] Reuse visibility state to control whether tap to continue is enabled or not)
 		if(!m_tapToContinue.visible) return;
 
+		// If sequence was skipped, ignore
+		if(m_skipped) return;
+
+		// Nothing to do if sequence is null
+		if(m_sequence.sequence == null) return;
+
 		// If sequence is playing, fast forward it.
 		if(m_sequence.sequence.IsPlaying()) {
 			// Make sure it's allowed!
@@ -116,6 +128,9 @@ public abstract class ResultsScreenSequenceStep : ResultsScreenStep {
 
 				// Notify listeners
 				OnSkip();
+
+				// Control vars
+				m_skipped = true;
 			}
 		}
 

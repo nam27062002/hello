@@ -94,6 +94,11 @@ public abstract class TrackingObjectiveBase {
 		m_typeDef = _typeDef;
 		m_tidDesc = _tidDesc;
 		m_tidTarget = _tidTarget;
+
+		// Make sure complete event is valid
+		if(OnObjectiveComplete == null) {
+			OnObjectiveComplete = new UnityEvent();
+		}
 	}
 
 	/// <summary>
@@ -106,7 +111,8 @@ public abstract class TrackingObjectiveBase {
 
 		// Unsubscribe from events
 		if(m_tracker != null) {
-			m_tracker.OnValueChanged.RemoveListener(OnValueChanged);
+			m_tracker.Clear();
+			m_tracker = null;	// Lose reference so it gets garbage-collected
 		}
 	}
 

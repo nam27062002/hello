@@ -140,6 +140,7 @@ namespace UbiBCN
 						if (Application.isPlaying) {
 							GameObject.DontDestroyOnLoad(containerObj);	// Persist throughout scene changes
 						}
+						//containerObj.hideFlags = HideFlags.DontSave;
 					}
 					
 					// Is there a pre-made prefab for this class in the Resources folder?
@@ -166,7 +167,7 @@ namespace UbiBCN
 							m_instance = singletonObj.GetComponent<T>();
 
                             // Prevents this game object which has been created by scripts to be saved in the scene if a instance stayed in the scene after playing by mistake
-                            m_instance.hideFlags = HideFlags.DontSaveInEditor;
+							m_instance.hideFlags = HideFlags.DontSave;
                         }
 					}
 					
@@ -180,7 +181,7 @@ namespace UbiBCN
 						m_instance = singletonObj.AddComponent<T>();
 
                         // Prevents this game object which has been created by scripts to be saved in the scene if a instance stayed in the scene after playing by mistake
-                        m_instance.hideFlags = HideFlags.DontSaveInEditor;
+						m_instance.hideFlags = HideFlags.DontSave;
                     }                    
 
                     // Attach the singleton object as child of the Singletons container to make it have the DontDestroyOnLoad flag and to keep the hierarchy clean

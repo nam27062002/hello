@@ -27,6 +27,7 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
 		//------------------------------------------------------------------//
+		[SerializeField] private GameObject m_canvas;
 
         private bool m_started = false;
 
@@ -38,7 +39,13 @@ namespace LevelEditor {
         /// </summary>
         override protected void Awake() {
         	m_started = false;
-            ApplicationManager.CreateInstance();            
+
+			if (m_canvas != null) {
+				m_canvas.SetActive(true);
+			}
+
+            ApplicationManager.CreateInstance();
+			ControlPanel.CreateInstance();
 
             // Initialize some required managers
             ContentManager.InitContent(true);
@@ -71,8 +78,7 @@ namespace LevelEditor {
 
             // Call parent
             base.Awake();
-
-			//ControlPanel.CreateInstance();
+		
 		}
 
 		/// <summary>
@@ -175,11 +181,17 @@ namespace LevelEditor {
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 
-			// Put player in position and make it playable
-			InstanceManager.player.MoveToSpawnPoint(true);
-			if ( LevelEditor.settings.useIntro )
-			{
-				InstanceManager.player.StartIntroMovement( true );	
+			if (LevelEditor.settings.spawnAtCameraPos) {
+				Vector3 startPos = mainCamera.transform.position;
+				startPos.z = 0f;
+				InstanceManager.player.transform.position = startPos;
+			} else {
+				// Put player in position and make it playable
+				InstanceManager.player.MoveToSpawnPoint(true);
+				if ( LevelEditor.settings.useIntro )
+				{
+					InstanceManager.player.StartIntroMovement( true );	
+				}
 			}
 			InstanceManager.player.playable = true;
 

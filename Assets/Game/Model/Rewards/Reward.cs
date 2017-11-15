@@ -47,11 +47,10 @@ namespace Metagame {
 		public static string RarityToSku(Rarity _rarity) {
 			// We could double-check with content, but it's much faster if we hardcode it (and these skus are not supposed to change)
 			switch(_rarity) {
-				case Rarity.COMMON:		return "common";		break;
-				case Rarity.RARE:		return "rare";			break;
-				case Rarity.EPIC:		return "epic";			break;
-				case Rarity.SPECIAL:	return "special";		break;
-				default:				return string.Empty;	break;
+				case Rarity.COMMON:		return "common";
+				case Rarity.RARE:		return "rare";
+				case Rarity.EPIC:		return "epic";
+				case Rarity.SPECIAL:	return "special";
 			}
 			return string.Empty;
 		}
@@ -60,17 +59,41 @@ namespace Metagame {
 		/// Constructor from json data.
 		/// </summary>
 		/// <param name="_data">Data to be parsed.</param>
-		public static Reward CreateFromJson(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup) {			
+		public static Reward CreateFromJson(SimpleJSON.JSONNode _data) {	
+			// Parse economy group (if any)
+			string key = "economyGroup";
+			HDTrackingManager.EEconomyGroup parsedEconomyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN;
+			if(_data.ContainsKey(key)) {
+				 parsedEconomyGroup = HDTrackingManager.StringToEconomyGroup(_data[key]);
+			}
+
+			// Parse source
+			key = "source";
+			string parsedSource = "";
+			if(_data.ContainsKey(key)) {
+				parsedSource = _data[key];
+			}
+
+			// Use the parametrized method
+			return CreateFromJson(_data, parsedEconomyGroup, parsedSource);
+		}
+
+		/// <summary>
+		/// Constructor from json data, with economy group and source manually set.
+		/// </summary>
+		/// <param name="_data">Data to be parsed.</param>
+		public static Reward CreateFromJson(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
 			string type = _data["type"];
 			type = type.ToLower();
 			
 			string data = "";
-			if(_data.ContainsKey("sku")) 	
+			if(_data.ContainsKey("sku")) {
 				data = _data["sku"];
-			else if(_data.ContainsKey("amount")) 
+			} else if(_data.ContainsKey("amount")) {
 				data = _data["amount"];
+			}
 
-			return CreateFromTypeCode(type, data, _economyGroup);
+			return CreateFromTypeCode(type, data, _economyGroup, _source);
 		}
 
 		/// <summary>
@@ -79,23 +102,23 @@ namespace Metagame {
 		/// <returns>A reward.</returns>
 		/// <param name="_typeCode">Type code.</param>
 		/// <param name="_data">Data.</param>
-		public static Reward CreateFromTypeCode(string _typeCode, string _data, HDTrackingManager.EEconomyGroup _economyGroup) {			
+		public static Reward CreateFromTypeCode(string _typeCode, string _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
 			switch(_typeCode) {
-				case RewardSoftCurrency.TYPE_CODE:	 return CreateTypeSoftCurrency(long.Parse(_data), _economyGroup);
-				case RewardHardCurrency.TYPE_CODE:	 return CreateTypeHardCurrency(long.Parse(_data), _economyGroup);
-				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments(int.Parse(_data), Rarity.COMMON, _economyGroup);
-				case RewardEgg.TYPE_CODE:			 return CreateTypeEgg(_data);
-				case RewardPet.TYPE_CODE:			 return CreateTypePet(_data);
+				case RewardSoftCurrency.TYPE_CODE:	  return CreateTypeSoftCurrency(long.Parse(_data), _economyGroup, _source);
+				case RewardHardCurrency.TYPE_CODE:	  return CreateTypeHardCurrency(long.Parse(_data), _economyGroup, _source);
+				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments(int.Parse(_data), Rarity.COMMON, _economyGroup, _source);
+				case RewardEgg.TYPE_CODE:			  return CreateTypeEgg(_data, _source);
+				case RewardPet.TYPE_CODE:			  return CreateTypePet(_data, _source);
 			}
 			return null;
 		}
 
-		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup) { return new RewardSoftCurrency(_amount, Rarity.COMMON, _economyGroup); }
-		public static RewardHardCurrency CreateTypeHardCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup) { return new RewardHardCurrency(_amount, Rarity.COMMON, _economyGroup); }
-		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) { return new RewardGoldenFragments(_amount, _rarity, _economyGroup); }
-		public static RewardEgg CreateTypeEgg(string _sku) 								{ return new RewardEgg(_sku); }
-		public static RewardPet CreateTypePet(string _sku)								{ return new RewardPet(_sku); }
-		public static RewardPet CreateTypePet(DefinitionNode _def)						{ return new RewardPet(_def); }
+		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source)						{ return new RewardSoftCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
+		public static RewardHardCurrency CreateTypeHardCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 						{ return new RewardHardCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
+		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 	{ return new RewardGoldenFragments(_amount, _rarity, _economyGroup, _source); }
+		public static RewardEgg CreateTypeEgg(string _sku, string _source) 				{ return new RewardEgg(_sku, _source); }
+		public static RewardPet CreateTypePet(string _sku, string _source)				{ return new RewardPet(_sku, _source); }
+		public static RewardPet CreateTypePet(DefinitionNode _def, string _source)		{ return new RewardPet(_def, _source); }
 		#endregion
 
 		//------------------------------------------------------------------------//
@@ -125,6 +148,9 @@ namespace Metagame {
 		// Sku of the rewarded item, if any
 		protected string m_sku = "";
 		public string sku { get { return m_sku; }}
+
+		protected string m_source = "";
+		public string source { get { return m_source; } }
 
 		// Definition of the rewarded item, if any
 		protected DefinitionNode m_def = null;
@@ -162,11 +188,22 @@ namespace Metagame {
 		/// Collect the reward! If the reward is going to be replaced, collect the replacement instead.
 		/// </summary>
 		public virtual void Collect() {
+			// If we're at the top of the stack, remove ourselves!
+			// Before invoking the DoCollect(), which may add new rewards to the stack!
+			if(UsersManager.currentUser.rewardStack.Count > 0
+			&& UsersManager.currentUser.rewardStack.Peek() == this) {
+				UsersManager.currentUser.PopReward();
+			}
+
+			// If the reward is going to be replaced, collect the replacement instead.
 			if(m_replacement != null) {
 				m_replacement.Collect();
 			} else {
 				DoCollect();
 			}
+
+			// Save persistence to prevent opening this reward twice in case of interruption
+			PersistenceFacade.instance.Save_Request(true);
 		}
 
 		/// <summary>
@@ -191,6 +228,35 @@ namespace Metagame {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.Reward"/>.</returns>
 		public override string ToString() {			
 			return "[" + GetType() + ": " + m_amount + "]";
+		}
+
+		/// <summary>
+		/// Create and return a persistence save data json initialized with this reward's data. 
+		/// </summary>
+		/// <returns>A new data json to be stored to persistence.</returns>
+		public SimpleJSON.JSONNode ToJson() {
+			// Create new object, initialize and return it
+			SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+			// Reward type
+			data.Add("type", type);
+
+			// Sku and amount - sku prevails
+			if(!string.IsNullOrEmpty(sku)) {
+				data.Add("sku", sku);
+			} else {
+				data.Add("amount", amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+			}
+
+			// Source
+			data.Add("source", source);
+
+			// Economy group (only for currency rewards)
+			if(this is Metagame.RewardCurrency) {
+				data.Add("economyGroup", HDTrackingManager.EconomyGroupToString((this as Metagame.RewardCurrency).EconomyGroup));
+			}
+
+			return data;
 		}
 	}
 }

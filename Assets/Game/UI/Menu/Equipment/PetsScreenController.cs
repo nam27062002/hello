@@ -462,6 +462,11 @@ public class PetsScreenController : MonoBehaviour {
 			// Open popup with delay
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
+					// Tracking
+					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoPets.PATH);
+					HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
+					// Open popup
 					PopupManager.OpenPopupInstant(PopupInfoPets.PATH);
 				},
 				delay

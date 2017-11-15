@@ -261,13 +261,13 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 			rewardsArray.Add(CreateEventRewardData(0.2f, Metagame.RewardSoftCurrency.TYPE_CODE, "", 500));
 			rewardsArray.Add(CreateEventRewardData(0.5f, Metagame.RewardSoftCurrency.TYPE_CODE, "", 1000));
 			rewardsArray.Add(CreateEventRewardData(0.75f, Metagame.RewardHardCurrency.TYPE_CODE, "", 100));
-			rewardsArray.Add(CreateEventRewardData(1f, Metagame.RewardEgg.TYPE_CODE, "egg_premium", -1));
+			rewardsArray.Add(CreateEventRewardData(1f, Metagame.RewardEgg.TYPE_CODE, "egg_event", -1));
 			eventData.Add("rewards", rewardsArray);
 
 			// Top percentile reward
 			//eventData.Add("topReward", CreateEventRewardData(0.01f, "pet", "pet_24", -1));
-			eventData.Add("topReward", CreateEventRewardData(0.01f, Metagame.RewardGoldenFragments.TYPE_CODE, "", 20));
-			//eventData.Add("topReward", CreateEventRewardData(0.01f, Metagame.RewardEgg.TYPE_CODE, "egg_premium", 1));
+			//eventData.Add("topReward", CreateEventRewardData(0.01f, Metagame.RewardGoldenFragments.TYPE_CODE, "", 20));
+			eventData.Add("topReward", CreateEventRewardData(0.01f, Metagame.RewardEgg.TYPE_CODE, "egg_event", 1));
 
 			// Bonuses
 			eventData.Add("bonusDragon", "dragon_reptile");
@@ -575,11 +575,8 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	override public void GlobalEvent_GetRewards(int _eventID, ServerCallback _callback) {		
 		/*
 		{
-			r: [
-				"SC:100",
-				"SC:200"
-			],
-			top: "SC:50"
+			r: "2",
+			top: "true"
 		}
 */
 		ServerResponse res = new ServerResponse();
@@ -599,7 +596,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 					r.Add(Metagame.RewardHardCurrency.TYPE_CODE, 100);
 				}
 				SimpleJSON.JSONClass top = new SimpleJSON.JSONClass(); {
-					top.Add(Metagame.RewardEgg.TYPE_CODE, "egg_premium");
+					top.Add(Metagame.RewardEgg.TYPE_CODE, "egg_event");
 				}
 				*/
 				eventData.Add("r", 2);

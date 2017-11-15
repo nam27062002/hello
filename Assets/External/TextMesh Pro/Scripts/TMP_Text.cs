@@ -3335,6 +3335,10 @@ namespace TMPro
         {
             float fontSize = m_enableAutoSizing ? m_fontSizeMax : m_fontSize;
 
+            // Reset auto sizing point size bounds
+            m_minFontSize = m_fontSizeMin;
+            m_maxFontSize = m_fontSizeMax;
+
             // Set Margins to Infinity
             Vector2 margin = k_LargePositiveVector2;
 
@@ -3364,6 +3368,10 @@ namespace TMPro
         {
             float fontSize = m_enableAutoSizing ? m_fontSizeMax : m_fontSize;
 
+            // Reset auto sizing point size bounds
+            m_minFontSize = m_fontSizeMin;
+            m_maxFontSize = m_fontSizeMax;
+
             m_recursiveCount = 0;
             float preferredWidth = CalculatePreferredValues(fontSize, margin, true).x;
 
@@ -3380,6 +3388,10 @@ namespace TMPro
         protected float GetPreferredHeight()
         {
             float fontSize = m_enableAutoSizing ? m_fontSizeMax : m_fontSize;
+
+            // Reset auto sizing point size bounds
+            m_minFontSize = m_fontSizeMin;
+            m_maxFontSize = m_fontSizeMax;
 
             Vector2 margin = new Vector2(m_marginWidth != 0 ? m_marginWidth : k_LargePositiveFloat, k_LargePositiveFloat);
 
@@ -3408,6 +3420,10 @@ namespace TMPro
         protected float GetPreferredHeight(Vector2 margin)
         {
             float fontSize = m_enableAutoSizing ? m_fontSizeMax : m_fontSize;
+
+             // Reset auto sizing point size bounds
+            m_minFontSize = m_fontSizeMin;
+            m_maxFontSize = m_fontSizeMax;
 
             m_recursiveCount = 0;
             float preferredHeight = CalculatePreferredValues(fontSize, margin, true).y;

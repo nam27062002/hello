@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Hungry Dragon/Transparent Additive AlphaBlend"
+Shader "Hungry Dragon/Particles/Transparent Additive Alpha Blend"
 {
 	Properties
 	{

@@ -152,8 +152,8 @@ public class PetSlot : MonoBehaviour {
 		// Toggle equipped/empty animators
 		if(show) {
 			// Equipped or empty?
-			if(m_equippedAnim != null) m_equippedAnim.Set(equipped, _animate);
-			if(m_emptyAnim != null) m_emptyAnim.Set(!equipped, _animate);
+			if(m_equippedAnim != null) m_equippedAnim.ForceSet(equipped, _animate);
+			if(m_emptyAnim != null) m_emptyAnim.ForceSet(!equipped, _animate);
 		}
 	}
 

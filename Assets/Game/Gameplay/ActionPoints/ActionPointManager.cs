@@ -22,8 +22,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// <summary>
 	/// Inititalization.
 	/// </summary>
-	private void Awake() {
-		m_actionPoints = new List<ActionPoint>();
+	private void Awake() {	
 	}
 
 	/// <summary>
@@ -51,6 +50,9 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	/// <param name="_actionPoint">The action point to be added.</param>
 	public void Register(ActionPoint _actionPoint) {
+		if (m_actionPoints == null) {
+			m_actionPoints = new List<ActionPoint>();
+		}
 		m_actionPoints.Add(_actionPoint);
 		if (m_actionPointsTree != null) m_actionPointsTree.Insert(_actionPoint);
 	}

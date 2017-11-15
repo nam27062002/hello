@@ -95,10 +95,11 @@ public class FireBreathNew : DragonBreathBehaviour {
     	{
 			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
 			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
-	        m_length *= transform.localScale.x;
 
-			dragonFlameStandardInstance.setEffectScale(furyBaseLength / 2.0f, transform.localScale.x);
-			dragonFlameSuperInstance.setEffectScale(furyBaseLength * m_superFuryLengthMultiplier / 2.0f, transform.localScale.x);
+			dragonFlameStandardInstance.setEffectScale(m_length / 2.0f, transform.localScale.x);
+			dragonFlameSuperInstance.setEffectScale(m_length * m_superFuryLengthMultiplier / 2.0f, transform.localScale.x);
+
+			m_length *= transform.localScale.x;
 		}
     }
 
@@ -213,7 +214,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 					if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 						AI.IMachine machine =  m_checkEntities[i].machine;
 						if (machine != null) {
-							machine.Burn(transform);
+							machine.Burn(transform, m_type == Type.Mega);
 						}
 					} else {
 						// Show message saying I cannot burn it

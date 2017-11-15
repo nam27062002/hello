@@ -31,7 +31,7 @@ public class DragonTint : MonoBehaviour
 	// Damage
 	public Color m_damageColor = Color.red;
 	float m_damageTimer = 0;
-	float m_damageTotalTime = 0.5f;
+	float m_damageTotalTime = 0.8f;
 
 	// Fury Timer
 	float m_furyTimer = 0;
@@ -147,7 +147,7 @@ public class DragonTint : MonoBehaviour
 
 		// Other color
 		Color otherColor = Color.black;
-		if ( m_health.HasDOT() )
+		if ( m_health.HasDOT(DamageType.POISON) )
 		{
 			m_otherColorTimer += Time.deltaTime * 5;
 			otherColor = m_curseColor * (Mathf.Sin( m_otherColorTimer) + 1) * 0.5f;

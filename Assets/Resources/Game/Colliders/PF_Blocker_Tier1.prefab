@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8845233bc93a243879832d2842686764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_unbreakableBlocker: 0
   m_tierWithTurboBreak: 1
   m_tierNoTurboBreak: 3
   m_hitCount: 1
@@ -242,7 +243,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     scale: 1
   m_corpseAsset: PF_Blocker_Tier1_Corpse
-  m_onBreakAudio: 
+  m_onBreakAudio: hd_trapdoor_broken
   m_view: {fileID: 0}
   m_activateOnDestroy: {fileID: 0}
 --- !u!114 &114548155384258260
@@ -258,6 +259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_type: 3
   m_rotateWithObject: 0
+  m_zoomCompensation: 1
 --- !u!114 &114714819731338518
 MonoBehaviour:
   m_ObjectHideFlags: 1

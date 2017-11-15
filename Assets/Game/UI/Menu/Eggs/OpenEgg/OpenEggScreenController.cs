@@ -120,7 +120,10 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Push the egg reward to the stack!
 		if(_egg.rewardData == null) _egg.GenerateReward();	// Generate a reward if the egg hasn't one
-		UsersManager.currentUser.rewardStack.Push(_egg.rewardData);
+		UsersManager.currentUser.PushReward(_egg.rewardData);
+
+		// Save current profile state in case the open egg flow is interrupted
+		PersistenceFacade.instance.Save_Request(true);
 
 		// Tell the scene to start the open reward flow with the latest pushed reward
 		m_scene.OpenReward();
@@ -207,7 +210,11 @@ public class OpenEggScreenController : MonoBehaviour {
 					if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
 						// Show popup after some extra delay
 						UbiBCN.CoroutineManager.DelayedCall(
-							() => { 
+							() => {
+								// Tracking
+								string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
+								HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
 								PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
 								UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
 							},

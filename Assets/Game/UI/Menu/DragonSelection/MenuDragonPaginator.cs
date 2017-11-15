@@ -30,6 +30,8 @@ public class MenuDragonPaginator : TabSystem {
 	// Exposed setup
 	[SerializeField] private GameObject m_buttonPrefab = null;
 	[SerializeField] private Tab m_dummyTab = null;
+	[Space]
+	[SerializeField] private string[] m_tierButtonSounds = new string[(int)DragonTier.COUNT];
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -107,6 +109,16 @@ public class MenuDragonPaginator : TabSystem {
 		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
+	/// <summary>
+	/// A change has ocurred on the inspector.
+	/// </summary>
+	private void OnValidate() {
+		// Make sure we have enough sound slots for all tiers
+		if(m_tierButtonSounds.Length != (int)DragonTier.COUNT) {
+			m_tierButtonSounds.Resize((int)DragonTier.COUNT);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -169,6 +181,9 @@ public class MenuDragonPaginator : TabSystem {
 			if(DragonManager.dragonsByOrder[i].tier == _tier) {
 				// Yes!! Select it and return
 				InstanceManager.menuSceneController.dragonSelector.SelectItem(i);
+
+				// Play audio corresponding to this tier
+				AudioController.Play(m_tierButtonSounds[(int)_tier]);
 				return;
 			}
 		}

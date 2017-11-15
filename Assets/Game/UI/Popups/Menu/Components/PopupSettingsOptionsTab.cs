@@ -227,7 +227,12 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 	public void OnGooglePlayAchievements(){
 		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
-			ApplicationManager.instance.GameCenter_ShowAchievements();
+			// Add some delay to give enough time for SFX to be played before losing focus
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					ApplicationManager.instance.GameCenter_ShowAchievements();
+				}, 0.15f
+			);
 		}
 	}
 

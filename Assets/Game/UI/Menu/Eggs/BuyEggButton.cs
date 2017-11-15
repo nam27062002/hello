@@ -51,6 +51,9 @@ public class BuyEggButton : MonoBehaviour {
 		ResourcesFlow purchaseFlow = new ResourcesFlow("BUY_EGG");
 		purchaseFlow.OnSuccess.AddListener(
 			(ResourcesFlow _flow) => {
+				// Play sound!
+				AudioController.Play("UI_Buy");
+
 				// Create a new egg instance
 				Egg purchasedEgg = Egg.CreateFromDef(_flow.itemDef);
 				purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!

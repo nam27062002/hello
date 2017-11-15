@@ -87,6 +87,8 @@ public class UserMissions {
 			// Is mission completed?
 			Mission m = GetMission((Mission.Difficulty)i);
 			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
+				HDTrackingManager.Instance.Notify_Missions(m, HDTrackingManager.EActionsMission.done);
+
 				// Give reward
 				coinsToReward += m.rewardCoins;
 
@@ -127,13 +129,13 @@ public class UserMissions {
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be skipped.</param>
 	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
-	public void SkipMission(Mission.Difficulty _difficulty, float _seconds) {
+	public void SkipMission(Mission.Difficulty _difficulty, float _seconds, bool _useAd, bool _useHC) {
 		// Get mission and check that it is in cooldown state
 		Mission m = GetMission(_difficulty);
 		if(m == null) return;
 
 		// Let mission handle it
-		m.SkipCooldownTimer(_seconds);
+		m.SkipCooldownTimer(_seconds, _useAd, _useHC);
 	}
 
 	//------------------------------------------------------------------//
@@ -209,6 +211,14 @@ public class UserMissions {
 
 			// 3. Get all mission definitions matching the selected type
 			List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
+
+			// 3.1. Filter out missions based on current max dragon tier unlocked
+			missionDefs = missionDefs.FindAll(
+				(DefinitionNode _def) => { 
+					return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked);	// Ignore missions meant for bigger tiers
+				}
+			);
+			DebugUtils.Assert(missionDefs.Count > 0, "<color=red>NO VALID MISSIONS FOUND!!!!</colo>");	// Just in case
 
 			// 4. Select a random mission based on weight (as we just did with the mission type)
 			// 4.1. Compute total weight

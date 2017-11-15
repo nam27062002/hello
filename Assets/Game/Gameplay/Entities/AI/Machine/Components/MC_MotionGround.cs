@@ -178,8 +178,9 @@ namespace AI {
 
 			if (m_onGround) {
 				m_fallTimer = FREE_FALL_THRESHOLD;
-				m_machine.SetSignal(Signals.Type.FallDown, false);
 				m_pilot.ReleaseAction(Pilot.Action.Jump);
+				m_machine.SetSignal(Signals.Type.FallDown, false);
+				m_viewControl.Height(0f);
 				m_nextSubState = SubState.Idle;
 			}
 		}
@@ -310,6 +311,9 @@ namespace AI {
 					break;
 				}
 			}
+			/*
+			m_heightFromGround = 100f;
+			m_viewControl.Height(100f);*/
 		}
 
 		public override void OnCollisionGroundExit(Collision _collision) {

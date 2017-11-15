@@ -69,13 +69,13 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 	}
 
-	public void Shoot(Transform _target, Vector3 _direction, float _damage) {
-		ShootAtPosition(_target.position, _direction, _damage);
+	public void Shoot(Transform _target, Vector3 _direction, float _damage, Transform _source) {
+		ShootAtPosition(_target.position, _direction, _damage, _source);
 	}
 
-	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage, Transform _source) {}
 
-	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage) {
+	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage, Transform _source) {
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
 			m_oldParent = null;

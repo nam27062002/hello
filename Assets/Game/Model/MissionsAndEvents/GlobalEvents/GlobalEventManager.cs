@@ -40,7 +40,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	public enum RequestType {
 		EVENT_DATA,
 		EVENT_STATE,
-		EVENT_LEADERBOARD
+		EVENT_LEADERBOARD,
+		EVENT_REWARDS
 	}
 
 	//------------------------------------------------------------------------//
@@ -237,7 +238,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	/// <returns>Whether the contribution has been applied or not and why.</returns>
 	/// <param name="_bonusDragonMultiplier">Apply bonus dragon multiplier?</param>
 	/// <param name="_keysMultiplier">Apply keys multiplier? Transaction must have been performed already.</param>
-	public static ErrorCode Contribute(float _bonusDragonMultiplier, float _keysMultiplier) {
+	public static ErrorCode Contribute(float _bonusDragonMultiplier, float _keysMultiplier, bool _spentHC, bool _viewAD) {
 		// Can the user contribute to the current event?
 		ErrorCode err = CanContribute();
 		if(err != ErrorCode.NONE) return err;
@@ -262,6 +263,16 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 						// Add to current user individual contribution in this event
 						GlobalEventUserData playerData = user.GetGlobalEventData(instance.m_currentEvent.id);
 						playerData.score += contribution;
+
+						// Track here!
+						HDTrackingManager.EEventMultiplier mult = HDTrackingManager.EEventMultiplier.none;
+						if (_keysMultiplier > 1) {
+							if (_spentHC) 		mult = HDTrackingManager.EEventMultiplier.hc_payment;
+							else if (_viewAD)	mult = HDTrackingManager.EEventMultiplier.ad;
+							else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
+						}
+						HDTrackingManager.Instance.Notify_GlobalEventRunDone(instance.m_currentEvent.id, instance.m_currentEvent.objective.typeDef.sku, contribution, playerData.score, mult);
+						//
 
 						// Check if player can join the leaderboard! (or update its position)
 						instance.m_currentEvent.RefreshLeaderboardPosition(playerData);
@@ -598,6 +609,9 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				Debug.Log("<color=purple>EVENT REWARD</color>\n" + responseJson.ToString(4));
 				m_currentEvent.UpdateRewardLevelFromJson(responseJson);
 			}
+
+			// Notify game
+			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_REWARDS);
 		}
 	}
 }

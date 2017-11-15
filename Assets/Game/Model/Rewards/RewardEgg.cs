@@ -55,7 +55,8 @@ namespace Metagame {
 		/// Constructor from egg sku.
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
-		public RewardEgg(string _sku) {
+		public RewardEgg(string _sku, string _source) {
+			m_source = _source;
 			Build(_sku);	// This will generate a random reward following the gacha rules
 		}
 
@@ -64,7 +65,7 @@ namespace Metagame {
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
 		private void Build(string _sku) {
-			Debug.Log("<color=purple>Building egg with sku " + _sku + "</color>");
+			//Debug.Log("<color=purple>Building egg with sku " + _sku + "</color>");
 
 			// Internal initializer
 			base.Init(TYPE_CODE);
@@ -87,7 +88,7 @@ namespace Metagame {
 		/// </summary>
 		/// <param name="_rewardTypeSku">Reward sku (from EGG_REWARDS definitions category). Leave empty to generate a random reward following the gacha rules.</param>
 		private void BuildReward() {
-			Debug.Log("<color=purple>Building egg reward!</color>");
+			//Debug.Log("<color=purple>Building egg reward!</color>");
 
 			// Get the reward definition
 			DefinitionNode rewardTypeDef = null;
@@ -164,8 +165,17 @@ namespace Metagame {
 
 					// Create the egg reward!
 					if(petDef != null) {
-						m_reward = CreateTypePet(petDef);
-						Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
+						m_reward = CreateTypePet(petDef, m_sku);
+						#if UNITY_EDITOR
+						string[] colorTags = {
+							"<color=#ffffff>",
+							"<color=#00ffff>",
+							"<color=#ffaa00>",
+							"<color=#ff7f00>"
+						};
+						Debug.Log("EGG REWARD GENERATED: " + colorTags[(int)m_reward.rarity] + m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "") + "</color>");
+						//Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
+						#endif
 					} else {
 						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + "!" + "</color>");
 					}
@@ -179,7 +189,7 @@ namespace Metagame {
 		override protected void DoCollect() {
 			// Push the egg's reward to the stack
 			if (m_reward != null) {
-				UsersManager.currentUser.rewardStack.Push(m_reward);
+				UsersManager.currentUser.PushReward(m_reward);
 			}
 		}
 	}

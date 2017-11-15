@@ -118,7 +118,9 @@ public class PersistenceData
 
     public PersistenceStates.ESaveState Save(string savePath, bool backUpOnFail = true)
 	{
-		Systems_Save();
+        m_data.Clear();
+
+        Systems_Save();
 
         SaveState = PersistenceStates.ESaveState.DiskSpace;
 
@@ -231,16 +233,8 @@ public class PersistenceData
     {
 #if UNITY_EDITOR
         return true;
-#else
-        // It should always return false except when debugging that can be changed to true
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }      
+#else        
+        return false;              
 #endif
     }    
 
@@ -431,6 +425,9 @@ public class PersistenceData
 
             if (headerVersion == -1)
             {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Debug.LogWarning("PersistenceData.LoadFromStream different headerVersions is -1");
+
                 LoadState = PersistenceStates.ELoadState.Corrupted;
             }
             else if (headerVersion < HeaderVersion)
@@ -443,6 +440,9 @@ public class PersistenceData
                 }
                 else
                 {
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        Debug.LogWarning("PersistenceData.LoadFromStream different headerVersions: " + headerVersion + " vs " + HeaderVersion);
+
                     LoadState = PersistenceStates.ELoadState.Corrupted;
                 }
             }
@@ -507,7 +507,7 @@ public class PersistenceData
                         else
                         {
                             if (FeatureSettingsManager.IsDebugEnabled)
-                                Debug.LogWarning("Trying to load invalid JSON file at path: " + savePath);
+                                Debug.LogWarning("Trying to load invalid JSON file at path: " + savePath + " content = " + text);
 
                             LoadState = PersistenceStates.ELoadState.Corrupted;
                         }
@@ -621,6 +621,9 @@ public class PersistenceData
             }
             else
             {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Debug.LogWarning("PersistenceData.Merge returned false");
+
                 LoadState = PersistenceStates.ELoadState.Corrupted;
             }
         }
@@ -655,8 +658,11 @@ public class PersistenceData
 					Systems[i].Load();
 				}
             }
-            catch (FGOL.Server.CorruptedSaveException)
+            catch (FGOL.Server.CorruptedSaveException e)
             {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Debug.LogWarning("CorruptedSaveException: " + e.ToString());
+
                 LoadState = PersistenceStates.ELoadState.Corrupted;
             }	
         }      

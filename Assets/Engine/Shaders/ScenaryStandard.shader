@@ -22,7 +22,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_DarkenDistance("Darken distance",  float) = 20.0
 
 		_EmissivePower("Emissive Power", Float) = 1.0
-		_BlinkTimeMultiplier("Blink time multiplier", Float) = 2.0
+		_BlinkTimeMultiplier("Blink time multiplier", Float) = 0.0
 
 //		_ReflectionColor("Reflection color", Color) = (1.0, 1.0, 0.0, 1.0)
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 1.0
@@ -41,11 +41,12 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
 		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
+
 //		[Toggle(EMISSIVEBLINK)] _EnableEmissiveBlink("Enable emissive blink", Float) = 0
 //		[Toggle(REFLECTIVE)] _EnableReflective("Enable reflective", Float) = 0
 //		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 		[KeywordEnum(None, Overlay, Additive, Modulate)] VertexColor("Vertex color mode", Float) = 0
-		[KeywordEnum(None, Blink, Reflective, LightmapContrast)] Emissive("Emission type", Float) = 0
+		[KeywordEnum(None, Blink, Reflective, LightmapContrast, Alpha)] Emissive("Emission type", Float) = 0
 /*
 		0.	Zero				Blend factor is(0, 0, 0, 0).
 		1.	One					Blend factor is(1, 1, 1, 1).
@@ -96,7 +97,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				
 				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 
-				#pragma multi_compile EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
+				#pragma multi_compile EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST EMISSIVE_ALPHA
 
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 

@@ -70,7 +70,6 @@ namespace LevelEditor {
 		/// First update.
 		/// </summary>
 		void Start() {
-		
 		}
 		
 		/// <summary>

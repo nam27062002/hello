@@ -97,9 +97,9 @@ namespace AI {
 				if (m_projectile != null) {					
 					IProjectile projectile = m_projectile.GetComponent<IProjectile>();
 					if (m_data.forceFaceToShoot && !((AttackRangedData)m_data).canFollowTarget) {
-						projectile.ShootAtPosition(m_facingTarget, m_machine.transform.forward, ((AttackRangedData)m_data).damage);
+						projectile.ShootAtPosition(m_facingTarget, m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
 					} else {
-						projectile.Shoot(InstanceManager.player.dragonMotion.head, m_machine.transform.forward, ((AttackRangedData)m_data).damage);
+						projectile.Shoot(InstanceManager.player.dragonMotion.head, m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
 					}
 					m_projectile = null;
 				}

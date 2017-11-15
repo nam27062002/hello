@@ -24,6 +24,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	private int m_allowBurnable;
 	public bool allowBurnable { get { return m_allowBurnable == 0; } set { if (value) { m_allowBurnable = Mathf.Max(0, m_allowBurnable - 1); } else { m_allowBurnable++; } } }
 
+	public virtual DragonTier edibleFromTier { get { return DragonTier.COUNT; } set { } }
 
 	protected DefinitionNode m_def;
 	public 	  DefinitionNode def { get { return m_def; } }

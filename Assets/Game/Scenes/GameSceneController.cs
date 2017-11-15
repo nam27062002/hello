@@ -40,6 +40,8 @@ public class GameSceneController : GameSceneControllerBase {
 	};
 
 	bool m_switchingArea = false;
+	public bool isSwitchingArea { get { return m_switchingArea; } }
+
 	string m_nextArea = "";
 	public enum SwitchingAreaSate
 	{
@@ -81,11 +83,8 @@ public class GameSceneController : GameSceneControllerBase {
 	}
 
 	// Pause management
-	private bool m_paused = false;
 	private float m_timeScaleBackup = 1f;	// When going to pause, store timescale to be restored later on
-	public bool paused {
-		get { return m_paused; }
-	}
+	private int m_pauseStacks = 0;
 
 	// Level loading
 	private AsyncOperation[] m_levelLoadingTasks = null;
@@ -137,8 +136,12 @@ public class GameSceneController : GameSceneControllerBase {
 
 	// Internal
 	private float m_timer = -1;	// Misc use
+	private float m_loadingTimer = 0;
 
     private SwitchAsyncScenes m_switchAsyncScenes = new SwitchAsyncScenes();
+
+    TrackerBoostTime m_boostTimeTracker;
+    TrackerMapUsage m_mapUsageTracker;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -150,6 +153,9 @@ public class GameSceneController : GameSceneControllerBase {
 		// Call parent
 		base.Awake();
 
+		m_boostTimeTracker = new TrackerBoostTime();
+		m_mapUsageTracker = new TrackerMapUsage();
+
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 		// Make sure loading screen is visible
@@ -158,6 +164,10 @@ public class GameSceneController : GameSceneControllerBase {
 		// Check whether the tutorial popup must be displayed
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
 			|| DebugSettings.isPlayTest) {
+			// Tracking
+			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
+			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
 			// Open popup
 			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
 			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
@@ -429,7 +439,7 @@ public class GameSceneController : GameSceneControllerBase {
         Track_RoundEnd();
 
         // Make sure game is not paused
-        PauseGame(false);
+        PauseGame(false, true);
 
 		// Change state
 		ChangeState(EStates.FINISHED);
@@ -444,25 +454,46 @@ public class GameSceneController : GameSceneControllerBase {
 	/// <summary>
 	/// Pause/resume
 	/// </summary>
-	/// <param name="_bPause">Whether to pause the game or resume it.</param>
-	public void PauseGame(bool _bPause) {
+	/// <param name="_pause">Whether to pause the game or resume it.</param>
+	/// <param name="_force">Ignore stacks.</param>
+	public void PauseGame(bool _pause, bool _force) {
 		// Only allowed in specific states
 		if(state == EStates.RUNNING || state == EStates.COUNTDOWN) {
-			m_paused = _bPause;
-			if(_bPause) {
-				// Store current timescale and set it to 0
-				m_timeScaleBackup = Time.timeScale;
-				Time.timeScale = 0.0f;
+			//m_paused = _bPause;
+			if(_pause) {
+				// If not paused, pause!
+				if(!m_paused || _force) {
+					// Store current timescale and set it to 0
+					// Not if already paused, otherwise resume wont work!
+					if(!m_paused) m_timeScaleBackup = Time.timeScale;
+					Time.timeScale = 0.0f;
 
-				// Notify the game
-				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
+					// Notify the game
+					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
+				}
+
+				// Increase stack
+				m_pauseStacks++;
 			} else {
-				// Restore previous timescale
-				Time.timeScale = m_timeScaleBackup;
+				// Decrease stack (or reset if forcing)
+				if(_force) {
+					m_pauseStacks = 0;
+				} else {
+					m_pauseStacks = Mathf.Max(m_pauseStacks - 1, 0);	// At least 0!
+				}
 
-				// Notify the game
-				Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
+				// If empty stack, restore gameplay!
+				if(m_pauseStacks == 0) {
+					// Restore previous timescale
+					Time.timeScale = m_timeScaleBackup;
+
+					// Notify the game
+					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
+				}
 			}
+
+			// Update logic flag
+			m_paused = (m_pauseStacks > 0);
 		}
 	}
 
@@ -513,10 +544,10 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.player.StartIntroMovement();
 
 				// Spawn collectibles
-				CollectiblesManager.OnLevelLoaded();              
+				CollectiblesManager.OnLevelLoaded();
 
-				// Hide loading screen
-				LoadingScreen.Toggle(false);
+				// Wait one frame!
+				StartCoroutine( OneFrameAfterActivation() );
 
                 // Notify the game
                 Messenger.Broadcast(GameEvents.GAME_STARTED);
@@ -543,6 +574,10 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.DELAY: {
 				// Reset timer
 				m_timer = INITIAL_DELAY;
+
+				// Notify loadGameplay start
+				HDTrackingManager.Instance.Notify_LoadingGameplayStart();
+				m_loadingTimer = Time.time;
 			} break;
 
 			case EStates.LOADING_LEVEL: {
@@ -584,6 +619,9 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Make dragon playable!
 				InstanceManager.player.playable = true;
+
+				// TODO: Notify loadGameplay end
+				HDTrackingManager.Instance.Notify_LoadingGameplayEnd( Time.time - m_loadingTimer );
 			} break;
 
 			case EStates.FINISHED: {
@@ -602,8 +640,8 @@ public class GameSceneController : GameSceneControllerBase {
                 // Show loading screen
 				LoadingScreen.Toggle(true, false);
 
-                // Disable dragon and entities!
-                InstanceManager.player.gameObject.SetActive(false);
+				// Disable dragon and entities!
+     			InstanceManager.player.gameObject.SetActive(false);
 
                 // Clear pools to save memory for the results screen
                 ClearGame();
@@ -621,7 +659,7 @@ public class GameSceneController : GameSceneControllerBase {
                   
                     int count = gos.Length;
                     for (int i = 0; i < count; i++) {                        
-                        if (gos[i] != gameObject && gos[i] != mainCameraGO && gos[i] != uiRoot) {                            
+                        if (gos[i] != gameObject && gos[i] != mainCameraGO && gos[i] != uiRoot && gos[i] != InstanceManager.player.gameObject ) {
                             Destroy(gos[i]);                                                                                     
                         }
                     }
@@ -633,15 +671,16 @@ public class GameSceneController : GameSceneControllerBase {
                 string[] tokens;
                 for (int i = 0; i < scenesToUnload.Count;) {
                     tokens = scenesToUnload[i].Split('_');
-                    if (tokens.Length > 1 && tokens[0] == "SP")
+                    if (tokens.Length > 1 && tokens[0].CompareTo("SP") == 0){
                         scenesToUnload.RemoveAt(i);
-                    else
+                    }else{
                         i++;
+					}
                 }
                                                      
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
-                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded);
+                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded, OnScenesUnloaded);
             } break;
         }
 		
@@ -649,18 +688,31 @@ public class GameSceneController : GameSceneControllerBase {
 		m_state = _newState;
 	}
 
-    private void OnResultsSceneLoaded() {        
+	IEnumerator OneFrameAfterActivation()
+	{
+		yield return null;
+		InstanceManager.fogManager.firstTime = true;
+		// Hide loading screen
+		LoadingScreen.Toggle(false);
+	}
+
+	private void OnScenesUnloaded()
+	{
+		// This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
+        if (uiRoot != null) {
+            uiRoot.SetActive(false);
+        }
+		DestroyImmediate( InstanceManager.player.gameObject );
+		InstanceManager.player = null;
+	}
+
+    private void OnResultsSceneLoaded() {
 
 		Scene scene = SceneManager.GetSceneByName( ResultsScreenController.NAME );
 		SceneManager.SetActiveScene(scene);
 
 		// Hide loading screen
 		LoadingScreen.Toggle(false, false);
-
-        // This scene uiRoot is disabled because the results screen scene's uiRoot is going to be used instead
-        if (uiRoot != null) {
-            uiRoot.SetActive(false);
-        }
 
         // We don't need it anymore as the results screen scene, which has its own AudioListener, has been loaded completely
         if (mainCamera != null) {
@@ -714,6 +766,9 @@ public class GameSceneController : GameSceneControllerBase {
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
 			m_switchState = SwitchingAreaSate.UNLOADING_SCENES;
+
+			// Disable everything?
+			LevelManager.DisableCurrentArea();
 			m_switchingAreaTasks = LevelManager.UnloadCurrentArea();
 		}
     }
@@ -723,7 +778,7 @@ public class GameSceneController : GameSceneControllerBase {
         int dragonXp = 0;
         int dragonProgress = 0;
         string dragonSkin = null;
-        List<string> pets = null;
+		List<string> pets = null;
         if (InstanceManager.player != null) {
             DragonData dragonData = InstanceManager.player.data;
             if (dragonData != null) {
@@ -732,16 +787,15 @@ public class GameSceneController : GameSceneControllerBase {
                 }
 
                 dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
-
-                // TODO: use trackSku instead of sku
                 dragonSkin = dragonData.diguise;
-
-                // TODO: use trackSkus instead of skus
-                pets = dragonData.pets;
+				pets = dragonData.pets;
             }
         }
 
-        HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+		m_boostTimeTracker.SetValue(0, false);
+		m_mapUsageTracker.SetValue(0, false);
+
+		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
     }
 
     private void Track_RoundEnd() {
@@ -772,7 +826,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc);
+            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
     }
 
     private void Track_RunEnd(bool _quitGame) {

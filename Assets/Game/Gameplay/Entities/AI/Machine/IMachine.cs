@@ -64,7 +64,7 @@ namespace AI {
 
 		Quaternion GetDyingFixRot();
 
-		bool Burn(Transform _transform);
+		bool Burn(Transform _transform, bool instant = false );
 
 		void SetVelocity(Vector3 _v);
 		void AddExternalForce(Vector3 _f);

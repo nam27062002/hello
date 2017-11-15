@@ -186,7 +186,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		switch(_requestType) {
 			case GlobalEventManager.RequestType.EVENT_STATE: {
 				// Chain with leaderboard request
-				GlobalEventManager.RequestCurrentEventLeaderboard(false);
+				//GlobalEventManager.RequestCurrentEventLeaderboard(false);
 				// BusyScreen.Show(this);
 			} break;
 
@@ -204,6 +204,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Get bonus dragon definition
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
 		if(def == null) return;	// Shouldn't happen
+
+		// Tracking
+		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoDragonBonus.PATH);
+		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
 
 		PopupManager.OpenPopupInstant(PopupInfoDragonBonus.PATH);
 	}

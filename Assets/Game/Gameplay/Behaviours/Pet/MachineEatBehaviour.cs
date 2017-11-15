@@ -41,9 +41,10 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_machine = GetComponent<AI.IMachine>();
 		m_attacker = GetComponent<IAttacker>();
 
-		IEntity entity = GetComponent<IEntity>();
-		if ( entity )
-			m_origin = entity.sku;
+		m_entity = GetComponent<IEntity>();
+		if (m_entity != null) {
+			m_origin = m_entity.sku;
+		}
 
 		if (m_isPet) {
 			m_canLatchOnPlayer = false;	

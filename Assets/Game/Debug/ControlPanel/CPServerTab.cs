@@ -33,6 +33,8 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_outputText = null;
 	[SerializeField] private TextMeshProUGUI m_accountIdText = null;
     [SerializeField] private TextMeshProUGUI m_enviromentText = null;
+    [SerializeField] private TextMeshProUGUI m_trackingIdText = null;
+    [SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
     [SerializeField] private Toggle m_debugServerToggle = null;
 
     // Internal
@@ -63,8 +65,11 @@ public class CPServerTab : MonoBehaviour {
 
     private void OnEnable()
     {
-        m_accountIdText.text = "Account Id: " + GameSessionManager.SharedInstance.GetUID();
+        m_accountIdText.text = "AccountId: " + GameSessionManager.SharedInstance.GetUID();
         m_enviromentText.text = "Env: " + ServerManager.SharedInstance.GetServerConfig().m_eBuildEnvironment.ToString();
+
+        m_trackingIdText.text = "TrackingId: " + HDTrackingManager.Instance.GetTrackingID();
+        m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
 
         m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);

@@ -137,8 +137,8 @@ public class PetSlotInfo : MonoBehaviour {
 			// Equipped or empty?
 			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[m_slotIdx]);
 			bool equipped = (petDef != null);
-			m_equippedSlotAnim.Set(equipped, _animate);
-			m_emptySlotAnim.Set(!equipped, _animate);
+			m_equippedSlotAnim.ForceSet(equipped, _animate);
+			m_emptySlotAnim.ForceSet(!equipped, _animate);
 
 			// Pet info
 			if(equipped) {

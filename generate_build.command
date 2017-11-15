@@ -445,8 +445,8 @@ if $COMMIT_CHANGES;then
   if $CREATE_TAG; then
       print_builder "Pushing Tag ${VERSION_ID}"
       set +e  # Dont exit script on error
-      git tag "${VERSION_ID}"
-      git push origin "${VERSION_ID}"
+      git tag "release/${VERSION_ID}"
+      git push origin "release/${VERSION_ID}"
       set -e
   fi
 fi

@@ -9,6 +9,7 @@ public class ParticleData {
 
 	public bool changeStartColor = false;
 	public Color startColor = Color.white;
+	public Color startColorTwo = Color.white;
 
 	public bool changeColorOvertime = false;
 	public Gradient colorOvertime;
@@ -27,6 +28,7 @@ public class ParticleData {
 		// Color
 		changeStartColor = false;
      	startColor = Color.white;
+		startColorTwo = Color.white;
 
 		changeColorOvertime = false;
 		colorOvertime = new Gradient();
@@ -46,6 +48,7 @@ public class ParticleData {
 		// Color
 		changeStartColor = false;
 		startColor = Color.white;
+		startColorTwo = Color.white;
 
 		changeColorOvertime = false;
 		colorOvertime = new Gradient();

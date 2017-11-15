@@ -215,10 +215,13 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 			}
 
 			// Finally remove the unused spawners from the scene
-			toRemove.AddRange(validSpawners);
-			for(int i = 0; i < toRemove.Count; i++) {
-				GameObject.Destroy(toRemove[i].gameObject);
-				toRemove[i] = null;
+			// Unless cheating!
+			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
+				toRemove.AddRange(validSpawners);
+				for(int i = 0; i < toRemove.Count; i++) {
+					GameObject.Destroy(toRemove[i].gameObject);
+					toRemove[i] = null;
+				}
 			}
 		}
 	}
@@ -268,13 +271,16 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 			}
 
 			// Remove the rest of collectibles from the scene
-			for(int i = 0; i < allCollectibles.Length; i++) {
-				// Skip if selected one
-				if(allCollectibles[i] == selectedObj) continue;
+			// Unless cheating!
+			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
+				for(int i = 0; i < allCollectibles.Length; i++) {
+					// Skip if selected one
+					if(allCollectibles[i] == selectedObj) continue;
 
-				// Delete from scene otherwise
-				GameObject.Destroy(allCollectibles[i]);
-				allCollectibles[i] = null;
+					// Delete from scene otherwise
+					GameObject.Destroy(allCollectibles[i]);
+					allCollectibles[i] = null;
+				}
 			}
 		}
 

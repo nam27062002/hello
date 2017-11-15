@@ -178,12 +178,33 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	/// <returns>The PC worth for <paramref name="_coins"/> amount of coins.</returns>
 	/// <param name="_coins">Amount of coins to be evaluated.</param>
 	public static long ComputePCForCoins(long _coins) {
-		// Get conversion factor from definition
-		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
-		double coinsToPC = gameSettingsDef.GetAsDouble("missingRessourcesPCperSC");
+		// Progressive conversion rather than linear one, so PC required for big amounts doesn't feel so punishing
+		// Formula from eco design: SCperHC = (coefA * tier + coefB) * base
+
+		// Figure out tier corresponding to the target coins amount
+		List<DefinitionNode> tierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.CURRENCY_TIERS);
+		DefinitionsManager.SharedInstance.SortByProperty(ref tierDefs, "minimumSC", DefinitionsManager.SortType.NUMERIC);
+		tierDefs.Reverse();	// High to low
+		int selectedTier = 1;	// [1..N]
+		for(int i = 0; i < tierDefs.Count; ++i) {
+			if(_coins > tierDefs[i].GetAsLong("minimumSC")) {
+				// This is our tier!
+				selectedTier = tierDefs[i].GetAsInt("tier");
+				break;
+			}
+		}
+
+		// Get constants from definitions
+		DefinitionNode constantsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "formulaCalculation");
+		double coefA = constantsDef.GetAsDouble("coefficientA");
+		double coefB = constantsDef.GetAsDouble("coefficientB");
+		double baseValue = constantsDef.GetAsDouble("scHCBaseValue");
+
+		// Compute conversion factor
+		double scPerPc = (coefA * (double)selectedTier + coefB) * baseValue;
 
 		// Apply, round and return
-		double pc = Mathf.Abs(_coins) * coinsToPC;
+		double pc = Mathf.Abs(_coins)/scPerPc;
 		pc = Math.Round(pc, MidpointRounding.AwayFromZero);
 		return Math.Max(1, (long)pc);	// At least 1
 	}

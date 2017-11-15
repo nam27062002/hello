@@ -184,6 +184,7 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
 	void OnDisable()
@@ -193,6 +194,14 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLost);
+		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+	}
+
+	void OnGameAreaEnter()
+	{
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+		}
 	}
 
 	void Update()

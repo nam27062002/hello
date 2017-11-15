@@ -53,7 +53,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(FRESNEL)] _EnableFresnel("Enable fresnel", Float) = 1.0
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cutoff", Float) = 0
-		[Toggle(DOUBLESIDED)] _EnableDoubleSided("Enable double sided", Float) = 0
+		[Toggle(DOUBLESIDED)] _EnableDoublesided("Enable doublesided", Float) = 0
 		[Toggle(SILHOUETTE)] _EnableSilhouette("Enable silhouette", Float) = 0
 
 		/// Enum Material Properties
@@ -63,9 +63,9 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 	}
 
 	SubShader {
-		Tags { "Queue"="Geometry+10" "IgnoreProjector"="True" "RenderType"="Opaque" "LightMode"="ForwardBase" }
-		LOD 100
-//		ColorMask RGBA
+		Tags { "Queue"="Geometry+10" "RenderType"="Opaque" "LightMode"="ForwardBase" }
+	//	LOD 100
+		ColorMask RGBA
 	
 		Pass {
 
@@ -77,31 +77,31 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 				ZFail keep
 			}
 
-			ztest less
 			Cull[_Cull]
 			Blend[_SrcBlend][_DstBlend]
-			ZWrite [_ZWrite]
+			ZWrite[_ZWrite]
+			ztest less
 
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
-			#pragma multi_compile __ SILHOUETTE
-			#pragma multi_compile  __ NORMALMAP
-			#pragma multi_compile  __ SPECULAR
-			#pragma multi_compile  __ FRESNEL
-			#pragma multi_compile  __ CUTOFF
-			#pragma multi_compile  __ DOUBLESIDED
+			#pragma shader_feature  __ SILHOUETTE
+			#pragma shader_feature  __ NORMALMAP
+			#pragma shader_feature  __ SPECULAR
+			#pragma shader_feature  __ FRESNEL
+			#pragma shader_feature  __ CUTOFF
+			#pragma shader_feature  __ DOUBLESIDED
 
-			#pragma multi_compile SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
-			#pragma multi_compile FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
+			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
+			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"
 			#include "../HungryDragon.cginc"
 
-			#define FRESNEL
+//			#define FRESNEL
 
 			#if LOW_DETAIL_ON
 			#undef NORMALMAP

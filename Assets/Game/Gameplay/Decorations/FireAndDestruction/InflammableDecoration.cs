@@ -176,6 +176,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				m_viewBurned.SetActive(true);
 
 				SwitchViewToDissolve();
+
+				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_entity.reward);
+
 				break;
 
 			case State.Explode:

@@ -132,6 +132,9 @@ public class GameCamera : MonoBehaviour
 	public FastBounds2D 		deactivationRectBG { get { return m_deactivationBG; }}
 
 
+	private Plane[] m_frustumPlanes;
+
+
 	private int					m_pixelWidth = 640;
 	private int					m_pixelHeight = 480;
 	private float				m_pixelAspectX = 1.333f;
@@ -235,6 +238,7 @@ public class GameCamera : MonoBehaviour
 	{
 		m_transform = transform;
 		m_unityCamera = GetComponent<Camera>();
+		m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
 
 		m_slowmoBreachTrigger = GetComponentInChildren<SlowmoBreachTrigger>();
@@ -321,15 +325,20 @@ public class GameCamera : MonoBehaviour
 		LevelEditor.LevelEditorSceneController editor = InstanceManager.gameSceneControllerBase as LevelEditor.LevelEditorSceneController;
 		if ( editor != null )
 		{
-			if (LevelEditor.LevelEditor.settings.useIntro)
-			{
-				StartIntro(true);
-			}
-			else
-			{
-				MoveToSpawnPos(true);
+			if (LevelEditor.LevelEditor.settings.spawnAtCameraPos) {
 				SetTargetObject( InstanceManager.player.gameObject );
 				m_state = State.PLAY;
+			} else {
+				if (LevelEditor.LevelEditor.settings.useIntro)
+				{
+					StartIntro(true);
+				}
+				else
+				{
+					MoveToSpawnPos(true);
+					SetTargetObject( InstanceManager.player.gameObject );
+					m_state = State.PLAY;
+				}
 			}
 		}
 		else
@@ -400,7 +409,7 @@ public class GameCamera : MonoBehaviour
         }        
 	}    
 
-	private void UpdatePixelData()
+	public void UpdatePixelData()
 	{
 		float pw = m_unityCamera.pixelWidth;
 		float ph = m_unityCamera.pixelHeight;
@@ -525,6 +534,12 @@ public class GameCamera : MonoBehaviour
 		m_frameWidthIncrement += cameraFrameWidthModifier;
 	}
 
+	public float GetFrameWidth(float size, float cameraFrameWidthModifier)
+	{
+		SetFrameWidthIncrement(size, cameraFrameWidthModifier);
+		return m_frameWidthDefault + m_frameWidthIncrement;
+	}
+
 	public bool IsTarget(GameObject obj)
 	{
 		return (m_targetObject == obj);
@@ -631,6 +646,7 @@ public class GameCamera : MonoBehaviour
 		}
 		*/
 
+		m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
 	}
 
 
@@ -1047,7 +1063,7 @@ public class GameCamera : MonoBehaviour
 	
 	// Zooming in and out is done by specifying the desired width of the frame, i.e. how wide is the visible frame in metres at the z=0 plane?
 	// We zoom in and out by animating Z position, but at close range we zoom in by animating FOV instead.
-	private void UpdateZooming(float desiredFrameWidth, bool bossZoom)
+	public void UpdateZooming(float desiredFrameWidth, bool bossZoom)
 	{        		        
         // deal with frame height and vertical FOV, as unity camera uses vertical FOV.
         float desiredFrameHeight = desiredFrameWidth * m_pixelAspectY;
@@ -1166,10 +1182,14 @@ public class GameCamera : MonoBehaviour
     private FastBounds2D[] m_bounds = new FastBounds2D[2];
     private float[] m_depth = new float[2];
 
-	void UpdateBounds() {
+	public void UpdateFOV() {
 		m_unityCamera.fieldOfView = m_fov;
-		
+	}
+
+	void UpdateBounds() {		
 		float z = -m_position.z;
+
+		UpdateFOV();
 
 		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 		
         m_cameraRays[0] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));
@@ -1322,12 +1342,24 @@ public class GameCamera : MonoBehaviour
 	}
 
 
-	public bool IsInsideFrustrum(Vector3 _point) {
+	public bool IsInside2dFrustrum(Vector3 _point) {
 		return m_screenWorldBounds.Contains(_point);
 	}
 
-	public bool IsInsideFrustrum(Bounds _bounds) {
+	public bool IsInside2dFrustrum(Bounds _bounds) {
 		return m_screenWorldBounds.Intersects(_bounds);
+	}
+
+	public bool IsInsideCameraFrustrum(Vector3 _p) {
+		for (int i = 0; i < m_frustumPlanes.Length; ++i) {
+			if (!m_frustumPlanes[i].GetSide(_p)) return true;
+		}
+
+		return false;
+	}
+
+	public bool IsInsideCameraFrustrum(Bounds _bounds) {
+		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, _bounds);
 	}
 
     private bool HasBoss() {

@@ -583,7 +583,10 @@ public class DragonPlayer : MonoBehaviour {
 	private void OnLevelUp(DragonData _data) {
 		// Assume it's this dragon
 		// Make sure the dragon has the scale according to its level
-		gameObject.transform.localScale = Vector3.one * data.scale;
+		// gameObject.transform.localScale = Vector3.one * data.scale;
+		gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
+		if (m_breathBehaviour.IsFuryOn())
+			m_breathBehaviour.RecalculateSize();
 
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
@@ -656,8 +659,12 @@ public class DragonPlayer : MonoBehaviour {
 	/// <returns>The tier when breaking.</returns>
 	public DragonTier GetTierWhenBreaking()
 	{
-		DragonTier ret = m_data.tier + m_tierIncreaseBreak;
-		return ret;
+		int ret = (int)m_data.tier + m_tierIncreaseBreak;
+		if ( ret >= (int)DragonTier.COUNT )
+		{
+			ret = (int)(DragonTier.COUNT - 1);
+		}
+		return (DragonTier)ret;
 	}
 
 	public void SetOnBreakIncrease( int increase )

@@ -152,7 +152,7 @@ namespace AI {
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }
 		
-		public virtual bool Burn(Transform _transform) { return false; }
+		public virtual bool Burn(Transform _transform, bool instant = false) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
 		public void SetVelocity(Vector3 _v) {}

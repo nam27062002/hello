@@ -28,6 +28,8 @@ public class PopupSettings : MonoBehaviour {
 	[SerializeField]
     private GameObject m_3dTouch;
 
+	[SerializeField] private Localizer m_versionText = null;
+
     void Awake()
     {
         if (m_saveTab != null)
@@ -44,6 +46,23 @@ public class PopupSettings : MonoBehaviour {
 			m_3dTouch.SetActive( PlatformUtils.Instance.InputPressureSupprted());
 		}
         CS_Init();
+
+		// Set version number
+		m_versionText.Localize(m_versionText.tid, GameSettings.internalVersion.ToString() + " ("+ ServerManager.SharedInstance.GetRevisionVersion() +")");
+
+		PopupController controller = GetComponent<PopupController>();
+		controller.OnOpenPostAnimation.AddListener( OnOpenAnimation );
+		controller.OnClosePreAnimation.AddListener( OnCloseAnimation );
+    }
+
+    private void OnOpenAnimation()
+    {
+    	HDTrackingManager.Instance.Notify_SettingsOpen();
+    }
+
+    private void OnCloseAnimation()
+    {
+		HDTrackingManager.Instance.Notify_SettingsClose();
     }
 
 	public void CS_Init()
@@ -89,6 +108,10 @@ public class PopupSettings : MonoBehaviour {
 	/// Dragon info button has been pressed.
 	/// </summary>
 	public void OnDragonInfoButton() {
+		// Tracking
+		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupDragonInfo.PATH);
+		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "settings");
+
 		// Open the dragon info popup and initialize it with the current dragon's data
 		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
 		popup.Init(DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon));
@@ -109,8 +132,16 @@ public class PopupSettings : MonoBehaviour {
 	public void OpenCustomerSupport()
     {
         //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
-		CSTSManager.SharedInstance.OpenView(LocalizationManager.SharedInstance.Culture.Name, false);	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.;
-        HDTrackingManager.Instance.Notify_CustomerSupportRequested();
+		if (Application.internetReachability != NetworkReachability.NotReachable)
+		{
+			CSTSManager.SharedInstance.OpenView(LocalizationManager.SharedInstance.Culture.Name, false);	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.;
+	        HDTrackingManager.Instance.Notify_CustomerSupportRequested();
+        }
+        else
+        {
+			string str = LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION");
+        	UIFeedbackText.CreateAndLaunch(str, new Vector2(0.5f, 0.5f), GetComponentInParent<Canvas>().transform as RectTransform);
+        }
     }
 
 	public void OnBackButton()

@@ -142,6 +142,7 @@ public class GameServerManagerCalety : GameServerManager {
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onNewAppVersionNeeded() {
 			Debug.TaggedLog(tag, "onNewAppVersionNeeded");
+			CacheServerManager.SharedInstance.SaveCurrentVersionAsObsolete();
 			IsNewAppVersionNeeded = true;
 		}
 
@@ -383,8 +384,8 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	public override void SetPersistence(string persistence, ServerCallback callback) {
-		Dictionary<string, string> parameters = new Dictionary<string, string>();
+	public override void SetPersistence(string persistence, ServerCallback callback) {        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("persistence", persistence);
 		Commands_EnqueueCommand(ECommand.SetPersistence, parameters, callback);        
 	}
@@ -793,11 +794,9 @@ public class GameServerManagerCalety : GameServerManager {
 				} break;
 
 				case ECommand.SetPersistence: {
-					if(IsLoggedIn()) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();						
-						kParams["universe"] = parameters["persistence"];
-                        Command_SendCommand(COMMAND_SET_PERSISTENCE, kParams);                            
-					}
+					if(IsLoggedIn()) {						
+                        Command_SendCommand(COMMAND_SET_PERSISTENCE, null, null, parameters["persistence"]);
+                    }
 				} break;
 
 				case ECommand.UpdateSaveVersion: {
@@ -812,9 +811,9 @@ public class GameServerManagerCalety : GameServerManager {
 
 				case ECommand.SetQualitySettings: {
 					// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
-					if(IsLoggedIn()) {
+					if(IsLoggedIn()) {                                                
                         Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                       
-					} else if (FeatureSettingsManager.IsDebugEnabled) {
+                    } else if (FeatureSettingsManager.IsDebugEnabled) {
 						LogError("SetQualitySettings require the user to be logged");
 					}
 				} break;
@@ -1168,7 +1167,7 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_TIME = "/api/server/time";
 	private const string COMMAND_GET_PERSISTENCE = "/api/persistence/get";
 	private const string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
-	private const string COMMAND_GET_QUALITY_SETTINGS = "/api/adq/settings";
+	private const string COMMAND_GET_QUALITY_SETTINGS = "/api/aquality/settings";
 	private const string COMMAND_SET_QUALITY_SETTINGS = "/api/quality/upload";
 	private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";

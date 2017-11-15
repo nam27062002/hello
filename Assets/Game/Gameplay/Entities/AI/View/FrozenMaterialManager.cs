@@ -11,6 +11,11 @@ public class FrozenMaterialManager : Singleton<FrozenMaterialManager> {
 		return instance.__GetFrozenMaterialFor(_source);
 	}
 
+	public static void CleanFrozenMaterials(){
+		if ( instance != null && instance.m_frozenReferences != null)
+			instance.m_frozenReferences.Clear();
+	}
+
 	private Material __GetFrozenMaterialFor(Material _source) {
 		if (m_frozenReferences == null) {
 			m_frozenReferences = new Dictionary<Material, Material>();

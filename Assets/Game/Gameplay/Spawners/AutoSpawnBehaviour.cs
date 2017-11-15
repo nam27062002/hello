@@ -28,6 +28,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private SpawnerConditions m_spawnConditions;
 
 	private Bounds m_bounds; // view bounds
+	private Renderer m_renderer;
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
 	public Quaternion rotation { get { return Quaternion.identity; } }
@@ -56,7 +57,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			m_gameSceneController = InstanceManager.gameSceneControllerBase;
 
 			GameObject view = transform.Find("view").gameObject;
-			m_bounds = view.GetComponentInChildren<Renderer>().bounds;
+			m_renderer = view.GetComponentInChildren<Renderer>();
+			m_bounds = m_renderer.bounds;
 
 			Vector2 position = (Vector2)m_bounds.min;
 			Vector2 size = (Vector2)m_bounds.size;
@@ -149,7 +151,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 				}
 			} else if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-					bool isInsideActivationArea = m_newCamera.IsInsideActivationArea(m_bounds);
+					bool isInsideActivationArea = m_newCamera.IsInsideCameraFrustrum(m_bounds);
 					if (isInsideActivationArea) {
 						return true;
 					}

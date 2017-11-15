@@ -69,7 +69,7 @@ public abstract class PopupPauseBase : MonoBehaviour {
 	public virtual void OnOpenPreAnimation() {
 		// Pause the game
 		if(InstanceManager.gameSceneController != null) {
-			InstanceManager.gameSceneController.PauseGame(true);
+			InstanceManager.gameSceneController.PauseGame(true, false);
 		}
 	}
 
@@ -79,7 +79,7 @@ public abstract class PopupPauseBase : MonoBehaviour {
 	public virtual void OnClosePostAnimation() {
 		// Resume game
 		if(InstanceManager.gameSceneController != null) {
-			InstanceManager.gameSceneController.PauseGame(false);
+			InstanceManager.gameSceneController.PauseGame(false, false);
 		}
 	}
 

@@ -6,8 +6,9 @@ public abstract class FunnelData : TrackingEventData {
 	private float[] m_stepTimeStamp;
 
 	private int m_stepCount;
+	public int stepCount { get{ return m_stepCount; } }
 	private int m_currentStep;
-
+	public int currentStep { get{ return m_currentStep; } }
 
 	protected FunnelData(string _name) : base(_name) { }
 

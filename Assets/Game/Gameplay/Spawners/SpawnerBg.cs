@@ -31,13 +31,8 @@ public class SpawnerBg : AbstractSpawner {
 	[SerializeField] private int m_flockBonus = 0;
 
 	[Separator("Activation")]
-	[Tooltip("Start spawning when any of the activation conditions is triggered.\nIf empty, the spawner will be activated at the start of the game.")]
-	[SerializeField] private SpawnCondition[] m_activationTriggers;
-	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
-
-	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
-	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
-	public SpawnCondition[] deactivationTriggers { get { return m_deactivationTriggers; }}
+	[Tooltip("Spawners may not be present on every run (percentage).")]
+	[SerializeField][Range(0f, 100f)] public float m_activationChance = 100f;
 
 	[Separator("Respawn")]	
 	[SerializeField] private int m_maxSpawns;
@@ -106,8 +101,20 @@ public class SpawnerBg : AbstractSpawner {
         if (m_quantity.max < m_quantity.min) {
             m_quantity.min = m_quantity.max;
         }
+
+		float rnd = Random.Range(0f, 100f);
+		if (m_activationChance < 100f) {
+			// check debug 
+			if (DebugSettings.spawnChance0) {
+				rnd = 100f;
+			} else if (DebugSettings.spawnChance100) {
+				rnd = 0f;
+			}
+		}
         
-        RegisterInSpawnerManager();
+		if (rnd <= m_activationChance) {
+        	RegisterInSpawnerManager();
+		}
 
         gameObject.SetActive(false);
 	}

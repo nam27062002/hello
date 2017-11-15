@@ -14,6 +14,7 @@ namespace AI {
 		public class AttackPassive : StateComponent {
 
 			private AttackPassiveData m_data;
+			private Entity m_entity;
 			private DragonHealthBehaviour m_dragon;
 			private float m_timer;
 			private bool m_enabled;
@@ -35,8 +36,8 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param){
 				DragonTier dragonTier = InstanceManager.player.data.tier;
-				Entity entity = m_pilot.GetComponent<Entity>();
-				m_enabled = !entity.IsEdible(dragonTier);
+				m_entity = m_pilot.GetComponent<Entity>(); 
+				m_enabled = !m_entity.IsEdible(dragonTier);
 			}
 
 			protected override void OnUpdate() {
@@ -52,7 +53,7 @@ namespace AI {
 						if (m_machine.GetSignal(Signals.Type.Trigger)) {					
 							object[] param = m_machine.GetSignalParams(Signals.Type.Trigger);
 							if (param != null && param.Length > 0 && ((GameObject)param[0]).CompareTag("Player")) {
-								m_dragon.ReceiveDamage(m_data.damage, m_data.type, m_machine.transform);
+								m_dragon.ReceiveDamage(m_data.damage, m_data.type, m_machine.transform, true, m_entity.sku, m_entity);
 								m_timer = m_data.delay;
 							}
 						}

@@ -442,7 +442,8 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
         if (ControlPanel.instance != null)
         {
-            ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
+            ControlPanel.instance.IsFPSEnabled = newValue;
+//            ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
         }
     }
     #endregion
@@ -515,6 +516,16 @@ public class ProfilerControlPanelController : MonoBehaviour
             ApplicationManager.instance.Debug_OnToggleBossCameraEffect(m_bossCameraAffector);
         }
     }
+
+    public void Test_ToggleBakedLights(bool value)
+    {
+        ApplicationManager.instance.Debug_DisableBakedLights(value);
+    }
+    public void Test_ToggleColliders(bool value)
+    {
+        ApplicationManager.instance.Debug_DisableColliders(value);
+    }
+
     #endregion
 
     #region Scene
@@ -614,6 +625,13 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
         GameScene_Toggle("ART_L1_Village_Fortress");
     }
+
+	public void GameScene_HideMeshesAtDistance(float _distance) {
+		if (ApplicationManager.instance != null)
+		{
+			ApplicationManager.instance.Debug_DisableMeshesAt(_distance);
+		}
+	}
     #endregion
 
     #region layers

@@ -68,40 +68,52 @@ namespace LevelEditor {
 					string oldDragon = LevelEditor.settings.testDragon;
 					string newDragon = oldDragon;
 
+
+					// Dragon selector
+					GUI.enabled = !playing;
+					EditorGUILayout.BeginHorizontal(); {
+						// Label
+						GUILayout.Label("Test Dragon:");
+
+						// Dragon selector
+						string[] options = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).ToArray();
+						int oldIdx = ArrayUtility.IndexOf<string>(options, oldDragon);
+						int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);	// Select first dragon if saved dragon was not found (i.e. sku changes)
+						if(oldIdx != newIdx) {
+							newDragon = options[newIdx];
+							LevelEditor.settings.testDragon = newDragon;
+							EditorUtility.SetDirty(LevelEditor.settings);
+							AssetDatabase.SaveAssets();
+						}
+					} EditorGUILayoutExt.EndHorizontalSafe();
+
+					GUI.enabled = true;
+					EditorGUILayout.BeginHorizontal(); {
+						// Label
+						bool intro = GUILayout.Toggle(LevelEditor.settings.useIntro, "Intro");
+						if ( intro != LevelEditor.settings.useIntro )
+						{
+							LevelEditor.settings.useIntro = intro;
+							EditorUtility.SetDirty(LevelEditor.settings);
+							AssetDatabase.SaveAssets();
+						}
+					} EditorGUILayoutExt.EndHorizontalSafe();
+
+					EditorGUILayout.BeginHorizontal(); {
+						// Label
+						bool cameraSpawn = GUILayout.Toggle(LevelEditor.settings.spawnAtCameraPos, "Spawn At Camera");
+						if ( cameraSpawn != LevelEditor.settings.spawnAtCameraPos )
+						{
+							LevelEditor.settings.spawnAtCameraPos = cameraSpawn;
+							EditorUtility.SetDirty(LevelEditor.settings);
+							AssetDatabase.SaveAssets();
+						}
+					} EditorGUILayoutExt.EndHorizontalSafe();
+
 					// Only show if a Spawners Level is loaded
 					if(!levelLoaded) {
 						EditorGUILayout.HelpBox("A Spawners scene is required", MessageType.Error);
 					} else {
-						// Dragon selector
-						GUI.enabled = levelLoaded && !playing;
-						EditorGUILayout.BeginHorizontal(); {
-							// Label
-							GUILayout.Label("Test Dragon:");
-
-							// Dragon selector
-							string[] options = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS).ToArray();
-							int oldIdx = ArrayUtility.IndexOf<string>(options, oldDragon);
-							int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);	// Select first dragon if saved dragon was not found (i.e. sku changes)
-							if(oldIdx != newIdx) {
-								newDragon = options[newIdx];
-								LevelEditor.settings.testDragon = newDragon;
-								EditorUtility.SetDirty(LevelEditor.settings);
-								AssetDatabase.SaveAssets();
-							}
-						} EditorGUILayoutExt.EndHorizontalSafe();
-						GUI.enabled = true;
-						EditorGUILayout.BeginHorizontal(); {
-							// Label
-							bool intro = GUILayout.Toggle(LevelEditor.settings.useIntro, "Intro");
-							if ( intro != LevelEditor.settings.useIntro )
-							{
-								LevelEditor.settings.useIntro = intro;
-								EditorUtility.SetDirty(LevelEditor.settings);
-								AssetDatabase.SaveAssets();
-							}
-						} EditorGUILayoutExt.EndHorizontalSafe();
-
-
 						// Show/Create spawn point
 						GameObject spawnPointObj = null;
 						if(levelLoaded) spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, false);

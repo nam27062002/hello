@@ -11,6 +11,8 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 	[SerializeField] private float m_knockback = 0;
 	[SerializeField] private DamageType m_damageType = DamageType.NORMAL;
 
+	private Transform m_source;
+
 	private float m_damage;
 	private bool m_hasBeenShot;
 
@@ -71,14 +73,16 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 	}
 
-	public void Shoot(Transform _target, Vector3 _direction, float _damage) {
+	public void Shoot(Transform _target, Vector3 _direction, float _damage, Transform _source) {
 		// m_targetCenter = InstanceManager.player.transform.position;
-		ShootAtPosition(_target.position, _direction, _damage);
+		ShootAtPosition(_target.position, _direction, _damage, _source);
 	}
 
-	public void ShootTowards(Vector3 _direction, float _speed, float _damage) {}
+	public void ShootTowards(Vector3 _direction, float _speed, float _damage, Transform _source) {}
 
-	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage) {
+	public void ShootAtPosition(Vector3 _target, Vector3 _direction, float _damage, Transform _source) {
+		m_source = _source;
+
 		if (m_oldParent) {
 			transform.parent = m_oldParent;
 			m_oldParent = null;
@@ -148,7 +152,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 				dragonMotion.AddForce(knockBack);
 			}
 
-			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, transform);
+			InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, m_source);
 		}
 
 		gameObject.SetActive(false);
