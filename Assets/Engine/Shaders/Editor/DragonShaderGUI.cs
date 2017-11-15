@@ -131,16 +131,16 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialEditor m_materialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
-//    readonly static string kw_blendTexture = "BLEND_TEXTURE";
-//    readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
-//    readonly static string kw_fog = "FOG";
     readonly static string kw_normalmap = "NORMALMAP";
     readonly static string kw_specular = "SPECULAR";
     readonly static string kw_cutOff = "CUTOFF";
     readonly static string kw_doubleSided = "DOUBLESIDED";
     readonly static string kw_emissiveBlink = "EMISSIVEBLINK";
-//    readonly static string kw_opaqueAlpha = "OPAQUEALPHA";
     readonly static string kw_fresnel = "FRESNEL";
+    readonly static string kw_reflection = "FXLAYER_REFLECTION";
+    readonly static string kw_autoInnerLight = "SELFILLUMINATE_AUTOINNERLIGHT";
+    readonly static string kw_blinkLights = "SELFILLUMINATE_BLINKLIGHTS";
+    readonly static string kw_fire = "FXLAYER_FIRE";
 
     private GUISkin editorSkin;
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
@@ -239,15 +239,6 @@ internal class DragonShaderGUI : ShaderGUI
         bool bNormalMap = mp_normalTexture.textureValue != null as Texture;
 
         SetKeyword(material, kw_normalmap, bNormalMap);
-        /*
-                if (EditorGUI.EndChangeCheck())
-                {
-                    SetKeyword(material, kw_normalmap, normalMap);
-        //            EditorUtility.SetDirty(material);
-        //            Debug.Log("EnableNormalMap " + (normalMap));
-                    //            DebugKeywords(material);
-                }
-        */
         EditorGUI.BeginChangeCheck();
 
         if (bNormalMap)
@@ -456,7 +447,7 @@ internal class DragonShaderGUI : ShaderGUI
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
-            // UnlitShadowLightmapDarken.shader
+            // DragonWings.shader
             else if (mat.shader.name == "Hungry Dragon/Dragon/Wings (Transparent)")
             {
                 changeMaterial(mat, shader, 1);
@@ -472,6 +463,123 @@ internal class DragonShaderGUI : ShaderGUI
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
+            // DragonBodyChinesse.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Body Chinese")
+            {
+                changeMaterial(mat, shader, 0);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+                SetKeyword(mat, kw_fresnel, true);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_reflection, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonBodyDevil.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Body Devil")
+            {
+                changeMaterial(mat, shader, 0);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+                SetKeyword(mat, kw_fresnel, true);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_autoInnerLight, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonBodyReptilus.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Body reptilus")
+            {
+                changeMaterial(mat, shader, 0);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+                SetKeyword(mat, kw_fresnel, true);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_blinkLights, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonDeath.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Death")
+            {
+                changeMaterial(mat, shader, 1);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonDeathChinese.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Death Chinese")
+            {
+                changeMaterial(mat, shader, 1);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_reflection, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonPetPhoenix.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/PetPhoenix")
+            {
+                changeMaterial(mat, shader, 0);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+                SetKeyword(mat, kw_fresnel, true);
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_fire, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+            // DragonWingsDevil.shader
+            else if (mat.shader.name == "Hungry Dragon/Dragon/Wings Devil (Transparent)")
+            {
+                changeMaterial(mat, shader, 1);
+
+                SetKeyword(mat, kw_normalmap, true);
+                SetKeyword(mat, kw_specular, true);
+
+                SetKeyword(mat, kw_fresnel, true);
+
+                mat.SetFloat("_EnableSpecular", 1.0f);
+                mat.SetFloat("_EnableFresnel", 1.0f);
+
+                SetKeyword(mat, kw_autoInnerLight, true);
+
+                EditorUtility.SetDirty(mat);
+                sChanged++;
+            }
+
         }
 
         Debug.Log(sChanged + " materials changed.");

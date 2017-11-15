@@ -201,6 +201,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static float MAP_MARKERS_DEPTH {
 		get { return instance.m_mapMarkersDepth; }
 	}
+
+	[SerializeField] private string[] m_dragonTiersSFX = new string[(int)DragonTier.COUNT];
+	public static string[] dragonTiersSFX {
+		get { return instance.m_dragonTiersSFX; }
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -208,6 +213,19 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// Internal
 	private StringBuilder m_sb = new StringBuilder();
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A change has occurred in the inspector.
+	/// </summary>
+	private void OnValidate() {
+		// Make sure we have as many sound slots as tiers
+		if(m_dragonTiersSFX.Length != (int)DragonTier.COUNT) {
+			m_dragonTiersSFX.Resize((int)DragonTier.COUNT);
+		}
+	}
 
     //------------------------------------------------------------------------//
     // STATIC METHODS														  //
@@ -401,5 +419,14 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 		// Done!
 		return instance.m_sb.ToString();
+	}
+
+	/// <summary>
+	/// Given a dragon tier, get the sound effect linked to it.
+	/// </summary>
+	/// <returns>The ID of the sound effect linked to the requested tier.</returns>
+	/// <param name="_tier">Dragon tier whose SFX we want.</param>
+	public static string GetDragonTierSFX(DragonTier _tier) {
+		return instance.m_dragonTiersSFX[(int)_tier];
 	}
 }

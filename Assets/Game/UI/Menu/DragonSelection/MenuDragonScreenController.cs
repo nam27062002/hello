@@ -241,6 +241,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 	}
 
 	private void LaunchTeaseAnim(string _teaseDragonSku) {
+		// Aux vars
+		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
+		DragonData dragonData = DragonManager.GetDragonData(_teaseDragonSku);
+
 		DOTween.Sequence()
 			.AppendCallback(() => {
 				// Lock all input
@@ -251,7 +255,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
 
-				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
 				slot.animator.ForceHide(false);
 			})
 			.AppendInterval(0.1f)	// Avoid 0 duration
@@ -263,14 +266,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 				MenuDragonPreview preview = InstanceManager.menuSceneController.dragonScroller.GetDragonPreview(_teaseDragonSku);
 				preview.equip.EquipDisguiseShadow();
 
-				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
 				slot.animator.ForceShow(true);
+
+				// SFX
+				AudioController.Play(UIConstants.GetDragonTierSFX(dragonData.tier));
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
 
-				DragonManager.GetDragonData(_teaseDragonSku).Tease();
+				dragonData.Tease();
 				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
 				m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
 
@@ -288,6 +293,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 	}
 
 	private void LaunchRevealAnim(string _revealDragonSku) {
+		// Aux vars
+		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
+		DragonData dragonData = DragonManager.GetDragonData(_revealDragonSku);
+
 		DOTween.Sequence()
 			.AppendCallback(() => {
 				// Lock all input
@@ -298,8 +307,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
 
-				if (!DragonManager.GetDragonData(_revealDragonSku).isTeased) {
-					MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
+				if (!dragonData.isTeased) {
 					slot.animator.ForceHide(false);
 				}
 			})
@@ -309,10 +317,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 			})
 			.AppendInterval(1f)	// Avoid 0 duration
 			.AppendCallback(() => {
-				if (!DragonManager.GetDragonData(_revealDragonSku).isTeased) {
-					MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
+				if (!dragonData.isTeased) {
 					slot.animator.ForceShow(true);
 				}
+
+				// SFX
+				AudioController.Play(UIConstants.GetDragonTierSFX(dragonData.tier));
 
 				MenuDragonPreview preview = InstanceManager.menuSceneController.dragonScroller.GetDragonPreview(_revealDragonSku);
 				preview.equip.EquipDisguise("");
@@ -321,7 +331,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {			
 				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
 			
-				DragonManager.GetDragonData(_revealDragonSku).Reveal();
+				dragonData.Reveal();
 				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
 				m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
 

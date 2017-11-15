@@ -123,4 +123,14 @@ public class MenuDragonSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The slot's show animation has just finished.
+	/// </summary>
+	public void OnShowPostAnimation() {
+		// Rescale all particles
+		ParticleScaler[] scalers = m_dragonPreview.GetComponentsInChildren<ParticleScaler>();
+		for(int i = 0;i<scalers.Length; ++i) {
+			scalers[i].DoScale();
+		}
+	}
 }
