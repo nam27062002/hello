@@ -483,7 +483,7 @@ public class FogManager : MonoBehaviour
 		RefreshFog();
 	}
 
-	void RefreshFog()
+	public void RefreshFog()
 	{
 		if ( m_defaultAreaFog.texture == null )
 			m_defaultAreaFog.CreateTexture();

@@ -234,7 +234,32 @@ public class GameCamera : MonoBehaviour
 
 	//----------------------------------------------------------------------------
 	
-	void Awake()
+	void Awake() {
+		PublicAwake();
+
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			// gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
+			Debug_Awake();
+		}
+
+		InstanceManager.gameCamera = this;
+
+		// Subscribe to external events
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
+		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);       
+
+
+		// Subscribe to external events
+		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
+	}
+
+	public void PublicAwake()
 	{
 		m_transform = transform;
 		m_unityCamera = GetComponent<Camera>();
@@ -278,30 +303,9 @@ public class GameCamera : MonoBehaviour
 		m_bossCamMode = BossCamMode.NoBoss;
 		m_state = State.INTRO;
 
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            // gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
-            Debug_Awake();
-        }
-
         // We can't setup post process effects here because FeatureSettings means to be ready first. Since Gamecamera and FeatureSettings are initialized at the same time when the game is
         // launched from the level editor, we need to synchronize this stuff
         NeedsToSetupPostProcessEffects = true;
-
-        InstanceManager.gameCamera = this;
-
-		// Subscribe to external events
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
-		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
-		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
-		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);       
-
-
-        // Subscribe to external events
-        Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
-		Messenger.AddListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 
         UpdateUseDampCamera();        
     }
@@ -550,9 +554,9 @@ public class GameCamera : MonoBehaviour
 		return (m_targetMachine == machine);
 	}
 	
-	public void Snap()
+	public void Snap(bool _value = true)
 	{
-		m_snap = true;
+		m_snap = _value;
 	}
 	
 	public void NotifyBoss(BossCameraAffector bca)
