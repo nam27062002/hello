@@ -58,6 +58,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	public bool darkenScreen = false;
 	public float darkScreenDistance = 50f;
 	public Color darkScreenColor = Colors.WithAlpha(Color.black, 0.4f);
+	public int darkScreenRenderQueue = 3030;
 
 	// Editor Settings
 	public bool livePreview = true;
@@ -169,6 +170,7 @@ public class CameraSnapPoint : MonoBehaviour {
 				screen.gameObject.SetActive(true);
 				screen.transform.localPosition = Vector3.forward * darkScreenDistance;
                 screen.material.SetColor("_TintColor", FixColorForDarkScreen(this.darkScreenColor));
+				screen.material.renderQueue = this.darkScreenRenderQueue;
 			} else {
 //				screen.color = Colors.WithAlpha(screen.color, 0f);
 				screen.gameObject.SetActive(false);
@@ -282,6 +284,13 @@ public class CameraSnapPoint : MonoBehaviour {
 				() => { return screen.material.GetColor("_TintColor"); },
 				(_newValue) => { screen.material.SetColor("_TintColor", FixColorForDarkScreen(_newValue)); },
 				targetColor, _duration
+			).SetAs(_params));
+
+			// Tween renderQueue
+			seq.Join(DOTween.To(
+				() => { return screen.material.renderQueue; },
+				(_newValue) => { screen.material.renderQueue = _newValue; },
+				this.darkScreenRenderQueue, _duration
 			).SetAs(_params));
 		}
 
