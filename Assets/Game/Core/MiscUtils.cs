@@ -10,13 +10,15 @@ public class MiscUtils {
 	public static void SendFeedbackEmail(){
 		// Open feedback link/email
 		string version = GameSettings.internalVersion.ToString() + "("+ ServerManager.SharedInstance.GetRevisionVersion() +")";
+		string track = HDTrackingManager.Instance.GetDNAProfileID();
+		if ( !string.IsNullOrEmpty(track) )
+		{
+			version += " (" + track + ")";
+		}
 		string subject = SUPPORT_EMAIL_SUBJECT + " " + version;
         string mailSubject = WWW.EscapeURL(subject).Replace("+", "%20");
 
-		string body = "\n\n\n\n" + HDTrackingManager.Instance.GetDNAProfileID();
-		body = WWW.EscapeURL(body).Replace("+", "%20");
-
-		Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject + "&body=" + body);
+		Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject);// + "&body=" + body);
 	}
 
 	public static bool IsDeviceTablet()
