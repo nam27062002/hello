@@ -40,6 +40,7 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string detailTextureText = "Detail Texture";
         readonly public static string normalTextureText = "Normal Texture";
 
+        readonly public static string tintColorText = "Color tint";
         readonly public static string colorMultiplyText = "Color Multiply";
         readonly public static string colorAddText = "Color Add";
 
@@ -81,6 +82,7 @@ internal class DragonShaderGUI : ShaderGUI
 
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string renderQueueText = "Render queue";
+        readonly public static string stencilMaskText = "Stencil mask";
 
     }
     MaterialProperty mp_mainTexture;
@@ -109,7 +111,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_innerLightWaveSpeed;
 
     MaterialProperty mp_BlendMode;
-
+    MaterialProperty mp_stencilMask;
 
     /// <summary>
     /// Toggle Material Properties
@@ -185,6 +187,7 @@ internal class DragonShaderGUI : ShaderGUI
         mp_fireAmount = FindProperty("_FireAmount", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
+        mp_stencilMask = FindProperty("_StencilMask", props);
 
         /// Toggle Material Properties
 
@@ -300,6 +303,12 @@ internal class DragonShaderGUI : ShaderGUI
                 break;
         }
 
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
+        EditorGUILayout.LabelField(Styles.tintColorText);
+        EditorGUILayout.EndVertical();
+        materialEditor.ShaderProperty(mp_colorMultiply, Styles.colorMultiplyText);
+        materialEditor.ShaderProperty(mp_colorAdd, Styles.colorAddText);
+
         EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
         EditorGUILayout.LabelField(Styles.renderQueueText);
         int renderQueue = EditorGUILayout.IntField(material.renderQueue);
@@ -308,6 +317,20 @@ internal class DragonShaderGUI : ShaderGUI
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
+        materialEditor.ShaderProperty(mp_stencilMask, Styles.stencilMaskText);
+
+/*      EditorGUILayout.LabelField(Styles.stencilMaskText);
+        int stencilMask = EditorGUILayout.IntField(material.renderQueue);
+        if (material.renderQueue != renderQueue)
+        {
+            material.renderQueue = renderQueue;
+        }
+*/
+        EditorGUILayout.EndHorizontal();
+
+
 
         if (GUILayout.Button("Log keywords", editorSkin.customStyles[1]))
         {
