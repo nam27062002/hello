@@ -325,15 +325,20 @@ public class GameCamera : MonoBehaviour
 		LevelEditor.LevelEditorSceneController editor = InstanceManager.gameSceneControllerBase as LevelEditor.LevelEditorSceneController;
 		if ( editor != null )
 		{
-			if (LevelEditor.LevelEditor.settings.useIntro)
-			{
-				StartIntro(true);
-			}
-			else
-			{
-				MoveToSpawnPos(true);
+			if (LevelEditor.LevelEditor.settings.spawnAtCameraPos) {
 				SetTargetObject( InstanceManager.player.gameObject );
 				m_state = State.PLAY;
+			} else {
+				if (LevelEditor.LevelEditor.settings.useIntro)
+				{
+					StartIntro(true);
+				}
+				else
+				{
+					MoveToSpawnPos(true);
+					SetTargetObject( InstanceManager.player.gameObject );
+					m_state = State.PLAY;
+				}
 			}
 		}
 		else
@@ -404,7 +409,7 @@ public class GameCamera : MonoBehaviour
         }        
 	}    
 
-	private void UpdatePixelData()
+	public void UpdatePixelData()
 	{
 		float pw = m_unityCamera.pixelWidth;
 		float ph = m_unityCamera.pixelHeight;
@@ -527,6 +532,12 @@ public class GameCamera : MonoBehaviour
 
 		// Apply the entity camera modifer after lerping the increment.
 		m_frameWidthIncrement += cameraFrameWidthModifier;
+	}
+
+	public float GetFrameWidth(float size, float cameraFrameWidthModifier)
+	{
+		SetFrameWidthIncrement(size, cameraFrameWidthModifier);
+		return m_frameWidthDefault + m_frameWidthIncrement;
 	}
 
 	public bool IsTarget(GameObject obj)
@@ -1052,7 +1063,7 @@ public class GameCamera : MonoBehaviour
 	
 	// Zooming in and out is done by specifying the desired width of the frame, i.e. how wide is the visible frame in metres at the z=0 plane?
 	// We zoom in and out by animating Z position, but at close range we zoom in by animating FOV instead.
-	private void UpdateZooming(float desiredFrameWidth, bool bossZoom)
+	public void UpdateZooming(float desiredFrameWidth, bool bossZoom)
 	{        		        
         // deal with frame height and vertical FOV, as unity camera uses vertical FOV.
         float desiredFrameHeight = desiredFrameWidth * m_pixelAspectY;
@@ -1171,10 +1182,14 @@ public class GameCamera : MonoBehaviour
     private FastBounds2D[] m_bounds = new FastBounds2D[2];
     private float[] m_depth = new float[2];
 
-	void UpdateBounds() {
+	public void UpdateFOV() {
 		m_unityCamera.fieldOfView = m_fov;
-		
+	}
+
+	void UpdateBounds() {		
 		float z = -m_position.z;
+
+		UpdateFOV();
 
 		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 		
         m_cameraRays[0] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));

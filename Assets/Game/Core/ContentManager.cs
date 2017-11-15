@@ -86,9 +86,11 @@ public class ContentManager
         }
     }
 
-    public static void InitContent(bool bAvoidDeltaContent = false)
+	public static void InitContent(bool bAvoidDeltaContent = false, bool _configureServerManager = true)
 	{
-        GameServerManager.SharedInstance.Configure();
+		if (_configureServerManager) {
+        	GameServerManager.SharedInstance.Configure();
+		}
 
         InitDefinitions();
         InitLanguages();
