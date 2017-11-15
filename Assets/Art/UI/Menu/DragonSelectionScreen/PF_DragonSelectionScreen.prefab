@@ -263,7 +263,6 @@ GameObject:
   - component: {fileID: 11434728}
   - component: {fileID: 11476566}
   - component: {fileID: 11498748}
-  - component: {fileID: 114000012885667806}
   - component: {fileID: 114000013757157520}
   m_Layer: 5
   m_Name: Paginator
@@ -1305,23 +1304,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnScreenIndexChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114000012885667806}
-        m_MethodName: Play
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: NavigationScreenSystem+ScreenIndexChangedEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_tabButtons: []
   m_buttonPrefab: {fileID: 164356, guid: 35eaef0e8c67c40a192220c917ea0b30, type: 2}
   m_dummyTab: {fileID: 11434668}
+  m_tierButtonSounds:
+  - hd_dragon_size_xs
+  - hd_dragon_size_s
+  - hd_dragon_size_m
+  - hd_dragon_size_l
+  - hd_dragon_size_xl
 --- !u!114 &11481970
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6622,23 +6616,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: hd_arrow_left
---- !u!114 &114000012885667806
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 178944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21ae6156cc17d45018bbbc2dcc703872, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_audios:
-  - hd_arrow_left
-  - hd_arrow_left
-  - hd_arrow_left
-  - hd_arrow_left
-  - hd_arrow_left
 --- !u!114 &114000012904233328
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -211,14 +211,14 @@ internal class DragonShaderGUI : ShaderGUI
         m_materialEditor = materialEditor;
         Material material = materialEditor.target as Material;
 
-        GUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        GUILayout.BeginHorizontal(editorSkin.customStyles[1]);
         GUILayout.FlexibleSpace();
-        EditorGUILayout.LabelField("Dragon standard shader", editorSkin.customStyles[0]);
+        EditorGUILayout.LabelField("Dragon standard shader", editorSkin.customStyles[1]);
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
         EditorGUI.BeginChangeCheck();
-        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
         materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
         EditorGUILayout.EndVertical();
 
@@ -309,7 +309,7 @@ internal class DragonShaderGUI : ShaderGUI
                 break;
         }
 
-        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
         EditorGUILayout.LabelField(Styles.renderQueueText);
         int renderQueue = EditorGUILayout.IntField(material.renderQueue);
         if (material.renderQueue != renderQueue)
@@ -318,7 +318,7 @@ internal class DragonShaderGUI : ShaderGUI
         }
         EditorGUILayout.EndHorizontal();
 
-        if (GUILayout.Button("Log keywords", editorSkin.customStyles[0]))
+        if (GUILayout.Button("Log keywords", editorSkin.customStyles[1]))
         {
             //            material.shaderKeywords = null;
             DebugKeywords(material);
@@ -344,7 +344,7 @@ internal class DragonShaderGUI : ShaderGUI
 
     private bool featureSet(MaterialProperty feature, string label)
     {
-        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
         m_materialEditor.ShaderProperty(feature, label);
         EditorGUILayout.EndVertical();
 
@@ -418,6 +418,7 @@ internal class DragonShaderGUI : ShaderGUI
         mat.shader = _newShader;
         mat.shaderKeywords = null;
         setBlendMode(mat, blendMode);
+        mat.renderQueue = rQueue;
     }
 
     /// <summary>
