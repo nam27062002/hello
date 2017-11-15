@@ -441,6 +441,7 @@ internal class DragonShaderGUI : ShaderGUI
                 SetKeyword(mat, kw_normalmap, true);
                 SetKeyword(mat, kw_specular, true);
                 SetKeyword(mat, kw_fresnel, true);
+
                 mat.SetFloat("_EnableSpecular", 1.0f);
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
@@ -454,7 +455,6 @@ internal class DragonShaderGUI : ShaderGUI
 
                 SetKeyword(mat, kw_normalmap, true);
                 SetKeyword(mat, kw_specular, true);
-
                 SetKeyword(mat, kw_fresnel, true);
 
                 mat.SetFloat("_EnableSpecular", 1.0f);
@@ -471,10 +471,12 @@ internal class DragonShaderGUI : ShaderGUI
                 SetKeyword(mat, kw_normalmap, true);
                 SetKeyword(mat, kw_specular, true);
                 SetKeyword(mat, kw_fresnel, true);
+
                 mat.SetFloat("_EnableSpecular", 1.0f);
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
                 SetKeyword(mat, kw_reflection, true);
+                mat.SetFloat("FXLayer", 1.0f);
 
                 EditorUtility.SetDirty(mat);
                 sChanged++;
@@ -487,10 +489,12 @@ internal class DragonShaderGUI : ShaderGUI
                 SetKeyword(mat, kw_normalmap, true);
                 SetKeyword(mat, kw_specular, true);
                 SetKeyword(mat, kw_fresnel, true);
+
                 mat.SetFloat("_EnableSpecular", 1.0f);
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
                 SetKeyword(mat, kw_autoInnerLight, true);
+                mat.SetFloat("SelfIlluminate", 1.0f);
 
                 EditorUtility.SetDirty(mat);
                 sChanged++;
@@ -507,6 +511,7 @@ internal class DragonShaderGUI : ShaderGUI
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
                 SetKeyword(mat, kw_blinkLights, true);
+                mat.SetFloat("SelfIlluminate", 2.0f);
 
                 EditorUtility.SetDirty(mat);
                 sChanged++;
@@ -541,6 +546,7 @@ internal class DragonShaderGUI : ShaderGUI
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
                 SetKeyword(mat, kw_reflection, true);
+                mat.SetFloat("FXLayer", 1.0f);
 
                 EditorUtility.SetDirty(mat);
                 sChanged++;
@@ -557,6 +563,7 @@ internal class DragonShaderGUI : ShaderGUI
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
                 SetKeyword(mat, kw_fire, true);
+                mat.SetFloat("FXLayer", 2.0f);
 
                 EditorUtility.SetDirty(mat);
                 sChanged++;
@@ -575,6 +582,7 @@ internal class DragonShaderGUI : ShaderGUI
                 mat.SetFloat("_EnableFresnel", 1.0f);
 
                 SetKeyword(mat, kw_autoInnerLight, true);
+                mat.SetFloat("SelfIlluminate", 1.0f);
 
                 EditorUtility.SetDirty(mat);
                 sChanged++;
