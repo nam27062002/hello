@@ -42,11 +42,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         CurrentQualityIndex = -1;
         Shaders_CurrentKey = null;
-        State = EState.WaitingForRules;        
+        State = EState.WaitingForRules; 
 
         m_deviceQualityManager = new DeviceQualityManager();
 
-        InitDefaultValues();    
+        InitDefaultValues();
+		UpdateRules();
     }
 
     private void InitDefaultValues()
@@ -63,18 +64,22 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }        
     }
 
+	private void UpdateRules() {
+		if (ContentManager.ready)
+		{
+			Rules_OnLoaded();
+			State_Timer = 0f;
+
+			State = EState.WaitingToCheckConnection;                    
+		}
+	}
+
     private void Update()
     {
         switch (State)
         {
             case EState.WaitingForRules:
-                if (ContentManager.ready)
-                {
-                    Rules_OnLoaded();
-                    State_Timer = 0f;
-
-                    State = EState.WaitingToCheckConnection;                    
-                }                
+				UpdateRules();
                 break;
 
             case EState.WaitingToCheckConnection:
