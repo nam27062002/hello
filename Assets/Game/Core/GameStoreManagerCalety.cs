@@ -59,11 +59,11 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public GameStoreManagerCalety () 
 	{
+		m_storeListener = new CaletyGameStoreListener();
 	}
 
 	public override void Initialize()
 	{
-		m_storeListener = new CaletyGameStoreListener();
 		StoreManager.SharedInstance.AddListener (m_storeListener);
 		CacheStoreSkus();	    
 		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);
