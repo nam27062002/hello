@@ -446,15 +446,18 @@ public class HDTrackingManagerImp : HDTrackingManager
     {        
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Notify_ApplicationPaused Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
-        }        
-
-        if (Session_IsNotifyOnPauseEnabled)
-        {
-            Notify_SessionEnd(ESeassionEndReason.no_activity);
+            Log("Notify_ApplicationPaused Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled + " State = " + State);
         }
 
-        Track_EtlEndEvent();
+        if (State != EState.WaitingForSessionStart)
+        {
+            if (Session_IsNotifyOnPauseEnabled)
+            {
+                Notify_SessionEnd(ESeassionEndReason.no_activity);
+            }
+
+            Track_EtlEndEvent();
+        }
     }
 
     public override void Notify_ApplicationResumed()
@@ -464,25 +467,21 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        Track_EtlStartEvent();
+        if (State != EState.WaitingForSessionStart)
+        {
+            Track_EtlStartEvent();
 
-        if (Session_IsNotifyOnPauseEnabled)
-        {
-            // If the dna session had been started then it has to be restarted
-            if (Session_AnyRoundsStarted)
+            if (Session_IsNotifyOnPauseEnabled)
             {
-                Track_MobileStartEvent();
-            }
+                // If the dna session had been started then it has to be restarted
+                if (Session_AnyRoundsStarted)
+                {
+                    Track_MobileStartEvent();
+                }
+            }            
         }
-        else
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled forced to true");
-            }
-            
-            mSession_IsNotifyOnPauseEnabled = true;
-        }
+
+        mSession_IsNotifyOnPauseEnabled = true;
     }
 
     private void Notify_SessionEnd(ESeassionEndReason reason)
@@ -959,7 +958,9 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Log("Track_StartSessionEvent");
         }
-        
+
+        Track_EtlStartEvent();
+
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
         if (e != null)
         {
@@ -972,9 +973,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamLanguage(e);
             Track_AddParamUserTimezone(e);
             Track_SendEvent(e);
-        }
-
-        Track_EtlStartEvent();
+        }        
     }    
 
     private void Track_ApplicationEndEvent(string stopCause)
