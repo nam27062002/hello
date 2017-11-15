@@ -440,7 +440,7 @@ public class GameServerManagerCalety : GameServerManager {
 	public override void GlobalEvent_GetEvent(int _eventID, ServerCallback _callback) 
 	{
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("eventId", _eventID.ToString("D"));
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.GlobalEvents_GetEvent, parameters, _callback);
 	}
 
