@@ -202,9 +202,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 			})
 			.AppendInterval(m_unlockAnimDuration)
 			.AppendCallback(() => {
-				// Unlock input
-				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
-
 				// Restore lock icon to the idle state (otherwise default values will get corrupted when deactivating the object)
 				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = true;
 				m_lockIcon.GetComponent<ShowHideAnimator>().ForceHide(false, false);
@@ -235,6 +232,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
+			})
+			.AppendInterval(0.5f)
+			.AppendCallback(() => {
+				// Unlock input
+				// Add some delay to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
+				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
 			})
 			.SetAutoKill(true)
 			.Play();

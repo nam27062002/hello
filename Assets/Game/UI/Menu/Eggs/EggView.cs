@@ -299,7 +299,7 @@ public class EggView : MonoBehaviour {
 
 		// Set intensity in all registered materials
 		for(int i = 0; i < m_incubatingFXMaterials.Count; ++i) {
-			m_incubatingFXMaterials[i].SetColor("_TintColor", Colors.WithAlpha(m_incubatingFXMaterials[i].GetColor("_TintColor"), _intensity));
+			m_incubatingFXMaterials[i].SetFloat("_OpacitySaturation", _intensity);
 		}
 	}
 

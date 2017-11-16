@@ -162,8 +162,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void StartTutorial() {
 		if(m_state == State.IDLE) {
-			// Lock input
-			InputLocker.Lock();
+			// Lock all input
+			Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
 
 			// Hide HUD and UI
 			InstanceManager.menuSceneController.hud.animator.ForceHide(false);
@@ -188,8 +188,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void StopTutorial() {
 		if(m_state != State.IDLE) {
-			// Unlock input
-			InputLocker.Unlock();
+			// Lock all input
+			Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
 
 			// Show UI back
 			InstanceManager.menuSceneController.hud.animator.ForceShow(true);
