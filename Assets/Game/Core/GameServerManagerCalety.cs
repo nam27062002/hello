@@ -628,23 +628,14 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private bool Commands_IsQueueEmpty() {
 		return Commands_Queue.Count == 0;
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private bool Commands_RequiresAuth(ECommand command) {
-		return false;
-	}
+	}	
 
 	/// <summary>
 	/// 
 	/// </summary>
 	private void Commands_BeforeCommand(ECommand command, Dictionary<string, string> parameters, BeforeCommandComplete callback) {
         if (FeatureSettingsManager.IsDebugEnabled)        
-            Log("BeforeCommand " + command + " requires auth = " + Commands_RequiresAuth(command));        
-
-		Error error = null;
+            Log("BeforeCommand " + command);        		
 
 		if(Authenticator.Instance.Token != null) {
 			parameters["deviceToken"] = Authenticator.Instance.Token.ToString();
@@ -652,47 +643,8 @@ public class GameServerManagerCalety : GameServerManager {
 
 		parameters["version"] = Globals.GetApplicationVersion();
 		parameters["platform"] = Globals.GetPlatform().ToString();
-
-		ServerCallback onAuthed = (Error authError, GameServerManager.ServerResponse _response) => {
-			if(authError == null) {
-				string sessionToken = Authenticator.Instance.User.sessionToken;
-				if(sessionToken != null) {
-					parameters["fgolID"] = Authenticator.Instance.User.ID;
-					parameters["socialID"] = SocialFacade.Instance.GetSocialIDFromHighestPrecedenceNetwork();
-					parameters["sessionToken"] = sessionToken;
-				} else {
-					error = new AuthenticationError("Invalid Session Token");
-				}
-			}
-
-			callback(error);
-		};
-
-		//ClaimedRewardReceiptCommand is a special command that is a Normal command but needs authentication
-		// [DGR] Not needed yet
-		//bool checkAuth = command.Name == ClaimedRewardReceiptCommand && Authenticator.Instance.User != null && !string.IsNullOrEmpty(Authenticator.Instance.User.ID);
-		bool checkAuth = false;        
-		if(Commands_RequiresAuth(command) || checkAuth) {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IsAuthenticated = " + AuthManager.Instance.IsAuthenticated(User.LoginType.Default));
-
-			if(AuthManager.Instance.IsAuthenticated(User.LoginType.Default)) {
-				onAuthed(null, null);
-			} else {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    LogWarning("(BeforeCommand) :: No authed trying to reauthenticated before command");
-
-				//Try and silently authenticate and continue with request
-				AuthManager.Instance.Authenticate(new PermissionType[] { PermissionType.Basic }, delegate (Error authError, PermissionType[] grantedPermissions, bool cloudSaveAvailable) {
-					onAuthed(authError, null);
-				}, true);
-			}
-		} else {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Continue");
-
-			callback(null);
-		}
+		
+		callback(null);		
 	}
 
 	/// <summary>
@@ -1227,20 +1179,7 @@ public class GameServerManagerCalety : GameServerManager {
 		// [DGR] Server: Default universe
 		if(string.IsNullOrEmpty(strResponse) || strResponse == "{}")
         {
-			SimpleJSON.JSONNode defaultJson = PersistenceManager.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);
-			defaultJson.Add("version", FGOL.Save.SaveGameManager.Instance.Version);
-
-            // We need to add the tracking information that has been collected while the user played offline
-            /*
-            TrackingPersistenceSystem system = HDTrackingManager.Instance.TrackingPersistenceSystem;
-            if (system != null && !defaultJson.ContainsKey(system.name))
-            {
-                SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
-                system.SetSocialParams(manager.GetPlatformName(), manager.GetUserId(), Authenticator.Instance.User.ID);
-                defaultJson.Add(system.name, system.ToJSON());
-            }
-            */
-
+			SimpleJSON.JSONNode defaultJson = PersistenceUtils.GetDefaultDataFromProfile(PersistenceProfile.DEFAULT_PROFILE);			            
 			strResponse = defaultJson.ToString();
 		}
 
