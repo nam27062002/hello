@@ -7,13 +7,15 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_fat_0_ingame_body
-  m_Shader: {fileID: 4800000, guid: 6288d0250357e4276bcc2c59b5715967, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
+  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2010
-  stringTagMap: {}
+  stringTagMap:
+    QUEUE: Geometry
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -42,6 +44,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FireMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: f440911cdbe595a4cb9eedd5190409e4, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -58,20 +64,38 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ReflectionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - FXLayer: 0
+    - SelfIlluminate: 0
+    - _BlendMode: 0
     - _BumpScale: 1
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EmissionScaleUI: 0
+    - _EnableCutoff: 0
+    - _EnableDoublesided: 0
+    - _EnableFresnel: 1
+    - _EnableNormalMap: 0
+    - _EnableSilhouette: 0
+    - _EnableSpecular: 1
+    - _FireAmount: 0
     - _Fresnel: 6.52
     - _Glossiness: 0.5
     - _InnerLightAdd: 0
+    - _InnerLightWavePhase: 1
+    - _InnerLightWaveSpeed: 1
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _ReflectionAmount: 0
     - _SpecExponent: 6.68
     - _SrcBlend: 1
     - _StencilMask: 10
