@@ -273,7 +273,7 @@ public class DragonCorpse : MonoBehaviour {
                 {
                     m_renderers[i].material = wingsMaterial;
                 }
-                else if (shaderName.Contains("Opaque"))
+                else if (tag.Contains("Opaque"))
                 {
                     m_renderers[i].material = bodyMaterial;
                 }
