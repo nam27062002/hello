@@ -35,8 +35,7 @@ public class MenuPlayScreen : MonoBehaviour {
     private Localizer m_incentivizeLabelLocalizer = null;    
 
 	private bool m_showLegalPopup;
-
-    private SocialFacade.Network m_socialNetwork = SocialFacade.Network.Default;
+    
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -45,13 +44,7 @@ public class MenuPlayScreen : MonoBehaviour {
     /// </summary>
     private void Awake() 
 	{		                
-        PersistenceManager.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
-
-        if (m_socialNetwork == SocialFacade.Network.Default)
-        {
-            m_socialNetwork = SocialManager.GetSelectedSocialNetwork();
-        }
-        
+        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
     }
 	
@@ -93,27 +86,11 @@ public class MenuPlayScreen : MonoBehaviour {
 
 	public void OnConnectBtn()
 	{        
-        PersistenceManager.Popups_OpenLoadingPopup();
+        PersistenceFacade.Popups_OpenLoadingPopup();
 
-        /*
-        if (SocialManager.GetSelectedSocialNetwork() != m_socialNetwork)
-        {
-            Debug.LogError("You are trying to switch networks. There should be a proper flow in place for this.");
-        }
-
-        //[DGR] No support added yet
-        //HSXAnalyticsManager.Instance.loginContext = "MainMenu";
-
-        SocialManager.Instance.Login(m_socialNetwork, delegate (bool success)
-        {
-            PersistenceManager.Popups_CloseLoadingPopup();
-
-            Refresh();
-        });
-        */
         PersistenceFacade.instance.Sync_FromSettings(delegate()
         {
-            PersistenceManager.Popups_CloseLoadingPopup();
+            PersistenceFacade.Popups_CloseLoadingPopup();
             Refresh();
         });
     }

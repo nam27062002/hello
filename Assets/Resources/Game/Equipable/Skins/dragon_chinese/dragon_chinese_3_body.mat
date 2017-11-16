@@ -7,169 +7,109 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_chinese_3_body
-  m_Shader: {fileID: 4800000, guid: 602fbf59642d6444ba64e147e42bb429, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP SPECULAR
   m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2010
-  stringTagMap: {}
+  stringTagMap:
+    QUEUE: Geometry
+    RenderType: Opaque
+  disabledShaderPasses: []
   m_SavedProperties:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TexEnvs:
-    - first:
-        name: _BumpMap
-      second:
+    - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 373bfeb071d702e4380a3f8582ff4c8a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
+    - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
+    - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
+    - _DetailNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailTex
-      second:
+    - _DetailTex:
         m_Texture: {fileID: 2800000, guid: 36b8cb11916e26e41980d51f1efc7948, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
+    - _FireMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
         m_Texture: {fileID: 2800000, guid: 0ce7251576f431c458283c1e46775ff6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
+    - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
+    - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
+    - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ReflectionMap
-      second:
+    - _ReflectionMap:
         m_Texture: {fileID: 8900000, guid: 14ca732449041b64aa36929057e32ebc, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _EmissionScaleUI
-      second: 0
-    - first:
-        name: _Fresnel
-      second: 3.36
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _InnerLightAdd
-      second: 0
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _NormalStrenght
-      second: 3
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _ReflectionAmount
-      second: 0.377
-    - first:
-        name: _SpecExponent
-      second: 6.68
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _StencilMask
-      second: 10
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _ZWrite
-      second: 1
+    - FXLayer: 1
+    - SelfIlluminate: 0
+    - _BlendMode: 0
+    - _BumpScale: 1
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EmissionScaleUI: 0
+    - _EnableCutoff: 0
+    - _EnableDoublesided: 0
+    - _EnableFresnel: 1
+    - _EnableNormalMap: 0
+    - _EnableSilhouette: 0
+    - _EnableSpecular: 1
+    - _FireAmount: 0
+    - _Fresnel: 3.36
+    - _Glossiness: 0.5
+    - _InnerLightAdd: 0
+    - _InnerLightWavePhase: 1
+    - _InnerLightWaveSpeed: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _NormalStrenght: 3
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _ReflectionAmount: 0.377
+    - _SpecExponent: 6.68
+    - _SrcBlend: 1
+    - _StencilMask: 10
+    - _UVSec: 0
+    - _ZWrite: 1
     m_Colors:
-    - first:
-        name: _AmbientAdd
-      second: {r: 0.03676468, g: 0.014508252, b: 0.002432957, a: 0}
-    - first:
-        name: _Color
-      second: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - first:
-        name: _ColorAdd
-      second: {r: 0, g: 0, b: 0, a: 0}
-    - first:
-        name: _ColorMultiply
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColorUI
-      second: {r: 1, g: 1, b: 1, a: 1}
-    - first:
-        name: _FresnelColor
-      second: {r: 0.44290656, g: 0.44424292, b: 0.4705882, a: 1}
-    - first:
-        name: _InnerLightColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _SecondLightColor
-      second: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
-    - first:
-        name: _SecondLightDir
-      second: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
-    - first:
-        name: _Tint
-      second: {r: 1, g: 1, b: 1, a: 1}
+    - _AmbientAdd: {r: 0.03676468, g: 0.014508252, b: 0.002432957, a: 0}
+    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+    - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
+    - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 0.44290656, g: 0.44424292, b: 0.4705882, a: 1}
+    - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SecondLightColor: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
+    - _SecondLightDir: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}

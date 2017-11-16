@@ -101,7 +101,7 @@ public class DragonEquip : MonoBehaviour {
 					if ( material != null )
 					{
 						string name = material.shader.name;
-						if ( name.Contains("Dragon/Wings") || name.Contains("Dragon/Body"))
+						if ( name.Contains("Dragon standard") )
 						{
 							m_renderers.Add( renderer );
 							// Stores the materials of this renderer in a dictionary for direct access//
@@ -428,14 +428,23 @@ public class DragonEquip : MonoBehaviour {
 			int count = materials.Count;
 			for (int m = 0; m < count; m++) {
 				string shaderName = materials[m].shader.name;
-				if (lockEffect) {
-					materials[m].SetOverrideTag("Lock", "");
-				} 
-				if (shaderName.Contains("Dragon/Wings")) {
-					materials[m] = m_wingsMaterial;
-				} else if (shaderName.Contains("Dragon/Body")) {
-					materials[m] = m_bodyMaterial;
-				}
+                if (shaderName.Contains("Dragon standard"))
+                {
+                    if (lockEffect)
+                    {
+                        materials[m].SetOverrideTag("Lock", "");
+                    }
+
+                    string tag = materials[m].GetTag("RenderType", false);
+                    if (tag.Contains("TransparentCutout"))
+                    {
+                        materials[m] = m_wingsMaterial;
+                    }
+                    else if (tag.Contains("Opaque"))
+                    {
+                        materials[m] = m_bodyMaterial;
+                    }
+                }
 			}
 			m_renderers[i].materials = materials.ToArray();
 		}
@@ -466,11 +475,18 @@ public class DragonEquip : MonoBehaviour {
 			List<Material> materials = m_materials[id];
 			for (int m = 0; m < materials.Count; m++) {
 				string shaderName = materials[m].shader.name;
-				if (shaderName.Contains("Dragon/Wings")) {
-					materials[m] = wingsMaterial;
-				} else if (shaderName.Contains("Dragon/Body")) {
-					materials[m] = bodyMaterial;
-				}
+                if (shaderName.Contains("Dragon standard"))
+                {
+                    string tag = materials[m].GetTag("RenderType", false);
+                    if (tag.Contains("TransparentCutout"))
+                    {
+                        materials[m] = wingsMaterial;
+                    }
+                    else if (tag.Contains("Opaque"))
+                    {
+                        materials[m] = bodyMaterial;
+                    }
+                }
 			}
 			m_renderers[i].materials = materials.ToArray();
 		}
