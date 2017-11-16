@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -35,6 +36,10 @@ public class EggView : MonoBehaviour {
 	public GameObject idleFX {
 		get { return m_idleFX; }
 	}
+
+	[Space]
+	[SerializeField] private GameObject m_incubatingFX = null;
+	[SerializeField] private Range m_incubatingFXIntensityRange = new Range(0f, 1f);
 
 	// Data - can be null
 	private Egg m_eggData = null;
@@ -63,6 +68,7 @@ public class EggView : MonoBehaviour {
 
 	// Internal references
 	private Animator m_animator = null;
+	private List<Material> m_incubatingFXMaterials = null;
 
 	//------------------------------------------------------------------------//
 	// FACTORY METHODS														  //
@@ -177,6 +183,17 @@ public class EggView : MonoBehaviour {
 		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		// If the egg is incubating, setup Idle VFX intensity
+		if(m_incubatingFX != null && m_eggData != null && m_eggData.state == Egg.State.INCUBATING) {
+			float intensity = m_incubatingFXIntensityRange.Lerp(m_eggData.incubationProgress);
+			SetIncubatingVFXIntensity(intensity);
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
@@ -208,36 +225,81 @@ public class EggView : MonoBehaviour {
 			m_animator.SetInteger("rarity", (int)Metagame.Reward.Rarity.COMMON);
 		}
 
-		// Idle FX - depends on the egg state
+		// Stuff depending on egg state
+		bool showIdleFX = false;
+		bool showIncubatingFX = false;
+		float incubatingFXIntensity = m_incubatingFXIntensityRange.max;
+		switch(state) {
+			case Egg.State.INCUBATING: {
+				showIdleFX = false;
+				showIncubatingFX = true;
+				incubatingFXIntensity = m_incubatingFXIntensityRange.min;
+			} break;
+
+			case Egg.State.READY: {
+				showIdleFX = true;
+				showIncubatingFX = true;
+			} break;
+
+			case Egg.State.OPENING: {
+				if(step <= 0) {	// Show only while no tap has been done
+					showIdleFX = true;
+					showIncubatingFX = true;
+				}
+			} break;
+
+			case Egg.State.SHOWROOM: {
+				// Only for premium eggs (or if forced)
+				if(m_forceIdleFX || (m_eggData != null && m_eggData.def.sku == Egg.SKU_PREMIUM_EGG)) {
+					showIdleFX = true;
+				}
+			} break;
+
+			default: {
+				// Hide for the rest of cases
+				showIdleFX = false;
+				showIncubatingFX = false;
+			} break;
+		}
+
+
 		if(m_idleFX != null) {
-			bool show = false;
-			switch(state) {
-				case Egg.State.READY: {
-					show = true;	// Show always
-				} break;
+			m_idleFX.SetActive(showIdleFX);
+		}
 
-				case Egg.State.OPENING: {
-					show = (step <= 0);	// Show only while no tap has been done
-				} break;
-
-				case Egg.State.SHOWROOM: {
-					// Only for premium eggs (or if forced)
-					if(m_forceIdleFX || (m_eggData != null && m_eggData.def.sku == Egg.SKU_PREMIUM_EGG)) {
-						show = true;
-					}
-				} break;
-
-				default: {
-					show = false;	// Hide for the rest of cases
-				} break;
-			}
-
-			m_idleFX.SetActive(show);
+		if(m_incubatingFX != null) {
+			m_incubatingFX.SetActive(showIncubatingFX);
+			if(showIncubatingFX) SetIncubatingVFXIntensity(incubatingFXIntensity);
 		}
 
 		// Animation intensity - reset to default if state is different than collected
 		if(state != Egg.State.COLLECTED) {
 			m_animator.SetFloat("intensity", 1f);
+		}
+	}
+
+	/// <summary>
+	/// Sets the intensity of the incubating VFX.
+	/// </summary>
+	/// <param name="_intensity">The intensity to be applied</param>
+	private void SetIncubatingVFXIntensity(float _intensity) {
+		// Skip if we have no FX assigned
+		if(m_incubatingFX == null) return;
+
+		// Do we have the material references?
+		if(m_incubatingFXMaterials == null) {
+			m_incubatingFXMaterials = new List<Material>();
+			Renderer[] renderers = m_incubatingFX.GetComponentsInChildren<Renderer>();
+			for(int i = 0; i < renderers.Length; ++i) {
+				for(int j = 0; j < renderers[i].materials.Length; ++j) {
+					m_incubatingFXMaterials.Add(renderers[i].materials[j]);
+				}
+			}
+		}
+
+		// Set intensity in all registered materials
+		for(int i = 0; i < m_incubatingFXMaterials.Count; ++i) {
+			m_incubatingFXMaterials[i].SetColor("_TintColor", Colors.WithAlpha(m_incubatingFXMaterials[i].GetColor("_TintColor"), _intensity));
 		}
 	}
 
