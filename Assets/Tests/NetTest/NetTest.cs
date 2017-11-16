@@ -9,35 +9,17 @@ public class NetTest : MonoBehaviour
 	public GameObject m_loginButton;
 	public GameObject m_actionButtons;
 	public GameObject m_waitingText;	
-
-    private enum ESocialAPI
-    {
-        None,
-        Calety,
-        FGOL
-    }
-
-    private ESocialAPI socialAPI = ESocialAPI.FGOL;
-
+            
 	// Use this for initialization
 	void Start () 
 	{
 		// CUSTOM SERVER
 		m_loginButton.SetActive(false);
 		m_actionButtons.SetActive(false);
-		m_waitingText.SetActive(false);		
-		
-        switch (socialAPI)
-        {
-            case ESocialAPI.Calety:
-                Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLog);                
-                SocialPlatformManager.SharedInstance.Init();
-                break;
+		m_waitingText.SetActive(false);
 
-            case ESocialAPI.FGOL:
-                SocialFacade.Instance.Init();
-                break;
-        }		        
+        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLog);
+        SocialPlatformManager.SharedInstance.Init();        
     }
 
 	void OnLog( bool logged)
@@ -68,8 +50,7 @@ public class NetTest : MonoBehaviour
 	{
 		m_loginButton.SetActive(false);
 		m_waitingText.SetActive(true);              
-        if ((socialAPI == ESocialAPI.Calety && SocialPlatformManager.SharedInstance.IsLoggedIn()) ||
-            (socialAPI == ESocialAPI.FGOL && SocialFacade.Instance.IsLoggedIn(SocialFacade.Network.Facebook)))
+        if (SocialPlatformManager.SharedInstance.IsLoggedIn())            
         {
             GameServerManager.SharedInstance.LogInToServerThruPlatform(FGOL.Authentication.User.LoginTypeToCaletySocialPlatform(FGOL.Authentication.User.LoginType.Facebook), SocialPlatformManager.SharedInstance.GetUserID(), SocialPlatformManager.SharedInstance.GetToken(),
                 (Error commandError, GameServerManager.ServerResponse response) =>
@@ -101,25 +82,11 @@ public class NetTest : MonoBehaviour
 	// SOCIAL PLATFORM
 	public void SocialLogin()
 	{
-        switch (socialAPI)
-        {
-            case ESocialAPI.Calety:
-                SocialPlatformManager.SharedInstance.Login(true, true, null);
-                break;
-
-            case ESocialAPI.FGOL:
-                SocialFacade.Instance.Login(SocialFacade.Network.Facebook, new PermissionType[] { PermissionType.Basic }, OnSocialLog);
-                break;
-
-            case ESocialAPI.None:
-                Debug.Log("No social API assigned");
-                break;
-        }                
+        SocialPlatformManager.SharedInstance.Login(true, true, null);                        
     }		
 
 	public void OnResetDeviceInfo()
-	{
-		PersistenceManager.Clear();
+	{		
 		PlayerPrefs.DeleteAll();
 	}
 }

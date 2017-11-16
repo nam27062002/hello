@@ -329,11 +329,11 @@ public class DragonData : IUISelectorItem {
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		data.Add("sku", def.sku);
-		data.Add("owned", m_owned.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("teased", m_teased.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("revealed", m_revealed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("xp", progression.xp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("level", progression.level.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("owned", m_owned.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("teased", m_teased.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("revealed", m_revealed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("xp", progression.xp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("level", progression.level.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		data.Add("disguise", m_persistentDisguise);
 
 
