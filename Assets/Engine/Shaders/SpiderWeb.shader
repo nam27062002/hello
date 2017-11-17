@@ -72,13 +72,13 @@ Shader "Hungry Dragon/Spider web"
 			fixed4 frag(v2f i) : SV_Target
 			{
 				half4 prev = i.color * tex2D(_MainTex, i.texcoord);
-				float n = dot(i.normal, i.viewDir);
-				float3 tn = normalize(i.viewDir - (i.normal * n));
 //				float dd = abs(dot(d, normalize(i.viewDir.xy)));
 //				float rq = (i.viewDir.x * i.viewDir.x) + (i.viewDir.y * i.viewDir.y);
-				prev *= _TintColor * abs(dot(tn.xy, i.texcoord));// *rq;
-
-				prev *= 2.0;
+				prev *= _TintColor;// *rq;
+				float n = dot(i.normal, i.viewDir);
+				float3 tn = normalize(i.viewDir - (i.normal * n));
+				prev *= 2.0 * (0.5 + clamp(pow(dot(tn.xy, i.texcoord), 2.0), 0.0, 1.0));
+				prev.a *= i.color.r;
 				return prev;
 			}
 
