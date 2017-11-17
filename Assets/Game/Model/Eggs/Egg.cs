@@ -66,6 +66,13 @@ public class Egg {
 		set { m_isNew = value; }
 	}
 
+	// Debug Testing
+	private bool m_testMode = false;
+	public bool testMode {
+		get { return m_testMode; }
+		set { m_testMode = value; }
+	}
+
 	// Incubation management
 	[SerializeField] private DateTime m_incubationEndTimestamp;
 	public DateTime incubationEndTimestamp { get { return m_incubationEndTimestamp; }}
@@ -191,7 +198,7 @@ public class Egg {
 				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
 
 				// Schedule local notification!
-                HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationDuration.TotalSeconds));
+				if(!m_testMode) HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationDuration.TotalSeconds));
            	} break;
 
 			// Opening
@@ -200,7 +207,7 @@ public class Egg {
 				GenerateReward();
 			} break;
 			case State.READY:{
-				HDNotificationsManager.instance.CancelNotification("sku.not.01");
+				if(!m_testMode) HDNotificationsManager.instance.CancelNotification("sku.not.01");
 			}break;
 		}
 
@@ -209,7 +216,7 @@ public class Egg {
 
 		// Save persistence
 		// [AOC] A bit of an overkill, try to improve it on the future
-		PersistenceFacade.instance.Save_Request();
+		if(!m_testMode) PersistenceFacade.instance.Save_Request();
 	}
 
 	/// <summary>
@@ -221,7 +228,9 @@ public class Egg {
 		if(!isIncubating) return 0;
 
 		// Skip is free during the tutorial
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR)) return 0;
+		if(!m_testMode) {
+			if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INCUBATOR)) return 0;
+		}
 
 		// Just use standard time/pc formula
 		return GameSettings.ComputePCForTime(incubationRemaining);
@@ -265,25 +274,27 @@ public class Egg {
 		// Change state
 		ChangeState(State.COLLECTED);
 
-		// Remove it from the inventory (if appliable)
-		EggManager.RemoveEggFromInventory(this);
+		if(!testMode) {
+			// Remove it from the inventory (if appliable)
+			EggManager.RemoveEggFromInventory(this);
 
-		// If it's a standard egg, mark tutorial as completed
-		if(def.sku == SKU_STANDARD_EGG) {
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR, true);
+			// If it's a standard egg, mark tutorial as completed
+			if(def.sku == SKU_STANDARD_EGG) {
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_INCUBATOR, true);
+			}
+
+			// Increase collected eggs counter
+			UsersManager.currentUser.eggsCollected++;
+
+			// If golden egg, increase total and reset fragments counter
+			if(def.sku == SKU_GOLDEN_EGG) {
+				UsersManager.currentUser.SpendCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (ulong)EggManager.goldenEggRequiredFragments);	// If we have extra fragments, they will be kept in the profile
+				UsersManager.currentUser.goldenEggsCollected++;
+			}
+
+	        // Save persistence
+	        PersistenceFacade.instance.Save_Request();
 		}
-
-		// Increase collected eggs counter
-		UsersManager.currentUser.eggsCollected++;
-
-		// If golden egg, increase total and reset fragments counter
-		if(def.sku == SKU_GOLDEN_EGG) {
-			UsersManager.currentUser.SpendCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (ulong)EggManager.goldenEggRequiredFragments);	// If we have extra fragments, they will be kept in the profile
-			UsersManager.currentUser.goldenEggsCollected++;
-		}
-
-        // Save persistence
-        PersistenceFacade.instance.Save_Request();
 
         // Notify game
         Messenger.Broadcast<Egg>(GameEvents.EGG_OPENED, this);
