@@ -113,7 +113,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     State = EState.Done;
                 }
                 else if (ISApplyFeatureSettingsAllowed())
-                {                    
+                {                
+					if (IsDebugEnabled)
+						Log("Applying settings from server");
+				
                     // Content configuration for that device and server configuration
                     SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), Server_QualitySettingsJSONToApply);                    
                     State = EState.Done;
@@ -183,12 +186,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// </summary>
 	private string CACHE_SERVER_KEY = "fSettings_data";
 
-    private float SERVER_TIME_TO_WAIT_BETWEEN_CONNECTION_CHECKS = 5f;
+    private float SERVER_TIME_TO_WAIT_BETWEEN_CONNECTION_CHECKS = 15f;
 
     /// <summary>
-    /// Time to wat for the user to log in once the client has been told to upload its quality settings information to the server
+    /// Time in seconds to wait for the user to log in once the client has been told to upload its quality settings information to the server
     /// </summary>
-    private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 20f * 60f;    
+    private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 90f;    
 
     private float Server_TimeToWaitToUploadSettings { get; set; }
 
@@ -264,7 +267,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void Server_UploadQualitySettings()
     {
 		string profileName = Device_CalculatedProfile;
-		if (!string.IsNullOrEmpty (profileName)) 
+
+		if (IsDebugEnabled)
+			Log("Server_UploadQualitySettings profileName = " + profileName);
+		
+		if (!string.IsNullOrEmpty(profileName)) 
 		{		
 			// The calculated profile is the one that is sent to the server since the current profile could be different to the calculated profile if the client has applied
 			// some settings received from server that were stored in the device cache in a previous session
@@ -591,19 +598,24 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         m_deviceQualityManager.Device_CalculatedRating = rating;
 
         Device_CurrentFeatureSettings = CreateFeatureSettings();
-		if (ISApplyFeatureSettingsAllowed())
+
+		JSONNode serverJSON = Server_QualitySettingsJSONToApply;
+
+		if(IsDebugEnabled)
+			Log("Rules_OnLoaded settings from server " + ((serverJSON == null) ? "null" : serverJSON.ToString())); 
+				
+		if (serverJSON == null && CacheServerManager.SharedInstance.HasKey(CACHE_SERVER_KEY)) 
 		{
-			if (Server_QualitySettingsJSONToApply != null)
-	        {
-				SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), Server_QualitySettingsJSONToApply);                    
-	        }
-			else if ( CacheServerManager.SharedInstance.HasKey(CACHE_SERVER_KEY) )
-	        {
-	    		string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_KEY);
-				JSONNode json = JSON.Parse(value);
-				SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), json);
-	        }
-        }
+			string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_KEY);
+			serverJSON = JSON.Parse(value);
+
+			if (IsDebugEnabled) 
+			{				
+				Log("Settings from server cached : " + ((serverJSON == null) ? "null" : serverJSON.ToString()));	
+			}
+		}
+
+		SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), serverJSON);
     }
     #endregion
 
@@ -707,12 +719,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         float rating = m_deviceQualityManager.Device_CalculatedRating;
         string profileName = null;
 
-        // If no device configuration is passed then try to get the device configuration from rules        
+		if(IsDebugEnabled) 
+		{
+			string msg = "SetupCurrentFeatureSettings: deviceSettingsJSON = ";
+			msg += (deviceSettingsJSON == null) ? "null" : deviceSettingsJSON.ToString();
+			msg += " serverSettingsJSON = " + ((serverSettingsJSON == null) ? "null" : serverSettingsJSON.ToString());	
+			Log(msg);
+		}
+
+		// If no device configuration is passed then try to get the device configuration from rules        
         if (deviceSettingsJSON == null)
         {
             deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();
-        }
-
+        }			
+		
         if (deviceSettingsJSON != null)
         {
             // Checks if the rating has been overriden for this device
@@ -725,6 +745,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
+
+			if (IsDebugEnabled)
+				Log("deviceSettingsJSON.profileName = " + profileName);
         }        
 
         // If no profileName is available for the device in iOS then we assume that it's a new device so its rating has to be the maximum
@@ -732,6 +755,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         if (string.IsNullOrEmpty(profileName))
         {
             rating = 1f;
+
+			if (IsDebugEnabled)
+				Log("rating forced to 1f because profileName is empty");        
         }        
 #endif
 
@@ -740,6 +766,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             int systemMemorySize = SystemInfo.systemMemorySize;
             profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize);
+
+			if (IsDebugEnabled)
+				Log("Based on systemMemorySize = " + systemMemorySize + " rating = " + rating + " profileName is " + profileName);
         }
         
         Device_CalculatedProfile = profileName;        
@@ -760,6 +789,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 profileName = serverSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
+
+			if (IsDebugEnabled)
+				Log("serverSettingsJSON profileName is " + profileName + " json = " + serverSettingsJSON.ToString());
         }
 
         Device_CurrentProfile = profileName;
@@ -803,6 +835,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public void RestoreCurrentFeatureSettingsToDevice()
     {
+		if (IsDebugEnabled)
+			Log("RestoreCurrentFeatureSettingsToDevice");
+		
         SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null);
     }
 
