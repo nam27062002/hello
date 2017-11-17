@@ -74,10 +74,10 @@ Shader "Hungry Dragon/Spider web"
 				float n = dot(i.normal, i.viewDir);
 				float3 tn = normalize(i.viewDir - (i.normal * n));
 //				float refl = clamp(pow(dot(tn.xy, i.texcoord - 2.0), 8.0), 0.0, 1.0);
-				float refl = clamp(pow(dot(tn.xy, i.texcoord - _MainTex_ST.x * 0.5), 4.0), 0.0, 1.0);
+				float refl = 1.0 - clamp(pow(abs(dot(tn.xy, i.texcoord - _MainTex_ST.x * 0.5)), 1.0), 0.0, 1.0);
 //				float dd = abs(dot(d, normalize(i.viewDir.xy)));
 //				float rq = (i.viewDir.x * i.viewDir.x) + (i.viewDir.y * i.viewDir.y);
-				float4 prev = lerp(_DarkColor, _BrightColor, intensity * refl);// *rq;
+				float4 prev = lerp(_DarkColor * intensity, _BrightColor, refl);// *rq;
 				prev.a *= i.color.r;
 				return prev;
 #endif
