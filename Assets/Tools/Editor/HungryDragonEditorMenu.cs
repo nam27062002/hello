@@ -168,6 +168,14 @@ public class HungryDragonEditorMenu
         FindMissingReferencesTool.FindMissingReferences(true);
     }
 
+	/// <summary>
+	/// Find TIDs in the project.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Find TIDs", false, 5)]
+	public static void FindTids() {
+		FindTidTool.ShowWindow();
+	}
+
     /// <summary>
     /// Easily change time scale in runtime.
     /// </summary>
