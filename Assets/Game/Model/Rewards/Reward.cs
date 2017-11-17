@@ -245,7 +245,7 @@ namespace Metagame {
 			if(!string.IsNullOrEmpty(sku)) {
 				data.Add("sku", sku);
 			} else {
-				data.Add("amount", amount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+				data.Add("amount", amount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			}
 
 			// Source

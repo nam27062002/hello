@@ -110,7 +110,7 @@ public class MenuDragonPreview : MonoBehaviour {
 			for( int j = 0;j<mats.Length; j++ )
 			{
 				string shaderName = mats[j].shader.name;
-				if ( shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body") )
+				if ( shaderName.Contains("Dragon standard"))
 				{
 					mats[j].SetColor("_FresnelColor", col);
 				}
