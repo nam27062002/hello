@@ -263,24 +263,23 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void Server_UploadQualitySettings()
     {
-        // The calculated profile is the one that is sent to the server since the current profile could be different to the calculated profile if the client has applied
-        // some settings received from server that were stored in the device cache in a previous session
-        JSONNode json = new JSONClass();
-        string profileName = Device_CalculatedProfile;
-        //profileName = "high";
-        json.Add("profile", profileName);             
-        GameServerManager.SharedInstance.SetQualitySettings(json.ToString(), 
-		(Error error, GameServerManager.ServerResponse response) =>
-        {
-            if (error == null)
-            {
-                Log("Quality settings uploaded successfully");
-            }
-            else
-            {
-                Log("Error when uploading quality settings " + error.message);
-            }
-        });                    
+		string profileName = Device_CalculatedProfile;
+		if (!string.IsNullOrEmpty (profileName)) 
+		{		
+			// The calculated profile is the one that is sent to the server since the current profile could be different to the calculated profile if the client has applied
+			// some settings received from server that were stored in the device cache in a previous session
+			JSONNode json = new JSONClass ();        
+			//profileName = "high";
+			json.Add ("profile", profileName);      
+			GameServerManager.SharedInstance.SetQualitySettings (json.ToString (), 
+				(Error error, GameServerManager.ServerResponse response) => {
+					if (error == null) {
+						Log ("Quality settings uploaded successfully");
+					} else {
+						Log ("Error when uploading quality settings " + error.message);
+					}
+				});                    
+		}
 
         Server_ResetUploadQualitySettings();
     }   
