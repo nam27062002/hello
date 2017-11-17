@@ -41,12 +41,7 @@ public class OpenEggBehaviour : MonoBehaviour, IPointerClickHandler {
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// If we are not at the menu scene, disable this component
-		MenuSceneController sceneController = InstanceManager.menuSceneController;
-		if(sceneController == null) {
-			this.enabled = false;
-			return;
-		}
+		
 	}
 
 	//------------------------------------------------------------------//

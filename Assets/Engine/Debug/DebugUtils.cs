@@ -152,10 +152,8 @@ public class DebugUtils {
 		// Time tag
 		System.TimeSpan t = System.TimeSpan.FromSeconds(Time.time);
 		//string.Format("{0:D2}:{1:D2}.{2:D3}", t.TotalMinutes, t.Seconds, t.Milliseconds);
-		ss.Append("[")
-			.AppendFormat("{0:D2}:{1:D2}.{2:D3}", (int)t.TotalMinutes, t.Seconds, t.Milliseconds)
-			//.Append(System.TimeSpan.FromSeconds(Time.time).ToString(@"mm\:ss\.fff"))
-			.Append("] ");
+		ss.AppendFormat("{0:D2}:{1:D2}.{2:D3}", (int)t.TotalMinutes, t.Seconds, t.Milliseconds);
+		//ss.Append(System.TimeSpan.FromSeconds(Time.time).ToString(@"mm\:ss\.fff"));
 		string timeTag = ss.ToString();
 
 		// Dim color for prefix

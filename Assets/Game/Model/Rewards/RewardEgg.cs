@@ -55,16 +55,16 @@ namespace Metagame {
 		/// Constructor from egg sku.
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
-		public RewardEgg(string _sku, string _source) {
+		public RewardEgg(string _sku, string _source, bool _buildReward = true) {
 			m_source = _source;
-			Build(_sku);	// This will generate a random reward following the gacha rules
+			Build(_sku, _buildReward);	// This will generate a random reward following the gacha rules
 		}
 
 		/// <summary>
 		/// Internal builder with egg sku and reward sku.
 		/// </summary>
 		/// <param name="_sku">Egg sku.</param>
-		private void Build(string _sku) {
+		private void Build(string _sku, bool _buildReward) {
 			//Debug.Log("<color=purple>Building egg with sku " + _sku + "</color>");
 
 			// Internal initializer
@@ -74,7 +74,7 @@ namespace Metagame {
 			m_sku = _sku;
 			m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _sku);
 
-			BuildReward();
+			if(_buildReward) BuildReward();
 
 			if (m_reward != null) {
 				m_rarity = m_reward.rarity;
