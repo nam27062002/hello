@@ -1,15 +1,13 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/Particles/Transparent Alpha Blend"
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hungry Dragon/Spider web"
 {
 	Properties
 	{
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
-		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
-		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
-		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
-		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
 
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
@@ -40,6 +38,7 @@ Shader "Hungry Dragon/Particles/Transparent Alpha Blend"
 			struct appdata_t {
 				float4 vertex : POSITION;
 				fixed4 color : COLOR;
+				fixed3 normal : NORMAL;
 				float2 texcoord : TEXCOORD0;
 			};
 
@@ -47,6 +46,8 @@ Shader "Hungry Dragon/Particles/Transparent Alpha Blend"
 				float4 vertex : SV_POSITION;
 				float2 texcoord : TEXCOORD0;
 				fixed4 color : COLOR;
+				fixed3 normal : NORMAL;
+				fixed3 viewDir : TEXCOORD1;
 			};
 
 			sampler2D _MainTex;
@@ -54,47 +55,30 @@ Shader "Hungry Dragon/Particles/Transparent Alpha Blend"
 
 			float4 _TintColor;
 
-#ifdef EMISSIVEPOWER
-			float _EmissivePower;
-#endif
-
-#ifdef AUTOMATICPANNING
-			float4 _Panning;
-#endif
-
 			v2f vert(appdata_t v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 
-#ifdef AUTOMATICPANNING
-				v.texcoord += _Panning.xy * _Time.y;
-#endif
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
+				o.normal = UnityObjectToWorldNormal(v.normal);
+				
+				o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 				return o;
 			}
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-#ifdef DEBUG
-				return fixed4(1.0, 0.0, 1.0, 1.0);
-#endif	
-
-#ifdef EMISSIVEPOWER
-				half4 prev = i.color * tex2D(_MainTex, i.texcoord) * _EmissivePower;
-#else
 				half4 prev = i.color * tex2D(_MainTex, i.texcoord);
-#endif
+				float n = dot(i.normal, i.viewDir);
+				float3 tn = normalize(i.viewDir - (i.normal * n));
+//				float dd = abs(dot(d, normalize(i.viewDir.xy)));
+//				float rq = (i.viewDir.x * i.viewDir.x) + (i.viewDir.y * i.viewDir.y);
+				prev *= _TintColor * abs(dot(tn.xy, i.texcoord));// *rq;
 
-				prev *= _TintColor;
-
-#if defined(SOFTADDITIVE)
-				prev.rgb *= prev.a;
-#elif defined(ALPHABLEND)
 				prev *= 2.0;
-#endif
 				return prev;
 			}
 
