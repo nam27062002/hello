@@ -47,31 +47,33 @@ namespace AI {
 			protected override void OnUpdate() {
 				CheckPromotion();
 
-				IMachine leader = m_group.leader;
-				if (leader != null) {
-					switch (m_followState) {
-						case FollowState.Follow:
-							m_pilot.SetMoveSpeed(m_data.speed);
-							m_pilot.GoTo(leader.target);
-							if (ShouldCatchUp() > 1f) {
-								m_pilot.SlowDown(true);
-								m_followState = FollowState.CatchUp;
-							}
-							break;
+				if (m_group != null) {
+					IMachine leader = m_group.leader;
+					if (leader != null) {
+						switch (m_followState) {
+							case FollowState.Follow:
+								m_pilot.SetMoveSpeed(m_data.speed);
+								m_pilot.GoTo(leader.target);
+								if (ShouldCatchUp() > 1f) {
+									m_pilot.SlowDown(true);
+									m_followState = FollowState.CatchUp;
+								}
+								break;
 
-						case FollowState.CatchUp:
-							float speedFactor = ShouldCatchUp();
+							case FollowState.CatchUp:
+								float speedFactor = ShouldCatchUp();
 
-							m_pilot.SetMoveSpeed(Mathf.Min(m_data.catchUpSpeed, m_data.speed * speedFactor));
-							m_pilot.GoTo(leader.target);
-							//m_pilot.GoTo(leader.position);
+								m_pilot.SetMoveSpeed(Mathf.Min(m_data.catchUpSpeed, m_data.speed * speedFactor));
+								m_pilot.GoTo(leader.target);
+								//m_pilot.GoTo(leader.position);
 
-							if (speedFactor <= 1f) {
-								m_pilot.SlowDown(true);
-								m_followState = FollowState.Follow;
-							}
-							break;
-					}     
+								if (speedFactor <= 1f) {
+									m_pilot.SlowDown(true);
+									m_followState = FollowState.Follow;
+								}
+								break;
+						}     
+					}
 				}
 			}
 

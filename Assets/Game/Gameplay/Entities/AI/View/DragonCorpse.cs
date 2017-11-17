@@ -33,7 +33,7 @@ public class DragonCorpse : MonoBehaviour {
 	private Renderer[] m_renderers = null;
 	private List<Material> m_originalMaterials = new List<Material>();
 	private List<Material> m_fadeMaterials = new List<Material>();
-	private Shader m_deathShader;
+//	private Shader m_deathShader;
 
 	// Use this for initialization
 	void Awake() {
@@ -84,10 +84,29 @@ public class DragonCorpse : MonoBehaviour {
 
 			}
 		}
-		m_deathShader = Shader.Find("Hungry Dragon/Dragon/Death");
+//		m_deathShader = Shader.Find("Hungry Dragon/Dragon/Death");
 	}
 
-	void OnDisable() {
+
+
+    public static void setDeathMode(Material material)
+    {
+        material.SetOverrideTag("RenderType", "TransparentCutout");
+        material.SetOverrideTag("Queue", "AlphaTest");
+        material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        //                material.renderQueue = 3000;
+        material.SetFloat("_ZWrite", 1.0f);
+        material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+        material.EnableKeyword("CUTOFF");
+        material.EnableKeyword("DOUBLESIDED");
+//        material.SetFloat("_EnableCutoff", 1.0f);
+//        material.SetFloat("_EnableDoublesided", 1.0f);
+//        Debug.Log("Blend mode transparent");
+    }
+
+
+    void OnDisable() {
 		m_spawned = false;
 	}
 
@@ -184,9 +203,11 @@ public class DragonCorpse : MonoBehaviour {
 											for( int k = 0; k<r.materials.Length; ++k )
 											{
 												string shaderName = r.materials[k].shader.name;
-												if (shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body"))
+												if (shaderName.Contains("Dragon standard"))
 												{
-													r.materials[k].shader = m_deathShader;
+//													r.materials[k].shader = m_deathShader;
+                                                    setDeathMode(r.materials[k]);
+
 													m_fadeMaterials.Add( r.materials[k] );
 												}
 											}
@@ -231,9 +252,13 @@ public class DragonCorpse : MonoBehaviour {
 		Material bodyMaterial = new Material (Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_body"));
 		if ( Application.isPlaying )
 		{
-			if ( wingsMaterial )
-				wingsMaterial.shader = m_deathShader;
-			bodyMaterial.shader = m_deathShader;
+            if (wingsMaterial)
+            {
+//				wingsMaterial.shader = m_deathShader;
+                setDeathMode(wingsMaterial);
+            }
+//			bodyMaterial.shader = m_deathShader;
+            setDeathMode(bodyMaterial);
 
 		}		
 		if ( wingsMaterial )
@@ -241,11 +266,18 @@ public class DragonCorpse : MonoBehaviour {
 		m_fadeMaterials.Add( bodyMaterial );
 		for (int i = 0; i < m_renderers.Length; i++) {
 			string shaderName = m_originalMaterials[i].shader.name;
-			if (shaderName.Contains("Dragon/Wings")) {
-				m_renderers[i].material = wingsMaterial;
-			} else if (shaderName.Contains("Dragon/Body")) {
-				m_renderers[i].material = bodyMaterial;
-			}
+            if (shaderName.Contains("Dragon standard"))
+            {
+                string tag = m_originalMaterials[i].GetTag("RenderType", false);
+                if (tag.Contains("TransparentCutout"))
+                {
+                    m_renderers[i].material = wingsMaterial;
+                }
+                else if (tag.Contains("Opaque"))
+                {
+                    m_renderers[i].material = bodyMaterial;
+                }
+            }
 		}
 	}
 
@@ -297,11 +329,18 @@ public class DragonCorpse : MonoBehaviour {
 		Material bodyMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_body");
 		for (int i = 0; i < m_renderers.Length; i++) {
 			string shaderName = m_originalMaterials[i].shader.name;
-			if (shaderName.Contains("Dragon/Wings")) {
-				m_renderers[i].material = wingsMaterial;
-			} else if (shaderName.Contains("Dragon/Body")) {
-				m_renderers[i].material = bodyMaterial;
-			}
+            if (shaderName.Contains("Dragon standard"))
+            {
+                string tag = m_originalMaterials[i].GetTag("RenderType", false);
+                if (tag.Contains("TransparentCutout"))
+                {
+                    m_renderers[i].material = wingsMaterial;
+                }
+                else if (shaderName.Contains("Opaque"))
+                {
+                    m_renderers[i].material = bodyMaterial;
+                }
+            }
 		}
 	}
 }

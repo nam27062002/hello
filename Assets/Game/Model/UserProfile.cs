@@ -53,7 +53,7 @@ public class UserProfile : UserPersistenceSystem
 		/// </summary>
 		public string Serialize() {
 			// freeAmount:paidAmount -> "50:20"
-			return freeAmount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE) + ":" + paidAmount.ToString(PersistenceManager.JSON_FORMATTING_CULTURE);
+			return freeAmount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE) + ":" + paidAmount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
 		}
 
 		/// <summary>
@@ -68,14 +68,14 @@ public class UserProfile : UserPersistenceSystem
 
 			// Parse free amount
 			if(values.Length > 0) {
-				long.TryParse(values[0], System.Globalization.NumberStyles.Any, PersistenceManager.JSON_FORMATTING_CULTURE, out freeAmount);
+				long.TryParse(values[0], System.Globalization.NumberStyles.Any, PersistenceFacade.JSON_FORMATTING_CULTURE, out freeAmount);
 			} else {
 				freeAmount = _defaultFree;
 			}
 
 			// Parse paid amount
 			if(values.Length > 1) {
-				long.TryParse(values[1], System.Globalization.NumberStyles.Any, PersistenceManager.JSON_FORMATTING_CULTURE, out paidAmount);
+				long.TryParse(values[1], System.Globalization.NumberStyles.Any, PersistenceFacade.JSON_FORMATTING_CULTURE, out paidAmount);
 			} else {
 				paidAmount = _defaultPaid;
 			}
@@ -680,7 +680,7 @@ public class UserProfile : UserPersistenceSystem
 
         if (profile.ContainsKey("timestamp"))
         {
-			m_saveTimestamp = DateTime.Parse(profile["timestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
+			m_saveTimestamp = DateTime.Parse(profile["timestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
         }
         else
         {
@@ -836,7 +836,7 @@ public class UserProfile : UserPersistenceSystem
 		m_dailyRemoveMissionAdUses = 0;
 		if ( _data.ContainsKey("dailyRemoveMissionAdTimestamp") )
 		{
-			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);;
+			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);;
 
 			if ( _data.ContainsKey("dailyRemoveMissionAdUses") )
 				m_dailyRemoveMissionAdUses = _data["dailyRemoveMissionAdUses"].AsInt;
@@ -848,7 +848,7 @@ public class UserProfile : UserPersistenceSystem
 
 		m_skipMissionAdUses = 0;
 		if(_data.ContainsKey("skipMissionAdTimestamp")) {
-			m_skipMissionAdTimestamp = DateTime.Parse(_data["skipMissionAdTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
+			m_skipMissionAdTimestamp = DateTime.Parse(_data["skipMissionAdTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
 			if(_data.ContainsKey("skipMissionAdUses")) {
 				m_skipMissionAdUses = _data["skipMissionAdUses"].AsInt;
 			}
@@ -859,7 +859,7 @@ public class UserProfile : UserPersistenceSystem
 		// Map upgrades
 		key = "mapResetTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
+			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
 		} else {
 			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
 		}
@@ -938,7 +938,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Incubator timer
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
 
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
@@ -974,7 +974,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Reset timestamp
-		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], PersistenceManager.JSON_FORMATTING_CULTURE);
+		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
 	}
 
 	//------------------------------------------------------------------------//
@@ -990,7 +990,7 @@ public class UserProfile : UserPersistenceSystem
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
 
-        profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+        profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         // Economy
 		profile.Add( "sc", m_currencies[(int)Currency.SOFT].Serialize());
@@ -1001,13 +1001,13 @@ public class UserProfile : UserPersistenceSystem
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
-		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Game stats
-		profile.Add("gamesPlayed",m_gamesPlayed.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		profile.Add("highScore",m_highScore.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		profile.Add("superFuryProgression",m_superFuryProgression.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		profile.Add("gamesPlayed",m_gamesPlayed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		profile.Add("highScore",m_highScore.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		profile.Add("superFuryProgression",m_superFuryProgression.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         profile.Add("socialState",SocialStatesAsString[(int)SocialState]);
 
 		data.Add("userProfile", profile);
@@ -1030,13 +1030,13 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("chests", SaveChestsData());
 
 		// Daily remove missions with ads
-		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("skipMissionAdTimestamp", m_skipMissionAdTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		data.Add("skipMissionAdUses", m_skipMissionAdUses.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("skipMissionAdTimestamp", m_skipMissionAdTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("skipMissionAdUses", m_skipMissionAdUses.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Map upgrades
-		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
@@ -1093,13 +1093,13 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Incubator timer
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         // Eggs collected
-		data.Add("collectedAmount", eggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("collectedAmount", eggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Golden eggs
-		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         return data;
 	}
@@ -1122,7 +1122,7 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("chests", chestsArray);
 
 		// Reset timestamp
-		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Done!
 		return data;

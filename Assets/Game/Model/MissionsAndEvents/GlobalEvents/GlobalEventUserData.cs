@@ -125,10 +125,10 @@ public class GlobalEventUserData {
 	public SimpleJSON.JSONNode Save(bool _includeEventID, bool _includePosition = true, bool _includeRewardCollected = true) {
 		// Create a new json object for this event
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-		if(_includeEventID) data.Add("eventId", eventID.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		if(_includeEventID) data.Add("eventId", eventID.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		data.Add("uid", userID);
-		data.Add("score", score.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
-		if(_includePosition) data.Add("rank", position.ToString(PersistenceManager.JSON_FORMATTING_CULTURE));
+		data.Add("score", score.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		if(_includePosition) data.Add("rank", position.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		if(_includeRewardCollected) data.Add("rewardCollected", rewardCollected);
 		return data;
 	}

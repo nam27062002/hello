@@ -138,22 +138,22 @@ public class MenuPetPreview : MonoBehaviour {
 				}
 
 				// Create show/hide animator
-				m_rarityGlowShowHideTween = m_rarityGlow.transform
+			/*	m_rarityGlowShowHideTween = m_rarityGlow.transform
 					.DOScale(Vector3.zero, 0.15f)
 					.From()
 					.SetEase(Ease.OutBack)
 					.SetAutoKill(false)
-					.Pause();
+					.Pause();*/
 
 			}
 
 			// Launch animation forwards
 
-			if(m_rarityGlowShowHideTween != null) {
+			/*if(m_rarityGlowShowHideTween != null) {
 				m_rarityGlowShowHideTween.PlayForward();
 			} else if(m_rarityGlow != null) {
 				m_rarityGlow.SetActive(true);
-			}
+			}*/
 
             foreach (Renderer rend in m_renderers)
             {
@@ -182,13 +182,17 @@ public class MenuPetPreview : MonoBehaviour {
 			if(m_rarityGlow == null) return;
 
 			// Launch animation backwards
-			if(m_rarityGlowShowHideTween != null) {
+		/*	if(m_rarityGlowShowHideTween != null) {
 				m_rarityGlowShowHideTween.PlayBackwards();
 			} else if(m_rarityGlow != null) {
 				m_rarityGlow.SetActive(false);
-			}
+			}*/
 
             setFresnelColor(Color.black);
+		}
+
+		if (m_rarityGlow != null) {
+			m_rarityGlow.SetActive(_show);
 		}
 	}
 

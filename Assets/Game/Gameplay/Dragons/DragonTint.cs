@@ -74,7 +74,7 @@ public class DragonTint : MonoBehaviour
 			{
 				
 				string shaderName = mats[j].shader.name;
-                if (shaderName.Contains("Dragon/Wings") || shaderName.Contains("Dragon/Body"))
+                if (shaderName.Contains("Dragon standard"))
                 {
                 	hasDragonPart = true;
                     m_materials.Add(mats[j]);
