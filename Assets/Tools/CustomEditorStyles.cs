@@ -20,5 +20,14 @@ public static partial class CustomEditorStyles {
 	//------------------------------------------------------------------------//
 	// STATICS																  //
 	//------------------------------------------------------------------------//
-	// [AOC] None for now! Add as needed
+	private static GUIStyle s_wrappedTextAreaStyle = null;
+	public static GUIStyle wrappedTextAreaStyle {
+		get {
+			if(s_wrappedTextAreaStyle == null) {
+				s_wrappedTextAreaStyle = new GUIStyle(GUI.skin.textArea);
+				s_wrappedTextAreaStyle.wordWrap = true;
+			}
+			return s_wrappedTextAreaStyle;
+		}
+	}
 }
