@@ -486,8 +486,10 @@ public class MemoryProfiler
         if ((GO_IsMemberACollection(propertyType) || property.PropertyType.IsSubclassOf(typeof(UnityEngine.Object))) &&
             !property.IsDefined(typeof(ObsoleteAttribute), true) &&         // Accessing properties marked as obsolete by Unity triggers an exception
             property.Name != "material" && property.Name != "materials" &&  // Accessing material or materials properties triggers an exception                    
-            property.Name != "mesh")                                        // Accessing mesh triggers an exception                   
+            property.Name != "mesh" &&                                      // Accessing mesh triggers an exception
+			property.Name != "entity")										// Accessing entity triggers an exception
         {             
+			Debug.Log(o.GetType().ToString() + " -> " + property.Name);
             object value = property.GetValue(o, null);
             if (value != null)
             {
