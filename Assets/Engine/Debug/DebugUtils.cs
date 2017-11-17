@@ -149,9 +149,6 @@ public class DebugUtils {
 		// Smart string memory usage
 		StringBuilder ss = new StringBuilder();
 
-		// Dim color for prefix
-		ss.Append("<color=white>");
-
 		// Time tag
 		System.TimeSpan t = System.TimeSpan.FromSeconds(Time.time);
 		//string.Format("{0:D2}:{1:D2}.{2:D3}", t.TotalMinutes, t.Seconds, t.Milliseconds);
@@ -159,6 +156,11 @@ public class DebugUtils {
 			.AppendFormat("{0:D2}:{1:D2}.{2:D3}", (int)t.TotalMinutes, t.Seconds, t.Milliseconds)
 			//.Append(System.TimeSpan.FromSeconds(Time.time).ToString(@"mm\:ss\.fff"))
 			.Append("] ");
+		string timeTag = ss.ToString();
+
+		// Dim color for prefix
+		ss.Length = 0;
+		ss.Append("<color=white>");
 
 		// Context name
 		if(_context != null) {
@@ -173,6 +175,6 @@ public class DebugUtils {
 		ss.Append(_text);
 			
 		// Log!
-		Debug.Log(ss.ToString(), _context);
+		Debug.TaggedLog(timeTag, ss.ToString(), _context);
 	}
 }
