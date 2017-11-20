@@ -174,7 +174,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 
    				// Compute diffuse and specular
 				fixed4 diffuse = (0.5 + max(0, dot(normalDirection, lightDirection))) * _LightColor;		// Custom light color
-				fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
+				fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 
 	     		// [AOC] We use light color alpha as specular intensity
 	     		specular *= _LightColor.a;
