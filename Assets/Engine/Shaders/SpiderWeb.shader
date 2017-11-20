@@ -6,16 +6,17 @@ Shader "Hungry Dragon/Spider web"
 {
 	Properties
 	{
-		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
+		_DarkColor("Dark Color", Color) = (0.5,0.5,0.5,0.5)
+		_BrightColor("Bright Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
-
+		[Toggle(ONLYTEXTURE)] _OnlyTexture("Only texture & vertex color", Float) = 0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
 	SubShader
 	{
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend SrcAlpha One
 		Cull Off
 		Lighting Off
 		ZWrite Off
@@ -26,14 +27,10 @@ Shader "Hungry Dragon/Spider web"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma shader_feature  __ EMISSIVEPOWER
-			#pragma shader_feature  __ AUTOMATICPANNING
+
+			#pragma shader_feature ONLYTEXTURE
 
 			#include "UnityCG.cginc"
-
-			#define	ALPHABLEND
-
-//			#pragma exclude_renderers d3d11
 
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -53,7 +50,8 @@ Shader "Hungry Dragon/Spider web"
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
-			float4 _TintColor;
+			float4 _DarkColor;
+			float4 _BrightColor;
 
 			v2f vert(appdata_t v)
 			{
@@ -62,24 +60,27 @@ Shader "Hungry Dragon/Spider web"
 				o.color = v.color;
 
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-
-				o.normal = UnityObjectToWorldNormal(v.normal);
-				
+				o.normal = UnityObjectToWorldNormal(v.normal);				
 				o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 				return o;
 			}
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				half4 prev = i.color * tex2D(_MainTex, i.texcoord);
-//				float dd = abs(dot(d, normalize(i.viewDir.xy)));
-//				float rq = (i.viewDir.x * i.viewDir.x) + (i.viewDir.y * i.viewDir.y);
-				prev *= _TintColor;// *rq;
+#ifdef ONLYTEXTURE
+				return tex2D(_MainTex, i.texcoord) * i.color;
+#else
+				float intensity = tex2D(_MainTex, i.texcoord);
 				float n = dot(i.normal, i.viewDir);
 				float3 tn = normalize(i.viewDir - (i.normal * n));
-				prev *= 2.0 * (0.5 + clamp(pow(dot(tn.xy, i.texcoord), 2.0), 0.0, 1.0));
+//				float refl = clamp(pow(dot(tn.xy, i.texcoord - 2.0), 8.0), 0.0, 1.0);
+				float refl = 1.0 - clamp(pow(abs(dot(tn.xy, i.texcoord - _MainTex_ST.x * 0.5)), 1.0), 0.0, 1.0);
+//				float dd = abs(dot(d, normalize(i.viewDir.xy)));
+//				float rq = (i.viewDir.x * i.viewDir.x) + (i.viewDir.y * i.viewDir.y);
+				float4 prev = lerp(_DarkColor * intensity, _BrightColor, refl);// *rq;
 				prev.a *= i.color.r;
 				return prev;
+#endif
 			}
 
 			ENDCG
