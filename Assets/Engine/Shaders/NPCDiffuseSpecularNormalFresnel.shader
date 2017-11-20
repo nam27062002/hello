@@ -22,14 +22,12 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 		_RimFactor("Rim factor", Range(0.0, 8.0)) = 0.27
 		_RimColor("Rim Color (RGB)", Color) = (1.0, 1.0, 1.0, 1.0)
 		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
-		_GlowColor("Glow (RGB, Alpha is intensity)", Color) = (1, 1, 1, 1)
-
 	}
 
 
 	SubShader
 	{
-		Tags{ "RenderType" = "Glow"  "Queue" = "Geometry" "LightMode" = "ForwardBase" }
+		Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry" "LightMode" = "ForwardBase" }
 		Pass
 		{
 			Cull Back
@@ -108,14 +106,6 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			uniform float4 _EmissiveColor;
 			uniform float _RimFactor;
 			uniform float4 _RimColor;
-			uniform float4 _GlowColor;
-
-//			#if GLOWEFFECT_MULTIPLY_COLOR
-//			uniform float4 _GlowColorMult;
-//			#endif
-
-//			uniform half4 _GlowColor;
-//			uniform half4 _GlowColorMult;
 
 
 			v2f vert (appdata v)
@@ -170,7 +160,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
    				float3 lightDirection = normalize(_SpecularDir.xyz);
 
    				// Compute diffuse and specular
-				fixed4 diffuse = max(0, dot(normalDirection, lightDirection)) * _LightColor;		// Custom light color
+				fixed4 diffuse = (0.5 + max(0, dot(normalDirection, lightDirection))) * _LightColor;		// Custom light color
 				fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
 				//fixed specular = pow(max(0, dot(normalDirection, lightDirection)), _SpecularPower);
 
@@ -188,7 +178,10 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 				float4 reflection = texCUBE(_ReflectionMap, normalDirection);
 				col = (1.0 - _ReflectionAmount) * col + _ReflectionAmount * reflection;
 				#endif
-				col = diffuse * col + (specular * _LightColor) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel) + (rim * _RimColor);	// Custom light color
+
+				col = diffuse * col + (specular * _LightColor);	//Diffuse + specular
+				col += lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel); //Fresnel
+				col += (rim * _RimColor); // Rim light
 
 				float3 emissive = tex2D(_GlowTex, i.uv2);
 				col = lerp(col, _EmissiveColor, (emissive.r + emissive.g + emissive.b) * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
@@ -205,7 +198,4 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			ENDCG
 		}
 	}
-
-	CustomEditor "GlowMaterialInspector"
-
 }
