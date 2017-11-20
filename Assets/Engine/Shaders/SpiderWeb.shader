@@ -9,7 +9,7 @@ Shader "Hungry Dragon/Spider web"
 		_DarkColor("Dark Color", Color) = (0.5,0.5,0.5,0.5)
 		_BrightColor("Bright Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
-		_SpecPower("Specular power", Range(0.1, 20.0)) = 2.0
+		_SpecPower("Specular power", Range(0.01, 1.5)) = 0.2
 		[Toggle(ONLYTEXTURE)] _OnlyTexture("Only texture & vertex color", Float) = 0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}

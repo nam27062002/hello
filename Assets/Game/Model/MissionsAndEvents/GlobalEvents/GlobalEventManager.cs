@@ -4,12 +4,17 @@
 // Created by Alger Ortín Castellví on 20/03/2017.
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
+#if UNITY_EDITOR
+// #define TEST_GLOBAL_EVENT
+#endif
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -101,9 +106,24 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	//------------------------------------------------------------------------//
 
 	public static void TMP_RequestCustomizer() {
+	#if TEST_GLOBAL_EVENT
+		GameServerManager.ServerResponse response = CreateTestResponse( "tmp_customizer.json" );
+		instance.OnTMPCustomizerResponse( null, response );
+	#else
 		GameServerManager.SharedInstance.GlobalEvent_TMPCustomizer(instance.OnTMPCustomizerResponse);
+	#endif
 	}
 
+#if UNITY_EDITOR
+	private static GameServerManager.ServerResponse CreateTestResponse( string fileName )
+	{
+		string path = Directory.GetCurrentDirectory() + "/Assets/GlobalEventsTests/" + fileName;
+		string json = File.ReadAllText(path);
+		GameServerManager.ServerResponse response = new GameServerManager.ServerResponse();
+		response.Add("response", json);
+		return response;
+	}
+#endif
 
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 		if(_response != null && _response["response"] != null) {
@@ -169,7 +189,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if (currentEventId >= 0) {
 			// We've found an event stored, lets get its data
 			Debug.Log("<color=magenta>EVENT DATA</color>");
-			GameServerManager.SharedInstance.GlobalEvent_GetEvent(currentEventId, instance.OnCurrentEventResponse);
+			#if TEST_GLOBAL_EVENT
+				GameServerManager.ServerResponse response = CreateTestResponse( "event.json" );
+				instance.OnCurrentEventResponse(null, response);
+			#else
+				GameServerManager.SharedInstance.GlobalEvent_GetEvent(currentEventId, instance.OnCurrentEventResponse);
+			#endif
 		} else {
 			ClearCurrentEvent();
 			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
@@ -192,7 +217,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 		// Just do it
 		Debug.Log("<color=magenta>EVENT STATE</color>");
+		#if TEST_GLOBAL_EVENT
+			GameServerManager.ServerResponse response = CreateTestResponse( "eventState.json" );
+			instance.OnEventStateResponse(null, response);
+		#else
 		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, instance.OnEventStateResponse);
+		#endif
 	}
 
 	/// <summary>
@@ -211,7 +241,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		|| Prefs.GetBoolPlayer(DebugSettings.GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD, false)) {
 			// Do it
 			Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
+			#if TEST_GLOBAL_EVENT
+				GameServerManager.ServerResponse response = CreateTestResponse( "leaderboard.json" );
+				instance.OnEventLeaderboardResponse(null, response);
+			#else
 			GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
+			#endif
 		} else {
 			// Notify game that leaderboard data is ready
 			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
