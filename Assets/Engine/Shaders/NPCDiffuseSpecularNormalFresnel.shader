@@ -193,7 +193,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 				col += (rim * _RimColor); // Rim light
 
 				#ifdef EMISSIVE
-				float3 emissive = tex2D(_GlowTex, i.uv2);
+				float3 emissive = tex2D(_GlowTex, i.uv);
 				col = lerp(col, _EmissiveColor, (emissive.r + emissive.g + emissive.b) * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
 				#endif
 
