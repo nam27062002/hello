@@ -9,19 +9,24 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
+		[Toggle(EMISSIVE)]_EnableEmissive("Enable emissive", Float) = 0.0
 		_GlowTex("Emissive (RGBA)", 2D) = "white" {}
+		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
+
+
+		[Toggle(REFLECTION)]_EnableReflection("Enable reflection", Float) = 0.0
 		_ReflectionMap("Reflection Map", Cube) = "white" {}
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+
 		_LightColor("Light Color", Color) = (1, 1, 1, 1)
-		_NormalStrength("Normal Strength", float) = 3
-		_SpecularPower( "Specular Power", float ) = 30.0
+		_NormalStrength("Normal Strength", Float) = 3.0
+		_SpecularPower( "Specular Power", Float ) = 30.0
 		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 		_FresnelFactor("Fresnel factor", Range(0.0, 5.0)) = 0.27
 		_FresnelInitialColor("Fresnel initial (RGB)", Color) = (0, 0, 0, 0)
 		_FresnelFinalColor("Fresnel final (RGB)", Color) = (0, 0, 0, 0)
 		_RimFactor("Rim factor", Range(0.0, 8.0)) = 0.27
 		_RimColor("Rim Color (RGB)", Color) = (1.0, 1.0, 1.0, 1.0)
-		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
 	}
 
 
@@ -44,18 +49,19 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma shader_feature REFLECTION
+			#pragma shader_feature EMISSIVE
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#if LOW_DETAIL_ON
+			#undef BUMP
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#define BUMP
+			#undef BUMP
 			#endif
 
 			#if HI_DETAIL_ON
-			#define BUMP
-			#define REFL
 			#endif
 
 
@@ -91,11 +97,17 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			uniform float4 _MainTex_TexelSize;
 			uniform sampler2D _NormalTex;
 			uniform float4 _NormalTex_ST;
+
+			#ifdef EMISSIVE
 			uniform sampler2D _GlowTex;
-			#ifdef REFL
+			uniform float4 _EmissiveColor;
+			#endif
+
+			#ifdef REFLECTION
 			uniform samplerCUBE _ReflectionMap;
 			uniform float _ReflectionAmount;
 			#endif
+
 			uniform float _SpecularPower;
 			uniform fixed4 _SpecularDir;
 			uniform float4 _LightColor;
@@ -103,7 +115,6 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			uniform float _FresnelFactor;
 			uniform float4 _FresnelInitialColor;
 			uniform float4 _FresnelFinalColor;
-			uniform float4 _EmissiveColor;
 			uniform float _RimFactor;
 			uniform float4 _RimColor;
 
@@ -162,19 +173,15 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
    				// Compute diffuse and specular
 				fixed4 diffuse = (0.5 + max(0, dot(normalDirection, lightDirection))) * _LightColor;		// Custom light color
 				fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
-				//fixed specular = pow(max(0, dot(normalDirection, lightDirection)), _SpecularPower);
 
 	     		// [AOC] We use light color alpha as specular intensity
 	     		specular *= _LightColor.a;
 
-				// fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
 				float nf = max(dot(i.viewDir, normalDirection), 0.0);
 				float fresnel = clamp(pow(nf, _FresnelFactor), 0.0, 1.0);
 				float rim = clamp(pow(1.0 - nf, _RimFactor), 0.0, 1.0) * _RimColor.a;	// Use rim color alpha as intensity
 
-				// col = diffuse * col + (specular * _LightColor0) + (fresnel * _FresnelColor);
-				// col = diffuse * col + (specular * _LightColor0) + lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel);	// World light color
-				#ifdef REFL
+				#ifdef REFLECTION
 				float4 reflection = texCUBE(_ReflectionMap, normalDirection);
 				col = (1.0 - _ReflectionAmount) * col + _ReflectionAmount * reflection;
 				#endif
@@ -183,14 +190,10 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 				col += lerp(_FresnelInitialColor, _FresnelFinalColor, fresnel); //Fresnel
 				col += (rim * _RimColor); // Rim light
 
+				#ifdef EMISSIVE
 				float3 emissive = tex2D(_GlowTex, i.uv2);
 				col = lerp(col, _EmissiveColor, (emissive.r + emissive.g + emissive.b) * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
-				// col = lerp(col, _EmissiveColor, emissive.r + emissive.g + emissive.b);			// Multiplicative, no intensity control
-				// col += _EmissiveColor * (emissive.r + emissive.g + emissive.b);				// Additive, no intesity control
-
-				//fixed4 one = fixed4(1, 1, 1, 1);
-				// col = one- (one-col) * (1-(i.color-fixed4(0.5,0.5,0.5,0.5)));	// Soft Light
-				//col = one - 2.0 * (one - reflection) * (one - col);	// Overlay
+				#endif
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;
