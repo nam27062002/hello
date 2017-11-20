@@ -51,6 +51,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			#pragma fragment frag
 			#pragma shader_feature REFLECTION
 			#pragma shader_feature EMISSIVE
+/*
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#if LOW_DETAIL_ON
@@ -63,7 +64,8 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 
 			#if HI_DETAIL_ON
 			#endif
-
+*/
+			#define BUMP
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
