@@ -100,8 +100,8 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			uniform sampler2D _NormalTex;
 			uniform float4 _NormalTex_ST;
 
-			#ifdef EMISSIVE
 			uniform sampler2D _GlowTex;
+			#ifdef EMISSIVE
 			uniform float4 _EmissiveColor;
 			#endif
 
