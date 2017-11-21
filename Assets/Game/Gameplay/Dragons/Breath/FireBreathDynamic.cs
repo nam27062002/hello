@@ -45,10 +45,10 @@ public class FireBreathDynamic : MonoBehaviour
     private Color[] m_color = null;
 
     // Meshes
-    private Mesh m_mesh = null;
+//    private Mesh m_mesh = null;
 
 	// Cached components
-	private MeshFilter m_meshFilter = null;
+//	private MeshFilter m_meshFilter = null;
 
     public float m_distance = 1;
     public float m_aplitude = 6;
@@ -185,7 +185,7 @@ public class FireBreathDynamic : MonoBehaviour
         }
 
         // Cache
-        m_meshFilter = GetComponent<MeshFilter>();
+//        m_meshFilter = GetComponent<MeshFilter>();
         m_numPos = (int)(4 + m_splits * 2);
 
         m_whipEnd = transform.Find("WhipEnd").gameObject;
@@ -204,9 +204,8 @@ public class FireBreathDynamic : MonoBehaviour
 //		InitUVs();
 		InitTriangles();
 
-		ReshapeFromWhip();
-
-        CreateMesh();
+//		ReshapeFromWhip();
+//      CreateMesh();
 
 
         m_particleList = GetComponentsInChildren<ParticleSystem>();
@@ -268,7 +267,7 @@ public class FireBreathDynamic : MonoBehaviour
 			pos++;
 		}
 	}
-
+/*
     void ReshapeFromWhip()
 	{
 		m_pos[0] = m_pos[1] = Vector3.zero;
@@ -315,17 +314,12 @@ public class FireBreathDynamic : MonoBehaviour
             {
                 m_color[i] = m_color[i + 1] = (whipIndex > m_collisionSplit) ? m_collisionColor : m_flameColor;
             }
-/*            else
-            {
-                m_color[i] = m_color[i + 1] = m_initialColor;
-            }
-*/
             step++;
 			whipIndex++;
 		}
 
     }
-
+*/
     void InitUVs()
     {
         //		m_UV[0] = Vector2.right * 0.5f;
@@ -352,7 +346,7 @@ public class FireBreathDynamic : MonoBehaviour
             step++;
         }
     }
-
+/*
     // Recreates the mesh
     void CreateMesh()
 	{
@@ -368,17 +362,17 @@ public class FireBreathDynamic : MonoBehaviour
         m_meshFilter.sharedMesh = m_mesh;
 
 	}
-
+*/
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
         UpdateWhip();
-		ReshapeFromWhip();
+//		ReshapeFromWhip();
 
-		m_mesh.uv = m_UV;
-		m_mesh.vertices = m_pos;
-        m_mesh.colors = m_color;
+//		m_mesh.uv = m_UV;
+//		m_mesh.vertices = m_pos;
+//        m_mesh.colors = m_color;
 
         Vector3 particlePos = m_whipEnd.transform.localPosition;
         float particleDistance = m_distance * (m_effectScale*0.38f);       
@@ -555,9 +549,7 @@ public class FireBreathDynamic : MonoBehaviour
         }
 
 
-
-
-
+/*
         for (int i = 0; i < m_splits + 1; i++)
         {
             // Vector3 distance = m_whip[i] - m_realWhip[i];
@@ -583,6 +575,7 @@ public class FireBreathDynamic : MonoBehaviour
                 m_whipTangent[i] = Vector3.Normalize(Vector3.Cross(Vector3.forward, whipDirection));//transform.up;
             }
         }
+*/
     }
 
 
