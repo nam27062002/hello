@@ -29,7 +29,7 @@ public class MapCamera : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Properties
 	private Camera m_camera = null;
-	public Camera camera {
+	new public Camera camera {
 		get {
 			if(m_camera == null) {
 				m_camera = GetComponent<Camera>();
