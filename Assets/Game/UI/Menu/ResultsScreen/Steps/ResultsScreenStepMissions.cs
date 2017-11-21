@@ -28,6 +28,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 	// Exposed
 	[Space]
 	[SerializeField] private ResultsScreenMissionPill[] m_pills = new ResultsScreenMissionPill[(int)Mission.Difficulty.COUNT];
+	[SerializeField] private string m_rewardSFX = "";
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
@@ -161,6 +162,9 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 			// Update counter
 			m_controller.totalCoins += _pill.mission.rewardCoins;
 			m_coinsCounter.SetValue(m_controller.totalCoins, true);
+
+			// Play SFX
+			AudioController.Play(m_rewardSFX);
 
 			// Show some coins flying around!
 			CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
