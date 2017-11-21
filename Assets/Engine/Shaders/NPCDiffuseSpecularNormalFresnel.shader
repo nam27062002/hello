@@ -174,7 +174,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 
    				// Compute diffuse and specular
 				fixed4 diffuse = (0.5 + max(0, dot(normalDirection, lightDirection))) * _LightColor;		// Custom light color
-				fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
+				fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 
 	     		// [AOC] We use light color alpha as specular intensity
 	     		specular *= _LightColor.a;
@@ -194,7 +194,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 
 				#ifdef EMISSIVE
 				float3 emissive = tex2D(_GlowTex, i.uv);
-				col = lerp(col, _EmissiveColor, (emissive.r + emissive.g + emissive.b) * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
+				col = lerp(col, _EmissiveColor, emissive.r * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
 				#endif
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
