@@ -34,8 +34,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public Quaternion rotation { get { return Quaternion.identity; } }
 	public Vector3 homePosition { get { return transform.position; } }
 
-	private bool m_disableAtFirstUpdate;
-
 	// Scene referemces
 	private GameSceneControllerBase m_gameSceneController = null;
 
@@ -65,8 +63,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			Vector2 extraSize = size * (transform.position.z * 4f) / 100f; // we have to increase the size due to z depth
 
 			m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
-
-			m_disableAtFirstUpdate = false;
 
 			return;
 		}
@@ -100,20 +96,18 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-		m_disableAtFirstUpdate = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
-		m_state = (m_disableAtFirstUpdate)? State.Respawning : State.Idle;
+		bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
+		if (disable) {
+			m_state = State.Respawning;
+			gameObject.SetActive(false);
+		} else {
+			m_state = State.Idle;
+		}
+
 	}
 
 	public void Initialize() {
 		m_state = State.Respawning;
-	}    
-
-	void Update() {
-		if (m_disableAtFirstUpdate) {
-			gameObject.SetActive(false);
-			m_state = State.Respawning;
-			m_disableAtFirstUpdate = false;
-		}
 	}
 
     public void Clear() {

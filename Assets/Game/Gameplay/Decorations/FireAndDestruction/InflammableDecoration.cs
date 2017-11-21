@@ -121,7 +121,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 
 		for (int i = 0; i < m_fireNodes.Length; i++) {
-			m_fireNodes[i].Init(m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
+			m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
 		}
 		m_startPosition = transform.position;
 	}
@@ -217,19 +217,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		}
 
 		switch (m_state) {
-			case State.Idle:
-				for (int i = 0; i < m_fireNodes.Length; ++i) {
-					FireNode n = m_fireNodes[i];
-					if (n.IsBurning()) {
-						m_nextState = State.Burning;
-						break;
-					} else if (n.IsGoingToExplode()) {
-						m_nextState = State.Explode;
-						break;
-					}
-				}
-				break;
-
 			case State.Burning: {
 					bool allNodesBurning = true;
 					for (int i = 0; i < m_fireNodes.Length; ++i) {
@@ -264,6 +251,13 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					Destroy();
 				}
 				break;
+		}
+	}
+
+	public void LetsBurn(bool _explode) {
+		if (m_state == State.Idle) {
+			if (_explode) 	m_nextState = State.Explode;
+			else 			m_nextState = State.Burning;
 		}
 	}
 
