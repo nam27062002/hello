@@ -29,7 +29,7 @@ public class BreakableBehaviour : MonoBehaviour
 	private Collider m_collider;
 	private Vector3 m_initialViewPos;
 
-	private float m_destroyTimer;
+
 
 	//----------------------------------------------------------------------
 	void Awake()
@@ -62,23 +62,8 @@ public class BreakableBehaviour : MonoBehaviour
 
 		if (m_activateOnDestroy != null)
 			m_activateOnDestroy.SetActive(false);
-
-		m_destroyTimer = 0f;
 	}
 
-	void Update() {
-		if (m_destroyTimer > 0f) {
-			m_destroyTimer -= Time.deltaTime;
-			if (m_destroyTimer <= 0f) {
-				if (m_disableOnBreak) {
-					gameObject.SetActive(false);
-				}
-				if (m_destroyOnBreak) {			
-					Destroy(gameObject);
-				}
-			}
-		}
-	}
 
 	void OnCollisionEnter(Collision collision) {
 		if (collision.transform.CompareTag("Player")) {
@@ -174,13 +159,23 @@ public class BreakableBehaviour : MonoBehaviour
 			m_activateOnDestroy.SetActive(true);
 
 		// Destroy
-		m_destroyTimer = 0.15f;
+		StartCoroutine(DestroyCountdown(0.15f));
 	}
 
 	public void Shake() {
 		if (m_wobbler != null) {
 			m_wobbler.enabled = true;
 			m_wobbler.StartWobbling(m_view, m_initialViewPos);
+		}
+	}
+
+	private IEnumerator DestroyCountdown(float _waitTime) {
+		yield return new WaitForSeconds(_waitTime);
+		if (m_disableOnBreak) {
+			gameObject.SetActive(false);
+		}
+		if (m_destroyOnBreak) {			
+			Destroy(gameObject);
 		}
 	}
 }
