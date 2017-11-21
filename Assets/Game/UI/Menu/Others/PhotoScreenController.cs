@@ -300,7 +300,7 @@ public class PhotoScreenController : MonoBehaviour {
 				// Initialize with egg reward view
 				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
 				RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
-				currentMode.dragControl.target = sceneController.rewardView.transform;
+				currentMode.dragControl.target = sceneController.currentRewardAssets.view.transform;
 			} break;
 		}
 
