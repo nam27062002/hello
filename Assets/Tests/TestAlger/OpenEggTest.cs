@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
+using System;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -21,6 +22,26 @@ public class OpenEggTest : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	[Serializable]
+	public class RaritySetup {
+		public ParticleSystem tapFX = null;
+		public ParticleSystem tapFXStatic = null;
+		public ParticleSystem openFX = null;
+
+		public void Clear() {
+			if(tapFX != null) {
+				tapFX.Stop(true);
+				tapFX.gameObject.SetActive(false);
+			}
+			if(tapFXStatic != null) {
+				tapFXStatic.Stop(true);
+				tapFXStatic.gameObject.SetActive(false);
+			}
+			if(openFX != null) {
+				openFX.gameObject.SetActive(false);
+			}
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -28,15 +49,11 @@ public class OpenEggTest : MonoBehaviour {
 	// Exposed
 	[List("egg_standard", "egg_premium", "egg_golden")]
 	[SerializeField] private string m_testEggSku = "egg_standard";
+	[SerializeField] private Metagame.Reward.Rarity m_testRewardRarity = Metagame.Reward.Rarity.COMMON;
 	[Space]
 	[SerializeField] private Transform m_eggAnchor = null;
-	[SerializeField] private ParticleSystem m_explosionFX = null;
-	[SerializeField] private GodRaysFXFast m_godRaysFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
-	[Tooltip("One per rarity, matching order")]
-	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
-	[Tooltip("One per rarity, matching order")]
-	[SerializeField] private ParticleSystem[] m_openFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)EggReward.Rarity.COUNT];
 
 	private EggView m_eggView = null;
 	public EggView eggView {
@@ -100,15 +117,6 @@ public class OpenEggTest : MonoBehaviour {
 		Clear();
 	}
 
-	/// <summary>
-	/// A change has been done in the inspector.
-	/// </summary>
-	private void OnValidate() {
-		// Make sure the rarity array has exactly the same length as rarities in the game.
-		m_openFX.Resize((int)EggReward.Rarity.COUNT);
-		m_tapFX.Resize((int)EggReward.Rarity.COUNT);
-	}
-
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -116,13 +124,12 @@ public class OpenEggTest : MonoBehaviour {
 	/// Clear the whole 3D scene.
 	/// </summary>
 	public void Clear() {
-		// Return tap FX to the pool
-		for (int i = 0; i < m_tapFX.Length; i++) {
-			if (m_tapFX[i] != null) {
-				m_tapFX[i].transform.SetParent(m_tapFXPool);
-				m_tapFX[i].Stop(true);
-				m_tapFX[i].gameObject.SetActive(false);
+		// Return tap FX to the pool (before deleting the egg view!!)
+		for(int i = 0; i < m_rarityFXSetup.Length; ++i) {
+			if(m_rarityFXSetup[i].tapFX != null) {
+				m_rarityFXSetup[i].tapFX.transform.SetParent(m_tapFXPool);
 			}
+			m_rarityFXSetup[i].Clear();
 		}
 
 		// Destroy egg view
@@ -132,21 +139,6 @@ public class OpenEggTest : MonoBehaviour {
 
 			// Unsubscribe from external events.
 			Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
-		}
-
-		// Stop all FX
-		if (m_godRaysFX != null) {
-			m_godRaysFX.StopFX();
-		}
-
-		for (int i = 0; i < m_openFX.Length; i++) {
-			if (m_openFX[i] != null) {
-				m_openFX[i].Stop(true);
-			}
-		}
-
-		if (m_explosionFX != null) {
-			m_explosionFX.Stop(true);
 		}
 	}
 
@@ -159,6 +151,7 @@ public class OpenEggTest : MonoBehaviour {
 
 		// Set test mode
 		m_currentReward.egg.testMode = true;
+		m_currentReward.rarity = m_testRewardRarity;
 
 		// Change egg state
 		m_currentReward.egg.ChangeState(Egg.State.OPENING);
@@ -211,7 +204,7 @@ public class OpenEggTest : MonoBehaviour {
 		}
 
 		// Attach tap FX to the egg's view (but don't activate it just yet)
-		ParticleSystem tapFX = m_tapFX[(int)_eggReward.rarity];
+		ParticleSystem tapFX = m_rarityFXSetup[(int)_eggReward.rarity].tapFX;
 		if(tapFX != null) {
 			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
 			tapFX.gameObject.SetActive(false);
@@ -232,32 +225,12 @@ public class OpenEggTest : MonoBehaviour {
 		m_eggView.gameObject.SetActive(false);
 
 		// Trigger the proper FX based on reward rarity
-		ParticleSystem openFX = m_openFX[(int)m_currentReward.rarity];
+		ParticleSystem openFX = m_rarityFXSetup[(int)m_currentReward.rarity].openFX;
 		if(openFX != null) {
+			openFX.gameObject.SetActive(true);
 			openFX.Clear();
 			openFX.Play(true);
 		}
-
-		// Explosion FX
-		// Match material with the egg shell!
-		// [AOC] No longer needed!
-		/*
-		if(m_explosionFX != null) {
-			// Find egg shell material
-			Renderer[] renderers = m_eggView.GetComponentsInChildren<Renderer>();
-			for(int i = 0; i < renderers.Length; i++) {
-				for(int j = 0; j < renderers[i].materials.Length; j++) {
-					if(renderers[i].materials[j].name.Contains("Scales")) {
-						// Use this one!
-						m_explosionFX.GetComponent<ParticleSystemRenderer>().material = renderers[i].materials[j];
-						break;
-					}
-				}
-			}
-
-			m_explosionFX.Play();
-		}
-		*/
 
 		// Program reward animation
 		UbiBCN.CoroutineManager.DelayedCall(OnEggExplosionAnimFinished, 0.35f, false);
@@ -275,11 +248,21 @@ public class OpenEggTest : MonoBehaviour {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
 			// Activate FX
-			ParticleSystem tapFX = m_tapFX[(int)m_currentReward.rarity];
-			tapFX.gameObject.SetActive(true);
-			tapFX.Stop(true);
-			tapFX.Clear();
-			tapFX.Play(true);
+			ParticleSystem tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFX;
+			if(tapFX != null) {
+				tapFX.gameObject.SetActive(true);
+				tapFX.Stop(true);
+				tapFX.Clear();
+				tapFX.Play(true);
+			}
+
+			tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic;
+			if(tapFX != null) {
+				tapFX.gameObject.SetActive(true);
+				tapFX.Stop(true);
+				tapFX.Clear();
+				tapFX.Play(true);
+			}
 		}
 	}
 

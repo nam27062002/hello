@@ -39,6 +39,14 @@ public class PhotoScreenController : MonoBehaviour {
 		public DragControlRotation dragControl = null;
 		public DragControlZoom zoomControl = null;
 	}
+
+	[Serializable]
+	public class ShareData {
+		public string url = "";
+
+		[FileList("Resources/UI/Menu/QR_codes", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*", false)]
+		public string qrCodePath = "";
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -60,6 +68,11 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_eggRewardDesc = null;
 	[SerializeField] private Image m_eggRewardIcon = null;
 
+	[Separator("Share Data")]
+	[SerializeField] private Image m_qrContainer = null;
+	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
+	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
+
 	// Public properties
 	private Mode m_mode = Mode.DRAGON;
 	public Mode mode {
@@ -69,10 +82,21 @@ public class PhotoScreenController : MonoBehaviour {
 
 	// Internal
 	private Texture2D m_picture = null;
-	private List<GameObject> m_objectsToShow = new List<GameObject>();
+	private List<GameObject> m_objectsToRestore = new List<GameObject>();
 
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
+	}
+
+	private ShareData shareData {
+		get {
+			// Select target share data based on platform
+			#if UNITY_IOS
+			return m_shareDataIOS;
+			#else
+			return m_shareDataAndroid;
+			#endif
+		}
 	}
 		
 	//------------------------------------------------------------------------//
@@ -83,6 +107,9 @@ public class PhotoScreenController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		SetMode(m_mode);	// Apply initial mode
+
+		// Load qr code
+		m_qrContainer.sprite = Resources.Load<Sprite>(shareData.qrCodePath);
 	}
 
 	/// <summary>
@@ -96,7 +123,8 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		
+		// Hide QR code container
+		m_qrContainer.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -128,17 +156,23 @@ public class PhotoScreenController : MonoBehaviour {
 	/// </summary>
 	/// <returns>The coroutine.</returns>
 	private IEnumerator TakePicture() {
+		
+
 		// Hide all UI elements
-		m_objectsToShow.Clear();	// Only those that were actually active will be restored
+		m_objectsToRestore.Clear();	// Only those that were actually active will be restored
 		for(int i = 0; i < m_objectsToHide.Count; i++) {
 			if(m_objectsToHide[i].activeSelf) {
 				m_objectsToHide[i].SetActive(false);
-				m_objectsToShow.Add(m_objectsToHide[i]);
+				m_objectsToRestore.Add(m_objectsToHide[i]);
 			}
 		}
 
 		// Hide HUD as well
 		InstanceManager.menuSceneController.hud.gameObject.SetActive(false);
+
+		// Display QR code
+		m_qrContainer.gameObject.SetActive(true);
+		m_objectsToRestore.Add(m_qrContainer.gameObject);	// Hide it again once capture is done
 
 		// Wait until the end of the frame so the "hide" is actually applied
 		yield return new WaitForEndOfFrame();
@@ -167,18 +201,18 @@ public class PhotoScreenController : MonoBehaviour {
 		yield return new WaitForSeconds(0.25f);
 
 		// Restore disabled objects
-		for(int i = 0; i < m_objectsToShow.Count; i++) {
-			m_objectsToShow[i].SetActive(true);
+		for(int i = 0; i < m_objectsToRestore.Count; i++) {
+			m_objectsToRestore[i].SetActive(!m_objectsToRestore[i].activeSelf);
 		}
 
 		// Restore HUD as well
 		InstanceManager.menuSceneController.hud.gameObject.SetActive(true);
 
-		// Figure out default message dependin on mode
-		string shareTid = "";
+		// Figure out default message depending on mode
+		string caption = "";
 		switch(m_mode) {
 			case Mode.DRAGON: {
-				shareTid = "TID_IMAGE_CAPTION";
+				caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION", shareData.url);
 			} break;
 
 			case Mode.EGG_REWARD: {
@@ -186,7 +220,7 @@ public class PhotoScreenController : MonoBehaviour {
 				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
 				switch(currentReward.type) {
 					case Metagame.RewardPet.TYPE_CODE: {
-						shareTid = "TID_IMAGE_CAPTION_PET";
+						caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION_PET", shareData.url);
 					} break;
 				}
 			} break;
@@ -194,7 +228,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
-		popup.Init(m_picture, shareTid);
+		popup.Init(m_picture, caption);
 	}
 
 	/// <summary>
@@ -300,7 +334,7 @@ public class PhotoScreenController : MonoBehaviour {
 				// Initialize with egg reward view
 				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
 				RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
-				currentMode.dragControl.target = sceneController.currentRewardAssets.view.transform;
+				currentMode.dragControl.target = sceneController.currentRewardSetup.view.transform;
 			} break;
 		}
 

@@ -95,6 +95,11 @@ public class GameSceneControllerBase : SceneController {
 			GameObject mapObj = Instantiate<GameObject>(levelData.mapPrefab);
 			InstanceManager.mapCamera = mapObj.GetComponentInChildren<MapCamera>();
 			Debug.Assert(InstanceManager.mapCamera != null, "The object holding the LevelMapData doesn't have a Camera component");
+
+			// Start with camera disabled, the map scroller will enable it when needed
+			if(InstanceManager.mapCamera != null) {
+				InstanceManager.mapCamera.gameObject.SetActive(false);
+			}
 		}
 	}
 
