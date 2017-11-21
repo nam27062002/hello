@@ -9,6 +9,7 @@ Shader "Hungry Dragon/Spider web"
 		_DarkColor("Dark Color", Color) = (0.5,0.5,0.5,0.5)
 		_BrightColor("Bright Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
+		_SpecPower("Specular power", Range(0.01, 1.5)) = 0.2
 		[Toggle(ONLYTEXTURE)] _OnlyTexture("Only texture & vertex color", Float) = 0
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
@@ -49,6 +50,7 @@ Shader "Hungry Dragon/Spider web"
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
+			float _SpecPower;
 
 			float4 _DarkColor;
 			float4 _BrightColor;
@@ -73,11 +75,9 @@ Shader "Hungry Dragon/Spider web"
 				float intensity = tex2D(_MainTex, i.texcoord);
 				float n = dot(i.normal, i.viewDir);
 				float3 tn = normalize(i.viewDir - (i.normal * n));
-//				float refl = clamp(pow(dot(tn.xy, i.texcoord - 2.0), 8.0), 0.0, 1.0);
-				float refl = 1.0 - clamp(pow(abs(dot(tn.xy, i.texcoord - _MainTex_ST.x * 0.5)), 1.0), 0.0, 1.0);
-//				float dd = abs(dot(d, normalize(i.viewDir.xy)));
-//				float rq = (i.viewDir.x * i.viewDir.x) + (i.viewDir.y * i.viewDir.y);
-				float4 prev = lerp(_DarkColor * intensity, _BrightColor, refl);// *rq;
+				float refl = 1.0 - clamp(pow(abs(dot(tn.xy, i.texcoord - _MainTex_ST.x * 0.5)), _SpecPower), 0.0, 1.0);
+//				float refl = pow(abs(dot(tn.xy, i.texcoord - _MainTex_ST.x * 0.5)), _SpecPower);
+				float4 prev = lerp(_DarkColor * intensity, _BrightColor, refl);
 				prev.a *= i.color.r;
 				return prev;
 #endif
