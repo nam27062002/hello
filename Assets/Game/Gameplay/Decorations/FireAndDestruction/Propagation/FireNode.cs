@@ -13,6 +13,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	};
 
 	private Decoration m_decoration;
+	private InflammableDecoration m_parent;
 	private Transform m_transform;
 
 	private ParticleData m_feedbackParticle;
@@ -58,8 +59,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		gameObject.SetActive(false);
 	}
 
-	public void Init(Decoration _decoration, ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {		
+	public void Init(InflammableDecoration _parent, Decoration _decoration, ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {		
 		m_decoration = _decoration;
+		m_parent = _parent;
 
 		m_burnParticle = _burnParticle;
 		m_feedbackParticle = _feedbackParticle;
@@ -104,8 +106,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 				if (effect == ZoneManager.ZoneEffect.L) {
 					m_nextState = State.GoingToExplode;
+					m_parent.LetsBurn(true);
 				} else {
 					m_nextState = State.Spreading;
+					m_parent.LetsBurn(false);
 				}
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
