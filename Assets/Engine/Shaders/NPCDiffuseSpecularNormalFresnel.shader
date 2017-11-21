@@ -160,6 +160,9 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 				fixed4 col = tex2D(_MainTex, i.uv);
 				float specMask = col.w;
 
+				float3 maskTex = tex2D(_GlowTex, i.uv);
+
+
 				// Aux vars
 				#ifdef BUMP
            		float3 encodedNormal = tex2D(_NormalTex, i.uv2);
@@ -185,7 +188,8 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 
 				#ifdef REFLECTION
 				float4 reflection = texCUBE(_ReflectionMap, normalDirection);
-				col = (1.0 - _ReflectionAmount) * col + _ReflectionAmount * reflection;
+				float amount = _ReflectionAmount * maskTex.g;
+				col = (1.0 - amount) * col + amount * reflection;
 				#endif
 
 				col = diffuse * col + (specular * _LightColor);	//Diffuse + specular
@@ -193,8 +197,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 				col += (rim * _RimColor); // Rim light
 
 				#ifdef EMISSIVE
-				float3 emissive = tex2D(_GlowTex, i.uv);
-				col = lerp(col, _EmissiveColor, emissive.r * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
+				col = lerp(col, _EmissiveColor, maskTex.r * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
 				#endif
 
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
