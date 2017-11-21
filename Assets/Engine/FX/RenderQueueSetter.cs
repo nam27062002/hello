@@ -16,7 +16,7 @@ using System;
 /// <summary>
 /// 
 /// </summary>
-public class RenderQueueSettter : MonoBehaviour {
+public class RenderQueueSetter : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -38,11 +38,7 @@ public class RenderQueueSettter : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		for(int i = 0; i < m_targets.Length; ++i) {
-			for(int j = 0; j < m_targets[i].renderer.materials.Length; ++j) {
-				m_targets[i].renderer.materials[j].renderQueue = m_targets[i].newRenderQueue;
-			}
-		}
+		Apply();
 	}
 
 	/// <summary>
@@ -55,6 +51,16 @@ public class RenderQueueSettter : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Do the actual render queue change.
+	/// </summary>
+	public void Apply() {
+		for(int i = 0; i < m_targets.Length; ++i) {
+			for(int j = 0; j < m_targets[i].renderer.materials.Length; ++j) {
+				m_targets[i].renderer.materials[j].renderQueue = m_targets[i].newRenderQueue;
+			}
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
