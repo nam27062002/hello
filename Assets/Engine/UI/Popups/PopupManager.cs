@@ -77,6 +77,14 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	}
 
 	/// <summary>
+	/// First update call.
+	/// </summary>
+	protected void Start() {
+		// Start with canvas camera disabled (for performance)
+		m_canvas.worldCamera.gameObject.SetActive(false);
+	}
+
+	/// <summary>
 	/// The manager has been enabled.
 	/// </summary>
 	private void OnEnable() {
@@ -133,6 +141,9 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// <returns>The new instance of the popup's game object.</returns>
 	/// <param name="_prefab">The prefab of the popup.</param>
 	private PopupController InstantiatePopup(GameObject _prefab) {
+		// Make sure canvas camera is enabled
+		m_canvas.worldCamera.gameObject.SetActive(true);
+
 		// If we already have an instance on the closed popups list, reuse it
 		PopupController controller = null;
 		for(int i = 0; i < m_closedPopups.Count; i++) {
@@ -256,6 +267,11 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 
 		// Add it to the closed popups list
 		m_closedPopups.Add(_popup);
+
+		// If there are no more open popups, disable canvas camera for performance
+		if(openPopupsCount == 0) {
+			m_canvas.worldCamera.gameObject.SetActive(false);
+		}
 	}
 
 	/// <summary>
@@ -266,6 +282,11 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 		// Remove it from all the lists
 		m_openedPopups.Remove(_popup);
 		m_closedPopups.Remove(_popup);
+
+		// If there are no more open popups, disable canvas camera for performance
+		if(openPopupsCount == 0) {
+			m_canvas.worldCamera.gameObject.SetActive(false);
+		}
 	}
     
     public static PopupController PopupMessage_Open(PopupMessage.Config _config)
