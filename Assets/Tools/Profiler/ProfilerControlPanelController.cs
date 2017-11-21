@@ -314,6 +314,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         Village_Ruins2,
         Village_Witches_Woods,
         Village_Goblins_City,
+        Village_TunnelToCastleThruWater,
         Village_TunnelToCastle,
 
         //---------------------- Castle area ----------------------
@@ -344,7 +345,8 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(280, 190, 0f),
         new Vector3(-394, -54, 0f),
         new Vector3(-450, 1.78f, 0f),
-        new Vector3(360, 69, 0f),                
+        new Vector3(-60, -129, 0f),
+        new Vector3(360, 69, 0f),                         
 
         //---------------------- Castle area ----------------------
         new Vector3(414, 68, 0f),

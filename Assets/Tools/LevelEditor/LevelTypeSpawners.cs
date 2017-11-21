@@ -49,20 +49,22 @@ namespace LevelEditor {
 		/// Initialization.
 		/// </summary>
 		override protected void Awake() {
-			// Call parent
-			base.Awake();
+			if (Application.isPlaying) {
+				// Call parent
+				base.Awake();
 
-			// TODO(miguel): improve this
-			// only if loading for the first time
-			GameSceneController gameController = InstanceManager.gameSceneController;
-			if ( gameController != null && gameController.state <= GameSceneController.EStates.COUNTDOWN )
-			{
-				// Create default point if not already done
-				if ( InstanceManager.player != null ){
-					string sku = InstanceManager.player.data.def.sku;
-					IntroSpawn( sku );
-				}else{
-					GetDragonSpawnPoint("", true);
+				// TODO(miguel): improve this
+				// only if loading for the first time
+				GameSceneController gameController = InstanceManager.gameSceneController;
+				if ( gameController != null && gameController.state <= GameSceneController.EStates.COUNTDOWN )
+				{
+					// Create default point if not already done
+					if ( InstanceManager.player != null ){
+						string sku = InstanceManager.player.data.def.sku;
+						IntroSpawn( sku );
+					}else{
+						GetDragonSpawnPoint("", true);
+					}
 				}
 			}
 		}
