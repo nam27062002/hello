@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
+using System;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -21,41 +22,68 @@ public class RewardSceneController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	[Serializable]
+	public class RewardSetup {
+		public GameObject view = null;
+		public GameObject godrays = null;
+		public string sfx = "";
+
+		public void Clear() {
+			if(view != null) {
+				view.SetActive(false);
+			}
+			if(godrays != null) {
+				godrays.SetActive(false);
+			}
+		}
+	}
+
+	[Serializable]
+	public class RaritySetup {
+		public ParticleSystem tapFX = null;
+		public ParticleSystem tapFXStatic = null;
+		public ParticleSystem openFX = null;
+
+		public void Clear() {
+			if(tapFX != null) {
+				tapFX.Stop(true);
+				tapFX.gameObject.SetActive(false);
+			}
+			if(tapFXStatic != null) {
+				tapFXStatic.Stop(true);
+				tapFXStatic.gameObject.SetActive(false);
+			}
+			if(openFX != null) {
+				openFX.gameObject.SetActive(false);
+			}
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[Separator("Anchors")]
+	[Separator("References")]
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_rewardAnchor = null;
 	public Transform rewardAnchor {
 		get { return m_rewardAnchor; }
 	}
 
-	[Separator("VFX")]
+	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private RewardSetup m_petRewardSetup = new RewardSetup();
+	[SerializeField] private RewardSetup m_hcRewardSetup = new RewardSetup();
+	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
+	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)EggReward.Rarity.COUNT - 1];
+
+	[Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_explosionFX = null;
-	[SerializeField] private GodRaysFXFast m_godRaysFX = null;
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
-	[Tooltip("One per rarity, matching order")]
-	[SerializeField] private ParticleSystem[] m_tapFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
-	[Tooltip("One per rarity, matching order")]
-	[SerializeField] private ParticleSystem[] m_openFX = new ParticleSystem[(int)EggReward.Rarity.COUNT];
 
-	[Separator("Reward views")]
-	[SerializeField] private GameObject m_petReward = null;
-	[SerializeField] private GameObject m_hcReward = null;
-	[SerializeField] private GameObject m_scReward = null;
-	[Tooltip("One per rarity, matching order. None for \"special\".")]
-	[SerializeField] private GameObject[] m_goldenFragmentsRewards = new GameObject[(int)EggReward.Rarity.COUNT - 1];
-
-	[Separator("SFX")]
+	[Separator("Other SFX")]
 	[SerializeField] private string m_eggTapSFX = "";
 	[SerializeField] private string m_eggExplosionSFX = "";
-	[SerializeField] private string m_scSFX = "";
-	[SerializeField] private string m_pcSFX = "";
-	[SerializeField] private string m_goldenFragmentsSFX = "";
 	[SerializeField] private string m_goldenEggCompletedSFX = "";
 
 	[Separator("Others")]
@@ -70,9 +98,14 @@ public class RewardSceneController : MonoBehaviour {
 	public UnityEvent OnAnimFinished = new UnityEvent();
 
 	// Internal
-	private GameObject m_rewardView = null;
-	public GameObject rewardView {
-		get { return m_rewardView; }
+	private Metagame.Reward m_currentReward;
+	public Metagame.Reward currentReward {
+		get { return m_currentReward; }
+	}
+
+	private RewardSetup m_currentRewardSetup = null;
+	public RewardSetup currentRewardAssets {
+		get { return m_currentRewardSetup; }
 	}
 
 	private EggView m_eggView = null;
@@ -88,11 +121,6 @@ public class RewardSceneController : MonoBehaviour {
 	private DragControlRotation m_dragController = null;
 	private RewardInfoUI m_rewardInfoUI = null;
 	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
-
-	private Metagame.Reward m_currentReward;
-	public Metagame.Reward currentReward {
-		get { return m_currentReward; }
-	}
 
 	//------------------------------------------------------------------------------------------------------------//
 
@@ -144,16 +172,6 @@ public class RewardSceneController : MonoBehaviour {
 		Clear();
 	}
 
-	/// <summary>
-	/// A change has been done in the inspector.
-	/// </summary>
-	private void OnValidate() {
-		// Make sure the rarity array has exactly the same length as rarities in the game.
-		m_openFX.Resize((int)EggReward.Rarity.COUNT);
-		m_tapFX.Resize((int)EggReward.Rarity.COUNT);
-		m_goldenFragmentsRewards.Resize((int)EggReward.Rarity.COUNT);
-	}
-
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -161,13 +179,12 @@ public class RewardSceneController : MonoBehaviour {
 	/// Clear the whole 3D scene.
 	/// </summary>
 	public void Clear() {
-		// Return tap FX to the pool
-		for (int i = 0; i < m_tapFX.Length; i++) {
-			if (m_tapFX[i] != null) {
-				m_tapFX[i].transform.SetParent(m_tapFXPool);
-				m_tapFX[i].Stop(true);
-				m_tapFX[i].gameObject.SetActive(false);
+		// Return tap FX to the pool (before deleting the egg view!!)
+		for(int i = 0; i < m_rarityFXSetup.Length; ++i) {
+			if(m_rarityFXSetup[i].tapFX != null) {
+				m_rarityFXSetup[i].tapFX.transform.SetParent(m_tapFXPool);
 			}
+			m_rarityFXSetup[i].Clear();
 		}
 
 		// Unlink any transform from the drag controller
@@ -184,21 +201,11 @@ public class RewardSceneController : MonoBehaviour {
 
 		// Hide any reward
 		HideAllRewards();
-		m_rewardView = null;
+		m_currentRewardSetup = null;
 
-		// Stop all FX
-		if (m_godRaysFX != null) {
-			m_godRaysFX.StopFX();
-		}
-
+		// Stop all other FX
 		if (m_goldenFragmentsSwapFX != null) {
 			m_goldenFragmentsSwapFX.Stop();
-		}
-
-		for (int i = 0; i < m_openFX.Length; i++) {
-			if (m_openFX[i] != null) {
-				m_openFX[i].Stop(true);
-			}
 		}
 
 		if (m_explosionFX != null) {
@@ -210,12 +217,11 @@ public class RewardSceneController : MonoBehaviour {
 	/// Hide all reward views.
 	/// </summary>
 	private void HideAllRewards() {
-		m_petReward.SetActive(false);
-		m_hcReward.SetActive(false);
-		m_scReward.SetActive(false);
-
-		for (int i = 0; i < m_goldenFragmentsRewards.Length; ++i) {
-			m_goldenFragmentsRewards[i].SetActive(false);
+		m_petRewardSetup.Clear();
+		m_hcRewardSetup.Clear();
+		m_scRewardSetup.Clear();
+		for(int i = 0; i < m_goldenFragmentsRewardsSetup.Length; ++i) {
+			m_goldenFragmentsRewardsSetup[i].Clear();
 		}
 	}
 
@@ -300,26 +306,26 @@ public class RewardSceneController : MonoBehaviour {
 		// Animate it!
 		Sequence seq = DOTween.Sequence();
 		seq.AppendInterval(0.05f);	// Initial delay
-		seq.Append(m_rewardView.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
 
 		// Trigger UI animation
 		seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_petReward); });
 
 		// Make it target of the drag controller
-		seq.AppendCallback(() => { SetDragTarget(m_rewardView.transform); });
+		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
 
 		// If the reward is a duplicate, check which alternate reward are we giving instead and switch the reward view by the replacement with a nice animation
-		GameObject replacementRewardView = null;
+		RewardSetup replacementSetup = null;
 		if(_petReward.WillBeReplaced()) {
 			if (_petReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-				replacementRewardView = m_goldenFragmentsRewards[(int)_petReward.rarity];
+				replacementSetup = m_goldenFragmentsRewardsSetup[(int)_petReward.rarity];
 			} else {
-				replacementRewardView = m_scReward;
+				replacementSetup = m_scRewardSetup;
 			}
 		}
 
 		// Launch a nice animation
-		if(replacementRewardView != null) {
+		if(replacementSetup != null) {
 			// Reward acceleration
 			// Make it compatible with the drag controller!
 			Vector2 baseIdleVelocity = m_dragController.idleVelocity;
@@ -349,27 +355,24 @@ public class RewardSceneController : MonoBehaviour {
 			// Swap
 			seq.AppendCallback(() => {
 				// Swap reward view with replacement view
-				m_rewardView.SetActive(false);
-				replacementRewardView.SetActive(true);
+				m_currentRewardSetup.view.SetActive(false);
+				replacementSetup.view.SetActive(true);
 
 				// Make it target of the drag controller
-				SetDragTarget(replacementRewardView.transform);
+				SetDragTarget(replacementSetup.view.transform);
 			});
 
 			// Show replacement UI info
 			seq.AppendCallback(() => {
-				// Depending on replacement type, show different texts and play different sounds
+				// Depending on replacement type, show different texts
 				string replacementInfoText = "";
-				string sfx = "";
 				if(_petReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-					sfx = m_goldenFragmentsSFX;
 					replacementInfoText = LocalizationManager.SharedInstance.Localize(
 						"TID_EGG_REWARD_DUPLICATED_1", 
 						_petReward.def.GetLocalized("tidName"), 
 						StringUtils.FormatNumber(_petReward.replacement.amount)
 					);
 				} else if(_petReward.replacement.currency == UserProfile.Currency.SOFT) {
-					sfx = m_scSFX;
 					replacementInfoText = LocalizationManager.SharedInstance.Localize(
 						"TID_EGG_REWARD_DUPLICATED_2", 
 						_petReward.def.GetLocalized("tidName"), 
@@ -377,12 +380,14 @@ public class RewardSceneController : MonoBehaviour {
 					);
 				}
 				m_rewardInfoUI.InitAndAnimate(_petReward.replacement, replacementInfoText);
-				AudioController.Play(sfx);
+
+				// Play specific sound as well!
+				AudioController.Play(replacementSetup.sfx);
 			});
 
 			// Replacement reward initial inertia and scale up
 			// Make it compatible with the drag controller!
-			seq.Append(replacementRewardView.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
+			seq.Append(replacementSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
 			seq.Join(DOTween.To(
 				() => { return baseIdleVelocity; },	// Getter
 				(Vector2 _v) => { m_dragController.idleVelocity = _v; },	// Setter
@@ -395,12 +400,15 @@ public class RewardSceneController : MonoBehaviour {
 
 		// Show reward godrays
 		// Except if duplicate! (for now)
-		if(m_godRaysFX != null && !_petReward.WillBeReplaced()) {
+		if(m_petRewardSetup.godrays != null && !_petReward.WillBeReplaced()) {
 			// Custom color based on reward's rarity
-			m_godRaysFX.StartFX(m_currentReward.rarity);
+			GodRaysFXFast godraysFX = m_petRewardSetup.godrays.GetComponent<GodRaysFXFast>();
+			if(godraysFX != null) {
+				godraysFX.StartFX(m_currentReward.rarity);
+			}
 
 			// Show with some delay to sync with pet's animation
-			seq.Insert(0.15f, m_godRaysFX.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+			seq.Insert(0.15f, m_petRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
 		}
 
 		seq.OnComplete(OnAnimationFinish);
@@ -422,17 +430,11 @@ public class RewardSceneController : MonoBehaviour {
 			// Show UI
 			m_rewardInfoUI.InitAndAnimate(_currencyReward);
 
-			// Trigger SFX, depends on currency type
-			string sfx = "";
-			switch(_currencyReward.currency) {
-				case UserProfile.Currency.SOFT: sfx = m_scSFX; break;
-				case UserProfile.Currency.HARD: sfx = m_pcSFX; break;
-				case UserProfile.Currency.GOLDEN_FRAGMENTS: sfx = m_goldenFragmentsSFX; break;
-			}
-			AudioController.Play(sfx);
+			// Trigger SFX, depends on reward tyoe
+			AudioController.Play(m_currentRewardSetup.sfx);
 		});
 
-		seq.Append(m_rewardView.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
+		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
 		seq.Join(DOTween.To(
 			() => { return baseIdleVelocity; },	// Getter
 			(Vector2 _v) => { m_dragController.idleVelocity = _v; },	// Setter
@@ -475,7 +477,7 @@ public class RewardSceneController : MonoBehaviour {
 		}
 
 		// Attach tap FX to the egg's view (but don't activate it just yet)
-		ParticleSystem tapFX = m_tapFX[(int)_eggReward.rarity];
+		ParticleSystem tapFX = m_rarityFXSetup[(int)_eggReward.rarity].tapFX;
 		if(tapFX != null) {
 			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
 			tapFX.gameObject.SetActive(false);
@@ -489,11 +491,11 @@ public class RewardSceneController : MonoBehaviour {
 	private void InitPetView(Metagame.RewardPet _petReward) {
 		HideAllRewards();
 
-		// Use a PetLoader to simplify things
-		m_rewardView = m_petReward;
-		m_rewardView.SetActive(true);
+		m_currentRewardSetup = m_petRewardSetup;
+		m_currentRewardSetup.view.SetActive(true);
 
-		MenuPetLoader loader = m_rewardView.GetComponent<MenuPetLoader>();
+		// Use a PetLoader to simplify things
+		MenuPetLoader loader = m_currentRewardSetup.view.GetComponent<MenuPetLoader>();
 		loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetPreview.Anim.IN, true);
 		loader.Load(_petReward.sku);
 	}
@@ -506,16 +508,16 @@ public class RewardSceneController : MonoBehaviour {
 		HideAllRewards();
 
 		if (_reward.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-			m_rewardView = m_goldenFragmentsRewards[(int)_reward.rarity];
+			m_currentRewardSetup = m_goldenFragmentsRewardsSetup[(int)_reward.rarity];
 		} else if (_reward.currency == UserProfile.Currency.HARD) {
-			m_rewardView = m_hcReward;
+			m_currentRewardSetup = m_hcRewardSetup;
 		} else {
-			m_rewardView = m_scReward;
+			m_currentRewardSetup = m_scRewardSetup;
 		}
 
-		m_rewardView.SetActive(true);
+		m_currentRewardSetup.view.SetActive(true);
 
-		SetDragTarget(m_rewardView.transform);
+		SetDragTarget(m_currentRewardSetup.view.transform);
 	}
 
 	//------------------------------------------------------------------//
@@ -532,32 +534,12 @@ public class RewardSceneController : MonoBehaviour {
 		m_eggView.gameObject.SetActive(false);
 
 		// Trigger the proper FX based on reward rarity
-		ParticleSystem openFX = m_openFX[(int)m_currentReward.rarity];
+		ParticleSystem openFX = m_rarityFXSetup[(int)m_currentReward.rarity].openFX;
 		if(openFX != null) {
+			openFX.gameObject.SetActive(true);
 			openFX.Clear();
 			openFX.Play(true);
 		}
-
-		// Explosion FX
-		// Match material with the egg shell!
-		// [AOC] No longer needed!
-		/*
-		if(m_explosionFX != null) {
-			// Find egg shell material
-			Renderer[] renderers = m_eggView.GetComponentsInChildren<Renderer>();
-			for(int i = 0; i < renderers.Length; i++) {
-				for(int j = 0; j < renderers[i].materials.Length; j++) {
-					if(renderers[i].materials[j].name.Contains("Scales")) {
-						// Use this one!
-						m_explosionFX.GetComponent<ParticleSystemRenderer>().material = renderers[i].materials[j];
-						break;
-					}
-				}
-			}
-
-			m_explosionFX.Play();
-		}
-		*/
 
 		// Trigger SFX
 		AudioController.Play(m_eggExplosionSFX);
@@ -599,11 +581,21 @@ public class RewardSceneController : MonoBehaviour {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
 			// Activate FX
-			ParticleSystem tapFX = m_tapFX[(int)m_currentReward.rarity];
-			tapFX.gameObject.SetActive(true);
-			tapFX.Stop(true);
-			tapFX.Clear();
-			tapFX.Play(true);
+			ParticleSystem tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFX;
+			if(tapFX != null) {
+				tapFX.gameObject.SetActive(true);
+				tapFX.Stop(true);
+				tapFX.Clear();
+				tapFX.Play(true);
+			}
+
+			tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic;
+			if(tapFX != null) {
+				tapFX.gameObject.SetActive(true);
+				tapFX.Stop(true);
+				tapFX.Clear();
+				tapFX.Play(true);
+			}
 
 			// Hide UI
 			m_rewardInfoUI.SetRewardType(string.Empty);
