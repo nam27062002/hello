@@ -77,7 +77,6 @@ public class RewardSceneController : MonoBehaviour {
 	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)EggReward.Rarity.COUNT - 1];
 
 	[Separator("Other VFX")]
-	[SerializeField] private ParticleSystem m_explosionFX = null;
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 
@@ -104,7 +103,7 @@ public class RewardSceneController : MonoBehaviour {
 	}
 
 	private RewardSetup m_currentRewardSetup = null;
-	public RewardSetup currentRewardAssets {
+	public RewardSetup currentRewardSetup {
 		get { return m_currentRewardSetup; }
 	}
 
@@ -206,10 +205,6 @@ public class RewardSceneController : MonoBehaviour {
 		// Stop all other FX
 		if (m_goldenFragmentsSwapFX != null) {
 			m_goldenFragmentsSwapFX.Stop();
-		}
-
-		if (m_explosionFX != null) {
-			m_explosionFX.Stop(true);
 		}
 	}
 
