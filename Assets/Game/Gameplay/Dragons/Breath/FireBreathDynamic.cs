@@ -447,7 +447,7 @@ public class FireBreathDynamic : MonoBehaviour
                         if (colFire != null)
                         {
                             colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
-
+/*
 							if (m_isTitan)
 	                        {
 	                            FireReflection fr = colFire.GetComponent<FireReflection>();
@@ -462,6 +462,7 @@ public class FireBreathDynamic : MonoBehaviour
 	                                fr.addVelocity(direction * m_reflectionScale + direction.normalized * rndRange);
 	                            }
 	                        }
+*/
                         }
 
                         m_lastTime = Time.time;

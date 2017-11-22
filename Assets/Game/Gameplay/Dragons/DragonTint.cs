@@ -136,7 +136,7 @@ public class DragonTint : MonoBehaviour
 		m_deathAlpha = Mathf.Clamp01(m_deathAlpha);
 		multiplyColor.a = m_deathAlpha;
 		SetColorMultiply(multiplyColor);
-		SetFresnelAlpha( m_deathAlpha );
+//		SetFresnelAlpha( m_deathAlpha );
 
 		// Color add
 		m_damageTimer -= Time.deltaTime;

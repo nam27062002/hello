@@ -120,8 +120,10 @@ public class Pool {
 		// In debug check!
 		if (m_notFreeObjects.Contains(go)) {
 			m_notFreeObjects.Remove(go);
-			go.SetActive(false);
-			m_returnObjects.Enqueue(go); // delayed return
+			if ( go != null ){
+				go.SetActive(false);
+				m_returnObjects.Enqueue(go); // delayed return
+			}
 		} else {
 			// Debug.LogError("Object " + go.name + "doesn't belong to pool " + m_containerObj.name);
 		}
