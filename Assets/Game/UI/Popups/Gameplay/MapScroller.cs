@@ -478,6 +478,7 @@ public class MapScroller : MonoBehaviour {
 
 		// Apply to camera component
 		m_camera.enabled = _enable;
+		m_camera.gameObject.SetActive(_enable);	// [AOC] Apparently even with the component disabled there are still some calls being made
 
 		// Do the same with scroll rect
 		m_scrollRect.viewport.gameObject.SetActive(_enable);

@@ -144,13 +144,19 @@ public class Spawner : AbstractSpawner {
 
 	private float m_groupBonus = 0;
 
-	//-----------------------------------------------    
+    //----------------------------------------------- 
+    // Properties
+    public bool HasGroupBonus
+    {
+        get { return m_hasGroupBonus; }
+    }
 
-	//-----------------------------------------------
-	// AbstractSpawner implementation
-	//----------------------------------------------- 
 
-	protected AreaBounds m_area;
+    //-----------------------------------------------
+    // AbstractSpawner implementation
+    //----------------------------------------------- 
+
+    protected AreaBounds m_area;
 	public override AreaBounds area {
 		get {
 			if (m_guideFunction != null) {

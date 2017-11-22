@@ -114,6 +114,9 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			m_escapedFeedbackPoolHandler = UIPoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false, false);
 		}
 
+		// Start with the 3D feedback container disabled - will be enabled on demand
+		m_3dFeedbackContainer.SetActive(false);
+
         Cache_Init();
         Offsets_Init();
 
@@ -134,6 +137,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.AddListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
 		Messenger.AddListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
         Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);        
+		Messenger.AddListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
     }
 	
 	/// <summary>
@@ -149,6 +153,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		Messenger.RemoveListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
 		Messenger.RemoveListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
         Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
     }
 
 	/// <summary>
@@ -267,6 +272,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 
 		// PC
 		if(m_pcFeedbackPrefab != null && _reward.pc > 0) {
+			m_pcFeedbackPoolHandler.pool.containerObj.SetActive(true);
 			m_pcFeedbackPoolHandler.GetInstance();
 		}
 	}
@@ -341,6 +347,14 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     private void OnGameEnded() {
         Clear();
     }
+
+	/// <summary>
+	/// 3D PC Feedback ended.
+	/// </summary>
+	private void OnPCFeedbackEnd() {
+		// Disable pool container for better performance
+		m_pcFeedbackPoolHandler.pool.containerObj.SetActive(false);
+	}
 
     #region offsets
     // This region is responsible for storing some offsets to be used to spawn feedback particles, typically when an entity is eaten. Every time an entity is eaten a particle

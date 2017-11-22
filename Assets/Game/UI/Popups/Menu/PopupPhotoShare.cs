@@ -32,7 +32,7 @@ public class PopupPhotoShare : MonoBehaviour {
 
 	// Internal
 	private Texture2D m_photo = null;
-	private string m_captionTid = "";
+	private string m_caption = "";
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -60,14 +60,14 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// Initialize the popup with the given photo.
 	/// </summary>
 	/// <param name="_photo">The photo that has been taken.</param>
-	/// <param name="_captionTid">The caption to be posted.</param>
-	public void Init(Texture2D _photo, string _captionTid) {
+	/// <param name="_caption">The caption to be posted.</param>
+	public void Init(Texture2D _photo, string _caption) {
 		// Skip if given photo is not valid
 		if(_photo == null) return;
 
 		// Store photo and caption for future use
 		m_photo = _photo;
-		m_captionTid = _captionTid;
+		m_caption = _caption;
 
 		CreateScreenshotFile();
 
@@ -79,8 +79,7 @@ public class PopupPhotoShare : MonoBehaviour {
 		m_aspectRatioFitter.aspectRatio = (float)_photo.width/(float)_photo.height;
 	}
 
-	private void CreateScreenshotFile()
-	{
+	private void CreateScreenshotFile() {
 		byte[] bytes = m_photo.EncodeToPNG();
 		string filePath = Application.temporaryCachePath + "/Screenshot.png";
 		if ( File.Exists(filePath) )
@@ -96,13 +95,12 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// <summary>
 	/// Share button has been pressed.
 	/// </summary>
-	public void OnShareButton() 
-	{
+	public void OnShareButton() {
 		// Share Flow - DO NOT REMOVE!
 		string filePath = Application.temporaryCachePath + "/Screenshot.png";
 	    PlatformUtils.Instance.ShareImage( 
 			filePath, 
-			string.IsNullOrEmpty(m_captionTid) ? string.Empty : LocalizationManager.SharedInstance.Localize(m_captionTid)
+			m_caption
 		);
 	}
 }

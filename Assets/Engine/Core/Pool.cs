@@ -6,7 +6,14 @@ public class Pool {
 	// Attributes
 	//-----------------------------------------------
 	private GameObject m_containerObj = null;
+	public GameObject containerObj {
+		get { return m_containerObj; }
+	}
+
 	private GameObject m_prefab = null;
+	public GameObject prefab {
+		get { return m_prefab; }
+	}
 
 	private Queue<GameObject> m_freeObjects;
 	private HashSet<GameObject> m_notFreeObjects;
@@ -16,7 +23,9 @@ public class Pool {
 	private bool m_dontDestroyContainer;
 
 	private bool m_temporary;
-	public bool isTemporary { get { return m_temporary; } }
+	public bool isTemporary {
+		get { return m_temporary; } 
+	}
 	
 	//-----------------------------------------------
 	// Methods
@@ -111,8 +120,10 @@ public class Pool {
 		// In debug check!
 		if (m_notFreeObjects.Contains(go)) {
 			m_notFreeObjects.Remove(go);
-			go.SetActive(false);
-			m_returnObjects.Enqueue(go); // delayed return
+			if ( go != null ){
+				go.SetActive(false);
+				m_returnObjects.Enqueue(go); // delayed return
+			}
 		} else {
 			// Debug.LogError("Object " + go.name + "doesn't belong to pool " + m_containerObj.name);
 		}
