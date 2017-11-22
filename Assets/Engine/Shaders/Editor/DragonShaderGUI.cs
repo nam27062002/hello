@@ -22,13 +22,14 @@ internal class DragonShaderGUI : ShaderGUI
     //------------------------------------------------------------------------//
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
-
+/*
     public enum BlendMode
     {
         Opaque,
         Cutout,
         Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
     }
+*/
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -60,8 +61,10 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string specularPowerText = "Specular Exponent";
         readonly public static string secondLightDirectionText = "Second light direction";
         readonly public static string secondLightColorText = "Second light color";
+        readonly public static string enableOpaqueSpecularText = "Enable Opaque Specular";
 
         readonly public static string enableFresnelText = "Enable Fresnel";
+        readonly public static string enableOpaqueFresnelText = "Enable Opaque Fresnel";
         readonly public static string fresnelPowerText = "Fresnel Power";
         readonly public static string fresnelColorText = "Fresnel Color";
 
@@ -122,6 +125,8 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_EnableCutoff;
     MaterialProperty mp_EnableFresnel;
     MaterialProperty mp_EnableSilhouette;
+    MaterialProperty mp_EnableOpaqueFresnel;
+    MaterialProperty mp_EnableOpaqueSpecular;
 
     /// <summary>
     /// Enum Material PProperties
@@ -137,6 +142,7 @@ internal class DragonShaderGUI : ShaderGUI
     readonly static string kw_specular = "SPECULAR";
     readonly static string kw_cutOff = "CUTOFF";
     readonly static string kw_doubleSided = "DOUBLESIDED";
+    readonly static string kw_opaqueAlpha = "OPAQUEALPHA";
     readonly static string kw_emissiveBlink = "EMISSIVEBLINK";
     readonly static string kw_fresnel = "FRESNEL";
     readonly static string kw_reflection = "FXLAYER_REFLECTION";
@@ -196,6 +202,8 @@ internal class DragonShaderGUI : ShaderGUI
         mp_EnableCutoff = FindProperty("_EnableCutoff", props);
         mp_EnableFresnel = FindProperty("_EnableFresnel", props);
         mp_EnableSilhouette = FindProperty("_EnableSilhouette", props);
+        mp_EnableOpaqueFresnel = FindProperty("_EnableOpaqueFresnel", props);
+        mp_EnableOpaqueSpecular = FindProperty("_EnableOpaqueSpecular", props);
 
         /// Enum Material Properties
 
@@ -254,12 +262,14 @@ internal class DragonShaderGUI : ShaderGUI
             materialEditor.ShaderProperty(mp_specExponent, Styles.specularPowerText);
             materialEditor.ShaderProperty(mp_secondLightDir, Styles.secondLightDirectionText);
             materialEditor.ShaderProperty(mp_secondLightColor, Styles.secondLightColorText);
+            materialEditor.ShaderProperty(mp_EnableOpaqueSpecular, Styles.enableOpaqueSpecularText);
         }
 
         if (featureSet(mp_EnableFresnel, Styles.enableFresnelText))
         {
             materialEditor.ShaderProperty(mp_fresnel, Styles.fresnelPowerText);
             materialEditor.ShaderProperty(mp_fresnelColor, Styles.fresnelColorText);
+            materialEditor.ShaderProperty(mp_EnableOpaqueFresnel, Styles.enableOpaqueFresnelText);
         }
 
         featureSet(mp_FxLayer, Styles.additionalFXLayerText);
@@ -378,7 +388,7 @@ internal class DragonShaderGUI : ShaderGUI
 
         switch (blendMode)
         {
-            case 0:
+            case 0:                         //Opaque
                 material.SetOverrideTag("RenderType", "Opaque");
                 material.SetOverrideTag("Queue", "Geometry");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
@@ -388,13 +398,14 @@ internal class DragonShaderGUI : ShaderGUI
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 SetKeyword(material, kw_cutOff, false);
                 SetKeyword(material, kw_doubleSided, false);
+                SetKeyword(material, kw_opaqueAlpha, true);
                 material.SetFloat("_EnableCutoff", 0.0f);
                 material.SetFloat("_EnableDoublesided", 0.0f);
                 //                material.DisableKeyword("CUTOFF");
                 Debug.Log("Blend mode opaque");
                 break;
 
-            case 1:
+            case 1:                         //Cutout
                 material.SetOverrideTag("RenderType", "TransparentCutout");
                 material.SetOverrideTag("Queue", "AlphaTest");
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
@@ -404,26 +415,29 @@ internal class DragonShaderGUI : ShaderGUI
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 SetKeyword(material, kw_cutOff, true);
                 SetKeyword(material, kw_doubleSided, true);
+                SetKeyword(material, kw_opaqueAlpha, false);
                 material.SetFloat("_EnableCutoff", 1.0f);
                 material.SetFloat("_EnableDoublesided", 1.0f);
-                Debug.Log("Blend mode transparent");
-                break;
-/*
-            case 2:
-                material.SetOverrideTag("RenderType", "TransparentCutout");
-                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetFloat("_ZWrite", 1.0f);
-                //                material.renderQueue = 2500;
-                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
-                material.EnableKeyword("CUTOFF");
-                material.EnableKeyword("DOUBLESIDED");
-
                 Debug.Log("Blend mode cutout");
                 break;
-*/
-        }
 
+            case 2:                         //Transparent
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetOverrideTag("Queue", "Transparent");
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                //                material.renderQueue = 3000;
+                material.SetFloat("_ZWrite", 0.0f);
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
+                SetKeyword(material, kw_cutOff, false);
+                SetKeyword(material, kw_doubleSided, false);
+                SetKeyword(material, kw_opaqueAlpha, false);
+                material.SetFloat("_EnableCutoff", 0.0f);
+                material.SetFloat("_EnableDoublesided", 0.0f);
+                Debug.Log("Blend mode transparent");
+                break;
+
+        }
     }
 
     public static void changeMaterial(Material mat, Shader _newShader, int blendMode)
