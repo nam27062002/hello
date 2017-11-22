@@ -28,6 +28,15 @@ public class ParticleControl : MonoBehaviour {
             FindSystems();
 		}
 
+		if (_data != null) {
+			if (m_scaler != null) {
+				if (m_scaler.m_scale != _data.scale) {
+					m_scaler.m_scale = _data.scale;
+					m_scaler.DoScale();
+				}
+			}
+		}
+
 		// lets iterate
 		for (int i = 0; i < m_subsystems.Count; i++) {
 			ParticleSystem system = m_subsystems[i];
@@ -89,15 +98,6 @@ public class ParticleControl : MonoBehaviour {
 */
             system.Play();
         }
-
-        if (_data != null) {
-			if (m_scaler != null) {
-				if (m_scaler.m_scale != _data.scale) {
-					m_scaler.m_scale = _data.scale;
-					m_scaler.DoScale();
-				}
-			}
-		}
 	}
 
 	// returns if it is fully stopped or not

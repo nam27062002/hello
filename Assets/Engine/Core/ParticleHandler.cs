@@ -36,7 +36,7 @@ public class ParticleHandler {
 	//-------------------------------------------------//
 	public GameObject Spawn(ParticleData _data, Vector3 _at = default(Vector3), bool _prewarm = true) {
 		if (m_isValid) {
-			GameObject system = m_pool.Get(true);
+			GameObject system = m_pool.Get(false);
 			StartSystem(system, null, _data, _at, _prewarm);
 			return system;
 		}
@@ -91,6 +91,8 @@ public class ParticleHandler {
 			if (pc != null) {
 				pc.Play(_data, _prewarm);
 			}
+
+			_system.SetActive(true);
 		}
 	}
 }
