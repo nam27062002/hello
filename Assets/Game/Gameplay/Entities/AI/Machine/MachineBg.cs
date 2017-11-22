@@ -64,11 +64,11 @@ namespace AI {
 
 
 		void OnTriggerEnter(Collider _other) {
-			SetSignal(Signals.Type.Trigger, true, null);
+			SetSignal(Signals.Type.Trigger, true);
 		}
 
 		void OnTriggerExit(Collider _other) {
-			SetSignal(Signals.Type.Trigger, false, null);
+			SetSignal(Signals.Type.Trigger, false);
 		}
 		//
 
@@ -81,7 +81,11 @@ namespace AI {
 			if (m_enableMotion) m_motion.FixedUpdate();
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params) {
+		public void SetSignal(Signals.Type _signal, bool _activated) {
+
+		}
+
+		public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
 			
 		}
 

@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineInflammableManager> { 
+	private const float DISINTEGRATE_TIME = 1.25f;
 
-	private Material m_ashes_00;	 // starting queue, all renderers will be back until next queue is available
-	private Material m_ashes_00_07;
-	private Material m_ashes_07_15;
+	private Material m_ashes_wait;	 // starting queue, all renderers will be back until next queue is available
+	private Material m_ashes_disintegrate;
+	private Material m_ashes_end;
 
-	private float m_timer_00_07; // timers 
-	private float m_timer_07_15;
+	private float m_timer;
 
-	private List<AI.MachineInflammable> m_queue_00;
-	private List<AI.MachineInflammable> m_queue_00_07;
-	private List<AI.MachineInflammable> m_queue_07_15;
+	private List<AI.MachineInflammable> m_list_wait;
+	private List<AI.MachineInflammable> m_list_disintegrate;
 
 
 	public static void Add(AI.MachineInflammable _machine) {
@@ -21,55 +20,46 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 	}
 
 	private void Awake() {
-		Material sharedAshesMaterial = Resources.Load ("Game/Materials/BurnToAshes") as Material;
+		Material sharedAshesMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
 		sharedAshesMaterial.renderQueue = 3000;
 
-		m_ashes_00 = new Material(sharedAshesMaterial);
-		m_ashes_00.SetFloat("_AshLevel", 0f);
-		m_ashes_00_07 = new Material(sharedAshesMaterial);
-		m_ashes_00_07.SetFloat("_AshLevel", 0f);
-		m_ashes_07_15 = new Material(sharedAshesMaterial);
-		m_ashes_07_15.SetFloat("_AshLevel", 0.5f);
+		m_ashes_wait = new Material(sharedAshesMaterial);
+		m_ashes_wait.SetFloat("_AshLevel", 0f);
+		m_ashes_disintegrate = new Material(sharedAshesMaterial);
+		m_ashes_disintegrate.SetFloat("_AshLevel", 0f);
+		m_ashes_end = new Material(sharedAshesMaterial);
+		m_ashes_end.SetFloat("_AshLevel", 1f);
 
-		m_queue_00 = new List<AI.MachineInflammable>();
-		m_queue_00_07 = new List<AI.MachineInflammable>();
-		m_queue_07_15 = new List<AI.MachineInflammable>();
-
-		m_timer_00_07 = 0f;
-		m_timer_07_15 = 0.75f;
+		m_list_wait = new List<AI.MachineInflammable>();
+		m_list_disintegrate = new List<AI.MachineInflammable>();
 	}
 
 	private void __Add(AI.MachineInflammable _machine) {
-		if (m_timer_00_07 <= 0.15f) {
-			PromoteTo_00_05(_machine);
+		if (m_timer <= 0.25f) {
+			AddToDisintegrateList(_machine);
 		} else {
-			PromoteTo_00(_machine);
+			AddToWaitQueue(_machine);
 		}
 	}
 
-	private void PromoteTo_00(AI.MachineInflammable _machine) {
-		ChangeMaterials(_machine, m_ashes_00);
-		m_queue_00.Add(_machine);
+	private void AddToWaitQueue(AI.MachineInflammable _machine) {
+		ChangeMaterials(_machine, m_ashes_wait);
+		m_list_wait.Add(_machine);
 	}
 
-	private void PromoteTo_00_05(AI.MachineInflammable _machine) {
-		ChangeMaterials(_machine, m_ashes_00_07);
-		m_queue_00_07.Add(_machine);
-	}
-
-	private void PromoteTo_05_10(AI.MachineInflammable _machine) {
-		ChangeMaterials(_machine, m_ashes_07_15);
-		m_queue_07_15.Add(_machine);
+	private void AddToDisintegrateList(AI.MachineInflammable _machine) {
+		ChangeMaterials(_machine, m_ashes_disintegrate);
+		m_list_disintegrate.Add(_machine);
 	}
 
 	private void ChangeMaterials(AI.MachineInflammable _machine, Material _material) {
 		List<Renderer> renderers = _machine.GetBurnableRenderers();
 		for (int i = 0; i < renderers.Count; ++i) {
-			Material[] materials = renderers[i].sharedMaterials;
+			Material[] materials = renderers[i].materials;
 			for (int m = 0; m < materials.Length; ++m) {
 				materials[m] = _material;
 			}
-			renderers[i].sharedMaterials = materials;
+			renderers[i].materials = materials;
 		}
 	}
 
@@ -78,43 +68,28 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 		float dt = Time.deltaTime;
 
 		// manage the renderers starting to burn
-		if (m_queue_00_07.Count == 0) {
-			if (m_queue_00.Count > 0) {
-				for (int i = 0; i < m_queue_00.Count; ++i) {
-					PromoteTo_00_05(m_queue_00[i]);
+		if (m_list_disintegrate.Count == 0) {
+			if (m_list_wait.Count > 0) {
+				for (int i = 0; i < m_list_wait.Count; ++i) {
+					AddToDisintegrateList(m_list_wait[i]);
 				}
-				m_queue_00.Clear();
-				m_timer_00_07 = 0f;
+				m_list_wait.Clear();
+				m_timer = 0f;
 			}
 		} else {
-			m_timer_00_07 += dt;
-			Mathf.Clamp(m_timer_00_07, 0f, 0.75f);
-			m_ashes_00_07.SetFloat("_AshLevel", m_timer_00_07 / 1.5f);
+			m_timer += dt;
+			Mathf.Clamp(m_timer, 0f, DISINTEGRATE_TIME);
 
-			if (m_timer_00_07 >= 0.75f) {
-				if (m_queue_07_15.Count == 0) {
-					for (int i = 0; i < m_queue_00_07.Count; ++i) {
-						PromoteTo_05_10(m_queue_00_07[i]);
-					}
-					m_queue_00_07.Clear();
-					m_timer_00_07 = 0f;
+			if (m_timer >= DISINTEGRATE_TIME) {
+				for (int i = 0; i < m_list_disintegrate.Count; ++i) {
+					m_list_disintegrate[i].Burned();
+					ChangeMaterials(m_list_disintegrate[i], m_ashes_end);
 				}
+				m_list_disintegrate.Clear();
+				m_timer = 0f;
 			}
-		}
 
-		// advance time for those renderers almost burned
-		if (m_queue_07_15.Count > 0) {
-			m_timer_07_15 += dt;
-			Mathf.Clamp(m_timer_07_15, 0.75f, 1.5f);
-			m_ashes_07_15.SetFloat("_AshLevel", m_timer_07_15 / 1.5f);
-
-			if (m_timer_07_15 >= 1.5f) {
-				for (int i = 0; i < m_queue_07_15.Count; ++i) {
-					m_queue_07_15[i].Burned();
-				}
-				m_queue_07_15.Clear();
-				m_timer_07_15 = 0.75f;
-			}
+			m_ashes_disintegrate.SetFloat("_AshLevel", m_timer / DISINTEGRATE_TIME);
 		}
 	}
 }

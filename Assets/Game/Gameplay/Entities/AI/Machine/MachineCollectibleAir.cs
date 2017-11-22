@@ -106,8 +106,12 @@ namespace AI {
 			Invoke("Activate", duration);
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
-			m_signals.SetValue(_signal, _activated, _params);
+		public void SetSignal(Signals.Type _signal, bool _activated) {
+			m_signals.SetValue(_signal, _activated);
+		}
+
+		public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
+			m_signals.SetValue(_signal, _activated, ref _params);
 		}
 
 		public bool GetSignal(Signals.Type _signal) {

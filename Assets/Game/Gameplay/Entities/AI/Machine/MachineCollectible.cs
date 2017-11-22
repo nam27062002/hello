@@ -70,7 +70,8 @@ namespace AI {
 		public void ReceiveDamage(float _damage) {}
 
 		public bool GetSignal(Signals.Type _signal) { return false;}
-		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {}
+		public void SetSignal(Signals.Type _signal, bool _activated) {}
+		public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {}
 		public object[] GetSignalParams(Signals.Type _signal) { return null;}
 
 		public virtual void UseGravity(bool _value) { }

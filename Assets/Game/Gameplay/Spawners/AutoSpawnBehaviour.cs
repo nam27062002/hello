@@ -146,7 +146,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			} else if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
 					bool isInsideActivationArea = m_newCamera.IsInsideCameraFrustrum(m_bounds);
-					if (isInsideActivationArea) {
+					if (!isInsideActivationArea) {
 						return true;
 					}
 				}

@@ -87,16 +87,13 @@ namespace AI {
 			m_params.Clear();
 		}
 
-		public void SetValue(Type _signal, bool _value, object[] _params = null) {
+		public void SetValue(Type _signal, bool _value) {
 			bool enabled = (m_value & _signal) != 0;
-
-			m_params[_signal] = _params;
 
 			if (enabled != _value) {
 				if (_value == true) {
 					m_value |= _signal;
 
-					m_params[_signal] = _params;
 					OnEnable(_signal);
 				} else {
 					m_value &= ~_signal;
@@ -105,6 +102,11 @@ namespace AI {
 					OnDisable(_signal);
 				}
 			}
+		}
+
+		public void SetValue(Type _signal, bool _value, ref object[] _params) {
+			m_params[_signal] = _params;
+			SetValue(_signal, _value);
 		}
 
 		public bool GetValue(Type _signal) {

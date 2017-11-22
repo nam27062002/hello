@@ -61,11 +61,14 @@ namespace AI {
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 			
 		// Update is called once per frame
-		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params) {
+		public void SetSignal(Signals.Type _signal, bool _activated) {
 			if (_signal == Signals.Type.Destroyed) {
 				m_projectile.OnEaten();
 				m_entity.Disable(true);
 			}
+		}
+		public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
+			SetSignal(_signal, _activated);
 		}
 		public bool GetSignal(Signals.Type _signal) { return false; }
 		public object[] GetSignalParams(Signals.Type _signal) { return null; }

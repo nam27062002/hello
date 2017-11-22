@@ -26,7 +26,8 @@ namespace AI {
 
 
 		// Internal connections
-		void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null);
+		void SetSignal(Signals.Type _signal, bool _activated);
+		void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params);
 		bool GetSignal(Signals.Type _signal);
 		object[] GetSignalParams(Signals.Type _signal);
 

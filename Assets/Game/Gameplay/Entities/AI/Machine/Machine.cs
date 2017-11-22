@@ -89,6 +89,10 @@ namespace AI {
 
 		float m_stunned = 0;
 
+
+		private object[] m_collisionParams;
+		private object[] m_triggerParams;
+
 		// Activating
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 		//---------------------------------------------------------------------------------
@@ -156,6 +160,9 @@ namespace AI {
 
 			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnInvulnerable);
 			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnVulnerable);
+
+			m_collisionParams = new object[1];
+			m_triggerParams = new object[1];
 
 			m_externalForces = Vector3.zero;
 		}
@@ -231,9 +238,9 @@ namespace AI {
 		//-----------------------------------------------------------
 		// Physics Collisions and Triggers
 		protected virtual void OnCollisionEnter(Collision _collision) {
-			object[] _params = new object[1]{_collision};
-			OnTrigger(SignalTriggers.OnCollisionEnter, _params);
-			SetSignal(Signals.Type.Collision, true, _params);
+			m_collisionParams[0] = _collision;
+			OnTrigger(SignalTriggers.OnCollisionEnter, m_collisionParams);
+			SetSignal(Signals.Type.Collision, true, ref m_collisionParams);
 
 			if (m_motion != null) {
 				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
@@ -263,9 +270,9 @@ namespace AI {
 		protected virtual void OnTriggerEnter(Collider _other) {
 			OnTriggerStay(_other);
 
-			object[] _params = new object[1]{_other.gameObject};
-			OnTrigger(SignalTriggers.OnTriggerEnter, _params);
-			SetSignal(Signals.Type.Trigger, true, _params);
+			m_triggerParams[0] = _other.gameObject;
+			OnTrigger(SignalTriggers.OnTriggerEnter, m_triggerParams);
+			SetSignal(Signals.Type.Trigger, true, ref m_triggerParams);
 
 			if (_other.CompareTag("Water")) {
 				SetSignal(Signals.Type.InWater, true);
@@ -318,7 +325,7 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		public virtual void CustomUpdate() {
+		public virtual void CustomUpdate() {			
 			if (!IsDead()) {
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
@@ -329,6 +336,7 @@ namespace AI {
 
 				if (m_enableSensor) m_sensor.Update();
 				if (m_motion != null) m_motion.Update();
+
 
 				//forward special actions
 				if (m_pilot != null) {
@@ -446,8 +454,12 @@ namespace AI {
 			m_stunned = Mathf.Max( _stunTime, m_stunned);
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated, object[] _params = null) {
-			m_signals.SetValue(_signal, _activated, _params);
+		public void SetSignal(Signals.Type _signal, bool _activated) {
+			m_signals.SetValue(_signal, _activated);
+		}
+
+		public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
+			m_signals.SetValue(_signal, _activated, ref _params);
 		}
 
 		public bool GetSignal(Signals.Type _signal) {
