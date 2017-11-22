@@ -31,6 +31,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// External references
+	[SerializeField] private Canvas m_canvas = null;
 	[SerializeField] private RectTransform m_panel;
 	public static RectTransform panel {
 		get { return instance.m_panel; }
@@ -61,6 +62,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         set {
             m_isStatsEnabled = value;
             m_statsCounter.SetActive(m_isStatsEnabled);
+			CheckCanvasActivation();
         }        
     }
 
@@ -73,6 +75,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		set {
 			m_isFPSEnabled = value;
 			m_fpsCounter.gameObject.SetActive(m_isFPSEnabled);
+			CheckCanvasActivation();
 		}        
 	}
 
@@ -201,6 +204,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		);
 
         m_activateTimer = 0;
+		CheckCanvasActivation();
 	}
 
 	void Start() {
@@ -350,6 +354,16 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		return 1.0f / median;
 	}
 
+	/// <summary>
+	/// Check whether canvas should be active (performance).
+	/// </summary>
+	private void CheckCanvasActivation() {
+		// Toggle both canvas and camera
+		bool active = m_isStatsEnabled || m_isFPSEnabled || m_panel.gameObject.activeSelf;
+		m_canvas.gameObject.SetActive(active);
+		m_canvas.worldCamera.gameObject.SetActive(active);
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -359,6 +373,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	public void Toggle() {
 		// Toggle panel
 		m_panel.gameObject.SetActive(!m_panel.gameObject.activeSelf);
+		CheckCanvasActivation();
 
 		// Disable player control while control panel is up
 		if(InstanceManager.player != null) {
