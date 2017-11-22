@@ -2,6 +2,10 @@
 
 public class PoolHandler {	
 	private Pool m_pool;
+	public Pool pool {
+		get { return m_pool; }
+	}
+
 	private bool m_isValid;
 
 
