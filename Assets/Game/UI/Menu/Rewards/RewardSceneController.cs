@@ -353,6 +353,9 @@ public class RewardSceneController : MonoBehaviour {
 				m_currentRewardSetup.view.SetActive(false);
 				replacementSetup.view.SetActive(true);
 
+				// Hide godrays as well
+				if(m_currentRewardSetup.godrays != null) m_currentRewardSetup.godrays.SetActive(false);
+
 				// Make it target of the drag controller
 				SetDragTarget(replacementSetup.view.transform);
 			});
@@ -378,6 +381,11 @@ public class RewardSceneController : MonoBehaviour {
 
 				// Play specific sound as well!
 				AudioController.Play(replacementSetup.sfx);
+
+				// Show godrays
+				if(replacementSetup.godrays != null) {
+					replacementSetup.godrays.SetActive(true);
+				}
 			});
 
 			// Replacement reward initial inertia and scale up
@@ -396,6 +404,9 @@ public class RewardSceneController : MonoBehaviour {
 		// Show reward godrays
 		// Except if duplicate! (for now)
 		if(m_petRewardSetup.godrays != null && !_petReward.WillBeReplaced()) {
+			// Activate object
+			m_petRewardSetup.godrays.SetActive(true);
+
 			// Custom color based on reward's rarity
 			GodRaysFXFast godraysFX = m_petRewardSetup.godrays.GetComponent<GodRaysFXFast>();
 			if(godraysFX != null) {
@@ -427,6 +438,11 @@ public class RewardSceneController : MonoBehaviour {
 
 			// Trigger SFX, depends on reward tyoe
 			AudioController.Play(m_currentRewardSetup.sfx);
+
+			// Show godrays
+			if(m_currentRewardSetup.godrays != null) {
+				m_currentRewardSetup.godrays.SetActive(true);
+			}
 		});
 
 		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
