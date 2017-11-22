@@ -238,6 +238,9 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
+		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+		Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
@@ -250,6 +253,8 @@ public class DragonPlayer : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+		Messenger.RemoveListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 	}
 
 	/// <summary>
@@ -458,6 +463,17 @@ public class DragonPlayer : MonoBehaviour {
 	public bool IsFuryOn() {
 		
 		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Standard;
+	}
+
+
+	public void OnLeavingArea(){
+		m_dragonEatBehaviour.PauseEating();
+	}
+
+	public void OnEnteringArea(){
+		if ( !m_breathBehaviour.IsFuryOn() ){
+			m_dragonEatBehaviour.ResumeEating();	
+		}
 	}
 
 

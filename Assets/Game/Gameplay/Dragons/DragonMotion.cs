@@ -520,9 +520,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.ChangingArea:
 				{
 					HDTrackingManager.Instance.Notify_LoadingAreaEnd(m_previousArea,LevelManager.currentArea, Time.time - m_switchAreaStart);
-					// if fury not active
 					m_dragon.changingArea = false;
-					m_eatBehaviour.ResumeEating();
 					Messenger.Broadcast(GameEvents.PLAYER_ENTERING_AREA);
 				}break;
 			}
@@ -637,7 +635,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_switchAreaStart = Time.time;
 					HDTrackingManager.Instance.Notify_LoadingAreaStart( m_previousArea, m_destinationArea);
 					m_changeAreaState = ChangeAreaState.Enter;
-					m_eatBehaviour.PauseEating();
+					// m_eatBehaviour.PauseEating();
 					// Send event to tell pets we are leaging the area
 					Messenger.Broadcast(GameEvents.PLAYER_LEAVING_AREA);
 				}break;
