@@ -8,7 +8,6 @@ public class DragonEatBehaviour : EatBehaviour {
 	private DragonBoostBehaviour m_dragonBoost;
 	private DragonHealthBehaviour m_dragonHealth;
 	private Animator m_animator;
-	protected bool m_pausedOnFury = false;
     private float m_eatingSpeed = -1;
     public Range m_randomSpeedRange = new Range(1.0f, 1.5f);
 	private float m_randomSpeed = 1;

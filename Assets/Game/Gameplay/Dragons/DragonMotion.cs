@@ -238,7 +238,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	public Transform head   { get { if (m_head == null)   { m_head = transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
+	public Transform head   { get { if (m_head == null)   { m_head = m_transform.FindTransformRecursive("Dragon_Head");  } return m_head;   } }
 	private Vector3 m_lastPosition;
 	private Vector3 lastPosition
 	{
@@ -264,7 +264,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private Vector3 m_introTarget;
 	private Vector3 m_destination;
 	private const float m_introDisplacement = 75;
-	public float introDisplacement{ get{return m_introDisplacement * transform.localScale.x;} }
+	public float introDisplacement{ get{return m_introDisplacement * m_transform.localScale.x;} }
 	public AnimationCurve m_introDisplacementCurve;
 	public float m_introStopAnimationDelta = 0.1f;
 
@@ -309,22 +309,23 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// </summary>
 	void Awake() {
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
+		m_transform = transform;
 
 		// Get references
-		m_animator			= transform.Find("view").GetComponent<Animator>();
+		m_animator			= m_transform.Find("view").GetComponent<Animator>();
 		m_flyLoopBehaviour	= m_animator.GetBehaviour<FlyLoopBehaviour>();
 		m_dragon			= GetComponent<DragonPlayer>();
 		// m_health			= GetComponent<DragonHealthBehaviour>();
 		m_controls 			= GetComponent<DragonControlPlayer>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 		m_particleController = GetComponentInChildren<DragonParticleController>();
-		Transform sensors	= transform.Find("sensors").transform; 
+		Transform sensors	= m_transform.Find("sensors").transform; 
 		m_sensor.top 		= sensors.Find("TopSensor").transform;
 		m_sensor.bottom		= sensors.Find("BottomSensor").transform;
 
 		int n = 0;
 		Transform t = null;
-		Transform points = transform.Find("points");
+		Transform points = m_transform.Find("points");
 		List<Transform> hitTargets = new List<Transform>();
 
 		while (true) {
@@ -364,7 +365,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 
 		// Find ground collider
-		Transform ground = transform.FindTransformRecursive("ground");
+		Transform ground = m_transform.FindTransformRecursive("ground");
 		if ( ground != null )
 		{
 			m_mainGroundCollider = ground.GetComponent<SphereCollider>();
@@ -381,7 +382,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_holdSpeedMultiplier = 1;
 		m_latchedOnSpeedMultiplier = 1;
 
-		m_transform = transform;
+
 		m_currentFrontBend = Vector2.zero;
 		m_currentBackBend = Vector2.zero;
 
@@ -406,7 +407,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_impulse = Vector3.zero;
 		m_direction = Vector3.right;
 		m_angularVelocity = Vector3.zero;
-		m_lastPosition = transform.position;
+		m_lastPosition = m_transform.position;
 		m_lastSpeed = 0;
 		m_suction = m_eatBehaviour.suction;
 
@@ -562,7 +563,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					if ( m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching){
 	                    m_accWaterFactor = 0.80f;
 	                    m_inverseGravityWater = 1.5f;
-						m_startParabolicPosition = transform.position;
+						m_startParabolicPosition = m_transform.position;
 					}
 				}break;
 				case State.ExitingWater:
@@ -578,7 +579,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
                     if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
                     {
-                        m_startParabolicPosition = transform.position;
+						m_startParabolicPosition = m_transform.position;
                     }
                     
 				}break;
@@ -595,7 +596,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_impulse = Vector3.zero;
 					m_direction = Vector3.right;
 					m_desiredRotation = Quaternion.Euler(0,90.0f,0);
-					transform.rotation = m_desiredRotation;
+					m_transform.rotation = m_desiredRotation;
 				}break;
 				case State.Latching:
 				{
@@ -610,7 +611,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					if ( m_previousState == State.InsideWater )
 						m_animator.SetBool("swim", true);
 					// Save Position!
-					m_diePosition = transform.position;
+					m_diePosition = m_transform.position;
 					m_deadTimer = 0;
 				}break;
 				case State.Reviving:
@@ -619,7 +620,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_reviveTimer = m_reviveDuration;
 					m_impulse = Vector3.zero;
 					m_rbody.velocity = Vector3.zero;
-					m_revivePosition = transform.position;
+					m_revivePosition = m_transform.position;
 					m_animator.Play("BaseLayer.Idle");
 
 					if ( m_direction.x > 0 ){
@@ -742,8 +743,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 		CheckForCurrents();
 		CheckAllowGlide();
-	}
 
+		// Update hitColliders Bounding box
+		UpdateHitCollidersBoundingBox();
+	}
 
  	private void CheckForCurrents()
     {
@@ -839,7 +842,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				RotateToDirection( m_holdPreyTransform.forward );
 				Vector3 deltaPosition = Vector3.Lerp( m_suction.position, m_holdPreyTransform.position, m_latchingTimer * 8);	// Mouth should be moving and orienting
 				// Vector3 deltaPosition = m_holdPreyTransform.position;
-				transform.position += deltaPosition - m_suction.position;
+				m_transform.position += deltaPosition - m_suction.position;
 				m_impulse = Vector3.zero;
 			}
 		}
@@ -895,7 +898,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		m_hitBounds.UpdateBounds( m_transform.position, Vector3.zero);
 		m_hitBounds.Encapsulate( m_hitColliders );
-
 	}
 
 
@@ -903,9 +905,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Called once per frame at regular intervals.
 	/// </summary>
 	void FixedUpdate() {
-		// Update hitColliders Bounding box
-		UpdateHitCollidersBoundingBox();
-
+		
 		m_closeToGround = false;
 		switch (m_state) {
 			case State.Idle:
@@ -964,14 +964,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			case State.Reviving:
 			{
 				m_reviveTimer -= Time.deltaTime;
-				transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
+				m_transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
 
 				RotateToDirection(m_direction, false);
 				m_desiredRotation = m_transform.rotation;
 
 				if ( m_reviveTimer <= 0 )
 				{
-					transform.position = m_diePosition;
+					m_transform.position = m_diePosition;
 					switch( m_previousState )
 					{
 						case State.InsideWater:
@@ -997,7 +997,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				{	
 					case ChangeAreaState.Enter:
 					{
-						m_followingSpline.GetClosestPointToPoint( transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
+						m_followingSpline.GetClosestPointToPoint( m_transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
 						m_followingClosestT += 0.1f;	// Add dragon speed?
 						if ( m_followingClosestT >= 0.5f )
 						{
@@ -1047,7 +1047,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					}break;
 					case ChangeAreaState.Exit:
 					{
-						m_followingSpline.GetClosestPointToPoint( transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
+						m_followingSpline.GetClosestPointToPoint( m_transform.position, 100, out m_followingClosestT, out m_followingClosestStep);
 						if ( m_followingClosestT >= 1.0f )
 						{
 							// Exit eating
@@ -1065,31 +1065,32 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_rbody.angularVelocity = m_angularVelocity;
 		// if ( FeatureSettingsManager.IsDebugEnabled )
 		{
-			m_lastSpeed = (transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
+			m_lastSpeed = (m_transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
 		}
 
 		if ( m_state != State.Intro)
 		{
-			Vector3 position = transform.position;
+			Vector3 position = m_transform.position;
 			position.z = 0f;
-			transform.position = position;
+			m_transform.position = position;
 		}
 
+		/*
 		Vector3 rewardDistance = RewardManager.distance;
 		Vector3 diff = transform.position-m_lastPosition;
 		rewardDistance.x += Mathf.Abs( diff.x );
 		rewardDistance.y += Mathf.Abs( diff.y );
 		rewardDistance.z += Mathf.Abs( diff.z );
 		RewardManager.distance = rewardDistance;
+		*/
 
 		m_impulseMagnitude = m_impulse.magnitude;
-
-		m_lastPosition = transform.position;
+		m_lastPosition = m_transform.position;
 	}
 
 	private void UpdateMovementToPoint( float _deltaTime, Vector3 targetPoint )
 	{
-		Vector3 impulse = (targetPoint - transform.position).normalized;
+		Vector3 impulse = (targetPoint - m_transform.position).normalized;
 		UpdateMovementImpulse( _deltaTime, impulse);
 	}
 
@@ -1289,7 +1290,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
         impulse.Scale(new Vector3(0.5f, 0, 1));
         Vector3 gravityAcceleration = Vector3.zero;
 		gravityAcceleration = Vector3.down * 9.81f * (m_dragonAirGravityModifier + m_dragonAirGravityModifier * -yGravityModifier);
-		float distance = (transform.position.y - m_startParabolicPosition.y);
+		float distance = (m_transform.position.y - m_startParabolicPosition.y);
 		if (distance > 0) {
 			gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
 		}
@@ -1325,7 +1326,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private void UpdateIdleMovement(float _deltaTime) {
 
 		Vector3 oldDirection = m_direction;
-		CheckGround( out m_raycastHit);
+		CheckGround( out m_raycastHit );
 		if ( m_closeToGround ) { // dragon will fly up to avoid mesh intersection
 			
 			// Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
@@ -1410,7 +1411,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if ( m_deadTimer < 1.5f * Time.timeScale )
 		{
 			Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier * m_deadGravityMultiplier;   // Gravity
-			if ( transform.position.y > (m_waterEnterPosition.y - m_mainGroundCollider.radius))
+			if ( m_transform.position.y > (m_waterEnterPosition.y - m_mainGroundCollider.radius))
 				gravityAcceleration -= gravityAcceleration;
 
 			Vector3 acceleration = gravityAcceleration;	// Gravity
@@ -1503,7 +1504,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 
 			m_desiredRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
-			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(transform.rotation, m_desiredRotation, blendRate);
+			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(m_transform.rotation, m_desiredRotation, blendRate);
 		}
 		else
 		{
@@ -1522,7 +1523,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		bool ret = false;
 		if (hit_L) {
 			float d = _leftHit.distance;
-			m_height = d * transform.localScale.y;
+			m_height = d * m_transform.localScale.y;
 			m_closeToGround = m_height < 1f;
 			m_lastGroundHit = _leftHit.point;
 			m_lastGroundHitNormal = _leftHit.normal;
@@ -1597,13 +1598,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	// GETTERS															//
 	//------------------------------------------------------------------//
 	public Quaternion orientation {
-		get { return transform.rotation; }
-		set { transform.rotation = value; } 
+		get { return m_transform.rotation; }
+		set { m_transform.rotation = value; } 
 	}
 
 	public Vector3 position {
-		get { return transform.position; }
-		set { transform.position = value; }
+		get { return m_transform.position; }
+		set { m_transform.position = value; }
 	}
 	/// <summary>
 	/// Obtain the current direction of the dragon.
@@ -1866,7 +1867,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if (!m_insideWater)
 		{
 			// Check direction?
-			m_waterEnterPosition = transform.position;
+			m_waterEnterPosition = m_transform.position;
 			m_insideWater = true;
 			// Modify Y to match real pos?
 

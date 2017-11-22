@@ -180,7 +180,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static Dictionary<string, int> categoryKillCount{
 		get{ return instance.m_categoryKillCount; }
 	}
-
+	/*
 	// Distance moved by the player
 	private Vector3 m_distance;
 	public static Vector3 distance{
@@ -191,6 +191,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static float traveledDistance{
 		get{ return instance.m_distance.magnitude; }
 	}
+	*/
 
 	// Revive tracking
 	private int m_freeReviveCount = 0;
