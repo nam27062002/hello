@@ -264,8 +264,9 @@ public class DragonTint : MonoBehaviour
 	private void OnPlayerKo( DamageType _type, Transform _source )
 	{
         // Switch body material to wings
-		for (int i = 0; i < m_materialsCount; ++i) 
-            m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
+        for (int i = 0; i < m_materialsCount; ++i)
+            DragonCorpse.setDeathMode(m_materials[i]);
+//            m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
 
      	if ( _type == DamageType.MINE || _type == DamageType.BIG_DAMAGE)
      	{

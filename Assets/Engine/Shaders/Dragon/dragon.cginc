@@ -131,10 +131,9 @@ fixed4 frag(v2f i) : SV_Target
 	diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
 	diffuse.w = 1.0;
 
+#ifdef SPECULAR
 	// Specular
 	float3 halfDir = normalize(i.viewDir + light0Direction);
-
-#ifdef SPECULAR
 	float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
 	halfDir = normalize(i.viewDir + light1Direction);
 	specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
@@ -193,14 +192,23 @@ fixed4 frag(v2f i) : SV_Target
 	col.xyz += fresnel * _FresnelColor.xyz;
 #endif
 
-
-
-#ifndef CUTOFF
+	// Opaque
+#ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);
 
 #else
-	col.w *= _Tint.w;
+//	col.w = 0.0f;
 
+#if defined(FRESNEL) && defined(OPAQUEFRESNEL)
+	col.w += fresnel;
 #endif
+
+#if defined(SPECULAR) && defined(OPAQUESPECULAR)
+	col.w += specularLight;
+#endif
+
+	col.w *= _Tint.w;
+#endif
+
 	return col;
 }
