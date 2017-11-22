@@ -118,4 +118,17 @@ public class GoalsScreenController : MonoBehaviour {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._10_continue_clicked);
 		}
 	}
+
+	/// <summary>
+	/// The screen is about to be displayed.
+	/// </summary>
+	public void OnShowPreAnimation() {
+		// If active tab is the Events tab, force a refresh
+		if(m_tabs.currentScreen != null) {
+			if(m_tabs.currentScreen.screenName == "eventsTab") {
+				// [AOC] Hardcore way to do it: simulate an OnShow() event like we just switched to this tab
+				m_tabs.currentScreen.OnShow.Invoke();
+			}
+		}
+	}
 }
