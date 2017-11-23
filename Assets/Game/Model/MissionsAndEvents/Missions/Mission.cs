@@ -284,11 +284,21 @@ public class Mission {
 
 		// Restore state
 		m_state = (State)_data["state"].AsInt;
+		if(m_state == State.ACTIVATION_PENDING) {
+			return false;	// Activation pending state should never be persisted! Return error to generate a new mission
+		}
 
 		// Restore objective
 		if(m_objective != null) {
 			m_objective.tracker.SetValue(_data["currentValue"].AsFloat, false);
 			m_objective.enabled = (m_state == State.ACTIVE);
+		}
+
+		// [AOC] If mission is active but objective is already completed, something went wrong
+		//		 Generate a new mission if that's the case.
+		//		 We have some weird cases where mission is marked as active but current value is >= than target (specially with ftux missions)
+		if(m_state == State.ACTIVE && m_objective.isCompleted) {
+			return false;
 		}
 
 		// Restore cooldown timestamp
