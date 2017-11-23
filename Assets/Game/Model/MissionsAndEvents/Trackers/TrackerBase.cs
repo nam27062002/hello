@@ -24,6 +24,13 @@ public class TrackerBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Add as many as needed
+	// Might be use by specific trackers to tune some features based on mode (i.e. value formatting)
+	public enum Mode {
+		GENERIC,
+		MISSION,
+		GLOBAL_EVENT
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -39,6 +46,12 @@ public class TrackerBase {
 	public bool enabled {
 		get { return m_enabled; }
 		set { m_enabled = value; }
+	}
+
+	protected Mode m_mode = Mode.GENERIC;
+	public Mode mode {
+		get { return m_mode; }
+		set { m_mode = value; }
 	}
 
 	// Events
@@ -68,6 +81,9 @@ public class TrackerBase {
 	/// Finalizer method. Leave the tracker ready for garbage collection.
 	/// </summary>
 	public virtual void Clear() {
+		// Reset current value
+		m_currentValue = 0f;
+
 		// Remove any listener
 		OnValueChanged.RemoveAllListeners();
 		OnValueChanged = null;

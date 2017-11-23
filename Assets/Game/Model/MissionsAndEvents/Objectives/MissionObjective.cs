@@ -81,6 +81,9 @@ public class MissionObjective : TrackingObjectiveBase {
 			_missionDef.Get("tidObjective")	// Does this mission have a custom target TID? (i.e. "Birds", "Archers", etc.)
 		);
 
+		// Tell tracker it's being used by a mission
+		m_tracker.mode = TrackerBase.Mode.MISSION;
+
 		#if LOG
 		DebugUtils.Log("<color=green>Done! </color>" + ToString());
 		#endif

@@ -61,7 +61,12 @@ public class TrackerSurviveTime : TrackerBase {
 	/// <param name="_value">Value to be formatted.</param>
 	override public string FormatValue(float _value) {
 		// Format value as time
-		return TimeUtils.FormatTime(_value, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3, TimeUtils.EPrecision.DAYS);
+		// [AOC] Different formats for global events!
+		TimeUtils.EFormat format = TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES;
+		if(m_mode == Mode.GLOBAL_EVENT) {
+			format = TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES;
+		}
+		return TimeUtils.FormatTime(_value, format, 3, TimeUtils.EPrecision.DAYS);
 	}
 
 	/// <summary>

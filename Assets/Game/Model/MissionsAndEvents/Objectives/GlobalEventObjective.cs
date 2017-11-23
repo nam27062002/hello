@@ -74,6 +74,9 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 			_data["tidDesc"]
 		);
 
+		// Tell tracker it's being used by a global event
+		m_tracker.mode = TrackerBase.Mode.GLOBAL_EVENT;
+
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
 		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
