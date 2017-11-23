@@ -28,7 +28,9 @@ Dim substrToFind
 				tmpStr = Replace(tmpStrToSave,"@","_")
 			End If
 			tmpStr = tmpStr + vbCrLf
-			objOutputFile.Write(tmpStr)
+			If foundStrMatch(tmpStr,"SP_BG") = false Then
+				objOutputFile.Write(tmpStr)
+			End If
 		End If
 	Loop
 
