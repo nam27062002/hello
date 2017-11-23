@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
+Shader "Hungry Dragon/Particles/Transparent Particles Additive"
 {
 	Properties
 	{
@@ -29,7 +29,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 	SubShader
 	{
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend SrcAlpha One
 		Cull Off
 		Lighting Off
 		ZWrite Off
@@ -117,9 +117,9 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 
 				float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier, 0.0, 1.0);
 #if COLOR_RAMP
-				col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * _EmissionSaturation;
+				col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * col.a * _EmissionSaturation;
 #else
-				col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;
+				col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif
 				return col;
 			}
