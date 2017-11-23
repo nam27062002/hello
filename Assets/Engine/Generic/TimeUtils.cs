@@ -33,10 +33,11 @@ public class TimeUtils {
 	};
 	
 	public enum EFormat {
-		WORDS,			// 1 year 2 days 3 hours 4 minutes 5 seconds
-		ABBREVIATIONS,	// 1y 2d 3h 4m 5s
-		ABBREVIATIONS_WITHOUT_0_VALUES,	// Same as abbreviations, but ignoring fields with value 0 (i.e. "5m 0s" -> "5m")
-		DIGITS			// 0001:03 02:03:04
+		WORDS,							// 1 year 2 days 3 hours 0 minutes 5 seconds
+		WORDS_WITHOUT_0_VALUES,			// 1 year 2 days 3 hours 5 seconds
+		ABBREVIATIONS,					// 1y 2d 3h 0m 5s
+		ABBREVIATIONS_WITHOUT_0_VALUES,	// 1y 2d 3h 5s
+		DIGITS							// 0001:03 02:03:04
 	};
 
 	private static readonly ulong[] SECONDS_IN_PRECISION = {
@@ -163,13 +164,17 @@ public class TimeUtils {
 			// Do the formatting
 			switch(_format) {
 				case EFormat.WORDS:
+				case EFormat.WORDS_WITHOUT_0_VALUES:
 				case EFormat.ABBREVIATIONS:
 				case EFormat.ABBREVIATIONS_WITHOUT_0_VALUES: {
 					// Special case if not including 0 values
-					if(_format == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES && val == 0) {
-						// Skip if value is 0, unless it's the only field standing or forced
-						if(!(i == lastIdx - 1 && addedFieldsCount == 0) && !_forcePrecision) {
-							continue;
+					if(_format == EFormat.WORDS_WITHOUT_0_VALUES || _format == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES) {
+						// Is value 0?
+						if(val == 0) {
+							// Skip, unless it's the only field standing or forced
+							if(!(i == lastIdx - 1 && addedFieldsCount == 0) && !_forcePrecision) {
+								continue;
+							}
 						}
 					}
 					
