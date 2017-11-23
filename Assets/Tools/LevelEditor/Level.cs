@@ -36,27 +36,6 @@ namespace LevelEditor {
 			// Make ouselves static, we don't want to accidentally move the parent object
 			this.gameObject.isStatic = true;
 		}
-
-		/// <summary>
-		/// First update.
-		/// </summary>
-		protected void Start() {
-		
-		}
-		
-		/// <summary>
-		/// Called every frame.
-		/// </summary>
-		private void Update() {
-
-		}
-
-		/// <summary>
-		/// Destructor.
-		/// </summary>
-		private void OnDestroy() {
-
-		}
 	}
 }
 
