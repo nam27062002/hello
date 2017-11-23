@@ -200,8 +200,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 				col = lerp(col, _EmissiveColor, maskTex.r * _EmissiveColor.a);	// Multiplicative, emissive color alpha controls intensity
 				#endif
 
-				col += UNITY_LIGHTMODEL_AMBIENT;
-
+//				col += UNITY_LIGHTMODEL_AMBIENT;
 				UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 				return col;
 			}
