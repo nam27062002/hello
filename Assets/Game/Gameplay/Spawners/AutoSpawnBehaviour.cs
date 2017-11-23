@@ -24,6 +24,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private State m_state;
 	public State state { get { return m_state; } }
 
+	private Decoration m_decoration;
+
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
 
@@ -50,6 +52,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 		if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
 			SpawnerManager.instance.Register(this, true);
+
+			m_decoration = GetComponent<Decoration>();
+			if (m_decoration != null) {
+				EntityManager.instance.RegisterDecoration(m_decoration);
+			}
 
 			m_newCamera = Camera.main.GetComponent<GameCamera>();
 			m_gameSceneController = InstanceManager.gameSceneControllerBase;
@@ -90,6 +97,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
     void OnDestroy() {
 		if (SpawnerManager.isInstanceCreated)
             SpawnerManager.instance.Unregister(this, false);
+	
+		if (m_decoration != null) {
+			EntityManager.instance.UnregisterDecoration(m_decoration);
+		}
     }
 
 	/// <summary>

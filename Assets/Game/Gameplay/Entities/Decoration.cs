@@ -61,10 +61,4 @@ public class Decoration : IEntity {
 
 		m_maxHealth = 1f;
 	}
-
-
-	//TODO: move this to another place -> maybe a decorations culling manager?
-	void Update() {
-		CustomUpdate();
-	}
 }
