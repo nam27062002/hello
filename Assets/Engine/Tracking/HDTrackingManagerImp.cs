@@ -115,10 +115,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
 	private void SetRetrySessionCreationIsEnabled(bool value)
-	{
+	{		
 		// UbiservicesManager is not called from the editor because it doesn’t work on Mac
 #if !UNITY_EDITOR
-		UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(value);
+		UbiservicesManager.SharedInstance.SetStartSessionRetryBehaviour(value);
 #endif
 	}
     
