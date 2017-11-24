@@ -25,7 +25,7 @@ public class RewardSceneController : MonoBehaviour {
 	[Serializable]
 	public class RewardSetup {
 		public GameObject view = null;
-		public GameObject godrays = null;
+		public ShinyGodraysFX godrays = null;
 		public string sfx = "";
 
 		public void Clear() {
@@ -33,7 +33,8 @@ public class RewardSceneController : MonoBehaviour {
 				view.SetActive(false);
 			}
 			if(godrays != null) {
-				godrays.SetActive(false);
+				godrays.ResetColor();
+				godrays.gameObject.SetActive(false);
 			}
 		}
 	}
@@ -354,7 +355,9 @@ public class RewardSceneController : MonoBehaviour {
 				replacementSetup.view.SetActive(true);
 
 				// Hide godrays as well
-				if(m_currentRewardSetup.godrays != null) m_currentRewardSetup.godrays.SetActive(false);
+				if(m_currentRewardSetup.godrays != null) {
+					m_currentRewardSetup.godrays.gameObject.SetActive(false);
+				}
 
 				// Make it target of the drag controller
 				SetDragTarget(replacementSetup.view.transform);
@@ -384,7 +387,7 @@ public class RewardSceneController : MonoBehaviour {
 
 				// Show godrays
 				if(replacementSetup.godrays != null) {
-					replacementSetup.godrays.SetActive(true);
+					replacementSetup.godrays.gameObject.SetActive(true);
 				}
 			});
 
@@ -404,14 +407,9 @@ public class RewardSceneController : MonoBehaviour {
 		// Show reward godrays
 		// Except if duplicate! (for now)
 		if(m_petRewardSetup.godrays != null && !_petReward.WillBeReplaced()) {
-			// Activate object
-			m_petRewardSetup.godrays.SetActive(true);
-
 			// Custom color based on reward's rarity
-			GodRaysFXFast godraysFX = m_petRewardSetup.godrays.GetComponent<GodRaysFXFast>();
-			if(godraysFX != null) {
-				godraysFX.StartFX(m_currentReward.rarity);
-			}
+			m_petRewardSetup.godrays.gameObject.SetActive(true);
+			m_petRewardSetup.godrays.Tint(UIConstants.GetRarityColor(m_currentReward.rarity));
 
 			// Show with some delay to sync with pet's animation
 			seq.Insert(0.15f, m_petRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
@@ -441,7 +439,7 @@ public class RewardSceneController : MonoBehaviour {
 
 			// Show godrays
 			if(m_currentRewardSetup.godrays != null) {
-				m_currentRewardSetup.godrays.SetActive(true);
+				m_currentRewardSetup.godrays.gameObject.SetActive(true);
 			}
 		});
 

@@ -335,6 +335,11 @@ public class PhotoScreenController : MonoBehaviour {
 				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
 				RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
 				currentMode.dragControl.target = sceneController.currentRewardSetup.view.transform;
+
+				// Disable godrays for photo!
+				if(sceneController.currentRewardSetup.godrays != null) {
+					sceneController.currentRewardSetup.godrays.gameObject.SetActive(false);
+				}
 			} break;
 		}
 
@@ -357,6 +362,16 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Re-enable camera snap point so we're able to zoom!
 		InstanceManager.menuSceneController.screensController.currentCameraSnapPoint.enabled = true;
+
+		// Restore rarity godrays!
+		if(m_mode == Mode.EGG_REWARD) {
+			MenuSceneController menuController = InstanceManager.menuSceneController;
+			MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+			RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
+			if(sceneController.currentRewardSetup.godrays != null) {
+				sceneController.currentRewardSetup.godrays.gameObject.SetActive(true);
+			}
+		}
 	}
 
 	/// <summary>

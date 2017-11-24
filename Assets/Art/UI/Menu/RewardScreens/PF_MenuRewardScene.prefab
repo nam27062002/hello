@@ -1553,6 +1553,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4902053519465848}
+  - component: {fileID: 114267259379995216}
   - component: {fileID: 114141363881503280}
   m_Layer: 0
   m_Name: PS_ShinyGodrays
@@ -4448,7 +4449,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1907290063566116}
-  m_LocalRotation: {x: 0.8402499, y: 0.018068556, z: -0.54177284, w: -0.011650381}
+  m_LocalRotation: {x: 0.84025, y: 0.018068558, z: -0.5417729, w: -0.011650382}
   m_LocalPosition: {x: -0.024072582, y: -0.00015581203, z: 0.018128952}
   m_LocalScale: {x: 1.1354501, y: 1.1354501, z: 1.1354499}
   m_Children: []
@@ -4500,7 +4501,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1710207856916722}
-  m_LocalRotation: {x: 0.25802234, y: -0.5127111, z: -0.15884829, w: 0.8033174}
+  m_LocalRotation: {x: 0.25802237, y: -0.51271117, z: -0.1588483, w: 0.80331755}
   m_LocalPosition: {x: -0.026009595, y: 0.010239073, z: -0.013776843}
   m_LocalScale: {x: 1.1354499, y: 1.1354499, z: 1.13545}
   m_Children: []
@@ -5218,7 +5219,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1097109676128852}
-  m_LocalRotation: {x: -0.36896932, y: -0.5714355, z: -0.50969434, w: 0.5268157}
+  m_LocalRotation: {x: -0.36896935, y: -0.5714356, z: -0.5096944, w: 0.5268158}
   m_LocalPosition: {x: -0.015113326, y: 0.015996514, z: -0.0076852157}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
   m_Children: []
@@ -6554,7 +6555,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1639404563642132}
-  m_LocalRotation: {x: 0.62623465, y: -0.32521963, z: -0.60318375, w: 0.3717952}
+  m_LocalRotation: {x: 0.6262347, y: -0.32521966, z: -0.6031838, w: 0.37179524}
   m_LocalPosition: {x: -0.007880735, y: 0.019134082, z: 0.010367875}
   m_LocalScale: {x: 1.1354499, y: 1.1354501, z: 1.1354499}
   m_Children: []
@@ -7500,6 +7501,20 @@ MonoBehaviour:
   livePreview: 1
   drawGizmos: 1
   gizmoColor: {r: 0, g: 0.751724, b: 1, a: 0.49803922}
+--- !u!114 &114267259379995216
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1401236599669094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad88bb5a6cff4fbea16fb2618268ecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_raysPS: {fileID: 198840318870090100}
+  m_glowPS: {fileID: 198481119957486360}
+  m_sparksPS: {fileID: 198944477429806044}
 --- !u!114 &114276149044951966
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7560,25 +7575,25 @@ MonoBehaviour:
     openFX: {fileID: 198876547914733980}
   m_petRewardSetup:
     view: {fileID: 1010872003196006}
-    godrays: {fileID: 1401236599669094}
+    godrays: {fileID: 114267259379995216}
     sfx: 
   m_hcRewardSetup:
     view: {fileID: 1896801055334026}
-    godrays: {fileID: 1401236599669094}
+    godrays: {fileID: 0}
     sfx: 
   m_scRewardSetup:
     view: {fileID: 1052990268597014}
-    godrays: {fileID: 1401236599669094}
+    godrays: {fileID: 0}
     sfx: 
   m_goldenFragmentsRewardsSetup:
   - view: {fileID: 1689973704954644}
-    godrays: {fileID: 1401236599669094}
+    godrays: {fileID: 114267259379995216}
     sfx: 
   - view: {fileID: 1436580472454840}
-    godrays: {fileID: 1401236599669094}
+    godrays: {fileID: 114267259379995216}
     sfx: 
   - view: {fileID: 1370955881466514}
-    godrays: {fileID: 1401236599669094}
+    godrays: {fileID: 114267259379995216}
     sfx: 
   m_goldenFragmentsSwapFX: {fileID: 198876547914733980}
   m_tapFXPool: {fileID: 4053976374167758}
@@ -81949,7 +81964,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 129701988
+  randomSeed: -1544906111
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -143311,7 +143326,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 195613468
+  randomSeed: 422666416
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -167966,7 +167981,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1747054811
+  randomSeed: -2061220905
   InitialModule:
     serializedVersion: 3
     enabled: 1
