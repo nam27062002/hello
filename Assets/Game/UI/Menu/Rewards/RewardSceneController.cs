@@ -282,13 +282,11 @@ public class RewardSceneController : MonoBehaviour {
 			// Assume we can do it (no checks)
 			// Activate egg
 			m_eggView.gameObject.SetActive(true);
-
-			// [AOC] TODO!! Some awesome FX!!
-			m_eggView.transform.DOScale(0f, 0.5f).From().SetEase(Ease.OutElastic);
 		}
 
 		// Trigger UI animation
-		UbiBCN.CoroutineManager.DelayedCall(() => { m_rewardInfoUI.InitAndAnimate(_eggReward); }, 0.25f, false);
+		float duration = (_eggReward.sku == Egg.SKU_GOLDEN_EGG) ? 3.5f : 0.25f;
+		UbiBCN.CoroutineManager.DelayedCall(() => { m_rewardInfoUI.InitAndAnimate(_eggReward); }, duration, false);
 	}
 
 	/// <summary>

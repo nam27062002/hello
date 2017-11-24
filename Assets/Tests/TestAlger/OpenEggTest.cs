@@ -165,9 +165,6 @@ public class OpenEggTest : MonoBehaviour {
 			// Assume we can do it (no checks)
 			// Activate egg
 			m_eggView.gameObject.SetActive(true);
-
-			// [AOC] TODO!! Some awesome FX!!
-			m_eggView.transform.DOScale(0f, 0.5f).From().SetEase(Ease.OutElastic);
 		}
 	}
 
