@@ -121,12 +121,26 @@ public class HDTrackingManagerImp : HDTrackingManager
 		UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(value);
 #endif
 	}
-
-    private void SaveOfflineUnsentEvents()
-    {        
-#if !UNITY_EDITOR		
-        DNAManager.SharedInstance.SaveOfflineUnsentEvents();		
+    
+    private bool IsSaveOfflineUnsentEventsEnabled
+    {
+        get
+        {
+#if UNITY_EDITOR
+            // Disabled in Editor because it causes a crash on Mac
+            return false;
+#else
+            // Disabled because a bug related to this feature freezing the game has been reported in M&M
+            return false;
 #endif
+        }
+    }
+    private void SaveOfflineUnsentEvents()
+    {
+        if (IsSaveOfflineUnsentEventsEnabled)
+        {
+            DNAManager.SharedInstance.SaveOfflineUnsentEvents();		
+        }
     }
 
     private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
@@ -941,7 +955,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
-    #endregion
+#endregion
 
 #region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
