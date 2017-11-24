@@ -104,24 +104,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                         }
                     });
                 }
-                break;           
-
-            case EState.WaitingToApplyServerResponse:
-                if (Server_QualitySettingsJSONToApply == null)
-                {
-                    LogError("JSON received from server can't be null");
-                    State = EState.Done;
-                }
-                else if (ISApplyFeatureSettingsAllowed())
-                {                
-					if (IsDebugEnabled)
-						Log("Applying settings from server");
-				
-                    // Content configuration for that device and server configuration
-                    SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), Server_QualitySettingsJSONToApply);                    
-                    State = EState.Done;
-                }
-                break;            
+                break;           			           
         }  
         
         // Checks if the client has been told to upload the settings calculated by the client. It's not been implemented as a state because we want this upload
@@ -163,8 +146,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         WaitingForRules,                        // Waiting for rules to be loaded
         WaitingToCheckConnection,               // Time to wait before checking if there's connection
         CheckingConnection,                     // Checks whether or not there's connection        
-        WaitingForServerResponse,               // Waiting for the response with the quality settings information from server 
-        WaitingToApplyServerResponse,           // Waiting for an appropriate moment to apply the quality settings received from server        
+        WaitingForServerResponse,               // Waiting for the response with the quality settings information from server               
         Done                                    // No more stuff has to be done once server quality settings have been applied
     }
     
@@ -194,15 +176,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private float SERVER_TIME_TO_WAIT_FOR_LOGIN_WHEN_TOLD_TO_UPLOAD = 90f;    
 
     private float Server_TimeToWaitToUploadSettings { get; set; }
-
-    /// <summary>
-    /// JSON with the quality settings received from the server to be applied
-    /// </summary>
-    private JSONNode Server_QualitySettingsJSONToApply { get; set; }
-   
+	    
     private void Server_Reset()
-    {
-        Server_QualitySettingsJSONToApply = null;
+    {       
         Server_ResetUploadQualitySettings();
     }
 
@@ -218,13 +194,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             if (error == null)
             {
-                // If there's no error then we need to wait for the right moment to apply the quality settings received from server
+                // Quality settings received from server is not applied during this run because it can be expensive or tool late to be applied. 
+				// Instead it's stored in cache so it can be applied next time the user launches the application
                 string qualitySettings = response["response"] as string;                
                 if (qualitySettings != null)
                 {                    
-					CacheServerManager.SharedInstance.SetVariable(CACHE_SERVER_KEY, qualitySettings);
-                    JSONNode json = JSONNode.Parse(qualitySettings);
-                    Server_QualitySettingsJSONToApply = FormatJSON(json);                    
+					CacheServerManager.SharedInstance.SetVariable(CACHE_SERVER_KEY, qualitySettings);                                       
                 }
 
                 // If there's no data then we need to upload the profile calculated to the server when as long as the user logs in
@@ -234,14 +209,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     Server_PrepareUploadQualitySettings();
                 }
 
-                if (Server_QualitySettingsJSONToApply == null)
-                {
-                    State = EState.Done;
-                }
-                else
-                {
-                    State = EState.WaitingToApplyServerResponse;                    
-                }
+				State = EState.Done;                
             }
             else
             {
@@ -599,12 +567,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         Device_CurrentFeatureSettings = CreateFeatureSettings();
 
-		JSONNode serverJSON = Server_QualitySettingsJSONToApply;
-
-		if(IsDebugEnabled)
-			Log("Rules_OnLoaded settings from server " + ((serverJSON == null) ? "null" : serverJSON.ToString())); 
-				
-		if (serverJSON == null && CacheServerManager.SharedInstance.HasKey(CACHE_SERVER_KEY)) 
+		// Some Quality settings received from server in a previous session might be stored in cache
+		JSONNode serverJSON = null;
+		if (CacheServerManager.SharedInstance.HasKey(CACHE_SERVER_KEY)) 
 		{
 			string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_KEY);
 			serverJSON = JSON.Parse(value);
@@ -854,18 +819,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         //Debug.Log(json);
     }
 
-    private int CurrentQualityIndex { get; set; }
-
-    /// <summary>
-    /// Returns whether or not this is a good moment to apply feature settings as it can change quality settings, which migh have an impact on performance. Typically we don't want to apply 
-    /// them when ingame.
-    /// </summary>
-    /// <returns></returns>
-    private bool ISApplyFeatureSettingsAllowed()
-    {
-        // It's not allowed to changing feature settings ingame because it might cause a halt
-        return !FlowManager.IsInGameScene();
-    }
+    private int CurrentQualityIndex { get; set; }	   
 
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
