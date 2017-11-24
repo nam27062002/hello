@@ -8,9 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_GoldenFragment
   m_Shader: {fileID: 4800000, guid: 6a206d3664d59fc4e912085ba47c4b98, type: 3}
-  m_ShaderKeywords: EMISSIVE GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
-    GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
-    REFLECTION
+  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
+    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF REFLECTION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -102,7 +101,7 @@ Material:
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 0
     - _EnableCutoff: 0
-    - _EnableEmissive: 1
+    - _EnableEmissive: 0
     - _EnableFog: 1
     - _EnableNormalMap: 0
     - _EnableOpaqueAlpha: 1
@@ -121,11 +120,11 @@ Material:
     - _NormalStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 1
+    - _ReflectionAmount: 0.5
     - _RimFactor: 6.36
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 0
-    - _SpecularPower: 117.1
+    - _SpecularPower: 120
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
