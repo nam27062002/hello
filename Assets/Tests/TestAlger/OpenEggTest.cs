@@ -208,6 +208,30 @@ public class OpenEggTest : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Restarts the given FX tuning it with current reward rarity.
+	/// </summary>
+	/// <param name="_fx">FX to be triggered. Can be <c>null</c>.</param>
+	private void TriggerFX(ParticleSystem _fx) {
+		// Check validity
+		if(_fx == null) return;
+
+		// Make sure object is active
+		_fx.gameObject.SetActive(true);
+
+		// Reset particle system
+		_fx.Stop(true);
+		_fx.Clear();
+		_fx.Play(true);
+
+		// If the FX has an animator assigned, setup and trigger animation!
+		Animator anim = _fx.GetComponent<Animator>();
+		if(anim != null) {
+			anim.SetInteger("rarity", (int)m_currentReward.rarity);
+			anim.SetTrigger("start");
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// ANIMATIONS														//
 	//------------------------------------------------------------------//
@@ -222,12 +246,7 @@ public class OpenEggTest : MonoBehaviour {
 		m_eggView.gameObject.SetActive(false);
 
 		// Trigger the proper FX based on reward rarity
-		ParticleSystem openFX = m_rarityFXSetup[(int)m_currentReward.rarity].openFX;
-		if(openFX != null) {
-			openFX.gameObject.SetActive(true);
-			openFX.Clear();
-			openFX.Play(true);
-		}
+		TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].openFX);
 
 		// Program reward animation
 		UbiBCN.CoroutineManager.DelayedCall(OnEggExplosionAnimFinished, 0.35f, false);
@@ -244,22 +263,9 @@ public class OpenEggTest : MonoBehaviour {
 	private void OnEggTap(EggView _egg, int _tapCount) {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
-			// Activate FX
-			ParticleSystem tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFX;
-			if(tapFX != null) {
-				tapFX.gameObject.SetActive(true);
-				tapFX.Stop(true);
-				tapFX.Clear();
-				tapFX.Play(true);
-			}
-
-			tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic;
-			if(tapFX != null) {
-				tapFX.gameObject.SetActive(true);
-				tapFX.Stop(true);
-				tapFX.Clear();
-				tapFX.Play(true);
-			}
+			// Activate tap FX, both static and dynamic
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFX);
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic);
 		}
 	}
 

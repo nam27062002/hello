@@ -854,6 +854,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void ApplyPhysicQuality(float deviceRating)
     {
+        /*
         float startValue = Rules_PhysicsMaxRating;
         if (deviceRating < startValue)
         {
@@ -861,6 +862,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             float fixedTimeStep = Mathf.Lerp(0.025f, 0.01666666f, perc);
             Time.fixedDeltaTime = fixedTimeStep;
         }
+        */
     }
 
     private JSONNode FormatJSON(JSONNode json)
