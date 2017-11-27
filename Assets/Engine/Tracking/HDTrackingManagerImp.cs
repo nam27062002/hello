@@ -125,13 +125,12 @@ public class HDTrackingManagerImp : HDTrackingManager
     private bool IsSaveOfflineUnsentEventsEnabled
     {
         get
-        {
+        {            
 #if UNITY_EDITOR
             // Disabled in Editor because it causes a crash on Mac
             return false;
 #else
-            // Disabled because a bug related to this feature freezing the game has been reported in M&M
-            return false;
+            return FeatureSettingsManager.instance.IsTrackingOfflineCachedEnabled;
 #endif
         }
     }
