@@ -54,6 +54,8 @@ public class OpenEggTest : MonoBehaviour {
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)EggReward.Rarity.COUNT];
+	[Space]
+	[SerializeField] private float m_newEggDelay = 1f;
 
 	private EggView m_eggView = null;
 	public EggView eggView {
@@ -290,6 +292,6 @@ public class OpenEggTest : MonoBehaviour {
 	/// </summary>
 	private void OnEggExplosionAnimFinished() {
 		// Open the reward inside the egg, which has been pushed into the stack by the egg view
-		OpenReward();
+		UbiBCN.CoroutineManager.DelayedCall(OpenReward, m_newEggDelay);
 	}
 }
