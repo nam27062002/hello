@@ -38,7 +38,7 @@ namespace AI {
 
 			protected override void OnUpdate()
 			{
-				if ( m_timer <= Time.time && m_spawner.CanRespawn())
+				if ( m_timer <= Time.time && m_spawner.HasAvailableEntities())
 				{
 					m_timer =  Time.time + m_data.m_timeSecondAction.GetRandom();
 					m_spawner.RamdomizeEntity();

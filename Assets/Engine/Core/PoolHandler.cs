@@ -48,4 +48,13 @@ public class PoolHandler {
 			Debug.LogError("[Pool] invalid pool handler");
 		}
 	}
+
+	public bool HasAvailableInstances()	{
+		if ( m_isValid )
+		{
+			return m_pool.canGrow || m_pool.NumFreeObjects() > 0;
+		}
+		return false;
+	}
+
 }
