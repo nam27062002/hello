@@ -310,6 +310,13 @@ namespace TMPro
             popupCanvas.overrideSorting = true;
             popupCanvas.sortingOrder = 30000;
 
+			// [AOC] FIX!! Starting at Unity 5.6, newly created Canvases don't include several shader parameters required by TMPro
+			#if UNITY_5_6_OR_NEWER
+			popupCanvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord1;
+			popupCanvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.Normal;
+			popupCanvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.Tangent;
+			#endif
+
             GetOrAddComponent<GraphicRaycaster>(templateGo);
             GetOrAddComponent<CanvasGroup>(templateGo);
             templateGo.SetActive(false);
