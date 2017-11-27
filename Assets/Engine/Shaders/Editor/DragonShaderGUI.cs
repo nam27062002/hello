@@ -65,8 +65,10 @@ internal class DragonShaderGUI : ShaderGUI
 
         readonly public static string enableFresnelText = "Enable Fresnel";
         readonly public static string enableOpaqueFresnelText = "Enable Opaque Fresnel";
+        readonly public static string enableBlendFresnelText = "Enable blend Fresnel";
         readonly public static string fresnelPowerText = "Fresnel Power";
         readonly public static string fresnelColorText = "Fresnel Color";
+        readonly public static string fresnelAdditiveInfoText = "By default fresnel light is applied by additive. You can change it to alpha blend with the below option.";
 
         readonly public static string additionalFXLayerText = "Additional FX layer";
         readonly public static string reflectionMapText = "Reflection Texture";
@@ -124,6 +126,7 @@ internal class DragonShaderGUI : ShaderGUI
 
     MaterialProperty mp_EnableCutoff;
     MaterialProperty mp_EnableFresnel;
+    MaterialProperty mp_EnableBlendFresnel;
     MaterialProperty mp_EnableSilhouette;
     MaterialProperty mp_EnableOpaqueFresnel;
     MaterialProperty mp_EnableOpaqueSpecular;
@@ -203,6 +206,7 @@ internal class DragonShaderGUI : ShaderGUI
         mp_EnableFresnel = FindProperty("_EnableFresnel", props);
         mp_EnableSilhouette = FindProperty("_EnableSilhouette", props);
         mp_EnableOpaqueFresnel = FindProperty("_EnableOpaqueFresnel", props);
+        mp_EnableBlendFresnel = FindProperty("_EnableBlendFresnel", props);
         mp_EnableOpaqueSpecular = FindProperty("_EnableOpaqueSpecular", props);
 
         /// Enum Material Properties
@@ -269,6 +273,8 @@ internal class DragonShaderGUI : ShaderGUI
         {
             materialEditor.ShaderProperty(mp_fresnel, Styles.fresnelPowerText);
             materialEditor.ShaderProperty(mp_fresnelColor, Styles.fresnelColorText);
+            EditorGUILayout.HelpBox(Styles.fresnelAdditiveInfoText, MessageType.Info);
+            materialEditor.ShaderProperty(mp_EnableBlendFresnel, Styles.enableBlendFresnelText);
             materialEditor.ShaderProperty(mp_EnableOpaqueFresnel, Styles.enableOpaqueFresnelText);
         }
 
@@ -429,11 +435,11 @@ internal class DragonShaderGUI : ShaderGUI
                 //                material.renderQueue = 3000;
                 material.SetFloat("_ZWrite", 0.0f);
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
-                SetKeyword(material, kw_cutOff, false);
-                SetKeyword(material, kw_doubleSided, false);
+                SetKeyword(material, kw_cutOff, true);
+                SetKeyword(material, kw_doubleSided, true);
                 SetKeyword(material, kw_opaqueAlpha, false);
-                material.SetFloat("_EnableCutoff", 0.0f);
-                material.SetFloat("_EnableDoublesided", 0.0f);
+                material.SetFloat("_EnableCutoff", 1.0f);
+                material.SetFloat("_EnableDoublesided", 1.0f);
                 Debug.Log("Blend mode transparent");
                 break;
 
