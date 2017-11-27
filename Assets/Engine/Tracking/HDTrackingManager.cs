@@ -7,15 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HDTrackingManager
-{
-    // Singleton ///////////////////////////////////////////////////////////
-#if UNITY_EDITOR
-    // Disabled on editor because ubimobile services crashes on editor when platform is set to iOS
-    private static bool IsEnabled = true;
-#else
-    private static bool IsEnabled = true;
-#endif
-
+{   
     private static HDTrackingManager smInstance = null;
 
     public static HDTrackingManager Instance
@@ -24,7 +16,7 @@ public class HDTrackingManager
         {
             if (smInstance == null)
             {
-                if (IsEnabled)
+                if (FeatureSettingsManager.instance.IsTrackingEnabled)                
                 {
                     smInstance = new HDTrackingManagerImp();
                 }

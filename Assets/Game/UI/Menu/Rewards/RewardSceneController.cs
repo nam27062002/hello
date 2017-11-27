@@ -282,13 +282,11 @@ public class RewardSceneController : MonoBehaviour {
 			// Assume we can do it (no checks)
 			// Activate egg
 			m_eggView.gameObject.SetActive(true);
-
-			// [AOC] TODO!! Some awesome FX!!
-			m_eggView.transform.DOScale(0f, 0.5f).From().SetEase(Ease.OutElastic);
 		}
 
 		// Trigger UI animation
-		UbiBCN.CoroutineManager.DelayedCall(() => { m_rewardInfoUI.InitAndAnimate(_eggReward); }, 0.25f, false);
+		float duration = (_eggReward.sku == Egg.SKU_GOLDEN_EGG) ? 3.5f : 0.25f;
+		UbiBCN.CoroutineManager.DelayedCall(() => { m_rewardInfoUI.InitAndAnimate(_eggReward); }, duration, false);
 	}
 
 	/// <summary>
@@ -342,10 +340,7 @@ public class RewardSceneController : MonoBehaviour {
 			// Show VFX to cover the swap
 			// We want it to launch a bit before doing the swap. To do so, use a combination of InserCallback() with the sequence's current duration.
 			seq.InsertCallback(seq.Duration() - 0.15f, () => {
-				if(m_goldenFragmentsSwapFX != null) {
-					m_goldenFragmentsSwapFX.Clear();
-					m_goldenFragmentsSwapFX.Play(true);
-				}
+				TriggerFX(m_goldenFragmentsSwapFX);
 			});
 
 			// Swap
@@ -543,12 +538,7 @@ public class RewardSceneController : MonoBehaviour {
 		m_eggView.gameObject.SetActive(false);
 
 		// Trigger the proper FX based on reward rarity
-		ParticleSystem openFX = m_rarityFXSetup[(int)m_currentReward.rarity].openFX;
-		if(openFX != null) {
-			openFX.gameObject.SetActive(true);
-			openFX.Clear();
-			openFX.Play(true);
-		}
+		TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].openFX);
 
 		// Trigger SFX
 		AudioController.Play(m_eggExplosionSFX);
@@ -578,6 +568,30 @@ public class RewardSceneController : MonoBehaviour {
 		m_dragController.gameObject.SetActive(_target != null);
 	}
 
+	/// <summary>
+	/// Restarts the given FX tuning it with current reward rarity.
+	/// </summary>
+	/// <param name="_fx">FX to be triggered. Can be <c>null</c>.</param>
+	private void TriggerFX(ParticleSystem _fx) {
+		// Check validity
+		if(_fx == null) return;
+
+		// Make sure object is active
+		_fx.gameObject.SetActive(true);
+
+		// Reset particle system
+		_fx.Stop(true);
+		_fx.Clear();
+		_fx.Play(true);
+
+		// If the FX has an animator assigned, setup and trigger animation!
+		Animator anim = _fx.GetComponent<Animator>();
+		if(anim != null) {
+			anim.SetInteger("rarity", (int)m_currentReward.rarity);
+			anim.SetTrigger("start");
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -589,22 +603,9 @@ public class RewardSceneController : MonoBehaviour {
 	private void OnEggTap(EggView _egg, int _tapCount) {
 		// Show the right particle effect based on rarity!
 		if(_tapCount == 1 && _egg == m_eggView) {
-			// Activate FX
-			ParticleSystem tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFX;
-			if(tapFX != null) {
-				tapFX.gameObject.SetActive(true);
-				tapFX.Stop(true);
-				tapFX.Clear();
-				tapFX.Play(true);
-			}
-
-			tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic;
-			if(tapFX != null) {
-				tapFX.gameObject.SetActive(true);
-				tapFX.Stop(true);
-				tapFX.Clear();
-				tapFX.Play(true);
-			}
+			// Activate tap FX, both static and dynamic
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFX);
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic);
 
 			// Hide UI
 			m_rewardInfoUI.SetRewardType(string.Empty);

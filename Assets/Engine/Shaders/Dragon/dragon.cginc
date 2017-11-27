@@ -11,7 +11,6 @@ struct v2f {
 	float3 tangentWorld : TEXCOORD2;
 	float3 binormalWorld : TEXCOORD4;
 #endif
-
 	//		        fixed3 posWorld : TEXCOORD5;
 	fixed3 viewDir : TEXCOORD5;
 };
@@ -189,8 +188,17 @@ fixed4 frag(v2f i) : SV_Target
 // Fresnel
 #ifdef FRESNEL
 	float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
-	col.xyz += fresnel * _FresnelColor.xyz;
+#ifdef BLENDFRESNEL
+	col.xyz = lerp(col.xyz, _FresnelColor.xyz, fresnel * _FresnelColor.w);
+#else
+	col.xyz = lerp(col.xyz, col.xyz + _FresnelColor.xyz, fresnel * _FresnelColor.w);
 #endif
+//	col.xyz += fresnel * _FresnelColor.xyz;
+#endif
+
+
+// Ambient
+//	col.xyz += unity_LightColor[0];
 
 	// Opaque
 #ifdef OPAQUEALPHA
@@ -198,15 +206,18 @@ fixed4 frag(v2f i) : SV_Target
 
 #else
 //	col.w = 0.0f;
-
+	float opaqueLight = 1.0;
 #if defined(FRESNEL) && defined(OPAQUEFRESNEL)
-	col.w += fresnel;
+	opaqueLight = fresnel;
+//	col.w += fresnel;
 #endif
 
 #if defined(SPECULAR) && defined(OPAQUESPECULAR)
-	col.w += specularLight;
+	opaqueLight = max(opaqueLight, specularLight);
+//	col.w += specularLight;
 #endif
 
+	col.w = min(col.w, opaqueLight);
 	col.w *= _Tint.w;
 #endif
 

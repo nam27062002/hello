@@ -115,18 +115,31 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
 	private void SetRetrySessionCreationIsEnabled(bool value)
-	{
+	{		
 		// UbiservicesManager is not called from the editor because it doesn’t work on Mac
 #if !UNITY_EDITOR
-		UbiservicesManager.Instance.SetRetrySessionCreationIsEnabled(value);
+		UbiservicesManager.SharedInstance.SetStartSessionRetryBehaviour(value);
 #endif
 	}
-
-    private void SaveOfflineUnsentEvents()
-    {        
-#if !UNITY_EDITOR		
-        DNAManager.SharedInstance.SaveOfflineUnsentEvents();		
+    
+    private bool IsSaveOfflineUnsentEventsEnabled
+    {
+        get
+        {            
+#if UNITY_EDITOR
+            // Disabled in Editor because it causes a crash on Mac
+            return false;
+#else
+            return FeatureSettingsManager.instance.IsTrackingOfflineCachedEnabled;
 #endif
+        }
+    }
+    private void SaveOfflineUnsentEvents()
+    {
+        if (IsSaveOfflineUnsentEventsEnabled)
+        {
+            DNAManager.SharedInstance.SaveOfflineUnsentEvents();		
+        }
     }
 
     private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) 
@@ -941,7 +954,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
-    #endregion
+#endregion
 
 #region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";

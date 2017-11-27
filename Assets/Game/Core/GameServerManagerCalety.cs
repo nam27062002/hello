@@ -417,10 +417,15 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.SetQualitySettings, parameters, callback);
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public override void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {
+    public override void GetGameSettings(ServerCallback callback)
+    {
+        Commands_EnqueueCommand(ECommand.GetGameSettings, null, callback);
+    }    
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("silent", silent.ToString());
 		parameters.Add("playTestUserId", playTestUserId);
@@ -515,7 +520,8 @@ public class GameServerManagerCalety : GameServerManager {
 		UpdateSaveVersion,
 		GetQualitySettings,
 		SetQualitySettings,
-		PlayTest,
+        GetGameSettings,
+        PlayTest,
 
 		GlobalEvents_TMPCustomizer,
 		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
@@ -770,7 +776,12 @@ public class GameServerManagerCalety : GameServerManager {
 					}
 				} break;
 
-				case ECommand.PlayTest: {
+                case ECommand.GetGameSettings: {                    
+                    Command_SendCommand(COMMAND_GET_GAME_SETTINGS);
+                }
+                break;
+
+                case ECommand.PlayTest: {
 					bool silent = (parameters["silent"].ToLower() == "true");
 					string cmd = (silent) ? COMMAND_PLAYTEST_A : COMMAND_PLAYTEST_B;
 
@@ -853,7 +864,8 @@ public class GameServerManagerCalety : GameServerManager {
     /// for the server to respond.
     /// </summary>        
     private bool Command_IsAnonymous(string commandName) {
-        return commandName == COMMAND_PING || commandName == COMMAND_TIME || commandName == COMMAND_GET_QUALITY_SETTINGS;
+        return commandName == COMMAND_PING || commandName == COMMAND_TIME || 
+               commandName == COMMAND_GET_QUALITY_SETTINGS || commandName == COMMAND_GET_GAME_SETTINGS;
     }
 
     /// <summary>
@@ -1121,7 +1133,8 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_SET_PERSISTENCE = "/api/persistence/set";
 	private const string COMMAND_GET_QUALITY_SETTINGS = "/api/aquality/settings";
 	private const string COMMAND_SET_QUALITY_SETTINGS = "/api/quality/upload";
-	private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
+    private const string COMMAND_GET_GAME_SETTINGS = "/api/settings/get";
+    private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
 
 	private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
@@ -1150,7 +1163,8 @@ public class GameServerManagerCalety : GameServerManager {
 		nm.RegistryEndPoint(COMMAND_SET_PERSISTENCE, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_SET_QUALITY_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-		nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_GET_GAME_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);

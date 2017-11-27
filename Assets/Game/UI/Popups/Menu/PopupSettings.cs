@@ -29,6 +29,7 @@ public class PopupSettings : MonoBehaviour {
     private GameObject m_3dTouch;
 
 	[SerializeField] private Localizer m_versionText = null;
+	[SerializeField] private Localizer m_userIdText = null;
 
     void Awake()
     {
@@ -50,10 +51,19 @@ public class PopupSettings : MonoBehaviour {
 		// Set version number
 		m_versionText.Localize(m_versionText.tid, GameSettings.internalVersion.ToString() + " ("+ ServerManager.SharedInstance.GetRevisionVersion() +")");
 
+		// Subscribe to popup events
 		PopupController controller = GetComponent<PopupController>();
+		controller.OnOpenPreAnimation.AddListener(OnOpenPreAnimation);
 		controller.OnOpenPostAnimation.AddListener( OnOpenAnimation );
 		controller.OnClosePreAnimation.AddListener( OnCloseAnimation );
     }
+
+	private void OnOpenPreAnimation() {
+		// Refresh user ID (might have changed from the last time we opened the popup, so refresh it every time
+		string uid = GameSessionManager.SharedInstance.GetUID();
+		m_userIdText.gameObject.SetActive(!string.IsNullOrEmpty(uid));	// Dont show if id not initialized (we never ever did a successful auth)
+		m_userIdText.Localize(m_userIdText.tid, uid);
+	}
 
     private void OnOpenAnimation()
     {
