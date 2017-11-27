@@ -143,7 +143,7 @@ public class CPGachaTest : MonoBehaviour {
 				// Add poption
 				m_petSkuDropdown.options.Add(
 					new TMP_Dropdown.OptionData(
-						m_petDefs[i].GetLocalized("tidName")
+						m_petDefs[i].sku + " (" + m_petDefs[i].GetLocalized("tidName") + ")"
 					)
 				);
 

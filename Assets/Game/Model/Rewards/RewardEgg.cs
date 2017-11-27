@@ -119,7 +119,7 @@ namespace Metagame {
 					// Remove all hidden and event only pets
 					for( int i = petDefs.Count - 1; i >= 0; --i )
 					{
-						if ( petDefs[i].GetAsBool("hidden") || petDefs[i].GetAsBool("eventOnly") )
+						if ( petDefs[i].GetAsBool("hidden") || petDefs[i].GetAsBool("notInGatcha") )
 						{
 							petDefs.RemoveAt(i);
 						}
