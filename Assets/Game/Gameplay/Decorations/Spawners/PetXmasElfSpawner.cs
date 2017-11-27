@@ -69,10 +69,16 @@ public class PetXmasElfSpawner : AbstractSpawner {
 	protected override void OnInitialize() {      
 		m_poolHandlers = new PoolHandler[m_possibleSpawners.Count];
 
+		CreatePool();
 
+		// create a projectile from resources (by name) and save it into pool
+		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, CreatePool);
+
+	}
+
+	void CreatePool() {
 		for (int i = 0; i<m_possibleSpawners.Count; i++) {
 			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], IEntity.EntityPrefabsPath, 1);
-			m_poolHandlers[i] = PoolManager.RequestPool(m_possibleSpawners[i], IEntity.EntityPrefabsPath, 1);
 		}
 	}
 
