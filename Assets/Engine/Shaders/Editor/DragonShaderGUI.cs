@@ -264,6 +264,9 @@ internal class DragonShaderGUI : ShaderGUI
         if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
         {
             materialEditor.ShaderProperty(mp_specExponent, Styles.specularPowerText);
+            RotationDrawer.setColor(mp_secondLightColor.colorValue);
+//            RotationDrawer.setTargetPoint(mp_secondLightDir.vectorValue.x, mp_secondLightDir.vectorValue.y);
+            RotationDrawer.setSpecularPow(mp_specExponent.floatValue);
             materialEditor.ShaderProperty(mp_secondLightDir, Styles.secondLightDirectionText);
             materialEditor.ShaderProperty(mp_secondLightColor, Styles.secondLightColorText);
             materialEditor.ShaderProperty(mp_EnableOpaqueSpecular, Styles.enableOpaqueSpecularText);

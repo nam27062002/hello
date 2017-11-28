@@ -283,6 +283,7 @@ GameObject:
   - component: {fileID: 4440453473812324}
   - component: {fileID: 95707947624072840}
   - component: {fileID: 114106178770971122}
+  - component: {fileID: 114761094255045190}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -1364,7 +1365,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"timeSecondAction":{"min":1,"max":2},"dataType":"AI.Behaviour.PetXmasElfGiftData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"timeSecondAction":{"min":10,"max":20},"dataType":"AI.Behaviour.PetXmasElfGiftData","editorFolded":false}]'
   m_databaseKey: PF_PetXmasElf_60
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1501,15 +1502,26 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_dragonStyleRotation: 0
-    m_faceDirection: 1
+    m_faceDirection: 0
     m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
+    m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
+--- !u!114 &114761094255045190
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1235256076072966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1

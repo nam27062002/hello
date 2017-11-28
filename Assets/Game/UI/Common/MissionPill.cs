@@ -227,11 +227,7 @@ public class MissionPill : MonoBehaviour {
 	/// <returns><c>true</c> if the user can pay to remove the mission with ads; otherwise, <c>false</c>.</returns>
 	private bool CanPayRemoveMissionWithAds()
 	{
-		if (Application.internetReachability == NetworkReachability.NotReachable)
-		{
-			return false;
-		}
-
+		bool checkVideoIsReady = true;
 		DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
         if (_def != null)
         {
@@ -246,12 +242,21 @@ public class MissionPill : MonoBehaviour {
 				}
 				if (UsersManager.currentUser.dailyRemoveMissionAdUses >= usesPerDay) 
 				{
-					return false;
+					checkVideoIsReady = false;
 				}
 			}
         }
+
+		bool ret = false;
+        if (checkVideoIsReady ) 
+        {
+			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || Application.internetReachability != NetworkReachability.NotReachable )	
+			{
+				ret = true;
+			}
+        }
        
-		return true;
+		return ret;
 	}
 
 	/// <summary>

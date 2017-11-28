@@ -14,7 +14,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", Range(0.1, 5.0)) = 1.0
 		_SpecularPower("Specular Power", float) = 3
-		_SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
+		[Rotation] _SpecularDir("Specular Dir", Vector) = (0,0,-1,0)
 	
 		_CutOff("Alpha cutoff threshold", Range(0.0, 1.0)) = 0.5
 
