@@ -70,6 +70,14 @@ public class SerializableDictionary<K,T> : ISerializationCallbackReceiver {
 		}
 	}
 
+	/// <summary>
+	/// Enumerator implementation to allow foreach looping this dictionary.
+	/// </summary>
+	/// <returns>The enumerator.</returns>
+	public Dictionary<K, T>.Enumerator GetEnumerator() {
+		return dict.GetEnumerator();
+	}
+
 	//------------------------------------------------------------------//
 	// ISerializationCallbackReceiver IMPLEMENTATION					//
 	//------------------------------------------------------------------//
