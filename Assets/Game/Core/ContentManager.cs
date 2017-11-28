@@ -65,11 +65,11 @@ public class ContentManager
     public static bool UseCachedAssetsLUTFromServer 
     {
         get
-        {
+        {                        
 #if UNITY_EDITOR
-            return false;            
+            return false;
 #else
-            return true;
+            return FeatureSettingsManager.instance.IsContentDeltasCachedEnabled;
 #endif
         }
     }
@@ -77,11 +77,11 @@ public class ContentManager
     public static bool UseDeltaContent
     {
         get
-        {
+        {                     
 #if UNITY_EDITOR
-            return false;            
+            return false;
 #else
-            return true;
+            return FeatureSettingsManager.instance.IsContentDeltasEnabled;
 #endif
         }
     }

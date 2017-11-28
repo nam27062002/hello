@@ -24,11 +24,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 {
     private DeviceQualityManager m_deviceQualityManager;
 
+    private bool m_isReady;
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
     /// <summary>
-    /// Inititalization.
+    /// Inititialization.
     /// </summary>
     private void Awake()
     {
@@ -46,12 +48,58 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         m_deviceQualityManager = new DeviceQualityManager();
 
+        m_isReady = false;
+
         InitDefaultValues();
 		UpdateRules();
     }
 
     private void InitDefaultValues()
-    {
+    {        
+        // Exceptionally some features need an early access (before rules are loaded, typically features related to content such as whether or not content deltas should be used).
+        // For those features we need to use the server settings cached if they exist
+        Device_CurrentFeatureSettings = CreateFeatureSettings();
+
+        // Some Quality settings received from server in a previous session might be stored in cache
+        JSONNode serverQualitySettingsJSON = null;
+        if (CacheServerManager.SharedInstance.HasKey(CACHE_SERVER_QUALITY_KEY))
+        {
+            string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_QUALITY_KEY);
+            serverQualitySettingsJSON = JSON.Parse(value);
+
+            if (IsDebugEnabled)
+            {
+                Log("Quality settings from server cached : " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString()));
+            }
+        }
+
+        // Some game settings received from server in a previous session might be stored in cache
+        JSONNode serverGameSettingsJSON = null;
+        if (CacheServerManager.SharedInstance.HasKey(CACHE_SERVER_GAME_KEY))
+        {
+            string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_GAME_KEY);
+            serverGameSettingsJSON = JSON.Parse(value);
+
+            if (IsDebugEnabled)
+            {
+                Log("Game settings from server cached : " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString()));
+            }
+        }
+
+        // The configuration received for the device from server has a bigger priority than the one retrieved from rules
+        if (serverQualitySettingsJSON != null)
+        {
+            serverQualitySettingsJSON = FormatJSON(serverQualitySettingsJSON);
+            Device_CurrentFeatureSettings.OverrideFromJSON(serverQualitySettingsJSON);
+        }
+
+        // The configuration received for the game from server has the biggest priority so it's the last one to be applied so it can override the values set by the other two configurations
+        if (serverGameSettingsJSON != null)
+        {
+            serverGameSettingsJSON = FormatJSON(serverGameSettingsJSON);
+            Device_CurrentFeatureSettings.OverrideFromJSON(serverGameSettingsJSON);
+        }
+
         IsFogOnDemandEnabled = !IsDebugEnabled;
     }
 
@@ -136,7 +184,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public bool IsReady()
     {
-        return Device_CurrentFeatureSettings != null;
+        return m_isReady;
     }
 
     #region state
@@ -546,6 +594,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void Rules_OnLoaded()
     {
+        m_isReady = true;
+
         m_deviceQualityManager.Profiles_Clear();
 
         DefinitionsManager defManager = DefinitionsManager.SharedInstance;
@@ -1144,6 +1194,22 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             // Disabled since it's a temporary tracking that is used only for play test
             return false;
+        }
+    }
+
+    public bool IsContentDeltasEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CONTENT_DELTAS);
+        }
+    }
+
+    public bool IsContentDeltasCachedEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CONTENT_DELTAS_CACHED);
         }
     }
 
