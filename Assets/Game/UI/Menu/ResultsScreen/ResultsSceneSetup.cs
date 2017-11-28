@@ -68,10 +68,6 @@ public class ResultsSceneSetup : MonoBehaviour {
 			{
 				m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
 				m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
-				if ( m_dragonSlot.dragonSku == "dragon_balrog")
-				{
-					m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
-				}
 				m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 			}
 
@@ -143,13 +139,10 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+		m_dragonSlot.dragonInstance.DisableMoves();
 		m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 		m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
 		m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
-		if ( m_dragonSlot.dragonSku == "dragon_balrog")
-		{
-			m_dragonSlot.dragonInstance.transform.Rotate(Vector3.up * -45);
-		}
 
 		// Trigger confetti anim
 		LaunchConfettiFX();
