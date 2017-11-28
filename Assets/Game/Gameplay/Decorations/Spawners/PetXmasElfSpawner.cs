@@ -3,203 +3,202 @@ using System.Collections;
 using System.Collections.Generic;
 using AI;
 
-public class PetXmasElfSpawner : AbstractSpawner {	
+public class PetXmasElfSpawner : MonoBehaviour, ISpawner {	
 
-	private enum LookAtVector {
-		Right = 0,
-		Left,
-		Forward,
-		Back
-	};
-
-	//-------------------------------------------------------------------
-	[SerializeField] private string m_entityPrefabStr;
-	private int m_entityPrefabIndex;
 	[SerializeField] private Transform m_spawnAtTransform;
-	[SerializeField] private bool m_mustBeChild = false;
-	[SerializeField] private LookAtVector m_lookAtVector;
-
-	private uint m_respawnCount;
-
-	//-------------------------------------------------------------------	
-	private IEntity m_operatorEntity;
-	public IEntity operatorEntity
-	{
-		get { return m_operatorEntity; }
-	}
-	private IMachine m_operator;
-	private Pilot m_operatorPilot;
-	public Pilot operatorPilot
-	{
-		get { return m_operatorPilot; }
-	}
-
 	public List<string> m_possibleSpawners;
 	private PoolHandler[] m_poolHandlers;
 
-    void Awake()
-    {
-        m_operator = null;
-        m_operatorPilot = null;
+	private string m_entityPrefabStr;
+	private int m_entityPrefabIndex;
+	private PoolHandler m_selectedPoolHandler;
+
+	struct EntityInfo
+	{
+		public Entity m_entity;
+		public int m_poolIndex;
+	}
+	List<EntityInfo> m_entityInfo;
+
+    //-------------------------------------------------------------------
+
+    protected  void Start() {
+		SpawnerManager.instance.Register(this, true);
+		m_entityInfo = new List<EntityInfo>();
     }
 
 	void OnDestroy() {
-		if ( ApplicationManager.IsAlive )
-		{
-			ForceRemoveEntities();
+		if (SpawnerManager.isInstanceCreated)
+			SpawnerManager.instance.Unregister(this, true);
+	}
+
+	public void Initialize() {
+		m_poolHandlers = new PoolHandler[m_possibleSpawners.Count];
+		CreatePool();
+		// create a projectile from resources (by name) and save it into pool
+		// Messenger.AddListener(GameEvents.GAME_AREA_ENTER, CreatePool);
+	}
+
+	public void Clear() {
+		ForceRemoveEntities();
+		gameObject.SetActive(false);
+	}
+
+	public void ForceRemoveEntities(){
+		for( int i = m_entityInfo.Count - 1; i >= 0; i-- ){
+			RemoveEntity(m_entityInfo[i].m_entity.gameObject, false);
 		}
 	}
-    //-------------------------------------------------------------------
 
-    //-------------------------------------------------------------------
-    // AbstractSpawner implementation
-    //-------------------------------------------------------------------	
-
-    private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
-    public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
-
-    protected override void OnStart() {
-	
-        // Progressive respawn disabled because it respawns only one instance and it's triggered by Catapult which is not prepared to loop until Respawn returns true
-        UseProgressiveRespawn = false;
-        UseSpawnManagerTree = false;
-        RegisterInSpawnerManager();
-    }
-
-	protected override void OnInitialize() {      
-		m_poolHandlers = new PoolHandler[m_possibleSpawners.Count];
-
-		CreatePool();
-
-		// create a projectile from resources (by name) and save it into pool
-		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, CreatePool);
-
+	public void ForceReset() {
+		ForceRemoveEntities();
+		Initialize();
 	}
 
 	void CreatePool() {
 		for (int i = 0; i<m_possibleSpawners.Count; i++) {
-			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], IEntity.EntityPrefabsPath, 1);
+			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], IEntity.EntityPrefabsPath, 2, false, false);
 		}
 	}
 
-    protected override uint GetMaxEntities() {
-        return 1;
+   
+    public bool HasAvailableEntities(){
+    	bool ret = false;
+		for( int i = 0; i<m_poolHandlers.Length && !ret; ++i ){
+			ret = m_poolHandlers[i].HasAvailableInstances();
+    	}
+    	return ret;
     }
 
-	public void RamdomizeEntity()
-    {
-		int i = Random.Range( 0, m_possibleSpawners.Count);
-		m_entityPrefabStr = m_possibleSpawners[ i ];
-		m_entityPrefabIndex = i;
+	public void RamdomizeEntity(){
+		m_selectedPoolHandler = null;
+		if ( HasAvailableEntities() )
+		{
+			int index = 0;
+			do
+			{
+				index = Random.Range( 0, m_poolHandlers.Length);
+				m_selectedPoolHandler = m_poolHandlers[index];
+			}while( !m_selectedPoolHandler.HasAvailableInstances() );
+
+			m_entityPrefabStr = m_possibleSpawners[ index ];
+			m_entityPrefabIndex = index;
+		}
     }
 
-    protected override uint GetEntitiesAmountToRespawn() {        
-        return GetMaxEntities();
-    }        
-
-	protected override PoolHandler GetPoolHandler(uint index) {
-		return m_poolHandlers[m_entityPrefabIndex];
-	}
-
-    protected override string GetPrefabNameToSpawn(uint index) {
-        return m_entityPrefabStr;
-    }    
-
-    public string GetSelectedPrefabStr()
-    {
+    public string GetSelectedPrefabStr(){
     	return m_entityPrefabStr;
     }
 
-	public override bool SpawnersCheckCurrents(){ return true; }
+	public bool MustCheckCameraBounds(){ return true; }
+	public bool SpawnersCheckCurrents(){ return false; }
 
-	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
-		m_operatorEntity = spawning;
-        Transform groundSensor = spawning.transform.Find("groundSensor");
+	protected void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         Transform t = spawning.transform;
-        
-		if (m_mustBeChild) {
-			t.parent = m_spawnAtTransform;
-			t.localPosition = Vector3.zero;
-			t.localRotation = Quaternion.identity;
-		} else {
-			t.position = m_spawnAtTransform.position;
-			t.rotation = m_spawnAtTransform.rotation;
-		}
-
-		if (groundSensor != null) {
-			t.position -= groundSensor.localPosition;
-		}
+		t.position = m_spawnAtTransform.position;
+		t.rotation = m_spawnAtTransform.rotation;
 		t.localScale = Vector3.one;
     }
 
-    protected override void OnMachineSpawned(AI.IMachine machine) {
-        m_operator = machine;
-    }
 
-    protected override void OnPilotSpawned(AI.Pilot pilot) {
-        m_operatorPilot = pilot;
-    }    
+	public void RemoveEntity(GameObject _gameObject, bool _killedByPlayer) {
 
-    protected override void OnRemoveEntity(GameObject _entity, int index) {
-        if (m_operator != null && _entity == m_operator.gameObject) {
-            m_operator = null;
-            m_operatorPilot = null;
-        }
-    }    
-    //-------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------
-    // Queries
-    //-------------------------------------------------------------------
-    public bool IsOperatorDead() {
-		if (m_operator != null) {
-			return m_operator.IsDying() || m_operator.IsDead();
+		
+		Entity entity = _gameObject.GetComponent<Entity>();
+		for( int i = m_entityInfo.Count - 1; i >= 0; --i )
+		{
+			if ( m_entityInfo[i].m_entity == entity )
+			{
+				PoolHandler handler = m_poolHandlers[ m_entityInfo[i].m_poolIndex ];
+				if (ProfilerSettingsManager.ENABLED) {               
+					SpawnerManager.RemoveFromTotalLogicUnits(1, m_possibleSpawners[ m_entityInfo[i].m_poolIndex ]);
+				}
+				// Returns the entity to the pool
+				handler.ReturnInstance(_gameObject);
+				m_entityInfo.RemoveAt(i);
+				break;
+			}
 		}
+
+		// Unregisters the entity
+		EntityManager.instance.UnregisterEntity(entity);
+	} 
+
+	public bool IsRespawing(){
 		return true;
 	}
-
-	public void OperatorDoReload() {
-		m_operatorPilot.PressAction(Pilot.Action.Button_A);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
+	public bool IsRespawingPeriodically(){
+		return true;
+	}
+	public bool CanRespawn(){
+		return HasAvailableEntities();
 	}
 
-	public void OperatorDoIdle() {
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
-	}
 
-	public void OperatorDoShoot() {
-		m_operatorPilot.PressAction(Pilot.Action.Button_B);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-	}
+	//return true if it respawned completelly
+    public bool Respawn() {
 
-	public void OperatorBurn() {
-		m_operator.Burn(transform);
-	}
+    	bool ret = false;
+		GameObject spawning = m_selectedPoolHandler.GetInstance(true);
 
-	private Vector3 GetLookAtVector() {
-		Vector3 lookAt = Vector3.zero;
-		switch(m_lookAtVector) {
-			case LookAtVector.Right:	lookAt = Vector3.right; 	break;
-			case LookAtVector.Left:		lookAt = Vector3.left; 		break;
-			case LookAtVector.Forward:	lookAt = Vector3.forward; 	break;
-			case LookAtVector.Back:		lookAt = Vector3.back; 		break;
+		if (spawning != null) {
+			Transform spawningTransform = spawning.transform;
+			spawningTransform.rotation = Quaternion.identity;
+			spawningTransform.localRotation = Quaternion.identity;
+			spawningTransform.localScale = Vector3.one;
+			spawningTransform.position = m_spawnAtTransform.position;
+
+			Entity entity = spawning.GetComponent<Entity>();
+			if (entity != null) {
+				EntityManager.instance.RegisterEntity(entity);
+				entity.Spawn(this); // lets spawn Entity component first
+			}
+
+			ISpawnable[] components = spawning.GetComponents<ISpawnable>();
+			foreach (ISpawnable component in components) {
+				if (component != entity ) {
+					component.Spawn(this);
+				}
+			}
+
+			if (ProfilerSettingsManager.ENABLED) {
+				SpawnerManager.AddToTotalLogicUnits(1, m_entityPrefabStr);
+			}
+
+			EntityInfo info;
+			info.m_entity = entity;
+			info.m_poolIndex = m_entityPrefabIndex;
+			m_entityInfo.Add(info);
+			ret = true;
 		}
-		return lookAt;
-	}
-	//-------------------------------------------------------------------
+		return ret;
+    }    
+
+	public void DrawStateGizmos() {}
 
 
-	//-------------------------------------------------------------------
-	// Debug
-	//-------------------------------------------------------------------
-	void OnDrawGizmosSelected() {
-		if (m_spawnAtTransform != null) {
-			Gizmos.color = Colors.coral;
-			Gizmos.DrawSphere(m_spawnAtTransform.position, 0.5f);
-			Gizmos.DrawCube(m_spawnAtTransform.position + GetLookAtVector() * 0.5f, Vector3.one * 0.125f + GetLookAtVector() * 1f);
+	// public AreaBounds area { get{return null;} }
+	private AreaBounds m_area;
+	public AreaBounds area {
+		get {
+			if (m_area == null) m_area = new RectAreaBounds(m_rect.center, m_rect.size);
+			else 				m_area.UpdateBounds(m_rect.center, m_rect.size);
+			return m_area;
 		}
-	}	
-	//-------------------------------------------------------------------
+	}
+	public IGuideFunction guideFunction { get{ return null; } }
+	public Quaternion rotation { get { return Quaternion.identity; } }
+	public Vector3 homePosition { get{ return Vector3.zero; } }
+	// public Rect boundingRect { get { return Rect.zero; } }
+	[SerializeField] protected Rect m_rect = new Rect(Vector2.zero, Vector2.one * 2f);
+	public Rect boundingRect { get { return m_rect; } }
+
+#region save_spawner_state
+	public virtual int GetSpawnerID(){return -1;}
+	public virtual AbstractSpawnerData Save(){return null;}
+	public virtual void Save( ref AbstractSpawnerData _data){}
+	public virtual void Load(AbstractSpawnerData _data){}
+#endregion
+    //-------------------------------------------------------------------
+
 }
