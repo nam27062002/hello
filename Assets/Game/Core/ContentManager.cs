@@ -65,11 +65,11 @@ public class ContentManager
     public static bool UseCachedAssetsLUTFromServer 
     {
         get
-        {
+        {                        
 #if UNITY_EDITOR
-            return false;            
+            return false;
 #else
-            return true;
+            return FeatureSettingsManager.instance.IsContentDeltasCachedEnabled;
 #endif
         }
     }
@@ -77,11 +77,11 @@ public class ContentManager
     public static bool UseDeltaContent
     {
         get
-        {
+        {                     
 #if UNITY_EDITOR
-            return false;            
+            return false;
 #else
-            return true;
+            return FeatureSettingsManager.instance.IsContentDeltasEnabled;
 #endif
         }
     }
@@ -125,6 +125,8 @@ public class ContentManager
             "Rules/initialSettings",
             "Rules/missingRessourcesVariablesDefinitions"
         });
+
+		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
 
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2" });

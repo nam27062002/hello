@@ -35,6 +35,7 @@ public class SkuListAttribute : ListAttribute {
 	/// <param name="_allowNullValue">If set to <c>true</c>, the "NONE" option will be available.</param>
 	public SkuListAttribute(string _category, bool _allowNullValue = true) {
 		m_category = _category;
+		m_allowNullValue = _allowNullValue;
 		ValidateOptions();
 	}
 
@@ -44,7 +45,7 @@ public class SkuListAttribute : ListAttribute {
 	public override void ValidateOptions() {
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
-			ContentManager.InitContent(true);
+			ContentManager.InitContent(true, false);
 		}
 
 		// Get sku list
