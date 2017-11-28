@@ -27,7 +27,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private ShowHideAnimator m_animator = null;
-	[SerializeField] private GameObject m_loadingCamera = null;
+	[SerializeField] private Canvas m_loadingCanvas = null;
 	[Space]
 	[SerializeField] private Image m_dragonIcon = null;
 	[SerializeField] private PowerIcon[] m_powerIcons = null;
@@ -41,7 +41,8 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	}
 
 	public void OnHidePostAnimation(ShowHideAnimator _animator) {
-		m_loadingCamera.SetActive(false);
+		m_loadingCanvas.gameObject.SetActive(false);
+		m_loadingCanvas.worldCamera.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -51,7 +52,8 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// <param name="_animate">Use fade animation?</param>
 	public static void Toggle(bool _show, bool _animate = true) {
 		if ( _show ){
-			instance.m_loadingCamera.SetActive(true);	
+			instance.m_loadingCanvas.gameObject.SetActive(true);
+			instance.m_loadingCanvas.worldCamera.gameObject.SetActive(true);
 		}
 		// Just let the animator do it
 		instance.m_animator.Set(_show, _animate);
