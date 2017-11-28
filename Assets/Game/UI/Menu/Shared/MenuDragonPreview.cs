@@ -102,6 +102,18 @@ public class MenuDragonPreview : MonoBehaviour {
 		}
 	}
 
+	public void DisableMoves()
+	{
+		DragonPartFollow[] moves = GetComponentsInChildren<DragonPartFollow>();
+		if ( moves != null )
+		{
+			for( int i = 0; i<moves.Length; ++i )
+			{
+				moves[i].enabled = false;
+			}
+		}
+	}
+
 	public void SetFresnelColor( Color col )
 	{
 		for( int i = 0; i<m_renderers.Length; i++ )
