@@ -270,16 +270,16 @@ public class GenTexTool : EditorWindow {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Window instance
-	private static GenTexTool m_instance = null;
 
 	public static GenTexTool instance {
 		get {
 			if(m_instance == null) {
-				m_instance = (GenTexTool)EditorWindow.GetWindow(typeof(GenTexTool));
+				m_instance = EditorWindow.GetWindow<GenTexTool>();
 			}
 			return m_instance;
 		}
 	}
+    private static GenTexTool m_instance = null;
 
 
     Texture2D backgroundImage = null;
@@ -326,8 +326,10 @@ public class GenTexTool : EditorWindow {
 	/// </summary>
 	private void OnDisable() {
         DestroyObject(currentTexGen);
+        currentTexGen = null;
+        m_instance = null;
     }
-
+/*
     /// <summary>
     /// Called 100 times per second on all visible windows.
     /// </summary>
@@ -342,7 +344,7 @@ public class GenTexTool : EditorWindow {
 	public void OnInspectorUpdate() {
 		
 	}
-
+*/
     void Generate(Texture2D frameBuffer, TextureGenBase texGen )
     {
         texGen.initGen(frameBuffer);
@@ -387,7 +389,8 @@ public class GenTexTool : EditorWindow {
             EditorGUILayout.BeginVertical();
 
 //                backgroundImage = (Texture2D)EditorGUILayout.ObjectField("Image", backgroundImage, typeof(Texture2D), false);
-                GUILayout.Label(backgroundImage);
+                if (backgroundImage != null)
+                    GUILayout.Label(backgroundImage);
 
                 EditorGUILayout.BeginHorizontal();
                     textureSize = EditorGUILayout.Vector2Field("Texture Size:", textureSize);

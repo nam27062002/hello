@@ -29,7 +29,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
 
 		_SpecExponent("Specular Exponent", float) = 1.0
-		_SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
+		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
 		_SecondLightColor("Second Light color", Color) = (0.0, 0.0, 0.0, 0.0)
 
 		_ReflectionMap("Reflection Map", Cube) = "white" {}

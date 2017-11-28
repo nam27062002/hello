@@ -340,6 +340,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
         if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
         {
             materialEditor.ShaderProperty(mp_specularPower, Styles.specularPowerText);
+//            RotationDrawer.setColor(mp_secondLightColor.colorValue);
+//            RotationDrawer.setTargetPoint(mp_specularDirection.vectorValue.x, mp_specularDirection.vectorValue.y);
+            RotationDrawer.setSpecularPow(mp_specularPower.floatValue);
+
             materialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText);
         }
 
