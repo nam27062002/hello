@@ -148,6 +148,16 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
     }
 
 
+    public bool IsWaitingToPlayAnAd()
+    {
+    	return MopubAdsManager.SharedInstance.IsWaitingToPlayAVideo();
+    }
+
+    public void StopWaitingToPlayAnAd()
+    {
+    	MopubAdsManager.SharedInstance.StopWaitingToPlayAVideo();
+    }
+
     #region track
     private const string TRACK_AD_PROVIDER_ID = "MoPub";
 

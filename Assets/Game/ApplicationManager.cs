@@ -327,6 +327,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
         if (pause)
         {
+        	if ( GameAds.isInstanceCreated && GameAds.instance.IsWaitingToPlayAnAd())
+        		GameAds.instance.StopWaitingToPlayAnAd();
+
             HDTrackingManager.Instance.Notify_ApplicationPaused();
         }
         else
