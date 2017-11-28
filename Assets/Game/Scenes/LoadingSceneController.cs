@@ -406,6 +406,8 @@ public class LoadingSceneController : SceneController {
 		        // Game		        
                 PersistenceFacade.instance.Reset();
 
+				// Meta
+				SeasonManager.CreateInstance(true);
 		        DragonManager.CreateInstance(true);
 				LevelManager.CreateInstance(true);
 				MissionManager.CreateInstance(true);
