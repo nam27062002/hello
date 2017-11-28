@@ -20,6 +20,9 @@ public class Pool {
 	private Queue<GameObject> m_returnObjects;
 	
 	private bool m_canGrow;
+	public bool canGrow{  
+		get{ return m_canGrow; }
+	}
 	private bool m_dontDestroyContainer;
 
 	private bool m_temporary;
@@ -127,6 +130,10 @@ public class Pool {
 		} else {
 			// Debug.LogError("Object " + go.name + "doesn't belong to pool " + m_containerObj.name);
 		}
+	}
+
+	public int NumFreeObjects(){
+		return m_freeObjects.Count;
 	}
 
 	/// <summary>

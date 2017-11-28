@@ -74,6 +74,16 @@ public class FeatureSettings
     // This key decides the resolution factor, screen size is multiplied by this float value
     public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
 
+    // Whether or not Tracking is enabled
+    public const string KEY_TRACKING = "tracking";
+
+    // Whether or not the events that couldn't be sent over the network should be cached
+    public const string KEY_TRACKING_OFFLINE_CACHED = "trackingOfflineCached";
+
+    public const string KEY_CONTENT_DELTAS = "contentDeltas";
+
+    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -185,6 +195,25 @@ public class FeatureSettings
             data = new DataFloat(key, 1.0f);
             Datas.Add(key, data);
 
+            // tracking
+            key = KEY_TRACKING;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // tracking offline cached
+            key = KEY_TRACKING_OFFLINE_CACHED;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // Content deltas. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
+            key = KEY_CONTENT_DELTAS;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            // Content deltas need to be cached. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
+            key = KEY_CONTENT_DELTAS_CACHED;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
 
             /*
             // intTest

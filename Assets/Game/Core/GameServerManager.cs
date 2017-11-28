@@ -207,11 +207,12 @@ public class GameServerManager
 	//------------------------------------------------------------------------//
 	public virtual void GetQualitySettings(ServerCallback callback) {}
     public virtual void SetQualitySettings(string qualitySettings, ServerCallback callback) {}
-    
-	//------------------------------------------------------------------------//
-	// OTHERS																  //
-	//------------------------------------------------------------------------//
-	public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {}    
+    public virtual void GetGameSettings(ServerCallback callback) {}
+
+    //------------------------------------------------------------------------//
+    // OTHERS																  //
+    //------------------------------------------------------------------------//
+    public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {}    
 
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS														  //

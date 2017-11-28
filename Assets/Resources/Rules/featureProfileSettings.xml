@@ -7,6 +7,7 @@
   <Definition sku="004_very_high" profile="very_high" max_zoom_cost="4" particles="very_high" minMemory="2048" qualityLevel="very_high" shadersLevel="high" rating="1" glow="true" drunkEffect="true" frameColorEffect="true" entitiesLOD="high" levelsLOD="high" bossZoomOut="true" decoSpawners="true" lockEffect="false" resolutionFactor="1080.0"/>
   
   <!-- Global definitions: Define here those feature which values are the same for all profiles -->
-  <Definition sku="debug"/>
-  <Definition sku="release"/>
+  <!-- trackingOfflineCached: false because an issue freezing the game when the offline events were sent has been reported on M&M -->
+  <Definition sku="debug" tracking="true" trackingOfflineCached="false"/>
+  <Definition sku="release" tracking="true" trackingOfflineCached="false"/>
 </Definitions>

@@ -151,6 +151,7 @@ public class LoadingSceneController : SceneController {
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
         WAITING_FOR_RULES,
+        LOADING_RULES,
         SHOWING_UPGRADE_POPUP,
     	COUNT
     }
@@ -336,10 +337,18 @@ public class LoadingSceneController : SceneController {
             {
                 if (ContentManager.ready)
                 {
-                    SetState(State.WAITING_SAVE_FACADE);
+                    // The state is not changed to WAITING_SAVE_FACADE yet because we want to be sure that other scripts checking for ContentManager.ready
+                    // in their Update() (for example FeatureSettingsManager, which has to load game settings according to rules and server) have time to do 
+                    // their stuff before the flow goes on
+                    SetState(State.LOADING_RULES);                        
                 }
             }break;
-    		default:
+            case State.LOADING_RULES:
+            {
+                // A tick is enought to do this state stuff as we just want to wait a tick so all scripts have the chance to realize content is ready
+                SetState(State.WAITING_SAVE_FACADE);                    
+            }break;
+            default:
     		{
 				// Update load progress
 				//m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(SceneManager.loadProgress * 100f, 0));
