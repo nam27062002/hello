@@ -12591,6 +12591,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4972860080589092}
   - component: {fileID: 114927305120703028}
+  - component: {fileID: 114363464735716846}
   m_Layer: 0
   m_Name: PS_ShinyGodrays
   m_TagString: Untagged
@@ -19701,7 +19702,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1799779036867776}
-  m_LocalRotation: {x: -0.72968507, y: -0.13468346, z: 0.02724057, w: 0.66983443}
+  m_LocalRotation: {x: -0.729685, y: -0.13468345, z: 0.027240565, w: 0.6698344}
   m_LocalPosition: {x: -0.5160918, y: -0.000000059604645, z: 0.00000011920929}
   m_LocalScale: {x: 1.000003, y: 0.99999565, z: 1.0000021}
   m_Children:
@@ -29675,6 +29676,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 12
+--- !u!114 &114363464735716846
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1801278015031856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targets:
+  - renderer: {fileID: 199690106927157036}
+    newRenderQueue: 3090
+  - renderer: {fileID: 199234975810247940}
+    newRenderQueue: 3090
+  - renderer: {fileID: 199694091101620036}
+    newRenderQueue: 3090
 --- !u!114 &114368786518557422
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34097,7 +34116,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 534784008
+  randomSeed: 354290139
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -37223,7 +37242,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -847610255
+  randomSeed: -873623702
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -40349,7 +40368,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1919549100
+  randomSeed: -1054133507
   InitialModule:
     serializedVersion: 3
     enabled: 1
