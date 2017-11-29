@@ -51,6 +51,9 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private GameObject m_equippedFrame = null;
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
 	[Space]
+	[SerializeField] private Image m_seasonalIcon = null;
+	[SerializeField] private GameObject m_seasonalIconRoot = null;
+	[Space]
 	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
 	[Space]
 	[SerializeField] private UIColorFX m_frameColorFX = null;
@@ -216,6 +219,18 @@ public class PetPill : MonoBehaviour {
 			if(m_rarityDecorations[i] != null) {
 				m_rarityDecorations[i].SetActive(i == rarityInt);
 			}
+		}
+
+		// Seasonal icon
+		string targetSeason = _petDef.GetAsString("associatedSeason", SeasonManager.NO_SEASON_SKU);
+		if(targetSeason == SeasonManager.NO_SEASON_SKU) {
+			// Default season: Don't show icon
+			m_seasonalIconRoot.SetActive(false);
+		} else {
+			// Custome season: Show icon
+			DefinitionNode seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, targetSeason);
+			m_seasonalIconRoot.SetActive(true);
+			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + seasonDef.Get("icon"));
 		}
 
 		// Refresh contextual elements
