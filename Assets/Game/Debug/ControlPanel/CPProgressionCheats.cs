@@ -471,6 +471,40 @@ public class CPProgressionCheats : MonoBehaviour {
         PersistenceFacade.instance.Save_Request(false);
     }
 
+	/// <summary>
+	/// Reset the state of pets and golden fragments to force a golden egg after opening the next egg.
+	/// </summary>
+	public void OnForceGoldenEgg() {
+		// Unlock all pets except the special ones
+		// This will force the next egg to give a duplicate and therefore golden fragments
+		string specialRaritySku = Metagame.RewardEgg.RarityToSku(Metagame.Reward.Rarity.SPECIAL);
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
+		for(int i = 0; i < petDefs.Count; i++) {
+			// Is it a special pet?
+			if(petDefs[i].Get("rarity") == specialRaritySku) {
+				// Unequip from all dragons
+				foreach(DragonData dragon in DragonManager.dragonsByOrder) {
+					UsersManager.currentUser.UnequipPet(dragon.def.sku, petDefs[i].sku);
+				}
+
+				// Remove from collection
+				UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
+			} else {
+				// Make sure pet is unlocked
+				UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
+			}
+		}
+
+		// Give almost all the golden fragments required to complete the first golden egg
+		// so when the next egg gives us some gf we will complete the golden egg
+		// Clear collected data
+		UsersManager.currentUser.goldenEggsCollected = 0;
+		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, EggManager.goldenEggRequiredFragments - 1, 0);
+
+		// Save!
+		PersistenceFacade.instance.Save_Request(false);
+	}
+
     /// <summary>
     /// Simulates daily chest collection (no menu refresh for now, reload menu for that).
     /// </summary>
