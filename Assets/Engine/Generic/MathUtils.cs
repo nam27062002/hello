@@ -295,4 +295,9 @@ public class MathUtils {
         return Vector3.Cross(ray.direction, point - ray.origin).magnitude;
     }
 
+
+	public static bool FuzzyEquals(float a, float b)
+	{
+	    return Mathf.Abs(a - b) < Mathf.Epsilon;
+	}
 }
