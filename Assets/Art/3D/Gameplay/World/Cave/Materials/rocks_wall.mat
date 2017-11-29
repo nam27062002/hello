@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: rocks_wall
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: FOG NORMALMAP OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY
+  m_ShaderKeywords: FOG OPAQUEALPHA VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -40,15 +40,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: e954072ec4331e84daaf4b26218e21fa, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: b351c9d98ff81c040b1039c1a1851b14, type: 3}
+        m_Scale: {x: 0.5, y: 0.5}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalTex:
-        m_Texture: {fileID: 2800000, guid: 8a986b7cb02a0b1449b2b13c380851b0, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -59,11 +59,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ReflectionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SecondTexture:
         m_Texture: {fileID: 2800000, guid: 8e5bb077ae2e5be4d8a285506453eb19, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Emissive: 0
     - VertexColor: 1
     - _BlendMode: 0
     - _BlinkTimeMultiplier: 2
@@ -74,6 +79,7 @@ Material:
     - _DarkenDistance: 20
     - _DarkenPosition: 0
     - _DetailNormalMapScale: 1
+    - _DoubleSided: 0
     - _DstBlend: 0
     - _EmissivePower: 1
     - _EnableAutomaticBlend: 0
@@ -85,16 +91,20 @@ Material:
     - _EnableLightmapContrast: 0
     - _EnableNormalMap: 1
     - _EnableOpaqueAlpha: 1
-    - _EnableSpecular: 1
+    - _EnableSpecular: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _LightmapContrastIntensity: 1.3
+    - _LightmapContrastMargin: 0.5
+    - _LightmapContrastPhase: 2
     - _LightmapIntensity: 0.1
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
     - _Specular: 50
     - _SpecularHighlights: 1
