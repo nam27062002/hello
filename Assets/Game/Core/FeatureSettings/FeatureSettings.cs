@@ -84,6 +84,8 @@ public class FeatureSettings
 
     public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
 
+    public const string KEY_CHECK_APP_WAS_DOWNLOADED_FROM_STORE = "checkAppWasDownloadedFromStore";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -212,6 +214,10 @@ public class FeatureSettings
 
             // Content deltas need to be cached. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS_CACHED;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_CHECK_APP_WAS_DOWNLOADED_FROM_STORE;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
 
