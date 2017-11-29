@@ -85,6 +85,7 @@ public class RewardSceneController : MonoBehaviour {
 	[SerializeField] private string m_eggTapSFX = "";
 	[SerializeField] private string m_eggExplosionSFX = "";
 	[SerializeField] private string m_goldenEggCompletedSFX = "";
+	[SerializeField] private string m_goldenEggIntroSFX = "";
 
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
@@ -341,6 +342,9 @@ public class RewardSceneController : MonoBehaviour {
 			// We want it to launch a bit before doing the swap. To do so, use a combination of InserCallback() with the sequence's current duration.
 			seq.InsertCallback(seq.Duration() - 0.15f, () => {
 				TriggerFX(m_goldenFragmentsSwapFX);
+
+				// Play SFX as well!
+				AudioController.Play(replacementSetup.sfx);
 			});
 
 			// Swap
@@ -376,9 +380,6 @@ public class RewardSceneController : MonoBehaviour {
 					);
 				}
 				m_rewardInfoUI.InitAndAnimate(_petReward.replacement, replacementInfoText);
-
-				// Play specific sound as well!
-				AudioController.Play(replacementSetup.sfx);
 
 				// Show godrays
 				if(replacementSetup.godrays != null) {
@@ -648,7 +649,16 @@ public class RewardSceneController : MonoBehaviour {
 			Metagame.Reward nextReward = UsersManager.currentUser.rewardStack.Peek();
 			if(nextReward != null && nextReward.sku == Egg.SKU_GOLDEN_EGG) {
 				// Give it some delay!
-				UbiBCN.CoroutineManager.DelayedCall(() => { OpenReward(); }, m_goldenEggDelay, false);
+				UbiBCN.CoroutineManager.DelayedCall(() => { 
+					// Do it!
+					OpenReward();
+
+					// Trigger some FX to make it more beautiful
+					TriggerFX(m_goldenFragmentsSwapFX);
+
+					// SFX
+					AudioController.Play(m_goldenEggIntroSFX);
+				}, m_goldenEggDelay, false);
 				return;
 			}
 		}
