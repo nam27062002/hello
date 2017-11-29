@@ -116,14 +116,24 @@ namespace Metagame {
 					List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", raritySku);
 					DefinitionNode petDef = null;
 
-					// Remove all hidden and event only pets
-					for( int i = petDefs.Count - 1; i >= 0; --i )
-					{
-						if ( petDefs[i].GetAsBool("hidden") || petDefs[i].GetAsBool("notInGatcha") )
-						{
-							petDefs.RemoveAt(i);
+					// Remove all hidden and disabled pets
+					petDefs.RemoveAll(
+						(DefinitionNode _petDef) => {
+							// Several conditions:
+							// a) Hidden pets (usually WIP pets or pets meant to be revealed in future updates)
+							if(_petDef.GetAsBool("hidden", false)) return true;
+
+							// b) Not-in-gatcha pets (pets unlocked by other means: global event reward, etc.)
+							if(_petDef.GetAsBool("notInGatcha", false)) return true;
+
+							// c) Pets linked to a specific season different than the current one
+							string targetSeason = _petDef.GetAsString("associatedSeason", SeasonManager.NO_SEASON_SKU);
+							if(targetSeason != SeasonManager.NO_SEASON_SKU && targetSeason != SeasonManager.activeSeason) return true;
+
+							// Pet is valid! Don't remove it from the list
+							return false;
 						}
-					}
+					);
 
 					// a) Forcing a specific sku from cheats?
 					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
@@ -177,7 +187,7 @@ namespace Metagame {
 						//Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
 						#endif
 					} else {
-						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + "!" + "</color>");
+						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + " and rarity " + m_rarity + "!" + "</color>");
 					}
 				} break;
 			}
