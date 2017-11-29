@@ -475,12 +475,6 @@ public class RewardSceneController : MonoBehaviour {
 		// Launch intro as soon as possible (wait for the camera to stop moving)
 		m_eggView.gameObject.SetActive(false);
 
-		// [AOC] Hacky!! Disable particle FX (Premium Egg Idle)
-		ParticleSystem[] particleFX = m_eggView.GetComponentsInChildren<ParticleSystem>();
-		for(int i = 0; i < particleFX.Length; i++) {
-			particleFX[i].gameObject.SetActive(false);
-		}
-
 		// Attach tap FX to the egg's view (but don't activate it just yet)
 		ParticleSystem tapFX = m_rarityFXSetup[(int)_eggReward.rarity].tapFX;
 		if(tapFX != null) {
