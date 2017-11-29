@@ -69,20 +69,19 @@ Shader "Hidden/RotationDrawer"
 				float d = 1.0 - step(0.25, dot(i.tex, i.tex));
 
 				fixed2 tp = _TargetPos * fixed2(1.0, -1.0);
+				float dtp = length(tp);
+				float dtx = length(i.tex);
 
-				fixed3 n1 = normalize(fixed3(tp, 0.5));
-				fixed3 n2 = normalize(fixed3(i.tex, 0.5));
+				fixed3 n1 = normalize(fixed3(tp, sin(acos(dtp))));
+				fixed3 n2 = normalize(fixed3(i.tex, sin(acos(dtx))));
 
 				fixed4 prev;
 				prev.xyz = _TintColor.xyz * pow(dot(n1, n2), _SpecPow * 0.25);
 				prev.w = d;
 
-				float dtp = length(tp);
-				fixed2 tpn = normalize(tp);
-
-				fixed2 dt = i.tex - (tpn * clamp(dtp, 0.0, 0.5));
+				fixed2 dt = i.tex - (tp * clamp(0.5 / dtp, 0.0, 1.0));
 				d = dot(dt, dt);
-				d = 1.0 - step(0.01, dot(dt, dt));
+				d = 1.0 - step(0.01, d);
 
 				prev = lerp(prev, fixed4(0.0, 0.0, 0.0, 1.0), d);
 				return prev;
