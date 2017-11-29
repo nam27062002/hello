@@ -462,14 +462,15 @@ public class LoadingSceneController : SceneController {
 
 				ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
             	if (kServerConfig != null && kServerConfig.m_eBuildEnvironment == CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-            	{
-					Debug.Log("Is Production!! Store: " + GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
-
+            	{					
+                    bool needsToCheckAppWasDownloadedFromStore = FeatureSettingsManager.instance.IsCheckAppWasDownloadedFromStoreEnabled;
 #if UNITY_EDITOR
-                    StartLoadFlow();
-#else
+                    needsToCheckAppWasDownloadedFromStore = false;                        
+#endif
+                    Debug.Log("Is Production!! Store: " + GameStoreManager.SharedInstance.AppWasDownloadedFromStore() + " needsToCheckAppWasDownloadedFromStore = " + needsToCheckAppWasDownloadedFromStore);
+                    
                     // Check if build is from store
-                    if ( GameStoreManager.SharedInstance.AppWasDownloadedFromStore() )	// Game Store Manager needs to be initialized before checking
+                    if ( !needsToCheckAppWasDownloadedFromStore || GameStoreManager.SharedInstance.AppWasDownloadedFromStore() )	// Game Store Manager needs to be initialized before checking
             		{	
             			StartLoadFlow();
             		}
@@ -477,14 +478,11 @@ public class LoadingSceneController : SceneController {
             		{
 						SetState(State.SHOWING_UPGRADE_POPUP);
             		}
-#endif
-                    }
+                }                
             	else
             	{
 					StartLoadFlow();	
-            	}
-
-                
+            	}                                
           	}break;
         }
     }
