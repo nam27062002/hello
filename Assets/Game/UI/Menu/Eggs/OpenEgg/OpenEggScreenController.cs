@@ -110,7 +110,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Check params
 		if(_egg == null) return;
 		if(_egg.state != Egg.State.READY) return;
-		if(m_state != State.IDLE) return;
+		if(m_state != State.IDLE && m_state != State.REWARD_IN) return;
 
 		// Make sure all required references are set
 		ValidateReferences();
