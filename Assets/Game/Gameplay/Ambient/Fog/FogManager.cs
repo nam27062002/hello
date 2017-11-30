@@ -137,7 +137,7 @@ public class FogManager : MonoBehaviour
 
 		Shader s = Shader.Find("Hidden/FogBlend");
 		m_fogBlendMaterial = new Material(s);
-		m_fogBlendMaterial.SetTexture("_OriginalTex", m_blitOrigin);
+		m_fogBlendMaterial.SetTexture( GameConstants.Material.ORIGINAL_TEX , m_blitOrigin);
 
 			// Register default attributes
 		CheckTextureAvailability( m_defaultAreaFog );
@@ -366,9 +366,9 @@ public class FogManager : MonoBehaviour
 			if ( m_updateValues || m_forceUpdate)
 			{
 				m_forceUpdate = false;
-				Shader.SetGlobalFloat("_FogStart", m_start);
-				Shader.SetGlobalFloat("_FogEnd", m_end);
-				m_fogBlendMaterial.SetFloat("_LerpValue" , m_blitLerpValue);
+				Shader.SetGlobalFloat( GameConstants.Material.FOG_START , m_start);
+				Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_end);
+				m_fogBlendMaterial.SetFloat( GameConstants.Material.LERP_VALUE  , m_blitLerpValue);
 				if (m_updateBlitOriginTexture)
 				{
 					Graphics.Blit(m_blitDestination, m_blitOrigin);

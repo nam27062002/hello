@@ -195,7 +195,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				// Show icon unlock animation
 				//m_lockIcon.animator.ResetTrigger("idle");	// Just in case initial delay is 0, both triggers would be set at the same frame and animation wouldn't work
-				m_lockIcon.animator.SetTrigger("unlock");
+				m_lockIcon.animator.SetTrigger( GameConstants.Animator.UNLOCK);
 
 				// Trigger SFX
 				AudioController.Play("hd_unlock_dragon");
@@ -205,7 +205,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Restore lock icon to the idle state (otherwise default values will get corrupted when deactivating the object)
 				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = true;
 				m_lockIcon.GetComponent<ShowHideAnimator>().ForceHide(false, false);
-				m_lockIcon.animator.SetTrigger("idle");
+				m_lockIcon.animator.SetTrigger( GameConstants.Animator.IDLE );
 
 				// Restore all hidden items
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {

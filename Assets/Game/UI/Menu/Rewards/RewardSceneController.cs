@@ -582,8 +582,8 @@ public class RewardSceneController : MonoBehaviour {
 		// If the FX has an animator assigned, setup and trigger animation!
 		Animator anim = _fx.GetComponent<Animator>();
 		if(anim != null) {
-			anim.SetInteger("rarity", (int)m_currentReward.rarity);
-			anim.SetTrigger("start");
+			anim.SetInteger( GameConstants.Animator.RARITY , (int)m_currentReward.rarity);
+			anim.SetTrigger( GameConstants.Animator.START );
 		}
 	}
 

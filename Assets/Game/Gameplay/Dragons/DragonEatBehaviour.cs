@@ -75,7 +75,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 		if (m_animator && m_animator.isInitialized) 
 		{
-			m_animator.SetBool("eat", false);
+			m_animator.SetBool( GameConstants.Animator.EAT , false);
 		}
 	}
 
@@ -99,7 +99,7 @@ public class DragonEatBehaviour : EatBehaviour {
 
 		if (m_eatingSpeed != eatSpeed){
 			m_eatingSpeed = eatSpeed;
-			m_animator.SetFloat("eatingSpeed", m_eatingSpeed);
+			m_animator.SetFloat( GameConstants.Animator.EAT_SPEED , m_eatingSpeed);
 		}
 	}
 
@@ -120,18 +120,18 @@ public class DragonEatBehaviour : EatBehaviour {
 
     protected override void EatExtended(PreyData preyData)
     {        		
-        m_animator.SetBool("eat", true);        
+        m_animator.SetBool( GameConstants.Animator.EAT , true);        
         if ((preyData != null && preyData.eatingAnimationDuration >= 0.5f) ||
             PreyCount > 2)
         {                        
-            m_animator.SetTrigger("eat crazy");            
+			m_animator.SetTrigger( GameConstants.Animator.EAT_CRAZY );            
         }             
 	}
 
 	protected override void UpdateEating() {
 		base.UpdateEating();
 		if (PreyCount <= 0 && m_attackTarget == null)
-			m_animator.SetBool("eat", false);	
+			m_animator.SetBool( GameConstants.Animator.EAT, false);	
 	}
 
 	void OnEntityEaten(Transform t, Reward reward) {
@@ -162,7 +162,7 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
 		if ( m_attackTarget != null && PreyCount <= 0)
 		{
-			m_animator.SetBool("eat", false);	// Stop targeting animation
+			m_animator.SetBool( GameConstants.Animator.EAT , false);	// Stop targeting animation
 		}
 		base.StopAttackTarget();
 	}
@@ -179,7 +179,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_dragonMotion.StartLatchMovement(m_holdingPrey, m_holdTransform);
 		}
 
-		m_animator.SetBool("eatHold", true);
+		m_animator.SetBool( GameConstants.Animator.EAT_HOLD , true);
 	}
 
 
@@ -199,7 +199,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		{
 			m_dragonMotion.EndLatchMovement();
 		}
-		m_animator.SetBool("eatHold", false);        
+		m_animator.SetBool( GameConstants.Animator.EAT_HOLD, false);        
 		base.EndHold();
 	}
 
@@ -232,13 +232,13 @@ public class DragonEatBehaviour : EatBehaviour {
 	{
 		base.StartAttackTarget (_transform);
 		// Start attack animation
-		m_animator.SetBool("eat", true);
-		m_animator.SetTrigger("eat crazy");
+		m_animator.SetBool( GameConstants.Animator.EAT, true);
+		m_animator.SetTrigger( GameConstants.Animator.EAT_CRAZY);
 	}
 
 	public override void PauseEating()
 	{
 		base.PauseEating();
-		m_animator.SetBool("eat", false);
+		m_animator.SetBool( GameConstants.Animator.EAT, false);
 	}
 }

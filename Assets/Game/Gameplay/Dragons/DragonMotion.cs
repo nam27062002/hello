@@ -454,7 +454,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private void OnDrunkToggle(bool _active)
 	{
-		m_animator.SetBool("drunk", _active);
+		m_animator.SetBool(GameConstants.Animator.DRUNK, _active);
 	}
 
 	private void OnPetPreFreeRevive()
@@ -480,7 +480,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					break;
 
 				case State.Fly_Down:
-					m_animator.SetBool("fly down", false);
+					m_animator.SetBool( GameConstants.Animator.FLY_DOWN , false);
 					break;
 
 				case State.Stunned:
@@ -490,18 +490,18 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					break;
 				case State.InsideWater:
 				{
-					m_animator.SetBool("swim", false);
-					m_animator.SetBool("fly down", false);
+					m_animator.SetBool( GameConstants.Animator.SWIM , false);
+					m_animator.SetBool( GameConstants.Animator.FLY_DOWN, false);
 				}break;
 				case State.OuterSpace:
 				{
-					m_animator.SetBool("fly down", false);
+					m_animator.SetBool(GameConstants.Animator.FLY_DOWN, false);
 				}break;
 				case State.Intro:
 				{
 					m_rbody.isKinematic = false;
-					m_animator.SetBool("boost", false);
-					m_animator.SetBool("move", false);
+					m_animator.SetBool(GameConstants.Animator.BOOST, false);
+					m_animator.SetBool(GameConstants.Animator.MOVE, false);
  				}break;
 				case State.Latching:
 				{
@@ -512,7 +512,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.Dead:
 				{
-					m_animator.ResetTrigger("dead");
+					m_animator.ResetTrigger(GameConstants.Animator.DEAD);
 				}break;
 				case State.Reviving:
 				{
@@ -529,7 +529,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			// entering new state
 			switch (_nextState) {
 				case State.Idle:
-					m_animator.SetBool("move", false);
+					m_animator.SetBool(GameConstants.Animator.MOVE, false);
 
 					// m_impulse = Vector3.zero;
 					// m_rbody.velocity = m_impulse;
@@ -539,12 +539,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					break;
 
 				case State.Fly:
-					m_animator.SetBool("move", true);
+					m_animator.SetBool(GameConstants.Animator.MOVE, true);
 					break;
 
 				case State.Fly_Down:
-					m_animator.SetBool("move", true);
-					m_animator.SetBool("fly down", true);
+					m_animator.SetBool(GameConstants.Animator.MOVE, true);
+					m_animator.SetBool(GameConstants.Animator.FLY_DOWN, true);
 					break;
 
 				case State.Stunned:
@@ -558,8 +558,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				{
 					// if ( m_canMoveInsideWater )
 
-					m_animator.SetBool("swim", true);
-					m_animator.SetBool("fly down", true);
+					m_animator.SetBool(GameConstants.Animator.SWIM, true);
+					m_animator.SetBool(GameConstants.Animator.FLY_DOWN, true);
 					if ( m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching){
 	                    m_accWaterFactor = 0.80f;
 	                    m_inverseGravityWater = 1.5f;
@@ -574,7 +574,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
                     break;
 				case State.OuterSpace:
 				{
-					m_animator.SetBool("fly down", true);
+					m_animator.SetBool(GameConstants.Animator.FLY_DOWN, true);
                     m_prevImpulse = m_impulse;
 
                     if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
@@ -590,8 +590,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.Intro:
 				{
 					m_rbody.isKinematic = true;
-					m_animator.SetBool("boost", true);
-					m_animator.SetBool("move", true);
+					m_animator.SetBool(GameConstants.Animator.BOOST, true);
+					m_animator.SetBool(GameConstants.Animator.MOVE, true);
 					m_introTimer = m_introDuration;
 					m_impulse = Vector3.zero;
 					m_direction = Vector3.right;
@@ -607,9 +607,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.Dead:
 				{
-					m_animator.SetTrigger("dead");
+					m_animator.SetTrigger(GameConstants.Animator.DEAD);
 					if ( m_previousState == State.InsideWater )
-						m_animator.SetBool("swim", true);
+						m_animator.SetBool(GameConstants.Animator.SWIM, true);
 					// Save Position!
 					m_diePosition = m_transform.position;
 					m_deadTimer = 0;
@@ -621,7 +621,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_impulse = Vector3.zero;
 					m_rbody.velocity = Vector3.zero;
 					m_revivePosition = m_transform.position;
-					m_animator.Play("BaseLayer.Idle");
+					m_animator.Play(GameConstants.Animator.BASE_IDLE);
 
 					if ( m_direction.x > 0 ){
 						m_direction = Vector3.right;	
@@ -717,7 +717,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			case State.InsideWater:
 			{
 				if (m_direction.y > -0.65f) {
-					m_animator.SetBool("fly down", false);
+					m_animator.SetBool(GameConstants.Animator.FLY_DOWN, false);
 				}
 			}break;
 			case State.ExitingWater:
@@ -795,12 +795,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			if(current == null)
             {
             	// Do not tremble
-				m_animator.SetBool("against_current", false);
+				m_animator.SetBool(GameConstants.Animator.AGAINST_CURRENT, false);
 
 				float angle = Util.ToAngleDegrees( m_direction );
 				if ( angle > m_noGlideAngle && angle < 180-m_noGlideAngle ){
 					m_flyLoopBehaviour.allowGlide = false;	
-					m_animator.SetBool("glide", false);
+					m_animator.SetBool(GameConstants.Animator.GLIDE, false);
 				}
 				else
 				{
@@ -816,14 +816,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					{
 						m_flyLoopBehaviour.allowGlide = true;
 						// Do not tremble
-						m_animator.SetBool("against_current", false);
+						m_animator.SetBool(GameConstants.Animator.AGAINST_CURRENT, false);
 					}
 					else
 					{
-						m_animator.SetBool("glide", false);
+						m_animator.SetBool(GameConstants.Animator.GLIDE, false);
 						m_flyLoopBehaviour.allowGlide = false;
 						// Allow tremble
-						m_animator.SetBool("against_current", true);
+						m_animator.SetBool(GameConstants.Animator.AGAINST_CURRENT, true);
 					}
 				}
 			}
@@ -873,16 +873,16 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		float desiredBendX = Mathf.Clamp(localDir.x*3.0f, -1.0f, 1.0f);	// max X bend is about 30 degrees, so *3
 		m_currentFrontBend.x = Util.MoveTowardsWithDamping(m_currentFrontBend.x, desiredBendX, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("direction X", m_currentFrontBend.x);
+		m_animator.SetFloat(GameConstants.Animator.DIR_X, m_currentFrontBend.x);
 		m_currentBackBend.x = Util.MoveTowardsWithDamping(m_currentBackBend.x, desiredBendX * backMultiplier, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("back direction X", m_currentBackBend.x);
+		m_animator.SetFloat(GameConstants.Animator.BACK_DIR_X, m_currentBackBend.x);
 
 
 		float desiredBendY = Mathf.Clamp(localDir.y*2.0f, -1.0f, 1.0f);		// max Y bend is about 45 degrees, so *2.
 		m_currentFrontBend.y = Util.MoveTowardsWithDamping(m_currentFrontBend.y, desiredBendY, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("direction Y", m_currentFrontBend.y);
+		m_animator.SetFloat(GameConstants.Animator.DIR_Y, m_currentFrontBend.y);
 		m_currentBackBend.y = Util.MoveTowardsWithDamping(m_currentBackBend.y, desiredBendY * backMultiplier, blendRate*dt, blendDampingRange);
-		m_animator.SetFloat("back direction Y", m_currentBackBend.y);
+		m_animator.SetFloat(GameConstants.Animator.BACK_DIR_Y, m_currentBackBend.y);
 
 		// update 'body bending' boolean parameter, we use this in the anim state machine
 		// to notify things like straight swim variations that they should break out and return
@@ -890,7 +890,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		float m_isBendingThreshold = 0.1f;
 		float maxBend = Mathf.Max(Mathf.Abs(m_currentFrontBend.x), Mathf.Abs(m_currentFrontBend.y));
 		bool isBending = (maxBend > m_isBendingThreshold);
-		m_animator.SetBool("Bend", isBending);
+		m_animator.SetBool(GameConstants.Animator.BEND, isBending);
 		
 	}
 
@@ -939,8 +939,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_rbody.MovePosition( m_destination );
 					if ( delta < m_introStopAnimationDelta )
 					{
-						m_animator.SetBool("boost", false);
-						m_animator.SetBool("move", false);
+						m_animator.SetBool(GameConstants.Animator.BOOST, false);
+						m_animator.SetBool(GameConstants.Animator.MOVE, false);
 					}
 				}
 
@@ -1258,7 +1258,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				{	
 					m_waterDeepLimit = true;
 					if (m_particleController.ShouldShowDeepLimitParticles())
-						m_animator.SetTrigger("no air");
+						m_animator.SetTrigger(GameConstants.Animator.NO_AIR);
 				}
 			}
         }
@@ -1565,7 +1565,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			return;
 		if ( isDamage )
 		{
-			m_animator.SetTrigger("damage");
+			m_animator.SetTrigger(GameConstants.Animator.DAMAGE);
 		}
 		m_impulse = _force;
 		if ( IsAliveState() )
@@ -1652,7 +1652,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	public void NoDamageImpact()
 	{
-		m_animator.SetTrigger("impact");
+		m_animator.SetTrigger(GameConstants.Animator.IMPACT);
 	}
 
 	public bool IsInsideWater() {
@@ -1695,7 +1695,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public void EndWaterMovement( Collider _other )
 	{
 		if (m_animator )
-			m_animator.SetBool("boost", false);
+			m_animator.SetBool(GameConstants.Animator.BOOST, false);
 
 		
 		bool createsSplash = false;
@@ -1806,7 +1806,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		m_latchedOnSpeedMultiplier = 0.7f;
 		m_latchedOn = true;
-		m_animator.SetBool("holded", true);
+		m_animator.SetBool(GameConstants.Animator.HOLDED, true);
 	}
 
 	/// <summary>
@@ -1816,7 +1816,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		m_latchedOnSpeedMultiplier = 1f;
 		m_latchedOn = false;
-		m_animator.SetBool("holded", false);
+		m_animator.SetBool(GameConstants.Animator.HOLDED, false);
 	}
 
 	public void StartIntroMovement(Vector3 introTarget)
@@ -1879,7 +1879,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 			else
 			{
-				m_animator.SetBool("swim", true);
+				m_animator.SetBool( GameConstants.Animator.SWIM , true);
 			}
 		}
 	}
@@ -1940,7 +1940,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 			else
 			{
-				m_animator.SetBool("swim", false);
+				m_animator.SetBool( GameConstants.Animator.SWIM, false);
 			}
 		}
 	}

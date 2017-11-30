@@ -766,10 +766,10 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_animator == null) return;
 
 		// Reset all known triggers
-		m_animator.ResetTrigger("show");
-		m_animator.ResetTrigger("hide");
-		m_animator.ResetTrigger("instantShow");
-		m_animator.ResetTrigger("instantHide");
+		m_animator.ResetTrigger( GameConstants.Animator.SHOW );
+		m_animator.ResetTrigger( GameConstants.Animator.HIDE );
+		m_animator.ResetTrigger( GameConstants.Animator.INSTANT_SHOW );
+		m_animator.ResetTrigger( GameConstants.Animator.INSTANT_HIDE );
 
 		// Set the target trigger
 		m_animator.SetTrigger(_trigger);

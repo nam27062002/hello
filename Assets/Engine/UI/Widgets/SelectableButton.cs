@@ -111,11 +111,11 @@ public class SelectableButton : MonoBehaviour {
 		if(button.transition == Selectable.Transition.Animation) {
 			// button.animator.ResetTrigger(m_transitionAnimationTrigger);
 			if(_selected) {
-				button.animator.SetTrigger("Selected");
+				button.animator.SetTrigger( GameConstants.Animator.SELECTED );
 			} else {
-				button.animator.SetTrigger("Normal");
-				button.animator.ResetTrigger("Highlighted");
-				button.animator.ResetTrigger("Selected");
+				button.animator.SetTrigger( GameConstants.Animator.NORMAL );
+				button.animator.ResetTrigger( GameConstants.Animator.HIGHLIGHTED );
+				button.animator.ResetTrigger( GameConstants.Animator.SELECTED);
 			}
 		}
 

@@ -78,8 +78,8 @@ public class DragonTint : MonoBehaviour
                 {
                 	hasDragonPart = true;
                     m_materials.Add(mats[j]);
-                    m_fresnelColors.Add(mats[j].GetColor("_FresnelColor"));
-					m_innerLightColors.Add(mats[j].GetColor("_InnerLightColor"));
+                    m_fresnelColors.Add(mats[j].GetColor( GameConstants.Material.FRESNEL_COLOR ));
+					m_innerLightColors.Add(mats[j].GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
                     m_originalShaders.Add(mats[j].shader);
 //					if (shaderName.Contains("Body"))
 //						m_bodyMaterials.Add( mats[j] );
@@ -220,7 +220,7 @@ public class DragonTint : MonoBehaviour
 	void SetColorMultiply( Color c )
 	{
 		for( int i = 0; i<m_materialsCount; ++i )	
-			m_materials[i].SetColor("_Tint", c );
+			m_materials[i].SetColor( GameConstants.Material.TINT , c );
 	}
 
 	void SetFresnelAlpha( float alpha )
@@ -230,7 +230,7 @@ public class DragonTint : MonoBehaviour
 			Color c = m_fresnelColors[i];
 			c.a = alpha;
 			m_fresnelColors[i] = c;
-			m_materials[i].SetColor("_FresnelColor", c );
+			m_materials[i].SetColor( GameConstants.Material.FRESNEL_COLOR , c );
 		}
 	}
 
@@ -238,13 +238,13 @@ public class DragonTint : MonoBehaviour
 	{
 		c.a = 0;
 		for( int i = 0; i<m_materialsCount; ++i )	
-			m_materials[i].SetColor("_ColorAdd", c );
+			m_materials[i].SetColor( GameConstants.Material.COLOR_ADD, c );
 	}
 
 	void SetInnerLightAdd( float innerValue )
 	{
 		for( int i = 0; i<m_materialsCount; ++i )	
-			m_materials[i].SetFloat("_InnerLightAdd", innerValue );
+			m_materials[i].SetFloat( GameConstants.Material.INNER_LIGHT_ADD, innerValue );
 	}
 
 	void SetInnerLightColorValue( float value )
@@ -252,7 +252,7 @@ public class DragonTint : MonoBehaviour
 		for( int i = 0; i<m_materialsCount; ++i )	
 		{
 			Color c = m_innerLightColors[i] * value;
-			m_materials[i].SetColor("_InnerLightColor", c );
+			m_materials[i].SetColor( GameConstants.Material.INNER_LIGHT_COLOR, c );
 		}
 	}
 

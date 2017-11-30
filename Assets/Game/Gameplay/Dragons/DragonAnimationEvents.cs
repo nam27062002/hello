@@ -130,7 +130,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	private void OnHealthModifierChanged(DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier)
 	{
 		bool starving = (_newModifier != null && _newModifier.IsStarving());
-		m_animator.SetBool( "starving", starving);
+		m_animator.SetBool( GameConstants.Animator.STARVING, starving);
 		if (!string.IsNullOrEmpty( m_starvingSound)){
 			if ( starving ){
 				m_starvingSoundAO = AudioController.Play(m_starvingSound, transform);
@@ -295,7 +295,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
 		if (stateInfo.fullPathHash != m_damageAnimState) {
-			m_animator.SetTrigger("damage");// receive damage?
+			m_animator.SetTrigger( GameConstants.Animator.DAMAGE );// receive damage?
 			m_lastDamageType = _type;
 		}
 	}

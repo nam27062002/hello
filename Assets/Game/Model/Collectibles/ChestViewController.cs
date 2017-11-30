@@ -92,10 +92,10 @@ public class ChestViewController : MonoBehaviour {
 	public void Open(Chest.RewardType _reward, bool _instant) {
 		// Launch animation
 		if(_instant) {
-			m_animator.SetTrigger("open_pose");
+			m_animator.SetTrigger( GameConstants.Animator.OPEN_POSE );
 		} else {
 			// Particle effect will be launched with the animation event
-			m_animator.SetTrigger("open");
+			m_animator.SetTrigger( GameConstants.Animator.OPEN);
 		}
 
 		// Show the right reward
@@ -111,7 +111,7 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void Close() {
 		// Launch close animation
-		m_animator.SetTrigger("close");
+		m_animator.SetTrigger( GameConstants.Animator.CLOSE );
 	}
 
 	/// <summary>
@@ -122,7 +122,7 @@ public class ChestViewController : MonoBehaviour {
 		ToggleFX(m_glowFX, false);
 
 		// Launch animation
-		m_animator.SetTrigger("results_in");
+		m_animator.SetTrigger( GameConstants.Animator.RESULTS_IN );
 	}
 
 	//------------------------------------------------------------------------//

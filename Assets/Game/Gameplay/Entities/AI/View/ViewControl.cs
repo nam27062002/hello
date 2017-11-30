@@ -522,18 +522,18 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if (m_animator.enabled) {
 				if (m_hasNavigationLayer) {
 					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, Time.deltaTime, 0.2f);
-					m_animator.SetFloat("direction X", m_currentBlendX);
+					m_animator.SetFloat( GameConstants.Animator.DIR_X , m_currentBlendX);
 
 					m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, Time.deltaTime, 0.2f);
-					m_animator.SetFloat("direction Y", m_currentBlendY);
+					m_animator.SetFloat( GameConstants.Animator.DIR_Y, m_currentBlendY);
 				}
 
-				m_animator.SetBool("swim", m_swim);
-				m_animator.SetBool("fly down", m_inSpace);
+				m_animator.SetBool( GameConstants.Animator.SWIM, m_swim);
+				m_animator.SetBool( GameConstants.Animator.FLY_DOWN, m_inSpace);
 				if (!m_swim){
-					m_animator.SetBool("move", m_moving);
+					m_animator.SetBool( GameConstants.Animator.MOVE, m_moving);
 				} else {
-					m_animator.SetBool("move", false);
+					m_animator.SetBool( GameConstants.Animator.MOVE, false);
 				}
 			}
 		}
@@ -654,20 +654,20 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void RotationLayer(ref Quaternion _from, ref Quaternion _to) {
 		if (m_hasRotationLayer && m_animator != null) {
 			float angle = Quaternion.Angle(_from, _to);
-			m_animator.SetBool("rotate left", angle < 0);
-			m_animator.SetBool("rotate right", angle > 0);
+			m_animator.SetBool( GameConstants.Animator.ROTATE_LEFT, angle < 0);
+			m_animator.SetBool( GameConstants.Animator.ROTATE_RIGHT, angle > 0);
 		}
 	}
 
 	public void Aim(float _blendFactor) {
 		m_aim = _blendFactor;
 		if (m_animator != null)
-			m_animator.SetFloat("aim", _blendFactor);
+			m_animator.SetFloat( GameConstants.Animator.AIM, _blendFactor);
 	}
 
 	public void Height(float _height) {
 		if (m_animator != null)
-			m_animator.SetFloat("height", _height);
+			m_animator.SetFloat( GameConstants.Animator.HEIGHT, _height);
 	}
 
 	public void Move(float _speed) {
@@ -698,7 +698,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 				m_moving = true;
 
-				m_animator.SetFloat("speed", blendFactor);
+				m_animator.SetFloat( GameConstants.Animator.SPEED, blendFactor);
 				m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
 			} else {
 				m_moving = false;
@@ -735,7 +735,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				}
 			}
 			if (m_animator != null)
-				m_animator.SetBool("scared", _scared);
+				m_animator.SetBool(GameConstants.Animator.SCARED, _scared);
 		}
 	}
 
@@ -747,7 +747,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void UpsideDown(bool _upsideDown) {
 		if (m_upsideDown != _upsideDown) {
 			m_upsideDown = _upsideDown;
-			m_animator.SetBool("upside down", _upsideDown);
+			m_animator.SetBool( GameConstants.Animator.UPSIDE_DOWN, _upsideDown);
 		}
 	}
 
@@ -772,7 +772,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 						RemoveAudioParent( ref m_onPanicAudioAO);
 				}
 				if (m_animator != null)
-					m_animator.SetBool("holded", _panic);
+					m_animator.SetBool( GameConstants.Animator.HOLDED, _panic);
 			}
 		}
 	}
@@ -785,7 +785,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_hitAnimOn = true;
 
 		if (m_animator != null)
-			m_animator.SetTrigger("hit");
+			m_animator.SetTrigger( GameConstants.Animator.HIT);
 		
 		if (m_showDamageFeedback) {
 			m_damageFeedbackTimer = m_damageTime;
@@ -800,7 +800,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_falling = _falling;
 			if (m_animator != null) {
 				m_animator.speed = 1f;
-				m_animator.SetBool("falling", _falling);
+				m_animator.SetBool( GameConstants.Animator.FALLING, _falling);
 			}
 		}
 	}
@@ -810,7 +810,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_jumping = _jumping;
 			if (m_animator != null) {
 				m_animator.speed = 1f;
-				m_animator.SetBool("jump", _jumping);
+				m_animator.SetBool( GameConstants.Animator.JUMP, _jumping);
 			}
 		}
 	}
@@ -822,9 +822,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if (!m_attack) {
 			m_attack = true;
 			if (m_animator != null) {
-				m_animator.SetBool("attack", true);
-				m_animator.SetBool("melee",  _melee);
-				m_animator.SetBool("ranged", _ranged);
+				m_animator.SetBool( GameConstants.Animator.ATTACK, true);
+				m_animator.SetBool( GameConstants.Animator.MELEE,  _melee);
+				m_animator.SetBool( GameConstants.Animator.RANGED, _ranged);
 			}
 		}
 	}
@@ -836,9 +836,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if (m_attack) {
 			m_attack = false;
 			if (m_animator != null) {
-				m_animator.SetBool("attack", false);
-				m_animator.SetBool("melee",  false);
-				m_animator.SetBool("ranged", false);
+				m_animator.SetBool( GameConstants.Animator.ATTACK, false);
+				m_animator.SetBool( GameConstants.Animator.MELEE,  false);
+				m_animator.SetBool( GameConstants.Animator.RANGED, false);
 			}
 		}
 	}
@@ -846,27 +846,27 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void StartAttackTarget() {
 		m_attackingTarget = true;
 		if (m_animator != null)
-			m_animator.SetBool("eat", true);
+			m_animator.SetBool( GameConstants.Animator.EAT, true);
 	}
 
 	public void StopAttackTarget() {
 		m_attackingTarget = false;
 		if (m_animator != null)
-			m_animator.SetBool("eat", false);
+			m_animator.SetBool( GameConstants.Animator.EAT, false);
 	}
 
 	public void StartEating() {
-		m_animator.SetBool("eat", true);
+		m_animator.SetBool( GameConstants.Animator.EAT, true);
 	}
 
 	public void StopEating() {
 		if (!m_attackingTarget)
-			m_animator.SetBool("eat", false);
+			m_animator.SetBool( GameConstants.Animator.EAT, false);
 	}
 
 	public void Impact() {
 		if (m_animator != null)
-			m_animator.SetTrigger("impact");
+			m_animator.SetTrigger( GameConstants.Animator.IMPACT );
 
 		if (m_showDamageFeedback) {
 			m_damageFeedbackTimer = m_damageTime;
@@ -1005,7 +1005,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 		if (m_animator != null) {
 			m_animator.speed = 1f;
-			m_animator.SetTrigger("burn");
+			m_animator.SetTrigger(GameConstants.Animator.BURN);
 			m_disableAnimatorTimer = _burnAnimSeconds + 0.1f;
 		} else {
 			m_disableAnimatorTimer = 0.1f;
