@@ -160,24 +160,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1555627166429716
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4357793953118808}
-  - component: {fileID: 33681110261922142}
-  - component: {fileID: 23717465104689680}
-  - component: {fileID: 114636839619598264}
-  m_Layer: 0
-  m_Name: barrel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 1
-  m_IsActive: 1
 --- !u!1 &1811645659885374
 GameObject:
   m_ObjectHideFlags: 1
@@ -287,34 +269,21 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1014197573407704}
-  m_LocalRotation: {x: -8.4219226e-10, y: -0.70710695, z: 0.0000000018626454, w: 0.7071067}
-  m_LocalPosition: {x: -0.018066647, y: 0.297, z: -1.536133}
-  m_LocalScale: {x: 0.0063600023, y: 0.00636, z: 0.0063600033}
+  m_LocalRotation: {x: 0.1950581, y: -0.097190365, z: 0.35490036, w: 0.90914917}
+  m_LocalPosition: {x: 0.149, y: 0.014, z: -1.268}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 4820025532544236}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4357793953118808
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1555627166429716}
-  m_LocalRotation: {x: -1.2732926e-10, y: -0.7071069, z: 9.313227e-10, w: 0.70710677}
-  m_LocalPosition: {x: -0.21572188, y: 0.297, z: 1.8032229}
-  m_LocalScale: {x: 0.0063617863, y: 0.0063617844, z: 0.0063617877}
-  m_Children: []
-  m_Father: {fileID: 4820025532544236}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 25.066002, y: -2.421, z: 42.11}
 --- !u!4 &4433274009400586
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1495253133127866}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 749.5695, y: 78.341736, z: -19.238968}
+  m_LocalRotation: {x: -0, y: -0.06458849, z: -0, w: 0.997912}
+  m_LocalPosition: {x: 527.99005, y: -63.7, z: 3.38}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4920656997595368}
@@ -322,7 +291,7 @@ Transform:
   - {fileID: 4064393143540546}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -23.089, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -7.406, z: 0}
 --- !u!4 &4437515374805772
 Transform:
   m_ObjectHideFlags: 1
@@ -342,12 +311,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1133862165790136}
-  m_LocalRotation: {x: -4.3110057e-10, y: -0.70710695, z: 9.313227e-10, w: 0.7071067}
-  m_LocalPosition: {x: 0.3074148, y: 0.297, z: 2.117493}
-  m_LocalScale: {x: 0.0063600023, y: 0.00636, z: 0.0063600033}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.342, y: -0.073, z: 2.084}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 4820025532544236}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4745734845762202
 Transform:
@@ -374,7 +343,6 @@ Transform:
   m_Children:
   - {fileID: 4437515374805772}
   - {fileID: 4094244680475466}
-  - {fileID: 4357793953118808}
   - {fileID: 4563449720739178}
   - {fileID: 4256423326488628}
   m_Father: {fileID: 4433274009400586}
@@ -498,51 +466,12 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!23 &23717465104689680
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1555627166429716}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: 8af0a6ecf92894948ba0f43368904771, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!33 &33224354837675784
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1133862165790136}
-  m_Mesh: {fileID: 4300002, guid: 757bdce500a5a96478023391c65ff3e5, type: 3}
---- !u!33 &33681110261922142
-MeshFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1555627166429716}
   m_Mesh: {fileID: 4300002, guid: 757bdce500a5a96478023391c65ff3e5, type: 3}
 --- !u!33 &33986299397965970
 MeshFilter:
@@ -828,20 +757,6 @@ MonoBehaviour:
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4094244680475466}
   m_worldPositionStays: 1
---- !u!114 &114636839619598264
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1555627166429716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_parentName: Human_Master
-  m_parentRoot: {fileID: 4094244680475466}
-  m_worldPositionStays: 1
 --- !u!114 &114717036301677878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -889,7 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnTime: 40
+  m_spawnTime: 50
   m_ground: []
 --- !u!137 &137660784778077890
 SkinnedMeshRenderer:
