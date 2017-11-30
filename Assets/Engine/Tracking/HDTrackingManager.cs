@@ -238,7 +238,7 @@ public class HDTrackingManager
     public virtual void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider=null) {}
 
     /// <summary>
-    /// Called then the ad requested by the user has finished
+    /// Called when the ad requested by the user has finished
     /// <param name="adType">Ad Type.</param>    
     /// <param name="adIsLoaded"><c>true</c>c> if the ad was effectively viewed, <c>false</c> otherwise.</param>
     /// <param name="maxReached"><c>true</c> if the user has reached the limit of ad viewing authorized by the app. Used for reward ads</param>
@@ -247,11 +247,16 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration=0, string provider=null) {}
 
-	/// <summary>
-	/// The game has reached a step in the loading funnel.
-	/// </summary>
-	/// <param name="_step">Step to notify.</param>
-	public virtual void Notify_Funnel_Load(FunnelData_Load.Steps _step) {}
+    /// <summary>
+    /// Called when Menu has been loaded
+    /// </summary>
+    public virtual void Notify_MenuLoaded() {}
+
+    /// <summary>
+    /// The game has reached a step in the loading funnel.
+    /// </summary>
+    /// <param name="_step">Step to notify.</param>
+    public virtual void Notify_Funnel_Load(FunnelData_Load.Steps _step) {}
 
 	/// <summary>
 	/// The game has reached a step in the firts user experience funnel.
