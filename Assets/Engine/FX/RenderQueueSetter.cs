@@ -29,6 +29,7 @@ public class RenderQueueSetter : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	[SerializeField] private bool m_applyOnStart = true;
 	[SerializeField] private Target[] m_targets = new Target[0];
 	
 	//------------------------------------------------------------------------//
@@ -38,7 +39,7 @@ public class RenderQueueSetter : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		Apply();
+		if(m_applyOnStart) Apply();
 	}
 
 	/// <summary>
