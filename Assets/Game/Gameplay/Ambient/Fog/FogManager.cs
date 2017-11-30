@@ -63,9 +63,9 @@ public class FogManager : MonoBehaviour
 		/// </summary>
 		public void FogSetup()
 		{
-			Shader.SetGlobalFloat("_FogStart", m_fogStart);
-			Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
-			Shader.SetGlobalTexture("_FogTexture", texture);
+			Shader.SetGlobalFloat(GameConstants.Material.FOG_START, m_fogStart);
+			Shader.SetGlobalFloat(GameConstants.Material.FOG_END, m_fogEnd);
+			Shader.SetGlobalTexture(GameConstants.Material.FOG_TEXTURE, texture);
 		}
 	}
 
@@ -310,9 +310,9 @@ public class FogManager : MonoBehaviour
 		{
 			m_forceUpdate = false;
 			m_texture.Apply(false);
-			Shader.SetGlobalFloat("_FogStart", m_start);
-			Shader.SetGlobalFloat("_FogEnd", m_end);
-			Shader.SetGlobalTexture("_FogTexture", m_texture);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START , m_start);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_end);
+			Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, m_texture);
 		}
 	}
 

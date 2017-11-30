@@ -15,6 +15,7 @@ namespace GameConstants
 
 		public static readonly int FOG_START = Shader.PropertyToID("_FogStart");
 		public static readonly int FOG_END = Shader.PropertyToID("_FogEnd");
+		public static readonly int FOG_TEXTURE = Shader.PropertyToID("_FogTexture");
 
 		public static readonly int LERP_VALUE = Shader.PropertyToID("_LerpValue");
 		public static readonly int START_TIME = Shader.PropertyToID("_StartTime");
