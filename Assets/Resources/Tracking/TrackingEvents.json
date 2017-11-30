@@ -295,7 +295,8 @@
 				{"language": {"Status": "OK"}},
 				{"country": {"Status": "OK"}},
 				{"connectionType": {"Status": "OK"}},
-				{"userTimezone": {"Status": "OK"}}
+				{"userTimezone": {"Status": "OK"}},
+				{"StoreInstalled": {"Status": "OK"}}				
             ],
             "APIs": [
                 "dna",
@@ -981,6 +982,10 @@
             "Values": []
         },
 		"isSuccess": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"StoreInstalled": {
             "Type": "INT:4",
             "Values": []
         }
