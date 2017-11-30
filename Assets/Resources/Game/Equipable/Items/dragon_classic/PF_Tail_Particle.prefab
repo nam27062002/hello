@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 4917715754461254}
   - component: {fileID: 114237339257704962}
   - component: {fileID: 114717344124102654}
+  - component: {fileID: 114661084256652654}
   m_Layer: 0
   m_Name: PF_Tail_Particle
   m_TagString: Untagged
@@ -116,6 +117,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_attachPoint: 11
+  m_showOnResults: 1
+--- !u!114 &114661084256652654
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1185511104189724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 0
+  m_targets:
+  - renderer: {fileID: 199616296879227298}
+    newRenderQueue: 3020
+  - renderer: {fileID: 199669417138307210}
+    newRenderQueue: 3020
 --- !u!114 &114717344124102654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -205,7 +224,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1517031134
+  randomSeed: 131855054
   InitialModule:
     serializedVersion: 3
     enabled: 1
