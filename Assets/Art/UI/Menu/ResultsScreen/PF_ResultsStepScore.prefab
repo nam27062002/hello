@@ -337,6 +337,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224165203034667712}
+  - component: {fileID: 114922539909855992}
   m_Layer: 5
   m_Name: PS_ShinyGodrays
   m_TagString: Untagged
@@ -2625,6 +2626,24 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &114922539909855992
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1433593435240502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targets:
+  - renderer: {fileID: 0}
+    newRenderQueue: 3000
+  - renderer: {fileID: 0}
+    newRenderQueue: 3000
+  - renderer: {fileID: 0}
+    newRenderQueue: 3000
 --- !u!114 &114925984083449046
 MonoBehaviour:
   m_ObjectHideFlags: 1
