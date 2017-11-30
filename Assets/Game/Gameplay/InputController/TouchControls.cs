@@ -51,6 +51,7 @@ abstract public class TouchControls : MonoBehaviour {
 		// Need to do this, as Unity doesn't seem to clear previous mouse clicks until the first query (i.e. GetMouseButton...())
 		// e.g. you clicked button '0' in the front end, and then during the game queried for GetMouseButtonDown(1) during
 		// the Update() method... the first time would also return a positive for GetMouseButtonDown(0)...
+		#if UNITY_EDITOR || UNITY_PC
 		if(m_boostWithSecondTouch)
 		{
 			Input.GetMouseButtonDown(0);
@@ -60,6 +61,7 @@ abstract public class TouchControls : MonoBehaviour {
 			Input.GetMouseButtonUp(0);
 			Input.GetMouseButtonUp(1);
 		}
+		#endif
 
         // Subscribe to external events
         Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
