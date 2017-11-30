@@ -733,6 +733,15 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_IsNotifyOnPauseEnabled = true;
     }
 
+    public override void Notify_MenuLoaded()
+    {
+        if (!Session_HasMenuEverLoaded)
+        {
+            Session_HasMenuEverLoaded = true;
+            HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+        }
+    }
+
 	/// <summary>
 	/// The game has reached a step in the loading funnel.
 	/// </summary>
@@ -2066,6 +2075,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     private bool Session_IsFirstTime { get; set; }
 
+    private bool Session_HasMenuEverLoaded { get; set; }
+
     private bool mSession_IsNotifyOnPauseEnabled;
 
     /// <summary>
@@ -2102,6 +2113,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathCoordinates = null;
         Session_IsFirstTime = false;
         Session_IsNotifyOnPauseEnabled = true;
+        Session_HasMenuEverLoaded = false;
      }
 #endregion
 
