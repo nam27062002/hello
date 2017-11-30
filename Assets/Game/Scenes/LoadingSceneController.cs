@@ -458,31 +458,8 @@ public class LoadingSceneController : SceneController {
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
-
-
-				ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-            	if (kServerConfig != null && kServerConfig.m_eBuildEnvironment == CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-            	{					
-                    bool needsToCheckAppWasDownloadedFromStore = FeatureSettingsManager.instance.IsCheckAppWasDownloadedFromStoreEnabled;
-#if UNITY_EDITOR
-                    needsToCheckAppWasDownloadedFromStore = false;                        
-#endif
-                    Debug.Log("Is Production!! Store: " + GameStoreManager.SharedInstance.AppWasDownloadedFromStore() + " needsToCheckAppWasDownloadedFromStore = " + needsToCheckAppWasDownloadedFromStore);
-                    
-                    // Check if build is from store
-                    if ( !needsToCheckAppWasDownloadedFromStore || GameStoreManager.SharedInstance.AppWasDownloadedFromStore() )	// Game Store Manager needs to be initialized before checking
-            		{	
-            			StartLoadFlow();
-            		}
-            		else
-            		{
-						SetState(State.SHOWING_UPGRADE_POPUP);
-            		}
-                }                
-            	else
-            	{
-					StartLoadFlow();	
-            	}                                
+				
+				StartLoadFlow();	            	                                
           	}break;
         }
     }

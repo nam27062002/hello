@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 4836490224385592}
   - component: {fileID: 114959439152980802}
   - component: {fileID: 114656011245838462}
+  - component: {fileID: 114657519678800868}
   m_Layer: 0
   m_Name: PF_Biohazard_Smoke
   m_TagString: Untagged
@@ -149,6 +150,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_attachPoint: 8
   m_showOnResults: 1
+--- !u!114 &114657519678800868
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1620844793526932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 0
+  m_targets:
+  - renderer: {fileID: 199049490385624376}
+    newRenderQueue: 3020
+  - renderer: {fileID: 199102328403736208}
+    newRenderQueue: 3020
+  - renderer: {fileID: 199037379368722234}
+    newRenderQueue: 3020
 --- !u!114 &114813353985738438
 MonoBehaviour:
   m_ObjectHideFlags: 1
