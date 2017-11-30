@@ -1121,7 +1121,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		CheckGround( out m_raycastHit);
 		if (boostSpeedMultiplier > 1)
         {
-            if (impulse == Vector3.zero)
+			if (impulse == GameConstants.Vector3.zero)
             {
                 impulse = m_directionWhenBoostPressed;
             }
@@ -1131,22 +1131,18 @@ public class DragonMotion : MonoBehaviour, IMotion {
         	m_directionWhenBoostPressed = m_direction;
         }
         
-		if ( impulse != Vector3.zero )
+		if ( impulse != GameConstants.Vector3.zero )
 		{
 			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
-
-			// bool ignoreGravity = OverWaterMovement( ref impulse );
-			bool ignoreGravity = false;
 
 			// v_max = a/f
 			// t_max = 5/f
 
-			Vector3 gravityAcceleration = Vector3.zero;
-            if (!ignoreGravity)
-            {
-                //if (impulse.y < 0) impulse.y *= m_dragonGravityModifier;
-                gravityAcceleration = Vector3.down * 9.81f * m_dragonGravityModifier;// * m_dragonMass;
-            }
+			Vector3 gravityAcceleration;
+			gravityAcceleration.x = 0;
+            gravityAcceleration.y = -9.81f * m_dragonGravityModifier;// * m_dragonMass;
+			gravityAcceleration.z = 0;// * m_dragonMass;
+            
             Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
             Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
@@ -1178,7 +1174,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if ( (degrees < angle && degrees > -angle) || (degrees > 180-angle || degrees < -180.0f+angle) )
 		{
 			// if hitting water check impulse angle 
-			bool hittingWater = Physics.Raycast( m_transform.position, Vector3.down, out m_raycastHit, 100, 1<<LayerMask.NameToLayer("Water"));
+			bool hittingWater = Physics.Raycast( m_transform.position, GameConstants.Vector3.down, out m_raycastHit, 100, 1<<LayerMask.NameToLayer("Water"));
 			if ( hittingWater )
 			{
 				
@@ -1186,11 +1182,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				// Correct impulse
 				if (degrees < angle && degrees > -angle)
 				{
-					impulse = Vector3.right;
+					impulse = GameConstants.Vector3.right;
 					return true;
 				}else if(degrees > 180-angle || degrees < -180.0f+angle)
 				{	
-					impulse = Vector3.left;
+					impulse = GameConstants.Vector3.left;
 					return true;
 				}
 			}
@@ -1201,7 +1197,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private void ApplyExternalForce()
 	{
 		m_impulse += m_externalForce;
-		m_externalForce = Vector3.zero;
+		m_externalForce = GameConstants.Vector3.zero;
 	}
 
 	float GetTargetForceMultiplier()
@@ -1216,7 +1212,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private void UpdateWaterMovement( float _deltaTime )
 	{
-		Vector3 impulse = Vector3.zero;
+		Vector3 impulse = GameConstants.Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
 		if ( m_dragon.IsDrunk() )
 		{
@@ -1229,7 +1225,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		if (impulse.y < 0) impulse.y *= m_inverseGravityWater;
 
-		Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonWaterGravityModifier * m_waterGravityMultiplier;   // Gravity
+		Vector3 gravityAcceleration = GameConstants.Vector3.up * 9.81f * m_dragonWaterGravityModifier * m_waterGravityMultiplier;   // Gravity
         Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass * m_accWaterFactor;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
@@ -1269,11 +1265,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
     private void UpdateSpaceMovement(float _deltaTime)
     {
-        Vector3 impulse = Vector3.zero;
+        Vector3 impulse = GameConstants.Vector3.zero;
         m_controls.GetImpulse(1, ref impulse);
         if (boostSpeedMultiplier > 1)
         {
-            if (impulse == Vector3.zero)
+            if (impulse == GameConstants.Vector3.zero)
             {
                 impulse = m_directionWhenBoostPressed;
             }
@@ -1288,8 +1284,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
         	yGravityModifier = 0;
 
         impulse.Scale(new Vector3(0.5f, 0, 1));
-        Vector3 gravityAcceleration = Vector3.zero;
-		gravityAcceleration = Vector3.down * 9.81f * (m_dragonAirGravityModifier + m_dragonAirGravityModifier * -yGravityModifier);
+        Vector3 gravityAcceleration = GameConstants.Vector3.zero;
+		gravityAcceleration = GameConstants.Vector3.down * 9.81f * (m_dragonAirGravityModifier + m_dragonAirGravityModifier * -yGravityModifier);
 		float distance = (m_transform.position.y - m_startParabolicPosition.y);
 		if (distance > 0) {
 			gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
@@ -1306,7 +1302,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
         	// if going down push harder
         if ( m_impulse.y <= 0 )
         {
-			acceleration += Vector3.down * 9.81f * m_dragonAirExtraGravityModifier;
+			acceleration.y += -9.81f * m_dragonAirExtraGravityModifier;
         }
 
         Vector3 impulseCapped = m_impulse;
@@ -1329,9 +1325,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		CheckGround( out m_raycastHit );
 		if ( m_closeToGround ) { // dragon will fly up to avoid mesh intersection
 			
-			// Vector3 impulse = Vector3.up * m_speedValue * 0.1f;			
-			Vector3 impulse = Vector3.up * 1 * 0.1f;			
-			ComputeFinalImpulse(_deltaTime, impulse);	
+			Vector3 impulse = GameConstants.Vector3.up * 0.1f;			
+			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref impulse, m_velocityBlendRate * _deltaTime, 8.0f);
 		}
 		else 
 		{
@@ -1340,9 +1335,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		bool slowly = true;
 		if ( current == null){
 			if ( oldDirection.x > 0 ){
-				m_direction = Vector3.right;	
+				m_direction = GameConstants.Vector3.right;	
 			}else{
-				m_direction = Vector3.left;
+				m_direction = GameConstants.Vector3.left;
 			}
 		}else{
 			m_direction = (m_impulse + m_externalForce).normalized;
@@ -1373,7 +1368,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
 				float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;
-				Vector3 acceleration = Vector3.down * gravity * m_dragonMass;	// Gravity
+				Vector3 acceleration = GameConstants.Vector3.down * gravity * m_dragonMass;	// Gravity
 
 				// stroke's Drag
 				float impulseMag = m_impulse.magnitude;
@@ -1387,11 +1382,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		if ( oldDirection.x > 0 )
 		{
-			m_direction = Vector3.right;	
+			m_direction = GameConstants.Vector3.right;	
 		}
 		else
 		{
-			m_direction = Vector3.left;
+			m_direction = GameConstants.Vector3.left;
 		}
 
 
@@ -1410,7 +1405,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_impulse = m_rbody.velocity;
 		if ( m_deadTimer < 1.5f * Time.timeScale )
 		{
-			Vector3 gravityAcceleration = Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier * m_deadGravityMultiplier;   // Gravity
+			Vector3 gravityAcceleration = GameConstants.Vector3.up * 9.81f * m_dragonGravityModifier * m_waterGravityMultiplier * m_deadGravityMultiplier;   // Gravity
 			if ( m_transform.position.y > (m_waterEnterPosition.y - m_mainGroundCollider.radius))
 				gravityAcceleration -= gravityAcceleration;
 
@@ -1427,11 +1422,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		if ( oldDirection.x > 0 )
 		{
-			m_direction = Vector3.right;	
+			m_direction = GameConstants.Vector3.right;	
 		}
 		else
 		{
-			m_direction = Vector3.left;
+			m_direction = GameConstants.Vector3.left;
 		}
 
 		RotateToDirection(m_direction, false);
@@ -1441,24 +1436,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_rbody.velocity = m_impulse;
 	}
 
-
-	private void ComputeFinalImpulse(float _deltaTime ,Vector3 _impulse) {
-		// we keep the velocity value
-		{
-			// on air impulse formula, we don't fully change the velocity vector 
-			// m_impulse = Vector3.Lerp(m_impulse, _impulse, m_impulseTransformationSpeed * Time.deltaTime);
-			// m_impulse.Normalize();
-
-			Util.MoveTowardsVector3XYWithDamping(ref m_impulse, ref _impulse, m_velocityBlendRate * _deltaTime, 8.0f);
-			m_direction = m_impulse.normalized;
-		}
-	}
-
 	private void ComputeImpulseToZero(float _deltaTime)
 	{
 		float impulseMag = m_impulse.magnitude;
 		m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime);
-		m_direction = m_impulse.normalized;
+		// m_direction = m_impulse.normalized;
 	}
 
 	protected virtual void RotateToDirection(Vector3 dir, bool slowly = false)
@@ -1504,13 +1486,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 		else
 		{
-			m_angularVelocity = Vector3.zero;
+			m_angularVelocity = GameConstants.Vector3.zero;
 		}
 	}
 
 
 	private bool CheckGround(out RaycastHit _leftHit) {
-		Vector3 distance = Vector3.down * 10f;
+		Vector3 distance = GameConstants.Vector3.down * 10f;
 		bool hit_L = false;
 
 		Vector3 leftSensor  = m_sensor.bottom.position;
@@ -1532,7 +1514,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	}
 
 	private bool CheckCeiling(out RaycastHit _leftHit) {
-		Vector3 distance = Vector3.up * 10f;
+		Vector3 distance = GameConstants.Vector3.up * 10f;
 		bool hit_L = false;
 		
 		Vector3 leftSensor 	= m_sensor.top.position;						
@@ -1551,7 +1533,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Stop dragon's movement
 	/// </summary>
 	public void Stop() {
-		m_impulse = Vector3.zero;
+		m_impulse = GameConstants.Vector3.zero;
 		m_rbody.velocity = m_impulse;
 		m_direction = m_impulse.normalized;
 	}
@@ -1611,7 +1593,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	}
 
 	public Vector3 groundDirection {
-		get { return Vector3.zero; }
+		get { return GameConstants.Vector3.zero; }
 	}
 		
 	public Vector3 velocity {
@@ -1818,7 +1800,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public void StartIntroMovement(Vector3 introTarget)
 	{
 		m_introTarget = introTarget;
-		m_transform.position = introTarget + Vector3.left * introDisplacement;
+		m_transform.position = introTarget + GameConstants.Vector3.left * introDisplacement;
 		m_introTimer = m_introDuration;
 		ChangeState(State.Intro);
 	}
