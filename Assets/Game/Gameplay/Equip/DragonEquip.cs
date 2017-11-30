@@ -248,7 +248,16 @@ public class DragonEquip : MonoBehaviour {
 					int attackPointIdx = (int)equipable.attachPoint;
 					if ( equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null )
 					{
+						// Equip accessory
 						m_attachPoints[attackPointIdx].EquipAccessory( equipable );
+
+						// In menu, adjust render queue of selected renderers
+						if(m_menuMode) {
+							RenderQueueSetter[] rqSetters = objInstance.GetComponentsInChildren<RenderQueueSetter>();
+							for(int j = 0; j < rqSetters.Length; ++j) {
+								rqSetters[j].Apply();
+							}
+						}
 					}
 					else
 					{
