@@ -121,7 +121,9 @@ namespace Metagame {
 						(DefinitionNode _petDef) => {
 							// Several conditions:
 							// a) Hidden pets (usually WIP pets or pets meant to be revealed in future updates)
-							if(_petDef.GetAsBool("hidden", false)) return true;
+							if(!DebugSettings.showHiddenPets) {		// Check cheats
+								if(_petDef.GetAsBool("hidden", false)) return true;
+							}
 
 							// b) Not-in-gatcha pets (pets unlocked by other means: global event reward, etc.)
 							if(_petDef.GetAsBool("notInGatcha", false)) return true;

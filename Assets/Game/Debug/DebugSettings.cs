@@ -71,6 +71,8 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
 	public const string GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD	= "GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD";
 
+	public const string SHOW_HIDDEN_PETS						= "SHOW_HIDDEN_PETS";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
@@ -128,6 +130,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public static bool spawnChance100{
 		get { return m_spawnChance100; }
 		set { m_spawnChance100 = value;}
+	}
+
+	// Metagame cheats
+	public static bool showHiddenPets {
+		get { return Prefs.GetBoolPlayer(SHOW_HIDDEN_PETS, false); }
+		set { Prefs.SetBoolPlayer(SHOW_HIDDEN_PETS, value); }
 	}
 
 	// Server debugging tools

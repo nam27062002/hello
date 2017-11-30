@@ -113,6 +113,9 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Subscribe to other events
 		petFilters.OnFilterChanged.AddListener(OnFilterChanged);
+
+		// Subscribe to external events
+		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
 	}
 
 	/// <summary>
@@ -162,6 +165,9 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Unsubscribe from other events
 		petFilters.OnFilterChanged.RemoveListener(OnFilterChanged);
+
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -192,11 +198,14 @@ public class PetsScreenController : MonoBehaviour {
 			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
 		}
 
-		for( int i = m_defs.Count - 1; i >= 0; --i )
-		{
-			if ( m_defs[i].GetAsBool("hidden") )
+		// Purge hidden pets (unless cheating!)
+		if(!DebugSettings.showHiddenPets) {
+			for( int i = m_defs.Count - 1; i >= 0; --i )
 			{
-				m_defs.RemoveAt(i);
+				if ( m_defs[i].GetAsBool("hidden") )
+				{
+					m_defs.RemoveAt(i);
+				}
 			}
 		}
 
@@ -575,5 +584,19 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Snap to that pill in any case
 		m_scrollList.SelectPoint(_pill.GetComponent<ScrollRectSnapPoint>());
+	}
+
+	/// <summary>
+	/// A control panel boolean flag has been changed.
+	/// </summary>
+	/// <param name="_id">CP Property ID.</param>
+	/// <param name="_newValue">New value.</param>
+	private void OnCPBoolChanged(string _id, bool _newValue) {
+		// Check id
+		if(_id == DebugSettings.SHOW_HIDDEN_PETS) {
+			// Force a reload of the pets list the next time we enter the screen
+			m_defs.Clear();
+			Initialize();
+		}
 	}
 }
