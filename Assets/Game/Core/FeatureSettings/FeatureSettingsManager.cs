@@ -1211,15 +1211,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CONTENT_DELTAS_CACHED);
         }
-    }
-
-    public bool IsCheckAppWasDownloadedFromStoreEnabled
-    {
-        get
-        {
-            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CHECK_APP_WAS_DOWNLOADED_FROM_STORE);
-        }
-    }
+    }    
 
     public bool IsGlowEffectEnabled
     {

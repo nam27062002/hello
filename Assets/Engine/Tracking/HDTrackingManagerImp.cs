@@ -985,7 +985,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
             Track_AddParamLanguage(e);
             Track_AddParamUserTimezone(e);
-            Track_SendEvent(e);
+            Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
+            Track_SendEvent(e);            
         }        
     }    
 
@@ -1733,6 +1734,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
 	private const string TRACK_PARAM_STEP_NAME	                = "stepName";
 	private const string TRACK_PARAM_STOP_CAUSE                 = "stopCause";
+    private const string TRACK_PARAM_STORE_INSTALLED            = "StoreInstalled";
     private const string TRACK_PARAM_STORE_TRANSACTION_ID       = "storeTransactionID";
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
