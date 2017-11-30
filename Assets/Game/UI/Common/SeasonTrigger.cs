@@ -63,6 +63,13 @@ public class SeasonTrigger : MonoBehaviour {
 		Apply();
 	}
 
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -70,6 +77,9 @@ public class SeasonTrigger : MonoBehaviour {
 	/// Apply seasonal trigger based on current season.
 	/// </summary>
 	public void Apply() {
+		// Only if component is enabled!
+		if(!this.enabled) return;
+
 		// Cache aux vars
 		string currentSeason = SeasonManager.activeSeason;
 
