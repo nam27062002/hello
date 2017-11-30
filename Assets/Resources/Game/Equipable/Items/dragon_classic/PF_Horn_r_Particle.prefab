@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4553950962343962}
   - component: {fileID: 114768225939135624}
   - component: {fileID: 114346603819624214}
+  - component: {fileID: 114492339813853102}
   m_Layer: 0
   m_Name: PF_Horn_r_Particle
   m_TagString: Untagged
@@ -105,6 +106,21 @@ MonoBehaviour:
   m_addToBodyParts: 1
   m_stopInsideWater: 1
   m_stopWhenDead: 1
+--- !u!114 &114492339813853102
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1874035621251006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 0
+  m_targets:
+  - renderer: {fileID: 199018037561532112}
+    newRenderQueue: 3020
 --- !u!114 &114768225939135624
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -117,6 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_attachPoint: 20
+  m_showOnResults: 1
 --- !u!198 &198561566925581100
 ParticleSystem:
   m_ObjectHideFlags: 1

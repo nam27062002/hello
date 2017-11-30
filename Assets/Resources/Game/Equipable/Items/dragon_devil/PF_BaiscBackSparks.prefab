@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 4267343688502964}
   - component: {fileID: 114483401948557316}
   - component: {fileID: 114487884426363636}
+  - component: {fileID: 114446528901454004}
   m_Layer: 0
   m_Name: PF_BaiscBackSparks
   m_TagString: Untagged
@@ -73,6 +74,21 @@ Transform:
   m_Father: {fileID: 4267343688502964}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -80.359, y: -80.909004, z: 81.663}
+--- !u!114 &114446528901454004
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1574201288590626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 0
+  m_targets:
+  - renderer: {fileID: 199428244588076056}
+    newRenderQueue: 3020
 --- !u!114 &114483401948557316
 MonoBehaviour:
   m_ObjectHideFlags: 1
