@@ -1157,7 +1157,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 
 			m_direction = m_impulse.normalized;
-			RotateToDirection( impulse );
+			RotateToDirection( m_direction );
 		}
 		else
 		{
@@ -1316,7 +1316,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
         m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime);	// drag only on x coordinate
         m_direction = m_impulse.normalized;
 
-        RotateToDirection(m_impulse.normalized);
+        RotateToDirection(m_direction);
 
         ApplyExternalForce();
 
@@ -1463,8 +1463,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	protected virtual void RotateToDirection(Vector3 dir, bool slowly = false)
 	{
-		float len = dir.magnitude;
-		// m_rotBlendRate is param
 		float blendRate = m_rotBlendRate;
 		if ( GetTargetForceMultiplier() > 1 )
 			blendRate *= 2;
@@ -1472,8 +1470,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if ( slowly )
 			blendRate = m_rotBlendRate * 0.2f;
 		float slowRange = 0.05f;
-		if(len < slowRange)
-			blendRate *= (len/slowRange);
 
 		
 		if(blendRate > Mathf.Epsilon)
