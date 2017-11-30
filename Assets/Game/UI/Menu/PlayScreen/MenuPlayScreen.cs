@@ -35,6 +35,8 @@ public class MenuPlayScreen : MonoBehaviour {
     private Localizer m_incentivizeLabelLocalizer = null;    
 
 	private bool m_showLegalPopup;
+
+    private bool m_isFirstTime = true;
     
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -43,7 +45,8 @@ public class MenuPlayScreen : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() 
-	{		                
+	{
+        m_isFirstTime = true;
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
     }
@@ -53,7 +56,11 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() 
 	{
-		HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+        if (m_isFirstTime)
+        {
+            HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+            m_isFirstTime = false;
+        }
 
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
