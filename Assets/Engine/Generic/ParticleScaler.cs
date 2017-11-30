@@ -17,6 +17,8 @@ public class ParticleScaler : MonoBehaviour
 	public float m_scale = 1;
 	public Transform m_transform;
 
+	[Space]
+	public bool m_resetFirst = false;
 	public bool m_scaleLifetime = false;
 	public bool m_scaleAllChildren = true;
 
@@ -27,9 +29,9 @@ public class ParticleScaler : MonoBehaviour
 		AFTER_ENABLE,
 		MANUALLY
 	}
+	[Space]
 	public WhenScale m_whenScale;
 
-	public bool m_resetFirst = false;
 
 	protected class PSDataRegistry
 	{
@@ -81,11 +83,8 @@ public class ParticleScaler : MonoBehaviour
 
     void Awake()
 	{
-		if ( m_resetFirst )
-		{
-			// Save original data
-			SaveOriginalData();
-		}
+		// Save original data
+		SaveOriginalData();
 	}
 
 
