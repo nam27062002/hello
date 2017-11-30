@@ -20,17 +20,14 @@ public class SeasonManager : Singleton<SeasonManager> {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string NO_SEASON_SKU = "none";
+	private const string ACTIVE_SEASON_CACHE_KEY = "SeasonManager.activeSeasonSku";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	private DefinitionNode m_activeSeasonDef = null;
-	public static DefinitionNode activeSeasonDef {
-		get { return instance.m_activeSeasonDef; }
-	}
-
+	private string m_activeSeason = NO_SEASON_SKU;
 	public static string activeSeason {
-		get { return instance.m_activeSeasonDef == null ? NO_SEASON_SKU : instance.m_activeSeasonDef.sku; }
+		get { return instance.m_activeSeason; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -53,27 +50,42 @@ public class SeasonManager : Singleton<SeasonManager> {
 			// Default behaviour
 			case CPSeasonSelector.DEFAULT_SEASON_SKU: {
 				// Load active season from content
-				m_activeSeasonDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(
-					DefinitionsCategory.SEASONS, 
-					"active", 
-					"true"
-				);
+				// If content is not ready, load it from cache
+				if(!ContentManager.ready) {
+					// Load from cache
+					m_activeSeason = PlayerPrefs.GetString(ACTIVE_SEASON_CACHE_KEY, NO_SEASON_SKU);
+				} else {
+					// Load from content - first definition with the "active" field set to true
+					DefinitionNode activeSeasonDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(
+						DefinitionsCategory.SEASONS, 
+						"active", 
+						"true"
+					);
+
+					// Store new season
+					m_activeSeason = activeSeasonDef == null ? NO_SEASON_SKU : activeSeasonDef.sku;
+
+					// Cache for future use
+					PlayerPrefs.SetString(ACTIVE_SEASON_CACHE_KEY, m_activeSeason);
+				}
 			} break;
 
 			// No season
 			case NO_SEASON_SKU: {
-				m_activeSeasonDef = null;
+				m_activeSeason = NO_SEASON_SKU;
 			} break;
 
 			// Some other season
 			default: {
 				// Directly retrieve target season def from content
-				m_activeSeasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, forcedSeasonSku);
+				DefinitionNode activeSeasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, forcedSeasonSku);
 
 				// If selected season wasn't found, reset cheat
-				if(m_activeSeasonDef == null) {
+				if(activeSeasonDef == null) {
 					CPSeasonSelector.forcedSeasonSku = CPSeasonSelector.DEFAULT_SEASON_SKU;
 					RefreshActiveSeason();
+				} else {
+					m_activeSeason = activeSeasonDef.sku;
 				}
 			} break;
 		}
