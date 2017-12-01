@@ -3,7 +3,6 @@ echo "----------- EXPORTING EXCEL TO XML... ------------"
 echo " "
 
 REM Aux vars
-set INPUT_FILE=HungryDragonContent.xlsx
 set OUTPUT_DIR=xml
 set TOOL_EXECUTABLE=xml_content_generator.jar
 
@@ -16,8 +15,11 @@ if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
 REM Clear previously exported files
 del /F /Q /S "%OUTPUT_DIR%\*"
 
-REM Run Java tool
-java -jar %TOOL_EXECUTABLE% %INPUT_FILE% %OUTPUT_DIR%
+REM Run Java tool for each Excel file in the folder
+for %%f in (*.xlsx) do (
+        echo "    Exporting %%~nf..."
+        java -jar %TOOL_EXECUTABLE% "%%~nf.xlsx" %OUTPUT_DIR%
+)
 
 REM Git Auto-commit
 REM TODO!!
