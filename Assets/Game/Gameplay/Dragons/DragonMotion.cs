@@ -934,7 +934,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					ChangeState( State.Idle );
 				}else{	
 					float delta = m_introTimer / m_introDuration;
-					m_destination = Vector3.left * introDisplacement * m_introDisplacementCurve.Evaluate(1.0f - delta);
+					m_destination = GameConstants.Vector3.left * introDisplacement * m_introDisplacementCurve.Evaluate(1.0f - delta);
 					m_destination += m_introTarget;
 					m_rbody.MovePosition( m_destination );
 					if ( delta < m_introStopAnimationDelta )
@@ -947,8 +947,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}break;
 			case State.Latching:
 			{
-				m_impulse = Vector3.zero;
-				m_rbody.velocity = Vector3.zero;
+				m_impulse = GameConstants.Vector3.zero;
+				m_rbody.velocity = GameConstants.Vector3.zero;
 			}break;
 			case State.Dead:
 			{
