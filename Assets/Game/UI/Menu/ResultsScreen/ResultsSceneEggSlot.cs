@@ -59,6 +59,12 @@ public class ResultsSceneEggSlot : MonoBehaviour {
 		m_eggLoader.gameObject.SetActive(true);
 		m_eggLoader.transform.SetLocalScale(0f);
 
+		// Stop particles during scale-up animation (they don't mix well with scale changes :s)
+		ParticleSystem[] particles = m_eggLoader.eggView.GetComponentsInChildren<ParticleSystem>();
+		for(int i = 0; i < particles.Length; ++i) {
+			particles[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+		}
+
 		// Launch sequence!
 		Sequence seq = DOTween.Sequence();
 		seq.AppendInterval(inDelay);	// Initial delay
@@ -66,10 +72,22 @@ public class ResultsSceneEggSlot : MonoBehaviour {
 		// Up
 		seq.Append(m_eggLoader.transform.DOScale(eggSlotScale, inDuration * 0.9f).SetEase(Ease.OutBack));
 		seq.Join(m_eggLoader.transform.DOLocalMoveY(0.25f, inDuration * 0.9f).SetRelative(true).SetEase(Ease.OutBack));
-		seq.Join(m_eggLoader.transform.DOBlendableLocalRotateBy(Vector3.up * 360f, inDuration, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
+
+		// Restore particles and make sure scale is ok
+		seq.AppendCallback(() => {
+			for(int i = 0; i < particles.Length; ++i) {
+				particles[i].Play(true);
+			}
+
+			ParticleScaler scaler = m_eggLoader.GetComponentInChildren<ParticleScaler>();
+			if(scaler != null) scaler.DoScale();
+		});
 
 		// Down
 		seq.Append(m_eggLoader.transform.DOLocalMoveY(-0.25f, outDuration).SetRelative(true).SetEase(Ease.OutQuad));
+
+		// Rotation
+		seq.Insert(inDelay, m_eggLoader.transform.DOBlendableLocalRotateBy(Vector3.up * 360f, inDuration, RotateMode.FastBeyond360).SetEase(Ease.OutCubic));
 
 		// Done!
 		seq.Play();

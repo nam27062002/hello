@@ -35,7 +35,7 @@ public class MenuPlayScreen : MonoBehaviour {
     private Localizer m_incentivizeLabelLocalizer = null;    
 
 	private bool m_showLegalPopup;
-    
+        
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -43,7 +43,7 @@ public class MenuPlayScreen : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() 
-	{		                
+	{    
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
     }
@@ -53,7 +53,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() 
 	{
-		HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+        HDTrackingManager.Instance.Notify_MenuLoaded();        
 
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
