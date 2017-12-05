@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeStage.AntiCheat.Detectors;
 
-public class AntiCheatsManager : Singleton<SeasonManager> {
+public class AntiCheatsManager : Singleton<AntiCheatsManager> {
 
 
 	public AntiCheatsManager()
@@ -21,5 +21,4 @@ public class AntiCheatsManager : Singleton<SeasonManager> {
 			// HSXAnalyticsManager.Instance.HackerDetected();	
 		}
 	}
-
 }
