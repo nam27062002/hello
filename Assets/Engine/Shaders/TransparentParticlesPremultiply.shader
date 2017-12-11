@@ -28,7 +28,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Premultiply"
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		Blend One OneMinusSrcAlpha
 		Cull Off
 		Lighting Off

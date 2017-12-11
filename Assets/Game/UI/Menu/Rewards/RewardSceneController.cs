@@ -44,6 +44,7 @@ public class RewardSceneController : MonoBehaviour {
 		public ParticleSystem tapFX = null;
 		public ParticleSystem tapFXStatic = null;
 		public ParticleSystem openFX = null;
+		public string sfx = "";
 
 		public void Clear() {
 			if(tapFX != null) {
@@ -83,7 +84,6 @@ public class RewardSceneController : MonoBehaviour {
 
 	[Separator("Other SFX")]
 	[SerializeField] private string m_eggTapSFX = "";
-	[SerializeField] private string m_eggExplosionSFX = "";
 	[SerializeField] private string m_goldenEggCompletedSFX = "";
 	[SerializeField] private string m_goldenEggIntroSFX = "";
 
@@ -536,7 +536,7 @@ public class RewardSceneController : MonoBehaviour {
 		TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].openFX);
 
 		// Trigger SFX
-		AudioController.Play(m_eggExplosionSFX);
+		AudioController.Play(m_rarityFXSetup[(int)m_currentReward.rarity].sfx);
 
 		// Program reward animation
 		UbiBCN.CoroutineManager.DelayedCall(OnEggExplosionAnimFinished, 0.35f, false);
