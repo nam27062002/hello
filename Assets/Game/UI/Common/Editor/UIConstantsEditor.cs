@@ -27,6 +27,7 @@ public class UIConstantsEditor : CategorizedEditor {
 	private const string CAT_RARITIES = "Rarities";
 	private const string CAT_ASSET_PATHS = "Asset paths in Resources";
 	private const string CAT_ANIMATION_SETUPS = "Animation Setups";
+	private const string CAT_SAFE_AREA = "Safe Area";
 	private const string CAT_OTHERS = "Others";
 
 	//------------------------------------------------------------------------//
@@ -46,6 +47,7 @@ public class UIConstantsEditor : CategorizedEditor {
 		m_categories[CAT_RARITIES] = new Category(CAT_RARITIES);
 		m_categories[CAT_ASSET_PATHS] = new Category(CAT_ASSET_PATHS);
 		m_categories[CAT_ANIMATION_SETUPS] = new Category(CAT_ANIMATION_SETUPS);
+		m_categories[CAT_SAFE_AREA] = new Category(CAT_SAFE_AREA);
 		m_categories[CAT_OTHERS] = new Category(CAT_OTHERS);
 
 		// Loop through all serialized properties and parse properties names to determine their category
@@ -76,6 +78,8 @@ public class UIConstantsEditor : CategorizedEditor {
 				m_categories[CAT_ANIMATION_SETUPS].Add(p, "Results Screen");
 			} else if(p.name.Contains("m_openEgg")) {
 				m_categories[CAT_ANIMATION_SETUPS].Add(p, "Open Egg Screen");
+			} else if(p.name.Contains("SafeArea")) {
+				m_categories[CAT_SAFE_AREA].Add(p);
 			}
 
 			// Unidentified property
@@ -102,6 +106,7 @@ public class UIConstantsEditor : CategorizedEditor {
 		DoCategory(CAT_TMP_SHORTCUTS);
 		DoCategory(CAT_ASSET_PATHS);
 		DoCategory(CAT_ANIMATION_SETUPS);
+		DoCategory(CAT_SAFE_AREA);
 		DoCategory(CAT_OTHERS);
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.

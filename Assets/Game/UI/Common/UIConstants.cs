@@ -216,6 +216,18 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string[] dragonTiersSFX {
 		get { return instance.m_dragonTiersSFX; }
 	}
+
+	[SerializeField] private UISafeArea m_defaultSafeArea = new UISafeArea(0f, 0f, 0f, 0f);
+	[SerializeField] private UISafeArea m_iPhoneXSafeArea = new UISafeArea(135f, 135f, 0f, 0f);
+	public static UISafeArea safeArea {
+		get {
+			if(DebugSettings.simulateIPhoneX) {
+				return instance.m_iPhoneXSafeArea;
+			} else {
+				return instance.m_defaultSafeArea;
+			}
+		}
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//

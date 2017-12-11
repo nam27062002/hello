@@ -38,10 +38,21 @@ public class AOCQuickTest : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	public Button m_targetButton = null;
-	public List<SelectableButton> m_tabButtons = new List<SelectableButton>();
-
-	private int m_selectedIdx = -1;
+	public UISafeArea m_safeArea = new UISafeArea();
+	public UISafeAreaSetter.Mode m_mode = UISafeAreaSetter.Mode.SIZE;
+	public RectTransform m_rt = null;
+	[Separator]
+	public Vector2 m_anchoredPosition = new Vector2();
+	public Vector2 m_sizeDelta = new Vector2();
+	public Vector2 m_pivot = new Vector2();
+	[Space]
+	public Vector2 m_anchorMax = new Vector2();
+	public Vector2 m_anchorMin = new Vector2();
+	[Space]
+	public Vector2 m_offsetMax = new Vector2();
+	public Vector2 m_offsetMin = new Vector2();
+	[Space]
+	public Rect m_rect = new Rect();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -50,18 +61,14 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		for(int i = 0; i < m_tabButtons.Count; ++i) {
-			int screenIdx = i;	// Issue with lambda expressions and iterations, see http://answers.unity3d.com/questions/791573/46-ui-how-to-apply-onclick-handler-for-button-gene.html
-			m_tabButtons[i].button.onClick.AddListener(() => SelectTab(screenIdx));
-			m_tabButtons[i].SetSelected(false);
-		}
+		ReadProperties();	
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		SelectTab(-1);
+		
 	}
 
 	/// <summary>
@@ -82,7 +89,51 @@ public class AOCQuickTest : MonoBehaviour {
 	/// Multi-purpose callback.
 	/// </summary>
 	public void OnTestButton() {
-		
+		// Apply based on mode
+		switch(m_mode) {
+			case UISafeAreaSetter.Mode.SIZE: {
+				// Adjust both offsets
+				m_rt.offsetMin = new Vector2(
+					m_rt.offsetMin.x + m_safeArea.left,
+					m_rt.offsetMin.y + m_safeArea.bottom
+				);
+
+				m_rt.offsetMax = new Vector2(
+					m_rt.offsetMax.x - m_safeArea.right,
+					m_rt.offsetMax.y - m_safeArea.top
+				);
+			} break;
+
+			case UISafeAreaSetter.Mode.POSITION: {
+				// Select which margins to apply in each axis based on anchors, and do it
+				Vector2 newAnchoredPos = m_rt.anchoredPosition;
+
+				// [AOC] TODO!! Research interpolating offset based on actual anchor value
+
+				// X
+				if(m_anchorMin.x < 0.5f && m_anchorMax.x < 0.5f) {
+					newAnchoredPos.x += m_safeArea.left;
+				} else if(m_anchorMin.x > 0.5f && m_anchorMax.x > 0.5f) {
+					newAnchoredPos.x -= m_safeArea.right;
+				} else {
+					// Don't move!
+				}
+
+				// Y
+				if(m_anchorMin.y < 0.5f && m_anchorMax.y < 0.5f) {
+					newAnchoredPos.y += m_safeArea.bottom;
+				} else if(m_anchorMin.y > 0.5f && m_anchorMax.y > 0.5f) {
+					newAnchoredPos.y -= m_safeArea.top;
+				} else {
+					// Don't move!!
+				}
+
+				// Apply!
+				m_rt.anchoredPosition = newAnchoredPos;
+			} break;
+		}
+
+		ReadProperties();
 	}
 
 	/// <summary>
@@ -92,35 +143,22 @@ public class AOCQuickTest : MonoBehaviour {
 
 	}
 
-	public void SelectTab(int _idx) {
-		// Unselect button for the current screen
-		if(m_selectedIdx >= 0) {
-			// Button is disabled if tab is not enabled
-			m_tabButtons[m_selectedIdx].SetSelected(false);
-		}
-			
-		if(_idx >= 0 && _idx < m_tabButtons.Count) {
-			m_selectedIdx = _idx;
-		} else {
-			m_selectedIdx = -1;
-		}
+	private void ReadProperties() {
+		m_anchoredPosition = m_rt.anchoredPosition;
+		m_sizeDelta = m_rt.sizeDelta;
+		m_pivot = m_rt.pivot;
 
-		// Select button for newly selected screen
-		if(m_selectedIdx >= 0) {
-			m_tabButtons[m_selectedIdx].SetSelected(true);
-		}
+		m_anchorMax = m_rt.anchorMax;
+		m_anchorMin = m_rt.anchorMin;
+
+		m_offsetMax = m_rt.offsetMax;
+		m_offsetMin = m_rt.offsetMin;
+
+		m_rect = m_rt.rect;
 	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
-	public void ToggleButton(bool _toggle) {
-		m_targetButton.interactable = _toggle;
 
-		UbiBCN.CoroutineManager.DelayedCall(() => { m_targetButton.gameObject.SetActive(_toggle); }, 1);
-	}
-
-	public void OnButtonClick() {
-		DebugUtils.Log("CLICK!", m_targetButton);
-	}
 }
