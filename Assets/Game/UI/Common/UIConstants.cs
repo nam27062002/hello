@@ -221,7 +221,15 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private UISafeArea m_iPhoneXSafeArea = new UISafeArea(135f, 135f, 0f, 0f);
 	public static UISafeArea safeArea {
 		get {
-			if(DebugSettings.simulateIPhoneX) {
+			// Is it an iPhone X?
+			bool isIPhoneX = DebugSettings.simulateIPhoneX;
+			#if UNITY_IOS
+			Debug.Log("<color=red>" + UnityEngine.iOS.Device.generation.ToString() + "</color>");
+			isIPhoneX |= UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhoneX;
+			#endif
+
+			// Choose which safe area to use
+			if(isIPhoneX) {
 				return instance.m_iPhoneXSafeArea;
 			} else {
 				return instance.m_defaultSafeArea;
