@@ -77,7 +77,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_CPAutoRestart = Prefs.GetBoolPlayer(DebugSettings.BOOST_AUTO_RESTART, m_CPAutoRestart);
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
+		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
 	}
 
 	void OnEnable() {
@@ -91,7 +91,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
 	}
 	
 	// Update is called once per frame
@@ -147,7 +147,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		{
 			m_animator.SetBool( GameConstants.Animator.BOOST , true);
 		}
-		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, true);
+		Messenger.Broadcast<bool>(MessengerEvents.BOOST_TOGGLED, true);
 	}
 
 	public void StopBoost() 
@@ -161,7 +161,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 			m_animator.SetBool( GameConstants.Animator.BOOST, false);
 		}
 
-		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);
+		Messenger.Broadcast<bool>(MessengerEvents.BOOST_TOGGLED, false);
 	}
 
 	public bool IsDraining() {

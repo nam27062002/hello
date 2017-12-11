@@ -62,14 +62,14 @@ abstract public class TouchControls : MonoBehaviour {
 		}
 
         // Subscribe to external events
-        Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
-		Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, OnPause);
+        Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
+		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
     }
 	
     public virtual void OnDestroy() {
         // Unsubscribe from external events
-        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);        
-		Messenger.RemoveListener<bool>(GameEvents.GAME_PAUSED, OnPause);
+        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);        
+		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
     }
 
 	private void ResetTouchValues()

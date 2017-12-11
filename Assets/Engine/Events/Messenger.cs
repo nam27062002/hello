@@ -44,104 +44,74 @@ static internal class Messenger {
 	#pragma warning restore 0414
 	#endif
 	
-	static public Dictionary<Enum, Delegate> eventTable = new Dictionary<Enum, Delegate>();
-	
-	//Message handlers that should never be removed, regardless of calling Cleanup
-	static public List< Enum > permanentMessages = new List< Enum > ();
+	// static public Dictionary<Enum, Delegate> eventTable = new Dictionary<Enum, Delegate>();
+	static public Delegate[] eventTable = new Delegate[ (int)MessengerEvents.COUNT ];
+
 	#endregion
 	#region Helper methods
-	//Marks a certain message as permanent.
-	static public void MarkAsPermanent(Enum eventType) {
-		#if LOG_ALL_MESSAGES
-		Debug.Log("Messenger MarkAsPermanent \t\"" + eventType + "\"");
-		#endif
-		
-		permanentMessages.Add( eventType );
-	}
-	
+
+	static Messenger()
+    {
+        Cleanup();
+    }
 	
 	static public void Cleanup()
 	{
 		#if LOG_ALL_MESSAGES
 		Debug.Log("MESSENGER Cleanup. Make sure that none of necessary listeners are removed.");
 		#endif
-		
-		List< Enum > messagesToRemove = new List<Enum>();
-		
-		foreach (KeyValuePair<Enum, Delegate> pair in eventTable) {
-			bool wasFound = false;
-			
-			foreach (Enum message in permanentMessages) {
-				if (pair.Key == message) {
-					wasFound = true;
-					break;
-				}
-			}
-			
-			if (!wasFound)
-				messagesToRemove.Add( pair.Key );
-		}
-		
-		foreach (Enum message in messagesToRemove) {
-			eventTable.Remove( message );
-		}
+
+		int count = (int)MessengerEvents.COUNT;
+		for( int i = 0; i<count; ++i )
+			eventTable[i] = null;
 	}
 	
 	static public void PrintEventTable()
 	{
 		Debug.Log("\t\t\t=== MESSENGER PrintEventTable ===");
-		
-		foreach (KeyValuePair<Enum, Delegate> pair in eventTable) {
-			Debug.Log("\t\t\t" + pair.Key + "\t\t" + pair.Value);
+
+		int count = (int)MessengerEvents.COUNT;
+		for( int i = 0; i< count; ++i)
+		{
+			Debug.Log("\t\t\t" + (MessengerEvents)i + "\t\t" + eventTable[ i ]);
 		}
-		
 		Debug.Log("\n");
 	}
 	#endregion
 	
 	#region Message logging and exception throwing
-	static public void OnListenerAdding(Enum eventType, Delegate listenerBeingAdded) {
+	static public void OnListenerAdding(MessengerEvents eventType, Delegate listenerBeingAdded) {
 		#if LOG_ALL_MESSAGES || LOG_ADD_LISTENER
 		Debug.Log("MESSENGER OnListenerAdding \t\"" + eventType + "\"\t{" + listenerBeingAdded.Target + " -> " + listenerBeingAdded.Method + "}");
 		#endif
-		
-		if (!eventTable.ContainsKey(eventType)) {
-			eventTable.Add(eventType, null );
-		}
-		
+
+		#if UNITY_DEBUG
 		Delegate d = eventTable[eventType];
 		if (d != null && d.GetType() != listenerBeingAdded.GetType()) {
 			throw new ListenerException(string.Format("Attempting to add listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being added has type {2}", eventType, d.GetType().Name, listenerBeingAdded.GetType().Name));
 		}
+		#endif
 	}
 	
-	static public void OnListenerRemoving(Enum eventType, Delegate listenerBeingRemoved) {
+	static public void OnListenerRemoving(MessengerEvents eventType, Delegate listenerBeingRemoved) {
 		#if LOG_ALL_MESSAGES
 		Debug.Log("MESSENGER OnListenerRemoving \t\"" + eventType + "\"\t{" + listenerBeingRemoved.Target + " -> " + listenerBeingRemoved.Method + "}");
 		#endif
 		
-		if (eventTable.ContainsKey(eventType)) {
-			Delegate d = eventTable[eventType];
-			
-			if (d == null) {
-				throw new ListenerException(string.Format("Attempting to remove listener with for event type \"{0}\" but current listener is null.", eventType));
-			} else if (d.GetType() != listenerBeingRemoved.GetType()) {
-				throw new ListenerException(string.Format("Attempting to remove listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being removed has type {2}", eventType, d.GetType().Name, listenerBeingRemoved.GetType().Name));
-			}
-		} else {
-			throw new ListenerException(string.Format("Attempting to remove listener for type \"{0}\" but Messenger doesn't know about this event type.", eventType));
+		#if UNITY_DEBUG
+		Delegate d = eventTable[eventType];
+		if (d == null) {
+			throw new ListenerException(string.Format("Attempting to remove listener with for event type \"{0}\" but current listener is null.", eventType));
+		} else if (d.GetType() != listenerBeingRemoved.GetType()) {
+			throw new ListenerException(string.Format("Attempting to remove listener with inconsistent signature for event type {0}. Current listeners have type {1} and listener being removed has type {2}", eventType, d.GetType().Name, listenerBeingRemoved.GetType().Name));
 		}
+		#endif
+		
 	}
 	
-	static public void OnListenerRemoved(Enum eventType) {
-		if (eventTable[eventType] == null) {
-			eventTable.Remove(eventType);
-		}
-	}
-	
-	static public void OnBroadcasting(Enum eventType) {
+	static public void OnBroadcasting(MessengerEvents eventType) {
 		#if REQUIRE_LISTENER
-		if (!eventTable.ContainsKey(eventType)) {
+		if (eventTable[ (int)eventType ] == null) {
 			throw new BroadcastException(string.Format("Broadcasting message \"{0}\" but no listener found. Try marking the message with Messenger.MarkAsPermanent.", eventType));
 		}
 		#endif
@@ -166,135 +136,120 @@ static internal class Messenger {
 	
 	#region AddListener
 	//No parameters
-	static public void AddListener(Enum eventType, UbiBCN.Callback handler) {
+	static public void AddListener(MessengerEvents eventType, UbiBCN.Callback handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (UbiBCN.Callback)eventTable[eventType] + handler;
+		eventTable[(int)eventType] = (UbiBCN.Callback)eventTable[(int)eventType] + handler;
 	}
 	
 	//Single parameter
-	static public void AddListener<T>(Enum eventType, UbiBCN.Callback<T> handler) {
+	static public void AddListener<T>(MessengerEvents eventType, UbiBCN.Callback<T> handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (UbiBCN.Callback<T>)eventTable[eventType] + handler;
+		eventTable[(int)eventType] = (UbiBCN.Callback<T>)eventTable[(int)eventType] + handler;
 	}
 	
 	//Two parameters
-	static public void AddListener<T, U>(Enum eventType, UbiBCN.Callback<T, U> handler) {
+	static public void AddListener<T, U>(MessengerEvents eventType, UbiBCN.Callback<T, U> handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (UbiBCN.Callback<T, U>)eventTable[eventType] + handler;
+		eventTable[(int)eventType] = (UbiBCN.Callback<T, U>)eventTable[(int)eventType] + handler;
 	}
 	
 	//Three parameters
-	static public void AddListener<T, U, V>(Enum eventType, UbiBCN.Callback<T, U, V> handler) {
+	static public void AddListener<T, U, V>(MessengerEvents eventType, UbiBCN.Callback<T, U, V> handler) {
 		OnListenerAdding(eventType, handler);
-		eventTable[eventType] = (UbiBCN.Callback<T, U, V>)eventTable[eventType] + handler;
+		eventTable[(int)eventType] = (UbiBCN.Callback<T, U, V>)eventTable[(int)eventType] + handler;
 	}
 	#endregion
 	
 	#region RemoveListener
 	//No parameters
-	static public void RemoveListener(Enum eventType, UbiBCN.Callback handler) {
+	static public void RemoveListener(MessengerEvents eventType, UbiBCN.Callback handler) {
 		OnListenerRemoving(eventType, handler);   
-		eventTable[eventType] = (UbiBCN.Callback)eventTable[eventType] - handler;
-		OnListenerRemoved(eventType);
+		eventTable[(int)eventType] = (UbiBCN.Callback)eventTable[(int)eventType] - handler;
 	}
 	
 	//Single parameter
-	static public void RemoveListener<T>(Enum eventType, UbiBCN.Callback<T> handler) {
+	static public void RemoveListener<T>(MessengerEvents eventType, UbiBCN.Callback<T> handler) {
 		OnListenerRemoving(eventType, handler);
-		eventTable[eventType] = (UbiBCN.Callback<T>)eventTable[eventType] - handler;
-		OnListenerRemoved(eventType);
+		eventTable[(int)eventType] = (UbiBCN.Callback<T>)eventTable[(int)eventType] - handler;
 	}
 	
 	//Two parameters
-	static public void RemoveListener<T, U>(Enum eventType, UbiBCN.Callback<T, U> handler) {
+	static public void RemoveListener<T, U>(MessengerEvents eventType, UbiBCN.Callback<T, U> handler) {
 		OnListenerRemoving(eventType, handler);
-		eventTable[eventType] = (UbiBCN.Callback<T, U>)eventTable[eventType] - handler;
-		OnListenerRemoved(eventType);
+		eventTable[(int)eventType] = (UbiBCN.Callback<T, U>)eventTable[(int)eventType] - handler;
 	}
 	
 	//Three parameters
-	static public void RemoveListener<T, U, V>(Enum eventType, UbiBCN.Callback<T, U, V> handler) {
+	static public void RemoveListener<T, U, V>(MessengerEvents eventType, UbiBCN.Callback<T, U, V> handler) {
 		OnListenerRemoving(eventType, handler);
-		eventTable[eventType] = (UbiBCN.Callback<T, U, V>)eventTable[eventType] - handler;
-		OnListenerRemoved(eventType);
+		eventTable[(int)eventType] = (UbiBCN.Callback<T, U, V>)eventTable[(int)eventType] - handler;
 	}
 	#endregion
 	
 	#region Broadcast
 	//No parameters
-	static public void Broadcast(Enum eventType) {
+	static public void Broadcast(MessengerEvents eventType) {
 		#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 		#endif
 		OnBroadcasting(eventType);
-		
-		Delegate d;
-		if (eventTable.TryGetValue(eventType, out d)) {
-			UbiBCN.Callback callback = d as UbiBCN.Callback;
-			
-			if (callback != null) {
-				callback();
-			} else {
-				throw CreateBroadcastSignatureException(eventType);
-			}
+
+		UbiBCN.Callback callback = eventTable[ (int)eventType ] as UbiBCN.Callback;
+		if (callback != null) {
+			callback();
+		} else {
+			// throw CreateBroadcastSignatureException(eventType);
 		}
+		
 	}
 	
 	//Single parameter
-	static public void Broadcast<T>(Enum eventType, T arg1) {
+	static public void Broadcast<T>(MessengerEvents eventType, T arg1) {
 		#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 		#endif
 		OnBroadcasting(eventType);
-		
-		Delegate d;
-		if (eventTable.TryGetValue(eventType, out d)) {
-			UbiBCN.Callback<T> callback = d as UbiBCN.Callback<T>;
-			
-			if (callback != null) {
-				callback(arg1);
-			} else {
-				throw CreateBroadcastSignatureException(eventType);
-			}
+
+		UbiBCN.Callback<T> callback = eventTable[ (int)eventType ] as UbiBCN.Callback<T>;
+		if (callback != null) {
+			callback(arg1);
+		} else {
+			// throw CreateBroadcastSignatureException(eventType);
 		}
 	}
 	
 	//Two parameters
-	static public void Broadcast<T, U>(Enum eventType, T arg1, U arg2) {
+	static public void Broadcast<T, U>(MessengerEvents eventType, T arg1, U arg2) {
 		#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 		#endif
 		OnBroadcasting(eventType);
+
+		UbiBCN.Callback<T, U> callback = eventTable[ (int)eventType ] as UbiBCN.Callback<T, U>;
 		
-		Delegate d;
-		if (eventTable.TryGetValue(eventType, out d)) {
-			UbiBCN.Callback<T, U> callback = d as UbiBCN.Callback<T, U>;
-			
-			if (callback != null) {
-				callback(arg1, arg2);
-			} else {
-				throw CreateBroadcastSignatureException(eventType);
-			}
+		if (callback != null) {
+			callback(arg1, arg2);
+		} else {
+			// throw CreateBroadcastSignatureException(eventType);
 		}
+		
 	}
 	
 	//Three parameters
-	static public void Broadcast<T, U, V>(Enum eventType, T arg1, U arg2, V arg3) {
+	static public void Broadcast<T, U, V>(MessengerEvents eventType, T arg1, U arg2, V arg3) {
 		#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 		#endif
 		OnBroadcasting(eventType);
+
+		UbiBCN.Callback<T, U, V> callback = eventTable[ (int)eventType ] as UbiBCN.Callback<T, U, V>;
 		
-		Delegate d;
-		if (eventTable.TryGetValue(eventType, out d)) {
-			UbiBCN.Callback<T, U, V> callback = d as UbiBCN.Callback<T, U, V>;
-			
-			if (callback != null) {
-				callback(arg1, arg2, arg3);
-			} else {
-				throw CreateBroadcastSignatureException(eventType);
-			}
+		if (callback != null) {
+			callback(arg1, arg2, arg3);
+		} else {
+			// throw CreateBroadcastSignatureException(eventType);
 		}
+		
 	}
 	#endregion
 }

@@ -164,7 +164,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
 		// Hide other currency counters to prevent conflicts
-		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
+		Messenger.Broadcast<bool>(MessengerEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
 
         HDTrackingManager.Instance.Notify_StoreVisited();
 
@@ -184,6 +184,6 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// </summary>
 	public void OnClosePreAnimation() {
 		// Restore currency counters
-		Messenger.Broadcast<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, true);
+		Messenger.Broadcast<bool>(MessengerEvents.UI_TOGGLE_CURRENCY_COUNTERS, true);
 	}
 }

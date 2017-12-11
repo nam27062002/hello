@@ -25,7 +25,7 @@ public class TrackerBuySkins : TrackerBase {
 	public TrackerBuySkins() {
 		// Subscribe to external events
 		//Messenger.AddListener<Chest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
-		Messenger.AddListener<string>(GameEvents.SKIN_ACQUIRED, OnSkinAcquired);
+		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnSkinAcquired);
 	}
 
 	/// <summary>
@@ -43,7 +43,7 @@ public class TrackerBuySkins : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.SKIN_ACQUIRED, OnSkinAcquired);
+		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnSkinAcquired);
 
 		// Call parent
 		base.Clear();

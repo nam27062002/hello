@@ -11,9 +11,43 @@
 /// Collection of events related to the game.
 /// Please keep the params documented!
 /// </summary>
-public enum GameEvents {
+public enum MessengerEvents {
+	// Game Scene Manager
+	SCENE_STATE_CHANGED = 0,	// params: SceneManager.ESceneState _oldState, SceneManager.ESceneState _newState
+    SCENE_PREUNLOAD,        // params: string _sceneName: The scene is about to be unloaded. Listeners to this event can be sure that all game object in the scene still exist
+    SCENE_UNLOADED,			// params: string _sceneName
+	SCENE_LOADED,			// params: string _sceneName
+
+	// Popups Management
+	POPUP_CREATED,			// params: PopupController _popup
+	POPUP_OPENED,			// params: PopupController _popup
+	POPUP_CLOSED,			// params: PopupController _popup
+	POPUP_DESTROYED,		// params: PopupController _popup
+
+	// Screen Navigation System
+	// [AOC] Triggered at the start of the animation, parameters englobed in a custom class:
+	NAVIGATION_SCREEN_CHANGED,		// params: NavigationScreenSystem.ScreenChangedEvent _eventData
+
+	// Rules and localization
+	LANGUAGE_CHANGED,		// no params
+	DEFINITIONS_LOADED,		// no params
+	GOOGLE_PLAY_STATE_UPDATE,// no params
+	GOOGLE_PLAY_AUTH_FAILED,// no params
+	GOOGLE_PLAY_AUTH_CANCELLED,// no params
+
+	// Store Transactions
+	PURCHASE_SUCCESSFUL,	// string _productSku (TODO: _transactionData? _purchaseId?)
+	PURCHASE_FAILED,		// string _productSku (TODO: _purchaseId?)
+	PURCHASE_CANCELLED,		// string _productSku (TODO: _purchaseId?)
+	PURCHASE_ERROR,			// string _productSku (TODO: _purchaseId?)
+	PURCHASE_FINISHED,		// string _productSku
+	PURCHASE_RECEIVED_PRODUCTS_AVAILABILITY,	// no params
+
+	// UI Events
+	UI_LOCK_INPUT,			// bool _lock
+
 	// Debug and control panel events
-	DEBUG_MENU_DRAGON_SELECTED = EngineEvents.END,
+	DEBUG_MENU_DRAGON_SELECTED,
 	DEBUG_SIMULATION_FINISHED,
 	DEBUG_UNLOCK_LEVELS,
 	CP_PREF_CHANGED,			// params _string _prefID
@@ -167,7 +201,9 @@ public enum GameEvents {
 	GLOBAL_EVENT_DATA_UPDATED,
 	GLOBAL_EVENT_STATE_UPDATED,
 	GLOBAL_EVENT_LEADERBOARD_UPDATED,
-	GLOBAL_EVENT_SCORE_REGISTERED	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
+	GLOBAL_EVENT_SCORE_REGISTERED,	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
+
+	COUNT
 }
 
 //------------------------------------------------------------------------//

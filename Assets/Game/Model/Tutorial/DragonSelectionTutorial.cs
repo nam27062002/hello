@@ -64,7 +64,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_scroller = InstanceManager.menuSceneController.dragonScroller;
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -73,7 +73,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -163,7 +163,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	private void StartTutorial() {
 		if(m_state == State.IDLE) {
 			// Lock all input
-			Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+			Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
 
 			// Hide HUD and UI
 			InstanceManager.menuSceneController.hud.animator.ForceHide(false);
@@ -189,7 +189,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	private void StopTutorial() {
 		if(m_state != State.IDLE) {
 			// Lock all input
-			Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
+			Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 
 			// Show UI back
 			InstanceManager.menuSceneController.hud.animator.ForceShow(true);

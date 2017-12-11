@@ -62,19 +62,19 @@ public class HDTrackingManagerImp : HDTrackingManager
         m_loadFunnel.Reset();
 		m_firstUXFunnel.Reset();
 
-		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
-		Messenger.AddListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
-		Messenger.AddListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
-        Messenger.AddListener<bool>(GameEvents.LOGGED, OnLoggedIn);
+		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
+		Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+        Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }
 
     public override void Destroy ()
     {
 		base.Destroy ();
-		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
-		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_ERROR, OnPurchaseFailed);
-		Messenger.RemoveListener<string>(EngineEvents.PURCHASE_FAILED, OnPurchaseFailed);
-        Messenger.RemoveListener<bool>(GameEvents.LOGGED, OnLoggedIn);
+		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+		Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
+		Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+        Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }
 
     public override string GetTrackingID()

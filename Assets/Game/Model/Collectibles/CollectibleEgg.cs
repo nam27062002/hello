@@ -61,7 +61,7 @@ public class CollectibleEgg : Collectible {
 		// If inventory is full, don't collect
 		if(EggManager.IsReady() && EggManager.isInventoryFull) {
 			// Broadcast message to show some feedback
-			Messenger.Broadcast<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, this);
+			Messenger.Broadcast<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, this);
 			return false;
 		}
 		return true;
@@ -72,6 +72,6 @@ public class CollectibleEgg : Collectible {
 	/// </summary>
 	override protected void OnCollect() {
 		// Dispatch global event
-		Messenger.Broadcast<CollectibleEgg>(GameEvents.EGG_COLLECTED, this);
+		Messenger.Broadcast<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, this);
 	}
 }

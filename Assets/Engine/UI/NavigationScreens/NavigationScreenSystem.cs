@@ -104,7 +104,7 @@ public class NavigationScreenSystem : MonoBehaviour {
 				evt.toScreen = currentScreen;
 				evt.toScreenIdx = i;
 				evt.animated = false;
-				Messenger.Broadcast<ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, evt);
+				Messenger.Broadcast<ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, evt);
 
 				OnScreenChanged.Invoke(evt);
 				OnScreenIndexChanged.Invoke(i);
@@ -259,7 +259,7 @@ public class NavigationScreenSystem : MonoBehaviour {
 		evt.toScreen = newScreen;
 		evt.toScreenIdx = _newScreenIdx;
 		evt.animated = _animType != NavigationScreen.AnimType.NONE;
-		Messenger.Broadcast<ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, evt);
+		Messenger.Broadcast<ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, evt);
 
 		OnScreenChanged.Invoke(evt);
 		OnScreenIndexChanged.Invoke(_newScreenIdx);

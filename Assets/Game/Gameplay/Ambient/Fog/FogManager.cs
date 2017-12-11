@@ -143,9 +143,9 @@ public class FogManager : MonoBehaviour
 		CheckTextureAvailability( m_defaultAreaFog );
 
 		m_active = true;//Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
-		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 
 		m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer( DebugSettings.FOG_BLEND_TYPE, 0);
 		OnModeChanged();
@@ -160,9 +160,9 @@ public class FogManager : MonoBehaviour
 	void OnDestroy()
 	{
 		InstanceManager.fogManager = null;
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-		Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void Debug_OnChanged( string _key, bool value)

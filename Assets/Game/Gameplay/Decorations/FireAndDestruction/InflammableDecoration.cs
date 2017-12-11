@@ -96,8 +96,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
@@ -105,8 +105,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
@@ -177,7 +177,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				SwitchViewToDissolve();
 
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_entity.reward);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 
 				break;
 
@@ -198,7 +198,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					}
 				}
 
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, transform, m_entity.reward);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 
 				m_timer.Start(250f);
 				break;

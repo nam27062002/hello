@@ -114,6 +114,6 @@ public class CollectibleChest : Collectible {
 		SetCollectedVisuals();
 
 		// Dispatch global event
-		Messenger.Broadcast<CollectibleChest>(GameEvents.CHEST_COLLECTED, this);
+		Messenger.Broadcast<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, this);
 	}
 }

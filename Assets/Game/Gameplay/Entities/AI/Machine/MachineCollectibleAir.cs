@@ -76,7 +76,7 @@ namespace AI {
 				Reward reward = m_entity.GetOnKillReward(false);
 
 				// Dispatch global event
-				Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_transform, reward);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
 
 				m_entity.Disable(true);
 			}

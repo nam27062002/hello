@@ -141,8 +141,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		ExtendedStart();
 
-		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 	}
 
 	/// <summary>
@@ -172,8 +172,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 	}
 	
 	void OnDisable() {
@@ -185,7 +185,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				m_animator.SetBool( GameConstants.Animator.BREATH , false);// Stop fury rush (if active)
 				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
-				Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, Type.None);
+				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, Type.None);
 			}
 		}
 	}
@@ -330,7 +330,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = false;
 
-		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, true, m_type);
+		Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, true, m_type);
 	}
 	virtual protected void Breath() 
 	{
@@ -386,7 +386,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 
-		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, m_type);
+		Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, m_type);
         m_type = Type.None;
 	}
 

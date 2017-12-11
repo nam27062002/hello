@@ -87,10 +87,10 @@ namespace AI {
 						return true;
 					} else {
 						// Message : You need boost!
-						Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
+						Messenger.Broadcast(MessengerEvents.BREAK_OBJECT_NEED_TURBO);
 					}
 				} else {
-					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, m_entity.sku);
+					Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, m_entity.sku);
 				}
 			}
 

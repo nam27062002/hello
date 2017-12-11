@@ -70,7 +70,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 		if ( m_warnEntities )
 		{
-			Messenger.Broadcast(GameEvents.APPLY_ENTITY_POWERUPS);
+			Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
 			m_warnEntities = false;
 		}
 	}

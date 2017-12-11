@@ -271,7 +271,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
         if (m_stunParticle == null)
         {
         	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
@@ -375,7 +375,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     }
 
 	void OnDestroy() {
-        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		RemoveAudios();
     }
 

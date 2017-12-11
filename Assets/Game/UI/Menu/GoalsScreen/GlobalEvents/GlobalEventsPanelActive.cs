@@ -55,7 +55,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		m_eventCountdownUpdateTimer = 0f;
 
 		// Subscribe to external events
-		Messenger.AddListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -63,7 +63,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.RemoveListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>

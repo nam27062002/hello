@@ -76,8 +76,8 @@ public class AchievementObjective : TrackingObjectiveBase {
 		);
 
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -85,8 +85,8 @@ public class AchievementObjective : TrackingObjectiveBase {
 	/// </summary>
 	~AchievementObjective() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	//------------------------------------------------------------------//

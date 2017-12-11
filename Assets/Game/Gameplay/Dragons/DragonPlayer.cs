@@ -235,11 +235,11 @@ public class DragonPlayer : MonoBehaviour {
 		m_holdPreyPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
 
 		// Subscribe to external events
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
-		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
-		Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
@@ -251,10 +251,10 @@ public class DragonPlayer : MonoBehaviour {
 	void OnDestroy()
 	{
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
-		Messenger.RemoveListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 	}
 
 	/// <summary>
@@ -307,7 +307,7 @@ public class DragonPlayer : MonoBehaviour {
 					
 			if ( drunk != IsDrunk() ) 
 			{
-				Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
+				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
 			}
 		}
 
@@ -360,11 +360,11 @@ public class DragonPlayer : MonoBehaviour {
 
 			// If health modifier changed, notify game
 			if(m_currentHealthModifier != oldHealthModifier) {
-				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
+				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
 			}
 
 			// Notify revive to game
-			Messenger.Broadcast<ReviveReason>(GameEvents.PLAYER_REVIVE, reason);
+			Messenger.Broadcast<ReviveReason>(MessengerEvents.PLAYER_REVIVE, reason);
 		}
 		else
 		{
@@ -402,18 +402,18 @@ public class DragonPlayer : MonoBehaviour {
 			{
 				m_freeRevives--;
 				ResetStats(true);
-				Messenger.Broadcast(GameEvents.PLAYER_FREE_REVIVE);
+				Messenger.Broadcast(MessengerEvents.PLAYER_FREE_REVIVE);
 			}
 			// If I have an angel pet and aura still playing
 			else
 			{
 				// Send global event
-				Messenger.Broadcast<DamageType, Transform>(GameEvents.PLAYER_KO, _type, _source);	// Reason
+				Messenger.Broadcast<DamageType, Transform>(MessengerEvents.PLAYER_KO, _type, _source);	// Reason
 
 				// Clear any health modifiers
 				m_currentHealthModifier = null;
 				if(oldHealthModifier != m_currentHealthModifier) {
-					Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
+					Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
 				}
 
 				// Make dragon unplayable (xD)
@@ -426,7 +426,7 @@ public class DragonPlayer : MonoBehaviour {
 			m_currentHealthModifier = ComputeHealthModifier();
 			if(oldHealthModifier != m_currentHealthModifier) {
 				//Debug.Log("HEALTH MODIFIER CHANGE FROM " + (oldHealthModifier == null ? "none" : oldHealthModifier.def.sku) + " TO " + (m_currentHealthModifier == null ? "none" : m_currentHealthModifier.def.sku));
-				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
+				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
 			}
 		}
 	}
@@ -446,7 +446,7 @@ public class DragonPlayer : MonoBehaviour {
 			m_alcohol += _offset;
 			if ( drunk != IsDrunk() ) 
 			{
-				Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, IsDrunk());
+				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
 			}
 		}
 	}
@@ -641,7 +641,7 @@ public class DragonPlayer : MonoBehaviour {
 			}
 
 			// event shield lost
-			Messenger.Broadcast<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, _type, _origin);
+			Messenger.Broadcast<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, _type, _origin);
 		}
 	}
 
