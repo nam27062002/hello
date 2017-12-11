@@ -224,7 +224,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			// Is it an iPhone X?
 			bool isIPhoneX = DebugSettings.simulateIPhoneX;
 			#if UNITY_IOS
-			Debug.Log("<color=red>" + UnityEngine.iOS.Device.generation.ToString() + "</color>");
 			isIPhoneX |= UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhoneX;
 			#endif
 
