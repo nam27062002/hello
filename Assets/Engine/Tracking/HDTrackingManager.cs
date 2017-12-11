@@ -344,6 +344,8 @@ public class HDTrackingManager
 
 	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) {}
 
+	public virtual void Notify_Hacker(){}
+
     #endregion
 
     #region log

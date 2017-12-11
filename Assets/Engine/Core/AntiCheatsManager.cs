@@ -18,7 +18,7 @@ public class AntiCheatsManager : Singleton<AntiCheatsManager> {
 		if ( UsersManager.currentUser != null && !UsersManager.currentUser.isHacker )
 		{
 			UsersManager.currentUser.isHacker = true;
-			// HSXAnalyticsManager.Instance.HackerDetected();	
+			HDTrackingManager.Instance.Notify_Hacker();
 		}
 	}
 }

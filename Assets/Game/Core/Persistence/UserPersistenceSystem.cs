@@ -22,9 +22,10 @@ public class UserPersistenceSystem : PersistenceSystem
     
     public int timePlayed = 0;
     
-	public ObscuredBool isPirate = false;
-	public ObscuredBool isHacker = false;
-	public ObscuredBool isCheater = false;
+	public ObscuredBool isPirate = false;	// Not used at the momment
+	// This flag is used when the players tries to modify the memory to change a variable. See AntiCheatsManager
+	public ObscuredBool isHacker = false;	
+	public ObscuredBool isCheater = false; // Not used at the momment
 
     public bool isBadUser
     {

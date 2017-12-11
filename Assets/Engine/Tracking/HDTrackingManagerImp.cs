@@ -350,15 +350,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             case EState.WaitingForSessionStart:                
                 if (TrackingPersistenceSystem != null && IsStartSessionNotified)
                 {
-                    // No tracking for hackers because their sessions will be misleading
-                    if (UsersManager.currentUser.isHacker)
-                    {
-                        State = EState.Banned;
-                    }
-                    else
-                    {
-                        StartSession();
-                    }
+                	StartSession();
                 }
                 break;
         }
@@ -963,6 +955,21 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
+
+	public override void Notify_Hacker()
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			Log("Notify_Hacker");
+		}
+	
+		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.hacker");
+		if (e != null)
+		{
+			Track_SendEvent(e);
+		}
+	}
+
 #endregion
 
 #region track	
@@ -995,6 +1002,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamLanguage(e);
             Track_AddParamUserTimezone(e);
             Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
+			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
             Track_SendEvent(e);            
         }        
     }    
@@ -1343,7 +1351,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
 			e.SetParameterValue(TRACK_PARAM_BOOST_TIME, boostTimeMs);
             e.SetParameterValue(TRACK_PARAM_MAP_USAGE, mapUsage);
-
+			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
 
             Track_SendEvent(e);
         }
@@ -1692,6 +1700,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID     = "houstonTransactionID";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
+	private const string TRACK_PARAM_IS_HACKER                  = "isHacker";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
     private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";
 	private const string TRACK_PARAM_IS_SUCCESS					= "isSuccess";
