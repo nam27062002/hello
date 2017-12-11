@@ -115,7 +115,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 
 		// Launch normal animation as well
 		if(_animate && m_anim != null) {
-			m_anim.SetTrigger("start");
+			m_anim.SetTrigger( GameConstants.Animator.START );
 		}
 	}
 

@@ -288,7 +288,7 @@ public class AmbientHazard : MonoBehaviour {
 			{
 				// In case always
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.SetBool("active", true);
+					m_animator.SetBool( GameConstants.Animator.ACTIVE , true);
 					if ( m_state == State.ACTIVE )
 					{
 						m_animator.Play("ACTIVATE", 0, 1);
@@ -334,7 +334,7 @@ public class AmbientHazard : MonoBehaviour {
 
 				// Launch deactivation animation
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.SetBool("active", false);
+					m_animator.SetBool( GameConstants.Animator.ACTIVE, false);
 				}
 
 				// Reset timer
@@ -345,7 +345,7 @@ public class AmbientHazard : MonoBehaviour {
 			case State.ACTIVATING: {
 				// Launch activation animation
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.SetBool("active", true);
+					m_animator.SetBool( GameConstants.Animator.ACTIVE, true);
 				}
 
 				// Reset timer

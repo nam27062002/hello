@@ -145,7 +145,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// ActivateTrails();
 		if (m_animator && m_animator.isInitialized)
 		{
-			m_animator.SetBool("boost", true);
+			m_animator.SetBool( GameConstants.Animator.BOOST , true);
 		}
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, true);
 	}
@@ -158,7 +158,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// DeactivateTrails();
 		if (m_animator && m_animator.isInitialized && !m_insideWater)
 		{
-			m_animator.SetBool("boost", false);
+			m_animator.SetBool( GameConstants.Animator.BOOST, false);
 		}
 
 		Messenger.Broadcast<bool>(GameEvents.BOOST_TOGGLED, false);

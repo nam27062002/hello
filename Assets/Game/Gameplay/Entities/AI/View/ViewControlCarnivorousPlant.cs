@@ -105,7 +105,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	public void CustomUpdate() { }
 
 	public void Attack(bool _attack) { 
-		m_animator.SetBool("attack", _attack); 
+		m_animator.SetBool( GameConstants.Animator.ATTACK , _attack); 
 	}
 
 	void OnAttackAudioCompleted(AudioObject ao)

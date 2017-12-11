@@ -129,8 +129,8 @@ public class HUDMultiplier : HudWidget {
             if (m_multiplierToShow == m_defaultScoreMultiplier)
             {
                 // Make sure "in" trigger is consumed
-                m_anim.ResetTrigger("in");
-                m_anim.SetTrigger("out");
+				m_anim.ResetTrigger( GameConstants.Animator.IN);
+				m_anim.SetTrigger( GameConstants.Animator.OUT);
 
                 // Reset combo index
                 m_comboSFXIdx = 0;
@@ -138,9 +138,9 @@ public class HUDMultiplier : HudWidget {
             else
             {
                 // Make sure "out" trigger is consumed
-                m_anim.ResetTrigger("out");
-                m_anim.SetTrigger("in");
-                m_anim.SetTrigger("change");
+				m_anim.ResetTrigger( GameConstants.Animator.OUT );
+				m_anim.SetTrigger( GameConstants.Animator.IN );
+				m_anim.SetTrigger( GameConstants.Animator.CHANGE );
 
                 // Trigger particle effect as well
                 m_changePS.gameObject.SetActive(true);

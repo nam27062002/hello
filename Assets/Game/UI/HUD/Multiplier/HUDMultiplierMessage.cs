@@ -69,6 +69,6 @@ public class HUDMultiplierMessage : MonoBehaviour {
 		// Select a random message from the multiplier definition
 		string message = _newMultiplier.feedbackMessages.GetRandomValue<string>();
 		m_text.text = message;
-		m_anim.SetTrigger("start");
+		m_anim.SetTrigger( GameConstants.Animator.START );
 	}
 }

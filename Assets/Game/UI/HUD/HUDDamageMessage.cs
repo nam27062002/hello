@@ -76,7 +76,7 @@ public class HUDDamageMessage : MonoBehaviour {
 			if(!String.IsNullOrEmpty(msg)) {
 				// Set text and launch anim
 				m_text.text = msg;
-				m_anim.SetTrigger("start");
+				m_anim.SetTrigger( GameConstants.Animator.START );
 			}
 		}
 	}

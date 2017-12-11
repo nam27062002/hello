@@ -110,7 +110,9 @@ namespace AI {
 						}
 
 						if (m_perpendicularAvoid) {
-							m_impulse.Set(-flee.y, flee.x, flee.z);
+							m_impulse.x = -flee.y;
+							m_impulse.y = flee.x;
+							m_impulse.z = flee.z;
 						} else {
 							m_impulse = m_seek + flee;
 						}

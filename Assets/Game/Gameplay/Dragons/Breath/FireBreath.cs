@@ -330,7 +330,7 @@ public class FireBreath : DragonBreathBehaviour {
 			if ( m_isFuryOn )
 			{
 				m_isFuryPaused = true;
-				m_animator.SetBool("breath", false);
+				m_animator.SetBool( GameConstants.Animator.BREATH , false);
 			}
 
 		}

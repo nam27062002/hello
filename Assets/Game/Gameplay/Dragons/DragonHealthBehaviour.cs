@@ -126,8 +126,16 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	}
 
 	public bool HasDOT(DamageType _type) {
-		// Use Exists() + Linq to look for a dot of the target type
-		return m_dots.Exists((_dot) => { return _dot.type == _type; });
+		int count = m_dots.Count;
+		bool ret = false;
+		for( int i = 0; i<count && !ret; ++i )
+		{
+			if ( m_dots[i].type == _type )
+			{
+				ret = true;
+			}
+		}
+		return ret;
 	}
 
 	/// <summary>

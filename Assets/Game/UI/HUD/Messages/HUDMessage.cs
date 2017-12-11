@@ -337,11 +337,11 @@ public class HUDMessage : MonoBehaviour {
 		m_visible = true;
 
 		// Trigger anim
-		m_anim.SetTrigger("in");
+		m_anim.SetTrigger( GameConstants.Animator.IN );
 
 		// Setup hide mode
 		m_timer = m_messageDuration;
-		m_anim.SetBool("out_auto", m_hideMode == HideMode.ANIMATION);
+		m_anim.SetBool( GameConstants.Animator.OUT_AUTO , m_hideMode == HideMode.ANIMATION);
 
 		// Notify
 		OnShow.Invoke(this);
@@ -361,7 +361,7 @@ public class HUDMessage : MonoBehaviour {
 		m_timer = 0f;
 
 		// Trigger anim
-		m_anim.SetTrigger("out");
+		m_anim.SetTrigger( GameConstants.Animator.OUT );
 
 		// Notify
 		OnHide.Invoke(this);

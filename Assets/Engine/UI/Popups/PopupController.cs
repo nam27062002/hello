@@ -103,8 +103,8 @@ public class PopupController : MonoBehaviour {
 		OnOpenPreAnimation.Invoke();
 
 		// Launch anim
-		m_anim.ResetTrigger("close");
-		m_anim.SetTrigger("open");
+		m_anim.ResetTrigger( GameConstants.Animator.CLOSE );
+		m_anim.SetTrigger( GameConstants.Animator.OPEN );
 	}
 
 	/// <summary>
@@ -119,8 +119,8 @@ public class PopupController : MonoBehaviour {
 		OnClosePreAnimation.Invoke();
 
 		// Launch anim
-		m_anim.ResetTrigger("open");
-		m_anim.SetTrigger("close");
+		m_anim.ResetTrigger( GameConstants.Animator.OPEN );
+		m_anim.SetTrigger( GameConstants.Animator.CLOSE );
 	}
 
 	/// <summary>

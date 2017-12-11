@@ -187,19 +187,11 @@ public class TiltControls : MonoBehaviour
 
 		//Now get the touch for boost
 		bool fire = false;
-		// NOTE(2): Unity Android bug: On each return to the app (after app loses focus), fingerIds get incremented by 1. Until Unity fixes this,
-		// we'll put in a temp hack that takes relative finger ids starting from the lowest one....
-		int lowestFingerId = int.MaxValue;
-		foreach(Touch touch in Input.touches)
+		int numTouches = Input.touchCount;
+		// foreach( Touch touch in Input.touches )
+		for( int i = 0; i<numTouches; ++i )
 		{
-			if(touch.fingerId <= lowestFingerId)
-			{
-				lowestFingerId = touch.fingerId;
-			}
-		}
-		foreach( Touch touch in Input.touches )
-		{
-            //int effectiveFingerId = touch.fingerId - lowestFingerId;
+			Touch touch = Input.GetTouch(i);
 			//if ( touch.phase == UnityEngine.TouchPhase.Began )
             if ((touch.phase == UnityEngine.TouchPhase.Began) ||
                 (touch.phase == UnityEngine.TouchPhase.Moved) ||
