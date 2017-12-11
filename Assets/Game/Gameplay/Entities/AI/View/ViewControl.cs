@@ -105,6 +105,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	//-----------------------------------------------
 	protected Entity m_entity;
 	protected Animator m_animator;
+	protected bool m_isAnimatorAvailable;
 	protected float m_disableAnimatorTimer;
 
 	private Renderer[] m_renderers;
@@ -179,8 +180,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 		m_entity = GetComponent<Entity>();
 		m_animator = transform.FindComponentRecursive<Animator>();
-		if (m_animator != null)
+		if (m_animator != null) {
+			m_isAnimatorAvailable = true;
 			m_animator.logWarnings = false;
+		} else {
+			m_isAnimatorAvailable = false;
+		}
 
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
 		if (m_animEvents != null) {
@@ -281,7 +286,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     }
 
 	void Start() {
-		if (m_animator != null) { 
+		if (m_isAnimatorAvailable) { 
 			StartEndMachineBehaviour[] behaviours = m_animator.GetBehaviours<StartEndMachineBehaviour>();
 			for( int i = 0; i<behaviours.Length; i++ ){
 				behaviours[i].onStart += onStartAnim;
@@ -352,7 +357,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_damageFeedbackTimer = 0f;
 
 		m_disableAnimatorTimer = 0f;
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
 			m_animator.enabled = true;
 			m_animator.speed = 1f;
 		}
@@ -511,7 +516,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     }
 
     public virtual void CustomUpdate() {
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
 			if (m_disableAnimatorTimer > 0) {
 				m_disableAnimatorTimer -= Time.deltaTime;
 				if (m_disableAnimatorTimer < 0) {
@@ -652,7 +657,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void RotationLayer(ref Quaternion _from, ref Quaternion _to) {
-		if (m_hasRotationLayer && m_animator != null) {
+		if (m_hasRotationLayer && m_isAnimatorAvailable) {
 			float angle = Quaternion.Angle(_from, _to);
 			m_animator.SetBool("rotate left", angle < 0);
 			m_animator.SetBool("rotate right", angle > 0);
@@ -661,17 +666,17 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void Aim(float _blendFactor) {
 		m_aim = _blendFactor;
-		if (m_animator != null)
+		if (m_isAnimatorAvailable)
 			m_animator.SetFloat("aim", _blendFactor);
 	}
 
 	public void Height(float _height) {
-		if (m_animator != null)
+		if (m_isAnimatorAvailable)
 			m_animator.SetFloat("height", _height);
 	}
 
 	public void Move(float _speed) {
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
 			if (m_panic || m_falling) {			
 				m_animator.speed = 1f;
 				return;
@@ -734,7 +739,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 					RemoveAudioParent( ref m_onScaredAudioAO);
 				}
 			}
-			if (m_animator != null)
+			if (m_isAnimatorAvailable)
 				m_animator.SetBool("scared", _scared);
 		}
 	}
@@ -758,7 +763,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if (_burning) {
 				// lets buuurn!!!
 				// will we have a special animation when burning?
-				if (m_animator != null)
+				if (m_isAnimatorAvailable)
 					m_animator.speed = 0f;
 			} else {
 				if ( _panic ){
@@ -771,7 +776,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 						m_onPanicAudioAO.Stop();
 						RemoveAudioParent( ref m_onPanicAudioAO);
 				}
-				if (m_animator != null)
+				if (m_isAnimatorAvailable)
 					m_animator.SetBool("holded", _panic);
 			}
 		}
@@ -784,7 +789,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Hit() {
 		m_hitAnimOn = true;
 
-		if (m_animator != null)
+		if (m_isAnimatorAvailable)
 			m_animator.SetTrigger("hit");
 		
 		if (m_showDamageFeedback) {
@@ -798,7 +803,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Falling(bool _falling) {
 		if (m_falling != _falling) {
 			m_falling = _falling;
-			if (m_animator != null) {
+			if (m_isAnimatorAvailable) {
 				m_animator.speed = 1f;
 				m_animator.SetBool("falling", _falling);
 			}
@@ -808,7 +813,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Jumping(bool _jumping) {
 		if (m_jumping != _jumping) {
 			m_jumping = _jumping;
-			if (m_animator != null) {
+			if (m_isAnimatorAvailable) {
 				m_animator.speed = 1f;
 				m_animator.SetBool("jump", _jumping);
 			}
@@ -821,7 +826,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (!m_attack) {
 			m_attack = true;
-			if (m_animator != null) {
+			if (m_isAnimatorAvailable) {
 				m_animator.SetBool("attack", true);
 				m_animator.SetBool("melee",  _melee);
 				m_animator.SetBool("ranged", _ranged);
@@ -835,7 +840,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (m_attack) {
 			m_attack = false;
-			if (m_animator != null) {
+			if (m_isAnimatorAvailable) {
 				m_animator.SetBool("attack", false);
 				m_animator.SetBool("melee",  false);
 				m_animator.SetBool("ranged", false);
@@ -845,13 +850,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void StartAttackTarget() {
 		m_attackingTarget = true;
-		if (m_animator != null)
+		if (m_isAnimatorAvailable)
 			m_animator.SetBool("eat", true);
 	}
 
 	public void StopAttackTarget() {
 		m_attackingTarget = false;
-		if (m_animator != null)
+		if (m_isAnimatorAvailable)
 			m_animator.SetBool("eat", false);
 	}
 
@@ -865,7 +870,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void Impact() {
-		if (m_animator != null)
+		if (m_isAnimatorAvailable)
 			m_animator.SetTrigger("impact");
 
 		if (m_showDamageFeedback) {
@@ -1003,7 +1008,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			AudioController.Play(m_onBurnAudio, transform.position);
 		}
 
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
 			m_animator.speed = 1f;
 			m_animator.SetTrigger("burn");
 			m_disableAnimatorTimer = _burnAnimSeconds + 0.1f;
@@ -1037,7 +1042,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void SetStunned( bool stunned ){
 		if ( stunned ){
-			if (m_animator != null)
+			if (m_isAnimatorAvailable)
 				m_animator.enabled = false;
 			// if no stunned particle -> stun
 			if (m_stunParticleInstance == null)
@@ -1045,7 +1050,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				m_stunParticleInstance = m_stunParticle.Spawn(transform);
 			}
 		}else{
-			if (m_animator != null)
+			if (m_isAnimatorAvailable)
 				m_animator.enabled = true;
 			// if stunned particle -> remove stun
 			if ( m_stunParticleInstance )

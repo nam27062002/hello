@@ -219,7 +219,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	}
 
 
-	protected void Update() {
+	protected void Update() {/*
         if (FeatureSettingsManager.IsControlPanelEnabled) {
             if (Input.touchCount > 0 || Input.GetMouseButton(0)) {
                 Vector2 pos = Vector2.zero;
@@ -248,7 +248,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             if (Input.GetKeyDown(KeyCode.Tab))
                 Toggle();
         }
-
+		*/
 
 		// Update FPS
 		m_DeltaTimes[ m_DeltaIndex ] = Time.deltaTime;
@@ -281,6 +281,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 			}
 		}
 
+		/*
 		if (m_showMemoryUsage)
 		{
             if ((Time.frameCount % 200) == 0)
@@ -340,7 +341,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				// Dispatch global event
 				Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
 			}
-		}
+		}*/
 	}
 
 	public float GetFPS()

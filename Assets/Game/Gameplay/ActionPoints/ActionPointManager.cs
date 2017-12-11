@@ -94,8 +94,10 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 		}
 
 		m_actionPointsTree = new QuadTree<ActionPoint>(bounds.x, bounds.y, bounds.width, bounds.height);
-		for(int i = 0; i < m_actionPoints.Count; i++) {
-			m_actionPointsTree.Insert(m_actionPoints[i]);
+		if (m_actionPoints != null) {
+			for(int i = 0; i < m_actionPoints.Count; i++) {
+				m_actionPointsTree.Insert(m_actionPoints[i]);
+			}
 		}
 	}
 
