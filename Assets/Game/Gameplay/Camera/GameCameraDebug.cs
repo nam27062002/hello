@@ -50,9 +50,6 @@ public class GameCameraDebug : MonoBehaviour {
         Shader.SetGlobalTexture("_MatCap", m_matCapTex);
     }
 
-    private int m_width = 0;
-    private int m_height = 0;
-
     public float m_resolutionFactor = 0.25f;
 
     private void Start()
@@ -63,9 +60,6 @@ public class GameCameraDebug : MonoBehaviour {
         // Initialize by simulating a toggle of the setting
         OnDebugSettingChangedShowCollisions(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
         OnDebugSettingChangedResolutionFactor(DebugSettings.RESOLUTION_FACTOR, Prefs.GetFloatPlayer(DebugSettings.RESOLUTION_FACTOR));
-
-        m_width = Screen.width;
-        m_height = Screen.height;
     }
 
     /// <summary>
@@ -133,11 +127,11 @@ public class GameCameraDebug : MonoBehaviour {
             }
 
 
-            float rFactor = vf / (float)m_height;
+            float rFactor = vf / (float)Screen.height;
 
 
-            int width = (int)((float)m_width * rFactor);
-            int height = (int)((float)m_height * rFactor);
+            int width = (int)((float)Screen.width * rFactor);
+            int height = (int)((float)Screen.height * rFactor);
 
             Screen.SetResolution(width, height, true);
 
