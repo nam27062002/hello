@@ -4,7 +4,7 @@
 // Created by David Germade
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
-//#define FREQFORMULA
+#define FREQFORMULA
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -436,18 +436,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             }
         }
 
-        float shaderMultiplier = 1.0f;
-        if (SystemInfo.graphicsShaderLevel == 20)
-        {
-            shaderMultiplier = 0.0f;
-        }
 
 #if FREQFORMULA
-        finalDeviceRating = Device_CPUFreqRating;
-        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier, 0.0f, 1.0f);
+        finalDeviceRating = Mathf.Clamp(Device_CPUFreqRating, 0.0f, 1.0f);
+        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2), 0.0f, 1.0f);
         m_deviceQualityManager.Device_UsingRatingFormula = true;
 #else
-        finalDeviceRating = ((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier;
+        finalDeviceRating = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2), 0.0f, 1.0f);
         m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(Device_CPUFreqRating, 0.0f, 1.0f);
         m_deviceQualityManager.Device_UsingRatingFormula = false;
 #endif
@@ -457,7 +452,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log("Graphics memory size = " + graphicsMemorySize + " gpuMemQualityLevel = " + Device_GfxMemoryRating +
            "Num cores = " + processorCount + " cpuQualityRating = " + Device_CPUCoresRating +
            "CPU Freq = " + cpuFreq + " cpuFreqRating = " + Device_CPUFreqRating + 
-           "Shader multiplier = " + shaderMultiplier + 
            "Device rating = " + finalDeviceRating);       
 
         return finalDeviceRating;
