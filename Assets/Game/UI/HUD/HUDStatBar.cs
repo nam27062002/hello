@@ -288,9 +288,11 @@ public class HUDStatBar : MonoBehaviour {
 				if(m_type == Type.SuperFury || m_type == Type.Fury) {
 					if(m_particles != null) {
 						if(Math.Abs(targetValue - targetValueStep) > 0.001f) {
-							m_particles.Play();
+							if ( !m_particles.isPlaying )
+								m_particles.Play();
 						} else {
-							m_particles.Stop();
+							if ( m_particles.isPlaying )
+								m_particles.Stop();
 						}
 					}
 				}
@@ -552,8 +554,13 @@ public class HUDStatBar : MonoBehaviour {
 
 	void OnBoostToggled(bool _active) {
 		if (m_particles != null) {
-			if (_active) m_particles.Play();
-			else 		 m_particles.Stop();
+			if (_active) {
+				if ( !m_particles.isPlaying )
+					m_particles.Play();
+			}else{
+				if ( m_particles.isPlaying )
+			 		m_particles.Stop();
+			}
 		}
 	}
 }
