@@ -40,6 +40,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Device_Model = SystemInfo.deviceModel;
 #endif
 
+//        Device_Model = SystemInfo.deviceModel;    //Allows same behaviour as device in UNITY_EDITOR 
+
+
         Server_Reset();
 
         CurrentQualityIndex = -1;
