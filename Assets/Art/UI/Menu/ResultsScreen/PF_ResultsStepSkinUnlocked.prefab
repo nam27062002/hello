@@ -1509,6 +1509,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224137994826541422}
+  - component: {fileID: 114727973384606840}
   m_Layer: 5
   m_Name: Powers
   m_TagString: Untagged
@@ -5332,6 +5333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyOnStart: 1
   m_targets:
   - renderer: {fileID: 0}
     newRenderQueue: 1000
@@ -6490,6 +6492,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114727973384606840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1636982402529712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_adjustMode: 1
 --- !u!114 &114734052320773202
 MonoBehaviour:
   m_ObjectHideFlags: 1
