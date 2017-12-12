@@ -39,7 +39,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, Refresh);
 		
 		// Do a first refresh
 		Refresh(InstanceManager.menuSceneController.selectedDragon);
@@ -50,7 +50,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, Refresh);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, Refresh);
 	}
 
 	/// <summary>

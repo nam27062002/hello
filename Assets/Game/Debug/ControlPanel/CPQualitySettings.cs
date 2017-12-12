@@ -40,7 +40,7 @@ public class CPQualitySettings : MonoBehaviour
             PrefabSettingsOption_IsDirty = false;
             FeatureSettingsManager.instance.ApplyCurrentFeatureSetting();
 
-            Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
+            Messenger.Broadcast(MessengerEvents.CP_QUALITY_CHANGED);
             WorldSplitter.Manager_SetLevelsLOD(FeatureSettingsManager.instance.LevelsLOD);
         }
     }

@@ -59,7 +59,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		get { return Prefs.GetFloatPlayer(TILT_CONTROL_SENSITIVITY, 0.5f); }
 		set {
 			Prefs.SetFloatPlayer(TILT_CONTROL_SENSITIVITY, value);
-			Messenger.Broadcast<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, value);
+			Messenger.Broadcast<float>(MessengerEvents.TILT_CONTROL_SENSITIVITY_CHANGED, value);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		Prefs.SetBoolPlayer(_settingId, _value);
 
 		// Notify game
-		Messenger.Broadcast<string, bool>(GameEvents.GAME_SETTING_TOGGLED, _settingId, _value);
+		Messenger.Broadcast<string, bool>(MessengerEvents.GAME_SETTING_TOGGLED, _settingId, _value);
 	}
 
 	//------------------------------------------------------------------//

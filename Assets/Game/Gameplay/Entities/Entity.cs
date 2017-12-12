@@ -94,14 +94,14 @@ public class Entity : IEntity {
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
 		m_bounds = GetComponentInChildren<CircleArea2D>();
-		Messenger.AddListener(GameEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
+		Messenger.AddListener(MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 
 	void OnDestroy() {
 		if (EntityManager.instance != null) {
 			EntityManager.instance.UnregisterEntity(this);
 		}
-		Messenger.RemoveListener(GameEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
+		Messenger.RemoveListener(MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 
 	private void InitFromDef() {

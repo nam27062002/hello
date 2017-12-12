@@ -184,29 +184,29 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnEnable() {
 		// Subscribe to external events, based on type
 		switch(m_type) {
-			case Type.LEVEL_UP:				Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
-			case Type.SURVIVAL_BONUS:		Messenger.AddListener(GameEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
-			case Type.HEALTH_EATMORE:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
-			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
-			case Type.HEALTH_CRITICAL:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.LEVEL_UP:				Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.SURVIVAL_BONUS:		Messenger.AddListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
+			case Type.HEALTH_EATMORE:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_CRITICAL:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			//case Type.POISON:				break;
-			case Type.SHIELD_MINE_LOST:		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
-			case Type.SHIELD_POISON_LOST:	Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
-			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
-			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
-			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
-			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.EGG_FOUND:			Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);			break;
-			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
-			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
-			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
-			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(GameEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;
-			case Type.DRUNK:				Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
-			case Type.KEY_FOUND:			Messenger.AddListener(GameEvents.TICKET_COLLECTED, OnKeyCollected);			break;
-			case Type.KEY_LIMIT:			Messenger.AddListener(GameEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
-			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
+			case Type.SHIELD_MINE_LOST:		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
+			case Type.SHIELD_POISON_LOST:	Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
+			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
+			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
+			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
+			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
+			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.EGG_FOUND:			Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);			break;
+			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
+			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
+			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
+			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;
+			case Type.DRUNK:				Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
+			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
+			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
+			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 		}
 	}
 
@@ -216,29 +216,29 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnDisable() {
 		switch(m_type) {
 			// Unsubscribe from external events, based on type
-			case Type.LEVEL_UP:				Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
-			case Type.SURVIVAL_BONUS:		Messenger.RemoveListener(GameEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
-			case Type.HEALTH_EATMORE:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
-			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
-			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.LEVEL_UP:				Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.SURVIVAL_BONUS:		Messenger.RemoveListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
+			case Type.HEALTH_EATMORE:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
+			case Type.HEALTH_CRITICAL:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			//case Type.POISON:				break;
-			case Type.SHIELD_MINE_LOST:		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
-			case Type.SHIELD_POISON_LOST:	Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
-			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
-			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
-			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);						break;
-			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.EGG_FOUND:			Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);				break;
-			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
-			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(GameEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
-			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(GameEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
-			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(GameEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;
-			case Type.DRUNK:				Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
-			case Type.KEY_FOUND:			Messenger.RemoveListener(GameEvents.TICKET_COLLECTED, OnKeyCollected);			break;
-			case Type.KEY_LIMIT:			Messenger.RemoveListener(GameEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
-			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
+			case Type.SHIELD_MINE_LOST:		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLostMine);	break;
+			case Type.SHIELD_POISON_LOST:	Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLostPoison);	break;
+			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
+			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
+			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
+			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
+			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.EGG_FOUND:			Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);				break;
+			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
+			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
+			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
+			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;
+			case Type.DRUNK:				Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
+			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
+			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
+			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 		}
 	}
 

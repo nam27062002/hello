@@ -48,7 +48,7 @@ public class Explosive {
 				if (health != null) {
 					health.ReceiveDamage(m_damage, m_damageType, _at);
 					if (health.IsAlive()) {
-						Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, m_cameraShakeTime, 0f);
+						Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShakeTime, 0f);
 					}
 
 					if (_knockback > 0) {

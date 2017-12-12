@@ -51,7 +51,7 @@ public class TiltControls : MonoBehaviour
 		}
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnControlPanelBoolChanged);
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnControlPanelBoolChanged);
 	}
 
 	/// <summary>
@@ -59,7 +59,7 @@ public class TiltControls : MonoBehaviour
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnControlPanelBoolChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnControlPanelBoolChanged);
 	}
 
 	/// <summary>

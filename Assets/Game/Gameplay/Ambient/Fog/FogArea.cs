@@ -21,12 +21,12 @@ public class FogArea : MonoBehaviour
 		{
 			m_fogManager.CheckTextureAvailability(m_attributes);
 		}
-		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnTriggerEnter( Collider other)

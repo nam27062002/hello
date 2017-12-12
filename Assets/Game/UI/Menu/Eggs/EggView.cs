@@ -156,7 +156,7 @@ public class EggView : MonoBehaviour {
 		m_animator = GetComponentInChildren<Animator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
@@ -180,7 +180,7 @@ public class EggView : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe to external events
-		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>

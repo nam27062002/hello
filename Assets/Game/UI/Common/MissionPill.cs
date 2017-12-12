@@ -73,8 +73,8 @@ public class MissionPill : MonoBehaviour {
 		m_skipCostText = m_cooldownObj.FindComponentRecursive<Localizer>("TextCost");
 
 		// Subscribe to external events
-		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.AddListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		Messenger.AddListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.AddListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
 	}
 
 	/// <summary>
@@ -82,8 +82,8 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
 	}
 
 	/// <summary>
@@ -91,7 +91,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Detect hot language changes
-		Messenger.AddListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 
 		// Make sure we're up to date
 		Refresh();
@@ -99,7 +99,7 @@ public class MissionPill : MonoBehaviour {
 
 	private void OnDisable() {
 		// Only detect hot language changes while active
-		Messenger.RemoveListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	/// <summary>

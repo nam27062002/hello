@@ -21,18 +21,18 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) 
 			{
-				Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-				Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+				Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+				Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
-				Messenger.AddListener<DragonMotion.PetsEatingTest>(GameEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
+				Messenger.AddListener<DragonMotion.PetsEatingTest>(MessengerEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
 			}
 
 			protected override void OnExit(State _newState)
 			{
-				Messenger.RemoveListener(GameEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-				Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+				Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+				Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
-				Messenger.RemoveListener<DragonMotion.PetsEatingTest>(GameEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
+				Messenger.RemoveListener<DragonMotion.PetsEatingTest>(MessengerEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
 			}
 
 			void OnEatingQuestion( DragonMotion.PetsEatingTest eating )

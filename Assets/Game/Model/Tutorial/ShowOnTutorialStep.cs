@@ -44,7 +44,7 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<TutorialStep, bool>(GameEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
+		Messenger.AddListener<TutorialStep, bool>(MessengerEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
 
 		// Apply initial visibility
 		Apply();
@@ -55,7 +55,7 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Subscribe to external events
-		Messenger.RemoveListener<TutorialStep, bool>(GameEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
+		Messenger.RemoveListener<TutorialStep, bool>(MessengerEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
 	}
 
 	//------------------------------------------------------------------------//

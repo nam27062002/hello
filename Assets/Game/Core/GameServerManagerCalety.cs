@@ -44,7 +44,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;            
 			if(!m_logged) {
 				m_logged = true;
-				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
+				Messenger.Broadcast<bool>(MessengerEvents.LOGGED, m_logged);
 			}
 
 			if(m_onResponse != null) {
@@ -73,7 +73,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;
 			if(m_logged) {
 				m_logged = false;
-				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
+				Messenger.Broadcast<bool>(MessengerEvents.LOGGED, m_logged);
 			}
 
 			// An error is sent, just in case the client is waiting for a response for any command            
@@ -103,7 +103,7 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount) {
 			m_waitingMergeResponse = false;            
 			Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
-            Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
+            Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(MessengerEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
         }
 
 		public override void onShowMaintenanceMode() {         
@@ -114,14 +114,14 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeSucceeded() {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeSucceeded");
-            Messenger.Broadcast(GameEvents.MERGE_SUCCEEDED);                
+            Messenger.Broadcast(MessengerEvents.MERGE_SUCCEEDED);                
         }
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
 		public override void onMergeFailed() {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeFailed");
-            Messenger.Broadcast(GameEvents.MERGE_FAILED);                        
+            Messenger.Broadcast(MessengerEvents.MERGE_FAILED);                        
         }
 
 		// The user has requested a password to do a cross platform merge
@@ -250,7 +250,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_Init()
     {
-        Messenger.AddListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+        Messenger.AddListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
 
         Login_State = ELoginState.NotLoggedIn;      
         if (Login_Callbacks != null)
@@ -261,7 +261,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_Destroy()
     {
-        Messenger.RemoveListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+        Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
     }
 
     public override void Auth(ServerCallback callback)

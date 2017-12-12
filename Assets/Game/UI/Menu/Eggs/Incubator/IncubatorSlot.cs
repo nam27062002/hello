@@ -105,7 +105,7 @@ public class IncubatorSlot : MonoBehaviour {
 
 		// Subscribe to external events
 		// [AOC] Order is super-important, otherwise the initial state change on the egg will trigger another Refresh which will try to create another view for the egg
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
@@ -113,7 +113,7 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>

@@ -140,7 +140,7 @@ public class RewardSceneController : MonoBehaviour {
 		Clear();
 
 		// Subscribe to external events
-		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>
@@ -148,7 +148,7 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
+		Messenger.AddListener<EggView, int>(MessengerEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -159,7 +159,7 @@ public class RewardSceneController : MonoBehaviour {
 		Clear();
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
+		Messenger.RemoveListener<EggView, int>(MessengerEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -167,7 +167,7 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 
 		// Clean up
 		Clear();
@@ -197,7 +197,7 @@ public class RewardSceneController : MonoBehaviour {
 			m_eggView = null;
 
 			// Unsubscribe from external events.
-			Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
+			Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
 		}
 
 		// Hide any reward
@@ -461,7 +461,7 @@ public class RewardSceneController : MonoBehaviour {
 		Clear();
 
 		// Be attentive to the egg collect event, which is managed by the egg view
-		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
+		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
 
 		// Create a new instance of the egg prefab
 		m_eggView = EggView.CreateFromData(_eggReward.egg);

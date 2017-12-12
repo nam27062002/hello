@@ -199,6 +199,6 @@ public class ChestViewController : MonoBehaviour {
 	/// Event to sync with the animation.
 	/// </summary>
 	public void OnCameraShake() {
-		Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, 0.1f, 0.5f);
+		Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 0.1f, 0.5f);
 	}
 }

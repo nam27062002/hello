@@ -63,7 +63,7 @@ public class MenuDragonScroller : MonoBehaviour {
 		}
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>
@@ -83,7 +83,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		m_menuScreensController.OnScreenChanged.RemoveListener(OnMenuScreenChanged);
 	}
 

@@ -135,7 +135,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		m_event = GlobalEventManager.currentEvent;
 
 		// Subscribe to external events
-		Messenger.AddListener<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, OnContributionConfirmed);
+		Messenger.AddListener<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, OnContributionConfirmed);
 
 		// Reset local vars
 		m_submitAttempts = 0;
@@ -460,7 +460,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	private void OnHidePostAnimation() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, OnContributionConfirmed);
+		Messenger.RemoveListener<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, OnContributionConfirmed);
 
 		// Clear sequence
 		if(m_activePanelSequence != null) {

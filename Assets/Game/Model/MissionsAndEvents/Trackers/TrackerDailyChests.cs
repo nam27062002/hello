@@ -24,7 +24,7 @@ public class TrackerDailyChests : TrackerBase {
 	/// </summary>
 	public TrackerDailyChests() {
 		// Subscribe to external events
-		Messenger.AddListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		Messenger.AddListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);
 	}
 
 	/// <summary>
@@ -42,7 +42,7 @@ public class TrackerDailyChests : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<CollectibleChest>(GameEvents.CHEST_COLLECTED, OnChestCollected);
+		Messenger.RemoveListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);
 
 		// Call parent
 		base.Clear();

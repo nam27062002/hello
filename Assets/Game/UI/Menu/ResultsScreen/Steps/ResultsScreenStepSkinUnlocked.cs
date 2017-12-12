@@ -196,7 +196,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 				m_tapToContinue.ForceHide();
 
 				// Message to track skin
-				Messenger.Broadcast<string>(GameEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
+				Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
 
 				// Continue with the animation after some delay
 				UbiBCN.CoroutineManager.DelayedCall(() => {

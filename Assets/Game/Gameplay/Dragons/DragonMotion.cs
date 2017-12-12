@@ -431,18 +431,18 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	}
 
 	void OnEnable() {
-		Messenger.AddListener(GameEvents.PLAYER_DIED, PnPDied);
-		Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
-		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Messenger.AddListener(MessengerEvents.PLAYER_DIED, PnPDied);
+		Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.AddListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
 	void OnDisable()
 	{
-		Messenger.RemoveListener(GameEvents.PLAYER_DIED, PnPDied);
-		Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
-		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
+		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
 	private void PnPDied()
@@ -522,7 +522,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				{
 					HDTrackingManager.Instance.Notify_LoadingAreaEnd(m_previousArea,LevelManager.currentArea, Time.time - m_switchAreaStart);
 					m_dragon.changingArea = false;
-					Messenger.Broadcast(GameEvents.PLAYER_ENTERING_AREA);
+					Messenger.Broadcast(MessengerEvents.PLAYER_ENTERING_AREA);
 				}break;
 			}
 
@@ -638,7 +638,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_changeAreaState = ChangeAreaState.Enter;
 					// m_eatBehaviour.PauseEating();
 					// Send event to tell pets we are leaging the area
-					Messenger.Broadcast(GameEvents.PLAYER_LEAVING_AREA);
+					Messenger.Broadcast(MessengerEvents.PLAYER_LEAVING_AREA);
 				}break;
 			}
 
@@ -1022,7 +1022,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 						{
 							// Check pets
 							PetsEatingTest test = new PetsEatingTest();
-							Messenger.Broadcast<DragonMotion.PetsEatingTest>(GameEvents.PLAYER_ASK_PETS_EATING, test);
+							Messenger.Broadcast<DragonMotion.PetsEatingTest>(MessengerEvents.PLAYER_ASK_PETS_EATING, test);
 							noeating = !test.m_eating;
 						}
 
@@ -1667,7 +1667,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}        
 
 		// Notify game
-		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, true);
+		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, true);
 	}
 
 	public void EndWaterMovement( Collider _other )
@@ -1691,7 +1691,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 
 		// Notify game
-		Messenger.Broadcast<bool>(GameEvents.UNDERWATER_TOGGLED, false);
+		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
 	}
 
 	public void StartSpaceMovement(Collider _other)
@@ -1711,7 +1711,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 
         // Notify game
-        Messenger.Broadcast<bool>(GameEvents.INTOSPACE_TOGGLED, true);        
+        Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, true);        
     }
 
 	public void EndSpaceMovement(Collider _other)
@@ -1730,7 +1730,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 
         // Notify game
-        Messenger.Broadcast<bool>(GameEvents.INTOSPACE_TOGGLED, false);
+        Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, false);
     }
 
 	public void StartGrabPreyMovement(AI.IMachine prey, Transform _holdPreyTransform)

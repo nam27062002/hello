@@ -142,6 +142,6 @@ public class DragonMapMarker : MapMarker {
 	/// </summary>
 	private void OnMouseUpAsButton() {
 		// Center view on dragon!
-		Messenger.Broadcast<float>(GameEvents.UI_MAP_CENTER_TO_DRAGON, m_scrollToDragonSpeed);
+		Messenger.Broadcast<float>(MessengerEvents.UI_MAP_CENTER_TO_DRAGON, m_scrollToDragonSpeed);
 	}
 }

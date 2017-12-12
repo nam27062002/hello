@@ -24,7 +24,7 @@ public class TrackerEggs : TrackerBase {
 	/// </summary>
 	public TrackerEggs() {
 		// Subscribe to external events
-		Messenger.AddListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);
 	}
 
 	/// <summary>
@@ -42,7 +42,7 @@ public class TrackerEggs : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<CollectibleEgg>(GameEvents.EGG_COLLECTED, OnEggCollected);
+		Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);
 
 		// Call parent
 		base.Clear();

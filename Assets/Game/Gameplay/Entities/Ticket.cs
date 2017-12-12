@@ -28,7 +28,7 @@ public class Ticket : Entity {
 	}
 
 	public override Reward GetOnKillReward(bool _burnt) {
-		Messenger.Broadcast(GameEvents.TICKET_COLLECTED);
+		Messenger.Broadcast(MessengerEvents.TICKET_COLLECTED);
 		return base.GetOnKillReward(_burnt);
 	}
 }

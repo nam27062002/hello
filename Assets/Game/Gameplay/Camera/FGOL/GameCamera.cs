@@ -246,17 +246,17 @@ public class GameCamera : MonoBehaviour
 		InstanceManager.gameCamera = this;
 
 		// Subscribe to external events
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
-		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);       
+		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.AddListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.AddListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);       
 
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
-		Messenger.AddListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
+		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 	}
 
 	public void PublicAwake()
@@ -388,16 +388,16 @@ public class GameCamera : MonoBehaviour
 	}
 
 	void OnDestroy() {
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-		Messenger.RemoveListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
-		Messenger.RemoveListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
+		Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.RemoveListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.RemoveListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
        
         // Unsubscribe from external events.
-        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
-		Messenger.RemoveListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
+        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 
 		InstanceManager.gameCamera = null;
 
@@ -1480,12 +1480,12 @@ public class GameCamera : MonoBehaviour
     // we don't want to change it if it's not really necessary in order to make future updates easier
     private void Debug_Awake()
     {
-        Messenger.AddListener(GameEvents.CP_QUALITY_CHANGED, Debug_OnChanged);        
+        Messenger.AddListener(MessengerEvents.CP_QUALITY_CHANGED, Debug_OnChanged);        
     }
 
     private void Debug_OnDestroy()
     {
-        Messenger.RemoveListener(GameEvents.CP_QUALITY_CHANGED, Debug_OnChanged);
+        Messenger.RemoveListener(MessengerEvents.CP_QUALITY_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged()

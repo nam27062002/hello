@@ -74,8 +74,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
 		m_animator = GetComponent<Animator>();
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
@@ -103,8 +103,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if (m_eventsRegistered)
 		{
-			Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
-			Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
+			Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+			Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		}
 	}
 
@@ -420,7 +420,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void IntroDone()
 	{
-		Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+		Messenger.Broadcast(MessengerEvents.GAME_COUNTDOWN_ENDED);
 	}
 
 	public void OnNoAirBubbles()

@@ -252,7 +252,7 @@ public class ContentManager
         m_ready = true;
 
         // Warn all other managers and definition consumers
-        Messenger.Broadcast(EngineEvents.DEFINITIONS_LOADED);
+		Messenger.Broadcast(MessengerEvents.DEFINITIONS_LOADED);
     }
 
     #region log

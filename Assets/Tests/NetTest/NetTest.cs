@@ -18,7 +18,7 @@ public class NetTest : MonoBehaviour
 		m_actionButtons.SetActive(false);
 		m_waitingText.SetActive(false);
 
-        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLog);
+        Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, OnSocialLog);
         SocialPlatformManager.SharedInstance.Init();        
     }
 

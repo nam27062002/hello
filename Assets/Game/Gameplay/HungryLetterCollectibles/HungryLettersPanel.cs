@@ -245,7 +245,7 @@ public class HungryLettersPanel : MonoBehaviour
 			// AudioManager.PlaySfx(AudioManager.Ui.HungryComplete);
 			AudioController.Play("AudioManager.Ui.HungryComplete");
 			// send out the event for all the hungry letters being collected.
-			Messenger.Broadcast(GameEvents.ALL_HUNGRY_LETTERS_COLLECTED);
+			Messenger.Broadcast(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED);
 			// release the lock and dismiss this panel.
 			m_allCollectedLock = false;
 			RequestDismission();

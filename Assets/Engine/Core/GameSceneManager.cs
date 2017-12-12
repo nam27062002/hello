@@ -160,7 +160,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 			case ESceneState.RESET: {
                 // PreUnload event is dispatched so listeners can do stuff thar needs to be done before game objects in the current scene start being destroyed. This is typically useful
                 // when the stuff to do when destroying a game object depends on another game object that could already be destroyed if that stuff was done in OnDestroy()
-                if (m_prevScene != "") Messenger.Broadcast<string>(EngineEvents.SCENE_PREUNLOAD, m_prevScene);               
+				if (m_prevScene != "") Messenger.Broadcast<string>(MessengerEvents.SCENE_PREUNLOAD, m_prevScene);               
                 
                 // Run a GC pass
                 System.GC.Collect();
@@ -202,8 +202,8 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 				m_loadingScene = "";
 
 				// Dispatch event
-				if(m_prevScene != "") Messenger.Broadcast<string>(EngineEvents.SCENE_UNLOADED, m_prevScene);
-				if(m_currentScene != "") Messenger.Broadcast<string>(EngineEvents.SCENE_LOADED, m_currentScene);
+				if(m_prevScene != "") Messenger.Broadcast<string>(MessengerEvents.SCENE_UNLOADED, m_prevScene);
+				if(m_currentScene != "") Messenger.Broadcast<string>(MessengerEvents.SCENE_LOADED, m_currentScene);
 			} break;
 
 			// Just before running, force one last memory cleanup. Run here any process required before running the scene, e.g. activate user input, open welcome popups, etc. 1-Frame state.
@@ -220,7 +220,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 		}
 
 		// Dispatch event
-		Messenger.Broadcast<ESceneState, ESceneState>(EngineEvents.SCENE_STATE_CHANGED, oldState, m_sceneState);
+		Messenger.Broadcast<ESceneState, ESceneState>(MessengerEvents.SCENE_STATE_CHANGED, oldState, m_sceneState);
 	}
 
 	/// <summary>

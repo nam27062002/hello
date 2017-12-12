@@ -60,7 +60,7 @@ public class HUDMultiplier : HudWidget {
     /// </summary>
     private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.AddListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 	
 	/// <summary>
@@ -68,7 +68,7 @@ public class HUDMultiplier : HudWidget {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.RemoveListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 
 	/// <summary>

@@ -53,10 +53,10 @@ public class HUDPc : HudWidget {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.AddListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
-		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);	// Show during revive
-		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);	// Show during revive
+		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 	
 	/// <summary>
@@ -64,10 +64,10 @@ public class HUDPc : HudWidget {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.RemoveListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
-		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
     protected override void Update() {

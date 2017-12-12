@@ -62,7 +62,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		instance.InitLevelEggs();
 		instance.InitLevelChests();
 
-		Messenger.AddListener(GameEvents.TICKET_COLLECTED, instance.OnCollectKey);	
+		Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, instance.OnCollectKey);	
 	}
 
 	/// <summary>
@@ -74,7 +74,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		instance.m_chests.Clear();
 		instance.m_key = false;
 
-		Messenger.RemoveListener(GameEvents.TICKET_COLLECTED, instance.OnCollectKey);
+		Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, instance.OnCollectKey);
 	}
 
 	public static void Process() {

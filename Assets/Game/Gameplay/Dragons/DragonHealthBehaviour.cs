@@ -177,10 +177,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			m_dragon.AddLife(-damage, _type, _source);
 
 			// Notify game
-			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
+			Messenger.Broadcast<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
 
 			if (_entity != null && _entity.hasToShowTierNeeded(m_dragon.data.tier)) {
-				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
+				Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
 			}
 		}
 	}
@@ -237,7 +237,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		}
 
 		if (_entity != null && _entity.hasToShowTierNeeded(m_dragon.data.tier)) {
-			Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
+			Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
 		}
 	}
 

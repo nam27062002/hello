@@ -22,8 +22,8 @@ public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManag
 		m_spawners = new List<ISpawner>();
 
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -31,8 +31,8 @@ public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManag
 	/// </summary>
 	protected override void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 
 		base.OnDestroy();
 	}

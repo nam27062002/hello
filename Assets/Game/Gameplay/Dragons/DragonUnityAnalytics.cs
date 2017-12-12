@@ -17,9 +17,9 @@ public class DragonUnityAnalytics : MonoBehaviour {
 		m_track = m_gameSceneController != null;
 		if ( m_track )
 		{
-			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
-			Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-			Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.AddListener(MessengerEvents.PLAYER_DIED, OnPlayerDied);
 		}
 		else
 		{
@@ -31,9 +31,9 @@ public class DragonUnityAnalytics : MonoBehaviour {
 	{
 		if ( m_track )
 		{
-			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
-			Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-			Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, OnPlayerDied);
 		}
 	}
 	
