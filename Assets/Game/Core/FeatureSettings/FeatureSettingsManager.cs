@@ -956,7 +956,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Shaders_ApplyQuality(shadersLevel);
 
         float resolutionFactor = settings.GetValueAsFloat(FeatureSettings.KEY_RESOLUTION_FACTOR);
-        resolutionFactor /= (float)Screen.height;
+
+        if (resolutionFactor < (float)Screen.height)
+        {
+            resolutionFactor /= (float)Screen.height;
+        }
+        else
+        {
+            resolutionFactor = 1.0f;
+        }
+
         int width = (int)((float)Screen.width * resolutionFactor);
         int height = (int)((float)Screen.height * resolutionFactor);
 
