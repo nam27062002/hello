@@ -414,8 +414,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
-		gameObject.AddComponent<DragonUnityAnalytics>();
-
 	}
 
 	void RecalculateDragonForce()
