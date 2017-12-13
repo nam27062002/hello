@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -62,8 +63,29 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Check dragons to tease
-		m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
-		m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
+		// [AOC] Special case: if dragon scroll tutorial hasn't been yet completed, 
+		//		 mark target dragons as already teased to prevent conflict with the tutorial scroll animation
+		List<DragonData> toTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE);
+		List<DragonData> toReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL);
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+			// Dragon scroll tutorial completed, pick first dragon to tease/reveal
+			m_dragonToTease = toTease.First();
+			m_dragonToReveal = toReveal.First();
+		} else {
+			// Dragon scroll tutorial hasn't been completed! Don't launch tease/reveal animations
+			m_dragonToTease = null;
+			m_dragonToReveal = null;
+
+			// Mark as teased to prevent launching the reveal anim in the future
+			for(int i = 0; i < toTease.Count; ++i) {
+				toTease[i].Tease();
+			}
+
+			// Mark as revealed to prevent launching the reveal anim in the future
+			for(int i = 0; i < toReveal.Count; ++i) {
+				toTease[i].Reveal();
+			}
+		}
 
 		// Subscribe to external events.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
