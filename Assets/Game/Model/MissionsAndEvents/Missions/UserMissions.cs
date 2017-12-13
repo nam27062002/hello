@@ -260,16 +260,16 @@ public class UserMissions {
 		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
 		// 6. Compute and apply modifiers to the target value
-		float totalModifier = 0f;	// Modifiers are additive
+		float totalModifier = 0f;
 
-		// 6.1. Dragon modifier
+		// 6.1. Dragon modifier - additive
 		DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);	// Matching sku
 		if(dragonModifierDef != null) {
 			totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
 			Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
-		// 6.2. Difficulty modifier
+		// 6.2. Difficulty modifier - additive
 		DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
 		DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
 		if(difficultyModifierDef != null) {
@@ -277,11 +277,11 @@ public class UserMissions {
 			Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
-		// 6.3. Single run modifier
+		// 6.3. Single run modifier - multiplicative
 		if(singleRun) {
 			DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
 			if(singleRunModifierDef != null) {
-				totalModifier += singleRunModifierDef.GetAsFloat("quantityModifier");
+				totalModifier *= 1f - singleRunModifierDef.GetAsFloat("quantityModifier");
 				Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 			}
 		}
