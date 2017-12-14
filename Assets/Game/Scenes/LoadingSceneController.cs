@@ -438,6 +438,7 @@ public class LoadingSceneController : SceneController {
 				SpawnerManager.CreateInstance(true);
 				SpawnerAreaManager.CreateInstance(true);
 				EntityManager.CreateInstance(true);
+				ViewManager.CreateInstance(true);
 				InstanceManager.CreateInstance(true);
 
 		        GameAds.CreateInstance(false);

@@ -151,6 +151,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private bool[] m_specialAnimations;
 
 	protected PreyAnimationEvents m_animEvents;
+	public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
 	private static int ATTACK_HASH = Animator.StringToHash("Attack");
     // private const int ATTACK_HASH = Animator.StringToHash("Attack");
@@ -170,6 +171,16 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
 
+
+	private Transform m_viewManagerTransform;
+	private Transform m_view;
+	// local backup
+	private Vector3 m_viewPosition;
+	private Quaternion m_viewRotation;
+	private Vector3 m_viewScale;
+	private AnimatorCullingMode m_animatorCullingMode;
+
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
@@ -179,12 +190,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		//---------------------------- 
 
 		m_entity = GetComponent<Entity>();
-		m_animator = transform.FindComponentRecursive<Animator>();
+		m_view = transform.FindObjectRecursive("view").transform;
+		m_animator = m_view.GetComponent<Animator>();
 		if (m_animator != null) {
 			m_isAnimatorAvailable = true;
 			m_animator.logWarnings = false;
+			m_animatorCullingMode = m_animator.cullingMode;
 		} else {
 			m_isAnimatorAvailable = false;
+			m_animatorCullingMode = AnimatorCullingMode.CullCompletely;
 		}
 
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
@@ -283,7 +297,35 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
         }
 		m_stunParticle.CreatePool();
 
+
+		// Backup view values
+		m_viewPosition = m_view.localPosition;
+		m_viewRotation = m_view.localRotation;
+		m_viewScale = m_view.localScale;
+
+		m_viewManagerTransform = ViewManager.instance.gameObject.transform;
+		SentViewToManager();
     }
+
+	void SentViewToManager() {
+		if (m_isAnimatorAvailable) {
+			m_animator.cullingMode = AnimatorCullingMode.CullCompletely;
+		}
+		m_view.SetParent(m_viewManagerTransform, false);
+		m_view.position = GameConstants.Vector3.one * 30000f;
+		m_view.localScale = GameConstants.Vector3.zero;
+	}
+
+	void GetViewFromManager() {
+		m_view.SetParent(this.transform);
+		m_view.localPosition = m_viewPosition;
+		m_view.localRotation = m_viewRotation;
+		m_view.localScale = m_viewScale;
+
+		if (m_isAnimatorAvailable) {
+			m_animator.cullingMode = m_animatorCullingMode;
+		}
+	}
 
 	void Start() {
 		if (m_isAnimatorAvailable) { 
@@ -339,6 +381,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	//
 
 	public virtual void Spawn(ISpawner _spawner) {
+		GetViewFromManager();
+
 		m_boost = false;
 		m_scared = false;
 		m_panic = false;
@@ -401,6 +445,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_stunParticleInstance = null;
 		}
 		RemoveAudios();
+
+		SentViewToManager();
     }
 
     protected virtual void RemoveAudios() {

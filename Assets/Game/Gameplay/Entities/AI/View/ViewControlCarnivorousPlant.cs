@@ -21,6 +21,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	[SerializeField] private string m_onBurnAudio;
 
 	protected PreyAnimationEvents m_animEvents;
+	public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
     //-----------------------------------------------
     // Use this for initialization
