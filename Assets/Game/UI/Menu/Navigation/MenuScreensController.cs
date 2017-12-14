@@ -63,16 +63,17 @@ public class MenuScreensController : NavigationScreenSystem {
 
 	public MenuScreenScene currentScene {
 		get {
-			if(MathUtils.IsBetween(currentScreenIdx, 0, m_scenes.Length)) {
+			if ( currentScreenIdx >= 0 && currentScreenIdx < m_scenes.Length ){
 				return m_scenes[currentScreenIdx]; 
 			}
+
 			return null;
 		}
 	}
 
 	public CameraSnapPoint currentCameraSnapPoint {
 		get {
-			if(MathUtils.IsBetween(currentScreenIdx, 0, m_cameraSnapPoints.Length)) {
+			if( currentScreenIdx >= 0 && currentScreenIdx < m_cameraSnapPoints.Length ) {
 				return m_cameraSnapPoints[currentScreenIdx]; 
 			}
 			return null;
