@@ -1078,8 +1078,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_HOUSTON_TRANSACTION_ID, houstonTransactionID);
             Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
             Track_AddParamString(e, TRACK_PARAM_PROMOTION_TYPE, promotionType);
-            Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrencyCode);            
-            e.SetParameterValue(TRACK_PARAM_MONEY_IAP, moneyPrice);
+            Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrencyCode);
+            Track_AddParamFloat(e, TRACK_PARAM_MONEY_IAP, moneyPrice);            
 
             // moneyPrice in cents of dollar
             e.SetParameterValue(TRACK_PARAM_MONEY_USD, moneyUSD);
@@ -1100,7 +1100,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (e != null)
         {            
             Track_AddParamString(e, TRACK_PARAM_AF_DEF_CURRENCY, moneyCurrencyCode);
-            e.SetParameterValue(TRACK_PARAM_AF_DEF_LOGPURCHASE, moneyPrice);
+            Track_AddParamFloat(e, TRACK_PARAM_AF_DEF_LOGPURCHASE, moneyPrice);
             e.SetParameterValue(TRACK_PARAM_AF_DEF_QUANTITY, 1);            
 
             Track_SendEvent(e);
@@ -1111,7 +1111,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (e != null)
         {
             Track_AddParamString(e, TRACK_PARAM_FB_DEF_CURRENCY, moneyCurrencyCode);
-            e.SetParameterValue(TRACK_PARAM_FB_DEF_LOGPURCHASE, moneyPrice);            
+            Track_AddParamFloat(e, TRACK_PARAM_FB_DEF_LOGPURCHASE, moneyPrice);            
 
             Track_SendEvent(e);
         }
@@ -1333,8 +1333,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_DEATH_COORDINATES, deathCoordinates);
             e.SetParameterValue(TRACK_PARAM_CHESTS_FOUND, chestsFound);
             e.SetParameterValue(TRACK_PARAM_EGG_FOUND, eggFound);
-            e.SetParameterValue(TRACK_PARAM_HIGHEST_MULTIPLIER, highestMultiplier);
-            e.SetParameterValue(TRACK_PARAM_HIGHEST_BASE_MULTIPLIER, highestBaseMultiplier);
+            Track_AddParamFloat(e, TRACK_PARAM_HIGHEST_MULTIPLIER, highestMultiplier);
+            Track_AddParamFloat(e, TRACK_PARAM_HIGHEST_BASE_MULTIPLIER, highestBaseMultiplier);            
             e.SetParameterValue(TRACK_PARAM_FIRE_RUSH_NB, furyRushNb);
             e.SetParameterValue(TRACK_PARAM_SUPER_FIRE_RUSH_NB, superFireRushNb);
             e.SetParameterValue(TRACK_PARAM_HC_REVIVE, hcRevive);
@@ -1932,6 +1932,18 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         int valueToSend = (value) ? 1 : 0;
         e.SetParameterValue(paramName, valueToSend);
+    }
+
+    private void Track_AddParamFloat(TrackingManager.TrackingEvent e, string paramName, float value)
+    {
+        // MAX value accepted by ETL
+        const float MAX = 999999999.99f;
+        if (value > MAX)
+        {
+            value = MAX;
+        }
+
+        e.SetParameterValue(paramName, value);
     }
 
     private string Track_UserCurrencyToString(UserProfile.Currency currency)
