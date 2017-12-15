@@ -338,9 +338,12 @@ public class HDTrackingManager
 	/// </summary>
 	public virtual void Notify_SettingsClose(){}
 
+    /// <summary>
+    /// Notifies the performance track every 30 seconds
+    /// </summary>
+    public virtual void Notify_PerformanceTrack() {}
 
-
-	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}
+    public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}
 
 	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) {}
 

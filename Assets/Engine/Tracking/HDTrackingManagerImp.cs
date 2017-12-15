@@ -913,7 +913,23 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_EndPlayingMode( true );
 	}
 
-	public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
+    public override void Notify_PerformanceTrack()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Performance track");
+        }
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.performance");
+        if (e != null)
+        {
+            Track_AddParamSessionsCount(e);
+            Track_AddParamGameRoundCount(e);
+
+        }
+    }
+
+    public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
