@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 
+using System;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -21,8 +23,16 @@ public class UISafeAreaSetter : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public enum Mode {
-		SIZE,
-		POSITION
+		SIZE_DECREASE,
+		POSITION,
+		SIZE_INCREASE
+	}
+
+	[Serializable]
+	public class OverrideData {
+		[HideEnumValues(false, true)]
+		public UIConstants.SpecialDevice device = UIConstants.SpecialDevice.NONE;
+		public UISafeArea safeArea = new UISafeArea();
 	}
 	
 	//------------------------------------------------------------------------//
@@ -30,6 +40,8 @@ public class UISafeAreaSetter : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Mode m_adjustMode = Mode.POSITION;
+
+	[SerializeField] private OverrideData[] m_customSafeAreas = new OverrideData[0];
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -68,9 +80,19 @@ public class UISafeAreaSetter : MonoBehaviour {
 		// Get safe area
 		UISafeArea safeArea = UIConstants.safeArea;
 
+		// Override?
+		for(int i = 0; i < m_customSafeAreas.Length; ++i) {
+			// Matching device?
+			if(m_customSafeAreas[i].device == UIConstants.specialDevice) {
+				// Yes! Override safe area
+				safeArea = m_customSafeAreas[i].safeArea;
+				break;
+			}
+		}
+
 		// Apply based on mode
 		switch(m_adjustMode) {
-			case Mode.SIZE: {
+			case Mode.SIZE_DECREASE: {
 				// Adjust both offsets
 				rt.offsetMin = new Vector2(
 					rt.offsetMin.x + safeArea.left,
@@ -80,6 +102,19 @@ public class UISafeAreaSetter : MonoBehaviour {
 				rt.offsetMax = new Vector2(
 					rt.offsetMax.x - safeArea.right,
 					rt.offsetMax.y - safeArea.top
+				);
+			} break;
+
+			case Mode.SIZE_INCREASE: {
+				// Adjust both offsets
+				rt.offsetMin = new Vector2(
+					rt.offsetMin.x - safeArea.left,
+					rt.offsetMin.y - safeArea.bottom
+				);
+
+				rt.offsetMax = new Vector2(
+					rt.offsetMax.x + safeArea.right,
+					rt.offsetMax.y + safeArea.top
 				);
 			} break;
 

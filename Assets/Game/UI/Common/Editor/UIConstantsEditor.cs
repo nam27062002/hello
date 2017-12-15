@@ -142,6 +142,18 @@ public class UIConstantsEditor : CategorizedEditor {
 			);
 		}
 
+		// Special devices safe areas
+		else if(_p.name == "m_safeAreas") {
+			// Fixed length arrays!
+			EditorGUILayoutExt.FixedLengthArray(
+				_p, 
+				(SerializedProperty _prop, int _idx) => {
+					EditorGUILayout.PropertyField(_prop, new GUIContent(((UIConstants.SpecialDevice)_idx).ToString()), true);
+				}, 
+				(int)UIConstants.SpecialDevice.COUNT
+			);
+		}
+
 		// Default property display
 		else {
 			base.DoProperty(_p);
