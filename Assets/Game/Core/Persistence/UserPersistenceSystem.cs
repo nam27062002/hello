@@ -1,7 +1,7 @@
-//[DGR] ANTICHEAT No support added yet
-//using CodeStage.AntiCheat.ObscuredTypes;
+using CodeStage.AntiCheat.ObscuredTypes;
 using FGOL.Server;
 using System;
+
 public class UserPersistenceSystem : PersistenceSystem
 {	
     private bool m_hasBeenIngame = false;
@@ -22,12 +22,10 @@ public class UserPersistenceSystem : PersistenceSystem
     
     public int timePlayed = 0;
     
-    public bool isPirate = false;
-    //[DGR] ANTICHEAT: No support added yet
-    //public ObscuredBool isHacker = false;
-    //public ObscuredBool isCheater = false;
-    public bool isHacker = false;
-    public bool isCheater = false;
+	public ObscuredBool isPirate = false;	// Not used at the momment
+	// This flag is used when the players tries to modify the memory to change a variable. See AntiCheatsManager
+	public ObscuredBool isHacker = false;	
+	public ObscuredBool isCheater = false; // Not used at the momment
 
     public bool isBadUser
     {
@@ -49,7 +47,7 @@ public class UserPersistenceSystem : PersistenceSystem
 
     public override void Reset()
     {        
-        timePlayed = 0;
+        //timePlayed = 0;
 
         m_hasBeenIngame = false;
         m_numGameLoops = 0;        

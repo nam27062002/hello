@@ -45,7 +45,7 @@ Function spawnerInfo()
 	substrToFind = "m_entityPrefabList:"
 	substrToFind2 = "m_entityPrefab:"
 	If foundStrMatch(tmpStr,substrToFind) = true Or foundStrMatch(tmpStr,substrToFind2) = true Then
-		spawner = Replace(CurrentSpawner.Path,"D:\Projects\HungryDragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")
+		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\client\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
 		REM spawner = Replace(CurrentSpawner.Path,"HungryDragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")
 		spawner = Replace(spawner,".prefab","")
 		If foundStrMatch(tmpStr,substrToFind) = true Then

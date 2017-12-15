@@ -31,6 +31,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -39,6 +40,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
 	}
 
 
@@ -97,6 +99,10 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 		for(int i = 0; i < m_actionPoints.Count; i++) {
 			m_actionPointsTree.Insert(m_actionPoints[i]);
 		}
+	}
+
+	private void OnGameEnded() {
+		m_actionPoints.Clear();
 	}
 
 	//------------------------------------------------------------------------//
