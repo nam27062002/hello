@@ -553,6 +553,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
+
+        Notify_StartPerformanceTracker();
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
@@ -913,22 +915,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_EndPlayingMode( true );
 	}
 
-    public override void Notify_PerformanceTrack()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("Performance track");
-        }
-
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.performance");
-        if (e != null)
-        {
-            Track_AddParamSessionsCount(e);
-            Track_AddParamGameRoundCount(e);
-
-        }
-    }
-
     public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
@@ -979,9 +965,22 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_SendEvent(e);
 		}
 	}
-#endregion
 
-#region track	
+    /// <summary>
+    /// Notifies the start of performance track every X seconds
+    /// </summary>
+    public override void Notify_StartPerformanceTracker() {
+        Track_PerformanceTrack();
+    }
+
+    /// <summary>
+    /// Notifies the stop of performance track every X seconds
+    /// </summary>
+    public override void Notify_StopPerformanceTracker() { }
+
+    #endregion
+
+    #region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
@@ -1663,6 +1662,23 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	}
 
+    private void Track_PerformanceTrack()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Performance track");
+        }
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.performance");
+        if (e != null)
+        {
+            Track_AddParamSessionsCount(e);
+            Track_AddParamGameRoundCount(e);
+            Track_SendEvent(e);
+        }
+    }
+
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -1777,7 +1793,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_SendEvent(TrackingManager.TrackingEvent e)
 	{
 		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
 		TrackingManager.SharedInstance.SendEvent(e);
 #endif
 	}

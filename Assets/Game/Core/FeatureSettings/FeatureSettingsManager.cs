@@ -1188,6 +1188,18 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     /// <summary>
+    /// When <c>true</c> performance tracking is enabled. When <c>false</c> no tracking stuff is done at all
+    /// </summary>
+    public bool IsPerformanceTrackingEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_PERFORMANCE_TRACKING);
+        }
+    }
+
+
+    /// <summary>
     /// When <c>true</c> events that couldn't be sent over the network are stored in the device storage so they can be sent when network is working again
     /// </summary>
     public bool IsTrackingOfflineCachedEnabled
