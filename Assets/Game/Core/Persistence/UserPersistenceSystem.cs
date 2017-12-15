@@ -47,7 +47,7 @@ public class UserPersistenceSystem : PersistenceSystem
 
     public override void Reset()
     {        
-        timePlayed = 0;
+        //timePlayed = 0;
 
         m_hasBeenIngame = false;
         m_numGameLoops = 0;        
