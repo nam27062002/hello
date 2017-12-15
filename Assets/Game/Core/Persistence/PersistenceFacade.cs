@@ -254,8 +254,7 @@ public class PersistenceFacade
         LocalDriver.TrackingPersistenceSystem = trackingSystem;
         if (trackingSystem != null)
         {
-            LocalData.Systems_RegisterSystem(trackingSystem);
-            LocalData.Systems_RegisterSystem(trackingSystem);            
+            LocalData.Systems_RegisterSystem(trackingSystem);                    
         }
 	}
 	#endregion

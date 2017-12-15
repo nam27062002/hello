@@ -154,7 +154,8 @@
 				{"scEarned": {"Status": "OK"}},
 				{"hcEarned": {"Status": "OK"}},
 				{"boostTime": {"Status": "OK"}},
-				{"mapUsedNB": {"Status": "OK"}}
+				{"mapUsedNB": {"Status": "OK"}},
+				{"isHacker": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -296,7 +297,8 @@
 				{"country": {"Status": "OK"}},
 				{"connectionType": {"Status": "OK"}},
 				{"userTimezone": {"Status": "OK"}},
-				{"storeInstalled": {"Status": "OK"}}				
+				{"storeInstalled": {"Status": "OK"}},
+				{"isHacker": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -346,6 +348,14 @@
                 {"rank": {"Status": "OK"}},
                 {"isSuccess": {"Status": "OK"}},
                 {"duration": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.player.hacker": {
+            "Parameters": [
             ],
             "APIs": [
                 "dna",
@@ -986,6 +996,10 @@
             "Values": []
         },
 		"storeInstalled": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"isHacker": {
             "Type": "INT:4",
             "Values": []
         }

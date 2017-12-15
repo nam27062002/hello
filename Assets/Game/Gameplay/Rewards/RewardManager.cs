@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CodeStage.AntiCheat.ObscuredTypes;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -59,17 +60,17 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// Basic rewards
 	// Exposed for easier debugging
-	[SerializeField] private long m_score = 0;
+	[SerializeField] private ObscuredLong m_score = 0;
 	public static long score { 
 		get { return instance.m_score; }
 	}
 
-	[SerializeField] private long m_coins = 0;
+	[SerializeField] private ObscuredLong m_coins = 0;
 	public static long coins {
 		get { return instance.m_coins; }
 	}
 
-	[SerializeField] private long m_pc = 0;
+	[SerializeField] private ObscuredLong m_pc = 0;
 	public static long pc {
 		get { return instance.m_pc; }
 	}
