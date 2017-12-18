@@ -207,17 +207,6 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		CheckCanvasActivation();
 	}
 
-	void Start() {
-		// FPS Initialization
-		m_DeltaTimes = new float[ m_NumDeltaTimes ];
-		m_DeltaIndex = 0;
-		float initValue = 1.0f / 30.0f;
-		if ( Application.targetFrameRate > 0 )
-			initValue = 1.0f / Application.targetFrameRate;
-		for( int i = 0; i<m_NumDeltaTimes; i++ )
-			m_DeltaTimes[i] = initValue;
-	}
-
 
 	protected void Update() {
         if (FeatureSettingsManager.IsControlPanelEnabled) {
@@ -250,15 +239,9 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         }
 
 
-		// Update FPS
-		m_DeltaTimes[ m_DeltaIndex ] = Time.deltaTime;
-		m_DeltaIndex++;
-		if ( m_DeltaIndex >= m_NumDeltaTimes )
-			m_DeltaIndex = 0;
-
 		if ( m_fpsCounter != null && m_isFPSEnabled )
 		{
-			float fps = GetFPS();            
+			float fps = FeatureSettingsManager.instance.GetFPS();            
 			if(fps >= 0) {
 				if ( fps < 15 )
 				{
@@ -341,17 +324,6 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
 			}
 		}
-	}
-
-	public float GetFPS()
-	{
-		float median = 0;
-		for( int i = 0; i<m_NumDeltaTimes; i++ )
-		{
-			median += m_DeltaTimes[i];
-		}
-		median = median / m_NumDeltaTimes;
-		return 1.0f / median;
 	}
 
 	/// <summary>

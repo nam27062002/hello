@@ -101,6 +101,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
 
         IsFogOnDemandEnabled = !IsDebugEnabled;
+
+        //Starts fps count system
+        StartFPS();
     }
 
     protected override void OnDestroy()
@@ -179,7 +182,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     Server_ResetUploadQualitySettings();
                 }
             }            
-        }     
+        }
+
+        //Update fps count system
+        UpdateFPS();
+
     }
 
     public bool IsReady()
@@ -1396,4 +1403,48 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
     }
     #endregion
+
+    #region fps
+
+    // Internal logic
+    private float m_activateTimer;
+    const int m_NumDeltaTimes = 30;
+    float[] m_DeltaTimes;
+    int m_DeltaIndex;
+
+    private void StartFPS()
+    {
+        // FPS Initialization
+        m_DeltaTimes = new float[m_NumDeltaTimes];
+        m_DeltaIndex = 0;
+        float initValue = 1.0f / 30.0f;
+        if (Application.targetFrameRate > 0)
+            initValue = 1.0f / Application.targetFrameRate;
+        for (int i = 0; i < m_NumDeltaTimes; i++)
+            m_DeltaTimes[i] = initValue;
+
+    }
+
+    private void UpdateFPS()
+    {
+        // Update FPS
+        m_DeltaTimes[m_DeltaIndex] = Time.deltaTime;
+        m_DeltaIndex++;
+        if (m_DeltaIndex >= m_NumDeltaTimes)
+            m_DeltaIndex = 0;
+    }
+
+    public float GetFPS()
+    {
+        float median = 0;
+        for (int i = 0; i < m_NumDeltaTimes; i++)
+        {
+            median += m_DeltaTimes[i];
+        }
+        median = median / m_NumDeltaTimes;
+        return 1.0f / median;
+    }
+
+
+    #endregion //fps
 }
