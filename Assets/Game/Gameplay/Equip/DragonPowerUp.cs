@@ -364,7 +364,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "eat":
 			case "vacuum":
 			case "prey_hp_boost":
-			{
+            case "drop_present":
+                {
 				return UIConstants.PET_CATEGORY_EAT;
 			} break;
 
