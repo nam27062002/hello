@@ -1198,6 +1198,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    /// <summary>
+    /// Delay in seconds between every track event
+    /// </summary>
+    public int PerformanceTrackingDelay
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_PERFORMANCE_TRACKING_DELAY);
+        }
+    }
 
     /// <summary>
     /// When <c>true</c> events that couldn't be sent over the network are stored in the device storage so they can be sent when network is working again
