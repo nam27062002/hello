@@ -52,4 +52,8 @@ public class UISafeArea {
 		this.right = _right;
 		this.top = _top;
 	}
+
+	public string ToString() {
+		return bottom + ", " + left + ", " + right + ", " + top;
+	}
 }

@@ -40,7 +40,9 @@ public class UISafeAreaSetter : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private Mode m_adjustMode = Mode.POSITION;
+	[SerializeField] private UISafeArea m_scale = new UISafeArea(1f, 1f, 1f, 1f);
 
+	[Separator("Safe Area Overrides")]
 	[SerializeField] private OverrideData[] m_customSafeAreas = new OverrideData[0];
 	
 	//------------------------------------------------------------------------//
@@ -90,31 +92,41 @@ public class UISafeAreaSetter : MonoBehaviour {
 			}
 		}
 
+		// Apply scale
+		UISafeArea scaledSafeArea = new UISafeArea(
+			safeArea.bottom * m_scale.bottom,
+			safeArea.left * m_scale.left,
+			safeArea.right * m_scale.right,
+			safeArea.top * m_scale.top
+		);
+
+		Debug.Log(scaledSafeArea.ToString() + " | " + safeArea.ToString() + " | " + m_scale.ToString());
+
 		// Apply based on mode
 		switch(m_adjustMode) {
 			case Mode.SIZE_DECREASE: {
 				// Adjust both offsets
 				rt.offsetMin = new Vector2(
-					rt.offsetMin.x + safeArea.left,
-					rt.offsetMin.y + safeArea.bottom
+					rt.offsetMin.x + scaledSafeArea.left,
+					rt.offsetMin.y + scaledSafeArea.bottom
 				);
 
 				rt.offsetMax = new Vector2(
-					rt.offsetMax.x - safeArea.right,
-					rt.offsetMax.y - safeArea.top
+					rt.offsetMax.x - scaledSafeArea.right,
+					rt.offsetMax.y - scaledSafeArea.top
 				);
 			} break;
 
 			case Mode.SIZE_INCREASE: {
 				// Adjust both offsets
 				rt.offsetMin = new Vector2(
-					rt.offsetMin.x - safeArea.left,
-					rt.offsetMin.y - safeArea.bottom
+					rt.offsetMin.x - scaledSafeArea.left,
+					rt.offsetMin.y - scaledSafeArea.bottom
 				);
 
 				rt.offsetMax = new Vector2(
-					rt.offsetMax.x + safeArea.right,
-					rt.offsetMax.y + safeArea.top
+					rt.offsetMax.x + scaledSafeArea.right,
+					rt.offsetMax.y + scaledSafeArea.top
 				);
 			} break;
 
@@ -128,18 +140,18 @@ public class UISafeAreaSetter : MonoBehaviour {
 				Vector2 anchorMin = rt.anchorMin;
 				Vector2 anchorMax = rt.anchorMax;
 				if(anchorMin.x < 0.5f && anchorMax.x < 0.5f) {
-					newAnchoredPos.x += safeArea.left;
+					newAnchoredPos.x += scaledSafeArea.left;
 				} else if(anchorMin.x > 0.5f && anchorMax.x > 0.5f) {
-					newAnchoredPos.x -= safeArea.right;
+					newAnchoredPos.x -= scaledSafeArea.right;
 				} else {
 					// Don't move!
 				}
 
 				// Y
 				if(anchorMin.y < 0.5f && anchorMax.y < 0.5f) {
-					newAnchoredPos.y += safeArea.bottom;
+					newAnchoredPos.y += scaledSafeArea.bottom;
 				} else if(anchorMin.y > 0.5f && anchorMax.y > 0.5f) {
-					newAnchoredPos.y -= safeArea.top;
+					newAnchoredPos.y -= scaledSafeArea.top;
 				} else {
 					// Don't move!!
 				}
