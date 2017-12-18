@@ -180,7 +180,8 @@ public class UserMissions {
 			List<DefinitionNode> typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_TYPES);
 			typeDefs = typeDefs.FindAll(
 				(DefinitionNode _def) => { 
-					return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked)	// Ignore mission types meant for bigger tiers
+					return (_def.GetAsInt("minTier") <= (int)maxTierUnlocked)	// Ignore mission types meant for bigger tiers
+						&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked)	// Ignore mission types meant for lower tiers
 						&& (!typesToIgnore.Contains(_def.sku));							// Prevent repetition
 				}
 			);
@@ -215,7 +216,8 @@ public class UserMissions {
 			// 3.1. Filter out missions based on current max dragon tier unlocked
 			missionDefs = missionDefs.FindAll(
 				(DefinitionNode _def) => { 
-					return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked);	// Ignore missions meant for bigger tiers
+					return (_def.GetAsInt("minTier") <= (int)maxTierUnlocked)	// Ignore missions meant for bigger tiers
+						&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked);	// Ignore missions meant for lower tiers
 				}
 			);
 			DebugUtils.Assert(missionDefs.Count > 0, "<color=red>NO VALID MISSIONS FOUND!!!!</colo>");	// Just in case
