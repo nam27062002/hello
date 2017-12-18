@@ -378,6 +378,12 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Debug_Update();
         }
+
+        if (Performance_IsTrackingEnabled)
+        {
+            Performance_Tracker();
+        }
+
     }
 
 #region notify   
@@ -970,13 +976,20 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// Notifies the start of performance track every X seconds
     /// </summary>
     public override void Notify_StartPerformanceTracker() {
-        Track_PerformanceTrack();
+        Performance_IsTrackingEnabled = FeatureSettingsManager.instance.IsPerformanceTrackingEnabled;
+        if (Performance_IsTrackingEnabled)
+        {
+            Performance_TrackingDelay = FeatureSettingsManager.instance.PerformanceTrackingDelay;
+//            Track_PerformanceTrack();
+        }
     }
 
     /// <summary>
     /// Notifies the stop of performance track every X seconds
     /// </summary>
-    public override void Notify_StopPerformanceTracker() { }
+    public override void Notify_StopPerformanceTracker() {
+        Performance_IsTrackingEnabled = false;
+    }
 
     #endregion
 
@@ -2160,6 +2173,25 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_HasMenuEverLoaded = false;
      }
 #endregion
+
+#region performance
+    private bool Performance_IsTrackingEnabled { get; set; }
+    private float Performance_TrackingDelay { get; set; }
+    private float m_Performance_LastTrackTime = 0;
+
+    private void Performance_Tracker()
+    {
+        float currentTime = Time.time;
+        float elapsedTime = currentTime - m_Performance_LastTrackTime;
+
+        if (elapsedTime > Performance_TrackingDelay)
+        {
+            m_Performance_LastTrackTime = currentTime;// - (elapsedTime - Performance_TrackingDelay);
+            Debug.Log("Performance tracking event at: " + currentTime);
+        }
+    }
+#endregion
+
 
 #region debug
     private const bool Debug_IsEnabled = true;
