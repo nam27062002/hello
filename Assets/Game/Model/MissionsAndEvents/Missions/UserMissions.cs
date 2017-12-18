@@ -189,7 +189,7 @@ public class UserMissions {
 						&& (!typesToIgnore.Contains(_def.sku));							// Prevent repetition
 				}
 			);
-			DebugUtils.Assert(typeDefs.Count > 0, "<color=red>NO VALID MISSION TYPES FOUND!!!!</colo>");	// Just in case
+			DebugUtils.Assert(typeDefs.Count > 0, "<color=red>NO VALID MISSION TYPES FOUND!!!!</color>");	// Just in case
 
 			// 2. Select a type based on definitions weights
 			// 2.1. Compute total weight
