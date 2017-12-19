@@ -22,9 +22,9 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 		Launch_Local_NeverLoggedIn_Cloud_Corrupted,
 		Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload,
 		Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge,
-		Launch_Local_Corrupted_Cloud_NoConnection,
-		Launch_Local_Corrupted_Cloud_Ok,
-		Launch_Local_Corrupted_Cloud_Corrupted,
+		Launch_Local_Corrupted_Cloud_NoConnection,                      // tested
+		Launch_Local_Corrupted_Cloud_Ok,                                // tested
+		Launch_Local_Corrupted_Cloud_Corrupted,                         // tested     
 
 		Settings_Local_NeverLoggedIn_Cloud_NoConnection,
 		Settings_Local_LoggedIn_Cloud_NoConnection,
@@ -180,15 +180,17 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// is shown again
 				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
 				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                LocalDriverDebug.Prefs_SocialId = "userId";
+            break;
 
 			case EUserCaseId.Launch_Local_Corrupted_Cloud_Ok:
 				// A popup letting the user know that local persistence is corrupted is shown.
 				// If the user chooses to reset local persistence then the game is loaded with the default persistence.
 				// If the user chooses to connect to cloud then the game loads with the cloud persistence				
 				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
-				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndInventivised, 100);				
-			break;
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndInventivised, 100);
+                LocalDriverDebug.Prefs_SocialId = "userId";
+            break;
 
 			case EUserCaseId.Launch_Local_Corrupted_Cloud_Corrupted:
 				// A popup letting the user know that local persistence is corrupted is shown.
@@ -197,7 +199,8 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// When reset button is clicked game loads with both local and cloud persistences resetted to default
 				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
 				CloudDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
-			break;
+                LocalDriverDebug.Prefs_SocialId = "userId";
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_NoConnection:
 				// A popup showing no connection message is shown
@@ -208,31 +211,31 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 			case EUserCaseId.Settings_Local_LoggedIn_Cloud_NoConnection:
 				// A popup showing no connection message is shown
 				SetupUserCaseId(EUserCaseId.Launch_Local_LoggedIn_Cloud_NoConnection);
-				CloudDriverDebug.IsConnectionEnabled = false;
+				CloudDriverDebug.IsConnectionEnabled = false;                
 			break;
 
 			case EUserCaseId.Settings_Local_LoggedInAndIncentivised_Cloud_NoConnection:
 				// A popup showing no connection message is shown
 				SetupUserCaseId(EUserCaseId.Launch_Local_LoggedInAndIncentivised_Cloud_NoConnection);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.IsConnectionEnabled = false;                
+            break;
 
 			case EUserCaseId.Settings_Local_LoggedIn_Cloud_Error_NotLoggedInServer:
 				// A popup showing no connection message is shown
 				SetupUserCaseId(EUserCaseId.Launch_Local_LoggedIn_Cloud_Error_NotLoggedInServer);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;                                
+            break;
 
 			case EUserCaseId.Settings_Local_LoggedIn_Cloud_Error_NotLoggedInSocial:
 				// No error popup is shown
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Error_NotLoggedInSocial);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Error_GetPersistence:
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Error_GetPersistence);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_More:
 				// When login button is clicked a popup prompting the user to choose between
@@ -243,28 +246,28 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// If the user decides to dismiss the question then local and cloud persistences will keep
 				// out of sync and the user will continue with local persistence
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_More);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Error_FullDisk_Cloud_More:
 				// Full disk message is shown until it's fixed.
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Error_FullDisk_Cloud_More);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Less:
 				// When login button is clicked a popup showing the login reward is shown and
 				// cloud and local are in sync with local persistence
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Equal:
 				// When login button is clicked a popup showing the login reward is shown and
 				// cloud and local are in sync with local persistence
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Equal);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Less_Error_Upload:
 				// When login button is clicked a popup showing an error because an error
@@ -273,8 +276,8 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// Persistences are in sync only if the error was fixed, otherwise they will get
 				// synced automatically when the error is fixed.
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less_Error_Upload);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Less_Error_Merge:
 				// When login button is clicked a popup is shown to let the user choose
@@ -284,8 +287,8 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// If cloud persistence is chosen then the game gets reloaded with the cloud persistence
 				// Login reward is granted before reloading.
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less_Error_Merge);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted:
 				// When login button is clicked a popup notifies the user that cloud persistence 
@@ -295,8 +298,8 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// we do so and if everything goes ok local and cloud will be in sync.
 				// After the popup the login reward is given to the user.				
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted);
-				CloudDriverDebug.IsConnectionEnabled = false;				
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload:
 				// When login button is clicked a popup notifies the user that cloud persistence 
@@ -305,8 +308,8 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// or the user decides to ignore the problem				
 				// After the popup the login reward is given to the user.				
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge:
 				// When login button is clicked a popup notifies the user that cloud persistence 
@@ -315,8 +318,8 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// locally, which means that the social login hasn't been completed so login reward is not given
 				// to the user.				
 				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge);
-				CloudDriverDebug.IsConnectionEnabled = false;
-			break;
+                CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
+            break;
 		}
 	}   
 
@@ -327,9 +330,10 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 
 	private string GetPersistence(UserProfile.ESocialState socialState, int gameLoops)
 	{
-		return "{\"userProfile\":{\"sc\":\"10000:0\",\"socialState\":\"" + socialState.ToString() 
-			+ "\"},\"User\":{\"NumGameLoops\":" + gameLoops + "}}";
-	}
+        //return "{\"userProfile\":{\"sc\":\"10000:0\",\"socialState\":\"" + socialState.ToString() 
+        //	+ "\"},\"User\":{\"NumGameLoops\":" + gameLoops + "}}";
+        return PersistenceUtils.GetDefaultDataFromProfile().ToString();
+    }
     
 	private PersistenceLocalDriverDebug LocalDriverDebug 
 	{

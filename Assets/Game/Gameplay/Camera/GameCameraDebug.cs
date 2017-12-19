@@ -43,40 +43,36 @@ public class GameCameraDebug : MonoBehaviour {
 		// Get camera
 		m_camera = GetComponent<Camera>();
 
-		// Subscribe to external events
-		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
-        Messenger.AddListener<string, float>(MessengerEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            // Subscribe to external events
+            Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
+            Messenger.AddListener<string, float>(GameEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
+        }
 
         Shader.SetGlobalTexture("_MatCap", m_matCapTex);
     }
-
-    private int m_width = 0;
-    private int m_height = 0;
-
-    public float m_resolutionFactor = 0.25f;
 
     private void Start()
     {
         m_cullingMask = m_camera.cullingMask;
         m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player", "AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
 
-        // Initialize by simulating a toggle of the setting
-        OnDebugSettingChangedShowCollisions(DebugSettings.SHOW_COLLISIONS, Prefs.GetBoolPlayer(DebugSettings.SHOW_COLLISIONS));
-        OnDebugSettingChangedResolutionFactor(DebugSettings.RESOLUTION_FACTOR, Prefs.GetFloatPlayer(DebugSettings.RESOLUTION_FACTOR));
-
-        m_width = Screen.width;
-        m_height = Screen.height;
     }
 
     /// <summary>
     /// Destructor.
     /// </summary>
     private void OnDestroy() {
-		// Unsubscribe from external events.
-		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
-        Messenger.RemoveListener<string, float>(MessengerEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            // Unsubscribe from external events.
+            Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
+            Messenger.RemoveListener<string, float>(GameEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
+        }
     }
 
+/*
     /// <summary>
     /// Component has been disabled.
     /// </summary>
@@ -87,6 +83,7 @@ public class GameCameraDebug : MonoBehaviour {
         // Backup some camera settings that we don't want to override
 
     }
+*/
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
@@ -133,11 +130,11 @@ public class GameCameraDebug : MonoBehaviour {
             }
 
 
-            float rFactor = vf / (float)m_height;
+            float rFactor = vf / (float)Screen.height;
 
 
-            int width = (int)((float)m_width * rFactor);
-            int height = (int)((float)m_height * rFactor);
+            int width = (int)((float)Screen.width * rFactor);
+            int height = (int)((float)Screen.height * rFactor);
 
             Screen.SetResolution(width, height, true);
 

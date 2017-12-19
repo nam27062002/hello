@@ -400,6 +400,8 @@ public class LoadingSceneController : SceneController {
         		// No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
         		ApplicationManager.CreateInstance();
 
+        		AntiCheatsManager.CreateInstance();
+
 				// The stuff that this manager handles has to be done only once, regardless the game reboots
 				FeatureSettingsManager.CreateInstance(false);
 
