@@ -13,49 +13,49 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: unlocked
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: AltAnimation
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: results_in
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: pose_fly
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: fly
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: blink
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: hissing
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -196,21 +196,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_minLoops: 1
   m_maxLoops: 1
---- !u!114 &114000013736036926
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b77fe100e2a254f86b35f7b358553207, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_altAnimationTimer:
-    min: 3
-    max: 6
-  m_numAlternativeAnim: 2
 --- !u!114 &114214194386196426
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -719,8 +704,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: 1101000010399703414}
   - {fileID: 1101000011384421156}
-  m_StateMachineBehaviours:
-  - {fileID: 114000013736036926}
+  m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -863,7 +847,7 @@ AnimatorStateMachine:
     m_Position: {x: 252, y: -12, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1102000011486570132}
-    m_Position: {x: 444, y: 72, z: 0}
+    m_Position: {x: 516, y: 72, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1102000011785009226}
     m_Position: {x: 252, y: 156, z: 0}
@@ -875,7 +859,7 @@ AnimatorStateMachine:
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
   m_EntryPosition: {x: 50, y: 120, z: 0}
   m_ExitPosition: {x: 720, y: 120, z: 0}
-  m_ParentStateMachinePosition: {x: 588, y: -48, z: 0}
+  m_ParentStateMachinePosition: {x: 732, y: -132, z: 0}
   m_DefaultState: {fileID: 1102000013287240324}
 --- !u!1107 &1107538509223914906
 AnimatorStateMachine:

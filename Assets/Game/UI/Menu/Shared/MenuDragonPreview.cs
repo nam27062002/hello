@@ -22,6 +22,7 @@ public class MenuDragonPreview : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public enum Anim {
+		NONE = -1,
 		IDLE,
 		UNLOCKED,
 		RESULTS_IN,
@@ -46,6 +47,22 @@ public class MenuDragonPreview : MonoBehaviour {
 	// Exposed
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; }}
+
+
+	private Anim m_currentAnim = Anim.NONE;
+	// IDLE STATE CONTROL
+	[System.Serializable]
+	public struct AltAnimConfig
+	{
+		public Range m_range;
+		public bool m_allowBlink;
+		public float m_timeToNext;
+	}
+	public List<AltAnimConfig> m_altAnimConfigs = new List<AltAnimConfig>();
+	private int m_currentAnimIndex = -1;
+	private int m_lastAltAnim = -1;
+	private int m_count;
+
 
 	// Components
 	private DragonEquip m_equip = null;
@@ -92,6 +109,17 @@ public class MenuDragonPreview : MonoBehaviour {
 		}
 	}
 
+	void Start(){
+		m_count = m_altAnimConfigs.Count;
+		for( int i = 0;i<m_count; ++i ){
+			AltAnimConfig item = m_altAnimConfigs[i];
+			item.m_timeToNext -= item.m_range.GetRandom();
+			m_altAnimConfigs[i] = item;
+		}
+		m_currentAnimIndex = -1;
+		m_lastAltAnim = - 1;
+	}
+
 	/// <summary>
 	/// Apply the given animation to the dragon's animator.
 	/// </summary>
@@ -100,6 +128,7 @@ public class MenuDragonPreview : MonoBehaviour {
 		if(m_animator != null) {
 			m_animator.SetTrigger(ANIM_TRIGGERS[(int)_anim]);
 		}
+		m_currentAnim = _anim;
 	}
 
 	public void DisableMoves()
@@ -127,6 +156,45 @@ public class MenuDragonPreview : MonoBehaviour {
 					mats[j].SetColor("_FresnelColor", col);
 				}
 			}
+		}
+	}
+
+	public void Update()
+	{
+		switch( m_currentAnim )
+		{
+			case Anim.IDLE:
+			{
+				// Work with alternative animations
+				if (m_currentAnimIndex >= 0)
+				{
+					// Check if state is "idle" to get back
+					if ( m_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") )
+					{
+						AltAnimConfig item = m_altAnimConfigs[m_lastAltAnim];
+						item.m_timeToNext = item.m_range.GetRandom();
+						m_altAnimConfigs[m_lastAltAnim] = item;
+						m_currentAnimIndex = -1;
+						m_lastAltAnim = - 1;
+					}
+				}
+				else
+				{
+					// Count down every timer to check when to start the new alternative animation
+					for( int i = 0; i<m_count; ++i )
+					{
+						AltAnimConfig item = m_altAnimConfigs[i];
+						item.m_timeToNext -= Time.deltaTime;	
+						m_altAnimConfigs[i] = item;
+						if (item.m_timeToNext <= 0) 
+						{
+							// Set alternative animation
+							m_lastAltAnim = m_currentAnimIndex = i;
+							m_animator.SetInteger("AltAnimation", m_currentAnimIndex);
+						}
+					}
+				}
+			}break;
 		}
 	}
 }
