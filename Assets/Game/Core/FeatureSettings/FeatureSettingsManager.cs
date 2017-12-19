@@ -1408,13 +1408,24 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     // Internal logic
     private float m_activateTimer;
-    const int m_NumDeltaTimes = 30;
+    private int m_NumDeltaTimes = 30;
     float[] m_DeltaTimes;
     int m_DeltaIndex;
+
+    public float SystemFPS
+    {
+        get; private set;
+    }
+    public float AverageSystemFPS
+    {
+        get; private set;
+    }
 
     private void StartFPS()
     {
         // FPS Initialization
+        SetFPSAverageBuffer(100);
+/*
         m_DeltaTimes = new float[m_NumDeltaTimes];
         m_DeltaIndex = 0;
         float initValue = 1.0f / 30.0f;
@@ -1422,28 +1433,56 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             initValue = 1.0f / Application.targetFrameRate;
         for (int i = 0; i < m_NumDeltaTimes; i++)
             m_DeltaTimes[i] = initValue;
+*/
+    }
+
+    public void SetFPSAverageBuffer(int bufSize)
+    {
+        m_NumDeltaTimes = bufSize;
+        m_DeltaTimes = new float[m_NumDeltaTimes];
+        m_DeltaIndex = 0;
+//        float initValue = 1.0f / 30.0f;
+//        if (Application.targetFrameRate > 0)
+//            initValue = 1.0f / Application.targetFrameRate;
+        for (int i = 0; i < m_NumDeltaTimes; i++)
+            m_DeltaTimes[i] = Application.targetFrameRate;
 
     }
 
+    // Update FPS
     private void UpdateFPS()
     {
-        // Update FPS
-        m_DeltaTimes[m_DeltaIndex] = Time.deltaTime;
-        m_DeltaIndex++;
+        float dTime = Time.deltaTime;
+        SystemFPS = dTime > 0.0f ? 1.0f / dTime : 0.0f;
+
+        m_DeltaTimes[m_DeltaIndex++] = SystemFPS;
         if (m_DeltaIndex >= m_NumDeltaTimes)
             m_DeltaIndex = 0;
-    }
 
-    public float GetFPS()
-    {
-        float median = 0;
+        AverageSystemFPS = 0;
         for (int i = 0; i < m_NumDeltaTimes; i++)
         {
-            median += m_DeltaTimes[i];
+            AverageSystemFPS += m_DeltaTimes[i];
         }
-        median = median / m_NumDeltaTimes;
-        return 1.0f / median;
+        AverageSystemFPS /= m_NumDeltaTimes;
+
+
     }
+
+    /*
+            public float GetFPS()
+            {
+                float dTime = Time.deltaTime;
+                return dTime > 0.0f ? 1.0f / dTime : 0.0f;
+                float median = 0;
+                for (int i = 0; i < m_NumDeltaTimes; i++)
+                {
+                    median += m_DeltaTimes[i];
+                }
+                median = median / m_NumDeltaTimes;
+                return 1.0f / median;
+            }
+    */
 
 
     #endregion //fps
