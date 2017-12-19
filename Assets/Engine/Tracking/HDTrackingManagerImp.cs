@@ -2233,11 +2233,11 @@ public class HDTrackingManagerImp : HDTrackingManager
                 {
                     m_Performance_FireRush = true;
                 }
-                else
-                {
-                    m_Performance_FireRushStartTime = currentTime;
-                }
             }
+        }
+        else
+        {
+            m_Performance_FireRushStartTime = currentTime;
         }
 
         if (elapsedTime > Performance_TrackingDelay)
@@ -2245,10 +2245,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
             int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
             Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.center, radius, m_Performance_FireRush);
-//            Track_PerformanceTrack();
-            
-            m_Performance_LastTrackTime = currentTime;// - (elapsedTime - Performance_TrackingDelay);
-            Debug.Log("Performance tracking event at: " + currentTime);
+            //            Track_PerformanceTrack();
+
+            Reset_Performance_Tracker();
+//            Debug.Log("Performance tracking event at: " + currentTime);
         }
     }
 #endregion
