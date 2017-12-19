@@ -100,8 +100,6 @@ public class UISafeAreaSetter : MonoBehaviour {
 			safeArea.top * m_scale.top
 		);
 
-		Debug.Log(scaledSafeArea.ToString() + " | " + safeArea.ToString() + " | " + m_scale.ToString());
-
 		// Apply based on mode
 		switch(m_adjustMode) {
 			case Mode.SIZE_DECREASE: {
