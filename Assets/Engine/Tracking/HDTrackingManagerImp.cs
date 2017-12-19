@@ -2186,6 +2186,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         if (elapsedTime > Performance_TrackingDelay)
         {
+//            Track_PerformanceTrack();
             m_Performance_LastTrackTime = currentTime;// - (elapsedTime - Performance_TrackingDelay);
             Debug.Log("Performance tracking event at: " + currentTime);
         }
