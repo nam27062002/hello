@@ -1,10 +1,14 @@
-﻿using System;
+﻿
+//#define DETACH_VIEW_ON_DISABLE
+
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
+	
 
 	private static Material sm_goldenMaterial = null;
 	private static ulong sm_id = 0;
@@ -320,7 +324,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_viewScale = m_view.localScale;
 
 		m_viewManagerTransform = ViewManager.instance.gameObject.transform;
+	
+		#if DETACH_VIEW_ON_DISABLE
 		SentViewToManager();
+		#endif
     }
 
 	void SentViewToManager() {
@@ -399,7 +406,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	//
 
 	public virtual void Spawn(ISpawner _spawner) {
+		#if DETACH_VIEW_ON_DISABLE
 		GetViewFromManager();
+		#endif
 
 		if (m_scared) 		{ AnimatorSetBool(GameConstants.Animator.SCARED, 	 false); 	m_scared 	 = false; }
 		if (m_panic) 		{ AnimatorSetBool(GameConstants.Animator.HOLDED, 	 false); 	m_panic 	 = false; }
@@ -456,10 +465,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	void OnDestroy() {
+		#if DETACH_VIEW_ON_DISABLE
 		if (m_view.parent != m_transform) {
 			GameObject.Destroy(m_view.gameObject);
 			m_view = null;
 		}
+		#endif
 
         Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		RemoveAudios();
@@ -483,7 +494,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 		RemoveAudios();
 
+		#if DETACH_VIEW_ON_DISABLE
 		SentViewToManager();
+		#endif
     }
 
     protected virtual void RemoveAudios() {
