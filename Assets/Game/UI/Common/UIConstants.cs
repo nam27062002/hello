@@ -270,6 +270,17 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Scriptable object has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Reset some runtime vars to their initial value
+		// [AOC] ScriptableObject Singletons are permanently loaded in the editor, thus not resetting runtime variables :(
+		// Special device
+		m_specialDevice = SpecialDevice.NONE;
+		m_specialDeviceInitialized = false;
+	}
+
+	/// <summary>
 	/// A change has occurred in the inspector.
 	/// </summary>
 	private void OnValidate() {
