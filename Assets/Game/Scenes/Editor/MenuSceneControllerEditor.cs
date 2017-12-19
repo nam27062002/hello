@@ -92,6 +92,20 @@ public class MenuSceneControllerEditor : Editor {
 				}
 				GUI.enabled = wasEnabled;
 				EditorGUILayout.Space();
+
+				if ( !Application.isPlaying )
+				{
+					FogManager.FogAttributes fog = m_targetMenuSceneController.fogSetup;
+					if ( fog.texture == null )
+					{
+						fog.CreateTexture();
+						Shader.SetGlobalTexture("_FogTexture", fog.texture);
+					}
+					fog.RefreshTexture();
+					Shader.SetGlobalFloat("_FogStart", fog.m_fogStart);
+					Shader.SetGlobalFloat("_FogEnd", fog.m_fogEnd);
+				}
+
 			}
 
 			// Default property display
