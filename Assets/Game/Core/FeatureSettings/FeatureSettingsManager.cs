@@ -1424,47 +1424,50 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void StartFPS()
     {
         // FPS Initialization
-        SetFPSAverageBuffer(100);
-/*
-        m_DeltaTimes = new float[m_NumDeltaTimes];
-        m_DeltaIndex = 0;
-        float initValue = 1.0f / 30.0f;
-        if (Application.targetFrameRate > 0)
-            initValue = 1.0f / Application.targetFrameRate;
-        for (int i = 0; i < m_NumDeltaTimes; i++)
-            m_DeltaTimes[i] = initValue;
-*/
+        SetFPSAverageBuffer(0);    //Default average buffer
     }
 
     public void SetFPSAverageBuffer(int bufSize)
     {
         m_NumDeltaTimes = bufSize;
-        m_DeltaTimes = new float[m_NumDeltaTimes];
-        m_DeltaIndex = 0;
-//        float initValue = 1.0f / 30.0f;
-//        if (Application.targetFrameRate > 0)
-//            initValue = 1.0f / Application.targetFrameRate;
-        for (int i = 0; i < m_NumDeltaTimes; i++)
-            m_DeltaTimes[i] = Application.targetFrameRate;
+        if (bufSize > 0)
+        {
+            m_DeltaTimes = new float[m_NumDeltaTimes];
+            m_DeltaIndex = 0;
+            for (int i = 0; i < m_NumDeltaTimes; i++)
+                m_DeltaTimes[i] = Application.targetFrameRate;
 
+            AverageSystemFPS = SystemFPS = Application.targetFrameRate;
+        }
+        else
+        {
+            m_DeltaTimes = null;
+        }
     }
 
     // Update FPS
     private void UpdateFPS()
     {
         float dTime = Time.deltaTime;
-        SystemFPS = dTime > 0.0f ? 1.0f / dTime : 0.0f;
+        SystemFPS = (dTime > 0.0f) ? 1.0f / dTime : 0.0f;
 
-        m_DeltaTimes[m_DeltaIndex++] = SystemFPS;
-        if (m_DeltaIndex >= m_NumDeltaTimes)
-            m_DeltaIndex = 0;
-
-        AverageSystemFPS = 0;
-        for (int i = 0; i < m_NumDeltaTimes; i++)
+        if (m_NumDeltaTimes > 0)
         {
-            AverageSystemFPS += m_DeltaTimes[i];
+            m_DeltaTimes[m_DeltaIndex++] = SystemFPS;
+            if (m_DeltaIndex >= m_NumDeltaTimes)
+                m_DeltaIndex = 0;
+
+            AverageSystemFPS = 0;
+            for (int i = 0; i < m_NumDeltaTimes; i++)
+            {
+                AverageSystemFPS += m_DeltaTimes[i];
+            }
+            AverageSystemFPS /= m_NumDeltaTimes;
         }
-        AverageSystemFPS /= m_NumDeltaTimes;
+        else
+        {
+            AverageSystemFPS = SystemFPS;
+        }
 
 
     }

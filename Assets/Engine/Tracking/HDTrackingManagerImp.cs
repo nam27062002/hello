@@ -976,12 +976,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// Notifies the start of performance track every X seconds
     /// </summary>
     public override void Notify_StartPerformanceTracker() {
-        Performance_IsTrackingEnabled = FeatureSettingsManager.instance.IsPerformanceTrackingEnabled;
-        if (Performance_IsTrackingEnabled)
-        {
-            Performance_TrackingDelay = FeatureSettingsManager.instance.PerformanceTrackingDelay;
-//            Track_PerformanceTrack();
-        }
+        Reset_Performance_Tracker();
     }
 
     /// <summary>
@@ -1675,20 +1670,28 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	}
 
-    private void Track_PerformanceTrack()
+    private void Track_PerformanceTrack(int deltaXP, int avgFPS, Vector3 position, int radius, bool fireRush)
     {
+        string posasstring = Track_CoordinatesToString(position);
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Performance track");
+            Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinates = " + posasstring + " radius = " + radius + " fireRush = " + fireRush);
         }
-
+/*
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.performance");
         if (e != null)
         {
             Track_AddParamSessionsCount(e);
             Track_AddParamGameRoundCount(e);
+            e.SetParameterValue(TRACK_PARAM_DELTA_XP, deltaXP);
+            e.SetParameterValue(TRACK_PARAM_AVERAGE_FPS, (int)FeatureSettingsManager.instance.AverageSystemFPS);
+            Track_AddParamString(e, TRACK_PARAM_COORDINATES, posasstring);
+            e.SetParameterValue(TRACK_PARAM_RADIUS, radius);
+            Track_AddParamBool(e, TRACK_PARAM_FIRE_RUSH, fireRush);
+
             Track_SendEvent(e);
         }
+*/
     }
 
 
@@ -1708,10 +1711,12 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AF_DEF_LOGPURCHASE         = "af_def_logPurchase";
     private const string TRACK_PARAM_AF_DEF_QUANTITY            = "af_quantity";
     private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
-    private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";      
+    private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";
+    private const string TRACK_PARAM_AVERAGE_FPS                = "avgFPS";
 	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";          
     private const string TRACK_PARAM_CURRENCY                   = "currency";
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
+    private const string TRACK_PARAM_COORDINATES                = "coordinates";
     private const string TRACK_PARAM_DEATH_CAUSE                = "deathCause";
     private const string TRACK_PARAM_DEATH_COORDINATES          = "deathCoordinates";
     private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB    = "deathInCurrentRunNb";
@@ -1725,8 +1730,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
-    private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
+    private const string TRACK_PARAM_FIRE_RUSH                  = "fireRush";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
+    private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
     private const string TRACK_PARAM_GENDER                     = "gender";
 	private const string TRACK_PARAM_GLOBAL_EVENT_ID 			= "glbEventID";
@@ -1775,7 +1781,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
-	private const string TRACK_PARAM_RANK						= "rank";
+    private const string TRACK_PARAM_RADIUS                     = "radius";
+    private const string TRACK_PARAM_RANK						= "rank";
 	private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
@@ -2177,16 +2184,69 @@ public class HDTrackingManagerImp : HDTrackingManager
 #region performance
     private bool Performance_IsTrackingEnabled { get; set; }
     private float Performance_TrackingDelay { get; set; }
+
     private float m_Performance_LastTrackTime = 0;
+
+    private Bounds m_Performance_TrackArea = new Bounds();
+    private int m_Performance_TickCounter;
+
+    private bool m_Performance_FireRush;
+    private float m_Performance_FireRushStartTime;
+    private float Performance_Timer
+    {
+        get
+        {
+            return Time.time;
+        }
+    }
+
+    private void Reset_Performance_Tracker()
+    {
+        Performance_IsTrackingEnabled = FeatureSettingsManager.instance.IsPerformanceTrackingEnabled;
+        if (Performance_IsTrackingEnabled)
+        {
+            Performance_TrackingDelay = FeatureSettingsManager.instance.PerformanceTrackingDelay;
+            Vector3 currentPosition = InstanceManager.player.transform.position;
+            m_Performance_TrackArea.SetMinMax(currentPosition, currentPosition);
+            m_Performance_TickCounter = 0;
+            m_Performance_FireRush = false;
+            m_Performance_FireRushStartTime = m_Performance_LastTrackTime = Performance_Timer;
+
+            //            Track_PerformanceTrack();
+        }
+
+    }
 
     private void Performance_Tracker()
     {
-        float currentTime = Time.time;
+        float currentTime = Performance_Timer;
         float elapsedTime = currentTime - m_Performance_LastTrackTime;
+
+        m_Performance_TrackArea.Encapsulate(InstanceManager.player.transform.position);
+        m_Performance_TickCounter++;
+
+        if (!m_Performance_FireRush)
+        {
+            if (InstanceManager.player.breathBehaviour.IsFuryOn())
+            {
+                if (currentTime - m_Performance_FireRushStartTime > 1.0f)
+                {
+                    m_Performance_FireRush = true;
+                }
+                else
+                {
+                    m_Performance_FireRushStartTime = currentTime;
+                }
+            }
+        }
 
         if (elapsedTime > Performance_TrackingDelay)
         {
+            int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
+            int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
+            Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.center, radius, m_Performance_FireRush);
 //            Track_PerformanceTrack();
+            
             m_Performance_LastTrackTime = currentTime;// - (elapsedTime - Performance_TrackingDelay);
             Debug.Log("Performance tracking event at: " + currentTime);
         }

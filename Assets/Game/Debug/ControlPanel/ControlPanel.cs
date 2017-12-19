@@ -241,7 +241,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
 		if ( m_fpsCounter != null && m_isFPSEnabled )
 		{
-			float fps = FeatureSettingsManager.instance.AverageSystemFPS;
+			float fps = FeatureSettingsManager.instance.SystemFPS;
 			if(fps >= 0) {
 				if ( fps < 15 )
 				{
