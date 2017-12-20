@@ -478,7 +478,7 @@ public class FogManager : MonoBehaviour
 			}break;
 			case FogBlendMode.BLIT:
 			{
-				Shader.SetGlobalTexture("_FogTexture", m_blitDestination);
+				Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE , m_blitDestination);
 			}break;
 		}
 		m_lastBlendMode = m_fogBlendMode;
