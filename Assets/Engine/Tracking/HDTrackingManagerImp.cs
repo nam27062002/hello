@@ -1670,12 +1670,13 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	}
 
-    private void Track_PerformanceTrack(int deltaXP, int avgFPS, Vector3 position, int radius, bool fireRush)
+    private void Track_PerformanceTrack(int deltaXP, int avgFPS, Vector3 positionBL, Vector3 positionTR, bool fireRush)
     {
-        string posasstring = Track_CoordinatesToString(position);
+        string posblasstring = Track_CoordinatesToString(positionBL);
+        string postrasstring = Track_CoordinatesToString(positionTR);
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinates = " + posasstring + " radius = " + radius + " fireRush = " + fireRush);
+            Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
         }
 
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.performance");
@@ -1685,8 +1686,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamGameRoundCount(e);
             e.SetParameterValue(TRACK_PARAM_DELTA_XP, deltaXP);
             e.SetParameterValue(TRACK_PARAM_AVERAGE_FPS, (int)FeatureSettingsManager.instance.AverageSystemFPS);
-            Track_AddParamString(e, TRACK_PARAM_COORDINATES, posasstring);
-            e.SetParameterValue(TRACK_PARAM_RADIUS, radius);
+            Track_AddParamString(e, TRACK_PARAM_COORDINATESBL, posblasstring);
+            Track_AddParamString(e, TRACK_PARAM_COORDINATESTR, postrasstring);
             Track_AddParamBool(e, TRACK_PARAM_FIRE_RUSH, fireRush);
 
             Track_SendEvent(e);
@@ -1716,7 +1717,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";          
     private const string TRACK_PARAM_CURRENCY                   = "currency";
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
-    private const string TRACK_PARAM_COORDINATES                = "coordinates";
+    private const string TRACK_PARAM_COORDINATESBL              = "coordinatesBL";
+    private const string TRACK_PARAM_COORDINATESTR              = "coordinatesTR";
     private const string TRACK_PARAM_DEATH_CAUSE                = "deathCause";
     private const string TRACK_PARAM_DEATH_COORDINATES          = "deathCoordinates";
     private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB    = "deathInCurrentRunNb";
@@ -2242,7 +2244,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
             int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
-            Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.center, radius, m_Performance_FireRush);
+            Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
             //            Track_PerformanceTrack();
 
             Reset_Performance_Tracker();
