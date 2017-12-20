@@ -560,7 +560,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
 
-        Notify_StartPerformanceTracker();
+//        Notify_StartPerformanceTracker();
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
@@ -1677,7 +1677,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinates = " + posasstring + " radius = " + radius + " fireRush = " + fireRush);
         }
-/*
+
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.performance");
         if (e != null)
         {
@@ -1691,7 +1691,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Track_SendEvent(e);
         }
-*/
+
     }
 
 
@@ -2196,7 +2196,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         get
         {
-            return Time.time;
+            return Time.unscaledTime;
         }
     }
 
@@ -2211,8 +2211,6 @@ public class HDTrackingManagerImp : HDTrackingManager
             m_Performance_TickCounter = 0;
             m_Performance_FireRush = false;
             m_Performance_FireRushStartTime = m_Performance_LastTrackTime = Performance_Timer;
-
-            //            Track_PerformanceTrack();
         }
 
     }

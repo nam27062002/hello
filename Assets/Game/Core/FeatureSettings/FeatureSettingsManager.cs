@@ -1448,7 +1448,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     // Update FPS
     private void UpdateFPS()
     {
-        float dTime = Time.deltaTime;
+        float dTime = Time.unscaledDeltaTime;
         SystemFPS = (dTime > 0.0f) ? 1.0f / dTime : 0.0f;
 
         if (m_NumDeltaTimes > 0)
@@ -1471,22 +1471,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
 
     }
-
-    /*
-            public float GetFPS()
-            {
-                float dTime = Time.deltaTime;
-                return dTime > 0.0f ? 1.0f / dTime : 0.0f;
-                float median = 0;
-                for (int i = 0; i < m_NumDeltaTimes; i++)
-                {
-                    median += m_DeltaTimes[i];
-                }
-                median = median / m_NumDeltaTimes;
-                return 1.0f / median;
-            }
-    */
-
 
     #endregion //fps
 }
