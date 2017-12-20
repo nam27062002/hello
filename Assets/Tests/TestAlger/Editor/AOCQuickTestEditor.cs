@@ -44,6 +44,20 @@ public class AOCQuickTestEditor : Editor {
 		}
 
 		EditorGUILayout.Space();
+		if(GUILayout.Button("CHECK BUILD SCENES", GUILayout.Height(50))) {
+			EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
+			for(int i = 0; i < scenes.Length; ++i) {
+				EditorBuildSettingsScene scene = scenes[i];
+				if(EditorUtility.DisplayCancelableProgressBar("Checking scenes...", (i+1) + "/" + scenes.Length + ": " + scene.path, ((float)(i+1)/(float)scenes.Length))) {
+					break;
+				}
+				Debug.Log("<color=green>OPENING " + scene.path + "</color>");
+				UnityEditor.SceneManagement.EditorSceneManager.OpenScene(scene.path, UnityEditor.SceneManagement.OpenSceneMode.Additive);
+				Debug.Log("<color=red>CLOSING " + scene.path + "</color>");
+				UnityEditor.SceneManagement.EditorSceneManager.CloseScene(UnityEditor.SceneManagement.EditorSceneManager.GetSceneByPath(scene.path), true);
+			}
+			EditorUtility.ClearProgressBar();
+		}
 	}
 
 	[MenuItem("Hungry Dragon/AOC/Clear Map Layer")]

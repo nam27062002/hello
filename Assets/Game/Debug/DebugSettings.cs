@@ -37,6 +37,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
 	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";  
 	public const string VERTICAL_ORIENTATION		 		    = "VERTICAL_ORIENTATION";
+	public const string SIMULATED_SPECIAL_DEVICE				= "SIMULATED_SPECIAL_DEVICE";
 
     public const string INGAME_HUD						        = "INGAME_HUD";
 	public const string INGAME_SPAWNERS					        = "INGAME_SPAWNERS";	
@@ -151,6 +152,21 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public static Range serverDelayRange {
 		get { return instance.m_debugServerDelayRange; }
 		set { instance.m_debugServerDelayRange = value; }
+	}
+
+	// UI settings
+	[HideEnumValues(false, true)]
+	[SerializeField] private UIConstants.SpecialDevice m_simulatedSpecialDevice = UIConstants.SpecialDevice.NONE;
+	public static UIConstants.SpecialDevice simulatedSpecialDevice {
+		get { 
+			// Only in editor
+			#if UNITY_EDITOR
+			return instance.m_simulatedSpecialDevice; 
+			#else
+			return UIConstants.SpecialDevice.NONE;
+			#endif
+		}
+		set { instance.m_simulatedSpecialDevice = value; }
 	}
 
     //------------------------------------------------------------------//
