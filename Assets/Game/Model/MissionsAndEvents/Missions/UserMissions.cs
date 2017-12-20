@@ -268,7 +268,7 @@ public class UserMissions {
 		bool singleRun = false;
 		if(selectedTypeDef.GetAsBool("canBeDuringOneRun")) {
 			// Single run? 50% chance
-			singleRun = UnityEngine.Random.value < 0.5f;	// 50% chance
+			singleRun = UnityEngine.Random.value < 0.3f;	// 30% chance
 		}
 		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
 
