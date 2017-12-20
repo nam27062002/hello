@@ -155,9 +155,9 @@ public class FogManager : MonoBehaviour
 	}
 
 	void Start() {
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
-		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnDestroy()
@@ -165,9 +165,9 @@ public class FogManager : MonoBehaviour
 		if (Application.isPlaying) {
 			InstanceManager.fogManager = null;
 
-			Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-			Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
-			Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+			Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+			Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		}
 	}
 
