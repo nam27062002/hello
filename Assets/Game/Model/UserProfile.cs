@@ -11,6 +11,8 @@ using UnityEngine;
 using System;
 using SimpleJSON;
 using System.Collections.Generic;
+using CodeStage.AntiCheat.ObscuredTypes;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -39,8 +41,10 @@ public class UserProfile : UserPersistenceSystem
 	};
 
 	public class CurrencyData {
-		public long freeAmount = 0;		// Free amount is restricted to the limit
-		public long paidAmount = 0;		// Paid amount can overflow the limits
+
+		public ObscuredLong freeAmount = 0;		// Free amount is restricted to the limit
+		public ObscuredLong paidAmount = 0;		// Paid amount can overflow the limits
+
 		public long amount { 
 			get { return freeAmount + paidAmount; }
 		}
@@ -68,14 +72,18 @@ public class UserProfile : UserPersistenceSystem
 
 			// Parse free amount
 			if(values.Length > 0) {
-				long.TryParse(values[0], System.Globalization.NumberStyles.Any, PersistenceFacade.JSON_FORMATTING_CULTURE, out freeAmount);
+				long tmp;
+				long.TryParse(values[0], System.Globalization.NumberStyles.Any, PersistenceFacade.JSON_FORMATTING_CULTURE, out tmp);
+				freeAmount = tmp;
 			} else {
 				freeAmount = _defaultFree;
 			}
 
 			// Parse paid amount
 			if(values.Length > 1) {
-				long.TryParse(values[1], System.Globalization.NumberStyles.Any, PersistenceFacade.JSON_FORMATTING_CULTURE, out paidAmount);
+				long tmp;
+				long.TryParse(values[1], System.Globalization.NumberStyles.Any, PersistenceFacade.JSON_FORMATTING_CULTURE, out tmp);
+				paidAmount = tmp;
 			} else {
 				paidAmount = _defaultPaid;
 			}

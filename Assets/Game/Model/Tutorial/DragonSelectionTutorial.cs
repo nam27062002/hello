@@ -10,6 +10,7 @@
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -176,7 +177,15 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			m_timer.Start(m_delay * 1000 * 0.5f);
 
 			// Last dragon delta, next dragons are locked until player progress further in the game
-			m_lastDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(6);
+			List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
+			for(int i = dragonsByOrder.Count - 1; i >= 0; --i) {
+				// First non-hidden dragon (including teased dragons)
+				if(dragonsByOrder[i].isRevealed || dragonsByOrder[i].isTeased) {
+					// Get delta corresponding to this dragon and break the loop!
+					m_lastDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(i);
+					break;
+				}
+			}
 
 			// Toggle state!
 			m_state = State.DELAY;
