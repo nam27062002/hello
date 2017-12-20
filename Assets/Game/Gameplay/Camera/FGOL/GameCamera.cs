@@ -243,6 +243,10 @@ public class GameCamera : MonoBehaviour
 			Debug_Awake();
 		}
 
+		if (FeatureSettingsManager.instance.LevelsLOD == FeatureSettings.ELevel3Values.low) {
+			m_deactivationDistance *= 0.5f;
+		}
+
 		InstanceManager.gameCamera = this;
 
 		// Subscribe to external events
