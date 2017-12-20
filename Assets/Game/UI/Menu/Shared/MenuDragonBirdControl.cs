@@ -5,8 +5,10 @@ using UnityEngine;
 public class MenuDragonBirdControl : MonoBehaviour {
 
 	public GameObject m_prefab;
+	public List<Material> m_materials = new List<Material>();
 	private GameObject m_prefabInstance;
 	private Animator m_birdAnimator;
+	private Renderer m_birdRenderer;
 	private Animator m_dragonAnimator;
 	private bool m_playingBird;
 	private bool m_waitToSync;
@@ -24,6 +26,7 @@ public class MenuDragonBirdControl : MonoBehaviour {
 		m_prefabInstance.transform.localPosition = Vector3.zero;
 		m_prefabInstance.transform.localRotation = Quaternion.identity;
 		m_birdAnimator = m_prefabInstance.GetComponent<Animator>();
+		m_birdRenderer = m_prefabInstance.GetComponentInChildren<Renderer>();
 		m_prefabInstance.SetActive(false);
 		m_playingBird = false;
 	}
@@ -35,6 +38,7 @@ public class MenuDragonBirdControl : MonoBehaviour {
 		m_prefabInstance.SetActive(true);
 		m_birdAnimator.speed = 0.9f;
 		m_birdAnimator.Play("SelectionScreen", 0, 0);
+		m_birdRenderer.material = m_materials[ Random.Range(0, m_materials.Count) ];
 	}
 
 	void Update()
