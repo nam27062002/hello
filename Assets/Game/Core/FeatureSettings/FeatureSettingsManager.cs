@@ -1405,7 +1405,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     // Internal logic
     private float m_activateTimer;
-    private int m_NumDeltaTimes = 30;
+    private int m_NumDeltaTimes;
     float[] m_DeltaTimes;
     int m_DeltaIndex;
 
@@ -1421,7 +1421,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void StartFPS()
     {
         // FPS Initialization
-        SetFPSAverageBuffer(0);    //Default average buffer
+        SetFPSAverageBuffer(20);    //Default average buffer
     }
 
     public void SetFPSAverageBuffer(int bufSize)

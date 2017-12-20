@@ -55,7 +55,7 @@ public class CPStats : MonoBehaviour {
 
 	private void Update()
 	{
-		m_FpsLabel.text = "FPS: " + FeatureSettingsManager.instance.SystemFPS;
+		m_FpsLabel.text = "FPS: " + FeatureSettingsManager.instance.AverageSystemFPS;
         m_ScreenSize.text = "Screen Size: " + Screen.currentResolution.width + "x" + Screen.currentResolution.height;
 
         if (NotificationsManager.SharedInstance != null)
