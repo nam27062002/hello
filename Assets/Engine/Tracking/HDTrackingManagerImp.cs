@@ -1679,7 +1679,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.performance");
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.fps");
         if (e != null)
         {
             Track_AddParamSessionsCount(e);
