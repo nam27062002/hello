@@ -63,9 +63,9 @@ public class FogManager : MonoBehaviour
 		/// </summary>
 		public void FogSetup()
 		{
-			Shader.SetGlobalFloat("_FogStart", m_fogStart);
-			Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
-			Shader.SetGlobalTexture("_FogTexture", texture);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_fogStart);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_fogEnd);
+			Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, texture);
 		}
 	}
 
@@ -316,9 +316,9 @@ public class FogManager : MonoBehaviour
 		{
 			m_forceUpdate = false;
 			m_texture.Apply(false);
-			Shader.SetGlobalFloat("_FogStart", m_start);
-			Shader.SetGlobalFloat("_FogEnd", m_end);
-			Shader.SetGlobalTexture("_FogTexture", m_texture);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_start);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_end);
+			Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, m_texture);
 		}
 	}
 
@@ -372,9 +372,9 @@ public class FogManager : MonoBehaviour
 			if ( m_updateValues || m_forceUpdate)
 			{
 				m_forceUpdate = false;
-				Shader.SetGlobalFloat("_FogStart", m_start);
-				Shader.SetGlobalFloat("_FogEnd", m_end);
-				m_fogBlendMaterial.SetFloat("_LerpValue" , m_blitLerpValue);
+				Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_start);
+				Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_end);
+				m_fogBlendMaterial.SetFloat( GameConstants.Material.LERP_VALUE , m_blitLerpValue);
 				if (m_updateBlitOriginTexture)
 				{
 					Graphics.Blit(m_blitDestination, m_blitOrigin);
