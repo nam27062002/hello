@@ -49,13 +49,24 @@ public class MenuDragonPreview : MonoBehaviour {
 	public string sku { get { return m_sku; }}
 
 
-	private Anim m_currentAnim = Anim.NONE;
+	private Anim m_currentAnim = Anim.IDLE;
+
+
 	// IDLE STATE CONTROL
+	public enum AltAnimSpecialAction
+	{
+		NONE,
+		BIRD,
+	};
+
 	[System.Serializable]
 	public struct AltAnimConfig
 	{
 		public Range m_range;
-		public bool m_allowBlink;
+		public bool m_allowFaceDetails;
+		public int m_loopsMin;
+		public int m_loopsMax;
+		public AltAnimSpecialAction m_special;
 		public float m_timeToNext;
 	}
 	public List<AltAnimConfig> m_altAnimConfigs = new List<AltAnimConfig>();
@@ -107,14 +118,27 @@ public class MenuDragonPreview : MonoBehaviour {
 				m_materials[renderer.GetInstanceID()] = materialList;
 			}
 		}
+
+		SetAnim(m_currentAnim);
 	}
 
 	void Start(){
 		m_count = m_altAnimConfigs.Count;
+
+		NumLoopsBehaviour[] behaviours = m_animator.GetBehaviours<NumLoopsBehaviour>();
+		int behavioursCount = behaviours.Length;
+
 		for( int i = 0;i<m_count; ++i ){
 			AltAnimConfig item = m_altAnimConfigs[i];
 			item.m_timeToNext -= item.m_range.GetRandom();
 			m_altAnimConfigs[i] = item;
+
+			for( int j = 0; j<behavioursCount; ++j ){
+				if ( behaviours[ j ].m_optionalId == i ){
+					behaviours[ j ].m_minLoops = item.m_loopsMin;
+					behaviours[ j ].m_maxLoops = item.m_loopsMax;
+				}
+			}
 		}
 		m_currentAnimIndex = -1;
 		m_lastAltAnim = - 1;
@@ -125,10 +149,10 @@ public class MenuDragonPreview : MonoBehaviour {
 	/// </summary>
 	/// <param name="_anim">The animation to be launched.</param>
 	public void SetAnim(Anim _anim) {
+		m_currentAnim = _anim;
 		if(m_animator != null) {
 			m_animator.SetTrigger(ANIM_TRIGGERS[(int)_anim]);
 		}
-		m_currentAnim = _anim;
 	}
 
 	public void DisableMoves()
@@ -169,7 +193,7 @@ public class MenuDragonPreview : MonoBehaviour {
 				if (m_currentAnimIndex >= 0)
 				{
 					// Check if state is "idle" to get back
-					if ( m_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") )
+					if ( m_animator.GetInteger("AltAnimation") == -1 && m_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") )
 					{
 						AltAnimConfig item = m_altAnimConfigs[m_lastAltAnim];
 						item.m_timeToNext = item.m_range.GetRandom();
@@ -181,7 +205,7 @@ public class MenuDragonPreview : MonoBehaviour {
 				else
 				{
 					// Count down every timer to check when to start the new alternative animation
-					for( int i = 0; i<m_count; ++i )
+					for( int i = 0; i<m_count && m_currentAnimIndex < 0; ++i )
 					{
 						AltAnimConfig item = m_altAnimConfigs[i];
 						item.m_timeToNext -= Time.deltaTime;	
@@ -191,8 +215,27 @@ public class MenuDragonPreview : MonoBehaviour {
 							// Set alternative animation
 							m_lastAltAnim = m_currentAnimIndex = i;
 							m_animator.SetInteger("AltAnimation", m_currentAnimIndex);
+							// 
+							if ( item.m_special != AltAnimSpecialAction.NONE )
+								StartSpecialEvent( item.m_special );
 						}
 					}
+				}
+			}break;
+		}
+	}
+
+	void StartSpecialEvent( AltAnimSpecialAction action )
+	{
+		switch( action )
+		{
+			case AltAnimSpecialAction.BIRD:
+			{
+				// Spawn special anim bird!!
+				MenuDragonBirdControl birdControl = GetComponent<MenuDragonBirdControl>();
+				if ( birdControl )
+				{
+					birdControl.PlayBird();
 				}
 			}break;
 		}
