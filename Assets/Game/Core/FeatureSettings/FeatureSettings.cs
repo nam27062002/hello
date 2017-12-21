@@ -77,6 +77,12 @@ public class FeatureSettings
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
 
+    // Whether or not Performance Tracking is enabled
+    public const string KEY_PERFORMANCE_TRACKING = "performanceTracking";
+
+    // Delay in seconds between every performance track event
+    public const string KEY_PERFORMANCE_TRACKING_DELAY = "performanceTrackingDelay";
+
     // Whether or not the events that couldn't be sent over the network should be cached
     public const string KEY_TRACKING_OFFLINE_CACHED = "trackingOfflineCached";
 
@@ -130,7 +136,6 @@ public class FeatureSettings
             data = new DataString(key, null);
             Datas.Add(key, data);
 
-
             // qualityLevel: Unity quality settings level
             key = KEY_QUALITY_LEVEL;
             data = new DataInt(key, EValueType.QualityLevel, (int)EQualityLevelValues.very_low);
@@ -140,7 +145,6 @@ public class FeatureSettings
             key = KEY_SHADERS_LEVEL;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
-
 
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW_EFFECT;
@@ -198,6 +202,16 @@ public class FeatureSettings
             // tracking
             key = KEY_TRACKING;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // performance tracking
+            key = KEY_PERFORMANCE_TRACKING;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // performance tracking delay
+            key = KEY_PERFORMANCE_TRACKING_DELAY;
+            data = new DataInt(key, EValueType.Int, 0);
             Datas.Add(key, data);
 
             // tracking offline cached

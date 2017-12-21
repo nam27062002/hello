@@ -610,7 +610,9 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Notify the game
 				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_STARTED);
-			} break;
+                // Begin performance track
+                HDTrackingManager.Instance.Notify_StartPerformanceTracker();
+            } break;
 				
 			case EStates.RUNNING: {
                 // Subscribe to external events
@@ -637,8 +639,11 @@ public class GameSceneController : GameSceneControllerBase {
 					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._04_run_is_done);
 				}
 
+                // Stops performance track
+                HDTrackingManager.Instance.Notify_StopPerformanceTracker();
+
                 // Show loading screen
-				LoadingScreen.Toggle(true, false);
+                LoadingScreen.Toggle(true, false);
 
 				// Disable dragon and entities!
      			InstanceManager.player.gameObject.SetActive(false);
