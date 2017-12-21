@@ -137,13 +137,22 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	/// To be called at the start of the game.
 	/// </summary>
 	private void InitLevelEggs() {
-		// If the player hasn't collected any egg yet, force a specific one
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_EGG_COLLECTED)) {
+		// Eggs disabled during FTUX
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_EGGS_AT_RUN) {
+			// Don't pick any egg, call the SelectCollectible method with an invalid name to hide all eggs on scene
+			instance.m_egg = SelectCollectible<CollectibleEgg>(CollectibleEgg.TAG, string.Empty);
+		}
+
+		// Player hasn't collected any egg yet, force a specific one
+		else if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_EGG_COLLECTED)) {
 			// Pick a specific egg
 			instance.m_egg = SelectCollectible<CollectibleEgg>(CollectibleEgg.TAG, CollectibleEgg.FIRST_EGG_NAME);
-		} else {
+		} 
+
+		// Normal case: pick a random egg
+		else {
 			// Pick a random egg from the scene
-			instance.m_egg = SelectRandomCollectible<CollectibleEgg>(CollectibleEgg.TAG, true, TutorialStep.FIRST_RUN);
+			instance.m_egg = SelectRandomCollectible<CollectibleEgg>(CollectibleEgg.TAG, true);
 		}
 	}
 
@@ -158,8 +167,8 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		// Get all the chests in the scene
 		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
 		if(chestSpawners.Length > 0) {
-			// Special case: chests are disabled during the very first run!
-			if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+			// Special case: chests are disabled during FTUX
+			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
 				for(int i = 0; i < chestSpawners.Length; i++) {
 					GameObject.Destroy(chestSpawners[i]);
 				}
@@ -252,9 +261,8 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	/// <returns>The selected random collectible. <c>null</c> if no collectible could be found with the given parameters.</returns>
 	/// <param name="_tag">Tag filter.</param>
 	/// <param name="_filterTier">Check tier?</param>
-	/// <param name="_tutorialMask">Steps to be completed before actually selecting a collectible.</param>
 	/// <typeparam name="T">Type of collectible to be picked.</typeparam>
-	private T SelectRandomCollectible<T>(string _tag, bool _filterTier, TutorialStep _tutorialMask = TutorialStep.INIT) where T : Collectible {
+	private T SelectRandomCollectible<T>(string _tag, bool _filterTier) where T : Collectible {
 		// Get all the collectibles in the scene with the requested tag 
 		GameObject[] allCollectibles = GameObject.FindGameObjectsWithTag(_tag);
 
@@ -273,14 +281,11 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 				filteredCollectibles = allCollectibles.ToList();// allCollectibles.Select((GameObject _go) => { return _go; }).ToList();
 			}
 
-			// Min tutorial step required?
+			// Grab a random one from the list
 			GameObject selectedObj = null;
 			if(filteredCollectibles.Count > 0) {
-				if(UsersManager.currentUser.IsTutorialStepCompleted(_tutorialMask)) {
-					// Grab a random one from the list
-					selectedObj = filteredCollectibles.GetRandomValue();
-					selectedCollectible = selectedObj.GetComponent<T>();
-				}
+				selectedObj = filteredCollectibles.GetRandomValue();
+				selectedCollectible = selectedObj.GetComponent<T>();
 			}
 
 			// Remove the rest of collectibles from the scene
@@ -309,7 +314,14 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		T selectedCollectible = null;
 		if(allCollectibles.Length > 0) {
 			// Find the one with the given name
-			GameObject selectedObj = allCollectibles.First((GameObject _obj) => { return _obj.name == _instanceName; });	// First one matching the name
+			GameObject selectedObj = null;
+			for(int i = 0; i < allCollectibles.Length; ++i) {
+				// First one matching the name
+				if(allCollectibles[i].name == _instanceName) {
+					selectedObj = allCollectibles[i];
+					break;
+				}
+			}
 
 			// Get component of the requested type
 			if(selectedObj != null) {
