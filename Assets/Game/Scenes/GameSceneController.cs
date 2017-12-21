@@ -343,6 +343,7 @@ public class GameSceneController : GameSceneControllerBase {
 							{								
 								PoolManager.Rebuild();
 								Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
+                                HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 								m_switchingArea = false;
 							}
 						}break;
@@ -468,6 +469,8 @@ public class GameSceneController : GameSceneControllerBase {
 					if(!m_paused) m_timeScaleBackup = Time.timeScale;
 					Time.timeScale = 0.0f;
 
+                    //Stop Performance tracking 
+                    HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
 					// Notify the game
 					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
 				}
@@ -489,8 +492,10 @@ public class GameSceneController : GameSceneControllerBase {
 
 					// Notify the game
 					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
-				}
-			}
+                    //Start Performance tracking 
+                    HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
+                }
+            }
 
 			// Update logic flag
 			m_paused = (m_pauseStacks > 0);
@@ -766,7 +771,8 @@ public class GameSceneController : GameSceneControllerBase {
     {
     	if ( LevelManager.currentArea != _nextArea && !m_switchingArea)
     	{
-			// ParticleManager.Clear();
+            // ParticleManager.Clear();
+            HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
 			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
