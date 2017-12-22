@@ -5,7 +5,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Constants
 	//-----------------------------------------------
-	private const float INITIAL_FURY_PERCENTAGE = 0.7f;
+	private const float INITIAL_FURY_PERCENTAGE = 0.8f;
 
 	//-----------------------------------------------
 	// Attributes
