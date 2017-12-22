@@ -1,4 +1,4 @@
-﻿// HUDMessage.cs
+// HUDMessage.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 08/06/2016.
@@ -32,6 +32,21 @@ public class HUDMessage : MonoBehaviour {
 	/// </summary>
 	[Serializable]
 	public class HUDMessageEvent : UnityEvent<HUDMessage> {}
+
+	[Serializable]
+	public class BoostMessageSetup {
+		[Comment("Time before the message appears for the first time")]
+		public float initialDelay = 20f;
+
+		[Comment("Time before the message is dismissed if the player doesn't boost")]
+		public float messageDuration = 8f;
+
+		[Comment("Time before the message is displayed again")]
+		public float respawnInterval = 150f;
+
+		[Comment("Boosting time required to dismiss the message")]
+		public float requiredBoostDuration = 1f;
+	}
 
 	// Message types
 	public enum Type {
@@ -94,27 +109,23 @@ public class HUDMessage : MonoBehaviour {
 
 	[Comment("How the hide animation is triggered:\n- TIMER: After a defined amount of seconds\n- ANIMATION: Animation driven, once the idle animation has finished\n- MANUAL: Manually via the Hide() method\nA manual trigger will override this property in any case.")]
 	[SerializeField] private HideMode m_hideMode = HideMode.TIMER;
-
-	[HideInInspector]
 	[SerializeField] private float m_idleDuration = 1f;	// Only applies for TIMER hide mode
 
 	// Custom exposed setup for specific types - editor will decide when to show them
-	[HideInInspector]
-	[SerializeField] private float m_boostReminderTriggerTime = 150f;
-	[HideInInspector]
-	[SerializeField] private float m_boostReminderFirstSessionTriggerTime = 20f;
-	private float m_boostDurationTime = 1f;
+	[Separator]
+	[SerializeField] private BoostMessageSetup m_boostMessageSetup = new BoostMessageSetup();
+	[SerializeField] private BoostMessageSetup m_boostMessageTutorialSetup = new BoostMessageSetup();
 
 	// Events
-	[Space]
-	[HideInInspector] public HUDMessageEvent OnShow = new HUDMessageEvent();
-	[HideInInspector] public HUDMessageEvent OnHide = new HUDMessageEvent();
+	[Separator]
+	public HUDMessageEvent OnShow = new HUDMessageEvent();
+	public HUDMessageEvent OnHide = new HUDMessageEvent();
 
 	// Internal references
 	private Animator m_anim = null;
 
 	// Internal logic
-	protected float m_timer = 0f;
+	protected float m_hideTimer = 0f;
 	protected bool m_visible = false;
 	public bool visible {
 		get { return m_visible; }
@@ -129,14 +140,15 @@ public class HUDMessage : MonoBehaviour {
 
 	// Custom internal vars for specific types
 	private float m_messageDuration;
-	private float m_boostReminderTime = 0f;
-	private float m_boostReminderIntervalTime = 0f;
-	private float m_timeSinceLastBoostReminder = 0f;
-	private float m_currentBoostTime = 0f;
 	private string m_needBiggerDragonEntitySku = "";
-	private bool m_isBoosting;
 
-	private bool m_hasEverPerformedAction;
+	private BoostMessageSetup m_currentBoostSetup = null;
+	private bool m_isBoosting = false;
+	private float m_boostingTimer = 0f;
+	private float m_boostSpawnTimer = 0f;
+
+	private bool m_gameStarted = false;
+	private bool m_hasEverPerformedAction = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -155,23 +167,24 @@ public class HUDMessage : MonoBehaviour {
 		if(m_messageSystem != null) {
 			m_messageSystem.Add(this);
 		}
-	}
 
-	virtual protected void Start() {
+		// Initialize some internal vars
 		m_messageDuration = m_idleDuration;
 
 		switch(m_type) {
 			case Type.BOOST_REMINDER: {
-					if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
-						m_boostReminderTime = m_boostReminderTriggerTime;
-						m_boostReminderIntervalTime = m_boostReminderTime;
-						m_messageDuration = m_idleDuration * 0.5f;
-					} else {
-						m_boostReminderTime = m_boostReminderFirstSessionTriggerTime;
-						m_boostReminderIntervalTime = m_boostReminderTime * 2f;
-					}
+				// Select target setup
+				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
+					m_currentBoostSetup = m_boostMessageSetup;
+				} else {
+					m_currentBoostSetup = m_boostMessageTutorialSetup;
 				}
-				break;
+
+				// Init timers
+				m_messageDuration = m_currentBoostSetup.messageDuration;
+				m_boostingTimer = m_currentBoostSetup.requiredBoostDuration;
+				m_boostSpawnTimer = m_currentBoostSetup.initialDelay;	// First time, set initial delay
+			} break;
 		}
 
 		m_isBoosting = false;
@@ -208,6 +221,10 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 		}
+
+		switch(m_hideMode) {
+			case HideMode.TIMER:			Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
+		}
 	}
 
 	/// <summary>
@@ -240,36 +257,49 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 		}
+
+		switch(m_hideMode) {
+			case HideMode.TIMER:			Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
+		}
 	}
 
 	/// <summary>
 	/// Called every frame
 	/// </summary>
 	virtual protected void Update() {
+		// Don't update timers until game has actually started
+		if(!m_gameStarted) return;
+
 		// Update timer - only for TIMER hide mode
 		if(m_hideMode == HideMode.TIMER) {
-			if(m_timer > 0f) {
-				m_timer -= Time.deltaTime;
+			if(m_hideTimer > 0f) {
+				m_hideTimer -= Time.deltaTime;
 
 				// Has timer finished?
-				if(m_timer <= 0f) {
+				if(m_hideTimer <= 0f) {
 					// Hide message!
 					Hide();
 				}
 			}
 		}
 
-		if (m_hasEverPerformedAction) {
+		if(m_hasEverPerformedAction) {
 			return;
 		}
 
 		// Custom actions depending on message type
 		switch(m_type) {
-			case Type.BOOST_REMINDER:
-				if (m_isBoosting) { 
-					m_currentBoostTime += Time.deltaTime;
-					if (m_currentBoostTime >= m_boostDurationTime) {
-						if (m_visible) {
+			case Type.BOOST_REMINDER: {
+				// Always update the spawn timer
+				m_boostSpawnTimer -= Time.deltaTime;
+
+				// If boosting, check whether we've reached the required threshold
+				if(m_isBoosting) { 
+					m_boostingTimer -= Time.deltaTime;
+					if(m_boostingTimer <= 0f) {
+						if(m_visible) {
+							// Show again with a custom message and duration to confirm the action
+							m_messageDuration = m_boostMessageSetup.messageDuration;
 							TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();							
 							text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_TUTO_BOOST_SUCCESS");
 							Show();
@@ -277,21 +307,21 @@ public class HUDMessage : MonoBehaviour {
 							// Mark tutorial as completed!
 							UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.BOOST, true);
 						}
+
+						// Don't show anymore!
 						m_hasEverPerformedAction = true;
 					}
 				} else {
-					m_currentBoostTime = 0f;
-					m_timeSinceLastBoostReminder += Time.deltaTime;
-					if (m_timeSinceLastBoostReminder >= m_boostReminderTime) {
+					// Do we need to show ther reminder? Not while we're boosting!
+					if(m_boostSpawnTimer <= 0f) {
 						// Show feedback!
 						// Don't reset timers if it couldn't be shown! Will be displayed asap
 						if(Show()) {
-							m_timeSinceLastBoostReminder = 0f;
-							m_boostReminderTime = m_boostReminderIntervalTime;
+							m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;
 						}
 					}
 				}
-			break;
+			} break;
 		}
 	}
 
@@ -316,7 +346,7 @@ public class HUDMessage : MonoBehaviour {
 				} 
 
 				case RepeatType.RESTART_TIMER: {
-					m_timer = m_messageDuration;
+					m_hideTimer = m_messageDuration;
 					return true;
 				} 
 
@@ -340,7 +370,7 @@ public class HUDMessage : MonoBehaviour {
 		m_anim.SetTrigger( GameConstants.Animator.IN );
 
 		// Setup hide mode
-		m_timer = m_messageDuration;
+		m_hideTimer = m_messageDuration;
 		m_anim.SetBool( GameConstants.Animator.OUT_AUTO , m_hideMode == HideMode.ANIMATION);
 
 		// Notify
@@ -358,7 +388,7 @@ public class HUDMessage : MonoBehaviour {
 
 		// Update internal state
 		m_visible = false;
-		m_timer = 0f;
+		m_hideTimer = 0f;
 
 		// Trigger anim
 		m_anim.SetTrigger( GameConstants.Animator.OUT );
@@ -370,7 +400,7 @@ public class HUDMessage : MonoBehaviour {
 		switch(m_type) {
 			case Type.BOOST_REMINDER: {
 				// Reset timer
-				m_timeSinceLastBoostReminder = 0f;
+				m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;
 			} break;
 		}
 	}
@@ -391,7 +421,15 @@ public class HUDMessage : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
-	//------------------------------------------------------------------------///// <summary>
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Game has started.
+	/// </summary>
+	private void OnGameStarted() {
+		m_gameStarted = true;
+	}
+
+	/// <summary>
 	/// Generic callback to trigger standard messages.
 	/// </summary>
 	private void OnStandardMessage() {
@@ -492,6 +530,9 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_toggled">Whether the boost was turned on or off.</param>
 	private void OnBoostToggled(bool _toggled) {
 		m_isBoosting = _toggled;
+
+		// Reset timer
+		m_boostingTimer = m_currentBoostSetup.requiredBoostDuration;
 	}
 
 	/// <summary>

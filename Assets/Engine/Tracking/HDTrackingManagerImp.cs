@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
@@ -370,6 +370,12 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Debug_Update();
         }
+
+        if (Performance_IsTrackingEnabled)
+        {
+            Performance_Tracker();
+        }
+
     }
 
 #region notify   
@@ -545,6 +551,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
+
+//        Notify_StartPerformanceTracker();
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
@@ -749,6 +757,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
         // This step has to be sent only within the first session
         if (TrackingPersistenceSystem.SessionCount == 1) {
+			Log("FTUX Funnel - step: " + m_firstUXFunnel.GetStepName(_step) + ", duration: " + m_firstUXFunnel.GetStepDuration(_step));
             Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
         }
 
@@ -905,7 +914,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_EndPlayingMode( true );
 	}
 
-	public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
+    public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier)
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
@@ -970,9 +979,23 @@ public class HDTrackingManagerImp : HDTrackingManager
 		}
 	}
 
-#endregion
+    /// <summary>
+    /// Notifies the start of performance track every X seconds
+    /// </summary>
+    public override void Notify_StartPerformanceTracker() {
+        Reset_Performance_Tracker();
+    }
 
-#region track	
+    /// <summary>
+    /// Notifies the stop of performance track every X seconds
+    /// </summary>
+    public override void Notify_StopPerformanceTracker() {
+        Performance_IsTrackingEnabled = false;
+    }
+
+    #endregion
+
+    #region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
@@ -1655,6 +1678,32 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	}
 
+    private void Track_PerformanceTrack(int deltaXP, int avgFPS, Vector3 positionBL, Vector3 positionTR, bool fireRush)
+    {
+        string posblasstring = Track_CoordinatesToString(positionBL);
+        string postrasstring = Track_CoordinatesToString(positionTR);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
+        }
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.fps");
+        if (e != null)
+        {
+            Track_AddParamSessionsCount(e);
+            Track_AddParamGameRoundCount(e);
+            e.SetParameterValue(TRACK_PARAM_DELTA_XP, deltaXP);
+            e.SetParameterValue(TRACK_PARAM_AVERAGE_FPS, (int)FeatureSettingsManager.instance.AverageSystemFPS);
+            Track_AddParamString(e, TRACK_PARAM_COORDINATESBL, posblasstring);
+            Track_AddParamString(e, TRACK_PARAM_COORDINATESTR, postrasstring);
+            Track_AddParamBool(e, TRACK_PARAM_FIRE_RUSH, fireRush);
+
+            Track_SendEvent(e);
+        }
+
+    }
+
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -1671,10 +1720,13 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AF_DEF_LOGPURCHASE         = "af_def_logPurchase";
     private const string TRACK_PARAM_AF_DEF_QUANTITY            = "af_quantity";
     private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
-    private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";      
+    private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";
+    private const string TRACK_PARAM_AVERAGE_FPS                = "avgFPS";
 	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";          
     private const string TRACK_PARAM_CURRENCY                   = "currency";
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
+    private const string TRACK_PARAM_COORDINATESBL              = "coordinatesBL";
+    private const string TRACK_PARAM_COORDINATESTR              = "coordinatesTR";
     private const string TRACK_PARAM_DEATH_CAUSE                = "deathCause";
     private const string TRACK_PARAM_DEATH_COORDINATES          = "deathCoordinates";
     private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB    = "deathInCurrentRunNb";
@@ -1688,8 +1740,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
-    private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
+    private const string TRACK_PARAM_FIRE_RUSH                  = "fireRush";
     private const string TRACK_PARAM_FIRE_RUSH_NB               = "fireRushNb";
+    private const string TRACK_PARAM_FIRST_LOAD                 = "firstLoad";
     private const string TRACK_PARAM_GAME_RUN_NB                = "gameRunNb";
     private const string TRACK_PARAM_GENDER                     = "gender";
 	private const string TRACK_PARAM_GLOBAL_EVENT_ID 			= "glbEventID";
@@ -1739,7 +1792,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
-	private const string TRACK_PARAM_RANK						= "rank";
+    private const string TRACK_PARAM_RADIUS                     = "radius";
+    private const string TRACK_PARAM_RANK						= "rank";
 	private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
@@ -1770,7 +1824,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_SendEvent(TrackingManager.TrackingEvent e)
 	{
 		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
 		TrackingManager.SharedInstance.SendEvent(e);
 #endif
 	}
@@ -2137,6 +2191,77 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_HasMenuEverLoaded = false;
      }
 #endregion
+
+#region performance
+    private bool Performance_IsTrackingEnabled { get; set; }
+    private float Performance_TrackingDelay { get; set; }
+
+    private float m_Performance_LastTrackTime = 0;
+
+    private Bounds m_Performance_TrackArea = new Bounds();
+    private int m_Performance_TickCounter;
+
+    private bool m_Performance_FireRush;
+    private float m_Performance_FireRushStartTime;
+    private float Performance_Timer
+    {
+        get
+        {
+            return Time.unscaledTime;
+        }
+    }
+
+    private void Reset_Performance_Tracker()
+    {
+        Performance_IsTrackingEnabled = FeatureSettingsManager.instance.IsPerformanceTrackingEnabled;
+        if (Performance_IsTrackingEnabled)
+        {
+            Performance_TrackingDelay = FeatureSettingsManager.instance.PerformanceTrackingDelay;
+            Vector3 currentPosition = InstanceManager.player.transform.position;
+            m_Performance_TrackArea.SetMinMax(currentPosition, currentPosition);
+            m_Performance_TickCounter = 0;
+            m_Performance_FireRush = false;
+            m_Performance_FireRushStartTime = m_Performance_LastTrackTime = Performance_Timer;
+        }
+
+    }
+
+    private void Performance_Tracker()
+    {
+        float currentTime = Performance_Timer;
+        float elapsedTime = currentTime - m_Performance_LastTrackTime;
+
+        m_Performance_TrackArea.Encapsulate(InstanceManager.player.transform.position);
+        m_Performance_TickCounter++;
+
+        if (!m_Performance_FireRush)
+        {
+            if (InstanceManager.player.breathBehaviour.IsFuryOn())
+            {
+                if (currentTime - m_Performance_FireRushStartTime > 1.0f)
+                {
+                    m_Performance_FireRush = true;
+                }
+            }
+        }
+        else
+        {
+            m_Performance_FireRushStartTime = currentTime;
+        }
+
+        if (elapsedTime > Performance_TrackingDelay)
+        {
+            int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
+            int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
+            Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
+            //            Track_PerformanceTrack();
+
+            Reset_Performance_Tracker();
+//            Debug.Log("Performance tracking event at: " + currentTime);
+        }
+    }
+#endregion
+
 
 #region debug
     private const bool Debug_IsEnabled = true;

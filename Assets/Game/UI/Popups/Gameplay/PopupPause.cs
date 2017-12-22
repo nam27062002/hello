@@ -147,8 +147,8 @@ public class PopupPause : PopupPauseBase {
 		// Call parent
 		base.OnOpenPreAnimation();
 
-		// Hide the mission tab during the first run (tutorial)
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) && SceneManager.GetActiveScene().name != "SC_Popups") {
+		// Hide the mission tab during FTUX
+		if(UsersManager.currentUser.gamesPlayed	< GameSettings.ENABLE_MISSIONS_AT_RUN && SceneManager.GetActiveScene().name != "SC_Popups") {
 			// Get the tab system component
 			if(tabs != null) {
 				// Set options tab as initial screen

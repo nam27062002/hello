@@ -26,6 +26,13 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
 
+	public enum Tabs {
+		MISSIONS,
+		CHESTS,
+		GLOBAL_EVENTS,
+		LEADERBOARDS
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -48,6 +55,22 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Disable some tabs during FTUX
+		// Chests
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
+			m_tabs.GetTab((int)Tabs.CHESTS).tabEnabled = false;
+		}
+
+		// Global Events
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
+			m_tabs.GetTab((int)Tabs.GLOBAL_EVENTS).tabEnabled = false;
+		}
+	}
+
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>

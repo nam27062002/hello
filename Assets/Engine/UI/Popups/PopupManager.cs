@@ -88,8 +88,10 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	protected void Start() {
 		// Start with canvas camera disabled (for performance)
 		//m_canvas.gameObject.SetActive(false);
-		m_canvasRaycaster.enabled = false;
-		m_canvas.worldCamera.gameObject.SetActive(false);
+		if(m_openedPopups.Count == 0) {
+			m_canvasRaycaster.enabled = false;
+			m_canvas.worldCamera.gameObject.SetActive(false);
+		}
 	}
 
 	/// <summary>
