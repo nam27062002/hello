@@ -82,6 +82,9 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		if(instance.m_egg != null && instance.m_egg.collected) {
 			// Add a new egg to the inventory
 			EggManager.AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));
+
+			// Mark tutorial as completed
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_EGG_COLLECTED, true);
 		}
 
 		// Process chests
@@ -134,8 +137,23 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	/// To be called at the start of the game.
 	/// </summary>
 	private void InitLevelEggs() {
-		// Pick a random egg from the scene
-		instance.m_egg = SelectRandomCollectible<CollectibleEgg>(CollectibleEgg.TAG, true, TutorialStep.FIRST_RUN);
+		// Eggs disabled during FTUX
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_EGGS_AT_RUN) {
+			// Don't pick any egg, call the SelectCollectible method with an invalid name to hide all eggs on scene
+			instance.m_egg = SelectCollectible<CollectibleEgg>(CollectibleEgg.TAG, string.Empty);
+		}
+
+		// Player hasn't collected any egg yet, force a specific one
+		else if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_EGG_COLLECTED)) {
+			// Pick a specific egg
+			instance.m_egg = SelectCollectible<CollectibleEgg>(CollectibleEgg.TAG, CollectibleEgg.FIRST_EGG_NAME);
+		} 
+
+		// Normal case: pick a random egg
+		else {
+			// Pick a random egg from the scene
+			instance.m_egg = SelectRandomCollectible<CollectibleEgg>(CollectibleEgg.TAG, true);
+		}
 	}
 
 	/// <summary>
@@ -149,8 +167,8 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		// Get all the chests in the scene
 		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
 		if(chestSpawners.Length > 0) {
-			// Special case: chests are disabled during the very first run!
-			if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+			// Special case: chests are disabled during FTUX
+			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
 				for(int i = 0; i < chestSpawners.Length; i++) {
 					GameObject.Destroy(chestSpawners[i]);
 				}
@@ -243,12 +261,13 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	/// <returns>The selected random collectible. <c>null</c> if no collectible could be found with the given parameters.</returns>
 	/// <param name="_tag">Tag filter.</param>
 	/// <param name="_filterTier">Check tier?</param>
-	/// <param name="_tutorialMask">Steps to be completed before actually select a collectible.</param>
 	/// <typeparam name="T">Type of collectible to be picked.</typeparam>
-	private T SelectRandomCollectible<T>(string _tag, bool _filterTier, TutorialStep _tutorialMask = TutorialStep.INIT) where T : Collectible {
+	private T SelectRandomCollectible<T>(string _tag, bool _filterTier) where T : Collectible {
 		// Get all the collectibles in the scene with the requested tag 
-		T selectedCollectible = null;
 		GameObject[] allCollectibles = GameObject.FindGameObjectsWithTag(_tag);
+
+		// Select our target collectible based on input parameters
+		T selectedCollectible = null;
 		if(allCollectibles.Length > 0) {
 			// Filter by dragon tier? (blockers, etc.)
 			List<GameObject> filteredCollectibles = new List<GameObject>();
@@ -259,32 +278,81 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 					return currentTier >= c.requiredTier && currentTier <= c.maxTier;
 				}).ToList();
 			} else {
-				filteredCollectibles = allCollectibles.Select((GameObject _go) => { return _go; }).ToList();
+				filteredCollectibles = allCollectibles.ToList();// allCollectibles.Select((GameObject _go) => { return _go; }).ToList();
 			}
 
-			// Min tutorial step required?
+			// Grab a random one from the list
 			GameObject selectedObj = null;
-			if(UsersManager.currentUser.IsTutorialStepCompleted(_tutorialMask)) {
-				// Grab a random one from the list
+			if(filteredCollectibles.Count > 0) {
 				selectedObj = filteredCollectibles.GetRandomValue();
 				selectedCollectible = selectedObj.GetComponent<T>();
 			}
 
 			// Remove the rest of collectibles from the scene
-			// Unless cheating!
-			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
-				for(int i = 0; i < allCollectibles.Length; i++) {
-					// Skip if selected one
-					if(allCollectibles[i] == selectedObj) continue;
-
-					// Delete from scene otherwise
-					GameObject.Destroy(allCollectibles[i]);
-					allCollectibles[i] = null;
-				}
-			}
+			ClearCollectibles(ref allCollectibles, selectedObj);
 		}
 
 		// Done!
 		return selectedCollectible;
+	}
+
+	/// <summary>
+	/// Select a specific collectible instance of the requested type from the current level.
+	/// All other collectible of the same type in the level will be destroyed.
+	/// A level must be loaded beforehand, otherwise nothing will happen.
+	/// To be called at the start of the game.
+	/// </summary>
+	/// <returns>The selected collectible. <c>null</c> if no collectible could be found with the given parameters.</returns>
+	/// <param name="_tag">Tag filter.</param>
+	/// <param name="_instanceName">Name of the collectible instance to be selected.</param>
+	/// <typeparam name="T">Type of collectible to be picked.</typeparam>
+	private T SelectCollectible<T>(string _tag, string _instanceName) where T : Collectible {
+		// Get all the collectibles in the scene with the requested tag 
+		GameObject[] allCollectibles = GameObject.FindGameObjectsWithTag(_tag);
+
+		// Select our target collectible based on input parameters
+		T selectedCollectible = null;
+		if(allCollectibles.Length > 0) {
+			// Find the one with the given name
+			GameObject selectedObj = null;
+			for(int i = 0; i < allCollectibles.Length; ++i) {
+				// First one matching the name
+				if(allCollectibles[i].name == _instanceName) {
+					selectedObj = allCollectibles[i];
+					break;
+				}
+			}
+
+			// Get component of the requested type
+			if(selectedObj != null) {
+				selectedCollectible = selectedObj.GetComponent<T>();
+			}
+
+			// Remove the rest of collectibles from the scene
+			ClearCollectibles(ref allCollectibles, selectedObj);
+		}
+
+		// Done!
+		return selectedCollectible;
+	}
+
+	/// <summary>
+	/// Removes all the given collectibles from the scene, except the selected one.
+	/// </summary>
+	/// <param name="_allCollectibles">Collectibles to be removed from the scene.</param>
+	/// <param name="_selectedCollectible">Selected collectible (will be spared). Can be <c>null</c> (all objects will be removed).</param>
+	private void ClearCollectibles(ref GameObject[] _allCollectibles, GameObject _selectedCollectible) {
+		// Skip for debugging
+		if(Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) return;
+
+		// Iterate collectibles to be removed
+		for(int i = 0; i < _allCollectibles.Length; i++) {
+			// Skip if selected one
+			if(_allCollectibles[i] == _selectedCollectible) continue;
+
+			// Delete from scene otherwise
+			GameObject.Destroy(_allCollectibles[i]);
+			_allCollectibles[i] = null;
+		}
 	}
 }
