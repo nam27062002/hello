@@ -62,6 +62,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 		m_3dAnchor = goalScene.chestSlots[m_chestIdx].uiAnchor;
 
 		// Set name
+		/* [AOC] Replacing with generic "REWARD" text, already set in the Localizer component
 		string tid = "";
 		switch(m_chestIdx) {
 			case 0: tid = "TID_GEN_ORDER_1"; break;
@@ -71,6 +72,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 			case 4: tid = "TID_GEN_ORDER_5"; break;
 		}
 		m_nameText.Localize(tid);
+		*/
 
 		// Initialize reward info - shouldn't change while alive, so do it at the Start() call
 		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestIdx + 1);
