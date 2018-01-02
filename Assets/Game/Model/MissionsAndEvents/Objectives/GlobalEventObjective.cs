@@ -101,8 +101,8 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 		// Reset counter!
 		m_tracker.SetValue(0f, false);
 
-		// Disable during first game session (tutorial)
-		this.enabled = (UsersManager.currentUser.gamesPlayed > 0);
+		// Disable during FTUX
+		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN);
 
 		// Disable too if parent event is not active!
 		this.enabled &= m_parentEvent.isActive;

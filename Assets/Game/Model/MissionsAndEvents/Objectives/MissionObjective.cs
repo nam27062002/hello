@@ -164,8 +164,8 @@ public class MissionObjective : TrackingObjectiveBase {
 			#endif
 		}
 
-		// Disable during first game session (tutorial)
-		this.enabled = (UsersManager.currentUser.gamesPlayed > 0);
+		// Disable during FTUX
+		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN);
 
 		// Disable too if mission is not active
 		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;

@@ -21,7 +21,8 @@ public class CollectibleEgg : Collectible {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public static readonly string TAG = "Egg";
+	public const string TAG = "Egg";
+	public const string FIRST_EGG_NAME = "PF_CollectibleEggFirstRun";
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//

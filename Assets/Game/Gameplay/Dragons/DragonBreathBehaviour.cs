@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections;
 
 public class DragonBreathBehaviour : MonoBehaviour {
+	//-----------------------------------------------
+	// Constants
+	//-----------------------------------------------
+	private const float INITIAL_FURY_PERCENTAGE = 0.8f;
 
 	//-----------------------------------------------
 	// Attributes
@@ -128,7 +132,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_currentFury = 0;
 
 		if (!UsersManager.currentUser.furyUsed) {
-			m_currentFury = m_furyMax * 0.5f;
+			m_currentFury = m_furyMax * INITIAL_FURY_PERCENTAGE;
 		}
 
 		// Get the level

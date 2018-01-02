@@ -135,6 +135,11 @@ public class MenuSceneController : SceneController {
 		// Make sure loading screen is hidden
 		LoadingScreen.Toggle(false, false);
 
+		// Track FTUX funnel
+		if(UsersManager.currentUser.gamesPlayed == 1) {		// Exactly after the very first run
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06a_load_done);
+		}
+
 		// Start loading pet pill's on the background!
 		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
 		StartCoroutine(petsScreen.InstantiatePillsAsync());
