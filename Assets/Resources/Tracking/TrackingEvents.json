@@ -296,7 +296,8 @@
 				{"country": {"Status": "OK"}},
 				{"connectionType": {"Status": "OK"}},
 				{"userTimezone": {"Status": "OK"}},
-				{"storeInstalled": {"Status": "OK"}}				
+				{"storeInstalled": {"Status": "OK"}},
+				{"deviceProfile": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -1021,7 +1022,10 @@
         "fireRush": {
             "Type": "INT:4",
             "Values": []
-        }
-        
+        },
+		    "deviceProfile": {
+            "Type": "STRING:15",
+            "Values": []
+        }        
     }
 }
