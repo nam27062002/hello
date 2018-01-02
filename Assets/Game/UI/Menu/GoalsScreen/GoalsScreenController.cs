@@ -106,7 +106,7 @@ public class GoalsScreenController : MonoBehaviour {
 			//		 Luckily for us Unity provides us with the right tools to rebuild it
 			//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
 			HorizontalOrVerticalLayoutGroup layout = m_eventActiveGroup.transform.GetComponentInParent<HorizontalOrVerticalLayoutGroup>();
-			LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
+			if(layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
 
 			// Event Timer - only if active
 			if(validEvent) {

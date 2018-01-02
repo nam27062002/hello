@@ -325,7 +325,7 @@ public class GenTexTool : EditorWindow {
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
-        DestroyObject(currentTexGen);
+//        DestroyObject(currentTexGen);
         currentTexGen = null;
         m_instance = null;
     }
