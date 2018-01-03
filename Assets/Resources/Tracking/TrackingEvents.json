@@ -298,7 +298,8 @@
 				{"connectionType": {"Status": "OK"}},
 				{"userTimezone": {"Status": "OK"}},
 				{"storeInstalled": {"Status": "OK"}},
-				{"isHacker": {"Status": "OK"}}
+				{"isHacker": {"Status": "OK"}},
+				{"deviceProfile": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -1035,7 +1036,10 @@
 		"isHacker": {
             "Type": "INT:4",
             "Values": []
+        },
+        "deviceProfile": {
+        "Type": "STRING:15",
+        "Values": []
         }
-        
     }
 }
