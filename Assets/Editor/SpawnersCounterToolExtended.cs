@@ -31,7 +31,7 @@ class SpawnerCounterToolExtended : EditorWindow
     {
         GUILayout.Label("Scene selection", EditorStyles.boldLabel);
 
-        //Let the user select the scene in which the seatch should be perfomed
+        //Let the user select the scene in which the search should be performed
         GUI.enabled = false;
         GUI.enabled = true;
         //Button add current Scene
@@ -99,9 +99,12 @@ class SpawnerCounterToolExtended : EditorWindow
         for (int i = 0; i < totalObjects; i++)
         {
 			if ((initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkEye") || (initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkFrog") || (initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkMagicBottle"))
-				finalArray[i+1] = "PF_BadJunkBone;" + initalArray[i].m_quantity.center + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
+				finalArray[i+1] = "Junk/PF_BadJunkBone;" + (((decimal)(initalArray[i].m_quantity.min + initalArray[i].m_quantity.max)/2)) + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
+			else if ((initalArray[i].m_entityPrefabList[0].name == "Surface/PF_RatSmall") || (initalArray[i].m_entityPrefabList[0].name == "Surface/PF_RatSmall_Static") || (initalArray[i].m_entityPrefabList[0].name == "Surface/PF_RatSmall_Wall"))
+				finalArray[i+1] = "Surface/PF_Rat;" + (((decimal)(initalArray[i].m_quantity.min + initalArray[i].m_quantity.max)/2)) + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
 			else
-				finalArray[i+1] = initalArray[i].m_entityPrefabList[0].name + ";" + initalArray[i].m_quantity.center + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
+				finalArray[i+1] = initalArray[i].m_entityPrefabList[0].name + ";" + (((decimal)(initalArray[i].m_quantity.min + initalArray[i].m_quantity.max)/2)) + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
+			finalArray[i+1] = finalArray[i+1].Replace(".",",");
         }
         return (finalArray);
     }
