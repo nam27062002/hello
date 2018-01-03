@@ -98,7 +98,10 @@ class SpawnerCounterToolExtended : EditorWindow
 		finalArray[0] = "spawner_sku;entity_spawned (AVG);respawn_time;activating_chance;xp;total_xp;agressive;min_entities;max_entities;hasBonus";
         for (int i = 0; i < totalObjects; i++)
         {
-			finalArray[i+1] = initalArray[i].m_entityPrefabList[0].name + ";" + initalArray[i].m_quantity.center + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
+			if ((initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkEye") || (initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkFrog") || (initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkMagicBottle"))
+				finalArray[i+1] = "PF_BadJunkBone;" + initalArray[i].m_quantity.center + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
+			else
+				finalArray[i+1] = initalArray[i].m_entityPrefabList[0].name + ";" + initalArray[i].m_quantity.center + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
         }
         return (finalArray);
     }
