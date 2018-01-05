@@ -187,8 +187,7 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     // LOGIN																  //
     //------------------------------------------------------------------------//
-    public virtual void Auth(ServerCallback callback) {}    
-    public virtual void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {}
+    public virtual void Auth(ServerCallback callback) {}        
 	public virtual void LogOut() {}
     public virtual bool IsLoggedIn() { return false; }    
 
