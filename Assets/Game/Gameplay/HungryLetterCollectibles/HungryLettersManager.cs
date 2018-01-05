@@ -1,7 +1,6 @@
 ﻿#define AWARD_AS_SOON_AS_COLLECTED
 
 using FGOL;
-using FGOL.Events;
 using System.Collections.Generic;
 using UnityEngine;
 
