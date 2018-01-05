@@ -64,9 +64,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Reset();
 
-        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
-        //SocialFacade.Instance.Init();
-        GameServicesFacade.Instance.Init();        
+        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);                
 
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
