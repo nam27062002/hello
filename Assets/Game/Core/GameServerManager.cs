@@ -149,10 +149,8 @@ public class GameServerManager
 	//------------------------------------------------------------------------//
 	// GENERIC SERVER MANAGEMENT											  //
 	//------------------------------------------------------------------------//
-    protected virtual void ExtendedConfigure() {}
-    public virtual void Init(GeoLocation.Location location) {}
+    protected virtual void ExtendedConfigure() {}    
 	public virtual void Ping(ServerCallback callback) {}
-	public virtual void SetServerLocation(GeoLocation.Location location) {}
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
 
 	//------------------------------------------------------------------------//
