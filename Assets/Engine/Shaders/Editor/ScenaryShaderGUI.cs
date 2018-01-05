@@ -61,6 +61,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         readonly public static string enableFogText = "Enable Fog";
 
+        readonly public static string additiveBlendingText = "Additive blending";
         readonly public static string automaticBlendingText = "Automatic blending";
         readonly public static string overlayColorText = "Vertex Color Tint";
 
@@ -126,6 +127,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 /// Toggle Material Properties
 /// </summary>
     MaterialProperty mp_EnableBlendTexture;
+    MaterialProperty mp_EnableAdditiveBlend;
     MaterialProperty mp_EnableAutomaticBlend;
 
     MaterialProperty mp_EnableSpecular;
@@ -202,6 +204,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         mp_EnableBlendTexture = FindProperty("_EnableBlendTexture", props);
         mp_EnableAutomaticBlend = FindProperty("_EnableAutomaticBlend", props);
+        mp_EnableAdditiveBlend = FindProperty("_EnableAdditiveBlend", props);
 
         mp_EnableSpecular = FindProperty("_EnableSpecular", props);
         mp_EnableNormalMap = FindProperty("_EnableNormalMap", props);
@@ -334,6 +337,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
         {
             materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
+            materialEditor.ShaderProperty(mp_EnableAdditiveBlend, Styles.additiveBlendingText);
             materialEditor.ShaderProperty(mp_EnableAutomaticBlend, Styles.automaticBlendingText);
         }
 

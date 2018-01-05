@@ -35,6 +35,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //		_StencilMask("Stencil Mask", int) = 10
 
 		[Toggle(BLEND_TEXTURE)] _EnableBlendTexture("Enable Blend Texture", Float) = 0
+		[Toggle(ADDITIVE_BLEND)] _EnableAdditiveBlend("Enable Additive Blend", Float) = 0
 		[Toggle(CUSTOM_VERTEXCOLOR)] _EnableAutomaticBlend("Automatic Y blend", Float) = 0
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
@@ -85,6 +86,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma fragment frag
 //				#pragma multi_compile_fwdbase
 				#pragma multi_compile __ BLEND_TEXTURE
+				#pragma multi_compile __ ADDITIVE_BLEND
 				#pragma multi_compile __ CUSTOM_VERTEXCOLOR
 				#pragma multi_compile __ SPECULAR
 				#pragma multi_compile __ NORMALMAP

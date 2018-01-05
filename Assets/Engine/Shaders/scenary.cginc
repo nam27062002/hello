@@ -189,9 +189,14 @@ fixed4 frag (v2f i) : SV_Target
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
+#ifdef ADDITIVE_BLEND
+	col += col2 * (1.0 - i.color.a);
+#else
 	float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
-//					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
 	col = lerp( col2, col, l);
+#endif
+
+
 #endif	
 
 #if defined (VERTEXCOLOR_OVERLAY)
