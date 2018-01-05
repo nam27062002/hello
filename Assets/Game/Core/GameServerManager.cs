@@ -129,20 +129,21 @@ public class GameServerManager
 	/// <summary>
 	/// 
 	/// </summary>
-	public void CheckConnection(ServerCallback callback)
+	public void CheckConnection(Action<Error> callback)
 	{
-		if (Application.internetReachability != NetworkReachability.NotReachable)
-		{
-			if (callback != null)
-			{
-				callback(null, null);
-			}
-		}
-		else
-		{
-			Debug.Log("HSXServer (CheckConnection) :: InternetReachability NotReachable");
-			callback(new FGOL.Server.ClientConnectionError("InternetReachability NotReachable", FGOL.Server.ErrorCodes.ClientConnectionError), null);
-		}
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            Debug.Log("GameServerManager (CheckConnection) :: InternetReachability NotReachable");
+            callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
+        }
+        else
+        {
+            GameServerManager.SharedInstance.Ping(
+                (Error _error, GameServerManager.ServerResponse _response) => {
+                    callback(_error);
+                }
+            );           
+        }        
 	}
 
 	//------------------------------------------------------------------------//

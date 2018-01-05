@@ -143,7 +143,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     State = EState.CheckingConnection;
 
                     // Check if there's connection
-                    Authenticator.Instance.CheckConnection(delegate (Error connectionError)
+                    GameServerManager.SharedInstance.CheckConnection(delegate (Error connectionError)
                     {
                         if (connectionError == null)
                         {

@@ -7,16 +7,7 @@ using FGOL.Server;
 using System;
 using System.Collections.Generic;
 public class AuthenticatorCalety : Authenticator
-{
-	protected override void ExtendedCheckConnection(Action<Error> callback)
-    {
-		GameServerManager.SharedInstance.Ping(
-			(Error _error, GameServerManager.ServerResponse _response) => { 
-				callback(_error); 
-			}
-		);
-    }
-
+{	
     public override void Authenticate(string fgolID, User.LoginCredentials credentials, User.LoginType network, Action<Error, AuthResult> callback)
     {
         Dictionary<string, string> parameters = new Dictionary<string, string>();

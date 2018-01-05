@@ -76,20 +76,7 @@ public class Authenticator
         ExtendedInit();
     }
     protected virtual void ExtendedInit() { }
-
-    public void CheckConnection(Action<Error> callback)
-    {
-        if (Application.internetReachability != NetworkReachability.NotReachable)
-        {
-            ExtendedCheckConnection(callback);
-        }
-        else
-        {
-            Debug.Log("Authenticator (CheckConnection) :: InternetReachability NotReachable");
-            callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
-        }
-    }
-    protected virtual void ExtendedCheckConnection(Action<Error> callback) { }
+    
     public virtual void Authenticate(string fgolID, User.LoginCredentials credentials, User.LoginType network, Action<Error, AuthResult> callback) { }    
     public virtual void Logout(Action<Error> callback) { }
     public virtual void UpdateSaveVersion(bool preliminary, Action<Error, int> onUpdate) { }

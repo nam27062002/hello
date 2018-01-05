@@ -690,14 +690,16 @@ public class PersistenceCloudDriver
 	}
 
 	protected virtual void Syncer_ExtendedCheckConnection(Action<bool> onDone)
-    {        
-        GameServerManager.SharedInstance.CheckConnection((Error error, GameServerManager.ServerResponse response) => 
+    {
+        Action<Error> onCheckDone = delegate (Error error)
         {
             if (onDone != null)
             {
                 onDone(error == null);
             }
-        });
+        };
+
+        GameServerManager.SharedInstance.CheckConnection(onCheckDone);        
     }
 
 	protected virtual void Syncer_ExtendedLogInServer(Action<bool> onDone)
