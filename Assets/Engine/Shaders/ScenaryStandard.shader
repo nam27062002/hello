@@ -11,6 +11,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
+		_Panning("Panning", Vector) = (0,0,0,0)
+
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", Range(0.1, 5.0)) = 1.0
 		_SpecularPower("Specular Power", float) = 3

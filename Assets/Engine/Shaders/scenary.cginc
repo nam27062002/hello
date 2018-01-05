@@ -46,6 +46,8 @@ struct v2f {
 sampler2D _MainTex;
 float4 _MainTex_ST;
 
+float4 _Panning;
+
 #ifdef BLEND_TEXTURE	
 sampler2D _SecondTexture;
 float4 _SecondTexture_ST;
@@ -109,10 +111,10 @@ v2f vert (appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 
-	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-	
+	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Time.y * _Panning.xy);
+
 #ifdef BLEND_TEXTURE	
-	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
+	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture) + (_Time.y * _Panning.zw);
 #endif
 
 #ifdef CUSTOM_VERTEXCOLOR
