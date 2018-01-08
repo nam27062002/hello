@@ -131,7 +131,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 		}
 	}
 
-	public void Aim(float _blendFactor) { m_animator.SetFloat("aim", _blendFactor); }
+	public void Aim(float _blendFactor) { m_animator.SetFloat(GameConstants.Animator.AIM, _blendFactor); }
 
 
 }
