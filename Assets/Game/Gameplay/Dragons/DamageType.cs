@@ -8,7 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-
+using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -29,4 +29,17 @@ public enum DamageType {
 	DRAIN,
 	BIG_DAMAGE,
 	LIGHTNING
+}
+
+public class DamageTypeComparer : IEqualityComparer<DamageType>
+{
+	public bool Equals(DamageType b1, DamageType b2)
+    {
+        return b1 == b2;
+    }
+
+	public int GetHashCode(DamageType bx)
+    {
+        return (int)bx;
+    }
 }
