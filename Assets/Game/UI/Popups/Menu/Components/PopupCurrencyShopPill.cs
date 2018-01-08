@@ -230,7 +230,7 @@ public class PopupCurrencyShopPill : MonoBehaviour {
                         // Start real money transaction flow
                         m_loadingPopupController = PopupManager.PopupLoading_Open();
                         m_loadingPopupController.OnClosePostAnimation.AddListener(OnConnectionCheck);
-                        Authenticator.Instance.CheckConnection(delegate (FGOL.Server.Error connectionError)
+                        GameServerManager.SharedInstance.CheckConnection(delegate (FGOL.Server.Error connectionError)
                         {
                             m_checkConnectionError = connectionError;
                     #if UNITY_EDITOR

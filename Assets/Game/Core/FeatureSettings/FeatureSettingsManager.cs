@@ -143,7 +143,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     State = EState.CheckingConnection;
 
                     // Check if there's connection
-                    Authenticator.Instance.CheckConnection(delegate (Error connectionError)
+                    GameServerManager.SharedInstance.CheckConnection(delegate (Error connectionError)
                     {
                         if (connectionError == null)
                         {
@@ -1404,10 +1404,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     #region fps
 
     // Internal logic
-    private float m_activateTimer;
-    private int m_NumDeltaTimes;
-    float[] m_DeltaTimes;
-    int m_DeltaIndex;
+    private int m_NumFPSTimes;
+    float[] m_FPSTimes;
+    float m_FPSSum;
+    int m_FPSIndex;
 
     public float SystemFPS
     {
@@ -1426,19 +1426,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public void SetFPSAverageBuffer(int bufSize)
     {
-        m_NumDeltaTimes = bufSize;
+        m_NumFPSTimes = bufSize;
+        m_FPSSum = 0.0f;
         if (bufSize > 0)
         {
-            m_DeltaTimes = new float[m_NumDeltaTimes];
-            m_DeltaIndex = 0;
-            for (int i = 0; i < m_NumDeltaTimes; i++)
-                m_DeltaTimes[i] = Application.targetFrameRate;
+            m_FPSTimes = new float[m_NumFPSTimes];
+            m_FPSIndex = 0;
+            for (int i = 0; i < m_NumFPSTimes; i++)
+                m_FPSSum += (m_FPSTimes[i] = Application.targetFrameRate);
 
             AverageSystemFPS = SystemFPS = Application.targetFrameRate;
         }
         else
         {
-            m_DeltaTimes = null;
+            m_FPSTimes = null;
         }
     }
 
@@ -1448,18 +1449,22 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         float dTime = Time.unscaledDeltaTime;
         SystemFPS = (dTime > 0.0f) ? 1.0f / dTime : 0.0f;
 
-        if (m_NumDeltaTimes > 0)
+        if (m_NumFPSTimes > 0)
         {
-            m_DeltaTimes[m_DeltaIndex++] = SystemFPS;
-            if (m_DeltaIndex >= m_NumDeltaTimes)
-                m_DeltaIndex = 0;
-
+            float diff = SystemFPS - m_FPSTimes[m_FPSIndex];
+            m_FPSTimes[m_FPSIndex++] += diff;
+            if (m_FPSIndex >= m_NumFPSTimes)
+                m_FPSIndex = 0;
+/*
             AverageSystemFPS = 0;
-            for (int i = 0; i < m_NumDeltaTimes; i++)
+            for (int i = 0; i < m_NumFPSTimes; i++)
             {
-                AverageSystemFPS += m_DeltaTimes[i];
+                AverageSystemFPS += m_FPSTimes[i];
             }
-            AverageSystemFPS /= m_NumDeltaTimes;
+            AverageSystemFPS /= m_NumFPSTimes;
+*/
+            m_FPSSum += diff;
+            AverageSystemFPS = m_FPSSum / m_NumFPSTimes;
         }
         else
         {

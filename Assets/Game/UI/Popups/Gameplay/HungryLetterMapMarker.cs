@@ -1,8 +1,4 @@
-﻿using FGOL.Events;
-using System;
-using UnityEngine;
-
-public class HungryLetterMapMarker : MapMarker {
+﻿public class HungryLetterMapMarker : MapMarker {
 
 	private HungryLetter m_hungryLetter;
 

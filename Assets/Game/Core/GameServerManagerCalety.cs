@@ -2,7 +2,6 @@
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
-using FGOL.Authentication;
 using FGOL.Server;
 using SimpleJSON;
 using System;
@@ -307,35 +306,7 @@ public class GameServerManagerCalety : GameServerManager {
             }
         }
     }
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public override void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("LogInToServerThruPlatform");
-		
-		//if(!m_delegate.m_logged)
-		{
-			if(!m_delegate.m_waitingLoginResponse) {
-				// We need to logout before if already logged in
-				if(GameSessionManager.SharedInstance.IsLogged()) {
-					LogOut();
-				}
-
-				m_delegate.m_logged = false;
-				m_delegate.m_waitingLoginResponse = true;
-				m_delegate.IsNewAppVersionNeeded = false;
-
-				Dictionary<string, string> parameters = new Dictionary<string, string>();
-				parameters.Add("platformId", platformId);
-				parameters.Add("platformUserId", platformUserId);
-				parameters.Add("platformToken", platformToken);
-				Commands_EnqueueCommand(ECommand.Login, parameters, callback);
-			}
-		}
-	}
-
+	
 	/// <summary>
 	/// 
 	/// </summary>
@@ -641,11 +612,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private void Commands_BeforeCommand(ECommand command, Dictionary<string, string> parameters, BeforeCommandComplete callback) {
         if (FeatureSettingsManager.IsDebugEnabled)        
-            Log("BeforeCommand " + command);        		
-
-		if(Authenticator.Instance.Token != null) {
-			parameters["deviceToken"] = Authenticator.Instance.Token.ToString();
-		}
+            Log("BeforeCommand " + command);        				
 
 		parameters["version"] = Globals.GetApplicationVersion();
 		parameters["platform"] = Globals.GetPlatform().ToString();
@@ -657,21 +624,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Commands_AfterCommand(Command command, Error error, ServerResponse result, int retries) {                       
-		//Try and recover from an auth error                    
-		if(error != null && error.GetType() == typeof(AuthenticationError) && retries < COMMANDS_MAX_AUTH_RETRIES && command.Cmd != ECommand.Login) {
-			//Invalidate the session in an attempt to force re-auth
-			if(Authenticator.Instance.User != null) {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("(AfterCommand) :: Invalidating session");
-
-				Authenticator.Instance.User.InvalidateSession();
-			}
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
-
-			Commands_PrepareToRunCommand(command, ++retries);
-		} else if(command.Callback != null) {
+		if(command.Callback != null) {
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("Commander Callback :: " + command);
 
@@ -693,8 +646,8 @@ public class GameServerManagerCalety : GameServerManager {
 
 		BeforeCommandComplete runCommand = delegate(Error beforeError) {
 			if(beforeError == null) {
-				Commands_RunCommand(command, delegate (Error error, ServerResponse result) {
-					Commands_AfterCommand(command, error, result, retries);                        
+				Commands_RunCommand(command, delegate (Error error, ServerResponse result) {                    
+                    Commands_AfterCommand(command, error, result, retries);                        
 				});
 			} else if(command.Callback != null) {
 				command.Callback(beforeError, null);
@@ -1052,9 +1005,7 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.Login: {
 					// [DGR] SERVER: Receive these parameters from server
 					response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
-					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
-					response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
-					//response["authState"] = Authenticator.AuthState.NewSocialLogin.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();					
 					if(responseJSON != null) {
 						string key = "upgradeAvailable";
 						response[key] = upgradeAvailable;

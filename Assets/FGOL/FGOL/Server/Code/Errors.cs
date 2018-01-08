@@ -132,15 +132,7 @@ namespace FGOL.Server
             : base(message != null ? message : "Timeout when connecting to server", code == ErrorCodes.Unset ? ErrorCodes.UnknownError : code)
         {
         }
-    }
-
-    public class AuthenticationError : Error
-    {
-        public AuthenticationError(string message = null, ErrorCodes code = ErrorCodes.Unset)
-            : base(message != null ? message : "Authentication error", code == ErrorCodes.Unset ? ErrorCodes.AuthError : code)
-        {
-        }
-    }
+    }   
     
     public class UserAuthError : Error
     {

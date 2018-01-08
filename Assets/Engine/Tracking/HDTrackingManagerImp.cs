@@ -1025,7 +1025,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamLanguage(e);
             Track_AddParamUserTimezone(e);
             Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
+
 			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
+            Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
+
             Track_SendEvent(e);            
         }        
     }    
@@ -1732,6 +1735,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB    = "deathInCurrentRunNb";
     private const string TRACK_PARAM_DEATH_TYPE                 = "deathType";
     private const string TRACK_PARAM_DELTA_XP                   = "deltaXp";
+    private const string TRACK_PARAM_DEVICE_PROFILE             = "deviceProfile";
     private const string TRACK_PARAM_DRAGON_PROGRESSION         = "dragonProgression";
     private const string TRACK_PARAM_DRAGON_SKIN                = "dragonSkin";
     private const string TRACK_PARAM_DURATION                   = "duration";

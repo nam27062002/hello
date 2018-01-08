@@ -1,8 +1,6 @@
-﻿using FGOL.Events;
-using System;
+﻿using System;
 using UnityEngine;
 using DG.Tweening;
-using System.Collections.Generic;
 
 public class HungryLettersPanel : MonoBehaviour
 {
