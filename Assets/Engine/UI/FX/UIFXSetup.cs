@@ -46,9 +46,9 @@ public class UIFXSetup : MonoBehaviour {
 	/// </summary>
 	public void Start() {
 		// Just make sure that the animator has the overriden parameters
-		animator.SetFloat("durationInverted", 1f/duration);
-		animator.SetFloat("delayInverted", 1f/delay);
-		animator.SetBool("loop", loop);
-		animator.SetBool("loopDelay", loopDelay);
+		animator.SetFloat( GameConstants.Animator.DURATION_INVERTED , 1f/duration);
+		animator.SetFloat( GameConstants.Animator.DELAY_INVERTED , 1f/delay);
+		animator.SetBool( GameConstants.Animator.LOOP , loop);
+		animator.SetBool( GameConstants.Animator.LOOP_DELAY , loopDelay);
 	}
 }

@@ -62,14 +62,14 @@ abstract public class TouchControls : MonoBehaviour {
 		}
 
         // Subscribe to external events
-        Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
-		Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, OnPause);
+        Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
+		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
     }
 	
     public virtual void OnDestroy() {
         // Unsubscribe from external events
-        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);        
-		Messenger.RemoveListener<bool>(GameEvents.GAME_PAUSED, OnPause);
+        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);        
+		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
     }
 
 	private void ResetTouchValues()
@@ -108,17 +108,11 @@ abstract public class TouchControls : MonoBehaviour {
 
 	protected void RefreshCurrentTouchPos()
 	{
-		m_currentTouchPos.Set(
-			GameInput.touchPosition[0].x,
-			GameInput.touchPosition[0].y,
-			0
-		);
+		m_currentTouchPos.x = GameInput.touchPosition[0].x;
+		m_currentTouchPos.y = GameInput.touchPosition[0].y;
 
-		m_currentTouch2Pos.Set(
-			GameInput.touchPosition[1].x,
-			GameInput.touchPosition[1].y,
-			0
-		);
+		m_currentTouch2Pos.x =  GameInput.touchPosition[1].x;
+		m_currentTouch2Pos.y =  GameInput.touchPosition[1].y;
 	}
 	
 	virtual public void SetRender(bool enable)

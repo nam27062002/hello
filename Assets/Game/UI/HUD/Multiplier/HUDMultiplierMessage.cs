@@ -44,7 +44,7 @@ public class HUDMultiplierMessage : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.AddListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 	
 	/// <summary>
@@ -52,7 +52,7 @@ public class HUDMultiplierMessage : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.RemoveListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -69,6 +69,6 @@ public class HUDMultiplierMessage : MonoBehaviour {
 		// Select a random message from the multiplier definition
 		string message = _newMultiplier.feedbackMessages.GetRandomValue<string>();
 		m_text.text = message;
-		m_anim.SetTrigger("start");
+		m_anim.SetTrigger( GameConstants.Animator.START );
 	}
 }

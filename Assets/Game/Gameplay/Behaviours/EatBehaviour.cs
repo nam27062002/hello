@@ -711,7 +711,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				// release prey
 				// Escaped Event
 				if ( m_isPlayer )
-					Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
+					Messenger.Broadcast<Transform>(MessengerEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
 				EndHold();
 			}	
 		}
@@ -1004,7 +1004,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 								tier = entity.grabFromTier;
 							if ( entity.canBeLatchedOn && entity.latchFromTier < tier )
 								tier = entity.latchFromTier;
-							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, tier, entity.sku);
+							Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, tier, entity.sku);
 						}
 					}
 				}

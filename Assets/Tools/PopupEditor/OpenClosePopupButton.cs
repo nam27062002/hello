@@ -54,14 +54,14 @@ namespace PopupEditor {
 		/// Component has been enabled.
 		/// </summary>
 		private void OnEnable() {
-			Messenger.AddListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
+			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
 		}
 
 		/// <summary>
 		/// Component has been disabled.
 		/// </summary>
 		private void OnDisable() {
-			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
+			Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
 		}
 
 		/// <summary>

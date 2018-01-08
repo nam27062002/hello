@@ -41,7 +41,7 @@ public abstract class PopupPauseBase : MonoBehaviour {
 		m_popup.OnClosePostAnimation.AddListener(OnClosePostAnimation);
 
 		// This popup won't be destroyed during the whole game, but we want to destroy it upon game ending
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnd);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnd);
 	}
 
 	/// <summary>
@@ -53,7 +53,7 @@ public abstract class PopupPauseBase : MonoBehaviour {
 		m_popup.OnClosePostAnimation.RemoveListener(OnClosePostAnimation);
 
 		// Unsubscribe to external events
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnd);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnd);
 	}
 
 	//------------------------------------------------------------------------//

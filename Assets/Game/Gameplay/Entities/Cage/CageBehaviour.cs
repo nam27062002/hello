@@ -128,7 +128,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 								}
 							} else {
 								// Message : You need boost!
-								Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
+								Messenger.Broadcast(MessengerEvents.BREAK_OBJECT_NEED_TURBO);
 							}
 
 							if ( playCollideSound && !string.IsNullOrEmpty( m_onCollideSound))
@@ -139,7 +139,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 						Break();
 					}
 				} else {
-					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, "");
+					Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, "");
 				}
 			}
 			else if (collision.transform.CompareTag("Pet")) {

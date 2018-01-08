@@ -46,8 +46,8 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Never during first run!
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) return false;
+		// Never during FTUX
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_MISSIONS_AT_RUN) return false;
 
 		// Display if we have at least one mission with its objective completed
 		return (m_completedMissions > 0);

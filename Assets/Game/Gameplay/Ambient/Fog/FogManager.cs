@@ -63,9 +63,9 @@ public class FogManager : MonoBehaviour
 		/// </summary>
 		public void FogSetup()
 		{
-			Shader.SetGlobalFloat("_FogStart", m_fogStart);
-			Shader.SetGlobalFloat("_FogEnd", m_fogEnd);
-			Shader.SetGlobalTexture("_FogTexture", texture);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_fogStart);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_fogEnd);
+			Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, texture);
 		}
 	}
 
@@ -116,8 +116,9 @@ public class FogManager : MonoBehaviour
 
 	void Awake()
 	{
-		if (Application.isPlaying)
+		if (Application.isPlaying) {
 			InstanceManager.fogManager = this;
+		}
 
 		m_texture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
 		m_texture.filterMode = FilterMode.Bilinear;
@@ -143,9 +144,6 @@ public class FogManager : MonoBehaviour
 		CheckTextureAvailability( m_defaultAreaFog );
 
 		m_active = true;//Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
-		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
 
 		m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer( DebugSettings.FOG_BLEND_TYPE, 0);
 		OnModeChanged();
@@ -156,13 +154,21 @@ public class FogManager : MonoBehaviour
 		}
 	}
 
+	void Start() {
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+	}
 
 	void OnDestroy()
 	{
-		InstanceManager.fogManager = null;
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
-		Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChangedString);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		if (Application.isPlaying) {
+			InstanceManager.fogManager = null;
+
+			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+			Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
+			Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		}
 	}
 
 	void Debug_OnChanged( string _key, bool value)
@@ -310,9 +316,9 @@ public class FogManager : MonoBehaviour
 		{
 			m_forceUpdate = false;
 			m_texture.Apply(false);
-			Shader.SetGlobalFloat("_FogStart", m_start);
-			Shader.SetGlobalFloat("_FogEnd", m_end);
-			Shader.SetGlobalTexture("_FogTexture", m_texture);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_start);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_end);
+			Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, m_texture);
 		}
 	}
 
@@ -366,9 +372,9 @@ public class FogManager : MonoBehaviour
 			if ( m_updateValues || m_forceUpdate)
 			{
 				m_forceUpdate = false;
-				Shader.SetGlobalFloat("_FogStart", m_start);
-				Shader.SetGlobalFloat("_FogEnd", m_end);
-				m_fogBlendMaterial.SetFloat("_LerpValue" , m_blitLerpValue);
+				Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_start);
+				Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_end);
+				m_fogBlendMaterial.SetFloat( GameConstants.Material.LERP_VALUE , m_blitLerpValue);
 				if (m_updateBlitOriginTexture)
 				{
 					Graphics.Blit(m_blitDestination, m_blitOrigin);
@@ -472,7 +478,7 @@ public class FogManager : MonoBehaviour
 			}break;
 			case FogBlendMode.BLIT:
 			{
-				Shader.SetGlobalTexture("_FogTexture", m_blitDestination);
+				Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE , m_blitDestination);
 			}break;
 		}
 		m_lastBlendMode = m_fogBlendMode;

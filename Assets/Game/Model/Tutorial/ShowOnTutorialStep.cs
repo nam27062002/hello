@@ -35,6 +35,7 @@ public class ShowOnTutorialStep : MonoBehaviour {
 
 	[Comment("Won't be activated until all target steps are completed")]
 	[SerializeField] private TutorialStep[] m_targetSteps;
+	[SerializeField] private int m_targetRuns = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -44,7 +45,7 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<TutorialStep, bool>(GameEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
+		Messenger.AddListener<TutorialStep, bool>(MessengerEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
 
 		// Apply initial visibility
 		Apply();
@@ -55,19 +56,20 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Subscribe to external events
-		Messenger.RemoveListener<TutorialStep, bool>(GameEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
+		Messenger.RemoveListener<TutorialStep, bool>(MessengerEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
 	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Check current tutorial state and apply visibility.
+	/// Check whether required conditions are met or not.
 	/// </summary>
-	private void Apply() {
+	/// <returns>Whether all the conditions to show the object are met or not.</returns>
+	private bool Check() {
 		// Skip if current user profile is not ready
 		if(UsersManager.currentUser == null) {
-			return;
+			return true;
 		}
 
 		// Check whether all target states are completed
@@ -80,8 +82,21 @@ public class ShowOnTutorialStep : MonoBehaviour {
 			}
 		}
 
+		// Check required number of runs
+		toggle &= (UsersManager.currentUser.gamesPlayed >= m_targetRuns);
+
 		// Reverse mode?
 		if(m_reverseMode) toggle = !toggle;
+
+		return toggle;
+	}
+
+	/// <summary>
+	/// Check current tutorial state and apply visibility.
+	/// </summary>
+	private void Apply() {
+		// Toggle on or off?
+		bool toggle = Check();
 
 		// All steps completed! Apply to object based on mode
 		switch(m_mode) {

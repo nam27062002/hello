@@ -4,7 +4,7 @@
 // Created by David Germade
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
-//#define FREQFORMULA
+#define FREQFORMULA
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -39,6 +39,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #else
         Device_Model = SystemInfo.deviceModel;
 #endif
+
+//        Device_Model = SystemInfo.deviceModel;    //Allows same behaviour as device in UNITY_EDITOR 
+
 
         Server_Reset();
 
@@ -101,6 +104,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
 
         IsFogOnDemandEnabled = !IsDebugEnabled;
+
+        //Starts fps count system
+        StartFPS();
     }
 
     protected override void OnDestroy()
@@ -137,7 +143,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     State = EState.CheckingConnection;
 
                     // Check if there's connection
-                    Authenticator.Instance.CheckConnection(delegate (Error connectionError)
+                    GameServerManager.SharedInstance.CheckConnection(delegate (Error connectionError)
                     {
                         if (connectionError == null)
                         {
@@ -179,7 +185,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     Server_ResetUploadQualitySettings();
                 }
             }            
-        }     
+        }
+
+        //Update fps count system
+        UpdateFPS();
+
     }
 
     public bool IsReady()
@@ -436,18 +446,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             }
         }
 
-        float shaderMultiplier = 1.0f;
-        if (SystemInfo.graphicsShaderLevel == 20)
-        {
-            shaderMultiplier = 0.0f;
-        }
 
 #if FREQFORMULA
-        finalDeviceRating = Device_CPUFreqRating;
-        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier, 0.0f, 1.0f);
+        finalDeviceRating = Mathf.Clamp(Device_CPUFreqRating, 0.0f, 1.0f);
+        m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2), 0.0f, 1.0f);
         m_deviceQualityManager.Device_UsingRatingFormula = true;
 #else
-        finalDeviceRating = ((Device_CPUCoresRating + Device_GfxMemoryRating) / 2) * shaderMultiplier;
+        finalDeviceRating = Mathf.Clamp(((Device_CPUCoresRating + Device_GfxMemoryRating) / 2), 0.0f, 1.0f);
         m_deviceQualityManager.Device_CalculatedRatingExt = Mathf.Clamp(Device_CPUFreqRating, 0.0f, 1.0f);
         m_deviceQualityManager.Device_UsingRatingFormula = false;
 #endif
@@ -457,7 +462,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log("Graphics memory size = " + graphicsMemorySize + " gpuMemQualityLevel = " + Device_GfxMemoryRating +
            "Num cores = " + processorCount + " cpuQualityRating = " + Device_CPUCoresRating +
            "CPU Freq = " + cpuFreq + " cpuFreqRating = " + Device_CPUFreqRating + 
-           "Shader multiplier = " + shaderMultiplier + 
            "Device rating = " + finalDeviceRating);       
 
         return finalDeviceRating;
@@ -1188,6 +1192,28 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     /// <summary>
+    /// When <c>true</c> performance tracking is enabled. When <c>false</c> no tracking stuff is done at all
+    /// </summary>
+    public bool IsPerformanceTrackingEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_PERFORMANCE_TRACKING);
+        }
+    }
+
+    /// <summary>
+    /// Delay in seconds between every track event
+    /// </summary>
+    public int PerformanceTrackingDelay
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_PERFORMANCE_TRACKING_DELAY);
+        }
+    }
+
+    /// <summary>
     /// When <c>true</c> events that couldn't be sent over the network are stored in the device storage so they can be sent when network is working again
     /// </summary>
     public bool IsTrackingOfflineCachedEnabled
@@ -1374,4 +1400,79 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
     }
     #endregion
+
+    #region fps
+
+    // Internal logic
+    private int m_NumFPSTimes;
+    float[] m_FPSTimes;
+    float m_FPSSum;
+    int m_FPSIndex;
+
+    public float SystemFPS
+    {
+        get; private set;
+    }
+    public float AverageSystemFPS
+    {
+        get; private set;
+    }
+
+    private void StartFPS()
+    {
+        // FPS Initialization
+        SetFPSAverageBuffer(20);    //Default average buffer
+    }
+
+    public void SetFPSAverageBuffer(int bufSize)
+    {
+        m_NumFPSTimes = bufSize;
+        m_FPSSum = 0.0f;
+        if (bufSize > 0)
+        {
+            m_FPSTimes = new float[m_NumFPSTimes];
+            m_FPSIndex = 0;
+            for (int i = 0; i < m_NumFPSTimes; i++)
+                m_FPSSum += (m_FPSTimes[i] = Application.targetFrameRate);
+
+            AverageSystemFPS = SystemFPS = Application.targetFrameRate;
+        }
+        else
+        {
+            m_FPSTimes = null;
+        }
+    }
+
+    // Update FPS
+    private void UpdateFPS()
+    {
+        float dTime = Time.unscaledDeltaTime;
+        SystemFPS = (dTime > 0.0f) ? 1.0f / dTime : 0.0f;
+
+        if (m_NumFPSTimes > 0)
+        {
+            float diff = SystemFPS - m_FPSTimes[m_FPSIndex];
+            m_FPSTimes[m_FPSIndex++] += diff;
+            if (m_FPSIndex >= m_NumFPSTimes)
+                m_FPSIndex = 0;
+/*
+            AverageSystemFPS = 0;
+            for (int i = 0; i < m_NumFPSTimes; i++)
+            {
+                AverageSystemFPS += m_FPSTimes[i];
+            }
+            AverageSystemFPS /= m_NumFPSTimes;
+*/
+            m_FPSSum += diff;
+            AverageSystemFPS = m_FPSSum / m_NumFPSTimes;
+        }
+        else
+        {
+            AverageSystemFPS = SystemFPS;
+        }
+
+
+    }
+
+    #endregion //fps
 }

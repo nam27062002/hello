@@ -97,7 +97,7 @@ public class OpenEggTest : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
+		Messenger.AddListener<EggView, int>(MessengerEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -108,7 +108,7 @@ public class OpenEggTest : MonoBehaviour {
 		Clear();
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<EggView, int>(GameEvents.EGG_TAP, OnEggTap);
+		Messenger.RemoveListener<EggView, int>(MessengerEvents.EGG_TAP, OnEggTap);
 	}
 
 	/// <summary>
@@ -140,7 +140,7 @@ public class OpenEggTest : MonoBehaviour {
 			m_eggView = null;
 
 			// Unsubscribe from external events.
-			Messenger.RemoveListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
+			Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
 		}
 	}
 
@@ -182,7 +182,7 @@ public class OpenEggTest : MonoBehaviour {
 		Clear();
 
 		// Be attentive to the egg collect event, which is managed by the egg view
-		Messenger.AddListener<Egg>(GameEvents.EGG_OPENED, OnEggCollected);
+		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
 
 		// Create a new instance of the egg prefab
 		m_eggView = EggView.CreateFromData(_eggReward.egg);
@@ -229,8 +229,8 @@ public class OpenEggTest : MonoBehaviour {
 		// If the FX has an animator assigned, setup and trigger animation!
 		Animator anim = _fx.GetComponent<Animator>();
 		if(anim != null) {
-			anim.SetInteger("rarity", (int)m_currentReward.rarity);
-			anim.SetTrigger("start");
+			anim.SetInteger( GameConstants.Animator.RARITY , (int)m_currentReward.rarity);
+			anim.SetTrigger( GameConstants.Animator.START);
 		}
 	}
 

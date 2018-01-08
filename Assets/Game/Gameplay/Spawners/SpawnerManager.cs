@@ -91,11 +91,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     /// </summary>
     private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, DisableManager);
-		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
+		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -103,11 +103,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, DisableManager);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}        
 
 	/// <summary>
@@ -631,14 +631,14 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 #region debug
     private void Debug_Awake() {        
-        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
     }
 
     private void Debug_OnDestroy() {        
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id, bool _newValue) {        

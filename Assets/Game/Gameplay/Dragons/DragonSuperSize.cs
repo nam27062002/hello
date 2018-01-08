@@ -38,14 +38,14 @@ public class DragonSuperSize : MonoBehaviour {
 		m_modeDuration = def.GetAsFloat("modeDuration", 10);
 		m_timer = 0;
 
-		Messenger.AddListener(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
-		Messenger.AddListener(GameEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
+		Messenger.AddListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
+		Messenger.AddListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
-		Messenger.RemoveListener(GameEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
+		Messenger.RemoveListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
+		Messenger.RemoveListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
 	}
 	
 	// Update is called once per frame
@@ -59,7 +59,7 @@ public class DragonSuperSize : MonoBehaviour {
 				if ( m_timer <= 0 ) 
 				{
 					EndSuperSize();
-					Messenger.Broadcast<bool>( GameEvents.SUPER_SIZE_TOGGLE, false);
+					Messenger.Broadcast<bool>( MessengerEvents.SUPER_SIZE_TOGGLE, false);
 				}
 			}
 		}
@@ -106,7 +106,7 @@ public class DragonSuperSize : MonoBehaviour {
 	void OnLettersCollected()
 	{
 		StartSuperSize();
-		Messenger.Broadcast<bool>( GameEvents.SUPER_SIZE_TOGGLE, true);
+		Messenger.Broadcast<bool>( MessengerEvents.SUPER_SIZE_TOGGLE, true);
 	}
 
 	void OnSuperSize( bool _value )

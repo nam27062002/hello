@@ -67,7 +67,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	/// <summary>
@@ -75,7 +75,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	/// <summary>

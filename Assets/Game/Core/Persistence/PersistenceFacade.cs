@@ -297,14 +297,14 @@ public class PersistenceFacade
     {
         if (!Popups_IsInited)
         {			
-            Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
             Popups_IsInited = true;
         }
     }
 
     private static void Popups_Destroy()
     {		
-        Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
     }
 	
     private static PopupController Popups_LoadingPopup { get; set; }

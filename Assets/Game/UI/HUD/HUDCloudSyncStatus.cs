@@ -54,14 +54,14 @@ public class HUDCloudSyncStatus : MonoBehaviour
         View_UpdateCloudSaveIsEnabled(true);
         
         IsPopupOpen = false;
-        Messenger.AddListener<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);        
+        Messenger.AddListener<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);        
 
         OnSyncChange(PersistenceFacade.instance.Sync_IsSynced);
     }
 
     void OnDestroy()
     {
-        Messenger.RemoveListener<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);
+        Messenger.RemoveListener<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);
     }
 
     void Update()

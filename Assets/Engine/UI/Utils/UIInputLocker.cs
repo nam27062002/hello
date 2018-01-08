@@ -53,7 +53,7 @@ public class UIInputLocker : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<bool>(EngineEvents.UI_LOCK_INPUT, OnLockInputEvent);
+		Messenger.AddListener<bool>(MessengerEvents.UI_LOCK_INPUT, OnLockInputEvent);
 	}
 
 	/// <summary>
@@ -61,7 +61,7 @@ public class UIInputLocker : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool>(EngineEvents.UI_LOCK_INPUT, OnLockInputEvent);
+		Messenger.RemoveListener<bool>(MessengerEvents.UI_LOCK_INPUT, OnLockInputEvent);
 
 		// Disable locker object as well (if any)
 		if(m_locker != null) {
