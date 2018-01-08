@@ -83,8 +83,8 @@ public class FrameColoring : MonoBehaviour
 		}
 		else
 		{
-	    	m_material.SetColor("_Color", m_color);
-			m_material.SetFloat("_Intensity", m_value);
+	    	m_material.SetColor( GameConstants.Material.COLOR , m_color);
+			m_material.SetFloat( GameConstants.Material.INTENSITY , m_value);
 			Graphics.Blit (source, destination, m_material);
 		}
     }

@@ -563,7 +563,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	void SetColorAdd(Color _c) {
 		_c.a = 0;
 		for (int i = 0; i < m_materialList.Count; ++i)	
-			m_materialList[i].SetColor("_Tint", _c);
+			m_materialList[i].SetColor( GameConstants.Material.TINT , _c);
 	}
 
     bool IsEntityGolden()

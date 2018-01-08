@@ -88,8 +88,8 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_healthBonus = 0;
 	private float m_energyBonus = 0;
 
-	public Dictionary<DamageType, int> m_shield = new Dictionary<DamageType, int>();
-	public Dictionary<DamageType, float> m_shieldTimers = new Dictionary<DamageType, float>();
+	public Dictionary<DamageType, int> m_shield;
+	public Dictionary<DamageType, float> m_shieldTimers;
 	public const float m_shieldsDuration = 1.0f;
 
 	private int m_freeRevives = 0;
@@ -192,6 +192,10 @@ public class DragonPlayer : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake () {
+		DamageTypeComparer comparer = new DamageTypeComparer();
+		m_shield = new Dictionary<DamageType, int>(comparer);
+		m_shieldTimers = new Dictionary<DamageType, float>(comparer);
+
 		// Get data from dragon manager
 		m_data = DragonManager.GetDragonData(m_sku);
 		DebugUtils.Assert(m_data != null, "Attempting to instantiate a dragon player with an ID not defined in the manager.");

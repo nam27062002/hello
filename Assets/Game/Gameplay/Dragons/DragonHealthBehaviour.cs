@@ -41,8 +41,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	// Power ups modifiers
 	private float m_drainReduceModifier = 0;
-	private Dictionary<DamageType, float> m_damageReductions = new Dictionary<DamageType, float>();
-	private Dictionary<string, float> m_damageOriginReductions = new Dictionary<string, float>();
+	private Dictionary<DamageType, float> m_damageReductions;
+	private Dictionary<string, float> m_damageOriginReductions;
 
 	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
 	private float m_globalEatingHpBoost = 0;
@@ -55,6 +55,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	void Awake()
 	{
+		DamageTypeComparer comparer = new DamageTypeComparer();
+		m_damageReductions = new Dictionary<DamageType, float>(comparer);
+
+		m_damageOriginReductions = new Dictionary<string, float>();
+
 		m_dragon = GetComponent<DragonPlayer>();
 	}
 
