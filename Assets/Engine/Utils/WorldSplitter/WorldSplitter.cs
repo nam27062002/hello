@@ -27,7 +27,7 @@ public class WorldSplitter : MonoBehaviour
         }
     }
 
-    public static void Manager_SetLevelsLOD(FeatureSettings.ELevel3Values level)
+    public static void Manager_SetLevelsLOD(FeatureSettings.ELevel4Values level)
     {
         if (Manager_WorldSplitters != null)
         {
@@ -66,11 +66,12 @@ public class WorldSplitter : MonoBehaviour
         }
     }   
 
-    private void SetLevelsLOD(FeatureSettings.ELevel3Values level)
+    private void SetLevelsLOD(FeatureSettings.ELevel4Values level)
     {
-        bool active = (level == FeatureSettings.ELevel3Values.low && Low) ||
-                      (level == FeatureSettings.ELevel3Values.mid && Medium) ||
-                      (level == FeatureSettings.ELevel3Values.high && High);
+        // very_low is ignored
+        bool active = (level == FeatureSettings.ELevel4Values.low && Low) ||
+                      (level == FeatureSettings.ELevel4Values.mid && Medium) ||
+                      (level == FeatureSettings.ELevel4Values.high && High);
 
         gameObject.SetActive(active);
     }

@@ -1281,11 +1281,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
-    public FeatureSettings.ELevel3Values LevelsLOD
+    public FeatureSettings.ELevel4Values LevelsLOD
     {
         get
         {
-            return Device_CurrentFeatureSettings.GetValueAsLevel3(FeatureSettings.KEY_LEVELS_LOD);
+            return Device_CurrentFeatureSettings.GetValueAsLevel4(FeatureSettings.KEY_LEVELS_LOD);
         }
     }
 

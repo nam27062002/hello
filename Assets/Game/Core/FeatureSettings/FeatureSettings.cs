@@ -109,6 +109,7 @@ public class FeatureSettings
             ValueTypeDatas.Add(EValueType.String, null);            
             ValueTypeDatas.Add(EValueType.Level2, GetValueTypeValuesAsString<ELevel2Values>());            
             ValueTypeDatas.Add(EValueType.Level3, GetValueTypeValuesAsString<ELevel3Values>());
+            ValueTypeDatas.Add(EValueType.Level4, GetValueTypeValuesAsString<ELevel4Values>());
             ValueTypeDatas.Add(EValueType.Level5, GetValueTypeValuesAsString<ELevel5Values>());            
             ValueTypeDatas.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());            
         }
@@ -166,7 +167,7 @@ public class FeatureSettings
 
             // levelsLOD
             key = KEY_LEVELS_LOD;
-            data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
+            data = new DataInt(key, EValueType.Level4, (int)ELevel4Values.low);            
             Datas.Add(key, data);
 
             // bossZoomOut
@@ -273,7 +274,8 @@ public class FeatureSettings
         Float,
         String,
         Level2,
-        Level3,
+        Level3,        
+        Level4,
         Level5,
         QualityLevel        
     };
@@ -301,6 +303,14 @@ public class FeatureSettings
         low,
         mid,
         high
+    };
+
+    public enum ELevel4Values
+    {
+        very_low,
+        low,
+        mid,
+        high        
     };
 
     public enum ELevel5Values
@@ -818,6 +828,11 @@ public class FeatureSettings
     public ELevel3Values GetValueAsLevel3(string key)
     {
         return (Values.ContainsKey(key)) ? (ELevel3Values)Values[key] : (ELevel3Values)(Datas[key].DefaultValueAsInt);
+    }
+
+    public ELevel4Values GetValueAsLevel4(string key)
+    {
+        return (Values.ContainsKey(key)) ? (ELevel4Values)Values[key] : (ELevel4Values)(Datas[key].DefaultValueAsInt);
     }
 
     public ELevel5Values GetValueAsLevel5(string key)
