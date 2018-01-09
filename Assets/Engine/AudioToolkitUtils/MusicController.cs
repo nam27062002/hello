@@ -41,7 +41,7 @@ public class MusicController : MonoBehaviour
         Music_StopCurrent();
         Music_CurrentKey = null;
         Music_LastKey = null;
-        Ambience_KeyToPlay = null;        
+        Ambience_ToPlay.Reset();
         Music_OffsetAccummulated = 0f;
         Music_Lengths = null;
         secondsToSwitchMusic = 0;
@@ -189,13 +189,15 @@ public class MusicController : MonoBehaviour
 		float musicFadeOut = m_musicFadeOut;
 		if (!m_useFireRushMusic)
 		{
-	        if (Ambience_KeyToPlay != null)
+			if (Ambience_ToPlay.IsValid())
 	        {
-	            keyToPlay = Ambience_KeyToPlay;
+	            keyToPlay = Ambience_ToPlay.music_key;
+				m_waitingMusicToFinish = Ambience_ToPlay.wait_to_finish;
 	        }           
         }
         else
         {
+			m_waitingMusicToFinish = false;
         	switch( m_fireRushType )
         	{
         		case DragonBreathBehaviour.Type.Standard: keyToPlay = m_fireRushMusic;break;
@@ -214,6 +216,11 @@ public class MusicController : MonoBehaviour
 				{
 					Music_CurrentKey = keyToPlay;
 					Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
+					if ( m_waitingMusicToFinish )
+					{
+						Ambience_Stop( Ambience_ToPlay.music_key, Ambience_ToPlay.game_object);
+						Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
+					}
 					AudioController.UnpauseMusic( musicFadeOut );
                     secondsToSwitchMusic = minSecondsToSwitchMusic;
                 }
@@ -227,11 +234,21 @@ public class MusicController : MonoBehaviour
 			{
 				Music_CurrentKey = keyToPlay;
 				Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
+				if ( m_waitingMusicToFinish )
+				{
+					Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
+				}
                 secondsToSwitchMusic = minSecondsToSwitchMusic;
             }
            
         }
     }
+
+	void OnMusicCompleted( AudioObject ao )
+	{
+		m_waitingMusicToFinish = false;
+	}
+
 
 	void OnFuryRushToggled( bool fire, DragonBreathBehaviour.Type fireType)
 	{
@@ -251,14 +268,32 @@ public class MusicController : MonoBehaviour
     {
     	public GameObject game_object;
     	public string music_key;
-    	public MusicPlaying(string key, GameObject go )
+    	public bool wait_to_finish;
+
+    	public MusicPlaying(string key, GameObject go, bool wait )
     	{
     		music_key = key;
     		game_object = go;
+    		wait_to_finish = wait;
     	}
+
+    	public void Reset()
+    	{
+			music_key = "";
+    		game_object = null;
+    		wait_to_finish = false;
+    	}
+
+    	public bool IsValid()
+    	{
+    		return !string.IsNullOrEmpty(music_key);
+    	}
+
     }
     List<MusicPlaying> m_musicsPlaying;
-    private string Ambience_KeyToPlay { get; set; }
+	private MusicPlaying Ambience_ToPlay;
+
+    private bool m_waitingMusicToFinish = false;
 
     /// <summary>
     /// Plays the ambience music of sound effect corresponding to the key passed as a parameter.
@@ -277,11 +312,17 @@ public class MusicController : MonoBehaviour
             string categoryName = audioItem.category.Name;
             if (categoryName == AMBIENCE_CATEGORY_MUSIC)
             {
-            	// Register object
-				if (m_musicsPlaying == null)
-					m_musicsPlaying = new List<MusicPlaying>();
-				m_musicsPlaying.Add( new MusicPlaying( key, from ) );
-                Ambience_KeyToPlay = key;
+            	// Check if music has to play!!
+            	AudioItem item = AudioController.GetAudioItem(key);
+				double deltaT = AudioController.systemTime - item._lastPlayedTime;
+            	if ( item.Loop != AudioItem.LoopMode.DoNotLoop || deltaT >= item.MinTimeBetweenPlayCalls)
+            	{
+					// Register object
+					if (m_musicsPlaying == null)
+						m_musicsPlaying = new List<MusicPlaying>();
+					Ambience_ToPlay = new MusicPlaying( key, from, item.Loop == AudioItem.LoopMode.DoNotLoop );	
+					m_musicsPlaying.Add( Ambience_ToPlay );
+            	}
             }
             else if (categoryName == AMBIENCE_CATEGORY_SFX)
             {
@@ -319,13 +360,12 @@ public class MusicController : MonoBehaviour
                 }
 				if (m_musicsPlaying.Count > 0)
 				{
-					Ambience_KeyToPlay = m_musicsPlaying[ m_musicsPlaying.Count - 1 ].music_key;
+					Ambience_ToPlay = m_musicsPlaying[ m_musicsPlaying.Count - 1 ];
 				}
 				else
 				{
-					Ambience_KeyToPlay = null;
+					Ambience_ToPlay.Reset();
 				}
-				
             }
             else if (categoryName == AMBIENCE_CATEGORY_SFX)
             {
