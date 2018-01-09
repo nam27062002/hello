@@ -33,15 +33,15 @@ namespace AI {
 			m_collisionCheckPool = NextCollisionCheckID % CollisionCheckPools;
 			NextCollisionCheckID++;
 
-			m_lastImpulse = Vector3.zero;
-			m_seek = Vector3.zero;
+			m_lastImpulse = GameConstants.Vector3.zero;
+			m_seek = GameConstants.Vector3.zero;
 		}
 
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
 			m_collisionAvoidFactor = 0f;
-			m_collisionNormal = Vector3.up;
+			m_collisionNormal = GameConstants.Vector3.up;
 		}
 
 		public override void CustomUpdate() {
@@ -49,12 +49,12 @@ namespace AI {
 
 			// calculate impulse to reach our target
 			m_lastImpulse = m_impulse;
-			m_impulse = Vector3.zero;
+			m_impulse = GameConstants.Vector3.zero;
 
 			if (speed > 0.01f) {
-
+				
 				if (IsActionPressed(Action.Latching)) {
-					m_direction = m_targetRotation * Vector3.forward;
+					m_direction = m_targetRotation * GameConstants.Vector3.forward;
 				} else {
 					Vector3 v = m_target - m_machine.position;
 
@@ -69,9 +69,11 @@ namespace AI {
 						}
 						m_seek = v;
 					}
+					#if UNITY_EDITOR
 					Debug.DrawLine(m_machine.position, m_machine.position + m_seek, Color.green);
+					#endif
 
-					Vector3 flee = Vector3.zero;
+					Vector3 flee = GameConstants.Vector3.zero;
 					if (IsActionPressed(Action.Avoid)) {
 						Transform enemy = m_machine.enemy;
 						if (enemy != null) {
@@ -88,7 +90,9 @@ namespace AI {
 							flee = v * speed;
 							flee.z = 0;
 
+							#if UNITY_EDITOR
 							Debug.DrawLine(m_machine.position, m_machine.position + flee, Color.red);
+							#endif
 						}
 
 						if (m_machine.GetSignal(Signals.Type.Critical)) {
@@ -137,18 +141,19 @@ namespace AI {
 					m_impulse += m_externalImpulse;
 
 					if (!m_directionForced && !m_stunned) {// behaviours are overriding the actual direction of this machine
-						if (m_impulse != Vector3.zero) {
+						if (m_impulse != GameConstants.Vector3.zero) {
 							m_direction = m_impulse.normalized;
 						}
 					}
-
+					#if UNITY_EDITOR
 					Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
+					#endif
 				}
 			} else {
-				m_seek = Vector3.zero;
+				m_seek = GameConstants.Vector3.zero;
 			}
 
-			m_externalImpulse = Vector3.zero;
+			m_externalImpulse = GameConstants.Vector3.zero;
 		}
 
 		private void AvoidCollisions() {
@@ -167,7 +172,7 @@ namespace AI {
 
 				if (isInsideWater) {
 					m_collisionAvoidFactor = 15f;
-					m_collisionNormal = Vector3.up;
+					m_collisionNormal = GameConstants.Vector3.up;
 					m_collisionNormal.z = 0f;
 				} else if (Physics.Linecast(m_machine.position, m_machine.position + (m_direction * distanceCheck), out ground, layerMask)) {
 					// 2- calc a big force to move away from the ground	
@@ -183,7 +188,9 @@ namespace AI {
 				m_impulse /= m_collisionAvoidFactor;
 				m_impulse += (m_collisionNormal * m_collisionAvoidFactor);
 
+				#if UNITY_EDITOR
 				Debug.DrawLine(m_machine.position, m_machine.position + (m_collisionNormal * m_collisionAvoidFactor), Color.gray);
+				#endif
 			}
 		}
 	}
