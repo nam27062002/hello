@@ -105,7 +105,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	public void CustomUpdate() { }
 
 	public void Attack(bool _attack) { 
-		m_animator.SetBool("attack", _attack); 
+		m_animator.SetBool( GameConstants.Animator.ATTACK , _attack); 
 	}
 
 	void OnAttackAudioCompleted(AudioObject ao)
@@ -131,7 +131,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 		}
 	}
 
-	public void Aim(float _blendFactor) { m_animator.SetFloat("aim", _blendFactor); }
+	public void Aim(float _blendFactor) { m_animator.SetFloat(GameConstants.Animator.AIM, _blendFactor); }
 
 
 }

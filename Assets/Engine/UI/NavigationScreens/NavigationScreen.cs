@@ -81,8 +81,8 @@ public class NavigationScreen : MonoBehaviour {
 		// If we have an animator, launch "in" animation
 		if(m_unityAnimator != null && useAnim) {
 			if(_animType == AnimType.AUTO) _animType = AnimType.NEUTRAL;	// [AOC] "AUTO" can only be used in a navigation screen system
-			m_unityAnimator.SetInteger("direction", (int)_animType);
-			m_unityAnimator.SetTrigger("in");
+			m_unityAnimator.SetInteger( GameConstants.Animator.DIR , (int)_animType);
+			m_unityAnimator.SetTrigger( GameConstants.Animator.IN );
 		}
 
 		// If the screen has a ShowHideAnimator, use it
@@ -114,8 +114,8 @@ public class NavigationScreen : MonoBehaviour {
 		// If we have an animator, launch "out" animation - it should disable the screen when finishing
 		if(m_unityAnimator != null && useAnim) {
 			if(_animType == AnimType.AUTO) _animType = AnimType.NEUTRAL;	// [AOC] "AUTO" can only be used in a navigation screen system
-			m_unityAnimator.SetInteger("direction", (int)_animType);
-			m_unityAnimator.SetTrigger("out");
+			m_unityAnimator.SetInteger( GameConstants.Animator.DIR , (int)_animType);
+			m_unityAnimator.SetTrigger( GameConstants.Animator.OUT );
 			applied = true;
 		} 
 

@@ -28,7 +28,7 @@ public class TrackerMapUsage : TrackerBase {
 	/// Default constructor.
 	/// </summary>
 	public TrackerMapUsage() {
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 	}
 
 	/// <summary>
@@ -43,7 +43,7 @@ public class TrackerMapUsage : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 
 		// Call parent
 		base.Clear();

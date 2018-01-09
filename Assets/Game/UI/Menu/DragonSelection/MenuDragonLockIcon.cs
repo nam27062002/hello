@@ -61,7 +61,7 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 		} 
 
 		// Trigger bounce animation
-		m_animator.SetTrigger("bounce");
+		m_animator.SetTrigger( GameConstants.Animator.BOUNCE );
 
 		// Trigger sound
 		AudioController.Play("hd_padlock");

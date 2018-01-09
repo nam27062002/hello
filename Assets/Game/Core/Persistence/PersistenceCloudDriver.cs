@@ -55,7 +55,7 @@ public class PersistenceCloudDriver
                     LatestSyncTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
                 }
 
-                Messenger.Broadcast<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
+                Messenger.Broadcast<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
             }
         }
     }
@@ -690,14 +690,16 @@ public class PersistenceCloudDriver
 	}
 
 	protected virtual void Syncer_ExtendedCheckConnection(Action<bool> onDone)
-    {        
-        GameServerManager.SharedInstance.CheckConnection((Error error, GameServerManager.ServerResponse response) => 
+    {
+        Action<Error> onCheckDone = delegate (Error error)
         {
             if (onDone != null)
             {
                 onDone(error == null);
             }
-        });
+        };
+
+        GameServerManager.SharedInstance.CheckConnection(onCheckDone);        
     }
 
 	protected virtual void Syncer_ExtendedLogInServer(Action<bool> onDone)

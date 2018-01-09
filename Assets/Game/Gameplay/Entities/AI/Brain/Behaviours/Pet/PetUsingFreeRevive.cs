@@ -16,7 +16,7 @@ namespace AI {
 			{
 				
 				// InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
-				Messenger.Broadcast(GameEvents.PLAYER_PET_PRE_FREE_REVIVE);
+				Messenger.Broadcast(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE);
 
 				// Make pet lose aura!
 				Transform t = m_machine.transform.FindTransformRecursive("PS_ReviveAura");

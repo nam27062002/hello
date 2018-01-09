@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using FGOL.Events;
 
 public class MissionAreaTrigger : MonoBehaviour
 {

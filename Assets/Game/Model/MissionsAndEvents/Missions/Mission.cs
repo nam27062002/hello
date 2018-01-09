@@ -176,10 +176,10 @@ public class Mission {
 
 		// Broadcast messages
 		switch(oldState) {
-			case State.LOCKED: Messenger.Broadcast<Mission>(GameEvents.MISSION_UNLOCKED, this);	break;
-			case State.COOLDOWN: Messenger.Broadcast<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, this);	break;
+			case State.LOCKED: Messenger.Broadcast<Mission>(MessengerEvents.MISSION_UNLOCKED, this);	break;
+			case State.COOLDOWN: Messenger.Broadcast<Mission>(MessengerEvents.MISSION_COOLDOWN_FINISHED, this);	break;
 		}
-		Messenger.Broadcast<Mission, State, State>(GameEvents.MISSION_STATE_CHANGED, this, oldState, _newState);
+		Messenger.Broadcast<Mission, State, State>(MessengerEvents.MISSION_STATE_CHANGED, this, oldState, _newState);
 	}
 
 	/// <summary>
@@ -342,6 +342,6 @@ public class Mission {
 	private void OnObjectiveComplete() {
 		// Dispatch global game event
 		DebugUtils.Log("<color=green>MISSION COMPLETED!</color>\n" + m_def.sku + " | " + m_objective.currentValue + "/" + m_objective.targetValue + " | " + m_difficulty);
-		Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, this);
+		Messenger.Broadcast<Mission>(MessengerEvents.MISSION_COMPLETED, this);
 	}
 }

@@ -46,8 +46,8 @@ public class GameCameraDebug : MonoBehaviour {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             // Subscribe to external events
-            Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
-            Messenger.AddListener<string, float>(GameEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
+			Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
+			Messenger.AddListener<string, float>(MessengerEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
         }
 
         Shader.SetGlobalTexture("_MatCap", m_matCapTex);
@@ -67,8 +67,8 @@ public class GameCameraDebug : MonoBehaviour {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             // Unsubscribe from external events.
-            Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
-            Messenger.RemoveListener<string, float>(GameEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
+			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnDebugSettingChangedShowCollisions);
+			Messenger.RemoveListener<string, float>(MessengerEvents.CP_FLOAT_CHANGED, OnDebugSettingChangedResolutionFactor);
         }
     }
 

@@ -72,7 +72,7 @@ public class WorldFeedbackController : MonoBehaviour {
 			if(m_delayTimer <= 0f) {
 				// Timer finished, move to initial position and start animation
 				ApplyPosOffset();
-				m_anim.SetTrigger("start");
+				m_anim.SetTrigger( GameConstants.Animator.START );
 
 				// Show on top
 				transform.SetAsLastSibling();

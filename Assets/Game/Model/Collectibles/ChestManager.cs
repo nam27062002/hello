@@ -154,7 +154,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
         PersistenceFacade.instance.Save_Request(false);
 
         // Notify game
-        Messenger.Broadcast(GameEvents.CHESTS_PROCESSED);
+        Messenger.Broadcast(MessengerEvents.CHESTS_PROCESSED);
 	}
 
 	/// <summary>
@@ -201,7 +201,7 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 		resetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(RESET_PERIOD);
 
 		// Notify game
-		Messenger.Broadcast(GameEvents.CHESTS_RESET);
+		Messenger.Broadcast(MessengerEvents.CHESTS_RESET);
 
         // Save persistence
         PersistenceFacade.instance.Save_Request(false);
