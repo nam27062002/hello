@@ -91,8 +91,8 @@ public class MenuDragonPaginator : TabSystem {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_TEASED, OnDragonTeased);
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_TEASED, OnDragonTeased);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 
 		// Make sure selected tab is the right one
 		Initialize();
@@ -103,8 +103,8 @@ public class MenuDragonPaginator : TabSystem {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_TEASED, OnDragonTeased);
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_TEASED, OnDragonTeased);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	//------------------------------------------------------------------------//

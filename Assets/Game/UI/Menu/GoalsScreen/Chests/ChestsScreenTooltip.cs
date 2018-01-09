@@ -94,16 +94,16 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.CHESTS_RESET, Refresh);
-		Messenger.AddListener(GameEvents.CHESTS_PROCESSED, Refresh);
+		Messenger.AddListener(MessengerEvents.CHESTS_RESET, Refresh);
+		Messenger.AddListener(MessengerEvents.CHESTS_PROCESSED, Refresh);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		Messenger.RemoveListener(GameEvents.CHESTS_RESET, Refresh);
-		Messenger.RemoveListener(GameEvents.CHESTS_PROCESSED, Refresh);
+		Messenger.RemoveListener(MessengerEvents.CHESTS_RESET, Refresh);
+		Messenger.RemoveListener(MessengerEvents.CHESTS_PROCESSED, Refresh);
 	}
 
 	/// <summary>

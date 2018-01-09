@@ -46,15 +46,15 @@ public class HUDFading : MonoBehaviour {
 
         m_oldMaterial = m_originalCurtain = m_blackImage.material;
 
-		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
-		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnAreaStart);
+		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaStart);
 	}
 	
 	// Update is called once per frame
 	void OnDestroy () 
 	{
-		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnAreaStart);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaStart);
 	}
 
 	void Update()

@@ -33,17 +33,17 @@ namespace AI {
 						// Get the reward to be given from the entity
 						Reward reward = m_entity.GetOnKillReward(false);
 						// Dispatch global event
-						Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_EATEN, m_transform, reward);
+						Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
 					}
 
 					return true;
 				} else {
 					// Message : You need boost!
-					Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
+					Messenger.Broadcast(MessengerEvents.BREAK_OBJECT_NEED_TURBO);
 				}
 			} else {
 				// player can't destroy the armor
-				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, m_entity.sku);
+				Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, m_minTierToBreak, m_entity.sku);
 			}
 
 			return false;

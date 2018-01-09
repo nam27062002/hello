@@ -132,14 +132,14 @@ public class GameHUD : MonoBehaviour {
 
 #region debug
     private void Debug_Awake() {
-        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
     }
 
     private void Debug_OnDestroy() {
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id, bool _newValue) {        

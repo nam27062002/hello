@@ -76,7 +76,7 @@ public class HUDCountdown : MonoBehaviour {
 						m_text.text = StringUtils.FormatNumber(value);
 					}
 
-					m_anim.SetTrigger("start");
+					m_anim.SetTrigger( GameConstants.Animator.START );
 					m_animFinished = false;
 					m_lastValue = value;
 				}

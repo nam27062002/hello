@@ -65,7 +65,7 @@ public class ProfilerToolController : MonoBehaviour
     private void OnEnable()
     {
         // Subscribe to external events
-        Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class ProfilerToolController : MonoBehaviour
     private void OnDisable()
     {
         // Unsubscribe from external events
-        Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
     }
 
     void Update()

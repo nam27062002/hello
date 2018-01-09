@@ -110,8 +110,8 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnEnable() {
 			// Subscribe to external events
-			Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
 		
 		/// <summary>
@@ -119,11 +119,11 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnDisable() {
 			// Simulate end game
-			Messenger.Broadcast(GameEvents.GAME_ENDED);
+			Messenger.Broadcast(MessengerEvents.GAME_ENDED);
 
 			// Unsubscribe from external events
-			Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-			Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
 
 		/// <summary>
@@ -148,7 +148,7 @@ namespace LevelEditor {
 				}
 
 				// Notify listeners
-				Messenger.Broadcast(GameEvents.GAME_UPDATED);
+				Messenger.Broadcast(MessengerEvents.GAME_UPDATED);
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace LevelEditor {
 			InitLevelMap();
 
 			// Simulate level loaded
-			Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+			Messenger.Broadcast(MessengerEvents.GAME_LEVEL_LOADED);
 
 			// Run spawner manager
 			SpawnerManager.instance.EnableSpawners();
@@ -221,7 +221,7 @@ namespace LevelEditor {
 			m_started = true;
 
 			// Notify the game
-			Messenger.Broadcast(GameEvents.GAME_STARTED);
+			Messenger.Broadcast(MessengerEvents.GAME_STARTED);
 		}
 
 		//------------------------------------------------------------------//

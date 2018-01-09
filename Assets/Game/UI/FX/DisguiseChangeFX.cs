@@ -40,7 +40,7 @@ public class DisguiseChangeFX : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
 	}
 
 	/// <summary>
@@ -48,7 +48,7 @@ public class DisguiseChangeFX : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
 	}
 
 	//------------------------------------------------------------------------//

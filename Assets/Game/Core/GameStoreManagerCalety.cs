@@ -20,19 +20,19 @@ public class GameStoreManagerCalety : GameStoreManager
 			{
 				PopupCurrencyShopPill.ApplyShopPack( def );	
 			}
-			Messenger.Broadcast<string, string, JSONNode>(EngineEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
+			Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
 		}
 
 		public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
 			Debug.Log("onPurchaseCancelled");
-			Messenger.Broadcast<string>(EngineEvents.PURCHASE_CANCELLED, sku);
+			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, sku);
 		}
 
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
 			Debug.Log("onPurchaseFailed");
-			Messenger.Broadcast<string>(EngineEvents.PURCHASE_FAILED, sku);
+			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, sku);
 		}
 
 		public override void onStoreIsReady() 

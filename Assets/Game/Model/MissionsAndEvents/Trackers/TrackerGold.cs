@@ -25,7 +25,7 @@ public class TrackerGold : TrackerBase {
 	/// </summary>
 	public TrackerGold() {
 		// Subscribe to external events
-		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 	}
 
 	/// <summary>
@@ -43,7 +43,7 @@ public class TrackerGold : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 
 		// Call parent
 		base.Clear();

@@ -135,6 +135,11 @@ public class MenuSceneController : SceneController {
 		// Make sure loading screen is hidden
 		LoadingScreen.Toggle(false, false);
 
+		// Track FTUX funnel
+		if(UsersManager.currentUser.gamesPlayed == 1) {		// Exactly after the very first run
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06a_load_done);
+		}
+
 		// Start loading pet pill's on the background!
 		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
 		StartCoroutine(petsScreen.InstantiatePillsAsync());
@@ -207,8 +212,8 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -216,8 +221,8 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------//
@@ -297,7 +302,7 @@ public class MenuSceneController : SceneController {
             PersistenceFacade.instance.Save_Request();
 
             // Broadcast message
-            Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_CONFIRMED, _sku);
+            Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_CONFIRMED, _sku);
 		}
 	}
 

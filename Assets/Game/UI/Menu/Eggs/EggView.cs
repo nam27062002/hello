@@ -156,7 +156,7 @@ public class EggView : MonoBehaviour {
 		m_animator = GetComponentInChildren<Animator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Messenger.AddListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
@@ -180,7 +180,7 @@ public class EggView : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe to external events
-		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
 	}
 
 	/// <summary>
@@ -212,17 +212,17 @@ public class EggView : MonoBehaviour {
 		m_readyBehaviour.enabled = (state == Egg.State.READY);
 
 		// Set animator's parameters
-		m_animator.SetInteger("egg_state", (int)state);
+		m_animator.SetInteger( GameConstants.Animator.EGG_STATE , (int)state);
 
 		// Collect steps
 		int step = Mathf.Clamp(m_openBehaviour.tapCount, 0, OpenEggBehaviour.TAPS_TO_OPEN);
-		m_animator.SetInteger("collect_step", step);
+		m_animator.SetInteger( GameConstants.Animator.COLLECT_STEP , step);
 
 		// Rarity
 		if(m_eggData != null && m_eggData.rewardData != null) {
-			m_animator.SetInteger("rarity", (int)m_eggData.rewardData.rarity);
+			m_animator.SetInteger( GameConstants.Animator.RARITY ,(int)m_eggData.rewardData.rarity);
 		} else {
-			m_animator.SetInteger("rarity", (int)Metagame.Reward.Rarity.COMMON);
+			m_animator.SetInteger( GameConstants.Animator.RARITY ,(int)Metagame.Reward.Rarity.COMMON);
 		}
 
 		// Stuff depending on egg state
@@ -274,7 +274,7 @@ public class EggView : MonoBehaviour {
 
 		// Animation intensity - reset to default if state is different than collected
 		if(state != Egg.State.COLLECTED) {
-			m_animator.SetFloat("intensity", 1f);
+			m_animator.SetFloat( GameConstants.Animator.INTENSITY , 1f);
 		}
 	}
 
@@ -299,7 +299,7 @@ public class EggView : MonoBehaviour {
 
 		// Set intensity in all registered materials
 		for(int i = 0; i < m_incubatingFXMaterials.Count; ++i) {
-			m_incubatingFXMaterials[i].SetFloat("_OpacitySaturation", _intensity);
+			m_incubatingFXMaterials[i].SetFloat( GameConstants.Material.OPACITY_SATURATION , _intensity);
 		}
 	}
 
@@ -323,12 +323,12 @@ public class EggView : MonoBehaviour {
 				// Increase intensity over time
 				// Super-easy to do with DOTween library!
 				DOVirtual.Float(1f, UIConstants.openEggSpinIntensity, UIConstants.openEggExplosionDuration, 
-					(float _value) => { m_animator.SetFloat("intensity", _value); }
+					(float _value) => { m_animator.SetFloat( GameConstants.Animator.INTENSITY, _value); }
 				)
 				.SetEase(UIConstants.openEggSpinEase)
 				.SetDelay(0f)
 				.OnComplete(
-					() => { m_animator.SetFloat("intensity", 1f); }
+						() => { m_animator.SetFloat( GameConstants.Animator.INTENSITY, 1f); }
 				);
 			}
 		}

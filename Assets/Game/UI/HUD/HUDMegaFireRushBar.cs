@@ -75,13 +75,13 @@ public class HUDMegaFireRushBar : MonoBehaviour {
 			}
 		}
 
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
 		m_state = State.Filling_Up;
 	}
 
 	void OnDestroy() {		
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	/// <summary>

@@ -55,7 +55,7 @@ public class PersistenceCloudDriver
                     LatestSyncTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
                 }
 
-                Messenger.Broadcast<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
+                Messenger.Broadcast<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
             }
         }
     }
@@ -121,7 +121,7 @@ public class PersistenceCloudDriver
 
     #region syncer
     private bool Syncer_IsSilent { get; set; }
-	private bool Syncer_IsAppInit { get; set; }
+	protected bool Syncer_IsAppInit { get; set; }
 	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult> Syncer_OnSyncDone { get; set; }
 
@@ -617,12 +617,16 @@ public class PersistenceCloudDriver
 
 		Action onDone = delegate() 
 		{
-			if (Syncer_OnSyncDone != null)
-			{
-				Syncer_OnSyncDone (result);
-			}
+            // We need to call Syncer_Reset() before calling onSyncDone because onSyncDone could call Sync() again which will set a new value to Syncer_OnSyncDone,
+            // will would be reseted if Syncer_Reset() was called after calling onSyncDone
+            // Syncer_OnSyncDone from being lost            
+            Action<PersistenceStates.ESyncResult> onSyncDone = Syncer_OnSyncDone;
+            Syncer_Reset();
 
-			Syncer_Reset ();				
+            if (onSyncDone != null)
+			{
+                onSyncDone(result);
+			}							
 		};
 
 		// If the sync is ok we need to process the new social state (reward for logging in)
@@ -686,14 +690,16 @@ public class PersistenceCloudDriver
 	}
 
 	protected virtual void Syncer_ExtendedCheckConnection(Action<bool> onDone)
-    {        
-        GameServerManager.SharedInstance.CheckConnection((Error error, GameServerManager.ServerResponse response) => 
+    {
+        Action<Error> onCheckDone = delegate (Error error)
         {
             if (onDone != null)
             {
                 onDone(error == null);
             }
-        });
+        };
+
+        GameServerManager.SharedInstance.CheckConnection(onCheckDone);        
     }
 
 	protected virtual void Syncer_ExtendedLogInServer(Action<bool> onDone)

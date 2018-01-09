@@ -103,8 +103,7 @@ public class PersistenceFacade
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
 
-			// If local persistence is corrupted then we need to offer the chance to override it with cloud persistence
-			// if the user has ever logged in the social network
+			// If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
 			if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
 			{				
 				bool logInSocialEver = !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId);
@@ -119,7 +118,10 @@ public class PersistenceFacade
 					LocalDriver.OverrideWithDefault(onResetDone);
 				};
 
-				Action onConnect = null;
+                Action onRetry = delegate ()
+                {
+                    Sync_FromLaunchApplication(onDone);
+                };			
 
 				if (logInSocialEver)
 				{
@@ -127,25 +129,29 @@ public class PersistenceFacade
 					{
 						if (result == PersistenceStates.ESyncResult.ErrorLogging)
 						{
-							Sync_FromLaunchApplication(onDone);
+                            // Error when accessing to cloud so a popup is prompted asking the user if she wants to try to connect to cloud again
+                            // or if she prefers to override local persistence with the default one
+                            Popups_OpenLoadLocalCorruptedNoAccessToCloudError(onReset, onRetry);                            
 						}
 						else
 						{
-                            Config.LocalDriver.IsLoadedInGame = true;
-                            Sync_OnDone(result, onDone);
+                            Action onSyncWithCloud = delegate ()
+                            {
+                                Config.LocalDriver.IsLoadedInGame = true;
+                                Sync_OnDone(result, onDone);
+                            };
+
+                            Popups_OpenLoadLocalCorruptedButCloudOkError(onSyncWithCloud);                           
 						}
 					};
 
-					onConnect = delegate()
-					{
-						Config.CloudDriver.Sync(false, true, onConnectDone);
-					};				
+                    Config.CloudDriver.Sync(false, true, onConnectDone);                    
 				}
-
-                // Lets the user know that local persistence is corrupted. User's options:
-                // 1)Reset local persistence to the default one
-                // 2)Override local persistence with cloud persistence
-                Popups_OpenLoadLocalCorruptedError(logInSocialEver, onReset, onConnect);				
+                else
+                {
+                    // Lets the user know that local persistence is corrupted and asks permission to reset it to the default one                    
+                    Popups_OpenLoadLocalCorruptedError(onReset);
+                }                
 			}
 			else
 			{
@@ -248,8 +254,7 @@ public class PersistenceFacade
         LocalDriver.TrackingPersistenceSystem = trackingSystem;
         if (trackingSystem != null)
         {
-            LocalData.Systems_RegisterSystem(trackingSystem);
-            LocalData.Systems_RegisterSystem(trackingSystem);            
+            LocalData.Systems_RegisterSystem(trackingSystem);                    
         }
 	}
 	#endregion
@@ -292,14 +297,14 @@ public class PersistenceFacade
     {
         if (!Popups_IsInited)
         {			
-            Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
             Popups_IsInited = true;
         }
     }
 
     private static void Popups_Destroy()
     {		
-        Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
     }
 	
     private static PopupController Popups_LoadingPopup { get; set; }
@@ -344,57 +349,54 @@ public class PersistenceFacade
             Popups_LoadingPopup = null;
         }
     }
-
-
-    ////
-    // PENDING
-    /// 1)Popups_OpenLoadLocalCorruptedError:
-    ///   En caso de que el usuario haya tenido cloud alguna vez pregunta: Local corrupted. Log in to override it with cloud or rset the local?, pero podrían ponerse 
-    ///   dos popups distintos. 
-    /// 
-    ///  Con un solo popup tids TO ADD:
-    ///   -Local corrupted. Log in to override with cloud? (Popups_OpenLoadLocalCorruptedError) ?
-    ///   -Log in to cloud (button)
-    ///   -Reset (button)
-    /// 
-    ///  Con un solo popup tids TO DELETE:
-    ///  -TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC   
-    /// 
-    // TO ADD:    
-    /// 
-    /// TO DELETE:
-    /// 
+    
 
     /// <summary>
     /// This popup is shown when the local save is corrupted
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/20%29Local+save+corrupted
-    /// </summary>
-    /// <param name="cloudEver">Whether or not the user has synced with server</param>    
-    public static void Popups_OpenLoadLocalCorruptedError(bool cloudEver, Action onReset, Action onOverride)
-	{        
-        string msg = (cloudEver) ? "Local corrupted. Log in to override with cloud or reset local?" : "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
+    /// </summary>     
+    private static void Popups_OpenLoadLocalCorruptedError(Action onReset)
+	{                
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
-        config.MessageTid = msg;
+        config.MessageTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
         config.IsButtonCloseVisible = false;
-        config.OnConfirm = onReset;        
+        config.OnConfirm = onReset;                
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;        
 
-        if (cloudEver)
-        {
-            config.ConfirmButtonTid = "Reset";
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-            config.OnCancel = onOverride;
-            config.CancelButtonTid = "Log in to cloud";
-        }
-        else
-        {
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        }
-
-        // Back button is disabled in order to make sure that the user is ware when making such an important decision
+        // Back button is disabled in order to make sure that the user is aware when making such an important decision
         config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
         PopupManager.PopupMessage_Open(config);        
 	}
+
+    private static void Popups_OpenLoadLocalCorruptedNoAccessToCloudError(Action onReset, Action onRetry)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC";
+        config.IsButtonCloseVisible = false;
+        config.OnConfirm = onRetry;
+        config.OnCancel = onReset;
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ConfirmButtonTid = "TID_GEN_RETRY";
+        config.CancelButtonTid = "TID_GEN_CONTINUE";
+
+        // Back button is disabled in order to make sure that the user is aware when making such an important decision
+        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    private static void Popups_OpenLoadLocalCorruptedButCloudOkError(Action onDone)
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_CLOUD_SAVE_DESC";
+        config.IsButtonCloseVisible = false;
+        config.OnConfirm = onDone;        
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;        
+        
+        PopupManager.PopupMessage_Open(config);        
+    }
 
 	/// <summary>
     /// This popup is shown when the access to the local save file is not authorized by the device
@@ -484,6 +486,7 @@ public class PersistenceFacade
         config.MessageParams = new string[] { rewardAmount + "" };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
+        config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);                
     }
 

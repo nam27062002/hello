@@ -380,7 +380,7 @@ public class ProbabilitySet {
 		for(int i = 0; i < m_elements.Count; i++) {
 			totalProb += m_elements[i].probability;
 		}
-		return MathUtils.IsBetween(totalProb, 1f - _errorMargin, 1f + _errorMargin);
+		return totalProb >= (1f - _errorMargin) && totalProb <= (1f + _errorMargin);
 	}
 
 	/// <summary>

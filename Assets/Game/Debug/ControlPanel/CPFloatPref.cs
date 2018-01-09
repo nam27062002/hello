@@ -68,7 +68,7 @@ public class CPFloatPref : CPPrefBase {
 	/// </summary>
 	public void OnValueChanged(float _value) {
 		Prefs.SetFloatPlayer(id, _value);
-		Messenger.Broadcast<string, float>(GameEvents.CP_FLOAT_CHANGED, id, _value);
-		Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
+		Messenger.Broadcast<string, float>(MessengerEvents.CP_FLOAT_CHANGED, id, _value);
+		Messenger.Broadcast<string>(MessengerEvents.CP_PREF_CHANGED, id);
 	}
 }

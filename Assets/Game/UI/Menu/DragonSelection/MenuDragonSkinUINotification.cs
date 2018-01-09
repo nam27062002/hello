@@ -51,7 +51,7 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 		UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.25f, false);
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>
@@ -59,7 +59,7 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	//------------------------------------------------------------------------//

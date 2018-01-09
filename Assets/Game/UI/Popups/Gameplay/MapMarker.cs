@@ -67,9 +67,9 @@ public class MapMarker : MonoBehaviour {
 		m_originalScale = GetMarkerTransform().localScale;
 
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
-		Messenger.AddListener<float>(GameEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.AddListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
 
 	/// <summary>
@@ -98,9 +98,9 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
-		Messenger.RemoveListener<float>(GameEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.RemoveListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
 
 	//------------------------------------------------------------------------//
