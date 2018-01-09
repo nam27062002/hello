@@ -53,8 +53,6 @@ GameObject:
   - component: {fileID: 33218943109291910}
   - component: {fileID: 23705979681918638}
   - component: {fileID: 114975035489365126}
-  - component: {fileID: 135432157061429448}
-  - component: {fileID: 114905315791410552}
   m_Layer: 25
   m_Name: Mine
   m_TagString: Untagged
@@ -75,6 +73,7 @@ GameObject:
   - component: {fileID: 114155644437042880}
   - component: {fileID: 114772094923774810}
   - component: {fileID: 54648308712829996}
+  - component: {fileID: 135318001129271590}
   m_Layer: 25
   m_Name: PF_MineMedium_Static
   m_TagString: Untagged
@@ -238,6 +237,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -279,6 +279,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -316,6 +317,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -355,6 +357,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -393,6 +396,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -503,31 +507,6 @@ MonoBehaviour:
   m_serializedJson: '[{"amplitude":0,"frequency":0,"dataType":"AI.Behaviour.MineData","editorFolded":false},{"isMine":true,"damage":150,"radius":0,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_MineMedium_Static
   m_updateMachinePos: 1
---- !u!114 &114905315791410552
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1495286303222746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ec28088696d843d1a86f4d065110df8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_receiver: {fileID: 1547624493115560}
-  m_onCollisionEnter: 0
-  m_onCollisionStay: 0
-  m_onCollisionExit: 0
-  m_onTriggerEnter: 1
-  m_onTriggerStay: 1
-  m_onTriggerExit: 1
-  m_onMouseDown: 0
-  m_onMouseDrag: 0
-  m_onMouseUp: 0
-  m_onMouseUpAsButton: 0
-  m_onMouseEnter: 0
-  m_onMouseExit: 0
-  m_onMouseOver: 0
 --- !u!114 &114975035489365126
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -542,12 +521,12 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 1.14
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!135 &135432157061429448
+--- !u!135 &135318001129271590
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1495286303222746}
+  m_GameObject: {fileID: 1547624493115560}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1

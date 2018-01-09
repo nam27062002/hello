@@ -1,12 +1,17 @@
-﻿using System;
+﻿
+//#define DETACH_VIEW_ON_DISABLE
+
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
+	
 
 	private static Material sm_goldenMaterial = null;
+	private static ulong sm_id = 0;
 
     public static float FREEZE_TIME = 1.0f;
 
@@ -105,6 +110,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	//-----------------------------------------------
 	protected Entity m_entity;
 	protected Animator m_animator;
+	protected bool m_isAnimatorAvailable;
 	protected float m_disableAnimatorTimer;
 
 	private Renderer[] m_renderers;
@@ -148,8 +154,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private float m_currentBlendY;
 
 	private bool[] m_specialAnimations;
+	private int m_animA_Hash;
+	private int m_animB_Hash;
+	private int m_animC_Hash;
 
 	protected PreyAnimationEvents m_animEvents;
+	public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
 	private static int ATTACK_HASH = Animator.StringToHash("Attack");
     // private const int ATTACK_HASH = Animator.StringToHash("Attack");
@@ -169,20 +179,47 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
 
+
+	private Transform m_transform;
+
+	private ulong m_id;
+	private Transform m_viewManagerTransform;
+	private Transform m_view;
+	// local backup
+	private Vector3 m_viewPosition;
+	private Quaternion m_viewRotation;
+	private Vector3 m_viewScale;
+	private bool m_applyRootMotion;
+	private AnimatorCullingMode m_animatorCullingMode;
+
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
     protected virtual void Awake() {
 		//----------------------------
+		m_id = sm_id;
+		sm_id++;
+		//----------------------------
 		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_Golden") as Material);
 		//---------------------------- 
 
 		m_entity = GetComponent<Entity>();
-		m_animator = transform.FindComponentRecursive<Animator>();
-		if (m_animator != null)
+		m_transform = transform;
+		m_view = m_transform.FindObjectRecursive("view").transform;
+		m_animator = m_view.GetComponent<Animator>();
+		if (m_animator != null) {
+			m_isAnimatorAvailable = true;
 			m_animator.logWarnings = false;
+			m_applyRootMotion = m_animator.applyRootMotion;
+			m_animatorCullingMode = m_animator.cullingMode;
+		} else {
+			m_isAnimatorAvailable = false;
+			m_applyRootMotion = false;
+			m_animatorCullingMode = AnimatorCullingMode.CullCompletely;
+		}
 
-		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
+		m_animEvents = m_transform.FindComponentRecursive<PreyAnimationEvents>();
 		if (m_animEvents != null) {
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
 			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
@@ -267,21 +304,56 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
+		m_animA_Hash = UnityEngine.Animator.StringToHash(m_animA);
+		m_animB_Hash = UnityEngine.Animator.StringToHash(m_animB);
+		m_animC_Hash = UnityEngine.Animator.StringToHash(m_animC);
 
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
         Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-        if (m_stunParticle == null)
-        {
+        if (m_stunParticle == null) {
         	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
         }
 		m_stunParticle.CreatePool();
 
+
+		// Backup view values
+		m_viewPosition = m_view.localPosition;
+		m_viewRotation = m_view.localRotation;
+		m_viewScale = m_view.localScale;
+
+		m_viewManagerTransform = ViewManager.instance.gameObject.transform;
+	
+		#if DETACH_VIEW_ON_DISABLE
+		SentViewToManager();
+		#endif
     }
 
+	void SentViewToManager() {
+		if (m_isAnimatorAvailable) {
+			m_animator.applyRootMotion = false;
+			m_animator.cullingMode = AnimatorCullingMode.CullCompletely;
+		}
+		m_view.SetParent(m_viewManagerTransform, false);
+		m_view.position = GameConstants.Vector3.one * (30000f + (100 * m_id));
+		m_view.localScale = GameConstants.Vector3.zero;
+	}
+
+	void GetViewFromManager() {
+		m_view.SetParent(m_transform);
+		m_view.localPosition = m_viewPosition;
+		m_view.localRotation = m_viewRotation;
+		m_view.localScale = m_viewScale;
+
+		if (m_isAnimatorAvailable) {
+			m_animator.applyRootMotion = m_applyRootMotion;
+			m_animator.cullingMode = m_animatorCullingMode;
+		}
+	}
+
 	void Start() {
-		if (m_animator != null) { 
+		if (m_isAnimatorAvailable) { 
 			StartEndMachineBehaviour[] behaviours = m_animator.GetBehaviours<StartEndMachineBehaviour>();
 			for( int i = 0; i<behaviours.Length; i++ ){
 				behaviours[i].onStart += onStartAnim;
@@ -292,7 +364,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	protected virtual void animEventsOnAttackStart() {
 		if (!string.IsNullOrEmpty(m_onAttackAudio)){
-			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, transform );
+			m_onAttackAudioAO = AudioController.Play( m_onAttackAudio, m_transform );
 			if (m_onAttackAudioAO != null )
 				m_onAttackAudioAO.completelyPlayedDelegate = OnAttackAudioCompleted;
 		}
@@ -311,7 +383,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	protected virtual void animEventsOnAttackDealDamage(){
 		if (!string.IsNullOrEmpty(m_onAttackDealDamageAudio)){
-			m_onAttackDealDamageAudioAO = AudioController.Play( m_onAttackDealDamageAudio, transform );
+			m_onAttackDealDamageAudioAO = AudioController.Play( m_onAttackDealDamageAudio, m_transform );
 		}
 	}
 
@@ -334,16 +406,27 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	//
 
 	public virtual void Spawn(ISpawner _spawner) {
+		#if DETACH_VIEW_ON_DISABLE
+		GetViewFromManager();
+		#endif
+
+		if (m_scared) 		{ AnimatorSetBool(GameConstants.Animator.SCARED, 	 false); 	m_scared 	 = false; }
+		if (m_panic) 		{ AnimatorSetBool(GameConstants.Animator.HOLDED, 	 false); 	m_panic 	 = false; }
+		if (m_upsideDown) 	{ AnimatorSetBool(GameConstants.Animator.UPSIDE_DOWN,false);	m_upsideDown = false; }
+		if (m_falling) 		{ AnimatorSetBool(GameConstants.Animator.FALLING, 	 false);	m_falling 	 = false; }
+		if (m_jumping) 		{ AnimatorSetBool(GameConstants.Animator.JUMP, 		 false);	m_jumping 	 = false; }
+		if (m_attack) 		{ AnimatorSetBool(GameConstants.Animator.ATTACK, 	 false);	m_attack 	 = false; }
+		if (m_swim) 		{ AnimatorSetBool(GameConstants.Animator.SWIM, 		 false);	m_swim 		 = false; }
+		if (m_inSpace) 		{ AnimatorSetBool(GameConstants.Animator.FLY_DOWN, 	 false);	m_inSpace 	 = false; }
+		if (m_moving) 		{ AnimatorSetBool(GameConstants.Animator.MOVE, 		 false);	m_moving 	 = false; }
+
+		if (m_specialAnimations[0]) { AnimatorSetBool(m_animA_Hash, false); m_specialAnimations[0] = false; }
+		if (m_specialAnimations[1]) { AnimatorSetBool(m_animB_Hash, false); m_specialAnimations[1] = false; }
+		if (m_specialAnimations[2]) { AnimatorSetBool(m_animC_Hash, false); m_specialAnimations[2] = false; }
+
+		AnimatorSetBool(GameConstants.Animator.EAT, false);
+
 		m_boost = false;
-		m_scared = false;
-		m_panic = false;
-		m_upsideDown = false;
-		m_falling = false;
-		m_jumping = false;
-		m_attack = false;
-		m_swim = false;
-		m_inSpace = false;
-		m_moving = false;
 		m_attackingTarget = false;
 		m_hitAnimOn = false;
 		m_isExclamationMarkOn = false;
@@ -352,14 +435,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_damageFeedbackTimer = 0f;
 
 		m_disableAnimatorTimer = 0f;
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
+			
 			m_animator.enabled = true;
 			m_animator.speed = 1f;
 		}
 
 		if (m_entity != null) {			
 			if (!string.IsNullOrEmpty(m_idleAudio))	{
-				m_idleAudioAO = AudioController.Play( m_idleAudio, transform);
+				m_idleAudioAO = AudioController.Play( m_idleAudio, m_transform);
 			}
 		}
 
@@ -374,7 +458,20 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
 
+	private void AnimatorSetBool(int _param, bool _value) {
+		if (m_isAnimatorAvailable) {
+			m_animator.SetBool(_param, _value);
+		}
+	}
+
 	void OnDestroy() {
+		#if DETACH_VIEW_ON_DISABLE
+		if (m_view.parent != m_transform) {
+			GameObject.Destroy(m_view.gameObject);
+			m_view = null;
+		}
+		#endif
+
         Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		RemoveAudios();
     }
@@ -382,7 +479,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     public virtual void PreDisable() {
 		for (int i = 0; i < m_fireParticles.Length; ++i) {
 			if (m_fireParticles[i] != null) {
-				if (((m_firePoints.Length == 0) && (m_fireParticles[i].parent == transform)) ||
+				if (((m_firePoints.Length == 0) && (m_fireParticles[i].parent == m_transform)) ||
 					((m_firePoints.Length > 0) && (m_fireParticles[i].parent == m_firePoints[i]))) {
 
 					m_fireParticles[i].SetParent(m_fireParticlesParents[i], true);
@@ -396,6 +493,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_stunParticleInstance = null;
 		}
 		RemoveAudios();
+
+		#if DETACH_VIEW_ON_DISABLE
+		SentViewToManager();
+		#endif
     }
 
     protected virtual void RemoveAudios() {
@@ -417,7 +518,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	protected void RemoveAudioParent(ref AudioObject ao)
 	{
-		if ( ao != null && ao.transform.parent == transform )
+		if ( ao != null && ao.transform.parent == m_transform )
 		{
 			ao.transform.parent = null;	
 			ao.completelyPlayedDelegate = null;
@@ -511,7 +612,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
     }
 
     public virtual void CustomUpdate() {
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
 			if (m_disableAnimatorTimer > 0) {
 				m_disableAnimatorTimer -= Time.deltaTime;
 				if (m_disableAnimatorTimer < 0) {
@@ -522,18 +623,18 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if (m_animator.enabled) {
 				if (m_hasNavigationLayer) {
 					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, Time.deltaTime, 0.2f);
-					m_animator.SetFloat( GameConstants.Animator.DIR_X , m_currentBlendX);
+					m_animator.SetFloat(GameConstants.Animator.DIR_X , m_currentBlendX);
 
 					m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, Time.deltaTime, 0.2f);
-					m_animator.SetFloat( GameConstants.Animator.DIR_Y, m_currentBlendY);
+					m_animator.SetFloat(GameConstants.Animator.DIR_Y, m_currentBlendY);
 				}
 
-				m_animator.SetBool( GameConstants.Animator.SWIM, m_swim);
-				m_animator.SetBool( GameConstants.Animator.FLY_DOWN, m_inSpace);
+				m_animator.SetBool(GameConstants.Animator.SWIM, m_swim);
+				m_animator.SetBool(GameConstants.Animator.FLY_DOWN, m_inSpace);
 				if (!m_swim){
-					m_animator.SetBool( GameConstants.Animator.MOVE, m_moving);
+					m_animator.SetBool(GameConstants.Animator.MOVE, m_moving);
 				} else {
-					m_animator.SetBool( GameConstants.Animator.MOVE, false);
+					m_animator.SetBool(GameConstants.Animator.MOVE, false);
 				}
 			}
 		}
@@ -619,7 +720,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 		if ( m_freezingLevel > 0.1f && m_useFrozenParticle)
 		{
-			GameObject go = m_onEatenFrozenParticle.Spawn(transform.position + m_onEatenFrozenParticle.offset);
+			GameObject go = m_onEatenFrozenParticle.Spawn(m_transform.position + m_onEatenFrozenParticle.offset);
 			if (go != null)	{
 				FollowTransform ft = go.GetComponent<FollowTransform>();
 				if (ft != null) {
@@ -630,7 +731,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 		else 
 		{
-			GameObject go = m_onEatenParticle.Spawn(transform.position + m_onEatenParticle.offset);
+			GameObject go = m_onEatenParticle.Spawn(m_transform.position + m_onEatenParticle.offset);
 			if (go != null)	{
 				FollowTransform ft = go.GetComponent<FollowTransform>();
 				if (ft != null) {
@@ -645,33 +746,33 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	// Animations
 	public void NavigationLayer(Vector3 _dir) {
 		if (m_hasNavigationLayer) {
-			Vector3 localDir = transform.InverseTransformDirection(_dir);	// todo: replace with direction to target if trying to bite, or during bite?
+			Vector3 localDir = m_transform.InverseTransformDirection(_dir);	// todo: replace with direction to target if trying to bite, or during bite?
 			m_desiredBlendX = Mathf.Clamp(localDir.x * 3f, -1f, 1f);	// max X bend is about 30 degrees, so *3
 			m_desiredBlendY = Mathf.Clamp(localDir.y * 2f, -1f, 1f);	// max Y bend is about 45 degrees, so *2.
 		}
 	}
 
 	public void RotationLayer(ref Quaternion _from, ref Quaternion _to) {
-		if (m_hasRotationLayer && m_animator != null) {
+		if (m_hasRotationLayer && m_isAnimatorAvailable) {
 			float angle = Quaternion.Angle(_from, _to);
-			m_animator.SetBool( GameConstants.Animator.ROTATE_LEFT, angle < 0);
-			m_animator.SetBool( GameConstants.Animator.ROTATE_RIGHT, angle > 0);
+			m_animator.SetBool(GameConstants.Animator.ROTATE_LEFT, angle < 0);
+			m_animator.SetBool(GameConstants.Animator.ROTATE_RIGHT, angle > 0);
 		}
 	}
 
 	public void Aim(float _blendFactor) {
 		m_aim = _blendFactor;
-		if (m_animator != null)
-			m_animator.SetFloat( GameConstants.Animator.AIM, _blendFactor);
+		if (m_isAnimatorAvailable)
+			m_animator.SetFloat(GameConstants.Animator.AIM, _blendFactor);
 	}
 
 	public void Height(float _height) {
-		if (m_animator != null)
-			m_animator.SetFloat( GameConstants.Animator.HEIGHT, _height);
+		if (m_isAnimatorAvailable)
+			m_animator.SetFloat(GameConstants.Animator.HEIGHT, _height);
 	}
 
 	public void Move(float _speed) {
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
 			if (m_panic || m_falling) {			
 				m_animator.speed = 1f;
 				return;
@@ -698,7 +799,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 				m_moving = true;
 
-				m_animator.SetFloat( GameConstants.Animator.SPEED, blendFactor);
+				m_animator.SetFloat(GameConstants.Animator.SPEED, blendFactor);
 				m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
 			} else {
 				m_moving = false;
@@ -724,7 +825,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_scared = _scared;
 			if ( _scared ){
 				if ( !string.IsNullOrEmpty(m_onScaredAudio)){
-					m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, transform);
+					m_onScaredAudioAO = AudioController.Play(m_onScaredAudio, m_transform);
 					if ( m_onScaredAudioAO != null )
 						m_onScaredAudioAO.completelyPlayedDelegate = OnScaredAudioEnded;
 				}
@@ -734,7 +835,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 					RemoveAudioParent( ref m_onScaredAudioAO);
 				}
 			}
-			if (m_animator != null)
+			if (m_isAnimatorAvailable)
 				m_animator.SetBool(GameConstants.Animator.SCARED, _scared);
 		}
 	}
@@ -747,7 +848,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void UpsideDown(bool _upsideDown) {
 		if (m_upsideDown != _upsideDown) {
 			m_upsideDown = _upsideDown;
-			m_animator.SetBool( GameConstants.Animator.UPSIDE_DOWN, _upsideDown);
+			m_animator.SetBool(GameConstants.Animator.UPSIDE_DOWN, _upsideDown);
 		}
 	}
 
@@ -758,12 +859,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if (_burning) {
 				// lets buuurn!!!
 				// will we have a special animation when burning?
-				if (m_animator != null)
+				if (m_isAnimatorAvailable)
 					m_animator.speed = 0f;
 			} else {
 				if ( _panic ){
 					if ( !string.IsNullOrEmpty(m_onPanicAudio) )
-						m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, transform);
+						m_onPanicAudioAO = AudioController.Play( m_onPanicAudio, m_transform);
 						if ( m_onPanicAudioAO != null )
 							m_onPanicAudioAO.completelyPlayedDelegate = OnPanicAudioEnded;
 				}else{
@@ -771,8 +872,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 						m_onPanicAudioAO.Stop();
 						RemoveAudioParent( ref m_onPanicAudioAO);
 				}
-				if (m_animator != null)
-					m_animator.SetBool( GameConstants.Animator.HOLDED, _panic);
+
+				if (m_isAnimatorAvailable)
+					m_animator.SetBool(GameConstants.Animator.HOLDED, _panic);
 			}
 		}
 	}
@@ -783,9 +885,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void Hit() {
 		m_hitAnimOn = true;
-
-		if (m_animator != null)
-			m_animator.SetTrigger( GameConstants.Animator.HIT);
+	
+		if (m_isAnimatorAvailable)
+			m_animator.SetTrigger(GameConstants.Animator.HIT);
 		
 		if (m_showDamageFeedback) {
 			m_damageFeedbackTimer = m_damageTime;
@@ -798,9 +900,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Falling(bool _falling) {
 		if (m_falling != _falling) {
 			m_falling = _falling;
-			if (m_animator != null) {
+			if (m_isAnimatorAvailable) {
 				m_animator.speed = 1f;
-				m_animator.SetBool( GameConstants.Animator.FALLING, _falling);
+				m_animator.SetBool(GameConstants.Animator.FALLING, _falling);
 			}
 		}
 	}
@@ -808,9 +910,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Jumping(bool _jumping) {
 		if (m_jumping != _jumping) {
 			m_jumping = _jumping;
-			if (m_animator != null) {
+			if (m_isAnimatorAvailable) {
 				m_animator.speed = 1f;
-				m_animator.SetBool( GameConstants.Animator.JUMP, _jumping);
+				m_animator.SetBool(GameConstants.Animator.JUMP, _jumping);
 			}
 		}
 	}
@@ -821,10 +923,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (!m_attack) {
 			m_attack = true;
-			if (m_animator != null) {
-				m_animator.SetBool( GameConstants.Animator.ATTACK, true);
-				m_animator.SetBool( GameConstants.Animator.MELEE,  _melee);
-				m_animator.SetBool( GameConstants.Animator.RANGED, _ranged);
+			if (m_isAnimatorAvailable) {
+				m_animator.SetBool(GameConstants.Animator.ATTACK, true);
+				m_animator.SetBool(GameConstants.Animator.MELEE,  _melee);
+				m_animator.SetBool(GameConstants.Animator.RANGED, _ranged);
+
 			}
 		}
 	}
@@ -835,38 +938,39 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		
 		if (m_attack) {
 			m_attack = false;
-			if (m_animator != null) {
-				m_animator.SetBool( GameConstants.Animator.ATTACK, false);
-				m_animator.SetBool( GameConstants.Animator.MELEE,  false);
-				m_animator.SetBool( GameConstants.Animator.RANGED, false);
+			if (m_isAnimatorAvailable) {
+				m_animator.SetBool(GameConstants.Animator.ATTACK, false);
+				m_animator.SetBool(GameConstants.Animator.MELEE,  false);
+				m_animator.SetBool(GameConstants.Animator.RANGED, false);
 			}
 		}
 	}
 
 	public void StartAttackTarget() {
 		m_attackingTarget = true;
-		if (m_animator != null)
-			m_animator.SetBool( GameConstants.Animator.EAT, true);
+
+		if (m_isAnimatorAvailable)
+			m_animator.SetBool(GameConstants.Animator.EAT, true);
 	}
 
 	public void StopAttackTarget() {
 		m_attackingTarget = false;
-		if (m_animator != null)
-			m_animator.SetBool( GameConstants.Animator.EAT, false);
+		if (m_isAnimatorAvailable)
+			m_animator.SetBool(GameConstants.Animator.EAT, false);
 	}
 
 	public void StartEating() {
-		m_animator.SetBool( GameConstants.Animator.EAT, true);
+		m_animator.SetBool(GameConstants.Animator.EAT, true);
 	}
 
 	public void StopEating() {
 		if (!m_attackingTarget)
-			m_animator.SetBool( GameConstants.Animator.EAT, false);
+			m_animator.SetBool(GameConstants.Animator.EAT, false);
 	}
 
 	public void Impact() {
-		if (m_animator != null)
-			m_animator.SetTrigger( GameConstants.Animator.IMPACT );
+		if (m_isAnimatorAvailable)
+			m_animator.SetTrigger(GameConstants.Animator.IMPACT );
 
 		if (m_showDamageFeedback) {
 			m_damageFeedbackTimer = m_damageTime;
@@ -885,10 +989,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	private void CreateSplash(Collider _other, float verticalImpulse) {
 		if (verticalImpulse >= m_speedToWaterSplash && !string.IsNullOrEmpty(m_waterSplashParticle.name)) {
-			Vector3 pos = transform.position;
+			Vector3 pos = m_transform.position;
 			float waterY =  _other.bounds.center.y + _other.bounds.extents.y;
 			pos.y = waterY;
-			m_waterSplashParticle.Spawn(transform.position + m_waterSplashParticle.offset);
+			m_waterSplashParticle.Spawn(m_transform.position + m_waterSplashParticle.offset);
 		}
 	}
 
@@ -911,9 +1015,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void SpecialAnimation(SpecialAnims _anim, bool _value) {
 		if (m_specialAnimations[(int)_anim] != _value) {
 			switch(_anim) {
-				case SpecialAnims.A: m_animator.SetBool(m_animA, _value); break;
-				case SpecialAnims.B: m_animator.SetBool(m_animB, _value); break;
-				case SpecialAnims.C: m_animator.SetBool(m_animC, _value); break;
+				case SpecialAnims.A: m_animator.SetBool(m_animA_Hash, _value); break;
+				case SpecialAnims.B: m_animator.SetBool(m_animB_Hash, _value); break;
+				case SpecialAnims.C: m_animator.SetBool(m_animC_Hash, _value); break;
 			}
 
 			if (_value) OnSpecialAnimationEnter(_anim);
@@ -946,7 +1050,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				// spawn corpse
 				GameObject corpse = m_corpseHandler.Spawn(null);
 				if (corpse != null) {
-					corpse.transform.CopyFrom(transform);
+					corpse.transform.CopyFrom(m_transform);
 					corpse.GetComponent<Corpse>().Spawn(IsEntityGolden(), m_dragonBoost.IsBoostActive());
 				}
 			}
@@ -955,10 +1059,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void PlayExplosion()
 	{
-		m_explosionParticles.Spawn(transform.position + m_explosionParticles.offset);
+		m_explosionParticles.Spawn(m_transform.position + m_explosionParticles.offset);
 
 		if (!string.IsNullOrEmpty(m_onExplosionAudio))
-			AudioController.Play(m_onExplosionAudio, transform.position);
+			AudioController.Play(m_onExplosionAudio, m_transform.position);
 	}
 
 	/// <summary>
@@ -976,7 +1080,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void OnEatenEvent( Transform _transform )
 	{
 		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onEatenAudio)) {
-			m_onEatenAudioAO = AudioController.Play(m_onEatenAudio, transform);
+			m_onEatenAudioAO = AudioController.Play(m_onEatenAudio, m_transform);
 		}
 		SpawnEatenParticlesAt( _transform );
 	}
@@ -994,16 +1098,16 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 						SpawnBurnParticle(m_firePoints[i], i, _burnAnimSeconds);
 					}
 				} else {
-					SpawnBurnParticle(transform, 0, _burnAnimSeconds);
+					SpawnBurnParticle(m_transform, 0, _burnAnimSeconds);
 				}
 			}
 		}
 
 		if (!string.IsNullOrEmpty(m_onBurnAudio)) {
-			AudioController.Play(m_onBurnAudio, transform.position);
+			AudioController.Play(m_onBurnAudio, m_transform.position);
 		}
 
-		if (m_animator != null) {
+		if (m_isAnimatorAvailable) {
 			m_animator.speed = 1f;
 			m_animator.SetTrigger(GameConstants.Animator.BURN);
 			m_disableAnimatorTimer = _burnAnimSeconds + 0.1f;
@@ -1037,15 +1141,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void SetStunned( bool stunned ){
 		if ( stunned ){
-			if (m_animator != null)
+			if (m_isAnimatorAvailable)
 				m_animator.enabled = false;
 			// if no stunned particle -> stun
 			if (m_stunParticleInstance == null)
 			{
-				m_stunParticleInstance = m_stunParticle.Spawn(transform);
+				m_stunParticleInstance = m_stunParticle.Spawn(m_transform);
 			}
 		}else{
-			if (m_animator != null)
+			if (m_isAnimatorAvailable)
 				m_animator.enabled = true;
 			// if stunned particle -> remove stun
 			if ( m_stunParticleInstance )

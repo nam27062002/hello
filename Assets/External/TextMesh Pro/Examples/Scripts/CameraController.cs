@@ -150,7 +150,7 @@ namespace TMPro.Examples
                 if (Input.GetKeyDown(KeyCode.S))
                     MovementSmoothing = !MovementSmoothing;
 
-
+				#if UNITY_EDITOR || UNITY_PC
                 // Check for right mouse button to change camera follow and elevation angle
                 if (Input.GetMouseButton(1))
                 {
@@ -173,6 +173,7 @@ namespace TMPro.Examples
                             OrbitalAngle += 360;
                     }
                 }
+				#endif
 
                 // Get Input from Mobile Device
                 if (touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
@@ -200,6 +201,7 @@ namespace TMPro.Examples
 
                 }
 
+				#if UNITY_EDITOR || UNITY_PC
                 // Check for left mouse button to select a new CameraTarget or to reset Follow position
                 if (Input.GetMouseButton(0))
                 {
@@ -221,7 +223,6 @@ namespace TMPro.Examples
 
                     }
                 }
-
 
                 if (Input.GetMouseButton(2))
                 {
@@ -254,7 +255,7 @@ namespace TMPro.Examples
                     dummyTarget.Translate(-moveVector, Space.World);
 
                 }
-
+				#endif
             }
 
             // Check Pinching to Zoom in - out on Mobile device

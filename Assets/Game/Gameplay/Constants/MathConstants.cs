@@ -8,12 +8,14 @@ namespace GameConstants
 {
 	public class Vector3
 	{
-		public static readonly UnityEngine.Vector3 zero = UnityEngine.Vector3.zero;
-		public static readonly UnityEngine.Vector3 one = UnityEngine.Vector3.one;
-		public static readonly UnityEngine.Vector3 right = UnityEngine.Vector3.right;
-		public static readonly UnityEngine.Vector3 left = UnityEngine.Vector3.left;
-		public static readonly UnityEngine.Vector3 up = UnityEngine.Vector3.up;
-		public static readonly UnityEngine.Vector3 down = UnityEngine.Vector3.down;
+		public static readonly UnityEngine.Vector3 zero 	= UnityEngine.Vector3.zero;
+		public static readonly UnityEngine.Vector3 one 		= UnityEngine.Vector3.one;
+		public static readonly UnityEngine.Vector3 right 	= UnityEngine.Vector3.right;
+		public static readonly UnityEngine.Vector3 left 	= UnityEngine.Vector3.left;
+		public static readonly UnityEngine.Vector3 up 		= UnityEngine.Vector3.up;
+		public static readonly UnityEngine.Vector3 down 	= UnityEngine.Vector3.down;
+		public static readonly UnityEngine.Vector3 forward 	= UnityEngine.Vector3.forward;
+		public static readonly UnityEngine.Vector3 back 	= UnityEngine.Vector3.back;
 	}
 
 	public class Quaternion
