@@ -68,7 +68,7 @@ public class Singleton<T> where T : Singleton<T>, new() {
 		// Unless manually destroying the instance
 		m_state = ISingleton.EState.APPLICATION_QUITTING;
 
-		Messenger.RemoveListener( GameEvents.APPLICATION_QUIT, OnApplicationQuit);
+		Messenger.RemoveListener( MessengerEvents.APPLICATION_QUIT, OnApplicationQuit);
 	}
 	
 	//------------------------------------------------------------------//
@@ -112,7 +112,7 @@ public class Singleton<T> where T : Singleton<T>, new() {
 				//		 See http://answers.unity3d.com/questions/1115856/scriptableobject-vs-dontdestroyonload.html
 				//ScriptableObject.DontDestroyOnLoad(m_instance);
 
-				Messenger.AddListener( GameEvents.APPLICATION_QUIT, m_instance.OnApplicationQuit);
+				Messenger.AddListener( MessengerEvents.APPLICATION_QUIT, m_instance.OnApplicationQuit);
 
 				// Instance has been created and stored, unlock instance creation
 				m_state = ISingleton.EState.READY;
@@ -130,7 +130,7 @@ public class Singleton<T> where T : Singleton<T>, new() {
 		// Remember that we're manually destroying the SingletonScriptableObject so recreation of the instance is not banned
 		m_state = ISingleton.EState.DESTROYING_INSTANCE;
 
-		Messenger.RemoveListener( GameEvents.APPLICATION_QUIT, m_instance.OnApplicationQuit);
+		Messenger.RemoveListener( MessengerEvents.APPLICATION_QUIT, m_instance.OnApplicationQuit);
 
 		// Immediately destroy game object holding the SingletonScriptableObject
 		m_instance = null;

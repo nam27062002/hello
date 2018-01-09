@@ -8,17 +8,17 @@ public class QuitPlayBackButtonHandler : BackButtonHandler {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	private void OnEnable() {
-		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, Register);
-		Messenger.AddListener(GameEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
-		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
-		Messenger.AddListener(GameEvents.GAME_ENDED, Unregister);
+		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Register);
+		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
+		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, Unregister);
 	}
 
 	private void OnDisable() {
-		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, Register);
-		Messenger.RemoveListener(GameEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
-		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, Unregister);
+		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, Register);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Unregister);
 	}
 
 	public void OnAreaEnter()

@@ -25,7 +25,7 @@ public class GlideBehaviour : StateMachineBehaviour {
 		if (m_timer <= 0) {
 			if (m_flyLoopBehaviour)
 				m_flyLoopBehaviour.ResetTimer();
-			animator.SetBool("glide", false);
+			animator.SetBool( GameConstants.Animator.GLIDE, false);
 
 		}
 	}

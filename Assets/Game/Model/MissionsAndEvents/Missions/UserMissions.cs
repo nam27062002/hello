@@ -175,57 +175,77 @@ public class UserMissions {
 			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
 			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
 		} else {
+			// Some more aux vars
+			List<DefinitionNode> missionDefs = new List<DefinitionNode>();
+			List<DefinitionNode> typeDefs = new List<DefinitionNode>();
+
 			// 1. Get available mission types (based on current max dragon tier unlocked and current mission types)
 			DragonTier maxTierUnlocked = DragonManager.biggestOwnedDragon.tier;
-			List<DefinitionNode> typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_TYPES);
+			typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSION_TYPES);
 			typeDefs = typeDefs.FindAll(
 				(DefinitionNode _def) => { 
-					return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked)	// Ignore mission types meant for bigger tiers
+					return (_def.GetAsInt("minTier") <= (int)maxTierUnlocked)	// Ignore mission types meant for bigger tiers
+						&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked)	// Ignore mission types meant for lower tiers
 						&& (!typesToIgnore.Contains(_def.sku));							// Prevent repetition
 				}
 			);
-			DebugUtils.Assert(typeDefs.Count > 0, "<color=red>NO VALID MISSION TYPES FOUND!!!!</colo>");	// Just in case
+			DebugUtils.Assert(typeDefs.Count > 0, "<color=red>NO VALID MISSION TYPES FOUND!!!!</color>");	// Just in case
 
 			// 2. Select a type based on definitions weights
 			// 2.1. Compute total weight
 			float totalWeight = 0f;
-			float[] weightsArray = new float[typeDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
+			List<float> weightsArray = new List<float>(typeDefs.Count);	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
 			for(int i = 0; i < typeDefs.Count; i++) {
-				weightsArray[i] = typeDefs[i].GetAsFloat("weight");
+				weightsArray.Add(typeDefs[i].GetAsFloat("weight"));
 				totalWeight += weightsArray[i];
 			}
 
 			// 2.2. Select a random value [0..totalWeight]
 			// Iterate through elements until the selected value is reached
 			// This should match weighted probability distribution
-			targetValue = UnityEngine.Random.Range(0f, totalWeight);
-			for(int i = 0; i < typeDefs.Count; i++) {
-				targetValue -= weightsArray[i];
-				if(targetValue <= 0f) {
-					// We reached the target value!
-					selectedTypeDef = typeDefs[i];
-					break;	// No need to keep looping
+			// Discard the type if it has no valid missions for the current dragon
+			int loopCount = 0;	// Failsafe to prevent infinite loops
+			while(selectedTypeDef == null && loopCount < 100) {
+				loopCount++;
+				targetValue = UnityEngine.Random.Range(0f, totalWeight);
+				for(int i = 0; i < typeDefs.Count; ++i) {
+					targetValue -= weightsArray[i];
+					if(targetValue <= 0f) {
+						// We reached the target value!
+						selectedTypeDef = typeDefs[i];
+
+						// Get all mission definitions matching the selected type
+						// Filter out missions based on current max dragon tier unlocked
+						missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
+						missionDefs = missionDefs.FindAll(
+							(DefinitionNode _def) => { 
+								return (_def.GetAsInt("minTier") <= (int)maxTierUnlocked)	// Ignore missions meant for bigger tiers
+									&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked);	// Ignore missions meant for lower tiers
+							}
+						);
+
+						// If the selected type has no valid missions, remove it from the candidates list and select a new type
+						if(missionDefs.Count == 0) {
+							Debug.Log("<color=red>No missions found for type " + selectedTypeDef.sku + ". Choosing a new type.</color>");
+
+							selectedTypeDef = null;
+							typeDefs.RemoveAt(i);
+
+							totalWeight -= weightsArray[i];
+							weightsArray.RemoveAt(i);
+						}
+						break;	// Break the type selection loop
+					}
 				}
 			}
 			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
 
-			// 3. Get all mission definitions matching the selected type
-			List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.MISSIONS, "type", selectedTypeDef.sku);
-
-			// 3.1. Filter out missions based on current max dragon tier unlocked
-			missionDefs = missionDefs.FindAll(
-				(DefinitionNode _def) => { 
-					return (_def.GetAsInt("minTierToUnlock") <= (int)maxTierUnlocked);	// Ignore missions meant for bigger tiers
-				}
-			);
-			DebugUtils.Assert(missionDefs.Count > 0, "<color=red>NO VALID MISSIONS FOUND!!!!</colo>");	// Just in case
-
 			// 4. Select a random mission based on weight (as we just did with the mission type)
 			// 4.1. Compute total weight
 			totalWeight = 0f;
-			weightsArray = new float[missionDefs.Count];	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
+			weightsArray.Clear();	// Store all weights in an array for optimization (avoid repetaedly calling DefinitionNode.GetAsFloat())
 			for(int i = 0; i < missionDefs.Count; i++) {
-				weightsArray[i] = missionDefs[i].GetAsFloat("weight");
+				weightsArray.Add(missionDefs[i].GetAsFloat("weight"));
 				totalWeight += weightsArray[i];
 			}
 
@@ -248,7 +268,7 @@ public class UserMissions {
 		bool singleRun = false;
 		if(selectedTypeDef.GetAsBool("canBeDuringOneRun")) {
 			// Single run? 50% chance
-			singleRun = UnityEngine.Random.value < 0.5f;	// 50% chance
+			singleRun = UnityEngine.Random.value < 0.3f;	// 30% chance
 		}
 		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
 
@@ -260,16 +280,16 @@ public class UserMissions {
 		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
 		// 6. Compute and apply modifiers to the target value
-		float totalModifier = 0f;	// Modifiers are additive
+		float totalModifier = 0f;
 
-		// 6.1. Dragon modifier
+		// 6.1. Dragon modifier - additive
 		DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);	// Matching sku
 		if(dragonModifierDef != null) {
 			totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
 			Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
-		// 6.2. Difficulty modifier
+		// 6.2. Difficulty modifier - additive
 		DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
 		DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
 		if(difficultyModifierDef != null) {
@@ -277,11 +297,11 @@ public class UserMissions {
 			Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
-		// 6.3. Single run modifier
+		// 6.3. Single run modifier - multiplicative
 		if(singleRun) {
 			DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
 			if(singleRunModifierDef != null) {
-				totalModifier += singleRunModifierDef.GetAsFloat("quantityModifier");
+				totalModifier *= 1f - singleRunModifierDef.GetAsFloat("quantityModifier");
 				Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 			}
 		}

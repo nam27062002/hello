@@ -41,8 +41,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	// Power ups modifiers
 	private float m_drainReduceModifier = 0;
-	private Dictionary<DamageType, float> m_damageReductions = new Dictionary<DamageType, float>();
-	private Dictionary<string, float> m_damageOriginReductions = new Dictionary<string, float>();
+	private Dictionary<DamageType, float> m_damageReductions;
+	private Dictionary<string, float> m_damageOriginReductions;
 
 	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
 	private float m_globalEatingHpBoost = 0;
@@ -55,6 +55,11 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	void Awake()
 	{
+		DamageTypeComparer comparer = new DamageTypeComparer();
+		m_damageReductions = new Dictionary<DamageType, float>(comparer);
+
+		m_damageOriginReductions = new Dictionary<string, float>();
+
 		m_dragon = GetComponent<DragonPlayer>();
 	}
 
@@ -126,8 +131,16 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	}
 
 	public bool HasDOT(DamageType _type) {
-		// Use Exists() + Linq to look for a dot of the target type
-		return m_dots.Exists((_dot) => { return _dot.type == _type; });
+		int count = m_dots.Count;
+		bool ret = false;
+		for( int i = 0; i<count && !ret; ++i )
+		{
+			if ( m_dots[i].type == _type )
+			{
+				ret = true;
+			}
+		}
+		return ret;
 	}
 
 	/// <summary>
@@ -169,10 +182,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			m_dragon.AddLife(-damage, _type, _source);
 
 			// Notify game
-			Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
+			Messenger.Broadcast<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
 
 			if (_entity != null && _entity.hasToShowTierNeeded(m_dragon.data.tier)) {
-				Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
+				Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
 			}
 		}
 	}
@@ -229,7 +242,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		}
 
 		if (_entity != null && _entity.hasToShowTierNeeded(m_dragon.data.tier)) {
-			Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
+			Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
 		}
 	}
 

@@ -70,10 +70,10 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 	public virtual void CustomUpdate() {
 		if (m_hasNavigationLayer) {
 			m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
-			m_animator.SetFloat("direction X", m_currentBlendX);
+			m_animator.SetFloat( GameConstants.Animator.DIR_X , m_currentBlendX);
 
 			m_currentBlendY = Util.MoveTowardsWithDamping(m_currentBlendY, m_desiredBlendY, 3f * Time.deltaTime, 0.2f);
-			m_animator.SetFloat("direction Y", m_currentBlendY);
+			m_animator.SetFloat( GameConstants.Animator.DIR_Y, m_currentBlendY);
 		}
 	}
 
@@ -103,13 +103,13 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 	public void RotationLayer(ref Quaternion _from, ref Quaternion _to) {
 		if (m_hasRotationLayer) {
 			float angle = Quaternion.Angle(_from, _to);
-			m_animator.SetBool("rotate left", angle < 0);
-			m_animator.SetBool("rotate right", angle > 0);
+			m_animator.SetBool( GameConstants.Animator.ROTATE_LEFT , angle < 0);
+			m_animator.SetBool( GameConstants.Animator.ROTATE_RIGHT, angle > 0);
 		}
 	}
 
 	public void Aim(float _blendFactor) {
-		m_animator.SetFloat("aim", _blendFactor);
+		m_animator.SetFloat( GameConstants.Animator.AIM, _blendFactor);
 	}
 
 	public void Move(float _speed) {
@@ -131,11 +131,11 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 				blendFactor = 0f + (_speed - m_walkSpeed) * ((1f - 0f) / (m_runSpeed - m_walkSpeed));
 			}
 
-			m_animator.SetFloat("speed", blendFactor);
-			m_animator.SetBool("move", true);
+			m_animator.SetFloat( GameConstants.Animator.SPEED , blendFactor);
+			m_animator.SetBool( GameConstants.Animator.MOVE, true);
 			m_animator.speed = animSpeedFactor;
 		} else {
-			m_animator.SetBool("move", false);
+			m_animator.SetBool( GameConstants.Animator.MOVE, false);
 			m_animator.speed = 1f;
 		}
 	}
@@ -146,7 +146,7 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 		
 		if (m_scared != _scared) {
 			m_scared = _scared;
-			m_animator.SetBool("scared", _scared);
+			m_animator.SetBool( GameConstants.Animator.SCARED , _scared);
 		}
 	}
 
@@ -159,7 +159,7 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 				// will we have a special animation when burning?
 				m_animator.speed = 0f;
 			} else {
-				m_animator.SetBool("hold", _panic);
+				m_animator.SetBool( GameConstants.Animator.HOLDED , _panic);
 			}
 		}
 	}
@@ -170,7 +170,7 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 		
 		if (!m_attack) {
 			m_attack = true;
-			m_animator.SetBool("attack", true);
+			m_animator.SetBool( GameConstants.Animator.ATTACK , true);
 		}
 	}
 
@@ -180,7 +180,7 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 		
 		if (m_attack) {
 			m_attack = false;
-			m_animator.SetBool("attack", false);
+			m_animator.SetBool( GameConstants.Animator.ATTACK, false);
 		}
 	}
 

@@ -144,7 +144,7 @@ public class PetPill : MonoBehaviour {
 		m_tapAllowed = true;
 
 		// Subscribe to external events
-		Messenger.AddListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.AddListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 
 		// Make sure pill is updated
 		Refresh();
@@ -155,7 +155,7 @@ public class PetPill : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>

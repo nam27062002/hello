@@ -20,7 +20,7 @@ public class DrunkCameraEffect : MonoBehaviour
     private void Start()
     {
 //        setDrunk(true);
-        Messenger.AddListener<bool>(GameEvents.DRUNK_TOGGLED, setDrunk);
+        Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, setDrunk);
         m_wasEnabled = true;
     }
 
@@ -28,7 +28,7 @@ public class DrunkCameraEffect : MonoBehaviour
 	{
         if (m_wasEnabled)
         {
-            Messenger.RemoveListener<bool>(GameEvents.DRUNK_TOGGLED, setDrunk);
+            Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, setDrunk);
         }
     }
 

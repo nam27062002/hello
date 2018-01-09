@@ -202,7 +202,7 @@ public class CPProgressionCheats : MonoBehaviour {
         PersistenceFacade.instance.Save_Request(false);
 
         // Simulate a dragon selected event so everything is refreshed
-        Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
+        Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
 	}
 
 	/// <summary>
@@ -288,7 +288,7 @@ public class CPProgressionCheats : MonoBehaviour {
         PersistenceFacade.instance.Save_Request(false);
 
         // Simulate a dragon selected event so everything is refreshed
-        Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
+        Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
 	}
 
 	/// <summary>

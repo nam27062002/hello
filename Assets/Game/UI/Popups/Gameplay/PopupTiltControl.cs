@@ -106,6 +106,6 @@ public class PopupTiltControl : MonoBehaviour {
 		PopupManager.OpenPopupInstant(PopupTiltCalibrationAnim.PATH);
 
 		// Popup is actually fake, do the calibration now!
-		Messenger.Broadcast(GameEvents.TILT_CONTROL_CALIBRATE);
+		Messenger.Broadcast(MessengerEvents.TILT_CONTROL_CALIBRATE);
 	}
 }

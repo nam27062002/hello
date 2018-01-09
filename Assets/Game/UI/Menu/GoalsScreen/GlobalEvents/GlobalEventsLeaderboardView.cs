@@ -73,7 +73,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED, OnLeaderboardUpdated);
+		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED, OnLeaderboardUpdated);
 
 		// Show loading widget
 		ToggleLoading(true);
@@ -87,7 +87,7 @@ public class GlobalEventsLeaderboardView : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED, OnLeaderboardUpdated);
+		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED, OnLeaderboardUpdated);
 	}
 
 	/// <summary>

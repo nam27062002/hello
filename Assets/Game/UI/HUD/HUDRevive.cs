@@ -54,9 +54,9 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.AddListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
-		Messenger.AddListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
+		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.AddListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		m_timer.Stop();
 	}
 
@@ -73,9 +73,9 @@ public class HUDRevive : MonoBehaviour {
 	/// </summary>
 	void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.RemoveListener<DragonPlayer.ReviveReason>(GameEvents.PLAYER_REVIVE, OnPlayerRevive);
-		Messenger.RemoveListener(GameEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
+		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
+		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
 		// Restore timescale
 		Time.timeScale = 1f;
@@ -90,7 +90,7 @@ public class HUDRevive : MonoBehaviour {
 			if(m_timer.IsFinished()) {
 				m_timer.Stop();
 				m_animator.Hide();
-				Messenger.Broadcast(GameEvents.PLAYER_DIED);
+				Messenger.Broadcast(MessengerEvents.PLAYER_DIED);
 			}
 		}
 	}

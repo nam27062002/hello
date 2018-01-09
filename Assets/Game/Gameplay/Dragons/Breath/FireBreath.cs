@@ -292,7 +292,7 @@ public class FireBreath : DragonBreathBehaviour {
 					}
 				} else {
 					// Show message saying I cannot burn it
-					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
+					Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 				}
 			}
 		}
@@ -330,7 +330,7 @@ public class FireBreath : DragonBreathBehaviour {
 			if ( m_isFuryOn )
 			{
 				m_isFuryPaused = true;
-				m_animator.SetBool("breath", false);
+				m_animator.SetBool( GameConstants.Animator.BREATH , false);
 			}
 
 		}

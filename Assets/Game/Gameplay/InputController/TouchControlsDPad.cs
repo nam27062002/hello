@@ -115,12 +115,12 @@ public class TouchControlsDPad : TouchControls {
 		m_lastArrowAngle = 0f;
 
 		// Subscribe to external events
-		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoost);
 	}	
 
 	override public void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
+		Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoost);
 
 		base.OnDestroy();
 	}

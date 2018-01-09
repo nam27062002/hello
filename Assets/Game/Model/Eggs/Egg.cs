@@ -174,7 +174,7 @@ public class Egg {
 			// Incubating
 			case State.INCUBATING: {
 				// Dispatch game event
-				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_ENDED, this);
+				Messenger.Broadcast<Egg>(MessengerEvents.EGG_INCUBATION_ENDED, this);
 			} break;
 		}
 
@@ -195,7 +195,7 @@ public class Egg {
 				m_incubationEndTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().Add(incubationDuration);
 
 				// Dispatch game event
-				Messenger.Broadcast<Egg>(GameEvents.EGG_INCUBATION_STARTED, this);
+				Messenger.Broadcast<Egg>(MessengerEvents.EGG_INCUBATION_STARTED, this);
 
 				// Schedule local notification!
 				if(!m_testMode) HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationDuration.TotalSeconds));
@@ -212,7 +212,7 @@ public class Egg {
 		}
 
 		// Broadcast game event
-		Messenger.Broadcast<Egg, Egg.State, Egg.State>(GameEvents.EGG_STATE_CHANGED, this, oldState, _newState);
+		Messenger.Broadcast<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, this, oldState, _newState);
 
 		// Save persistence
 		// [AOC] A bit of an overkill, try to improve it on the future
@@ -297,7 +297,7 @@ public class Egg {
 		}
 
         // Notify game
-        Messenger.Broadcast<Egg>(GameEvents.EGG_OPENED, this);
+        Messenger.Broadcast<Egg>(MessengerEvents.EGG_OPENED, this);
 	}
 
 	//------------------------------------------------------------------------//

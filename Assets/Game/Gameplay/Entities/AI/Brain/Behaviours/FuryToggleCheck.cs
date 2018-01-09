@@ -13,11 +13,11 @@ namespace AI {
 
 
 			protected override void OnEnter(State oldState, object[] param) {
-				Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+				Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 			}
 
 			protected override void OnExit(State newState) {
-				Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+				Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 			}
 
 			private void OnFuryToggled(bool toggle, DragonBreathBehaviour.Type type) {

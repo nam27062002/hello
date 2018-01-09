@@ -338,9 +338,18 @@ public class HDTrackingManager
 	/// </summary>
 	public virtual void Notify_SettingsClose(){}
 
+    /// <summary>
+    /// Notifies the start of performance track every X seconds
+    /// </summary>
+    public virtual void Notify_StartPerformanceTracker() {}
+
+    /// <summary>
+    /// Notifies the stop of performance track every X seconds
+    /// </summary>
+    public virtual void Notify_StopPerformanceTracker() {}
 
 
-	public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}
+    public virtual void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {}
 
 	public virtual void Notify_GlobalEventReward(int _eventId, string _eventType, int _rewardTier, int _score, bool _topContributor) {}
 
@@ -349,7 +358,7 @@ public class HDTrackingManager
     #endregion
 
     #region log
-    private const bool LOG_USE_COLOR = false;
+    private const bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
