@@ -225,9 +225,9 @@ public class MusicController : MonoBehaviour
         {
 			if (Music_CurrentAudioObject != null)
 			{
-				if (Music_CurrentAudioObject.IsPaused(false))
+				if (!Music_CurrentAudioObject.IsPlaying() || musicFadeOut <= 0)
 				{
-					Music_CurrentAudioObject.Stop();
+					Music_CurrentAudioObject.Stop();	// Force stop
 					Music_CurrentKey = keyToPlay;
 					Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
 					m_waitingMusicToFinish = waitToPlay;
@@ -236,19 +236,24 @@ public class MusicController : MonoBehaviour
 						Ambience_Stop( Ambience_ToPlay.music_key, Ambience_ToPlay.game_object);
 						Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
 					}
-					AudioController.UnpauseMusic( musicFadeOut );
+					// AudioController.PauseMusic();	// Pause Music manually to fade in while unpausing!
+					// AudioController.UnpauseMusic( musicFadeOut );
+					if ( musicFadeOut > 0 )
+						Music_CurrentAudioObject.FadeIn( musicFadeOut );
                     secondsToSwitchMusic = minSecondsToSwitchMusic;
                 }
-				else if ( !Music_CurrentAudioObject.IsPaused(true) )
+				else if ( Music_CurrentAudioObject.IsPlaying() && !Music_CurrentAudioObject.isFadingOut)
 				{
                     //Fading out
-					AudioController.PauseMusic( musicFadeOut );
+					// AudioController.PauseMusic( musicFadeOut );
+					AudioController.StopMusic(musicFadeOut);
 				}
 			}
 			else
 			{
 				Music_CurrentKey = keyToPlay;
 				Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
+				m_waitingMusicToFinish = waitToPlay;
 				if ( m_waitingMusicToFinish )
 				{
 					Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
