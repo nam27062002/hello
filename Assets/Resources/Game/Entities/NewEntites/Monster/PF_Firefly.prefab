@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 135997305440061154}
   - component: {fileID: 54760520937648814}
   m_Layer: 22
-  m_Name: PF_GlowWorm
+  m_Name: PF_Firefly
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -332,8 +332,8 @@ MonoBehaviour:
     m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 1
-    m_faceLeftAngle: 0
-    m_faceRightAngle: 0
+    m_faceLeftAngle: 90
+    m_faceRightAngle: 90
     m_limitVerticalRotation: 1
     m_faceUpAngle: 340
     m_faceDownAngle: 20
@@ -357,7 +357,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_serializedJson: '[{"boostSpeed":5,"panicSpeed":5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":3,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
-  m_databaseKey: PF_GlowWorm
+  m_databaseKey: PF_Firefly
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
@@ -392,6 +392,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -433,6 +434,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 0.2205882, g: 0.18318217, b: 0.184, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -470,6 +472,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 0.31764707, g: 0.7176471, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -509,6 +512,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -547,6 +551,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2

@@ -9,9 +9,10 @@ GameObject:
   m_Component:
   - component: {fileID: 447832}
   - component: {fileID: 11448584}
-  - component: {fileID: 114000011743134776}
+  - component: {fileID: 114336355391884586}
+  - component: {fileID: 114244689889194490}
   m_Layer: 0
-  m_Name: SP_MediumFood_Dark
+  m_Name: SP_Fireball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 177470}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 123.9, y: 67.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -49,7 +50,7 @@ MonoBehaviour:
     height: 2
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Monster/PF_MediumFood_Dark
+  - name: Monster/PF_Fireball
     chance: 100
   m_quantity:
     min: 1
@@ -92,7 +93,7 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 177470}
   m_IsPrefabParent: 1
---- !u!114 &114000011743134776
+--- !u!114 &114244689889194490
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -100,17 +101,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 177470}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -10.293327, y: -5.0572996, z: 0}
-  - {x: -13.629526, y: 1.5020609, z: 0}
-  - {x: -10.309113, y: 7.715626, z: 0}
-  - {x: -0.112006664, y: 10.779182, z: 0}
-  - {x: 10.257996, y: 7.7912693, z: 0}
-  - {x: 12.890764, y: 1.6911697, z: 0}
-  - {x: 10.250103, y: -4.4953785, z: 0}
-  - {x: -0.02161336, y: -7.715625, z: 0}
+  m_guideFunction: 0
+  m_innerRadius: 10
+  m_outterRadius: 20
+  m_targetDistance: 5
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_drawPreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
+--- !u!114 &114336355391884586
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 177470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_formation: 0
