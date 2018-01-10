@@ -227,6 +227,7 @@ public class MusicController : MonoBehaviour
 			{
 				if (Music_CurrentAudioObject.IsPaused(false))
 				{
+					Music_CurrentAudioObject.Stop();
 					Music_CurrentKey = keyToPlay;
 					Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
 					m_waitingMusicToFinish = waitToPlay;
