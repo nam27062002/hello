@@ -953,6 +953,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
         }
 
+		if (quality <= FeatureSettings.EQualityLevelValues.low) {
+			Time.fixedDeltaTime = 0.05f; //20fps
+		}
+
         ApplyPhysicQuality(settings.Rating);
 #endif
 
