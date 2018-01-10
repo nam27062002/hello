@@ -211,15 +211,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		}
 	}
 
-	private ParticleHandler __CreatePool(string _prefabName, string _folderPath) {
-		if (string.IsNullOrEmpty(_prefabName)) {
+	private ParticleHandler __CreatePool(string _prefabName, string _folderPath) {        
+        if (string.IsNullOrEmpty(_prefabName)) {
 			return null;
 		} else {
 			PoolContainer container = null;
 
 			if (m_pools.ContainsKey(_prefabName)) {
 				container = m_pools[_prefabName];
-				if ( container.size <= 0 )
+				if ( container.size < 0 )
 					container.size = 1;
 			} else {
 				container = new PoolContainer();
