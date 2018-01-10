@@ -122,6 +122,10 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(_egg.rewardData == null) _egg.GenerateReward();	// Generate a reward if the egg hasn't one
 		UsersManager.currentUser.PushReward(_egg.rewardData);
 
+		// Remove it from the inventory (if appliable)
+		// [AOC] At this point the egg is pushed to pending rewards stack, so if the game is interrupted we will get the pending rewards flow. We don't want the egg to also be ready in the inventory! (Exploit)
+		EggManager.RemoveEggFromInventory(_egg);
+
 		// Save current profile state in case the open egg flow is interrupted
 		PersistenceFacade.instance.Save_Request(true);
 
