@@ -185,23 +185,36 @@ public class MusicController : MonoBehaviour
             secondsToSwitchMusic -= Time.deltaTime;
         }
 
-        string keyToPlay = m_mainMusicKey;
+		string keyToPlay = null;
+		bool waitToPlay = false;
 		float musicFadeOut = m_musicFadeOut;
 		if (!m_useFireRushMusic)
 		{
-			if (Ambience_ToPlay.IsValid())
-	        {
-	            keyToPlay = Ambience_ToPlay.music_key;
-				m_waitingMusicToFinish = Ambience_ToPlay.wait_to_finish;
+			if ( !m_waitingMusicToFinish )
+			{
+				if (Ambience_ToPlay.IsValid())
+		        {
+		            keyToPlay = Ambience_ToPlay.music_key;
+					waitToPlay = Ambience_ToPlay.wait_to_finish;
+		        }
+		        else
+		        {
+		        	keyToPlay = m_mainMusicKey;
+		        }
 	        }           
+	        else
+	        {
+				keyToPlay = Music_CurrentKey;
+	        }
         }
         else
         {
-			m_waitingMusicToFinish = false;
         	switch( m_fireRushType )
         	{
+				default: 
         		case DragonBreathBehaviour.Type.Standard: keyToPlay = m_fireRushMusic;break;
 				case DragonBreathBehaviour.Type.Mega: keyToPlay = m_megaFireRushMusic;break;
+
         	}
 			musicFadeOut = 0;
             secondsToSwitchMusic = 0;
@@ -216,6 +229,7 @@ public class MusicController : MonoBehaviour
 				{
 					Music_CurrentKey = keyToPlay;
 					Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
+					m_waitingMusicToFinish = waitToPlay;
 					if ( m_waitingMusicToFinish )
 					{
 						Ambience_Stop( Ambience_ToPlay.music_key, Ambience_ToPlay.game_object);
@@ -291,6 +305,7 @@ public class MusicController : MonoBehaviour
 
     }
     List<MusicPlaying> m_musicsPlaying;
+	List<MusicPlaying> m_priorityMusicsPlaying;
 	private MusicPlaying Ambience_ToPlay;
 
     private bool m_waitingMusicToFinish = false;
@@ -312,17 +327,33 @@ public class MusicController : MonoBehaviour
             string categoryName = audioItem.category.Name;
             if (categoryName == AMBIENCE_CATEGORY_MUSIC)
             {
+				// Register object
+				if (m_musicsPlaying == null || m_priorityMusicsPlaying == null)
+				{
+					m_musicsPlaying = new List<MusicPlaying>();
+					m_priorityMusicsPlaying = new List<MusicPlaying>();
+				}
+
             	// Check if music has to play!!
             	AudioItem item = AudioController.GetAudioItem(key);
-				double deltaT = AudioController.systemTime - item._lastPlayedTime;
-            	if ( item.Loop != AudioItem.LoopMode.DoNotLoop || deltaT >= item.MinTimeBetweenPlayCalls)
-            	{
-					// Register object
-					if (m_musicsPlaying == null)
-						m_musicsPlaying = new List<MusicPlaying>();
-					Ambience_ToPlay = new MusicPlaying( key, from, item.Loop == AudioItem.LoopMode.DoNotLoop );	
-					m_musicsPlaying.Add( Ambience_ToPlay );
-            	}
+				MusicPlaying mp = new MusicPlaying( key, from, item.Loop == AudioItem.LoopMode.DoNotLoop );
+				if ( item.Loop == AudioItem.LoopMode.DoNotLoop )
+				{
+					if (item._lastPlayedTime <= 0 || (AudioController.systemTime - item._lastPlayedTime) >= item.MinTimeBetweenPlayCalls)
+					{
+						// Add it
+						m_priorityMusicsPlaying.Add( mp );
+						Ambience_ToPlay = mp;
+					}
+				}
+				else
+				{
+					m_musicsPlaying.Add( mp );
+					if ( m_priorityMusicsPlaying.Count <= 0)
+					{
+						Ambience_ToPlay = mp;	
+					}
+				}
             }
             else if (categoryName == AMBIENCE_CATEGORY_SFX)
             {
@@ -358,7 +389,22 @@ public class MusicController : MonoBehaviour
                 		break;
                 	}
                 }
-				if (m_musicsPlaying.Count > 0)
+
+				count = m_priorityMusicsPlaying.Count;
+				for( int i = m_priorityMusicsPlaying.Count - 1; i >= 0; --i )
+                {
+					if ( m_priorityMusicsPlaying[i].game_object == from )	
+                	{
+						m_priorityMusicsPlaying.RemoveAt(i);
+                		break;
+                	}
+                }
+
+                if ( m_priorityMusicsPlaying.Count > 0 )
+                {
+					Ambience_ToPlay = m_priorityMusicsPlaying[ m_priorityMusicsPlaying.Count - 1 ];
+                }
+				else if (m_musicsPlaying.Count > 0)
 				{
 					Ambience_ToPlay = m_musicsPlaying[ m_musicsPlaying.Count - 1 ];
 				}
