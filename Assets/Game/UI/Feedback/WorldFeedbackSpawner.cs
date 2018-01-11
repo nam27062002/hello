@@ -60,6 +60,10 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//      	
+    private void Awake() {
+        enabled = FeatureSettingsManager.instance.IsParticlesFeedbackEnabled;
+    }
+
     private void Start() {
 		// Create the pools
 		// No more than X simultaneous messages on screen!
@@ -129,15 +133,15 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     /// </summary>
     private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnEaten);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
-		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.AddListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
-		Messenger.AddListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
-        Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);        
-		Messenger.AddListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
+		Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
+        Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);        
+		Messenger.AddListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
     }
 	
 	/// <summary>
@@ -145,15 +149,15 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnEaten);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnDestroyed);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.STAR_COMBO, OnStarCombo);
-		Messenger.RemoveListener<Transform>(GameEvents.ENTITY_ESCAPED, OnEscaped);
-        Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
-		Messenger.RemoveListener(GameEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
+		Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
+        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
     }
 
 	/// <summary>
@@ -606,14 +610,14 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     #region debug
     // This region is responsible for enabling/disabling the feedback particles for profiling purposes. 
     private void Debug_Awake() {
-        Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
     }
 
     private void Debug_OnDestroy() {
-        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, Debug_OnChanged);
+        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id) {

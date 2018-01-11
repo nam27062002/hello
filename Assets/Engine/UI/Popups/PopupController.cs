@@ -63,7 +63,7 @@ public class PopupController : MonoBehaviour {
 		m_isOpen = false;
 
 		// Dispatch message
-		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CREATED, this);
+		Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_CREATED, this);
 	}
 
 	/// <summary>
@@ -71,7 +71,7 @@ public class PopupController : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnDestroy() {
 		// Dispatch message - it could be problematic using "this" at this point
-		Messenger.Broadcast<PopupController>(EngineEvents.POPUP_DESTROYED, this);
+		Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_DESTROYED, this);
 
 		// Clear all events
 		OnOpenPreAnimation.RemoveAllListeners();
@@ -96,15 +96,15 @@ public class PopupController : MonoBehaviour {
 			m_reopening = false;
 		} else {
 			// Send message
-			Messenger.Broadcast<PopupController>(EngineEvents.POPUP_OPENED, this);
+			Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_OPENED, this);
 		}
 
 		// Invoke event
 		OnOpenPreAnimation.Invoke();
 
 		// Launch anim
-		m_anim.ResetTrigger("close");
-		m_anim.SetTrigger("open");
+		m_anim.ResetTrigger( GameConstants.Animator.CLOSE );
+		m_anim.SetTrigger( GameConstants.Animator.OPEN );
 	}
 
 	/// <summary>
@@ -119,8 +119,8 @@ public class PopupController : MonoBehaviour {
 		OnClosePreAnimation.Invoke();
 
 		// Launch anim
-		m_anim.ResetTrigger("open");
-		m_anim.SetTrigger("close");
+		m_anim.ResetTrigger( GameConstants.Animator.OPEN );
+		m_anim.SetTrigger( GameConstants.Animator.CLOSE );
 	}
 
 	/// <summary>
@@ -169,7 +169,7 @@ public class PopupController : MonoBehaviour {
 			Open();
 		} else {
 			// Dispatch message
-			Messenger.Broadcast<PopupController>(EngineEvents.POPUP_CLOSED, this);
+			Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_CLOSED, this);
 
 			// Delete ourselves if required
 			if(m_destroyAfterClose) {

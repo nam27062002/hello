@@ -196,6 +196,11 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
 			EntitiesSpawned++;
 
+			IViewControl view = spawning.GetComponent<IViewControl>();
+			if (view != null) {
+				view.Spawn(this);
+			}
+
 			AI.IMachine machine = spawning.GetComponent<AI.IMachine>();
             if (machine != null) {
                 machine.Spawn(this);
@@ -210,7 +215,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
             ISpawnable[] components = spawning.GetComponents<ISpawnable>();
             foreach (ISpawnable component in components) {
-                if (component != entity && component != pilot && component != machine) {
+				if (component != entity && component != pilot && component != machine && component != view) {
                     component.Spawn(this);
                 }
             }

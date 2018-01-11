@@ -197,8 +197,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			#endif
 		} else {
 			ClearCurrentEvent();
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_DATA_UPDATED);
 		}
 	}
 
@@ -249,8 +249,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			#endif
 		} else {
 			// Notify game that leaderboard data is ready
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 		}
 	}
 
@@ -316,7 +316,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 				// Notify game that server response was received
 				Debug.Log("<color=purple>REGISTER SCORE</color>");
-				Messenger.Broadcast<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
+				Messenger.Broadcast<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
 			}
 		);
 
@@ -405,7 +405,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				TMP_RequestCustomizer();
 			}
             
-            Messenger.AddListener<bool>(GameEvents.LOGGED, OnLoggedIn);            
+            Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);            
         }
 	}
 
@@ -440,8 +440,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Probably store somewhere that there was an error so retry timer is reset or smth
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_DATA_UPDATED);
 			return;
 		}
 
@@ -468,8 +468,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		}
 
 		// Notify game that we have new data concerning the current event
-		Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
-		Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+		Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+		Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_DATA_UPDATED);
 
 		// If we have a valid event, request its state too
 		if(m_currentEvent != null) {
@@ -490,8 +490,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Probably store somewhere that there was an error so retry timer is reset or smth
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_STATE_UPDATED);
 			return;
 		}
 
@@ -515,8 +515,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				}
 
 				// Notify game that we have new data concerning the current event
-				Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
-				Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
+				Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
+				Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_STATE_UPDATED);
 			}
 		}
 	}
@@ -567,8 +567,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Probably store somewhere that there was an error so retry timer is reset or smth
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 			return;
 		}
 
@@ -617,8 +617,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 		}
 	}
 
@@ -646,7 +646,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 
 			// Notify game
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_REWARDS);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_REWARDS);
 		}
 	}
 }

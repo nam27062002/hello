@@ -1,4 +1,4 @@
-﻿// DragonSelectionTutorial.cs
+// DragonSelectionTutorial.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 19/04/2016.
@@ -10,6 +10,7 @@
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -38,14 +39,22 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	[SerializeField] private float m_duration = 10f;
 	[SerializeField] private float m_backdelay = 1f;
 	[SerializeField] private float m_backDuration = 1.5f;
-	[SerializeField] private CustomEase.EaseType m_ease = CustomEase.EaseType.quartInOut_01;
+	[Space]
+	[SerializeField] private CustomEase.EaseType m_easeForward = CustomEase.EaseType.quartInOut_01;
+	[SerializeField] private CustomEase.EaseType m_easeBackward = CustomEase.EaseType.quartInOut_01;
 
 	// External references
 	[Space]
 	[SerializeField] private CanvasGroup m_uiCanvasGroup = null;
 
+	// Public properties
+	public bool isPlaying {
+		get { return m_state != State.IDLE; }
+	}
+
 	// Internal references
 	private MenuDragonScroller m_scroller = null;
+	private List<ParticleSystem> m_pausedParticles = new List<ParticleSystem>();
 
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
@@ -64,7 +73,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_scroller = InstanceManager.menuSceneController.dragonScroller;
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -73,7 +82,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -103,7 +112,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_timer.Start(m_backDuration * 1000);
 				} else {
 					// Timer not finished, scroll
-					m_scroller.cameraAnimator.delta = m_timer.GetDelta(m_ease) * m_lastDelta;
+					m_scroller.cameraAnimator.delta = m_timer.GetDelta(m_easeForward) * m_lastDelta;
 				}
 			} break;
 
@@ -143,12 +152,13 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Update tutorial flag and save persistence
 					UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
 
-					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06_load_and_animation);
+					// Tracking!
+					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06b_animation_done);
 
 					PersistenceFacade.instance.Save_Request();
                 } else {
 					// Timer not finished, scroll
-					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_lastDelta, m_targetDelta, m_timer.GetDelta(m_ease));	// [AOC] Reverse scroll!
+					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_lastDelta, m_targetDelta, m_timer.GetDelta(m_easeBackward));	// [AOC] Reverse scroll!
 				}
 			} break;
 		}
@@ -160,45 +170,76 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// <summary>
 	/// Starts the tutorial, if not already running.
 	/// </summary>
-	private void StartTutorial() {
-		if(m_state == State.IDLE) {
-			// Lock all input
-			Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+	public void StartTutorial() {
+		// Ignore if not in the IDLE state
+		if(m_state != State.IDLE) return;
 
-			// Hide HUD and UI
-			InstanceManager.menuSceneController.hud.animator.ForceHide(false);
-			if(m_uiCanvasGroup != null) m_uiCanvasGroup.alpha = 0;
+		// Lock all input
+		Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
 
-			// Instant scroll to first dragon
-			m_scroller.cameraAnimator.delta = 0f;
+		// Hide HUD and UI
+		InstanceManager.menuSceneController.hud.animator.ForceHide(false);
+		if(m_uiCanvasGroup != null) {
+			m_uiCanvasGroup.alpha = 0;
 
-			// Start timer
-			m_timer.Start(m_delay * 1000 * 0.5f);
-
-			// Last dragon delta, next dragons are locked until player progress further in the game
-			m_lastDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(6);
-
-			// Toggle state!
-			m_state = State.DELAY;
+			// Particle Systems are not affected by canvas groups, so manually pause them
+			ParticleSystem[] particles = m_uiCanvasGroup.GetComponentsInChildren<ParticleSystem>();
+			m_pausedParticles.Clear();
+			for(int i = 0; i < particles.Length; ++i) {
+				if(particles[i].isPlaying) {
+					particles[i].Stop();
+					particles[i].Clear();
+					m_pausedParticles.Add(particles[i]);
+				}
+			}
 		}
+
+		// Instant scroll to first dragon
+		m_scroller.cameraAnimator.delta = 0f;
+
+		// Start timer
+		m_timer.Start(m_delay * 1000 * 0.5f);
+
+		// Last dragon delta, next dragons are locked until player progress further in the game
+		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
+		for(int i = dragonsByOrder.Count - 1; i >= 0; --i) {
+			// First non-hidden dragon (including teased dragons)
+			if(dragonsByOrder[i].isRevealed || dragonsByOrder[i].isTeased) {
+				// Get delta corresponding to this dragon and break the loop!
+				m_lastDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(i);
+				break;
+			}
+		}
+
+		// Toggle state!
+		m_state = State.DELAY;
 	}
 
 	/// <summary>
 	/// Stops the tutorial. Doesn't update profile's persistence!
 	/// </summary>
 	private void StopTutorial() {
-		if(m_state != State.IDLE) {
-			// Lock all input
-			Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
+		// Ignore if already in the IDLE state
+		if(m_state == State.IDLE) return;
 
-			// Show UI back
-			InstanceManager.menuSceneController.hud.animator.ForceShow(true);
-			if(m_uiCanvasGroup != null) m_uiCanvasGroup.DOFade(1f, 0.25f);
+		// Lock all input
+		Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 
-			// Control vars
-			m_state = State.IDLE;
-			m_timer.Finish();
+		// Show UI back
+		InstanceManager.menuSceneController.hud.animator.ForceShow(true);
+		if(m_uiCanvasGroup != null) {
+			m_uiCanvasGroup.DOFade(1f, 0.25f);
+
+			// Restore paused particle systems
+			for(int i = 0; i < m_pausedParticles.Count; ++i) {
+				m_pausedParticles[i].Play();
+			}
+			m_pausedParticles.Clear();
 		}
+
+		// Control vars
+		m_state = State.IDLE;
+		m_timer.Finish();
 	}
 
 	//------------------------------------------------------------------------//

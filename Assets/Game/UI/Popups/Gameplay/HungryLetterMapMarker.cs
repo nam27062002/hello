@@ -1,8 +1,4 @@
-﻿using FGOL.Events;
-using System;
-using UnityEngine;
-
-public class HungryLetterMapMarker : MapMarker {
+﻿public class HungryLetterMapMarker : MapMarker {
 
 	private HungryLetter m_hungryLetter;
 
@@ -10,13 +6,13 @@ public class HungryLetterMapMarker : MapMarker {
 	{
 		base.Awake();
 		m_hungryLetter = transform.parent.GetComponent<HungryLetter>();
-		Messenger.AddListener<Reward>(GameEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
+		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
 	}
 
 	override protected void OnDestroy()
 	{
 		base.OnDestroy();
-		Messenger.RemoveListener<Reward>(GameEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
+		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnCollectedHungryLetter);
 	}
 
 	public void OnUpdateMarkerStatus()

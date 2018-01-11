@@ -73,7 +73,7 @@ public class MenuPetPreview : MonoBehaviour {
 		m_animator = GetComponentInChildren<Animator>();
         m_renderers = GetComponentsInChildren<Renderer>();
 
-		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
     void setFresnelColor(Color col)
@@ -96,7 +96,7 @@ public class MenuPetPreview : MonoBehaviour {
 			m_rarityGlowShowHideTween = null;
 		}
 
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>

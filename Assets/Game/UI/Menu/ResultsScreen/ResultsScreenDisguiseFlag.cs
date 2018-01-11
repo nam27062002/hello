@@ -69,7 +69,7 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 	/// Launch the whole unlock animation.
 	/// </summary>
 	public void LaunchAnim() {
-		m_animator.SetTrigger("unlock");
+		m_animator.SetTrigger( GameConstants.Animator.UNLOCK );
 	}
 
 	/// <summary>
@@ -78,9 +78,9 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 	/// <param name="_folded">Whether to fold or unfold the flag.</param>
 	public void ToggleFold(bool _folded) {
 		if(_folded) {
-			m_animator.SetTrigger("fold");
+			m_animator.SetTrigger( GameConstants.Animator.FOLD );
 		} else {
-			m_animator.SetTrigger("unfold");
+			m_animator.SetTrigger( GameConstants.Animator.UNFOLD );
 		}
 	}
 

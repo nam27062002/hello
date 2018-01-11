@@ -75,14 +75,14 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		// Disable google play group if not available
 #if UNITY_ANDROID
 		m_googlePlayGroup.SetActive(true);
-		Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 #else
 		m_googlePlayGroup.SetActive(false);	// [AOC] TODO!!
 #endif
     }
 
     void OnDestroy(){
-		Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
     }
 
 	void Update() {
@@ -133,7 +133,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			}
 		}
 
-		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
+		Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
 	}
 
 	/// <summary>
@@ -181,9 +181,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	public void OnShow(){
 		#if UNITY_ANDROID
 			RefreshGooglePlayView();
-			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
 
 		m_dirty = true;
@@ -191,9 +191,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 	public void OnHide(){
 		#if UNITY_ANDROID
-			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
 	}
 

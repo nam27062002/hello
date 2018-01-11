@@ -43,7 +43,7 @@ public class CameraShake : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
+		Messenger.AddListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
 	}
 
 	/// <summary>
@@ -51,7 +51,7 @@ public class CameraShake : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe to external events
-		Messenger.RemoveListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
+		Messenger.RemoveListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
 	}
 
 	//------------------------------------------------------------------------//

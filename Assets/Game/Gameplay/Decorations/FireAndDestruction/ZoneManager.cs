@@ -27,11 +27,11 @@ public class ZoneManager : MonoBehaviour {
 
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------//
-	void Awake() {
+	void OnEnable() {
 		InstanceManager.zoneManager = this;	
 	}
 
-	void OnDestroy() {
+	void OnDisable() {
 		if (ApplicationManager.IsAlive)
 			InstanceManager.zoneManager = null;		
 	}

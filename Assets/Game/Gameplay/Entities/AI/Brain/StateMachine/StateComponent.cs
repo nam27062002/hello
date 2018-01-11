@@ -31,6 +31,7 @@ namespace AI
 		protected StateMachine m_stateMachine;
 		protected AIPilot m_pilot;
 		protected IMachine m_machine;
+		protected IViewControl m_viewControl;
 
 		State m_state;
 		public State state { get { return m_sharedBetweenStates ? m_stateMachine.current : m_state; } }
@@ -40,9 +41,10 @@ namespace AI
 		{
 			if (!m_initialised)
 			{
-				m_stateMachine = _stateMachine;
-				m_pilot 	= m_stateMachine.gameObject.GetComponent<AIPilot>();
-				m_machine	= m_stateMachine.gameObject.GetComponent<IMachine>();
+				m_stateMachine 	= _stateMachine;
+				m_pilot 		= m_stateMachine.gameObject.GetComponent<AIPilot>();
+				m_machine		= m_stateMachine.gameObject.GetComponent<IMachine>();
+				m_viewControl 	= m_stateMachine.gameObject.GetComponent<IViewControl>();
 
 				m_state = _state;
 

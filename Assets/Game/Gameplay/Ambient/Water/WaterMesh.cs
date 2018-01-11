@@ -167,7 +167,7 @@ public class WaterMesh : MonoBehaviour
             m_mesh.SetTriangles(m_indices2, 1);            
         }
 
-        Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+        Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 
     }
 
@@ -181,7 +181,7 @@ public class WaterMesh : MonoBehaviour
         // The listener has to be removed only if it was added, since it's added in Start() we need to check if it's been started
         if (HasBeenStarted())
         {
-            Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+            Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
         }
     }    
 

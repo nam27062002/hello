@@ -70,7 +70,7 @@ namespace AI {
 				CreatePool();
 
 				// create a projectile from resources (by name) and save it into pool
-				Messenger.AddListener(GameEvents.GAME_AREA_ENTER, CreatePool);
+				Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
 
 				m_targetDummy = (m_machine as MachineGoblinWarBoat).targetDummy;
 				m_cannonEye = (m_machine as MachineGoblinWarBoat).cannonEye;

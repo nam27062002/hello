@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CodeStage.AntiCheat.ObscuredTypes;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -59,17 +60,17 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// Basic rewards
 	// Exposed for easier debugging
-	[SerializeField] private long m_score = 0;
+	[SerializeField] private ObscuredLong m_score = 0;
 	public static long score { 
 		get { return instance.m_score; }
 	}
 
-	[SerializeField] private long m_coins = 0;
+	[SerializeField] private ObscuredLong m_coins = 0;
 	public static long coins {
 		get { return instance.m_coins; }
 	}
 
-	[SerializeField] private long m_pc = 0;
+	[SerializeField] private ObscuredLong m_pc = 0;
 	public static long pc {
 		get { return instance.m_pc; }
 	}
@@ -259,20 +260,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.AddListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.AddListener<Transform, Reward>(GameEvents.STAR_COMBO, OnFlockEaten);
-		Messenger.AddListener<Reward>(GameEvents.LETTER_COLLECTED, OnLetterCollected);
-		Messenger.AddListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
-		Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
+		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
+		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 
         // Required for tracking purposes
-        Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
-        Messenger.AddListener<bool>(GameEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
+        Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+        Messenger.AddListener<bool>(MessengerEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
     }
 
 	/// <summary>
@@ -280,20 +281,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.RemoveListener<Transform, Reward>(GameEvents.STAR_COMBO, OnFlockEaten);
-		Messenger.RemoveListener<Reward>(GameEvents.LETTER_COLLECTED, OnLetterCollected);
-		Messenger.RemoveListener<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryRush);
-		Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
+		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
+		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 
         // Required for tracking purposes
-        Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
-        Messenger.RemoveListener<bool>(GameEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
+        Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+        Messenger.RemoveListener<bool>(MessengerEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
     }
 
 	/// <summary>
@@ -311,7 +312,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 				if (m_currentScoreMultiplierIndex != 0)
 				{
 					SetScoreMultiplier(0);
-					Messenger.Broadcast(GameEvents.SCORE_MULTIPLIER_LOST);
+					Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_LOST);
 				}
 			}
 		}
@@ -457,7 +458,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_xp += _reward.xp;
 
 		// Global notification (i.e. to show feedback)
-		Messenger.Broadcast<Reward, Transform>(GameEvents.REWARD_APPLIED, _reward, _entity);
+		Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, _reward, _entity);
 	}
 
 	//------------------------------------------------------------------//
@@ -483,7 +484,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Dispatch game event (only if actually changing)
 		if(old != currentScoreMultiplierData) {
-			Messenger.Broadcast<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
+			Messenger.Broadcast<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
 
 			// [AOC] Update tracking vars
 			instance.m_maxScoreMultiplier = Mathf.Max(instance.m_maxScoreMultiplier, currentScoreMultiplier);
@@ -520,7 +521,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		int elapsedMinutes = (int)Math.Floor(GameTime() / 60f);
 		if(elapsedMinutes > m_lastAwardedSurvivalBonusMinute) {
 			// Trigger event so HUD can show an event!
-			Messenger.Broadcast(GameEvents.SURVIVAL_BONUS_ACHIEVED);
+			Messenger.Broadcast(MessengerEvents.SURVIVAL_BONUS_ACHIEVED);
 			m_lastAwardedSurvivalBonusMinute = elapsedMinutes;
 		}
 	}
@@ -647,13 +648,13 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		if (m_currentScoreMultiplierIndex != 0)
 		{
 			SetScoreMultiplier(0);
-			Messenger.Broadcast(GameEvents.SCORE_MULTIPLIER_LOST);
+			Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_LOST);
 		}
 	}
 
 	private void OnFuryRush(bool toggle, DragonBreathBehaviour.Type type )
 	{
-		Messenger.Broadcast<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
+		Messenger.Broadcast<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, currentScoreMultiplierData, m_currentFireRushMultiplier);
         
 		// [AOC] Update tracking vars
 		instance.m_maxScoreMultiplier = Mathf.Max(instance.m_maxScoreMultiplier, currentScoreMultiplier);
