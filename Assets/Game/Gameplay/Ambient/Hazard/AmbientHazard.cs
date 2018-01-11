@@ -134,9 +134,6 @@ public class AmbientHazard : MonoBehaviour {
 		m_transform = transform;
 		m_collider = GetComponent<Collider>();
 
-		m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
-		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
-
 		m_poisonParticle.CreatePool();
 	}
 
@@ -144,6 +141,10 @@ public class AmbientHazard : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
+
+		m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
+		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+
 		if ( m_visualActivationRadius < 0 )
 			m_visualActivationRadius = 40;
 		
@@ -289,9 +290,12 @@ public class AmbientHazard : MonoBehaviour {
 				// In case always
 				if(m_animator != null && m_animator.isInitialized) {
 					m_animator.SetBool( GameConstants.Animator.ACTIVE , true);
-					if ( m_state == State.ACTIVE )
-					{
+					if (m_state == State.ACTIVE) {
 						m_animator.Play("ACTIVATE", 0, 1);
+						ActivateParticles(true);
+					}
+				} else {
+					if (m_state == State.ACTIVE) {
 						ActivateParticles(true);
 					}
 				}
@@ -346,6 +350,8 @@ public class AmbientHazard : MonoBehaviour {
 				// Launch activation animation
 				if(m_animator != null && m_animator.isInitialized) {
 					m_animator.SetBool( GameConstants.Animator.ACTIVE, true);
+				} else {
+					ActivateParticles(true);
 				}
 
 				// Reset timer
