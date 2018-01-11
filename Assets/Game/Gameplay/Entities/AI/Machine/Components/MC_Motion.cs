@@ -133,19 +133,19 @@ namespace AI {
 
 		public sealed override void Init() {
 			switch (m_defaultUpVector) {
-				case UpVector.Up: 		m_upVector = Vector3.up; 		break;
-				case UpVector.Down: 	m_upVector = Vector3.down; 		break;
-				case UpVector.Right: 	m_upVector = Vector3.right; 	break;
-				case UpVector.Left: 	m_upVector = Vector3.left; 		break;
-				case UpVector.Forward: 	m_upVector = Vector3.forward; 	break;
-				case UpVector.Back: 	m_upVector = Vector3.back;		break;
+				case UpVector.Up: 		m_upVector = GameConstants.Vector3.up; 		break;
+				case UpVector.Down: 	m_upVector = GameConstants.Vector3.down; 		break;
+				case UpVector.Right: 	m_upVector = GameConstants.Vector3.right; 	break;
+				case UpVector.Left: 	m_upVector = GameConstants.Vector3.left; 		break;
+				case UpVector.Forward: 	m_upVector = GameConstants.Vector3.forward; 	break;
+				case UpVector.Back: 	m_upVector = GameConstants.Vector3.back;		break;
 			}
 
 			m_groundSensorOffset = (m_machineTransform.position - m_groundSensor.position).magnitude;
 
-			m_direction = Vector3.back;
-			m_velocity = Vector3.zero;
-			m_acceleration = Vector3.zero;
+			m_direction = GameConstants.Vector3.back;
+			m_velocity = GameConstants.Vector3.zero;
+			m_acceleration = GameConstants.Vector3.zero;
 
 			if (m_mass < 1f) {
 				m_mass = 1f;
@@ -182,9 +182,9 @@ namespace AI {
 
 		public void Stop() {
 			if (m_state != State.FreeFall) {
-				m_velocity = Vector3.zero;
-				m_rbody.velocity = Vector3.zero;
-				m_rbody.angularVelocity = Vector3.zero;
+				m_velocity = GameConstants.Vector3.zero;
+				m_rbody.velocity = GameConstants.Vector3.zero;
+				m_rbody.angularVelocity = GameConstants.Vector3.zero;
 
 				m_viewControl.Move(0f);
 			}
@@ -225,7 +225,7 @@ namespace AI {
 
 					UpdateAttack();
 
-					m_direction = Vector3.Cross(m_direction + Vector3.back * 0.1f, Vector3.down);
+					m_direction = Vector3.Cross(m_direction + GameConstants.Vector3.back * 0.1f, GameConstants.Vector3.down);
 
 					m_upVector = m_machineTransform.parent.up;
 
@@ -269,7 +269,9 @@ namespace AI {
 			//----------------------------------------------------------------------------------
 			// Debug
 			//----------------------------------------------------------------------------------
+			#if UNITY_EDITOR
 			Debug.DrawLine(position, position + m_rbody.velocity, Color.yellow);
+			#endif
 			//----------------------------------------------------------------------------------
 
 			CheckState();
@@ -283,7 +285,7 @@ namespace AI {
 
 				case State.FreeFall: {
 						// free fall
-						m_acceleration = Vector3.down * GRAVITY;
+						m_acceleration = GameConstants.Vector3.down * GRAVITY;
 
 						float terminalVelocity = m_terminalVelocity;
 						if (m_machine.GetSignal(Signals.Type.InWater)) {
@@ -292,7 +294,7 @@ namespace AI {
 
 						m_velocity += m_acceleration * Time.fixedDeltaTime;
 						m_velocity = Vector3.ClampMagnitude(m_velocity, terminalVelocity) + m_externalVelocity;
-						m_rbody.angularVelocity = Vector3.zero;
+						m_rbody.angularVelocity = GameConstants.Vector3.zero;
 						m_rbody.velocity = m_velocity;
 					} break;
 			}
@@ -348,7 +350,7 @@ namespace AI {
 				targetDir.z = 0f;
 
 				targetDir.Normalize();
-				Vector3 cross = Vector3.Cross(targetDir, Vector3.right);
+				Vector3 cross = Vector3.Cross(targetDir, GameConstants.Vector3.right);
 				float aim = cross.z * -1;
 
 				// Z
@@ -361,14 +363,14 @@ namespace AI {
 				targetDir.y = 0f;
 				targetDir.Normalize();
 
-				cross = Vector3.Cross(targetDir, Vector3.right);
+				cross = Vector3.Cross(targetDir, GameConstants.Vector3.right);
 				float aimZ = cross.y * -1;
 				float angleZ = (((aimZ - 0f) / (1f - 0f)) * (180f - angleSide)) + angleSide;
 
 				// face target
 				m_targetRotation = Quaternion.Euler(0, angleZ, 0);
 
-				m_pilot.SetDirection(m_targetRotation * Vector3.forward, true);
+				m_pilot.SetDirection(m_targetRotation * GameConstants.Vector3.forward, true);
 
 				// blend between attack directions
 				m_viewControl.Aim(aim);

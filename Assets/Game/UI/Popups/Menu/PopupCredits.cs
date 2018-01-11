@@ -166,12 +166,13 @@ public class PopupCredits : MonoBehaviour {
 		// To work around that, just pause the scroll animation whenever we have a finger touching the screen
 		// Unless waiting to end!
 		if(!m_autoClosePending) {
+			int touchCount = Input.touchCount;
 			if(m_tween != null) {
-				if(Input.GetMouseButtonDown(0)) {
+				if(touchCount > 0) {
 					m_tween.Kill();
 					m_tween = null;
 				}
-			} else if(!Input.GetMouseButton(0) && Mathf.Abs(m_scroll.velocity.y) <= m_inertiaThreshold) {
+			} else if(touchCount == 0 && Mathf.Abs(m_scroll.velocity.y) <= m_inertiaThreshold) {
 				CreateTween();	// Re-create to start from current pos
 			}
 		} else {

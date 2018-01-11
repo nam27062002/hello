@@ -38,7 +38,7 @@ namespace AI {
 		//--------------------------------------------------
 		protected override void ExtendedUpdate() {
 			if (!m_faceDirection) {
-				m_direction = (m_pilot.direction.x >= 0)? Vector3.right : Vector3.left;
+				m_direction = (m_pilot.direction.x >= 0)? GameConstants.Vector3.right : GameConstants.Vector3.left;
 			} else if (m_pilot.IsActionPressed(Pilot.Action.Stop | Pilot.Action.Attack)) {
 				m_direction = m_pilot.direction;
 			} else {
@@ -59,7 +59,7 @@ namespace AI {
 		}
 
 		protected override void UpdateOrientation() {
-			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
+			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
 
 			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
 				if (m_dragonStyleRotation) {

@@ -16,7 +16,7 @@ public class PersistenceUtils
     /// </summary>
     /// <returns>The data from profile.</returns>
     /// <param name="_profileName">The name of the profile to be loaded.</param>
-    public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "")
+    public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "", string _initialDragonSku=null, string _socialState=null, int _timePlayed=0)
     {
         SimpleJSON.JSONClass _returnValue = null;
 
@@ -29,7 +29,10 @@ public class PersistenceUtils
             {
                 string _sc = _def.Get("softCurrency");
                 string _pc = _def.Get("hardCurrency");
-                string _initialDragonSku = _def.Get("initialDragonSKU");
+                if (_initialDragonSku == null)
+                {
+                    _initialDragonSku = _def.Get("initialDragonSKU");
+                }
 
                 _returnValue = new SimpleJSON.JSONClass();
 
@@ -40,7 +43,18 @@ public class PersistenceUtils
                 _userProfile.Add("keys", 3);	// [AOC] HARDCODED!!
                 _userProfile.Add("currentDragon", _initialDragonSku);
                 _userProfile.Add("currentLevel", "level_0");	// Only one level now
+
+                if (_socialState != null)
+                    _userProfile.Add("socialState", _socialState);
+
                 _returnValue.Add("userProfile", _userProfile);
+
+                if (_timePlayed > 0)
+                {
+                    SimpleJSON.JSONClass _user = new SimpleJSON.JSONClass();
+                    _user.Add("TimePlayed", _timePlayed);
+                    _returnValue.Add("User", _user);
+                }
 
                 // Dragons array
                 SimpleJSON.JSONArray _dragons = new SimpleJSON.JSONArray();
@@ -65,7 +79,7 @@ public class PersistenceUtils
         }
 
         return _returnValue;
-    }
+    }    
 
     /// <summary>
 	/// Given the name of a profile, obtain the full path of its associated persistence file.

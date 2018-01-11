@@ -64,18 +64,18 @@ namespace AI {
 			SetArea(_spawner);
 
 
-			Quaternion rot = Quaternion.identity;
+			Quaternion rot = GameConstants.Quaternion.identity;
 			if ( _spawner != null )
 			 	rot = _spawner.rotation;
 
 			if (rot == Quaternion.identity) {
 				if (UnityEngine.Random.Range(0f, 1f) < 0.5f) {
-					m_direction = Vector2.right;
+					m_direction = GameConstants.Vector3.right;
 				} else {
-					m_direction = Vector2.left;
+					m_direction = GameConstants.Vector3.left;
 				}
 			} else {
-				m_direction = rot * Vector3.forward;
+				m_direction = rot * GameConstants.Vector3.forward;
 			}
 
 			Stop();
