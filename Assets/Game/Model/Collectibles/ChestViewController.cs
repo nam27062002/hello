@@ -31,7 +31,8 @@ public class ChestViewController : MonoBehaviour {
 	[SerializeField] private GameObject m_gemsRewardView = null;
 	[Space]
     [SerializeField] private GameObject m_glowFX = null;
-	[SerializeField] private ParticleData m_openParticle = null;
+	[SerializeField] private ParticleData m_goldOpenFX = null;
+	[SerializeField] private ParticleData m_gemsOpenFX = null;
 	// [SerializeField] private ParticleData m_dustParticle = null;
 
 	// Exposed setup
@@ -49,6 +50,8 @@ public class ChestViewController : MonoBehaviour {
 	// Internal
 	private Animator m_animator = null;
 	private GameObject[] m_rewardViews = null;
+	private Chest.RewardType m_lastRewardType = Chest.RewardType.SC;
+	private GameObject m_openFXInstance = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -70,7 +73,8 @@ public class ChestViewController : MonoBehaviour {
 			m_gemsRewardView
 		};
 
-		m_openParticle.CreatePool();
+		m_goldOpenFX.CreatePool();
+		m_gemsOpenFX.CreatePool();
 	}
 
 	//------------------------------------------------------------------------//
@@ -104,6 +108,19 @@ public class ChestViewController : MonoBehaviour {
 				m_rewardViews[i].SetActive(i == (int)_reward);
 			}
 		}
+
+		// Clear previous open FX instance (if any)
+		if(m_openFXInstance != null) {
+			// Return it to the source pool
+			ParticleData targetFX = GetOpenFX(m_lastRewardType);
+			if(targetFX != null) {
+				targetFX.ReturnInstance(m_openFXInstance);
+				m_openFXInstance = null;
+			}
+		}
+
+		// Store reward type to spawn the right FX once the lid is open
+		m_lastRewardType = _reward;
 	}
 
 	/// <summary>
@@ -112,6 +129,16 @@ public class ChestViewController : MonoBehaviour {
 	public void Close() {
 		// Launch close animation
 		m_animator.SetTrigger( GameConstants.Animator.CLOSE );
+
+		// Clear previous open FX instance (if any)
+		if(m_openFXInstance != null) {
+			// Return it to the source pool
+			ParticleData targetFX = GetOpenFX(m_lastRewardType);
+			if(targetFX != null) {
+				targetFX.ReturnInstance(m_openFXInstance);
+				m_openFXInstance = null;
+			}
+		}
 	}
 
 	/// <summary>
@@ -156,6 +183,19 @@ public class ChestViewController : MonoBehaviour {
 		*/
 	}
 
+	/// <summary>
+	/// Get the target Open FX Data based on reward type.
+	/// </summary>
+	/// <returns>The target open FX. <c>null</c> if none assigned to the given reward type.</returns>
+	/// <param name="_rewardType">Reward type whose Open FX we want.</param>
+	private ParticleData GetOpenFX(Chest.RewardType _rewardType) {
+		switch(_rewardType) {
+			case Chest.RewardType.SC: return m_goldOpenFX;
+			case Chest.RewardType.PC: return m_gemsOpenFX;
+		}
+		return null;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -163,12 +203,16 @@ public class ChestViewController : MonoBehaviour {
 	/// Lid open animation event.
 	/// </summary>
 	public void OnLidOpen() {
-		// Launch particle system
-		// ToggleFX(m_openFX, true);
-		GameObject go = m_openParticle.Spawn(this.transform, m_openParticle.offset);
-		if (go != null) {
-			go.SetLayerRecursively(this.gameObject.layer);
-			go.transform.rotation = transform.rotation;
+		// Launch particle system matching the last known reward type
+		ParticleData targetFX = GetOpenFX(m_lastRewardType);
+		m_openFXInstance = null;
+		if(targetFX != null) {
+			m_openFXInstance = targetFX.Spawn(this.transform, targetFX.offset);
+			Debug.Log("<color=lime>Spawning " + targetFX.name + ": " + m_openFXInstance + "</color>");
+			if(m_openFXInstance != null) {
+				m_openFXInstance.SetLayerRecursively(this.gameObject.layer);
+				m_openFXInstance.transform.rotation = transform.rotation;
+			}
 		}
 		
 		ToggleFX(m_glowFX, false);
