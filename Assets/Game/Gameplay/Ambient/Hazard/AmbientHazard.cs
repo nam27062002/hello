@@ -111,6 +111,8 @@ public class AmbientHazard : MonoBehaviour {
 
 
 	// Internal logic
+	private bool m_levelLoaded = false;
+
 	private bool m_visible = true;
 	private State m_state = State.IDLE;
 
@@ -135,6 +137,8 @@ public class AmbientHazard : MonoBehaviour {
 		m_collider = GetComponent<Collider>();
 
 		m_poisonParticle.CreatePool();
+
+		m_levelLoaded = false;
 	}
 
 	/// <summary>
@@ -168,52 +172,75 @@ public class AmbientHazard : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+	}
+
+	private void OnLevelLoaded() { m_levelLoaded = true;  }
+	private void OnGameEnded() 	 { m_levelLoaded = false; }
+
+	/// <summary>
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		// Update state timer
-		if(m_stateTargetTime > 0f) {
-			m_stateTimer += Time.deltaTime;
-			if(m_stateTimer >= m_stateTargetTime) {
-				// Timer up! Different actions based on state
-				switch(m_state) {
-					case State.INITIAL_DELAY: {
-						// Move to initial state
-						SetState(m_initialState);
-					} break;
+		if (m_levelLoaded) {
+			// Update state timer
+			if(m_stateTargetTime > 0f) {
+				m_stateTimer += Time.deltaTime;
+				if(m_stateTimer >= m_stateTargetTime) {
+					// Timer up! Different actions based on state
+					switch(m_state) {
+						case State.INITIAL_DELAY: {
+							// Move to initial state
+							SetState(m_initialState);
+						} break;
 
-					case State.IDLE: {
-						SetState(State.ACTIVATING);
-					} break;
+						case State.IDLE: {
+							SetState(State.ACTIVATING);
+						} break;
 
-					case State.ACTIVATING: {
-						SetState(State.ACTIVE);
-					} break;
+						case State.ACTIVATING: {
+							SetState(State.ACTIVE);
+						} break;
 
-					case State.ACTIVE: {
-						SetState(State.IDLE);
-					} break;
+						case State.ACTIVE: {
+							SetState(State.IDLE);
+						} break;
+					}
 				}
 			}
-		}
 
-		// Update visual activation
-		// Only if visual activation is enabled (radius > 0)
-		if(m_visualActivationRadius > 0f) {
-			// Update detection timer (optimization to avoid performing the check every frame)
-			m_visualActivationCheckTimer += Time.deltaTime;
-			if(m_visualActivationCheckTimer >= VISUAL_ACTIVATION_CHECK_INTERVAL) {
-				// Reset timer
-				m_visualActivationCheckTimer = 0f;
+			// Update visual activation
+			// Only if visual activation is enabled (radius > 0)
+			if(m_visualActivationRadius > 0f) {
+				// Update detection timer (optimization to avoid performing the check every frame)
+				m_visualActivationCheckTimer += Time.deltaTime;
+				if(m_visualActivationCheckTimer >= VISUAL_ACTIVATION_CHECK_INTERVAL) {
+					// Reset timer
+					m_visualActivationCheckTimer = 0f;
 
-				// Check whether player is within the activation distance
-				bool isWithinDistance = Mathf.Abs((m_dragonMotion.position - m_transform.position).sqrMagnitude) < m_visualActivationRadiusSqr;
+					// Check whether player is within the activation distance
+					bool isWithinDistance = Mathf.Abs((m_dragonMotion.position - m_transform.position).sqrMagnitude) < m_visualActivationRadiusSqr;
 
-				// Show/hide based on trigger
-				if(m_visible && !isWithinDistance) {
-					SetVisible(false);
-				} else if(!m_visible && isWithinDistance) {
-					SetVisible(true);
+					// Show/hide based on trigger
+					if(m_visible && !isWithinDistance) {
+						SetVisible(false);
+					} else if(!m_visible && isWithinDistance) {
+						SetVisible(true);
+					}
 				}
 			}
 		}
