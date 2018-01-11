@@ -11,14 +11,14 @@ public class AnimatedCamera : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.AddListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-		Messenger.RemoveListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.RemoveListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
 	}
 
 	public void CountDownEnded()

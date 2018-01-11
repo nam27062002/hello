@@ -60,7 +60,7 @@ public class HUDMultiplier : HudWidget {
     /// </summary>
     private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.AddListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 	
 	/// <summary>
@@ -68,7 +68,7 @@ public class HUDMultiplier : HudWidget {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<ScoreMultiplier, float>(GameEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+		Messenger.RemoveListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
 	}
 
 	/// <summary>
@@ -129,8 +129,8 @@ public class HUDMultiplier : HudWidget {
             if (m_multiplierToShow == m_defaultScoreMultiplier)
             {
                 // Make sure "in" trigger is consumed
-                m_anim.ResetTrigger("in");
-                m_anim.SetTrigger("out");
+				m_anim.ResetTrigger( GameConstants.Animator.IN);
+				m_anim.SetTrigger( GameConstants.Animator.OUT);
 
                 // Reset combo index
                 m_comboSFXIdx = 0;
@@ -138,9 +138,9 @@ public class HUDMultiplier : HudWidget {
             else
             {
                 // Make sure "out" trigger is consumed
-                m_anim.ResetTrigger("out");
-                m_anim.SetTrigger("in");
-                m_anim.SetTrigger("change");
+				m_anim.ResetTrigger( GameConstants.Animator.OUT );
+				m_anim.SetTrigger( GameConstants.Animator.IN );
+				m_anim.SetTrigger( GameConstants.Animator.CHANGE );
 
                 // Trigger particle effect as well
                 m_changePS.gameObject.SetActive(true);

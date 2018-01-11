@@ -1,7 +1,6 @@
 ﻿#define AWARD_AS_SOON_AS_COLLECTED
 
 using FGOL;
-using FGOL.Events;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -104,7 +103,7 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void OnEnable()
 	{
-		Messenger.AddListener<bool>(GameEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+		Messenger.AddListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 #if !PRODUCTION || UNITY_EDITOR
 		// TODO: Recover This!
 		// EventManager.Instance.RegisterEvent(Events.RespawnCollectiblesRandomly, OnDebugRespawn);
@@ -114,7 +113,7 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void OnDisable()
 	{
-		Messenger.RemoveListener<bool>(GameEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+		Messenger.RemoveListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 #if !PRODUCTION || UNITY_EDITOR
 		// TODO: Recover This!
 		// EventManager.Instance.DeregisterEvent(Events.RespawnCollectiblesRandomly, OnDebugRespawn);
@@ -180,7 +179,7 @@ public class HungryLettersManager : MonoBehaviour
 			m_reward.coins = m_coinAwards[ m_lettersCollected ];
 		if ( m_lettersCollected < m_scoreAwards.Count )
 			m_reward.score = m_scoreAwards[ m_lettersCollected ];
-		Messenger.Broadcast<Reward>(GameEvents.LETTER_COLLECTED, m_reward);
+		Messenger.Broadcast<Reward>(MessengerEvents.LETTER_COLLECTED, m_reward);
 		//report analytics.
 		// TODO: Recover analytics
 		/*
@@ -202,7 +201,7 @@ public class HungryLettersManager : MonoBehaviour
 		// check if all letters have been collected.
 		if(m_lettersCollected == m_instantiatedLetters.Length)
 		{
-			Messenger.Broadcast(GameEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED);
+			Messenger.Broadcast(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED);
 			HungryLettersPanel.Instance.AllCollected();
 		}
 	}

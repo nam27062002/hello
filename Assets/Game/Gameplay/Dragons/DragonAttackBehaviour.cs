@@ -57,7 +57,7 @@ public class DragonAttackBehaviour : MonoBehaviour {
 		if (m_attackTimer <= 0 && !m_isAttacking) {
 			m_target = collision.gameObject.GetComponent<HittableBehaviour>();
 			if (m_target != null) {
-				m_animator.SetTrigger("attack");
+				m_animator.SetTrigger( GameConstants.Animator.ATTACK );
 				m_isAttacking = true;
 				m_motion.enabled = false;
 			}

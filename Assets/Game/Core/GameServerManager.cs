@@ -129,29 +129,28 @@ public class GameServerManager
 	/// <summary>
 	/// 
 	/// </summary>
-	public void CheckConnection(ServerCallback callback)
+	public void CheckConnection(Action<Error> callback)
 	{
-		if (Application.internetReachability != NetworkReachability.NotReachable)
-		{
-			if (callback != null)
-			{
-				callback(null, null);
-			}
-		}
-		else
-		{
-			Debug.Log("HSXServer (CheckConnection) :: InternetReachability NotReachable");
-			callback(new FGOL.Server.ClientConnectionError("InternetReachability NotReachable", FGOL.Server.ErrorCodes.ClientConnectionError), null);
-		}
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            Debug.Log("GameServerManager (CheckConnection) :: InternetReachability NotReachable");
+            callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
+        }
+        else
+        {
+            GameServerManager.SharedInstance.Ping(
+                (Error _error, GameServerManager.ServerResponse _response) => {
+                    callback(_error);
+                }
+            );           
+        }        
 	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC SERVER MANAGEMENT											  //
 	//------------------------------------------------------------------------//
-    protected virtual void ExtendedConfigure() {}
-    public virtual void Init(GeoLocation.Location location) {}
+    protected virtual void ExtendedConfigure() {}    
 	public virtual void Ping(ServerCallback callback) {}
-	public virtual void SetServerLocation(GeoLocation.Location location) {}
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
 
 	//------------------------------------------------------------------------//
@@ -186,8 +185,7 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     // LOGIN																  //
     //------------------------------------------------------------------------//
-    public virtual void Auth(ServerCallback callback) {}    
-    public virtual void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {}
+    public virtual void Auth(ServerCallback callback) {}        
 	public virtual void LogOut() {}
     public virtual bool IsLoggedIn() { return false; }    
 

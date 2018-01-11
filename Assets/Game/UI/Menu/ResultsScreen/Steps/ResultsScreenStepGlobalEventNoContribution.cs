@@ -45,8 +45,8 @@ public class ResultsScreenStepGlobalEventNoContribution : ResultsScreenSequenceS
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Never during first run!
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) return false;
+		// Never during FTUX
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) return false;
 
 		// Is there a valid current event to display? Check error codes to know so.
 		GlobalEventManager.ErrorCode canContribute = GlobalEventManager.CanContribute();

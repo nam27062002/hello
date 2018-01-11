@@ -211,9 +211,9 @@ public class CPGlobalEventsTest : MonoBehaviour {
 		GlobalEventManager.currentEvent.RefreshLeaderboardPosition(playerData);
 
 		// Notify game
-		Messenger.Broadcast<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, true);
-		Messenger.Broadcast<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, GlobalEventManager.RequestType.EVENT_LEADERBOARD);
-		Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+		Messenger.Broadcast<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, true);
+		Messenger.Broadcast<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, GlobalEventManager.RequestType.EVENT_LEADERBOARD);
+		Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 	}
 
 	//------------------------------------------------------------------------//

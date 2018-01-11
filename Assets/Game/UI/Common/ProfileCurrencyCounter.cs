@@ -73,7 +73,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 		UpdateText(false);
 
 		// Subscribe to external events
-		Messenger.AddListener<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, OnAmountChanged);
+		Messenger.AddListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnAmountChanged);
 	}
 	
 	/// <summary>
@@ -81,7 +81,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe to external events
-		Messenger.RemoveListener<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, OnAmountChanged);
+		Messenger.RemoveListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnAmountChanged);
 	}
 
 	/// <summary>
@@ -115,7 +115,7 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 
 		// Launch normal animation as well
 		if(_animate && m_anim != null) {
-			m_anim.SetTrigger("start");
+			m_anim.SetTrigger( GameConstants.Animator.START );
 		}
 	}
 

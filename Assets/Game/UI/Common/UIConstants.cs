@@ -39,6 +39,14 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		RIGHT
 	}
 
+	// Special devices: extreme aspect ratios, custom safe areas, etc.
+	public enum SpecialDevice {
+		NONE,
+		IPHONE_X,
+
+		COUNT
+	}
+
 	//------------------------------------------------------------------------//
 	// STATIC MEMBERS														  //
 	//------------------------------------------------------------------------//
@@ -216,6 +224,40 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string[] dragonTiersSFX {
 		get { return instance.m_dragonTiersSFX; }
 	}
+
+	[SerializeField] private UISafeArea[] m_safeAreas = new UISafeArea[0];
+	private bool m_specialDeviceInitialized = false;
+	private SpecialDevice m_specialDevice = SpecialDevice.NONE;
+	public static SpecialDevice specialDevice {
+		get {
+			// Has the special device been initialized?
+			if(!instance.m_specialDeviceInitialized) {
+				// No! Do it now
+				// Override if debugging
+				if(DebugSettings.simulatedSpecialDevice != SpecialDevice.NONE) {
+					instance.m_specialDevice = DebugSettings.simulatedSpecialDevice;
+				}
+
+				// Is it an iPhone X?
+				#if UNITY_IOS
+				else if(UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhoneX) {
+					instance.m_specialDevice = SpecialDevice.IPHONE_X;
+				}
+				#endif
+
+				// Mark as initialized!
+				instance.m_specialDeviceInitialized = true;
+			}
+			return instance.m_specialDevice;
+		}
+	}
+
+	public static UISafeArea safeArea {
+		get {
+			// Select target safe area based on special device
+			return instance.m_safeAreas[(int)specialDevice];
+		}
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -227,6 +269,17 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Scriptable object has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Reset some runtime vars to their initial value
+		// [AOC] ScriptableObject Singletons are permanently loaded in the editor, thus not resetting runtime variables :(
+		// Special device
+		m_specialDevice = SpecialDevice.NONE;
+		m_specialDeviceInitialized = false;
+	}
+
 	/// <summary>
 	/// A change has occurred in the inspector.
 	/// </summary>

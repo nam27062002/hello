@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 114867928475640776}
   - component: {fileID: 11405304}
   - component: {fileID: 54000011371471642}
+  - component: {fileID: 135371572886198632}
   m_Layer: 25
   m_Name: PF_MineBig
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 143052}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 132.23354, y: 35.314537, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4479633231270138}
@@ -299,8 +300,6 @@ GameObject:
   - component: {fileID: 33459593274625462}
   - component: {fileID: 23130309349579226}
   - component: {fileID: 114853032547061518}
-  - component: {fileID: 135283942323954010}
-  - component: {fileID: 114314952966793436}
   m_Layer: 25
   m_Name: big_mina
   m_TagString: Untagged
@@ -476,31 +475,6 @@ MonoBehaviour:
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
---- !u!114 &114314952966793436
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1007290887976674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ec28088696d843d1a86f4d065110df8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_receiver: {fileID: 143052}
-  m_onCollisionEnter: 0
-  m_onCollisionStay: 0
-  m_onCollisionExit: 0
-  m_onTriggerEnter: 1
-  m_onTriggerStay: 1
-  m_onTriggerExit: 1
-  m_onMouseDown: 0
-  m_onMouseDrag: 0
-  m_onMouseUp: 0
-  m_onMouseUpAsButton: 0
-  m_onMouseEnter: 0
-  m_onMouseExit: 0
-  m_onMouseOver: 0
 --- !u!114 &114853032547061518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -564,12 +538,12 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
---- !u!135 &135283942323954010
+--- !u!135 &135371572886198632
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1007290887976674}
+  m_GameObject: {fileID: 143052}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1

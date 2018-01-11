@@ -5,6 +5,6 @@ public class AnimatedCameraEvents : MonoBehaviour
 {
 	public void IntroDone()
 	{
-		Messenger.Broadcast(GameEvents.CAMERA_INTRO_DONE);
+		Messenger.Broadcast(MessengerEvents.CAMERA_INTRO_DONE);
 	}
 }

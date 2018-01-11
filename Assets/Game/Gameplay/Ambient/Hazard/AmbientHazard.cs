@@ -102,31 +102,13 @@ public class AmbientHazard : MonoBehaviour {
 
 	// Internal references
 	private GameObject m_particlesObj = null;
-
+	private Transform m_transform = null;
 	private Collider m_collider = null;
 
 	// Dynamic references
+	private DragonMotion m_dragonMotion = null;
 	private DragonHealthBehaviour m_dragonHealthBehaviour = null;
 
-	private DragonHealthBehaviour dragonHealthBehaviour {
-		get {
-			if(m_dragonHealthBehaviour == null) {
-				if(InstanceManager.player != null) m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
-			}
-			return m_dragonHealthBehaviour;
-		}
-	}
-
-	private DragonMotion m_dragonMotion = null;
-
-	private DragonMotion dragonMotion {
-		get {
-			if(m_dragonMotion == null) {
-				if(InstanceManager.player != null) m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
-			}
-			return m_dragonMotion;
-		}
-	}
 
 	// Internal logic
 	private bool m_visible = true;
@@ -149,7 +131,11 @@ public class AmbientHazard : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Initialize internal references
+		m_transform = transform;
 		m_collider = GetComponent<Collider>();
+
+		m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
+		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 
 		m_poisonParticle.CreatePool();
 	}
@@ -220,15 +206,13 @@ public class AmbientHazard : MonoBehaviour {
 				m_visualActivationCheckTimer = 0f;
 
 				// Check whether player is within the activation distance
-				if(InstanceManager.player != null) {
-					bool isWithinDistance = Mathf.Abs((InstanceManager.player.transform.position - this.transform.position).sqrMagnitude) < m_visualActivationRadiusSqr;
+				bool isWithinDistance = Mathf.Abs((m_dragonMotion.position - m_transform.position).sqrMagnitude) < m_visualActivationRadiusSqr;
 
-					// Show/hide based on trigger
-					if(m_visible && !isWithinDistance) {
-						SetVisible(false);
-					} else if(!m_visible && isWithinDistance) {
-						SetVisible(true);
-					}
+				// Show/hide based on trigger
+				if(m_visible && !isWithinDistance) {
+					SetVisible(false);
+				} else if(!m_visible && isWithinDistance) {
+					SetVisible(true);
 				}
 			}
 		}
@@ -304,7 +288,7 @@ public class AmbientHazard : MonoBehaviour {
 			{
 				// In case always
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.SetBool("active", true);
+					m_animator.SetBool( GameConstants.Animator.ACTIVE , true);
 					if ( m_state == State.ACTIVE )
 					{
 						m_animator.Play("ACTIVATE", 0, 1);
@@ -350,7 +334,7 @@ public class AmbientHazard : MonoBehaviour {
 
 				// Launch deactivation animation
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.SetBool("active", false);
+					m_animator.SetBool( GameConstants.Animator.ACTIVE, false);
 				}
 
 				// Reset timer
@@ -361,7 +345,7 @@ public class AmbientHazard : MonoBehaviour {
 			case State.ACTIVATING: {
 				// Launch activation animation
 				if(m_animator != null && m_animator.isInitialized) {
-					m_animator.SetBool("active", true);
+					m_animator.SetBool( GameConstants.Animator.ACTIVE, true);
 				}
 
 				// Reset timer
@@ -370,8 +354,8 @@ public class AmbientHazard : MonoBehaviour {
 
 				if ( m_visible )
 				{
-					if ( !string.IsNullOrEmpty(m_onActiveSound) )
-						AudioController.Play(m_onActiveSound, transform.position);
+					//if ( !string.IsNullOrEmpty(m_onActiveSound) )
+					//	AudioController.Play(m_onActiveSound, transform.position);
 				}
 
 				// Start particles! -> done on animation event
@@ -412,7 +396,7 @@ public class AmbientHazard : MonoBehaviour {
 			}
 		}
 	}
-
+	/*
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -422,12 +406,9 @@ public class AmbientHazard : MonoBehaviour {
 	/// <param name="_collision">Collision information.</param>
 	private void OnCollisionEnter(Collision _collision) {
 		// Is it the player?
-		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collision.collider.CompareTag("Player")) {
+		if(_collision.collider.CompareTag("Player")) {
 			// Apply initial damage
-			if(dragonHealthBehaviour != null) {
-				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform,true);	// Resetting all current DOTs
-			}
+			m_dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform, true);	// Resetting all current DOTs
 
 			// Apply knockback
 			Vector3 repulseDirection = Vector3.zero;
@@ -435,10 +416,8 @@ public class AmbientHazard : MonoBehaviour {
 				repulseDirection += _collision.contacts[i].normal;
 			}
 
-			if(dragonMotion != null) {
-				//dragonMotion.Stop(); ??
-				dragonMotion.AddForce(-repulseDirection.normalized * m_knockBackIntensity);
-			}
+			//m_dragonMotion.Stop(); ??
+			m_dragonMotion.AddForce(-repulseDirection.normalized * m_knockBackIntensity);
 
 			// [AOC] TODO!! Show debris
 			// [AOC] TODO!! Show text feedback
@@ -452,24 +431,19 @@ public class AmbientHazard : MonoBehaviour {
 	/// <param name="_collider">The object within the area.</param>
 	private void OnTriggerStay(Collider _collider) {
 		// Is it the player?
-		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collider.CompareTag( "Player")) {
+		if(_collider.CompareTag( "Player")) {
 			// Reset dot timer
-			if(dragonHealthBehaviour != null) {
-				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform,true);	// Resetting all current DOTs
-			}
+			m_dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform,true);	// Resetting all current DOTs
 
 			// Apply knockback
 			if (m_knockBackIntensity > 0)
 			{
-				Vector3 repulseDirection = dragonMotion.position - transform.position;
-				if(dragonMotion != null) {
-					//dragonMotion.Stop(); ??
-					dragonMotion.AddForce(repulseDirection.normalized * m_knockBackIntensity);
-				}
+				Vector3 repulseDirection = m_dragonMotion.position - transform.position;
+				//m_dragonMotion.Stop(); ??
+				m_dragonMotion.AddForce(repulseDirection.normalized * m_knockBackIntensity);
 			}
 
 			// [AOC] TODO!! Play SFX
 		}
-	}
+	}*/
 }

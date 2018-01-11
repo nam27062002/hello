@@ -255,7 +255,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Broadcast message
 		if(newEquip) {
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
+			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
         PersistenceFacade.instance.Save_Request();
 
@@ -451,7 +451,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Apply selected disguise to dragon preview
 		if(UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_selectedPill.def.sku, persist)) {
 			// Notify game
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
+			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
 	}
 
@@ -497,7 +497,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				PersistenceFacade.instance.Save_Request(true);
 
 				// Notify game
-				Messenger.Broadcast<string>(GameEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
+				Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
 
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDisguisePurchasedFX();

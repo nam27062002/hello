@@ -30,9 +30,9 @@ public class TrackerBoostTime : TrackerBase {
 	/// </summary>
 	public TrackerBoostTime() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
 	}
 
 	/// <summary>
@@ -50,9 +50,9 @@ public class TrackerBoostTime : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
 
 		// Call parent
 		base.Clear();

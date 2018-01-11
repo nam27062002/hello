@@ -110,11 +110,11 @@ public class FireBreathDynamic : MonoBehaviour
 
     void OnEnable()
     {
-        Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+        Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
     }
     void OnDisable()
     {
-        Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+        Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
     }
 
     void OnBoostToggled(bool value)

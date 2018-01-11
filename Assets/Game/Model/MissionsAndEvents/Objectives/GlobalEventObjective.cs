@@ -78,8 +78,8 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 		m_tracker.mode = TrackerBase.Mode.GLOBAL_EVENT;
 
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -87,8 +87,8 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 	/// </summary>
 	~GlobalEventObjective() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -101,8 +101,8 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 		// Reset counter!
 		m_tracker.SetValue(0f, false);
 
-		// Disable during first game session (tutorial)
-		this.enabled = (UsersManager.currentUser.gamesPlayed > 0);
+		// Disable during FTUX
+		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN);
 
 		// Disable too if parent event is not active!
 		this.enabled &= m_parentEvent.isActive;

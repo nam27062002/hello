@@ -111,7 +111,7 @@ public class SpawnerStar : AbstractSpawner {
 			if (m_coinsReward > 0) {
 				Reward reward = new Reward();
 				reward.coins = m_coinsReward;
-				Messenger.Broadcast<Transform, Reward>(GameEvents.STAR_COMBO, _lastEntity.transform, reward);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.STAR_COMBO, _lastEntity.transform, reward);
 			}
 			// Program the next spawn time
 			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();

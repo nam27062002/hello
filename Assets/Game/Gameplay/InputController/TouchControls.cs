@@ -51,6 +51,7 @@ abstract public class TouchControls : MonoBehaviour {
 		// Need to do this, as Unity doesn't seem to clear previous mouse clicks until the first query (i.e. GetMouseButton...())
 		// e.g. you clicked button '0' in the front end, and then during the game queried for GetMouseButtonDown(1) during
 		// the Update() method... the first time would also return a positive for GetMouseButtonDown(0)...
+		#if UNITY_EDITOR || UNITY_PC
 		if(m_boostWithSecondTouch)
 		{
 			Input.GetMouseButtonDown(0);
@@ -60,16 +61,17 @@ abstract public class TouchControls : MonoBehaviour {
 			Input.GetMouseButtonUp(0);
 			Input.GetMouseButtonUp(1);
 		}
+		#endif
 
         // Subscribe to external events
-        Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);
-		Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, OnPause);
+        Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
+		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
     }
 	
     public virtual void OnDestroy() {
         // Unsubscribe from external events
-        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnPrefChanged);        
-		Messenger.RemoveListener<bool>(GameEvents.GAME_PAUSED, OnPause);
+        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);        
+		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
     }
 
 	private void ResetTouchValues()
@@ -108,17 +110,11 @@ abstract public class TouchControls : MonoBehaviour {
 
 	protected void RefreshCurrentTouchPos()
 	{
-		m_currentTouchPos.Set(
-			GameInput.touchPosition[0].x,
-			GameInput.touchPosition[0].y,
-			0
-		);
+		m_currentTouchPos.x = GameInput.touchPosition[0].x;
+		m_currentTouchPos.y = GameInput.touchPosition[0].y;
 
-		m_currentTouch2Pos.Set(
-			GameInput.touchPosition[1].x,
-			GameInput.touchPosition[1].y,
-			0
-		);
+		m_currentTouch2Pos.x =  GameInput.touchPosition[1].x;
+		m_currentTouch2Pos.y =  GameInput.touchPosition[1].y;
 	}
 	
 	virtual public void SetRender(bool enable)

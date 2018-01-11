@@ -2,7 +2,6 @@
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
-using FGOL.Authentication;
 using FGOL.Server;
 using SimpleJSON;
 using System;
@@ -44,7 +43,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;            
 			if(!m_logged) {
 				m_logged = true;
-				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
+				Messenger.Broadcast<bool>(MessengerEvents.LOGGED, m_logged);
 			}
 
 			if(m_onResponse != null) {
@@ -73,7 +72,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;
 			if(m_logged) {
 				m_logged = false;
-				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
+				Messenger.Broadcast<bool>(MessengerEvents.LOGGED, m_logged);
 			}
 
 			// An error is sent, just in case the client is waiting for a response for any command            
@@ -103,7 +102,7 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount) {
 			m_waitingMergeResponse = false;            
 			Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
-            Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
+            Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(MessengerEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
         }
 
 		public override void onShowMaintenanceMode() {         
@@ -114,14 +113,14 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeSucceeded() {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeSucceeded");
-            Messenger.Broadcast(GameEvents.MERGE_SUCCEEDED);                
+            Messenger.Broadcast(MessengerEvents.MERGE_SUCCEEDED);                
         }
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
 		public override void onMergeFailed() {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeFailed");
-            Messenger.Broadcast(GameEvents.MERGE_FAILED);                        
+            Messenger.Broadcast(MessengerEvents.MERGE_FAILED);                        
         }
 
 		// The user has requested a password to do a cross platform merge
@@ -250,7 +249,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_Init()
     {
-        Messenger.AddListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+        Messenger.AddListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
 
         Login_State = ELoginState.NotLoggedIn;      
         if (Login_Callbacks != null)
@@ -261,7 +260,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_Destroy()
     {
-        Messenger.RemoveListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+        Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
     }
 
     public override void Auth(ServerCallback callback)
@@ -307,35 +306,7 @@ public class GameServerManagerCalety : GameServerManager {
             }
         }
     }
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public override void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("LogInToServerThruPlatform");
-		
-		//if(!m_delegate.m_logged)
-		{
-			if(!m_delegate.m_waitingLoginResponse) {
-				// We need to logout before if already logged in
-				if(GameSessionManager.SharedInstance.IsLogged()) {
-					LogOut();
-				}
-
-				m_delegate.m_logged = false;
-				m_delegate.m_waitingLoginResponse = true;
-				m_delegate.IsNewAppVersionNeeded = false;
-
-				Dictionary<string, string> parameters = new Dictionary<string, string>();
-				parameters.Add("platformId", platformId);
-				parameters.Add("platformUserId", platformUserId);
-				parameters.Add("platformToken", platformToken);
-				Commands_EnqueueCommand(ECommand.Login, parameters, callback);
-			}
-		}
-	}
-
+	
 	/// <summary>
 	/// 
 	/// </summary>
@@ -641,11 +612,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private void Commands_BeforeCommand(ECommand command, Dictionary<string, string> parameters, BeforeCommandComplete callback) {
         if (FeatureSettingsManager.IsDebugEnabled)        
-            Log("BeforeCommand " + command);        		
-
-		if(Authenticator.Instance.Token != null) {
-			parameters["deviceToken"] = Authenticator.Instance.Token.ToString();
-		}
+            Log("BeforeCommand " + command);        				
 
 		parameters["version"] = Globals.GetApplicationVersion();
 		parameters["platform"] = Globals.GetPlatform().ToString();
@@ -657,21 +624,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Commands_AfterCommand(Command command, Error error, ServerResponse result, int retries) {                       
-		//Try and recover from an auth error                    
-		if(error != null && error.GetType() == typeof(AuthenticationError) && retries < COMMANDS_MAX_AUTH_RETRIES && command.Cmd != ECommand.Login) {
-			//Invalidate the session in an attempt to force re-auth
-			if(Authenticator.Instance.User != null) {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("(AfterCommand) :: Invalidating session");
-
-				Authenticator.Instance.User.InvalidateSession();
-			}
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
-
-			Commands_PrepareToRunCommand(command, ++retries);
-		} else if(command.Callback != null) {
+		if(command.Callback != null) {
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("Commander Callback :: " + command);
 
@@ -693,8 +646,8 @@ public class GameServerManagerCalety : GameServerManager {
 
 		BeforeCommandComplete runCommand = delegate(Error beforeError) {
 			if(beforeError == null) {
-				Commands_RunCommand(command, delegate (Error error, ServerResponse result) {
-					Commands_AfterCommand(command, error, result, retries);                        
+				Commands_RunCommand(command, delegate (Error error, ServerResponse result) {                    
+                    Commands_AfterCommand(command, error, result, retries);                        
 				});
 			} else if(command.Callback != null) {
 				command.Callback(beforeError, null);
@@ -1052,9 +1005,7 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.Login: {
 					// [DGR] SERVER: Receive these parameters from server
 					response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
-					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
-					response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
-					//response["authState"] = Authenticator.AuthState.NewSocialLogin.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();					
 					if(responseJSON != null) {
 						string key = "upgradeAvailable";
 						response[key] = upgradeAvailable;

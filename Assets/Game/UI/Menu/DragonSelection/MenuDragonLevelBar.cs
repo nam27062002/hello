@@ -35,7 +35,7 @@ public class MenuDragonLevelBar : DragonXPBar {
 	/// </summary>
 	protected void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		
 		// Do a first refresh
 		Refresh(InstanceManager.menuSceneController.selectedDragon);
@@ -46,7 +46,7 @@ public class MenuDragonLevelBar : DragonXPBar {
 	/// </summary>
 	protected void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>

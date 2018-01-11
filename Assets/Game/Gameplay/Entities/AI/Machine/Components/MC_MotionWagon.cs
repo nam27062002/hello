@@ -67,7 +67,7 @@ namespace AI {
 		}
 
 		protected override void UpdateOrientation() {
-			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
+			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
 		}
 
 

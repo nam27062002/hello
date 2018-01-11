@@ -21,12 +21,12 @@ public class FogArea : MonoBehaviour
 		{
 			m_fogManager.CheckTextureAvailability(m_attributes);
 		}
-		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
 	void OnTriggerEnter( Collider other)
@@ -79,9 +79,9 @@ public class FogArea : MonoBehaviour
 
 		if (!Application.isPlaying )
 		{
-			Shader.SetGlobalFloat("_FogStart", m_attributes.m_fogStart);
-			Shader.SetGlobalFloat("_FogEnd", m_attributes.m_fogEnd);
-			Shader.SetGlobalTexture("_FogTexture", m_attributes.texture);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_attributes.m_fogStart);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_attributes.m_fogEnd);
+			Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, m_attributes.texture);
 		}
 	}
 

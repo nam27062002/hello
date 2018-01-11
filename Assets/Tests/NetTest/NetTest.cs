@@ -18,7 +18,7 @@ public class NetTest : MonoBehaviour
 		m_actionButtons.SetActive(false);
 		m_waitingText.SetActive(false);
 
-        Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, OnSocialLog);
+        Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, OnSocialLog);
         SocialPlatformManager.SharedInstance.Init();        
     }
 
@@ -52,7 +52,7 @@ public class NetTest : MonoBehaviour
 		m_waitingText.SetActive(true);              
         if (SocialPlatformManager.SharedInstance.IsLoggedIn())            
         {
-            GameServerManager.SharedInstance.LogInToServerThruPlatform(FGOL.Authentication.User.LoginTypeToCaletySocialPlatform(FGOL.Authentication.User.LoginType.Facebook), SocialPlatformManager.SharedInstance.GetUserID(), SocialPlatformManager.SharedInstance.GetToken(),
+            GameServerManager.SharedInstance.Auth(
                 (Error commandError, GameServerManager.ServerResponse response) =>
                 {
                     if (commandError == null)

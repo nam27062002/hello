@@ -42,8 +42,8 @@ public class HUDMissionCompletedNotification : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.AddListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 	}
 
 	/// <summary>
@@ -51,8 +51,8 @@ public class HUDMissionCompletedNotification : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Mission>(GameEvents.MISSION_COMPLETED, OnMissionCompleted);
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 	}
 
 	//------------------------------------------------------------------------//

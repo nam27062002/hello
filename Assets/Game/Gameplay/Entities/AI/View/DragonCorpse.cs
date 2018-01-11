@@ -303,9 +303,9 @@ public class DragonCorpse : MonoBehaviour {
 		int count = m_fadeMaterials.Count;
 		for( int i = 0; i<count; ++i )
 		{
-			Color tint = m_fadeMaterials[i].GetColor("_Tint");
+			Color tint = m_fadeMaterials[i].GetColor( GameConstants.Material.TINT );
 			tint.a = alpha;
-			m_fadeMaterials[i].SetColor("_Tint", tint);
+			m_fadeMaterials[i].SetColor( GameConstants.Material.TINT , tint);
 		}
 	}
 

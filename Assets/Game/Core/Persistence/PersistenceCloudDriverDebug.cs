@@ -9,7 +9,29 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 	public bool IsGetPersistenceEnabled { get; set; }
 	public bool IsUploadPersistenceEnabled { get; set; }
 
-	protected override void ExtendedReset()
+    private bool mNeedsToIgnoreSyncFromLaunch;
+
+    private int ConnectionTimes { get; set; }
+    private int UploadTimes { get; set; }
+
+    public bool NeedsToIgnoreSycnFromLaunch
+    {
+        get
+        {
+            return mNeedsToIgnoreSyncFromLaunch;
+        }
+
+        set
+        {
+            mNeedsToIgnoreSyncFromLaunch = value;
+            if (mNeedsToIgnoreSyncFromLaunch)
+            {
+                IsConnectionEnabled = false;
+            }
+        }
+    }
+
+    protected override void ExtendedReset()
 	{
 		PersistenceAsString = "{}";
 		IsConnectionEnabled = true;
@@ -18,10 +40,22 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 		IsMergeEnabled = false;
 		IsGetPersistenceEnabled = true;
 		IsUploadPersistenceEnabled = true;
-	}
+        NeedsToIgnoreSycnFromLaunch = false;
+        ConnectionTimes = 0;        
+    }
 
 	protected override void Syncer_ExtendedCheckConnection(Action<bool> onDone)
 	{
+        ConnectionTimes++;
+
+        if (ConnectionTimes == 4)
+            IsConnectionEnabled = true;
+        
+        if (!Syncer_IsAppInit && mNeedsToIgnoreSyncFromLaunch)
+        {
+            IsConnectionEnabled = true;
+        }
+
 		if (onDone != null)
 		{
 			onDone(IsConnectionEnabled);
@@ -73,27 +107,21 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 
 	protected override void Upload_Perform (string persistence, Action<bool> onDone)
 	{
-		if (IsUploadPersistenceEnabled)
+        UploadTimes++;
+        if (UploadTimes == 2)
+        {
+            IsUploadPersistenceEnabled = true;
+        }
+
+        if (IsUploadPersistenceEnabled)
 		{
 			PersistenceAsString = persistence;
-			Data.LoadFromString (persistence);
+			Data.LoadFromString (persistence);            
 		}
 
-		if (onDone != null)
+        if (onDone != null)
 		{
 			onDone(IsUploadPersistenceEnabled);
 		}
-	}
-
-    /*
-	private int KeysAmount { get; set; }
-	public override void OnKeyPressed()
-	{
-		KeysAmount++;
-		IsConnectionEnabled = true;
-
-		if (KeysAmount == 2)
-			IsUploadPersistenceEnabled = true;
-	}
-    */
+	}          
 }

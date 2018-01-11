@@ -57,8 +57,8 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.CHESTS_RESET, Refresh);
-		Messenger.AddListener(GameEvents.CHESTS_PROCESSED, Refresh);
+		Messenger.AddListener(MessengerEvents.CHESTS_RESET, Refresh);
+		Messenger.AddListener(MessengerEvents.CHESTS_PROCESSED, Refresh);
 
 		// Refresh
 		Refresh();
@@ -69,8 +69,8 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.CHESTS_RESET, Refresh);
-		Messenger.RemoveListener(GameEvents.CHESTS_PROCESSED, Refresh);
+		Messenger.RemoveListener(MessengerEvents.CHESTS_RESET, Refresh);
+		Messenger.RemoveListener(MessengerEvents.CHESTS_PROCESSED, Refresh);
 	}
 
 	/// <summary>
