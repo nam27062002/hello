@@ -85,6 +85,8 @@ namespace AI {
 					}
 					else
 					{
+						Vector3 dir = m_machine.enemy.position - m_machine.position;
+						m_pilot.SetDirection(dir.normalized, true);
 
 							// Intro Outro
 						float delta = 1;
@@ -95,7 +97,7 @@ namespace AI {
 							delta = 1.0f - delta / m_stunData.m_archIntro;
 						}else if ( m_attackingTimer < m_stunData.m_archOutro){
 							// outro
-							delta = (m_stunData.m_archOutro - m_attackingTimer) / m_stunData.m_archOutro;
+							delta = m_attackingTimer / m_stunData.m_archOutro;
 						}
 
 						float arcLength = m_stunData.m_archLength * delta;
@@ -111,8 +113,8 @@ namespace AI {
 						m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(arcOrigin, arcLength, m_checkEntities);
 
 						// To test 
-						// float arcDot = Vector3.Dot( m_stunAnchor.forward, arcDir);
-						// arcLength = arcLength * arcDot;
+						float arcDot = Vector3.Dot( m_stunAnchor.forward, arcDir);
+						arcLength = arcLength * arcDot;
 
 						#if UNITY_EDITOR
 							Debug.DrawLine( arcOrigin_0, arcOrigin_0 + arcDir * arcLength, Color.white);
