@@ -107,7 +107,22 @@ namespace AI {
 						Vector3 arcDir = m_stunAnchor.forward;
 						arcDir.z = 0;
 						arcDir.Normalize();
+
 						m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(arcOrigin, arcLength, m_checkEntities);
+
+						// To test 
+						// float arcDot = Vector3.Dot( m_stunAnchor.forward, arcDir);
+						// arcLength = arcLength * arcDot;
+
+						#if UNITY_EDITOR
+							Debug.DrawLine( arcOrigin_0, arcOrigin_0 + arcDir * arcLength, Color.white);
+							Vector2 d = (Vector2)arcDir;
+							Vector2 dUp = d.RotateDegrees(arcAngle/2.0f);
+							Debug.DrawLine( arcOrigin_0, arcOrigin_0 + (Vector3)(dUp * arcLength), Color.red);
+							Vector2 dDown = d.RotateDegrees(-arcAngle/2.0f);
+							Debug.DrawLine( arcOrigin_0, arcOrigin_0 + (Vector3)dDown * arcLength, Color.red);
+						#endif
+
 
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
