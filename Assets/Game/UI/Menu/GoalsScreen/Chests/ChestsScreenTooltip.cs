@@ -23,8 +23,8 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	
 	//------------------------------------------------------------------------//
-	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------8------------//
 	// Setup
 	[Comment("Position will be anchored to the UIAnchor transform in the corresponding slot of the 3D scene")]
 	[SerializeField][Range(0, 4)] private int m_chestIdx = 0;
@@ -48,7 +48,10 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.CHESTS_RESET, RefreshCollected);
+		Messenger.AddListener(MessengerEvents.CHESTS_PROCESSED, RefreshCollected);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -74,38 +77,9 @@ public class ChestsScreenTooltip : MonoBehaviour {
 		m_nameText.Localize(tid);
 		*/
 
-		// Initialize reward info - shouldn't change while alive, so do it at the Start() call
-		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestIdx + 1);
-		bool isPC = rewardData.type == Chest.RewardType.PC;
-
-		m_coinsRewardText.gameObject.SetActive(!isPC);
-		m_pcRewardText.gameObject.SetActive(isPC);
-
-		if(isPC) {
-			m_pcRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
-		} else {
-			m_coinsRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
-		}
-
 		// Do a first refresh!
-		Refresh();
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.CHESTS_RESET, Refresh);
-		Messenger.AddListener(MessengerEvents.CHESTS_PROCESSED, Refresh);
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		Messenger.RemoveListener(MessengerEvents.CHESTS_RESET, Refresh);
-		Messenger.RemoveListener(MessengerEvents.CHESTS_PROCESSED, Refresh);
+		RefreshReward();
+		RefreshCollected();
 	}
 
 	/// <summary>
@@ -131,16 +105,19 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.CHESTS_RESET, RefreshCollected);
+		Messenger.RemoveListener(MessengerEvents.CHESTS_PROCESSED, RefreshCollected);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Refresh all info.
+	/// Refresh collected state.
 	/// </summary>
-	private void Refresh() {
+	private void RefreshCollected() {
 		// Only collected status
 		bool collected = ChestManager.collectedAndPendingChests > m_chestIdx;
 
@@ -148,7 +125,33 @@ public class ChestsScreenTooltip : MonoBehaviour {
 		m_checkMark.SetActive(collected);
 	}
 
+	/// <summary>
+	/// Refresh reward text.
+	/// </summary>
+	private void RefreshReward() {
+		// Initialize reward info
+		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestIdx + 1);
+		bool isPC = rewardData.type == Chest.RewardType.PC;
+
+		m_coinsRewardText.gameObject.SetActive(!isPC);
+		m_pcRewardText.gameObject.SetActive(isPC);
+
+		if(isPC) {
+			m_pcRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
+		} else {
+			m_coinsRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A dragon has been acquired.
+	/// </summary>
+	/// <param name="_data">Data of the dragon that has just been acquired.</param>
+	private void OnDragonAcquired(DragonData _data) {
+		// Reward scales with the biggest owned dragon. Update it.
+		RefreshReward();
+	}
 }
