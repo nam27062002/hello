@@ -19,7 +19,7 @@ public class NumLoopsBehaviour : StateMachineBehaviour {
 	// OnStateUpdate is called before OnStateUpdate is called on any state inside this state machine
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		if ( stateInfo.normalizedTime >= (m_missingLoops - m_offset) ){
-			animator.SetInteger("AltAnimation", -1);
+			animator.SetInteger(GameConstants.Animator.ALT_ANIMATION, -1);
 		}
 	}
 

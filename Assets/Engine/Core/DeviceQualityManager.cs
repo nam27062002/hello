@@ -154,7 +154,10 @@ public class DeviceQualityManager
     {
         if (memorySize < Profiles_MinMemory)
         {
-            LogWarning("memory Size " + memorySize + " is lower than the minimum memory required by the game (" + Profiles_MinMemory + ")");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                LogWarning("memory Size " + memorySize + " is lower than the minimum memory required by the game (" + Profiles_MinMemory + ")");
+            }
 
             // Memory size is forced to min memory. Some devices have a few bytes less than 1GB so we try our luck
             memorySize = 1024;
@@ -167,14 +170,19 @@ public class DeviceQualityManager
             int count = Profiles_Names.Count;
             
             // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
-            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating < rating; i++)
+            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating <= rating; i++)
             {
                 // Makes sure that it has memory and rating enough to use this profile
-                if (memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating < rating)
+                if (memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
                 {
                     returnValue = Profiles_Names[i];
                 }                
             }                                   
+        }
+
+        if (returnValue == null && FeatureSettingsManager.IsDebugEnabled)
+        {
+            LogWarning("No profile available");
         }
 
         return returnValue;

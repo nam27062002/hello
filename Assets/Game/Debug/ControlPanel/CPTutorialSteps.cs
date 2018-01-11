@@ -114,7 +114,7 @@ public class CPTutorialSteps : MonoBehaviour {
 		m_gamesPlayedText.text = UsersManager.currentUser.gamesPlayed.ToString();
 
 		// Subscribe to external events
-		Messenger.AddListener<TutorialStep, bool>(GameEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
+		Messenger.AddListener<TutorialStep, bool>(MessengerEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
 	}
 
 	/// <summary>
@@ -124,7 +124,7 @@ public class CPTutorialSteps : MonoBehaviour {
 		m_ignoreToggles = true;
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<TutorialStep, bool>(GameEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
+		Messenger.RemoveListener<TutorialStep, bool>(MessengerEvents.TUTORIAL_STEP_TOGGLED, OnTutorialStepToggled);
 	}
 
 	/// <summary>

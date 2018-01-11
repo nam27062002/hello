@@ -65,7 +65,7 @@ public class CPStringPref : CPPrefBase {
 	/// </summary>
 	public void OnValueChanged(string _newValue) {
 		Prefs.SetStringPlayer(id, _newValue);
-		Messenger.Broadcast<string, string>(GameEvents.CP_STRING_CHANGED, id, _newValue);
-		Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, id);
+		Messenger.Broadcast<string, string>(MessengerEvents.CP_STRING_CHANGED, id, _newValue);
+		Messenger.Broadcast<string>(MessengerEvents.CP_PREF_CHANGED, id);
 	}
 }

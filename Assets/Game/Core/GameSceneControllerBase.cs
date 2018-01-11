@@ -55,9 +55,9 @@ public class GameSceneControllerBase : SceneController {
 		base.Awake();
 
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
-		Messenger.AddListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	/// <summary>
@@ -68,9 +68,9 @@ public class GameSceneControllerBase : SceneController {
 		base.OnDestroy();
 
 		// Unsubscribe to external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
-		Messenger.RemoveListener(GameEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 	}
 
 	public virtual bool IsLevelLoaded()

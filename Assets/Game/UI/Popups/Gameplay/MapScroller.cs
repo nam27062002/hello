@@ -118,7 +118,7 @@ public class MapScroller : MonoBehaviour {
 		m_scrollRect.onValueChanged.AddListener(OnScrollChanged);
 
 		// Subscribe to external events
-		Messenger.AddListener<float>(GameEvents.UI_MAP_CENTER_TO_DRAGON, OnCenterToDragon);
+		Messenger.AddListener<float>(MessengerEvents.UI_MAP_CENTER_TO_DRAGON, OnCenterToDragon);
 	}
 
 	/// <summary>
@@ -150,7 +150,7 @@ public class MapScroller : MonoBehaviour {
 		m_scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<float>(GameEvents.UI_MAP_CENTER_TO_DRAGON, OnCenterToDragon);
+		Messenger.RemoveListener<float>(MessengerEvents.UI_MAP_CENTER_TO_DRAGON, OnCenterToDragon);
 	}
 
 	/// <summary>
@@ -398,7 +398,7 @@ public class MapScroller : MonoBehaviour {
 						() => {
 							RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
 							ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
-							Messenger.Broadcast<float>(GameEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+							Messenger.Broadcast<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
 						}
 					);
 			} else {
@@ -412,7 +412,7 @@ public class MapScroller : MonoBehaviour {
 			m_camera.orthographicSize = newOrthoSize;		// Apply new zoom level
 			RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
 			ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
-			Messenger.Broadcast<float>(GameEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+			Messenger.Broadcast<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
 		}
 	}
 
@@ -518,8 +518,8 @@ public class MapScroller : MonoBehaviour {
 		EnableCamera(this.isActiveAndEnabled);
 
 		// Subscribe to other popups opening
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -530,8 +530,8 @@ public class MapScroller : MonoBehaviour {
 		EnableCamera(false);
 
 		// Subscribe to other popups opening
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>

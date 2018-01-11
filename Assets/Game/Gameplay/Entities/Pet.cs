@@ -47,12 +47,12 @@ public class Pet : IEntity {
 
 	void OnEnable()
 	{
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnEnded);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnEnded);
 	}
 
 	void OnDisable()
 	{
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnEnded);
 	}
 
 

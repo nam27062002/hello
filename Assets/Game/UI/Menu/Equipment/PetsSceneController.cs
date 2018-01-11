@@ -64,7 +64,7 @@ public class PetsSceneController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		Messenger.AddListener<string, int , string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.AddListener<string, int , string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -99,7 +99,7 @@ public class PetsSceneController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		Messenger.RemoveListener<string, int , string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.RemoveListener<string, int , string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	//------------------------------------------------------------------------//

@@ -58,14 +58,14 @@ public class PopupLauncher : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	protected virtual void OnEnable() {
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	protected virtual void OnDisable() {
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
 	}
 
 	//------------------------------------------------------------------------//

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 11442140}
   - component: {fileID: 114000011212942158}
   - component: {fileID: 54000012009397850}
+  - component: {fileID: 135864655729300930}
   m_Layer: 25
   m_Name: PF_MineSmall
   m_TagString: Untagged
@@ -64,6 +65,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -105,6 +107,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -142,6 +145,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -181,6 +185,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -219,6 +224,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -325,8 +331,6 @@ GameObject:
   - component: {fileID: 33229619662997986}
   - component: {fileID: 23560559445975014}
   - component: {fileID: 114368614657949686}
-  - component: {fileID: 135152114297504496}
-  - component: {fileID: 114492640611057814}
   m_Layer: 25
   m_Name: Mine
   m_TagString: Untagged
@@ -485,31 +489,6 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 1.14
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &114492640611057814
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1502719201804324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ec28088696d843d1a86f4d065110df8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_receiver: {fileID: 146638}
-  m_onCollisionEnter: 0
-  m_onCollisionStay: 0
-  m_onCollisionExit: 0
-  m_onTriggerEnter: 1
-  m_onTriggerStay: 1
-  m_onTriggerExit: 1
-  m_onMouseDown: 0
-  m_onMouseDrag: 0
-  m_onMouseUp: 0
-  m_onMouseUpAsButton: 0
-  m_onMouseEnter: 0
-  m_onMouseExit: 0
-  m_onMouseOver: 0
 --- !u!114 &114730465877022114
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -559,12 +538,12 @@ MonoBehaviour:
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
---- !u!135 &135152114297504496
+--- !u!135 &135864655729300930
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1502719201804324}
+  m_GameObject: {fileID: 146638}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1

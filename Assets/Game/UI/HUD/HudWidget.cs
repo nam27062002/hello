@@ -108,6 +108,6 @@ public abstract class HudWidget : MonoBehaviour
 
     protected virtual void PlayAnimExtended()
     {
-        m_anim.SetTrigger("start");
+		m_anim.SetTrigger( GameConstants.Animator.START );
     }
 }

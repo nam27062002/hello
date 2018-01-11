@@ -106,6 +106,7 @@ namespace DG.DOTweenEditor
             onUpdateProperty = base.serializedObject.FindProperty("onUpdate");
             onStepCompleteProperty = base.serializedObject.FindProperty("onStepComplete");
             onCompleteProperty = base.serializedObject.FindProperty("onComplete");
+            onRewindProperty = base.serializedObject.FindProperty("onRewind");
             onTweenCreatedProperty = base.serializedObject.FindProperty("onTweenCreated");
 
             // Convert _AnimationType to _animationTypeNoSlashes
@@ -316,12 +317,11 @@ namespace DG.DOTweenEditor
             _src.delay = EditorGUILayout.FloatField("Delay", _src.delay);
             if (_src.delay < 0) _src.delay = 0;
             _src.isIndependentUpdate = EditorGUILayout.Toggle("Ignore TimeScale", _src.isIndependentUpdate);
-            /*
-            _src.easeType = EditorGUIUtils.FilteredEasePopup(_src.easeType);
+    
+			/*_src.easeType = EditorGUIUtils.FilteredEasePopup(_src.easeType);
             if (_src.easeType == Ease.INTERNAL_Custom) {
                 _src.easeCurve = EditorGUILayout.CurveField("   Ease Curve", _src.easeCurve);
-            }
-            */
+            }*/
 			// [AOC] Customization
 			SerializedProperty easeTypeProp = serializedObject.FindProperty("easeType");
 			EditorGUILayout.PropertyField(easeTypeProp);
@@ -329,8 +329,8 @@ namespace DG.DOTweenEditor
 			if (_src.easeType == Ease.INTERNAL_Custom) {
 				_src.easeCurve = EditorGUILayout.CurveField("   Ease Curve", _src.easeCurve);
 			}
-
-            _src.loops = EditorGUILayout.IntField(new GUIContent("Loops", "Set to -1 for infinite loops"), _src.loops);
+            
+			_src.loops = EditorGUILayout.IntField(new GUIContent("Loops", "Set to -1 for infinite loops"), _src.loops);
             if (_src.loops < -1) _src.loops = -1;
             if (_src.loops > 1 || _src.loops == -1)
                 _src.loopType = (LoopType)EditorGUILayout.EnumPopup("   Loop Type", _src.loopType);

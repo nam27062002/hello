@@ -31,7 +31,7 @@ public class GameEventDispatcher : MonoBehaviour {
 
 	// We must store the event as a string, since serializing the enum value would result in a wrong value if new values are added in the middle of the enum
 	[Tooltip("For now, only events with no parameters are supported.")]
-	[EnumList(typeof(GameEvents))]
+	[EnumList(typeof(MessengerEvents))]
 	[SerializeField] private string m_eventTypeName = "";
 
 	//------------------------------------------------------------------------//
@@ -42,7 +42,7 @@ public class GameEventDispatcher : MonoBehaviour {
 	/// </summary>
 	public void Dispatch() {
 		// Figure out the enum value equivalent to the stored name
-		GameEvents eventType = (GameEvents)System.Enum.Parse(typeof(GameEvents), m_eventTypeName, true);
+		MessengerEvents eventType = (MessengerEvents)System.Enum.Parse(typeof(MessengerEvents), m_eventTypeName, true);
 		Messenger.Broadcast(eventType);
 	}
 

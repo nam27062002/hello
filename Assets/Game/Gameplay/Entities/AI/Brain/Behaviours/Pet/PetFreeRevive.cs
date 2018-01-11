@@ -12,11 +12,11 @@ namespace AI {
 			public const string onStartFreeRevive = "onStartFreeRevive";
 
 			PetFreeRevive(){
-				Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnFreeRevive);
+				Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnFreeRevive);
 			}
 
 			~PetFreeRevive(){
-				Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnFreeRevive);
+				Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnFreeRevive);
 			}
 
 			private bool m_revive = true;

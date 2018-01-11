@@ -79,7 +79,7 @@ namespace AI {
 
 			// reward
 			Reward reward = m_entity.GetOnKillReward(true);
-			Messenger.Broadcast<Transform, Reward>(GameEvents.ENTITY_BURNED, m_machine.transform, reward);
+			Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, m_machine.transform, reward);
 
 			if ( instant )
 			{

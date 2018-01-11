@@ -5,7 +5,10 @@ public class PersistenceLocalDriverDebug : PersistenceLocalDriver
 	public bool IsPermissionErrorEnabled { get; set; }
 	public bool isFullDiskErrorEnabled { get; set; }
 
-	public PersistenceLocalDriverDebug()
+    private int LoadTimes { get; set; }
+    private int SaveTimes { get; set; }
+
+    public PersistenceLocalDriverDebug()
 	{
 		Reset();	
 	}
@@ -15,11 +18,19 @@ public class PersistenceLocalDriverDebug : PersistenceLocalDriver
 		PersistenceAsString = null;
 		IsPermissionErrorEnabled = false;
 		isFullDiskErrorEnabled = false;
-	}
+        LoadTimes = 0;
+        SaveTimes = 0;
+    }
 
 	protected override void ExtendedLoad()
 	{
-		if (IsPermissionErrorEnabled)
+        LoadTimes++;
+        if (LoadTimes == 2)
+        {
+            IsPermissionErrorEnabled = false;
+        }
+
+        if (IsPermissionErrorEnabled)
 		{
 			Data.LoadState = PersistenceStates.ELoadState.PermissionError;
 		} 
@@ -32,10 +43,18 @@ public class PersistenceLocalDriverDebug : PersistenceLocalDriver
 			Data.LoadFromString(PersistenceAsString);
 		}
 	}
-
-	protected override void ExtendedSave()
+    
+    protected override void ExtendedSave()
 	{
-		if (IsPermissionErrorEnabled)
+        SaveTimes++;
+
+        if (SaveTimes == 4)
+        {
+            IsPermissionErrorEnabled = false;
+            isFullDiskErrorEnabled = false;
+        }
+
+        if (IsPermissionErrorEnabled)
 		{
 			Data.SaveState = PersistenceStates.ESaveState.PermissionError;
 		} 
@@ -59,20 +78,5 @@ public class PersistenceLocalDriverDebug : PersistenceLocalDriver
         get { return mPrefsSocialId; }
         set { mPrefsSocialId = value; }
     }
-    #endregion
-
-    /*
-	private int KeyPressed { get; set; }
-	// UNGTK
-	public override void OnKeyPressed()
-	{
-		KeyPressed++;
-
-		if (KeyPressed == 2)
-		{
-			IsPermissionErrorEnabled = false;
-			isFullDiskErrorEnabled = false;
-		}
-	}
-    */
+    #endregion   
 }

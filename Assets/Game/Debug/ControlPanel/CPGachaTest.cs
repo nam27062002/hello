@@ -305,8 +305,8 @@ public class CPGachaTest : MonoBehaviour {
 	public void OnPetValueChanged(int _newValueIdx) {
 		if(m_petDefs != null) {
 			forcedPetSku = m_petDefs[_newValueIdx].sku;
-			Messenger.Broadcast<string, string>(GameEvents.CP_STRING_CHANGED, FORCED_PET_SKU, m_petDefs[_newValueIdx].sku);
-			Messenger.Broadcast<string>(GameEvents.CP_PREF_CHANGED, FORCED_PET_SKU);
+			Messenger.Broadcast<string, string>(MessengerEvents.CP_STRING_CHANGED, FORCED_PET_SKU, m_petDefs[_newValueIdx].sku);
+			Messenger.Broadcast<string>(MessengerEvents.CP_PREF_CHANGED, FORCED_PET_SKU);
 		}
 	}
 

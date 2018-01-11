@@ -77,7 +77,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -85,7 +85,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -174,7 +174,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		instance.m_user.userMissions.RemoveMission(_difficulty);
 
 		// Dispatch global event
-		Messenger.Broadcast<Mission>(GameEvents.MISSION_REMOVED, GetMission(_difficulty));
+		Messenger.Broadcast<Mission>(MessengerEvents.MISSION_REMOVED, GetMission(_difficulty));
 	}
 
 	/// <summary>
@@ -198,7 +198,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		instance.m_user.userMissions.CheckActivation(!gaming);
 
 		// Dispatch global event
-		Messenger.Broadcast<Mission>(GameEvents.MISSION_SKIPPED, GetMission(_difficulty));
+		Messenger.Broadcast<Mission>(MessengerEvents.MISSION_SKIPPED, GetMission(_difficulty));
 	}
 
 	/// <summary>
