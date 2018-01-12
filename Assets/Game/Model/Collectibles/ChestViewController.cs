@@ -23,16 +23,21 @@ public class ChestViewController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PREFAB_PATH = "UI/Metagame/Chests/PF_ChestView";
 
+	[System.Serializable]
+	public class RewardSetup {
+		[HideEnumValues(false, true)]
+		public Chest.RewardType type = Chest.RewardType.SC;
+		public GameObject view = null;
+		public ViewParticleSpawner openFX = null;
+		public ViewParticleSpawner openLoopFX = null;
+	}
+
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed references
-	[SerializeField] private GameObject m_goldRewardView = null;
-	[SerializeField] private GameObject m_gemsRewardView = null;
-	[Space]
 	[SerializeField] private ViewParticleSpawner m_glowFX = null;
-	[SerializeField] private ViewParticleSpawner m_goldOpenFX = null;
-	[SerializeField] private ViewParticleSpawner m_gemsOpenFX = null;
+	[SerializeField] private RewardSetup[] m_rewardSetups = new RewardSetup[(int)Chest.RewardType.COUNT];
 
 	// Exposed setup
 	[Space]
@@ -48,8 +53,11 @@ public class ChestViewController : MonoBehaviour {
 
 	// Internal
 	private Animator m_animator = null;
-	private GameObject[] m_rewardViews = null;
 	private Chest.RewardType m_rewardType = Chest.RewardType.SC;
+
+	private RewardSetup currentRewardSetup {
+		get { return m_rewardSetups[(int)m_rewardType]; }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -58,20 +66,18 @@ public class ChestViewController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Sort reward setup to match enum
+		RewardSetup[] sortedSetups = new RewardSetup[(int)Chest.RewardType.COUNT];
+		for(int i = 0; i < m_rewardSetups.Length; ++i) {
+			sortedSetups[(int)m_rewardSetups[i].type] = m_rewardSetups[i];
+		}
+		m_rewardSetups = sortedSetups;
+
 		// Get animator ref
 		m_animator = GetComponent<Animator>();
 
 		// Start with all particles stopped
-		ToggleFX(m_glowFX, false);
-		ToggleFX(m_goldOpenFX, false);
-		ToggleFX(m_gemsOpenFX, false);
-
-		// Get references (from FBX names)
-		// Respect enum name
-		m_rewardViews = new GameObject[] {
-			m_goldRewardView,
-			m_gemsRewardView
-		};
+		StopAllFX();
 	}
 
 	//------------------------------------------------------------------------//
@@ -100,15 +106,13 @@ public class ChestViewController : MonoBehaviour {
 		}
 
 		// Show the right reward
-		if(m_rewardViews != null) {
-			for(int i = 0; i < m_rewardViews.Length; i++) {
-				m_rewardViews[i].SetActive(i == (int)_reward);
-			}
+		for(int i = 0; i < m_rewardSetups.Length; i++) {
+			m_rewardSetups[i].view.SetActive(m_rewardSetups[i].type == _reward);
 		}
 
-		// Stop reward FX - target reward FX will be triggered synched with the animation (OnLidOpen event)
-		ToggleFX(m_goldOpenFX, false);
-		ToggleFX(m_gemsOpenFX, false);
+		// Stop current reward FX - target reward FX will be triggered synched with the animation (OnLidOpen event)
+		ToggleFX(currentRewardSetup.openFX, false);
+		ToggleFX(currentRewardSetup.openLoopFX, false);
 
 		// Store reward type to spawn the right FX once the lid is open
 		m_rewardType = _reward;
@@ -121,9 +125,8 @@ public class ChestViewController : MonoBehaviour {
 		// Launch close animation
 		m_animator.SetTrigger( GameConstants.Animator.CLOSE );
 
-		// Stop reward FX
-		ToggleFX(m_goldOpenFX, false);
-		ToggleFX(m_gemsOpenFX, false);
+		// Stop FX
+		StopAllFX();
 	}
 
 	/// <summary>
@@ -131,9 +134,7 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void ResultsAnim() {
 		// Stop all particles
-		ToggleFX(m_glowFX, false);
-		ToggleFX(m_goldOpenFX, false);
-		ToggleFX(m_gemsOpenFX, false);
+		StopAllFX();
 
 		// Launch animation
 		m_animator.SetTrigger( GameConstants.Animator.RESULTS_IN );
@@ -142,6 +143,18 @@ public class ChestViewController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// INTERNAL																  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Stops all FX.
+	/// </summary>
+	private void StopAllFX() {
+		ToggleFX(m_glowFX, false);
+		for(int i = 0; i < m_rewardSetups.Length; ++i) {
+			if(m_rewardSetups[i] == null) continue;
+			ToggleFX(m_rewardSetups[i].openFX, false);
+			ToggleFX(m_rewardSetups[i].openLoopFX, false);
+		}
+	}
+
 	/// <summary>
 	/// Enable/Disable FX, making sure it's a valid reference.
 	/// </summary>
@@ -152,19 +165,6 @@ public class ChestViewController : MonoBehaviour {
 		_fx.gameObject.SetActive(_toggle);
 	}
 
-	/// <summary>
-	/// Get the target Open FX Data based on reward type.
-	/// </summary>
-	/// <returns>The target open FX. <c>null</c> if none assigned to the given reward type.</returns>
-	/// <param name="_rewardType">Reward type whose Open FX we want.</param>
-	private ViewParticleSpawner GetOpenFX(Chest.RewardType _rewardType) {
-		switch(_rewardType) {
-			case Chest.RewardType.SC: return m_goldOpenFX;
-			case Chest.RewardType.PC: return m_gemsOpenFX;
-		}
-		return null;
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -172,19 +172,15 @@ public class ChestViewController : MonoBehaviour {
 	/// Lid open animation event.
 	/// </summary>
 	public void OnLidOpen() {
-		// Launch particle system matching the current reward type
-		ViewParticleSpawner targetFX = GetOpenFX(m_rewardType);
-		if(targetFX != null) {
-			ToggleFX(targetFX, true);
-			Debug.Log("<color=lime>Spawning " + targetFX.name + "</color>");
-			/*if(m_openFXInstance != null) {
-				m_openFXInstance.SetLayerRecursively(this.gameObject.layer);
-				m_openFXInstance.transform.rotation = transform.rotation;
-			}*/
-		}
-
 		// Turn off glow FX
 		ToggleFX(m_glowFX, false);
+
+		// Trigger open and loop FXs corresponding to current reward type
+		ToggleFX(currentRewardSetup.openFX, true);
+		ToggleFX(currentRewardSetup.openLoopFX, true);
+
+		// Disable openFX after some delay so it's not triggered again
+		UbiBCN.CoroutineManager.DelayedCall(() => { ToggleFX(currentRewardSetup.openFX, false); }, 1.5f);
 
 		// Notify delegates
 		OnChestOpenEvent.Invoke();

@@ -1061,11 +1061,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531ea0f3e519948eeabd145240a210cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_goldRewardView: {fileID: 1622189753665962}
-  m_gemsRewardView: {fileID: 1725335055703344}
   m_glowFX: {fileID: 114907505044113460}
-  m_goldOpenFX: {fileID: 114744449121465918}
-  m_gemsOpenFX: {fileID: 114429288189212374}
+  m_rewardSetups:
+  - type: 0
+    view: {fileID: 1622189753665962}
+    openFX: {fileID: 114744449121465918}
+    openLoopFX: {fileID: 0}
+  - type: 1
+    view: {fileID: 1725335055703344}
+    openFX: {fileID: 114429288189212374}
+    openLoopFX: {fileID: 0}
   OnChestOpenEvent:
     m_PersistentCalls:
       m_Calls: []
