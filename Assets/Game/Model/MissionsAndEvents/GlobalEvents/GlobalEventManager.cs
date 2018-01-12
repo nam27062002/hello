@@ -128,21 +128,23 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			if ( responseJson != null && responseJson.ContainsKey("liveEvents") ){
+			if ( responseJson != null && responseJson.ContainsKey("liveEvents") && responseJson["liveEvents"].IsArray ){
 				SimpleJSON.JSONArray arr = responseJson["liveEvents"].AsArray;
-				SimpleJSON.JSONClass liveEvent = arr[0].AsObject;
-				int globalEventKey = liveEvent["code"].AsInt;
-				if ( globalEventKey > 0 ){
-					GlobalEventUserData globalEventUserData = null;
-					if ( user.globalEvents.ContainsKey(globalEventKey) ){
-						globalEventUserData = user.globalEvents[globalEventKey];
-					}else{
-						globalEventUserData = new GlobalEventUserData();
-						globalEventUserData.eventID = globalEventKey;
-						user.globalEvents.Add(globalEventKey, globalEventUserData);
+				if ( arr.Count > 0 ){
+					SimpleJSON.JSONClass liveEvent = arr[0].AsObject;
+					int globalEventKey = liveEvent["code"].AsInt;
+					if ( globalEventKey > 0 ){
+						GlobalEventUserData globalEventUserData = null;
+						if ( user.globalEvents.ContainsKey(globalEventKey) ){
+							globalEventUserData = user.globalEvents[globalEventKey];
+						}else{
+							globalEventUserData = new GlobalEventUserData();
+							globalEventUserData.eventID = globalEventKey;
+							user.globalEvents.Add(globalEventKey, globalEventUserData);
+						}
+						if ( liveEvent.ContainsKey("end") )
+							globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
 					}
-					if ( liveEvent.ContainsKey("end") )
-						globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
 				}
 			}
 		}
