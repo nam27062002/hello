@@ -30,10 +30,9 @@ public class ChestViewController : MonoBehaviour {
 	[SerializeField] private GameObject m_goldRewardView = null;
 	[SerializeField] private GameObject m_gemsRewardView = null;
 	[Space]
-    [SerializeField] private GameObject m_glowFX = null;
-	[SerializeField] private ParticleData m_goldOpenFX = null;
-	[SerializeField] private ParticleData m_gemsOpenFX = null;
-	// [SerializeField] private ParticleData m_dustParticle = null;
+	[SerializeField] private ViewParticleSpawner m_glowFX = null;
+	[SerializeField] private ViewParticleSpawner m_goldOpenFX = null;
+	[SerializeField] private ViewParticleSpawner m_gemsOpenFX = null;
 
 	// Exposed setup
 	[Space]
@@ -50,8 +49,7 @@ public class ChestViewController : MonoBehaviour {
 	// Internal
 	private Animator m_animator = null;
 	private GameObject[] m_rewardViews = null;
-	private Chest.RewardType m_lastRewardType = Chest.RewardType.SC;
-	private GameObject m_openFXInstance = null;
+	private Chest.RewardType m_rewardType = Chest.RewardType.SC;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -65,6 +63,8 @@ public class ChestViewController : MonoBehaviour {
 
 		// Start with all particles stopped
 		ToggleFX(m_glowFX, false);
+		ToggleFX(m_goldOpenFX, false);
+		ToggleFX(m_gemsOpenFX, false);
 
 		// Get references (from FBX names)
 		// Respect enum name
@@ -72,9 +72,6 @@ public class ChestViewController : MonoBehaviour {
 			m_goldRewardView,
 			m_gemsRewardView
 		};
-
-		m_goldOpenFX.CreatePool();
-		m_gemsOpenFX.CreatePool();
 	}
 
 	//------------------------------------------------------------------------//
@@ -109,18 +106,12 @@ public class ChestViewController : MonoBehaviour {
 			}
 		}
 
-		// Clear previous open FX instance (if any)
-		if(m_openFXInstance != null) {
-			// Return it to the source pool
-			ParticleData targetFX = GetOpenFX(m_lastRewardType);
-			if(targetFX != null) {
-				targetFX.ReturnInstance(m_openFXInstance);
-				m_openFXInstance = null;
-			}
-		}
+		// Stop reward FX - target reward FX will be triggered synched with the animation (OnLidOpen event)
+		ToggleFX(m_goldOpenFX, false);
+		ToggleFX(m_gemsOpenFX, false);
 
 		// Store reward type to spawn the right FX once the lid is open
-		m_lastRewardType = _reward;
+		m_rewardType = _reward;
 	}
 
 	/// <summary>
@@ -130,15 +121,9 @@ public class ChestViewController : MonoBehaviour {
 		// Launch close animation
 		m_animator.SetTrigger( GameConstants.Animator.CLOSE );
 
-		// Clear previous open FX instance (if any)
-		if(m_openFXInstance != null) {
-			// Return it to the source pool
-			ParticleData targetFX = GetOpenFX(m_lastRewardType);
-			if(targetFX != null) {
-				targetFX.ReturnInstance(m_openFXInstance);
-				m_openFXInstance = null;
-			}
-		}
+		// Stop reward FX
+		ToggleFX(m_goldOpenFX, false);
+		ToggleFX(m_gemsOpenFX, false);
 	}
 
 	/// <summary>
@@ -147,6 +132,8 @@ public class ChestViewController : MonoBehaviour {
 	public void ResultsAnim() {
 		// Stop all particles
 		ToggleFX(m_glowFX, false);
+		ToggleFX(m_goldOpenFX, false);
+		ToggleFX(m_gemsOpenFX, false);
 
 		// Launch animation
 		m_animator.SetTrigger( GameConstants.Animator.RESULTS_IN );
@@ -156,31 +143,13 @@ public class ChestViewController : MonoBehaviour {
 	// INTERNAL																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Aux method to quickly toggle a particle system on/off.
+	/// Enable/Disable FX, making sure it's a valid reference.
 	/// </summary>
-	/// <param name="_fx">The system to be toggled.</param>
-	/// <param name="_active">Whether to turn it on or off.</param>
-	private void ToggleFX(GameObject _fx, bool _active) {
-		// Ignore if given FX is not valid
+	/// <param name="_fx">The FX to be toggled.</param>
+	/// <param name="_toggle">Whether to enable or disable it.</param>
+	private void ToggleFX(ViewParticleSpawner _fx, bool _toggle) {
 		if(_fx == null) return;
-		_fx.SetActive( _active );
-
-		/*
-		// Activate?
-		if(_active) {
-			_fx.gameObject.SetActive(true);
-			_fx.Play();
-
-            // If it has a CustomParticlesCulling assigned then it checks if it's invisible, if so then it has to pause the effect
-            if (CustomParticlesCulling != null && !CustomParticlesCulling.IsVisible())
-            {
-                _fx.Pause();
-            }
-		} else {
-			_fx.Stop();
-			_fx.gameObject.SetActive(false);
-		}
-		*/
+		_fx.gameObject.SetActive(_toggle);
 	}
 
 	/// <summary>
@@ -188,7 +157,7 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	/// <returns>The target open FX. <c>null</c> if none assigned to the given reward type.</returns>
 	/// <param name="_rewardType">Reward type whose Open FX we want.</param>
-	private ParticleData GetOpenFX(Chest.RewardType _rewardType) {
+	private ViewParticleSpawner GetOpenFX(Chest.RewardType _rewardType) {
 		switch(_rewardType) {
 			case Chest.RewardType.SC: return m_goldOpenFX;
 			case Chest.RewardType.PC: return m_gemsOpenFX;
@@ -203,18 +172,18 @@ public class ChestViewController : MonoBehaviour {
 	/// Lid open animation event.
 	/// </summary>
 	public void OnLidOpen() {
-		// Launch particle system matching the last known reward type
-		ParticleData targetFX = GetOpenFX(m_lastRewardType);
-		m_openFXInstance = null;
+		// Launch particle system matching the current reward type
+		ViewParticleSpawner targetFX = GetOpenFX(m_rewardType);
 		if(targetFX != null) {
-			m_openFXInstance = targetFX.Spawn(this.transform, targetFX.offset);
-			Debug.Log("<color=lime>Spawning " + targetFX.name + ": " + m_openFXInstance + "</color>");
-			if(m_openFXInstance != null) {
+			ToggleFX(targetFX, true);
+			Debug.Log("<color=lime>Spawning " + targetFX.name + "</color>");
+			/*if(m_openFXInstance != null) {
 				m_openFXInstance.SetLayerRecursively(this.gameObject.layer);
 				m_openFXInstance.transform.rotation = transform.rotation;
-			}
+			}*/
 		}
-		
+
+		// Turn off glow FX
 		ToggleFX(m_glowFX, false);
 
 		// Notify delegates
@@ -225,16 +194,6 @@ public class ChestViewController : MonoBehaviour {
 	/// Event to sync with the animation.
 	/// </summary>
 	public void OnChestLanded() {
-		// [AOC] TODO!! Play some SFX
-
-		// Play some VFX
-		/*
-		if ( m_dustParticle.IsValid() )
-		{
-			GameObject go = ParticleManager.Spawn(m_dustParticle, transform.position + m_dustParticle.offset );
-			go.transform.rotation = transform.rotation;
-		}
-		*/
 		// Notify delegates
 		OnChestAnimLandedEvent.Invoke();
 	}

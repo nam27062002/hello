@@ -43,6 +43,9 @@ public class ResultsSceneController : MonoBehaviour {
         if (m_resultsSceneSetup != null) {
             m_resultsSceneSetup.gameObject.SetActive(false);
         }
+
+		// Allow unlimited amount of particles
+		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
 	}    
 
     /// <summary>
