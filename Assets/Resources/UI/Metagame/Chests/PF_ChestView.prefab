@@ -267,6 +267,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1478380786655558
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4510238834683320}
+  - component: {fileID: 114869400801020276}
+  m_Layer: 0
+  m_Name: GoldOpenFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1571379009744652
 GameObject:
   m_ObjectHideFlags: 1
@@ -340,7 +356,7 @@ GameObject:
   - component: {fileID: 4176258656167722}
   - component: {fileID: 114429288189212374}
   m_Layer: 0
-  m_Name: GemsOpenFX
+  m_Name: GoldLoopFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -356,6 +372,22 @@ GameObject:
   - component: {fileID: 4341045576609282}
   m_Layer: 0
   m_Name: Chest_Gem_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1666799823023724
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4904820663933464}
+  - component: {fileID: 114364756484953548}
+  m_Layer: 0
+  m_Name: GemsOpenFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -477,7 +509,7 @@ GameObject:
   - component: {fileID: 4083035519172158}
   - component: {fileID: 114744449121465918}
   m_Layer: 0
-  m_Name: GoldOpenFX
+  m_Name: GemsLoopFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -591,12 +623,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1734578388144678}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4530135181296866}
-  m_RootOrder: 1
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4105793612968772
 Transform:
@@ -677,7 +709,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4530135181296866}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4193997436153146
 Transform:
@@ -834,6 +866,19 @@ Transform:
   m_Father: {fileID: 4348864253420026}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4510238834683320
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1478380786655558}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4530135181296866}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4530135181296866
 Transform:
   m_ObjectHideFlags: 1
@@ -845,8 +890,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4874609653206332}
-  - {fileID: 4083035519172158}
+  - {fileID: 4510238834683320}
+  - {fileID: 4904820663933464}
   - {fileID: 4176258656167722}
+  - {fileID: 4083035519172158}
   m_Father: {fileID: 4000011754260506}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1020,6 +1067,19 @@ Transform:
   m_Father: {fileID: 4201349863281310}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 1.0403951e-12, y: -1.2402475e-19, z: -1.040395e-12}
+--- !u!4 &4904820663933464
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1666799823023724}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4530135181296866}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4941320896071988
 Transform:
   m_ObjectHideFlags: 1
@@ -1065,11 +1125,11 @@ MonoBehaviour:
   m_rewardSetups:
   - type: 0
     view: {fileID: 1622189753665962}
-    openFX: {fileID: 114744449121465918}
+    openFX: {fileID: 114869400801020276}
     openLoopFX: {fileID: 0}
   - type: 1
     view: {fileID: 1725335055703344}
-    openFX: {fileID: 114429288189212374}
+    openFX: {fileID: 114364756484953548}
     openLoopFX: {fileID: 0}
   OnChestOpenEvent:
     m_PersistentCalls:
@@ -1081,6 +1141,57 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+--- !u!114 &114364756484953548
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1666799823023724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 4348864253420026}
+  m_view: {fileID: 137057647229374216}
+  m_particleDatas:
+  - name: PS_ChestOpenBurstDiamond
+    path: 
+    changeStartColor: 0
+    startColor: {r: 0, g: 0, b: 0, a: 0}
+    startColorTwo: {r: 0, g: 0, b: 0, a: 0}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 0, g: 0, b: 0, a: 0}
+      key1: {r: 0, g: 0, b: 0, a: 0}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0.7, z: 0}
+    scale: 0
 --- !u!114 &114429288189212374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1095,7 +1206,7 @@ MonoBehaviour:
   m_parent: {fileID: 4348864253420026}
   m_view: {fileID: 137057647229374216}
   m_particleDatas:
-  - name: PS_ChestOpenLoopDiamond
+  - name: PS_ChestOpenLoopGold
     path: 
     changeStartColor: 0
     startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1146,7 +1257,58 @@ MonoBehaviour:
   m_parent: {fileID: 4348864253420026}
   m_view: {fileID: 137057647229374216}
   m_particleDatas:
-  - name: PS_ChestOpenLoop
+  - name: PS_ChestOpenLoopDiamond
+    path: 
+    changeStartColor: 0
+    startColor: {r: 0, g: 0, b: 0, a: 0}
+    startColorTwo: {r: 0, g: 0, b: 0, a: 0}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 0, g: 0, b: 0, a: 0}
+      key1: {r: 0, g: 0, b: 0, a: 0}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0.7, z: 0}
+    scale: 0
+--- !u!114 &114869400801020276
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1478380786655558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parent: {fileID: 4348864253420026}
+  m_view: {fileID: 137057647229374216}
+  m_particleDatas:
+  - name: PS_ChestOpenBurstGold
     path: 
     changeStartColor: 0
     startColor: {r: 0, g: 0, b: 0, a: 0}
