@@ -1,16 +1,33 @@
 fileFormatVersion: 2
-guid: 0a6a296ed5ea45c4e9d42b0922e5c953
-timeCreated: 1472565211
+guid: 7d5a82ffa8df44489851b84c5b7b49fd
+timeCreated: 1515761299
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Bat_Body
+    100004: Bat_Head
+    100006: Bat_LArm_1
+    100008: Bat_LArm_2
+    100010: Bat_LArm_3
+    100012: Bat_RArm_1
+    100014: Bat_RArm_2
+    100016: Bat_RArm_3
+    100018: Bat_ultralow_geo
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: big_mushroom
+    400002: Bat_Body
+    400004: Bat_Head
+    400006: Bat_LArm_1
+    400008: Bat_LArm_2
+    400010: Bat_LArm_3
+    400012: Bat_RArm_1
+    400014: Bat_RArm_2
+    400016: Bat_RArm_3
+    400018: Bat_ultralow_geo
+    4300000: Bat_ultralow_geo
     9500000: //RootNode
+    13700000: Bat_ultralow_geo
   materials:
     importMaterials: 0
     materialName: 0
@@ -19,13 +36,15 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -40,7 +59,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 1
+    generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
@@ -57,6 +76,7 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -67,7 +87,10 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1

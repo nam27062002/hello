@@ -51,7 +51,7 @@ public class DecorationSkuListAttributeEditor : ExtendedPropertyDrawer {
 		DecorationSkuListAttribute attr = attribute as DecorationSkuListAttribute;
 
 		// If definitions are not loaded, do it now
-		if(!ContentManager.ready) ContentManager.InitContent(true);
+		if(!ContentManager.ready) ContentManager.InitContent(true, false);
 
 		// Get the definitions and sort them by category
 		List<string> categorySkus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.ENTITY_CATEGORIES);
