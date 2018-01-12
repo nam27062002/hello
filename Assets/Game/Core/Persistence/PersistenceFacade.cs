@@ -31,7 +31,7 @@ public class PersistenceFacade
 		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Equal;
+        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted;
         if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
             Config = new PersistenceFacadeConfigDebug(userCaseId);
@@ -285,9 +285,10 @@ public class PersistenceFacade
     #endregion
 
     #region popups
-    private static int SYNC_GENERIC_ERROR_CODE_CLOUD_SAVE_CORRUPTED = 1;
-    private static int SYNC_GENERIC_ERROR_CODE_LOCAL_SAVE_CORRUPTED = 2;
-    private static int SYNC_GENERIC_ERROR_CODE_BOTH_SAVES_CORRUPTED = 3;
+    private static int SYNC_GENERIC_ERROR_CODE_MERGE_CLOUD_SAVE_CORRUPTED = 1;
+    private static int SYNC_GENERIC_ERROR_CODE_MERGE_LOCAL_SAVE_CORRUPTED = 2;
+    private static int SYNC_GENERIC_ERROR_CODE_MERGE_BOTH_SAVES_CORRUPTED = 3;
+    private static int SYNC_GENERIC_ERROR_CODE_SYNC_CLOUD_SAVE_CORRUPTED = 4;
 
     // This region is responsible for opening the related to persistence popups    
     private static bool Popups_IsInited { get; set; }
@@ -564,20 +565,20 @@ public class PersistenceFacade
     public static void Popup_OpenMergeConflictCloudCorrupted(Action onConfirm)
     {        
         // Alternative: "You can't use this facebook account because its cloud save is corrupted."
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_CLOUD_SAVE_CORRUPTED, onConfirm);        
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_SYNC_CLOUD_SAVE_CORRUPTED, onConfirm);        
     }
 
     public static void Popup_OpenMergeConflictLocalCorrupted(Action onConfirm)
     {        
         // Local save corrupted when syncing
         // Alternative: "Your local save is corrupted, do you want to override it with the cloud save?"
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_LOCAL_SAVE_CORRUPTED, onConfirm);        
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_LOCAL_SAVE_CORRUPTED, onConfirm);        
     }
 
     public static void Popup_OpenMergeConflictBothCorrupted(Action onConfirm)
     {
         // Alternative "Both saves are corrupted, reset local save?"
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_BOTH_SAVES_CORRUPTED, onConfirm);       
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_BOTH_SAVES_CORRUPTED, onConfirm);       
     }
 
     public static void Popup_OpenMergeWithADifferentAccount(Action onConfirm, Action onCancel)
@@ -595,8 +596,7 @@ public class PersistenceFacade
     }    
 
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
-	{        
-        // UNPH: Two buttons instead of three (upload local save to cloud is not an option. Review the text description)
+	{                
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_NAME";
         config.MessageTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_DESC";
@@ -610,7 +610,12 @@ public class PersistenceFacade
     }
 
 	public static void Popup_OpenCloudCorrupted(Action onContinue, Action onOverride)
-	{               
+	{
+        // Internal error is shown.
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_SYNC_CLOUD_SAVE_CORRUPTED, onContinue);
+        /*            
+        // Alternative: Let the user override cloud save with local save.
+        // Make sure texts used by 'Popup_OpenCloudCorruptedWasOverriden()' popup stop being hardcoded when this alternative is enabled
         string msg = "TID_SAVE_ERROR_CLOUD_SAVE_CORRUPTED_DESC";
 
         PopupMessage.Config config = PopupMessage.GetConfig();
@@ -624,10 +629,13 @@ public class PersistenceFacade
         config.OnCancel = onContinue;        
 
         PopupManager.PopupMessage_Open(config);
+        */
     }
-
+    
     public static void Popup_OpenCloudCorruptedWasOverriden(Action onContinue)
-    {        
+    {
+        // Don't worry about the hardcoded texts because this popup is not used yet since this popup is shown only if 'Popup_OpenCloudCorrupted()'
+        // lets the user override cloud save with local save when cloud save is corrupted
         string msg = "Corrupted cloud save was fixed";
 
         PopupMessage.Config config = PopupMessage.GetConfig();
