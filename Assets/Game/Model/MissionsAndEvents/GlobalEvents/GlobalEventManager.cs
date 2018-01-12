@@ -132,7 +132,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				SimpleJSON.JSONArray arr = responseJson["liveEvents"].AsArray;
 				SimpleJSON.JSONClass liveEvent = arr[0].AsObject;
 				int globalEventKey = liveEvent["code"].AsInt;
-				if ( globalEventKey >= 0 ){
+				if ( globalEventKey > 0 ){
 					GlobalEventUserData globalEventUserData = null;
 					if ( user.globalEvents.ContainsKey(globalEventKey) ){
 						globalEventUserData = user.globalEvents[globalEventKey];
@@ -261,7 +261,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(instance.m_currentEvent == null) return;
 
 		Debug.Log("<color=magenta>EVENT REWARDS</color>");
+
+		#if TEST_GLOBAL_EVENT
+			GameServerManager.ServerResponse response = CreateTestResponse( "eventResult.json" );
+			instance.OnEventRewardResponse(null, response);
+		#else
 		GameServerManager.SharedInstance.GlobalEvent_GetRewards(instance.m_currentEvent.id, instance.OnEventRewardResponse);
+		#endif
 	}
 
 	/// <summary>
