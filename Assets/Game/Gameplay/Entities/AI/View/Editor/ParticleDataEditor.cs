@@ -76,14 +76,16 @@ public class ParticleDataPropertyDrawer : ExtendedPropertyDrawer {
 
 						// 1st Color
 						SerializedProperty colorProp = m_rootProperty.FindPropertyRelative("startColor");
+						pos.height = EditorGUI.GetPropertyHeight(colorProp);	// Make sure it has the adequate height!
 						EditorGUI.PropertyField(pos, colorProp);
-						AdvancePos();
+						AdvancePos(pos.height);
 						pos.y = m_pos.y;
 
 						// 2nd Color
 						colorProp = m_rootProperty.FindPropertyRelative("startColorTwo");
+						pos.height = EditorGUI.GetPropertyHeight(colorProp);	// Make sure it has the adequate height!
 						EditorGUI.PropertyField(pos, colorProp);
-						AdvancePos();
+						AdvancePos(pos.height);
 					}
 				}
 
@@ -99,8 +101,9 @@ public class ParticleDataPropertyDrawer : ExtendedPropertyDrawer {
 
 						// Color prop
 						SerializedProperty colorProp = m_rootProperty.FindPropertyRelative("colorOvertime");
+						pos.height = EditorGUI.GetPropertyHeight(colorProp);	// Make sure it has the adequate height!
 						EditorGUI.PropertyField(pos, colorProp);
-						AdvancePos();
+						AdvancePos(pos.height);
 					}
 				}
 
@@ -120,8 +123,11 @@ public class ParticleDataPropertyDrawer : ExtendedPropertyDrawer {
 				// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 				loop = _property.Next(false);
 
-				// If within an array, Next() will give the next element of the array, which will be already be drawn by itself afterwards, so we don't want it - check depth to prevent it
-				if(_property.depth <= baseDepth) loop = false;
+				// If within an array, Next() will give the next element of the array, which will 
+				// already be drawn by itself afterwards, so we don't want it - check depth to prevent it
+				if(loop) {
+					if(_property.depth <= baseDepth) loop = false;
+				}
 			}
 		}
 	}
