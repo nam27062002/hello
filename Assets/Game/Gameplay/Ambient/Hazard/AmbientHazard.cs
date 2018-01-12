@@ -101,7 +101,7 @@ public class AmbientHazard : MonoBehaviour {
 	[SerializeField] private AmbientHazardAnimEvents m_animEvents;
 
 	// Internal references
-	private GameObject m_particlesObj = null;
+	private ParticleControl m_particlesObj = null;
 	private Transform m_transform = null;
 	private Collider m_collider = null;
 
@@ -145,7 +145,6 @@ public class AmbientHazard : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-
 		m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
 
@@ -177,6 +176,8 @@ public class AmbientHazard : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -186,6 +187,8 @@ public class AmbientHazard : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -298,18 +301,10 @@ public class AmbientHazard : MonoBehaviour {
 		if (m_visible) {
 			// If particles are not created, do it now
 			if (m_particlesObj == null) {
-				m_particlesObj = m_poisonParticle.Spawn();
-				if (m_particlesObj != null) {
-					// As children of ourselves
-					// Particle system should already be created to match the zero position
-					m_particlesObj.transform.SetParentAndReset(this.transform);
-					m_particlesObj.transform.localPosition = m_poisonParticle.offset;
-					m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
-
-					// Particles are automatically started when spawned from the pool
-					// Stop them if hazard is not active
-					if(m_state == State.IDLE || m_state == State.ACTIVATING) ActivateParticles(false);
-				}
+				LoadParticles();
+				// Particles are automatically started when spawned from the pool
+				// Stop them if hazard is not active
+				if(m_state == State.IDLE || m_state == State.ACTIVATING) ActivateParticles(false);
 			}
 
 			if ( m_state == State.ACTIVATING || m_state == State.ACTIVE )
@@ -335,7 +330,7 @@ public class AmbientHazard : MonoBehaviour {
 		} else {
 			// Return them to the pool
 			if (m_particlesObj != null) {
-				m_poisonParticle.ReturnInstance(m_particlesObj);
+				m_poisonParticle.ReturnInstance(m_particlesObj.gameObject);
 				m_particlesObj = null;
 			}
 		}
@@ -416,20 +411,32 @@ public class AmbientHazard : MonoBehaviour {
 	/// <param name="_activate"><c>true</c> to play the particle systems, <c>false</c> to stop them.</param>
 	private void ActivateParticles(bool _activate) {
 		// Only if we actually have a particle system!
-		if(m_particlesObj == null) return;
-
-		// Propagate to all subsystems
-		ParticleSystem[] subsystems = m_particlesObj.GetComponentsInChildren<ParticleSystem>();
-		for(int i = 0; i < subsystems.Length; i++) {
-			if(_activate) {
-				subsystems[i].Clear();
-				subsystems[i].Play();
+		if (m_particlesObj == null) {			
+			if (m_visible && _activate) {
+				LoadParticles();
+			}
+		} else {
+			if (_activate) {
+				m_particlesObj.Play();
 			} else {
-				subsystems[i].Stop();
+				m_particlesObj.Stop();
 			}
 		}
 	}
-	/*
+
+	private void LoadParticles() {
+		GameObject go = m_poisonParticle.Spawn();
+		if (go != null) {
+			m_particlesObj = go.GetComponent<ParticleControl>();
+
+			// As children of ourselves
+			// Particle system should already be created to match the zero position
+			m_particlesObj.transform.SetParentAndReset(this.transform);
+			m_particlesObj.transform.localPosition = m_poisonParticle.offset;
+			m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -444,7 +451,7 @@ public class AmbientHazard : MonoBehaviour {
 			m_dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform, true);	// Resetting all current DOTs
 
 			// Apply knockback
-			Vector3 repulseDirection = Vector3.zero;
+			Vector3 repulseDirection = GameConstants.Vector3.zero;
 			for(int i = 0; i < _collision.contacts.Length; i++) {
 				repulseDirection += _collision.contacts[i].normal;
 			}
@@ -478,5 +485,5 @@ public class AmbientHazard : MonoBehaviour {
 
 			// [AOC] TODO!! Play SFX
 		}
-	}*/
+	}
 }
