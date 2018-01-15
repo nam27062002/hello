@@ -37,7 +37,8 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public virtual int score { get { return 0; } }
 
-	protected List<ISpawnable> m_otherSpawnables = new List<ISpawnable>();
+	protected ISpawnable[] m_otherSpawnables;
+	protected int m_otherSpawnablesCount;
 	protected AI.IMachine m_machine;
 	public AI.IMachine machine { get { return m_machine; } }
 
@@ -45,10 +46,15 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	protected virtual void Awake() {
 		ISpawnable[] spawners = GetComponents<ISpawnable>();
+		m_otherSpawnables = new ISpawnable[ spawners.Length - 1 ];
+		m_otherSpawnablesCount = 0;
 		ISpawnable thisSpawn = this as ISpawnable;
 		for (int i = 0; i < spawners.Length; i++) {
 			if (spawners[i] != thisSpawn)
-				m_otherSpawnables.Add(spawners[i]);				
+			{
+				m_otherSpawnables[m_otherSpawnablesCount] = spawners[i];
+				m_otherSpawnablesCount++;
+			}
 		}
 		m_machine = GetComponent<AI.IMachine>();
 		m_viewControl = GetComponent<IViewControl>();
@@ -99,7 +105,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	}
 
     public virtual void CustomUpdate() {
-    	for (int i = 0; i < m_otherSpawnables.Count; i++) {
+		for (int i = 0; i < m_otherSpawnablesCount; i++) {
 			m_otherSpawnables[i].CustomUpdate();
     	}
     }
