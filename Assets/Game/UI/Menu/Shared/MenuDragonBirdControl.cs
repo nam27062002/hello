@@ -26,8 +26,9 @@ public class MenuDragonBirdControl : MonoBehaviour {
 
 		m_prefabInstance = Instantiate<GameObject>(m_prefab);
 		m_prefabInstance.transform.parent = view;
-		m_prefabInstance.transform.localPosition = Vector3.zero;
-		m_prefabInstance.transform.localRotation = Quaternion.identity;
+		m_prefabInstance.transform.localPosition = GameConstants.Vector3.zero;
+		m_prefabInstance.transform.localRotation = GameConstants.Quaternion.identity;
+		m_prefabInstance.transform.localScale = GameConstants.Vector3.one;
 		m_birdAnimator = m_prefabInstance.GetComponent<Animator>();
 		m_birdRenderer = m_prefabInstance.GetComponentInChildren<Renderer>();
 		m_prefabInstance.SetActive(false);
