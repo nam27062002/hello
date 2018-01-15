@@ -71,8 +71,10 @@ public class ParticleDataPropertyDrawer : ExtendedPropertyDrawer {
 
 					// If toggled, draw color boxes (indented)
 					if(_property.boolValue) {
-						// Indented
-						Rect pos = EditorGUI.IndentedRect(m_pos);
+						// Add small offset to make it clear it's a sub-property
+						Rect pos = new Rect(m_pos);
+						pos.x += 10f;
+						pos.width -= 10f;
 
 						// 1st Color
 						SerializedProperty colorProp = m_rootProperty.FindPropertyRelative("startColor");
@@ -96,8 +98,10 @@ public class ParticleDataPropertyDrawer : ExtendedPropertyDrawer {
 
 					// If toggled, draw color boxes (indented)
 					if(_property.boolValue) {
-						// Indented
-						Rect pos = EditorGUI.IndentedRect(m_pos);
+						// Add small offset to make it clear it's a sub-property
+						Rect pos = new Rect(m_pos);
+						pos.x += 10f;
+						pos.width -= 10f;
 
 						// Color prop
 						SerializedProperty colorProp = m_rootProperty.FindPropertyRelative("colorOvertime");
