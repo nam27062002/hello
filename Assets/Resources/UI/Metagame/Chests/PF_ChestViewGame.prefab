@@ -406,8 +406,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1249456203593438}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4464255683014870}
@@ -497,7 +497,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422641720593510}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4464255683014870}
@@ -509,8 +509,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1070125410850292}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4464255683014870}
@@ -523,7 +523,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1176386020806192}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4464255683014870}
@@ -706,11 +706,11 @@ MonoBehaviour:
   - type: 0
     view: {fileID: 1727068133322964}
     openFX: {fileID: 114379745325920044}
-    openLoopFX: {fileID: 0}
+    openLoopFX: {fileID: 114410148665740282}
   - type: 1
     view: {fileID: 1478917675884602}
-    openFX: {fileID: 114410148665740282}
-    openLoopFX: {fileID: 0}
+    openFX: {fileID: 114652566409791936}
+    openLoopFX: {fileID: 114491436774237004}
   OnChestOpenEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -732,7 +732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parent: {fileID: 4946155191545890}
+  m_parent: {fileID: 0}
   m_view: {fileID: 137075133516638470}
   m_particleDatas:
   - name: PS_ChestOpenBurstGame
@@ -770,7 +770,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 4
-    offset: {x: 0, y: 0.7, z: 0}
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
 --- !u!114 &114410148665740282
 MonoBehaviour:
@@ -783,7 +783,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parent: {fileID: 4946155191545890}
+  m_parent: {fileID: 0}
   m_view: {fileID: 137075133516638470}
   m_particleDatas:
   - name: PS_ChestOpenLoopGame
@@ -821,7 +821,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0.7, z: 0}
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
 --- !u!114 &114491436774237004
 MonoBehaviour:
@@ -834,7 +834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parent: {fileID: 4946155191545890}
+  m_parent: {fileID: 0}
   m_view: {fileID: 137075133516638470}
   m_particleDatas:
   - name: PS_ChestOpenLoopGame
@@ -872,7 +872,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0.7, z: 0}
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
 --- !u!114 &114652566409791936
 MonoBehaviour:
@@ -885,7 +885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parent: {fileID: 4946155191545890}
+  m_parent: {fileID: 0}
   m_view: {fileID: 137075133516638470}
   m_particleDatas:
   - name: PS_ChestOpenBurstGame
@@ -923,7 +923,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 4
-    offset: {x: 0, y: 0.7, z: 0}
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
 --- !u!137 &137075133516638470
 SkinnedMeshRenderer:
