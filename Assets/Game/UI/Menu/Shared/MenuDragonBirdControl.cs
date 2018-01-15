@@ -13,11 +13,14 @@ public class MenuDragonBirdControl : MonoBehaviour {
 	private bool m_playingBird;
 	private bool m_waitToSync;
 
-	private static int MENU_ALT_1 = Animator.StringToHash("MenuAlt1");
+	public string m_AnimationName = "MenuAlt1";
+	private int m_AnimHash;
 	private static int SELECTION_SCREEN = Animator.StringToHash("SelectionScreen");
 
 	// Use this for initialization
 	void Awake () {
+		m_AnimHash = Animator.StringToHash(m_AnimationName);
+
 		Transform view = transform.Find("view");
 		m_dragonAnimator = view.GetComponent<Animator>();
 
@@ -38,7 +41,8 @@ public class MenuDragonBirdControl : MonoBehaviour {
 		m_prefabInstance.SetActive(true);
 		m_birdAnimator.speed = 0.9f;
 		m_birdAnimator.Play("SelectionScreen", 0, 0);
-		m_birdRenderer.material = m_materials[ Random.Range(0, m_materials.Count) ];
+		if ( m_materials.Count > 0 )
+			m_birdRenderer.material = m_materials[ Random.Range(0, m_materials.Count) ];
 	}
 
 	void Update()
@@ -48,7 +52,7 @@ public class MenuDragonBirdControl : MonoBehaviour {
 			if ( m_waitToSync )
 			{
 				AnimatorStateInfo dragonStateInfo = m_dragonAnimator.GetCurrentAnimatorStateInfo(0);
-				if ( dragonStateInfo.shortNameHash == MENU_ALT_1 )
+				if ( dragonStateInfo.shortNameHash == m_AnimHash )
 				{
 					AnimatorStateInfo birdStateInfo = m_birdAnimator.GetCurrentAnimatorStateInfo(0);
 

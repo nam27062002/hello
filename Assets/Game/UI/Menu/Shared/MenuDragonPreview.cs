@@ -96,6 +96,10 @@ public class MenuDragonPreview : MonoBehaviour {
 	private Dictionary<int, List<Material>> m_materials;
 
 
+	public bool m_hasFire = false;
+	public GameObject m_dragonFlameStandard = null;
+	private FireBreathDynamic m_dragonFlameStandardInstance = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -142,6 +146,22 @@ public class MenuDragonPreview : MonoBehaviour {
 		}
 		m_currentAnimIndex = -1;
 		m_lastAltAnim = - 1;
+
+		if ( m_hasFire )
+		{
+			Transform cacheTransform = transform;
+	        Transform mouth = cacheTransform.FindTransformRecursive("mouth");
+			GameObject tempFire = Instantiate<GameObject>(m_dragonFlameStandard);
+	        Transform t = tempFire.transform;
+	        t.SetParent(mouth, true);
+	        t.localPosition = Vector3.zero;
+	        t.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
+			m_dragonFlameStandardInstance = tempFire.GetComponent<FireBreathDynamic>();
+			m_dragonFlameStandardInstance.EnableFlame(false);
+			m_dragonFlameStandardInstance.gameObject.SetActive(false);
+
+		}
+
 	}
 
 	/// <summary>
@@ -239,6 +259,16 @@ public class MenuDragonPreview : MonoBehaviour {
 				}
 			}break;
 		}
+	}
+
+	public void StartFlame()
+	{
+		m_dragonFlameStandardInstance.EnableFlame(true, false);
+	}
+
+	public void EndFlame()
+	{
+		m_dragonFlameStandardInstance.EnableFlame(false, false);
 	}
 }
 

@@ -210,7 +210,8 @@ public class FireBreathDynamic : MonoBehaviour
 
         m_particleList = GetComponentsInChildren<ParticleSystem>();
 
-        m_isTitan = (InstanceManager.player.sku == "dragon_titan");
+		if ( InstanceManager.player )
+        	m_isTitan = (InstanceManager.player.sku == "dragon_titan");
 
     }
 
