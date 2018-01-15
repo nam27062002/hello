@@ -34,7 +34,10 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#pragma multi_compile __ OPAQUEALPHA
+//			#pragma multi_compile __ OPAQUEALPHA
+			#pragma multi_compile __ FREEZE
+			#pragma multi_compile __ TINT
+
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
