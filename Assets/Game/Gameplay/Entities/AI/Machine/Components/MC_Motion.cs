@@ -126,7 +126,7 @@ namespace AI {
 				m_animEvents.onStandUp += new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
 			}
 
-			m_mouth = null;
+			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 
 			ExtendedAttach();
 		}
@@ -155,9 +155,6 @@ namespace AI {
 
 			m_rbody.isKinematic = false;
 			m_rbody.detectCollisions = true;
-
-			//----------------------------------------------------------------------------------
-			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 
 			//----------------------------------------------------------------------------------
 			ExtendedInit();
