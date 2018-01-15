@@ -472,6 +472,8 @@ public class MissionPill : MonoBehaviour {
 			UsersManager.currentUser.skipMissionAdUses++;
 			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD, true, false);
 	        PersistenceFacade.instance.Save_Request();
+
+			Refresh();
 		}
     }
 
