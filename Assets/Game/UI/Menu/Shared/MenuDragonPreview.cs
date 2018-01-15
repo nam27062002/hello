@@ -156,7 +156,13 @@ public class MenuDragonPreview : MonoBehaviour {
 	        t.SetParent(mouth, true);
 	        t.localPosition = Vector3.zero;
 	        t.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
+	        t.localScale = GameConstants.Vector3.one;
 			m_dragonFlameStandardInstance = tempFire.GetComponent<FireBreathDynamic>();
+
+			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DRAGONS, m_sku);
+			float furyBaseLength = def.GetAsFloat("furyBaseLength");
+			m_dragonFlameStandardInstance.setEffectScale(furyBaseLength / 2.0f, transform.localScale.x);
+
 			m_dragonFlameStandardInstance.EnableFlame(false);
 			m_dragonFlameStandardInstance.gameObject.SetActive(false);
 
