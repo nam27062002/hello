@@ -206,7 +206,7 @@ namespace AI {
 						UpdateAttack();
 
 						if (m_viewControl.hasNavigationLayer) {
-							m_viewControl.NavigationLayer(m_pilot.impulse);
+							m_viewControl.NavigationLayer(m_direction + GameConstants.Vector3.back * 0.1f);
 						}
 					}
 					break;
@@ -255,9 +255,9 @@ namespace AI {
 			if (m_attackTarget) {
 				Vector3 dir = m_attackTarget.position - position;
 				dir.Normalize();
-				m_viewControl.NavigationLayer(dir);	
+				m_viewControl.NavigationLayer(dir + GameConstants.Vector3.back * 0.1f);	
 			} else {
-				m_viewControl.NavigationLayer(m_pilot.impulse);	
+				m_viewControl.NavigationLayer(m_direction + GameConstants.Vector3.back * 0.1f);	
 			}
 
 			m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
