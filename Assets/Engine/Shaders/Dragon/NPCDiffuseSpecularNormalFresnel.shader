@@ -3,7 +3,7 @@
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Glow)"
+Shader "Hungry Dragon/Dragon/Eggs"
 {
 	Properties
 	{
@@ -51,25 +51,25 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 			#pragma fragment frag
 			#pragma shader_feature REFLECTION
 			#pragma shader_feature EMISSIVE
-/*
+			#pragma shader_feature NORMALMAP
+
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 			#if LOW_DETAIL_ON
-			#undef BUMP
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#undef BUMP
+			#define NORMALMAP
 			#endif
 
 			#if HI_DETAIL_ON
+			#define NORMALMAP
 			#endif
-*/
-			#define BUMP
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
-			#include "HungryDragon.cginc"
+
+			#include "../HungryDragon.cginc"
 
 			struct appdata
 			{
@@ -88,7 +88,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 				float3 viewDir : TEXTCOORD1;
 				float3 halfDir : TEXTCOORD2;
 				float3 normalWorld : TEXCOORD4;
-				#ifdef BUMP
+				#ifdef NORMALMAP
 				float3 tangentWorld : TANGENT;
 		        float3 binormalWorld : TEXCOORD5;
 				#endif
@@ -142,7 +142,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 
 				// To calculate tangent world
 																								  // To calculate tangent world
-				#ifdef BUMP
+				#ifdef NORMALMAP
 				o.tangentWorld = UnityObjectToWorldNormal(v.tangent);
 				o.normalWorld = UnityObjectToWorldNormal(v.normal);
 				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
@@ -164,7 +164,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + NormalMap + Specular + Fresnel + Rim (Gl
 
 
 				// Aux vars
-				#ifdef BUMP
+				#ifdef NORMALMAP
            		float3 encodedNormal = tex2D(_NormalTex, i.uv2);
 				float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 				float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
