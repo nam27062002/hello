@@ -2,6 +2,19 @@
 // Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _LightmapIntensity)
 #pragma exclude_renderers d3d11
 
+struct appdata_t
+{
+	float4 vertex : POSITION;
+	float2 texcoord : TEXCOORD0;
+#ifdef LIGHTMAP_ON
+	float4 texcoord1 : TEXCOORD1;
+#endif
+
+	float4 color : COLOR;
+
+	float3 normal : NORMAL;
+	float4 tangent : TANGENT;
+};
 
 //#define EMISSIVE_LIGHTMAPCONTRAST
 
@@ -92,12 +105,28 @@ uniform float _LightmapContrastMargin;
 uniform float _LightmapContrastPhase;
 #endif
 
+
+//Used by plants, simulates wind movement
+#if defined(CUSTOM_VERTEXPOSITION)
+float _SpeedWave;
+float4 getCustomVertexPosition(inout appdata_t v)
+{
+	float hMult = v.vertex.y;
+	//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	//					tvertex.w = -0.5f;
+	return UnityObjectToClipPos(tvertex);
+}
+#endif
+
+//used by automatic blend to blend grass and stone from up to down
+#if defined(CUSTOM_VERTEXCOLOR)
 float4 getCustomVertexColor(inout appdata_t v)
 {
 	//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
 	return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
 }
-
+#endif
 
 v2f vert (appdata_t v) 
 {
