@@ -331,6 +331,10 @@ if [ "$VERSION_CODE_PARAMS" != "" ]; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${VERSION_CODE_PARAMS}"
 fi
 
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
+PACKAGE_NAME="$(cat bundleIdentifier.txt)"
+rm -f "bundleIdentifier.txt"
+
 # Generate Android build
 if $BUILD_ANDROID; then
   print_builder "BUILDER: Generating APKs..."
@@ -351,9 +355,6 @@ if $BUILD_ANDROID; then
   mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.apk" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/"
 
   if $GENERATE_OBB; then
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
-    PACKAGE_NAME="$(cat bundleIdentifier.txt)"
-    rm -f "bundleIdentifier.txt"
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
     mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}"
   fi
@@ -396,6 +397,11 @@ if $BUILD_IOS; then
       <dict> \
         <key>method</key> \
         <string>ad-hoc</string> \
+        <key>provisioningProfiles</key> \
+        <dict> \
+          <key>${PACKAGE_NAME}</key> \
+          <string>${PROVISIONING_PROFILE_UUID}</string> \
+        </dict> \
         <key>teamId</key> \
         <string>${DEVELOPMENT_TEAM}</string> \
       </dict> \

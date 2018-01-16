@@ -127,6 +127,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 			m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
 		}
 		m_startPosition = transform.position;
+
+		m_initialized = true;
 	}
 
 	public void SetupFireNodes() {

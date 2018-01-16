@@ -443,7 +443,6 @@ public class PersistenceCloudDriver
         {
             //PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(Syncer_OnMergeConflictUseCloud);
 
-
             // This case shouldn't happen because there are previous checks that should avoid it. Just in case a generic sync error popup is shown
             // and the game is reloaded to make it follow a know flow.             
             PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(onError);
