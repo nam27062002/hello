@@ -673,8 +673,8 @@ public class GameServerManagerCalety : GameServerManager {
 
         switch (command) {
             case ECommand.GetPersistence:
-            case ECommand.SetPersistence:
-            case ECommand.SetQualitySettings:
+            case ECommand.SetPersistence:            
+            case ECommand.SetQualitySettings: // The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
             case ECommand.GlobalEvents_GetState:
             case ECommand.GlobalEvents_GetEvent:
             case ECommand.GlobalEvents_GetRewards:
@@ -701,7 +701,19 @@ public class GameServerManagerCalety : GameServerManager {
         // command is not anonymous
         //        
 		if(Commands_CurrentCommand == command) {
-			Dictionary<string, string> parameters = command.Parameters;
+
+            // If the command needs to be logged in but the game is not currently logged in then an error is returned
+            // TODO: To force login before sending the command
+            if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn())
+            {
+                if (FeatureSettingsManager.IsDebugEnabled)                
+                    LogError("Command " + command.Cmd + " requires the user to be logged in but she's not");
+
+                Commands_OnResponse(null, 401);
+                return;
+            }
+
+            Dictionary<string, string> parameters = command.Parameters;
        
 			switch(command.Cmd) {
 				case ECommand.Ping: {
@@ -728,16 +740,12 @@ public class GameServerManagerCalety : GameServerManager {
 					ServerManager.SharedInstance.Server_SendAuth(parameters["platformId"], parameters["platformToken"]);
 				} break;                
 
-				case ECommand.GetPersistence: {
-					if(IsLoggedIn()) {
-                        Command_SendCommand(COMMAND_GET_PERSISTENCE);                        
-					}
+				case ECommand.GetPersistence: {					
+                    Command_SendCommand(COMMAND_GET_PERSISTENCE);                        					
 				} break;
 
-				case ECommand.SetPersistence: {
-					if(IsLoggedIn()) {						
-                        Command_SendCommand(COMMAND_SET_PERSISTENCE, null, null, parameters["persistence"]);
-                    }
+				case ECommand.SetPersistence: {											
+                    Command_SendCommand(COMMAND_SET_PERSISTENCE, null, null, parameters["persistence"]);                    
 				} break;
 
 				case ECommand.UpdateSaveVersion: {
@@ -750,13 +758,8 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommand(COMMAND_GET_QUALITY_SETTINGS);                    
 				} break;
 
-				case ECommand.SetQualitySettings: {
-					// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
-					if(IsLoggedIn()) {                                                
-                        Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                       
-                    } else if (FeatureSettingsManager.IsDebugEnabled) {
-						LogError("SetQualitySettings require the user to be logged");
-					}
+				case ECommand.SetQualitySettings: {										
+                   Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                                           
 				} break;
 
                 case ECommand.GetGameSettings: {                    
@@ -779,31 +782,27 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.GlobalEvents_GetState:
 				case ECommand.GlobalEvents_GetEvent:
 				case ECommand.GlobalEvents_GetRewards:
-				case ECommand.GlobalEvents_GetLeadeboard: {
-					if(IsLoggedIn()) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();						
-						kParams["eventId"] = parameters["eventId"];
-						string global_event_command = "";
-						switch( command.Cmd )
-						{
-							case ECommand.GlobalEvents_GetState: global_event_command = COMMAND_GLOBAL_EVENTS_GET_STATE;break;
-							case ECommand.GlobalEvents_GetEvent: global_event_command = COMMAND_GLOBAL_EVENTS_GET_EVENT;break;
-							case ECommand.GlobalEvents_GetRewards: global_event_command = COMMAND_GLOBAL_EVENTS_GET_REWARDS;break;
-							case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
-						}
-
-                        Command_SendCommand( global_event_command, kParams );
+				case ECommand.GlobalEvents_GetLeadeboard: {					
+					Dictionary<string, string> kParams = new Dictionary<string, string>();						
+					kParams["eventId"] = parameters["eventId"];
+					string global_event_command = "";
+					switch( command.Cmd )
+					{
+						case ECommand.GlobalEvents_GetState: global_event_command = COMMAND_GLOBAL_EVENTS_GET_STATE;break;
+						case ECommand.GlobalEvents_GetEvent: global_event_command = COMMAND_GLOBAL_EVENTS_GET_EVENT;break;
+						case ECommand.GlobalEvents_GetRewards: global_event_command = COMMAND_GLOBAL_EVENTS_GET_REWARDS;break;
+						case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
 					}
+
+                    Command_SendCommand( global_event_command, kParams );					
 				}break;
 
-				case ECommand.GlobalEvents_RegisterScore: {
-					if ( IsLoggedIn() ) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();							
-						kParams["eventId"] = parameters["eventId"];
-						kParams["progress"] = parameters["progress"];
-                        Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
-						// progress
-					}
+				case ECommand.GlobalEvents_RegisterScore: {					
+					Dictionary<string, string> kParams = new Dictionary<string, string>();							
+					kParams["eventId"] = parameters["eventId"];
+					kParams["progress"] = parameters["progress"];
+                    Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
+					// progress					
 				}break;
                 default: {
                     if (FeatureSettingsManager.IsDebugEnabled)
