@@ -271,10 +271,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 		if (settingsInstance != null)
 		{
 		string strDNAGameVersion = "UAT";
-		UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
 		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-		{
-            kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
+		{            
 		    strDNAGameVersion = "Full";
             clientVersion += "_PROD";
 		}
@@ -285,9 +283,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 		List<string> kDNACachedEventIDs = TrackingManager.SharedInstance.GetEventIDsByAPI (TrackingManager.ETrackAPIs.E_TRACK_API_DNA, kEventNameFilters);
 
 #if UNITY_ANDROID
-		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", clientVersion, strDNAGameVersion, kDNACachedEventIDs);
 #elif UNITY_IOS
-		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", clientVersion, strDNAGameVersion, kDNACachedEventIDs);
 #endif
 		}
 #endif
