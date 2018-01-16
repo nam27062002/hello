@@ -167,12 +167,12 @@ public class GameServerManagerCalety : GameServerManager {
 
 		public override void onShowLostConnection () {
 			Debug.TaggedLog(tag, "onShowLostConnection");
-			GameServerManager.SharedInstance.onLostConnection();
+			GameServerManager.SharedInstance.OnConnectionLost();
 		} 
 
 		public override void onNetworkFailedInAPacket() {
 			Debug.TaggedLog(tag, "onNetworkFailedInAPacket");
-			GameServerManager.SharedInstance.onLostConnection();
+			GameServerManager.SharedInstance.OnConnectionLost();
 		}
 
 		void ResetWaitingFlags() {
@@ -245,7 +245,7 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
 
-	public override void onLostConnection() {
+	public override void OnConnectionLost() {
 		if (FeatureSettingsManager.IsDebugEnabled) {
 			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
 		}
