@@ -117,7 +117,7 @@ public class GameServerManagerCalety : GameServerManager {
         }
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
-		public override void onMergeFailed() {
+		public override void onMergeFailed(bool bNeedToUnAuthenticateFromSocialPlatform = false) {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeFailed");
             Messenger.Broadcast(MessengerEvents.MERGE_FAILED);                        
