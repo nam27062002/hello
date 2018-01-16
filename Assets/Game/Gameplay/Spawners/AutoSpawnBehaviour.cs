@@ -16,6 +16,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	//-----------------------------------------------
 	[SeparatorAttribute("Spawner")]
 	[SerializeField] private float m_spawnTime;
+	[SerializeField] private int m_maxSpawns = 0;
 
 	[SeparatorAttribute("Ground")]
 	[SerializeField] private Collider[] m_ground;
@@ -26,6 +27,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	private Decoration m_decoration;
 
+	private int m_respawnCount;
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
 
@@ -75,6 +77,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 			m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
 
+
+			m_respawnCount = 0;
+
 			return;
 		}
 
@@ -113,9 +118,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private void OnLevelLoaded() {
 		bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
 		if (disable) {
+			m_respawnCount = 0;
 			m_state = State.Respawning;
 			gameObject.SetActive(false);
 		} else {
+			m_respawnCount = 1;
 			m_state = State.Idle;
 		}
 
@@ -133,15 +140,22 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
     public void ForceRemoveEntities() {}
     public void ForceReset() {}
 
-    public void StartRespawn() {		
-		// Program the next spawn time
-		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
+    public void StartRespawn() {	
+		m_respawnCount++;
 
-		for (int i = 0; i < m_ground.Length; ++i) {
-			m_ground[i].isTrigger = true;
+		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
+			// we are not goin to use this spawner, lets destroy it
+			Destroy(gameObject);    
+		} else {
+			// Program the next spawn time
+			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
+
+			for (int i = 0; i < m_ground.Length; ++i) {
+				m_ground[i].isTrigger = true;
+			}
+
+			m_state = State.Respawning;
 		}
-
-		m_state = State.Respawning;
 	}        
 
 	public bool IsRespawing() {
