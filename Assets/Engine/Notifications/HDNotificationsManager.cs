@@ -11,7 +11,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 			kNotificationsConfig.m_bEnableLights = true;
 			kNotificationsConfig.m_bEnableVibration = true;
 			kNotificationsConfig.m_iIconColorARGB = 0x00000000;
-			kNotificationsConfig.m_iLightColorARGB = 0xFF00F0F0;
+			kNotificationsConfig.m_iLightColorARGB = 0xFFFF8C00;
 			NotificationsManager.SharedInstance.Initialise(kNotificationsConfig);			          
 #else
 			NotificationsManager.SharedInstance.Initialise();			          
