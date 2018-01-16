@@ -42,8 +42,22 @@ public class ChestViewController : MonoBehaviour {
 	// SFX
 	[Space]
 	[SerializeField] private string m_openSFX = "";
+	public string openSFX {
+		get { return m_openSFX; }
+		set { m_openSFX = value; }
+	}
+
 	[SerializeField] private string m_closeSFX = "";
+	public string closeSFX {
+		get { return m_closeSFX; }
+		set { m_closeSFX = value; }
+	}
+
 	[SerializeField] private string m_resultsSFX = "";
+	public string resultsSFX {
+		get { return m_resultsSFX; }
+		set { m_resultsSFX = value; }
+	}
 
 	// Exposed setup
 	[Space]

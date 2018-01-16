@@ -28,9 +28,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Space]
-	[SerializeField] private ShowHideAnimator m_eggFoundAnim = null;
-	[SerializeField] private ShowHideAnimator m_eggNotFoundAnim = null;
-	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
+	[SerializeField] private string[] m_chestsSFX = new string[5];
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
@@ -39,6 +37,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	private int m_collectedChests = 0;
 	private int m_pendingRewardChests = 0;
 	private int m_checkedChests = 0;
+	private ResultsSceneChestSlot[] m_chestSlots = null;
 	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 
 	//------------------------------------------------------------------------//
@@ -165,6 +164,11 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 
 		// Start animating at the first non-collected chest
 		m_checkedChests = m_collectedChests;
+
+		// Assign SFX to non-collected chests
+		for(int i = m_collectedChests; i < m_chestSlots.Length; ++i) {
+			m_chestSlots[i].chestView.resultsSFX = m_chestsSFX[i - m_collectedChests];
+		}
 	}
 
 	//------------------------------------------------------------------------//
