@@ -122,7 +122,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 
 	public void Initialize() {
-		m_state = State.Respawning;
+		m_state = State.Idle;
 	}
 
     public void Clear() {
