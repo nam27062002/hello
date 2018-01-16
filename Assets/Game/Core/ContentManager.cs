@@ -95,8 +95,10 @@ public class ContentManager
         InitDefinitions();
         InitLanguages();
 
-        // Content Delta Manager has to be initialised regardless 'UseDeltaContent' because it initialises the version that is sent as the X-Version of the client in all commands sent to the server
-        InitContentDeltaManager();
+		if (_configureServerManager) {
+	        // Content Delta Manager has to be initialised regardless 'UseDeltaContent' because it initialises the version that is sent as the X-Version of the client in all commands sent to the server
+	        InitContentDeltaManager();
+		}
 
         if (UseDeltaContent)
         {            
