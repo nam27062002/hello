@@ -93,27 +93,16 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma multi_compile __ OPAQUEALPHA
 				#pragma multi_compile __ REFLECTIVE
 				#pragma multi_compile __ LIGHTMAP_ON
-
-				
+			
 				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
-
 				#pragma multi_compile EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
-
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
-
-
-				#define HG_SCENARY
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "Lighting.cginc"
 
 				#include "HungryDragon.cginc"
-
-//				#define FOG
-//				#define OPAQUEALPHA
-//				#define BLEND_TEXTURE
-//				#define CUSTOM_VERTEXCOLOR
 
 				#if LOW_DETAIL_ON
 				#undef NORMALMAP
@@ -126,10 +115,6 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 
 				#if HI_DETAIL_ON
 				#endif
-
-//				#define FOG
-//				#define OPAQUEALPHA
-
 
 				#include "scenary.cginc"
 			ENDCG

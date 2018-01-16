@@ -1,11 +1,20 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 
+struct appdata_t
+{
+	float4 vertex : POSITION;
+	float2 uv : TEXCOORD0;
+	float4 color : COLOR;
+	float3 normal : NORMAL;
+	float4 tangent : TANGENT;
+};
+
 struct v2f
 {
-	float2 uv : TEXCOORD0;
 	float4 vertex : SV_POSITION;
 
+	float2 uv : TEXCOORD0;
 	float4 color : COLOR;
 
 #if !defined(GHOST)
@@ -67,12 +76,6 @@ uniform float4 _FresnelColor2;
 uniform float4 _Tint;
 #endif
 
-#ifdef EMISSIVE_COLOR
-uniform float4 _EmissiveColor;
-uniform float _EmissiveBlinkPhase;
-#endif
-
-
 v2f vert(appdata_t v)
 {
 	v2f o;
@@ -133,11 +136,6 @@ fixed4 frag(v2f i) : SV_Target
 //	fixed specMask = col.a;
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 
-#if defined (EMISSIVE)
-	fixed emmisiveMask = col.a;
-#elif  defined (EMISSIVE_COLOR)
-	fixed emmisiveMask = col.a * ((sin(_Time.y * _EmissiveBlinkPhase) + 1.0) * 0.5);
-#endif
 
 #if defined (TINT)
 	col.xyz *= _Tint.xyz;
@@ -145,11 +143,7 @@ fixed4 frag(v2f i) : SV_Target
 	col = getCustomTint(col, _Tint, i.color);
 #endif
 
-#ifdef EMISSIVE_COLOR
-	fixed4 unlitColor = _EmissiveColor;
-#else
 	fixed4 unlitColor = col;
-#endif
 
 #ifdef NORMALMAP
 	// Calc normal from detail texture normal and tangent world
@@ -192,10 +186,6 @@ fixed4 frag(v2f i) : SV_Target
 //	col = (col + ((mc*2.0) - 0.5));
 	col = lerp(col, mc * 3.0, _GoldColor.w);// (1.0 - clamp(_FresnelPower, 0.0, 1.0)));
 	//	res.a = 0.5;
-#endif
-
-#if defined (EMISSIVE) || defined (EMISSIVE_COLOR)
-	col = lerp(col, unlitColor, emmisiveMask);
 #endif
 
 #if defined (OPAQUEALPHA)
