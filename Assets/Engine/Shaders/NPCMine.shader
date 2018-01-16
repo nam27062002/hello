@@ -37,8 +37,8 @@ Shader "Hungry Dragon/NPC/NPC Mine (Spawners)"
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
-
-			#define HG_ENTITIES
+//			#pragma multi_compile __ NORMALMAP
+//			#pragma multi_compile __ SPECULAR
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
@@ -56,12 +56,6 @@ Shader "Hungry Dragon/NPC/NPC Mine (Spawners)"
 			#define NORMALMAP
 			#define SPECULAR
 			#endif
-
-//			#define NORMALMAP
-//			#define SPECULAR
-
-//			#define FRESNEL
-//			#define MATCAP
 
 			#include "entities.cginc"
 
