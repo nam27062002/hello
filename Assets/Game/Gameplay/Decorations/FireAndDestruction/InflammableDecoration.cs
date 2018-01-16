@@ -264,10 +264,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	}
 
 	private void Destroy() {
-		m_autoSpawner.StartRespawn();
 		m_view.SetActive(false);
 		m_viewBurned.SetActive(true);
-		if (m_collider) m_collider.enabled = false;
+		if (m_collider) 	m_collider.enabled = false;
+		if (m_autoSpawner) m_autoSpawner.StartRespawn();
 
 		m_state = m_nextState = State.Respawn;
 	}
