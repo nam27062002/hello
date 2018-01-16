@@ -561,7 +561,6 @@ public class GameServerManagerCalety : GameServerManager {
 	private Command Commands_CurrentCommand { get; set; }
 
 	public delegate void BeforeCommandComplete(Error error);
-	//public delegate void AfterCommand(Command command, Dictionary<string, string> parameters, Error error, ServerResponse result, ServerCallback callback, int retries);
 
 	private bool mCommandsIsEnabled;
 	
@@ -648,18 +647,6 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_AfterCommand(Command command, Error error, ServerResponse result, int retries) {                       
-		if(command.Callback != null) {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Commander Callback :: " + command);
-
-			command.Callback(error, result);
-		}                             
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
 	private void Commands_PrepareToRunCommand(Command command, int retries = 0) {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("PrepareToRunCommand " + command.Cmd);       
@@ -671,9 +658,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 		BeforeCommandComplete runCommand = delegate(Error beforeError) {
 			if(beforeError == null) {
-				Commands_RunCommand(command, delegate (Error error, ServerResponse result) {                    
-                    Commands_AfterCommand(command, error, result, retries);                        
-				});
+				Commands_RunCommand(command);
 			} else if(command.Callback != null) {
 				command.Callback(beforeError, null);
 			}
@@ -682,13 +667,33 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_BeforeCommand(command.Cmd, command.Parameters, runCommand);                           
 	}
 
+    private bool Commands_NeedsToBeLoggedIn(ECommand command)
+    {
+        bool returnValue = false;
+
+        switch (command) {
+            case ECommand.GetPersistence:
+            case ECommand.SetPersistence:
+            case ECommand.SetQualitySettings:
+            case ECommand.GlobalEvents_GetState:
+            case ECommand.GlobalEvents_GetEvent:
+            case ECommand.GlobalEvents_GetRewards:
+            case ECommand.GlobalEvents_GetLeadeboard:
+            case ECommand.GlobalEvents_RegisterScore:
+                returnValue = true;
+                break;
+        }
+
+        return returnValue;
+    }
+
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_RunCommand(Command command, ServerCallback callback) {
+	private void Commands_RunCommand(Command command) {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
-        // Commands have to be executed one by one since we're not using actions on server side
+        // Commands have to be executed one by one since we're not using actions on server side       
 
         //
         // [DGR] 
