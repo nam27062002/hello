@@ -146,6 +146,8 @@ public class GameServerManager
         }        
 	}
 
+	public virtual void onLostConnection() {}
+
 	//------------------------------------------------------------------------//
 	// GENERIC SERVER MANAGEMENT											  //
 	//------------------------------------------------------------------------//

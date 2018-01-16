@@ -165,6 +165,16 @@ public class GameServerManagerCalety : GameServerManager {
 			Debug.TaggedLog(tag, "onRequestGameReset");
 		}
 
+		public override void onShowLostConnection () {
+			Debug.TaggedLog(tag, "onShowLostConnection");
+			GameServerManager.SharedInstance.onLostConnection();
+		} 
+
+		public override void onNetworkFailedInAPacket() {
+			Debug.TaggedLog(tag, "onNetworkFailedInAPacket");
+			GameServerManager.SharedInstance.onLostConnection();
+		}
+
 		void ResetWaitingFlags() {
 			m_waitingLoginResponse = false;
 			m_waitingGetUniverse = false;
@@ -233,6 +243,18 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	public override void Ping(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
+	}
+
+	public override void onLostConnection() {
+		if (FeatureSettingsManager.IsDebugEnabled) {
+			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
+		}
+
+		Commands_OnServerDown();
+
+		NetworkManager.SharedInstance.CancelRequests();        
+		ServerManager.SharedInstance.CancelPendingCommands();
+		NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
 	}
 
     #region login
@@ -541,12 +563,15 @@ public class GameServerManagerCalety : GameServerManager {
 	public delegate void BeforeCommandComplete(Error error);
 	//public delegate void AfterCommand(Command command, Dictionary<string, string> parameters, Error error, ServerResponse result, ServerCallback callback, int retries);
 
+	private bool mCommandsIsEnabled;
+	
 	/// <summary>
 	/// 
 	/// </summary>
 	private void Commands_Init() {
 		Commands_Pool = new Queue<Command>();
-		Commands_Queue = new Queue<Command>();        
+		Commands_Queue = new Queue<Command>();   
+		mCommandsIsEnabled = true;
 	}
 
 	/// <summary>
@@ -836,7 +861,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 		// If no command is being processed and there's a command enqueued then that command is processed
 		// We need to verify that Commands_CurrentCommand is null because the callback called right above might have call another command
-		if(Commands_CurrentCommand == null && !Commands_IsQueueEmpty()) {
+		if(mCommandsIsEnabled && Commands_CurrentCommand == null && !Commands_IsQueueEmpty()) {
 			Commands_CurrentCommand = Commands_DequeueCommand();
 			Commands_PrepareToRunCommand(Commands_CurrentCommand);
 		}
@@ -1071,6 +1096,55 @@ public class GameServerManagerCalety : GameServerManager {
 
 		Commands_OnExecuteCommandDone(error, response);
 		return error == null;       
+	}
+
+	private void Commands_OnServerDown() {
+		mCommandsIsEnabled = false;
+
+		Error error = new ServerConnectionError("Server down");
+		ServerCallback callback;
+
+		// Clears latest command sent to server manager
+		if (Commands_CurrentCommand != null) {
+			callback = Commands_CurrentCommand.Callback;
+			Commands_ReturnCommand(Commands_CurrentCommand);
+			Commands_CurrentCommand = null;
+			if (callback != null) {
+				callback(error, null);
+			}
+		}
+
+		// Clears commands pending to be sent to server manager
+		Command command;        
+		while (!Commands_IsQueueEmpty()) {
+			command = Commands_DequeueCommand();
+			callback = command.Callback;
+			Commands_ReturnCommand(command);
+			if (callback != null) {
+				callback(error, null);
+			}
+		}    
+
+		mCommandsIsEnabled = true;
+	}
+
+		private string Commands_ToString() {
+		string str = "COMMANDS QUEUE: ";
+		if (Commands_Queue != null) {
+			Command[] commands = Commands_Queue.ToArray();
+			int count = commands.Length;
+			for (int i = 0; i < count; i++) {
+			str += commands[i].Cmd.ToString() + System.Environment.NewLine;
+			}
+		}
+
+		str += System.Environment.NewLine + " CURRENT COMMAND: ";
+
+		if (Commands_CurrentCommand != null) {
+			str += Commands_CurrentCommand.Cmd.ToString();
+		}
+
+		return str;
 	}
 	#endregion
 
