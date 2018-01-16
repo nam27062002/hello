@@ -1049,7 +1049,7 @@ public class UserProfile : UserPersistenceSystem
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
 		foreach(KeyValuePair<int, GlobalEventUserData> kvp in m_globalEvents) {
-			if ( kvp.Value.eventID >= 0 ){
+			if ( kvp.Value.eventID > 0 ){
 				eventsData.Add(kvp.Value.Save(true));
 			}
 			#if UNITY_EDITOR

@@ -23,8 +23,6 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel + Transparent (Spawners)"
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#define HG_ENTITIES
-
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"

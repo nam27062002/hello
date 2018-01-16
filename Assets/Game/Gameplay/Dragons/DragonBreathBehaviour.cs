@@ -147,6 +147,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}
 
 	/// <summary>
@@ -178,6 +179,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}
 	
 	void OnDisable() {
@@ -287,6 +289,22 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
+	}
+
+	protected virtual void OnGamePaused( bool _paused )
+	{
+		if ( _paused && m_isFuryOn)
+		{
+			// Pause sound
+			if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() )
+				m_breathSoundAO.Pause();
+		}
+		else if ( m_isFuryOn )
+		{
+			// Resume sound
+			if (m_breathSoundAO != null && m_breathSoundAO.IsPaused() )
+				m_breathSoundAO.Unpause();
+		}
 	}
 
 	virtual public bool IsInsideArea(Vector2 _point) { return false; }
