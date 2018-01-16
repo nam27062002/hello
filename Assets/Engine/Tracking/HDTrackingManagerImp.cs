@@ -1024,7 +1024,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
             Track_AddParamLanguage(e);
             Track_AddParamUserTimezone(e);
-            Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
+			Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
 
 			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
             Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
