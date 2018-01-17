@@ -40,5 +40,14 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 		transform.parent.GetComponent<MenuDragonPreview>().EndFlame();
 	}
 
+	public void StartBlood()
+	{
+		transform.parent.GetComponent<MenuDragonPreview>().StartBlood();
+	}
+
+	public void EndBlood()
+	{
+		transform.parent.GetComponent<MenuDragonPreview>().EndBlood();
+	}
 
 }

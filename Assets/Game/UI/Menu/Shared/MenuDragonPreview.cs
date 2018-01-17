@@ -100,6 +100,9 @@ public class MenuDragonPreview : MonoBehaviour {
 	public GameObject m_dragonFlameStandard = null;
 	private FireBreathDynamic m_dragonFlameStandardInstance = null;
 
+	public ParticleControl m_bloodParticle;
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -275,6 +278,16 @@ public class MenuDragonPreview : MonoBehaviour {
 	public void EndFlame()
 	{
 		m_dragonFlameStandardInstance.EnableFlame(false, false);
+	}
+
+	public void StartBlood()
+	{
+		m_bloodParticle.Play();
+	}
+
+	public void EndBlood()
+	{
+		m_bloodParticle.Stop();
 	}
 }
 
