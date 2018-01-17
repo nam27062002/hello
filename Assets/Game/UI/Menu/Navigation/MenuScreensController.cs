@@ -56,6 +56,8 @@ public class MenuScreensController : NavigationScreenSystem {
 		get { return m_cameraSnapPoints; }
 	}
 
+	[SerializeField] private float m_cameraTransitionDuration = 0.5f;
+
 	// Other properties
 	public MenuScreens currentMenuScreen {
 		get { return (MenuScreens)currentScreenIdx; }
@@ -208,7 +210,7 @@ public class MenuScreensController : NavigationScreenSystem {
 			// Perform camera transition!
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
-			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, 0.5f, tweenParams, OnCameraTweenCompleted);
+			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, m_cameraTransitionDuration, tweenParams, OnCameraTweenCompleted);
 
 			// Lock input to prevent weird flow cases when interrupting a screen transition
 			// See https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-620
