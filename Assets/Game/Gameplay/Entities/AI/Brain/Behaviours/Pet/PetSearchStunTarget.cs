@@ -66,7 +66,12 @@ namespace AI {
 
 				m_sensor = (m_machine as Machine).sensor;
 
-				m_ignoreSkus = m_data.m_ignoreSkus.Split(new string[] { "," }, StringSplitOptions.None);
+				if (string.IsNullOrEmpty(m_data.m_ignoreSkus))
+				{
+					m_ignoreSkus = new string[]{};
+				}else{
+					m_ignoreSkus = m_data.m_ignoreSkus.Split(new string[] { "," }, StringSplitOptions.None);
+				}
 				m_ignoreSkusCount = m_ignoreSkus.Length;
 			}
 
