@@ -14,6 +14,8 @@ namespace AI {
 			public DragonTier minValidTier = DragonTier.TIER_0;
 			public float dragonSizeRangeMultiplier = 10;
 			public Range m_shutdownRange = new Range(10,20);
+			[Tooltip("Coma separated list of entity skus to ignore")]
+			public string m_ignoreSkus;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Stun Target")]
@@ -36,6 +38,8 @@ namespace AI {
 			MachineSensor m_sensor;
 
 			private PetSearchStunTargetData m_data;
+			string[] m_ignoreSkus;
+			int m_ignoreSkusCount;
 
 
 			public override StateComponentData CreateData() {
@@ -61,6 +65,9 @@ namespace AI {
 				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.dragonSizeRangeMultiplier;
 
 				m_sensor = (m_machine as Machine).sensor;
+
+				m_ignoreSkus = m_data.m_ignoreSkus.Split(new string[] { "," }, StringSplitOptions.None);
+				m_ignoreSkusCount = m_ignoreSkus.Length;
 			}
 
 			// The first element in _param must contain the amount of time without detecting an enemy
@@ -86,14 +93,23 @@ namespace AI {
 						Machine machine = entity.GetComponent<Machine>();
 						if (machine != null && !machine.isPetTarget )
 						{
-							bool isViable = false;
-
 							if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
 							{
 								// Test if in front of player!
 								Vector3 entityDir = machine.position - m_owner.dragonMotion.position;
 								if( Vector2.Dot( m_owner.dragonMotion.direction, entityDir) > 0)
 								{
+									bool ignore = false;
+									for( int i = 0; i<m_ignoreSkusCount && !ignore; ++i)
+									{
+										if ( entity.sku.Equals(m_ignoreSkus[i]) )
+										{
+											ignore = true;
+										}
+									}
+									if ( ignore )
+										continue;
+
 									// Check if physics reachable
 									RaycastHit hit;
 									Vector3 dir = entity.circleArea.center - m_machine.position;
