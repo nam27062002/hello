@@ -66,16 +66,17 @@ public class MenuScreensController : NavigationScreenSystem {
 
 	public MenuScreenScene currentScene {
 		get {
-			if(MathUtils.IsBetween(currentScreenIdx, 0, m_scenes.Length)) {
+			if ( currentScreenIdx >= 0 && currentScreenIdx < m_scenes.Length ){
 				return m_scenes[currentScreenIdx]; 
 			}
+
 			return null;
 		}
 	}
 
 	public CameraSnapPoint currentCameraSnapPoint {
 		get {
-			if(MathUtils.IsBetween(currentScreenIdx, 0, m_cameraSnapPoints.Length)) {
+			if( currentScreenIdx >= 0 && currentScreenIdx < m_cameraSnapPoints.Length ) {
 				return m_cameraSnapPoints[currentScreenIdx]; 
 			}
 			return null;
@@ -196,13 +197,13 @@ public class MenuScreensController : NavigationScreenSystem {
 		m_prevScreen = (MenuScreens)currentScreenIdx;
 
 		// Notify game a screen transition is about to happen
-		Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_REQUESTED, m_prevScreen, (MenuScreens)_newScreenIdx);
+		Messenger.Broadcast<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_REQUESTED, m_prevScreen, (MenuScreens)_newScreenIdx);
 
 		// Let parent do its stuff
 		base.GoToScreen(_newScreenIdx, _animType);
 
 		// Notify game a screen transition has just happen and animation is about to start
-		Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, m_prevScreen, (MenuScreens)_newScreenIdx);
+		Messenger.Broadcast<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, m_prevScreen, (MenuScreens)_newScreenIdx);
 
 		// Perform camera transition (if snap point defined)
 		CameraSnapPoint targetSnapPoint = GetCameraSnapPoint(m_currentScreenIdx);
@@ -221,7 +222,7 @@ public class MenuScreensController : NavigationScreenSystem {
 			UbiBCN.CoroutineManager.DelayedCall(() => { InputLocker.Unlock(); }, 0.15f, false);
 		} else {
 			// No animation, instantly notify game the screen transition has been completed
-			Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)_newScreenIdx);
+			Messenger.Broadcast<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)_newScreenIdx);
 		}
 	}
 
@@ -237,6 +238,6 @@ public class MenuScreensController : NavigationScreenSystem {
 		InputLocker.Unlock();
 
 		// Notify game the screen transition has been completed
-		Messenger.Broadcast<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)this.currentScreenIdx);
+		Messenger.Broadcast<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, (MenuScreens)this.currentScreenIdx);
 	}
 }

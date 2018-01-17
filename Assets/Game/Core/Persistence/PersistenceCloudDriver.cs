@@ -55,7 +55,7 @@ public class PersistenceCloudDriver
                     LatestSyncTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
                 }
 
-                Messenger.Broadcast<bool>(GameEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
+                Messenger.Broadcast<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);
             }
         }
     }
@@ -178,6 +178,8 @@ public class PersistenceCloudDriver
 		}
 	}
 
+    private bool Syncer_NeedsToShowCloudOverridenPopup { get; set; }
+
 	private void Syncer_Reset()
 	{
 		Syncer_Step = ESyncSetp.None;
@@ -185,7 +187,8 @@ public class PersistenceCloudDriver
 		Syncer_IsSilent = false;
 		Syncer_OnSyncDone = null;
 		Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
-	}
+        Syncer_NeedsToShowCloudOverridenPopup = false;
+    }
 
 	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult> onDone)
 	{
@@ -295,7 +298,7 @@ public class PersistenceCloudDriver
 	}    
 
 	private void Syncer_Sync()
-	{
+	{        
         switch (Syncer_LogInSocialResult)
         {
             case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
@@ -364,6 +367,7 @@ public class PersistenceCloudDriver
 
             Action onOverride = delegate ()
             {
+                Syncer_NeedsToShowCloudOverridenPopup = true;
                 Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseLocal);
             };
 
@@ -374,7 +378,13 @@ public class PersistenceCloudDriver
             if (FeatureSettingsManager.IsDebugEnabled)
                 PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Ok");
 
-            Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseCloud);
+            Action onSyncWithCloud = delegate ()
+            {
+                // Since local persistence is corrupted we need to override it with cloud persistence 
+                Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseCloud);
+            };            
+
+            PersistenceFacade.Popups_OpenLoadLocalCorruptedButCloudOkError(onSyncWithCloud);            
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
         {
@@ -383,7 +393,7 @@ public class PersistenceCloudDriver
 
             Action onReset = delegate ()
             {
-                Action onResetDone = delegate ()
+                Action onResetDone = delegate()
                 {
                     // Since cloud persistence is corrupted we need to override cloud persistence with local persistence after resetting it
                     // to the default persistence
@@ -403,11 +413,22 @@ public class PersistenceCloudDriver
             Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging);
         }
     }
-
+    
     private void Syncer_ProcessMerge()
     {
         PersistenceStates.ELoadState localState = LocalDriver.Data.LoadState;
-        PersistenceStates.ELoadState cloudState = Data.LoadState;        
+        PersistenceStates.ELoadState cloudState = Data.LoadState;
+        
+        Action onError = delegate ()
+        {
+            // Dismiss
+            Syncer_OnMergeConflictUseLocal();
+
+            // Forces the game to restart so the flow follows a known case
+            ApplicationManager.instance.NeedsToRestartFlow = true;
+        };
+
+
         if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.OK)
         {
             // Chooses between local and cloud
@@ -420,11 +441,15 @@ public class PersistenceCloudDriver
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
         {
-            // Notifies local is not an option so confirm to override it with cloud
-            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(Syncer_OnMergeConflictUseCloud);
+            //PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(Syncer_OnMergeConflictUseCloud);
+
+            // This case shouldn't happen because there are previous checks that should avoid it. Just in case a generic sync error popup is shown
+            // and the game is reloaded to make it follow a know flow.             
+            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(onError);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
         {
+            /*
             Action onConfirmReset = delegate ()
             {
                 Action onResetDone = delegate ()
@@ -433,10 +458,15 @@ public class PersistenceCloudDriver
                 };
 
                 LocalDriver.OverrideWithDefault(onResetDone);
-            };                        
+            };
+                        
+            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(onError);
+            */
 
             // Neither local and cloud is an option so reset cloud
-            PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(onConfirmReset);
+            // This case shouldn't happen because there are previous checks that should avoid it. Just in case a generic sync error popup is shown
+            // and the game is reloaded to make it follow a known flow.             
+            PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(onError);
         }
         else
         {
@@ -570,7 +600,20 @@ public class PersistenceCloudDriver
 		{
 			if (success)
 			{
-				Syncer_PerformDone(PersistenceStates.ESyncResult.Ok);
+                Action onDone = delegate ()
+                {
+                    Syncer_PerformDone(PersistenceStates.ESyncResult.Ok);
+                };
+
+                if (Syncer_NeedsToShowCloudOverridenPopup)
+                {
+                    Syncer_NeedsToShowCloudOverridenPopup = false;
+                    PersistenceFacade.Popup_OpenCloudCorruptedWasOverriden(onDone);
+                }
+                else
+                {
+                    onDone();
+                }				
 			}
 			else
 			{
@@ -690,14 +733,16 @@ public class PersistenceCloudDriver
 	}
 
 	protected virtual void Syncer_ExtendedCheckConnection(Action<bool> onDone)
-    {        
-        GameServerManager.SharedInstance.CheckConnection((Error error, GameServerManager.ServerResponse response) => 
+    {
+        Action<Error> onCheckDone = delegate (Error error)
         {
             if (onDone != null)
             {
                 onDone(error == null);
             }
-        });
+        };
+
+        GameServerManager.SharedInstance.CheckConnection(onCheckDone);        
     }
 
 	protected virtual void Syncer_ExtendedLogInServer(Action<bool> onDone)

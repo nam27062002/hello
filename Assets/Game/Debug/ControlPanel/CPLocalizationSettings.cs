@@ -35,8 +35,8 @@ public class CPLocalizationSettings : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnBoolChanged);
-		Messenger.AddListener<string, int>(GameEvents.CP_ENUM_CHANGED, OnEnumChanged);
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnBoolChanged);
+		Messenger.AddListener<string, int>(MessengerEvents.CP_ENUM_CHANGED, OnEnumChanged);
 	}
 
 	/// <summary>
@@ -44,8 +44,8 @@ public class CPLocalizationSettings : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe to external events
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnBoolChanged);
-		Messenger.RemoveListener<string, int>(GameEvents.CP_ENUM_CHANGED, OnEnumChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnBoolChanged);
+		Messenger.RemoveListener<string, int>(MessengerEvents.CP_ENUM_CHANGED, OnEnumChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -69,7 +69,7 @@ public class CPLocalizationSettings : MonoBehaviour {
 			} else {
 				// Fill empty entries and notify game
 				LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
-				Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
+				Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
 			}
 		}
 	}
@@ -86,7 +86,7 @@ public class CPLocalizationSettings : MonoBehaviour {
 			LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)_newValue;
 
 			// Reload active texts by simulating a language change
-			Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
+			Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
 		}
 	}
 }

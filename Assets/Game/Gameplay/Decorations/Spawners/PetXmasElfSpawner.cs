@@ -23,20 +23,22 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner {
     //-------------------------------------------------------------------
 
     protected  void Start() {
-		SpawnerManager.instance.Register(this, true);
+		// SpawnerManager.instance.Register(this, true);
 		m_entityInfo = new List<EntityInfo>();
+		Initialize();
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
     }
 
 	void OnDestroy() {
-		if (SpawnerManager.isInstanceCreated)
-			SpawnerManager.instance.Unregister(this, true);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
 	}
+
 
 	public void Initialize() {
 		m_poolHandlers = new PoolHandler[m_possibleSpawners.Count];
 		CreatePool();
 		// create a projectile from resources (by name) and save it into pool
-		// Messenger.AddListener(GameEvents.GAME_AREA_ENTER, CreatePool);
+
 	}
 
 	public void Clear() {
@@ -139,37 +141,40 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner {
     public bool Respawn() {
 
     	bool ret = false;
-		GameObject spawning = m_selectedPoolHandler.GetInstance(true);
+    	if ( m_selectedPoolHandler != null )
+    	{
+			GameObject spawning = m_selectedPoolHandler.GetInstance(true);
 
-		if (spawning != null) {
-			Transform spawningTransform = spawning.transform;
-			spawningTransform.rotation = Quaternion.identity;
-			spawningTransform.localRotation = Quaternion.identity;
-			spawningTransform.localScale = Vector3.one;
-			spawningTransform.position = m_spawnAtTransform.position;
+			if (spawning != null) {
+				Transform spawningTransform = spawning.transform;
+				spawningTransform.rotation = Quaternion.identity;
+				spawningTransform.localRotation = Quaternion.identity;
+				spawningTransform.localScale = Vector3.one;
+				spawningTransform.position = m_spawnAtTransform.position;
 
-			Entity entity = spawning.GetComponent<Entity>();
-			if (entity != null) {
-				EntityManager.instance.RegisterEntity(entity);
-				entity.Spawn(this); // lets spawn Entity component first
-			}
-
-			ISpawnable[] components = spawning.GetComponents<ISpawnable>();
-			foreach (ISpawnable component in components) {
-				if (component != entity ) {
-					component.Spawn(this);
+				Entity entity = spawning.GetComponent<Entity>();
+				if (entity != null) {
+					EntityManager.instance.RegisterEntity(entity);
+					entity.Spawn(this); // lets spawn Entity component first
 				}
-			}
 
-			if (ProfilerSettingsManager.ENABLED) {
-				SpawnerManager.AddToTotalLogicUnits(1, m_entityPrefabStr);
-			}
+				ISpawnable[] components = spawning.GetComponents<ISpawnable>();
+				foreach (ISpawnable component in components) {
+					if (component != entity ) {
+						component.Spawn(this);
+					}
+				}
 
-			EntityInfo info;
-			info.m_entity = entity;
-			info.m_poolIndex = m_entityPrefabIndex;
-			m_entityInfo.Add(info);
-			ret = true;
+				if (ProfilerSettingsManager.ENABLED) {
+					SpawnerManager.AddToTotalLogicUnits(1, m_entityPrefabStr);
+				}
+
+				EntityInfo info;
+				info.m_entity = entity;
+				info.m_poolIndex = m_entityPrefabIndex;
+				m_entityInfo.Add(info);
+				ret = true;
+			}
 		}
 		return ret;
     }    

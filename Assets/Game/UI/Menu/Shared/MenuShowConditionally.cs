@@ -98,9 +98,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		Debug.Assert(m_targetAnimator != null, "No target defined!");
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 
 		m_coroutine = null;
 	}
@@ -125,9 +125,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	//------------------------------------------------------------------//

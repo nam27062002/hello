@@ -23,7 +23,7 @@ public class ExplosionProcController : MonoBehaviour {
 		if (m_timer > 0f) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
-				m_animator.SetTrigger("explode");
+				m_animator.SetTrigger( GameConstants.Animator.EXPLODE );
 			}
 		}
 	}

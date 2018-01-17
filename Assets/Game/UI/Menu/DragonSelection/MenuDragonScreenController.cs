@@ -88,7 +88,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		}
 
 		// Subscribe to external events.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 
 		// Check whether we need to move to another screen
 		// Check order is relevant!
@@ -116,7 +116,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 	}
 
 	/// <summary>
@@ -188,7 +188,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		DOTween.Sequence()
 			.AppendCallback(() => {
 				// Lock all input
-				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
 			})
 			.AppendInterval(Mathf.Max(0.1f, _initialDelay))	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -217,7 +217,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				// Show icon unlock animation
 				//m_lockIcon.animator.ResetTrigger("idle");	// Just in case initial delay is 0, both triggers would be set at the same frame and animation wouldn't work
-				m_lockIcon.animator.SetTrigger("unlock");
+				m_lockIcon.animator.SetTrigger( GameConstants.Animator.UNLOCK);
 
 				// Trigger SFX
 				AudioController.Play("hd_unlock_dragon");
@@ -227,7 +227,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Restore lock icon to the idle state (otherwise default values will get corrupted when deactivating the object)
 				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = true;
 				m_lockIcon.GetComponent<ShowHideAnimator>().ForceHide(false, false);
-				m_lockIcon.animator.SetTrigger("idle");
+				m_lockIcon.animator.SetTrigger( GameConstants.Animator.IDLE );
 
 				// Restore all hidden items
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
@@ -259,7 +259,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				// Unlock input
 				// Add some delay to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
-				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -273,7 +273,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		DOTween.Sequence()
 			.AppendCallback(() => {
 				// Lock all input
-				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
 
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
@@ -298,7 +298,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {
-				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 
 				dragonData.Tease();
 				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
@@ -325,7 +325,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		DOTween.Sequence()
 			.AppendCallback(() => {
 				// Lock all input
-				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, true);
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
 
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
@@ -354,7 +354,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {			
-				Messenger.Broadcast<bool>(EngineEvents.UI_LOCK_INPUT, false);
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 			
 				dragonData.Reveal();
 				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();

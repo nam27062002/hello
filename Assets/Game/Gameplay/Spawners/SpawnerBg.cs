@@ -198,7 +198,7 @@ public class SpawnerBg : AbstractSpawner {
             if (m_flockBonus > 0) {
                 Reward reward = new Reward();
                 reward.score = (int)(m_flockBonus * EntitiesKilled);
-                Messenger.Broadcast<Transform, Reward>(GameEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+                Messenger.Broadcast<Transform, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, reward);
             }
 
             m_respawnCount++;

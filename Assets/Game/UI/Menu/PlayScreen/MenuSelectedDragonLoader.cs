@@ -50,7 +50,7 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 		LoadSelectedDragon();
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_CONFIRMED, OnDragonChanged);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_CONFIRMED, OnDragonChanged);
 	}
 
 	/// <summary>
@@ -58,7 +58,7 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_CONFIRMED, OnDragonChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_CONFIRMED, OnDragonChanged);
 	}
 
 	//------------------------------------------------------------------//

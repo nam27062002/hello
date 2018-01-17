@@ -42,7 +42,7 @@ namespace AI {
 
 
 			protected override void OnInitialise() {
-				m_animEvents 	= m_pilot.FindComponentRecursive<PreyAnimationEvents>();
+				m_animEvents 	= m_viewControl.animationEvents;
 				m_machine.SetSignal(Signals.Type.Alert, true);
 
 				m_attacksLeft = m_data.consecutiveAttacks;

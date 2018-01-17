@@ -149,7 +149,7 @@ public class Catapult : SimpleDevice {
 				if (m_target != null && Aim(m_target.position)) {
 					if (!string.IsNullOrEmpty(m_onTossAudio))
 						AudioController.Play(m_onTossAudio, transform.position);
-					m_animator.SetBool("toss", true);
+					m_animator.SetBool( GameConstants.Animator.TOSS , true);
 					m_operatorSpawner.OperatorDoShoot();
 					m_state = State.Toss;
 				}
@@ -203,7 +203,7 @@ public class Catapult : SimpleDevice {
 
 		m_timer = m_tossDelay;
 
-		m_animator.SetBool("reload", false);
+		m_animator.SetBool( GameConstants.Animator.RELOAD , false);
 		m_operatorSpawner.OperatorDoIdle();
 
 		m_state = State.Loaded;
@@ -250,7 +250,7 @@ public class Catapult : SimpleDevice {
 			m_ammo[i] = null;
 		}
 
-		m_animator.SetBool("toss", false);
+		m_animator.SetBool( GameConstants.Animator.TOSS , false);
 	}
 
 	private Vector3 DirectionFromAngles(float _vAngle, float _hAngle) {
@@ -259,7 +259,7 @@ public class Catapult : SimpleDevice {
 
 	private void OnReload() {
 		if (m_operatorAvailable) {
-			m_animator.SetBool("reload", true);
+			m_animator.SetBool( GameConstants.Animator.RELOAD , true);
 			m_operatorSpawner.OperatorDoReload();
 		}
 

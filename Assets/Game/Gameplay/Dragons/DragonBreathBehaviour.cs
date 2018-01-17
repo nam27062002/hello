@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections;
 
 public class DragonBreathBehaviour : MonoBehaviour {
+	//-----------------------------------------------
+	// Constants
+	//-----------------------------------------------
+	private const float INITIAL_FURY_PERCENTAGE = 0.80f;
 
 	//-----------------------------------------------
 	// Attributes
@@ -128,7 +132,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_currentFury = 0;
 
 		if (!UsersManager.currentUser.furyUsed) {
-			m_currentFury = m_furyMax * 0.5f;
+			m_currentFury = m_furyMax * INITIAL_FURY_PERCENTAGE;
 		}
 
 		// Get the level
@@ -141,8 +145,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		ExtendedStart();
 
-		Messenger.AddListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-		Messenger.AddListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}
 
 	/// <summary>
@@ -172,8 +177,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<Transform,Reward>(GameEvents.ENTITY_BURNED, OnEntityBurned);
-		Messenger.RemoveListener<Reward, Transform>(GameEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
+		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}
 	
 	void OnDisable() {
@@ -182,10 +188,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			if (m_isFuryOn) 
 			{
 				m_isFuryOn = false;
-				m_animator.SetBool("breath", false);// Stop fury rush (if active)
+				m_animator.SetBool( GameConstants.Animator.BREATH , false);// Stop fury rush (if active)
 				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
-				Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, Type.None);
+				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, Type.None);
 			}
 		}
 	}
@@ -237,12 +243,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if (m_currentRemainingFuryDuration <= 0)
 				{
 					EndFury();
-					m_animator.SetBool("breath", false);
+					m_animator.SetBool( GameConstants.Animator.BREATH, false);
 				} 
 				else
 				{
 					Breath();
-					m_animator.SetBool("breath", true);
+					m_animator.SetBool( GameConstants.Animator.BREATH, true);
 				}
 			}
 		} else {
@@ -283,6 +289,22 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
+	}
+
+	protected virtual void OnGamePaused( bool _paused )
+	{
+		if ( _paused && m_isFuryOn)
+		{
+			// Pause sound
+			if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() )
+				m_breathSoundAO.Pause();
+		}
+		else if ( m_isFuryOn )
+		{
+			// Resume sound
+			if (m_breathSoundAO != null && m_breathSoundAO.IsPaused() )
+				m_breathSoundAO.Unpause();
+		}
 	}
 
 	virtual public bool IsInsideArea(Vector2 _point) { return false; }
@@ -330,7 +352,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = false;
 
-		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, true, m_type);
+		Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, true, m_type);
 	}
 	virtual protected void Breath() 
 	{
@@ -386,7 +408,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 		if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 
-		Messenger.Broadcast<bool, Type>(GameEvents.FURY_RUSH_TOGGLED, false, m_type);
+		Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, m_type);
         m_type = Type.None;
 	}
 
@@ -435,7 +457,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public virtual void PauseFury()
 	{
 		m_isFuryPaused = true;
-		m_animator.SetBool("breath", false);
+		m_animator.SetBool( GameConstants.Animator.BREATH, false);
 		switch( m_type )
 		{
 			case Type.Standard: if ( m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Pause();break;

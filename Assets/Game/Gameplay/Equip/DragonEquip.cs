@@ -161,8 +161,8 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
-		Messenger.AddListener<string, int , string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.AddListener<string, int , string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -170,8 +170,8 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
-		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	//------------------------------------------------------------------------//

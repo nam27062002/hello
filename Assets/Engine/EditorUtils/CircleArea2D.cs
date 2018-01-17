@@ -4,25 +4,43 @@ using System.Collections;
 public class CircleArea2D : MonoBehaviour, Area {
 
 	public Vector2 offset;
-	public float radius = 5f;
-	
+	public float radius = 5f;	
 	public Color color = new Color(0.76f, 0.23f, 0.13f, 0.2f);
 
+	//
+	//Helpers
 	private CircleAreaBounds m_bounds;
+	private Vector2 m_distance;
+	private Vector3 m_center;
+	private Transform m_transform;
+
+	//
 
 	public AreaBounds bounds {
 		get {
 			if (m_bounds == null) {
 				m_bounds = new CircleAreaBounds(center, radius);
 			} else {
-				m_bounds.UpdateBounds(center, Vector3.one * radius * 2f);
+				m_bounds.UpdateBounds(center, GameConstants.Vector3.one * radius * 2f);
 			}
 
 			return m_bounds;
 		}
 	}
 
-	public Vector3 center { get { return transform.position + (Vector3)offset; } }
+	public Vector3 center { 
+		get { 
+			m_center = m_transform.position;
+			m_center.x += offset.x;
+			m_center.y += offset.y;
+			return m_center;
+		}
+	}
+
+	private void Awake() {
+		m_transform = transform;
+		m_center = m_transform.position;
+	}
 
 	public float DistanceSqr( Vector3 position )
 	{
@@ -38,28 +56,26 @@ public class CircleArea2D : MonoBehaviour, Area {
 
 	public bool Overlaps( Rect r )
 	{
-		Vector2 distance;
-
-		distance.x = Mathf.Abs(center.x - r.center.x);
-		distance.y = Mathf.Abs(center.y - r.center.y);
+		m_distance.x = Mathf.Abs(center.x - r.center.x);
+		m_distance.y = Mathf.Abs(center.y - r.center.y);
 
 		// too far away
-    	if (distance.x > (r.width/2.0f + radius)) { return false; }
-    	if (distance.y > (r.height/2.0f + radius)) { return false; }
+		if (m_distance.x > (r.width/2.0f + radius)) { return false; }
+		if (m_distance.y > (r.height/2.0f + radius)) { return false; }
 
     	// center inside rectangle
-    	if (distance.x <= (r.width/2.0f)) { return true; } 
-    	if (distance.y <= (r.height/2.0f)) { return true; }
+		if (m_distance.x <= (r.width/2.0f)) { return true; } 
+		if (m_distance.y <= (r.height/2.0f)) { return true; }
 
     	// Other cases
     	// sqr magnitude
-    	float cornerDistance_sq = Mathf.Pow( (distance.x - r.width/2), 2) + Mathf.Pow((distance.y - r.height/2), 2);
+		float cornerDistance_sq = Mathf.Pow( (m_distance.x - r.width/2), 2) + Mathf.Pow((m_distance.y - r.height/2), 2);
 
     	return (cornerDistance_sq <= (radius*radius));
 		
 	}
 
-	public bool Overlaps( Vector2 _center, float _radius)
+	public bool Overlaps(Vector2 _center, float _radius)
 	{
 		float sqrMagnitude = ((Vector2)this.center - _center).sqrMagnitude;
 		float test = (_radius + this.radius);

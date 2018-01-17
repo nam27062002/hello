@@ -81,7 +81,7 @@ public class HUDMessagesTest : MonoBehaviour {
 		// This behaves identically as the DragonPlayer class to detect when the health modifiers are reached
 		DragonHealthModifier newModifier = ComputeHealthModifier();
 		if(oldModifier != newModifier) {
-			Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(GameEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldModifier, newModifier);
+			Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldModifier, newModifier);
 		}
 	}
 
@@ -92,10 +92,10 @@ public class HUDMessagesTest : MonoBehaviour {
 	public void SimulateMessage(int _type) {
 		string[] randomEntitySkus = {"entity_1", "entity_2", "entity_3"};
 		switch(_type) {
-			case 0:		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, null);		break;
-			case 1:		Messenger.Broadcast(GameEvents.SURVIVAL_BONUS_ACHIEVED);				break;
-			case 2:		Messenger.Broadcast<float, DamageType, Transform>(GameEvents.PLAYER_DAMAGE_RECEIVED, 10f, DamageType.POISON, null);	break;
-			case 3:		Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, (DragonTier)UnityEngine.Random.Range((int)DragonTier.TIER_1, (int)DragonTier.COUNT), randomEntitySkus.GetRandomValue());	break;
+			case 0:		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, null);		break;
+			case 1:		Messenger.Broadcast(MessengerEvents.SURVIVAL_BONUS_ACHIEVED);				break;
+			case 2:		Messenger.Broadcast<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, 10f, DamageType.POISON, null);	break;
+			case 3:		Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, (DragonTier)UnityEngine.Random.Range((int)DragonTier.TIER_1, (int)DragonTier.COUNT), randomEntitySkus.GetRandomValue());	break;
 
 			case 4:	{
 				Mission m = new Mission();
@@ -108,11 +108,11 @@ public class HUDMessagesTest : MonoBehaviour {
 					Random.value < 0.5f	// 50% chace
 				);
 				m.difficulty = Mission.Difficulty.MEDIUM;
-				Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, m);
+				Messenger.Broadcast<Mission>(MessengerEvents.MISSION_COMPLETED, m);
 			} break;
 
-			case 5:		Messenger.Broadcast<CollectibleChest>(GameEvents.CHEST_COLLECTED, null);	break;
-			case 6:		Messenger.Broadcast<CollectibleEgg>(GameEvents.EGG_COLLECTED, null);		break;
+			case 5:		Messenger.Broadcast<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, null);	break;
+			case 6:		Messenger.Broadcast<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, null);		break;
 			default:	break;
 		}
 	}

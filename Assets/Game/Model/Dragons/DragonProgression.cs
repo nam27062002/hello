@@ -162,7 +162,7 @@ public class DragonProgression : SerializableClass {
 			// "Level Down", which is not possible in normal gameplay so we have to do it manually
 			while(m_level > newLevel) {
 				m_level--;
-				Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, m_owner);
+				Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, m_owner);
 			}
 		}
 	}
@@ -224,7 +224,7 @@ public class DragonProgression : SerializableClass {
 			levelUpCount++;
 
 			// Dispatch global event
-			Messenger.Broadcast<DragonData>(GameEvents.DRAGON_LEVEL_UP, m_owner);
+			Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, m_owner);
 		}
 
 		return levelUpCount;

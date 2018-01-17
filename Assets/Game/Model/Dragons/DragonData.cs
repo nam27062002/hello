@@ -239,7 +239,7 @@ public class DragonData : IUISelectorItem {
 
 		PersistenceFacade.instance.Save_Request();
 
-		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_TEASED, this);
+		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_TEASED, this);
 	}
 
 	public void Reveal() {
@@ -262,7 +262,7 @@ public class DragonData : IUISelectorItem {
 		m_revealed = true;
 
 		// Dispatch global event
-		Messenger.Broadcast<DragonData>(GameEvents.DRAGON_ACQUIRED, this);
+		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
 	}
 
 	//------------------------------------------------------------------//

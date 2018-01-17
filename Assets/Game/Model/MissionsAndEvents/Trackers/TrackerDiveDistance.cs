@@ -32,9 +32,9 @@ public class TrackerDiveDistance : TrackerBase {
 	/// </summary>
 	public TrackerDiveDistance() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 	}
 
 	/// <summary>
@@ -52,12 +52,24 @@ public class TrackerDiveDistance : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 
 		// Call parent
 		base.Clear();
+	}
+
+	/// <summary>
+	/// Round a value according to specific rules defined for every tracker type.
+	/// Typically used for target values.
+	/// </summary>
+	/// <returns>The rounded value.</returns>
+	/// <param name="_targetValue">The original value to be rounded.</param>
+	override public float RoundTargetValue(float _targetValue) {
+		// Round it to 10 multiple
+		_targetValue = MathUtils.Snap(_targetValue, 10f);
+		return base.RoundTargetValue(_targetValue);	// Apply default rounding as well
 	}
 
 	//------------------------------------------------------------------------//

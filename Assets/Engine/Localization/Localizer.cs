@@ -91,7 +91,7 @@ public class Localizer : MonoBehaviour {
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 
 		// Make sure text is properly localized (in case language changed while disabled)
 		Localize();
@@ -102,7 +102,7 @@ public class Localizer : MonoBehaviour {
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	//------------------------------------------------------------------------//

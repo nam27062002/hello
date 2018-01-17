@@ -22,7 +22,7 @@ public class NumLoopsBehaviour : StateMachineBehaviour {
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		if ( (int)stateInfo.normalizedTime >= m_missingLoops )
 		{
-			animator.SetInteger("AltAnimation", -1);
+			animator.SetInteger( GameConstants.Animator.ALT_ANIMATION , -1);
 		}
 	}
 

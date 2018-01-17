@@ -20,6 +20,11 @@ using System.IO;
 /// </summary>
 public class TimeUtils {
 	//------------------------------------------------------------------//
+	// STATIC															//
+	//------------------------------------------------------------------//
+	static StringWriter m_writer = new StringWriter();
+
+	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	// [AOC] Doesn't make any sense to use months, since every month has a different amount of days
@@ -150,10 +155,12 @@ public class TimeUtils {
 		
 		// 5. Do the formatting depending on selected format
 		ulong val;
-		StringWriter writer = new StringWriter();
+
+		// Clean
+		m_writer.GetStringBuilder().Length = 0;
 
 		// If the amount was originally negative, insert negative sign
-		if(isNegative) writer.Write("-");
+		if(isNegative) m_writer.Write("-");
 
 		// Do the rest
 		int addedFieldsCount = 0;
@@ -180,24 +187,24 @@ public class TimeUtils {
 					
 					// Insert space if not the first field
 					if(i != firstIdx) {
-						writer.Write(" ");
+						m_writer.Write(" ");
 					}
 					
 					// Insert field value, properly formatted
-					writer.Write(StringUtils.FormatNumber(val));
+					m_writer.Write(StringUtils.FormatNumber(val));
 
 					// Increase counter
 					addedFieldsCount++;
 					
 					// Insert field name, abbreviation, singular or plural
 					if(_format == EFormat.ABBREVIATIONS || _format == EFormat.ABBREVIATIONS_WITHOUT_0_VALUES) {
-						writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_ABBREVIATED[i]));
+						m_writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_ABBREVIATED[i]));
 					} else if(val == 1) {
-						writer.Write(" ");
-                        writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_SINGULAR[i]));
+						m_writer.Write(" ");
+                        m_writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_SINGULAR[i]));
 					} else {
-						writer.Write(" ");
-                        writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_PLURAL[i]));
+						m_writer.Write(" ");
+                        m_writer.Write(LocalizationManager.SharedInstance.Localize(TIDS_PLURAL[i]));
 					}
 				} break;
 					
@@ -205,9 +212,9 @@ public class TimeUtils {
 					// Specification says "YYYY:DD HH:MM:SS"
 					// Put value properly formatted
 					if(i == (int)EPrecision.YEARS) {
-						writer.Write(StringUtils.FormatNumber(val, 4, false));
+						m_writer.Write(StringUtils.FormatNumber(val, 4, false));
 					} else {
-						writer.Write(StringUtils.FormatNumber(val, 2, false));
+						m_writer.Write(StringUtils.FormatNumber(val, 2, false));
 					}
 
 					// Increase counter
@@ -220,11 +227,11 @@ public class TimeUtils {
 							case EPrecision.YEARS:
 							case EPrecision.HOURS:
 							case EPrecision.MINUTES: {
-								writer.Write(":");
+								m_writer.Write(":");
 							} break;
 								
 							case EPrecision.DAYS: {
-								writer.Write(" ");
+								m_writer.Write(" ");
 							} break;
 						}
 					}
@@ -233,6 +240,6 @@ public class TimeUtils {
 		}
 		
 		// Done! ^_^
-		return writer.ToString();
+		return m_writer.ToString();
 	}
 }

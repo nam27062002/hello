@@ -68,14 +68,13 @@ namespace AI {
 			FindUpVector();
 
 			if (!m_onGround) {
-				m_upVector = Vector3.up;
-				Debug.Log("rest up");
+				m_upVector = GameConstants.Vector3.up;
 				FreeFall();
 			}
 
-			m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
+			m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_upVector);
 
-			m_gravity = Vector3.zero;
+			m_gravity = GameConstants.Vector3.zero;
 
 			m_subState = SubState.Idle;
 			m_nextSubState = SubState.Idle;
@@ -102,8 +101,10 @@ namespace AI {
 					break;
 			}
 
+			#if UNITY_EDITOR
 			Debug.DrawRay(position, m_groundNormal, Color.red, 1f);
 			Debug.DrawRay(position, m_upVector, Color.green, 1f);
+			#endif
 		}
 
 		protected override void ExtendedFixedUpdate() {
@@ -112,7 +113,7 @@ namespace AI {
 			if (m_checkCollisions) {
 				m_gravity += gravityDir * GRAVITY * Time.fixedDeltaTime;
 			} else {
-				m_gravity = Vector3.zero;
+				m_gravity = GameConstants.Vector3.zero;
 			}
 
 			if (m_subState == SubState.Idle) {
@@ -140,7 +141,7 @@ namespace AI {
 		}
 
 		protected override void UpdateOrientation() {
-			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_groundNormal);
+			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_groundNormal);
 
 			if (m_limitHorizontalRotation) {
 				if (m_direction.x < 0f) 	 m_targetRotation = Quaternion.AngleAxis(m_faceLeftAngle, m_groundNormal) * m_targetRotation; 
@@ -172,14 +173,14 @@ namespace AI {
 				}
 
 				if (m_heightFromGround < 0.3f) {
-					m_gravity = Vector3.zero;
+					m_gravity = GameConstants.Vector3.zero;
 				}
 
 				m_onGround = m_heightFromGround < 0.3f;
 				m_groundNormal = normal;
 				m_upVector = normal;
 
-				m_groundDirection = Vector3.Cross(Vector3.back, m_upVector);
+				m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_upVector);
 			}
 
 			return hitPos;
@@ -189,10 +190,10 @@ namespace AI {
 			RaycastHit[] hit = new RaycastHit[4];
 			bool[] hasHit = new bool[4];
 
-			hasHit[0] = Physics.Raycast(position, Vector3.down,  out hit[0], 10f, GROUND_MASK);
-			hasHit[1] = Physics.Raycast(position, Vector3.up,	 out hit[1], 10f, GROUND_MASK);
-			hasHit[2] = Physics.Raycast(position, Vector3.right, out hit[2], 10f, GROUND_MASK);
-			hasHit[3] = Physics.Raycast(position, Vector3.left,  out hit[3], 10f, GROUND_MASK);
+			hasHit[0] = Physics.Raycast(position, GameConstants.Vector3.down,  	out hit[0], 10f, GROUND_MASK);
+			hasHit[1] = Physics.Raycast(position, GameConstants.Vector3.up,	 	out hit[1], 10f, GROUND_MASK);
+			hasHit[2] = Physics.Raycast(position, GameConstants.Vector3.right, 	out hit[2], 10f, GROUND_MASK);
+			hasHit[3] = Physics.Raycast(position, GameConstants.Vector3.left,  	out hit[3], 10f, GROUND_MASK);
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {
@@ -243,16 +244,16 @@ namespace AI {
 		}
 
 		public override void OnCollisionGroundStay(Collision _collision) {
-			Vector3 groundNormal = Vector3.zero;
+			Vector3 groundNormal = GameConstants.Vector3.zero;
 			for (int i = 0; i < _collision.contacts.Length; i++) {
 				groundNormal += _collision.contacts[i].normal;
 			}
 			groundNormal.Normalize();
 			m_groundNormal = m_groundNormal * 0.25f + groundNormal * 0.75f;
 			m_groundNormal.Normalize();
-			m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
+			m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_groundNormal);
 
-			m_gravity = Vector3.zero;
+			m_gravity = GameConstants.Vector3.zero;
 
 			m_heightFromGround = 0f;
 			m_viewControl.Height(0f);

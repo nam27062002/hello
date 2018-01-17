@@ -29,9 +29,9 @@ For Each CurrentSpawner In SpawnersFolder.Files
 				contentSku = entityInfo()
 				If contentSku <> "" Then
 					currentContentInfo = contentInfo(contentSku)
-					currentSpawnerInfo = Replace(contentSku + ";" + currentSpawnerInfo + ";" + currentContentInfo + ";" + damage + vbCrLf," ","")
+					currentSpawnerInfo = Replace(Replace(currentSpawnerInfo,"contentSku",contentSku) + ";" + currentContentInfo + ";" + damage + vbCrLf," ","")
 				Else
-					currentSpawnerInfo = Replace("-" + ";" + currentSpawnerInfo + ";" + damage + vbCrLf," ","")
+					currentSpawnerInfo = Replace(Replace(currentSpawnerInfo,"contentSku","-") + ";" + damage + vbCrLf," ","")
 				End If
 				objOutputFile.Write(currentSpawnerInfo)
 			End If
@@ -62,7 +62,7 @@ Function spawnerInfo()
 	If foundStrMatch(tmpStr,substrToFind) = true Then
 		minTime = Replace(objInputFile.ReadLine,"min:","")
 		maxTime = Replace(objInputFile.ReadLine,"max:","")
-		spawnerInfo = spawner + ";" + prefab + ";" + minTime + ";" + maxTime
+		spawnerInfo = spawner + ";contentSku;" + prefab + ";" + minTime + ";" + maxTime
 	Else
 		spawnerInfo = ""
 	End If

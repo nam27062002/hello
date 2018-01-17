@@ -31,8 +31,8 @@ public class HUDMessageEditor : Editor {
 	SerializedProperty m_hideModeProp = null;
 	SerializedProperty m_idleDurationProp = null;
 
-	SerializedProperty m_boostReminderTriggerTimeProp = null;
-	SerializedProperty m_boostReminderFirstSessionTriggerTimeProp = null;
+	SerializedProperty m_boostSetup = null;
+	SerializedProperty m_boostTutorialSetup = null;
 
 	SerializedProperty m_onShowProp = null;
 	SerializedProperty m_onHideProp = null;
@@ -49,8 +49,8 @@ public class HUDMessageEditor : Editor {
 		m_hideModeProp = serializedObject.FindProperty("m_hideMode");
 		m_idleDurationProp = serializedObject.FindProperty("m_idleDuration");
 
-		m_boostReminderTriggerTimeProp = serializedObject.FindProperty("m_boostReminderTriggerTime");
-		m_boostReminderFirstSessionTriggerTimeProp = serializedObject.FindProperty("m_boostReminderFirstSessionTriggerTime");
+		m_boostSetup = serializedObject.FindProperty("m_boostMessageSetup");
+		m_boostTutorialSetup = serializedObject.FindProperty("m_boostMessageTutorialSetup");
 
 		m_onShowProp = serializedObject.FindProperty("OnShow");
 		m_onHideProp = serializedObject.FindProperty("OnHide");
@@ -65,8 +65,8 @@ public class HUDMessageEditor : Editor {
 		m_hideModeProp = null;
 		m_idleDurationProp = null;
 
-		m_boostReminderTriggerTimeProp = null;
-		m_boostReminderFirstSessionTriggerTimeProp = null;
+		m_boostSetup = null;
+		m_boostTutorialSetup = null;
 
 		m_onShowProp = null;
 		m_onHideProp = null;
@@ -76,9 +76,6 @@ public class HUDMessageEditor : Editor {
 	/// Draw the inspector.
 	/// </summary>
 	public override void OnInspectorGUI() {
-		// Default inspector
-		DrawDefaultInspector();
-
 		// Instead of modifying script variables directly, it's advantageous to use the SerializedObject and 
 		// SerializedProperty system to edit them, since this automatically handles private fields, multi-object 
 		// editing, undo, and prefab overrides.
@@ -86,26 +83,48 @@ public class HUDMessageEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
-		// Show custom GUI controls
-		// Idle timer: only if hide mode is TIMER
-		if(m_hideModeProp.enumValueIndex == (int)HUDMessage.HideMode.TIMER) {	// [AOC] Unsafe operation, we can do it cause we know enum starts with 0
-			EditorGUILayout.PropertyField(m_idleDurationProp);
-		}
+		// Loop through all serialized properties and work with special ones
+		SerializedProperty p = serializedObject.GetIterator();
+		p.Next(true);	// To get first element
+		do {
+			// Properties requiring special treatment
+			// Unity's "script" property
+			if(p.name == "m_Script") {
+				// Draw the property, disabled
+				bool wasEnabled = GUI.enabled;
+				GUI.enabled = false;
+				EditorGUILayout.PropertyField(p, true);
+				GUI.enabled = wasEnabled;
+			}
 
-		// Custom properties based on type
-		// Add here any types requiring extra setup
-		switch((HUDMessage.Type)m_typeProp.enumValueIndex) {
-			case HUDMessage.Type.BOOST_REMINDER: {
-				EditorGUILayoutExt.Separator();
-				EditorGUILayout.PropertyField(m_boostReminderTriggerTimeProp);
-				EditorGUILayout.PropertyField(m_boostReminderFirstSessionTriggerTimeProp);
-			} break;
-		}
+			// Idle timer: only if hide mode is TIMER and type different than BOOST_REMINDER
+			else if(p.name == m_idleDurationProp.name) {
+				if(m_hideModeProp.enumValueIndex == (int)HUDMessage.HideMode.TIMER
+				&& m_typeProp.enumValueIndex != (int)HUDMessage.Type.BOOST_REMINDER) {	// [AOC] Unsafe operation, we can do it cause we know enum starts with 0
+					EditorGUILayout.PropertyField(p, true);
+				}
+			}
 
-		// Events
-		EditorGUILayoutExt.Separator();
-		EditorGUILayout.PropertyField(m_onShowProp);
-		EditorGUILayout.PropertyField(m_onHideProp);
+			// Boost setup properties
+			else if(p.name == m_boostSetup.name) {
+				// Only for BOOST_REMINDER messages
+				if(m_typeProp.enumValueIndex == (int)HUDMessage.Type.BOOST_REMINDER) {	// [AOC] Unsafe operation, we can do it cause we know enum starts with 0
+					EditorGUILayout.PropertyField(m_boostSetup, true);
+					EditorGUILayout.PropertyField(m_boostTutorialSetup, true);
+				}
+			}
+
+			// Properties we don't want to show
+			else if(p.name == "m_ObjectHideFlags"
+				 || p.name == m_boostTutorialSetup.name) {
+				// Do nothing
+			}
+
+			// Default property display
+			else {
+				EditorGUILayout.PropertyField(p, true);
+			}
+		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();

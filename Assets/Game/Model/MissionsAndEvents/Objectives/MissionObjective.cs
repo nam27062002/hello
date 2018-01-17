@@ -89,8 +89,8 @@ public class MissionObjective : TrackingObjectiveBase {
 		#endif
 
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -111,8 +111,8 @@ public class MissionObjective : TrackingObjectiveBase {
 		#endif
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 
 		// Forget parent mission reference
 		m_parentMission = null;
@@ -164,8 +164,8 @@ public class MissionObjective : TrackingObjectiveBase {
 			#endif
 		}
 
-		// Disable during first game session (tutorial)
-		this.enabled = (UsersManager.currentUser.gamesPlayed > 0);
+		// Disable during FTUX
+		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN);
 
 		// Disable too if mission is not active
 		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;

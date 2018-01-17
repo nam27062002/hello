@@ -68,14 +68,23 @@ public class FeatureSettings
     // This key decides the quality level used in the particles manager
     public const string KEY_PARTICLES = "particles";
 
-	// This key decides the quality level used in the particles manager
-	public const string MAX_ZOOM_COST = "max_zoom_cost";
+    // This key decides whether or not the feedback particles (score spawned when eating,...) are enabled
+    public const string KEY_PARTICLES_FEEDBACK = "particlesFeedback";
+
+    // This key decides the quality level used in the particles manager
+    public const string MAX_ZOOM_COST = "max_zoom_cost";
 
     // This key decides the resolution factor, screen size is multiplied by this float value
     public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
 
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
+
+    // Whether or not Performance Tracking is enabled
+    public const string KEY_PERFORMANCE_TRACKING = "performanceTracking";
+
+    // Delay in seconds between every performance track event
+    public const string KEY_PERFORMANCE_TRACKING_DELAY = "performanceTrackingDelay";
 
     // Whether or not the events that couldn't be sent over the network should be cached
     public const string KEY_TRACKING_OFFLINE_CACHED = "trackingOfflineCached";
@@ -103,6 +112,7 @@ public class FeatureSettings
             ValueTypeDatas.Add(EValueType.String, null);            
             ValueTypeDatas.Add(EValueType.Level2, GetValueTypeValuesAsString<ELevel2Values>());            
             ValueTypeDatas.Add(EValueType.Level3, GetValueTypeValuesAsString<ELevel3Values>());
+            ValueTypeDatas.Add(EValueType.Level4, GetValueTypeValuesAsString<ELevel4Values>());
             ValueTypeDatas.Add(EValueType.Level5, GetValueTypeValuesAsString<ELevel5Values>());            
             ValueTypeDatas.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());            
         }
@@ -130,7 +140,6 @@ public class FeatureSettings
             data = new DataString(key, null);
             Datas.Add(key, data);
 
-
             // qualityLevel: Unity quality settings level
             key = KEY_QUALITY_LEVEL;
             data = new DataInt(key, EValueType.QualityLevel, (int)EQualityLevelValues.very_low);
@@ -140,7 +149,6 @@ public class FeatureSettings
             key = KEY_SHADERS_LEVEL;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
-
 
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW_EFFECT;
@@ -162,7 +170,7 @@ public class FeatureSettings
 
             // levelsLOD
             key = KEY_LEVELS_LOD;
-            data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
+            data = new DataInt(key, EValueType.Level4, (int)ELevel4Values.low);            
             Datas.Add(key, data);
 
             // bossZoomOut
@@ -185,8 +193,13 @@ public class FeatureSettings
 			data = new DataInt(key, EValueType.Level5, (int)ELevel5Values.mid);
 			Datas.Add(key, data);
 
-			// zoom
-			key = MAX_ZOOM_COST;
+            // particles feedback
+            key = KEY_PARTICLES_FEEDBACK;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // zoom
+            key = MAX_ZOOM_COST;
 			data = new DataInt(key, EValueType.Int, 3);
 			Datas.Add(key, data);
 
@@ -198,6 +211,16 @@ public class FeatureSettings
             // tracking
             key = KEY_TRACKING;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // performance tracking
+            key = KEY_PERFORMANCE_TRACKING;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // performance tracking delay
+            key = KEY_PERFORMANCE_TRACKING_DELAY;
+            data = new DataInt(key, EValueType.Int, 0);
             Datas.Add(key, data);
 
             // tracking offline cached
@@ -259,7 +282,8 @@ public class FeatureSettings
         Float,
         String,
         Level2,
-        Level3,
+        Level3,        
+        Level4,
         Level5,
         QualityLevel        
     };
@@ -287,6 +311,14 @@ public class FeatureSettings
         low,
         mid,
         high
+    };
+
+    public enum ELevel4Values
+    {
+        very_low,
+        low,
+        mid,
+        high        
     };
 
     public enum ELevel5Values
@@ -804,6 +836,11 @@ public class FeatureSettings
     public ELevel3Values GetValueAsLevel3(string key)
     {
         return (Values.ContainsKey(key)) ? (ELevel3Values)Values[key] : (ELevel3Values)(Datas[key].DefaultValueAsInt);
+    }
+
+    public ELevel4Values GetValueAsLevel4(string key)
+    {
+        return (Values.ContainsKey(key)) ? (ELevel4Values)Values[key] : (ELevel4Values)(Datas[key].DefaultValueAsInt);
     }
 
     public ELevel5Values GetValueAsLevel5(string key)

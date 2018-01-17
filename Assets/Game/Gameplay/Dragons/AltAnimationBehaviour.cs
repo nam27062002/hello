@@ -32,7 +32,7 @@ public class AltAnimationBehaviour : StateMachineBehaviour {
 			{
 				// Set alternative animation
 				m_currentAnimIndex = Random.Range(0,m_numAlternativeAnim);
-				animator.SetInteger("AltAnimation", m_currentAnimIndex);
+				animator.SetInteger( GameConstants.Animator.ALT_ANIMATION , m_currentAnimIndex);
 			}	
 		}
 	}

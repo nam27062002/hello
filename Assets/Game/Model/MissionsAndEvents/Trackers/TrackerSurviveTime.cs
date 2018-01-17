@@ -29,7 +29,7 @@ public class TrackerSurviveTime : TrackerBase {
 	/// </summary>
 	public TrackerSurviveTime() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
 	}
 
 	/// <summary>
@@ -47,7 +47,7 @@ public class TrackerSurviveTime : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
 
 		// Call parent
 		base.Clear();

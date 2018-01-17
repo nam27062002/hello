@@ -115,7 +115,7 @@ public class PetsScreenController : MonoBehaviour {
 		petFilters.OnFilterChanged.AddListener(OnFilterChanged);
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
 	}
 
 	/// <summary>
@@ -130,7 +130,7 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.AddListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -144,7 +144,7 @@ public class PetsScreenController : MonoBehaviour {
 		}
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -167,7 +167,7 @@ public class PetsScreenController : MonoBehaviour {
 		petFilters.OnFilterChanged.RemoveListener(OnFilterChanged);
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
 	}
 
 	//------------------------------------------------------------------------//

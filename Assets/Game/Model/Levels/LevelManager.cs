@@ -253,19 +253,24 @@ public class LevelManager : Singleton<LevelManager> {
 			switch( FeatureSettingsManager.instance.LevelsLOD )
 			{	
 				default:
-				case FeatureSettings.ELevel3Values.low:
+                case FeatureSettings.ELevel4Values.very_low:
+                {
+                    sceneName += "_verylow";
+                }
+                break;
+                case FeatureSettings.ELevel4Values.low:
 				{
 					sceneName += "_low";
 				}break;
-				case FeatureSettings.ELevel3Values.mid:
+				case FeatureSettings.ELevel4Values.mid:
 				{
 					sceneName += "_medium";
 				}break;
-				case FeatureSettings.ELevel3Values.high:
+				case FeatureSettings.ELevel4Values.high:
 				{
 					sceneName += "_high";
-				}break;
-			}
+				}break;               
+            }
 		}
 		return sceneName;
 	}
