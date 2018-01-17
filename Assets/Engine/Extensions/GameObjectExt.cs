@@ -182,10 +182,12 @@ public static class GameObjectExt {
 	/// <param name="_name"></param>
 	public static Transform FindTransformRecursive(this Transform _trans, string _name) {
 		// Found!
-		if(_trans.name == _name)  return _trans;
+		if(_trans.name.Equals(_name))  return _trans;
 
 		// Not found, iterate children transforms
-		foreach(Transform t in _trans) {
+		// foreach(Transform t in _trans) {
+		for( int i = 0; i<_trans.childCount; ++i ){
+			Transform t = _trans.GetChild(i);
 			Transform found  = t.FindTransformRecursive(_name);
 			if(found != null) return found;
 		}

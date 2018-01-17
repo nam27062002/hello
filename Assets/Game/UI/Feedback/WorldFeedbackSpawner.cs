@@ -60,6 +60,10 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//      	
+    private void Awake() {
+        enabled = FeatureSettingsManager.instance.IsParticlesFeedbackEnabled;
+    }
+
     private void Start() {
 		// Create the pools
 		// No more than X simultaneous messages on screen!

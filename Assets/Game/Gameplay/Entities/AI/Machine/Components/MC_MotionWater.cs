@@ -6,11 +6,10 @@ namespace AI {
 	public sealed class MC_MotionWater : MC_Motion {
 		//--------------------------------------------------
 		[SerializeField] private bool m_spawnsInsideWater = true;
-
+		[SerializeField] private bool m_faceDirectionFreeFall = false;
 
 		//--------------------------------------------------
 		private float m_diveTimer;
-
 
 		//--------------------------------------------------
 		protected override void ExtendedInit() {
@@ -31,7 +30,7 @@ namespace AI {
 			if (!m_machine.GetSignal(Signals.Type.InWater) 
 			&&  !m_machine.GetSignal(Signals.Type.Latching)) {
 				FreeFall();
-				m_diveTimer = 1f;
+				m_diveTimer = UnityEngine.Random.Range(0.25f, 0.75f);
 			}
 		}
 
@@ -53,14 +52,22 @@ namespace AI {
 			if (m_machine.GetSignal(Signals.Type.InWater)) {				
 				m_diveTimer -= Time.deltaTime;
 				if (m_diveTimer <= 0f) {
-					m_pilot.SetDirection(Vector3.down, false);
+					if (UnityEngine.Random.Range(0, 100) < 50)
+						m_pilot.SetDirection(Vector3.right, false);
+					else
+						m_pilot.SetDirection(Vector3.left, false);
 					m_machine.SetSignal(Signals.Type.FallDown, false);
 				}
+			}
+
+			if (m_faceDirectionFreeFall) {
+				m_direction = m_pilot.direction;
+				UpdateOrientation();
 			}
 		}
 
 		protected override void UpdateOrientation() {
-			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
+			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
 		}
 
 		//--------------------------------------------------

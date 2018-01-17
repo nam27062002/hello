@@ -1,17 +1,20 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+struct appdata_t {
+	float4 vertex : POSITION;
+	float2 texcoord : TEXCOORD0;
+	float3 normal : NORMAL;
+	float4 tangent : TANGENT;
+};
 
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
-	// float3 normal : NORMAL;
-	// float3 halfDir : VECTOR;
 	float3 vLight : TEXCOORD1;
 	float3 normalWorld : TEXCOORD3;
 #ifdef NORMALMAP
 	float3 tangentWorld : TEXCOORD2;
 	float3 binormalWorld : TEXCOORD4;
 #endif
-	//		        fixed3 posWorld : TEXCOORD5;
 	fixed3 viewDir : TEXCOORD5;
 };
 
