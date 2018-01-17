@@ -122,13 +122,6 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#if HI_DETAIL_ON
 			#endif
 
-			struct appdata_t {
-				float4 vertex : POSITION;
-				float2 texcoord : TEXCOORD0;
-				float3 normal : NORMAL;
-				float4 tangent : TANGENT;
-			};
-
 			#include "dragon.cginc"
 			ENDCG
 		}

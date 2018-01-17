@@ -10,6 +10,10 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 	public bool IsUploadPersistenceEnabled { get; set; }
 
     private bool mNeedsToIgnoreSyncFromLaunch;
+
+    private int ConnectionTimes { get; set; }
+    private int UploadTimes { get; set; }
+
     public bool NeedsToIgnoreSycnFromLaunch
     {
         get
@@ -37,16 +41,16 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 		IsGetPersistenceEnabled = true;
 		IsUploadPersistenceEnabled = true;
         NeedsToIgnoreSycnFromLaunch = false;
+        ConnectionTimes = 0;        
     }
 
-    //int counter = 0;
 	protected override void Syncer_ExtendedCheckConnection(Action<bool> onDone)
 	{
-        /*counter++;
+        ConnectionTimes++;
 
-        if (counter == 2)
+        if (ConnectionTimes == 4)
             IsConnectionEnabled = true;
-        */
+        
         if (!Syncer_IsAppInit && mNeedsToIgnoreSyncFromLaunch)
         {
             IsConnectionEnabled = true;
@@ -103,27 +107,21 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 
 	protected override void Upload_Perform (string persistence, Action<bool> onDone)
 	{
-		if (IsUploadPersistenceEnabled)
+        UploadTimes++;
+        if (UploadTimes == 2)
+        {
+            IsUploadPersistenceEnabled = true;
+        }
+
+        if (IsUploadPersistenceEnabled)
 		{
 			PersistenceAsString = persistence;
-			Data.LoadFromString (persistence);
+			Data.LoadFromString (persistence);            
 		}
 
-		if (onDone != null)
+        if (onDone != null)
 		{
 			onDone(IsUploadPersistenceEnabled);
 		}
-	}   
-    
-    /*
-	private int KeysAmount { get; set; }
-	public override void OnKeyPressed()
-	{
-		KeysAmount++;
-		IsConnectionEnabled = true;
-
-		if (KeysAmount == 2)
-			IsUploadPersistenceEnabled = true;
-	} 
-    */   
+	}          
 }

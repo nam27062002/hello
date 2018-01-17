@@ -26,20 +26,23 @@ namespace AI {
 				} else {
 					m_impulse = v;
 				}
+
+				#if UNITY_EDITOR
 				Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
 				Debug.DrawLine(m_machine.position, m_target, Colors.coral);
+				#endif
 
 				if (!m_directionForced) {// behaviours are overriding the actual direction of this machine
 					if (m_impulse.x >= 0) {
-						m_direction = Vector3.right;
+						m_direction = GameConstants.Vector3.right;
 					} else {
-						m_direction = Vector3.left;
+						m_direction = GameConstants.Vector3.left;
 					}
 				}
 			}
 
 			m_impulse += m_externalImpulse;
-			m_externalImpulse = Vector3.zero;
+			m_externalImpulse = GameConstants.Vector3.zero;
 		}
 
 		void OnDrawGizmosSelected() {

@@ -101,34 +101,18 @@ public class AmbientHazard : MonoBehaviour {
 	[SerializeField] private AmbientHazardAnimEvents m_animEvents;
 
 	// Internal references
-	private GameObject m_particlesObj = null;
-
+	private ParticleControl m_particlesObj = null;
+	private Transform m_transform = null;
 	private Collider m_collider = null;
 
 	// Dynamic references
+	private DragonMotion m_dragonMotion = null;
 	private DragonHealthBehaviour m_dragonHealthBehaviour = null;
 
-	private DragonHealthBehaviour dragonHealthBehaviour {
-		get {
-			if(m_dragonHealthBehaviour == null) {
-				if(InstanceManager.player != null) m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
-			}
-			return m_dragonHealthBehaviour;
-		}
-	}
-
-	private DragonMotion m_dragonMotion = null;
-
-	private DragonMotion dragonMotion {
-		get {
-			if(m_dragonMotion == null) {
-				if(InstanceManager.player != null) m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
-			}
-			return m_dragonMotion;
-		}
-	}
 
 	// Internal logic
+	private bool m_levelLoaded = false;
+
 	private bool m_visible = true;
 	private State m_state = State.IDLE;
 
@@ -149,15 +133,21 @@ public class AmbientHazard : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Initialize internal references
+		m_transform = transform;
 		m_collider = GetComponent<Collider>();
 
 		m_poisonParticle.CreatePool();
+
+		m_levelLoaded = false;
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
+		m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
+		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+
 		if ( m_visualActivationRadius < 0 )
 			m_visualActivationRadius = 40;
 		
@@ -181,47 +171,72 @@ public class AmbientHazard : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+	}
+
+	private void OnLevelLoaded() { m_levelLoaded = true;  }
+	private void OnGameEnded() 	 { m_levelLoaded = false; }
+
+	/// <summary>
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		// Update state timer
-		if(m_stateTargetTime > 0f) {
-			m_stateTimer += Time.deltaTime;
-			if(m_stateTimer >= m_stateTargetTime) {
-				// Timer up! Different actions based on state
-				switch(m_state) {
-					case State.INITIAL_DELAY: {
-						// Move to initial state
-						SetState(m_initialState);
-					} break;
+		if (m_levelLoaded) {
+			// Update state timer
+			if(m_stateTargetTime > 0f) {
+				m_stateTimer += Time.deltaTime;
+				if(m_stateTimer >= m_stateTargetTime) {
+					// Timer up! Different actions based on state
+					switch(m_state) {
+						case State.INITIAL_DELAY: {
+							// Move to initial state
+							SetState(m_initialState);
+						} break;
 
-					case State.IDLE: {
-						SetState(State.ACTIVATING);
-					} break;
+						case State.IDLE: {
+							SetState(State.ACTIVATING);
+						} break;
 
-					case State.ACTIVATING: {
-						SetState(State.ACTIVE);
-					} break;
+						case State.ACTIVATING: {
+							SetState(State.ACTIVE);
+						} break;
 
-					case State.ACTIVE: {
-						SetState(State.IDLE);
-					} break;
+						case State.ACTIVE: {
+							SetState(State.IDLE);
+						} break;
+					}
 				}
 			}
-		}
 
-		// Update visual activation
-		// Only if visual activation is enabled (radius > 0)
-		if(m_visualActivationRadius > 0f) {
-			// Update detection timer (optimization to avoid performing the check every frame)
-			m_visualActivationCheckTimer += Time.deltaTime;
-			if(m_visualActivationCheckTimer >= VISUAL_ACTIVATION_CHECK_INTERVAL) {
-				// Reset timer
-				m_visualActivationCheckTimer = 0f;
+			// Update visual activation
+			// Only if visual activation is enabled (radius > 0)
+			if(m_visualActivationRadius > 0f) {
+				// Update detection timer (optimization to avoid performing the check every frame)
+				m_visualActivationCheckTimer += Time.deltaTime;
+				if(m_visualActivationCheckTimer >= VISUAL_ACTIVATION_CHECK_INTERVAL) {
+					// Reset timer
+					m_visualActivationCheckTimer = 0f;
 
-				// Check whether player is within the activation distance
-				if(InstanceManager.player != null) {
-					bool isWithinDistance = Mathf.Abs((InstanceManager.player.transform.position - this.transform.position).sqrMagnitude) < m_visualActivationRadiusSqr;
+					// Check whether player is within the activation distance
+					bool isWithinDistance = Mathf.Abs((m_dragonMotion.position - m_transform.position).sqrMagnitude) < m_visualActivationRadiusSqr;
 
 					// Show/hide based on trigger
 					if(m_visible && !isWithinDistance) {
@@ -286,18 +301,10 @@ public class AmbientHazard : MonoBehaviour {
 		if (m_visible) {
 			// If particles are not created, do it now
 			if (m_particlesObj == null) {
-				m_particlesObj = m_poisonParticle.Spawn();
-				if (m_particlesObj != null) {
-					// As children of ourselves
-					// Particle system should already be created to match the zero position
-					m_particlesObj.transform.SetParentAndReset(this.transform);
-					m_particlesObj.transform.localPosition = m_poisonParticle.offset;
-					m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
-
-					// Particles are automatically started when spawned from the pool
-					// Stop them if hazard is not active
-					if(m_state == State.IDLE || m_state == State.ACTIVATING) ActivateParticles(false);
-				}
+				LoadParticles();
+				// Particles are automatically started when spawned from the pool
+				// Stop them if hazard is not active
+				if(m_state == State.IDLE || m_state == State.ACTIVATING) ActivateParticles(false);
 			}
 
 			if ( m_state == State.ACTIVATING || m_state == State.ACTIVE )
@@ -305,9 +312,12 @@ public class AmbientHazard : MonoBehaviour {
 				// In case always
 				if(m_animator != null && m_animator.isInitialized) {
 					m_animator.SetBool( GameConstants.Animator.ACTIVE , true);
-					if ( m_state == State.ACTIVE )
-					{
+					if (m_state == State.ACTIVE) {
 						m_animator.Play("ACTIVATE", 0, 1);
+						ActivateParticles(true);
+					}
+				} else {
+					if (m_state == State.ACTIVE) {
 						ActivateParticles(true);
 					}
 				}
@@ -320,7 +330,7 @@ public class AmbientHazard : MonoBehaviour {
 		} else {
 			// Return them to the pool
 			if (m_particlesObj != null) {
-				m_poisonParticle.ReturnInstance(m_particlesObj);
+				m_poisonParticle.ReturnInstance(m_particlesObj.gameObject);
 				m_particlesObj = null;
 			}
 		}
@@ -362,6 +372,8 @@ public class AmbientHazard : MonoBehaviour {
 				// Launch activation animation
 				if(m_animator != null && m_animator.isInitialized) {
 					m_animator.SetBool( GameConstants.Animator.ACTIVE, true);
+				} else {
+					ActivateParticles(true);
 				}
 
 				// Reset timer
@@ -370,8 +382,8 @@ public class AmbientHazard : MonoBehaviour {
 
 				if ( m_visible )
 				{
-					if ( !string.IsNullOrEmpty(m_onActiveSound) )
-						AudioController.Play(m_onActiveSound, transform.position);
+					//if ( !string.IsNullOrEmpty(m_onActiveSound) )
+					//	AudioController.Play(m_onActiveSound, transform.position);
 				}
 
 				// Start particles! -> done on animation event
@@ -399,17 +411,29 @@ public class AmbientHazard : MonoBehaviour {
 	/// <param name="_activate"><c>true</c> to play the particle systems, <c>false</c> to stop them.</param>
 	private void ActivateParticles(bool _activate) {
 		// Only if we actually have a particle system!
-		if(m_particlesObj == null) return;
-
-		// Propagate to all subsystems
-		ParticleSystem[] subsystems = m_particlesObj.GetComponentsInChildren<ParticleSystem>();
-		for(int i = 0; i < subsystems.Length; i++) {
-			if(_activate) {
-				subsystems[i].Clear();
-				subsystems[i].Play();
-			} else {
-				subsystems[i].Stop();
+		if (m_particlesObj == null) {			
+			if (m_visible && _activate) {
+				LoadParticles();
 			}
+		} else {
+			if (_activate) {
+				m_particlesObj.Play();
+			} else {
+				m_particlesObj.Stop();
+			}
+		}
+	}
+
+	private void LoadParticles() {
+		GameObject go = m_poisonParticle.Spawn();
+		if (go != null) {
+			m_particlesObj = go.GetComponent<ParticleControl>();
+
+			// As children of ourselves
+			// Particle system should already be created to match the zero position
+			m_particlesObj.transform.SetParentAndReset(this.transform);
+			m_particlesObj.transform.localPosition = m_poisonParticle.offset;
+			m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
 		}
 	}
 
@@ -422,23 +446,18 @@ public class AmbientHazard : MonoBehaviour {
 	/// <param name="_collision">Collision information.</param>
 	private void OnCollisionEnter(Collision _collision) {
 		// Is it the player?
-		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collision.collider.CompareTag("Player")) {
+		if(_collision.collider.CompareTag("Player")) {
 			// Apply initial damage
-			if(dragonHealthBehaviour != null) {
-				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform,true);	// Resetting all current DOTs
-			}
+			m_dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform, true);	// Resetting all current DOTs
 
 			// Apply knockback
-			Vector3 repulseDirection = Vector3.zero;
+			Vector3 repulseDirection = GameConstants.Vector3.zero;
 			for(int i = 0; i < _collision.contacts.Length; i++) {
 				repulseDirection += _collision.contacts[i].normal;
 			}
 
-			if(dragonMotion != null) {
-				//dragonMotion.Stop(); ??
-				dragonMotion.AddForce(-repulseDirection.normalized * m_knockBackIntensity);
-			}
+			//m_dragonMotion.Stop(); ??
+			m_dragonMotion.AddForce(-repulseDirection.normalized * m_knockBackIntensity);
 
 			// [AOC] TODO!! Show debris
 			// [AOC] TODO!! Show text feedback
@@ -452,21 +471,16 @@ public class AmbientHazard : MonoBehaviour {
 	/// <param name="_collider">The object within the area.</param>
 	private void OnTriggerStay(Collider _collider) {
 		// Is it the player?
-		DragonPlayer player = InstanceManager.player;
-		if(player != null && _collider.CompareTag( "Player")) {
+		if(_collider.CompareTag( "Player")) {
 			// Reset dot timer
-			if(dragonHealthBehaviour != null) {
-				dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform,true);	// Resetting all current DOTs
-			}
+			m_dragonHealthBehaviour.ReceiveDamageOverTime(m_damageBase * m_damageMultiplier, m_damageDuration, m_damageType, transform,true);	// Resetting all current DOTs
 
 			// Apply knockback
 			if (m_knockBackIntensity > 0)
 			{
-				Vector3 repulseDirection = dragonMotion.position - transform.position;
-				if(dragonMotion != null) {
-					//dragonMotion.Stop(); ??
-					dragonMotion.AddForce(repulseDirection.normalized * m_knockBackIntensity);
-				}
+				Vector3 repulseDirection = m_dragonMotion.position - transform.position;
+				//m_dragonMotion.Stop(); ??
+				m_dragonMotion.AddForce(repulseDirection.normalized * m_knockBackIntensity);
 			}
 
 			// [AOC] TODO!! Play SFX

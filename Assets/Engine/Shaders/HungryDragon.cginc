@@ -17,35 +17,5 @@
 
 //#define DYNAMIC_SHADOWS
 
-#ifdef HG_SCENARY
-	struct appdata_t
-	{
-		float4 vertex : POSITION;
-		float2 texcoord : TEXCOORD0;
-	#ifdef LIGHTMAP_ON
-		float4 texcoord1 : TEXCOORD1;
-	#endif
-
-		float4 color : COLOR;
-
-		float3 normal : NORMAL;
-		float4 tangent : TANGENT;
-	};
-
-#endif
-
-#ifdef HG_ENTITIES
-	struct appdata_t
-	{
-		float4 vertex : POSITION;
-		float2 uv : TEXCOORD0;
-		float4 color : COLOR;
-		float3 normal : NORMAL;
-		float4 tangent : TANGENT;
-	};
-
-#endif
-
-
 #endif // HUNGRYDRAGON_CG_INCLUDED
     

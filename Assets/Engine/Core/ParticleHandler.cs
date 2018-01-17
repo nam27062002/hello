@@ -41,9 +41,9 @@ public class ParticleHandler {
 			return system;
 		}
 		if (_data != null){
-			Debug.LogError("[Particle] invalid pool handler for " + _data.name);
+			Debug.LogWarning("[Particle] invalid pool handler for " + _data.name);
 		}else{
-			Debug.LogError("[Particle] invalid pool handler");
+			Debug.LogWarning("[Particle] invalid pool handler");
 		}
 		return null;
 	}
@@ -55,9 +55,9 @@ public class ParticleHandler {
 			return system;
 		}
 		if (_data != null){
-			Debug.LogError("[Particle] invalid pool handler for " + _data.name);
+			Debug.LogWarning("[Particle] invalid pool handler for " + _data.name);
 		}else{
-			Debug.LogError("[Particle] invalid pool handler");
+			Debug.LogWarning("[Particle] invalid pool handler");
 		}
 		return null;
 	}
@@ -66,7 +66,7 @@ public class ParticleHandler {
 		if (m_isValid) {
 			m_pool.Return(_go);
 		} else {
-			Debug.LogError("[Particle] invalid pool handler for " + _go.name);
+			Debug.LogWarning("[Particle] invalid pool handler for " + _go.name);
 		}
 	}
 
