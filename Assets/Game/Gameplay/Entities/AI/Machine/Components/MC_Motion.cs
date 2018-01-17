@@ -126,7 +126,7 @@ namespace AI {
 				m_animEvents.onStandUp += new PreyAnimationEvents.OnStandUpDelegate(OnStandUp);
 			}
 
-			m_mouth = null;
+			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 
 			ExtendedAttach();
 		}
@@ -155,9 +155,6 @@ namespace AI {
 
 			m_rbody.isKinematic = false;
 			m_rbody.detectCollisions = true;
-
-			//----------------------------------------------------------------------------------
-			m_mouth = m_machineTransform.FindTransformRecursive("Fire_Dummy");
 
 			//----------------------------------------------------------------------------------
 			ExtendedInit();
@@ -206,7 +203,7 @@ namespace AI {
 						UpdateAttack();
 
 						if (m_viewControl.hasNavigationLayer) {
-							m_viewControl.NavigationLayer(m_pilot.impulse);
+							m_viewControl.NavigationLayer(m_direction + GameConstants.Vector3.back * 0.1f);
 						}
 					}
 					break;
@@ -255,9 +252,9 @@ namespace AI {
 			if (m_attackTarget) {
 				Vector3 dir = m_attackTarget.position - position;
 				dir.Normalize();
-				m_viewControl.NavigationLayer(dir);	
+				m_viewControl.NavigationLayer(dir + GameConstants.Vector3.back * 0.1f);	
 			} else {
-				m_viewControl.NavigationLayer(m_pilot.impulse);	
+				m_viewControl.NavigationLayer(m_direction + GameConstants.Vector3.back * 0.1f);	
 			}
 
 			m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);

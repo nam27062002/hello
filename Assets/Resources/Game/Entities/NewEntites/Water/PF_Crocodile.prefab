@@ -264,8 +264,9 @@ MonoBehaviour:
   m_waterMotion:
     m_mass: 15
     m_defaultUpVector: 0
-    m_orientationSpeed: 240
+    m_orientationSpeed: 120
     m_spawnsInsideWater: 1
+    m_faceDirectionFreeFall: 1
 --- !u!114 &114185850136965936
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -287,6 +288,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -324,6 +326,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -382,7 +385,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":3,"max":4},"onFailShutdown":{"min":5,"max":7},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"separation":2,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":0,"max":0},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":1,"max":2},"onFailShutdown":{"min":10,"max":15},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"speed":5,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":0,"max":0},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
   m_databaseKey: PF_Crocodile
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 2.5
@@ -432,6 +435,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -473,6 +477,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -510,6 +515,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -549,6 +555,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -587,6 +594,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
