@@ -107,15 +107,16 @@ uniform float _LightmapContrastMargin;
 uniform float _LightmapContrastPhase;
 #endif
 
-
 //Used by plants, simulates wind movement
 #if defined(CUSTOM_VERTEXPOSITION)
 float _SpeedWave;
 float4 getCustomVertexPosition(inout appdata_t v)
 {
 	float hMult = v.vertex.y;
+	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+
 	//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
-	float4 tvertex = v.vertex + float4(sin((_Time.y * _SpeedWave) + hMult) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	float4 tvertex = v.vertex + float4(sin((_Time.y * _SpeedWave) + hMult + worldPos.x) * hMult * 0.08, 0.0, 0.0, 0.0f);
 	//					tvertex.w = -0.5f;
 	return UnityObjectToClipPos(tvertex);
 }
