@@ -5967,11 +5967,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_applyOnStart: 1
   m_targets:
-  - renderer: {fileID: 0}
+  - renderer: {fileID: 199836206516199712}
     newRenderQueue: 1000
-  - renderer: {fileID: 0}
+  - renderer: {fileID: 199546484609056408}
     newRenderQueue: 1000
-  - renderer: {fileID: 0}
+  - renderer: {fileID: 199111293943598852}
     newRenderQueue: 1000
 --- !u!114 &114734451060930672
 MonoBehaviour:
@@ -6329,6 +6329,7 @@ MonoBehaviour:
   hasOnStepComplete: 0
   hasOnComplete: 0
   hasOnTweenCreated: 0
+  hasOnRewind: 0
   onStart:
     m_PersistentCalls:
       m_Calls: []
@@ -6355,6 +6356,11 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   onTweenCreated:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRewind:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,

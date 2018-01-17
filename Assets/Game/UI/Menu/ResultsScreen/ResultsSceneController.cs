@@ -46,6 +46,7 @@ public class ResultsSceneController : MonoBehaviour {
 
 		// Allow unlimited amount of particles
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
+		ParticleManager.Clear();
 	}    
 
     /// <summary>

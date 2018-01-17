@@ -5335,11 +5335,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_applyOnStart: 1
   m_targets:
-  - renderer: {fileID: 0}
+  - renderer: {fileID: 199231242873552814}
     newRenderQueue: 1000
-  - renderer: {fileID: 0}
+  - renderer: {fileID: 199957576445446052}
     newRenderQueue: 1000
-  - renderer: {fileID: 0}
+  - renderer: {fileID: 199292275061064256}
     newRenderQueue: 1000
 --- !u!114 &114521926280957166
 MonoBehaviour:
@@ -6235,6 +6235,7 @@ MonoBehaviour:
   hasOnStepComplete: 0
   hasOnComplete: 0
   hasOnTweenCreated: 0
+  hasOnRewind: 0
   onStart:
     m_PersistentCalls:
       m_Calls: []
@@ -6261,6 +6262,11 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   onTweenCreated:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRewind:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
@@ -6504,6 +6510,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_adjustMode: 1
+  m_scale:
+    bottom: 1
+    left: 1
+    right: 1
+    top: 1
+  m_customSafeAreas: []
 --- !u!114 &114734052320773202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7958,7 +7970,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 718963142
+  randomSeed: -830269127
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -11084,7 +11096,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1549660040
+  randomSeed: 1745810766
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -14210,7 +14222,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -645593742
+  randomSeed: -368576271
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -18264,10 +18276,10 @@ RectTransform:
   m_Father: {fileID: 224971344653519298}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 125, y: -470}
-  m_SizeDelta: {x: 0, y: 200}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224816032217486550
 RectTransform:

@@ -35,9 +35,29 @@ public class ChestViewController : MonoBehaviour {
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
-    // Exposed references
+    // VFX
 	[SerializeField] private ViewParticleSpawner m_glowFX = null;
 	[SerializeField] private RewardSetup[] m_rewardSetups = new RewardSetup[(int)Chest.RewardType.COUNT];
+
+	// SFX
+	[Space]
+	[SerializeField] private string m_openSFX = "";
+	public string openSFX {
+		get { return m_openSFX; }
+		set { m_openSFX = value; }
+	}
+
+	[SerializeField] private string m_closeSFX = "";
+	public string closeSFX {
+		get { return m_closeSFX; }
+		set { m_closeSFX = value; }
+	}
+
+	[SerializeField] private string m_resultsSFX = "";
+	public string resultsSFX {
+		get { return m_resultsSFX; }
+		set { m_resultsSFX = value; }
+	}
 
 	// Exposed setup
 	[Space]
@@ -103,6 +123,9 @@ public class ChestViewController : MonoBehaviour {
 		} else {
 			// Particle effect will be launched with the animation event
 			m_animator.SetTrigger( GameConstants.Animator.OPEN);
+
+			// Play SFX
+			AudioController.Play(m_openSFX);
 		}
 
 		// Show the right reward
@@ -127,6 +150,9 @@ public class ChestViewController : MonoBehaviour {
 
 		// Stop FX
 		StopAllFX();
+
+		// Play SFX
+		AudioController.Play(m_closeSFX);
 	}
 
 	/// <summary>
@@ -137,7 +163,10 @@ public class ChestViewController : MonoBehaviour {
 		StopAllFX();
 
 		// Launch animation
-		m_animator.SetTrigger( GameConstants.Animator.RESULTS_IN );
+		m_animator.SetTrigger(GameConstants.Animator.RESULTS_IN);
+
+		// Play SFX
+		AudioController.Play(m_resultsSFX);
 	}
 
 	//------------------------------------------------------------------------//
