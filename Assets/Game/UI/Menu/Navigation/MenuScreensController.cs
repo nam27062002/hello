@@ -46,6 +46,9 @@ public class MenuScreensController : NavigationScreenSystem {
 	// Exposed
 	// There should always be one entry per screen, value can be null
 	[Space]
+	[SerializeField] private float m_cameraTransitionDuration = 0.5f;
+
+	[Space]
 	[SerializeField] private MenuScreenScene[] m_scenes = new MenuScreenScene[(int)MenuScreens.COUNT];
 	public MenuScreenScene[] scenes {
 		get { return m_scenes; }
@@ -55,8 +58,6 @@ public class MenuScreensController : NavigationScreenSystem {
 	public CameraSnapPoint[] cameraSnapPoints {
 		get { return m_cameraSnapPoints; }
 	}
-
-	[SerializeField] private float m_cameraTransitionDuration = 0.5f;
 
 	// Other properties
 	public MenuScreens currentMenuScreen {

@@ -79,7 +79,21 @@ public class MenuScreensControllerEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			if(p.name == m_screensProp.name) {
+			// Unity's "script" property
+			if(p.name == "m_Script") {
+				// Draw the property, disabled
+				bool wasEnabled = GUI.enabled;
+				GUI.enabled = false;
+				EditorGUILayout.PropertyField(p, true);
+				GUI.enabled = wasEnabled;
+			}
+
+			// Properties we don't want to show
+			else if(p.name == "m_ObjectHideFlags") {
+				// Do nothing
+			}
+
+			else if(p.name == m_screensProp.name) {
 				// Make sure both screens and scenes array properties have exactly one entry per menu screen
 				m_screensProp.arraySize = (int)MenuScreens.COUNT;
 				m_scenesProp.arraySize = (int)MenuScreens.COUNT;
