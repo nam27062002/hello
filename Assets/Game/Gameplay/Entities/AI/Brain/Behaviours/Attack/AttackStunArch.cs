@@ -14,7 +14,7 @@ namespace AI {
 
 			public string m_beamAnchorPoint;
 			public float m_stunDuration;
-
+			public string m_beamSound;
 		}
 		
 
@@ -32,6 +32,8 @@ namespace AI {
 			private Transform m_stunAnchor;
 			private bool m_attacking = false;
 			private float m_attackingTimer = 0;
+			private ParticleSystem m_particle;
+			private AudioObject m_beamSoundAO;
 
 			public override StateComponentData CreateData() {
 				return new AttackStunArchData();
@@ -48,10 +50,39 @@ namespace AI {
 				base.OnInitialise();
 
 				m_stunAnchor = m_pilot.FindTransformRecursive( m_stunData.m_beamAnchorPoint );
+
+				ParticleSystem particlePrefab = null;
+				switch(FeatureSettingsManager.instance.Particles) 
+				{
+					case FeatureSettings.ELevel5Values.very_low:							
+					case FeatureSettings.ELevel5Values.low:
+					{
+						particlePrefab = Resources.Load<ParticleSystem>("Particles/Low/PS_PetStun");
+					}break;
+					default:
+					{
+						particlePrefab = Resources.Load<ParticleSystem>("Particles/Master/PS_PetStun");
+					}break;
+				}
+
+				if ( particlePrefab )
+				{
+					m_particle = Instantiate<ParticleSystem>(particlePrefab);
+					m_particle.transform.parent = m_stunAnchor;
+					m_particle.transform.localPosition = Vector3.zero;
+					m_particle.transform.localRotation = Quaternion.identity;
+				}
+
 			}
 
 			protected override void StartAttack() 
 			{
+				if ( m_particle )
+					m_particle.Play();
+				if (!string.IsNullOrEmpty( m_stunData.m_beamSound ))
+				{
+					m_beamSoundAO = AudioController.Play(m_stunData.m_beamSound, m_pilot.transform);
+				}
 				m_attacking = true;
 				m_attackingTimer = m_stunData.m_archDuration + m_stunData.m_archIntro + m_stunData.m_archOutro;
 
@@ -79,6 +110,9 @@ namespace AI {
 					m_attackingTimer -= Time.deltaTime;
 					if ( m_attackingTimer <= 0 )
 					{
+						if ( m_particle )
+							m_particle.Stop();
+						StopSound();
 						m_pilot.ReleaseAction(Pilot.Action.Attack);
 						m_machine.DisableSensor(m_data.retreatTime);
 						Transition(OnAttackDone);
@@ -152,6 +186,18 @@ namespace AI {
 				base.OnExit(_newState);
 				m_pilot.ReleaseAction(Pilot.Action.Aim);
 				m_machine.SetSignal(Signals.Type.Ranged, false);
+				if ( m_particle )
+					m_particle.Stop();
+				StopSound();
+			}
+
+			private void StopSound()
+			{
+				if (m_beamSoundAO != null && m_beamSoundAO.IsPlaying())
+				{
+					m_beamSoundAO.Stop();
+					m_beamSoundAO = null;
+				}
 			}
 		}
 	}
