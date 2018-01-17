@@ -5,8 +5,6 @@ namespace AI {
 	namespace Behaviour {	
 		[System.Serializable]
 		public class AttackStunArchData : AttackData {
-			public float m_archIntro;
-			public float m_archOutro;
 			public float m_archDuration;
 
 			public float m_archLength;
@@ -15,6 +13,7 @@ namespace AI {
 			public string m_beamAnchorPoint;
 			public float m_stunDuration;
 			public string m_beamSound;
+			public float m_delayAfterEnd;
 		}
 		
 
@@ -71,6 +70,7 @@ namespace AI {
 					m_particle.transform.parent = m_stunAnchor;
 					m_particle.transform.localPosition = Vector3.zero;
 					m_particle.transform.localRotation = Quaternion.identity;
+					m_particle.Stop();
 				}
 
 			}
@@ -84,7 +84,7 @@ namespace AI {
 					m_beamSoundAO = AudioController.Play(m_stunData.m_beamSound, m_pilot.transform);
 				}
 				m_attacking = true;
-				m_attackingTimer = m_stunData.m_archDuration + m_stunData.m_archIntro + m_stunData.m_archOutro;
+				m_attackingTimer = m_stunData.m_archDuration;
 
 				base.StartAttack();
 				if (m_data.forceFaceToShoot && m_viewControl != null) {
@@ -105,37 +105,28 @@ namespace AI {
 			protected override void OnUpdate() {
 				base.OnUpdate();
 
-				if ( m_attacking && m_attackingTimer > 0 )
+				if ( m_attacking )
 				{
 					m_attackingTimer -= Time.deltaTime;
 					if ( m_attackingTimer <= 0 )
 					{
-						if ( m_particle )
+						if ( m_particle && m_particle.isPlaying)
 							m_particle.Stop();
 						StopSound();
-						m_pilot.ReleaseAction(Pilot.Action.Attack);
-						m_machine.DisableSensor(m_data.retreatTime);
-						Transition(OnAttackDone);
+						if ( m_attackingTimer <= -m_stunData.m_delayAfterEnd )
+						{
+							m_pilot.ReleaseAction(Pilot.Action.Attack);
+							m_machine.DisableSensor(m_data.retreatTime);
+							Transition(OnAttackDone);
+						}
 					}
 					else
 					{
 						Vector3 dir = m_machine.enemy.position - m_machine.position;
 						m_pilot.SetDirection(dir.normalized, true);
 
-							// Intro Outro
-						float delta = 1;
-						if ( m_attackingTimer > (m_stunData.m_archDuration + m_stunData.m_archOutro) )
-						{
-							// intro
-							delta = m_attackingTimer - (m_stunData.m_archDuration + m_stunData.m_archOutro);
-							delta = 1.0f - delta / m_stunData.m_archIntro;
-						}else if ( m_attackingTimer < m_stunData.m_archOutro){
-							// outro
-							delta = m_attackingTimer / m_stunData.m_archOutro;
-						}
-
-						float arcLength = m_stunData.m_archLength * delta;
-						float arcAngle = m_stunData.m_archAngle * delta;
+						float arcLength = m_stunData.m_archLength;
+						float arcAngle = m_stunData.m_archAngle;
 
 						Vector3 arcOrigin = m_stunAnchor.position;
 						Vector3 arcOrigin_0 = arcOrigin;
