@@ -344,6 +344,7 @@ public class EventRewardScreen : MonoBehaviour {
 			case Step.FINISH: {
 				// Purge event list
 				GlobalEventManager.ClearRewardedEvents();
+				GlobalEventManager.ResetHasChecked();
 				GlobalEventManager.ClearCurrentEvent();
 
 				// Request new event data

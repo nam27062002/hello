@@ -411,6 +411,21 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	}
 
 	/// <summary>
+	/// Resets the has checked flag on all events to start looking everything again
+	/// </summary>
+	public static void ResetHasChecked(){
+		// First we have to resolve all the stored events (profile)
+		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+
+		if (storedEvents.Count > 0) {
+			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
+				pair.Value.hasBeenChecked = false;
+			}
+		}
+	}
+
+
+	/// <summary>
 	/// Tells the manager with which user data he should work.
 	/// </summary>
 	/// <param name="_user">Profile to work with.</param>
