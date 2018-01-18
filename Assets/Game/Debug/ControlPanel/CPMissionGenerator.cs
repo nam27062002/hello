@@ -271,10 +271,11 @@ public class CPMissionGenerator : MonoBehaviour {
 		Mission.Difficulty difficulty = (Mission.Difficulty)m_difficultyDropdown.value;
 		DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, GetSelectedOption(m_missionTypeDropdown));
 		DefinitionNode missionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSIONS, GetSelectedOption(m_missionSkuDropdown));
+		string ownedDragonSku = GetSelectedOption(m_ownedDragonDropdown);
 		bool singleRun = m_singleRunToggleContainer.activeSelf && m_singleRunToggle.isOn;
 
 		// Validate them
-		if(typeDef == null || missionDef == null) {
+		if(typeDef == null || missionDef == null || string.IsNullOrEmpty(ownedDragonSku)) {
 			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
 				"SOME INVALID PARAMETERS!",
 				new Vector2(0.5f, 0.5f),
@@ -300,6 +301,7 @@ public class CPMissionGenerator : MonoBehaviour {
 			difficulty,
 			missionDef,
 			typeDef,
+			ownedDragonSku,
 			singleRun
 		);
 
