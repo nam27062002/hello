@@ -40,7 +40,8 @@ GameObject:
   - component: {fileID: 114043734523262186}
   - component: {fileID: 65512963358344686}
   - component: {fileID: 114898301322595714}
-  m_Layer: 11
+  - component: {fileID: 114522502320533956}
+  m_Layer: 16
   m_Name: PF_Blocker_Collapse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,15 +126,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1189587967232188}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -917.7372, y: -181.06236, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.99956566, w: 0.029469978}
+  m_LocalPosition: {x: -914.54, y: -197.56, z: 0}
+  m_LocalScale: {x: 0.42113292, y: 0.42113292, z: 0.42113292}
   m_Children:
   - {fileID: 4268578160030648}
   - {fileID: 4386012589169948}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 180, y: 180, z: 167.679}
+  m_LocalEulerAnglesHint: {x: 180, y: 180, z: 3.3779907}
 --- !u!23 &23468667213763664
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -147,7 +148,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 907f9d243fe7fc24d8f479370f1c1f49, type: 2}
+  - {fileID: 2100000, guid: f00a2cae1da8c5e4eb32f28885692cb6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -180,7 +181,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1189587967232188}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 9, y: 16, z: 10}
@@ -215,6 +216,20 @@ MonoBehaviour:
   m_type: 3
   m_rotateWithObject: 0
   m_zoomCompensation: 1
+--- !u!114 &114522502320533956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1189587967232188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc93fe7ab01734feaaff27c615cf4151, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_damage: 10
+  m_type: 0
+  m_delay: 0.5
 --- !u!114 &114542662783856796
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -286,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_amplitude: 20
-  m_frequency: 3
+  m_frequency: 2
 --- !u!212 &212645453721776684
 SpriteRenderer:
   m_ObjectHideFlags: 1
