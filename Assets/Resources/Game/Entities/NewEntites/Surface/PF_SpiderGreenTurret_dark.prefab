@@ -490,7 +490,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4734279086005344}
   - component: {fileID: 33179196943304384}
-  - component: {fileID: 64888300477191366}
   - component: {fileID: 23554427476161282}
   - component: {fileID: 114778776836562028}
   m_Layer: 0
@@ -576,7 +575,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1886606325564150}
-  m_LocalRotation: {x: -0.016957127, y: 0.98177534, z: -0.10629224, w: -0.15662563}
+  m_LocalRotation: {x: -0.00010206116, y: 0.99988985, z: -0.012312302, w: -0.008288451}
   m_LocalPosition: {x: 0.048, y: 1.07, z: -0.868}
   m_LocalScale: {x: 4.2, y: 4.2, z: 4.2}
   m_Children: []
@@ -650,20 +649,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!64 &64888300477191366
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1886606325564150}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 0
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!95 &95588935491671842
 Animator:
   serializedVersion: 3
@@ -707,7 +692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
-  m_enableSensor: 0
+  m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
     m_sightRadius: 18
