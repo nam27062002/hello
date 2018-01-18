@@ -88,6 +88,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		}
 	}
 
+	private int m_lastGetEventId = -1;
+
 	// Shortcuts
 	private static DateTime serverTime {
 		get { return GameServerManager.SharedInstance.GetEstimatedServerTime(); }
@@ -166,19 +168,28 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	public static void RequestCurrentEventData() {
 		// First we have to resolve all the stored events (profile)
 		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+
 		int currentEventId = -1;
+
 
 		if (storedEvents.Count > 0) {
 			List<int> deleteEvents = new List<int>();
 			long minEndTimestamp = long.MaxValue;
+			bool currentEventIsChecked = true;
 
 			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
 				if (pair.Value.rewardCollected) {
 					deleteEvents.Add(pair.Key);
 				} else {
-					if (pair.Value.endTimestamp < minEndTimestamp) {
-						currentEventId = pair.Key;
-						minEndTimestamp = pair.Value.endTimestamp;
+
+					if ( pair.Value.endTimestamp < minEndTimestamp || (currentEventIsChecked && !pair.Value.hasBeenChecked) )  
+					{
+						if ( !pair.Value.hasBeenChecked || currentEventIsChecked )
+						{
+							currentEventId = pair.Key;
+							minEndTimestamp = pair.Value.endTimestamp;
+							currentEventIsChecked = pair.Value.hasBeenChecked;	
+						}
 					}
 				}
 			}
@@ -188,6 +199,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 		}
 
+		instance.m_lastGetEventId = currentEventId;
 		if (currentEventId >= 0) {
 			// We've found an event stored, lets get its data
 			Debug.Log("<color=magenta>EVENT DATA</color>");
@@ -444,15 +456,20 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	private void OnCurrentEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 		// Error?
 		if(_error != null) {
-			// [AOC] Do something or just ignore?
-			// Probably store somewhere that there was an error so retry timer is reset or smth
+			// What event id are we talking about?! -> m_lastGetEventId? Need to do this better
+			if ( instance.m_user.globalEvents.ContainsKey( instance.m_lastGetEventId) ) 
+				instance.m_user.globalEvents[ instance.m_lastGetEventId ].hasBeenChecked = true;
+
+			if(m_currentEvent != null){
+				ClearCurrentEvent();
+			}
 
 			// Notify game that we have new data concerning the current event
 			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
 			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_DATA_UPDATED);
 			return;
 		}
-
+		bool markAsChecked = false;
 		// Did the server gave us an event?
 		if(_response != null && _response["response"] != null) {
 			// If the ID is different from the stored event, load the new event's data!
@@ -468,11 +485,24 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 					m_currentEvent.InitFromJson(responseJson);
 				}
 			}else{
-				if(m_currentEvent != null) ClearCurrentEvent();
+				markAsChecked = true;
 			}
 		} else {
-			// No! Clear current event (if any)
-			if(m_currentEvent != null) ClearCurrentEvent();
+			markAsChecked = true;
+		}
+
+		if (markAsChecked)
+		{
+			// What event id are we talking about?! -> m_lastGetEventId? Need to do this better
+			if ( instance.m_user.globalEvents.ContainsKey( instance.m_lastGetEventId) ) 
+				instance.m_user.globalEvents[ instance.m_lastGetEventId ].hasBeenChecked = true;
+
+			if(m_currentEvent != null){
+				ClearCurrentEvent();
+			}
+
+			// How to avoid infinite loop if we only have an event with has been checked?
+				// RequestCurrentEventData();
 		}
 
 		// Notify game that we have new data concerning the current event
