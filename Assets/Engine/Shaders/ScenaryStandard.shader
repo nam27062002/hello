@@ -94,7 +94,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma multi_compile __ NORMALMAP
 				#pragma multi_compile __ FOG
 				#pragma multi_compile __ CUTOFF
-				#pragma multi_compile __ OPAQUEALFA
+				#pragma multi_compile __ OPAQUEALPHA
 				#pragma multi_compile __ REFLECTIVE
 				#pragma multi_compile __ LIGHTMAP_ON
 			
