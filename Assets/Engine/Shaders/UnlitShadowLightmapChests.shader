@@ -1,10 +1,3 @@
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-// Unlit shader, with shadows
-// - no lighting
-// - can receive shadows
-// - has lightmap
-
 Shader "Hungry Dragon/Scenary/Diffuse + Lightmap (Chests)" 
 {
 	Properties 
@@ -14,7 +7,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap (Chests)"
 	}
 
 	SubShader {
-//		Tags { "RenderType"="Opaque" "Queue"="Geometry" "LightMode"="ForwardBase" }
 		Tags{ "RenderType" = "Opaque" "Queue" = "Geometry" }
 		LOD 100
 		
@@ -31,13 +23,6 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap (Chests)"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-//				#pragma multi_compile __ LIGHTMAP_ON
-//				#pragma multi_compile __ FOG
-//				#pragma multi_compile __ OPAQUEALFA
-//				#pragma glsl_no_auto_normalization
-//				#pragma fragmentoption ARB_precision_hint_fastest
-
-				#define HG_SCENARY
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
