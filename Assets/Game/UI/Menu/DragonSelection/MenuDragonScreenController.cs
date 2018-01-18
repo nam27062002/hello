@@ -100,13 +100,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 			return;
 		}
 
-		// Check global events rewards
-		GlobalEvent ge = GlobalEventManager.currentEvent;
-		if (ge != null) {
-			ge.UpdateState();
-			if (ge.isRewardAvailable) {
-				m_goToScreen = MenuScreens.EVENT_REWARD;
-				return;
+		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN ) 
+		{
+			// Check global events rewards
+			GlobalEvent ge = GlobalEventManager.currentEvent;
+			if (ge != null) {
+				ge.UpdateState();
+				if (ge.isRewardAvailable) {
+					m_goToScreen = MenuScreens.EVENT_REWARD;
+					return;
+				}
 			}
 		}
 	}
