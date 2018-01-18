@@ -38,7 +38,6 @@ GameObject:
   - component: {fileID: 4538103423195966}
   - component: {fileID: 198884580877454754}
   - component: {fileID: 199394536827314066}
-  - component: {fileID: 114998911942933056}
   m_Layer: 12
   m_Name: Sparks
   m_TagString: Untagged
@@ -56,8 +55,9 @@ GameObject:
   - component: {fileID: 4246723153903782}
   - component: {fileID: 198484298841342586}
   - component: {fileID: 199144896520032144}
+  - component: {fileID: 114592327530708548}
   m_Layer: 0
-  m_Name: PlantsFlameHigh
+  m_Name: PS_PlantsFlame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135,24 +135,17 @@ Transform:
   m_Father: {fileID: 4246723153903782}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114998911942933056
+--- !u!114 &114592327530708548
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1394578890307502}
+  m_GameObject: {fileID: 1868519904308766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_scaleOrigin: 1
-  m_scale: 1
-  m_transform: {fileID: 0}
-  m_resetFirst: 1
-  m_scaleLifetime: 0
-  m_scaleAllChildren: 1
-  m_whenScale: 1
 --- !u!198 &198255967003429456
 ParticleSystem:
   m_ObjectHideFlags: 1
