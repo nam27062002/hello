@@ -312,7 +312,8 @@ public class GameInput : MonoBehaviour
 					return TouchState.none;
 				}
 
-				m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				m_touchPosition[id].x = touch.position.x;
+				m_touchPosition[id].y = touch.position.y;
 				if (Input.touchPressureSupported)
 					m_touchPressure[id] = touch.pressure / touch.maximumPossiblePressure;
 
@@ -323,7 +324,8 @@ public class GameInput : MonoBehaviour
 			}
 			else if(((touch.phase == UnityEngine.TouchPhase.Moved) || (touch.phase == TouchPhase.Stationary)) && (effectiveFingerId == id))
 			{
-				m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				m_touchPosition[id].x = touch.position.x;
+				m_touchPosition[id].y = touch.position.y;
 				if (Input.touchPressureSupported)
 					m_touchPressure[id] = touch.pressure / touch.maximumPossiblePressure;
 				m_touchID = effectiveFingerId;
@@ -333,7 +335,8 @@ public class GameInput : MonoBehaviour
 			}
 			else if((touch.phase == UnityEngine.TouchPhase.Ended) && (effectiveFingerId == id))
 			{
-				m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				m_touchPosition[id].x = touch.position.x;
+				m_touchPosition[id].y = touch.position.y;
 				if (Input.touchPressureSupported)
 					m_touchPressure[id] = 0;
 				m_touchID = effectiveFingerId;
@@ -350,21 +353,24 @@ public class GameInput : MonoBehaviour
 			}
 
 			Vector3 mousePos = Input.mousePosition;
-			m_touchPosition[id].Set(mousePos.x, mousePos.y);
+			m_touchPosition[id].x = mousePos.x;
+			m_touchPosition[id].y = mousePos.y;
 			m_touchID = id;
 			return TouchState.pressed;
 		}
 		else if(Input.GetMouseButton(id))
 		{
 			Vector3 mousePos = Input.mousePosition;
-			m_touchPosition[id].Set(mousePos.x, mousePos.y);
+			m_touchPosition[id].x = mousePos.x;
+			m_touchPosition[id].y = mousePos.y;
 			m_touchID = id;
 			return TouchState.held;
 		}
 		else if(Input.GetMouseButtonUp(id))
 		{
 			Vector3 mousePos = Input.mousePosition;
-			m_touchPosition[id].Set(mousePos.x, mousePos.y);
+			m_touchPosition[id].x = mousePos.x;
+			m_touchPosition[id].y = mousePos.y;
 			m_touchID = id;
 			return TouchState.released;
 		}
@@ -410,7 +416,7 @@ public class GameInput : MonoBehaviour
 		{
 			for(int i=0; i < m_maxTouches; i++)
 			{
-				m_touchPosition[i].Set(0,0);
+				m_touchPosition[i].x = m_touchPosition[i].y = 0;
 			}
 			m_touchID = 0;
 			#if (TEST_KEYBOARD_IN_EDITOR && UNITY_EDITOR) || (UNITY_STANDALONE && !UNITY_EDITOR)
@@ -426,7 +432,8 @@ public class GameInput : MonoBehaviour
 		if(Input.GetMouseButton(0))
 		{
 			Vector3 mousePos = Input.mousePosition;
-			m_touchPosition[0].Set(mousePos.x, mousePos.y);
+			m_touchPosition[0].x = mousePos.x;
+			m_touchPosition[0].y = mousePos.y;
 			m_touchID = 0;
 			ret = true;
 		}
@@ -450,7 +457,9 @@ public class GameInput : MonoBehaviour
             int effectiveFingerId = touch.fingerId - lowestFingerId;
 			if ( touch.phase == UnityEngine.TouchPhase.Began )
 			{
-				m_touchPosition[0].Set(touch.position.x, touch.position.y);
+				// m_touchPosition[0].Set(touch.position.x, touch.position.y);
+				m_touchPosition[0].x = touch.position.x;
+				m_touchPosition[0].y = touch.position.y;
 				m_touchID = effectiveFingerId;
 				ret = true;
 			}
@@ -467,7 +476,7 @@ public class GameInput : MonoBehaviour
 		{
 			for(int i=0; i < m_maxTouches; i++)
 			{
-				m_touchPosition[i].Set(0,0);
+				m_touchPosition[i].x = m_touchPosition[i].y = 0;
 			}
 			return FGOLControllerMapper.Instance.GetButton( "BUTTON_A" );
 		}
@@ -479,7 +488,7 @@ public class GameInput : MonoBehaviour
 		{
 			for(int i=0; i < m_maxTouches; i++)
 			{
-				m_touchPosition[i].Set(0,0);
+				m_touchPosition[i].x = m_touchPosition[i].y = 0;
 			}
 			#if (TEST_KEYBOARD_IN_EDITOR && UNITY_EDITOR) || (UNITY_STANDALONE && !UNITY_EDITOR)
 			return Input.GetButton("Button0");
@@ -512,7 +521,9 @@ public class GameInput : MonoBehaviour
 			     ((touch.phase == UnityEngine.TouchPhase.Began) || (touch.phase == UnityEngine.TouchPhase.Moved) || (touch.phase == UnityEngine.TouchPhase.Stationary))
 			     )
 			{
-				m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				// m_touchPosition[id].Set(touch.position.x, touch.position.y);
+				m_touchPosition[id].x = touch.position.x;
+				m_touchPosition[id].y = touch.position.y;
 				ret = true;
 			}
 		}

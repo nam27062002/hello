@@ -38,7 +38,7 @@ public class HUDCurrencyGroup : MonoBehaviour {
 		m_animator = GetComponent<ShowHideAnimator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, OnToggleCurrencyCounters);
+		Messenger.AddListener<bool>(MessengerEvents.UI_TOGGLE_CURRENCY_COUNTERS, OnToggleCurrencyCounters);
 	}
 
 	/// <summary>
@@ -74,7 +74,7 @@ public class HUDCurrencyGroup : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool>(GameEvents.UI_TOGGLE_CURRENCY_COUNTERS, OnToggleCurrencyCounters);
+		Messenger.RemoveListener<bool>(MessengerEvents.UI_TOGGLE_CURRENCY_COUNTERS, OnToggleCurrencyCounters);
 	}
 
 	//------------------------------------------------------------------------//

@@ -32,12 +32,12 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
     void OnEnable()
     {
-        Messenger.AddListener<bool>(GameEvents.DARK_ZONE_TOGGLE, SetEnable);
+        Messenger.AddListener<bool>(MessengerEvents.DARK_ZONE_TOGGLE, SetEnable);
     }
 
     void OnDisable()
     {
-        Messenger.RemoveListener<bool>(GameEvents.DARK_ZONE_TOGGLE, SetEnable);
+        Messenger.RemoveListener<bool>(MessengerEvents.DARK_ZONE_TOGGLE, SetEnable);
     }
 
 

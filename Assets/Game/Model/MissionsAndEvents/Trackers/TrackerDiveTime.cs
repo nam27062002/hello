@@ -30,9 +30,9 @@ public class TrackerDiveTime : TrackerBase {
 	/// </summary>
 	public TrackerDiveTime() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.AddListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 	}
 
 	/// <summary>
@@ -50,9 +50,9 @@ public class TrackerDiveTime : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
-		Messenger.RemoveListener<bool>(GameEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
 
 		// Call parent
 		base.Clear();

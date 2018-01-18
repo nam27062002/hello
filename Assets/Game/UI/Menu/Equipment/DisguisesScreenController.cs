@@ -37,6 +37,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[Separator("Scene References")]
 	[SerializeField] private DisguisesScreenTitle m_title = null;
 	[SerializeField] private PowerIcon m_powerIcon;
+	[SerializeField] private ShowHideAnimator m_powerSlotAnim = null;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
 
 	[Space]
@@ -55,9 +56,6 @@ public class DisguisesScreenController : MonoBehaviour {
 	private DisguisePill[] m_pills;
 	private DisguisePill m_equippedPill;	// Pill corresponding to the equipped disguise 
 	private DisguisePill m_selectedPill;	// Pill corresponding to the selected disguise
-
-	// Powers
-	private ShowHideAnimator m_powerAnim = null;
 
 	// Other data
 	private DragonData m_dragonData = null;
@@ -107,8 +105,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		// Store some references
-		m_powerAnim = m_powerIcon.GetComponent<ShowHideAnimator>();
-
 		m_dragonData = null;
 		m_wardrobe = UsersManager.currentUser.wardrobe;
 
@@ -196,7 +192,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "shopOrder", DefinitionsManager.SortType.NUMERIC);
 
 		// Hide all the contextual info
-		if(m_powerAnim != null) m_powerAnim.ForceHide(false);
+		if(m_powerSlotAnim != null) m_powerSlotAnim.ForceHide(false);
 		if(m_title != null) m_title.showHideAnimator.ForceHide(false);
 		if(m_lockText != null) m_lockText.GetComponent<ShowHideAnimator>().ForceHide(false);
 		if(m_SCButton != null) m_SCButton.animator.ForceHide(false);
@@ -255,12 +251,12 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Broadcast message
 		if(newEquip) {
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
+			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
         PersistenceFacade.instance.Save_Request();
 
         // Hide all powerups
-        if (m_powerAnim != null) m_powerAnim.Hide();
+		if(m_powerSlotAnim != null) m_powerSlotAnim.Hide();
 
 		// Hide header
 		m_title.GetComponent<ShowHideAnimator>().Hide();
@@ -361,15 +357,14 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// If no power, hide the power icon
 		if(powerDef == null) {
-			m_powerAnim.Hide();
+			m_powerSlotAnim.Hide();
 		} else {
 			// Refresh data
 			m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
 
 			// Show
-			// Force an instant hide first to force the animation to be launched
-			m_powerAnim.Hide(false);
-			m_powerAnim.Show();
+			// Force the animation to be launched
+			m_powerSlotAnim.RestartShow();
 		}
 
 		// Refresh the lock info
@@ -451,7 +446,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Apply selected disguise to dragon preview
 		if(UsersManager.currentUser.EquipDisguise(m_dragonData.def.sku, m_selectedPill.def.sku, persist)) {
 			// Notify game
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
+			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, m_dragonData.def.sku);
 		}
 	}
 
@@ -497,7 +492,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				PersistenceFacade.instance.Save_Request(true);
 
 				// Notify game
-				Messenger.Broadcast<string>(GameEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
+				Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
 
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDisguisePurchasedFX();

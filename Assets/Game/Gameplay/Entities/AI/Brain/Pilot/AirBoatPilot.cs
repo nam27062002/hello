@@ -40,7 +40,9 @@ namespace AI {
 				}
 
 				m_direction = m_impulse.normalized;
+				#if UNITY_EDITOR
 				Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
+				#endif
 			}
 
 			m_externalImpulse = Vector3.zero;

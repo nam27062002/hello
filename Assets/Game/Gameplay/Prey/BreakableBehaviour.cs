@@ -68,7 +68,7 @@ public class BreakableBehaviour : MonoBehaviour
 	void OnCollisionEnter(Collision collision) {
 		if (collision.transform.CompareTag("Player")) {
 			if (m_unbreakableBlocker) {
-				Messenger.Broadcast(GameEvents.BREAK_OBJECT_SHALL_NOT_PASS);
+				Messenger.Broadcast(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS);
 			} else {
 				DragonPlayer player = collision.transform.gameObject.GetComponent<DragonPlayer>();
 				if ( player.changingArea )
@@ -95,12 +95,12 @@ public class BreakableBehaviour : MonoBehaviour
 							pushVector = -collision.contacts[0].normal * value;
 						} else {
 							// Message : You need boost!
-							Messenger.Broadcast(GameEvents.BREAK_OBJECT_NEED_TURBO);
+							Messenger.Broadcast(MessengerEvents.BREAK_OBJECT_NEED_TURBO);
 
 						}
 					} else {
 						// Message: You need a bigger dragon
-						Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, m_tierWithTurboBreak, "");
+						Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, m_tierWithTurboBreak, "");
 						value *= 0.5f;
 					}
 

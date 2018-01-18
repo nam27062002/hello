@@ -7,8 +7,6 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
-#define USING_3D_SCENE
-
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -30,9 +28,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Space]
-	[SerializeField] private ShowHideAnimator m_eggFoundAnim = null;
-	[SerializeField] private ShowHideAnimator m_eggNotFoundAnim = null;
-	[SerializeField] private ResultsSceneChestSlot[] m_chestSlots = new ResultsSceneChestSlot[5];
+	[SerializeField] private string[] m_chestsSFX = new string[5];
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
@@ -41,6 +37,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	private int m_collectedChests = 0;
 	private int m_pendingRewardChests = 0;
 	private int m_checkedChests = 0;
+	private ResultsSceneChestSlot[] m_chestSlots = null;
 	private List<ResultsSceneChestSlot> m_rewardedSlots = new List<ResultsSceneChestSlot>();	// The slots that we'll be actually using, sorted in order of appereance
 
 	//------------------------------------------------------------------------//
@@ -51,47 +48,34 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Never during first run!
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) return false;
-
-		return true;
+		// Never during FTUX
+		return UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_CHESTS_AT_RUN;
 	}
 
 	/// <summary>
 	/// Initialize the step.
 	/// </summary>
 	override protected void DoInit() {
-		#if USING_3D_SCENE
 		// Grab slots from the 3D scene
 		m_chestSlots = new ResultsSceneChestSlot[m_controller.scene.chestSlots.Length];
 		System.Array.Copy(m_controller.scene.chestSlots, m_chestSlots, m_chestSlots.Length);
 
-		// Start with everything hidden
-		for(int i = 0; i < m_chestSlots.Length; ++i) {
-			m_chestSlots[i].gameObject.SetActive(false);
-		}
+		// Reset internal vars
+		m_collectedChests = 0;
+		m_pendingRewardChests = 0;
+		m_checkedChests = 0;
+
+		// Initialize chests.
+		InitChests();
+
+		// Hide egg
 		m_controller.scene.eggSlot.gameObject.SetActive(false);
-		#endif
 	}
 
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
-		// Reset internal vars
-		m_collectedChests = 0;
-		m_pendingRewardChests = 0;
-		m_checkedChests = 0;
-
-		// Initialize chests. Can't do it in the DoInit call because we need the chest slots to be active!
-		InitChests();
-
-		#if !USING_3D_SCENE
-		// Hide both egg anims
-		m_eggFoundAnim.ForceHide(false);
-		m_eggNotFoundAnim.ForceHide(false);
-		#endif
-
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
@@ -164,44 +148,26 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		}
 
 		// Initialize chest slots
-		// Testing different layouts!
-		switch(CPResultsScreenTest.chestsLayout) {
-			// Option A) Show the chests in the center, left to right
-			case CPResultsScreenTest.ChestsLayout.ONLY_COLLECTED_CHESTS: {
-				/*
-				m_rewardedSlots.Clear();
-				int startIdx = (Mathf.CeilToInt(m_chestSlots.Length/2f) - Mathf.FloorToInt(m_collectedChests/2f)) - 1;	// -1 for 0-based index
-				int endIdx = startIdx + m_collectedChests;
-				int chestIdx = m_preCollectedChests + 1;
-				for(int i = startIdx; i < endIdx; i++) {
-					m_rewardedSlots.Add(m_chestSlots[i]);
-					m_chestSlots[i].InitFromChest(sortedChests[chestIdx], ChestManager.GetRewardData(chestIdx + 1));
-				}
+		// Show the daily chest progression, linear order (0-1-2-3-4) left to right
+		m_rewardedSlots.Clear();
+		for(int i = 0; i < m_chestSlots.Length; i++) {
+			// Initialize based on chest state
+			//Debug.Log("<color=orange>Initializing chest " + i + ": " + sortedChests[i].state + "</color>");
+			m_chestSlots[i].InitFromChest(sortedChests[i], ChestManager.GetRewardData(i + 1));
+			if(sortedChests[i].state == Chest.State.PENDING_REWARD) {
+				m_rewardedSlots.Add(m_chestSlots[i]);
+			}
 
-				// Hide all slots
-				for(int i = 0; i < m_chestSlots.Length; i++) {
-					m_chestSlots[i].gameObject.SetActive(false);
-				}
-				*/
-				Debug.Log("<color=red>ONLY_COLLECTED_CHESTS layout not implemented in the new results screen</color>");
-			} break;
+			// Start hidden if not yet collected
+			m_chestSlots[i].gameObject.SetActive(m_chestSlots[i].chest.state == Chest.State.COLLECTED);
+		}
 
-			// Option B) Show the daily chest progression, linear order (0-1-2-3-4) left to right
-			case CPResultsScreenTest.ChestsLayout.FULL_PROGRESSION: {
-				// Using all chest slots
-				m_rewardedSlots.Clear();
-				for(int i = 0; i < m_chestSlots.Length; i++) {
-					// Initialize based on chest state
-					//Debug.Log("<color=orange>Initializing chest " + i + ": " + sortedChests[i].state + "</color>");
-					m_chestSlots[i].InitFromChest(sortedChests[i], ChestManager.GetRewardData(i + 1));
-					if(sortedChests[i].state == Chest.State.PENDING_REWARD) {
-						m_rewardedSlots.Add(m_chestSlots[i]);
-					}
+		// Start animating at the first non-collected chest
+		m_checkedChests = m_collectedChests;
 
-					// Start hidden
-					m_chestSlots[i].gameObject.SetActive(false);
-				}
-			} break;
+		// Assign SFX to non-collected chests
+		for(int i = m_collectedChests; i < m_chestSlots.Length; ++i) {
+			m_chestSlots[i].chestView.resultsSFX = m_chestsSFX[i - m_collectedChests];
 		}
 	}
 
@@ -212,6 +178,9 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// A chest has entered, show its reward if appliable.
 	/// </summary>
 	public void OnChestRewardCheck() {
+		// Until we've checked all the chests!
+		if(m_checkedChests >= m_chestSlots.Length) return;
+
 		// Does the current chest have a reward?
 		ResultsSceneChestSlot targetChest = m_chestSlots[m_checkedChests];
 		if(m_rewardedSlots.Contains(targetChest)) {
@@ -248,26 +217,11 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// Trigger the rewarded egg anim (if needed).
 	/// </summary>
 	public void OnEggRewardCheck() {
-		#if USING_3D_SCENE
 		if(m_controller.eggFound) {
 			// Trigger animation!
 			m_controller.scene.eggSlot.gameObject.SetActive(true);
 			m_controller.scene.eggSlot.LaunchResultsAnim();
 		}
-		#else
-		if(m_controller.eggFound) {
-			// Trigger animation
-			m_eggFoundAnim.ForceShow();
-
-			// Show custom egg VFX
-			MenuEggLoader egg = m_eggFoundAnim.GetComponentInChildren<MenuEggLoader>();
-			if(egg != null) {
-				egg.eggView.idleFX.SetActive(true);	// [AOC] TODO!! Not working :(
-			}
-		} else {
-			m_eggNotFoundAnim.ForceShow();
-		}
-		#endif
 	}
 
 	/// <summary>

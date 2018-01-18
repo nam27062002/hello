@@ -64,8 +64,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events.
-		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	/// <summary>
@@ -95,8 +95,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	//------------------------------------------------------------------//
@@ -121,6 +121,10 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Push the egg reward to the stack!
 		if(_egg.rewardData == null) _egg.GenerateReward();	// Generate a reward if the egg hasn't one
 		UsersManager.currentUser.PushReward(_egg.rewardData);
+
+		// Remove it from the inventory (if appliable)
+		// [AOC] At this point the egg is pushed to pending rewards stack, so if the game is interrupted we will get the pending rewards flow. We don't want the egg to also be ready in the inventory! (Exploit)
+		EggManager.RemoveEggFromInventory(_egg);
 
 		// Save current profile state in case the open egg flow is interrupted
 		PersistenceFacade.instance.Save_Request(true);

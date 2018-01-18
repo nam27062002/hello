@@ -57,11 +57,11 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 			DragonData needDragonData = DragonManager.GetDragonData(data.revealFromDragons[0]);
 			string[] replacements = new string[1];
 			replacements[0] = LocalizationManager.SharedInstance.Localize(needDragonData.def.GetAsString("tidName"));
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_UNKNOWN_MESSAGE", replacements), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_UNKNOWN_MESSAGE", replacements), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		} 
 
 		// Trigger bounce animation
-		m_animator.SetTrigger("bounce");
+		m_animator.SetTrigger( GameConstants.Animator.BOUNCE );
 
 		// Trigger sound
 		AudioController.Play("hd_padlock");

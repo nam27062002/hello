@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public abstract class EatBehaviour : MonoBehaviour {
+public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	protected class PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
@@ -206,6 +206,12 @@ public abstract class EatBehaviour : MonoBehaviour {
         }
     }
 
+	public void Spawn(ISpawner _spawner) {
+		if (m_mouth == null) {
+			MouthCache();
+		}
+	}
+
 	// find mouth transform 
 	protected virtual void MouthCache() 
 	{
@@ -310,6 +316,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		return m_grabbingPrey && m_holdingPrey != null;
 	}
+
+
+	public void CustomUpdate() {}
 
 	// Update is called once per frame
 	protected virtual void Update() 
@@ -711,7 +720,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				// release prey
 				// Escaped Event
 				if ( m_isPlayer )
-					Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
+					Messenger.Broadcast<Transform>(MessengerEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
 				EndHold();
 			}	
 		}
@@ -1004,7 +1013,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 								tier = entity.grabFromTier;
 							if ( entity.canBeLatchedOn && entity.latchFromTier < tier )
 								tier = entity.latchFromTier;
-							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, tier, entity.sku);
+							Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, tier, entity.sku);
 						}
 					}
 				}

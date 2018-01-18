@@ -438,7 +438,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Notify game!
 		// [AOC] For now we don't need to differientate earnings from paid and free sources, neither do we need to differientate earnings and expenses, so use the same event for everything
-		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
+		Messenger.Broadcast<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 
         if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT && toAdd > 0) {
             HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount);
@@ -480,7 +480,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Notify game!
 		// [AOC] For now we don't need to differientate earnings from paid and free sources, neither do we need to differientate earnings and expenses, so use the same event for everything
-		Messenger.Broadcast<UserProfile.Currency, long, long>(GameEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
+		Messenger.Broadcast<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 	}
 
 	/// <summary>
@@ -591,7 +591,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Notify game (only if value has changed)
 		if(wasCompleted != _completed) {
-			Messenger.Broadcast(GameEvents.TUTORIAL_STEP_TOGGLED, _step, _completed);
+			Messenger.Broadcast(MessengerEvents.TUTORIAL_STEP_TOGGLED, _step, _completed);
 		}
 	}
 
@@ -619,7 +619,7 @@ public class UserProfile : UserPersistenceSystem
 		} else {
 			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
 		}
-		Messenger.Broadcast(GameEvents.PROFILE_MAP_UNLOCKED);
+		Messenger.Broadcast(MessengerEvents.PROFILE_MAP_UNLOCKED);
 	}
 
 	/// <summary>
@@ -1049,7 +1049,7 @@ public class UserProfile : UserPersistenceSystem
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
 		foreach(KeyValuePair<int, GlobalEventUserData> kvp in m_globalEvents) {
-			if ( kvp.Value.eventID >= 0 ){
+			if ( kvp.Value.eventID > 0 ){
 				eventsData.Add(kvp.Value.Save(true));
 			}
 			#if UNITY_EDITOR
@@ -1243,7 +1243,7 @@ public class UserProfile : UserPersistenceSystem
 				dragon.pets[i] = _petSku;
 
 				// Notify game
-				Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, i, _petSku);
+				Messenger.Broadcast<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, i, _petSku);
 
 				return i;
 			}
@@ -1291,7 +1291,7 @@ public class UserProfile : UserPersistenceSystem
 		dragon.pets[_slotIdx] = _petSku;
 
 		// Notify game
-		Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, _petSku);
+		Messenger.Broadcast<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, _petSku);
 
 		return _slotIdx;
 	}
@@ -1347,7 +1347,7 @@ public class UserProfile : UserPersistenceSystem
 		dragon.pets[_slotIdx] = string.Empty;
 
 		// Notify game
-		Messenger.Broadcast<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, string.Empty);
+		Messenger.Broadcast<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, _dragonSku, _slotIdx, string.Empty);
 
 		return _slotIdx;
 	}

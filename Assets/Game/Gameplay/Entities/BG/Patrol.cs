@@ -91,7 +91,7 @@ public class Patrol : MonoBehaviour {
 	}
 
 	void Idle() {
-		m_animator.SetBool("move", false);
+		m_animator.SetBool( GameConstants.Animator.MOVE , false);
 		m_timer = m_idleTimeAtDestination.GetRandom();
 
 		// direction
@@ -102,7 +102,7 @@ public class Patrol : MonoBehaviour {
 	}
 
 	void Walk() {
-		m_animator.SetBool("move", true);
+		m_animator.SetBool( GameConstants.Animator.MOVE, true);
 
 		//change target
 		if (m_circular) {

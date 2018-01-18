@@ -115,7 +115,7 @@ public class PetsScreenController : MonoBehaviour {
 		petFilters.OnFilterChanged.AddListener(OnFilterChanged);
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
 	}
 
 	/// <summary>
@@ -130,7 +130,7 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.AddListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -144,7 +144,7 @@ public class PetsScreenController : MonoBehaviour {
 		}
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -167,7 +167,7 @@ public class PetsScreenController : MonoBehaviour {
 		petFilters.OnFilterChanged.RemoveListener(OnFilterChanged);
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -554,9 +554,15 @@ public class PetsScreenController : MonoBehaviour {
 	private void OnPillTapped(PetPill _pill) {
 		// Nothing to do if pet is locked
 		if(_pill.locked) {
-			// Different feedback if pet is unlocked with golden egg fragments
 			if(_pill.special) {
+				// Different feedback if pet is unlocked with golden egg fragments
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SPECIAL"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			} else if(_pill.seasonDef != null) {
+				// Also different feedback if it's a seasonal pet
+				UIFeedbackText.CreateAndLaunch(
+					LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SEASON", _pill.seasonDef.GetLocalized("tidName")), 
+					new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform
+				);
 			} else {
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			}

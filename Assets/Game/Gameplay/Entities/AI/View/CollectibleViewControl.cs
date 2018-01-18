@@ -17,6 +17,8 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 	private int m_rendererCount;
 	public int rendererCount { get { return m_rendererCount; } }
 
+	public PreyAnimationEvents animationEvents { get { return null; } }
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
@@ -47,6 +49,10 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 			}
 		}
     }
+
+	public void Spawn(ISpawner _spawner) {
+
+	}
 
     void OnDestroy() {
     	RemoveAudios();

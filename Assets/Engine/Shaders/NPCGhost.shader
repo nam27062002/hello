@@ -38,8 +38,6 @@ Shader "Hungry Dragon/NPC/NPC Ghost (Spawners)"
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#define HG_ENTITIES
-
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"

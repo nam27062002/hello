@@ -61,6 +61,21 @@ namespace AI {
 			Ranged				= (1 << 23),
 			Melee				= (1 << 24),
 		}
+
+
+		public class TypeComparer : IEqualityComparer<Type>
+		{
+			public bool Equals(Type b1, Type b2)
+		    {
+		        return b1 == b2;
+		    }
+
+			public int GetHashCode(Type bx)
+		    {
+		        return (int)bx;
+		    }
+		}
+
 		//---------------------------------
 
 
@@ -75,9 +90,10 @@ namespace AI {
 		//---------------------------------
 		public Signals(IMachine _machine) {
 			m_value 			= Type.None;
-			m_onEnableTrigger 	= new Dictionary<Signals.Type, string>();
-			m_onDisableTrigger 	= new Dictionary<Signals.Type, string>();
-			m_params			= new Dictionary<Signals.Type, object[]>();
+			TypeComparer comparer = new TypeComparer();
+			m_onEnableTrigger 	= new Dictionary<Signals.Type, string>( comparer );
+			m_onDisableTrigger 	= new Dictionary<Signals.Type, string>( comparer );
+			m_params			= new Dictionary<Signals.Type, object[]>( comparer );
 
 			m_machine = _machine;
 		}

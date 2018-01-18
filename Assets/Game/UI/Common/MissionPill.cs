@@ -24,6 +24,8 @@ public class MissionPill : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private const string TID_SKIP_FREE = "TID_MISSIONS_SKIP_FREE";
+	private const string TID_SKIP_PARTIAL = "TID_MISSIONS_SKIP_PARTIAL";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -73,8 +75,8 @@ public class MissionPill : MonoBehaviour {
 		m_skipCostText = m_cooldownObj.FindComponentRecursive<Localizer>("TextCost");
 
 		// Subscribe to external events
-		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.AddListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		Messenger.AddListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.AddListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
 	}
 
 	/// <summary>
@@ -82,8 +84,8 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
 	}
 
 	/// <summary>
@@ -91,7 +93,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Detect hot language changes
-		Messenger.AddListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 
 		// Make sure we're up to date
 		Refresh();
@@ -99,7 +101,7 @@ public class MissionPill : MonoBehaviour {
 
 	private void OnDisable() {
 		// Only detect hot language changes while active
-		Messenger.RemoveListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	/// <summary>
@@ -278,16 +280,12 @@ public class MissionPill : MonoBehaviour {
 		// Skip with ad button
 		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
 		if(skipWithAdText != null) {
-			// [AOC] TODO!! Force the time to be in lower case always
 			// If the remaining time is lower than skip time, don't put time at all
 			if(m_mission.cooldownRemaining.TotalSeconds < Mission.SECONDS_SKIPPED_WITH_AD) {
-				skipWithAdText.Localize(
-					skipWithAdText.tid, 
-					""
-				);
+				skipWithAdText.Localize(TID_SKIP_FREE);
 			} else {
 				skipWithAdText.Localize(
-					skipWithAdText.tid, 
+					TID_SKIP_PARTIAL, 
 					TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
 				);
 			}
@@ -474,6 +472,8 @@ public class MissionPill : MonoBehaviour {
 			UsersManager.currentUser.skipMissionAdUses++;
 			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD, true, false);
 	        PersistenceFacade.instance.Save_Request();
+
+			Refresh();
 		}
     }
 

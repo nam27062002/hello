@@ -122,9 +122,9 @@ public class Corpse : MonoBehaviour {
 			for (int m = 0; m < materials.Length; m++) {
 				if (_isGold)	materials[m] = sm_goldenMaterial; 
 				else			materials[m] = m_materials[id][m];
-				Color tint = materials[m].GetColor("_Tint");
+				Color tint = materials[m].GetColor(GameConstants.Material.TINT);
 				tint.a = 1f;
-				materials[m].SetColor("_Tint", tint);
+				materials[m].SetColor(GameConstants.Material.TINT, tint);
 			}
 			m_renderers[i].sharedMaterials = materials;
 		}
@@ -141,9 +141,9 @@ public class Corpse : MonoBehaviour {
 				for (int i = 0; i < m_renderers.Length; ++i) {			
 					Material[] materials = m_renderers[i].sharedMaterials;
 					for (int m = 0; m < materials.Length; m++) {
-						Color tint = materials[m].GetColor("_Tint");
+						Color tint = materials[m].GetColor(GameConstants.Material.TINT);
 						tint.a = a;
-						materials[m].SetColor("_Tint", tint);
+						materials[m].SetColor(GameConstants.Material.TINT, tint);
 					}
 					m_renderers[i].sharedMaterials = materials;
 				}
