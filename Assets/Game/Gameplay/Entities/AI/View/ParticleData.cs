@@ -5,8 +5,8 @@ using UnityEngine;
 public class ParticleData {
 	public string name = "";
 	public string path = "";
-	public Vector3 offset = Vector3.zero;
 
+	[Space]
 	public bool changeStartColor = false;
 	public Color startColor = Color.white;
 	public Color startColorTwo = Color.white;
@@ -14,6 +14,8 @@ public class ParticleData {
 	public bool changeColorOvertime = false;
 	public Gradient colorOvertime;
 
+	[Space]
+	public Vector3 offset = Vector3.zero;
 	public float scale = 1f;
 
 	//--------------//

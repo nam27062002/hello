@@ -5,18 +5,20 @@ public class RotationMotion : Initializable {
 
 	[SerializeField] private Vector3 m_rotationSpeed;
 		
+	private Transform m_transform;
 	private Vector3 m_rotation;
 
 	void Start() {
-		m_rotation = transform.localRotation.eulerAngles;
+		m_transform = transform;
+		m_rotation = m_transform.localRotation.eulerAngles;
 	}
 	
 	public override void Initialize() {		
-		m_rotation = transform.localRotation.eulerAngles;
+		m_rotation = m_transform.localRotation.eulerAngles;
 	}
 
 	void Update() {
 		m_rotation += m_rotationSpeed * Time.deltaTime;
-		transform.localRotation = Quaternion.Euler(m_rotation);
+		m_transform.localRotation = Quaternion.Euler(m_rotation);
 	}
 }

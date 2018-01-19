@@ -486,8 +486,13 @@ public class LoadingSceneController : SceneController {
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
+
+                // Automatic connection check is enabled once the loading is over
+                GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
             };
 
+            // Automatic connection check disabled during loading because network is already being used
+            GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);
             PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
         }
     }

@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ViewParticleSpawner : MonoBehaviour {
+	[Comment("Where the particles will be spawned.\nLeave empty to use this transform as parent.")]
+	[SerializeField] private Transform m_parent;
+	[Comment("View's bounds will be compared to the camera frustum to trigger the particles.\nLeave empty to use parent's position instead.")]
 	[SerializeField] private Renderer m_view;
+	[Space]
 	[SerializeField] private ParticleData[] m_particleDatas;
 
 	private enum State {
@@ -14,7 +18,6 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 	private GameCamera m_camera;
 
-	private Transform m_parent;
 	private GameObject[] m_particleSytems;
 	private ParticleControl[] m_particleControl;
 
@@ -23,9 +26,15 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		m_camera = Camera.main.GetComponent<GameCamera>();
+		m_camera = null;
+		if(Camera.main != null) {
+			m_camera = Camera.main.GetComponent<GameCamera>();
+		}
 
-		m_parent = transform;
+		if(m_parent == null) {
+			m_parent = transform;
+		}
+
 		m_particleSytems = new GameObject[m_particleDatas.Length];
 		m_particleControl = new ParticleControl[m_particleDatas.Length];
 
@@ -41,7 +50,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 	}
 
 	void Update() {
-		// Show / Hide fire effect if thfis node is inside Camera or not
+		// Show / Hide effect if this node is inside Camera or not
 		bool isInsideActivationMaxArea = false;
 
 		if (m_camera != null) {
@@ -50,6 +59,9 @@ public class ViewParticleSpawner : MonoBehaviour {
 			} else {			
 				isInsideActivationMaxArea = m_camera.IsInsideCameraFrustrum(m_parent.position);
 			}
+		} else {
+			// [AOC] Probably not in-game, always show the effect (i.e. Menu)
+			isInsideActivationMaxArea = true;
 		}
 
 		switch (m_state) {
@@ -77,7 +89,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 	
 	protected virtual void Spawn() {
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
-			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, Vector3.zero, true);
+			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, m_particleDatas[i].offset, true);
 			if (m_particleSytems[i] != null) {
 				m_particleControl[i] = m_particleSytems[i].GetComponent<ParticleControl>();
 			}
