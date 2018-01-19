@@ -106,7 +106,11 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 	private void Refresh() {
 		// Collected count
 		if(m_collectedText != null) {
-			m_collectedText.Localize("TID_CHEST_DAILY_DESC", ChestManager.collectedChests.ToString(), ChestManager.NUM_DAILY_CHESTS.ToString());
+			m_collectedText.Localize(
+				"TID_CHEST_DAILY_DESC", 
+				StringUtils.FormatNumber(ChestManager.collectedChests), 
+				StringUtils.FormatNumber(ChestManager.NUM_DAILY_CHESTS)
+			);
 		}
 
 		// Time info

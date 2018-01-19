@@ -23,17 +23,17 @@ public class BezierCurveEditor : Editor {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private enum State {
-		HOVER,
-		DRAG,
-		BOX_SELECT,
-		MOVE_SELECTED
-	}
-
 	private enum Tool {
 		LINE,
 		CIRCLE
 	}
+
+	private static readonly Color POINT_COLOR = Color.white;
+	private static readonly Color HANDLE_COLOR = Colors.skyBlue;
+	private static readonly Color SELECTED_COLOR = Color.yellow;
+	private static readonly Color DISABLED_COLOR = Color.gray;
+	private static readonly Vector3 LABEL_OFFSET = new Vector3(-0.25f, -0.5f, 0f);
+	private const float LINE_THICKNESS = 5f;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -46,25 +46,7 @@ public class BezierCurveEditor : Editor {
 	// Store a reference of interesting properties for faster access
 	private SerializedProperty m_pointsProp = null;
 
-	// Points
-	private List<int> m_selectedIndices = new List<int>();
-	private int m_dragIdx = -1;
-	private Vector3 m_splitPos = Vector3.zero;
-
-	// Mouse logic
-	private State m_state = State.HOVER;
-	MouseCursor m_mouseCursor = MouseCursor.Arrow;
-	private Vector3 m_mouseScreenPos = Vector3.zero;
-	private Vector3 m_mouseWorldPos = Vector3.zero;
-	private Vector3 m_mouseClickPos = Vector3.zero;
-	private int m_nearestControlPointIdx = -1;
-
-	// Editor settings
-	private bool m_editorSettingsExpanded = false;
-	private float m_clickRadius = 1f;
-
 	// Tools
-	private bool m_toolsExpanded = false;
 	private Tool m_toolSelected = Tool.LINE;
 
 	// Line Tool
@@ -120,14 +102,16 @@ public class BezierCurveEditor : Editor {
 		// Separator
 		EditorGUILayoutExt.Separator();
 
-		// Resolution
-		targetCurve.resolution = EditorGUILayout.IntField("Resolution", targetCurve.resolution);
-
-		// Color
-		targetCurve.drawColor = EditorGUILayout.ColorField("Color", targetCurve.drawColor);
-
-		// Z-lock
-		targetCurve.lockZ = EditorGUILayout.Toggle("Z-Lock", targetCurve.lockZ);
+		// Editor settings
+		bool editorSettingsExpanded = EditorPrefs.GetBool("BezierCurveEditorSettingsExpanded");
+		editorSettingsExpanded = EditorGUILayout.Foldout(editorSettingsExpanded, "Editor Settings");
+		EditorPrefs.SetBool("BezierCurveEditorSettingsExpanded", editorSettingsExpanded);
+		if(editorSettingsExpanded) {
+			// Draw editor settings menu
+			EditorGUI.indentLevel++;
+			DoEditorSettings();
+			EditorGUI.indentLevel--;
+		}
 
 		// Separator
 		EditorGUILayoutExt.Separator();
@@ -144,7 +128,9 @@ public class BezierCurveEditor : Editor {
 			if(GUILayout.Button("Add CP"))  {
 				// Clone last point (if any)
 				if (targetCurve.points.Count > 0 ) {
-					targetCurve.AddPoint(targetCurve.points[ targetCurve.points.Count - 1 ].globalPosition);
+					Vector3 pos = targetCurve.points[targetCurve.points.Count - 1].globalPosition;
+					pos.x += 10f;
+					targetCurve.AddPoint(pos);
 				} else {
 					targetCurve.AddPoint(Vector3.zero);
 				}
@@ -156,33 +142,12 @@ public class BezierCurveEditor : Editor {
 			}
 		} EditorGUILayoutExt.EndHorizontalSafe();
 
-		/*// General editing settings
-		// Separator
-		EditorGUILayoutExt.Separator();
-
-		// [AOC] Grouped in a foldout, stored in EditorPrefs
-		m_editorSettingsExpanded = EditorPrefs.GetBool("BezierCurveSettingsExpanded");
-		m_editorSettingsExpanded = EditorGUILayout.Foldout(m_editorSettingsExpanded, "Editor Settings");
-		EditorPrefs.SetBool("BezierCurveSettingsExpanded", m_editorSettingsExpanded);
-		if(m_editorSettingsExpanded) {
-			// Indent in
-			EditorGUI.indentLevel++;
-
-			// Click radius
-			m_clickRadius = EditorPrefs.GetFloat("BezierCurveClickRadius");
-			m_clickRadius = EditorGUILayout.Slider("Click Radius", m_clickRadius, 0f, 1f);
-			EditorPrefs.SetFloat("BezierCurveClickRadius", m_clickRadius);
-
-			// Indent out
-			EditorGUI.indentLevel--;
-		}*/
-
 		// Tools
 		EditorGUILayoutExt.Separator();
-		m_toolsExpanded = EditorPrefs.GetBool("BezierCurveToolsExpanded");
-		m_toolsExpanded = EditorGUILayout.Foldout(m_toolsExpanded, "Tools");
-		EditorPrefs.SetBool("BezierCurveToolsExpanded", m_toolsExpanded);
-		if(m_toolsExpanded) {
+		bool toolsExpanded = EditorPrefs.GetBool("BezierCurveToolsExpanded");
+		toolsExpanded = EditorGUILayout.Foldout(toolsExpanded, "Tools");
+		EditorPrefs.SetBool("BezierCurveToolsExpanded", toolsExpanded);
+		if(toolsExpanded) {
 			// Draw tools menu
 			EditorGUI.indentLevel++;
 			DoTools();
@@ -202,157 +167,145 @@ public class BezierCurveEditor : Editor {
 	/// The scene is being refreshed.
 	/// </summary>
 	public void OnSceneGUI() {
+		// Don't draw if not active
+		if(!targetCurve.isActiveAndEnabled) return;
+
 		// Record changes
 		Undo.RecordObject(targetCurve, "BezierCurve Data Change");
 
 		// Scene-related stuff
 		// Draw position handles to move points and handlers
 		BezierPoint p;
+		int localSelection = -1;	// Per point: -1 (none), 0 (point), 1 (handler1), 2 (handler2)
+		float handlerPointSize = targetCurve.pointSize * 0.5f;
+		float handlerPickSize = targetCurve.pickSize * 0.5f;
 		for(int i = 0; i < targetCurve.pointCount; i++) {
-			// Skip if the point is locked!
+			// Get point
 			p = targetCurve.GetPoint(i);
-			if(p.locked) continue;
-
-			// Draw either the handler for the point itself or for the handles
-			if(!(Event.current.modifiers == EventModifiers.Control)) {
-				// The point itself
-				Handles.color = Colors.white;
-				p.globalPosition = Handles.PositionHandle(p.globalPosition, Quaternion.identity);
-			} else {
-				// Handlers - except if "NONE" or autoSmooth is enabled
-				if(p.handleStyle != BezierPoint.HandleStyle.NONE && !targetCurve.autoSmooth) {
-					Handles.color = Colors.skyBlue;
-					p.globalHandle1 = Handles.PositionHandle(p.globalHandle1, Quaternion.identity);
-					p.globalHandle2 = Handles.PositionHandle(p.globalHandle2, Quaternion.identity);
-				}
-			}
-		}
-
-		// VERSION 0.2 - from PolyMesh
-		/*
-		// Load handle matrix
-		Handles.matrix = targetCurve.transform.localToWorldMatrix;
-
-		// Draw points
-		AOCBezierPoint p;
-		for(int i = 0; i < targetCurve.pointCount; i++) {
-			// Get point and other aux vars
-			p = targetCurve.GetPointAt(i);
-			bool selected = m_selectedIndices.Contains(i);
-
-			// Different color for nearest line
-			// [AOC] TODO!!
-			//Handles.color = nearestLine == i ? Colors.green : Colors.white;
-			//DrawSegment(i);
-
-			// The point itself
-			// Draw a circle around if selected
-			if(selected) {
-				Handles.color = Colors.green;
-				//DrawCircle(p.globalPosition, 0.08f);
-				//Handles.CircleCap(0, p.globalPosition, inverseRotation, HandleUtility.GetHandleSize(p.globalPosition) * 0.08f);
-				Handles.CircleCap(0, p.globalPosition, Quaternion.identity, HandleUtility.GetHandleSize(p.globalPosition) * 0.08f);
-			} else if(m_dragIdx == i) {
-				Handles.color = Colors.blue;
-			} else {
-				Handles.color = Colors.white;
-			}
-			Handles.DotCap(0, p.globalPosition, Quaternion.identity, HandleUtility.GetHandleSize(p.globalPosition) * 0.03f);
-
-			// Handlers
-			// [AOC] TODO!! Interactable - for now let's just draw them
-			// Only on the selected nodes
-			if(selected) {
-				// Handler 1
-				Handles.color = Colors.skyBlue;
-				Handles.DrawLine(p.globalPosition, p.globalHandle1);
-				Handles.CircleCap(0, p.globalHandle1, Quaternion.identity, HandleUtility.GetHandleSize(p.globalPosition) * 0.1f);
-
-				// Handler 2
-				Handles.color = Colors.skyBlue;
-				Handles.DrawLine(p.globalPosition, p.globalHandle2);
-				Handles.CircleCap(0, p.globalHandle2, Quaternion.identity, HandleUtility.GetHandleSize(p.globalPosition) * 0.1f);
-			}
+			bool handlersEnabled = p.handleStyle != BezierPoint.HandleStyle.NONE && !targetCurve.autoSmooth;
 
 			// Label
-			Handles.Label(p.globalPosition, i.ToString(), CustomEditorStyles.bezierSceneLabel);
-		}
+			Handles.Label(p.globalPosition + LABEL_OFFSET, i.ToString(), CustomEditorStyles.bigSceneLabel);
 
-		// Check several quit conditions before proceeding
-		if(Tools.current == Tool.View) return;	// Using camera
-		if(Camera.current == null) return;	// No camera
-		if(Event.current.type == EventType.Layout) return;	// Layouting				// HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
-		if(Event.current.type == EventType.ScrollWheel) return;	// Zooming in-out
-		if(Event.current.isMouse && Event.current.button > 0) return;	// ????
+			// Is this point or any of its handlers the current selection?
+			if(i == targetCurve.selectedIdx) {
+				localSelection = targetCurve.selectedHandlerIdx;	// 0, 1, 2; matches same values
+			} else {
+				localSelection = -1;
+			}
 
-		// Update mouse vars - if mouse doesn't intersect the curve's Z plane, no need to continue
-		EditorGUIUtility.AddCursorRect(new Rect(0, 0, Camera.current.pixelWidth, Camera.current.pixelHeight), m_mouseCursor);
-		m_mouseCursor = MouseCursor.Arrow;
-		m_mouseScreenPos = new Vector3(Event.current.mousePosition.x, Camera.current.pixelHeight - Event.current.mousePosition.y);
-		Plane plane = new Plane(-targetCurve.transform.forward, targetCurve.transform.position);
-		Ray ray = Camera.current.ScreenPointToRay(m_mouseScreenPos);
-		float hit;
-		if(plane.Raycast(ray, out hit)) {
-			m_mouseWorldPos = targetCurve.transform.worldToLocalMatrix.MultiplyPoint(ray.GetPoint(hit));
-		} else {
-			return;
-		}
-
-		// Update nearest segment and split position
-		ComputeNearestCPAndSplitPosition();
-
-		// Update logic state
-		UpdateState();
-
-		// Repaint
-		HandleUtility.Repaint();
-		*/
-	}
-
-	/// <summary>
-	/// Logic state update.
-	/// </summary>
-	private void UpdateState() {
-		// Different actions based on current state
-		switch(m_state) {
-			// Mouse hovering the curve, idle-like state
-			case State.HOVER: {
-				// Draw nearest line and split point
-				if(m_nearestControlPointIdx >= 0) {
-					Handles.color = Color.green;
-					//Handles.DrawLine(targetCurve[m_nearestLine].globalPosition, targetCurve[(m_nearestLine + 1) % targetCurve.pointCount].globalPosition);
-					DrawCurve(targetCurve[m_nearestControlPointIdx], targetCurve[(m_nearestControlPointIdx + 1) % targetCurve.pointCount], targetCurve.resolution);
-
-					Handles.color = Color.red;
-					Handles.DotCap(0, m_splitPos, Quaternion.identity, HandleUtility.GetHandleSize(m_splitPos) * 0.03f);
+			// Handlers
+			// Draw them first so the lines are not rendered on top of the points
+			if(p.handleStyle != BezierPoint.HandleStyle.NONE) {
+				// Handler 1
+				if(!handlersEnabled) {
+					Handles.color = DISABLED_COLOR;
+				} else if(localSelection == 1) {
+					Handles.color = SELECTED_COLOR;
+				} else {
+					Handles.color = HANDLE_COLOR;
+				}
+				Handles.DrawLine(p.globalPosition, p.globalHandle1);
+				if(Handles.Button(p.globalHandle1, Quaternion.identity, handlerPointSize, handlerPickSize, Handles.SphereHandleCap)) {
+					// Select this point
+					targetCurve.selectedIdx = i;
+					targetCurve.selectedHandlerIdx = 1;
+					localSelection = 1;
 				}
 
-				// Are we dragging selected points?
-				// [AOC] TODO!!
-				//if(TryDragSelected()) ChangeState(State.DRAG); return;
+				// Handler 2
+				if(!handlersEnabled) {
+					Handles.color = DISABLED_COLOR;
+				} else if(localSelection == 2) {
+					Handles.color = SELECTED_COLOR;
+				} else {
+					Handles.color = HANDLE_COLOR;
+				}
+				Handles.DrawLine(p.globalPosition, p.globalHandle2);
+				if(Handles.Button(p.globalHandle2, Quaternion.identity, handlerPointSize, handlerPickSize, Handles.SphereHandleCap)) {
+					// Select this point
+					targetCurve.selectedIdx = i;
+					targetCurve.selectedHandlerIdx = 2;
+					localSelection = 2;
+				}
+			}
 
-				// Are we selecting all points?
-				// [AOC] TODO!!
-				//if(TrySelectAll()) ChangeState(State.HOVER); return;
-			} break;
+			// [AOC] We'll be drawing Handle spheres on top of the Gizmos to detect selection
+			// The point itself
+			Handles.color = localSelection == 0 ? SELECTED_COLOR : POINT_COLOR;
+			if(Handles.Button(p.globalPosition, Quaternion.identity, targetCurve.pointSize, targetCurve.pickSize, Handles.SphereHandleCap)) {
+				// Select this point
+				targetCurve.selectedIdx = i;
+				targetCurve.selectedHandlerIdx = 0;
+				localSelection = 0;
+			}
+
+			// Skip position handlers if the point is locked!
+			if(p.locked) continue;
+
+			// Draw position handler in the selected point/handler
+			switch(localSelection) {
+				case 0: {
+					p.globalPosition = Handles.PositionHandle(p.globalPosition, Quaternion.identity);
+				} break;
+
+				case 1: {
+					// Except if HandleMode is "NONE" or autoSmooth is enabled
+					if(handlersEnabled) {
+						p.globalHandle1 = Handles.PositionHandle(p.globalHandle1, Quaternion.identity);
+					}
+				} break;
+
+				case 2: {
+					if(handlersEnabled) {
+						p.globalHandle2 = Handles.PositionHandle(p.globalHandle2, Quaternion.identity);
+					}
+				} break;
+			}
 		}
 	}
 
 	/// <summary>
-	/// Perform all required actions when changing from one state to another.
-	/// Nothing will happen if state is the same as we already are.
+	/// Draw gizmos for the target bezier curve.
+	/// Do it here rather than OnDrawGizoms so we can define it as pickable as well
+	/// as save time by avoiding compilation of the whole project (just the Editor code).
 	/// </summary>
-	/// <param name="_newState">New state.</param>
-	private void ChangeState(State _newState) {
-		// Skip if state is the same
-		if(_newState == m_state) return;
+	/// <param name="_target">Target curve.</param>
+	/// <param name="_gizmoType">Gizmo type.</param>
+	[DrawGizmo(GizmoType.Pickable | GizmoType.InSelectionHierarchy | GizmoType.NotInSelectionHierarchy)]
+	static void DrawGizmo(BezierCurve _target, GizmoType _gizmoType) {
+		// Don't draw if not active
+		if(!_target.isActiveAndEnabled) return;
 
-		// Perform some actions based on state we're leaving
+		// [AOC] Although Handles give us more visual options, we will use Gizmos
+		// 		 instead to allow selecting the object by clicking on the spheres/line
 
-		// Perform some actions based on new state
+		// Draw line
+		// Gather sampled points
+		Vector3[] sampledPoints = new Vector3[_target.sampledSegments.Count];
+		for(int i = 0; i < _target.sampledSegments.Count; i++) {
+			sampledPoints[i] = _target.sampledSegments[i].p1;
+		}
 
-		// Store state change
-		m_state = _newState;
+		// Draw selectable Gizmo line
+		Gizmos.color = _target.drawColor;
+		for(int i = 1; i < sampledPoints.Length; ++i) {
+			Gizmos.DrawLine(sampledPoints[i-1], sampledPoints[i]);
+		}
+
+		// [AOC] Overkill: To make line more visible, draw a Handles line on top of the selectable Gizmos line
+		// 		 Remove if performance is critical
+		Handles.color = _target.drawColor;
+		Handles.DrawAAPolyLine(LINE_THICKNESS, sampledPoints);
+
+		// Draw points
+		Gizmos.color = POINT_COLOR;
+		float sphereRadius = _target.pointSize/2f;
+		BezierPoint p;
+		for(int i = 0; i < _target.pointCount; i++) {
+			p = _target.GetPoint(i);
+			Gizmos.DrawSphere(p.globalPosition, sphereRadius);
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -514,7 +467,25 @@ public class BezierCurveEditor : Editor {
 	}
 
 	/// <summary>
-	/// Do the tools section
+	/// Do the editor settings section.
+	/// </summary>
+	private void DoEditorSettings() {
+		// Resolution
+		targetCurve.resolution = EditorGUILayout.IntField("Resolution", targetCurve.resolution);
+
+		// Color
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("drawColor"));
+
+		// Z-lock
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("lockZ"));
+
+		// Point and pick sizes
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("pointSize"));
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("pickSize"));
+	}
+
+	/// <summary>
+	/// Do the tools section.
 	/// </summary>
 	private void DoTools() {
 		// Tool selector
@@ -606,50 +577,6 @@ public class BezierCurveEditor : Editor {
 	}
 
 	//------------------------------------------------------------------//
-	// INTERNAL UTILS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Compute nearest control point to current mouse position and nearest split point.
-	/// Store the result in the m_nearestControlPointIdx and m_splitPos members respectively.
-	/// </summary>
-	private void ComputeNearestCPAndSplitPosition() {
-		// Skip if not enough points
-		if(targetCurve.pointCount < 2) {
-			m_nearestControlPointIdx = -1;
-			m_splitPos = Vector3.zero;
-			return;
-		}
-
-		// Custom version 2 - using pre-computed segments
-		m_nearestControlPointIdx = -1;
-		m_splitPos = targetCurve[0].globalPosition;
-		float minDist = float.MaxValue;
-		Vector3 tmpPos = Vector3.zero;
-		for(int i = 0; i < targetCurve.sampledSegments.Count; i++) {
-			// Get target segment
-			BezierCurve.SampledSegment segment = targetCurve.sampledSegments[i];
-
-			// Only eligible if cusror is in an acute angle towards the segment and smaller than the actual segment
-			// (or something like that, extracted from PolyMeshEditor)
-			Vector3 line = segment.p2 - segment.p1;
-			Vector3 lineToCursor = m_mouseWorldPos - segment.p1;
-			float dot = Vector3.Dot(line.normalized, lineToCursor);
-			if(dot >= 0 && dot <= line.magnitude) {
-				// Compute where the cursor intersects the segment
-				tmpPos = segment.p1 + line.normalized * dot;
-
-				// If it's the closest line so far, save it
-				var dist = Vector3.Distance(tmpPos, m_mouseWorldPos);
-				if(dist < minDist) {
-					minDist = dist;
-					m_splitPos = tmpPos;
-					m_nearestControlPointIdx = targetCurve.GetPointIdx(segment.cp1);
-				}
-			}
-		}
-	}
-
-	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
 	/// <summary>
@@ -659,5 +586,6 @@ public class BezierCurveEditor : Editor {
 		// Mark curve as dirty and repaint
 		targetCurve.SetDirty();
 		SceneView.RepaintAll();
+		EditorUtility.SetDirty(targetCurve);
 	}
 }

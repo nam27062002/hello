@@ -202,80 +202,83 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	protected virtual void Update() {
-		// Cheat for infinite fire
-		bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+		if (!m_dragon.changingArea) {
+
+			// Cheat for infinite fire
+			bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
 
-		if (m_isFuryOn) 
-		{
-			if ( !m_isFuryPaused )
+			if (m_isFuryOn) 
 			{
-				// Don't decrease fury if cheating
-				if(!cheating && !m_dragon.changingArea)
+				if ( !m_isFuryPaused )
 				{
-					m_currentRemainingFuryDuration -= Time.deltaTime;
-				}
+					// Don't decrease fury if cheating
+					if(!cheating && !m_dragon.changingArea)
+					{
+						m_currentRemainingFuryDuration -= Time.deltaTime;
+					}
 
-				switch( m_type )
-				{
-					case Type.Standard:	{
-							m_currentFury = m_currentRemainingFuryDuration / m_currentFuryDuration * m_furyMax;
-							if (UsersManager.currentUser.superFuryProgression + 1 == m_superFuryMax) {
-								if (m_currentRemainingFuryDuration <= 0.25f) {
-									MegaFireUp();
+					switch( m_type )
+					{
+						case Type.Standard:	{
+								m_currentFury = m_currentRemainingFuryDuration / m_currentFuryDuration * m_furyMax;
+								if (UsersManager.currentUser.superFuryProgression + 1 == m_superFuryMax) {
+									if (m_currentRemainingFuryDuration <= 0.25f) {
+										MegaFireUp();
+									}
 								}
 							}
+							break;
+						case Type.Mega:
+						{
+								
 						}
 						break;
-					case Type.Mega:
-					{
-							
 					}
-					break;
+					
+					// With fury on boost is infinite
+					m_dragon.AddEnergy(m_dragon.energyMax);
+
+
+
+
+					if (m_currentRemainingFuryDuration <= 0)
+					{
+						EndFury();
+						m_animator.SetBool( GameConstants.Animator.BREATH, false);
+					} 
+					else
+					{
+						Breath();
+						m_animator.SetBool( GameConstants.Animator.BREATH, true);
+					}
 				}
-				
-				// With fury on boost is infinite
-				m_dragon.AddEnergy(m_dragon.energyMax);
+			} else {
 
-
-
-
-				if (m_currentRemainingFuryDuration <= 0)
+				if (cheating)
 				{
-					EndFury();
-					m_animator.SetBool( GameConstants.Animator.BREATH, false);
-				} 
-				else
+					if (DebugSettings.infiniteFire)
+						AddFury(m_furyMax - m_currentFury);	// Set to max fury
+					else if (DebugSettings.infiniteSuperFire)
+						UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
+				}
+
+				if ( !m_dragon.dragonEatBehaviour.IsEating())
 				{
-					Breath();
-					m_animator.SetBool( GameConstants.Animator.BREATH, true);
+					if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
+					{
+						BeginFury( Type.Mega );
+
+					}
+					else if (m_currentFury >= m_furyMax)
+					{
+						BeginFury( Type.Standard );
+					}
 				}
 			}
-		} else {
 
-			if (cheating)
-			{
-				if (DebugSettings.infiniteFire)
-					AddFury(m_furyMax - m_currentFury);	// Set to max fury
-				else if (DebugSettings.infiniteSuperFire)
-					UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
-			}
-
-			if ( !m_dragon.dragonEatBehaviour.IsEating())
-			{
-				if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
-				{
-					BeginFury( Type.Mega );
-
-				}
-				else if (m_currentFury >= m_furyMax)
-				{
-					BeginFury( Type.Standard );
-				}
-			}
+			ExtendedUpdate();
 		}
-
-		ExtendedUpdate();
 	}
 
 

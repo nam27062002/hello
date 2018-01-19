@@ -46,7 +46,18 @@ public class CollectibleChest : Collectible {
 
 		// Store view
 		m_chestView = this.gameObject.GetComponentInChildren<ChestViewController>();
+
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
     }
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+	}
 
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
@@ -72,9 +83,16 @@ public class CollectibleChest : Collectible {
 	/// Update object and visuals to match the "collected" state.
 	/// </summary>
 	private void SetCollectedVisuals() {
-		// Open chest and launch FX
 		// Figure out reward type to show the proper FX
-		Chest.RewardData rewardData = ChestManager.GetRewardData(ChestManager.collectedAndPendingChests);
+		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestData.collectionOrder);
+
+		// [AOC] Protection just in case (mainly for the initial integration of the collectionOrder feature)
+		// 		 The only consequence is that a chest previously collected that gave gems could be displayed as gold, but just until chests are reset again (24h).
+		if(rewardData == null) {
+			rewardData = ChestManager.GetRewardData(1);
+		}
+
+		// Open chest and launch FX
 		m_chestView.Open(rewardData.type, false);
 	}
 
@@ -115,5 +133,16 @@ public class CollectibleChest : Collectible {
 
 		// Dispatch global event
 		Messenger.Broadcast<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, this);
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Game has ended.
+	/// </summary>
+	private void OnGameEnded() {
+		// Close chest (to return particles to their pools)
+		m_chestView.Close();
 	}
 }
