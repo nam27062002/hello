@@ -160,10 +160,10 @@ public class CPMissionGenerator : MonoBehaviour {
 		if(!m_init) return;
 
 		// Based on seleected mission def
-		DefinitionNode missionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSIONS, GetSelectedOption(m_missionSkuDropdown));
+		DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, GetSelectedOption(m_missionTypeDropdown));
 
 		// Show/hide the whole toggle group
-		m_singleRunToggleContainer.SetActive(missionDef != null && missionDef.GetAsBool("canBeDuringOneRun"));
+		m_singleRunToggleContainer.SetActive(typeDef != null && typeDef.GetAsBool("canBeDuringOneRun"));
 	}
 
 	//------------------------------------------------------------------------//
@@ -259,8 +259,7 @@ public class CPMissionGenerator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newValueIdx">Index of the new selected option in the dropdown.</param>
 	public void OnSkuChanged(int _newValueIdx) {
-		// Refresh single run
-		RefreshSingleRun();
+		// Nothing to do
 	}
 
 	/// <summary>
