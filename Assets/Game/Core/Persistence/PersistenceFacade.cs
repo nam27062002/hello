@@ -197,7 +197,24 @@ public class PersistenceFacade
 		Config.LocalDriver.Save(onSaveDone);
 	}
 
-	private void Sync_OnDone(PersistenceStates.ESyncResult result, Action onDone)
+    public void Sync_FromReconnecting(Action onDone)
+    {
+        Sync_IsSyncing = true;
+
+        Action onSaveDone = delegate ()
+        {
+            Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+            {
+                Sync_OnDone(result, onDone);
+            };
+
+            Config.CloudDriver.Sync(true, false, onSyncDone);
+        };
+
+        Config.LocalDriver.Save(onSaveDone);
+    }
+
+    private void Sync_OnDone(PersistenceStates.ESyncResult result, Action onDone)
 	{
         Sync_IsSyncing = false;
 
