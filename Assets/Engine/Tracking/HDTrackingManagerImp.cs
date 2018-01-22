@@ -264,7 +264,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	private void InitDNA(CaletySettings settingsInstance)
 	{
-        string clientVersion = settingsInstance.GetClientBuildVersion();
+        string clientVersion = GameSettings.internalVersion.ToString();
 
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
 #if !UNITY_EDITOR
