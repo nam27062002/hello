@@ -795,4 +795,139 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
     }
     #endregion
+
+    #region render_queues
+
+    private GameObject[] getBackgroundGameObjects(bool foreground)
+    {
+        List<GameObject> result = new List<GameObject>();
+
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        {
+            UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (foreground)
+            {
+                if (scene.name.Contains("ART") && !scene.name.Contains("ART_Levels_Background_Skies") && !scene.name.Contains("ART_L1_Background_Village") && !scene.name.Contains("ART_L1_Background_Castle") && !scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        result.AddRange(goRoots);
+                    }
+                }
+            }
+            else
+            {
+                if (scene.name.Contains("ART_Levels_Background_Skies") || scene.name.Contains("ART_L1_Background_Village") || scene.name.Contains("ART_L1_Background_Castle") || scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        result.AddRange(goRoots);
+                    }
+                }
+            }
+        }
+
+        return result.ToArray();
+    }
+
+    public void Background_OnBackgroundValueChanged(bool newValue)
+    {
+        GameObject[] go = getBackgroundGameObjects(false);
+        for (int c = 0; c < go.Length; c++)
+        {
+//            if (renderers[c].material.shader.name.Contains("Hungry Dragon/Scenary/Scenary Standard"))
+                go[c].SetActive(newValue);
+        }
+    }
+    public void Foreground_OnForegroundValueChanged(bool newValue)
+    {
+        GameObject[] go = getBackgroundGameObjects(true);
+        for (int c = 0; c < go.Length; c++)
+        {
+//            if (renderers[c].material.shader.name.Contains("Hungry Dragon/Scenary/Scenary Standard"))
+                go[c].SetActive(newValue);
+        }
+    }
+
+    private struct QueueBackup
+    {
+        public bool isNPC;
+        public int oldQueue;
+    };
+    private QueueBackup[] m_oldQueues = null;
+    public void Queues_OnQueuesValueChanged(bool newValue)
+    {
+        List<Renderer> renderer = GameObjectExt.FindObjectsOfType<Renderer>(false);
+
+        if (!newValue)
+        {
+            m_oldQueues = new QueueBackup[renderer.Count];
+        }
+
+        for (int c = 0; c < renderer.Count; c++)
+        {
+            if (renderer[c].material.shader.name.Contains("Hungry Dragon/Dragon/Dragon standard"))
+            {
+                if (newValue)
+                {
+                    if (m_oldQueues != null)
+                    {
+                        renderer[c].material.renderQueue = m_oldQueues[c].oldQueue;
+                    }
+                }
+                else
+                {
+                    m_oldQueues[c].oldQueue = renderer[c].material.renderQueue;
+                    m_oldQueues[c].isNPC = false;
+                }
+            }
+            else if (renderer[c].material.shader.name.Contains("NPC"))
+            {
+                if (newValue)
+                {
+                    if (m_oldQueues != null)
+                    {
+                        renderer[c].material.renderQueue = m_oldQueues[c].oldQueue;
+                    }
+                }
+                else
+                {
+                    m_oldQueues[c].oldQueue = renderer[c].material.renderQueue;
+                    m_oldQueues[c].isNPC = true;
+                }
+            }
+            else
+            {
+                if (!newValue)
+                {
+                    m_oldQueues[c].oldQueue = -1;
+                }
+            }
+        }
+
+        if (newValue)
+        {
+            m_oldQueues = null;
+        }
+        else
+        {
+            for (int c = 0; c < renderer.Count; c++)
+            {
+                if (c < m_oldQueues.Length && m_oldQueues[c].oldQueue != -1)
+                {
+                    if (m_oldQueues[c].isNPC)
+                    {
+                        renderer[c].material.renderQueue = 1000;
+                    }
+                    else
+                    {
+                        renderer[c].material.renderQueue = 500;
+                    }
+                }
+            }
+        }
+    }
+    #endregion
 }
