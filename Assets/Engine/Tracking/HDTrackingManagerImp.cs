@@ -1028,7 +1028,16 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
             Track_SendEvent(e);            
-        }        
+        }
+
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
+        if (e != null)
+        {
+            string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
+            Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
+
+            Track_SendEvent(e);
+        }
     }    
 
     private void Track_ApplicationEndEvent(string stopCause)
@@ -1820,6 +1829,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE              = "userTime<one";
+    private const string TRACK_PARAM_VERSION_REVISION           = "versionRevision";
     private const string TRACK_PARAM_XP                         = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";
 
