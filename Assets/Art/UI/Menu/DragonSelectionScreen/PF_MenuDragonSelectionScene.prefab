@@ -563,7 +563,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 169554}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 148.5, y: -0.33000004, z: -7}
+  m_LocalPosition: {x: 150, y: -0.33000004, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 475598}
@@ -641,7 +641,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174072}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 119.00001, y: -0.33000004, z: -7}
+  m_LocalPosition: {x: 120.00001, y: -0.33000004, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 470690}
@@ -948,6 +948,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawColor: {r: 0, g: 0.61764705, b: 0.0042597475, a: 1}
   lockZ: 0
+  pointSize: 1
+  pickSize: 1.5
   m_points:
   - m_handleStyle: 1
     m_locked: 0
@@ -1039,7 +1041,7 @@ MonoBehaviour:
   m_delta: 0.8
   m_snapPoint: 8
   m_linkMode: 2
-  m_offset: {x: -1, y: -1.2, z: 0}
+  m_offset: {x: 0, y: -1.2, z: 1}
 --- !u!114 &11418412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1183,7 +1185,7 @@ MonoBehaviour:
   m_delta: 1
   m_snapPoint: 9
   m_linkMode: 2
-  m_offset: {x: -1.5, y: -1.2, z: 0}
+  m_offset: {x: 0, y: -1.2, z: 1}
 --- !u!114 &11447260
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1268,6 +1270,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawColor: {r: 0, g: 0.5665314, b: 0.61764705, a: 1}
   lockZ: 0
+  pointSize: 1
+  pickSize: 1.5
   m_points:
   - m_handleStyle: 1
     m_locked: 0
@@ -21329,7 +21333,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1084293249247682}
-  m_LocalRotation: {x: -0.72968507, y: -0.13468346, z: 0.027240584, w: 0.66983443}
+  m_LocalRotation: {x: -0.72968507, y: -0.13468346, z: 0.02724058, w: 0.66983443}
   m_LocalPosition: {x: -0.5160918, y: -0.000000059604645, z: 0.00000011920929}
   m_LocalScale: {x: 1.000003, y: 0.99999565, z: 1.0000021}
   m_Children:
@@ -28436,25 +28440,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_balrog
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 0
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114013343576360718
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28709,25 +28694,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_bug
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-  - m_range:
-      min: 4
-      max: 8
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 1
-    m_timeToNext: 0
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114094846839480040
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -29367,25 +29333,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_baby
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 0
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114282445137748780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -30590,26 +30537,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_devil
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-  - m_range:
-      min: 10
-      max: 20
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 1
-    m_timeToNext: 0
-  m_hasFire: 1
-  m_dragonFlameStandard: {fileID: 197018, guid: c14795ad74862da47a6176c0deacb83b,
-    type: 2}
 --- !u!114 &114574257273747870
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -30916,25 +30843,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_crocodile
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-  - m_range:
-      min: 10
-      max: 20
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 1
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114620554090073342
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -31606,25 +31514,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_classic
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 1
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114778127477655714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -31743,17 +31632,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_fat
-  m_altAnimConfigs:
-  - m_range:
-      min: 10
-      max: 20
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 0
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114796149548887470
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -31950,17 +31828,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_reptile
-  m_altAnimConfigs:
-  - m_range:
-      min: 10
-      max: 20
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 0
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114839443093172600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -32123,25 +31990,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_titan
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-  - m_range:
-      min: 10
-      max: 20
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 0
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114890063830484110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -32210,17 +32058,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_chinese
-  m_altAnimConfigs:
-  - m_range:
-      min: 10
-      max: 20
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 0
-    m_timeToNext: 0
-  m_hasFire: 0
-  m_dragonFlameStandard: {fileID: 0}
 --- !u!114 &114900682242293164
 MonoBehaviour:
   m_ObjectHideFlags: 1
