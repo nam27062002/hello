@@ -1341,7 +1341,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 		{
 			return Device_CurrentFeatureSettings.GetValueAsInt( FeatureSettings.MAX_ZOOM_COST );
 		}
-	}    
+	}
+    
+    public bool IsAutomaticReloginEnabled()
+    {        
+        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
+    }
+    
+    public int GetAutomaticReloginPeriod()
+    {     
+        return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
+    }
     #endregion
 
     #region log

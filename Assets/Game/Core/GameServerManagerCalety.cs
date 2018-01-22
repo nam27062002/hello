@@ -1259,13 +1259,14 @@ public class GameServerManagerCalety : GameServerManager {
     // 1)Trying to reconnect after a network failure
     // 2)Keeping the session in server alive by sending a ping command periodically
 
-    // In Seconds
-    private const float CONNECTION_PING_PERIOD = 2 * 60f;
+    // In Seconds    
     private float m_connectionTimeLeftToPing;
 
     private bool m_connectionIsBeingChecked;
 
     private bool m_connectionIsCheckEnabled;
+
+    private bool m_connectionIsReady;
 
     private void Connection_Init() {
         Connection_ResetTimer();
@@ -1273,10 +1274,11 @@ public class GameServerManagerCalety : GameServerManager {
 
         // If has to be enabled explicitly
         m_connectionIsCheckEnabled = false;
+        m_connectionIsReady = false;
     }
 
     private void Connection_ResetTimer() {        
-        m_connectionTimeLeftToPing = CONNECTION_PING_PERIOD;        
+        m_connectionTimeLeftToPing = FeatureSettingsManager.instance.GetAutomaticReloginPeriod();        
     }
 
     private void Connection_ForceCheck() {
@@ -1286,44 +1288,55 @@ public class GameServerManagerCalety : GameServerManager {
         }
     }    
 
-    private void Connection_Update() {     
-        // Check that a connection check is not already being performed   
-        if (Connection_IsCheckEnabled() && !m_connectionIsBeingChecked) {            
-            m_connectionTimeLeftToPing -= Time.unscaledDeltaTime;
+    private void Connection_Update() {
+        if (FeatureSettingsManager.instance.IsAutomaticReloginEnabled()) {            
+            if (m_connectionIsReady) {
+                // System ready
+                // Check that a connection check is not already being performed   
+                if (Connection_IsCheckEnabled() && !m_connectionIsBeingChecked) {
+                    m_connectionTimeLeftToPing -= Time.unscaledDeltaTime;
 
-            // Time's up
-            if (m_connectionTimeLeftToPing < 0f) {
-                m_connectionIsBeingChecked = true;
+                    // Time's up
+                    if (m_connectionTimeLeftToPing < 0f) {
+                        m_connectionIsBeingChecked = true;
 
-                // Checks connection
-                CheckConnection(delegate (Error connectionError) {
-                    Connection_ResetTimer();                    
+                        // Checks connection
+                        CheckConnection(delegate (Error connectionError) {
+                            Connection_ResetTimer();
 
-                    if (connectionError == null) {
-                        Action onSyncDone = delegate () {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("Sync done after recovering from network failure");
-                            m_connectionIsBeingChecked = false;
-                        };
+                            if (connectionError == null) {
+                                Action onSyncDone = delegate () {
+                                    if (FeatureSettingsManager.IsDebugEnabled)
+                                        Log("Sync done after recovering from network failure");
+                                    m_connectionIsBeingChecked = false;
+                                };
 
-                        // Checks if a connection is being checked again because it might have been reseted because the game was restarted. 
-                        // If that's the case then we don't need to sync because the game already performs a sync when starting                        
-                        if (Connection_IsCheckEnabled() && Connection_NeedsToRelogin()) {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("Sync_FromReconnecting...");
+                                // Checks if a connection is being checked again because it might have been reseted because the game was restarted. 
+                                // If that's the case then we don't need to sync because the game already performs a sync when starting                        
+                                if (Connection_IsCheckEnabled() && Connection_NeedsToRelogin()) {
+                                    if (FeatureSettingsManager.IsDebugEnabled)
+                                        Log("Sync_FromReconnecting...");
 
-                            // There's connection so it tries to relogin
-                            PersistenceFacade.instance.Sync_FromReconnecting(onSyncDone);
-                        } else {
-                            onSyncDone();
-                        }
+                                    // There's connection so it tries to relogin
+                                    PersistenceFacade.instance.Sync_FromReconnecting(onSyncDone);
+                                } else {
+                                    onSyncDone();
+                                }
 
-                    } else {
-                        m_connectionIsBeingChecked = false;
-                    }                    
-                });
+                            } else {
+                                m_connectionIsBeingChecked = false;
+                            }
+                        });
+                    }
+                }
+            } else {
+                // System is not ready: Waiting for content to be ready
+                if (ContentManager.m_ready) {
+                    Connection_ResetTimer();
+                    m_connectionIsReady = true;
+                }
             }
-        }
+        }          
     }
 
     private bool Connection_NeedsToRelogin() {        
