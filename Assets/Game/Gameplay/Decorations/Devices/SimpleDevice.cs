@@ -29,7 +29,7 @@ public class SimpleDevice : Initializable {
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
-	private void OnEnable() {
+	protected virtual void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
@@ -38,7 +38,7 @@ public class SimpleDevice : Initializable {
 	/// <summary>
 	/// Component disabled.
 	/// </summary>
-	private void OnDisable() {
+	protected virtual void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
