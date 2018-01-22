@@ -68,8 +68,11 @@ public class FeatureSettings
     // This key decides the quality level used in the particles manager
     public const string KEY_PARTICLES = "particles";
 
-	// This key decides the quality level used in the particles manager
-	public const string MAX_ZOOM_COST = "max_zoom_cost";
+    // This key decides whether or not the feedback particles (score spawned when eating,...) are enabled
+    public const string KEY_PARTICLES_FEEDBACK = "particlesFeedback";
+
+    // This key decides the quality level used in the particles manager
+    public const string MAX_ZOOM_COST = "max_zoom_cost";
 
     // This key decides the resolution factor, screen size is multiplied by this float value
     public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
@@ -190,8 +193,13 @@ public class FeatureSettings
 			data = new DataInt(key, EValueType.Level5, (int)ELevel5Values.mid);
 			Datas.Add(key, data);
 
-			// zoom
-			key = MAX_ZOOM_COST;
+            // particles feedback
+            key = KEY_PARTICLES_FEEDBACK;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // zoom
+            key = MAX_ZOOM_COST;
 			data = new DataInt(key, EValueType.Int, 3);
 			Datas.Add(key, data);
 

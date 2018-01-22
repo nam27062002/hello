@@ -96,14 +96,19 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		#if PRINT_POOLS						
 		m_printTimer -= Time.deltaTime;
 		if (m_printTimer <= 0f) {
-			string fileName = "PM_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
-			StreamWriter sw = new StreamWriter(fileName, false);
-			sw.WriteLine("<Definitions>");
-			foreach (KeyValuePair<string, PoolContainer> pair in m_pools) {
-				sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.pool.Size() + "\"/>");
+			if (LevelManager.currentLevelData != null) {
+				string fileName = "PM_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
+				using (StreamWriter sw = new StreamWriter(fileName, false)) {
+					sw.WriteLine("<Definitions>");
+					foreach (KeyValuePair<string, PoolContainer> pair in m_pools) {
+						if (pair.Value.pool != null) {
+							sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.pool.Size() + "\"/>");
+						}
+					}
+					sw.WriteLine("</Definitions>");
+					sw.Close();
+				}
 			}
-			sw.WriteLine("</Definitions>");
-			sw.Close();
 			m_printTimer = 10f;
 		}
 		#endif
@@ -211,15 +216,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		}
 	}
 
-	private ParticleHandler __CreatePool(string _prefabName, string _folderPath) {
-		if (string.IsNullOrEmpty(_prefabName)) {
+	private ParticleHandler __CreatePool(string _prefabName, string _folderPath) {        
+        if (string.IsNullOrEmpty(_prefabName)) {
 			return null;
 		} else {
 			PoolContainer container = null;
 
 			if (m_pools.ContainsKey(_prefabName)) {
 				container = m_pools[_prefabName];
-				if ( container.size <= 0 )
+				if ( container.size < 0 )
 					container.size = 1;
 			} else {
 				container = new PoolContainer();

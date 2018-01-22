@@ -987,6 +987,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 						}break;
 					}
 				}
+
+				m_externalForce = GameConstants.Vector3.zero;	// Avoid building up external force!
 			}break;
 			case State.ChangingArea:
 			{
