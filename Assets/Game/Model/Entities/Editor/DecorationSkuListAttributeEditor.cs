@@ -39,6 +39,8 @@ public class DecorationSkuListAttributeEditor : ExtendedPropertyDrawer {
 	/// <param name="_property">The property we're drawing.</param>
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
+		m_targetProperty = _property;
+
 		// Check field type
 		if(_property.propertyType != SerializedPropertyType.String) {
 			m_pos.height = EditorStyles.largeLabel.lineHeight;
@@ -97,14 +99,14 @@ public class DecorationSkuListAttributeEditor : ExtendedPropertyDrawer {
 					}
 				}
 			}
+			OnSkuSelected(selectedIdx);
 		}
 		
 		// Display the property
 		// Show button using the popup style with the current value
 		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
 		Rect contentPos = EditorGUI.PrefixLabel(m_pos, _label);
-		if(GUI.Button(contentPos, m_skus[selectedIdx], EditorStyles.popup)) {
-			m_targetProperty = _property;
+		if(GUI.Button(contentPos, m_skus[selectedIdx], EditorStyles.popup)) {			
 			SelectionPopupWindow.Show(m_skus.ToArray(), OnSkuSelected);
 		}
 
@@ -117,14 +119,16 @@ public class DecorationSkuListAttributeEditor : ExtendedPropertyDrawer {
 	/// </summary>
 	/// <param name="_selectedIdx">The index of the newly selected option.</param>
 	private void OnSkuSelected(int _selectedIdx) {
-		// Store new value - "NONE" will be stored as "" when allowed
-		DecorationSkuListAttribute attr = attribute as DecorationSkuListAttribute;
-		if(attr.m_allowNullValue && _selectedIdx == 0) {
-			m_targetProperty.stringValue = "";
-		} else {
-			m_targetProperty.stringValue = m_skus[_selectedIdx];	// Options array match the definition skus, so no need to do anything else :)
+		if (m_targetProperty != null) {
+			// Store new value - "NONE" will be stored as "" when allowed
+			DecorationSkuListAttribute attr = attribute as DecorationSkuListAttribute;
+			if(attr.m_allowNullValue && _selectedIdx == 0) {
+				m_targetProperty.stringValue = "";
+			} else {
+				m_targetProperty.stringValue = m_skus[_selectedIdx];	// Options array match the definition skus, so no need to do anything else :)
+			}
+			m_targetProperty.serializedObject.ApplyModifiedProperties();
 		}
-		m_targetProperty.serializedObject.ApplyModifiedProperties();
 	}
 }
 

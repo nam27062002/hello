@@ -156,12 +156,7 @@ public class GameStoreManagerCalety : GameStoreManager
     		}
     	}
 #endif
-    }
-
-    public override bool AppWasDownloadedFromStore()
-	{
-		return StoreManager.SharedInstance.AppWasDownloadedFromStore();
-	}
+    }		   
 
     IEnumerator SimulatePurchase( string _sku)
     {
