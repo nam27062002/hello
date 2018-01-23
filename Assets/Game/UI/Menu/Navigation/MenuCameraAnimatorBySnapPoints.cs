@@ -33,7 +33,16 @@ public class MenuCameraAnimatorBySnapPoints : MonoBehaviour {
 	// Animation Setup
 	[Space()]
 	[SerializeField] private float m_tweenDuration = 0.25f;
+	public float tweenDuration {
+		get { return m_tweenDuration; }
+		set { m_tweenDuration = value; }
+	}
+
 	[SerializeField] private Ease m_tweenEase = Ease.InOutQuad;
+	public Ease tweenEase {
+		get { return m_tweenEase; }
+		set { m_tweenEase = value; }
+	}
 
 	// Logic
 	[Space()]

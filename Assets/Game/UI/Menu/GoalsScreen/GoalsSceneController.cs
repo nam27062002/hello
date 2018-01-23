@@ -136,6 +136,8 @@ public class GoalsSceneController : MonoBehaviour {
 		MenuScreensController screensController = InstanceManager.menuSceneController.screensController;
 		if(screensController.currentScreenIdx == (int)MenuScreens.GOALS) {
 			// Animate camera to target snap point
+			// Make sure animation duration is updated
+			cameraAnimator.tweenDuration = UIConstants.menuCameraTransitionDuration;
 			cameraAnimator.SnapTo(_data.toScreenIdx);
 		} else {
 			// Set target snap point as the current one for the goals screen

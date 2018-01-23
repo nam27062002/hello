@@ -46,9 +46,6 @@ public class MenuScreensController : NavigationScreenSystem {
 	// Exposed
 	// There should always be one entry per screen, value can be null
 	[Space]
-	[SerializeField] private float m_cameraTransitionDuration = 0.5f;
-
-	[Space]
 	[SerializeField] private MenuScreenScene[] m_scenes = new MenuScreenScene[(int)MenuScreens.COUNT];
 	public MenuScreenScene[] scenes {
 		get { return m_scenes; }
@@ -212,7 +209,7 @@ public class MenuScreensController : NavigationScreenSystem {
 			// Perform camera transition!
 			// Camera snap point makes it easy for us! ^_^
 			TweenParams tweenParams = new TweenParams().SetEase(Ease.InOutCubic);
-			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, m_cameraTransitionDuration, tweenParams, OnCameraTweenCompleted);
+			targetSnapPoint.TweenTo(InstanceManager.sceneController.mainCamera, UIConstants.menuCameraTransitionDuration, tweenParams, OnCameraTweenCompleted);
 
 			// Lock input to prevent weird flow cases when interrupting a screen transition
 			// See https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-620
