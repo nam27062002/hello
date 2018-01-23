@@ -2,6 +2,8 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+
 
 /// <summary>
 /// This class is responsible for handling the column dedicated to the spawner tool in the control panel
@@ -913,10 +915,24 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
         else
         {
+            
             for (int c = 0; c < renderer.Count; c++)
             {
                 if (c < m_oldQueues.Length && m_oldQueues[c].oldQueue != -1)
                 {
+/*
+                    Material mat = renderer[c].material;
+
+                    if (mat.name.Contains("(Instance)"))
+                    {
+                        using (StreamWriter sw = new StreamWriter("Instancelog.log", true))
+                        {
+                            sw.WriteLine(mat.name);
+                            sw.Close();
+                        }
+
+                    }
+*/
                     if (m_oldQueues[c].isNPC)
                     {
                         renderer[c].material.renderQueue = 1000;
