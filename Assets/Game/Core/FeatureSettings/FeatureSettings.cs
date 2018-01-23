@@ -91,7 +91,13 @@ public class FeatureSettings
 
     public const string KEY_CONTENT_DELTAS = "contentDeltas";
 
-    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";    
+    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
+
+    // Whether or not automatic relogin is enabled (this features tries to login to our server and to the cloud if network is up)
+    public const string KEY_AUTOMATIC_RELOGIN = "automaticRelogin";
+
+    // Period in seconds between two automatic relogin checks
+    public const string KEY_AUTOMATIC_RELOGIN_PERIOD = "automaticReloginPeriod";
 
     // Examples of how to use different type datas
     /*
@@ -236,7 +242,15 @@ public class FeatureSettings
             // Content deltas need to be cached. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS_CACHED;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
-            Datas.Add(key, data);            
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN_PERIOD;
+            data = new DataInt(key, EValueType.Int, 60);
+            Datas.Add(key, data);
 
             /*
             // intTest

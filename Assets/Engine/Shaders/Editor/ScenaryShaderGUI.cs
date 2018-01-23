@@ -252,6 +252,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 ///                material.renderQueue = 2000;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 material.DisableKeyword("CUTOFF");
+                material.EnableKeyword("OPAQUEALPHA");
                 Debug.Log("Blend mode opaque");
                 break;
 
@@ -263,6 +264,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetFloat("_ZWrite", 0.0f);
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.DisableKeyword("CUTOFF");
+                material.DisableKeyword("OPAQUEALPHA");
                 Debug.Log("Blend mode transparent");
                 break;
 
@@ -274,6 +276,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 //                material.renderQueue = 2500;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.EnableKeyword("CUTOFF");
+                material.EnableKeyword("OPAQUEALPHA");
 
                 Debug.Log("Blend mode cutout");
                 break;
@@ -491,6 +494,45 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         Debug.Log(sChanged + " materials changed");
     }
+
+
+    /// <summary>
+    /// Seek for all transparent scenary standard materials and disable keyword OPAQUEALPHA
+    /// </summary>
+    [MenuItem("Tools/Scenary/disable OPAQUEALPHA in transparent materials")]
+    public static void DisableOPAQUEALPHAinTransparent()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+            // UnlitShadowLightmap.shader
+            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
+            {
+                int blendMode = (int)mat.GetFloat("_BlendMode");
+
+                if (blendMode == 1 && mat.IsKeywordEnabled("OPAQUEALPHA"))
+                {
+                    mat.DisableKeyword("OPAQUEALPHA");
+                    sChanged++;
+                }
+            }
+        }
+
+        Debug.Log(sChanged + " materials changed");
+    }
+
+
 
 
 
