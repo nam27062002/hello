@@ -11,6 +11,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	
 
 	private static Material sm_goldenMaterial = null;
+	private static Material sm_goldenFreezeMaterial = null;
 	private static ulong sm_id = 0;
 
     public static float FREEZE_TIME = 1.0f;
@@ -33,6 +34,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	{
 		NORMAL,
 		GOLD,
+		GOLD_FREEZE,
 		FREEZE,
 		NONE
 	}
@@ -203,6 +205,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		sm_id++;
 		//----------------------------
 		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_Golden") as Material);
+		if (sm_goldenFreezeMaterial == null) sm_goldenFreezeMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenFreeze") as Material);
 		//---------------------------- 
 
 		m_entity = GetComponent<Entity>();
@@ -541,7 +544,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			Material[] materials = m_renderers[i].sharedMaterials;
 			for (int m = 0; m < materials.Length; m++) {
 				switch (_type) {
-					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  		 break;
+					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  		break;
+					case MaterialType.GOLD_FREEZE: 	materials[m] = sm_goldenFreezeMaterial;  	break;
 					case MaterialType.FREEZE:	materials[m] = m_materialsFrozen[id][m]; break;						
 					case MaterialType.NORMAL: {
 							Material mat = m_materials[id][m]; 
@@ -597,11 +601,17 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if (IsBurnableByPlayer(_type)) {	
 				matType = MaterialType.GOLD;
 			}
-		} else {
-			if (m_freezingLevel > 0) {
+		}
+
+		// Check Freezing
+		if (m_freezingLevel > 0) {
+			if ( matType == MaterialType.GOLD ){
+				matType = MaterialType.GOLD_FREEZE;
+			}else{
 				matType = MaterialType.FREEZE;
 			}
 		}
+		
 		return matType;
 	}
 
@@ -645,11 +655,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
         if (m_freezingLevel > 0) {
 			m_wasFreezing = true;
-            SetMaterialType(MaterialType.FREEZE);
-        } else if (m_wasFreezing) {
 			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
 			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
-        	m_wasFreezing = false;
+        } else if (m_wasFreezing) {
+			m_wasFreezing = false;
+			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
         }
 
 		if (m_damageFeedbackTimer > 0f) {
