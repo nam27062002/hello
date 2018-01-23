@@ -24,6 +24,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[SerializeField] private GameObject m_googlePlayLoginButton = null;
 	[SerializeField] private GameObject m_googlePlayLogoutButton = null;
 	[SerializeField] private Button m_googlePlayAchievementsButton = null;
+	[Space]
+	[SerializeField] private GameObject m_gameCenterGroup = null;
 
 #if UNITY_ANDROID
 	const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
@@ -77,8 +79,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		m_googlePlayGroup.SetActive(true);
 		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 #else
-		m_googlePlayGroup.SetActive(false);	// [AOC] TODO!!
+		m_googlePlayGroup.SetActive(false);
 #endif
+
+		// Do the same for the GameCenter group!
+		m_gameCenterGroup.SetActive(Application.platform == RuntimePlatform.IPhonePlayer);
     }
 
     void OnDestroy(){
@@ -236,4 +241,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 	}
 
+	public void OnGameCenterButton() {
+		// Black magic from Calety xD
+		GameCenterManager.SharedInstance.LaunchGameCenterApp();
+	}
 }
