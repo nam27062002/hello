@@ -110,6 +110,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	//-----------------------------------------------
 	protected Entity m_entity;
 	protected Animator m_animator;
+	protected float m_animatorSpeed;
 	protected bool m_isAnimatorAvailable;
 	protected float m_disableAnimatorTimer;
 
@@ -435,10 +436,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_damageFeedbackTimer = 0f;
 
 		m_disableAnimatorTimer = 0f;
+		m_animatorSpeed = 1f;
 		if (m_isAnimatorAvailable) {
-			
 			m_animator.enabled = true;
-			m_animator.speed = 1f;
+			m_animator.speed = m_animatorSpeed;
 		}
 
 		if (m_entity != null) {			
@@ -621,6 +622,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			}
 
 			if (m_animator.enabled) {
+
+				m_animator.speed = m_animatorSpeed *  Mathf.Max(0.25f,  1f-m_freezingLevel);
+				
 				if (m_hasNavigationLayer) {
 					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, Time.deltaTime, 0.2f);
 					m_animator.SetFloat(GameConstants.Animator.DIR_X , m_currentBlendX);
@@ -774,7 +778,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Move(float _speed) {
 		if (m_isAnimatorAvailable) {
 			if (m_panic || m_falling) {			
-				m_animator.speed = 1f;
+				m_animatorSpeed = 1;
 				return;
 			}
 
@@ -800,10 +804,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				m_moving = true;
 
 				m_animator.SetFloat(GameConstants.Animator.SPEED, blendFactor);
-				m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
+				m_animatorSpeed = Mathf.Lerp(m_animatorSpeed, animSpeedFactor, Time.deltaTime * 2f);
+				// m_animator.speed = 
 			} else {
 				m_moving = false;
-				m_animator.speed = Mathf.Lerp(m_animator.speed, 1f, Time.deltaTime * 2f);
+				m_animatorSpeed = Mathf.Lerp(m_animatorSpeed, 1f, Time.deltaTime * 2f);
 			}
 		}
 	}
@@ -860,7 +865,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				// lets buuurn!!!
 				// will we have a special animation when burning?
 				if (m_isAnimatorAvailable)
-					m_animator.speed = 0f;
+					m_animatorSpeed = 0f;
 			} else {
 				if ( _panic ){
 					if ( !string.IsNullOrEmpty(m_onPanicAudio) )
@@ -901,7 +906,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if (m_falling != _falling) {
 			m_falling = _falling;
 			if (m_isAnimatorAvailable) {
-				m_animator.speed = 1f;
+				m_animatorSpeed = 1;
 				m_animator.SetBool(GameConstants.Animator.FALLING, _falling);
 			}
 		}
@@ -911,7 +916,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if (m_jumping != _jumping) {
 			m_jumping = _jumping;
 			if (m_isAnimatorAvailable) {
-				m_animator.speed = 1f;
+				m_animatorSpeed = 1f;
 				m_animator.SetBool(GameConstants.Animator.JUMP, _jumping);
 			}
 		}
@@ -1108,7 +1113,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 
 		if (m_isAnimatorAvailable) {
-			m_animator.speed = 1f;
+			m_animatorSpeed = 1f;
 			m_animator.SetTrigger(GameConstants.Animator.BURN);
 			m_disableAnimatorTimer = _burnAnimSeconds + 0.1f;
 		} else {
@@ -1135,6 +1140,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 	}
 
+	/// <summary>
+	/// Freezing the specified freezeLevel. 0 -> no freezing, 1 -> completely frozen
+	/// </summary>
+	/// <param name="freezeLevel">Freeze level.</param>
 	public void Freezing( float freezeLevel ){
 		m_freezingLevel = freezeLevel;
 	}
