@@ -131,6 +131,26 @@ public class Catapult : SimpleDevice {
 		m_state = State.Reload;
 	}
 
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	protected override void OnEnable() {
+		base.OnEnable();
+
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	protected override void OnDisable() {
+		base.OnDisable();
+
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+	}
+
 	// Update is called once per frame
 	protected override void ExtendedUpdate() {	
 		if (m_state == State.Loaded) {
@@ -305,6 +325,11 @@ public class Catapult : SimpleDevice {
 		}
 
 		return false;
+	}
+
+
+	private void OnAreaExit() {
+		m_animator.StopPlayback();
 	}
 
 

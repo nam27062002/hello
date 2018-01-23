@@ -126,10 +126,12 @@ public class GameServerManager
         }
     }
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public void CheckConnection(Action<Error> callback)
+    public virtual void Reset() {}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void CheckConnection(Action<Error> callback)
 	{
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
@@ -146,9 +148,13 @@ public class GameServerManager
         }        
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC SERVER MANAGEMENT											  //
-	//------------------------------------------------------------------------//
+	public virtual void OnConnectionLost() {}
+
+    public virtual void Connection_SetIsCheckEnabled(bool value) {}
+
+    //------------------------------------------------------------------------//
+    // GENERIC SERVER MANAGEMENT											  //
+    //------------------------------------------------------------------------//
     protected virtual void ExtendedConfigure() {}    
 	public virtual void Ping(ServerCallback callback) {}
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
@@ -187,15 +193,16 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     public virtual void Auth(ServerCallback callback) {}        
 	public virtual void LogOut() {}
-    public virtual bool IsLoggedIn() { return false; }    
+    public virtual bool IsLoggedIn() { return false; }
+    public virtual void OnLogOut() {}    
 
     //------------------------------------------------------------------------//
     // CUSTOMIZER															  //
     //------------------------------------------------------------------------//
 
-    //------------------------------------------------------------------------//
-    // PERSISTENCE															  //
-    //------------------------------------------------------------------------//
+        //------------------------------------------------------------------------//
+        // PERSISTENCE															  //
+        //------------------------------------------------------------------------//
     public virtual void GetPersistence(ServerCallback callback) {}
     public virtual void SetPersistence(string persistence, ServerCallback callback) {}
 	public virtual void UpdateSaveVersion(bool prelimUpdate, ServerCallback callback) {}
@@ -255,13 +262,11 @@ public class GameServerManager
 
 	//------------------------------------------------------------------------//
 	// DEBUG ONLY															  //
-	//------------------------------------------------------------------------//
-	#if UNITY_EDITOR
+	//------------------------------------------------------------------------//	
 	/// <summary>
 	/// Update frame.
 	/// </summary>
 	public virtual void Update() {
 		;	// Put a breakpoint in here to peek what the GameServerManager is doing
-	}
-	#endif
+	}	
 }
