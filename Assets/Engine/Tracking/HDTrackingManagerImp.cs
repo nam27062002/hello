@@ -264,17 +264,15 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	private void InitDNA(CaletySettings settingsInstance)
 	{
-        string clientVersion = settingsInstance.GetClientBuildVersion();
+        string clientVersion = GameSettings.internalVersion.ToString();
 
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
 #if !UNITY_EDITOR
 		if (settingsInstance != null)
 		{
 		string strDNAGameVersion = "UAT";
-		UbimobileToolkit.UbiservicesEnvironment kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.UAT;
 		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-		{
-            kDNAEnvironment = UbimobileToolkit.UbiservicesEnvironment.PROD;
+		{            
 		    strDNAGameVersion = "Full";
             clientVersion += "_PROD";
 		}
@@ -285,9 +283,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 		List<string> kDNACachedEventIDs = TrackingManager.SharedInstance.GetEventIDsByAPI (TrackingManager.ETrackAPIs.E_TRACK_API_DNA, kEventNameFilters);
 
 #if UNITY_ANDROID
-		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", clientVersion, strDNAGameVersion, kDNACachedEventIDs);
 #elif UNITY_IOS
-		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", clientVersion, strDNAGameVersion, kDNAEnvironment, kDNACachedEventIDs);
+		DNAManager.SharedInstance.Initialise ("42cbdf99-63e7-4e80-aae3-d05b9533349e", clientVersion, strDNAGameVersion, kDNACachedEventIDs);
 #endif
 		}
 #endif
@@ -1024,13 +1022,22 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
             Track_AddParamLanguage(e);
             Track_AddParamUserTimezone(e);
-            Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, GameStoreManager.SharedInstance.AppWasDownloadedFromStore());
+			Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
 
 			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
             Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
             Track_SendEvent(e);            
-        }        
+        }
+
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
+        if (e != null)
+        {
+            string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
+            Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
+
+            Track_SendEvent(e);
+        }
     }    
 
     private void Track_ApplicationEndEvent(string stopCause)
@@ -1822,6 +1829,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE              = "userTime<one";
+    private const string TRACK_PARAM_VERSION_REVISION           = "versionRevision";
     private const string TRACK_PARAM_XP                         = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";
 

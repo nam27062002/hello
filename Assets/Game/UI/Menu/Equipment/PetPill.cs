@@ -118,6 +118,11 @@ public class PetPill : MonoBehaviour {
 		get { return m_special; }
 	}
 
+	private DefinitionNode m_seasonDef = null;	// If it's a seasonal pet, store its target season
+	public DefinitionNode seasonDef {
+		get { return m_seasonDef; }
+	}
+
 	private DragonData m_dragonData = null;
 
 	// Events
@@ -225,12 +230,13 @@ public class PetPill : MonoBehaviour {
 		string targetSeason = _petDef.GetAsString("associatedSeason", SeasonManager.NO_SEASON_SKU);
 		if(targetSeason == SeasonManager.NO_SEASON_SKU) {
 			// Default season: Don't show icon
+			m_seasonDef = null;
 			m_seasonalIconRoot.SetActive(false);
 		} else {
 			// Custome season: Show icon
-			DefinitionNode seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, targetSeason);
+			m_seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, targetSeason);
 			m_seasonalIconRoot.SetActive(true);
-			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + seasonDef.Get("icon"));
+			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
 		}
 
 		// Refresh contextual elements

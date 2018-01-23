@@ -11,7 +11,7 @@ using UnityEngine.Serialization;
 
 public class AutoParenter : MonoBehaviour {
 	
-	[SerializeField] private string m_parentName;
+	[SerializeField] private string m_parentName = "";
 	public string parentName
 	{
 		get{ return m_parentName; }
@@ -27,12 +27,7 @@ public class AutoParenter : MonoBehaviour {
 	void Awake() {
 		if (!string.IsNullOrEmpty(m_parentName)) {
 			Transform t = transform;
-			Transform p;
-			if (m_parentRoot == null)
-				p = t.parent.FindTransformRecursive(m_parentName);
-			else
-				p = m_parentRoot.FindTransformRecursive(m_parentName);
-
+			Transform p = GetNewParent();
 			if (p == null) {
                 string parentObjName = t.name;
 				Debug.LogWarning(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
@@ -48,17 +43,24 @@ public class AutoParenter : MonoBehaviour {
 	{
 		if (!string.IsNullOrEmpty(parentName)) {
 			Transform t = transform;
-			Transform p;
-			if (parentRoot == null)
-				p = t.parent.FindTransformRecursive(parentName);
-			else
-				p = parentRoot.FindTransformRecursive(parentName);
-
+			Transform p = GetNewParent();
 			if (p != null) {
 				t.position = p.position;
 				t.rotation = p.rotation;
 			} 
 		}
+	}
+
+	private Transform GetNewParent() {
+		Transform p = null;
+		if(m_parentRoot == null) {
+			p = this.transform.parent.FindTransformRecursive(m_parentName);
+		} else if(string.IsNullOrEmpty(m_parentName)) {
+			p = m_parentRoot;
+		} else {
+			p = m_parentRoot.FindTransformRecursive(m_parentName);
+		}
+		return p;
 	}
 
 

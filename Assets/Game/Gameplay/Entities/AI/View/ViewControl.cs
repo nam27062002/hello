@@ -11,6 +11,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	
 
 	private static Material sm_goldenMaterial = null;
+	private static Material sm_goldenFreezeMaterial = null;
 	private static ulong sm_id = 0;
 
     public static float FREEZE_TIME = 1.0f;
@@ -33,6 +34,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	{
 		NORMAL,
 		GOLD,
+		GOLD_FREEZE,
 		FREEZE,
 		NONE
 	}
@@ -110,6 +112,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	//-----------------------------------------------
 	protected Entity m_entity;
 	protected Animator m_animator;
+	protected float m_animatorSpeed;
 	protected bool m_isAnimatorAvailable;
 	protected float m_disableAnimatorTimer;
 
@@ -202,6 +205,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		sm_id++;
 		//----------------------------
 		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_Golden") as Material);
+		if (sm_goldenFreezeMaterial == null) sm_goldenFreezeMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenFreeze") as Material);
 		//---------------------------- 
 
 		m_entity = GetComponent<Entity>();
@@ -435,10 +439,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_damageFeedbackTimer = 0f;
 
 		m_disableAnimatorTimer = 0f;
+		m_animatorSpeed = 1f;
 		if (m_isAnimatorAvailable) {
-			
 			m_animator.enabled = true;
-			m_animator.speed = 1f;
+			m_animator.speed = m_animatorSpeed;
 		}
 
 		if (m_entity != null) {			
@@ -540,7 +544,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			Material[] materials = m_renderers[i].sharedMaterials;
 			for (int m = 0; m < materials.Length; m++) {
 				switch (_type) {
-					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  		 break;
+					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  		break;
+					case MaterialType.GOLD_FREEZE: 	materials[m] = sm_goldenFreezeMaterial;  	break;
 					case MaterialType.FREEZE:	materials[m] = m_materialsFrozen[id][m]; break;						
 					case MaterialType.NORMAL: {
 							Material mat = m_materials[id][m]; 
@@ -596,11 +601,17 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			if (IsBurnableByPlayer(_type)) {	
 				matType = MaterialType.GOLD;
 			}
-		} else {
-			if (m_freezingLevel > 0) {
+		}
+
+		// Check Freezing
+		if (m_freezingLevel > 0) {
+			if ( matType == MaterialType.GOLD ){
+				matType = MaterialType.GOLD_FREEZE;
+			}else{
 				matType = MaterialType.FREEZE;
 			}
 		}
+		
 		return matType;
 	}
 
@@ -621,6 +632,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			}
 
 			if (m_animator.enabled) {
+
+				m_animator.speed = m_animatorSpeed *  Mathf.Max(0.25f,  1f-m_freezingLevel);
+				
 				if (m_hasNavigationLayer) {
 					m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, Time.deltaTime, 0.2f);
 					m_animator.SetFloat(GameConstants.Animator.DIR_X , m_currentBlendX);
@@ -641,11 +655,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
         if (m_freezingLevel > 0) {
 			m_wasFreezing = true;
-            SetMaterialType(MaterialType.FREEZE);
-        } else if (m_wasFreezing) {
 			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
 			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
-        	m_wasFreezing = false;
+        } else if (m_wasFreezing) {
+			m_wasFreezing = false;
+			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
         }
 
 		if (m_damageFeedbackTimer > 0f) {
@@ -774,7 +789,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void Move(float _speed) {
 		if (m_isAnimatorAvailable) {
 			if (m_panic || m_falling) {			
-				m_animator.speed = 1f;
+				m_animatorSpeed = 1;
 				return;
 			}
 
@@ -800,10 +815,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				m_moving = true;
 
 				m_animator.SetFloat(GameConstants.Animator.SPEED, blendFactor);
-				m_animator.speed = Mathf.Lerp(m_animator.speed, animSpeedFactor, Time.deltaTime * 2f);
+				m_animatorSpeed = Mathf.Lerp(m_animatorSpeed, animSpeedFactor, Time.deltaTime * 2f);
+				// m_animator.speed = 
 			} else {
 				m_moving = false;
-				m_animator.speed = Mathf.Lerp(m_animator.speed, 1f, Time.deltaTime * 2f);
+				m_animatorSpeed = Mathf.Lerp(m_animatorSpeed, 1f, Time.deltaTime * 2f);
 			}
 		}
 	}
@@ -860,7 +876,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				// lets buuurn!!!
 				// will we have a special animation when burning?
 				if (m_isAnimatorAvailable)
-					m_animator.speed = 0f;
+					m_animatorSpeed = 0f;
 			} else {
 				if ( _panic ){
 					if ( !string.IsNullOrEmpty(m_onPanicAudio) )
@@ -901,7 +917,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if (m_falling != _falling) {
 			m_falling = _falling;
 			if (m_isAnimatorAvailable) {
-				m_animator.speed = 1f;
+				m_animatorSpeed = 1;
 				m_animator.SetBool(GameConstants.Animator.FALLING, _falling);
 			}
 		}
@@ -911,7 +927,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if (m_jumping != _jumping) {
 			m_jumping = _jumping;
 			if (m_isAnimatorAvailable) {
-				m_animator.speed = 1f;
+				m_animatorSpeed = 1f;
 				m_animator.SetBool(GameConstants.Animator.JUMP, _jumping);
 			}
 		}
@@ -1108,7 +1124,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 
 		if (m_isAnimatorAvailable) {
-			m_animator.speed = 1f;
+			m_animatorSpeed = 1f;
 			m_animator.SetTrigger(GameConstants.Animator.BURN);
 			m_disableAnimatorTimer = _burnAnimSeconds + 0.1f;
 		} else {
@@ -1135,6 +1151,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 	}
 
+	/// <summary>
+	/// Freezing the specified freezeLevel. 0 -> no freezing, 1 -> completely frozen
+	/// </summary>
+	/// <param name="freezeLevel">Freeze level.</param>
 	public void Freezing( float freezeLevel ){
 		m_freezingLevel = freezeLevel;
 	}
