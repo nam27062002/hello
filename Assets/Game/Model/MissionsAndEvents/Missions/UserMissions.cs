@@ -159,9 +159,6 @@ public class UserMissions {
 			if(m_missions[i] != null) typesToIgnore.Add(m_missions[i].typeDef.sku);
 		}
 
-		// Terminate any mission at the requested slot
-		ClearMission(_difficulty);
-
 		// Aux vars
 		DefinitionNode selectedTypeDef = null;
 		DefinitionNode selectedMissionDef = null;
@@ -272,24 +269,41 @@ public class UserMissions {
 		}
 		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
 
-		// 5. Compute target value based on mission min/max range
-		targetValue = UnityEngine.Random.Range(
-			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin"),
-			selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax")
-		);
-		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + selectedMissionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
+		// 6. All ready! Generate the mission!
+		return GenerateNewMission(_difficulty, selectedMissionDef, selectedTypeDef, DragonManager.biggestOwnedDragon.def.sku, singleRun);
+	}
 
-		// 6. Compute and apply modifiers to the target value
+	/// <summary>
+	/// Create a new mission with the given parameters.
+	/// A new target value will be computed based on algorithm factors.
+	/// If a mission already exists at the given difficulty slot, it will be immediately terminated.
+	/// </summary>
+	/// <returns>The newly created mission.</returns>
+	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
+	/// <param name="_missionDef">The mission to be generated.</param>
+	/// <param name="_missionDef">The type of the mission to be generated.</param>
+	/// <param name="_dragonModifierSku">The dragon to be used as modifier (biggest owned dragon).</param>
+	/// <param name="_singleRun">Single run mission?</param>
+	private Mission GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, string _dragonModifierSku, bool _singleRun) {
+		// 1. Compute target value based on mission min/max range
+		float targetValue = 0f;
+		targetValue = UnityEngine.Random.Range(
+			_missionDef.GetAsFloat("objectiveBaseQuantityMin"),
+			_missionDef.GetAsFloat("objectiveBaseQuantityMax")
+		);
+		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + _missionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + _missionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
+
+		// 2. Compute and apply modifiers to the target value
 		float totalModifier = 0f;
 
-		// 6.1. Dragon modifier - additive
-		DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);	// Matching sku
+		// 2.1. Dragon modifier - additive
+		DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, _dragonModifierSku);	// Matching sku
 		if(dragonModifierDef != null) {
 			totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
 			Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
-		// 6.2. Difficulty modifier - additive
+		// 2.2. Difficulty modifier - additive
 		DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
 		DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
 		if(difficultyModifierDef != null) {
@@ -297,8 +311,8 @@ public class UserMissions {
 			Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
 		}
 
-		// 6.3. Single run modifier - multiplicative
-		if(singleRun) {
+		// 2.3. Single run modifier - multiplicative
+		if(_singleRun) {
 			DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
 			if(singleRunModifierDef != null) {
 				totalModifier *= 1f - singleRunModifierDef.GetAsFloat("quantityModifier");
@@ -306,17 +320,18 @@ public class UserMissions {
 			}
 		}
 
-		// 6.4. Apply modifier and round final value
+		// 2.4. Apply modifier and round final value
 		targetValue = Mathf.Round(targetValue * totalModifier);
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 
-		// 7. We got everything we need! Create the new mission
+		// 3. We got everything we need! Create the new mission
+		ClearMission(_difficulty);	// Terminate any mission at the requested slot first
 		Mission newMission = new Mission();
 		newMission.difficulty = _difficulty;
-		newMission.InitWithParams(selectedMissionDef, selectedTypeDef, targetValue, singleRun);
+		newMission.InitWithParams(_missionDef, _typeDef, targetValue, _singleRun);
 		m_missions[(int)_difficulty] = newMission;
 
-		// Check whether the new mission should be locked or not
+		// Check whether the new mission should be locked or not (deprecated)
 		if(UsersManager.currentUser.GetNumOwnedDragons() < MissionManager.GetDragonsRequiredToUnlockMissionDifficulty(_difficulty)) {
 			newMission.ChangeState(Mission.State.LOCKED);
 		} else {
@@ -377,9 +392,29 @@ public class UserMissions {
 		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED);
 	}
 
-	//------------------------------------------------------------------//
-	// PERSISTENCE														//
-	//------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// DEBUG METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// DEBUG ONLY!
+	/// Create a new mission with the given parameters.
+	/// A new target value will be computed based on algorithm factors.
+	/// If a mission already exists at the given difficulty slot, it will be immediately terminated.
+	/// </summary>
+	/// <returns>The newly created mission.</returns>
+	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
+	/// <param name="_missionDef">The mission to be generated.</param>
+	/// <param name="_missionDef">The type of the mission to be generated.</param>
+	/// <param name="_dragonModifierSku">The dragon to be used as modifier (biggest owned dragon).</param>
+	/// <param name="_singleRun">Single run mission?</param>
+	public Mission DEBUG_GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, string _dragonModifierSku, bool _singleRun) {
+		Debug.Log("<color=green>GENERATING NEW MISSION (DEBUG) " + _difficulty + "</color>");
+		return GenerateNewMission(_difficulty, _missionDef, _typeDef, _dragonModifierSku, _singleRun);
+	}
+
+	//------------------------------------------------------------------------//
+	// PERSISTENCE															  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Load state from a persistence object.
 	/// </summary>
