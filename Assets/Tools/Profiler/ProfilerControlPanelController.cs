@@ -834,6 +834,47 @@ public class ProfilerControlPanelController : MonoBehaviour
         return result.ToArray();
     }
 
+    private Renderer[] getBackgroundRenderers(bool foreground)
+    {
+        List<Renderer> result = new List<Renderer>();
+
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        {
+            UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (foreground)
+            {
+                if (scene.name.Contains("ART") && !scene.name.Contains("ART_Levels_Background_Skies") && !scene.name.Contains("ART_L1_Background_Village") && !scene.name.Contains("ART_L1_Background_Castle") && !scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        for (int c = 0; c < goRoots.Length; c++)
+                        {
+                            result.AddRange(goRoots[c].GetComponentsInChildren<Renderer>(false));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (scene.name.Contains("ART_Levels_Background_Skies") || scene.name.Contains("ART_L1_Background_Village") || scene.name.Contains("ART_L1_Background_Castle") || scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        for (int c = 0; c < goRoots.Length; c++)
+                        {
+                            result.AddRange(goRoots[c].GetComponentsInChildren<Renderer>(false));
+                        }
+                    }
+                }
+            }
+        }
+
+        return result.ToArray();
+    }
+
+
     public void Background_OnBackgroundValueChanged(bool newValue)
     {
         GameObject[] go = getBackgroundGameObjects(false);
@@ -858,7 +899,11 @@ public class ProfilerControlPanelController : MonoBehaviour
         public bool isNPC;
         public int oldQueue;
     };
+
     private QueueBackup[] m_oldQueues = null;
+    private int[] m_backgroundQueues = null;
+    private int[] m_foregroundQueues = null;
+
     public void Queues_OnQueuesValueChanged(bool newValue)
     {
         List<Renderer> renderer = GameObjectExt.FindObjectsOfType<Renderer>(false);
@@ -914,25 +959,11 @@ public class ProfilerControlPanelController : MonoBehaviour
             m_oldQueues = null;
         }
         else
-        {
-            
+        {            
             for (int c = 0; c < renderer.Count; c++)
             {
                 if (c < m_oldQueues.Length && m_oldQueues[c].oldQueue != -1)
                 {
-/*
-                    Material mat = renderer[c].material;
-
-                    if (mat.name.Contains("(Instance)"))
-                    {
-                        using (StreamWriter sw = new StreamWriter("Instancelog.log", true))
-                        {
-                            sw.WriteLine(mat.name);
-                            sw.Close();
-                        }
-
-                    }
-*/
                     if (m_oldQueues[c].isNPC)
                     {
                         renderer[c].material.renderQueue = 1000;
@@ -944,6 +975,77 @@ public class ProfilerControlPanelController : MonoBehaviour
                 }
             }
         }
+
+        renderer.Clear();
+        renderer.AddRange(getBackgroundRenderers(false));
+        if (!newValue)
+        {
+            m_backgroundQueues = new int[renderer.Count];
+        }
+
+        for (int c = 0; c < renderer.Count; c++)
+        {
+            if (newValue)
+            {
+                if (m_backgroundQueues != null)
+                {
+                    renderer[c].material.renderQueue = m_backgroundQueues[c];
+                }
+            }
+            else
+            {
+                m_backgroundQueues[c] = renderer[c].material.renderQueue;
+            }
+        }
+
+        if (newValue)
+        {
+            m_backgroundQueues = null;
+        }
+        else
+        {
+            for (int c = 0; c < renderer.Count; c++)
+            {
+                renderer[c].material.renderQueue = 2500;
+            }
+        }
+
+
+        renderer.Clear();
+        renderer.AddRange(getBackgroundRenderers(true));
+        if (!newValue)
+        {
+            m_foregroundQueues = new int[renderer.Count];
+        }
+
+        for (int c = 0; c < renderer.Count; c++)
+        {
+            if (newValue)
+            {
+                if (m_foregroundQueues != null)
+                {
+                    renderer[c].material.renderQueue = m_foregroundQueues[c];
+                }
+            }
+            else
+            {
+                m_foregroundQueues[c] = renderer[c].material.renderQueue;
+            }
+        }
+
+        if (newValue)
+        {
+            m_foregroundQueues = null;
+        }
+        else
+        {
+            for (int c = 0; c < renderer.Count; c++)
+            {
+                renderer[c].material.renderQueue = 2000;
+            }
+        }
+
+
     }
     #endregion
 }
