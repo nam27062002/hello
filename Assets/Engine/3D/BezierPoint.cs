@@ -104,10 +104,19 @@ public class BezierPoint {
 	public BezierCurve curve {
 		get{ return m_curve; }
 		set {
+			// Nothing to do if same curve
 			if(m_curve == value) return;
+
+			// Remove from previous curve
 			if(m_curve != null) m_curve.RemovePoint(this);
+
+			// Store new curve
 			m_curve = value;
-			m_curve.AddPoint(this);
+
+			// If not on the new curve, add it
+			if(m_curve.GetPointIdx(this) < 0) {
+				m_curve.AddPoint(this);
+			}
 		}
 	}
 
