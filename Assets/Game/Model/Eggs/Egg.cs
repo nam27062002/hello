@@ -198,7 +198,7 @@ public class Egg {
 				Messenger.Broadcast<Egg>(MessengerEvents.EGG_INCUBATION_STARTED, this);
 
 				// Schedule local notification!
-				if(!m_testMode) HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationDuration.TotalSeconds));
+				ScheduleEggNotification();
            	} break;
 
 			// Opening
@@ -217,6 +217,13 @@ public class Egg {
 		// Save persistence
 		// [AOC] A bit of an overkill, try to improve it on the future
 		if(!m_testMode) PersistenceFacade.instance.Save_Request();
+	}
+
+	/// <summary>
+	/// If the egg is incubating it schedules the egg notification.
+	/// </summary>
+	public void ScheduleEggNotification(){
+		if(!m_testMode && m_state == State.INCUBATING) HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationRemaining.TotalSeconds));
 	}
 
 	/// <summary>

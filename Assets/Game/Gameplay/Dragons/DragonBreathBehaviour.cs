@@ -187,11 +187,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		{
 			if (m_isFuryOn) 
 			{
-				m_isFuryOn = false;
-				m_animator.SetBool( GameConstants.Animator.BREATH , false);// Stop fury rush (if active)
-				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
-				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
-				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, Type.None);
+				EndFury( false );
 			}
 		}
 	}
@@ -378,11 +374,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 
-	virtual protected void EndFury() 
+	virtual protected void EndFury( bool increase_mega_fire = true ) 
 	{
 		switch (m_type) {
 			case Type.Standard: {
-				MegaFireUp();
+				if ( increase_mega_fire )
+					MegaFireUp();
 				m_currentFury = 0;
 				m_furyRushesCompleted++;
 

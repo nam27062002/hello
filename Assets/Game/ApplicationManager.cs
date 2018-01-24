@@ -667,7 +667,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Load achievements
 		GameCenterManager.GameCenterItemData[] kAchievementsData = null;
 		Dictionary<string, DefinitionNode> kAchievementSKUs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.ACHIEVEMENTS);
-		if (kAchievementSKUs.Count > 0)
+		if (kAchievementSKUs != null && kAchievementSKUs.Count > 0)
 		{
 			kAchievementsData = new GameCenterManager.GameCenterItemData[kAchievementSKUs.Count];
 			int iSKUIdx = 0;
