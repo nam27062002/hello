@@ -813,11 +813,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_parent: {fileID: 0}
   m_view: {fileID: 137374747960183022}
   m_particleDatas:
   - name: PS_MachineSmoke
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 0, g: 0, b: 0, a: 0}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -851,6 +851,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
 --- !u!114 &114065967011018624
 MonoBehaviour:
@@ -863,11 +864,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_parent: {fileID: 0}
   m_view: {fileID: 137374747960183022}
   m_particleDatas:
   - name: PS_MachineSmoke
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 0, g: 0, b: 0, a: 0}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -901,6 +902,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
 --- !u!114 &114068464316651418
 MonoBehaviour:
@@ -1136,7 +1138,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1170,6 +1171,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 1
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -1178,7 +1180,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1212,11 +1213,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1.25
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1250,6 +1251,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_miner_guardian_dead
   m_firePoints:
@@ -1261,7 +1263,6 @@ MonoBehaviour:
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 1.37, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1295,12 +1296,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 1.37, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1334,6 +1335,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: hd_miner_guardian_dead
   m_explodeWhenBurned: 0
@@ -1422,7 +1424,6 @@ MonoBehaviour:
   m_hitParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 14}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1456,6 +1457,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 14}
     scale: 1
 --- !u!114 &114897718702450538
 MonoBehaviour:
@@ -1504,7 +1506,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 3
-  m_serializedJson: '[{"speed":2.5,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":10,"max":16},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":7,"max":35},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":60,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":1,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":3,"arrivalRadius":1,"hasGuardState":true,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"damage":40,"weaponA":"weapon","weaponB":"weapon_alt","dataType":"AI.Behaviour.AttackTurnAroundData","editorFolded":false},{"speed":2.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":10,"max":16},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":7,"max":35},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":60,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":1,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":3,"arrivalRadius":1,"hasGuardState":true,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"damage":40,"weaponA":"weapon","weaponB":"weapon_alt","dataType":"AI.Behaviour.AttackTurnAroundData","editorFolded":false},{"speed":2.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Guardian
 --- !u!114 &114956441247360002
 MonoBehaviour:
