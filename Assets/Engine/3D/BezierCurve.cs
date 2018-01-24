@@ -179,6 +179,14 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Make sure there are always at least 2 points
+		if(pointCount < 1) AddPoint(Vector3.zero);
+		if(pointCount < 2) {
+			Vector3 pos = GetPoint(0).globalPosition;
+			pos.x += 10f;
+			AddPoint(pos);
+		}
+
 		// Make sure length is ok
 		ComputeLength();
 	}
