@@ -55,9 +55,13 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	//------------------------------------------------------------------//
 	// Drawing parameters
 	public Color drawColor = Color.white;
-	public bool lockZ = false;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public float lineThickness = 5f;
+
 	public float pointSize = 1f;
-	public float pickSize = 1.5f;
+	public bool constantSize = true;
+	
+	public bool[] lockAxis = new bool[] { false, false, false }; // Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public bool[] lockHandlersAxis = new bool[] { false, false, false };
 
 	/// <summary>
 	/// Control points of the curve.

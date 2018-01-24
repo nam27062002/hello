@@ -75,7 +75,11 @@ public class BezierPoint {
 			if(m_locked) return;
 
 			// Apply Z-lock
-			if(curve != null && curve.lockZ) value.z = m_position.z;
+			if(curve != null) {
+				for(int i = 0; i < 3; ++i) {
+					if(curve.lockAxis[i]) value[i] = 0;
+				}
+			}
 
 			// Skip if it hasn't changed
 			if(m_position == value) return;
@@ -142,8 +146,12 @@ public class BezierPoint {
 			// Ignore if locked
 			if(m_locked) return;
 
-			// Apply Z-lock
-			if(curve != null && curve.lockZ) value.z = m_position.z;
+			// Apply Axis-lock
+			if(curve != null) {
+				for(int i = 0; i < 3; ++i) {
+					if(curve.lockHandlersAxis[i]) value[i] = 0;
+				}
+			}
 
 			// Skip if not changed
 			if(m_handle1 == value) return;
@@ -184,7 +192,11 @@ public class BezierPoint {
 			if(m_locked) return;
 
 			// Apply Z-lock
-			if(curve != null && curve.lockZ) value.z = m_position.z;
+			if(curve != null) {
+				for(int i = 0; i < 3; ++i) {
+					if(curve.lockHandlersAxis[i]) value[i] = 0;
+				}
+			}
 
 			// Skip if not changed
 			if(m_handle2 == value) return;
