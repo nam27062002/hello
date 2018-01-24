@@ -30,8 +30,8 @@ SubShader {
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile_fog
-			
+			#pragma multi_compile __ LIGHTMAP_ON
+
 			#include "UnityCG.cginc"
 			#include "HungryDragon.cginc"
 			#include "AutoLight.cginc"
@@ -73,7 +73,7 @@ SubShader {
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
-#if defined(LIGHTMAP_ON) //&& !defined(EMISSIVE_BLINK)
+#if defined(LIGHTMAP_ON)
 				o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
@@ -89,7 +89,7 @@ SubShader {
 
 				fixed4 col = tex2D(_MainTex, i.texcoord);
 
-#if defined(LIGHTMAP_ON)// && !defined(EMISSIVE_BLINK)
+#if defined(LIGHTMAP_ON)
 				fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 				col.rgb *= lm * 1.3;
 #endif

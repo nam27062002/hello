@@ -253,16 +253,22 @@ public class HDTrackingManager
     public virtual void Notify_MenuLoaded() {}
 
     /// <summary>
-    /// The game has reached a step in the loading funnel.
+    /// The game has reached a step in the loading funnel according to the sequence defined for Calety
     /// </summary>
     /// <param name="_step">Step to notify.</param>
-    public virtual void Notify_Funnel_Load(FunnelData_Load.Steps _step) {}
+    public virtual void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {}
 
-	/// <summary>
-	/// The game has reached a step in the firts user experience funnel.
-	/// </summary>
-	/// <param name="_step">Step to notify.</param>
-	public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
+    /// <summary>
+    /// The game has reached a step in the loading funnel according to the sequence defined for Razolytics 
+    /// </summary>
+    /// <param name="_step">Step to notify.</param>
+    public virtual void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {}    
+
+    /// <summary>
+    /// The game has reached a step in the firts user experience funnel.
+    /// </summary>
+    /// <param name="_step">Step to notify.</param>
+    public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
 
     /// <summary>
     /// The user has logged in the social platform.

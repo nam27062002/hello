@@ -64,7 +64,7 @@ public class MenuPlayScreen : MonoBehaviour {
 			Debug.LogError("LEGAL");
 			// Open terms and conditions popup
 			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
-			HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
+			HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
 			m_showLegalPopup = false;
 		}
 
