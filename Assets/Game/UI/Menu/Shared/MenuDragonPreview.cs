@@ -102,6 +102,9 @@ public class MenuDragonPreview : MonoBehaviour {
 
 	public ParticleControl m_bloodParticle;
 
+	private bool m_allowAltAnimations = true;
+	public bool allowAltAnimations{ get{ return m_allowAltAnimations; }set{ m_allowAltAnimations = value; } }
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -234,19 +237,22 @@ public class MenuDragonPreview : MonoBehaviour {
 				else
 				{
 					// Count down every timer to check when to start the new alternative animation
-					for( int i = 0; i<m_count && m_currentAnimIndex < 0; ++i )
+					if (m_allowAltAnimations)
 					{
-						AltAnimConfig item = m_altAnimConfigs[i];
-						item.m_timeToNext -= Time.deltaTime;	
-						m_altAnimConfigs[i] = item;
-						if (item.m_timeToNext <= 0) 
+						for( int i = 0; i<m_count && m_currentAnimIndex < 0; ++i )
 						{
-							// Set alternative animation
-							m_lastAltAnim = m_currentAnimIndex = i;
-							m_animator.SetInteger("AltAnimation", m_currentAnimIndex);
-							// 
-							if ( item.m_special != AltAnimSpecialAction.NONE )
-								StartSpecialEvent( item.m_special );
+							AltAnimConfig item = m_altAnimConfigs[i];
+							item.m_timeToNext -= Time.deltaTime;	
+							m_altAnimConfigs[i] = item;
+							if (item.m_timeToNext <= 0) 
+							{
+								// Set alternative animation
+								m_lastAltAnim = m_currentAnimIndex = i;
+								m_animator.SetInteger("AltAnimation", m_currentAnimIndex);
+								// 
+								if ( item.m_special != AltAnimSpecialAction.NONE )
+									StartSpecialEvent( item.m_special );
+							}
 						}
 					}
 				}
