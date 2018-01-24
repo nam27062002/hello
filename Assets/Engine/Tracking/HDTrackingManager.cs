@@ -358,7 +358,7 @@ public class HDTrackingManager
     #endregion
 
     #region log
-    private const bool LOG_USE_COLOR = true;
+    private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
