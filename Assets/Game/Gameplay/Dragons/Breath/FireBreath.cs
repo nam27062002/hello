@@ -144,9 +144,9 @@ public class FireBreath : DragonBreathBehaviour {
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * transform.localScale.x * 1.75f, 1f);
 	}
 
-	override protected void EndFury() 
+	override protected void EndFury( bool increase_mega_fury = true ) 
 	{
-		base.EndFury();
+		base.EndFury( increase_mega_fury );
 		m_light.SetActive(false);
 		m_flameLightPoolHandler.ReturnInstance(m_light);
 		m_light = null;

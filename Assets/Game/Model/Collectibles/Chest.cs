@@ -86,6 +86,12 @@ public class Chest {
 		get { return m_state == State.PENDING_REWARD || m_state == State.COLLECTED; }
 	}
 
+	private int m_collectionOrder = -1;
+	public int collectionOrder {
+		get { return m_collectionOrder; }
+		set { m_collectionOrder = value; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -117,8 +123,15 @@ public class Chest {
 
 		// Perform actions upon entering a new state
 		switch(m_state) {
-			default: {
-				// Nothing to do for now
+			case State.PENDING_REWARD: {
+				// Store collection order!
+				m_collectionOrder = ChestManager.collectedAndPendingChests;	// [1..N] counting this same chest (we already updated the m_state var)
+			} break;
+
+			case State.INIT:
+			case State.NOT_COLLECTED:
+			case State.SHOWROOM: {
+				m_collectionOrder = -1;
 			} break;
 		}
 	}
@@ -147,6 +160,9 @@ public class Chest {
 
 		// Spawn point ID
 		m_spawnPointID = _data["spawnPointID"];
+
+		// Collection order
+		m_collectionOrder = _data["collectionOrder"].AsInt;
 	}
 
 	/// <summary>
@@ -163,6 +179,9 @@ public class Chest {
 		// Spawn point ID
 		if(string.IsNullOrEmpty(m_spawnPointID)) m_spawnPointID = "-";	// [AOC] Apparently SimpleJson crashes when parsing an empty string in the ToString() method. Use this for now.
 		data.Add("spawnPointID", m_spawnPointID);
+
+		// Collection order
+		data.Add("collectionOrder", m_collectionOrder);
 
 		// Done!
 		return data;

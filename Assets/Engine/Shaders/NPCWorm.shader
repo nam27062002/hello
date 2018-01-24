@@ -32,28 +32,12 @@ Shader "Hungry Dragon/NPC/NPC worm"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
-
-			#define HG_ENTITIES
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
-			#if LOW_DETAIL_ON
-			#endif
-
-			#if MEDIUM_DETAIL_ON
-//			#define NORMALMAP
-			#endif
-
-			#if HI_DETAIL_ON
-//			#define NORMALMAP
-//			#define SPECULAR
-			#endif
-
 			#define FRESNEL
-//			#define MATCAP
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"

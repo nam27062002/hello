@@ -111,14 +111,14 @@ public class GameCameraDebug : MonoBehaviour {
     /// </summary>
     /// <param name="_id">ID of the changed setting.</param>
     /// <param name="_newValue">New value of the setting.</param>
-    private float[] validFactors = new float[] { 360.0f, 720.0f, 1080.0f };
+    private float[] validFactors = new float[] { 720.0f, 1080.0f };
     private void OnDebugSettingChangedResolutionFactor(string _id, float _newValue)
     {
         // Show collisions cheat?
         if (_id == DebugSettings.RESOLUTION_FACTOR)
         {
-            _newValue = Mathf.Clamp(_newValue, validFactors[0], validFactors[2]);
-            float vf = validFactors[2];
+            _newValue = Mathf.Clamp(_newValue, validFactors[0], validFactors[1]);
+            float vf = validFactors[1];
 
             for (int c = 0; c < validFactors.Length; c++)
             {

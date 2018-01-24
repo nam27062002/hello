@@ -398,7 +398,7 @@
             ]
         },
 
-    "custom.gameplay.fps": {
+		"custom.gameplay.fps": {
             "Parameters": [
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
@@ -414,6 +414,16 @@
             ]
         },
 
+		"custom.session.started": {
+            "Parameters": [
+				{"versionRevision": {"Status": "OK"}}				
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1038,8 +1048,12 @@
             "Values": []
         },
         "deviceProfile": {
-        "Type": "STRING:15",
-        "Values": []
-        }
+			"Type": "STRING:15",
+			"Values": []
+        },
+		"versionRevision": {
+			"Type": "STRING:15",
+			"Values": []
+        }		
     }
 }
