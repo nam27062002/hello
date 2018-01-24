@@ -34,6 +34,16 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     {
         Log("SetNotificationsEnabled = " + enabled);
         NotificationsManager.SharedInstance.SetNotificationsEnabled(enabled);
+
+		// Clear all notifications
+        NotificationsManager.SharedInstance.CancelAllNotifications();
+
+        // If enabled reschedule all notifications
+		if (enabled){
+			if ( UsersManager.currentUser != null && EggManager.incubatingEgg != null){
+				EggManager.incubatingEgg.ScheduleEggNotification();
+	        }
+        }
     }
 
     public void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)
