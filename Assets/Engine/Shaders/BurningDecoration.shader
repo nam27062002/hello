@@ -19,7 +19,7 @@ Properties {
 }
 
 SubShader {
-	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+	Tags {"Queue"="Transparent" "RenderType"="Transparent"}
 	LOD 100
 	
 	ZWrite on
@@ -34,16 +34,26 @@ SubShader {
 			
 			#include "UnityCG.cginc"
 			#include "HungryDragon.cginc"
+			#include "AutoLight.cginc"
+			#include "Lighting.cginc"
+
 
 			struct appdata_t {
 				float4 vertex : POSITION;
 				float2 texcoord : TEXCOORD0;
+#ifdef LIGHTMAP_ON
+				float4 texcoord1 : TEXCOORD1;
+#endif
+
 			};
 
 			struct v2f {
 				float4 vertex : SV_POSITION;
 				half2 texcoord : TEXCOORD0;
-				HG_FOG_COORDS(1)
+#ifdef LIGHTMAP_ON
+				float2 lmap : TEXCOORD1;
+#endif	
+				HG_FOG_COORDS(2)
 			};
 
 			sampler2D _MainTex;
@@ -62,6 +72,11 @@ SubShader {
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+
+#if defined(LIGHTMAP_ON) //&& !defined(EMISSIVE_BLINK)
+				o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
+#endif
+
 				HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 				return o;
 			}
@@ -73,6 +88,12 @@ SubShader {
 				clip(fragAlpha);	// Remove ashes pixels
 
 				fixed4 col = tex2D(_MainTex, i.texcoord);
+
+#if defined(LIGHTMAP_ON)// && !defined(EMISSIVE_BLINK)
+				fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
+				col.rgb *= lm * 1.3;
+#endif
+
 
 				fixed burnedFactor = tex2D(_BurnMask, i.texcoord * _BurnMaskScale).r - _BurnLevel;
 

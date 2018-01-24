@@ -151,9 +151,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -184,6 +184,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -192,9 +193,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -225,13 +226,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1.25
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -262,15 +264,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: Soldier_Dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 1.37, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -301,14 +304,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 1.37, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -339,6 +343,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
@@ -383,7 +388,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":0,"max":0},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":40,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":4,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":7.5,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":0,"max":0},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":40,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":4,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":7.5,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false}]'
   m_databaseKey: PF_Soldier02
 --- !u!1001 &100100000
 Prefab:

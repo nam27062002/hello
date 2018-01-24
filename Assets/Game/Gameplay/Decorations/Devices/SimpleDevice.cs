@@ -33,6 +33,7 @@ public class SimpleDevice : Initializable {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnAreaExit);
 	}
 
 	/// <summary>
@@ -42,6 +43,7 @@ public class SimpleDevice : Initializable {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnAreaExit);
 	}
 
 	// Update is called once per frame
@@ -86,7 +88,11 @@ public class SimpleDevice : Initializable {
 	protected virtual void OnOperatorDead() {}
 	protected virtual void OnOperatorSpawned() {}
 
-	private void OnAreaLoaded() {
+	protected virtual void OnAreaLoaded() {
 		m_enabled = true;
+	}
+
+	protected virtual void OnAreaExit() {
+		m_enabled = false;
 	}
 }

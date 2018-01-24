@@ -196,7 +196,6 @@ public class Mission {
 			_seconds = (float)cooldownRemaining.TotalSeconds;
 		}
 
-
 		m_skipTimeWithAds = _useAd;
 		m_skipTimeWithHC = _useHC;
 
@@ -258,6 +257,26 @@ public class Mission {
 	private int ComputeSkipCostPC() {
 		// [AOC] Standard time/PC equivalence
 		return GameSettings.ComputePCForTime(cooldownRemaining);
+	}
+
+	//------------------------------------------------------------------//
+	// DEBUG															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Skip the specified amount of seconds on the cooldown timer.
+	/// </summary>
+	/// <param name="_seconds">Seconds.</param>
+	public void DEBUG_SkipCooldownTimer(float _seconds) {
+		// Nothing to do if mission is not on cooldown
+		if(state != Mission.State.COOLDOWN) return;
+
+		// Full cooldown completion?
+		if(_seconds < 0) {
+			_seconds = (float)cooldownRemaining.TotalSeconds;
+		}
+
+		// Do it!
+		m_cooldownStartTimestamp = m_cooldownStartTimestamp.AddSeconds(-_seconds);	// Simulate that cooldown started earlier than it actually did
 	}
 
 	//------------------------------------------------------------------//
