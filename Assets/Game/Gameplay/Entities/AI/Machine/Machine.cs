@@ -327,6 +327,8 @@ namespace AI {
 		// Update is called once per frame
 		public virtual void CustomUpdate() {			
 			if (!IsDead()) {
+				CheckFreeze();
+
 				if (m_willPlaySpawnSound) {
 					if (m_entity.isOnScreen) {
 						PlaySound(m_onSpawnSound);
@@ -359,7 +361,6 @@ namespace AI {
 					if (m_regionManager == null) {
 						m_regionManager = RegionManager.Instance;
 					}
-					CheckFreeze();
 
 					m_motion.externalVelocity = m_externalForces;
 					m_externalForces = Vector3.zero;
@@ -434,7 +435,8 @@ namespace AI {
 					m_freezingMultiplier += Time.deltaTime * FreezingObjectsRegistry.m_defrostSpeed;
 				}
 				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, FreezingObjectsRegistry.m_minFreezeSpeedMultiplier, 1.0f);
-				m_pilot.SetFreezeFactor(m_freezingMultiplier);
+				if ( m_pilot )
+					m_pilot.SetFreezeFactor(m_freezingMultiplier);
 
 				float freezingLevel = (1.0f - m_freezingMultiplier) / (1.0f - FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
 

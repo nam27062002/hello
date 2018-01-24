@@ -59,6 +59,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		gameObject.SetActive(false);
 	}
 
+	void OnDestroy() {
+		FirePropagationManager.UnregisterBurningNode(this);
+	}
+
 	public void Init(InflammableDecoration _parent, Decoration _decoration, ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {		
 		m_decoration = _decoration;
 		m_parent = _parent;
@@ -94,6 +98,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public bool IsBurning() 		{ return m_state == State.Burning; 	  		}
 	public bool IsGoingToExplode()  { return m_state == State.GoingToExplode; 	}
 	public bool IsExtinguishing() 	{ return m_state == State.Extinguish; 		}
+	public bool IsExtinguished() 	{ return m_state == State.Extinguished;		}
 
 
 	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {
