@@ -19,7 +19,7 @@ Properties {
 }
 
 SubShader {
-	Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+	Tags {"Queue"="Transparent" "RenderType"="Transparent"}
 	LOD 100
 	
 	ZWrite on
@@ -34,6 +34,9 @@ SubShader {
 			
 			#include "UnityCG.cginc"
 			#include "HungryDragon.cginc"
+			#include "AutoLight.cginc"
+			#include "Lighting.cginc"
+
 
 			struct appdata_t {
 				float4 vertex : POSITION;
