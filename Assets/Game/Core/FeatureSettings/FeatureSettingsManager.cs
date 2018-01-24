@@ -35,7 +35,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void Awake()
     {
 #if UNITY_EDITOR
-        Device_Model = "UNITY_EDITOR";
+        Device_Model = "UNITY_EDITOR";        
 #else
         Device_Model = SystemInfo.deviceModel;
 #endif
@@ -796,16 +796,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         float rating = m_deviceQualityManager.Device_CalculatedRating;
         string profileName = null;
 
-		if(IsDebugEnabled) 
+        string userProfileName = GetUserProfileName();
+        bool hasUserProfileName = !string.IsNullOrEmpty(userProfileName);
+
+        if (IsDebugEnabled) 
 		{
 			string msg = "SetupCurrentFeatureSettings: deviceSettingsJSON = ";
 			msg += (deviceSettingsJSON == null) ? "null" : deviceSettingsJSON.ToString();
 			msg += " qualitySettingsJSON = " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString());
             msg += " gameSettingsJSON = " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString());
+            msg += " userProfileName = " + userProfileName;
             Log(msg);
-		}
+		}        
 
-		// If no device configuration is passed then try to get the device configuration from rules        
+        // If no device configuration is passed then try to get the device configuration from rules        
         if (deviceSettingsJSON == null)
         {
             deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();
@@ -822,10 +826,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
-            }
+            }            
 
 			if (IsDebugEnabled)
 				Log("deviceSettingsJSON.profileName = " + profileName);
+
+            // This settings are ignored if this settings profile is not the same as the profile chosen by the user. If it's the same profile then we assume that this settings are more
+            // specific than the ones defined for the whole profile
+            if (hasUserProfileName && profileName != userProfileName)
+            {
+                deviceSettingsJSON = null;
+            }
         }        
 
         // If no profileName is available for the device in iOS then we assume that it's a new device so its rating has to be the maximum
@@ -866,10 +877,24 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             if (serverQualitySettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
             {
                 profileName = serverQualitySettingsJSON[FeatureSettings.KEY_PROFILE];
-            }
+            }            
 
-			if (IsDebugEnabled)
+            if (IsDebugEnabled)
 				Log("serverSettingsJSON profileName is " + profileName + " json = " + serverQualitySettingsJSON.ToString());
+
+            // This settings are ignored if this settings profile is not the same as the profile chosen by the user. If it's the same profile then we assume that this settings are more
+            // specific than the ones defined for the whole profile
+            if (hasUserProfileName && profileName != userProfileName)
+            {
+                serverQualitySettingsJSON = null;
+            }
+        }
+
+        // User's profile, if the user has set it, has the highest priority        
+        if (hasUserProfileName)
+        {
+            profileName = userProfileName;
+            rating = m_deviceQualityManager.Profiles_ProfileNameToRating(profileName);            
         }
 
         Device_CurrentProfile = profileName;
@@ -1055,7 +1080,101 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }        
 
         return returnValue;
-    }    
+    }
+
+    /// <summary>
+    /// Returns the profile level currently active.
+    /// </summary>
+    /// <returns>A value in [0, NUM_PROFILES -1]. The bigger the value the better the profile</returns>
+    public int GetCurrentProfileLevel()
+    {
+        return Device_CurrentFeatureSettings == null ? -1 : ProfileNameToLevel(Device_CurrentFeatureSettings.Profile);
+    }
+
+    /// <summary>
+    /// Returns max profile level supported by the device
+    /// </summary>
+    /// <returns>A value in [0, NUM_PROFILES -1]. The bigger the value the better the profile</returns>
+    public int GetMaxProfileLevelSupported()
+    {
+        int systemMemorySize = SystemInfo.systemMemorySize;
+        return m_deviceQualityManager.Profiles_GetMaxProfileLevel(systemMemorySize);
+    }
+
+    /// <summary>
+    /// Returns the profile level chosen by the user.
+    /// </summary>
+    /// <returns>A value in [0, MAX_PROFILE_LEVEL] if the user has ever chosen a profile, otherwise <c>-1</c></returns>
+    public int GetUserProfileLevel()
+    {
+        // Translates name to level
+        string userProfileName = GetUserProfileName();
+        return ProfileNameToLevel(userProfileName);                
+    }
+
+    /// <summary>
+    /// Sets a profile level as the user's profile.
+    /// </summary>
+    /// <param name="value">A value in [0, NUM_PROFILES -1] to set as user's profile. The bigger the value the better the profile.</param>
+    /// <param name="apply">When <c>true</c> this profile is applied.</param>
+    public void SetUserProfileLevel(int value, bool apply=true)
+    {
+        SetUserProfileName(ProfileLevelToName(value), apply);        
+    }
+
+    /// <summary>
+    /// Returns the profile name chosen by the user.
+    /// </summary>
+    /// <returns>A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c> if the user has ever chosen a profile, otherwise <c>null</c></returns>
+    private string GetUserProfileName()
+    {
+        string userProfileName = PersistencePrefs.GetUserProfileName();
+        // If user's profile is higher than max profile supported (probably because this level was supported in an earlier version of the game but it's not supported anymore) then
+        // max profile is returned
+        int userProfileLevel = ProfileNameToLevel(userProfileName);
+        if (userProfileLevel > GetMaxProfileLevelSupported())
+        {
+            userProfileLevel = GetMaxProfileLevelSupported();
+            userProfileName = ProfileLevelToName(userProfileLevel);
+        }
+
+        return userProfileName;
+    }
+
+    /// <summary>
+    /// Sets a profile name as the user's profile.
+    /// </summary>
+    /// <param name="value">A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c></param>
+    /// <param name="apply">When <c>true</c> this profile is applied</param>
+    private void SetUserProfileName(string value, bool apply)
+    {
+        PersistencePrefs.SetUserProfileName(value);
+        if (apply)
+        {
+            RestoreCurrentFeatureSettingsToDevice();
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// Translates a profile name into its level
+    /// </summary>
+    /// <param name="value">A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c></param>
+    /// <returns>A value in [0, NUM_PROFILES - 1]</returns>
+    private int ProfileNameToLevel(string value)
+    {        
+        return FeatureSettings.EQualityLevelValuesNames.IndexOf(value);
+    }
+
+    /// <summary>
+    /// Translates a profile level into its name
+    /// </summary>
+    /// <param name="value">A value in [0, NUM_PROFILES - 1]</param>
+    /// <returns>A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c></returns>
+    private string ProfileLevelToName(int level)
+    {        
+        return (level >= 0 && level < FeatureSettings.EQualityLevelValuesNames.Count) ? FeatureSettings.EQualityLevelValuesNames[level] : null;
+    }
     #endregion
 
     #region configs
@@ -1358,8 +1477,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private const string PREFIX = "FeatureSettingsManager:";
 
     public static void Log(string message)
-    {
+    {        
         Debug.Log(PREFIX + message);
+        //Debug.Log("<color=cyan>" + PREFIX + message + " </color>");
     }
 
     public static void LogWarning(string message)

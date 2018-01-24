@@ -186,7 +186,57 @@ public class DeviceQualityManager
         }
 
         return returnValue;
-    }       
+    }  
+
+    public float Profiles_ProfileNameToRating(string profileName)
+    {
+        float returnValue = -1f;
+        if (Profiles_Data != null && Profiles_Data.ContainsKey(profileName))
+        {
+            returnValue = Profiles_Data[profileName].Rating;            
+        }
+
+        if (returnValue < 0f && FeatureSettingsManager.IsDebugEnabled)
+        {
+            LogWarning("No profile " + profileName + " found");
+        }
+
+        return returnValue;
+    }
+    
+    public int Profiles_GetMaxProfileLevel(int memorySize)
+    {
+        int returnValue = -1;
+
+
+        // Max profile allowed depends on memory size
+        if (Profiles_Names != null)
+        {
+            int i;
+            int count = Profiles_Names.Count;
+
+            // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
+            for (i = 0; i < count; i++)
+            {
+                // Makes sure that it has memory and rating enough to use this profile
+                if (memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory)
+                {
+                    returnValue = i;
+                }
+            }
+        }
+
+        if (returnValue == -1)
+        {
+            // The minimum is returned
+            returnValue = 0;
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LogWarning("No profile available for memory " + memorySize);
+        }
+
+        return returnValue;
+    }     
     #endregion
 
     #region device
