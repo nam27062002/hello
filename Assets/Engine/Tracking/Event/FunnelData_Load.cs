@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class FunnelData_Load : FunnelData {
+﻿public class FunnelData_Load : FunnelData {
 	//-- Step index ------------------------
 	public enum Steps {
 		_01_persistance = 0,

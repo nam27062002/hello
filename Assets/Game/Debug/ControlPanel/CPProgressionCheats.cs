@@ -353,6 +353,9 @@ public class CPProgressionCheats : MonoBehaviour {
 				}
 			}
 
+			// Dragon baby is always owned
+			DragonManager.GetDragonData("dragon_baby").Acquire();
+
             // Save persistence
             PersistenceFacade.instance.Save_Request(false);
         }
@@ -505,34 +508,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		PersistenceFacade.instance.Save_Request(false);
 	}
 
-    /// <summary>
-    /// Simulates daily chest collection (no menu refresh for now, reload menu for that).
-    /// </summary>
-    public void OnAddDailyChest() {
-		// Find the first non-collected chest
-		Chest ch = null;
-		foreach(Chest chest in ChestManager.dailyChests) {
-			if(!chest.collected) {
-				ch = chest;
-				break;
-			}
-		}
-
-		// Mark it as collected and process rewards
-		if(ch != null) {
-			ch.ChangeState(Chest.State.PENDING_REWARD);
-			ChestManager.ProcessChests();
-		}
-	}
-
-	/// <summary>
-	/// Simulate daily chests timer expiration.
-	/// </summary>
-	public void OnResetDailyChests() {
-		ChestManager.Reset();
-	}
-
-	/// <summary>
+   	/// <summary>
 	/// Reset all map upgrades
 	/// </summary>
 	public void OnResetMapUpgrades() {

@@ -807,6 +807,9 @@ public class GameSceneController : GameSceneControllerBase {
 		m_mapUsageTracker.SetValue(0, false);
 
 		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+
+        // Automatic connection system is disabled during the round in order to ease performance
+        GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);
     }
 
     private void Track_RoundEnd() {
@@ -838,6 +841,9 @@ public class GameSceneController : GameSceneControllerBase {
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
             RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
+
+        // Automatic connection system is enabled again since performance is not a constraint anymore
+        GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
     }
 
     private void Track_RunEnd(bool _quitGame) {

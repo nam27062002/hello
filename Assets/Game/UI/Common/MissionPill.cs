@@ -24,6 +24,8 @@ public class MissionPill : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private const string TID_SKIP_FREE = "TID_MISSIONS_SKIP_FREE";
+	private const string TID_SKIP_PARTIAL = "TID_MISSIONS_SKIP_PARTIAL";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -75,6 +77,9 @@ public class MissionPill : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
 		Messenger.AddListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -84,6 +89,9 @@ public class MissionPill : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
 		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -278,16 +286,12 @@ public class MissionPill : MonoBehaviour {
 		// Skip with ad button
 		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
 		if(skipWithAdText != null) {
-			// [AOC] TODO!! Force the time to be in lower case always
 			// If the remaining time is lower than skip time, don't put time at all
 			if(m_mission.cooldownRemaining.TotalSeconds < Mission.SECONDS_SKIPPED_WITH_AD) {
-				skipWithAdText.Localize(
-					skipWithAdText.tid, 
-					""
-				);
+				skipWithAdText.Localize(TID_SKIP_FREE);
 			} else {
 				skipWithAdText.Localize(
-					skipWithAdText.tid, 
+					TID_SKIP_PARTIAL, 
 					TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
 				);
 			}
@@ -474,6 +478,8 @@ public class MissionPill : MonoBehaviour {
 			UsersManager.currentUser.skipMissionAdUses++;
 			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD, true, false);
 	        PersistenceFacade.instance.Save_Request();
+
+			Refresh();
 		}
     }
 
@@ -531,6 +537,14 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Just update all the info
+		Refresh();
+	}
+
+	/// <summary>
+	/// Force a refresh.
+	/// </summary>
+	private void DEBUG_OnRefreshMissionInfo() {
+		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		Refresh();
 	}
 }

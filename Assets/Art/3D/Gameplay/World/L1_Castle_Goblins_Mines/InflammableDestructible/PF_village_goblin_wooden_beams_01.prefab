@@ -43,22 +43,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1201838995277564
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4626962838181444}
-  - component: {fileID: 114782903592665564}
-  m_Layer: 0
-  m_Name: FireNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1238273000096084
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,22 +60,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!1 &1348755030138284
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4489066321928770}
-  - component: {fileID: 114787322793221442}
-  m_Layer: 0
-  m_Name: FireNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1433062539331900
 GameObject:
   m_ObjectHideFlags: 1
@@ -136,9 +104,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4489066321928770}
   - {fileID: 4908227026542452}
-  - {fileID: 4626962838181444}
   m_Father: {fileID: 4473902048870448}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -158,19 +124,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4489066321928770
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1348755030138284}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.2732887, y: 0.100097656, z: -1.4148712}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4340438835866012}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4556741630918086
 Transform:
   m_ObjectHideFlags: 1
@@ -183,19 +136,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4473902048870448}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4626962838181444
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1201838995277564}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.47125626, y: -0.1673584, z: 13.496735}
-  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
-  m_Children: []
-  m_Father: {fileID: 4340438835866012}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4807414260369632
 Transform:
@@ -218,10 +158,10 @@ Transform:
   m_GameObject: {fileID: 1433062539331900}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.7330704, y: -0.48532104, z: 6.097}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4349624, y: 1.4349629, z: 1.4349629}
   m_Children: []
   m_Father: {fileID: 4340438835866012}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23287899366920542
 MeshRenderer:
@@ -329,7 +269,6 @@ MonoBehaviour:
   m_feedbackParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -363,12 +302,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
   m_feedbackParticleMatchDirection: 0
   m_burnParticle:
     name: PF_FireProc
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -402,11 +341,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_disintegrateParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -440,6 +379,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
   m_boxelSize: 8
   m_hitRadius: 2
@@ -456,28 +396,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnTime: 30
   m_ground: []
---- !u!114 &114782903592665564
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1201838995277564}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114787322793221442
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1348755030138284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114921770186505982
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -497,6 +497,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.Intro:
 				{
+					// Enable boost!!
+					InstanceManager.player.dragonBoostBehaviour.enabled = true;
 					m_rbody.isKinematic = false;
 					m_animator.SetBool(GameConstants.Animator.BOOST, false);
 					m_animator.SetBool(GameConstants.Animator.MOVE, false);
@@ -605,6 +607,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.Dead:
 				{
+					m_controls.enabled = false;
 					m_animator.SetTrigger(GameConstants.Animator.DEAD);
 					if ( m_previousState == State.InsideWater )
 						m_animator.SetBool(GameConstants.Animator.SWIM, true);
@@ -614,6 +617,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				}break;
 				case State.Reviving:
 				{
+					m_controls.enabled = true;
 					m_rbody.detectCollisions = false;
 					m_reviveTimer = m_reviveDuration;
 					m_impulse = Vector3.zero;
@@ -935,11 +939,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_destination = GameConstants.Vector3.left * introDisplacement * m_introDisplacementCurve.Evaluate(1.0f - delta);
 					m_destination += m_introTarget;
 					m_rbody.MovePosition( m_destination );
+					/*
 					if ( delta < m_introStopAnimationDelta )
 					{
 						m_animator.SetBool(GameConstants.Animator.BOOST, false);
 						m_animator.SetBool(GameConstants.Animator.MOVE, false);
 					}
+					*/
 				}
 
 			}break;

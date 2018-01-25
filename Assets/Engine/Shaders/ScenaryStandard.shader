@@ -11,6 +11,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
+		_Panning("Panning", Vector) = (0,0,0,0)
+
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", Range(0.1, 5.0)) = 1.0
 		_SpecularPower("Specular Power", float) = 3
@@ -35,6 +37,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //		_StencilMask("Stencil Mask", int) = 10
 
 		[Toggle(BLEND_TEXTURE)] _EnableBlendTexture("Enable Blend Texture", Float) = 0
+		[Toggle(ADDITIVE_BLEND)] _EnableAdditiveBlend("Enable Additive Blend", Float) = 0
 		[Toggle(CUSTOM_VERTEXCOLOR)] _EnableAutomaticBlend("Automatic Y blend", Float) = 0
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
@@ -85,12 +88,13 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma fragment frag
 //				#pragma multi_compile_fwdbase
 				#pragma multi_compile __ BLEND_TEXTURE
+				#pragma multi_compile __ ADDITIVE_BLEND
 				#pragma multi_compile __ CUSTOM_VERTEXCOLOR
 				#pragma multi_compile __ SPECULAR
 				#pragma multi_compile __ NORMALMAP
 				#pragma multi_compile __ FOG
 				#pragma multi_compile __ CUTOFF
-				#pragma multi_compile __ OPAQUEALFA
+				#pragma multi_compile __ OPAQUEALPHA
 				#pragma multi_compile __ REFLECTIVE
 				#pragma multi_compile __ LIGHTMAP_ON
 			
