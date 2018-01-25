@@ -131,7 +131,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013507566798}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -929.43005, y: -269.9111, z: 2.0832486}
+  m_LocalPosition: {x: -959.2561, y: -269.83408, z: 2.0832486}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000010828258556}
@@ -146,7 +146,7 @@ Transform:
   m_GameObject: {fileID: 1000011314936906}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.798, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4000014228119594}
   - {fileID: 4000011864195014}
@@ -475,7 +475,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_serializedJson: '[{"speed":3.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":10,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":3,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3.5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"timeBeforeBackHome":3,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
-  m_databaseKey: PF_Fish02_Generic_dark (1)
+  m_databaseKey: PF_Fish02_Generic_dark
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 8
   m_avoidCollisions: 1
@@ -548,6 +548,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 170
     m_spawnsInsideWater: 1
+    m_faceDirectionFreeFall: 0
 --- !u!136 &136000010683048776
 CapsuleCollider:
   m_ObjectHideFlags: 1
