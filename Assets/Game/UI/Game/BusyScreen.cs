@@ -47,7 +47,7 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 		m_animator.Hide(false);
 
 		// Default setup
-		Setup(true, string.Empty);
+		SetupInternal(true, string.Empty);
 	}
 
 	//------------------------------------------------------------------//
@@ -59,12 +59,7 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	/// <param name="_showSpinner">Show the spinner?.</param>
 	/// <param name="_text">Text to be displayed. string.Empty for none.</param>
 	public static void Setup(bool _showSpinner, string _text) {
-		// Spinner
-		instance.m_spinner.SetActive(_showSpinner);
-
-		// Text
-		instance.m_text.gameObject.SetActive(!string.IsNullOrEmpty(_text));
-		instance.m_text.text = _text;
+		instance.SetupInternal(_showSpinner, _text);
 	}
 
 	/// <summary>
@@ -116,5 +111,22 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 
 		// Hide!
 		Hide(null, _animate);
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Actually do the setup.
+	/// </summary>
+	/// <param name="_showSpinner">Show the spinner?.</param>
+	/// <param name="_text">Text to be displayed. string.Empty for none.</param>
+	private void SetupInternal(bool _showSpinner, string _text) {
+		// Spinner
+		m_spinner.SetActive(_showSpinner);
+
+		// Text
+		m_text.gameObject.SetActive(!string.IsNullOrEmpty(_text));
+		m_text.text = _text;
 	}
 }
