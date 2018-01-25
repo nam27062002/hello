@@ -915,33 +915,34 @@ public class ProfilerControlPanelController : MonoBehaviour
 
         for (int c = 0; c < renderer.Count; c++)
         {
-            if (renderer[c].material.shader.name.Contains("Hungry Dragon/Dragon/Dragon standard"))
+            Material mat = renderer[c].material;
+            if (mat.shader.name.Contains("Hungry Dragon/Dragon/Dragon standard") && mat.GetTag("RenderType", false).Contains("Opaque"))
             {
                 if (newValue)
                 {
                     if (m_oldQueues != null)
                     {
-                        renderer[c].material.renderQueue = m_oldQueues[c].oldQueue;
+                        mat.renderQueue = m_oldQueues[c].oldQueue;
                     }
                 }
                 else
                 {
-                    m_oldQueues[c].oldQueue = renderer[c].material.renderQueue;
+                    m_oldQueues[c].oldQueue = mat.renderQueue;
                     m_oldQueues[c].isNPC = false;
                 }
             }
-            else if (renderer[c].material.shader.name.Contains("NPC"))
+            else if (mat.shader.name.Contains("NPC") && mat.GetTag("RenderType", false).Contains("Opaque"))
             {
                 if (newValue)
                 {
                     if (m_oldQueues != null)
                     {
-                        renderer[c].material.renderQueue = m_oldQueues[c].oldQueue;
+                        mat.renderQueue = m_oldQueues[c].oldQueue;
                     }
                 }
                 else
                 {
-                    m_oldQueues[c].oldQueue = renderer[c].material.renderQueue;
+                    m_oldQueues[c].oldQueue = mat.renderQueue;
                     m_oldQueues[c].isNPC = true;
                 }
             }
@@ -985,16 +986,20 @@ public class ProfilerControlPanelController : MonoBehaviour
 
         for (int c = 0; c < renderer.Count; c++)
         {
-            if (newValue)
+            string renderType = renderer[c].material.GetTag("RenderType", false);
+            if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
             {
-                if (m_backgroundQueues != null)
+                if (newValue)
                 {
-                    renderer[c].material.renderQueue = m_backgroundQueues[c];
+                    if (m_backgroundQueues != null)
+                    {
+                        renderer[c].material.renderQueue = m_backgroundQueues[c];
+                    }
                 }
-            }
-            else
-            {
-                m_backgroundQueues[c] = renderer[c].material.renderQueue;
+                else
+                {
+                    m_backgroundQueues[c] = renderer[c].material.renderQueue;
+                }
             }
         }
 
@@ -1006,7 +1011,11 @@ public class ProfilerControlPanelController : MonoBehaviour
         {
             for (int c = 0; c < renderer.Count; c++)
             {
-                renderer[c].material.renderQueue = 2500;
+                string renderType = renderer[c].material.GetTag("RenderType", false);
+                if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
+                {
+                    renderer[c].material.renderQueue = 2500;
+                }
             }
         }
 
@@ -1020,16 +1029,20 @@ public class ProfilerControlPanelController : MonoBehaviour
 
         for (int c = 0; c < renderer.Count; c++)
         {
-            if (newValue)
+            string renderType = renderer[c].material.GetTag("RenderType", false);
+            if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
             {
-                if (m_foregroundQueues != null)
+                if (newValue)
                 {
-                    renderer[c].material.renderQueue = m_foregroundQueues[c];
+                    if (m_foregroundQueues != null)
+                    {
+                        renderer[c].material.renderQueue = m_foregroundQueues[c];
+                    }
                 }
-            }
-            else
-            {
-                m_foregroundQueues[c] = renderer[c].material.renderQueue;
+                else
+                {
+                    m_foregroundQueues[c] = renderer[c].material.renderQueue;
+                }
             }
         }
 
@@ -1041,7 +1054,11 @@ public class ProfilerControlPanelController : MonoBehaviour
         {
             for (int c = 0; c < renderer.Count; c++)
             {
-                renderer[c].material.renderQueue = 2000;
+                string renderType = renderer[c].material.GetTag("RenderType", false);
+                if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
+                {
+                    renderer[c].material.renderQueue = 2000;
+                }
             }
         }
 
