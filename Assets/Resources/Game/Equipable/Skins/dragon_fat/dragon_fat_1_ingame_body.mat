@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_classic_0_body
+  m_Name: dragon_fat_1_ingame_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
   m_LightmapFlags: 5
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 94fc70baa58d8fd45acf1ef5c633bd70, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5aaa48daaa3cf6f4794e13e4271aeb43, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: c1ca24fc3fdfb324289b49f1456f3c9b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2cb7df9ba7416ae41a345531410bea39, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6b70741f2766bf84dbe701e210db5fdd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 499d19a88d2fe0947acd3cabab03d4fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -71,7 +71,6 @@ Material:
     m_Floats:
     - FXLayer: 0
     - SelfIlluminate: 0
-    - _Alpha_as_depth: 0
     - _BlendMode: 0
     - _BumpScale: 1
     - _Cull: 2
@@ -89,7 +88,7 @@ Material:
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _FireAmount: 0
-    - _Fresnel: 6.8
+    - _Fresnel: 6.52
     - _Glossiness: 0.5
     - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
@@ -99,22 +98,21 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.157
-    - _SecondLightIntensity: 0.47
+    - _ReflectionAmount: 0
     - _SpecExponent: 6.68
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _AmbientAdd: {r: 0.03676468, g: 0.014508252, b: 0.002432957, a: 0}
+    - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
-    - _ColorMultiply: {r: 0.8308824, g: 0.81255406, b: 0.81255406, a: 1}
+    - _ColorAdd: {r: 0.13235295, g: 0.03795415, b: 0.03795415, a: 0}
+    - _ColorMultiply: {r: 0.9632353, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0.3576449, g: 0.35875937, b: 0.3602941, a: 1}
-    - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SecondLightColor: {r: 0.38570502, g: 0.5609922, b: 0.9044118, a: 0}
-    - _SecondLightDir: {r: -31.6, g: 8.94, b: 0.85, a: 0.45}
-    - _Tint: {r: 0.8897059, g: 0.8897059, b: 0.8897059, a: 1}
+    - _FresnelColor: {r: 0.32331315, g: 0.35547966, b: 0.38235295, a: 1}
+    - _InnerLightColor: {r: 0.45588237, g: 0.45588237, b: 0.45588237, a: 1}
+    - _SecondLightColor: {r: 0.2647059, g: 0.2647059, b: 0.2647059, a: 0}
+    - _SecondLightDir: {r: 1.54, g: -8.03, b: -1.66, a: 20.29}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
