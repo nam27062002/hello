@@ -906,6 +906,8 @@ public class ProfilerControlPanelController : MonoBehaviour
 
     public void Queues_OnQueuesValueChanged(bool newValue)
     {
+        int changed = 0;
+
         List<Renderer> renderer = GameObjectExt.FindObjectsOfType<Renderer>(false);
 
         if (!newValue)
@@ -923,6 +925,7 @@ public class ProfilerControlPanelController : MonoBehaviour
                     if (m_oldQueues != null)
                     {
                         mat.renderQueue = m_oldQueues[c].oldQueue;
+                        changed++;
                     }
                 }
                 else
@@ -938,6 +941,7 @@ public class ProfilerControlPanelController : MonoBehaviour
                     if (m_oldQueues != null)
                     {
                         mat.renderQueue = m_oldQueues[c].oldQueue;
+                        changed++;
                     }
                 }
                 else
@@ -973,6 +977,7 @@ public class ProfilerControlPanelController : MonoBehaviour
                     {
                         renderer[c].material.renderQueue = 500;
                     }
+                    changed++;
                 }
             }
         }
@@ -994,6 +999,7 @@ public class ProfilerControlPanelController : MonoBehaviour
                     if (m_backgroundQueues != null)
                     {
                         renderer[c].material.renderQueue = m_backgroundQueues[c];
+                        changed++;
                     }
                 }
                 else
@@ -1015,6 +1021,7 @@ public class ProfilerControlPanelController : MonoBehaviour
                 if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
                 {
                     renderer[c].material.renderQueue = 2500;
+                    changed++;
                 }
             }
         }
@@ -1037,6 +1044,7 @@ public class ProfilerControlPanelController : MonoBehaviour
                     if (m_foregroundQueues != null)
                     {
                         renderer[c].material.renderQueue = m_foregroundQueues[c];
+                        changed++;
                     }
                 }
                 else
@@ -1058,11 +1066,12 @@ public class ProfilerControlPanelController : MonoBehaviour
                 if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
                 {
                     renderer[c].material.renderQueue = 2000;
+                    changed++;
                 }
             }
         }
 
-
+        Debug.Log("Materials changed: " + changed);
     }
     #endregion
 }
