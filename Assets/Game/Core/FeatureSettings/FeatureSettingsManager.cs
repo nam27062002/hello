@@ -943,12 +943,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         ApplyCurrentFeatureSetting();
     }
 
+    public void RecalculateAndApplyProfile()
+    {
+        SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null, null);
+    }
+
     public void RestoreCurrentFeatureSettingsToDevice()
     {
 		if (IsDebugEnabled)
 			Log("RestoreCurrentFeatureSettingsToDevice");
-		
-        SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null, null);
+
+        RecalculateAndApplyProfile();
     }
 
     private FeatureSettings CreateFeatureSettings()
@@ -1115,11 +1120,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// <summary>
     /// Sets a profile level as the user's profile.
     /// </summary>
-    /// <param name="value">A value in [0, NUM_PROFILES -1] to set as user's profile. The bigger the value the better the profile.</param>
-    /// <param name="apply">When <c>true</c> this profile is applied.</param>
-    public void SetUserProfileLevel(int value, bool apply=true)
+    /// <param name="value">A value in [0, NUM_PROFILES -1] to set as user's profile. The bigger the value the better the profile.</param>    
+    public void SetUserProfileLevel(int value)
     {
-        SetUserProfileName(ProfileLevelToName(value), apply);        
+        SetUserProfileName(ProfileLevelToName(value));        
     }
 
     /// <summary>
@@ -1146,13 +1150,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// </summary>
     /// <param name="value">A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c></param>
     /// <param name="apply">When <c>true</c> this profile is applied</param>
-    private void SetUserProfileName(string value, bool apply)
+    private void SetUserProfileName(string value)
     {
-        PersistencePrefs.SetUserProfileName(value);
-        if (apply)
-        {
-            RestoreCurrentFeatureSettingsToDevice();
-        }
+        PersistencePrefs.SetUserProfileName(value);        
     }
 
     /// <summary>
