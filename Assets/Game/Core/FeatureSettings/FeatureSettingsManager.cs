@@ -1118,7 +1118,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     /// <summary>
-    /// Sets a profile level as the user's profile.
+    /// Sets a profile level as the user's profile. This method just changes the user's profile level. Call <c>RecalculateAndApplyProfile()</c> to get it applied.
     /// </summary>
     /// <param name="value">A value in [0, NUM_PROFILES -1] to set as user's profile. The bigger the value the better the profile.</param>    
     public void SetUserProfileLevel(int value)
