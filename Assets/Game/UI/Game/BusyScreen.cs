@@ -30,8 +30,19 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private ShowHideAnimator m_animator = null;
+	public ShowHideAnimator animator {
+		get { return m_animator; }
+	}
+
 	[SerializeField] private TextMeshProUGUI m_text = null;
+	public TextMeshProUGUI text {
+		get { return m_text; }
+	}
+
 	[SerializeField] private GameObject m_spinner = null;
+	public GameObject spinner {
+		get { return m_spinner; }
+	}
 
 	// Internal
 	private HashSet<Object> m_owners = new HashSet<Object>();	// HashSet ~= List without duplicates
