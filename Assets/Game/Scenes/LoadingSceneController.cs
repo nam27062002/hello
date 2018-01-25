@@ -493,7 +493,9 @@ public class LoadingSceneController : SceneController {
 
             // Automatic connection check disabled during loading because network is already being used
             GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);
-            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
+            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);
+
+            HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._00_start);        			
         }
     }
 
