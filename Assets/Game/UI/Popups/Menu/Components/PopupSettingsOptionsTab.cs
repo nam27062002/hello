@@ -220,7 +220,10 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			BusyScreen.Show(this, false);
 
 			// Apply new quality setting
-			FeatureSettingsManager.instance.RecalculateAndApplyProfile();
+			// Give enough time for the busy screen to show
+			UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+				FeatureSettingsManager.instance.RecalculateAndApplyProfile();
+			}, 1);
 		}
 
 		// Remove listener
