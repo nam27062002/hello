@@ -52,6 +52,7 @@ public class PopupAdBlocker : MonoBehaviour {
 	public static void Launch(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
 		// If ad can't be displayed, show error message instead of the popup
 		if(!GameAds.adsAvailable) {
+			PopupManager.canvas.worldCamera.gameObject.SetActive(true);
 			// Show some feedback
 			UIFeedbackText errorText = UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"), 
@@ -59,7 +60,7 @@ public class PopupAdBlocker : MonoBehaviour {
 				PopupManager.canvas.transform as RectTransform
 			);
 			errorText.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-
+			errorText.sequence.onComplete += PopupManager.instance.RefreshCameraActive;
 			// Notify error
 			if(_onAdFinishedCallback != null) _onAdFinishedCallback.Invoke(false);	// Unsuccessful
 			return;
