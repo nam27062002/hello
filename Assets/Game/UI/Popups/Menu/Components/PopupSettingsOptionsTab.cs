@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 /// <summary>
 /// This class is responsible for handling the options tab in the settings popup.
@@ -215,15 +216,26 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		// If the graphics quality setting has changed, apply new value
 		// Ignore if max quality level is 0 (shouldn't even get here)
 		if(m_graphicsMaxLevel > 0 && FeatureSettingsManager.instance.GetUserProfileLevel() != m_initialGraphicsQualityLevel) {
-			// Show busy screen
-			BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_QUALITY_SLIDER_APPLYING"));
-			BusyScreen.Show(this, false);
-
-			// Apply new quality setting
-			// Give enough time for the busy screen to show
-			UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-				FeatureSettingsManager.instance.RecalculateAndApplyProfile();
-			}, 1);
+			// Program a sequence of events so every step has enough time to be applied properly
+			DOTween.Sequence()
+				.SetAutoKill(true)
+				.AppendCallback(() => {
+					// Show busy screen
+					BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_QUALITY_SLIDER_APPLYING"));
+					BusyScreen.Show(this, false);
+				})
+				.AppendInterval(1f)
+				.AppendCallback(() => {
+					// Apply new quality setting
+					FeatureSettingsManager.instance.RecalculateAndApplyProfile();
+				})
+				.AppendInterval(3f)
+				.AppendCallback(() => {
+					// Hide busy screen
+					BusyScreen.Hide(this, true);
+				})
+				.SetUpdate(true)
+				.Play();
 		}
 
 		// Remove listener
@@ -234,8 +246,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// The popup has been closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
-		// Hide busy screen
-		BusyScreen.Hide(this, true);
+		
 	}
 
 	public void RefreshGooglePlayView(){
