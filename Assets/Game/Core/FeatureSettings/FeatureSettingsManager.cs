@@ -980,7 +980,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             CurrentQualityIndex = qualityIndex;
             QualitySettings.SetQualityLevel(CurrentQualityIndex);
-            Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
+            
+            if (IsDebugEnabled)
+                Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
         }
 
 		if (quality <= FeatureSettings.EQualityLevelValues.low) {
