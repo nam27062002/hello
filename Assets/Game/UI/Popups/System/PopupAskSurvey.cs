@@ -28,12 +28,6 @@ public class PopupAskSurvey : MonoBehaviour {
 	public const int MIN_RUNS = 3;
 	public const int MIN_SESSIONS = 3;
 
-	private enum Action {
-		NO,
-		LATER,
-		YES
-	}
-	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -83,8 +77,9 @@ public class PopupAskSurvey : MonoBehaviour {
 	/// Sends the tracking and close the popup.
 	/// </summary>
 	/// <param name="_action">Tha chosen action.</param>
-	private void CloseAndSendTracking(Action _action) {
-		// [AOC] TODO!! Tracking
+	private void CloseAndSendTracking(HDTrackingManager.EPopupSurveyAction _action) {
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupSurveyShown(_action);
 
 		// Close the popup!
 		GetComponent<PopupController>().Close(true);
@@ -109,7 +104,7 @@ public class PopupAskSurvey : MonoBehaviour {
 
 		// Close the popup and set to never show again
 		Prefs.SetBoolPlayer(PREF_CHECK, false);
-		CloseAndSendTracking(Action.YES);
+		CloseAndSendTracking(HDTrackingManager.EPopupSurveyAction.Yes);
 	}
 
 	/// <summary>
@@ -118,7 +113,7 @@ public class PopupAskSurvey : MonoBehaviour {
 	public void OnNo() {
 		// Close the popup and set to never show again
 		Prefs.SetBoolPlayer(PREF_CHECK, false);
-		CloseAndSendTracking(Action.NO);
+		CloseAndSendTracking(HDTrackingManager.EPopupSurveyAction.No);
 	}
 
 	/// <summary>
@@ -126,6 +121,6 @@ public class PopupAskSurvey : MonoBehaviour {
 	/// </summary>
 	public void OnLater() {
 		// Close the popup
-		CloseAndSendTracking(Action.LATER);
+		CloseAndSendTracking(HDTrackingManager.EPopupSurveyAction.Later);
 	}
 }
