@@ -21,6 +21,8 @@ public class PopupAskSurvey : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Message/PF_PopupSurvey";
 
+	public const string SURVEY_URL = "https://ubisoft.ca1.qualtrics.com/jfe/form/SV_23Kqa1zeNPP6rT7?=%USER_ID%";	// Replace %USER_ID% with actual user tracking ID
+
 	public const string PREF_CHECK = "PopupAskSurvey.Check";
 	public const string PREF_LAST_DISPLAYED_SESSION = "PopupAskSurvey.LastDisplayedSession";
 
@@ -50,6 +52,9 @@ public class PopupAskSurvey : MonoBehaviour {
 
 		// Not if we don't have internet access!
 		if(Application.internetReachability == NetworkReachability.NotReachable) return false;
+
+		// Not if we don't have a tracking ID
+		if(HDTrackingManager.Instance.GetDNAProfileID() == null) return false;
 
 		// Not if target dragon not yet owned
 		DragonData targetDragon = DragonManager.GetDragonData(MIN_OWNED_DRAGON);
@@ -100,11 +105,18 @@ public class PopupAskSurvey : MonoBehaviour {
 	/// Yes button has been pressed.
 	/// </summary>
 	public void OnYes() {
-		// [AOC] TODO!! Open external survey
-
 		// Close the popup and set to never show again
 		Prefs.SetBoolPlayer(PREF_CHECK, false);
 		CloseAndSendTracking(HDTrackingManager.EPopupSurveyAction.Yes);
+
+		// Open external survey
+		// Add some delay to give enough time for SFX to be played before losing focus
+		string url = SURVEY_URL.Replace("%USER_ID%", HDTrackingManager.Instance.GetDNAProfileID());
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				Application.OpenURL(url);
+			}, 0.15f
+		);
 	}
 
 	/// <summary>
