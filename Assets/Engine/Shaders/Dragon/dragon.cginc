@@ -171,7 +171,7 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 	// Inner lights
 #if defined (SELFILLUMINATE_AUTOINNERLIGHT)				// Used in devil dragon
-	float wave = (i.texcoord.x * _InnerLightWavePhase) + (_Time.y * _InnerLightWaveSpeed);
+	float wave = /*(i.texcoord.x * _InnerLightWavePhase) + */(_Time.y * _InnerLightWaveSpeed);
 	fixed satMask = (0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b) * detail.r;
 	satMask = lerp(satMask, 1.0, detail.b);
 	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
