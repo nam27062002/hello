@@ -224,11 +224,7 @@ public class DragonEquip : MonoBehaviour {
 		if ( m_menuMode ){
 			SetSkin( skin );
 		}else{
-			if ( skin.EndsWith("_0") ){
-				SetSkin( skin + "_ingame" );
-			}else{
-				SetSkin( skin );
-			}
+			SetSkin( skin + "_ingame" );
 		}
 
 
