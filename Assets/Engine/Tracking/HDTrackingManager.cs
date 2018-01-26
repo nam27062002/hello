@@ -361,6 +361,15 @@ public class HDTrackingManager
 
 	public virtual void Notify_Hacker(){}
 
+    public enum EPopupSurveyAction
+    {
+        Yes,
+        No,
+        Later
+    };
+
+    public virtual void Notify_PopupSurveyShown(EPopupSurveyAction action) {}    
+
     #endregion
 
     #region log
