@@ -200,9 +200,9 @@ public class GameServerManager
     // CUSTOMIZER															  //
     //------------------------------------------------------------------------//
 
-        //------------------------------------------------------------------------//
-        // PERSISTENCE															  //
-        //------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
     public virtual void GetPersistence(ServerCallback callback) {}
     public virtual void SetPersistence(string persistence, ServerCallback callback) {}
 	public virtual void UpdateSaveVersion(bool prelimUpdate, ServerCallback callback) {}
@@ -217,7 +217,8 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     // OTHERS																  //
     //------------------------------------------------------------------------//
-    public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {}    
+    public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {}
+    public virtual void SendTrackLoading(string step, int deltaTime, bool isFirstTime, int sessionsCount, ServerCallback callback) {}   
 
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS														  //

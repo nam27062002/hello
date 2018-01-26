@@ -100,8 +100,11 @@ public class UIFeedbackText : MonoBehaviour {
 			.Join(m_text.DOFade(0f, durations[2]).SetEase(Ease.InCubic))
 
 			// Sequence setup and pause
-			.OnComplete(() => { GameObject.Destroy(this.gameObject); })	// Self-destroy on end
-			.Pause();
+			.OnComplete(() => { 
+				GameObject.Destroy(this.gameObject); 
+			})	// Self-destroy on end
+			.Pause()
+			.SetUpdate(true);
 	}
 
 	/// <summary>

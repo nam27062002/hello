@@ -489,7 +489,7 @@ public class PersistenceCloudDriver
     private void Syncer_OnMergeConflictUseCloud()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
-            PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD!!!");
+            PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD!!! Syncer_LogInSocialResult = " + Syncer_LogInSocialResult + " CloudData = " + ((Data == null) ? null : Data.ToString()));
 
         // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
         switch (Syncer_LogInSocialResult)

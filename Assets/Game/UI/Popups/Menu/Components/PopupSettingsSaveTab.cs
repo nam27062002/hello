@@ -411,6 +411,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
                 Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
                 m_userAvatarImage.sprite = sprite;
+				m_userAvatarImage.color = Color.white;
                 m_userAvatarImage.gameObject.SetActive(true);
                 // m_profileSpinner.SetActive(false);
             }

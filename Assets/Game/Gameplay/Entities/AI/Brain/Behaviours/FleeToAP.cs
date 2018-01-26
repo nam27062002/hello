@@ -39,7 +39,7 @@ namespace AI {
 
 			private Vector3 m_target;
 			private Vector3 m_lastPos;
-			private Vector3 m_runDirection;
+			private int m_runDirection;
 			private float m_timeStuck;
 
 			private float m_dragonVisibleTimer;
@@ -84,13 +84,12 @@ namespace AI {
 				Transform enemy = m_machine.enemy;
 				if (enemy != null) {
 					if (enemy.position.x < m_machine.position.x) {
-						m_runDirection = m_machine.groundDirection;
+						m_runDirection = 1;
 					} else if (enemy.position.x > m_machine.position.x) {
-						m_runDirection = -m_machine.groundDirection;
+						m_runDirection = -1;
 					}
 				} else {
-					m_runDirection = Random.Range(-1, 1) * m_machine.groundDirection;
-					m_runDirection.Normalize();
+					m_runDirection = Random.Range(-1, 1);
 				}
 
 				m_fleeState = FleeState.Flee;
@@ -149,6 +148,7 @@ namespace AI {
 							if (!warning) {
 								if (m_fleeState == FleeState.Flee) 	ChangeState(FleeState.Slow_Down);
 								else 								ChangeState(FleeState.Slow_Down_Panic);
+								return;
 							} else {
 								m_dragonVisibleTimer -= Time.deltaTime;
 								if (m_dragonVisibleTimer <= 0f) {
@@ -156,6 +156,7 @@ namespace AI {
 									else 		ChangeState(FleeState.Flee);
 
 									m_dragonVisibleTimer = 1f;
+									return;
 								}
 							}
 
@@ -164,15 +165,18 @@ namespace AI {
 							if (m_dragonPositionTimer <= 0f) {
 								if (enemy) {						
 									if (enemy.position.x < m_machine.position.x) {
-										m_runDirection = m_machine.groundDirection;
+										m_runDirection = 1;
 									} else if (enemy.position.x > m_machine.position.x) {
-										m_runDirection = -m_machine.groundDirection;
+										m_runDirection = -1;
 									}
 								}
 								m_dragonPositionTimer = m_data.checkDragonPositionTime;
 							}
 
-							if (m_pilot.speed >= m_pilot.moveSpeed * 0.5f) {
+							if (m_machine.groundDirection.y > 0.6f) {
+								ChangeState(FleeState.Panic);
+								return;
+							} else if (m_pilot.speed >= m_pilot.moveSpeed * 0.5f) {
 								float dSqr = (m_machine.position - m_lastPos).sqrMagnitude;
 								if (dSqr < 0.001f) 	m_timeStuck += Time.deltaTime;
 								else 				m_timeStuck = 0f;
@@ -181,6 +185,7 @@ namespace AI {
 
 								if (m_timeStuck > 1f) {
 									ChangeState(FleeState.Panic);
+									return;
 								}
 							}
 							break;
@@ -196,24 +201,37 @@ namespace AI {
 
 							m_panicTimer -= Time.deltaTime;
 							if (m_panicTimer <= 0) {
-								m_pilot.SetDirection(m_machine.direction, false);
-								ChangeState(FleeState.Flee_Panic);
+								if (danger) {
+									m_panicTimer = 2.5f;
+								} else {
+									m_pilot.SetDirection(m_machine.direction, false);
+									ChangeState(FleeState.Flee_Panic);
+								}
+								return;
 							}
 							break;
 													
 						case FleeState.Slow_Down:
 						case FleeState.Slow_Down_Panic:
-							if (warning) ChangeState(FleeState.Flee);
+							if (warning) {
+								ChangeState(FleeState.Flee);
+								return;
+							} 
 
-							m_panicTimer -= Time.deltaTime;
-							if (m_panicTimer <= 0) {
-								m_pilot.SetMoveSpeed(0);
-								if (m_pilot.speed < 1) Transition(OnIdleAlert);							
+							if (m_machine.groundDirection.y > 0.6f) {
+								ChangeState(FleeState.Panic);
+								return;
+							} else {
+								m_panicTimer -= Time.deltaTime;
+								if (m_panicTimer <= 0) {
+									m_pilot.SetMoveSpeed(0);
+									if (m_pilot.speed < 1) Transition(OnIdleAlert);							
+								}
 							}
 							break;
 					}
 
-					m_target = m_machine.position + m_runDirection * 1.5f;
+					m_target = m_machine.position + m_runDirection * m_machine.groundDirection * 1.5f;
 					m_pilot.GoTo(m_target);
 				}
 			}
@@ -239,12 +257,12 @@ namespace AI {
 
 					switch(_nextState) {
 						case FleeState.Flee:
-							m_dragonVisibleTimer = 1f;
+							m_dragonVisibleTimer = 0f;
 							m_pilot.SetMoveSpeed(m_data.speed);
 							break;
 
 						case FleeState.Flee_Panic:
-							m_dragonVisibleTimer = 1f;
+							m_dragonVisibleTimer = 0f;
 							m_pilot.SetMoveSpeed(m_data.speed);
 							m_pilot.PressAction(Pilot.Action.Scared); 
 							break;
