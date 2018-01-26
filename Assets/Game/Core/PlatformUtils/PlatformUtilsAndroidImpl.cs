@@ -90,7 +90,6 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 						uris.Call<bool>("add", uriObject);
 					}
 				}
-
 				using (intentObject.Call<AndroidJavaObject>("putParcelableArrayListExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uris)) { }
 			}
 
