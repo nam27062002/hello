@@ -117,7 +117,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1920625982296484}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.850811, y: -9.00225, z: -6.67264}
+  m_LocalPosition: {x: 0.8508064, y: -9.002245, z: -6.672865}
   m_LocalScale: {x: 2.2194297, y: 2.2194283, z: 2.2194283}
   m_Children: []
   m_Father: {fileID: 4690154148682326}
@@ -130,8 +130,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1801237935869452}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 29.5, y: -0.18, z: -0.29}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 176.12, y: -208.1, z: -0.62}
+  m_LocalScale: {x: 1.0924264, y: 1.0924264, z: 1.0924264}
   m_Children:
   - {fileID: 4674026649342808}
   - {fileID: 4887671315510736}
@@ -146,7 +146,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1666453940134826}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.228529, y: 2.0263405, z: -2.490646}
+  m_LocalPosition: {x: -6.2285337, y: 2.0263362, z: -2.490647}
   m_LocalScale: {x: 1.952783, y: 2.6510358, z: 2.6510358}
   m_Children: []
   m_Father: {fileID: 4690154148682326}
@@ -306,11 +306,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_burningTime: 2
+  m_burningTime: 4
   m_feedbackParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -344,12 +343,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
   m_feedbackParticleMatchDirection: 1
   m_burnParticle:
     name: PF_FireProc
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -383,11 +382,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_disintegrateParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -421,6 +420,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
   m_boxelSize: 10
   m_hitRadius: 1.5

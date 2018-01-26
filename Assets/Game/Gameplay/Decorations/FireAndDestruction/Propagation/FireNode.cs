@@ -98,6 +98,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public bool IsBurning() 		{ return m_state == State.Burning; 	  		}
 	public bool IsGoingToExplode()  { return m_state == State.GoingToExplode; 	}
 	public bool IsExtinguishing() 	{ return m_state == State.Extinguish; 		}
+	public bool IsExtinguished() 	{ return m_state == State.Extinguished;		}
 
 
 	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier) {

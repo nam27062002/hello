@@ -447,7 +447,20 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.PlayTest, parameters, callback);                
 	}
 
-	override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
+    public override void SendTrackLoading(string step, int deltaTime, bool isFirstTime, int sessionsCount, ServerCallback callback) {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+        deltaTime = Mathf.Max(1, deltaTime);
+        
+        parameters.Add("step", step);
+        parameters.Add("delta", deltaTime.ToString());
+        parameters.Add("newUser", isFirstTime.ToString());
+        parameters.Add("appLaunches", sessionsCount.ToString());
+        parameters.Add("millis", ServerManager.SharedInstance.GetCurrentTimeMillis().ToString());
+        Commands_EnqueueCommand(ECommand.TrackLoading, parameters, callback);                       
+    }
+
+    override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
 	}
 
@@ -536,6 +549,7 @@ public class GameServerManagerCalety : GameServerManager {
 		SetQualitySettings,
         GetGameSettings,
         PlayTest,
+        TrackLoading,
 
 		GlobalEvents_TMPCustomizer,
 		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
@@ -797,7 +811,22 @@ public class GameServerManagerCalety : GameServerManager {
 					kParams["uid"] = parameters["playTestUserId"];                        
                     Command_SendCommand(cmd, kParams, null, parameters["trackingData"]);
 				} break;
-				case ECommand.GlobalEvents_TMPCustomizer:{
+
+                case ECommand.TrackLoading: {                        
+                        /*
+                        JSONNode json = new JSONClass();
+                        json["step"] = parameters["step"];
+                        json["delta"] = parameters["delta"];
+                        json["appLaunches"] = parameters["appLaunches"];
+                        json["newUser"] = parameters["newUser"];
+                        json["millis"] = json["millis"];
+                        Command_SendCommand(COMMAND_TRACK_LOADING, null, null, json.ToString());
+                        */
+
+                        Command_SendCommand(COMMAND_TRACK_LOADING, null, parameters, null);                        
+                } break;
+
+                case ECommand.GlobalEvents_TMPCustomizer:{
                     Command_SendCommand( COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, null, null, "" );
 				}break;
 				case ECommand.GlobalEvents_GetState:
@@ -1029,7 +1058,7 @@ public class GameServerManagerCalety : GameServerManager {
 				    LogError(url, error);
 				    callback(error, null);
 				}*/
-			} break;
+    } break;
 
 			case 4: {
 				error = new ClientConnectionError("Status code: " + statusCode);                
@@ -1189,18 +1218,19 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_GET_GAME_SETTINGS = "/api/settings/get";
     private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
+    private const string COMMAND_TRACK_LOADING = "/api/loading/step";
 
-	private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
+    private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
 	private const string COMMAND_GLOBAL_EVENTS_GET_EVENT = "/api/gevent/get";
 	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/gevent/progress";
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/gevent/addProgress";
 	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/gevent/reward";
-	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
+	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";    
 
-	/// <summary>
-	/// Initialize Calety's NetworkManager.
-	/// </summary>
-	private void CaletyExtensions_Init() {
+    /// <summary>
+    /// Initialize Calety's NetworkManager.
+    /// </summary>
+    private void CaletyExtensions_Init() {
 		// All codes need to be handled in order to be sure that the game will continue regardless the network error
 		int[] codes = new int[] {
 			200, 204, 301, 302, 303, 304, 305, 306, 307, 400, 401, 402, 403, 404,
@@ -1219,8 +1249,9 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_GET_GAME_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
-		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_STATE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
@@ -1259,13 +1290,14 @@ public class GameServerManagerCalety : GameServerManager {
     // 1)Trying to reconnect after a network failure
     // 2)Keeping the session in server alive by sending a ping command periodically
 
-    // In Seconds
-    private const float CONNECTION_PING_PERIOD = 2 * 60f;
+    // In Seconds    
     private float m_connectionTimeLeftToPing;
 
     private bool m_connectionIsBeingChecked;
 
     private bool m_connectionIsCheckEnabled;
+
+    private bool m_connectionIsReady;
 
     private void Connection_Init() {
         Connection_ResetTimer();
@@ -1273,10 +1305,11 @@ public class GameServerManagerCalety : GameServerManager {
 
         // If has to be enabled explicitly
         m_connectionIsCheckEnabled = false;
+        m_connectionIsReady = false;
     }
 
     private void Connection_ResetTimer() {        
-        m_connectionTimeLeftToPing = CONNECTION_PING_PERIOD;        
+        m_connectionTimeLeftToPing = FeatureSettingsManager.instance.GetAutomaticReloginPeriod();        
     }
 
     private void Connection_ForceCheck() {
@@ -1286,44 +1319,55 @@ public class GameServerManagerCalety : GameServerManager {
         }
     }    
 
-    private void Connection_Update() {     
-        // Check that a connection check is not already being performed   
-        if (Connection_IsCheckEnabled() && !m_connectionIsBeingChecked) {            
-            m_connectionTimeLeftToPing -= Time.unscaledDeltaTime;
+    private void Connection_Update() {
+        if (FeatureSettingsManager.instance.IsAutomaticReloginEnabled()) {            
+            if (m_connectionIsReady) {
+                // System ready
+                // Check that a connection check is not already being performed   
+                if (Connection_IsCheckEnabled() && !m_connectionIsBeingChecked) {
+                    m_connectionTimeLeftToPing -= Time.unscaledDeltaTime;
 
-            // Time's up
-            if (m_connectionTimeLeftToPing < 0f) {
-                m_connectionIsBeingChecked = true;
+                    // Time's up
+                    if (m_connectionTimeLeftToPing < 0f) {
+                        m_connectionIsBeingChecked = true;
 
-                // Checks connection
-                CheckConnection(delegate (Error connectionError) {
-                    Connection_ResetTimer();                    
+                        // Checks connection
+                        CheckConnection(delegate (Error connectionError) {
+                            Connection_ResetTimer();
 
-                    if (connectionError == null) {
-                        Action onSyncDone = delegate () {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("Sync done after recovering from network failure");
-                            m_connectionIsBeingChecked = false;
-                        };
+                            if (connectionError == null) {
+                                Action onSyncDone = delegate () {
+                                    if (FeatureSettingsManager.IsDebugEnabled)
+                                        Log("Sync done after recovering from network failure");
+                                    m_connectionIsBeingChecked = false;
+                                };
 
-                        // Checks if a connection is being checked again because it might have been reseted because the game was restarted. 
-                        // If that's the case then we don't need to sync because the game already performs a sync when starting                        
-                        if (Connection_IsCheckEnabled() && Connection_NeedsToRelogin()) {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("Sync_FromReconnecting...");
+                                // Checks if a connection is being checked again because it might have been reseted because the game was restarted. 
+                                // If that's the case then we don't need to sync because the game already performs a sync when starting                        
+                                if (Connection_IsCheckEnabled() && Connection_NeedsToRelogin()) {
+                                    if (FeatureSettingsManager.IsDebugEnabled)
+                                        Log("Sync_FromReconnecting...");
 
-                            // There's connection so it tries to relogin
-                            PersistenceFacade.instance.Sync_FromReconnecting(onSyncDone);
-                        } else {
-                            onSyncDone();
-                        }
+                                    // There's connection so it tries to relogin
+                                    PersistenceFacade.instance.Sync_FromReconnecting(onSyncDone);
+                                } else {
+                                    onSyncDone();
+                                }
 
-                    } else {
-                        m_connectionIsBeingChecked = false;
-                    }                    
-                });
+                            } else {
+                                m_connectionIsBeingChecked = false;
+                            }
+                        });
+                    }
+                }
+            } else {
+                // System is not ready: Waiting for content to be ready
+                if (ContentManager.m_ready) {
+                    Connection_ResetTimer();
+                    m_connectionIsReady = true;
+                }
             }
-        }
+        }          
     }
 
     private bool Connection_NeedsToRelogin() {        

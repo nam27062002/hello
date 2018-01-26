@@ -6,6 +6,7 @@ namespace AI {
 		[System.Serializable]
 		public class GroundWanderData : StateComponentData {
 			public float speed = 1.5f;
+			public bool isWallWalking = false;
 			public Range timeToIdle = new Range(15f, 20f);
 			public Range timeToChangeDirection = new Range(5f, 10f);
 		}
@@ -85,17 +86,21 @@ namespace AI {
 				Vector3 direction = m_machine.groundDirection;
 				direction.z = 0f;
 
-				Vector3 target = m_machine.position + direction * m_side * 1.5f;
+				if (m_data.isWallWalking || direction.y < 0.6f) {					
+					Vector3 target = m_machine.position + direction * m_side * 1.5f;
 
-				m_sideTimer -= Time.deltaTime;
-				if (m_sideTimer <= 0 || ShouldChangeDirection(target)) {
-					m_side *= -1;
-					m_sideTimer = m_data.timeToChangeDirection.GetRandom();
+					m_sideTimer -= Time.deltaTime;
+					if (m_sideTimer <= 0 || ShouldChangeDirection(target)) {
+						m_side *= -1;
+						m_sideTimer = m_data.timeToChangeDirection.GetRandom();
+					}
+
+					m_distanceToTarget =  (target - m_machine.position).sqrMagnitude;
+
+					m_pilot.GoTo(target);
+				} else {
+					Transition(OnRest);
 				}
-
-				m_distanceToTarget =  (target - m_machine.position).sqrMagnitude;
-
-				m_pilot.GoTo(target);
 			}
 
 			private bool ShouldChangeDirection(Vector3 _pos) {

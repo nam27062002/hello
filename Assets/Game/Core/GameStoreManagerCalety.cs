@@ -40,6 +40,19 @@ public class GameStoreManagerCalety : GameStoreManager
 			Debug.Log("onStoreIsReady");
 			m_isReady = true;	
 		}
+
+		/// <summary>
+		// TODO: TEST!!!!!
+		/// Ons the IAP promoted received. 
+		/// </summary>
+		/// <param name="strSku">String sku Product bought on the store.</param>
+		public override void onIAPPromotedReceived (string strSku) 
+		{
+			// Check if this sku is valid. Is it a one time purchase?
+			// if the user cannot purchase -> show message: You already have this item
+			// it the user can purchase -> GameStoreManager.SharedInstance.Buy(strSku)
+		}
+
 		/*
 		private string PlatformSkuToGameSku( string platform_sku )
 	    {
