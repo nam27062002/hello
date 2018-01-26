@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -54,15 +55,26 @@ public class PopupAskSurvey : MonoBehaviour {
 		if(Application.internetReachability == NetworkReachability.NotReachable) return false;
 
 		// Not if we don't have a tracking ID
+		#if !UNITY_EDITOR
 		if(HDTrackingManager.Instance.GetDNAProfileID() == null) return false;
+		#endif
 
-		// Not if target dragon not yet owned
-		DragonData targetDragon = DragonManager.GetDragonData(MIN_OWNED_DRAGON);
+		// Not if target min dragon is not properly defined
+		DragonData minDragon = DragonManager.GetDragonData(MIN_OWNED_DRAGON);
+		if(minDragon == null) return false;	// Something went really wrong
+
+		// Not if target min dragon not yet owned (or bigger one)
+		// Check whether player owns a dragon bigger than the min required and has played at least MIN_RUNS with it
+		int minOwnedDragonOrder = minDragon.GetOrder();
+		DragonData targetDragon = null;
+		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
+		for(int i = minOwnedDragonOrder; i < dragonsByOrder.Count; ++i) {
+			if(dragonsByOrder[i].isOwned && dragonsByOrder[i].gamesPlayed >= MIN_RUNS) {
+				targetDragon = dragonsByOrder[i];
+				break;
+			}
+		}
 		if(targetDragon == null) return false;
-		if(!targetDragon.isOwned) return false;
-
-		// Not if we haven't reached the minimum runs with target dragon!
-		if(targetDragon.gamesPlayed < MIN_RUNS) return false;
 
 		// Only after a run!
 		if(GameSceneManager.prevScene.CompareTo(ResultsScreenController.NAME) != 0 
