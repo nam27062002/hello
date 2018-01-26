@@ -224,12 +224,12 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 					BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_QUALITY_SLIDER_APPLYING"));
 					BusyScreen.Show(this, false);
 				})
-				.AppendInterval(1f)
+				.AppendInterval(0.5f)
 				.AppendCallback(() => {
 					// Apply new quality setting
 					FeatureSettingsManager.instance.RecalculateAndApplyProfile();
 				})
-				.AppendInterval(3f)
+				.AppendInterval(0.5f)
 				.AppendCallback(() => {
 					// Hide busy screen
 					BusyScreen.Hide(this, true);
