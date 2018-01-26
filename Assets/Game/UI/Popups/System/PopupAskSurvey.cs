@@ -54,6 +54,9 @@ public class PopupAskSurvey : MonoBehaviour {
 		// Not if already checked!
 		if(!Prefs.GetBoolPlayer(PREF_CHECK, true)) return false;
 
+		// Not if we don't have internet access!
+		if(Application.internetReachability == NetworkReachability.NotReachable) return false;
+
 		// Not if target dragon not yet owned
 		DragonData targetDragon = DragonManager.GetDragonData(MIN_OWNED_DRAGON);
 		if(targetDragon == null) return false;
