@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5435752}
   - component: {fileID: 11462060}
   - component: {fileID: 11434888}
+  - component: {fileID: 114286997533934014}
   m_Layer: 0
   m_Name: PF_DragonBugMenu
   m_TagString: Untagged
@@ -75,6 +76,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_bug
+  m_altAnimConfigs:
+  - m_range:
+      min: 3
+      max: 6
+    m_allowFaceDetails: 1
+    m_loopsMin: 3
+    m_loopsMax: 4
+    m_special: 0
+    m_timeToNext: 0
+  - m_range:
+      min: 4
+      max: 8
+    m_allowFaceDetails: 0
+    m_loopsMin: 1
+    m_loopsMax: 1
+    m_special: 1
+    m_timeToNext: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -3377,6 +3395,23 @@ MonoBehaviour:
   m_parentName: Dragon_LDown_Snout
   m_parentRoot: {fileID: 429386}
   m_worldPositionStays: 1
+--- !u!114 &114286997533934014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 145240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5079a9557e28740cba2dc15aa05422d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prefab: {fileID: 1927669451800062, guid: 18d2295d0a46d4d589173421e9ff69e1, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: 901275363d731470f825797afd86dcc1, type: 2}
+  - {fileID: 2100000, guid: 9176f5222aa7948898b709ffb9fca480, type: 2}
+  - {fileID: 2100000, guid: de5cff992f1244b9089de5fe5db0c597, type: 2}
+  - {fileID: 2100000, guid: a3c0b2ab375eb467b87c40a0cea2c8aa, type: 2}
 --- !u!114 &114298068997124578
 MonoBehaviour:
   m_ObjectHideFlags: 1
