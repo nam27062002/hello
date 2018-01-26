@@ -41,9 +41,9 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	{
 		Debug.Log ("Trying to share " + filename);
 #if !UNITY_EDITOR
-
+		// Previous version
 		//instantiate the class Intent
-		AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
+		/*AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
 		
 		//instantiate the object Intent
 		AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent");
@@ -69,6 +69,35 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		
 		//call the activity with our Intent
 		currentActivity.Call("startActivity", intentObject);
+		*/
+
+		// [AOC] Updated version, supports multiple file sharing
+		using(AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
+		using(AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent"))
+		{
+			using(intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"))) { }
+			using(intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), "")) { }
+			using(intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption)) { }
+
+			// attach file
+			string[] filePaths = new string[] { filename };
+			using(intentObject.Call<AndroidJavaObject>("setType", "image/jpeg")) { }
+			using(AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
+			using(AndroidJavaObject uris = new AndroidJavaObject("java.util.ArrayList")) {
+				for (int i = 0; i < filePaths.Length; i++) {
+					//instantiate the object Uri with the parse of the url's file
+					using(AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", "file://" + filePaths[i])) {
+						uris.Call<bool>("add", uriObject);
+					}
+				}
+
+				using (intentObject.Call<AndroidJavaObject>("putParcelableArrayListExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uris)) { }
+			}
+
+			// finally start application with our intent
+			AndroidJavaObject currentActivity = GetCurrentActivity();
+			currentActivity.Call("startActivity", intentObject);
+		}
 #endif
 	}
 
