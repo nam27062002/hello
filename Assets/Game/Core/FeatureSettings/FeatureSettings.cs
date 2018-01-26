@@ -354,6 +354,8 @@ public class FeatureSettings
         deprecated
     };
 
+    public static List<string> EQualityLevelValuesNames = new List<string>(Enum.GetNames(typeof(EQualityLevelValues)));
+
     public abstract class Data
     {        
         public static bool ParseValueInt(string value, out int outValue)

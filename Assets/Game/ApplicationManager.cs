@@ -208,6 +208,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 // ---------------------------         
 
                 // ---------------------------
+                // Test user profile level
+                //Debug_TestUserProfileLevel();
+                // ---------------------------
+
+                // ---------------------------
                 // Test toggling entities visibility
                 //Debug_TestToggleEntitiesVisibility();
                 // ---------------------------        
@@ -796,6 +801,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         key = FeatureSettings.KEY_PROFILE;
         Debug.Log(key + " as string = " + FeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));                        
         */
+    }
+
+    private int m_DebugUserProfileLevel = -1;
+    private void Debug_TestUserProfileLevel()
+    {
+        int currentUserProfileLevel = FeatureSettingsManager.instance.GetUserProfileLevel();
+        int currentProfileLevel = FeatureSettingsManager.instance.GetCurrentProfileLevel();
+        int maxProfileLevel = FeatureSettingsManager.instance.GetMaxProfileLevelSupported();
+        m_DebugUserProfileLevel = (m_DebugUserProfileLevel + 1) % (maxProfileLevel + 1);
+        FeatureSettingsManager.Log("before maxProfileLevel = " + maxProfileLevel + " currentUserProfileLevel = " + currentUserProfileLevel + " currentProfileLevel = " + currentProfileLevel + " to set " + m_DebugUserProfileLevel);        
+        FeatureSettingsManager.instance.SetUserProfileLevel(m_DebugUserProfileLevel);
+        FeatureSettingsManager.Log("after currentUserProfileLevel = " + FeatureSettingsManager.instance.GetUserProfileLevel() + " currentProfileLevel = " + FeatureSettingsManager.instance.GetCurrentProfileLevel());
     }
 
     private bool Debug_IsDrunkOn { get; set; }
