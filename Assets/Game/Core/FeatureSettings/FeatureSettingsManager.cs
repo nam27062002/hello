@@ -973,8 +973,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
+		FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
 #if !UNITY_EDITOR
-        FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
         int qualityIndex = (int)quality;
         if (qualityIndex != CurrentQualityIndex)
         {
@@ -984,13 +984,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             if (IsDebugEnabled)
                 Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
         }
-
-		if (quality <= FeatureSettings.EQualityLevelValues.low) {
-			Time.fixedDeltaTime = 0.05f; //20fps
-		}
-
-        ApplyPhysicQuality(settings.Rating);
 #endif
+		if (quality <= FeatureSettings.EQualityLevelValues.low) {
+			Time.fixedDeltaTime = 1f/20f;
+		} else {
+			Time.fixedDeltaTime = 1f/30f;
+		}
 
         FeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(FeatureSettings.KEY_SHADERS_LEVEL);
         Shaders_ApplyQuality(shadersLevel);
@@ -1016,19 +1015,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log(Device_GetInfo());
         Log(Shaders_GetInfo());
         Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
-    }
-
-    private void ApplyPhysicQuality(float deviceRating)
-    {
-        /*
-        float startValue = Rules_PhysicsMaxRating;
-        if (deviceRating < startValue)
-        {
-            float perc = Mathf.Clamp01(deviceRating / startValue);
-            float fixedTimeStep = Mathf.Lerp(0.025f, 0.01666666f, perc);
-            Time.fixedDeltaTime = fixedTimeStep;
-        }
-        */
     }
 
     private JSONNode FormatJSON(JSONNode json)
