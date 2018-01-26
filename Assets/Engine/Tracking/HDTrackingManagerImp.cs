@@ -1007,8 +1007,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     public override void Notify_StopPerformanceTracker() {
         Performance_IsTrackingEnabled = false;
-    }
+    }    
 
+    public override void Notify_PopupSurveyShown(EPopupSurveyAction action) {
+        Track_PopupSurveyShown(action);
+    }
     #endregion
 
     #region track	
@@ -1728,9 +1731,21 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Track_SendEvent(e);
         }
-
     }
 
+    private void Track_PopupSurveyShown(EPopupSurveyAction action)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_PopupSurveyShown action = " + action);
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.survey.popup");
+        if (e != null)
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, "HD_SURVEY_1");
+            Track_AddParamString(e, TRACK_PARAM_POPUP_ACTION, action.ToString());            
+            Track_SendEvent(e);
+        }
+    }
 
     // -------------------------------------------------------------
     // Params
@@ -1816,7 +1831,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PLAYER_ID                  = "playerID";
     private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
 	private const string TRACK_PARAM_PLAYING_MODE				= "playingMode";
-	private const string TRACK_PARAM_POPUP_NAME					= "popupName";
+    private const string TRACK_PARAM_POPUP_ACTION               = "popupAction";    
+    private const string TRACK_PARAM_POPUP_NAME					= "popupName";
     private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
