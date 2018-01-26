@@ -7,7 +7,7 @@ namespace GameConstants
 	public class Animator{
 
 		// Eat
-		public static readonly int EAT_HOLD = UnityEngine.Animator.StringToHash("EatHold");
+		public static readonly int EAT_HOLD = UnityEngine.Animator.StringToHash("eatHold");
 		public static readonly int EAT = UnityEngine.Animator.StringToHash("eat");
 		public static readonly int EAT_CRAZY = UnityEngine.Animator.StringToHash("eat crazy");
 		public static readonly int EAT_SPEED = UnityEngine.Animator.StringToHash("eatingSpeed");
