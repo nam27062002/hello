@@ -1181,6 +1181,7 @@ MonoBehaviour:
   hasOnStepComplete: 0
   hasOnComplete: 1
   hasOnTweenCreated: 0
+  hasOnRewind: 0
   onStart:
     m_PersistentCalls:
       m_Calls: []
@@ -1218,6 +1219,11 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   onTweenCreated:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRewind:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
@@ -2141,10 +2147,10 @@ MonoBehaviour:
   m_eggRewardIcon: {fileID: 114779669887845634}
   m_qrContainer: {fileID: 114118001943062184}
   m_shareDataIOS:
-    url: 
+    url: http://bit.ly/HD-share
     qrCodePath: UI/Menu/QR_codes/ios_qr
   m_shareDataAndroid:
-    url: https://play.google.com/store/apps/details?id=com.ubisoft.hungrydragon
+    url: http://bit.ly/HD-share
     qrCodePath: UI/Menu/QR_codes/android_qr
 --- !u!114 &114594269238717128
 MonoBehaviour:
@@ -4102,15 +4108,15 @@ RectTransform:
   m_GameObject: {fileID: 1536628370347598}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984001, y: 0.9984001, z: 0.9984001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224148627485733782}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -22, y: 21}
-  m_SizeDelta: {x: 200, y: 200}
+  m_AnchoredPosition: {x: -50, y: 50}
+  m_SizeDelta: {x: 410, y: 410}
   m_Pivot: {x: 1, y: 0}
 --- !u!224 &224770988189369802
 RectTransform:

@@ -100,9 +100,8 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 	public struct SocialSharingStruct
 	{
 		public string text;
-		public string url;
-		public string image;
 		public string subject;
+		public string filePaths;
 	}
 	
 	[DllImport ("__Internal")] private static extern void showSocialSharing(ref SocialSharingStruct conf);
@@ -118,11 +117,10 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 	private void CallSocialShareAdvanced(string img, string caption)
 	{
 		SocialSharingStruct conf = new SocialSharingStruct();
-		conf.text = caption; 
-		conf.url = "";
-		conf.image = img;
+		conf.text = caption;
+		conf.filePaths = img;
 		conf.subject = "";
-		
+
 		showSocialSharing(ref conf);
 	}
 
