@@ -76,6 +76,7 @@ namespace AI {
 				}
 			} else {
 				m_direction = rot * GameConstants.Vector3.forward;
+				m_machine.upVector = rot * m_machine.upVector;
 			}
 
 			Stop();
