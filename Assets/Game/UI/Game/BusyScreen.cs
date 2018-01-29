@@ -12,6 +12,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -29,6 +30,19 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	//------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private ShowHideAnimator m_animator = null;
+	public ShowHideAnimator animator {
+		get { return m_animator; }
+	}
+
+	[SerializeField] private TextMeshProUGUI m_text = null;
+	public TextMeshProUGUI text {
+		get { return m_text; }
+	}
+
+	[SerializeField] private GameObject m_spinner = null;
+	public GameObject spinner {
+		get { return m_spinner; }
+	}
 
 	// Internal
 	private HashSet<Object> m_owners = new HashSet<Object>();	// HashSet ~= List without duplicates
@@ -42,11 +56,23 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	private void Awake() {
 		// Start hidden
 		m_animator.Hide(false);
+
+		// Default setup
+		SetupInternal(true, string.Empty);
 	}
 
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Setup the busy screen.
+	/// </summary>
+	/// <param name="_showSpinner">Show the spinner?.</param>
+	/// <param name="_text">Text to be displayed. string.Empty for none.</param>
+	public static void Setup(bool _showSpinner, string _text) {
+		instance.SetupInternal(_showSpinner, _text);
+	}
+
 	/// <summary>
 	/// Toggle the loading screen on/off.
 	/// </summary>
@@ -96,5 +122,22 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 
 		// Hide!
 		Hide(null, _animate);
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Actually do the setup.
+	/// </summary>
+	/// <param name="_showSpinner">Show the spinner?.</param>
+	/// <param name="_text">Text to be displayed. string.Empty for none.</param>
+	private void SetupInternal(bool _showSpinner, string _text) {
+		// Spinner
+		m_spinner.SetActive(_showSpinner);
+
+		// Text
+		m_text.gameObject.SetActive(!string.IsNullOrEmpty(_text));
+		m_text.text = _text;
 	}
 }

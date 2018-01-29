@@ -190,6 +190,7 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	public void Initialize() {
 		// In order to properly initialize everything, object must be active
+		bool wasActive = this.gameObject.activeSelf;
 		this.gameObject.SetActive(true);
 
 		// If not done yet, load the pet definitions!
@@ -279,6 +280,9 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Initialize the pills!
 		InitPillsWithDragonData();
+
+		// We're done! Restore original object state
+		this.gameObject.SetActive(wasActive);
 	}
 
 	/// <summary>

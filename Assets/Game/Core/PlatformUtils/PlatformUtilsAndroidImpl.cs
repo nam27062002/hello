@@ -41,34 +41,30 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	{
 		Debug.Log ("Trying to share " + filename);
 #if !UNITY_EDITOR
+		// [AOC] Updated version, supports multiple file sharing
+		using(AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
+		using(AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent")) {
+			// Aux vars
+			AndroidJavaObject currentActivity = GetCurrentActivity();
 
-		//instantiate the class Intent
-		AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
-		
-		//instantiate the object Intent
-		AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent");
-		
-		//call setAction setting ACTION_SEND as parameter
-		intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
+			// Initialize intent parameters
+			intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
+			//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), "");	// Not using subject field for now
+			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 
-		// create file
-		AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
+			// Instantiate the object Uri class pointing to the file's path
+			AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
+			AndroidJavaClass fileProviderClass = new AndroidJavaClass("android.support.v4.content.FileProvider");
+			AndroidJavaObject uriObject = fileProviderClass.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
 
-		AndroidJavaObject currentActivity = GetCurrentActivity();
+			// attach file
+			intentObject.Call<AndroidJavaObject>("setType", "image/png");
+			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
+			intentObject.Call<AndroidJavaObject>("addFlags", intentClass.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION"));
 
-		//instantiate the class Uri
-		AndroidJavaClass fileProvider = new AndroidJavaClass("android.support.v4.content.FileProvider");
-		AndroidJavaObject uriObject = fileProvider.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
-		
-		//call putExtra with the uri object of the file
-		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
-		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
-		
-		//set the type of file
-		intentObject.Call<AndroidJavaObject>("setType", "image/jpeg");
-		
-		//call the activity with our Intent
-		currentActivity.Call("startActivity", intentObject);
+			// finally start application with our intent
+			currentActivity.Call("startActivity", intentObject);
+		}
 #endif
 	}
 

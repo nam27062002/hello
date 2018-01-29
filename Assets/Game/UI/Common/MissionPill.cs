@@ -77,6 +77,9 @@ public class MissionPill : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
 		Messenger.AddListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -86,6 +89,9 @@ public class MissionPill : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
 		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -536,6 +542,14 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Just update all the info
+		Refresh();
+	}
+
+	/// <summary>
+	/// Force a refresh.
+	/// </summary>
+	private void DEBUG_OnRefreshMissionInfo() {
+		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		Refresh();
 	}
 }

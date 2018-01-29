@@ -98,6 +98,13 @@ public class DragonData : IUISelectorItem {
 	private List<string> m_revealFromDragons = new List<string>();
 	public List<string> revealFromDragons { get { return m_revealFromDragons; } }
 
+	// Tracking
+	private int m_gamesPlayed = 0;
+	public int gamesPlayed {
+		get { return m_gamesPlayed; }
+		set { m_gamesPlayed = value; }
+	}
+
 	// Debug
 	private float m_scaleOffset = 0f;
 
@@ -277,6 +284,8 @@ public class DragonData : IUISelectorItem {
 		m_progression.Load(0,0);
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
 		m_pets = Enumerable.Repeat(string.Empty, m_tierDef.GetAsInt("maxPetEquipped", 0)).ToList();	// Use Linq to easily fill the list with the default value
+
+		m_gamesPlayed = 0;
 	}
 
 	/// <summary>
@@ -317,6 +326,12 @@ public class DragonData : IUISelectorItem {
 			}
 		}
 
+		// Tracking
+		if(_data.ContainsKey("gamesPlayed")) {
+			m_gamesPlayed = _data["gamesPlayed"].AsInt;
+		} else {
+			m_gamesPlayed = 0;
+		}
 	}
 
 	/// <summary>
@@ -343,6 +358,9 @@ public class DragonData : IUISelectorItem {
 			pets.Add( m_pets[i] == null ? string.Empty : m_pets[i] );	// [AOC] Adding a null value here breaks the JSON parsing when loading back :/
 		}
 		data.Add("pets", pets);
+
+		// Tracking
+		data.Add("gamesPlayed", m_gamesPlayed);
 
 		return data;
 

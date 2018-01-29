@@ -38,8 +38,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 				m_defaultValues[SHOW_BIG_AMOUNT_CONFIRMATION_POPUP] = true;
 				m_defaultValues[SHOW_EXIT_RUN_CONFIRMATION_POPUP] = true;
-
-				m_defaultValues[NOTIFICATIONS_ENABLED] = true;
 			}
 			return m_defaultValues;
 		}
@@ -67,8 +65,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
 	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";	// bool, default true
 
-	// Other settings
-	public const string NOTIFICATIONS_ENABLED = "GAME_SETTINGS_NOTIFICATIONS_ENABLED";	// bool, default true
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//

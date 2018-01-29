@@ -24,11 +24,11 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 		sharedAshesMaterial.renderQueue = 3000;
 
 		m_ashes_wait = new Material(sharedAshesMaterial);
-		m_ashes_wait.SetFloat("_AshLevel", 0f);
+		m_ashes_wait.SetFloat( GameConstants.Material.ASH_LEVEL , 0f);
 		m_ashes_disintegrate = new Material(sharedAshesMaterial);
-		m_ashes_disintegrate.SetFloat("_AshLevel", 0f);
+		m_ashes_disintegrate.SetFloat( GameConstants.Material.ASH_LEVEL , 0f);
 		m_ashes_end = new Material(sharedAshesMaterial);
-		m_ashes_end.SetFloat("_AshLevel", 1f);
+		m_ashes_end.SetFloat( GameConstants.Material.ASH_LEVEL , 1f);
 
 		m_list_wait = new List<AI.MachineInflammable>();
 		m_list_disintegrate = new List<AI.MachineInflammable>();
@@ -89,7 +89,7 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 				m_timer = 0f;
 			}
 
-			m_ashes_disintegrate.SetFloat("_AshLevel", m_timer / DISINTEGRATE_TIME);
+			m_ashes_disintegrate.SetFloat( GameConstants.Material.ASH_LEVEL , m_timer / DISINTEGRATE_TIME);
 		}
 	}
 }

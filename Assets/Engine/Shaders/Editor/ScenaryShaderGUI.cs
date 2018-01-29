@@ -61,6 +61,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         readonly public static string enableFogText = "Enable Fog";
 
+        readonly public static string additiveBlendingText = "Additive blending";
         readonly public static string automaticBlendingText = "Automatic blending";
         readonly public static string overlayColorText = "Vertex Color Tint";
 
@@ -91,8 +92,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
     /// Material Properties
     /// </summary>
     MaterialProperty mp_mainTexture;
-
     MaterialProperty mp_blendTexture;
+
+    MaterialProperty mp_Panning;
+
     MaterialProperty mp_lightmapContrastIntensity;
     MaterialProperty mp_lightmapContrastMargin;
     MaterialProperty mp_lightmapContrastPhase;
@@ -126,6 +129,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 /// Toggle Material Properties
 /// </summary>
     MaterialProperty mp_EnableBlendTexture;
+    MaterialProperty mp_EnableAdditiveBlend;
     MaterialProperty mp_EnableAutomaticBlend;
 
     MaterialProperty mp_EnableSpecular;
@@ -174,7 +178,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
     {
         mp_mainTexture = FindProperty("_MainTex", props);
         mp_blendTexture = FindProperty("_SecondTexture", props);
-//        mp_lightmapIntensity = FindProperty("_LightmapIntensity", props);
+        //        mp_lightmapIntensity = FindProperty("_LightmapIntensity", props);
+        mp_Panning = FindProperty("_Panning", props);
 
         mp_normalTexture = FindProperty("_NormalTex", props);
         mp_normalStrength = FindProperty("_NormalStrength", props);
@@ -202,6 +207,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         mp_EnableBlendTexture = FindProperty("_EnableBlendTexture", props);
         mp_EnableAutomaticBlend = FindProperty("_EnableAutomaticBlend", props);
+        mp_EnableAdditiveBlend = FindProperty("_EnableAdditiveBlend", props);
 
         mp_EnableSpecular = FindProperty("_EnableSpecular", props);
         mp_EnableNormalMap = FindProperty("_EnableNormalMap", props);
@@ -246,6 +252,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 ///                material.renderQueue = 2000;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 material.DisableKeyword("CUTOFF");
+                material.EnableKeyword("OPAQUEALPHA");
                 Debug.Log("Blend mode opaque");
                 break;
 
@@ -257,6 +264,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetFloat("_ZWrite", 0.0f);
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.DisableKeyword("CUTOFF");
+                material.DisableKeyword("OPAQUEALPHA");
                 Debug.Log("Blend mode transparent");
                 break;
 
@@ -268,6 +276,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 //                material.renderQueue = 2500;
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.EnableKeyword("CUTOFF");
+                material.EnableKeyword("OPAQUEALPHA");
 
                 Debug.Log("Blend mode cutout");
                 break;
@@ -311,8 +320,14 @@ internal class ScenaryShaderGUI : ShaderGUI {
         }
 
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
-
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
+
+        Vector4 tem = mp_Panning.vectorValue;
+        Vector2 p1 = new Vector2(tem.x, tem.y);
+        p1 = EditorGUILayout.Vector2Field("Panning:", p1);
+        tem.x = p1.x;
+        tem.y = p1.y;
+
 
         bool normalMap = mp_normalTexture.textureValue != null as Texture;
 
@@ -334,8 +349,17 @@ internal class ScenaryShaderGUI : ShaderGUI {
         if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
         {
             materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
+            p1.Set(tem.z, tem.w);
+            p1 = EditorGUILayout.Vector2Field("Panning:", p1);
+            tem.z = p1.x;
+            tem.w = p1.y;
+
+            materialEditor.ShaderProperty(mp_EnableAdditiveBlend, Styles.additiveBlendingText);
             materialEditor.ShaderProperty(mp_EnableAutomaticBlend, Styles.automaticBlendingText);
         }
+
+
+        mp_Panning.vectorValue = tem;
 
         if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
         {
@@ -470,6 +494,45 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         Debug.Log(sChanged + " materials changed");
     }
+
+
+    /// <summary>
+    /// Seek for all transparent scenary standard materials and disable keyword OPAQUEALPHA
+    /// </summary>
+    [MenuItem("Tools/Scenary/disable OPAQUEALPHA in transparent materials")]
+    public static void DisableOPAQUEALPHAinTransparent()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+            // UnlitShadowLightmap.shader
+            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
+            {
+                int blendMode = (int)mat.GetFloat("_BlendMode");
+
+                if (blendMode == 1 && mat.IsKeywordEnabled("OPAQUEALPHA"))
+                {
+                    mat.DisableKeyword("OPAQUEALPHA");
+                    sChanged++;
+                }
+            }
+        }
+
+        Debug.Log(sChanged + " materials changed");
+    }
+
+
 
 
 

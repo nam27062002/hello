@@ -59,6 +59,8 @@ struct v2f {
 sampler2D _MainTex;
 float4 _MainTex_ST;
 
+float4 _Panning;
+
 #ifdef BLEND_TEXTURE	
 sampler2D _SecondTexture;
 float4 _SecondTexture_ST;
@@ -105,15 +107,18 @@ uniform float _LightmapContrastMargin;
 uniform float _LightmapContrastPhase;
 #endif
 
-
 //Used by plants, simulates wind movement
 #if defined(CUSTOM_VERTEXPOSITION)
 float _SpeedWave;
+float _Amplitude;
 float4 getCustomVertexPosition(inout appdata_t v)
 {
 	float hMult = v.vertex.y;
+	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+	float wave = sin((_Time.y * _SpeedWave) + hMult + worldPos.x) * hMult * _Amplitude;
+
 	//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
-	float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	float4 tvertex = v.vertex + float4(wave, 0.0, wave, 0.0f);
 	//					tvertex.w = -0.5f;
 	return UnityObjectToClipPos(tvertex);
 }
@@ -138,10 +143,10 @@ v2f vert (appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 
-	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-	
+	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Time.y * _Panning.xy);
+
 #ifdef BLEND_TEXTURE	
-	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
+	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture) + (_Time.y * _Panning.zw);
 #endif
 
 #ifdef CUSTOM_VERTEXCOLOR
@@ -218,9 +223,14 @@ fixed4 frag (v2f i) : SV_Target
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
+#ifdef ADDITIVE_BLEND
+	col += col2 * (1.0 - i.color.a);
+#else
 	float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
-//					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
 	col = lerp( col2, col, l);
+#endif
+
+
 #endif	
 
 #if defined (VERTEXCOLOR_OVERLAY)
