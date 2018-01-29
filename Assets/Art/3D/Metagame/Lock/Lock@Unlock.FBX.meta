@@ -1,22 +1,22 @@
 fileFormatVersion: 2
-guid: 15af053839d32df4e8bdcf6ec981dcf3
-timeCreated: 1515575655
+guid: 9d152bfb765d74c22b1b30d1780c7b48
+timeCreated: 1517224350
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: lock_geo
-    100004: lock_hook_geo
-    400000: //RootNode
-    400002: lock_geo
-    400004: lock_hook_geo
-    2300000: lock_geo
-    2300002: lock_hook_geo
-    3300000: lock_geo
-    3300002: lock_hook_geo
-    4300000: lock_hook_geo
-    4300002: lock_geo
+    100000: lock_hook_geo
+    100002: //RootNode
+    400000: lock_hook_geo
+    400002: //RootNode
+    2300000: lock_hook_geo
+    2300002: //RootNode
+    3300000: lock_hook_geo
+    3300002: //RootNode
+    4300000: lock_geo
+    4300002: lock_hook_geo
+    7400000: AN_UILockUnlock
+    9500000: //RootNode
   materials:
     importMaterials: 0
     materialName: 0
@@ -39,7 +39,39 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: AN_UILockUnlock
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 27
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: lock_hook_geo
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -62,7 +94,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
-  importAnimation: 0
+  importAnimation: 1
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2
@@ -81,7 +113,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
