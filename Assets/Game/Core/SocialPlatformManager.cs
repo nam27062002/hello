@@ -372,14 +372,20 @@ public class SocialPlatformManager : MonoBehaviour
 
         JSONNode persistenceAsJson = null;
         
-        const string key = "profile";
+        const string key = "profile";        
         if (kCloudAccount != null && kCloudAccount.ContainsKey(key))
         {            
-            persistenceAsJson = kCloudAccount[key];            
+            persistenceAsJson = kCloudAccount[key];                        
         }
 
-        // Makes sure it's a valid persistence
-        if (persistenceAsJson == null || persistenceAsJson.ToString() == "{}")
+        string persistenceAsString = null;
+        if (persistenceAsJson != null)
+        {
+            persistenceAsString = persistenceAsJson.ToString();
+        }
+
+        // If it's an empty persistence then the default one is used instead
+        if (persistenceAsJson == null || persistenceAsString == "{}" || persistenceAsString == "{\"sc\":0,\"pc\":0}")
         {
             persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
         }
