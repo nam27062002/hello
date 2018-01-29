@@ -461,6 +461,11 @@ public class SocialPlatformManager : MonoBehaviour
         {
             Login_Update();
         }
+
+        if (m_socialUtils != null)
+        {
+            m_socialUtils.Update();
+        }
     }
 
     private const string LOG_CHANNEL = "[Social] ";
