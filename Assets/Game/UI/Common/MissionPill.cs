@@ -218,15 +218,20 @@ public class MissionPill : MonoBehaviour {
 
 	private void RefreshRemovePayButtons()
 	{
-		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
-		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
-		if ( watchAd != null && removeButton != null){
-			
-			bool canPayWithAds = CanPayRemoveMissionWithAds();
-			// Check if ads availables to skip mission
-			watchAd.SetActive( canPayWithAds );
-			removeButton.SetActive( !canPayWithAds );
+		// Check if ads availables to skip mission
+		bool canPayWithAds = CanPayRemoveMissionWithAds();
+
+		// Don't allow removing during tutorial
+		bool ftux = false;
+		if(m_mission != null && m_mission.def != null) {
+			ftux = m_mission.def.sku.Contains("ftux");
 		}
+
+		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
+		if(watchAd != null) watchAd.SetActive( !ftux && canPayWithAds );
+
+		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
+		if(removeButton != null) removeButton.SetActive( !ftux && !canPayWithAds );
 	}
 
 	/// <summary>
