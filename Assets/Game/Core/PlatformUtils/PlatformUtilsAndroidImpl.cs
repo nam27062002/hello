@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿//#define SKIP_DEFINES	// Uncomment for editing
+
+using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID || SKIP_DEFINES
 public class PlatformUtilsAndroidImpl: PlatformUtils
 {
 	private string AndroidGetCountryCode()
@@ -40,47 +42,50 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	public override void ShareImage(string filename, string caption)
 	{
 		Debug.Log ("Trying to share " + filename);
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
+		// [AOC] Updated version, supports multiple file sharing
+		using(AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
+		using(AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent")) {
+			// Aux vars
+			AndroidJavaObject currentActivity = GetCurrentActivity();
 
-		//instantiate the class Intent
-		AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
-		
-		//instantiate the object Intent
-		AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent");
-		
-		//call setAction setting ACTION_SEND as parameter
-		intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
+			// Initialize intent parameters
+			intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
+			//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), "");	// Not using subject field for now
+			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 
-		// create file
-		AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
+			// Instantiate the object Uri class pointing to the file's path
+			AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
+			AndroidJavaClass fileProviderClass = new AndroidJavaClass("android.support.v4.content.FileProvider");
+			AndroidJavaObject uriObject = fileProviderClass.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
 
-		AndroidJavaObject currentActivity = GetCurrentActivity();
+			// attach file
+			intentObject.Call<AndroidJavaObject>("setType", "image/png");
+			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
+			intentObject.Call<AndroidJavaObject>("addFlags", intentClass.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION"));
 
-		//instantiate the class Uri
-		AndroidJavaClass fileProvider = new AndroidJavaClass("android.support.v4.content.FileProvider");
-		AndroidJavaObject uriObject = fileProvider.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
-		
-		//call putExtra with the uri object of the file
-		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
-		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
-		
-		//set the type of file
-		intentObject.Call<AndroidJavaObject>("setType", "image/jpeg");
-		
-		//call the activity with our Intent
-		currentActivity.Call("startActivity", intentObject);
+			// finally start application with our intent
+			// [AOC] Create custom chooser intent to avoid showing the "Always" and "Only Once" button
+			bool customChooser = true;
+			if(customChooser) {
+				AndroidJavaObject chooserObject = intentClass.CallStatic<AndroidJavaObject>("createChooser", intentObject, LocalizationManager.SharedInstance.Localize("TID_GEN_SHARE_WITH"));
+				currentActivity.Call("startActivity", chooserObject);
+			} else {
+				currentActivity.Call("startActivity", intentObject);
+			}
+		}
 #endif
 	}
 
 	public override void MakeToast(string text, bool longDuration)
 	{
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass toastInterfaceClass = new AndroidJavaClass("com.ubisoft.utils.ToastInterface");
 		toastInterfaceClass.CallStatic("makeToast", GetCurrentActivity(), text, longDuration);
 #endif
 	}
 
-	#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 	private AndroidJavaObject GetCurrentActivity()
 	{
 		//instantiate the class UnityPlayer
@@ -95,7 +100,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 	public override string GetTrackingId()
 	{
-		#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass up = new AndroidJavaClass  ("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject> ("currentActivity");
 		AndroidJavaClass client = new AndroidJavaClass ("com.ubisoft.utils.PlatformUtils");
@@ -109,7 +114,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 	public override void askPermissions(){
 		//string[] permissions = "android.permission.WRITE_EXTERNAL_STORAGE".Split(new char[]{' '});
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass up = new AndroidJavaClass  ("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject> ("currentActivity");
 		AndroidJavaClass client = new AndroidJavaClass ("com.ubisoft.utils.PlatformUtils");
@@ -119,7 +124,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	}
 
 	public override bool arePermissionsGranted(){
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass up = new AndroidJavaClass  ("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject> ("currentActivity");
 		AndroidJavaClass client = new AndroidJavaClass ("com.ubisoft.utils.PlatformUtils");
@@ -132,7 +137,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	private static int GetSDKLevel()
 	{
 		int _sdkLevel = 18;
-#if UNITY_ANDROID && !UNITY_EDITOR	
+#if (UNITY_ANDROID && !UNITY_EDITOR) || SKIP_DEFINES
 		IntPtr _class = AndroidJNI.FindClass("android.os.Build$VERSION");
 		IntPtr _fieldId = AndroidJNI.GetStaticFieldID( _class, "SDK_INT", "I");
 		_sdkLevel = AndroidJNI.GetStaticIntField( _class, _fieldId);

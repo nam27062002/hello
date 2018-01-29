@@ -88,7 +88,7 @@ namespace LevelEditor {
 		/// </summary>
 		public void OnEnable() {
 			// Make sure we have the latest definitions loaded
-			ContentManager.InitContent(true);
+			ContentManager.InitContent(true, false);
 
 			// We must detect when application goes to play mode and back, so subscribe to the event
 			EditorApplication.playmodeStateChanged += OnPlayModeChanged;

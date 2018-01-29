@@ -77,6 +77,9 @@ public class FeatureSettings
     // This key decides the resolution factor, screen size is multiplied by this float value
     public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
 
+    // This key decides the minimum gfx memory amount
+    public const string KEY_GFX_MEMORY = "gfxMemory";
+
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
 
@@ -91,7 +94,13 @@ public class FeatureSettings
 
     public const string KEY_CONTENT_DELTAS = "contentDeltas";
 
-    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";    
+    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
+
+    // Whether or not automatic relogin is enabled (this features tries to login to our server and to the cloud if network is up)
+    public const string KEY_AUTOMATIC_RELOGIN = "automaticRelogin";
+
+    // Period in seconds between two automatic relogin checks
+    public const string KEY_AUTOMATIC_RELOGIN_PERIOD = "automaticReloginPeriod";
 
     // Examples of how to use different type datas
     /*
@@ -132,6 +141,10 @@ public class FeatureSettings
             Datas.Add(key, data);
 
             key = KEY_MIN_MEMORY;
+            data = new DataRangeInt(key, 0, 0, int.MaxValue);
+            Datas.Add(key, data);
+
+            key = KEY_GFX_MEMORY;
             data = new DataRangeInt(key, 0, 0, int.MaxValue);
             Datas.Add(key, data);
 
@@ -236,7 +249,15 @@ public class FeatureSettings
             // Content deltas need to be cached. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS_CACHED;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
-            Datas.Add(key, data);            
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN_PERIOD;
+            data = new DataInt(key, EValueType.Int, 60);
+            Datas.Add(key, data);
 
             /*
             // intTest
@@ -339,6 +360,8 @@ public class FeatureSettings
         very_high,
         deprecated
     };
+
+    public static List<string> EQualityLevelValuesNames = new List<string>(Enum.GetNames(typeof(EQualityLevelValues)));
 
     public abstract class Data
     {        
@@ -790,6 +813,28 @@ public class FeatureSettings
             }
         }
     }
+
+    public int GfxMemory
+    {
+        get
+        {
+            return GetValueAsInt(KEY_GFX_MEMORY);
+        }
+
+        set
+        {
+            string key = KEY_GFX_MEMORY;
+            if (Values.ContainsKey(key))
+            {
+                Values[key] = value;
+            }
+            else
+            {
+                Values.Add(key, value);
+            }
+        }
+    }
+
 
     public string Profile
     {

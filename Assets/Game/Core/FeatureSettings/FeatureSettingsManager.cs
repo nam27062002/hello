@@ -35,7 +35,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void Awake()
     {
 #if UNITY_EDITOR
-        Device_Model = "UNITY_EDITOR";
+        Device_Model = "UNITY_EDITOR";        
 #else
         Device_Model = SystemInfo.deviceModel;
 #endif
@@ -621,7 +621,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             }
             else
             {                               
-                m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, featureSettings.MinMemory, settingsJSON);
+                m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, featureSettings.MinMemory, featureSettings.GfxMemory, settingsJSON);
             }
         }
 
@@ -796,16 +796,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         float rating = m_deviceQualityManager.Device_CalculatedRating;
         string profileName = null;
 
-		if(IsDebugEnabled) 
+        string userProfileName = GetUserProfileName();
+        bool hasUserProfileName = !string.IsNullOrEmpty(userProfileName);
+
+        if (IsDebugEnabled) 
 		{
 			string msg = "SetupCurrentFeatureSettings: deviceSettingsJSON = ";
 			msg += (deviceSettingsJSON == null) ? "null" : deviceSettingsJSON.ToString();
 			msg += " qualitySettingsJSON = " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString());
             msg += " gameSettingsJSON = " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString());
+            msg += " userProfileName = " + userProfileName;
             Log(msg);
-		}
+		}        
 
-		// If no device configuration is passed then try to get the device configuration from rules        
+        // If no device configuration is passed then try to get the device configuration from rules        
         if (deviceSettingsJSON == null)
         {
             deviceSettingsJSON = GetDeviceFeatureSettingsAsJSON();
@@ -822,10 +826,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
-            }
+            }            
 
 			if (IsDebugEnabled)
 				Log("deviceSettingsJSON.profileName = " + profileName);
+
+            // This settings are ignored if this settings profile is not the same as the profile chosen by the user. If it's the same profile then we assume that this settings are more
+            // specific than the ones defined for the whole profile
+            if (hasUserProfileName && profileName != userProfileName)
+            {
+                deviceSettingsJSON = null;
+            }
         }        
 
         // If no profileName is available for the device in iOS then we assume that it's a new device so its rating has to be the maximum
@@ -843,7 +854,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         if (string.IsNullOrEmpty(profileName))
         {
             int systemMemorySize = SystemInfo.systemMemorySize;
-            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize);
+            int gfxMemorySize = SystemInfo.graphicsMemorySize;
+            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
 
 			if (IsDebugEnabled)
 				Log("Based on systemMemorySize = " + systemMemorySize + " rating = " + rating + " profileName is " + profileName);
@@ -866,10 +878,24 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             if (serverQualitySettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
             {
                 profileName = serverQualitySettingsJSON[FeatureSettings.KEY_PROFILE];
-            }
+            }            
 
-			if (IsDebugEnabled)
+            if (IsDebugEnabled)
 				Log("serverSettingsJSON profileName is " + profileName + " json = " + serverQualitySettingsJSON.ToString());
+
+            // This settings are ignored if this settings profile is not the same as the profile chosen by the user. If it's the same profile then we assume that this settings are more
+            // specific than the ones defined for the whole profile
+            if (hasUserProfileName && profileName != userProfileName)
+            {
+                serverQualitySettingsJSON = null;
+            }
+        }
+
+        // User's profile, if the user has set it, has the highest priority        
+        if (hasUserProfileName)
+        {
+            profileName = userProfileName;
+            rating = m_deviceQualityManager.Profiles_ProfileNameToRating(profileName);            
         }
 
         Device_CurrentProfile = profileName;
@@ -918,12 +944,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         ApplyCurrentFeatureSetting();
     }
 
+    public void RecalculateAndApplyProfile()
+    {
+        SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null, null);
+    }
+
     public void RestoreCurrentFeatureSettingsToDevice()
     {
 		if (IsDebugEnabled)
 			Log("RestoreCurrentFeatureSettingsToDevice");
-		
-        SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null, null);
+
+        RecalculateAndApplyProfile();
     }
 
     private FeatureSettings CreateFeatureSettings()
@@ -943,22 +974,23 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
+		FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
 #if !UNITY_EDITOR
-        FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
         int qualityIndex = (int)quality;
         if (qualityIndex != CurrentQualityIndex)
         {
             CurrentQualityIndex = qualityIndex;
             QualitySettings.SetQualityLevel(CurrentQualityIndex);
-            Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
+            
+            if (IsDebugEnabled)
+                Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
         }
-
-		if (quality <= FeatureSettings.EQualityLevelValues.low) {
-			Time.fixedDeltaTime = 0.05f; //20fps
-		}
-
-        ApplyPhysicQuality(settings.Rating);
 #endif
+		if (quality <= FeatureSettings.EQualityLevelValues.low) {
+			Time.fixedDeltaTime = 1f/20f;
+		} else {
+			Time.fixedDeltaTime = 1f/30f;
+		}
 
         FeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(FeatureSettings.KEY_SHADERS_LEVEL);
         Shaders_ApplyQuality(shadersLevel);
@@ -984,19 +1016,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log(Device_GetInfo());
         Log(Shaders_GetInfo());
         Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
-    }
-
-    private void ApplyPhysicQuality(float deviceRating)
-    {
-        /*
-        float startValue = Rules_PhysicsMaxRating;
-        if (deviceRating < startValue)
-        {
-            float perc = Mathf.Clamp01(deviceRating / startValue);
-            float fixedTimeStep = Mathf.Lerp(0.025f, 0.01666666f, perc);
-            Time.fixedDeltaTime = fixedTimeStep;
-        }
-        */
     }
 
     private JSONNode FormatJSON(JSONNode json)
@@ -1055,7 +1074,96 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }        
 
         return returnValue;
-    }    
+    }
+
+    /// <summary>
+    /// Returns the profile level currently active.
+    /// </summary>
+    /// <returns>A value in [0, NUM_PROFILES -1]. The bigger the value the better the profile</returns>
+    public int GetCurrentProfileLevel()
+    {
+        return Device_CurrentFeatureSettings == null ? -1 : ProfileNameToLevel(Device_CurrentFeatureSettings.Profile);
+    }
+
+    /// <summary>
+    /// Returns max profile level supported by the device
+    /// </summary>
+    /// <returns>A value in [0, NUM_PROFILES -1]. The bigger the value the better the profile</returns>
+    public int GetMaxProfileLevelSupported()
+    {
+        int systemMemorySize = SystemInfo.systemMemorySize;
+        return m_deviceQualityManager.Profiles_GetMaxProfileLevel(systemMemorySize);
+    }
+
+    /// <summary>
+    /// Returns the profile level chosen by the user.
+    /// </summary>
+    /// <returns>A value in [0, MAX_PROFILE_LEVEL] if the user has ever chosen a profile, otherwise <c>-1</c></returns>
+    public int GetUserProfileLevel()
+    {
+        // Translates name to level
+        string userProfileName = GetUserProfileName();
+        return ProfileNameToLevel(userProfileName);                
+    }
+
+    /// <summary>
+    /// Sets a profile level as the user's profile. This method just changes the user's profile level. Call <c>RecalculateAndApplyProfile()</c> to get it applied.
+    /// </summary>
+    /// <param name="value">A value in [0, NUM_PROFILES -1] to set as user's profile. The bigger the value the better the profile.</param>    
+    public void SetUserProfileLevel(int value)
+    {
+        SetUserProfileName(ProfileLevelToName(value));        
+    }
+
+    /// <summary>
+    /// Returns the profile name chosen by the user.
+    /// </summary>
+    /// <returns>A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c> if the user has ever chosen a profile, otherwise <c>null</c></returns>
+    private string GetUserProfileName()
+    {
+        string userProfileName = PersistencePrefs.GetUserProfileName();
+        // If user's profile is higher than max profile supported (probably because this level was supported in an earlier version of the game but it's not supported anymore) then
+        // max profile is returned
+        int userProfileLevel = ProfileNameToLevel(userProfileName);
+        if (userProfileLevel > GetMaxProfileLevelSupported())
+        {
+            userProfileLevel = GetMaxProfileLevelSupported();
+            userProfileName = ProfileLevelToName(userProfileLevel);
+        }
+
+        return userProfileName;
+    }
+
+    /// <summary>
+    /// Sets a profile name as the user's profile.
+    /// </summary>
+    /// <param name="value">A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c></param>
+    /// <param name="apply">When <c>true</c> this profile is applied</param>
+    private void SetUserProfileName(string value)
+    {
+        PersistencePrefs.SetUserProfileName(value);        
+    }
+
+    /// <summary>
+    /// 
+    /// Translates a profile name into its level
+    /// </summary>
+    /// <param name="value">A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c></param>
+    /// <returns>A value in [0, NUM_PROFILES - 1]</returns>
+    private int ProfileNameToLevel(string value)
+    {        
+        return FeatureSettings.EQualityLevelValuesNames.IndexOf(value);
+    }
+
+    /// <summary>
+    /// Translates a profile level into its name
+    /// </summary>
+    /// <param name="value">A value in [0, NUM_PROFILES - 1]</param>
+    /// <returns>A string corresponding to one of the values of <c>FeatureSettings.EQualityLevelValues</c></returns>
+    private string ProfileLevelToName(int level)
+    {        
+        return (level >= 0 && level < FeatureSettings.EQualityLevelValuesNames.Count) ? FeatureSettings.EQualityLevelValuesNames[level] : null;
+    }
     #endregion
 
     #region configs
@@ -1341,15 +1449,26 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 		{
 			return Device_CurrentFeatureSettings.GetValueAsInt( FeatureSettings.MAX_ZOOM_COST );
 		}
-	}    
+	}
+    
+    public bool IsAutomaticReloginEnabled()
+    {        
+        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
+    }
+    
+    public int GetAutomaticReloginPeriod()
+    {     
+        return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
+    }
     #endregion
 
     #region log
     private const string PREFIX = "FeatureSettingsManager:";
 
     public static void Log(string message)
-    {
+    {        
         Debug.Log(PREFIX + message);
+        //Debug.Log("<color=cyan>" + PREFIX + message + " </color>");
     }
 
     public static void LogWarning(string message)
@@ -1371,44 +1490,50 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // 1: very_high
         float rating = 0f;
         int memorySize = 512;
-        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        int gfxMemorySize = 1024;
+        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.1f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 128;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.3f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 1024;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.5f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 1024;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.7f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        memorySize = 2048;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.8f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 2048;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.85f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.9f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 1.0f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 1.1f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
     }
     #endregion
 

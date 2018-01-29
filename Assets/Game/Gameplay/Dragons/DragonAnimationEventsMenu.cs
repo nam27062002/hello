@@ -30,5 +30,24 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 		Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 0.5f, 0.25f);
 	}
 
+	public void StartFire()
+	{
+		transform.parent.GetComponent<MenuDragonPreview>().StartFlame();	
+	}
+
+	public void EndFire()
+	{
+		transform.parent.GetComponent<MenuDragonPreview>().EndFlame();
+	}
+
+	public void StartBlood()
+	{
+		transform.parent.GetComponent<MenuDragonPreview>().StartBlood();
+	}
+
+	public void EndBlood()
+	{
+		transform.parent.GetComponent<MenuDragonPreview>().EndBlood();
+	}
 
 }

@@ -77,6 +77,9 @@ public class MissionPill : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
 		Messenger.AddListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -86,6 +89,9 @@ public class MissionPill : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
 		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -212,15 +218,20 @@ public class MissionPill : MonoBehaviour {
 
 	private void RefreshRemovePayButtons()
 	{
-		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
-		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
-		if ( watchAd != null && removeButton != null){
-			
-			bool canPayWithAds = CanPayRemoveMissionWithAds();
-			// Check if ads availables to skip mission
-			watchAd.SetActive( canPayWithAds );
-			removeButton.SetActive( !canPayWithAds );
+		// Check if ads availables to skip mission
+		bool canPayWithAds = CanPayRemoveMissionWithAds();
+
+		// Don't allow removing during tutorial
+		bool ftux = false;
+		if(m_mission != null && m_mission.def != null) {
+			ftux = m_mission.def.sku.Contains("ftux");
 		}
+
+		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
+		if(watchAd != null) watchAd.SetActive( !ftux && canPayWithAds );
+
+		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
+		if(removeButton != null) removeButton.SetActive( !ftux && !canPayWithAds );
 	}
 
 	/// <summary>
@@ -531,6 +542,14 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Just update all the info
+		Refresh();
+	}
+
+	/// <summary>
+	/// Force a refresh.
+	/// </summary>
+	private void DEBUG_OnRefreshMissionInfo() {
+		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		Refresh();
 	}
 }
