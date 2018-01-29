@@ -112,6 +112,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		GameServerManager.ServerResponse response = CreateTestResponse( "tmp_customizer.json" );
 		instance.OnTMPCustomizerResponse( null, response );
 	#else
+		Debug.Log("<color=magenta>EVENT TMP CUSTOMIZER</color>");
 		GameServerManager.SharedInstance.GlobalEvent_TMPCustomizer(instance.OnTMPCustomizerResponse);
 	#endif
 	}
@@ -130,6 +131,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+			Debug.Log("<color=purple>EVENT TMP CUSTOMIZER</color>\n" + (responseJson == null ? "<color=red>NULL RESPONSE!</color>" : responseJson.ToString(4)));
 			if ( responseJson != null && responseJson.ContainsKey("liveEvents") && responseJson["liveEvents"].IsArray ){
 				SimpleJSON.JSONArray arr = responseJson["liveEvents"].AsArray;
 				if ( arr.Count > 0 ){
