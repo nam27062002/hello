@@ -12,7 +12,7 @@ public class PopupAskRateUs : MonoBehaviour {
 		// Open rate us
 #if UNITY_IOS
 		// TODO: store id for this app
-		DeviceUtilsManager.SharedInstance.OpenMarketForRating( "" , true);
+		DeviceUtilsManager.SharedInstance.OpenMarketForRating( Application.identifier , true);
 #elif UNITY_ANDROID
 		DeviceUtilsManager.SharedInstance.OpenMarketForRating();
 #endif

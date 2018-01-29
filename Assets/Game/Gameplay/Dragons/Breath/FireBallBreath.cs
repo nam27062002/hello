@@ -49,11 +49,6 @@ public class FireBallBreath : DragonBreathBehaviour {
 		}
 	}
 
-	override protected void EndFury() 
-	{
-		base.EndFury();
-	}
-
 
 
 	void OnTriggerEnter(Collider _other)

@@ -307,6 +307,10 @@ public class Catapult : SimpleDevice {
 		return false;
 	}
 
+	protected override void OnAreaExit() {
+		base.OnAreaExit();
+		m_animator.StopPlayback();
+	}
 
 	//-------------------------------------------------------------------
 	// Debug

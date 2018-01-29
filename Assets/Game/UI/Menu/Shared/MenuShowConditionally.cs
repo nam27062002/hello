@@ -229,7 +229,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
 			// Go to opposite of the target state
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
-			m_targetAnimator.Hide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
+			m_targetAnimator.ForceHide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
 
 			// Program the animation to the target state in sync with the dragon scroll animation (more or less)
 			if (m_coroutine != null) {
@@ -242,7 +242,7 @@ public class MenuShowConditionally : MonoBehaviour {
 				StopCoroutine(m_coroutine);
 				m_coroutine = null;
 			}
-			m_targetAnimator.Set(_show, _useAnims);
+			m_targetAnimator.ForceSet(_show, _useAnims);
 		}
 	}
 
@@ -320,7 +320,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
 
 		// Do it! (If still enabled!)
-		if(this.enabled) m_targetAnimator.Set(_toShow, _useAnims);
+		if(this.enabled) m_targetAnimator.ForceSet(_toShow, _useAnims);
 
 		m_coroutine = null;
 	}

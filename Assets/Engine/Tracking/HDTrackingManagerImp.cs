@@ -16,8 +16,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         Banned
     }
 
-	private FunnelData_Load m_loadFunnel;
-	private FunnelData_FirstUX m_firstUXFunnel;
+    // Load funnel events are tracked by two different apis (Calety and Razolytics). 
+    private FunnelData_Load m_loadFunnelCalety;
+    private FunnelData_LoadRazolytics m_loadFunnelRazolytics;
+
+    private FunnelData_FirstUX m_firstUXFunnel;    
 
     private EState State { get; set; }    
 
@@ -38,8 +41,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public HDTrackingManagerImp()
     {
-		m_loadFunnel = new FunnelData_Load();
-		m_firstUXFunnel = new FunnelData_FirstUX();		        
+		m_loadFunnelCalety = new FunnelData_Load();
+        m_loadFunnelRazolytics = new FunnelData_LoadRazolytics();
+        m_firstUXFunnel = new FunnelData_FirstUX();		        
     }
 
     public override void Init()
@@ -59,8 +63,9 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         Session_Reset();
-        m_loadFunnel.Reset();
-		m_firstUXFunnel.Reset();
+        m_loadFunnelCalety.Reset();
+        m_loadFunnelRazolytics.Reset();
+        m_firstUXFunnel.Reset();
 
 		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 		Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
@@ -247,7 +252,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
 
-        Notify_Funnel_Load(FunnelData_Load.Steps._01_persistance);    
+        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_persistance);
+        Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
     }    
 
     private void InitSDKs()
@@ -264,7 +270,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	private void InitDNA(CaletySettings settingsInstance)
 	{
-        string clientVersion = settingsInstance.GetClientBuildVersion();
+        string clientVersion = GameSettings.internalVersion.ToString();
 
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
 #if !UNITY_EDITOR
@@ -736,7 +742,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (!Session_HasMenuEverLoaded)
         {
             Session_HasMenuEverLoaded = true;
-            HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
+            HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
         }
     }
 
@@ -744,15 +751,26 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// The game has reached a step in the loading funnel.
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
-	public override void Notify_Funnel_Load(FunnelData_Load.Steps _step) {
-		Track_Funnel(m_loadFunnel.name, m_loadFunnel.GetStepName(_step), m_loadFunnel.GetStepDuration(_step), m_loadFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
-	}
+	public override void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {        
+        Track_Funnel(m_loadFunnelCalety.name, m_loadFunnelCalety.GetStepName(_step), m_loadFunnelCalety.GetStepDuration(_step), m_loadFunnelCalety.GetStepTotalTime(_step), Session_IsFirstTime);                                            
+	}  
+    
+    public override void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {
+        int _sessionsCount = (TrackingPersistenceSystem == null) ? 0 : TrackingPersistenceSystem.SessionCount;
+        string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
+        int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
+        // TODO: To debug with server
+        //GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
 
-	/// <summary>
-	/// The game has reached a step in the firts user experience funnel.
-	/// </summary>
-	/// <param name="_step">Step to notify.</param>
-	public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);
+    }
+
+    /// <summary>
+    /// The game has reached a step in the firts user experience funnel.
+    /// </summary>
+    /// <param name="_step">Step to notify.</param>
+    public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
         // This step has to be sent only within the first session
         if (TrackingPersistenceSystem.SessionCount == 1) {
 			Log("FTUX Funnel - step: " + m_firstUXFunnel.GetStepName(_step) + ", duration: " + m_firstUXFunnel.GetStepDuration(_step));
@@ -989,8 +1007,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// </summary>
     public override void Notify_StopPerformanceTracker() {
         Performance_IsTrackingEnabled = false;
-    }
+    }    
 
+    public override void Notify_PopupSurveyShown(EPopupSurveyAction action) {
+        Track_PopupSurveyShown(action);
+    }
     #endregion
 
     #region track	
@@ -1028,7 +1049,16 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
             Track_SendEvent(e);            
-        }        
+        }
+
+        e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
+        if (e != null)
+        {
+            string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
+            Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
+
+            Track_SendEvent(e);
+        }
     }    
 
     private void Track_ApplicationEndEvent(string stopCause)
@@ -1701,9 +1731,21 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Track_SendEvent(e);
         }
-
     }
 
+    private void Track_PopupSurveyShown(EPopupSurveyAction action)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_PopupSurveyShown action = " + action);
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.survey.popup");
+        if (e != null)
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, "HD_SURVEY_1");
+            Track_AddParamString(e, TRACK_PARAM_POPUP_ACTION, action.ToString());            
+            Track_SendEvent(e);
+        }
+    }
 
     // -------------------------------------------------------------
     // Params
@@ -1789,7 +1831,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PLAYER_ID                  = "playerID";
     private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
 	private const string TRACK_PARAM_PLAYING_MODE				= "playingMode";
-	private const string TRACK_PARAM_POPUP_NAME					= "popupName";
+    private const string TRACK_PARAM_POPUP_ACTION               = "popupAction";    
+    private const string TRACK_PARAM_POPUP_NAME					= "popupName";
     private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
     private const string TRACK_PARAM_PROVIDER                   = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH              = "providerAuth";
@@ -1820,6 +1863,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE              = "userTime<one";
+    private const string TRACK_PARAM_VERSION_REVISION           = "versionRevision";
     private const string TRACK_PARAM_XP                         = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";
 

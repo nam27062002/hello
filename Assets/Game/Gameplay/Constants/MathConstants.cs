@@ -18,6 +18,16 @@ namespace GameConstants
 		public static readonly UnityEngine.Vector3 back 	= UnityEngine.Vector3.back;
 	}
 
+	public class Vector2
+	{
+		public static readonly UnityEngine.Vector2 zero 	= UnityEngine.Vector2.zero;
+		public static readonly UnityEngine.Vector2 one 		= UnityEngine.Vector2.one;
+		public static readonly UnityEngine.Vector2 right 	= UnityEngine.Vector2.right;
+		public static readonly UnityEngine.Vector2 left 	= UnityEngine.Vector2.left;
+		public static readonly UnityEngine.Vector2 up 		= UnityEngine.Vector2.up;
+		public static readonly UnityEngine.Vector2 down 	= UnityEngine.Vector2.down;
+	}
+
 	public class Quaternion
 	{
 		public static readonly UnityEngine.Quaternion identity = UnityEngine.Quaternion.identity;	
