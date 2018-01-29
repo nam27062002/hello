@@ -94,7 +94,7 @@ public class NumberTextAnimator : MonoBehaviour {
 		// Skip if we've reached the final value
 		if(m_currentValue != m_finalValue) {
 			// Update current value
-			long newValue = (long)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.time - m_startTime)/m_duration);
+			long newValue = (long)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.unscaledTime - m_startTime)/m_duration);
 
 			// If value has changed, update textfield
 			if(newValue != m_currentValue) {
@@ -116,7 +116,7 @@ public class NumberTextAnimator : MonoBehaviour {
 
 		// Reset timestamp and current value
 		m_currentValue = m_initialValue;
-		m_startTime = Time.time;
+		m_startTime = Time.unscaledTime;
 
 		// Initialize textfield
 		ApplyValue(m_initialValue);

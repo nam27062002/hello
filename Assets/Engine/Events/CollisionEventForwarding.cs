@@ -12,15 +12,6 @@ public class CollisionEventForwarding : MonoBehaviour {
 	[SerializeField] private bool m_onTriggerEnter = false;
 	[SerializeField] private bool m_onTriggerStay = false;
 	[SerializeField] private bool m_onTriggerExit = false;
-	[SeparatorAttribute]
-	[SerializeField] private bool m_onMouseDown = false;
-	[SerializeField] private bool m_onMouseDrag = false;
-	[SerializeField] private bool m_onMouseUp = false;
-	[SerializeField] private bool m_onMouseUpAsButton = false;
-	[SeparatorAttribute]
-	[SerializeField] private bool m_onMouseEnter = false;
-	[SerializeField] private bool m_onMouseExit = false;
-	[SerializeField] private bool m_onMouseOver = false;
 		
 	void OnCollisionEnter(Collision _other) { if (m_onCollisionEnter) 	m_receiver.SendMessage("OnCollisionEnter", _other); 	} 
 	void OnCollisionStay(Collision _other) 	{ if (m_onCollisionStay) 	m_receiver.SendMessage("OnCollisionStay", _other); 		}

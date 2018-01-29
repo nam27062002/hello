@@ -101,7 +101,7 @@ public class ContentManager
 		}
 
         if (UseDeltaContent)
-        {            
+		{            
             ContentDeltaManager.SharedInstance.RequestAssetsLUT(ServerManager.SharedInstance.GetServerConfig().m_strServerApplicationSecretKey);
         }  
         else

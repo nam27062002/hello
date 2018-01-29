@@ -235,14 +235,19 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					// Advance dissolve!
 					m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
 
-					if (m_timer.GetDelta() > 0.75f) {
-						for (int i = 0; i < m_fireNodes.Length; ++i) {
-							m_fireNodes[i].Extinguish();
-						}
-					}
-
 					if (m_timer.IsFinished()) {
-						Destroy();
+						bool extinguished = true;
+						for (int i = 0; i < m_fireNodes.Length; ++i) {
+							if (!m_fireNodes[i].IsExtinguishing()
+							&&  !m_fireNodes[i].IsExtinguished()) {
+								m_fireNodes[i].Extinguish();
+								extinguished = false;
+							}
+						}
+
+						if (extinguished) {
+							Destroy();
+						}						
 					}
 					break;
 

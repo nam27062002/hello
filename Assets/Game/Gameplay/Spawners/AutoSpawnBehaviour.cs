@@ -32,7 +32,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private SpawnerConditions m_spawnConditions;
 
 	private Bounds m_bounds; // view bounds
-	private Renderer m_renderer;
+
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
 	public Quaternion rotation { get { return Quaternion.identity; } }
@@ -63,9 +63,13 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			m_newCamera = Camera.main.GetComponent<GameCamera>();
 			m_gameSceneController = InstanceManager.gameSceneControllerBase;
 
+
+			m_bounds = new Bounds();
 			GameObject view = transform.Find("view").gameObject;
-			m_renderer = view.GetComponentInChildren<Renderer>();
-			m_bounds = m_renderer.bounds;
+			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
+			for (int i = 0; i < renderers.Length; ++i) {
+				m_bounds.Encapsulate(renderers[i].bounds);
+			}
 
 			Vector2 position = (Vector2)m_bounds.min;
 			Vector2 size = (Vector2)m_bounds.size;
@@ -125,7 +129,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 
 	public void Initialize() {
-		m_state = State.Respawning;
+		m_state = State.Idle;
 	}
 
     public void Clear() {

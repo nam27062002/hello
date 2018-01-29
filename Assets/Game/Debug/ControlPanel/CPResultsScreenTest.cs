@@ -51,19 +51,6 @@ public class CPResultsScreenTest : MonoBehaviour {
 		set { Prefs.SetIntPlayer(CHESTS_MODE, (int)value); }
 	}
 
-	public enum ChestsLayout {
-		ONLY_COLLECTED_CHESTS,
-		FULL_PROGRESSION
-	};
-
-	public const string CHESTS_LAYOUT = "RESULTS_CHESTS_LAYOUT";
-	public static ChestsLayout chestsLayout {
-		get {
-			return (ChestsLayout)Prefs.GetIntPlayer(CHESTS_LAYOUT, (int)ChestsLayout.FULL_PROGRESSION); 
-		}
-		set { Prefs.SetIntPlayer(CHESTS_LAYOUT, (int)value); }
-	}
-
 	//------------------------------------------------------------------------//
 	// EGGS																	  //
 	//------------------------------------------------------------------------//
@@ -180,10 +167,6 @@ public class CPResultsScreenTest : MonoBehaviour {
 	[SerializeField] private CPEnumPref m_eggModeDropdown = null;
 	[SerializeField] private CPEnumPref m_missionsModeDropdown = null;
 
-	// Visuals
-	[Space]
-	[SerializeField] private CPEnumPref m_chestsLayoutDropdown = null;
-
 	// Score
 	[Space]
 	[SerializeField] private TMP_InputField m_scoreValueInput = null;
@@ -222,8 +205,6 @@ public class CPResultsScreenTest : MonoBehaviour {
 		m_eggModeDropdown.InitFromEnum(EGG_MODE, typeof(EggTestMode), (int)EggTestMode.RANDOM);
 		m_missionsModeDropdown.InitFromEnum(MISSIONS_MODE, typeof(MissionsTestMode), (int)MissionsTestMode.NONE);
 
-		m_chestsLayoutDropdown.InitFromEnum(CHESTS_LAYOUT, typeof(ChestsLayout), (int)ChestsLayout.FULL_PROGRESSION);
-
 		m_scoreValueInput.onValueChanged.AddListener(_text => scoreValue = long.Parse(_text));
 		m_highScoreValueInput.onValueChanged.AddListener(_text => highScoreValue = long.Parse(_text));
 		m_newHighScoreToggle.onValueChanged.AddListener(_toggled => newHighScore = _toggled);
@@ -260,8 +241,6 @@ public class CPResultsScreenTest : MonoBehaviour {
 		m_chestsModeDropdown.Refresh();
 		m_eggModeDropdown.Refresh();
 		m_missionsModeDropdown.Refresh();
-
-		m_chestsLayoutDropdown.Refresh();
 
 		m_scoreValueInput.text = scoreValue.ToString();
 		m_highScoreValueInput.text = highScoreValue.ToString();
