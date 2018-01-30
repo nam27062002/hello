@@ -361,7 +361,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 
 			// Lock break animation
 			.AppendCallback(() => {
-				m_lockIcon.GetComponentInChildren<Animator>().SetTrigger("unlock");
+				m_lockIcon.GetComponentInChildren<LockViewController>().LaunchUnlockAnim();
 			})
 
 			// Let animation finish
