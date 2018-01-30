@@ -133,21 +133,35 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
 			Debug.Log("<color=purple>EVENT TMP CUSTOMIZER</color>\n" + (responseJson == null ? "<color=red>NULL RESPONSE!</color>" : responseJson.ToString(4)));
 			if ( responseJson != null && responseJson.ContainsKey("liveEvents") && responseJson["liveEvents"].IsArray ){
+				// Parse all events
 				SimpleJSON.JSONArray arr = responseJson["liveEvents"].AsArray;
-				if ( arr.Count > 0 ){
-					SimpleJSON.JSONClass liveEvent = arr[0].AsObject;
+				foreach(SimpleJSON.JSONClass liveEvent in arr) {
 					int globalEventKey = liveEvent["code"].AsInt;
 					if ( globalEventKey > 0 ){
-						GlobalEventUserData globalEventUserData = null;
-						if ( user.globalEvents.ContainsKey(globalEventKey) ){
-							globalEventUserData = user.globalEvents[globalEventKey];
-						}else{
-							globalEventUserData = new GlobalEventUserData();
-							globalEventUserData.eventID = globalEventKey;
-							user.globalEvents.Add(globalEventKey, globalEventUserData);
+						// Retrieve end timestamp
+						long secondsToEnd = 0;
+						if(liveEvent.ContainsKey("timeToEnd")) {
+							secondsToEnd = liveEvent["timeToEnd"].AsLong;
 						}
-						if ( liveEvent.ContainsKey("end") )
-							globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
+
+						// If we already have a local event data for this event ID, use it
+						GlobalEventUserData globalEventUserData = null;
+						if(user.globalEvents.ContainsKey(globalEventKey)) {
+							globalEventUserData = user.globalEvents[globalEventKey];
+						} else {
+							// We don't know anything about this event!
+							// If it hasn't yet ended, create a new local data object for it. Otherwise just ignore it (it's an old event that we have either already collected the reward or never participated).
+							if(secondsToEnd >= 0) {
+								globalEventUserData = new GlobalEventUserData();
+								globalEventUserData.eventID = globalEventKey;
+								user.globalEvents.Add(globalEventKey, globalEventUserData);
+							}
+						}
+
+						// If we got a valid timestamp, update local event data
+						if(globalEventUserData != null && secondsToEnd > 0) {
+							globalEventUserData.endTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() + (secondsToEnd * 1000);
+						}
 					}
 				}
 			}
