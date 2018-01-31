@@ -621,7 +621,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             }
             else
             {                               
-                m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, featureSettings.MinMemory, settingsJSON);
+                m_deviceQualityManager.Profiles_AddData(featureSettings.Profile, featureSettings.Rating, featureSettings.MinMemory, featureSettings.GfxMemory, settingsJSON);
             }
         }
 
@@ -854,7 +854,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         if (string.IsNullOrEmpty(profileName))
         {
             int systemMemorySize = SystemInfo.systemMemorySize;
-            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize);
+            int gfxMemorySize = SystemInfo.graphicsMemorySize;
+            profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
 
 			if (IsDebugEnabled)
 				Log("Based on systemMemorySize = " + systemMemorySize + " rating = " + rating + " profileName is " + profileName);
@@ -973,8 +974,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
+		FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
 #if !UNITY_EDITOR
-        FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
         int qualityIndex = (int)quality;
         if (qualityIndex != CurrentQualityIndex)
         {
@@ -984,13 +985,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             if (IsDebugEnabled)
                 Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
         }
-
-		if (quality <= FeatureSettings.EQualityLevelValues.low) {
-			Time.fixedDeltaTime = 0.05f; //20fps
-		}
-
-        ApplyPhysicQuality(settings.Rating);
 #endif
+		if (quality <= FeatureSettings.EQualityLevelValues.low) {
+			Time.fixedDeltaTime = 1f/20f;
+		} else {
+			Time.fixedDeltaTime = 1f/30f;
+		}
 
         FeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(FeatureSettings.KEY_SHADERS_LEVEL);
         Shaders_ApplyQuality(shadersLevel);
@@ -1016,19 +1016,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log(Device_GetInfo());
         Log(Shaders_GetInfo());
         Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
-    }
-
-    private void ApplyPhysicQuality(float deviceRating)
-    {
-        /*
-        float startValue = Rules_PhysicsMaxRating;
-        if (deviceRating < startValue)
-        {
-            float perc = Mathf.Clamp01(deviceRating / startValue);
-            float fixedTimeStep = Mathf.Lerp(0.025f, 0.01666666f, perc);
-            Time.fixedDeltaTime = fixedTimeStep;
-        }
-        */
     }
 
     private JSONNode FormatJSON(JSONNode json)
@@ -1503,44 +1490,50 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // 1: very_high
         float rating = 0f;
         int memorySize = 512;
-        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        int gfxMemorySize = 1024;
+        string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.1f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 128;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.3f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 1024;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.5f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 1024;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.7f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        memorySize = 2048;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.8f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        gfxMemorySize = 2048;
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.85f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 0.9f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 1.0f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 
         rating = 1.1f;
-        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize);
-        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize);
+        profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
+        Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
     }
     #endregion
 

@@ -72,6 +72,13 @@ public class GoalsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		
+	}
+
+	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
@@ -146,9 +153,17 @@ public class GoalsScreenController : MonoBehaviour {
 	/// The screen is about to be displayed.
 	/// </summary>
 	public void OnShowPreAnimation() {
+		// If there is an active global event, go to the events tab
+		// Do it as well if the event is pending reward collection
+		if(GlobalEventManager.currentEvent != null
+			&& (GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
+			&& m_tabs.GetTab((int)Tabs.GLOBAL_EVENTS).tabEnabled) {
+			m_tabs.GoToScreenInstant((int)Tabs.GLOBAL_EVENTS);
+		}
+
 		// If active tab is the Events tab, force a refresh
 		if(m_tabs.currentScreen != null) {
-			if(m_tabs.currentScreen.screenName == "eventsTab") {
+			if(m_tabs.currentScreenIdx == (int)Tabs.GLOBAL_EVENTS) {
 				// [AOC] Hardcore way to do it: simulate an OnShow() event like we just switched to this tab
 				m_tabs.currentScreen.OnShow.Invoke();
 			}

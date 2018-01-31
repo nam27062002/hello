@@ -570,6 +570,7 @@ public class DragonEquip : MonoBehaviour {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();
 				newInstance.transform.localScale = Vector3.one * player.data.def.GetAsFloat("petScale");
+				newInstance.transform.position = m_attachPoints[attachPointIdx].transform.position;
 				// newInstance.transform.localScale = Vector3.one * player.data.scale;
 			}
 
