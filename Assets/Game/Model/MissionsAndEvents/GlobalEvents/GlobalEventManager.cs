@@ -579,7 +579,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				Debug.Log("<color=purple>EVENT STATE</color>\n" + responseJson.ToString(4));
 				m_currentEvent.UpdateFromJson(responseJson);
 
-				if (m_currentEvent.isRewardAvailable) {
+				if (m_currentEvent.isFinished) {
 					GlobalEventManager.RequestCurrentEventRewards();
 				}
 
@@ -654,7 +654,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Debug.Log("<color=purple>EVENT LEADERBOARD</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateLeaderboardFromJson(responseJson);
 
-			if (m_currentEvent.isRewardAvailable) {
+			if (m_currentEvent.isFinished) {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 
