@@ -328,6 +328,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				MenuDragonPreview preview = InstanceManager.menuSceneController.dragonScroller.GetDragonPreview(_teaseDragonSku);
 				preview.equip.EquipDisguiseShadow();
+				preview.allowAltAnimations = false;
 
 				dragonData.Tease();	// [AOC] Mark as teased before actually showing it, otherwise the slot will auto-hide itself again!
 				slot.animator.ForceShow(true);
