@@ -114,7 +114,7 @@ public class MenuDragonScroller : MonoBehaviour {
 			if ( allowAltAnimations)
 			{
 				MenuDragonSlot slot = GetDragonSlot( kvp.Key);
-				if ( slot.currentState == DragonData.LockState.SHADOW )
+				if ( slot.currentState < DragonData.LockState.LOCKED )
 					allowAltAnimations = false;
 			}
 			if(kvp.Value.dragonPreview.equip.showPets != showPets) {
