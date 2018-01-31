@@ -173,6 +173,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 				if(DragonManager.GetDragonData(dragon.sku).isOwned) {
 					//dragon.SetAnim(MenuDragonPreview.Anim.FUN);
 					dragon.transform.DOKill(true);
+					/*
 					switch(m_animId) {
 						case "scale": {
 							dragon.transform.DOScale(Vector3.Scale(dragon.transform.localScale, m_animValue), m_animDuration).SetEase(m_animEase).SetLoops(2, LoopType.Yoyo);
@@ -186,6 +187,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 							dragon.transform.DOBlendableRotateBy(m_animValue, m_animDuration, RotateMode.FastBeyond360).SetEase(m_animEase);
 						} break;
 					}
+					*/
 				}
 				break;
 			}
