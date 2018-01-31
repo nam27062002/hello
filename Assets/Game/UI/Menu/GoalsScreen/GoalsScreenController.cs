@@ -154,8 +154,9 @@ public class GoalsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnShowPreAnimation() {
 		// If there is an active global event, go to the events tab
+		// Do it as well if the event is pending reward collection
 		if(GlobalEventManager.currentEvent != null
-			&& GlobalEventManager.currentEvent.isActive
+			&& (GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
 			&& m_tabs.GetTab((int)Tabs.GLOBAL_EVENTS).tabEnabled) {
 			m_tabs.GoToScreenInstant((int)Tabs.GLOBAL_EVENTS);
 		}
