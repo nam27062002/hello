@@ -172,8 +172,8 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 				// Only owned dragons!
 				if(DragonManager.GetDragonData(dragon.sku).isOwned) {
 					//dragon.SetAnim(MenuDragonPreview.Anim.FUN);
-					dragon.transform.DOKill(true);
 					/*
+					dragon.transform.DOKill(true);
 					switch(m_animId) {
 						case "scale": {
 							dragon.transform.DOScale(Vector3.Scale(dragon.transform.localScale, m_animValue), m_animDuration).SetEase(m_animEase).SetLoops(2, LoopType.Yoyo);
@@ -188,6 +188,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 						} break;
 					}
 					*/
+					// dragon.ForcePreferedAltAnimation();
 				}
 				break;
 			}
