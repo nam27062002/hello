@@ -118,7 +118,7 @@ public class GoalsScreenController : MonoBehaviour {
 			// Event Timer - only if active
 			if(validEvent) {
 				// Timer text
-				float remainingSeconds = Mathf.Max(0f, evt.remainingTime.TotalSeconds);	// Never go negative!
+				double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);	// Never go negative!
 				m_eventCountdownText.text = TimeUtils.FormatTime(
 					remainingSeconds,
 					TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
@@ -130,7 +130,7 @@ public class GoalsScreenController : MonoBehaviour {
 				m_eventCountdownSlider.value = 1f - (float)(remainingSeconds/totalSpan.TotalSeconds);
 
 				// If time has finished, request new data
-				if(remainingSeconds <= 0f) {
+				if(remainingSeconds <= 0) {
 					GlobalEventManager.RequestCurrentEventState();
 				}
 			}

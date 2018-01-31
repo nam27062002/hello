@@ -41,7 +41,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 		// Update timer
 		// [AOC] Could be done with less frequency
 		m_timerText.text = TimeUtils.FormatTime(
-			Mathf.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),
+			System.Math.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),
 			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
 			4
 		);
