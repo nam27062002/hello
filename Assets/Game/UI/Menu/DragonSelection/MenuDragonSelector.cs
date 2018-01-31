@@ -172,6 +172,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 				// Only owned dragons!
 				if(DragonManager.GetDragonData(dragon.sku).isOwned) {
 					//dragon.SetAnim(MenuDragonPreview.Anim.FUN);
+					/*
 					dragon.transform.DOKill(true);
 					switch(m_animId) {
 						case "scale": {
@@ -186,6 +187,8 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 							dragon.transform.DOBlendableRotateBy(m_animValue, m_animDuration, RotateMode.FastBeyond360).SetEase(m_animEase);
 						} break;
 					}
+					*/
+					// dragon.ForcePreferedAltAnimation();
 				}
 				break;
 			}
