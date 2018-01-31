@@ -81,7 +81,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 			// Parse remaining time
 			m_timerText.text = TimeUtils.FormatTime(
-				GlobalEventManager.currentEvent.remainingTime.TotalSeconds,
+				Mathf.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),	// Never show negative time!
 				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			);
