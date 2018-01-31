@@ -34,6 +34,29 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 		m_list_disintegrate = new List<AI.MachineInflammable>();
 	}
 
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, ClearQueues);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, ClearQueues);
+	}
+
+	private void ClearQueues() {
+		m_list_wait.Clear();
+		m_list_disintegrate.Clear();
+	}
+
 	private void __Add(AI.MachineInflammable _machine) {
 		if (m_timer <= 0.25f) {
 			AddToDisintegrateList(_machine);

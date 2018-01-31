@@ -128,8 +128,12 @@ public partial class GlobalEvent {
 		get { return m_state == State.ACTIVE; }
 	}
 
-	public bool isRewardAvailable {
+	public bool isFinished {
 		get { return m_state == State.FINISHED; }
+	}
+
+	public bool isRewardAvailable {
+		get { return isFinished && m_rewardLevel > -1; }	// By checking the reward level, we make sure that the rewards have been received from server!
 	}
 
 	// Contribution
