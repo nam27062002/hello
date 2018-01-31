@@ -161,15 +161,19 @@ public class PersistenceFacade
                     onDone();
                 }
 
-                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app whe she last played
-                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
+                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
                 {
-                    Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
-                    {
-                        Sync_OnDone(result, null);
-                    };
+                    Sync_OnDone(result, null);
+                };
 
+                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app last time she played
+                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
+                {                    
                     Config.CloudDriver.Sync(true, true, onSyncDone);
+                }
+                else
+                {
+                    onSyncDone(PersistenceStates.ESyncResult.ErrorLogging);
                 }
 			}			
 		};

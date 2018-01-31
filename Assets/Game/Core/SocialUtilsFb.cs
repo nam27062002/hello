@@ -117,7 +117,7 @@ public class SocialUtilsFb : SocialUtils
         }
     }
 
-    protected override void ExtendedGetProfilePicture(string socialID, Action<Texture2D, bool> onGetProfilePicture, int width = 256, int height = 256)
+    protected override void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256)
     {
         string url = string.Format("/{0}/picture?width={1}&height={2}&redirect=false&type=normal", socialID, width, height);
 
@@ -133,35 +133,27 @@ public class SocialUtilsFb : SocialUtils
                     Dictionary<string, object> pictureInfo = result.ResultDictionary["data"] as Dictionary<string, object>;
 
                     if (pictureInfo != null)
-                    {
+                    {                        
                         if (pictureInfo.ContainsKey("url") && (!pictureInfo.ContainsKey("is_silhouette") || !(bool)pictureInfo["is_silhouette"]))
                         {
                             if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("SocialUtilsFb :: (GetProfilePicture) Profile image " + pictureInfo["url"] + " requested");
+                                Log("SocialUtilsFb :: (GetProfilePicture) Profile image " + pictureInfo["url"] + " requested");                           
 
-                            ImageRequest request = new ImageRequest();
-                            request.Get(pictureInfo["url"] as string, delegate (Error error, Texture2D texture)
+                            UnityEngine.Events.UnityAction<bool, string, long> onThisDone = delegate(bool success,  string key, long size)
                             {
-                                if (error == null)
-                                {
-                                    onGetProfilePicture(texture, false);                                    
-                                }
-                                else
-                                {
-                                    if (FeatureSettingsManager.IsDebugEnabled)
-                                        Log("SocialUtilsFb :: (GetProfilePicture) Error getting image: " + error);
+                                onGetProfilePicture(success);
+                            };
 
-                                    // no need to fire the callback because there is nothing to cache.
-                                    onGetProfilePicture(null, true);
-                                }
-                            });
+                            NetworkManager.SharedInstance.DownloadFile("profilePic_" + socialID, pictureInfo["url"] as string, FileUtils.GetDeviceStoragePath(storagePath, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED), onThisDone);
                         }
                         else
-                        {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("SocialUtilsFb :: (GetProfilePicture) Invalid image!");
+                        {                            
+                            FileUtils.RemoveFileInDeviceStorage(storagePath, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);                            
 
-                            onGetProfilePicture(null, false);
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                            Log("SocialUtilsFb :: (GetProfilePicture) Invalid image!");
+
+                            onGetProfilePicture(true);
                         }
                     }
                     else
@@ -169,7 +161,7 @@ public class SocialUtilsFb : SocialUtils
                         if (FeatureSettingsManager.IsDebugEnabled)
                             LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
 
-                        onGetProfilePicture(null, true);
+                        onGetProfilePicture(true);
                     }
                 }
                 else
@@ -177,7 +169,7 @@ public class SocialUtilsFb : SocialUtils
                     if (FeatureSettingsManager.IsDebugEnabled)
                         LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
 
-                    onGetProfilePicture(null, true);
+                    onGetProfilePicture(true);
                 }
             }
             else
@@ -185,8 +177,8 @@ public class SocialUtilsFb : SocialUtils
                 if (FeatureSettingsManager.IsDebugEnabled)
                     LogWarning("SocialUtilsFb :: (GetProfilePicture) Error getting facebook profile picture: " + (result.Error != null ? result.Error : "NONE"));
 
-                onGetProfilePicture(null, true);
+                onGetProfilePicture(true);
             }
         });
-    }
+    }   
 }

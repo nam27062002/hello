@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿//#define SKIP_DEFINES	// Uncomment for editing
+
+using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID || SKIP_DEFINES
 public class PlatformUtilsAndroidImpl: PlatformUtils
 {
 	private string AndroidGetCountryCode()
@@ -40,7 +42,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	public override void ShareImage(string filename, string caption)
 	{
 		Debug.Log ("Trying to share " + filename);
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		// [AOC] Updated version, supports multiple file sharing
 		using(AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
 		using(AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent")) {
@@ -63,20 +65,27 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 			intentObject.Call<AndroidJavaObject>("addFlags", intentClass.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION"));
 
 			// finally start application with our intent
-			currentActivity.Call("startActivity", intentObject);
+			// [AOC] Create custom chooser intent to avoid showing the "Always" and "Only Once" button
+			bool customChooser = true;
+			if(customChooser) {
+				AndroidJavaObject chooserObject = intentClass.CallStatic<AndroidJavaObject>("createChooser", intentObject, LocalizationManager.SharedInstance.Localize("TID_GEN_SHARE_WITH"));
+				currentActivity.Call("startActivity", chooserObject);
+			} else {
+				currentActivity.Call("startActivity", intentObject);
+			}
 		}
 #endif
 	}
 
 	public override void MakeToast(string text, bool longDuration)
 	{
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass toastInterfaceClass = new AndroidJavaClass("com.ubisoft.utils.ToastInterface");
 		toastInterfaceClass.CallStatic("makeToast", GetCurrentActivity(), text, longDuration);
 #endif
 	}
 
-	#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 	private AndroidJavaObject GetCurrentActivity()
 	{
 		//instantiate the class UnityPlayer
@@ -91,7 +100,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 	public override string GetTrackingId()
 	{
-		#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass up = new AndroidJavaClass  ("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject> ("currentActivity");
 		AndroidJavaClass client = new AndroidJavaClass ("com.ubisoft.utils.PlatformUtils");
@@ -105,7 +114,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 	public override void askPermissions(){
 		//string[] permissions = "android.permission.WRITE_EXTERNAL_STORAGE".Split(new char[]{' '});
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass up = new AndroidJavaClass  ("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject> ("currentActivity");
 		AndroidJavaClass client = new AndroidJavaClass ("com.ubisoft.utils.PlatformUtils");
@@ -115,7 +124,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	}
 
 	public override bool arePermissionsGranted(){
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR || SKIP_DEFINES
 		AndroidJavaClass up = new AndroidJavaClass  ("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject> ("currentActivity");
 		AndroidJavaClass client = new AndroidJavaClass ("com.ubisoft.utils.PlatformUtils");
@@ -128,7 +137,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 	private static int GetSDKLevel()
 	{
 		int _sdkLevel = 18;
-#if UNITY_ANDROID && !UNITY_EDITOR	
+#if (UNITY_ANDROID && !UNITY_EDITOR) || SKIP_DEFINES
 		IntPtr _class = AndroidJNI.FindClass("android.os.Build$VERSION");
 		IntPtr _fieldId = AndroidJNI.GetStaticFieldID( _class, "SDK_INT", "I");
 		_sdkLevel = AndroidJNI.GetStaticIntField( _class, _fieldId);

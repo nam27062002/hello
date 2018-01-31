@@ -35,6 +35,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
 
+	private bool m_isAnimating = false;
+	private bool isAnimating {
+		get { return m_isAnimating; }
+		set { m_isAnimating = value; Debug.Log("IS ANIMATING SET TO <color=" + (value ? "green" : "red") + ">" + value + "</color>"); }
+	}
+
 	private MenuScreens m_goToScreen = MenuScreens.NONE;
 	private DragonData m_dragonToTease = null;
 	private DragonData m_dragonToReveal = null;
@@ -62,31 +68,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Check dragons to tease
-		// [AOC] Special case: if dragon scroll tutorial hasn't been yet completed, 
-		//		 mark target dragons as already teased to prevent conflict with the tutorial scroll animation
-		List<DragonData> toTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE);
-		List<DragonData> toReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL);
-		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
-			// Dragon scroll tutorial completed, pick first dragon to tease/reveal
-			m_dragonToTease = toTease.First();
-			m_dragonToReveal = toReveal.First();
-		} else {
-			// Dragon scroll tutorial hasn't been completed! Don't launch tease/reveal animations
-			m_dragonToTease = null;
-			m_dragonToReveal = null;
-
-			// Mark as teased to prevent launching the reveal anim in the future
-			for(int i = 0; i < toTease.Count; ++i) {
-				toTease[i].Tease();
-			}
-
-			// Mark as revealed to prevent launching the reveal anim in the future
-			for(int i = 0; i < toReveal.Count; ++i) {
-				toTease[i].Reveal();
-			}
-		}
-
 		// Subscribe to external events.
 		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
 
@@ -163,16 +144,18 @@ public class MenuDragonScreenController : MonoBehaviour {
 		#endif
 
 		//-----
-		if (!InstanceManager.menuSceneController.dragonScroller.cameraAnimator.isTweening) {
-			if (m_dragonToReveal != null) {
-				LaunchRevealAnim(m_dragonToReveal.def.sku);
-			} else if (m_dragonToTease != null) {
-				LaunchTeaseAnim(m_dragonToTease.def.sku);
-			}
-			// we'll launch only one animation at a time
+		if(!m_isAnimating) { 	// Not while animating!
+			if (!InstanceManager.menuSceneController.dragonScroller.cameraAnimator.isTweening) {
+				if (m_dragonToReveal != null) {
+					LaunchRevealAnim(m_dragonToReveal.def.sku);
+				} else if (m_dragonToTease != null) {
+					LaunchTeaseAnim(m_dragonToTease.def.sku);
+				}
 
-			m_dragonToReveal = null;
-			m_dragonToTease = null;
+				// Launch only one animation at a time (this will do it)
+				m_dragonToReveal = null;
+				m_dragonToTease = null;
+			}
 		}
 	}
 
@@ -187,11 +170,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_scrollDuration">Use it to sync with scrolling to target dragon.</param>
 	/// <param name="_gotoDragonUnlockScreen">Whether to go the DragonUnlockScreen after the animation or not.</param>
 	public void LaunchUnlockAnim(string _unlockedDragonSku, float _initialDelay, float _scrollDuration, bool _gotoDragonUnlockScreen) {
+		Debug.Log("<color=yellow>UNLOCK </color>" + _unlockedDragonSku);
 		// Program lock animation sequence
 		DOTween.Sequence()
 			.AppendCallback(() => {
 				// Lock all input
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+
+				// Toggle flag
+				isAnimating = true;
 			})
 			.AppendInterval(Mathf.Max(0.1f, _initialDelay))	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -257,18 +244,63 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
 			})
-			.AppendInterval(0.5f)
+			.AppendInterval(0.5f)		// Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {
 				// Unlock input
 				// Add some delay to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+
+				// Toggle flag
+				isAnimating = false;
 			})
 			.SetAutoKill(true)
 			.Play();
 	}
 
+	/// <summary>
+	/// Launch the acquire animation!
+	/// </summary>
+	/// <param name="_acquiredDragonSku">Acquired dragon sku.</param>
+	public void LaunchAcquireAnim(string _acquiredDragonSku) {
+		Debug.Log("<color=yellow>ACQUIRE </color>" + _acquiredDragonSku);
+
+		// Program animation
+		DOTween.Sequence()
+			.AppendCallback(() => {
+				// Lock all input
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+
+				// Toggle flag
+				isAnimating = true;
+
+				// Throw out some fireworks!
+				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
+
+				// Trigger SFX
+				AudioController.Play("hd_unlock_dragon");
+			})
+			.AppendInterval(1f)		// Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
+			.AppendCallback(() => {
+				// Unlock input
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+
+				// Toggle flag
+				isAnimating = false;
+
+				// Check for new tease/reveals
+				CheckPendingReveals();
+			})
+			.SetAutoKill(true)
+			.Play();
+	}
+
+	/// <summary>
+	/// Launch the tease animation!
+	/// </summary>
+	/// <param name="_teaseDragonSku">Teased dragon sku.</param>
 	private void LaunchTeaseAnim(string _teaseDragonSku) {
 		// Aux vars
+		Debug.Log("<color=yellow>TEASE </color>" + _teaseDragonSku);
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
 		DragonData dragonData = DragonManager.GetDragonData(_teaseDragonSku);
 
@@ -283,6 +315,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 
 				slot.animator.ForceHide(false);
+
+				// Toggle flag
+				isAnimating = true;
 			})
 			.AppendInterval(0.1f)	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -303,8 +338,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 
-				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
-				m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
+				CheckPendingReveals();
 
 				if (m_dragonToTease == null && m_dragonToReveal == null) {
 					InstanceManager.menuSceneController.hud.animator.ForceShow(true);
@@ -314,13 +348,21 @@ public class MenuDragonScreenController : MonoBehaviour {
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
+
+				// Toggle flag
+				isAnimating = false;
 			})
 			.SetAutoKill(true)
 			.Play();
 	}
 
+	/// <summary>
+	/// Launch the reveal animation!
+	/// </summary>
+	/// <param name="_revealDragonSku">The revealed dragon sku.</param>
 	private void LaunchRevealAnim(string _revealDragonSku) {
 		// Aux vars
+		Debug.Log("<color=yellow>REVEAL </color>" + _revealDragonSku);
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
 		DragonData dragonData = DragonManager.GetDragonData(_revealDragonSku);
 
@@ -337,6 +379,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 				if (!dragonData.isTeased) {
 					slot.animator.ForceHide(false);
 				}
+
+				// Toggle flag
+				isAnimating = true;
 			})
 			.AppendInterval(0.1f)	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -359,8 +404,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 			
 				dragonData.Reveal();
-				m_dragonToTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE).First();
-				m_dragonToReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL).First();
+				CheckPendingReveals();
 
 				if (m_dragonToTease == null && m_dragonToReveal == null) {
 					InstanceManager.menuSceneController.hud.animator.ForceShow(true);
@@ -370,9 +414,44 @@ public class MenuDragonScreenController : MonoBehaviour {
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
+
+				// Toggle flag
+				isAnimating = false;
 			})
 			.SetAutoKill(true)
 			.Play();
+	}
+
+	/// <summary>
+	/// Check the current states of the dragons and determines whether there are 
+	/// dragons pending to be TEASED/REVEALED.
+	/// Initializes the <c>m_dragonToTease</c> and <c>m_dragonToReveal</c> vars.
+	/// </summary>
+	private void CheckPendingReveals() {
+		// Check dragons to tease
+		// [AOC] Special case: if dragon scroll tutorial hasn't been yet completed, 
+		//		 mark target dragons as already teased to prevent conflict with the tutorial scroll animation
+		List<DragonData> toTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE);
+		List<DragonData> toReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL);
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+			// Dragon scroll tutorial completed, pick first dragon to tease/reveal
+			m_dragonToTease = toTease.First();
+			m_dragonToReveal = toReveal.First();
+		} else {
+			// Dragon scroll tutorial hasn't been completed! Don't launch tease/reveal animations
+			m_dragonToTease = null;
+			m_dragonToReveal = null;
+
+			// Mark as teased to prevent launching the reveal anim in the future
+			for(int i = 0; i < toTease.Count; ++i) {
+				toTease[i].Tease();
+			}
+
+			// Mark as revealed to prevent launching the reveal anim in the future
+			for(int i = 0; i < toReveal.Count; ++i) {
+				toTease[i].Reveal();
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -389,6 +468,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 			// Reset flag
 			GameVars.unlockedDragonSku = string.Empty;
+		} else {
+			// Check whether we need to launch any other animation
+			CheckPendingReveals();
 		}
 	}
 
