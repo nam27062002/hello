@@ -355,9 +355,13 @@ public class ResultsScreenXPBar : DragonXPBar {
 
 		// Program animation
 		DOTween.Sequence()
-			// Initial Pause
+			// Lock IN
 			.SetId(this)
-			.AppendInterval(0.25f)
+			.Append(
+				m_lockIcon.transform.DOScale(0f, 0.25f)
+				.From()
+				.SetEase(Ease.OutBack)
+			)
 
 			// Lock break animation
 			.AppendCallback(() => {
@@ -365,11 +369,11 @@ public class ResultsScreenXPBar : DragonXPBar {
 			})
 
 			// Let animation finish
-			.AppendInterval(1f)	// Sync with animation
+			.AppendInterval(1.5f)	// Sync with animation
 
 			// Trigger banner animation
 			.AppendCallback(() => {
-				// Show
+				// Show Banner
 				m_dragonUnlockFX.SetActive(true);
 
 				// Update text with the name of the unlocked dragon
@@ -387,10 +391,15 @@ public class ResultsScreenXPBar : DragonXPBar {
 				}
 			})
 
-			// Disable invisible objects once the sequence is completed
-			.OnComplete(() => {
-				m_lockIcon.SetActive(false);
+			// Lock out
+			.Append(
+				m_lockIcon.transform.DOScale(0f, 0.25f)
+				.SetEase(Ease.InBack)
+				.OnComplete(() => { m_lockIcon.SetActive(false); })
+			)
 
+			// Notify
+			.OnComplete(() => {
 				// Notify listeners
 				OnAnimationFinished.Invoke();
 			})
