@@ -66,7 +66,7 @@ public class SimpleDevice : Initializable {
 				}
 			} else {
 				// check respawn conditions
-				if (m_operatorSpawner.CanRespawn() || m_operatorSpawner.IsRespawing()) {
+				if (m_operatorSpawner.IsRespawing() && m_operatorSpawner.CanRespawn()) {
 					m_operatorSpawner.Respawn();
 				}
 

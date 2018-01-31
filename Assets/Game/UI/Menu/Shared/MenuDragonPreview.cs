@@ -68,6 +68,7 @@ public class MenuDragonPreview : MonoBehaviour {
 		public int m_loopsMax;
 		public AltAnimSpecialAction m_special;
 		public float m_timeToNext;
+		public bool m_isPreferedAnimation;	// Animation Used when we touch the dragon on dragon selection
 	}
 	public List<AltAnimConfig> m_altAnimConfigs = new List<AltAnimConfig>();
 	private int m_currentAnimIndex = -1;
@@ -225,7 +226,7 @@ public class MenuDragonPreview : MonoBehaviour {
 				if (m_currentAnimIndex >= 0)
 				{
 					// Check if state is "idle" to get back
-					if ( m_animator.GetInteger("AltAnimation") == -1 && m_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") )
+					if ( m_animator.GetInteger(GameConstants.Animator.ALT_ANIMATION) == -1 && m_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") )
 					{
 						AltAnimConfig item = m_altAnimConfigs[m_lastAltAnim];
 						item.m_timeToNext = item.m_range.GetRandom();
@@ -248,7 +249,7 @@ public class MenuDragonPreview : MonoBehaviour {
 							{
 								// Set alternative animation
 								m_lastAltAnim = m_currentAnimIndex = i;
-								m_animator.SetInteger("AltAnimation", m_currentAnimIndex);
+								m_animator.SetInteger(GameConstants.Animator.ALT_ANIMATION, m_currentAnimIndex);
 								// 
 								if ( item.m_special != AltAnimSpecialAction.NONE )
 									StartSpecialEvent( item.m_special );
@@ -257,6 +258,28 @@ public class MenuDragonPreview : MonoBehaviour {
 					}
 				}
 			}break;
+		}
+	}
+
+	public void ForcePreferedAltAnimation()
+	{
+		for( int i = 0; i<m_count && m_currentAnimIndex < 0; ++i )
+		{
+			AltAnimConfig item = m_altAnimConfigs[i];
+			if ( item.m_isPreferedAnimation )
+			{
+				item.m_timeToNext = 0;
+			}
+			m_altAnimConfigs[i] = item;
+
+			// Check if we are doing another alt animation to stop it
+			if (m_currentAnimIndex >= 0)
+			{
+				if (m_animator.GetInteger( GameConstants.Animator.ALT_ANIMATION ) != -1)
+				{
+					m_animator.SetInteger(GameConstants.Animator.ALT_ANIMATION, -1);
+				}
+			}
 		}
 	}
 

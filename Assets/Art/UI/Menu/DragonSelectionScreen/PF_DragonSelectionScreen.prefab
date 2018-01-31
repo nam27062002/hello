@@ -1462,7 +1462,8 @@ MonoBehaviour:
   m_lockIcon: {fileID: 114497360995486190}
   m_initialDelay: 0.75
   m_scrollDuration: 0.15
-  m_unlockAnimDuration: 1
+  m_unlockAnimDuration: 1.5
+  m_unlockAnimFinalPauseDuration: 0.5
   m_toHideOnUnlockAnim:
   - {fileID: 114491185582465046}
   - {fileID: 11498748}
@@ -3780,6 +3781,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4958478331458874}
+  - component: {fileID: 114762498420581400}
   m_Layer: 5
   m_Name: PF_Lock
   m_TagString: Untagged
@@ -9643,7 +9645,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 735aaeabdccef4c2b9413f77c100968f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_animator: {fileID: 95927549967558348}
 --- !u!114 &114504193011444558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10650,6 +10651,19 @@ MonoBehaviour:
   m_reverseMode: 0
   m_targetSteps: 
   m_targetRuns: 2
+--- !u!114 &114762498420581400
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1704246946540262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeTime: 0
+  m_replacementPrefab: UI/Metagame/PF_Lock
 --- !u!114 &114784743913556914
 MonoBehaviour:
   m_ObjectHideFlags: 1

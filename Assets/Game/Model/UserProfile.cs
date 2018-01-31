@@ -98,7 +98,7 @@ public class UserProfile : UserPersistenceSystem
     // PROPERTIES															  //
     //------------------------------------------------------------------------//
     // Last save timestamp
-    private DateTime m_saveTimestamp = DateTime.UtcNow;
+    private DateTime m_saveTimestamp;
     public DateTime saveTimestamp {
         get { return m_saveTimestamp; }
     }
@@ -116,7 +116,7 @@ public class UserProfile : UserPersistenceSystem
 	}
 
     // Economy
-	private List<CurrencyData> m_currencies = new List<CurrencyData>();
+    private List<CurrencyData> m_currencies;
 
 	public long coins {
 		get { return GetCurrency(Currency.SOFT); }
@@ -135,7 +135,7 @@ public class UserProfile : UserPersistenceSystem
 	}
 
 	// Game Settings
-	private string m_currentDragon = "";
+	private string m_currentDragon;
 	public string currentDragon {
 		get { return m_currentDragon; }
 		set {
@@ -143,7 +143,7 @@ public class UserProfile : UserPersistenceSystem
         }
 	}
 
-	private string m_currentLevel = "";
+	private string m_currentLevel;
 	public string currentLevel {
 		get { return m_currentLevel; }
 		set { m_currentLevel = value; }
@@ -162,7 +162,7 @@ public class UserProfile : UserPersistenceSystem
 	}
 
 	// Game Stats
-	private int m_gamesPlayed = 0;
+	private int m_gamesPlayed;
 	public int gamesPlayed {
 		get { return m_gamesPlayed; }
 		set {
@@ -173,13 +173,13 @@ public class UserProfile : UserPersistenceSystem
 		}
 	}
 
-	private long m_highScore = 0;
+	private long m_highScore;
 	public long highScore {
 		get { return m_highScore; }
 		set { m_highScore = value; }
 	}
 	
-	private int m_superFuryProgression = 0;
+	private int m_superFuryProgression;
 	public int superFuryProgression {
 		get { return m_superFuryProgression; }
 		set { m_superFuryProgression = value; }
@@ -243,14 +243,14 @@ public class UserProfile : UserPersistenceSystem
 		set; 
 	}
 
-	private int m_goldenEggsCollected = 0;
+	private int m_goldenEggsCollected;
 	public int goldenEggsCollected {
 		get { return m_goldenEggsCollected; }
 		set { m_goldenEggsCollected = value; }
 	}
 
     // Chests
-    private Chest[] m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];	// Should always have the same length
+    private Chest[] m_dailyChests;
 	public Chest[] dailyChests {
 		get { return m_dailyChests; }
 	}
@@ -268,7 +268,7 @@ public class UserProfile : UserPersistenceSystem
 		set{ m_dailyRemoveMissionAdTimestamp = value; }
 	}
 
-	private int m_dailyRemoveMissionAdUses = 0;
+	private int m_dailyRemoveMissionAdUses;
 	public int dailyRemoveMissionAdUses {
 		get{ return m_dailyRemoveMissionAdUses; }
 		set{ m_dailyRemoveMissionAdUses = value; }
@@ -281,7 +281,7 @@ public class UserProfile : UserPersistenceSystem
 		set{ m_skipMissionAdTimestamp = value; }
 	}
 
-	private int m_skipMissionAdUses = 0;
+	private int m_skipMissionAdUses;
 	public int skipMissionAdUses {
 		get{ return m_skipMissionAdUses; }
 		set{ m_skipMissionAdUses = value; }
@@ -338,6 +338,11 @@ public class UserProfile : UserPersistenceSystem
 
     public ESocialState SocialState { get; set; }
 
+    //
+    // New variables here: Remember to initialize them in Reset()
+    //
+
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -345,45 +350,108 @@ public class UserProfile : UserPersistenceSystem
 	/// Default constructor.
 	/// </summary>
 	public UserProfile()
-	{
-		// Initialize currencies to 0
-		for(int i = 0; i < (int)Currency.COUNT; ++i) {
-			m_currencies.Add(new CurrencyData());
-		}
-
-		// Define some custom values
-		m_currencies[(int)Currency.KEYS].max = 10;	// [AOC] TODO!! Get from content
-
-		// Init dragons
-		m_dragonsBySku = new Dictionary<string, DragonData>();
-		DragonData newDragonData = null;
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
-		for(int i = 0; i < defs.Count; i++) {
-			newDragonData = new DragonData();
-			newDragonData.Init(defs[i]);
-			m_dragonsBySku[defs[i].sku] = newDragonData;
-		}
-
-		m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
-		m_incubatingEgg = null;
-		m_goldenEggsCollected = 0;
-
-		m_wardrobe = new Wardrobe();
-		m_petCollection = new PetCollection();
-		m_userMissions = new UserMissions();
-		m_achievements = new AchievementsTracker();
-
-        SocialState = ESocialState.NeverLoggedIn;
+	{        
     }
 
 	~UserProfile()
 	{
-		if ( m_achievements != null )
-		{
-			m_achievements.Dispose();
-			m_achievements = null;
-		}
+        Destroy();
 	}
+
+    public override void Reset()
+    {        
+        Destroy();
+
+        base.Reset();
+
+        m_saveTimestamp = DateTime.UtcNow;
+        lastModified = 0;
+
+        if (m_currencies == null)
+        {
+            m_currencies = new List<CurrencyData>();
+
+            // Initialize currencies to 0
+            for (int i = 0; i < (int)Currency.COUNT; ++i)
+            {
+                m_currencies.Add(new CurrencyData());
+            }
+        }
+
+        // Define some custom values
+        m_currencies[(int)Currency.KEYS].max = 10;  // [AOC] TODO!! Get from content
+        
+        m_currentDragon = "";
+        m_currentLevel = "";
+
+        m_tutorialStep = TutorialStep.ALL;   
+         
+        m_furyUsed = false;
+        m_gamesPlayed = 0;
+        m_highScore = 0;
+        m_superFuryProgression = 0;
+
+        // Dragons: The Dictionay and DragonData objects that contains are created only the first time because there are references to these objects somewhere else, so we just reset them
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
+        if (m_dragonsBySku == null)
+        {
+            m_dragonsBySku = new Dictionary<string, DragonData>();
+        }
+                        
+        DragonData newDragonData = null;
+        string dragonSku;
+        for (int i = 0; i < defs.Count; i++)
+        {
+            dragonSku = defs[i].sku;
+            if (m_dragonsBySku.ContainsKey(dragonSku))
+            {
+                m_dragonsBySku[dragonSku].ResetLoadedData();
+            }
+            else
+            {
+                newDragonData = new DragonData();
+                newDragonData.Init(defs[i]);
+                m_dragonsBySku[defs[i].sku] = newDragonData;
+            }
+        }        
+
+        // Disguises
+        m_wardrobe = new Wardrobe();
+        m_petCollection = new PetCollection();
+        m_userMissions = new UserMissions();
+        m_achievements = new AchievementsTracker();        
+
+        m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
+        m_incubatingEgg = null;
+        m_incubationEndTimestamp = DateTime.MinValue;
+        eggsCollected = 0;
+        m_goldenEggsCollected = 0;
+
+        m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];   // Should always have the same length
+        m_dailyChestsResetTimestamp = DateTime.MinValue;
+        m_dailyRemoveMissionAdTimestamp = DateTime.MinValue;
+        m_dailyRemoveMissionAdUses = 0;
+
+        m_skipMissionAdTimestamp = DateTime.MinValue;
+        m_skipMissionAdUses = 0;
+
+        m_mapResetTimestamp = DateTime.MinValue;        
+        
+        m_globalEvents = new Dictionary<int, GlobalEventUserData>();    
+    
+        m_rewards = new Stack<Metagame.Reward>();                            
+
+        SocialState = ESocialState.NeverLoggedIn;
+    }
+
+    private void Destroy()
+    {
+        if (m_achievements != null)
+        {
+            m_achievements.Dispose();
+            m_achievements = null;
+        }
+    }
 
 	/// <summary>
 	/// Return a string representation of this class.
@@ -699,7 +767,7 @@ public class UserProfile : UserPersistenceSystem
 		m_currencies[(int)Currency.SOFT].Deserialize(profile.ContainsKey("sc") ? (string)profile["sc"] : "");
 		m_currencies[(int)Currency.HARD].Deserialize(profile.ContainsKey("pc") ? (string)profile["pc"] : "");
 		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Deserialize(profile.ContainsKey("gf") ? (string)profile["gf"] : "");
-		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 3, 0);
+		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 0, 0);
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
@@ -906,7 +974,7 @@ public class UserProfile : UserPersistenceSystem
 				Metagame.Reward r = Metagame.Reward.CreateFromJson(rewardsData[i]);
 				m_rewards.Push(r);
 			}
-		}
+		}        
 	}
 
 	/// <summary>
