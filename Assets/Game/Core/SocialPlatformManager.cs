@@ -385,10 +385,15 @@ public class SocialPlatformManager : MonoBehaviour
         }
 
         // If it's an empty persistence then the default one is used instead
-        if (persistenceAsJson == null || persistenceAsString == "{}" || persistenceAsString == "{\"sc\":0,\"pc\":0}")
-        {
+        // Sometimes server sends "{\"sc\":0,\"pc\":0}" as a persistence
+        bool persistenceBrokenFromServer = persistenceAsString == "{\"sc\":0,\"pc\":0}";
+        if (persistenceAsJson == null || persistenceAsString == "{}" || persistenceBrokenFromServer)
+        {            
             persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
         }
+
+        if (FeatureSettingsManager.IsDebugEnabled && persistenceBrokenFromServer)
+            LogError("Persistence Broken from server");
 
         Login_MergePersistence = persistenceAsJson.ToString();
     }
@@ -472,5 +477,10 @@ public class SocialPlatformManager : MonoBehaviour
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);
+    }
+
+    public static void LogError(string msg)
+    {
+        Debug.LogError(LOG_CHANNEL + msg);
     }
 }

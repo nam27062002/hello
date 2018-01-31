@@ -10,17 +10,14 @@ public class PersistenceLocalDriverDebug : PersistenceLocalDriver
 
     public PersistenceLocalDriverDebug()
 	{
-		Reset();	
-	}
+		Reset();
 
-	protected override void ExtendedReset()
-	{
-		PersistenceAsString = null;
-		IsPermissionErrorEnabled = false;
-		isFullDiskErrorEnabled = false;
+        PersistenceAsString = null;
+        IsPermissionErrorEnabled = false;
+        isFullDiskErrorEnabled = false;
         LoadTimes = 0;
         SaveTimes = 0;
-    }
+    }	
 
 	protected override void ExtendedLoad()
 	{
