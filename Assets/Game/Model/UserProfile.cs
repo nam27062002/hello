@@ -699,7 +699,7 @@ public class UserProfile : UserPersistenceSystem
 		m_currencies[(int)Currency.SOFT].Deserialize(profile.ContainsKey("sc") ? (string)profile["sc"] : "");
 		m_currencies[(int)Currency.HARD].Deserialize(profile.ContainsKey("pc") ? (string)profile["pc"] : "");
 		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Deserialize(profile.ContainsKey("gf") ? (string)profile["gf"] : "");
-		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 3, 0);
+		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 0, 0);
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )

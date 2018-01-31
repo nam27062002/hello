@@ -34,19 +34,19 @@ public abstract class SocialUtils
             {
                 if (mProfilePicture != null)
                 {
-                    Texture2D.Destroy(mProfilePicture);                    
+                    Texture2D.Destroy(mProfilePicture);
                 }
 
                 mProfilePicture = value;
 
-                Disk_SaveProfilePicture(mProfilePicture);                
+                //Disk_SaveProfilePicture(mProfilePicture);                
             }
-        }        
+        }
 
         public bool HasBeenUpdatedFromPlatform { get; set; }
 
         public void Invalidate()
-        {            
+        {
             ProfileName = null;
             SocialId = null;
 
@@ -54,11 +54,11 @@ public abstract class SocialUtils
             Disk_DeleteProfilePicture();
 
             HasBeenUpdatedFromPlatform = false;
-        }           
-         
-        public void LoadInfo(Action onDone)
+        }
+
+        public void LoadInfo(bool force, Action onDone)
         {
-            if (Disk_IsPictureLoaded)
+            if (Disk_IsPictureLoaded && !force)
             {
                 if (onDone != null)
                 {
@@ -69,76 +69,53 @@ public abstract class SocialUtils
             {
                 Util.StartCoroutineWithoutMonobehaviour("Disk_LoadProfileImage", Disk_LoadProfileImage(onDone));
             }
-        }       
-                
+        }
+
         #region disk
         private bool Disk_IsPictureLoaded { get; set; }
 
         private IEnumerator Disk_LoadProfileImage(Action onDone)
-        {
-            string fileName = Disk_GetProfileImagePath(true);
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Profile image loaded from " + fileName);
-
-            WWW cachedImageLoader = new WWW(fileName);
-
-            yield return cachedImageLoader;
-
-            Disk_IsPictureLoaded = true;
-
+        {            
             Texture2D cachedImage = null;
-            if (cachedImageLoader.error == null)
+            FileStream kFile = FileUtils.OpenBinaryFileInDeviceStorage(PROFILE_IMAGE_STORAGE_PATH, FileUtils.FileMode.E_FILE_READ, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+            if (kFile != null)
             {
+                byte[] kBytes = new byte[kFile.Length];
+
+                kFile.Read(kBytes, 0, (int)kFile.Length);
+
                 cachedImage = new Texture2D(256, 256);
-                cachedImageLoader.LoadImageIntoTexture(cachedImage);
+                cachedImage.LoadImage(kBytes);
+
+                kFile.Close();
             }
             else
             {
-                SocialUtils.LogWarning("SocialUtils (Store_LoadProfileImage) :: LoadCachedImage failed: " + cachedImageLoader.error);
+                SocialUtils.LogWarning("SocialUtils (Store_LoadProfileImage) :: LoadCachedImage failed");
             }
+
+            Disk_IsPictureLoaded = true;           
 
             ProfilePicture = cachedImage;
             if (onDone != null)
             {
                 onDone();
             }
+
+            yield return null;
         }
 
         private void Disk_DeleteProfilePicture()
         {
-            string path = Disk_GetProfileImagePath();
+            string path = PROFILE_IMAGE_STORAGE_PATH;
             if (File.Exists(path))
             {
-                File.Delete(path);
+                FileUtils.RemoveFileInDeviceStorage(path, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);                
 
                 if (FeatureSettingsManager.IsDebugEnabled)
                     Log("Profile image deleted from " + path);
             }
-        }
-
-        private void Disk_SaveProfilePicture(Texture2D image)
-        {
-            if (image == null)
-            {
-                Disk_DeleteProfilePicture();
-            }
-            else
-            {
-                string fileName = Disk_GetProfileImagePath();                
-                File.WriteAllBytes(Disk_GetProfileImagePath(), image.EncodeToPNG());
-
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("Profile image saved to " + fileName);
-            }
-        }
-
-        private string Disk_GetProfileImagePath(bool wwwPath = false)
-        {
-            //return string.Format("{0}{1}/ProfileImg.bytes", (wwwPath ? "file://" : ""), Application.persistentDataPath);
-            string prefix = (wwwPath) ? "file:///" : "";
-            return System.IO.Path.Combine(prefix + Application.persistentDataPath, "ProfileImg.bytes");
-        }
+        }              
         #endregion
     }
 
@@ -156,7 +133,7 @@ public abstract class SocialUtils
         }
     }
 
-    public abstract string GetPlatformNameTID();    
+    public abstract string GetPlatformNameTID();
 
     public abstract void Init(SocialPlatformManager.GameSocialListener listener);
 
@@ -166,7 +143,9 @@ public abstract class SocialUtils
 
     public abstract string GetUserName();
 
-    public abstract bool IsLoggedIn();            
+    public abstract bool IsLoggedIn();
+
+    public static string PROFILE_IMAGE_STORAGE_PATH = "ProfileImg.bytes";
 
     public class ProfileInfo
     {
@@ -215,12 +194,12 @@ public abstract class SocialUtils
             YearOfBirth = 0;
         }
 
-        public string Id                    { get { return GetValueAsString(KEY_ID); } }
-        public string FirstName             { get { return GetValueAsString(KEY_FIRST_NAME); } }
-        public string LastName              { get { return GetValueAsString(KEY_LAST_NAME); } }
-        public string Gender                { get { return GetValueAsString(KEY_GENDER); } }
-        public string Email                 { get { return GetValueAsString(KEY_EMAIL); } }
-        public int YearOfBirth              { get; set; }
+        public string Id { get { return GetValueAsString(KEY_ID); } }
+        public string FirstName { get { return GetValueAsString(KEY_FIRST_NAME); } }
+        public string LastName { get { return GetValueAsString(KEY_LAST_NAME); } }
+        public string Gender { get { return GetValueAsString(KEY_GENDER); } }
+        public string Email { get { return GetValueAsString(KEY_EMAIL); } }
+        public int YearOfBirth { get; set; }
     }
 
     /// <summary>
@@ -228,17 +207,22 @@ public abstract class SocialUtils
     /// </summary>
     /// <param name="onGetProfileInfo"></param>
     public abstract void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo);
-    
-    protected void GetProfilePicture(string socialID, Action<Texture2D, bool> onGetProfilePicture, int width = 256, int height = 256)
-    {
-        ExtendedGetProfilePicture(socialID, onGetProfilePicture, width, height);        
-    }    
 
-    protected abstract void ExtendedGetProfilePicture(string socialID, Action<Texture2D, bool> onGetProfilePicture, int width = 256, int height = 256);    
+    protected void GetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256)
+    {
+        ExtendedGetProfilePicture(socialID, storagePath, onGetProfilePicture, width, height);
+    }
+
+    protected abstract void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256);
 
     public void OnLoggedIn()
     {
         Profile_LoadInfo();
+    }
+
+    public void Update()
+    {
+        Profile_Update();
     }
 
     #region profile
@@ -252,6 +236,20 @@ public abstract class SocialUtils
     private EProfileState Profile_State { get; set; }
 
     private Action<string, Texture2D> Profile_OnGetInfoDone { get; set; }
+    
+    private bool m_profileUpdateInfoFromPlatformReady;
+    private bool m_profileNeedsToReloadInfo;
+    private string m_profileNameFromPlatform;
+    private Action m_profileUpdateInfoFromPlatformOnDone;
+
+    private void Profile_ResetUpdateInfoFromPlatform()
+    {
+        m_profileUpdateInfoFromPlatformReady = false;
+        m_profileNeedsToReloadInfo = false;
+        m_profileUpdateInfoFromPlatformOnDone = null;
+        m_profileNameFromPlatform = null;
+    }
+
 
     public bool Profile_NeedsInfoToBeUpdated()
     {
@@ -273,7 +271,7 @@ public abstract class SocialUtils
         }
 
         return returnValue;
-    }    
+    }
 
     /// <summary>
     /// Returns user's first name and picture. If these data are cached then they are used instead of requesting them to the social platform.
@@ -284,7 +282,7 @@ public abstract class SocialUtils
         // Only one request should be processed
         if (Profile_OnGetInfoDone != null && FeatureSettingsManager.IsDebugEnabled)
             LogWarning("Only one Profile_GetInfo can be requested simmultaneously");
-        
+
         Profile_OnGetInfoDone = onDone;
 
         // If it needs to be updated then the profile is forced to be loaded
@@ -324,7 +322,7 @@ public abstract class SocialUtils
 
             if (Cache.HasBeenUpdatedFromPlatform)
             {
-                Cache.LoadInfo(Profile_PerformGetInfoDone);
+                Cache.LoadInfo(false, Profile_PerformGetInfoDone);
             }
             else
             {
@@ -333,7 +331,7 @@ public abstract class SocialUtils
         }
         else
         {
-            Cache.LoadInfo(Profile_PerformGetInfoDone);
+            Cache.LoadInfo(false, Profile_PerformGetInfoDone);
         }
     }
 
@@ -350,6 +348,9 @@ public abstract class SocialUtils
 
     private void Profile_UpdateInfoFromPlatform(Action onDone)
     {
+        Profile_ResetUpdateInfoFromPlatform();
+        m_profileUpdateInfoFromPlatformOnDone = onDone;
+                    
         bool profileIsNameReady = false;
         bool profileIsPictureReady = false;
 
@@ -357,29 +358,67 @@ public abstract class SocialUtils
         {
             if (profileIsNameReady && profileIsPictureReady && onDone != null)
             {
-                Cache.HasBeenUpdatedFromPlatform = true;
-                onDone();
+                m_profileUpdateInfoFromPlatformReady = true;
             }
         };
 
         GetProfileInfoFromPlatform(delegate (ProfileInfo profileInfo)
-        {           
-            Cache.ProfileName = (profileInfo != null) ? profileInfo.FirstName : null;
+        {
+            m_profileNameFromPlatform = (profileInfo != null) ? profileInfo.FirstName : null;            
             profileIsNameReady = true;
             onReady();
         });
 
-        GetProfilePicture(GetSocialID(), delegate (Texture2D profileImage, bool error)
+        GetProfilePicture(GetSocialID(), PROFILE_IMAGE_STORAGE_PATH, delegate(bool error)
         {
+            Action onPictureDone = delegate ()
+            {
+                profileIsPictureReady = true;
+                onReady();
+            };
+
             if (!error)
             {
-                Cache.ProfilePicture = profileImage;
+                m_profileNeedsToReloadInfo = true;
+                onPictureDone();               
             }
-
-            profileIsPictureReady = true;
-            onReady();
+            else
+            {
+                onPictureDone();
+            }
         });
     }
+
+    private void Profile_Update()
+    {
+        if (m_profileUpdateInfoFromPlatformReady)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Profile_Update name = " + m_profileNameFromPlatform + " m_profileNeedsToReloadInfo = " + m_profileNeedsToReloadInfo);
+
+            m_profileUpdateInfoFromPlatformReady = false;
+
+            Action onDone = delegate ()
+            {
+                Cache.HasBeenUpdatedFromPlatform = true;
+                if (m_profileUpdateInfoFromPlatformOnDone != null)
+                {
+                    m_profileUpdateInfoFromPlatformOnDone();
+                }
+            };
+
+            Cache.ProfileName = m_profileNameFromPlatform;
+
+            if (m_profileNeedsToReloadInfo)
+            {
+                Cache.LoadInfo(true, onDone);
+            }
+            else
+            {
+                onDone();
+            }
+        }
+    }    
     #endregion        
 
     #region log

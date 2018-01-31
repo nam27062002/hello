@@ -55,6 +55,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	[SerializeField] private ShowHideAnimator m_buyKeyAdButtonAnim = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_keysBonusText = null;
+	[SerializeField] private Localizer m_keysBonusInfoText = null;
 	[SerializeField] private ShowHideAnimator m_keysBonusTextAnim = null;
 	[Space]
 	[SerializeField] private ShowHideAnimator m_scoreOrnamentAnim = null;
@@ -240,6 +241,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		if(m_keyBonus) {
 			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_KEY_BONUS_USED");
 			m_keysBonusText.text = "x2";
+			m_keysBonusInfoText.Localize("");
 		} else {
 			m_keysBonusLabelText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_KEY_BONUS_NOT_FOUND", "x2");
 		}
