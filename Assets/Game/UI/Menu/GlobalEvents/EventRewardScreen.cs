@@ -117,11 +117,11 @@ public class EventRewardScreen : MonoBehaviour {
 				UsersManager.currentUser.PushReward(m_event.rewardSlots[i].reward);
 			}
 
-			// Immediately save persistence in case the rewards opening gets interrupted
-			PersistenceFacade.instance.Save_Request(true);
-
 			// Mark event as collected
 			m_event.FinishRewardCollection();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
+
+			// Immediately save persistence in case the rewards opening gets interrupted
+			PersistenceFacade.instance.Save_Request(true);
 		}
 
 		// Initialize progress bar
@@ -344,6 +344,7 @@ public class EventRewardScreen : MonoBehaviour {
 			case Step.FINISH: {
 				// Purge event list
 				GlobalEventManager.ClearRewardedEvents();
+				GlobalEventManager.ResetHasChecked();
 				GlobalEventManager.ClearCurrentEvent();
 
 				// Request new event data
