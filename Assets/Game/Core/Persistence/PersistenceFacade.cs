@@ -84,7 +84,7 @@ public class PersistenceFacade
 
 	#region sync
     public long Sync_LatestSyncTime { get { return CloudDriver.LatestSyncTime; } }
-
+   
     public bool Sync_IsSyncing { get; set; }
 
     public bool Sync_IsSynced { get { return CloudDriver.IsInSync; } }
@@ -125,7 +125,7 @@ public class PersistenceFacade
 
 				if (logInSocialEver)
 				{
-					Action<PersistenceStates.ESyncResult> onConnectDone = delegate(PersistenceStates.ESyncResult result)
+					Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onConnectDone = delegate(PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
 					{
 						if (result == PersistenceStates.ESyncResult.ErrorLogging)
 						{
@@ -161,7 +161,7 @@ public class PersistenceFacade
                     onDone();
                 }
 
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
                 {
                     Sync_OnDone(result, null);
                 };
@@ -173,7 +173,7 @@ public class PersistenceFacade
                 }
                 else
                 {
-                    onSyncDone(PersistenceStates.ESyncResult.ErrorLogging);
+                    onSyncDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
                 }
 			}			
 		};
@@ -199,7 +199,7 @@ public class PersistenceFacade
 
             Action onSaveDone = delegate ()
             {
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
                 {
                     Sync_OnDone(result, onDone);
                 };
@@ -211,13 +211,13 @@ public class PersistenceFacade
         }
 	}
 
-    public void Sync_FromReconnecting(Action onDone)
+    public void Sync_FromReconnecting(Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
     {
         if (Sync_IsSyncing)
         {
             if (onDone != null)
             {
-                onDone();
+                onDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.Cancelled);
             }
         }
         else
@@ -226,9 +226,10 @@ public class PersistenceFacade
 
             Action onSaveDone = delegate ()
             {
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
                 {
-                    Sync_OnDone(result, onDone);
+                    Sync_OnDone(result, null);
+                    onDone(result, resultDetail);
                 };
 
                 Config.CloudDriver.Sync(true, false, onSyncDone);
