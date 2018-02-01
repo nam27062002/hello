@@ -87,6 +87,35 @@ public class DragonMapMarker : MapMarker {
 		diff.z = 0.0f;
 
 		// Arrow
+		// Detect touch on the arrow
+		// [AOC] Simulate touch with mouse in the editor
+		bool checkTouch = false;
+		Vector2 touchPos = GameConstants.Vector2.zero;	// The pos of the touch on the screen
+		#if UNITY_EDITOR || UNITY_PC
+		checkTouch = Input.GetMouseButtonDown(0);
+		touchPos = Input.mousePosition;
+		#else
+		if(Input.touchCount == 1) {	// Not while zooming (touchCount == 2)
+			Touch touch = Input.GetTouch(0);
+			if(touch.phase == TouchPhase.Began) {	// Not while dragging (touchPhase != Began)
+				checkTouch = true;
+				touchPos = touch.position;
+			}
+		}
+		#endif
+
+		if(checkTouch) {
+			Ray ray = m_mapCamera.camera.ScreenPointToRay(new Vector3(touchPos.x, touchPos.y, 0f));	// The ray to the touched object in the world
+			RaycastHit hitInfo;
+			if(Physics.Raycast(ray.origin, ray.direction, out hitInfo, float.MaxValue, LayerMask.GetMask("Map"))) {
+				// Did we touch the icon's collider (is on the root)
+				if(hitInfo.collider.transform == m_iconRoot) {
+					// Center view on dragon!
+					Messenger.Broadcast<float>(MessengerEvents.UI_MAP_CENTER_TO_DRAGON, m_scrollToDragonSpeed);
+				}
+			}
+		}
+
 		// Show only when far away from the marker!
 		if(diff.sqrMagnitude > m_arrowSqrDistanceThreshold) {
 			// We're outside limits, show arrow
@@ -137,11 +166,4 @@ public class DragonMapMarker : MapMarker {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Click over the marker happened.
-	/// </summary>
-	private void OnMouseUpAsButton() {
-		// Center view on dragon!
-		Messenger.Broadcast<float>(MessengerEvents.UI_MAP_CENTER_TO_DRAGON, m_scrollToDragonSpeed);
-	}
 }

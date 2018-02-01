@@ -21,7 +21,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
-	private const float FAR_LAYER_Z = 8f;
+	public const float FAR_LAYER_Z = 8f;
 	public const float BACKGROUND_LAYER_Z = 60f;
     public const float SPAWNING_MAX_TIME = 4f; // Max time (in milliseconds) allowed to spend on spawning entities
     
@@ -238,9 +238,14 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
 				bool cancelSpawn = false;
 
-				if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
+
+				if (sp.transform.position.z < FAR_LAYER_Z) 
 				{
 					cancelSpawn = m_camera.IsInsideDeactivationArea(sp.boundingRect);
+				}
+				else if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
+				{
+					cancelSpawn = m_camera.IsInsideDeactivationAreaFar(sp.boundingRect);
 				}
 				else 
 				{

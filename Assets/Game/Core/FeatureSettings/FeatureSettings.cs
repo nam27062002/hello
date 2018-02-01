@@ -77,6 +77,9 @@ public class FeatureSettings
     // This key decides the resolution factor, screen size is multiplied by this float value
     public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
 
+    // This key decides the minimum gfx memory amount
+    public const string KEY_GFX_MEMORY = "gfxMemory";
+
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
 
@@ -138,6 +141,10 @@ public class FeatureSettings
             Datas.Add(key, data);
 
             key = KEY_MIN_MEMORY;
+            data = new DataRangeInt(key, 0, 0, int.MaxValue);
+            Datas.Add(key, data);
+
+            key = KEY_GFX_MEMORY;
             data = new DataRangeInt(key, 0, 0, int.MaxValue);
             Datas.Add(key, data);
 
@@ -353,6 +360,8 @@ public class FeatureSettings
         very_high,
         deprecated
     };
+
+    public static List<string> EQualityLevelValuesNames = new List<string>(Enum.GetNames(typeof(EQualityLevelValues)));
 
     public abstract class Data
     {        
@@ -804,6 +813,28 @@ public class FeatureSettings
             }
         }
     }
+
+    public int GfxMemory
+    {
+        get
+        {
+            return GetValueAsInt(KEY_GFX_MEMORY);
+        }
+
+        set
+        {
+            string key = KEY_GFX_MEMORY;
+            if (Values.ContainsKey(key))
+            {
+                Values[key] = value;
+            }
+            else
+            {
+                Values.Add(key, value);
+            }
+        }
+    }
+
 
     public string Profile
     {

@@ -164,11 +164,11 @@ public class HUDRevive : MonoBehaviour {
 		// Make sure timer hasn't finished!
 		if(m_timer.IsFinished()) return;
 
-		// Show video ad!
-		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.REVIVE, OnVideoRewardCallback);
-
 		// Pause timer
 		m_timer.Stop();
+
+		// Show video ad!
+		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.REVIVE, OnVideoRewardCallback);
 	}
 
 	void OnVideoRewardCallback( bool done ){

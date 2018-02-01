@@ -361,10 +361,19 @@ public class HDTrackingManager
 
 	public virtual void Notify_Hacker(){}
 
+    public enum EPopupSurveyAction
+    {
+        Yes,
+        No,
+        Later
+    };
+
+    public virtual void Notify_PopupSurveyShown(EPopupSurveyAction action) {}    
+
     #endregion
 
     #region log
-    private const bool LOG_USE_COLOR = true;
+    private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
