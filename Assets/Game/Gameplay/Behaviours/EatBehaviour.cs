@@ -706,7 +706,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 			StartBlood();
 			AI.IMachine toEat = m_holdingPrey;
 			EndHold();
-			Eat( toEat, true, 0.5f);
+			Eat( toEat, true, 0.1f);
 			// StartSwallow(m_holdingPrey);
 			// EndSwallow(m_holdingPrey);
 
