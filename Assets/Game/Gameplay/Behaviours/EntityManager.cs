@@ -151,6 +151,26 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         return nearestEntity;
     }
 
+	public int GetCagesInRange2DNonAlloc(Vector2 _center, float _radius, Cage[] _results)
+	{
+		int numResult = 0;
+		int size = m_cages.Count;
+		int length = _results.Length;
+		for (int i = 0; i < size && numResult < length; ++i)
+		{
+			Cage c = m_cages[i];
+			if (c != null)
+			{
+				if (c.IntersectsWith(_center, _radius))
+				{
+					_results[numResult] = c;
+					numResult++;
+				}
+			}
+		}
+		return numResult;
+	}
+
     /**
 	*
 	*/
