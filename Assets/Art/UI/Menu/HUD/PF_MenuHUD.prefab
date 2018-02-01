@@ -798,6 +798,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224049092617696736}
   - component: {fileID: 114704359628413256}
+  - component: {fileID: 114179609075133974}
   m_Layer: 5
   m_Name: CloudSyncStatusRoot
   m_TagString: Untagged
@@ -1457,6 +1458,29 @@ MonoBehaviour:
   mRoot: {fileID: 1938295982392488}
   m_syncSuccessSprite: {fileID: 1053055481283930}
   m_syncFailedSprite: {fileID: 1959394804616816}
+--- !u!114 &114179609075133974
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1823827414160316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetAnimator: {fileID: 114704359628413256}
+  m_checkSelectedDragon: 0
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfShadow: 0
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_checkScreens: 1
+  m_mode: 1
+  m_screens: 06000000
+  m_restartShowAnimation: 0
 --- !u!114 &114246271287690552
 MonoBehaviour:
   m_ObjectHideFlags: 1
