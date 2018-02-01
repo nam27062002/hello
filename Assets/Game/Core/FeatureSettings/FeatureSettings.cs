@@ -80,6 +80,9 @@ public class FeatureSettings
     // This key decides the minimum gfx memory amount
     public const string KEY_GFX_MEMORY = "gfxMemory";
 
+    // This key decides if lightmap will be used on this profile
+    public const string KEY_LIGHTMAP = "lightmap";
+
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
 
@@ -161,6 +164,11 @@ public class FeatureSettings
             // shadersLevel: Configuration for shaders
             key = KEY_SHADERS_LEVEL;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
+            Datas.Add(key, data);
+
+            // lightmap: enable/disable lightmap
+            key = KEY_LIGHTMAP;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
