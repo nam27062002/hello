@@ -24,14 +24,37 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 		sharedAshesMaterial.renderQueue = 3000;
 
 		m_ashes_wait = new Material(sharedAshesMaterial);
-		m_ashes_wait.SetFloat("_AshLevel", 0f);
+		m_ashes_wait.SetFloat( GameConstants.Material.ASH_LEVEL , 0f);
 		m_ashes_disintegrate = new Material(sharedAshesMaterial);
-		m_ashes_disintegrate.SetFloat("_AshLevel", 0f);
+		m_ashes_disintegrate.SetFloat( GameConstants.Material.ASH_LEVEL , 0f);
 		m_ashes_end = new Material(sharedAshesMaterial);
-		m_ashes_end.SetFloat("_AshLevel", 1f);
+		m_ashes_end.SetFloat( GameConstants.Material.ASH_LEVEL , 1f);
 
 		m_list_wait = new List<AI.MachineInflammable>();
 		m_list_disintegrate = new List<AI.MachineInflammable>();
+	}
+
+	/// <summary>
+	/// Component enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, ClearQueues);
+	}
+
+	/// <summary>
+	/// Component disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, ClearQueues);
+	}
+
+	private void ClearQueues() {
+		m_list_wait.Clear();
+		m_list_disintegrate.Clear();
 	}
 
 	private void __Add(AI.MachineInflammable _machine) {
@@ -89,7 +112,7 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 				m_timer = 0f;
 			}
 
-			m_ashes_disintegrate.SetFloat("_AshLevel", m_timer / DISINTEGRATE_TIME);
+			m_ashes_disintegrate.SetFloat( GameConstants.Material.ASH_LEVEL , m_timer / DISINTEGRATE_TIME);
 		}
 	}
 }

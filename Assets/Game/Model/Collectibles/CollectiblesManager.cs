@@ -214,7 +214,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 				}
 			}
 
-			// If we have any pending chest, assing a new spawner to it!
+			// If we have any pending chest, assign a new spawner to it!
 			for(int i = 0; i < pendingChests.Count; i++) {
 				// Pick a random one from the valid spawners list
 				spawner = validSpawners.GetRandomValue();

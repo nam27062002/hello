@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(AutoParenter))]
+[CustomEditor(typeof(AutoParenter), true)]
+[CanEditMultipleObjects]
 public class AutoParenterEditor : Editor {
-
-	AutoParenter m_target = null;
-
-	private void OnEnable() {
-		if ( !Application.isPlaying ){
-			m_target = target as AutoParenter;
-		}
-	}
-
 	public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
+
+		GUI.enabled = !Application.isPlaying;
 		if ( GUILayout.Button("Copy Target Position And Rotation") )
 		{
-			m_target.CopyTargetPosAndRot();
+			Undo.RecordObjects(targets, "AutoParenter.CopyTargetPosAndRot");
+			for(int i = 0; i < targets.Length; ++i) {
+				(targets[i] as AutoParenter).CopyTargetPosAndRot();
+			}
 		}
+		GUI.enabled = true;
     }
 }

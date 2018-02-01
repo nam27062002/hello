@@ -56,10 +56,11 @@
   <Definition sku="iPad4,8" iOSGeneration="iPadMini3Gen" profile="mid"/>
   <Definition sku="iPad4,9" iOSGeneration="iPadMini3Gen" profile="mid"/>
 
-  <!-- HIGH devices -->
-  <Definition sku="iPhone7,1" iOSGeneration="iPhone6" profile="high"/>
-  <Definition sku="iPhone7,2" iOSGeneration="iPhone6Plus" profile="high"/>
-  <Definition sku="iPod7,1" iOSGeneration="iPodTouchUnknown" profile="high"/>
+  <Definition sku="iPhone7,1" iOSGeneration="iPhone6" profile="mid"/> <!-- RAM: 1GB-->
+  <Definition sku="iPhone7,2" iOSGeneration="iPhone6Plus" profile="mid"/> <!-- RAM: 1GB-->
+  <Definition sku="iPod7,1" iOSGeneration="iPodTouchUnknown" profile="mid"/> <!-- RAM: 1GB-->
+  
+  <!-- HIGH devices atleast 2GB RAM -->  
   <Definition sku="iPad5,3" iOSGeneration="iPadAir2" profile="high"/>
   <Definition sku="iPad5,4" iOSGeneration="iPadAir2" profile="high"/>
   <Definition sku="iPad5,1" iOSGeneration="iPadMini4Gen" profile="high"/>
@@ -81,5 +82,5 @@
   <!-- =========================================================================================================================- -->
   <!-- ANDROID devices -->
   <!-- =========================================================================================================================- -->
-  <Definition sku="samsung SM-N910" profile="mid"/>
+  <Definition sku="samsung SM-N910" profile="mid"/> <!-- Samsung Galaxy Note 4 -->
 </Definitions>

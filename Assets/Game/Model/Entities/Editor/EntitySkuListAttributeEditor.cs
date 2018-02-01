@@ -40,6 +40,8 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 	/// <param name="_property">The property we're drawing.</param>
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
+		m_targetProperty = _property;
+
 		// Check field type
 		if(_property.propertyType != SerializedPropertyType.String) {
 			m_pos.height = EditorStyles.largeLabel.lineHeight;
@@ -52,7 +54,7 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 		EntitySkuListAttribute attr = attribute as EntitySkuListAttribute;
 
 		// If definitions are not loaded, do it now
-		if(!ContentManager.ready) ContentManager.InitContent(true);
+		if(!ContentManager.ready) ContentManager.InitContent(true, false);
 
 		// Get the definitions and sort them by category
 		List<string> categorySkus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.ENTITY_CATEGORIES);
@@ -105,8 +107,7 @@ public class EntitySkuListAttributeEditor : ExtendedPropertyDrawer {
 		// Show button using the popup style with the current value
 		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
 		Rect contentPos = EditorGUI.PrefixLabel(m_pos, _label);
-		if(GUI.Button(contentPos, m_skus[selectedIdx], EditorStyles.popup)) {
-			m_targetProperty = _property;
+		if(GUI.Button(contentPos, m_skus[selectedIdx], EditorStyles.popup)) {			
 			SelectionPopupWindow.Show(m_skus.ToArray(), OnSkuSelected);
 		}
 

@@ -3,18 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ViewParticleSpawner : MonoBehaviour {
-	[SerializeField] private Renderer m_view;
-	[SerializeField] private ParticleData[] m_particleDatas;
+	private enum ActivationMode {
+		AUTO,
+		MANUAL
+	}
 
 	private enum State {
-		Idle = 0,
-		Spawned,
-		Return
+		IDLE = 0,
+		SPAWNED,
+		RETURN
 	}
+
+	[SerializeField] private ActivationMode m_activationMode = ActivationMode.AUTO;
+	[Comment("Where the particles will be spawned.\nLeave empty to use this transform as parent.")]
+	[SerializeField] private Transform m_parent;
+	[Comment("View's bounds will be compared to the camera frustum to trigger the particles.\nLeave empty to use parent's position instead.")]
+	[SerializeField] private Renderer m_view;
+	[Space]
+	[SerializeField] private ParticleData[] m_particleDatas;
 
 	private GameCamera m_camera;
 
-	private Transform m_parent;
 	private GameObject[] m_particleSytems;
 	private ParticleControl[] m_particleControl;
 
@@ -23,9 +32,15 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		m_camera = Camera.main.GetComponent<GameCamera>();
+		m_camera = null;
+		if(Camera.main != null) {
+			m_camera = Camera.main.GetComponent<GameCamera>();
+		}
 
-		m_parent = transform;
+		if(m_parent == null) {
+			m_parent = transform;
+		}
+
 		m_particleSytems = new GameObject[m_particleDatas.Length];
 		m_particleControl = new ParticleControl[m_particleDatas.Length];
 
@@ -33,7 +48,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 			m_particleDatas[i].CreatePool();
 		}
 
-		m_state = State.Idle;
+		m_state = State.IDLE;
 	}
 
 	void OnDisable() {
@@ -41,7 +56,76 @@ public class ViewParticleSpawner : MonoBehaviour {
 	}
 
 	void Update() {
-		// Show / Hide fire effect if thfis node is inside Camera or not
+		// Show / Hide effect if this node is inside Camera or not
+		bool isInsideActivationMaxArea = CheckActivationArea();
+
+		switch(m_state) {
+			case State.IDLE: {
+				if(isInsideActivationMaxArea) {
+					// If activation mode is AUTO, spawn!
+					if(m_activationMode == ActivationMode.AUTO) {
+						SpawnInternal();
+					}
+				}
+			}
+			break;
+
+			case State.SPAWNED: {
+				if(!isInsideActivationMaxArea) {
+					m_state = State.RETURN;
+				}
+			}
+			break;
+
+			case State.RETURN: {
+				if(isInsideActivationMaxArea && m_activationMode == ActivationMode.AUTO) {
+					CancelReturn();
+				} else {
+					StopAndReturn();
+				}
+			}
+			break;
+		}
+	}
+
+	/// <summary>
+	/// Check whether the particle can be spawned and do it.
+	/// Only for <c>ActivationMode.MANUAL</c>.
+	/// </summary>
+	public void Spawn() {
+		// Only for manual activation mode
+		if(m_activationMode != ActivationMode.MANUAL) return;
+
+		// Only if not already spawned
+		if(m_state != State.IDLE) return;
+
+		// Are we inside the activation area?
+		if(!CheckActivationArea()) return;
+
+		// Everything ok! Spawn the particle
+		SpawnInternal();
+	}
+
+	/// <summary>
+	/// Force the active particle to stop and returns it to the pool.
+	/// Only for <c>ActivationMode.MANUAL</c>.
+	/// </summary>
+	public void Stop() {
+		// Only for manual activation mode
+		if(m_activationMode != ActivationMode.MANUAL) return;
+
+		// Only if actually spawned
+		if(m_state != State.SPAWNED) return;
+
+		// Everything ok! Stop the particle
+		StopAndReturn();
+	}
+
+	/// <summary>
+	/// Check whether the spawner is inside the activation area and thus can be spawned.
+	/// </summary>
+	/// <returns>Whether the spawner is within the activation area.</returns>
+	protected bool CheckActivationArea() {
 		bool isInsideActivationMaxArea = false;
 
 		if (m_camera != null) {
@@ -50,40 +134,23 @@ public class ViewParticleSpawner : MonoBehaviour {
 			} else {			
 				isInsideActivationMaxArea = m_camera.IsInsideCameraFrustrum(m_parent.position);
 			}
+		} else {
+			// [AOC] Probably not in-game, always show the effect (i.e. Menu)
+			isInsideActivationMaxArea = true;
 		}
 
-		switch (m_state) {
-			case State.Idle:
-				if (isInsideActivationMaxArea) {
-					Spawn();
-				}
-				break;
-
-			case State.Spawned:
-				if (!isInsideActivationMaxArea) {
-					m_state = State.Return;
-				}
-				break;
-
-			case State.Return:
-				if (isInsideActivationMaxArea) {
-					CancelReturn();
-				} else {
-					StopAndReturn();
-				}
-				break;
-		}
+		return isInsideActivationMaxArea;
 	}
 	
-	protected virtual void Spawn() {
+	protected virtual void SpawnInternal() {
 		for (int i = 0; i < m_particleDatas.Length; ++i) {
-			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, Vector3.zero, true);
+			m_particleSytems[i] = m_particleDatas[i].Spawn(m_parent, m_particleDatas[i].offset, true);
 			if (m_particleSytems[i] != null) {
 				m_particleControl[i] = m_particleSytems[i].GetComponent<ParticleControl>();
 			}
 		}
 
-		m_state = State.Spawned;
+		m_state = State.SPAWNED;
 	}
 
 	protected virtual void CancelReturn() {
@@ -92,7 +159,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 				m_particleControl[i].Play(m_particleDatas[i]);
 			}
 		}
-		m_state = State.Spawned;
+		m_state = State.SPAWNED;
 	}
 
 	protected virtual void StopAndReturn() {
@@ -116,6 +183,6 @@ public class ViewParticleSpawner : MonoBehaviour {
 			m_particleSytems[i] = null;
 			m_particleControl[i] = null;
 		}
-		m_state = State.Idle;
+		m_state = State.IDLE;
 	}
 }

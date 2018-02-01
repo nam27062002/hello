@@ -128,6 +128,9 @@ public class GameCamera : MonoBehaviour
 	private FastBounds2D 		m_deactivationNear = new FastBounds2D();
 	public FastBounds2D 		deactivationRectNear { get { return m_deactivationNear; }}
 
+	private FastBounds2D 		m_deactivationFar = new FastBounds2D();
+	public FastBounds2D 		deactivationRectFar { get { return m_deactivationFar; }}
+
 	private FastBounds2D 		m_deactivationBG = new FastBounds2D();
 	public FastBounds2D 		deactivationRectBG { get { return m_deactivationBG; }}
 
@@ -241,6 +244,10 @@ public class GameCamera : MonoBehaviour
 		{
 			// gameObject.AddComponent<RenderProfiler>();	// TODO (MALH): Recover this
 			Debug_Awake();
+		}
+
+		if (FeatureSettingsManager.instance.LevelsLOD <= FeatureSettings.ELevel4Values.low) {
+			m_deactivationDistance *= 0.5f;
 		}
 
 		InstanceManager.gameCamera = this;
@@ -1289,6 +1296,9 @@ public class GameCamera : MonoBehaviour
 		m_deactivationNear.ExpandBy( expand, expand );
 		m_deactivationNear.ExpandBy( -expand, -expand );  	
 
+		m_deactivationFar.Set(m_deactivationNear);
+		m_deactivationFar.ApplyScale(1.5f);
+
 		m_deactivationBG.Set(m_activationMaxBG);
 		m_deactivationBG.ExpandBy( 2f, 2f );
 		m_deactivationBG.ExpandBy( -2f, -2f );  	
@@ -1348,18 +1358,36 @@ public class GameCamera : MonoBehaviour
 		return !m_activationMinBG.Intersects(_bounds) && m_activationMaxBG.Intersects(_bounds);
 	}
 
-	public bool IsInsideDeactivationArea(Vector3 _point) {		
-		return !m_deactivationNear.Contains(_point);
+
+	//
+	public bool IsInsideDeactivationArea(Vector3 _point) {
+		if (_point.z < SpawnerManager.FAR_LAYER_Z) {
+			return !m_deactivationNear.Contains(_point);
+		} else {
+			return !m_deactivationFar.Contains(_point);
+		}
 	}
 
 	public bool IsInsideDeactivationArea(Bounds _bounds) {		
-		return !m_deactivationNear.Intersects(_bounds);
+		if (_bounds.center.z < SpawnerManager.FAR_LAYER_Z) {
+			return !m_deactivationNear.Intersects(_bounds);
+		} else {
+			return !m_deactivationFar.Intersects(_bounds);
+		}
 	}
 
 	public bool IsInsideDeactivationArea(Rect _bounds) {		
 		return !m_deactivationNear.Intersects(_bounds);
 	}
+	//
 
+	//
+	public bool IsInsideDeactivationAreaFar(Rect _bounds) {		
+		return !m_deactivationFar.Intersects(_bounds);
+	}
+	//
+
+	//
 	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
 		return !m_deactivationBG.Contains(_point);
 	}
@@ -1371,6 +1399,7 @@ public class GameCamera : MonoBehaviour
 	public bool IsInsideBackgroundDeactivationArea(Rect _bounds) {		
 		return !m_deactivationBG.Intersects(_bounds);
 	}
+	//
 
 
 	public bool IsInside2dFrustrum(Vector3 _point) {

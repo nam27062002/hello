@@ -56,6 +56,8 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	// Drawing parameters
 	public Color drawColor = Color.white;
 	public bool lockZ = false;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public float pointSize = 1f;
+	public float pickSize = 1.5f;
 
 	/// <summary>
 	/// Control points of the curve.
@@ -135,7 +137,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// <summary>
 	/// If enabled, handle points will be automatically computed.
 	/// </summary>
-	private bool m_autoSmooth = true;
+	private bool m_autoSmooth = false;
 	public bool autoSmooth {
 		get { return m_autoSmooth; }
 		set { 
@@ -155,7 +157,21 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 			m_autoSmoothFactor = value;
 		}
 	}
-	
+
+	// Editing tools
+	private int m_selectedIdx = -1;
+	public int selectedIdx {
+		get { return m_selectedIdx; }
+		set { m_selectedIdx = value; }
+	}
+
+	private int m_selectedHandlerIdx = 0;	// 0, 1, 2
+	public int selectedHandlerIdx {
+		get { return m_selectedHandlerIdx; }
+		set { m_selectedHandlerIdx = value; }
+	}
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -647,51 +663,5 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// <param name="_idx">Index of the point to be returned.</param>
 	public BezierPoint this[int _idx] {
 		get { return GetPoint(_idx); }
-	}
-
-	//------------------------------------------------------------------//
-	// DRAWING															//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Scene gizmos drawing
-	/// </summary>
-	private void OnDrawGizmos() {
-		if(!isActiveAndEnabled) return;
-
-		#if UNITY_EDITOR
-		// Draw line
-		Handles.color = drawColor;
-		Vector3[] sampledPoints = new Vector3[m_sampledSegments.Count];
-		for(int i = 0; i < m_sampledSegments.Count; i++) {
-			sampledPoints[i] = m_sampledSegments[i].p1;
-		}
-	 	Handles.DrawAAPolyLine(5f, sampledPoints);
-
-		// Draw points and handlers
-		BezierPoint p;
-		for(int i = 0; i < pointCount; i++) {
-			p = GetPoint(i);
-
-			// The point itself
-			Handles.color = Colors.white;
-			Handles.SphereCap(0, p.globalPosition, Quaternion.identity, 1f);
-
-			// Handlers
-			if(p.handleStyle != BezierPoint.HandleStyle.NONE) {
-				Handles.color = Colors.skyBlue;
-
-				// Handler 1
-				Handles.DrawLine(p.globalPosition, p.globalHandle1);
-				Handles.SphereCap(0, p.globalHandle1, Quaternion.identity, 0.5f);
-
-				// Handler 2
-				Handles.DrawLine(p.globalPosition, p.globalHandle2);
-				Handles.SphereCap(0, p.globalHandle2, Quaternion.identity, 0.5f);
-			}
-
-			// Label
-			Handles.Label(p.globalPosition, i.ToString(), CustomEditorStyles.bigSceneLabel);
-		}
-		#endif
 	}
 }

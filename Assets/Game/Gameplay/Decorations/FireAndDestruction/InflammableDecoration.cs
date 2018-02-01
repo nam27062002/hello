@@ -52,6 +52,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	private State m_state;
 	private State m_nextState;
 
+	private bool m_initialized = false;
 
 	public string sku { get { return m_entity.sku; } }
 
@@ -89,6 +90,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_ashMaterial.renderQueue = 3000;// Force transparent
 
 		m_state = m_nextState = State.Idle;
+
+		m_initialized = false;
 	}
 
 	/// <summary>
@@ -124,6 +127,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 			m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
 		}
 		m_startPosition = transform.position;
+
+		m_initialized = true;
 	}
 
 	public void SetupFireNodes() {
@@ -208,49 +213,53 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	}
 
 	// Update is called once per frame
-	public void CustomUpdate() {
-		if (m_autoSpawner == null)
-			return;
+	public void CustomUpdate() {		
+		if (m_initialized) {
+			if (m_state != m_nextState) {
+				ChangeState();
+			}
 
-		if (m_state != m_nextState) {
-			ChangeState();
-		}
+			switch (m_state) {
+				case State.Burning: {
+						bool allNodesBurning = true;
+						for (int i = 0; i < m_fireNodes.Length; ++i) {
+							allNodesBurning = allNodesBurning && m_fireNodes[i].IsBurning();
+						}
 
-		switch (m_state) {
-			case State.Burning: {
-					bool allNodesBurning = true;
+						if (allNodesBurning) {
+							m_nextState = State.Extinguish;
+						}
+					} break;
+
+				case State.Extinguish:
+					// Advance dissolve!
+					m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
+
+					if (m_timer.IsFinished()) {
+						bool extinguished = true;
+						for (int i = 0; i < m_fireNodes.Length; ++i) {
+							if (!m_fireNodes[i].IsExtinguishing()
+							&&  !m_fireNodes[i].IsExtinguished()) {
+								m_fireNodes[i].Extinguish();
+								extinguished = false;
+							}
+						}
+
+						if (extinguished) {
+							Destroy();
+						}						
+					}
+					break;
+
+				case State.Explode:
 					for (int i = 0; i < m_fireNodes.Length; ++i) {
-						allNodesBurning = allNodesBurning && m_fireNodes[i].IsBurning();
+						m_fireNodes[i].Explode();
 					}
-
-					if (allNodesBurning) {
-						m_nextState = State.Extinguish;
+					if (m_timer.IsFinished()) {
+						Destroy();
 					}
-				} break;
-
-			case State.Extinguish:
-				// Advance dissolve!
-				m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
-
-				if (m_timer.GetDelta() > 0.75f) {
-					for (int i = 0; i < m_fireNodes.Length; ++i) {
-						m_fireNodes[i].Extinguish();
-					}
-				}
-
-				if (m_timer.IsFinished()) {
-					Destroy();
-				}
-				break;
-
-			case State.Explode:
-				for (int i = 0; i < m_fireNodes.Length; ++i) {
-					m_fireNodes[i].Explode();
-				}
-				if (m_timer.IsFinished()) {
-					Destroy();
-				}
-				break;
+					break;
+			}
 		}
 	}
 

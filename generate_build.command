@@ -331,6 +331,10 @@ if [ "$VERSION_CODE_PARAMS" != "" ]; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${VERSION_CODE_PARAMS}"
 fi
 
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
+PACKAGE_NAME="$(cat bundleIdentifier.txt)"
+rm -f "bundleIdentifier.txt"
+
 # Generate Android build
 if $BUILD_ANDROID; then
   print_builder "BUILDER: Generating APKs..."
@@ -351,9 +355,6 @@ if $BUILD_ANDROID; then
   mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.apk" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/"
 
   if $GENERATE_OBB; then
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
-    PACKAGE_NAME="$(cat bundleIdentifier.txt)"
-    rm -f "bundleIdentifier.txt"
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
     mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}"
   fi
@@ -396,6 +397,11 @@ if $BUILD_IOS; then
       <dict> \
         <key>method</key> \
         <string>ad-hoc</string> \
+        <key>provisioningProfiles</key> \
+        <dict> \
+          <key>${PACKAGE_NAME}</key> \
+          <string>${PROVISIONING_PROFILE_UUID}</string> \
+        </dict> \
         <key>teamId</key> \
         <string>${DEVELOPMENT_TEAM}</string> \
       </dict> \
@@ -413,17 +419,32 @@ if $UPLOAD;then
   mkdir -p server
   mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" server
 
+  # In order to keep the server organized, replicate the branches structure on it
+  SMB_PATH="server/${BRANCH}"
+
   # Copy IPA
   if $BUILD_IOS; then
-      cp "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}" "server/"
+  	  mkdir -p "${SMB_PATH}/${STAGE_IPA_FILE}"
+      cp "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}" "${SMB_PATH}/"
   fi
 
   # Copy APK
   if $BUILD_ANDROID; then
-      mkdir -p "server/${STAGE_APK_FILE}"
-      cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${STAGE_APK_FILE}.apk" "server/${STAGE_APK_FILE}/"
+  	  # If generating OBBs, create a single folder with the APK + the OBBs
+  	  SMB_PATH_APK="${SMB_PATH}"
+  	  if $GENERATE_OBB; then
+	    SMB_PATH_APK="${SMB_PATH}/${STAGE_APK_FILE}"
+  	  fi
+
+  	  # Make sure path exists
+  	  mkdir -p "${SMB_PATH_APK}"
+
+  	  # Copy APK
+  	  cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${STAGE_APK_FILE}.apk" "${SMB_PATH_APK}/"
+
+  	  # Copy OBBs
       if $GENERATE_OBB; then
-        cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}" "server/${STAGE_APK_FILE}/"
+        cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}" "${SMB_PATH_APK}/"
       fi
   fi
 

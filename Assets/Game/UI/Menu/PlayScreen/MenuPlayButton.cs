@@ -51,6 +51,6 @@ public class MenuPlayButton : MenuNavigationButton {
 		// Save flag to not display play screen again
 		GameVars.playScreenShown = true;
 
-		HDTrackingManager.Instance.Notify_Funnel_Load(FunnelData_Load.Steps._04_click_play);
+		HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._04_click_play);
 	}
 }

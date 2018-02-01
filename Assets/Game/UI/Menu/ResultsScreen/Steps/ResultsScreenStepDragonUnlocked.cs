@@ -102,6 +102,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 
 		// Dragon preview
 		m_preview.LoadDragon(def.sku);
+		m_preview.dragonInstance.allowAltAnimations = false;	// [AOC] Disable weird alt animations for now
 
 		// Tier info
 		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, m_dragonData.tierDef.GetAsString("icon"));

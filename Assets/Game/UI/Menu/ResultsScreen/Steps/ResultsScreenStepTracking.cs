@@ -42,6 +42,7 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 	override protected void DoLaunch() {
 		// Update global stats
 		UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
+		DragonManager.currentDragon.gamesPlayed = DragonManager.currentDragon.gamesPlayed + 1;
 
 		// Pre-process chests
 		int chestsFound = 0;

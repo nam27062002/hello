@@ -31,7 +31,7 @@ public class PersistenceFacade
 		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Launch_Local_Corrupted_Cloud_Corrupted;
+        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_More;
         if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
             Config = new PersistenceFacadeConfigDebug(userCaseId);
@@ -132,16 +132,11 @@ public class PersistenceFacade
                             // Error when accessing to cloud so a popup is prompted asking the user if she wants to try to connect to cloud again
                             // or if she prefers to override local persistence with the default one
                             Popups_OpenLoadLocalCorruptedNoAccessToCloudError(onReset, onRetry);                            
-						}
+						}                        
 						else
-						{
-                            Action onSyncWithCloud = delegate ()
-                            {
-                                Config.LocalDriver.IsLoadedInGame = true;
-                                Sync_OnDone(result, onDone);
-                            };
-
-                            Popups_OpenLoadLocalCorruptedButCloudOkError(onSyncWithCloud);                           
+                        {
+                            Config.LocalDriver.IsLoadedInGame = true;
+                            Sync_OnDone(result, onDone);                            
 						}
 					};
 
@@ -166,15 +161,19 @@ public class PersistenceFacade
                     onDone();
                 }
 
-                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app whe she last played
-                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
+                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
                 {
-                    Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
-                    {
-                        Sync_OnDone(result, null);
-                    };
+                    Sync_OnDone(result, null);
+                };
 
+                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app last time she played
+                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
+                {                    
                     Config.CloudDriver.Sync(true, true, onSyncDone);
+                }
+                else
+                {
+                    onSyncDone(PersistenceStates.ESyncResult.ErrorLogging);
                 }
 			}			
 		};
@@ -187,22 +186,59 @@ public class PersistenceFacade
 
 	public void Sync_FromSettings(Action onDone)
 	{
-        Sync_IsSyncing = true;
+        // Check if there's already a sync being performed since only one can be performed simultaneously. this Typically happens when the sync from launching the app wasn't over yet when the game loaded so
+        // the user could click on manual sync
+        if (Sync_IsSyncing)
+        {
+            // A popup is shown so the user gets some feedback
+            Popup_SyncAlreadyOn(onDone);
+        }
+        else
+        {
+            Sync_IsSyncing = true;
 
-        Action onSaveDone = delegate()
-		{		
-			Action<PersistenceStates.ESyncResult> onSyncDone = delegate(PersistenceStates.ESyncResult result)
-			{
-				Sync_OnDone(result, onDone);
-			};
+            Action onSaveDone = delegate ()
+            {
+                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                {
+                    Sync_OnDone(result, onDone);
+                };
 
-			Config.CloudDriver.Sync(false, false, onSyncDone);
-		};
+                Config.CloudDriver.Sync(false, false, onSyncDone);
+            };
 
-		Config.LocalDriver.Save(onSaveDone);
+            Config.LocalDriver.Save(onSaveDone);
+        }
 	}
 
-	private void Sync_OnDone(PersistenceStates.ESyncResult result, Action onDone)
+    public void Sync_FromReconnecting(Action onDone)
+    {
+        if (Sync_IsSyncing)
+        {
+            if (onDone != null)
+            {
+                onDone();
+            }
+        }
+        else
+        {
+            Sync_IsSyncing = true;
+
+            Action onSaveDone = delegate ()
+            {
+                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                {
+                    Sync_OnDone(result, onDone);
+                };
+
+                Config.CloudDriver.Sync(true, false, onSyncDone);
+            };
+
+            Config.LocalDriver.Save(onSaveDone);
+        }
+    }
+
+    private void Sync_OnDone(PersistenceStates.ESyncResult result, Action onDone)
 	{
         Sync_IsSyncing = false;
 
@@ -220,7 +256,7 @@ public class PersistenceFacade
 		{
 			onDone();
 		}
-	}
+	}    
 	#endregion
 
     #region texts
@@ -235,7 +271,12 @@ public class PersistenceFacade
     #region save
 	public void Save_Request(bool immediate=false)
 	{
-		Config.LocalDriver.Save(null);
+        // Makes sure that local persistence has already been loaded in game so we can be sure that default persistence is not saved 
+        // if this method is called when the engine is not ready (for example, when restarting the app)
+        if (Config.LocalDriver.IsLoadedInGame)
+        {
+            Config.LocalDriver.Save(null);
+        }
 	}
 	#endregion
 
@@ -245,7 +286,7 @@ public class PersistenceFacade
 
 	private void Local_Reset()
 	{
-		LocalData.Reset();
+		LocalDriver.Reset();
 
         LocalDriver.UserProfile = UsersManager.currentUser;
         LocalData.Systems_RegisterSystem(LocalDriver.UserProfile);
@@ -290,6 +331,12 @@ public class PersistenceFacade
     #endregion
 
     #region popups
+    private static int SYNC_GENERIC_ERROR_CODE_MERGE_CLOUD_SAVE_CORRUPTED = 1;
+    private static int SYNC_GENERIC_ERROR_CODE_MERGE_LOCAL_SAVE_CORRUPTED = 2;
+    private static int SYNC_GENERIC_ERROR_CODE_MERGE_BOTH_SAVES_CORRUPTED = 3;
+    private static int SYNC_GENERIC_ERROR_CODE_SYNC_CLOUD_SAVE_CORRUPTED = 4;
+    private static int SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING = 5;
+
     // This region is responsible for opening the related to persistence popups    
     private static bool Popups_IsInited { get; set; }
 
@@ -386,7 +433,7 @@ public class PersistenceFacade
         PopupManager.PopupMessage_Open(config);
     }
 
-    private static void Popups_OpenLoadLocalCorruptedButCloudOkError(Action onDone)
+    public static void Popups_OpenLoadLocalCorruptedButCloudOkError(Action onDone)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
@@ -548,39 +595,46 @@ public class PersistenceFacade
         config.OnCancel = onLocal;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
-    }
+    }   
 
-    public static void Popup_OpenMergeConflictCloudCorrupted(Action onConfirm)
+    private static void Popup_OpenSyncGenericError(int errorCode, Action onConfirm)
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
-        config.MessageTid = "You can't use this facebook account because its cloud save is corrupted.";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;        
-        config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-    }
-
-    public static void Popup_OpenMergeConflictLocalCorrupted(Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
-        config.MessageTid = "Your local save is corrupted, do you want to override it with the cloud save?";
+        config.TitleTid = "TID_SAVE_ERROR_SYNC_FAILED_NAME";
+        config.MessageTid = "TID_SAVE_ERROR_SYNC_FAILED_DESC";
+        config.MessageParams = new string[] { "" + errorCode };
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
+    }
+
+    public static void Popup_OpenMergeConflictCloudCorrupted(Action onConfirm)
+    {        
+        // Alternative: "You can't use this facebook account because its cloud save is corrupted."
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_CLOUD_SAVE_CORRUPTED, onConfirm);        
+    }
+
+    public static void Popup_OpenMergeConflictLocalCorrupted(Action onConfirm)
+    {        
+        // Local save corrupted when syncing
+        // Alternative: "Your local save is corrupted, do you want to override it with the cloud save?"
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_LOCAL_SAVE_CORRUPTED, onConfirm);        
     }
 
     public static void Popup_OpenMergeConflictBothCorrupted(Action onConfirm)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
-        config.MessageTid = "Both saves are corrupted, reset local save?";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
-        config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
+        // Alternative "Both saves are corrupted, reset local save?"
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_BOTH_SAVES_CORRUPTED, onConfirm);       
+    }
+
+    /// <summary>
+    /// Called when there was an attempt to sync while a sync is already being performed
+    /// </summary>
+    /// <param name="onConfirm"></param>
+    public static void Popup_SyncAlreadyOn(Action onConfirm)
+    {
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING, onConfirm);
     }
 
     public static void Popup_OpenMergeWithADifferentAccount(Action onConfirm, Action onCancel)
@@ -598,35 +652,68 @@ public class PersistenceFacade
     }    
 
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
-	{        
-        // UNPH: Two buttons instead of three (upload local save to cloud is not an option. Review the text description)
+	{                
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_NAME";
         config.MessageTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_DESC";
-        config.ConfirmButtonTid = "TID_GEN_RETRY";
-        config.CancelButtonTid = "TID_GEN_CONTINUE";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onRetry;
-        config.OnCancel = onContinue;
+
+        if (onRetry == null)
+        {
+            config.ConfirmButtonTid = "TID_GEN_CONTINUE";            
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+            config.OnConfirm = onContinue;            
+        }
+        else
+        {
+            config.ConfirmButtonTid = "TID_GEN_RETRY";
+            config.CancelButtonTid = "TID_GEN_CONTINUE";
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+            config.OnConfirm = onRetry;
+            config.OnCancel = onContinue;
+        }
+
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);                   
     }
 
 	public static void Popup_OpenCloudCorrupted(Action onContinue, Action onOverride)
-	{       
-        // UNPH: Add TIDS and add popup Popups_OpenCloudSaveCorruptedError when the cloud was overridden successfully?
-        string msg = "Cloud corrupted. Override?";
+	{
+        // Internal error is shown.
+        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_SYNC_CLOUD_SAVE_CORRUPTED, onContinue);
+        /*            
+        // Alternative: Let the user override cloud save with local save.
+        // Make sure texts used by 'Popup_OpenCloudCorruptedWasOverriden()' popup stop being hardcoded when this alternative is enabled
+        string msg = "TID_SAVE_ERROR_CLOUD_SAVE_CORRUPTED_DESC";
 
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_CORRUPTED_NAME";
         config.MessageTid = msg;
-        config.IsButtonCloseVisible = false;
-        config.OnConfirm = onContinue;        
+        config.ConfirmButtonTid = "TID_GEN_UPLOAD";
+        config.CancelButtonTid = "TID_GEN_CONTINUE";
+        config.IsButtonCloseVisible = false;          
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnCancel = onOverride;        
+        config.OnConfirm = onOverride;
+        config.OnCancel = onContinue;        
 
         PopupManager.PopupMessage_Open(config);
-    }	
+        */
+    }
+    
+    public static void Popup_OpenCloudCorruptedWasOverriden(Action onContinue)
+    {
+        // Don't worry about the hardcoded texts because this popup is not used yet since this popup is shown only if 'Popup_OpenCloudCorrupted()'
+        // lets the user override cloud save with local save when cloud save is corrupted
+        string msg = "Corrupted cloud save was fixed";
+
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "Cloud save";
+        config.MessageTid = msg;
+        config.IsButtonCloseVisible = false;
+        config.OnConfirm = onContinue;
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;        
+
+        PopupManager.PopupMessage_Open(config);
+    }
 
     public static void Popup_OpenLocalAndCloudCorrupted(Action onReset)
 	{
@@ -637,27 +724,7 @@ public class PersistenceFacade
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onReset;
         PopupManager.PopupMessage_Open(config);        
-	}
-
-    /// <summary>
-    /// This popup is shown when the user clicks on cloud sync icon on hud or on sync button on settings and the synchronization went ok    
-    /// </summary>
-    public static void Popups_OpenCloudSyncedSuccessfully(Action onConfirm)
-    {
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
-        
-        config.MessageTid = "TID_SAVE_CLOUD_ACTIVE_DESC";            
-        DateTime lastUpload = GameServerManager.SharedInstance.GetEstimatedServerTime();
-        string lastUploadStr = lastUpload.ToString("F");
-        config.MessageParams = new string[] { lastUploadStr };
-
-        config.ConfirmButtonTid = "TID_GEN_CONTINUE";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
-        config.IsButtonCloseVisible = false;
-        PopupManager.PopupMessage_Open(config);
-    }
+	}   
 
     public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
     {

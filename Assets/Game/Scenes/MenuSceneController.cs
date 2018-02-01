@@ -147,10 +147,17 @@ public class MenuSceneController : SceneController {
 		// Request latest global event data
 		GlobalEventManager.RequestCurrentEventData();
 
-			// wait one tick
+		// wait one tick
 		yield return null;
 
-		CheckRatingFlow();
+		// Check interstitial popups
+		bool popupDisplayed = false;
+
+		// 1. Rating popup
+		if(!popupDisplayed) popupDisplayed = CheckRatingFlow();
+
+		// 2. Survey popup
+		if(!popupDisplayed) popupDisplayed = PopupAskSurvey.Check();
 
 		// Test mode
 		yield return new WaitForSeconds(5.0f);
@@ -165,8 +172,9 @@ public class MenuSceneController : SceneController {
 	}
 
 	public static string RATING_DRAGON = "dragon_crocodile";
-	public static void CheckRatingFlow()
+	public static bool CheckRatingFlow()
 	{
+		bool ret = false;
 		DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
 		if ( data.GetLockState() > DragonData.LockState.LOCKED )
 		{
@@ -187,7 +195,8 @@ public class MenuSceneController : SceneController {
 						if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
 						{
 							// Start Asking!
-							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );			
+							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
+							ret = true;
 						}
 					}
 				}
@@ -199,7 +208,7 @@ public class MenuSceneController : SceneController {
 			}
 		}
 
-
+		return ret;
 	}
 
 	protected override void OnDestroy() {
