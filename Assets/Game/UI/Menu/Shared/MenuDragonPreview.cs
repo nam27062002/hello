@@ -129,8 +129,6 @@ public class MenuDragonPreview : MonoBehaviour {
 				m_materials[renderer.GetInstanceID()] = materialList;
 			}
 		}
-
-		SetAnim(m_currentAnim);
 	}
 
 	void Start(){
