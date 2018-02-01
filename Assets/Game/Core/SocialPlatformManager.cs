@@ -372,17 +372,28 @@ public class SocialPlatformManager : MonoBehaviour
 
         JSONNode persistenceAsJson = null;
         
-        const string key = "profile";
+        const string key = "profile";        
         if (kCloudAccount != null && kCloudAccount.ContainsKey(key))
         {            
-            persistenceAsJson = kCloudAccount[key];            
+            persistenceAsJson = kCloudAccount[key];                        
         }
 
-        // Makes sure it's a valid persistence
-        if (persistenceAsJson == null || persistenceAsJson.ToString() == "{}")
+        string persistenceAsString = null;
+        if (persistenceAsJson != null)
         {
+            persistenceAsString = persistenceAsJson.ToString();
+        }
+
+        // If it's an empty persistence then the default one is used instead
+        // Sometimes server sends "{\"sc\":0,\"pc\":0}" as a persistence
+        bool persistenceBrokenFromServer = persistenceAsString == "{\"sc\":0,\"pc\":0}";
+        if (persistenceAsJson == null || persistenceAsString == "{}" || persistenceBrokenFromServer)
+        {            
             persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
         }
+
+        if (FeatureSettingsManager.IsDebugEnabled && persistenceBrokenFromServer)
+            LogError("Persistence Broken from server");
 
         Login_MergePersistence = persistenceAsJson.ToString();
     }
@@ -455,11 +466,21 @@ public class SocialPlatformManager : MonoBehaviour
         {
             Login_Update();
         }
+
+        if (m_socialUtils != null)
+        {
+            m_socialUtils.Update();
+        }
     }
 
     private const string LOG_CHANNEL = "[Social] ";
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);
+    }
+
+    public static void LogError(string msg)
+    {
+        Debug.LogError(LOG_CHANNEL + msg);
     }
 }

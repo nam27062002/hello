@@ -35,6 +35,10 @@ public class GlobalEventUserData {
 	public string name = "";
 	public string pictureUrl = "";
 
+
+	// This flag is used to avoid asking to the server for the same event always if the server doesn't responde correctly 
+	public bool hasBeenChecked = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -84,6 +88,7 @@ public class GlobalEventUserData {
 		position = _position;
 		endTimestamp = _endTimestamp;
 		rewardCollected = _rewardCollected;
+		hasBeenChecked = false;
 	}
 
 	//------------------------------------------------------------------------//

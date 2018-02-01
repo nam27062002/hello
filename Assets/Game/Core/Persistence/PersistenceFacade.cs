@@ -31,7 +31,7 @@ public class PersistenceFacade
 		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted;
+        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_More;
         if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
             Config = new PersistenceFacadeConfigDebug(userCaseId);
@@ -161,15 +161,19 @@ public class PersistenceFacade
                     onDone();
                 }
 
-                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app whe she last played
-                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
+                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
                 {
-                    Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
-                    {
-                        Sync_OnDone(result, null);
-                    };
+                    Sync_OnDone(result, null);
+                };
 
+                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app last time she played
+                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
+                {                    
                     Config.CloudDriver.Sync(true, true, onSyncDone);
+                }
+                else
+                {
+                    onSyncDone(PersistenceStates.ESyncResult.ErrorLogging);
                 }
 			}			
 		};
@@ -267,7 +271,12 @@ public class PersistenceFacade
     #region save
 	public void Save_Request(bool immediate=false)
 	{
-		Config.LocalDriver.Save(null);
+        // Makes sure that local persistence has already been loaded in game so we can be sure that default persistence is not saved 
+        // if this method is called when the engine is not ready (for example, when restarting the app)
+        if (Config.LocalDriver.IsLoadedInGame)
+        {
+            Config.LocalDriver.Save(null);
+        }
 	}
 	#endregion
 
@@ -277,7 +286,7 @@ public class PersistenceFacade
 
 	private void Local_Reset()
 	{
-		LocalData.Reset();
+		LocalDriver.Reset();
 
         LocalDriver.UserProfile = UsersManager.currentUser;
         LocalData.Systems_RegisterSystem(LocalDriver.UserProfile);

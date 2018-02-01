@@ -70,6 +70,11 @@ public class FireBreath : DragonBreathBehaviour {
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
+	private Cage[] m_checkCages = new Cage[50];
+	private int m_numCheckCages = 0;
+
+
+
 	override protected void ExtendedStart() {
 
 		m_flamePoolHandler 			= PoolManager.RequestPool(m_flameParticle, "Particles/Master/", m_maxParticles);
@@ -294,6 +299,17 @@ public class FireBreath : DragonBreathBehaviour {
 					// Show message saying I cannot burn it
 					Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 				}
+			}
+		}
+
+		// pick cages 
+		m_numCheckCages = EntityManager.instance.GetCagesInRange2DNonAlloc(m_sphCenter, m_sphRadius, m_checkCages);
+		for (int i = 0; i < m_numCheckCages; i++) 
+		{
+			Cage cage = m_checkCages[i];
+			if ((cage.circleArea != null && Overlaps((CircleAreaBounds)cage.circleArea.bounds)) || IsInsideArea(cage.transform.position)) 
+			{
+				cage.behaviour.Break();
 			}
 		}
 	}
