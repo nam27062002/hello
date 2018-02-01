@@ -39,6 +39,9 @@ public class FireBreathNew : DragonBreathBehaviour {
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
+	private Cage[] m_checkCages = new Cage[50];
+	private int m_numCheckCages = 0;
+
     public GameObject m_dragonFlameStandard = null;
     public GameObject m_dragonFlameSuper = null;
 
@@ -148,7 +151,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     }
 
 
-    override protected void EndFury() 
+	override protected void EndFury(bool increase_mega_fury = true) 
 	{
         if (m_type == Type.Standard)
         {
@@ -158,7 +161,7 @@ public class FireBreathNew : DragonBreathBehaviour {
         {
             dragonFlameSuperInstance.EnableFlame(false);
         }
-        base.EndFury();
+		base.EndFury(increase_mega_fury);
 
     }
 
@@ -221,6 +224,17 @@ public class FireBreathNew : DragonBreathBehaviour {
 						Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 					}
 				}
+			}
+		}
+
+		// pick cages 
+		m_numCheckCages = EntityManager.instance.GetCagesInRange2DNonAlloc(m_mouthTransform.position, m_actualLength, m_checkCages);
+		for (int i = 0; i < m_numCheckCages; i++) 
+		{
+			Cage cage = m_checkCages[i];
+			if ((cage.circleArea != null && Overlaps((CircleAreaBounds)cage.circleArea.bounds)) || IsInsideArea(cage.transform.position)) 
+			{
+				cage.behaviour.Break();
 			}
 		}
 

@@ -108,11 +108,19 @@ public class MenuDragonScroller : MonoBehaviour {
 
 		// Only show pets of the focused dragon
 		bool showPets = false;
+		bool allowAltAnimations = false;
 		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
-			showPets = (kvp.Key == _sku);
+			showPets = allowAltAnimations = (kvp.Key == _sku);
+			if ( allowAltAnimations)
+			{
+				MenuDragonSlot slot = GetDragonSlot( kvp.Key);
+				if ( slot.currentState < DragonData.LockState.LOCKED )
+					allowAltAnimations = false;
+			}
 			if(kvp.Value.dragonPreview.equip.showPets != showPets) {
 				kvp.Value.dragonPreview.equip.TogglePets(showPets, false);
 			}
+			kvp.Value.dragonPreview.allowAltAnimations = allowAltAnimations;
 		}
 	}
 

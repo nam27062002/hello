@@ -101,9 +101,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	public void Refresh() {
 		// Do we need to go to the rewards screen?
 		if ( GlobalEventManager.currentEvent != null ){
-			// By checking isRewardAvailable, we make sure the event is finished
-			// By checking the reward level, we make sure that the rewards have been received from server!
-			if (GlobalEventManager.currentEvent.isRewardAvailable && GlobalEventManager.currentEvent.rewardLevel > -1) {
+			// If the current global event has a reward pending, go to the event reward screen
+			if(GlobalEventManager.currentEvent.isRewardAvailable) {
 				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.EVENT_REWARD).GetComponent<EventRewardScreen>();
 				scr.StartFlow();
 				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.EVENT_REWARD);
@@ -218,6 +217,25 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			case GlobalEventManager.RequestType.EVENT_STATE: {
 				Refresh();
 			} break;
+		}
+	}
+
+	/// <summary>
+	/// The retry button on the offline panel has been pressed.
+	/// </summary>
+	public void OnOfflineRetryButton() {
+		if(GlobalEventManager.user != null && GlobalEventManager.Connected()){
+			// Show loading panel
+			SetActivePanel(Panel.LOADING);
+
+			// Do we have an event?
+			if(GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0) {
+				// No! Ask for live events again
+				GlobalEventManager.TMP_RequestCustomizer();
+			} else {
+				// Yes! Refresh data
+				GlobalEventManager.RequestCurrentEventData();
+			}
 		}
 	}
 

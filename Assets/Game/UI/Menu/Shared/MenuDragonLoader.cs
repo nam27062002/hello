@@ -101,6 +101,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_useResultsScreen = value; }
 	}
 
+	[SerializeField] private bool m_allowAltAnimations = true;
+	public bool allowAltAnimations {
+		get { return m_allowAltAnimations; }
+		set { m_allowAltAnimations = value; }
+	}
+
 	private bool m_useShadowMaterial = false;
 	public bool useShadowMaterial {
 		get { return m_useShadowMaterial; }
@@ -225,8 +231,13 @@ public class MenuDragonLoader : MonoBehaviour {
 					m_dragonInstance.SetFresnelColor(Color.black);
 				}
 
-				if (m_useShadowMaterial)
+				// Apply shadow material if required
+				if(m_useShadowMaterial) {
 					m_dragonInstance.equip.EquipDisguiseShadow();
+				}
+
+				// Allow alt animations?
+				m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
 			}
 		}
 

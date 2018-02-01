@@ -36,8 +36,8 @@ namespace AI {
 		//--------------------------------------------------
 		protected static int GROUND_MASK;
 		protected const float GRAVITY = 9.8f;
-		private const float AIR_DENSITY = 1.293f;
-		private const float DRAG = 1.3f;//human //0.47f;//sphere
+		private const float AIR_DENSITY = 1.293f * 0.5f;
+		private const float DRAG = 1.3f * 0.5f;//human //0.47f;//sphere
 		//--------------------------------------------------
 
 		private Transform m_machineTransform;

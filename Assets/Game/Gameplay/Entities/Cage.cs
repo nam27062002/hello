@@ -12,9 +12,13 @@ public class Cage : IEntity {
 		get{ return m_behaviour; }
 	}
 
+	private CircleArea2D m_bounds;
+	public override CircleArea2D circleArea { get{ return m_bounds; } }
+
 	//
 	protected override void Awake() {
 		base.Awake();
+		m_bounds = GetComponentInChildren<CircleArea2D>();
 		m_behaviour = GetComponent<CageBehaviour>();
 		m_maxHealth = 1f;
 	}
@@ -40,6 +44,16 @@ public class Cage : IEntity {
 	//
 	public override void Disable(bool _destroyed) {	
 		m_timer = 0.25f;
+	}
+
+	public bool IntersectsWith(Vector2 _center, float _radius) {
+		if (m_bounds != null) {
+			return m_bounds.Overlaps(_center, _radius);
+		} 
+
+		// return _r.Contains(transform.position);
+		float sqrMagnitude = (_center - (Vector2)transform.position).sqrMagnitude;
+		return ( sqrMagnitude <= _radius * _radius );	
 	}
 
 	// Update is called once per frame

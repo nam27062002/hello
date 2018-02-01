@@ -421,9 +421,9 @@ public class FireLightning : DragonBreathBehaviour {
 		}
     }
 
-	override protected void EndFury() 
+	override protected void EndFury( bool increase_mega_fire = true) 
 	{
-		base.EndFury();
+		base.EndFury(increase_mega_fire);
 		if ( m_particleStart )
 			m_particleStart.gameObject.SetActive(false);
 		if ( m_particleEnd )

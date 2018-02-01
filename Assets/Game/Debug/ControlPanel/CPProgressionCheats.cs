@@ -353,6 +353,9 @@ public class CPProgressionCheats : MonoBehaviour {
 				}
 			}
 
+			// Dragon baby is always owned
+			DragonManager.GetDragonData("dragon_baby").Acquire();
+
             // Save persistence
             PersistenceFacade.instance.Save_Request(false);
         }
