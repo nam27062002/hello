@@ -221,6 +221,25 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// The retry button on the offline panel has been pressed.
+	/// </summary>
+	public void OnOfflineRetryButton() {
+		if(GlobalEventManager.user != null && GlobalEventManager.Connected()){
+			// Show loading panel
+			SetActivePanel(Panel.LOADING);
+
+			// Do we have an event?
+			if(GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0) {
+				// No! Ask for live events again
+				GlobalEventManager.TMP_RequestCustomizer();
+			} else {
+				// Yes! Refresh data
+				GlobalEventManager.RequestCurrentEventData();
+			}
+		}
+	}
+
+	/// <summary>
 	/// The Facebook button has been pressed.
 	/// </summary>
 	public void OnFacebookButton() {
