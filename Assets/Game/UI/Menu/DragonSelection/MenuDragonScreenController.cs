@@ -32,6 +32,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	[SerializeField] private float m_initialDelay = 1f;
 	[SerializeField] private float m_scrollDuration = 1f;
 	[SerializeField] private float m_unlockAnimDuration = 1f;
+	[SerializeField] private float m_unlockAnimFinalPauseDuration = 1f;
 	[Space]
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
 
@@ -177,6 +178,13 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Lock all input
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
 
+				// Disable normal behaviour
+				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = false;
+				if(_unlockedDragonSku == InstanceManager.menuSceneController.selectedDragon) {
+					// Target dragon is already selected, make sure lock icon is visible!
+					m_lockIcon.GetComponent<ShowHideAnimator>().ForceShow();
+				}
+
 				// Toggle flag
 				isAnimating = true;
 			})
@@ -200,14 +208,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
 
-				// Prepare lock icon animation
-				// Disable normal behaviour
-				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = false;
-				m_lockIcon.GetComponent<ShowHideAnimator>().RestartShow();
-
 				// Show icon unlock animation
-				//m_lockIcon.animator.ResetTrigger("idle");	// Just in case initial delay is 0, both triggers would be set at the same frame and animation wouldn't work
-				m_lockIcon.animator.SetTrigger( GameConstants.Animator.UNLOCK);
+				m_lockIcon.GetComponent<ShowHideAnimator>().ForceShow();
+				m_lockIcon.view.LaunchUnlockAnim();
 
 				// Trigger SFX
 				AudioController.Play("hd_unlock_dragon");
@@ -216,8 +219,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 			.AppendCallback(() => {
 				// Restore lock icon to the idle state (otherwise default values will get corrupted when deactivating the object)
 				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = true;
-				m_lockIcon.GetComponent<ShowHideAnimator>().ForceHide(false, false);
-				m_lockIcon.animator.SetTrigger( GameConstants.Animator.IDLE );
+				m_lockIcon.GetComponent<ShowHideAnimator>().ForceHide(true, false);
+			})
+			.AppendInterval(m_unlockAnimFinalPauseDuration)
+			.AppendCallback(() => {
+				// Put lock icon back to its original position
+				m_lockIcon.view.StopAllAnims();
 
 				// Restore all hidden items
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {

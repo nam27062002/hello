@@ -7,8 +7,8 @@ public class ViewParticleSpawnerAndSound : ViewParticleSpawner {
 	[SerializeField] private string m_sound;
 	private AudioObject m_idleAudioAO;
 
-	override protected void Spawn() {
-		base.Spawn();
+	override protected void SpawnInternal() {
+		base.SpawnInternal();
 		SpawnSound();
 	}
 

@@ -119,6 +119,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 
 		// Skin preview
 		m_preview.LoadDragon(def.Get("dragonSku"), def.sku);
+		m_preview.dragonInstance.allowAltAnimations = false;	// [AOC] Disable weird alt animations for now
 
 		// Power
 		string powerSku = def.GetAsString("powerup");
