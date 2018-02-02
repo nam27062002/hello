@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 114192832202075354}
   - component: {fileID: 114740566661760072}
   - component: {fileID: 114110715325440984}
+  - component: {fileID: 114092312810419282}
   m_Layer: 11
   m_Name: PF_Trapdoor_Obstacle
   m_TagString: Untagged
@@ -243,6 +244,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 16, y: 0.9, z: 10.87}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114092312810419282
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1711923060905030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 30
+  m_ground: []
 --- !u!114 &114110715325440984
 MonoBehaviour:
   m_ObjectHideFlags: 1
