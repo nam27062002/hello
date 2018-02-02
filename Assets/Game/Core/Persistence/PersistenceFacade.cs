@@ -31,7 +31,7 @@ public class PersistenceFacade
 		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted;
+        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_More;
         if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
         {
             Config = new PersistenceFacadeConfigDebug(userCaseId);
@@ -84,7 +84,7 @@ public class PersistenceFacade
 
 	#region sync
     public long Sync_LatestSyncTime { get { return CloudDriver.LatestSyncTime; } }
-
+   
     public bool Sync_IsSyncing { get; set; }
 
     public bool Sync_IsSynced { get { return CloudDriver.IsInSync; } }
@@ -125,7 +125,7 @@ public class PersistenceFacade
 
 				if (logInSocialEver)
 				{
-					Action<PersistenceStates.ESyncResult> onConnectDone = delegate(PersistenceStates.ESyncResult result)
+					Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onConnectDone = delegate(PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
 					{
 						if (result == PersistenceStates.ESyncResult.ErrorLogging)
 						{
@@ -161,7 +161,7 @@ public class PersistenceFacade
                     onDone();
                 }
 
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
                 {
                     Sync_OnDone(result, null);
                 };
@@ -173,7 +173,7 @@ public class PersistenceFacade
                 }
                 else
                 {
-                    onSyncDone(PersistenceStates.ESyncResult.ErrorLogging);
+                    onSyncDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
                 }
 			}			
 		};
@@ -199,7 +199,7 @@ public class PersistenceFacade
 
             Action onSaveDone = delegate ()
             {
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
                 {
                     Sync_OnDone(result, onDone);
                 };
@@ -211,13 +211,13 @@ public class PersistenceFacade
         }
 	}
 
-    public void Sync_FromReconnecting(Action onDone)
+    public void Sync_FromReconnecting(Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
     {
         if (Sync_IsSyncing)
         {
             if (onDone != null)
             {
-                onDone();
+                onDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.Cancelled);
             }
         }
         else
@@ -226,9 +226,10 @@ public class PersistenceFacade
 
             Action onSaveDone = delegate ()
             {
-                Action<PersistenceStates.ESyncResult> onSyncDone = delegate (PersistenceStates.ESyncResult result)
+                Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
                 {
-                    Sync_OnDone(result, onDone);
+                    Sync_OnDone(result, null);
+                    onDone(result, resultDetail);
                 };
 
                 Config.CloudDriver.Sync(true, false, onSyncDone);
@@ -271,7 +272,12 @@ public class PersistenceFacade
     #region save
 	public void Save_Request(bool immediate=false)
 	{
-		Config.LocalDriver.Save(null);
+        // Makes sure that local persistence has already been loaded in game so we can be sure that default persistence is not saved 
+        // if this method is called when the engine is not ready (for example, when restarting the app)
+        if (Config.LocalDriver.IsLoadedInGame)
+        {
+            Config.LocalDriver.Save(null);
+        }
 	}
 	#endregion
 
@@ -281,7 +287,7 @@ public class PersistenceFacade
 
 	private void Local_Reset()
 	{
-		LocalData.Reset();
+		LocalDriver.Reset();
 
         LocalDriver.UserProfile = UsersManager.currentUser;
         LocalData.Systems_RegisterSystem(LocalDriver.UserProfile);

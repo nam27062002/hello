@@ -165,8 +165,7 @@ public class ChestViewController : MonoBehaviour {
 		// Launch animation
 		m_animator.SetTrigger(GameConstants.Animator.RESULTS_IN);
 
-		// Play SFX
-		AudioController.Play(m_resultsSFX);
+		// SFX will be played on the ChestLanded animation event so it's fully synced
 	}
 
 	//------------------------------------------------------------------------//
@@ -219,6 +218,9 @@ public class ChestViewController : MonoBehaviour {
 	/// Event to sync with the animation.
 	/// </summary>
 	public void OnChestLanded() {
+		// Play SFX
+		AudioController.Play(m_resultsSFX);
+
 		// Notify delegates
 		OnChestAnimLandedEvent.Invoke();
 	}

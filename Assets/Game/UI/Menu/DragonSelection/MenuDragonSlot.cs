@@ -50,7 +50,9 @@ public class MenuDragonSlot : MonoBehaviour {
 	}
 
 	private DragonData.LockState m_currentState = DragonData.LockState.HIDDEN;
-
+	public DragonData.LockState currentState{
+		get{ return m_currentState; }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

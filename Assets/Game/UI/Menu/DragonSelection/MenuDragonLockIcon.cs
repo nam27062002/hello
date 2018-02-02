@@ -25,8 +25,15 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SerializeField] private Animator m_animator = null;
-	public Animator animator { get { return m_animator; }}
+	private LockViewController m_view = null;
+	public LockViewController view { 
+		get {
+			if(m_view == null) {
+				m_view = GetComponentInChildren<LockViewController>();
+			}
+			return m_view; 
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -38,8 +45,9 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
-		Debug.Assert(m_animator != null, "Required component missing!");
+	private void Start() {
+		// Init view
+		m_view = GetComponentInChildren<LockViewController>();
 	}
 
 	//------------------------------------------------------------------------//
@@ -61,10 +69,7 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 		} 
 
 		// Trigger bounce animation
-		m_animator.SetTrigger( GameConstants.Animator.BOUNCE );
-
-		// Trigger sound
-		AudioController.Play("hd_padlock");
+		view.LaunchBounceAnim();
 
 		// Propagate event to parent hierarchy (we don't want to capture the event)
 		// From https://coeurdecode.com/2015/10/20/bubbling-events-in-unity/ <3

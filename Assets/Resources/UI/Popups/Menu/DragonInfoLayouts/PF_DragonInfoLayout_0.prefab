@@ -1656,6 +1656,7 @@ GameObject:
   - component: {fileID: 224838034516541494}
   - component: {fileID: 222764261691538826}
   - component: {fileID: 114744822635027152}
+  - component: {fileID: 114079915523003944}
   m_Layer: 5
   m_Name: EdiblesBg
   m_TagString: Untagged
@@ -2861,7 +2862,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1807454903051018}
-  m_LocalRotation: {x: -0.2535371, y: 0.5587251, z: 0.55417216, w: 0.56252855}
+  m_LocalRotation: {x: -0.25353712, y: 0.5587252, z: 0.5541722, w: 0.5625286}
   m_LocalPosition: {x: -0.08062987, y: -0.021874828, z: 0.043720305}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1.0000001}
   m_Children:
@@ -3751,6 +3752,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114079915523003944
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1799202890859190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_color1: {r: 0.20000002, g: 0.2784314, b: 0.28627452, a: 1}
+  m_color2: {r: 0.42647058, g: 0.42398354, b: 0.35434687, a: 1}
+  m_direction: 1
 --- !u!114 &114101897684014886
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3901,9 +3916,9 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -3934,13 +3949,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1.2
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -3971,6 +3987,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_burpSound: 
   m_canEatEntities: 1
@@ -4007,9 +4024,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4040,6 +4057,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -4048,9 +4066,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PF_feathers_3D_noblood
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 0.058823526, g: 0.3534528, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4081,13 +4099,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 0.31764707, g: 0.7176471, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4118,15 +4137,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_onEatenAudio: hd_canary_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4157,14 +4177,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4195,9 +4216,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: hd_bird_alert
   m_onPanicAudio: hd_bird_alert
   m_idleAudio: hd_bird_idle
@@ -4261,9 +4285,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4294,6 +4318,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -4302,9 +4327,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4335,13 +4360,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.75
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4372,15 +4398,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_sheep_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 0.6, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4411,14 +4438,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0.6, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4449,9 +4477,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: hd_sheep_alert
   m_onPanicAudio: hd_sheep_alert
   m_idleAudio: 
@@ -4690,9 +4721,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4723,6 +4754,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -4731,9 +4763,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4764,13 +4796,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4801,15 +4834,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_goblin_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 1.05, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4840,14 +4874,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 1.05, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -4878,9 +4913,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -4976,9 +5014,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5009,6 +5047,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -5017,9 +5056,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5050,13 +5089,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5087,15 +5127,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_flyingpig_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5126,14 +5167,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5164,9 +5206,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: hd_flyingpig_idle
   m_onPanicAudio: 
   m_idleAudio: hd_flyingpig_idle
@@ -5470,9 +5515,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5503,6 +5548,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -5511,9 +5557,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5544,13 +5590,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5581,15 +5628,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_villager_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 1.05, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5620,14 +5668,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 1.05, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5658,9 +5707,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: 
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: hd_villager_scream
   m_onPanicAudio: hd_villager_scream
   m_idleAudio: 
@@ -5826,9 +5878,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5859,6 +5911,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -5867,9 +5920,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5900,13 +5953,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5937,15 +5991,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: Soldier_Dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 1.05, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -5976,14 +6031,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 1.05, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6014,9 +6070,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: Archer_Attack
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -6233,14 +6292,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.68235296, g: 0.6784314, b: 0.57254905, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 0e74dadbe5f4772489ab12b5ad83caf0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 07e1c265ccd73a94c98a06e78d6144ca, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6275,9 +6334,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6308,6 +6367,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -6316,9 +6376,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6349,13 +6409,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6386,15 +6447,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_onEatenAudio: hd_batsmall_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6425,14 +6487,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6463,9 +6526,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: hd_bat_attack
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: hd_batsmall_scared
   m_onPanicAudio: hd_batsmall_scared
   m_idleAudio: hd_batsmall_idle
@@ -6677,9 +6743,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6710,6 +6776,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -6718,9 +6785,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6751,13 +6818,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6788,15 +6856,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_dragon_enemy_dead
   m_firePoints: []
   m_burnParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6827,14 +6896,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -6865,9 +6935,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
+  m_explodeWhenBurned: 1
   m_onAttackAudio: hd_dragon_enemy_attack
+  m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
   m_idleAudio: 
@@ -6964,13 +7037,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_parent: {fileID: 0}
   m_view: {fileID: 137102320550448400}
   m_particleDatas:
   - name: PS_EntityPCTrail
     path: Rewards
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 0, g: 0, b: 0, a: 0}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -7001,6 +7075,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0
 --- !u!114 &114916929736161242
 MonoBehaviour:
@@ -7868,7 +7943,7 @@ RectTransform:
   m_GameObject: {fileID: 1295761903309334}
   m_LocalRotation: {x: 0, y: 0.8479555, z: 0, w: 0.5300674}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 27.74059, y: 27.74059, z: 27.74059}
+  m_LocalScale: {x: 226.09048, y: 226.09048, z: 226.09048}
   m_Children:
   - {fileID: 4723876076415044}
   m_Father: {fileID: 224128597096869350}
@@ -7876,7 +7951,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0034059507, y: -21.307114}
+  m_AnchoredPosition: {x: 0.0023939903, y: -28.033539}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224037239219110648
@@ -7932,7 +8007,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 110, y: -66.7}
+  m_AnchoredPosition: {x: 110, y: -150}
   m_SizeDelta: {x: 200, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224128597096869350
@@ -7951,8 +8026,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 75, y: 0}
-  m_SizeDelta: {x: 500, y: 380}
+  m_AnchoredPosition: {x: 100, y: 0}
+  m_SizeDelta: {x: 600, y: 500}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224145424563972006
 RectTransform:
@@ -7962,7 +8037,7 @@ RectTransform:
   m_GameObject: {fileID: 1698586937624114}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 61.39112, y: 61.39112, z: 61.39112}
+  m_LocalScale: {x: 380.2645, y: 380.2645, z: 380.2645}
   m_Children:
   - {fileID: 4075761286754122}
   m_Father: {fileID: 224063896902935222}
@@ -7970,7 +8045,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0007592251, y: 10.964486}
+  m_AnchoredPosition: {x: 0.000108822955, y: 10.964252}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224248060669156570
@@ -7989,8 +8064,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -350, y: 50}
-  m_SizeDelta: {x: 180, y: 121}
+  m_AnchoredPosition: {x: -450, y: 100}
+  m_SizeDelta: {x: 280, y: 221}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224298275718794310
 RectTransform:
@@ -8008,7 +8083,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 400, y: 120}
+  m_AnchoredPosition: {x: 500, y: 120}
   m_SizeDelta: {x: 200, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224348140240770792
@@ -8019,7 +8094,7 @@ RectTransform:
   m_GameObject: {fileID: 1217062176794336}
   m_LocalRotation: {x: 0, y: 0.9396927, z: 0, w: -0.34202015}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 96.04358, y: 96.04358, z: 96.04358}
+  m_LocalScale: {x: 594.9061, y: 594.9061, z: 594.9061}
   m_Children:
   - {fileID: 4736107114010004}
   m_Father: {fileID: 224644269510195300}
@@ -8027,7 +8102,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -140, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.006591399, y: -82.950096}
+  m_AnchoredPosition: {x: -0.000027942417, y: -82.94717}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
@@ -8038,7 +8113,7 @@ RectTransform:
   m_GameObject: {fileID: 1582260704575616}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 43.88937, y: 43.88937, z: 43.88937}
+  m_LocalScale: {x: 271.85635, y: 271.85635, z: 271.85635}
   m_Children:
   - {fileID: 4364597780685780}
   m_Father: {fileID: 224925082016888350}
@@ -8046,7 +8121,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000289917, y: 18.169254}
+  m_AnchoredPosition: {x: -0.0014419556, y: 18.1702}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224432464807154352
@@ -8057,7 +8132,7 @@ RectTransform:
   m_GameObject: {fileID: 1655966961861500}
   m_LocalRotation: {x: 0, y: 0.83843297, z: 0, w: 0.5450047}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 43.756374, y: 43.756374, z: 43.756374}
+  m_LocalScale: {x: 317.4195, y: 317.4195, z: 317.4195}
   m_Children:
   - {fileID: 4032458586364284}
   m_Father: {fileID: 224860100176181556}
@@ -8065,7 +8140,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 6.8147583, y: -27.216324}
+  m_AnchoredPosition: {x: 7.9832916, y: -31.857773}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224454884897058284
@@ -8076,7 +8151,7 @@ RectTransform:
   m_GameObject: {fileID: 1319738532263436}
   m_LocalRotation: {x: 0, y: 0.9211854, z: 0, w: -0.38912398}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 37.64046, y: 37.64046, z: 37.64046}
+  m_LocalScale: {x: 233.14984, y: 233.14984, z: 233.14984}
   m_Children:
   - {fileID: 4013677080749314}
   m_Father: {fileID: 224298275718794310}
@@ -8084,7 +8159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0014537023, y: -92.523834}
+  m_AnchoredPosition: {x: 0.00031440982, y: -92.52334}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224463467601954708
@@ -8103,8 +8178,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 96.5, y: -349}
-  m_SizeDelta: {x: 193, y: 352}
+  m_AnchoredPosition: {x: 150, y: -450}
+  m_SizeDelta: {x: 193, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224482242306850772
 RectTransform:
@@ -8114,7 +8189,7 @@ RectTransform:
   m_GameObject: {fileID: 1417131727459794}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 35.148674, y: 35.148674, z: 35.148674}
+  m_LocalScale: {x: 397.64542, y: 397.64542, z: 397.64542}
   m_Children:
   - {fileID: 4987161509241640}
   m_Father: {fileID: 224248060669156570}
@@ -8122,7 +8197,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00043520378, y: -10.478458}
+  m_AnchoredPosition: {x: -0.004798051, y: -19.129929}
   m_SizeDelta: {x: 66851.75, y: -6262.4404}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224644269510195300
@@ -8141,7 +8216,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -150}
+  m_AnchoredPosition: {x: 450, y: -250}
   m_SizeDelta: {x: 420, y: 360}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224778288402923544
@@ -8199,8 +8274,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -200, y: -20}
-  m_SizeDelta: {x: 222, y: 300}
+  m_AnchoredPosition: {x: -300, y: -20}
+  m_SizeDelta: {x: 260, y: 400}
   m_Pivot: {x: 1, y: 0}
 --- !u!224 &224886929180153128
 RectTransform:
@@ -8244,7 +8319,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0}
+  m_AnchoredPosition: {x: -100, y: 0}
   m_SizeDelta: {x: 192, y: 372}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224962343693778236
@@ -8255,7 +8330,7 @@ RectTransform:
   m_GameObject: {fileID: 1524697186554056}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 41.813282, y: 41.813282, z: 41.813282}
+  m_LocalScale: {x: 309.17392, y: 309.17392, z: 309.17392}
   m_Children:
   - {fileID: 4044149683942538}
   m_Father: {fileID: 224463467601954708}
@@ -8263,6 +8338,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0000019073486, y: 22.940323}
+  m_AnchoredPosition: {x: -0.0000641346, y: 27.383583}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

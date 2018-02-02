@@ -96,10 +96,12 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma shader_feature __ CUTOFF
 				#pragma shader_feature __ OPAQUEALPHA
 				#pragma shader_feature __ REFLECTIVE
-				#pragma shader_feature __ LIGHTMAP_ON
 			
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
+
+				#pragma multi_compile __ LIGHTMAP_ON
+				#pragma multi_compile __ FORCE_LIGHTMAP
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 				#include "UnityCG.cginc"

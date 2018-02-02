@@ -45,7 +45,10 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		CUSTOM,
 
-		ANIMATOR
+		ANIMATOR,
+
+		SCALE_X,
+		SCALE_Y
 	}
 
 	public enum State {
@@ -476,6 +479,20 @@ public class ShowHideAnimator : MonoBehaviour {
 				RectTransform rt = transform as RectTransform;
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
 				m_sequence.Join(rt.DOSizeDelta(rt.sizeDelta + Vector2.one * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+			} break;
+
+			case TweenType.SCALE_X: {
+				Vector3 scale = transform.localScale;
+				scale.x = m_tweenValue;
+				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
+			} break;
+
+			case TweenType.SCALE_Y: {
+				Vector3 scale = transform.localScale;
+				scale.y = m_tweenValue;
+				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
 		}
 
