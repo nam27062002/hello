@@ -132,19 +132,21 @@ public class GameServerManager
     /// 
     /// </summary>
     public void CheckConnection(Action<Error> callback)
-	{
-        if (Application.internetReachability == NetworkReachability.NotReachable)
+	{        
+       if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             Debug.Log("GameServerManager (CheckConnection) :: InternetReachability NotReachable");
             callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
         }
         else
         {
-            GameServerManager.SharedInstance.Ping(
-                (Error _error, GameServerManager.ServerResponse _response) => {
+            Ping((Error _error, GameServerManager.ServerResponse _response) =>
+            {
+                if (callback != null)
+                {
                     callback(_error);
                 }
-            );           
+            });           
         }        
 	}
 
