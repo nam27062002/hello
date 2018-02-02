@@ -10,14 +10,14 @@ public class QuitPlayBackButtonHandler : BackButtonHandler {
 	private void OnEnable() {
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Register);
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
-		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
+		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, Unregister);
 	}
 
 	private void OnDisable() {
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, Register);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
-		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
+		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Unregister);
 	}
 
@@ -25,7 +25,7 @@ public class QuitPlayBackButtonHandler : BackButtonHandler {
 	{
 		m_changingArea = false;
 	}
-	public void OnAreaLeave()
+	public void OnAreaLeave(float estimatedLeavingTime)
 	{
 		m_changingArea = true;
 	}
