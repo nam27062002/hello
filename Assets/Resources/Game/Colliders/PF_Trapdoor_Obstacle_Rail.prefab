@@ -177,6 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8845233bc93a243879832d2842686764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_unbreakableBlocker: 0
   m_tierWithTurboBreak: 0
   m_tierNoTurboBreak: 3
   m_hitCount: 1
@@ -185,9 +186,9 @@ MonoBehaviour:
   m_onBreakParticle:
     name: PS_D_WoodDestruction
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -218,6 +219,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_corpseAsset: 
   m_onBreakAudio: hd_trapdoor_broken
