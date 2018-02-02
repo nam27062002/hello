@@ -23,7 +23,7 @@ struct v2f
 
 #ifdef SPECULAR
 	float3 halfDir : TEXCOORD7;
-#endif	
+#endif
 
 #if defined(FRESNEL) || defined(FREEZE)
 	float3 viewDir : VECTOR;
@@ -72,9 +72,15 @@ uniform float4 _FresnelColor2;
 
 #endif
 
-#if defined (TINT) || defined (CUSTOM_TINT)
+#if defined(TINT) || defined(CUSTOM_TINT)
 uniform float4 _Tint;
 #endif
+
+#if defined(EMISSIVE)
+uniform float _EmissiveIntensity;
+uniform float _EmissiveBlink;
+#endif
+
 
 v2f vert(appdata_t v)
 {
@@ -105,7 +111,10 @@ v2f vert(appdata_t v)
 #endif
 
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+
+#if defined(FRESNEL) || defined(FREEZE) || defined(SPECULAR)
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
+#endif
 
 #ifdef SPECULAR
 	// Half View - See: Blinn-Phong
@@ -133,17 +142,18 @@ fixed4 frag(v2f i) : SV_Target
 {
 	// sample the texture
 	fixed4 col = tex2D(_MainTex, i.uv);
-//	fixed specMask = col.a;
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 
+#if defined(EMISSIVE)
+	float anim = (sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity * col.a;
+	col.xyz *= 1.0 + anim;
+#endif
 
 #if defined (TINT)
 	col.xyz *= _Tint.xyz;
 #elif defined (CUSTOM_TINT)
 	col = getCustomTint(col, _Tint, i.color);
 #endif
-
-	fixed4 unlitColor = col;
 
 #ifdef NORMALMAP
 	// Calc normal from detail texture normal and tangent world
@@ -161,13 +171,9 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 #ifdef SPECULAR
-//	specMask = 1.0;
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
-#else
-
 #endif
-//				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
 
 #if defined(FRESNEL) || defined(FREEZE)
 	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
