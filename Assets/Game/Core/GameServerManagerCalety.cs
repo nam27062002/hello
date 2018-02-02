@@ -1395,7 +1395,7 @@ public class GameServerManagerCalety : GameServerManager {
     }     
    
     private void Connection_ResetTimer() {
-        m_connectionTimeLeftToPing = 40;// FeatureSettingsManager.instance.GetAutomaticReloginPeriod();
+        m_connectionTimeLeftToPing = FeatureSettingsManager.instance.GetAutomaticReloginPeriod();
     }                   
     
     private bool Connection_IsCheckEnabled() {
