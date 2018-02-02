@@ -310,8 +310,7 @@ namespace AI {
 		}
 
 		public void FreeFall() {
-			if (m_state != State.FreeFall /*&& m_state != State.StandUp*/) {
-				m_velocity *= 0.5f;
+			if (m_state != State.FreeFall /*&& m_state != State.StandUp*/) {				
 				m_viewControl.Height(100f);
 				m_machine.SetSignal(Signals.Type.FallDown, true);
 				m_nextState = State.FreeFall;
