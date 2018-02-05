@@ -204,6 +204,8 @@ public enum MessengerEvents {
 	GLOBAL_EVENT_LEADERBOARD_UPDATED,
 	GLOBAL_EVENT_SCORE_REGISTERED,	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
 
+    CONNECTION_RECOVERED,
+
 	COUNT
 }
 

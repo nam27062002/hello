@@ -40,4 +40,13 @@ public class PersistenceStates
 		ErrorSyncing, // Log In successfully but local couldn't be sent to cloud
 		NeedsToReload
 	};
+
+    public enum ESyncResultDetail
+    {
+        None,
+        NoConnection,
+        NoLogInServer,
+        NoLogInSocial,
+        Cancelled
+    };
 }

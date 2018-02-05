@@ -123,7 +123,7 @@ namespace AI {
 			if (m_subState <= SubState.Move) {
 				if (!m_onGround) {
 					m_fallTimer -= Time.deltaTime;
-					if (m_fallTimer <= 0f) {
+					if (m_fallTimer <= 0f) {						
 						FreeFall();
 						m_fallTimer = FREE_FALL_THRESHOLD;
 					}
@@ -169,7 +169,10 @@ namespace AI {
 			}
 		}
 
-		protected override void OnFreeFall() { }
+		protected override void OnFreeFall() { 
+			m_velocity *= 0.5f;
+		}
+
 		protected override void ExtendedUpdateFreeFall() {
 			if (m_faceDirection) {
 				m_direction = m_velocity.normalized;
