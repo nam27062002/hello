@@ -26,7 +26,9 @@ public class GameStoreManagerCalety : GameStoreManager
 
 		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
-			Debug.Log("onPurchaseCompleted");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onPurchaseCompleted");
+
 			// string gameSku = PlatformSkuToGameSku( sku );
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, sku);
 			if ( def != null )
@@ -38,19 +40,25 @@ public class GameStoreManagerCalety : GameStoreManager
 
 		public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
-			Debug.Log("onPurchaseCancelled");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onPurchaseCancelled");
+
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, sku);
 		}
 
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
-			Debug.Log("onPurchaseFailed");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onPurchaseFailed");
+
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, sku);
 		}
 
 		public override void onStoreIsReady() 
 		{
-			Debug.Log("onStoreIsReady");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onStoreIsReady");
+
 			m_isReady = true;	
 		}
 
@@ -76,6 +84,9 @@ public class GameStoreManagerCalety : GameStoreManager
 
         public override void onStoreIosInitFail(int errorCode)
         {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onStoreIosInitFail errorCode = " + errorCode);
+
             m_hasInitFailed = true;
         }
 
