@@ -1356,6 +1356,12 @@ public class GameServerManagerCalety : GameServerManager {
 
         Action<bool> onRecoverDone = delegate (bool success) {
             EConnectionState state = (success) ? EConnectionState.Up : EConnectionState.Down;
+            
+            // Threre's connection again
+            if (success) {
+                // Notifies that network is up again
+                Messenger.Broadcast(MessengerEvents.CONNECTION_RECOVERED);
+            }
 
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("Recovery connection " + ((success) ? "succeeded" : "failed"));
