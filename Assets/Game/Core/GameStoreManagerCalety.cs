@@ -11,9 +11,24 @@ public class GameStoreManagerCalety : GameStoreManager
 	private class CaletyGameStoreListener : StoreManager.StoreListenerBase
     {
     	public bool m_isReady = false;
+        private bool m_hasInitFailed = false;
+
+        public CaletyGameStoreListener() : base()
+        {
+            Reset();
+        }
+
+        public void Reset()
+        {
+            m_isReady = false;
+            m_hasInitFailed = false;
+        }
+
 		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
-			Debug.Log("onPurchaseCompleted");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onPurchaseCompleted");
+
 			// string gameSku = PlatformSkuToGameSku( sku );
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, sku);
 			if ( def != null )
@@ -25,19 +40,25 @@ public class GameStoreManagerCalety : GameStoreManager
 
 		public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
-			Debug.Log("onPurchaseCancelled");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onPurchaseCancelled");
+
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, sku);
 		}
 
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
-			Debug.Log("onPurchaseFailed");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onPurchaseFailed");
+
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, sku);
 		}
 
 		public override void onStoreIsReady() 
 		{
-			Debug.Log("onStoreIsReady");
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onStoreIsReady");
+
 			m_isReady = true;	
 		}
 
@@ -53,13 +74,26 @@ public class GameStoreManagerCalety : GameStoreManager
 			// it the user can purchase -> GameStoreManager.SharedInstance.Buy(strSku)
 		}
 
-		/*
+        /*
 		private string PlatformSkuToGameSku( string platform_sku )
 	    {
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable( DefinitionsCategory.SHOP_PACKS, GameStoreManagerCalety.GetPlatformAttribute(), platform_sku);
 			return def.sku;
 	    }
 	    */
+
+        public override void onStoreIosInitFail(int errorCode)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug.Log("onStoreIosInitFail errorCode = " + errorCode);
+
+            m_hasInitFailed = true;
+        }
+
+        public bool HasInitFailed()
+        {
+            return m_hasInitFailed;
+        }
     }
 	#endregion
 
@@ -70,17 +104,38 @@ public class GameStoreManagerCalety : GameStoreManager
 	CaletyGameStoreListener m_storeListener;
 	string[] m_storeSkus;
 
-	public GameStoreManagerCalety () 
+    private bool m_isFirstInit;
+    
+    public GameStoreManagerCalety () 
 	{
 		m_storeListener = new CaletyGameStoreListener();
-	}
+        m_isFirstInit = true;
+    }
+
+    private void Reset()
+    {
+        m_isFirstInit = true;
+        m_storeListener.Reset();
+    }
 
 	public override void Initialize()
 	{
-		StoreManager.SharedInstance.AddListener (m_storeListener);
-		CacheStoreSkus();	    
+        if (m_isFirstInit)
+        {
+            Messenger.AddListener(MessengerEvents.CONNECTION_RECOVERED, OnConnectionRecovered);            
+
+            StoreManager.SharedInstance.AddListener(m_storeListener);
+            CacheStoreSkus();
+        }
+
+		m_storeListener.Reset();
 		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);
-		#if UNITY_ANDROID && !UNITY_EDITOR
+
+        if (m_isFirstInit)
+        {
+            m_isFirstInit = false;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
 	        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 	        if(settingsInstance != null)
 	        {
@@ -93,8 +148,27 @@ public class GameStoreManagerCalety : GameStoreManager
 	                StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysAmazon[settingsInstance.m_iBuildEnvironmentSelected]);
 	            }
 	        }
-		#endif
+#endif
+        }
 	}
+
+    private void OnConnectionRecovered()
+    {
+        TryToSolveInitializeProblems();
+    }
+
+    private void TryToSolveInitializeProblems()
+    {
+		if (FeatureSettingsManager.IsDebugEnabled)
+			Debug.Log("TryToSolveInitializedProblems isReady = " + IsReady() + " HasInitFailed = " + m_storeListener.HasInitFailed());
+		
+        // Checks if there was an initialize problem
+        if (!IsReady() && m_storeListener.HasInitFailed())
+        {
+            m_storeListener.Reset();
+            StoreManager.SharedInstance.Initialise(ref m_storeSkus, false);
+        }
+    }
 
 	public void CacheStoreSkus()
 	{
@@ -210,7 +284,5 @@ public class GameStoreManagerCalety : GameStoreManager
 			return GOOGLE_ATTRIBUTE;
 		#endif
     	return "";
-    }
-
-  
+    }        
 }
