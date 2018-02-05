@@ -293,9 +293,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_burningTime: 0
+  m_burningTime: 2
   m_feedbackParticle:
-    name: 
+    name: PS_C_Splinters
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -332,9 +332,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
-  m_feedbackParticleMatchDirection: 0
+  m_feedbackParticleMatchDirection: 1
   m_burnParticle:
-    name: 
+    name: PF_FireProc
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -434,6 +434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 30
+  m_maxSpawns: 0
   m_ground: []
 --- !u!114 &114874623518566938
 MonoBehaviour:
@@ -447,4 +448,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: vegetation_medium
+  m_tier: 1
   m_disintegrable: 1
