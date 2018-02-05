@@ -128,6 +128,7 @@ public class GameStoreManagerCalety : GameStoreManager
             CacheStoreSkus();
         }
 
+		m_storeListener.Reset();
 		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);
 
         if (m_isFirstInit)
@@ -158,6 +159,9 @@ public class GameStoreManagerCalety : GameStoreManager
 
     private void TryToSolveInitializeProblems()
     {
+		if (FeatureSettingsManager.IsDebugEnabled)
+			Debug.Log("TryToSolveInitializedProblems isReady = " + IsReady() + " HasInitFailed = " + m_storeListener.HasInitFailed());
+		
         // Checks if there was an initialize problem
         if (!IsReady() && m_storeListener.HasInitFailed())
         {
