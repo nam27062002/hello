@@ -215,7 +215,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 }
             }
         }
-    }   
+    }       
 
     private void StartSession()
     {     
@@ -347,15 +347,20 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }        
 
+    private void UpdateWaitingForSessionStart()
+    {
+        if (TrackingPersistenceSystem != null && IsStartSessionNotified)
+        {
+            StartSession();
+        }
+    }
+
     public override void Update()
     {
         switch (State)
         {
-            case EState.WaitingForSessionStart:                
-                if (TrackingPersistenceSystem != null && IsStartSessionNotified)
-                {
-                	StartSession();
-                }
+            case EState.WaitingForSessionStart:
+                UpdateWaitingForSessionStart();
                 break;
         }
 
@@ -440,6 +445,9 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (State == EState.WaitingForSessionStart)
         {
             IsStartSessionNotified = true;
+
+            // We want to start as soon as possible in order to reduce problems when sending early events
+            UpdateWaitingForSessionStart();
         }        
     }
 
@@ -1011,6 +1019,11 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void Notify_PopupSurveyShown(EPopupSurveyAction action) {
         Track_PopupSurveyShown(action);
+    }
+
+    public override void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action)
+    {
+        Track_PopupUnsupportedDevice(action);        
     }
     #endregion
 
@@ -1743,6 +1756,19 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, "HD_SURVEY_1");
             Track_AddParamString(e, TRACK_PARAM_POPUP_ACTION, action.ToString());            
+            Track_SendEvent(e);
+        }
+    }
+
+    private void Track_PopupUnsupportedDevice(EPopupUnsupportedDeviceAction action)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_PopupUnsupportedDevice action = " + action);
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.leave.popup");
+        if (e != null)
+        {            
+            Track_AddParamString(e, TRACK_PARAM_POPUP_ACTION, action.ToString());
             Track_SendEvent(e);
         }
     }

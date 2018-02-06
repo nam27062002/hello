@@ -526,20 +526,24 @@ public class LoadingSceneController : SceneController {
         // Back button is disabled in order to make sure that the user is aware when making such an important decision
         config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
         PopupManager.PopupMessage_Open(config);
+
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Shown);
     }
 
     private void UnsupportedDevice_OnGoToLink()
-    {
-        // HSE is opened in store
+    {        
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Leave2HSE);
+
+        // HSE is opened in store        
         ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungrySharkEvo);
     }  
 
     private void UnsupportedDevice_OnQuit()
-    {        
-        ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungryDragon);
+    {
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Quit);        
 
         // The user quits the application
-        //Application.Quit();
+        Application.Quit();
     }
     #endregion
 
