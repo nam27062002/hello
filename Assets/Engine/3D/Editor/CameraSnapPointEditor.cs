@@ -56,6 +56,10 @@ public class CameraSnapPointEditor : Editor {
 			}
 			camObj.name = "CameraSnapPointPreview";
 			camObj.hideFlags = HideFlags.DontSave;
+
+			// Destroy audio listener component, if any, otherwise the editor complains
+			AudioListener listener = m_editionCamera.GetComponent<AudioListener>();
+			if(listener != null) GameObject.DestroyImmediate(listener);
 		}
 
 		// Initialize live preview
@@ -234,11 +238,54 @@ public class CameraSnapPointEditor : Editor {
 			if(m_livePreviewProp.boolValue) {
 				// Update edition camera
 				m_editionCamera.depth = 100;	// Make sure camera has priority
+				m_editionCamera.transform.position = m_targetSnapPoint.transform.position;
 				m_targetSnapPoint.Apply(m_editionCamera);
 			}
 		}
 
 		// Make sure all views are up to date
 		UnityEditorInternal.InternalEditorUtility.RepaintAllViews();	// HACKS! http://answers.unity3d.com/questions/449407/how-to-manually-update-gameview.html
+	}
+
+	/// <summary>
+	/// Draw gizmos for the target snap point.
+	/// Do it here rather than OnDrawGizoms to save time by avoiding compilation 
+	/// of the whole project (just the Editor code).
+	/// </summary>
+	/// <param name="_target">Target curve.</param>
+	/// <param name="_gizmoType">Gizmo type.</param>
+	[DrawGizmo(GizmoType.Pickable | GizmoType.InSelectionHierarchy)]
+	static void DrawGizmo(CameraSnapPoint _target, GizmoType _gizmoType) {
+		// Ignore if gizmos disabled
+		if(!_target.drawGizmos) return;
+
+		// Camera frustum
+		// If not defined, use main camera values in a different color
+		// If there is no main camera, use default values in a different color
+		Gizmos.color = _target.gizmoColor;
+		Camera refCamera = Camera.main;
+
+		// Fov
+		float targetFov = _target.fov;
+		if(!_target.changeFov) {
+			targetFov = (refCamera != null) ? refCamera.fieldOfView : 60f;
+		}
+
+		// Near
+		float targetNear = _target.near;
+		if(!_target.changeNear) {
+			targetNear = (refCamera != null) ? refCamera.nearClipPlane : 0.3f;
+		}
+
+		// Far
+		float targetFar = _target.far;
+		if(!_target.changeFar) {
+			targetFar = (refCamera != null) ? refCamera.farClipPlane : 1000f;
+		}
+
+		// Draw camera frustum
+		Gizmos.matrix = _target.transform.localToWorldMatrix;
+		Gizmos.DrawFrustum(Vector3.zero, targetFov, targetFar, targetNear, (refCamera != null) ? refCamera.aspect : 4f/3f);
+		Gizmos.matrix = Matrix4x4.identity;
 	}
 }
