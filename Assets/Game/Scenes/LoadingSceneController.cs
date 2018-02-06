@@ -491,7 +491,7 @@ public class LoadingSceneController : SceneController {
                 // Game will be loaded only if the device is supported, otherwise a popup is shown suggesting the user download HSE. 
                 // We need to wait until this point to open this popup because we need to read local persistence to have access to
                 // tracking id since the user's interaction with this popup has to be tracked
-                if (FeatureSettingsManager.IsDeviceSupported())
+                if (FeatureSettingsManager.instance.Device_IsSupported())
                 {
                     m_loadingDone = true;
                 }
