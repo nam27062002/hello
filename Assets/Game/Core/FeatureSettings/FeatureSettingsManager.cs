@@ -1220,6 +1220,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     /// <summary>
+    /// Returns whether or not the device is supported by the app. It's static because we need to check it as soon as the app is loaded (even before rules are loaded) in order to 
+    /// make the user wait as short as possible
+    /// </summary>
+    /// <returns></returns>
+    public static bool IsDeviceSupported()
+    {
+        return false;
+    }
+
+    /// <summary>
     /// Returns whether or not debug mode is enabled. 
     /// It's a static method to be sure that it will be available at all times since it's looked up by some MonoBehaviours when awaking
     /// </summary>

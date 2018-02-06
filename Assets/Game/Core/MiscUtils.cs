@@ -28,4 +28,13 @@ public class MiscUtils {
         float diagonalInches = Mathf.Sqrt(Mathf.Pow(screenWidth, 2) + Mathf.Pow(screenHeight, 2));
         return diagonalInches > 6.5f;
     }
+
+    public static void OpenAppInStore(string appId)
+    {
+#if UNITY_IOS        
+	    Application.OpenURL("itms-apps://itunes.apple.com/app/" + appId);
+#elif UNITY_ANDROID
+        Application.OpenURL("market://details?id=" + appId);
+#endif
+    }    
 }
