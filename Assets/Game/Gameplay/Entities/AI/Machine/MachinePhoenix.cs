@@ -7,8 +7,11 @@ namespace AI {
 		//--------------------------------------------------
 		[SeparatorAttribute("Phoenix Effects")]
 		[SerializeField] private GameObject m_fire;
-		[SerializeField] private List<GameObject> m_fireView;
+		[SerializeField] private string m_fireParticleName;
+		[SerializeField] private string m_fireAnchorName;
 		[SerializeField] private Renderer m_bodyRenderer;
+
+		private GameObject m_fireView;
 
 		//--------------------------------------------------
 		private bool m_phoenixActive = false;
@@ -16,6 +19,40 @@ namespace AI {
 		//--------------------------------------------------
 		protected override void Awake() {
 			base.Awake();
+
+			string version = "";
+			switch(FeatureSettingsManager.instance.Particles)
+			{
+				default:
+				case FeatureSettings.ELevel5Values.very_low:							
+				case FeatureSettings.ELevel5Values.low:
+						version = "Low/";
+					break;
+				case FeatureSettings.ELevel5Values.mid:
+						version = "Master/";
+					break;
+				case FeatureSettings.ELevel5Values.very_high:
+				case FeatureSettings.ELevel5Values.high:
+						version = "High/";
+					break;
+			}
+
+			string path = "Particles/" + version + m_fireParticleName;
+
+			GameObject prefab = Resources.Load<GameObject>(path);
+			if ( prefab )
+			{
+				m_fireView = Instantiate<GameObject>(prefab);
+				if ( m_fireView )
+				{
+					// Anchor
+					Transform p = transform.FindTransformRecursive(m_fireAnchorName);
+					m_fireView.transform.SetParent(p, true);
+					m_fireView.transform.localPosition = GameConstants.Vector3.zero;
+					m_fireView.transform.localRotation = GameConstants.Quaternion.identity;
+				}
+			}
+
 			DeactivateFire();
 		}
 
@@ -51,8 +88,8 @@ namespace AI {
 		private void ActivateFire() {
 			m_phoenixActive = true;
 			m_fire.SetActive(true);
-			for( int i = 0; i<m_fireView.Count; ++i)
-				m_fireView[i].SetActive(true);
+			if ( m_fireView )
+				m_fireView.SetActive(true);
 			StopCoroutine("FireTo");
 			StartCoroutine( FireTo(1) );
 		}
@@ -60,8 +97,8 @@ namespace AI {
 		private void DeactivateFire() {
 			m_phoenixActive = false;
 			m_fire.SetActive(false);
-			for( int i = 0; i<m_fireView.Count; ++i)
-				m_fireView[i].SetActive(false);
+			if ( m_fireView )
+				m_fireView.SetActive(false);
 			StopCoroutine("FireTo");
 			StartCoroutine( FireTo(0) );
 		}
