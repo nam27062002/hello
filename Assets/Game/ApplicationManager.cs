@@ -755,13 +755,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         string appId = Apps_GetAppIdInStore(app);
         if (string.IsNullOrEmpty(appId))
         {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
+            if (FeatureSettingsManager.IsDebugEnabled)            
                 LogError("No appId found for app " + app.ToString());
-            }
+            
         }
         else
-        {
+        {			
             MiscUtils.OpenAppInStore(appId);
         }
     }
@@ -786,14 +785,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private static string Apps_GetHDIdInStore()
     {
-        string returnValue = null;
-#if UNITY_IOS
-		returnValue = "idYOUR_ID";        
-#elif UNITY_ANDROID
-        returnValue = Application.identifier;
-#endif
-
-        return returnValue;
+		return Application.identifier;
     }
 
     private static string Apps_GetHSEIdInStore()
