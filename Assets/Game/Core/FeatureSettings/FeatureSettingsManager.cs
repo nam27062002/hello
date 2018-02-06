@@ -1016,6 +1016,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log(Device_GetInfo());
         Log(Shaders_GetInfo());
         Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
+
+        if (IsLightmapEnabled) {
+            Shader.EnableKeyword("FORCE_LIGHTMAP");
+        }
+        else
+        {
+            Shader.DisableKeyword("FORCE_LIGHTMAP");
+        }
     }
 
     private JSONNode FormatJSON(JSONNode json)
@@ -1376,12 +1384,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_DRUNK_EFFECT);
         }
     }
-                
+                    
     public bool IsFrameColorEffectEnabled
     {
         get
         {
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_FRAME_COLOR_EFFECT);
+        }
+    }
+
+    public bool IsLightmapEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_LIGHTMAP);
         }
     }
 

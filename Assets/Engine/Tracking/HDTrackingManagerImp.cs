@@ -1942,7 +1942,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_AddParamPlayerProgress(TrackingManager.TrackingEvent e)
     {
         int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
-        Track_AddParamString(e, TRACK_PARAM_PLAYER_PROGRESS, value + "");
+        e.SetParameterValue(TRACK_PARAM_PLAYER_PROGRESS, value);
     }    
 
     private void Track_AddParamSessionsCount(TrackingManager.TrackingEvent e)

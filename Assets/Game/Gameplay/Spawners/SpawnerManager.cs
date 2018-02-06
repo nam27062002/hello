@@ -93,7 +93,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
@@ -105,7 +105,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}        
@@ -462,7 +462,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_selectedSpawners.Clear();
     }
 
-	private void DisableManager() {
+	private void DisableManager(float estimatedTime) {
 		m_enabled = false;
 	}
 

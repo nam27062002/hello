@@ -640,7 +640,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_changeAreaState = ChangeAreaState.Enter;
 					// m_eatBehaviour.PauseEating();
 					// Send event to tell pets we are leaging the area
-					Messenger.Broadcast(MessengerEvents.PLAYER_LEAVING_AREA);
+					Vector3 pos = m_followingSpline.GetPoint( 0.5f );
+					float distance = (pos - m_transform.position).magnitude;
+					float estimatedTime = distance / absoluteMaxSpeed;
+
+					Messenger.Broadcast<float>(MessengerEvents.PLAYER_LEAVING_AREA, estimatedTime);
 				}break;
 			}
 
