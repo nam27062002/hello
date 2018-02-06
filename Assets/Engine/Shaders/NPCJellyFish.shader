@@ -12,12 +12,14 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
 //		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 //		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
-		_VertexAnimation("Vertex Animation", Vector) = (1.0, 1.0, 1.0, 1.0)
-		_VertexAnimation2("Vertex Animation2", Vector) = (1.0, 1.0, 1.0, 1.0)
-		_VertexAnimation3("Vertex Animation3", Vector) = (1.0, 1.0, 1.0, 1.0)
+		_TimePhase("Head Time Phase", Float) = 1.0
+		_Period("Head Period", Float) = 1.0
+		_VertexAnimation("Head Vertex Animation", Vector) = (1.0, 1.0, 1.0, 1.0)
 
-		_AnimationPhase("Animation Phase", Float) = 1.0
-
+		_TimePhase2("Legs Time Phase 2", Float) = 1.0
+		_Period2("Legs Period", Float) = 50.0
+		_VertexAnimation2("Legs Vertex Animation2", Vector) = (1.0, 1.0, 1.0, 1.0)
+		_VertexAnimation3("Legs Vertex Animation3", Vector) = (1.0, 1.0, 1.0, 1.0)
 
 		_StencilMask("Stencil Mask", int) = 10
 	}

@@ -82,10 +82,13 @@ uniform float _EmissiveBlink;
 #endif
 
 #if defined(VERTEX_ANIMATION)
-uniform float _AnimationPhase;
+uniform float _TimePhase;
+uniform float _Period;
 uniform float4 _VertexAnimation;
 
 #if defined(JELLY)
+uniform float _TimePhase2;
+uniform float _Period2;
 uniform float4 _VertexAnimation2;
 uniform float4 _VertexAnimation3;
 #endif
@@ -99,11 +102,11 @@ v2f vert(appdata_t v)
 #if defined(VERTEX_ANIMATION)
 //	float s = step(0.0, v.vertex.y);
 
-	float4 anim = sin(_Time.y * _AnimationPhase + v.vertex * 2.0);
+	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
 	v.vertex += anim * _VertexAnimation * v.color.g;
 
 #if defined(JELLY)
-	anim = sin(_Time.y * _AnimationPhase * 1.5 + v.vertex.y * 20.0);
+	anim = sin(_Time.y * _TimePhase2 + v.vertex.y * _Period2);
 	v.vertex += anim * _VertexAnimation2 * v.color.r; //* (1.0 - s);
 	v.vertex += anim * _VertexAnimation3 * v.color.b; // *(1.0 - s);
 #endif
