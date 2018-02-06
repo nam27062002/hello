@@ -90,8 +90,8 @@ namespace AI {
 			m_fire.SetActive(true);
 			if ( m_fireView )
 				m_fireView.SetActive(true);
-			StopCoroutine("FireTo");
-			StartCoroutine( FireTo(1) );
+			// StopCoroutine("FireTo");
+			// StartCoroutine( FireTo(1) );
 		}
 
 		private void DeactivateFire() {
@@ -99,10 +99,11 @@ namespace AI {
 			m_fire.SetActive(false);
 			if ( m_fireView )
 				m_fireView.SetActive(false);
-			StopCoroutine("FireTo");
-			StartCoroutine( FireTo(0) );
+			// StopCoroutine("FireTo");
+			// StartCoroutine( FireTo(0) );
 		}
 
+		/*
 		IEnumerator FireTo( float _targetValue )
 		{
 			if ( m_phoenixMaterial != null )
@@ -121,5 +122,6 @@ namespace AI {
 				m_phoenixMaterial.SetFloat("_FireAmount", _targetValue);
 			}
 		}
+		*/
 	}
 }
