@@ -788,7 +788,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         string returnValue = null;
 #if UNITY_IOS
-        returnValue = "idYOUR_ID"        
+		returnValue = "idYOUR_ID";        
 #elif UNITY_ANDROID
         returnValue = Application.identifier;
 #endif
