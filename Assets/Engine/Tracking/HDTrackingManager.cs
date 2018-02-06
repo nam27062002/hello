@@ -101,7 +101,7 @@ public class HDTrackingManager
 	public static EEconomyGroup StringToEconomyGroup(string _str) {
 		try {
 			return (EEconomyGroup)System.Enum.Parse(typeof(EEconomyGroup), _str);
-		} catch(System.ArgumentException _e) {
+		} catch(System.ArgumentException) {
 			return EEconomyGroup.UNKNOWN;
 		}
 	}

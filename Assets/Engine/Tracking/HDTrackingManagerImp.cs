@@ -2298,7 +2298,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (elapsedTime > Performance_TrackingDelay)
         {
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
-            int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
+            //int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
             Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
             //            Track_PerformanceTrack();
 
