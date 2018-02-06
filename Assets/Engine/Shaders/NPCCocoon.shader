@@ -1,7 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
-Shader "Hungry Dragon/NPC/NPC Jelly fish"
+Shader "Hungry Dragon/NPC/NPC Cocoon"
 {
 	Properties
 	{
@@ -13,11 +13,7 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 //		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 //		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_VertexAnimation("Vertex Animation", Vector) = (1.0, 1.0, 1.0, 1.0)
-		_VertexAnimation2("Vertex Animation2", Vector) = (1.0, 1.0, 1.0, 1.0)
-		_VertexAnimation3("Vertex Animation3", Vector) = (1.0, 1.0, 1.0, 1.0)
-
 		_AnimationPhase("Animation Phase", Float) = 1.0
-
 
 		_StencilMask("Stencil Mask", int) = 10
 	}
@@ -25,9 +21,7 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 	{
 		Pass
 		{
-
-			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
-			Cull Back
+			Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 
 			ZWrite on
 
@@ -64,7 +58,6 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 			#endif
 
 			#define VERTEX_ANIMATION
-			#define JELLY
 
 			#include "entities.cginc"
 

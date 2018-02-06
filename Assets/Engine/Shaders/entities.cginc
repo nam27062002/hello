@@ -82,8 +82,14 @@ uniform float _EmissiveBlink;
 #endif
 
 #if defined(VERTEX_ANIMATION)
-uniform float4 _VertexAnimation;
 uniform float _AnimationPhase;
+uniform float4 _VertexAnimation;
+
+#if defined(JELLY)
+uniform float4 _VertexAnimation2;
+uniform float4 _VertexAnimation3;
+#endif
+
 #endif
 
 v2f vert(appdata_t v)
@@ -91,10 +97,18 @@ v2f vert(appdata_t v)
 	v2f o;
 
 #if defined(VERTEX_ANIMATION)
-	float4 anim = sin(_Time.y * _AnimationPhase + v.vertex * 30.0);
-	v.vertex += anim * _VertexAnimation * v.color.a;
+//	float s = step(0.0, v.vertex.y);
+
+	float4 anim = sin(_Time.y * _AnimationPhase + v.vertex * 2.0);
+	v.vertex += anim * _VertexAnimation * v.color.g;
+
+#if defined(JELLY)
+	anim = sin(_Time.y * _AnimationPhase * 1.5 + v.vertex.y * 20.0);
+	v.vertex += anim * _VertexAnimation2 * v.color.r; //* (1.0 - s);
+	v.vertex += anim * _VertexAnimation3 * v.color.b; // *(1.0 - s);
 #endif
 
+#endif
 	o.vertex = UnityObjectToClipPos(v.vertex);
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
@@ -148,6 +162,7 @@ fixed4 frag(v2f i) : SV_Target
 	// sample the texture
 	fixed4 col = tex2D(_MainTex, i.uv);
 	fixed specMask = col.a;// 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+//	return i.color;
 
 #if defined(EMISSIVE)
 	float anim = (sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity * col.a;
