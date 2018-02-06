@@ -41,6 +41,12 @@ public class BezierPoint {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private string m_name = "";
+	public string name {
+		get { return m_name; }
+		set { m_name = value; }
+	}
+
 	[SerializeField] private HandleStyle m_handleStyle = HandleStyle.CONNECTED;
 	public HandleStyle handleStyle {
 		get { return m_handleStyle; }
@@ -233,6 +239,19 @@ public class BezierPoint {
 	/// <param name="_pos">The local position of this point related to the curve transform.</param>
 	public BezierPoint(Vector3 _pos) {
 		m_position = _pos;
+	}
+
+	/// <summary>
+	/// Copy constructor.
+	/// </summary>
+	/// <param name="_p">Source point.</param>
+	public BezierPoint(BezierPoint _p) {
+		// Copy basic properties
+		m_handleStyle = _p.m_handleStyle;
+		m_locked = _p.m_locked;
+		m_position = _p.m_position;
+		m_handle1 = _p.m_handle1;
+		m_handle2 = _p.m_handle2;
 	}
 
 	//------------------------------------------------------------------//

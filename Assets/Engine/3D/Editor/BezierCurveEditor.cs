@@ -76,6 +76,42 @@ public class BezierCurveEditor : Editor {
 	private GUIContent m_insertButtonContent = new GUIContent("+", "Insert Point");
 	private GUIContent m_deleteButtonContent = new GUIContent("X", "Delete Point");
 
+	// Custom styles
+	private static GUIStyle s_pointLabelStyle = null;
+	private GUIStyle pointLabelStyle {
+		get {
+			if(s_pointLabelStyle == null) {
+				s_pointLabelStyle = new GUIStyle(CustomEditorStyles.bigSceneLabel);
+				s_pointLabelStyle.fontSize = 14;
+				s_pointLabelStyle.normal.textColor = Colors.WithAlpha(POINT_COLOR, 0.5f);
+			}
+			return s_pointLabelStyle;
+		}
+	}
+
+	private static GUIStyle s_pointLabelStyleSelected = null;
+	private GUIStyle pointLabelStyleSelected {
+		get {
+			if(s_pointLabelStyleSelected == null) {
+				s_pointLabelStyleSelected = new GUIStyle(pointLabelStyle);
+				s_pointLabelStyleSelected.normal.textColor = Colors.WithAlpha(SELECTED_COLOR, 0.5f);
+			}
+			return s_pointLabelStyleSelected;
+		}
+	}
+
+	private static GUIStyle s_pointBackgroundStyle = null;
+	private GUIStyle pointBackgroundStyle {
+		get {
+			if(s_pointBackgroundStyle == null) {
+				int margin = 5;
+				s_pointBackgroundStyle = new GUIStyle(EditorStyles.miniButton);
+				s_pointBackgroundStyle.padding = new RectOffset(margin, margin, margin, margin);
+			}
+			return s_pointBackgroundStyle;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
@@ -200,7 +236,11 @@ public class BezierCurveEditor : Editor {
 			pointSize = targetCurve.pointSize * (targetCurve.constantSize ? HandleUtility.GetHandleSize(p.globalPosition) * CONSTANT_SIZE_FACTOR : 1f);
 
 			// Label
-			Handles.Label(p.globalPosition + LABEL_OFFSET, i.ToString(), CustomEditorStyles.bigSceneLabel);
+			Handles.Label(
+				p.globalPosition + LABEL_OFFSET, 
+				string.IsNullOrEmpty(p.name) ? "P" + i.ToString() : p.name, 
+				(i == targetCurve.selectedIdx) ? pointLabelStyleSelected : pointLabelStyle
+			);
 
 			// Is this point or any of its handlers the current selection?
 			if(i == targetCurve.selectedIdx) {
@@ -406,6 +446,11 @@ public class BezierCurveEditor : Editor {
 		int point1 = -1;
 		int point2 = -1;
 
+		// Some initializations
+		GUI.color = Color.white;
+		GUI.contentColor = Color.white;
+		GUI.backgroundColor = Color.white;
+
 		// Indent in
 		EditorGUI.indentLevel++;
 
@@ -454,10 +499,7 @@ public class BezierCurveEditor : Editor {
 
 		// Show all points in a list
 		// Some aux vars outside the loop
-		int margin = 5;
 		Rect auxPos = Rect.zero;
-		GUIStyle newStyle = new GUIStyle(EditorStyles.miniButton);
-		newStyle.padding = new RectOffset(margin, margin, margin, margin);
 		for(int i = 0; i < targetCurve.pointCount; i++) {
 			// Get target point
 			p = targetCurve.GetPoint(i);
@@ -466,18 +508,26 @@ public class BezierCurveEditor : Editor {
 			GUI.backgroundColor	= i == targetCurve.selectedIdx ? SELECTED_COLOR : Color.white;
 
 			// Add some margins and englobe everything in a layout area
-			EditorGUILayout.BeginVertical(newStyle); {
+			EditorGUILayout.BeginVertical(pointBackgroundStyle); {
 				GUI.backgroundColor = Color.white;
 
 				// Lock toggle, name, sort buttons
 				EditorGUILayout.BeginHorizontal(); {
-					// Lock & point name
+					// Lock
 					if(i == targetCurve.selectedIdx) {
 						GUI.contentColor = SELECTED_COLOR;
 					} else {
 						GUI.contentColor = Color.white;
 					}
-					p.locked = !GUILayout.Toggle(!p.locked, " P" + i.ToString());
+					p.locked = !GUILayout.Toggle(!p.locked, GUIContent.none);
+
+					// Point name: editable textfield, shpw default name if none is defined
+					EditorGUI.BeginChangeCheck();
+					string pointName = string.IsNullOrEmpty(p.name) ? ("P" + i.ToString()) : p.name;
+					pointName = GUILayout.TextField(pointName);
+					if(EditorGUI.EndChangeCheck()) {
+						p.name = pointName;
+					}
 
 					// If selected or locked (or both), show it!
 					if(p.locked) {
