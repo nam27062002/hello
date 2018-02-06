@@ -152,7 +152,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
     readonly static string kw_blendTexture = "BLEND_TEXTURE";
-    readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
     readonly static string kw_fog = "FOG";
     readonly static string kw_normalmap = "NORMALMAP";
     readonly static string kw_specular = "SPECULAR";

@@ -72,7 +72,7 @@ uniform float4 _FresnelColor2;
 
 #endif
 
-#if defined(TINT) || defined(CUSTOM_TINT)
+#if defined(TINT)
 uniform float4 _Tint;
 #endif
 
@@ -81,16 +81,21 @@ uniform float _EmissiveIntensity;
 uniform float _EmissiveBlink;
 #endif
 
+#if defined(VERTEX_ANIMATION)
+uniform float4 _VertexAnimation;
+uniform float _AnimationPhase;
+#endif
 
 v2f vert(appdata_t v)
 {
 	v2f o;
 
-#ifdef CUSTOM_VERTEXPOSITION
-	o.vertex = getCustomVertexPosition(v);
-#else
-	o.vertex = UnityObjectToClipPos(v.vertex);
+#if defined(VERTEX_ANIMATION)
+	float4 anim = sin(_Time.y * _AnimationPhase + v.vertex * 30.0);
+	v.vertex += anim * _VertexAnimation * v.color.a;
 #endif
+
+	o.vertex = UnityObjectToClipPos(v.vertex);
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 	float3 normal = UnityObjectToWorldNormal(v.normal);
@@ -142,7 +147,7 @@ fixed4 frag(v2f i) : SV_Target
 {
 	// sample the texture
 	fixed4 col = tex2D(_MainTex, i.uv);
-	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+	fixed specMask = col.a;// 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 
 #if defined(EMISSIVE)
 	float anim = (sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity * col.a;
@@ -151,8 +156,6 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined (TINT)
 	col.xyz *= _Tint.xyz;
-#elif defined (CUSTOM_TINT)
-	col = getCustomTint(col, _Tint, i.color);
 #endif
 
 #ifdef NORMALMAP
@@ -202,9 +205,8 @@ fixed4 frag(v2f i) : SV_Target
 	col.a = clamp(fresnel + specMask, 0.0, 1.0);
 #endif
 
-#if defined (TINT) || defined (CUSTOM_TINT)
+#if defined (TINT)
 	col.a *= _Tint.a;
-
 #endif
 	return col;
 }
