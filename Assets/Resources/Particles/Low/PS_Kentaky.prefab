@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4024526303954226}
   - component: {fileID: 33564522013987786}
   - component: {fileID: 23341522047882182}
-  - component: {fileID: 64695579180735602}
+  - component: {fileID: 114912707254856898}
   m_Layer: 0
-  m_Name: Particle System (1)
+  m_Name: FireShapeMask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,9 +56,9 @@ GameObject:
   - component: {fileID: 4546893845832456}
   - component: {fileID: 33946810911342186}
   - component: {fileID: 23353950029606978}
-  - component: {fileID: 64127576961451546}
+  - component: {fileID: 114456914039572414}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: FireShapeADD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +71,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1670253521995090}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -68.61, y: 0, z: 1286.85}
+  m_LocalPosition: {x: 3.72, y: 1.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4546893845832456}
@@ -85,9 +85,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1312811004916416}
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalRotation: {x: 0.0005615776, y: 0.9985439, z: 0.010602366, w: -0.05289007}
   m_LocalPosition: {x: 0, y: -0.016114, z: 0}
-  m_LocalScale: {x: 3.3, y: 3.3, z: 3.3}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 4018941479110588}
   m_RootOrder: 1
@@ -98,9 +98,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1895024920913018}
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalRotation: {x: 0.0005615776, y: 0.9985439, z: 0.010602366, w: -0.05289007}
   m_LocalPosition: {x: 0, y: -0.016114, z: 0}
-  m_LocalScale: {x: 3.3, y: 3.3, z: 3.3}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 4018941479110588}
   m_RootOrder: 0
@@ -183,34 +183,30 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1895024920913018}
   m_Mesh: {fileID: 4300008, guid: 2731c97d78ead1743b2791fab5eda628, type: 3}
---- !u!64 &64127576961451546
-MeshCollider:
+--- !u!114 &114456914039572414
+MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1895024920913018}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 0
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300008, guid: 2731c97d78ead1743b2791fab5eda628, type: 3}
---- !u!64 &64695579180735602
-MeshCollider:
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
+--- !u!114 &114912707254856898
+MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1312811004916416}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 0
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300008, guid: 2731c97d78ead1743b2791fab5eda628, type: 3}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!198 &198251842602059780
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -221,7 +217,7 @@ ParticleSystem:
   lengthInSec: 5
   simulationSpeed: 1
   looping: 1
-  prewarm: 0
+  prewarm: 1
   playOnAwake: 1
   autoRandomSeed: 1
   startDelay:
@@ -268,7 +264,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 66796202
+  randomSeed: 1596308153
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -358,7 +354,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.22794116, g: 0, b: 0, a: 0.334}
+      maxColor: {r: 0.3897059, g: 0, b: 0, a: 0.147}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -3370,7 +3366,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -10
+  m_SortingOrder: 0
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
