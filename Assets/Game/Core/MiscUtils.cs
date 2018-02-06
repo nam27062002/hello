@@ -31,10 +31,19 @@ public class MiscUtils {
 
     public static void OpenAppInStore(string appId)
     {
+		string url = null;
 #if UNITY_IOS        
-	    Application.OpenURL("itms-apps://itunes.apple.com/app/" + appId);
+	    Application.OpenURL("itms-apps://itunes.apple.com/app/id" + appId);
 #elif UNITY_ANDROID
         Application.OpenURL("market://details?id=" + appId);
 #endif
+
+		if (FeatureSettingsManager.IsDebugEnabled)
+			Debug.Log("Open store url " + url);
+		
+		if (!string.IsNullOrEmpty (url)) 
+		{
+			Application.OpenURL(url);
+		}
     }    
 }
