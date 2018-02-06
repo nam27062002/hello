@@ -296,7 +296,7 @@ public class UserProfile : UserPersistenceSystem
 
 	public bool mapUnlocked {
 		// Map is unlocked as long as the timestamp hasn't expired
-		get { return m_mapResetTimestamp > DateTime.UtcNow; }
+		get { return m_mapResetTimestamp > GameServerManager.SharedInstance.GetEstimatedServerTime(); }
 	}
 
 	// Global events
