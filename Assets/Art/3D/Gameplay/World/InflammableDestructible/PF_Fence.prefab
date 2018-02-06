@@ -26,6 +26,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1383047662546096
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4020706416443450}
+  m_Layer: 16
+  m_Name: view_destroyed
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
 --- !u!1 &1396067178503012
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,13 +102,28 @@ GameObject:
   - component: {fileID: 114651664418458858}
   - component: {fileID: 114772734337366426}
   - component: {fileID: 114193784235953050}
-  m_Layer: 0
+  - component: {fileID: 114507023537047180}
+  - component: {fileID: 65020350620845774}
+  m_Layer: 16
   m_Name: PF_Fence
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4020706416443450
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1383047662546096}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4632979131982442}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4405168350189008
 Transform:
   m_ObjectHideFlags: 1
@@ -105,7 +135,7 @@ Transform:
   m_LocalScale: {x: 11.409491, y: 11.409457, z: 11.409505}
   m_Children: []
   m_Father: {fileID: 4632979131982442}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -0.23400001, y: -180.32599, z: -1.4330001}
 --- !u!4 &4513000087466294
 Transform:
@@ -118,7 +148,7 @@ Transform:
   m_LocalScale: {x: 11.4, y: 11.4, z: 11.4}
   m_Children: []
   m_Father: {fileID: 4632979131982442}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4517464918313954
 Transform:
@@ -132,7 +162,7 @@ Transform:
   m_Children:
   - {fileID: 4764366302139230}
   m_Father: {fileID: 4632979131982442}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4632979131982442
 Transform:
@@ -141,11 +171,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1632824587847064}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 319.4, y: 0.2, z: 2}
+  m_LocalPosition: {x: 79.460526, y: -34.687557, z: -21.58374}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4513000087466294}
   - {fileID: 4405168350189008}
+  - {fileID: 4513000087466294}
+  - {fileID: 4020706416443450}
   - {fileID: 4517464918313954}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -241,6 +272,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1590688292045914}
   m_Mesh: {fileID: 4300000, guid: 9b19597fb7f3a934f97cfb28cc7671fc, type: 3}
+--- !u!65 &65020350620845774
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632824587847064}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.68, z: 1}
+  m_Center: {x: 0, y: 1.06, z: 0}
 --- !u!114 &114193784235953050
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -370,6 +413,98 @@ MonoBehaviour:
     scale: 0
   m_boxelSize: 2
   m_hitRadius: 1.5
+--- !u!114 &114507023537047180
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632824587847064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Interaction: 1
+  m_knockBackStrength: 0
+  m_particleFaceDragonDirection: 0
+  m_feedbackParticle:
+    name: PS_C_Splinters
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+  m_destroyParticle:
+    name: PS_D_Splinters
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+  m_onDestroyAudio: 
+  m_onFeedbackAudio: 
 --- !u!114 &114543031810165422
 MonoBehaviour:
   m_ObjectHideFlags: 1
