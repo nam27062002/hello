@@ -519,7 +519,9 @@ public class LoadingSceneController : SceneController {
 
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;        
         config.OnConfirm = UnsupportedDevice_OnGoToLink;
+        config.ConfirmButtonTid = "TID_BUTTON_UNSUPPORTED_DEVICE";
         config.OnCancel = UnsupportedDevice_OnQuit;
+        config.CancelButtonTid = "TID_PAUSE_TAB_OPTIONS_QUIT";
 
         // Back button is disabled in order to make sure that the user is aware when making such an important decision
         config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
