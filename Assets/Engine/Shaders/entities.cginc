@@ -102,25 +102,29 @@ v2f vert(appdata_t v)
 #if defined(VERTEX_ANIMATION)
 //	float s = step(0.0, v.vertex.y);
 
-	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
-	v.vertex += anim * _VertexAnimation * v.color.g;
-
 #if defined(JELLY)
+	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
+	v.vertex.xyz += anim.y * _VertexAnimation.y * v.normal * v.color.g;
 	anim = sin(_Time.y * _TimePhase2 + v.vertex.y * _Period2);
 	v.vertex += anim * _VertexAnimation2 * v.color.r; //* (1.0 - s);
 	v.vertex += anim * _VertexAnimation3 * v.color.b; // *(1.0 - s);
+
+#else
+	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
+	v.vertex += anim * _VertexAnimation * v.color.g;
+
 #endif
 
 #endif
 	o.vertex = UnityObjectToClipPos(v.vertex);
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+
 	float3 normal = UnityObjectToWorldNormal(v.normal);
 
 #if !defined(GHOST)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
 #endif
-
 	// To calculate tangent world
 #ifdef NORMALMAP
 	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
