@@ -86,6 +86,10 @@ namespace AI {
 							v.Normalize();
 							if (distSqr > distAttSqr) {								
 								v *= distAttSqr / distSqr;
+							} else {
+								if (m_machine.GetSignal(Signals.Type.Critical)) {
+									m_seek *= 0.25f;
+								}
 							}
 							flee = v * speed;
 							flee.z = 0;
@@ -93,10 +97,6 @@ namespace AI {
 							#if UNITY_EDITOR
 							Debug.DrawLine(m_machine.position, m_machine.position + flee, Color.red);
 							#endif
-						}
-
-						if (m_machine.GetSignal(Signals.Type.Critical)) {
-							m_seek *= 0.25f;
 						}
 					}
 
