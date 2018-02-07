@@ -323,9 +323,11 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	// Update is called once per frame
 	protected virtual void Update() 
 	{
-		if (PreyCount <= 0 && m_attackTarget != null && m_isPlayer)
+		if (m_isPlayer && PreyCount <= 0 && m_attackTarget != null && m_holdingPrey == null)
 		{
-			BiteKill( false );
+			BiteKill( true );
+			if ( PreyCount > 0 || m_holdingPrey != null )
+				StopAttackTarget();
 		}
 
 		if ( m_attackTarget != null )
@@ -569,10 +571,6 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					float t = 1.0f - Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
 
 					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, 0);
-
-					if (!prey.prey.HasCorpse()) {						
-						prey.prey.transform.localScale = Vector3.Lerp(prey.startScale * 0.5f, prey.startScale * 0.5f, t);
-					}
 
 					// remaining time eating
 					if (prey.eatingAnimationTimer <= 0) 
