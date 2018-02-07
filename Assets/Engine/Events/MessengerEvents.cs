@@ -198,6 +198,9 @@ public enum MessengerEvents {
 	TILT_CONTROL_SENSITIVITY_CHANGED,	// params: float _sensitivity
 
 	// Global events events (xD)
+	GLOBAL_EVENT_CUSTOMIZER_ERROR,
+	GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS,
+
 	GLOBAL_EVENT_UPDATED,			// params: _requestType, the manager notifies that has received new data from the server related to the current event. Triggers with all the request types: event definition, event state, leaderboard...
 	GLOBAL_EVENT_DATA_UPDATED,
 	GLOBAL_EVENT_STATE_UPDATED,
