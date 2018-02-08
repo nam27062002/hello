@@ -95,9 +95,14 @@ public class ContentManager
         InitDefinitions();
         InitLanguages();
 
+		if (_configureServerManager) {
+	        // Content Delta Manager has to be initialised regardless 'UseDeltaContent' because it initialises the version that is sent as the X-Version of the client in all commands sent to the server
+	        InitContentDeltaManager();
+		}
+
         if (UseDeltaContent)
-        {
-            InitContentDeltaManager();
+		{            
+            ContentDeltaManager.SharedInstance.RequestAssetsLUT(ServerManager.SharedInstance.GetServerConfig().m_strServerApplicationSecretKey);
         }  
         else
         {
@@ -109,8 +114,7 @@ public class ContentManager
     {
         m_kContentDeltaDelegate = new ContentDeltaDelegate();
         ContentDeltaManager.SharedInstance.SetListener(m_kContentDeltaDelegate);
-        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer);        
-        ContentDeltaManager.SharedInstance.RequestAssetsLUT(ServerManager.SharedInstance.GetServerConfig().m_strServerApplicationSecretKey);
+        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer);                
     }
 
     private static void InitDefinitions()
@@ -252,7 +256,7 @@ public class ContentManager
         m_ready = true;
 
         // Warn all other managers and definition consumers
-        Messenger.Broadcast(EngineEvents.DEFINITIONS_LOADED);
+		Messenger.Broadcast(MessengerEvents.DEFINITIONS_LOADED);
     }
 
     #region log

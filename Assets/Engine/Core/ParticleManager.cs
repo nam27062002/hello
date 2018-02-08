@@ -36,7 +36,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		set { m_poolLimits = value; }
 	}
 
-
+	private bool m_useBlood = true;
 
 	//---------------------------------------------------------------//
 	//-- Static Methods ---------------------------------------------//
@@ -96,14 +96,19 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		#if PRINT_POOLS						
 		m_printTimer -= Time.deltaTime;
 		if (m_printTimer <= 0f) {
-			string fileName = "PM_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
-			StreamWriter sw = new StreamWriter(fileName, false);
-			sw.WriteLine("<Definitions>");
-			foreach (KeyValuePair<string, PoolContainer> pair in m_pools) {
-				sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.pool.Size() + "\"/>");
+			if (LevelManager.currentLevelData != null) {
+				string fileName = "PM_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
+				using (StreamWriter sw = new StreamWriter(fileName, false)) {
+					sw.WriteLine("<Definitions>");
+					foreach (KeyValuePair<string, PoolContainer> pair in m_pools) {
+						if (pair.Value.pool != null) {
+							sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.pool.Size() + "\"/>");
+						}
+					}
+					sw.WriteLine("</Definitions>");
+					sw.Close();
+				}
 			}
-			sw.WriteLine("</Definitions>");
-			sw.Close();
 			m_printTimer = 10f;
 		}
 		#endif
@@ -114,6 +119,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	}
 
 	private void __PreBuild() {
+		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
 		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
 				List<DefinitionNode> poolSizes = GetPoolSizesForCurrentArea();
@@ -175,6 +181,13 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				pc.size = def.GetAsInt("countVeryHigh", pc.size);
 				break;
 		}
+
+		// size is 0 if we dont want to use blood and the particle is blood
+		if ( !m_useBlood && def.GetAsBool("isBlood", false))
+		{
+			pc.size = 0;
+		}
+
 		return pc;
 	}
 
@@ -183,6 +196,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// Rebuild. When changin area, this funcion makes the proper changes to adapt to the area
 	/// </summary>
 	private void __Rebuild() {
+		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
 		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
 				Dictionary<string, PoolContainer> toDelete = new Dictionary<string, PoolContainer>( m_pools );
@@ -211,15 +225,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		}
 	}
 
-	private ParticleHandler __CreatePool(string _prefabName, string _folderPath) {
-		if (string.IsNullOrEmpty(_prefabName)) {
+	private ParticleHandler __CreatePool(string _prefabName, string _folderPath) {        
+        if (string.IsNullOrEmpty(_prefabName)) {
 			return null;
 		} else {
 			PoolContainer container = null;
 
 			if (m_pools.ContainsKey(_prefabName)) {
 				container = m_pools[_prefabName];
-				if ( container.size <= 0 )
+				if ( container.size < 0 )
 					container.size = 1;
 			} else {
 				container = new PoolContainer();

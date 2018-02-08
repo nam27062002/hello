@@ -55,7 +55,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		m_eventCountdownUpdateTimer = 0f;
 
 		// Subscribe to external events
-		Messenger.AddListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -63,7 +63,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<GlobalEventManager.RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.RemoveListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -81,7 +81,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 			// Parse remaining time
 			m_timerText.text = TimeUtils.FormatTime(
-				GlobalEventManager.currentEvent.remainingTime.TotalSeconds,
+				System.Math.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),	// Never show negative time!
 				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			);

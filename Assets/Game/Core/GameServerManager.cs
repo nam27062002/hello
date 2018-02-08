@@ -126,32 +126,39 @@ public class GameServerManager
         }
     }
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public void CheckConnection(ServerCallback callback)
-	{
-		if (Application.internetReachability != NetworkReachability.NotReachable)
-		{
-			if (callback != null)
-			{
-				callback(null, null);
-			}
-		}
-		else
-		{
-			Debug.Log("HSXServer (CheckConnection) :: InternetReachability NotReachable");
-			callback(new FGOL.Server.ClientConnectionError("InternetReachability NotReachable", FGOL.Server.ErrorCodes.ClientConnectionError), null);
-		}
+    public virtual void Reset() {}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void CheckConnection(Action<Error> callback)
+	{        
+       if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            Debug.Log("GameServerManager (CheckConnection) :: InternetReachability NotReachable");
+            callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
+        }
+        else
+        {
+            Ping((Error _error, GameServerManager.ServerResponse _response) =>
+            {
+                if (callback != null)
+                {
+                    callback(_error);
+                }
+            });           
+        }        
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC SERVER MANAGEMENT											  //
-	//------------------------------------------------------------------------//
-    protected virtual void ExtendedConfigure() {}
-    public virtual void Init(GeoLocation.Location location) {}
+	public virtual void OnConnectionLost() {}
+
+    public virtual void Connection_SetIsCheckEnabled(bool value) {}
+
+    //------------------------------------------------------------------------//
+    // GENERIC SERVER MANAGEMENT											  //
+    //------------------------------------------------------------------------//
+    protected virtual void ExtendedConfigure() {}    
 	public virtual void Ping(ServerCallback callback) {}
-	public virtual void SetServerLocation(GeoLocation.Location location) {}
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
 
 	//------------------------------------------------------------------------//
@@ -186,10 +193,10 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     // LOGIN																  //
     //------------------------------------------------------------------------//
-    public virtual void Auth(ServerCallback callback) {}    
-    public virtual void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {}
+    public virtual void Auth(ServerCallback callback) {}        
 	public virtual void LogOut() {}
-    public virtual bool IsLoggedIn() { return false; }    
+    public virtual bool IsLoggedIn() { return false; }
+    public virtual void OnLogOut() {}    
 
     //------------------------------------------------------------------------//
     // CUSTOMIZER															  //
@@ -212,7 +219,8 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     // OTHERS																  //
     //------------------------------------------------------------------------//
-    public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {}    
+    public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {}
+    public virtual void SendTrackLoading(string step, int deltaTime, bool isFirstTime, int sessionsCount, ServerCallback callback) {}   
 
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS														  //
@@ -257,13 +265,11 @@ public class GameServerManager
 
 	//------------------------------------------------------------------------//
 	// DEBUG ONLY															  //
-	//------------------------------------------------------------------------//
-	#if UNITY_EDITOR
+	//------------------------------------------------------------------------//	
 	/// <summary>
 	/// Update frame.
 	/// </summary>
 	public virtual void Update() {
 		;	// Put a breakpoint in here to peek what the GameServerManager is doing
-	}
-	#endif
+	}	
 }

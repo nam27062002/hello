@@ -10,7 +10,8 @@ public class FunnelData_FirstUX : FunnelData {
 		_03_game_started,
     	_04_run_is_done,
     	_05_continue_clicked,
-    	_06_load_and_animation,
+    	_06a_load_done,
+		_06b_animation_done,
     	_07_close_tier_popup,
     	_08_continue_clicked,
     	_09_close_missions_popup,
@@ -28,7 +29,8 @@ public class FunnelData_FirstUX : FunnelData {
 	private const string STEP_03_game_started	 		= "03.game_started";
 	private const string STEP_04_run_is_done	 		= "04.run_is_done";
 	private const string STEP_05_continue_clicked		= "05.continue_clicked";
-	private const string STEP_06_load_and_animation 	= "06.load_and_animation";
+	private const string STEP_06a_load_done 			= "06.a load_done";
+	private const string STEP_06b_animation_done	 	= "06.b animation_done";
 	private const string STEP_07_close_tier_popup 		= "07.close_tier_popup";
 	private const string STEP_08_continue_clicked		= "08.continue_clicked";
 	private const string STEP_09_close_missions_popup	= "09.close_missions_popup";
@@ -46,7 +48,8 @@ public class FunnelData_FirstUX : FunnelData {
 		SetupStep((int)Steps._03_game_started, 			STEP_03_game_started);
 		SetupStep((int)Steps._04_run_is_done, 			STEP_04_run_is_done);
 		SetupStep((int)Steps._05_continue_clicked, 		STEP_05_continue_clicked);
-		SetupStep((int)Steps._06_load_and_animation, 	STEP_06_load_and_animation);
+		SetupStep((int)Steps._06a_load_done,		 	STEP_06a_load_done);
+		SetupStep((int)Steps._06b_animation_done, 		STEP_06b_animation_done);
 		SetupStep((int)Steps._07_close_tier_popup, 		STEP_07_close_tier_popup);
 		SetupStep((int)Steps._08_continue_clicked, 		STEP_08_continue_clicked);
 		SetupStep((int)Steps._09_close_missions_popup, 	STEP_09_close_missions_popup);

@@ -175,7 +175,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Load the dragon
 		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
 	}
@@ -256,7 +256,7 @@ public class GameSceneController : GameSceneControllerBase {
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
-						Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_ENDED);
+						Messenger.Broadcast(MessengerEvents.GAME_COUNTDOWN_ENDED);
 						// ChangeState(EStates.RUNNING);
 					}
 				}
@@ -342,7 +342,8 @@ public class GameSceneController : GameSceneControllerBase {
 							if ( done )
 							{								
 								PoolManager.Rebuild();
-								Messenger.Broadcast(GameEvents.GAME_AREA_ENTER);
+								Messenger.Broadcast(MessengerEvents.GAME_AREA_ENTER);
+                                HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 								m_switchingArea = false;
 							}
 						}break;
@@ -350,7 +351,7 @@ public class GameSceneController : GameSceneControllerBase {
 				}
 
 				// Notify listeners
-				Messenger.Broadcast(GameEvents.GAME_UPDATED);
+				Messenger.Broadcast(MessengerEvents.GAME_UPDATED);
 			} break;
 
 			case EStates.FINISHED: {
@@ -392,7 +393,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         CustomParticlesCulling.Manager_OnDestroy();
 
-        Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
 	//------------------------------------------------------------------//
@@ -426,8 +427,6 @@ public class GameSceneController : GameSceneControllerBase {
     /// End the current game. Wont reset the stats so they can be used.
     /// <param name="_quitGame">Whether or not the game is ended because the user has quit.</param>
     public void EndGame(bool _quitGame) {    
-		Screen.sleepTimeout = SleepTimeout.SystemSetting;
-
         //
         // Tracking
         //
@@ -441,11 +440,13 @@ public class GameSceneController : GameSceneControllerBase {
         // Make sure game is not paused
         PauseGame(false, true);
 
+		Screen.sleepTimeout = SleepTimeout.SystemSetting;
+
 		// Change state
 		ChangeState(EStates.FINISHED);
 
 		// Dispatch game event
-		Messenger.Broadcast(GameEvents.GAME_ENDED);
+		Messenger.Broadcast(MessengerEvents.GAME_ENDED);
 
 		// Open summary screen - override timer after calling this method if you want some delay
 		m_timer = 0.0125f;
@@ -467,9 +468,12 @@ public class GameSceneController : GameSceneControllerBase {
 					// Not if already paused, otherwise resume wont work!
 					if(!m_paused) m_timeScaleBackup = Time.timeScale;
 					Time.timeScale = 0.0f;
+					Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
+                    //Stop Performance tracking 
+                    HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
 					// Notify the game
-					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, true);
+					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, true);
 				}
 
 				// Increase stack
@@ -486,11 +490,14 @@ public class GameSceneController : GameSceneControllerBase {
 				if(m_pauseStacks == 0) {
 					// Restore previous timescale
 					Time.timeScale = m_timeScaleBackup;
+					Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 					// Notify the game
-					Messenger.Broadcast<bool>(GameEvents.GAME_PAUSED, false);
-				}
-			}
+					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, false);
+                    //Start Performance tracking 
+                    HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
+                }
+            }
 
 			// Update logic flag
 			m_paused = (m_pauseStacks > 0);
@@ -534,7 +541,7 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.gameCamera.Init();
 
 				// Dispatch game event
-				Messenger.Broadcast(GameEvents.GAME_LEVEL_LOADED);
+				Messenger.Broadcast(MessengerEvents.GAME_LEVEL_LOADED);
 
 				// Enable dragon back and put it in the spawn point
 				// Don't make it playable until the countdown ends
@@ -550,7 +557,7 @@ public class GameSceneController : GameSceneControllerBase {
 				StartCoroutine( OneFrameAfterActivation() );
 
                 // Notify the game
-                Messenger.Broadcast(GameEvents.GAME_STARTED);
+                Messenger.Broadcast(MessengerEvents.GAME_STARTED);
 			} break;
 
 			case EStates.COUNTDOWN: {
@@ -564,8 +571,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 			case EStates.RUNNING: {
                 // Unsubscribe from external events
-                Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKO);
-                Messenger.RemoveListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+                Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKO);
+                Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, OnPlayerDied);
 			} break;
 		}
 		
@@ -609,13 +616,15 @@ public class GameSceneController : GameSceneControllerBase {
 				SpawnerManager.instance.EnableSpawners();
 
 				// Notify the game
-				Messenger.Broadcast(GameEvents.GAME_COUNTDOWN_STARTED);
-			} break;
+				Messenger.Broadcast(MessengerEvents.GAME_COUNTDOWN_STARTED);
+                // Begin performance track
+                HDTrackingManager.Instance.Notify_StartPerformanceTracker();
+            } break;
 				
 			case EStates.RUNNING: {
                 // Subscribe to external events
-                Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKO);
-                Messenger.AddListener(GameEvents.PLAYER_DIED, OnPlayerDied);
+                Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKO);
+                Messenger.AddListener(MessengerEvents.PLAYER_DIED, OnPlayerDied);
 
 				// Make dragon playable!
 				InstanceManager.player.playable = true;
@@ -637,8 +646,11 @@ public class GameSceneController : GameSceneControllerBase {
 					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._04_run_is_done);
 				}
 
+                // Stops performance track
+                HDTrackingManager.Instance.Notify_StopPerformanceTracker();
+
                 // Show loading screen
-				LoadingScreen.Toggle(true, false);
+                LoadingScreen.Toggle(true, false);
 
 				// Disable dragon and entities!
      			InstanceManager.player.gameObject.SetActive(false);
@@ -761,8 +773,9 @@ public class GameSceneController : GameSceneControllerBase {
     {
     	if ( LevelManager.currentArea != _nextArea && !m_switchingArea)
     	{
-			// ParticleManager.Clear();
-			Messenger.Broadcast(GameEvents.GAME_AREA_EXIT);
+            // ParticleManager.Clear();
+            HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
+			Messenger.Broadcast(MessengerEvents.GAME_AREA_EXIT);
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
 			m_switchState = SwitchingAreaSate.UNLOADING_SCENES;
@@ -796,6 +809,9 @@ public class GameSceneController : GameSceneControllerBase {
 		m_mapUsageTracker.SetValue(0, false);
 
 		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+
+        // Automatic connection system is disabled during the round in order to ease performance
+        GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);
     }
 
     private void Track_RoundEnd() {
@@ -827,6 +843,9 @@ public class GameSceneController : GameSceneControllerBase {
         HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
             RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
+
+        // Automatic connection system is enabled again since performance is not a constraint anymore
+        GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
     }
 
     private void Track_RunEnd(bool _quitGame) {

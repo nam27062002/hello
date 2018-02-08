@@ -7,6 +7,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using DG.Tweening;
 
 /// <summary>
 /// This class is responsible for handling the options tab in the settings popup.
@@ -20,10 +22,17 @@ public class PopupSettingsOptionsTab : MonoBehaviour
     [SerializeField] private GameObject m_languagePillPrefab = null;
 	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
 	[Space]
+	[SerializeField] private Slider m_graphicsQualitySlider = null;
+	[SerializeField] private CanvasGroup m_graphicsQualityCanvasGroup = null;
+	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
+	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
+	[Space]
 	[SerializeField] private GameObject m_googlePlayGroup = null;
 	[SerializeField] private GameObject m_googlePlayLoginButton = null;
 	[SerializeField] private GameObject m_googlePlayLogoutButton = null;
 	[SerializeField] private Button m_googlePlayAchievementsButton = null;
+	[Space]
+	[SerializeField] private GameObject m_gameCenterGroup = null;
 
 #if UNITY_ANDROID
 	const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
@@ -35,6 +44,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 	private PopupController m_loadingPopupController = null;
 	private bool m_dirty = false;
+
+	private int m_graphicsMaxLevel = 4;
+	private int m_initialGraphicsQualityLevel = -1;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -75,14 +87,17 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		// Disable google play group if not available
 #if UNITY_ANDROID
 		m_googlePlayGroup.SetActive(true);
-		Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 #else
-		m_googlePlayGroup.SetActive(false);	// [AOC] TODO!!
+		m_googlePlayGroup.SetActive(false);
 #endif
+
+		// Do the same for the GameCenter group!
+		m_gameCenterGroup.SetActive(Application.platform == RuntimePlatform.IPhonePlayer);
     }
 
     void OnDestroy(){
-		Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
     }
 
 	void Update() {
@@ -109,6 +124,15 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Update the graphics quality textfield with the current selected value.
+	/// </summary>
+	private void RefreshGraphicsQualityText() {
+		// Just display the number
+		int value = Mathf.Min(m_graphicsMaxLevel, (int)m_graphicsQualitySlider.value);	// Special case for when max level is 0
+		m_graphicsQualityCurrentValueText.text = StringUtils.FormatNumber(value + 1);
+	}
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
@@ -133,15 +157,96 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			}
 		}
 
-		Messenger.Broadcast(EngineEvents.LANGUAGE_CHANGED);
+		Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
 	}
 
 	/// <summary>
-	/// The popup has just finished open.
+	/// The graphics quality slider has changed its value.
 	/// </summary>
-	public void OnOpenPostAnimation() {
-		// SelectCurrentLanguage(false);
-		// UbiBCN.CoroutineManager.DelayedCallByFrames(() => { SelectCurrentLanguage(true); }, 5);
+	/// <param name="_newValue">New value.</param>
+	public void OnGraphicsQualityChanged(float _newValue) {
+		// Ignore if max quality level is 0 (shouldn't even get here)
+		if(m_graphicsMaxLevel == 0) return;
+
+		// Store new value
+		FeatureSettingsManager.instance.SetUserProfileLevel((int)_newValue);
+
+		// Update text
+		RefreshGraphicsQualityText();
+	}
+
+	/// <summary>
+	/// The popup is about to open.
+	/// </summary>
+	public void OnOpenPreAnimation() {
+		// Initialize Graphics Quality Slider
+		m_initialGraphicsQualityLevel = FeatureSettingsManager.instance.GetUserProfileLevel();
+		m_graphicsMaxLevel = FeatureSettingsManager.instance.GetMaxProfileLevelSupported();
+		int userLevel = m_initialGraphicsQualityLevel;
+		if(userLevel < 0) {
+			userLevel = FeatureSettingsManager.instance.GetCurrentProfileLevel();
+		}
+
+		// Special case when only 1 level is available
+		m_graphicsQualitySlider.minValue = 0;
+		if(m_graphicsMaxLevel == 0) {
+			m_graphicsQualitySlider.maxValue = 1;
+			m_graphicsQualitySlider.value = 1;
+			m_graphicsQualityCanvasGroup.interactable = false;
+		} else {
+			m_graphicsQualitySlider.maxValue = m_graphicsMaxLevel;
+			m_graphicsQualitySlider.value = userLevel;
+			m_graphicsQualityCanvasGroup.interactable = true;
+		}
+		m_graphicsQualitySlider.onValueChanged.AddListener(OnGraphicsQualityChanged);
+
+		// Adjust number of separators according to slider's max value
+		for(int i = 0; i < m_graphicsQualitySeparators.Length; ++i) {
+			m_graphicsQualitySeparators[i].SetActive(i < (int)m_graphicsQualitySlider.maxValue);	// Last level doesn't have a separator (it's the end of the slider)
+		}
+
+		// Initialize text
+		RefreshGraphicsQualityText();
+	}
+
+	/// <summary>
+	/// The popup is about to be closed.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// If the graphics quality setting has changed, apply new value
+		// Ignore if max quality level is 0 (shouldn't even get here)
+		if(m_graphicsMaxLevel > 0 && FeatureSettingsManager.instance.GetUserProfileLevel() != m_initialGraphicsQualityLevel) {
+			// Program a sequence of events so every step has enough time to be applied properly
+			DOTween.Sequence()
+				.SetAutoKill(true)
+				.AppendCallback(() => {
+					// Show busy screen
+					BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_QUALITY_SLIDER_APPLYING"));
+					BusyScreen.Show(this, false);
+				})
+				.AppendInterval(0.5f)
+				.AppendCallback(() => {
+					// Apply new quality setting
+					FeatureSettingsManager.instance.RecalculateAndApplyProfile();
+				})
+				.AppendInterval(0.5f)
+				.AppendCallback(() => {
+					// Hide busy screen
+					BusyScreen.Hide(this, true);
+				})
+				.SetUpdate(true)
+				.Play();
+		}
+
+		// Remove listener
+		m_graphicsQualitySlider.onValueChanged.RemoveListener(OnGraphicsQualityChanged);
+	}
+
+	/// <summary>
+	/// The popup has been closed.
+	/// </summary>
+	public void OnClosePostAnimation() {
+		
 	}
 
 	public void RefreshGooglePlayView(){
@@ -181,9 +286,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	public void OnShow(){
 		#if UNITY_ANDROID
 			RefreshGooglePlayView();
-			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-			Messenger.AddListener(EngineEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
 
 		m_dirty = true;
@@ -191,9 +296,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 	public void OnHide(){
 		#if UNITY_ANDROID
-			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
 	}
 
@@ -236,4 +341,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 	}
 
+	public void OnGameCenterButton() {
+		// Black magic from Calety xD
+		GameCenterManager.SharedInstance.LaunchGameCenterApp();
+	}
 }

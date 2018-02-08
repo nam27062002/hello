@@ -161,8 +161,8 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
-		Messenger.AddListener<string, int , string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.AddListener<string, int , string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	/// <summary>
@@ -170,8 +170,8 @@ public class DragonEquip : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
-		Messenger.RemoveListener<string, int, string>(GameEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, OnDisguiseChanged);
+		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -224,11 +224,7 @@ public class DragonEquip : MonoBehaviour {
 		if ( m_menuMode ){
 			SetSkin( skin );
 		}else{
-			if ( skin.EndsWith("_0") ){
-				SetSkin( skin + "_ingame" );
-			}else{
-				SetSkin( skin );
-			}
+			SetSkin( skin + "_ingame" );
 		}
 
 
@@ -574,6 +570,7 @@ public class DragonEquip : MonoBehaviour {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();
 				newInstance.transform.localScale = Vector3.one * player.data.def.GetAsFloat("petScale");
+				newInstance.transform.position = m_attachPoints[attachPointIdx].transform.position;
 				// newInstance.transform.localScale = Vector3.one * player.data.scale;
 			}
 

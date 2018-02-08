@@ -26,6 +26,13 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
 
+	public enum Tabs {
+		MISSIONS,
+		CHESTS,
+		GLOBAL_EVENTS,
+		LEADERBOARDS
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -48,6 +55,29 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Disable some tabs during FTUX
+		// Chests
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
+			m_tabs.GetTab((int)Tabs.CHESTS).tabEnabled = false;
+		}
+
+		// Global Events
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
+			m_tabs.GetTab((int)Tabs.GLOBAL_EVENTS).tabEnabled = false;
+		}
+	}
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		
+	}
+
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
@@ -83,23 +113,24 @@ public class GoalsScreenController : MonoBehaviour {
 			//		 Luckily for us Unity provides us with the right tools to rebuild it
 			//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
 			HorizontalOrVerticalLayoutGroup layout = m_eventActiveGroup.transform.GetComponentInParent<HorizontalOrVerticalLayoutGroup>();
-			LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
+			if(layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
 
 			// Event Timer - only if active
 			if(validEvent) {
 				// Timer text
+				double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);	// Never go negative!
 				m_eventCountdownText.text = TimeUtils.FormatTime(
-					evt.remainingTime.TotalSeconds,
+					remainingSeconds,
 					TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
 					2
 				);
 
 				// Timer bar
 				TimeSpan totalSpan = evt.endTimestamp - evt.startTimestamp;
-				m_eventCountdownSlider.value = 1f - (float)(evt.remainingTime.TotalSeconds/totalSpan.TotalSeconds);
+				m_eventCountdownSlider.value = 1f - (float)(remainingSeconds/totalSpan.TotalSeconds);
 
 				// If time has finished, request new data
-				if (GlobalEventManager.currentEvent.remainingTime.TotalSeconds <= 0 ){
+				if(remainingSeconds <= 0) {
 					GlobalEventManager.RequestCurrentEventState();
 				}
 			}
@@ -123,9 +154,17 @@ public class GoalsScreenController : MonoBehaviour {
 	/// The screen is about to be displayed.
 	/// </summary>
 	public void OnShowPreAnimation() {
+		// If there is an active global event, go to the events tab
+		// Do it as well if the event is pending reward collection
+		if(GlobalEventManager.currentEvent != null
+			&& (GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
+			&& m_tabs.GetTab((int)Tabs.GLOBAL_EVENTS).tabEnabled) {
+			m_tabs.GoToScreenInstant((int)Tabs.GLOBAL_EVENTS);
+		}
+
 		// If active tab is the Events tab, force a refresh
 		if(m_tabs.currentScreen != null) {
-			if(m_tabs.currentScreen.screenName == "eventsTab") {
+			if(m_tabs.currentScreenIdx == (int)Tabs.GLOBAL_EVENTS) {
 				// [AOC] Hardcore way to do it: simulate an OnShow() event like we just switched to this tab
 				m_tabs.currentScreen.OnShow.Invoke();
 			}

@@ -38,8 +38,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 				m_defaultValues[SHOW_BIG_AMOUNT_CONFIRMATION_POPUP] = true;
 				m_defaultValues[SHOW_EXIT_RUN_CONFIRMATION_POPUP] = true;
-
-				m_defaultValues[NOTIFICATIONS_ENABLED] = true;
 			}
 			return m_defaultValues;
 		}
@@ -59,7 +57,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		get { return Prefs.GetFloatPlayer(TILT_CONTROL_SENSITIVITY, 0.5f); }
 		set {
 			Prefs.SetFloatPlayer(TILT_CONTROL_SENSITIVITY, value);
-			Messenger.Broadcast<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, value);
+			Messenger.Broadcast<float>(MessengerEvents.TILT_CONTROL_SENSITIVITY_CHANGED, value);
 		}
 	}
 
@@ -67,22 +65,35 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
 	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";	// bool, default true
 
-	// Other settings
-	public const string NOTIFICATIONS_ENABLED = "GAME_SETTINGS_NOTIFICATIONS_ENABLED";	// bool, default true
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Add here any global setup variable such as quality, server ip, debug enabled, ...
-	[Comment("Name of the dragon instance on the scene")]
+	// Versioning
+	[Separator("Versioning")]
+	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
+	public static Version internalVersion { get { return instance.m_internalVersion; }}
+	
+	// Gameplay
 	[Separator("Gameplay")]
+	[Comment("Name of the dragon instance on the scene")]
 	[SerializeField] private string m_playerName = "Player";
 	public static string playerName { get { return instance.m_playerName; }}
 
-	[Separator("Versioning")]
-	[Comment("Used by the development team, QC, etc. to identify each build internally.\nFormat X.Y.Z where:\n    - X: Development Stage [1..4] (1 - Preproduction, 2 - Production, 3 - Soft Launch, 4 - Worldwide Launch)\n    - Y: Sprint Number [1..N]\n    - Z: Build Number [1..N] within the sprint, increased by 1 for each new build")]
-	[SerializeField] private Version m_internalVersion = new Version(0, 1, 0);
-	public static Version internalVersion { get { return instance.m_internalVersion; }}
+	// FTUX
+	[Separator("FTUX")]
+	[SerializeField] private int m_enableChestsAtRun = 3;
+	public static int ENABLE_CHESTS_AT_RUN { get { return instance.m_enableChestsAtRun; }}
+
+	[SerializeField] private int m_enableEggsAtRun = 2;
+	public static int ENABLE_EGGS_AT_RUN { get { return instance.m_enableEggsAtRun; }}
+
+	[SerializeField] private int m_enableMissionsAtRun = 2;
+	public static int ENABLE_MISSIONS_AT_RUN { get { return instance.m_enableMissionsAtRun; }}
+
+	[SerializeField] private int m_enableGlobalEventsAtRun = 3;
+	public static int ENABLE_GLOBAL_EVENTS_AT_RUN { get { return instance.m_enableGlobalEventsAtRun; }}
 
 	// Internal references
 	private AudioMixer m_audioMixer = null;
@@ -149,7 +160,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		Prefs.SetBoolPlayer(_settingId, _value);
 
 		// Notify game
-		Messenger.Broadcast<string, bool>(GameEvents.GAME_SETTING_TOGGLED, _settingId, _value);
+		Messenger.Broadcast<string, bool>(MessengerEvents.GAME_SETTING_TOGGLED, _settingId, _value);
 	}
 
 	//------------------------------------------------------------------//

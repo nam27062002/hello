@@ -40,12 +40,14 @@ public class DeviceQualityManager
 
         // Min memory in bytes required to run this profile
         public int MinMemory { get; set; }
+        public int GfxMemory { get; set; }
         public JSONNode Json { get; set; }
 
-        public ProfileData(float rating, int minMemory, JSONNode json)
+        public ProfileData(float rating, int minMemory, int gfxMemory, JSONNode json)
         {
             Rating = rating;
             MinMemory = minMemory;
+            GfxMemory = gfxMemory;
             Json = json;
         }
     }
@@ -66,6 +68,12 @@ public class DeviceQualityManager
     /// </summary>
     private int Profiles_MinMemory { get; set; }
 
+    /// <summary>
+    /// Min gfx memory in bytes required to run the game
+    /// </summary>
+    private int Profiles_GfxMemory { get; set; }
+
+
     public void Profiles_Clear()
     {
         if (Profiles_Names != null)
@@ -78,10 +86,10 @@ public class DeviceQualityManager
             Profiles_Data.Clear();
         }
 
-        Profiles_MinMemory = int.MaxValue;
+        Profiles_GfxMemory = Profiles_MinMemory = int.MaxValue;
     }    
 
-    public void Profiles_AddData(string profileName, float rating, int minMemory, JSONNode settings)
+    public void Profiles_AddData(string profileName, float rating, int minMemory, int gfxMemory, JSONNode settings)
     {
         if (Profiles_Names == null)
         {
@@ -101,7 +109,7 @@ public class DeviceQualityManager
                 Profiles_Data = new Dictionary<string, ProfileData>();
             }
 
-            ProfileData profileData = new ProfileData(rating, minMemory, settings);
+            ProfileData profileData = new ProfileData(rating, minMemory, gfxMemory, settings);
             Profiles_Data.Add(profileName, profileData);
 
             // Makes sure that the profiles are sorted which is important to be able to determine the profile for a rating given (Profiles_RatingToProfileName())
@@ -150,11 +158,14 @@ public class DeviceQualityManager
     /// <param name="rating"></param>
     /// <param name="memorySize">memory size in bytes</param>
     /// <returns></returns>
-    public string Profiles_RatingToProfileName(float rating, int memorySize)
+    public string Profiles_RatingToProfileName(float rating, int memorySize, int gfxMemorySize)
     {
         if (memorySize < Profiles_MinMemory)
         {
-            LogWarning("memory Size " + memorySize + " is lower than the minimum memory required by the game (" + Profiles_MinMemory + ")");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                LogWarning("memory Size " + memorySize + " is lower than the minimum memory required by the game (" + Profiles_MinMemory + ")");
+            }
 
             // Memory size is forced to min memory. Some devices have a few bytes less than 1GB so we try our luck
             memorySize = 1024;
@@ -167,18 +178,107 @@ public class DeviceQualityManager
             int count = Profiles_Names.Count;
             
             // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
-            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating < rating; i++)
+            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating <= rating; i++)
             {
                 // Makes sure that it has memory and rating enough to use this profile
-                if (memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating < rating)
+                if (memorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
                 {
                     returnValue = Profiles_Names[i];
                 }                
             }                                   
         }
 
+        if (returnValue == null && FeatureSettingsManager.IsDebugEnabled)
+        {
+            LogWarning("No profile available");
+        }
+
         return returnValue;
-    }       
+    }  
+
+    public float Profiles_ProfileNameToRating(string profileName)
+    {
+        float returnValue = -1f;
+        if (Profiles_Data != null && Profiles_Data.ContainsKey(profileName))
+        {
+            returnValue = Profiles_Data[profileName].Rating;            
+        }
+
+        if (returnValue < 0f && FeatureSettingsManager.IsDebugEnabled)
+        {
+            LogWarning("No profile " + profileName + " found");
+        }
+
+        return returnValue;
+    }
+    
+    public int Profiles_GetMaxProfileLevel(int memorySize)
+    {
+        int returnValue = -1;
+
+        // Max profile allowed depends on memory size
+        if (Profiles_Names != null)
+        {
+            int i;
+            int count = Profiles_Names.Count;
+
+            // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
+            for (i = 0; i < count; i++)
+            {
+                // Makes sure that it has memory and rating enough to use this profile
+                if (memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory)
+                {
+                    returnValue = i;
+                }
+            }
+        }
+
+        if (returnValue == -1)
+        {
+            // The minimum is returned
+            returnValue = 0;
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LogWarning("No profile available for memory " + memorySize);
+        }
+
+        return returnValue;
+    }     
+
+    /// <summary>
+    /// Returns the minimum amount of memory in megabytes required to run the game
+    /// </summary>
+    /// <returns></returns>
+    public int Profiles_GetMinMemoryRequired()
+    {
+        int returnValue = int.MaxValue;
+
+        // Max profile allowed depends on memory size
+        if (Profiles_Names != null)
+        {
+            int i;
+            int count = Profiles_Names.Count;
+
+            // Loops through all profiles checking their memory requirements
+            for (i = 0; i < count; i++)
+            {                
+                if (Profiles_Data[Profiles_Names[i]].MinMemory < returnValue)
+                {
+                    returnValue = Profiles_Data[Profiles_Names[i]].MinMemory;
+                }
+            }
+        }
+
+        if (returnValue == int.MaxValue)
+        {
+            returnValue = 0;
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LogWarning("No memory data loaded");
+        }
+
+        return returnValue;
+    }
     #endregion
 
     #region device

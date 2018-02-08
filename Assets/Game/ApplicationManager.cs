@@ -64,14 +64,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Reset();
 
-        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
-        //SocialFacade.Instance.Init();
-        GameServicesFacade.Instance.Init();        
+        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);                
 
         // This class needs to know whether or not the user is in the middle of a game
-        Messenger.AddListener(GameEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
-        Messenger.AddListener<bool>(GameEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.AddListener(GameEvents.GAME_ENDED, Game_OnEnded);        
+        Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
+        Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
+        Messenger.AddListener(MessengerEvents.GAME_ENDED, Game_OnEnded);        
 
 		Device_Init();
 
@@ -96,8 +94,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		}
 
         // Subscribe to external events
-        Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
-        Messenger.AddListener(GameEvents.GAME_ENDED, Debug_OnLevelReset);
+        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
+        Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
 
         StartCoroutine(Device_Update());
     }
@@ -138,7 +136,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Device_Destroy();
         
         m_isAlive = false;
-        Messenger.Broadcast(GameEvents.APPLICATION_QUIT);
+        Messenger.Broadcast(MessengerEvents.APPLICATION_QUIT);
 
         // This needs to be called once all stuff is done, otherwise this singleton will be marked as destroyed and some other stuff won't
         // be able to access it
@@ -208,6 +206,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 // Test quality settings
                 //Debug_TestQualitySettings();
                 // ---------------------------         
+
+                // ---------------------------
+                // Test user profile level
+                //Debug_TestUserProfileLevel();
+                // ---------------------------
 
                 // ---------------------------
                 // Test toggling entities visibility
@@ -477,7 +480,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // When this is enabled the user will be allowed to enable the vertical orientation on the control panel
             if (FeatureSettingsManager.IsVerticalOrientationEnabled)
             {
-                Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+                Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
             }
         }
 	}
@@ -486,7 +489,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	{
 		if (FeatureSettingsManager.IsVerticalOrientationEnabled) 
 		{
-			Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
+			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Device_OnOrientationSettingsChanged);
 		}
 	}
 
@@ -529,7 +532,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             {
                 Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
 #endif
-                Messenger.Broadcast<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);
+                Messenger.Broadcast<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);
             }
 
             // Check for an Orientation Change
@@ -543,7 +546,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     if (Device_Orientation != Input.deviceOrientation)
                     {
                         Device_Orientation = Input.deviceOrientation;
-                        Messenger.Broadcast<DeviceOrientation>(GameEvents.DEVICE_ORIENTATION_CHANGED, Device_Orientation);
+                        Messenger.Broadcast<DeviceOrientation>(MessengerEvents.DEVICE_ORIENTATION_CHANGED, Device_Orientation);
                     }
                     break;
             }
@@ -607,13 +610,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             GameCenterManager.SharedInstance.RequestUserToken(); // Async process
 
-			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_STATE_UPDATE);
+			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onAuthenticationFailed()
         {
             Debug.Log("GameCenterDelegate onAuthenticationFailed");
-			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_AUTH_FAILED);
+			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED);
         }
 
         public override void onAuthenticationCancelled()
@@ -623,13 +626,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 			// On android if player cancells the authentication we will not ask again
 			CacheServerManager.SharedInstance.SetVariable(GC_ON_START_KEY, "false" , false);
 #endif
-			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_AUTH_CANCELLED);
+			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED);
         }
 
         public override void onUnauthenticated()
         {
             Debug.Log("GameCenterDelegate onUnauthenticated");
-			Messenger.Broadcast(EngineEvents.GOOGLE_PLAY_STATE_UPDATE);
+			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onGetToken(JSONNode kTokenDataJSON)
@@ -669,7 +672,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Load achievements
 		GameCenterManager.GameCenterItemData[] kAchievementsData = null;
 		Dictionary<string, DefinitionNode> kAchievementSKUs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.ACHIEVEMENTS);
-		if (kAchievementSKUs.Count > 0)
+		if (kAchievementSKUs != null && kAchievementSKUs.Count > 0)
 		{
 			kAchievementsData = new GameCenterManager.GameCenterItemData[kAchievementSKUs.Count];
 			int iSKUIdx = 0;
@@ -738,9 +741,67 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	return ret;
     }
 
-#endregion
+    #endregion
 
-#region debug
+    #region apps
+    public enum EApp
+    {
+        HungryDragon,
+        HungrySharkEvo
+    };
+
+    public static void Apps_OpenAppInStore(EApp app)
+    {
+        string appId = Apps_GetAppIdInStore(app);
+        if (string.IsNullOrEmpty(appId))
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)            
+                LogError("No appId found for app " + app.ToString());
+            
+        }
+        else
+        {			
+            MiscUtils.OpenAppInStore(appId);
+        }
+    }
+
+    public static string Apps_GetAppIdInStore(EApp app)
+    {
+        string returnValue = null;
+
+        switch (app)
+        {
+            case EApp.HungryDragon:
+                returnValue = Apps_GetHDIdInStore();
+                break;
+
+            case EApp.HungrySharkEvo:
+                returnValue = Apps_GetHSEIdInStore();
+                break;
+        }
+
+        return returnValue;
+    }
+
+    private static string Apps_GetHDIdInStore()
+    {
+		return Application.identifier;
+    }
+
+    private static string Apps_GetHSEIdInStore()
+    {
+        string returnValue = null;
+#if UNITY_IOS
+        returnValue = "535500008"; //HSE App Store ID
+#elif UNITY_ANDROID
+        returnValue = "com.fgol.HungrySharkEvolution"; //HSE Google play ID
+#endif
+
+        return returnValue;
+    }
+    #endregion
+
+    #region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
@@ -773,7 +834,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         FeatureSettingsManager.instance.SetupCurrentFeatureSettings(def.ToJSON(), null, null);
 
         // The client is notified that some quality settings might have changed
-        Messenger.Broadcast(GameEvents.CP_QUALITY_CHANGED);
+        Messenger.Broadcast(MessengerEvents.CP_QUALITY_CHANGED);
     }
 
     private void Debug_TestFeatureSettingsTypeData()
@@ -800,12 +861,24 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         */
     }
 
+    private int m_DebugUserProfileLevel = -1;
+    private void Debug_TestUserProfileLevel()
+    {
+        int currentUserProfileLevel = FeatureSettingsManager.instance.GetUserProfileLevel();
+        int currentProfileLevel = FeatureSettingsManager.instance.GetCurrentProfileLevel();
+        int maxProfileLevel = FeatureSettingsManager.instance.GetMaxProfileLevelSupported();
+        m_DebugUserProfileLevel = (m_DebugUserProfileLevel + 1) % (maxProfileLevel + 1);
+        FeatureSettingsManager.Log("before maxProfileLevel = " + maxProfileLevel + " currentUserProfileLevel = " + currentUserProfileLevel + " currentProfileLevel = " + currentProfileLevel + " to set " + m_DebugUserProfileLevel);        
+        FeatureSettingsManager.instance.SetUserProfileLevel(m_DebugUserProfileLevel);
+        FeatureSettingsManager.Log("after currentUserProfileLevel = " + FeatureSettingsManager.instance.GetUserProfileLevel() + " currentProfileLevel = " + FeatureSettingsManager.instance.GetCurrentProfileLevel());
+    }
+
     private bool Debug_IsDrunkOn { get; set; }
 
     public void Debug_TestToggleDrunk()
     {
         Debug_IsDrunkOn = !Debug_IsDrunkOn;
-        Messenger.Broadcast<bool>(GameEvents.DRUNK_TOGGLED, Debug_IsDrunkOn);
+        Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, Debug_IsDrunkOn);
     }
 
     private bool Debug_IsFrameColorOn { get; set; }
@@ -813,7 +886,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_TestToggleFrameColor()
     {
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
-        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
+        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
     }
 
     private bool Debug_IsBakedLightsDisabled { get; set; }
@@ -1175,19 +1248,19 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
-    private void Log(string msg)
+    private static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.Log(msg);
     }
 
-    private void LogWarning(string msg)
+    private static void LogWarning(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogWarning(msg);
     }
 
-    private void LogError(string msg)
+    private static void LogError(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogError(msg);

@@ -89,17 +89,17 @@ public class SocialPlatformManager : MonoBehaviour
 
 	void OnSocialPlatformLogin()
 	{
-		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());        
+		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());        
     }
 
 	void OnSocialPlatformLoginFailed()
 	{
-		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());        
+		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());        
     }
 
 	void OnSocialPlatformLogOut()
 	{
-		Messenger.Broadcast<bool>(GameEvents.SOCIAL_LOGGED, IsLoggedIn());
+		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());
 	}
     //////////////////////////////////////////////////////////////////////////
 
@@ -266,7 +266,7 @@ public class SocialPlatformManager : MonoBehaviour
 
         if (!Login_IsLogInReady)
         {
-            Messenger.AddListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
+            Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
             GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
         }
 
@@ -307,7 +307,7 @@ public class SocialPlatformManager : MonoBehaviour
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("(LOGGING) onLogged " + logged);
 
-        Messenger.RemoveListener<bool>(GameEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
+        Messenger.RemoveListener<bool>(MessengerEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
         Login_OnLoggedIn(logged);
     }
 
@@ -322,16 +322,16 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_AddMergeListeners()
     {
-        Messenger.AddListener(GameEvents.MERGE_SUCCEEDED, Login_OnMergeSucceeded);
-        Messenger.AddListener(GameEvents.MERGE_FAILED, Login_OnMergeFailed);
-        Messenger.AddListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, Login_OnMergeShowPopupNeeded);
+        Messenger.AddListener(MessengerEvents.MERGE_SUCCEEDED, Login_OnMergeSucceeded);
+        Messenger.AddListener(MessengerEvents.MERGE_FAILED, Login_OnMergeFailed);
+        Messenger.AddListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(MessengerEvents.MERGE_SHOW_POPUP_NEEDED, Login_OnMergeShowPopupNeeded);
     }
 
     private void Login_RemoveMergeListeners()
     {
-        Messenger.RemoveListener(GameEvents.MERGE_SUCCEEDED, Login_OnMergeSucceeded);
-        Messenger.RemoveListener(GameEvents.MERGE_FAILED, Login_OnMergeFailed);
-        Messenger.RemoveListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, Login_OnMergeShowPopupNeeded);
+        Messenger.RemoveListener(MessengerEvents.MERGE_SUCCEEDED, Login_OnMergeSucceeded);
+        Messenger.RemoveListener(MessengerEvents.MERGE_FAILED, Login_OnMergeFailed);
+        Messenger.RemoveListener<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(MessengerEvents.MERGE_SHOW_POPUP_NEEDED, Login_OnMergeShowPopupNeeded);
     }
 
     private void Login_OnMergeSucceeded()
@@ -372,17 +372,28 @@ public class SocialPlatformManager : MonoBehaviour
 
         JSONNode persistenceAsJson = null;
         
-        const string key = "profile";
+        const string key = "profile";        
         if (kCloudAccount != null && kCloudAccount.ContainsKey(key))
         {            
-            persistenceAsJson = kCloudAccount[key];            
+            persistenceAsJson = kCloudAccount[key];                        
         }
 
-        // Makes sure it's a valid persistence
-        if (persistenceAsJson == null || persistenceAsJson.ToString() == "{}")
+        string persistenceAsString = null;
+        if (persistenceAsJson != null)
         {
+            persistenceAsString = persistenceAsJson.ToString();
+        }
+
+        // If it's an empty persistence then the default one is used instead
+        // Sometimes server sends "{\"sc\":0,\"pc\":0}" as a persistence
+        bool persistenceBrokenFromServer = persistenceAsString == "{\"sc\":0,\"pc\":0}";
+        if (persistenceAsJson == null || persistenceAsString == "{}" || persistenceBrokenFromServer)
+        {            
             persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
         }
+
+        if (FeatureSettingsManager.IsDebugEnabled && persistenceBrokenFromServer)
+            LogError("Persistence Broken from server");
 
         Login_MergePersistence = persistenceAsJson.ToString();
     }
@@ -455,11 +466,21 @@ public class SocialPlatformManager : MonoBehaviour
         {
             Login_Update();
         }
+
+        if (m_socialUtils != null)
+        {
+            m_socialUtils.Update();
+        }
     }
 
     private const string LOG_CHANNEL = "[Social] ";
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);
+    }
+
+    public static void LogError(string msg)
+    {
+        Debug.LogError(LOG_CHANNEL + msg);
     }
 }

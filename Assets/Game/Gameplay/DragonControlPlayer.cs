@@ -73,18 +73,18 @@ public class DragonControlPlayer : MonoBehaviour {
 		SetupInputs();
 
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.GAME_SETTING_TOGGLED, OnGameSettingsToggled);
-		Messenger.AddListener(GameEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
-		Messenger.AddListener<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
+		Messenger.AddListener<string, bool>(MessengerEvents.GAME_SETTING_TOGGLED, OnGameSettingsToggled);
+		Messenger.AddListener(MessengerEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
+		Messenger.AddListener<float>(MessengerEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
-		Messenger.RemoveListener<string, bool>(GameEvents.GAME_SETTING_TOGGLED, OnGameSettingsToggled);
-		Messenger.RemoveListener(GameEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
-		Messenger.RemoveListener<float>(GameEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.GAME_SETTING_TOGGLED, OnGameSettingsToggled);
+		Messenger.RemoveListener(MessengerEvents.TILT_CONTROL_CALIBRATE, OnTiltCalibrate);
+		Messenger.RemoveListener<float>(MessengerEvents.TILT_CONTROL_SENSITIVITY_CHANGED, OnTiltSensitivityChanged);
 	}
 
 	/// <summary>

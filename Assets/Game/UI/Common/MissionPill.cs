@@ -24,6 +24,8 @@ public class MissionPill : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private const string TID_SKIP_FREE = "TID_MISSIONS_SKIP_FREE";
+	private const string TID_SKIP_PARTIAL = "TID_MISSIONS_SKIP_PARTIAL";
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -73,8 +75,11 @@ public class MissionPill : MonoBehaviour {
 		m_skipCostText = m_cooldownObj.FindComponentRecursive<Localizer>("TextCost");
 
 		// Subscribe to external events
-		Messenger.AddListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.AddListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		Messenger.AddListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.AddListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -82,8 +87,11 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Mission>(GameEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(GameEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		}
 	}
 
 	/// <summary>
@@ -91,7 +99,7 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Detect hot language changes
-		Messenger.AddListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 
 		// Make sure we're up to date
 		Refresh();
@@ -99,7 +107,7 @@ public class MissionPill : MonoBehaviour {
 
 	private void OnDisable() {
 		// Only detect hot language changes while active
-		Messenger.RemoveListener(EngineEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
 	}
 
 	/// <summary>
@@ -210,15 +218,20 @@ public class MissionPill : MonoBehaviour {
 
 	private void RefreshRemovePayButtons()
 	{
-		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
-		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
-		if ( watchAd != null && removeButton != null){
-			
-			bool canPayWithAds = CanPayRemoveMissionWithAds();
-			// Check if ads availables to skip mission
-			watchAd.SetActive( canPayWithAds );
-			removeButton.SetActive( !canPayWithAds );
+		// Check if ads availables to skip mission
+		bool canPayWithAds = CanPayRemoveMissionWithAds();
+
+		// Don't allow removing during tutorial
+		bool ftux = false;
+		if(m_mission != null && m_mission.def != null) {
+			ftux = m_mission.def.sku.Contains("ftux");
 		}
+
+		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
+		if(watchAd != null) watchAd.SetActive( !ftux && canPayWithAds );
+
+		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
+		if(removeButton != null) removeButton.SetActive( !ftux && !canPayWithAds );
 	}
 
 	/// <summary>
@@ -278,16 +291,12 @@ public class MissionPill : MonoBehaviour {
 		// Skip with ad button
 		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
 		if(skipWithAdText != null) {
-			// [AOC] TODO!! Force the time to be in lower case always
 			// If the remaining time is lower than skip time, don't put time at all
 			if(m_mission.cooldownRemaining.TotalSeconds < Mission.SECONDS_SKIPPED_WITH_AD) {
-				skipWithAdText.Localize(
-					skipWithAdText.tid, 
-					""
-				);
+				skipWithAdText.Localize(TID_SKIP_FREE);
 			} else {
 				skipWithAdText.Localize(
-					skipWithAdText.tid, 
+					TID_SKIP_PARTIAL, 
 					TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
 				);
 			}
@@ -474,6 +483,8 @@ public class MissionPill : MonoBehaviour {
 			UsersManager.currentUser.skipMissionAdUses++;
 			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD, true, false);
 	        PersistenceFacade.instance.Save_Request();
+
+			Refresh();
 		}
     }
 
@@ -531,6 +542,14 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Just update all the info
+		Refresh();
+	}
+
+	/// <summary>
+	/// Force a refresh.
+	/// </summary>
+	private void DEBUG_OnRefreshMissionInfo() {
+		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		Refresh();
 	}
 }

@@ -45,7 +45,10 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		CUSTOM,
 
-		ANIMATOR
+		ANIMATOR,
+
+		SCALE_X,
+		SCALE_Y
 	}
 
 	public enum State {
@@ -477,6 +480,20 @@ public class ShowHideAnimator : MonoBehaviour {
 				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
 				m_sequence.Join(rt.DOSizeDelta(rt.sizeDelta + Vector2.one * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
 			} break;
+
+			case TweenType.SCALE_X: {
+				Vector3 scale = transform.localScale;
+				scale.x = m_tweenValue;
+				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
+			} break;
+
+			case TweenType.SCALE_Y: {
+				Vector3 scale = transform.localScale;
+				scale.y = m_tweenValue;
+				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
+			} break;
 		}
 
 		m_sequence.PrependCallback(() => {
@@ -766,10 +783,10 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_animator == null) return;
 
 		// Reset all known triggers
-		m_animator.ResetTrigger("show");
-		m_animator.ResetTrigger("hide");
-		m_animator.ResetTrigger("instantShow");
-		m_animator.ResetTrigger("instantHide");
+		m_animator.ResetTrigger( GameConstants.Animator.SHOW );
+		m_animator.ResetTrigger( GameConstants.Animator.HIDE );
+		m_animator.ResetTrigger( GameConstants.Animator.INSTANT_SHOW );
+		m_animator.ResetTrigger( GameConstants.Animator.INSTANT_HIDE );
 
 		// Set the target trigger
 		m_animator.SetTrigger(_trigger);

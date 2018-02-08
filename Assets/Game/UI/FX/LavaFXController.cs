@@ -60,7 +60,7 @@ public class LavaFXController : MonoBehaviour {
 			m_timer -= Time.deltaTime;
 			if(m_timer <= 0f) {
 				// Timer finished! Launch animation and program next one
-				m_anim.SetTrigger("start");
+				m_anim.SetTrigger( GameConstants.Animator.START );
 
 				// Program next anim trigger
 				// Take in account anim's duration

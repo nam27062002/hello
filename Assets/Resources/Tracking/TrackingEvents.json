@@ -298,7 +298,8 @@
 				{"connectionType": {"Status": "OK"}},
 				{"userTimezone": {"Status": "OK"}},
 				{"storeInstalled": {"Status": "OK"}},
-				{"isHacker": {"Status": "OK"}}
+				{"isHacker": {"Status": "OK"}},
+				{"deviceProfile": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -390,6 +391,49 @@
 				{"gameRunNb": {"Status": "OK"}},
 				{"maxXp": {"Status": "OK"}},
 				{"playerProgress": {"Status": "OK"}}                
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.gameplay.fps": {
+            "Parameters": [
+				{"sessionsCount": {"Status": "OK"}},
+				{"gameRunNb": {"Status": "OK"}},
+				{"deltaXp": {"Status": "OK"}},
+				{"avgFPS": {"Status": "OK"}},
+        {"coordinatesBL": { "Status": "OK" }},
+        {"coordinatesTR": { "Status": "OK" }},
+        {"fireRush": { "Status": "OK" }}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.session.started": {
+            "Parameters": [
+				{"versionRevision": {"Status": "OK"}}				
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.survey.popup": {
+            "Parameters": [
+				{"popupName": {"Status": "OK"}},
+				{"popupAction": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.leave.popup": {
+            "Parameters": [
+				{"popupAction": {"Status": "OK"}}				
             ],
             "APIs": [
                 "dna",
@@ -559,27 +603,27 @@
             "Type": "INT:4",
             "Values": []
         },
-		"score": {
+		    "score": {
             "Type": "INT:4",
             "Values": []
         },
-		"deathInCurrentRunNb": {
+		    "deathInCurrentRunNb": {
             "Type": "INT:4",
             "Values": []
         },
-		"scEarned": {
+		    "scEarned": {
             "Type": "INT:4",
             "Values": []
         },
-		"hcEarned": {
+		    "hcEarned": {
             "Type": "INT:4",
             "Values": []
         },
-		"boostTime": {
+		    "boostTime": {
             "Type": "INT:4",
             "Values": []
         },
-		"mapUsedNB": {
+		    "mapUsedNB": {
             "Type": "INT:4",
             "Values": []
         },
@@ -735,7 +779,7 @@
             "Type": "FLOAT",
             "Values": []
         },
-		"moneyUSD": {
+		    "moneyUSD": {
             "Type": "INT:4",
             "Values": []
         },		
@@ -840,7 +884,7 @@
             "Values": []
         },
         "playerProgress": {
-            "Type": "STRING:4",
+            "Type": "INT:4",
             "Values": []
         },
         "stepDuration": {
@@ -887,7 +931,7 @@
             "Type": "INT:4",
             "Values": []
         },		
-		"accepted": {
+        "accepted": {
             "Type": "INT:4",
             "Values": []
         },				
@@ -911,11 +955,15 @@
             "Type": "STRING:80",
             "Values": []
         },
+		"popupAction": {
+			"Type": "STRING:15",
+			"Values": []
+  		},
 		"popupName": {
 			"Type": "STRING:45",
 			"Values": []
-		},
-		"action": {
+  		},		
+  		"action": {
 			"Type": "STRING:40",
 			"Values": []
 		},
@@ -924,20 +972,20 @@
 			"Values": []
 		},
 		"originalArea": {
-			"Type": "STRING:45",
-			"Values": []
+		    "Type": "STRING:45",
+		    "Values": []
 		},
 		"newArea": {
-			"Type": "STRING:45",
-			"Values": []
+		    "Type": "STRING:45",
+		    "Values": []
 		},
 		"petName": {
-			"Type": "STRING:45",
-			"Values": []
+		    "Type": "STRING:45",
+		    "Values": []
 		},
 		"sourceOfPet": {
-			"Type": "STRING:45",
-			"Values": []
+		    "Type": "STRING:45",
+		    "Values": []
 		},
 		"missionType": {
             "Type": "STRING:45",
@@ -998,10 +1046,34 @@
 		"storeInstalled": {
             "Type": "INT:4",
             "Values": []
+        },    
+        "avgFPS": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "coordinatesBL": {
+            "Type": "STRING:30",
+            "Values": []
+        },
+        "coordinatesTR": {
+            "Type": "STRING:30",
+            "Values": []
+        },
+        "fireRush": {
+            "Type": "INT:4",
+            "Values": []
         },
 		"isHacker": {
             "Type": "INT:4",
             "Values": []
-        }
+        },
+        "deviceProfile": {
+			"Type": "STRING:15",
+			"Values": []
+        },
+		"versionRevision": {
+			"Type": "STRING:15",
+			"Values": []
+        }		
     }
 }

@@ -136,22 +136,22 @@ public class HUDStatBar : MonoBehaviour {
 		if ( m_type == Type.Health )
 		{
 			// Check remaining lives to show more health Icons!
-			Messenger.AddListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-			Messenger.AddListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
 			RefreshIcons();
 		}
 
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		m_timer = 10;
 		m_timerDuration = 10;
 		if ( m_type == Type.SuperFury )
 		{
-			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		}
 
 		if (m_type == Type.Energy)
 		{
-			Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+			Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
 		}
 
 		m_ready = true;
@@ -161,18 +161,18 @@ public class HUDStatBar : MonoBehaviour {
 	{
 		if ( m_type == Type.Health )
 		{
-			Messenger.RemoveListener<DamageType, Transform>(GameEvents.PLAYER_KO, OnPlayerKo);
-			Messenger.RemoveListener(GameEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+			Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
 		}
 		else if (m_type == Type.Energy)
 		{
-			Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoostToggled);
+			Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
 		}
 		else if ( m_type == Type.SuperFury )
 		{
-			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		}
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
 	/// <summary>
@@ -288,9 +288,11 @@ public class HUDStatBar : MonoBehaviour {
 				if(m_type == Type.SuperFury || m_type == Type.Fury) {
 					if(m_particles != null) {
 						if(Math.Abs(targetValue - targetValueStep) > 0.001f) {
-							m_particles.Play();
+							if ( !m_particles.isPlaying )
+								m_particles.Play();
 						} else {
-							m_particles.Stop();
+							if ( m_particles.isPlaying )
+								m_particles.Stop();
 						}
 					}
 				}
@@ -552,8 +554,13 @@ public class HUDStatBar : MonoBehaviour {
 
 	void OnBoostToggled(bool _active) {
 		if (m_particles != null) {
-			if (_active) m_particles.Play();
-			else 		 m_particles.Stop();
+			if (_active) {
+				if ( !m_particles.isPlaying )
+					m_particles.Play();
+			}else{
+				if ( m_particles.isPlaying )
+			 		m_particles.Stop();
+			}
 		}
 	}
 }

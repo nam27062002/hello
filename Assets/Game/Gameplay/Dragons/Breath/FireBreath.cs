@@ -70,6 +70,11 @@ public class FireBreath : DragonBreathBehaviour {
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
+	private Cage[] m_checkCages = new Cage[50];
+	private int m_numCheckCages = 0;
+
+
+
 	override protected void ExtendedStart() {
 
 		m_flamePoolHandler 			= PoolManager.RequestPool(m_flameParticle, "Particles/Master/", m_maxParticles);
@@ -144,9 +149,9 @@ public class FireBreath : DragonBreathBehaviour {
 		m_light.transform.localScale = new Vector3(m_actualLength * 1.25f, m_sizeCurve.Evaluate(1) * transform.localScale.x * 1.75f, 1f);
 	}
 
-	override protected void EndFury() 
+	override protected void EndFury( bool increase_mega_fury = true ) 
 	{
-		base.EndFury();
+		base.EndFury( increase_mega_fury );
 		m_light.SetActive(false);
 		m_flameLightPoolHandler.ReturnInstance(m_light);
 		m_light = null;
@@ -292,8 +297,19 @@ public class FireBreath : DragonBreathBehaviour {
 					}
 				} else {
 					// Show message saying I cannot burn it
-					Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
+					Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
 				}
+			}
+		}
+
+		// pick cages 
+		m_numCheckCages = EntityManager.instance.GetCagesInRange2DNonAlloc(m_sphCenter, m_sphRadius, m_checkCages);
+		for (int i = 0; i < m_numCheckCages; i++) 
+		{
+			Cage cage = m_checkCages[i];
+			if ((cage.circleArea != null && Overlaps((CircleAreaBounds)cage.circleArea.bounds)) || IsInsideArea(cage.transform.position)) 
+			{
+				cage.behaviour.Break();
 			}
 		}
 	}
@@ -330,7 +346,7 @@ public class FireBreath : DragonBreathBehaviour {
 			if ( m_isFuryOn )
 			{
 				m_isFuryPaused = true;
-				m_animator.SetBool("breath", false);
+				m_animator.SetBool( GameConstants.Animator.BREATH , false);
 			}
 
 		}

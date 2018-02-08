@@ -2,7 +2,6 @@
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
-using FGOL.Authentication;
 using FGOL.Server;
 using SimpleJSON;
 using System;
@@ -44,7 +43,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;            
 			if(!m_logged) {
 				m_logged = true;
-				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
+				Messenger.Broadcast<bool>(MessengerEvents.LOGGED, m_logged);
 			}
 
 			if(m_onResponse != null) {
@@ -73,7 +72,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;
 			if(m_logged) {
 				m_logged = false;
-				Messenger.Broadcast<bool>(GameEvents.LOGGED, m_logged);
+				Messenger.Broadcast<bool>(MessengerEvents.LOGGED, m_logged);
 			}
 
 			// An error is sent, just in case the client is waiting for a response for any command            
@@ -81,8 +80,10 @@ public class GameServerManagerCalety : GameServerManager {
 				//m_onResponse(null, 500);
 			}
 
-			// no problem, continue playing
-		}
+            GameServerManager.SharedInstance.OnLogOut();
+
+            // no problem, continue playing
+        }
 
 		// The GC login is finished after receiving GC token
 		public override void onGameCenterAuthenticationFinished() {
@@ -103,7 +104,7 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount) {
 			m_waitingMergeResponse = false;            
 			Debug.TaggedLog(tag, "onMergeShowPopupNeeded");
-            Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(GameEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
+            Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(MessengerEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
         }
 
 		public override void onShowMaintenanceMode() {         
@@ -114,14 +115,14 @@ public class GameServerManagerCalety : GameServerManager {
 		public override void onMergeSucceeded() {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeSucceeded");
-            Messenger.Broadcast(GameEvents.MERGE_SUCCEEDED);                
+            Messenger.Broadcast(MessengerEvents.MERGE_SUCCEEDED);                
         }
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
-		public override void onMergeFailed() {
+		public override void onMergeFailed(bool bNeedToUnAuthenticateFromSocialPlatform = false) {
 			m_waitingMergeResponse = false;
 			Debug.TaggedLog(tag, "onMergeFailed");
-            Messenger.Broadcast(GameEvents.MERGE_FAILED);                        
+            Messenger.Broadcast(MessengerEvents.MERGE_FAILED);                        
         }
 
 		// The user has requested a password to do a cross platform merge
@@ -166,6 +167,16 @@ public class GameServerManagerCalety : GameServerManager {
 			Debug.TaggedLog(tag, "onRequestGameReset");
 		}
 
+		public override void onShowLostConnection () {
+			Debug.TaggedLog(tag, "onShowLostConnection");
+			GameServerManager.SharedInstance.OnConnectionLost();
+		} 
+
+		public override void onNetworkFailedInAPacket() {
+			Debug.TaggedLog(tag, "onNetworkFailedInAPacket");
+			GameServerManager.SharedInstance.OnConnectionLost();
+		}
+
 		void ResetWaitingFlags() {
 			m_waitingLoginResponse = false;
 			m_waitingGetUniverse = false;
@@ -184,6 +195,11 @@ public class GameServerManagerCalety : GameServerManager {
     {
         base.Destroy();
         Login_Destroy();
+    }
+
+    public override void Update()
+    {
+        Connection_Update();
     }
 
     /// <summary>
@@ -217,17 +233,24 @@ public class GameServerManagerCalety : GameServerManager {
 
         kServerConfig.m_strServerApplicationSecretKey = "avefusilmagnifica";
 
-		ServerManager.SharedInstance.Initialise(ref kServerConfig);
+        kServerConfig.m_iConnectTimeOut = 6000;
+        kServerConfig.m_iReadTimeOut = 6000;
+        ServerManager.SharedInstance.Initialise(ref kServerConfig);
 
 		m_delegate = new GameSessionDelegate(Commands_OnResponse);
 		GameSessionManager.SharedInstance.SetListener(m_delegate);
 
-        Login_Init();
-		Commands_Init();
+        //[DGR] Extra api calls which are needed by Dragon but are not defined in Calety. Maybe they could be added in Calety when it supports offline mode
+        CaletyExtensions_Init();
 
-		//[DGR] Extra api calls which are needed by Dragon but are not defined in Calety. Maybe they could be added in Calety when it supports offline mode
-		CaletyExtensions_Init();
-	}
+        Reset();
+    }
+
+    public override void Reset() {
+        Login_Init();
+        Commands_Init();
+        Connection_Init();
+    }
 
 	/// <summary>
 	/// 
@@ -235,6 +258,20 @@ public class GameServerManagerCalety : GameServerManager {
 	public override void Ping(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
+
+	public override void OnConnectionLost() {
+		if (FeatureSettingsManager.IsDebugEnabled) {
+			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
+		}
+
+		Commands_OnServerDown();
+
+		NetworkManager.SharedInstance.CancelRequests();        
+		ServerManager.SharedInstance.CancelPendingCommands();
+		NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
+        
+        Connection_OnServerDown();
+    }
 
     #region login
     private enum ELoginState
@@ -250,7 +287,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_Init()
     {
-        Messenger.AddListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+        Messenger.AddListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
 
         Login_State = ELoginState.NotLoggedIn;      
         if (Login_Callbacks != null)
@@ -261,7 +298,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private void Login_Destroy()
     {
-        Messenger.RemoveListener<bool>(GameEvents.LOGGED, Login_OnLogged);
+        Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
     }
 
     public override void Auth(ServerCallback callback)
@@ -307,43 +344,20 @@ public class GameServerManagerCalety : GameServerManager {
             }
         }
     }
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public override void LogInToServerThruPlatform(string platformId, string platformUserId, string platformToken, ServerCallback callback) {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("LogInToServerThruPlatform");
-		
-		//if(!m_delegate.m_logged)
-		{
-			if(!m_delegate.m_waitingLoginResponse) {
-				// We need to logout before if already logged in
-				if(GameSessionManager.SharedInstance.IsLogged()) {
-					LogOut();
-				}
-
-				m_delegate.m_logged = false;
-				m_delegate.m_waitingLoginResponse = true;
-				m_delegate.IsNewAppVersionNeeded = false;
-
-				Dictionary<string, string> parameters = new Dictionary<string, string>();
-				parameters.Add("platformId", platformId);
-				parameters.Add("platformUserId", platformUserId);
-				parameters.Add("platformToken", platformToken);
-				Commands_EnqueueCommand(ECommand.Login, parameters, callback);
-			}
-		}
-	}
-
+	
 	/// <summary>
 	/// 
 	/// </summary>
 	public override void LogOut()
     {
 		// The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
-		GameSessionManager.SharedInstance.LogOutFromServer(false);		
-	}
+		GameSessionManager.SharedInstance.LogOutFromServer(false);        
+    }
+
+    public override void OnLogOut()
+    {
+        Login_State = ELoginState.NotLoggedIn;
+    }
 
 	/// <summary>
 	/// 
@@ -433,7 +447,20 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.PlayTest, parameters, callback);                
 	}
 
-	override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
+    public override void SendTrackLoading(string step, int deltaTime, bool isFirstTime, int sessionsCount, ServerCallback callback) {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+        deltaTime = Mathf.Max(1, deltaTime);
+        
+        parameters.Add("step", step);
+        parameters.Add("delta", deltaTime.ToString());
+        parameters.Add("newUser", isFirstTime.ToString());
+        parameters.Add("appLaunches", sessionsCount.ToString());
+        parameters.Add("millis", ServerManager.SharedInstance.GetCurrentTimeMillis().ToString());
+        Commands_EnqueueCommand(ECommand.TrackLoading, parameters, callback);                       
+    }
+
+    override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
 	}
 
@@ -522,6 +549,7 @@ public class GameServerManagerCalety : GameServerManager {
 		SetQualitySettings,
         GetGameSettings,
         PlayTest,
+        TrackLoading,
 
 		GlobalEvents_TMPCustomizer,
 		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
@@ -565,17 +593,26 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private Queue<Command> Commands_Pool { get; set; }
 	private Queue<Command> Commands_Queue { get; set; }
-	private Command Commands_CurrentCommand { get; set; }
 
-	public delegate void BeforeCommandComplete(Error error);
-	//public delegate void AfterCommand(Command command, Dictionary<string, string> parameters, Error error, ServerResponse result, ServerCallback callback, int retries);
+    private Command m_commandsCurrentCommand;
+	private Command Commands_CurrentCommand
+    {
+        get { return m_commandsCurrentCommand; }
+        set
+        {
+            m_commandsCurrentCommand = value;
+        }
+    }	
 
+	private bool m_CommandsIsEnabled;
+	
 	/// <summary>
 	/// 
 	/// </summary>
 	private void Commands_Init() {
 		Commands_Pool = new Queue<Command>();
-		Commands_Queue = new Queue<Command>();        
+		Commands_Queue = new Queue<Command>();   
+		m_CommandsIsEnabled = true;
 	}
 
 	/// <summary>
@@ -614,8 +651,7 @@ public class GameServerManagerCalety : GameServerManager {
 		cmd.Setup(command, parameters, callback);
 
 		// If no command is being processed and the queue is empty then it's run immeditaly
-		if(Commands_CurrentCommand == null && Commands_IsQueueEmpty()) {
-			Commands_CurrentCommand = cmd;
+		if(Commands_CurrentCommand == null && Commands_IsQueueEmpty()) {			
 			Commands_PrepareToRunCommand(cmd);
 		} else {
 			Commands_Queue.Enqueue(cmd);
@@ -634,83 +670,76 @@ public class GameServerManagerCalety : GameServerManager {
 	/// </summary>
 	private bool Commands_IsQueueEmpty() {
 		return Commands_Queue.Count == 0;
-	}	
+	}		
 
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_BeforeCommand(ECommand command, Dictionary<string, string> parameters, BeforeCommandComplete callback) {
-        if (FeatureSettingsManager.IsDebugEnabled)        
-            Log("BeforeCommand " + command);        		
+	private void Commands_PrepareToRunCommand(Command command, int retries = 0)
+    {
+        Action onReady = delegate()
+        {
+            Commands_CurrentCommand = command;
 
-		if(Authenticator.Instance.Token != null) {
-			parameters["deviceToken"] = Authenticator.Instance.Token.ToString();
-		}
+            if (m_connectionState == EConnectionState.Up || m_connectionState == EConnectionState.Recovering)
+            {
+                //Make sure we have a valid parameters object as before or after command callbacks may modify it
+                if (command.Parameters == null)
+                {
+                    command.Parameters = new Dictionary<string, string>();
+                }
 
-		parameters["version"] = Globals.GetApplicationVersion();
-		parameters["platform"] = Globals.GetPlatform().ToString();
-		
-		callback(null);		
-	}
+                command.Parameters["version"] = Globals.GetApplicationVersion();
+                command.Parameters["platform"] = Globals.GetPlatform().ToString();
+                
+                Commands_RunCommand(command);
+            }
+            else
+            {             
+                Commands_OnExecuteCommandDone(Connection_GetServerDownError(), null);                
+            }          
+        };
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void Commands_AfterCommand(Command command, Error error, ServerResponse result, int retries) {                       
-		//Try and recover from an auth error                    
-		if(error != null && error.GetType() == typeof(AuthenticationError) && retries < COMMANDS_MAX_AUTH_RETRIES && command.Cmd != ECommand.Login) {
-			//Invalidate the session in an attempt to force re-auth
-			if(Authenticator.Instance.User != null) {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("(AfterCommand) :: Invalidating session");
-
-				Authenticator.Instance.User.InvalidateSession();
-			}
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log(string.Format("(AfterCommand) :: Auth Error Retrying ({0})", retries));
-
-			Commands_PrepareToRunCommand(command, ++retries);
-		} else if(command.Callback != null) {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Commander Callback :: " + command);
-
-			command.Callback(error, result);
-		}                             
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void Commands_PrepareToRunCommand(Command command, int retries = 0) {
         if (FeatureSettingsManager.IsDebugEnabled)
-            Log("PrepareToRunCommand " + command.Cmd);       
+            Log("PrepareToRunCommand " + command.Cmd);
 
-		//Make sure we have a valid parameters object as before or after command callbacks may modify it
-		if(command.Parameters == null) {
-			command.Parameters = new Dictionary<string, string>();
-		}
+        if (FeatureSettingsManager.instance.IsAutomaticReloginEnabled() && m_connectionState == EConnectionState.Down)
+        {
+            Connection_Recover(onReady);
+        }
+        else
+        {
+            onReady();
+        }
+	}    
 
-		BeforeCommandComplete runCommand = delegate(Error beforeError) {
-			if(beforeError == null) {
-				Commands_RunCommand(command, delegate (Error error, ServerResponse result) {
-					Commands_AfterCommand(command, error, result, retries);                        
-				});
-			} else if(command.Callback != null) {
-				command.Callback(beforeError, null);
-			}
-		};
+    private bool Commands_NeedsToBeLoggedIn(ECommand command)
+    {
+        bool returnValue = false;
 
-		Commands_BeforeCommand(command.Cmd, command.Parameters, runCommand);                           
-	}
+        switch (command) {
+            case ECommand.GetPersistence:
+            case ECommand.SetPersistence:            
+            case ECommand.SetQualitySettings: // The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
+            case ECommand.GlobalEvents_GetState:
+            case ECommand.GlobalEvents_GetEvent:
+            case ECommand.GlobalEvents_GetRewards:
+            case ECommand.GlobalEvents_GetLeadeboard:
+            case ECommand.GlobalEvents_RegisterScore:
+                returnValue = true;
+                break;
+        }
+
+        return returnValue;
+    }
 
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_RunCommand(Command command, ServerCallback callback) {
+	private void Commands_RunCommand(Command command) {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
-        // Commands have to be executed one by one since we're not using actions on server side
+        // Commands have to be executed one by one since we're not using actions on server side       
 
         //
         // [DGR] 
@@ -718,7 +747,19 @@ public class GameServerManagerCalety : GameServerManager {
         // command is not anonymous
         //        
 		if(Commands_CurrentCommand == command) {
-			Dictionary<string, string> parameters = command.Parameters;
+
+            // If the command needs to be logged in but the game is not currently logged in then an error is returned
+            // TODO: To force login before sending the command
+            if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn())
+            {
+                if (FeatureSettingsManager.IsDebugEnabled)                
+                    LogError("Command " + command.Cmd + " requires the user to be logged in but she's not");
+
+                Commands_OnResponse(null, 401);
+                return;
+            }
+
+            Dictionary<string, string> parameters = command.Parameters;
        
 			switch(command.Cmd) {
 				case ECommand.Ping: {
@@ -745,16 +786,12 @@ public class GameServerManagerCalety : GameServerManager {
 					ServerManager.SharedInstance.Server_SendAuth(parameters["platformId"], parameters["platformToken"]);
 				} break;                
 
-				case ECommand.GetPersistence: {
-					if(IsLoggedIn()) {
-                        Command_SendCommand(COMMAND_GET_PERSISTENCE);                        
-					}
+				case ECommand.GetPersistence: {					
+                    Command_SendCommand(COMMAND_GET_PERSISTENCE);                        					
 				} break;
 
-				case ECommand.SetPersistence: {
-					if(IsLoggedIn()) {						
-                        Command_SendCommand(COMMAND_SET_PERSISTENCE, null, null, parameters["persistence"]);
-                    }
+				case ECommand.SetPersistence: {											
+                    Command_SendCommand(COMMAND_SET_PERSISTENCE, null, null, parameters["persistence"]);                    
 				} break;
 
 				case ECommand.UpdateSaveVersion: {
@@ -767,13 +804,8 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommand(COMMAND_GET_QUALITY_SETTINGS);                    
 				} break;
 
-				case ECommand.SetQualitySettings: {
-					// The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
-					if(IsLoggedIn()) {                                                
-                        Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                       
-                    } else if (FeatureSettingsManager.IsDebugEnabled) {
-						LogError("SetQualitySettings require the user to be logged");
-					}
+				case ECommand.SetQualitySettings: {										
+                   Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                                           
 				} break;
 
                 case ECommand.GetGameSettings: {                    
@@ -790,37 +822,48 @@ public class GameServerManagerCalety : GameServerManager {
 					kParams["uid"] = parameters["playTestUserId"];                        
                     Command_SendCommand(cmd, kParams, null, parameters["trackingData"]);
 				} break;
-				case ECommand.GlobalEvents_TMPCustomizer:{
+
+                case ECommand.TrackLoading: {                        
+                        /*
+                        JSONNode json = new JSONClass();
+                        json["step"] = parameters["step"];
+                        json["delta"] = parameters["delta"];
+                        json["appLaunches"] = parameters["appLaunches"];
+                        json["newUser"] = parameters["newUser"];
+                        json["millis"] = json["millis"];
+                        Command_SendCommand(COMMAND_TRACK_LOADING, null, null, json.ToString());
+                        */
+
+                        Command_SendCommand(COMMAND_TRACK_LOADING, null, parameters, null);                        
+                } break;
+
+                case ECommand.GlobalEvents_TMPCustomizer:{
                     Command_SendCommand( COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, null, null, "" );
 				}break;
 				case ECommand.GlobalEvents_GetState:
 				case ECommand.GlobalEvents_GetEvent:
 				case ECommand.GlobalEvents_GetRewards:
-				case ECommand.GlobalEvents_GetLeadeboard: {
-					if(IsLoggedIn()) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();						
-						kParams["eventId"] = parameters["eventId"];
-						string global_event_command = "";
-						switch( command.Cmd )
-						{
-							case ECommand.GlobalEvents_GetState: global_event_command = COMMAND_GLOBAL_EVENTS_GET_STATE;break;
-							case ECommand.GlobalEvents_GetEvent: global_event_command = COMMAND_GLOBAL_EVENTS_GET_EVENT;break;
-							case ECommand.GlobalEvents_GetRewards: global_event_command = COMMAND_GLOBAL_EVENTS_GET_REWARDS;break;
-							case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
-						}
-
-                        Command_SendCommand( global_event_command, kParams );
+				case ECommand.GlobalEvents_GetLeadeboard: {					
+					Dictionary<string, string> kParams = new Dictionary<string, string>();						
+					kParams["eventId"] = parameters["eventId"];
+					string global_event_command = "";
+					switch( command.Cmd )
+					{
+						case ECommand.GlobalEvents_GetState: global_event_command = COMMAND_GLOBAL_EVENTS_GET_STATE;break;
+						case ECommand.GlobalEvents_GetEvent: global_event_command = COMMAND_GLOBAL_EVENTS_GET_EVENT;break;
+						case ECommand.GlobalEvents_GetRewards: global_event_command = COMMAND_GLOBAL_EVENTS_GET_REWARDS;break;
+						case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
 					}
+
+                    Command_SendCommand( global_event_command, kParams );					
 				}break;
 
-				case ECommand.GlobalEvents_RegisterScore: {
-					if ( IsLoggedIn() ) {
-						Dictionary<string, string> kParams = new Dictionary<string, string>();							
-						kParams["eventId"] = parameters["eventId"];
-						kParams["progress"] = parameters["progress"];
-                        Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
-						// progress
-					}
+				case ECommand.GlobalEvents_RegisterScore: {					
+					Dictionary<string, string> kParams = new Dictionary<string, string>();							
+					kParams["eventId"] = parameters["eventId"];
+					kParams["progress"] = parameters["progress"];
+                    Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
+					// progress					
 				}break;
                 default: {
                     if (FeatureSettingsManager.IsDebugEnabled)
@@ -857,6 +900,9 @@ public class GameServerManagerCalety : GameServerManager {
         }
 
         ServerManager.SharedInstance.SendCommand(commandName, urlParams, headerParams, body);
+
+        // Connection checker timer is reseted because a request is already being sent
+        Connection_ResetTimer();
     }
 
     /// <summary>
@@ -883,9 +929,8 @@ public class GameServerManagerCalety : GameServerManager {
 
 		// If no command is being processed and there's a command enqueued then that command is processed
 		// We need to verify that Commands_CurrentCommand is null because the callback called right above might have call another command
-		if(Commands_CurrentCommand == null && !Commands_IsQueueEmpty()) {
-			Commands_CurrentCommand = Commands_DequeueCommand();
-			Commands_PrepareToRunCommand(Commands_CurrentCommand);
+		if(m_CommandsIsEnabled && Commands_CurrentCommand == null && !Commands_IsQueueEmpty()) {			
+			Commands_PrepareToRunCommand(Commands_DequeueCommand());
 		}
 	}
 
@@ -1023,7 +1068,7 @@ public class GameServerManagerCalety : GameServerManager {
 				    LogError(url, error);
 				    callback(error, null);
 				}*/
-			} break;
+    } break;
 
 			case 4: {
 				error = new ClientConnectionError("Status code: " + statusCode);                
@@ -1052,9 +1097,7 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.Login: {
 					// [DGR] SERVER: Receive these parameters from server
 					response["fgolID"] = GameSessionManager.SharedInstance.GetUID();
-					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();
-					response["authState"] = Authenticator.AuthState.Authenticated.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
-					//response["authState"] = Authenticator.AuthState.NewSocialLogin.ToString(); //(Authenticator.AuthState)Enum.Parse(typeof(Authenticator.AuthState), response["authState"] as string);                        
+					response["sessionToken"] = GameSessionManager.SharedInstance.GetUserToken();					
 					if(responseJSON != null) {
 						string key = "upgradeAvailable";
 						response[key] = upgradeAvailable;
@@ -1121,6 +1164,55 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_OnExecuteCommandDone(error, response);
 		return error == null;       
 	}
+
+	private void Commands_OnServerDown() {
+		m_CommandsIsEnabled = false;
+
+		Error error = new ServerConnectionError("Server down");
+		ServerCallback callback;
+
+		// Clears latest command sent to server manager
+		if (Commands_CurrentCommand != null) {
+			callback = Commands_CurrentCommand.Callback;
+			Commands_ReturnCommand(Commands_CurrentCommand);
+			Commands_CurrentCommand = null;
+			if (callback != null) {
+				callback(error, null);
+			}
+		}
+
+		// Clears commands pending to be sent to server manager
+		Command command;        
+		while (!Commands_IsQueueEmpty()) {
+			command = Commands_DequeueCommand();
+			callback = command.Callback;
+			Commands_ReturnCommand(command);
+			if (callback != null) {
+				callback(error, null);
+			}
+		}    
+
+		m_CommandsIsEnabled = true;
+	}
+
+		private string Commands_ToString() {
+		string str = "COMMANDS QUEUE: ";
+		if (Commands_Queue != null) {
+			Command[] commands = Commands_Queue.ToArray();
+			int count = commands.Length;
+			for (int i = 0; i < count; i++) {
+			str += commands[i].Cmd.ToString() + System.Environment.NewLine;
+			}
+		}
+
+		str += System.Environment.NewLine + " CURRENT COMMAND: ";
+
+		if (Commands_CurrentCommand != null) {
+			str += Commands_CurrentCommand.Cmd.ToString();
+		}
+
+		return str;
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -1136,18 +1228,19 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_GET_GAME_SETTINGS = "/api/settings/get";
     private const string COMMAND_PLAYTEST_A = "/api/playtest/a";
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
+    private const string COMMAND_TRACK_LOADING = "/api/loading/step";
 
-	private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
+    private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
 	private const string COMMAND_GLOBAL_EVENTS_GET_EVENT = "/api/gevent/get";
 	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/gevent/progress";
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/gevent/addProgress";
 	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/gevent/reward";
-	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
+	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";    
 
-	/// <summary>
-	/// Initialize Calety's NetworkManager.
-	/// </summary>
-	private void CaletyExtensions_Init() {
+    /// <summary>
+    /// Initialize Calety's NetworkManager.
+    /// </summary>
+    private void CaletyExtensions_Init() {
 		// All codes need to be handled in order to be sure that the game will continue regardless the network error
 		int[] codes = new int[] {
 			200, 204, 301, 302, 303, 304, 305, 306, 307, 400, 401, 402, 403, 404,
@@ -1166,8 +1259,9 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_GET_GAME_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
-		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_STATE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
@@ -1199,7 +1293,166 @@ public class GameServerManagerCalety : GameServerManager {
 
 		return Commands_OnResponse(strResponse, iResponseCode);                
 	}
-    #endregion    
+    #endregion
+
+    #region connection
+    // This region is responsible for 
+    // 1)Trying to reconnect after a network failure
+    // 2)Keeping the session in server alive by sending a ping command periodically   
+
+    private enum EConnectionState
+    {        
+        Up,
+        Down,
+        Recovering
+    };
+
+    private EConnectionState m_connectionState;
+
+    private Error m_connectionServerDownError;
+
+    // In Seconds    
+    private float m_connectionTimeLeftToPing;
+
+    private bool m_connectionIsCheckEnabled;
+    private bool m_connectionIsPerformingCheck;
+
+    private bool m_connectionIsReady;    
+
+    private void Connection_Init() {        
+        m_connectionIsReady = false;
+
+        // If has to be enabled explicitly
+        m_connectionIsCheckEnabled = false;
+        m_connectionIsPerformingCheck = false;
+        Connection_ResetTimer();
+
+        Connection_SetState(EConnectionState.Up);
+    }    
+
+    private void Connection_SetState(EConnectionState value) {
+        m_connectionState = value;
+    }
+    
+    private Error Connection_GetServerDownError() {
+        if (m_connectionServerDownError == null)
+        {
+            m_connectionServerDownError = new TimeoutError();
+        }
+
+        return m_connectionServerDownError;
+    }
+
+    private void Connection_OnServerDown() {
+        // If it's already recovering then we let the flow finish
+        if (m_connectionState != EConnectionState.Recovering) {
+            m_connectionState = EConnectionState.Down;
+        }
+    }
+
+    private void Connection_Recover(Action onDone) {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Trying to recover connection....");
+
+        Action<bool> onRecoverDone = delegate (bool success) {
+            EConnectionState state = (success) ? EConnectionState.Up : EConnectionState.Down;
+            
+            // Threre's connection again
+            if (success) {
+                // Notifies that network is up again
+                Messenger.Broadcast(MessengerEvents.CONNECTION_RECOVERED);
+            }
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Recovery connection " + ((success) ? "succeeded" : "failed"));
+
+            Connection_SetState(state);
+
+            if (onDone != null) {
+                onDone();
+            }
+        };
+
+        Connection_SetState(EConnectionState.Recovering);
+
+        Connection_ResetTimer();
+
+        CheckConnection((Error checkError) => {
+            if (checkError == null) {
+                // Logs in server
+                Auth((Error error, GameServerManager.ServerResponse response) => {
+                    bool isLoggedInServer = IsLoggedIn();
+
+                    // If it's logged in server then tries to sync
+                    if (isLoggedInServer) {
+                        PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => {
+                            onRecoverDone(isLoggedInServer);
+                        }
+                        );
+                    } else {
+                        onRecoverDone(isLoggedInServer);
+                    }
+                });
+            } else {
+                onRecoverDone(false);
+            }
+        }
+        );
+    }     
+   
+    private void Connection_ResetTimer() {
+        m_connectionTimeLeftToPing = FeatureSettingsManager.instance.GetAutomaticReloginPeriod();
+    }                   
+    
+    private bool Connection_IsCheckEnabled() {
+        return m_connectionIsCheckEnabled;
+    }
+
+    public override void Connection_SetIsCheckEnabled(bool value) {
+        m_connectionIsCheckEnabled = value;
+    }
+
+    private void Connection_Update() {
+        if (FeatureSettingsManager.instance.IsAutomaticReloginEnabled()) {
+            if (m_connectionIsReady) {
+                // System ready
+                // Check that a connection check is not already being performed 
+                if (Connection_IsCheckEnabled() && !m_connectionIsPerformingCheck && m_connectionState != EConnectionState.Recovering) {
+                    m_connectionTimeLeftToPing -= Time.unscaledDeltaTime;
+
+                    // Time's up
+                    if (m_connectionTimeLeftToPing < 0f) {
+                        Action onDone = delegate () {
+                            m_connectionIsPerformingCheck = false;
+                            Connection_ResetTimer();
+                        };
+
+                        m_connectionIsPerformingCheck = true;
+
+                        // Checks if we needs to relogin to cloud, if so then we force a sync (which also checks connection and login)
+                        if (SocialPlatformManager.SharedInstance.IsLoggedIn() && !PersistenceFacade.instance.CloudDriver.IsLoggedIn && !PersistenceFacade.instance.Sync_IsSyncing) {
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                                Log("Automatic relogin performing cloud sync...");
+
+                            PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => { onDone(); });
+                        } else {
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                                Log("Automatic relogin performing a ping...");
+
+                            // We just need to check the connection because just sending a command will force network and login check
+                            CheckConnection((Error error) => { onDone(); });
+                        }
+                    }
+                }
+            } else {
+                // System is not ready: Waiting for content to be ready
+                if (ContentManager.m_ready) {
+                    m_connectionIsReady = true;
+                }
+            }
+        }
+    }
+    #endregion
 
     //------------------------------------------------------------------------//
     // LOGGING METHODS														  //

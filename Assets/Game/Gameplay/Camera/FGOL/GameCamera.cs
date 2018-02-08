@@ -128,12 +128,15 @@ public class GameCamera : MonoBehaviour
 	private FastBounds2D 		m_deactivationNear = new FastBounds2D();
 	public FastBounds2D 		deactivationRectNear { get { return m_deactivationNear; }}
 
+	private FastBounds2D 		m_deactivationFar = new FastBounds2D();
+	public FastBounds2D 		deactivationRectFar { get { return m_deactivationFar; }}
+
 	private FastBounds2D 		m_deactivationBG = new FastBounds2D();
 	public FastBounds2D 		deactivationRectBG { get { return m_deactivationBG; }}
 
 
-	private Plane[] m_frustumPlanes;
-
+	private const int m_numFrustumPlanes = 6;
+	private Plane[] m_frustumPlanes = new Plane[m_numFrustumPlanes];
 
 	private int					m_pixelWidth = 640;
 	private int					m_pixelHeight = 480;
@@ -243,27 +246,33 @@ public class GameCamera : MonoBehaviour
 			Debug_Awake();
 		}
 
+		if (FeatureSettingsManager.instance.LevelsLOD <= FeatureSettings.ELevel4Values.low) {
+			m_deactivationDistance *= 0.5f;
+		}
+
 		InstanceManager.gameCamera = this;
 
 		// Subscribe to external events
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.AddListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-		Messenger.AddListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
-		Messenger.AddListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);       
+		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.AddListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.AddListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);       
 
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
-		Messenger.AddListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
+		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+		Messenger.AddListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 	}
 
 	public void PublicAwake()
 	{
 		m_transform = transform;
 		m_unityCamera = GetComponent<Camera>();
-		m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
+	
+		UpdateFrustumPlanes();
+
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
 
 		m_slowmoBreachTrigger = GetComponentInChildren<SlowmoBreachTrigger>();
@@ -388,16 +397,16 @@ public class GameCamera : MonoBehaviour
 	}
 
 	void OnDestroy() {
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFury);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
-		Messenger.RemoveListener(GameEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
-		Messenger.RemoveListener(GameEvents.CAMERA_INTRO_DONE, IntroDone);
-		Messenger.RemoveListener<float, float>(GameEvents.CAMERA_SHAKE, OnCameraShake);
+		Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+		Messenger.RemoveListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
+		Messenger.RemoveListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
        
         // Unsubscribe from external events.
-        Messenger.RemoveListener<string>(GameEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
-		Messenger.RemoveListener<Vector2>(GameEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
+        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+		Messenger.RemoveListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 
 		InstanceManager.gameCamera = null;
 
@@ -650,8 +659,33 @@ public class GameCamera : MonoBehaviour
 		}
 		*/
 
-		m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
+		UpdateFrustumPlanes();
 	}
+
+	private void UpdateFrustumPlanes()
+	{
+		// m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
+		CalculateFrustumPlanes( m_frustumPlanes, m_unityCamera.projectionMatrix * m_unityCamera.worldToCameraMatrix);
+	}
+
+	private static System.Action<Plane[], Matrix4x4> _calculateFrustumPlanes_Imp;
+    public static void CalculateFrustumPlanes(Plane[] planes, Matrix4x4 worldToProjectMatrix)
+    {
+        if (planes == null) throw new System.ArgumentNullException("planes");
+        if (planes.Length < 6) throw new System.ArgumentException("Output array must be at least 6 in length.", "planes");
+ 
+        if (_calculateFrustumPlanes_Imp == null)
+        {
+            var meth = typeof(GeometryUtility).GetMethod("Internal_ExtractPlanes", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new System.Type[] { typeof(Plane[]), typeof(Matrix4x4) }, null);
+            if (meth == null) throw new System.Exception("Failed to reflect internal method. Your Unity version may not contain the presumed named method in GeometryUtility.");
+ 
+            _calculateFrustumPlanes_Imp = System.Delegate.CreateDelegate(typeof(System.Action<Plane[], Matrix4x4>), meth) as System.Action<Plane[], Matrix4x4>;
+            if(_calculateFrustumPlanes_Imp == null) throw new System.Exception("Failed to reflect internal method. Your Unity version may not contain the presumed named method in GeometryUtility.");
+        }
+ 
+        _calculateFrustumPlanes_Imp(planes, worldToProjectMatrix);
+    }
+
 
 
 	bool PlayingIntro()
@@ -1262,6 +1296,9 @@ public class GameCamera : MonoBehaviour
 		m_deactivationNear.ExpandBy( expand, expand );
 		m_deactivationNear.ExpandBy( -expand, -expand );  	
 
+		m_deactivationFar.Set(m_deactivationNear);
+		m_deactivationFar.ApplyScale(1.5f);
+
 		m_deactivationBG.Set(m_activationMaxBG);
 		m_deactivationBG.ExpandBy( 2f, 2f );
 		m_deactivationBG.ExpandBy( -2f, -2f );  	
@@ -1321,18 +1358,36 @@ public class GameCamera : MonoBehaviour
 		return !m_activationMinBG.Intersects(_bounds) && m_activationMaxBG.Intersects(_bounds);
 	}
 
-	public bool IsInsideDeactivationArea(Vector3 _point) {		
-		return !m_deactivationNear.Contains(_point);
+
+	//
+	public bool IsInsideDeactivationArea(Vector3 _point) {
+		if (_point.z < SpawnerManager.FAR_LAYER_Z) {
+			return !m_deactivationNear.Contains(_point);
+		} else {
+			return !m_deactivationFar.Contains(_point);
+		}
 	}
 
 	public bool IsInsideDeactivationArea(Bounds _bounds) {		
-		return !m_deactivationNear.Intersects(_bounds);
+		if (_bounds.center.z < SpawnerManager.FAR_LAYER_Z) {
+			return !m_deactivationNear.Intersects(_bounds);
+		} else {
+			return !m_deactivationFar.Intersects(_bounds);
+		}
 	}
 
 	public bool IsInsideDeactivationArea(Rect _bounds) {		
 		return !m_deactivationNear.Intersects(_bounds);
 	}
+	//
 
+	//
+	public bool IsInsideDeactivationAreaFar(Rect _bounds) {		
+		return !m_deactivationFar.Intersects(_bounds);
+	}
+	//
+
+	//
 	public bool IsInsideBackgroundDeactivationArea(Vector3 _point) {
 		return !m_deactivationBG.Contains(_point);
 	}
@@ -1344,6 +1399,7 @@ public class GameCamera : MonoBehaviour
 	public bool IsInsideBackgroundDeactivationArea(Rect _bounds) {		
 		return !m_deactivationBG.Intersects(_bounds);
 	}
+	//
 
 
 	public bool IsInside2dFrustrum(Vector3 _point) {
@@ -1355,7 +1411,7 @@ public class GameCamera : MonoBehaviour
 	}
 
 	public bool IsInsideCameraFrustrum(Vector3 _p) {
-		for (int i = 0; i < m_frustumPlanes.Length; ++i) {
+		for (int i = 0; i < m_numFrustumPlanes; ++i) {
 			if (!m_frustumPlanes[i].GetSide(_p)) return true;
 		}
 
@@ -1480,12 +1536,12 @@ public class GameCamera : MonoBehaviour
     // we don't want to change it if it's not really necessary in order to make future updates easier
     private void Debug_Awake()
     {
-        Messenger.AddListener(GameEvents.CP_QUALITY_CHANGED, Debug_OnChanged);        
+        Messenger.AddListener(MessengerEvents.CP_QUALITY_CHANGED, Debug_OnChanged);        
     }
 
     private void Debug_OnDestroy()
     {
-        Messenger.RemoveListener(GameEvents.CP_QUALITY_CHANGED, Debug_OnChanged);
+        Messenger.RemoveListener(MessengerEvents.CP_QUALITY_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged()

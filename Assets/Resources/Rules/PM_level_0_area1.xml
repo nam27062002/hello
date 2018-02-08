@@ -9,8 +9,8 @@
 	<Definition sku="PS_UIMegaFireBurst" 			count="1"/>
 	<Definition sku="PS_UIMegaFireConsume" 			count="4"/>
 	<Definition sku="PF_CaveBlockerExplosion" 		count="1"/>
-	<Definition sku="PS_C_Splinters" 				count="2"/>
-	<Definition sku="PS_C_Wheat" 					count="2"/>
+	<Definition sku="PS_C_Splinters" 				count="2" countLow="0"/>
+	<Definition sku="PS_C_Wheat" 					count="2" countLow="0"/>
 	<Definition sku="PS_D_RockyExplosion" 			count="2"/>
 	<Definition sku="PS_NewFireExplosion" 			count="2"/>
 	<Definition sku="PS_D_Splinters" 				count="2"/>
@@ -23,11 +23,11 @@
 	<Definition sku="PS_CoinShine"  				count="2"/>
 	<Definition sku="PS_EntityPCTrail"  			count="2"/>
 	<Definition sku="PS_FairyDust"					count="2" countLow="0"/>
-	<Definition sku="PS_BunnyFluff"					count="2"/>
+	<Definition sku="PS_BunnyFluff"					count="2" countLow="0"/>
 	<Definition sku="PF_feathers_3D_noblood"  		count="2"/>
 	<Definition sku="PF_BonfireToon"  				count="10"/>
-	<Definition sku="PS_Blood_Explosion_Fish"  		count="2"/>
-	<Definition sku="PS_Blood_Explosion"  			count="5"/>
+	<Definition sku="PS_Blood_Explosion_Fish"  		count="2" isBlood="true"/>
+	<Definition sku="PS_Blood_Explosion"  			count="5" isBlood="true"/>
 	<Definition sku="PS_IceExplosion"  				count="1"/>
 	<Definition sku="PS_GhostBlood"  				count="2"/>
 	<Definition sku="PF_Mine_Edible"  				count="1"/>
@@ -46,6 +46,7 @@
 	<Definition sku="PS_SpartakusDustFall"  		count="1"/>
 	<Definition sku="PS_KamikazeJet"  				count="1"/>
 	<Definition sku="PS_Poison02"  					count="5"/>
+	<Definition sku="PS_PoisonLoop"  			    count="5"/>
 	<Definition sku="PS_WitchBuildUp"  				count="3"/>
 	<Definition sku="PS_WitchExplosion"  			count="3"/>
 	<Definition sku="PS_SoldierSlash01"  			count="1"/>
@@ -70,12 +71,16 @@
 	<Definition sku="PS_DevilDiveIn"  				count="1"/>
 	<Definition sku="PS_DevilDiveOut"  				count="1"/>
 	<Definition sku="PS_MarmiteSmoke" 				count="4"/>
-	<Definition sku="PS_ChestOpen"  				count="2"/>
-	<Definition sku="PS_ChestOpenLoop"  			count="5"/>
 	<Definition sku="PS_ChestGlow"  				count="1"/>
+	<Definition sku="PS_ChestOpenBurstGame"				count="1"/>
+	<Definition sku="PS_ChestOpenBurstGold"				count="1"/>
+	<Definition sku="PS_ChestOpenBurstDiamond"			count="1"/>
+	<Definition sku="PS_ChestOpenLoopGame" 				count="1"/>
+	<Definition sku="PS_ChestOpenLoopGold" 				count="1"/>
+	<Definition sku="PS_ChestOpenLoopDiamond"  			count="1"/>
 	<Definition sku="PS_Dive"  						count="4"/>
-	<Definition sku="PS_EnvironmentLeaves"  		count="2"/>
-	<Definition sku="PS_EnvironmentLeavesFast" 		count="2"/>
+	<Definition sku="PS_EnvironmentLeaves"  		count="2" countLow="0"/>
+	<Definition sku="PS_EnvironmentLeavesFast" 		count="2" countLow="0"/>
 	<Definition sku="PS_SkyDust"  					count="2" countLow="0"/>
 	<Definition sku="PS_TorchFire"  				count="9" lowVersion="true"/>
 	<Definition sku="PS_CaveDust"  					count="3" countLow="0"/>
@@ -87,16 +92,16 @@
 	<Definition sku="PS_BubbleStreak"  				count="2" countLow="0"/>
 	<Definition sku="PS_Bubbles"  					count="2" countLow="0"/>
 	<Definition sku="PS_CastleDust"  				count="2" countLow="0"/>
-	<Definition sku="PS_Candle"  					count="2"/>
+	<Definition sku="PS_Candle"  					count="2" countLow="0"/>
 	<Definition sku="PS_CemeteryMist"  				count="2" countLow="0"/>
-	<Definition sku="PS_WitchLeaves"  				count="2"/>
+	<Definition sku="PS_WitchLeaves"  				count="2" countLow="0"/>
 	<Definition sku="PS_MagicMushroom"  			count="4" highVersion="true" veryHighVersion="true" countLow="0"/>
-	<Definition sku="PS_BadJunk"  					count="5" />
+	<Definition sku="PS_BadJunk"  					count="5"/>
 	<Definition sku="PS_BigSplash"					count="3"/>
 	<Definition sku="PS_SmallSplash"				count="4"/>	
-	<Definition sku="PS_WaterShape"					count="6"/>		
+	<Definition sku="PS_WaterShape"					count="6"/>
 	<Definition sku="PS_Drops"						count="2"/>
-	<Definition sku="PS_PunchSmoke"					count="1"/>
+	<Definition sku="PS_PunchSmoke"					count="1" countLow="0"/>
 	<Definition sku="PS_ElectricWormLightning"		count="5"/>
 	<Definition sku="PF_Blocker_Tier1_Corpse"		count="1"/>
 	<Definition sku="PF_Blocker_Tier2_Corpse"		count="1"/>

@@ -98,9 +98,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		Debug.Assert(m_targetAnimator != null, "No target defined!");
 
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 
 		m_coroutine = null;
 	}
@@ -125,9 +125,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(EngineEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -229,7 +229,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
 			// Go to opposite of the target state
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
-			m_targetAnimator.Hide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
+			m_targetAnimator.ForceHide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
 
 			// Program the animation to the target state in sync with the dragon scroll animation (more or less)
 			if (m_coroutine != null) {
@@ -242,7 +242,7 @@ public class MenuShowConditionally : MonoBehaviour {
 				StopCoroutine(m_coroutine);
 				m_coroutine = null;
 			}
-			m_targetAnimator.Set(_show, _useAnims);
+			m_targetAnimator.ForceSet(_show, _useAnims);
 		}
 	}
 
@@ -320,7 +320,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
 
 		// Do it! (If still enabled!)
-		if(this.enabled) m_targetAnimator.Set(_toShow, _useAnims);
+		if(this.enabled) m_targetAnimator.ForceSet(_toShow, _useAnims);
 
 		m_coroutine = null;
 	}

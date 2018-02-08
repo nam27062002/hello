@@ -141,7 +141,7 @@ public class ResourcesFlow {
 		m_name = _name;
 
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -149,7 +149,7 @@ public class ResourcesFlow {
 	/// </summary>
 	~ResourcesFlow() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
     /// <summary>

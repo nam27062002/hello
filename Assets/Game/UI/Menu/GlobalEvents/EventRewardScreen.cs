@@ -61,8 +61,8 @@ public class EventRewardScreen : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events.
-		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.AddListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	/// <summary>
@@ -84,8 +84,8 @@ public class EventRewardScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(GameEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	//------------------------------------------------------------------//
@@ -117,11 +117,11 @@ public class EventRewardScreen : MonoBehaviour {
 				UsersManager.currentUser.PushReward(m_event.rewardSlots[i].reward);
 			}
 
-			// Immediately save persistence in case the rewards opening gets interrupted
-			PersistenceFacade.instance.Save_Request(true);
-
 			// Mark event as collected
 			m_event.FinishRewardCollection();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
+
+			// Immediately save persistence in case the rewards opening gets interrupted
+			PersistenceFacade.instance.Save_Request(true);
 		}
 
 		// Initialize progress bar
@@ -344,6 +344,7 @@ public class EventRewardScreen : MonoBehaviour {
 			case Step.FINISH: {
 				// Purge event list
 				GlobalEventManager.ClearRewardedEvents();
+				GlobalEventManager.ResetHasChecked();
 				GlobalEventManager.ClearCurrentEvent();
 
 				// Request new event data

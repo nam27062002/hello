@@ -40,10 +40,15 @@ public class PersistenceLocalDriver
     {
     }
 
-    protected virtual void Reset()
+    public void Reset()
 	{
 		IsLoadedInGame = false;
 		UpdatesAheadOfCloud = 0;
+
+        if (Data != null)
+        {
+            Data.Reset();
+        }
 
 		ExtendedReset();
 	}
@@ -128,8 +133,8 @@ public class PersistenceLocalDriver
 	}
 
 	public void Override(string persistence, Action onDone)
-	{
-		Data.LoadFromString(persistence);
+	{               
+        Data.LoadFromString(persistence);
 
         // Overrides all files except the one that is going to be overridden by Save(onDone) below
         // They all need to be overridden becuase their values are not valid anymore, otherwise the user could be able to load an old persistence
@@ -156,16 +161,16 @@ public class PersistenceLocalDriver
 	}
 
 	public void OverrideWithDefault(Action onDone)
-	{
+	{        
 		// Default persistence is loaded
 		SimpleJSON.JSONClass defaultPersistence = PersistenceUtils.GetDefaultDataFromProfile();
 		Override(defaultPersistence.ToString(), onDone);
 	}
 
 	public void Save(Action onDone)
-	{
-		// Makes sure that the persistence that is about to be saved is a valid one
-		if (Data.LoadState == PersistenceStates.ELoadState.OK)
+	{        
+        // Makes sure that the persistence that is about to be saved is a valid one
+        if (Data.LoadState == PersistenceStates.ELoadState.OK)
 		{
 			ExtendedSave();
 			OnSaveDone(onDone);

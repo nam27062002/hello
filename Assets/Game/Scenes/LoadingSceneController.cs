@@ -146,14 +146,14 @@ public class LoadingSceneController : SceneController {
 
     private enum State
     {
-    	NONE,
-    	WAITING_SAVE_FACADE,
+    	NONE,        
+        WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
         WAITING_FOR_RULES,
         LOADING_RULES,
-        SHOWING_UPGRADE_POPUP,
-    	COUNT
+        SHOWING_UPGRADE_POPUP,        
+        COUNT
     }
     private State m_state = State.NONE;
 	private AndroidPermissionsListener m_androidPermissionsListener = null;
@@ -233,13 +233,13 @@ public class LoadingSceneController : SceneController {
 				kAndroidPermissionsConfig.m_strPopupButtonExit              = "TID_EXIT_GAME";
 
                 AndroidPermissionsManager.SharedInstance.Initialise(ref kAndroidPermissionsConfig);
-
+                
 				if(!AndroidPermissionsManager.SharedInstance.CheckDangerousPermissions ()) {
                     // Application.targetFrameRate = 10;
 					SetState(State.WAITING_ANDROID_PERMISSIONS);
 				}else{
                     // Load persistence
-                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate())
+                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
                     {
 						SetState(State.SHOWING_UPGRADE_POPUP);
                     }
@@ -389,7 +389,7 @@ public class LoadingSceneController : SceneController {
         m_state = state;
 
         switch (state)
-        {
+        {            
         	case State.SHOWING_UPGRADE_POPUP:
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
@@ -440,6 +440,7 @@ public class LoadingSceneController : SceneController {
 				SpawnerManager.CreateInstance(true);
 				SpawnerAreaManager.CreateInstance(true);
 				EntityManager.CreateInstance(true);
+				ViewManager.CreateInstance(true);
 				InstanceManager.CreateInstance(true);
 
 		        GameAds.CreateInstance(false);
@@ -451,12 +452,11 @@ public class LoadingSceneController : SceneController {
                 EggManager.SetupUser(UsersManager.currentUser);
                 ChestManager.SetupUser(UsersManager.currentUser);
                 GameStoreManager.SharedInstance.Initialize();
-#if UNITY_ANDROID
+
 				if ( ApplicationManager.instance.GameCenter_LoginOnStart() )
 				{
 					ApplicationManager.instance.GameCenter_Login();
 				}
-#endif
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
@@ -479,23 +479,80 @@ public class LoadingSceneController : SceneController {
                 Log("Started Loading Flow");
 
             Action onDone = delegate()
-            {
-                m_loadingDone = true;                
-
+            {                
                 HDTrackingManager.Instance.Notify_ApplicationStart();
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
+
+                // Automatic connection check is enabled once the loading is over
+                GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
+
+                // Game will be loaded only if the device is supported, otherwise a popup is shown suggesting the user download HSE. 
+                // We need to wait until this point to open this popup because we need to read local persistence to have access to
+                // tracking id since the user's interaction with this popup has to be tracked
+                if (FeatureSettingsManager.instance.Device_IsSupported())
+                {
+                    m_loadingDone = true;
+                }
+                else
+                {
+                    Popup_ShowUnsupportedDevice();
+                }
             };
 
-            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            			
+            // Automatic connection check disabled during loading because network is already being used
+            GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);
+            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);
+
+            HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._00_start);        			
         }
     }
 
+    #region unsupported_device
+    private void Popup_ShowUnsupportedDevice()
+    {
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
+        config.MessageTid = "TID_BODY_UNSUPPORTED_DEVICE";
+        config.IsButtonCloseVisible = false;
+
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;        
+        config.OnConfirm = UnsupportedDevice_OnGoToLink;
+        config.ConfirmButtonTid = "TID_BUTTON_UNSUPPORTED_DEVICE";
+        config.OnCancel = UnsupportedDevice_OnQuit;
+        config.CancelButtonTid = "TID_PAUSE_TAB_OPTIONS_QUIT";
+
+        // Back button is disabled in order to make sure that the user is aware when making such an important decision
+        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+        PopupManager.PopupMessage_Open(config);
+
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Shown);
+    }
+
+    private void UnsupportedDevice_OnGoToLink()
+    {        
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Leave2HSE);
+
+        // HSE is opened in store        
+        ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungrySharkEvo);
+    }  
+
+    private void UnsupportedDevice_OnQuit()
+    {
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Quit);        
+
+        // The user quits the application
+        Application.Quit();
+    }
+    #endregion
+
+    #region log
     private const string LOG_CHANNEL = "[LOADING] ";
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);
     }
+    #endregion
 }
 

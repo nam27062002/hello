@@ -70,7 +70,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 		if ( m_warnEntities )
 		{
-			Messenger.Broadcast(GameEvents.APPLY_ENTITY_POWERUPS);
+			Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
 			m_warnEntities = false;
 		}
 	}
@@ -364,7 +364,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "eat":
 			case "vacuum":
 			case "prey_hp_boost":
-			{
+            case "drop_present":
+                {
 				return UIConstants.PET_CATEGORY_EAT;
 			} break;
 

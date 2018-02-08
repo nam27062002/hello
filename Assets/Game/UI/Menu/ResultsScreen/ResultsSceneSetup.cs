@@ -41,6 +41,10 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[Comment("DragonLoader should be set to \"CURRENT\" mode", 10)]
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
 	[SerializeField] private Transform m_dragonSlotViewPosition = null;
+	public MenuDragonLoader dragonSlot {
+		get { return m_dragonSlot; }
+	}
+
 	[SerializeField] private ResultsSceneEggSlot m_eggSlot = null;
 	public ResultsSceneEggSlot eggSlot {
 		get { return m_eggSlot; }
@@ -74,11 +78,11 @@ public class ResultsSceneSetup : MonoBehaviour {
 			if ( m_fog.texture == null )
 			{
 				m_fog.CreateTexture();
-				Shader.SetGlobalTexture("_FogTexture", m_fog.texture);
+				Shader.SetGlobalTexture(GameConstants.Material.FOG_TEXTURE, m_fog.texture);
 			}
 			m_fog.RefreshTexture();
-			Shader.SetGlobalFloat("_FogStart", m_fog.m_fogStart);
-			Shader.SetGlobalFloat("_FogEnd", m_fog.m_fogEnd);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_fog.m_fogStart);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_fog.m_fogEnd);
 		}
 	}
 

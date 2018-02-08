@@ -98,7 +98,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	public void OnSelectedDragonChanged(DragonData _oldDragon, DragonData _newDragon) {
 		if(_newDragon != null) {
 			// Notify game
-			Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);
+			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);
 
 			// Play some SFX!
 			AudioController.Play("hd_arrow_left");
@@ -154,13 +154,25 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 
 			// Is it a dragon?
 			else if(dragon != null) {
+				// a) Goto Game!
+				// Only if enabled!
+				if(Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) {
+					// Only owned dragons!
+					if(DragonManager.GetDragonData(dragon.sku).isOwned) {
+						// Menu scene controller will manage it
+						InstanceManager.menuSceneController.OnPlayButton();
+					}
+				}
+
+				// b) Goto Disguises Screen
 				// Yes! Go to the disguises screen
-				targetScreen = MenuScreens.DISGUISES;
+				//targetScreen = MenuScreens.DISGUISES;
 
 				// Do a fun animation on the dragon!
 				// Only owned dragons!
 				if(DragonManager.GetDragonData(dragon.sku).isOwned) {
 					//dragon.SetAnim(MenuDragonPreview.Anim.FUN);
+					/*
 					dragon.transform.DOKill(true);
 					switch(m_animId) {
 						case "scale": {
@@ -175,6 +187,8 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 							dragon.transform.DOBlendableRotateBy(m_animValue, m_animDuration, RotateMode.FastBeyond360).SetEase(m_animEase);
 						} break;
 					}
+					*/
+					// dragon.ForcePreferedAltAnimation();
 				}
 				break;
 			}

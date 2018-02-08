@@ -37,7 +37,7 @@ public class PlayTestActivator : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnPrefChanged);
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnPrefChanged);
 
 		// Init internal vars
 		m_wasActive = this.gameObject.activeSelf;
@@ -65,7 +65,7 @@ public class PlayTestActivator : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, OnPrefChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnPrefChanged);
 	}
 
 	//------------------------------------------------------------------------//

@@ -119,6 +119,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 
 		// Skin preview
 		m_preview.LoadDragon(def.Get("dragonSku"), def.sku);
+		m_preview.dragonInstance.allowAltAnimations = false;	// [AOC] Disable weird alt animations for now
 
 		// Power
 		string powerSku = def.GetAsString("powerup");
@@ -196,7 +197,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 				m_tapToContinue.ForceHide();
 
 				// Message to track skin
-				Messenger.Broadcast<string>(GameEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
+				Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
 
 				// Continue with the animation after some delay
 				UbiBCN.CoroutineManager.DelayedCall(() => {

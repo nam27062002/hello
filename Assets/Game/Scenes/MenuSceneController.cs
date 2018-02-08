@@ -135,6 +135,11 @@ public class MenuSceneController : SceneController {
 		// Make sure loading screen is hidden
 		LoadingScreen.Toggle(false, false);
 
+		// Track FTUX funnel
+		if(UsersManager.currentUser.gamesPlayed == 1) {		// Exactly after the very first run
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06a_load_done);
+		}
+
 		// Start loading pet pill's on the background!
 		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
 		StartCoroutine(petsScreen.InstantiatePillsAsync());
@@ -142,10 +147,17 @@ public class MenuSceneController : SceneController {
 		// Request latest global event data
 		GlobalEventManager.RequestCurrentEventData();
 
-			// wait one tick
+		// wait one tick
 		yield return null;
 
-		CheckRatingFlow();
+		// Check interstitial popups
+		bool popupDisplayed = false;
+
+		// 1. Rating popup
+		if(!popupDisplayed) popupDisplayed = CheckRatingFlow();
+
+		// 2. Survey popup
+		if(!popupDisplayed) popupDisplayed = PopupAskSurvey.Check();
 
 		// Test mode
 		yield return new WaitForSeconds(5.0f);
@@ -160,8 +172,9 @@ public class MenuSceneController : SceneController {
 	}
 
 	public static string RATING_DRAGON = "dragon_crocodile";
-	public static void CheckRatingFlow()
+	public static bool CheckRatingFlow()
 	{
+		bool ret = false;
 		DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
 		if ( data.GetLockState() > DragonData.LockState.LOCKED )
 		{
@@ -182,7 +195,8 @@ public class MenuSceneController : SceneController {
 						if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
 						{
 							// Start Asking!
-							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );			
+							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
+							ret = true;
 						}
 					}
 				}
@@ -194,7 +208,7 @@ public class MenuSceneController : SceneController {
 			}
 		}
 
-
+		return ret;
 	}
 
 	protected override void OnDestroy() {
@@ -207,8 +221,8 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -216,8 +230,8 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(GameEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonData>(GameEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------//
@@ -297,7 +311,7 @@ public class MenuSceneController : SceneController {
             PersistenceFacade.instance.Save_Request();
 
             // Broadcast message
-            Messenger.Broadcast<string>(GameEvents.MENU_DRAGON_CONFIRMED, _sku);
+            Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_CONFIRMED, _sku);
 		}
 	}
 

@@ -31,8 +31,8 @@ public class TrackerDistance : TrackerBase {
 	/// </summary>
 	public TrackerDistance() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
 	}
 
 	/// <summary>
@@ -50,8 +50,8 @@ public class TrackerDistance : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(GameEvents.GAME_UPDATED, OnGameUpdated);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
 
 		// Call parent
 		base.Clear();

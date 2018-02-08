@@ -49,11 +49,6 @@ public class FireBallBreath : DragonBreathBehaviour {
 		}
 	}
 
-	override protected void EndFury() 
-	{
-		base.EndFury();
-	}
-
 
 
 	void OnTriggerEnter(Collider _other)
@@ -63,7 +58,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 			if ( m_isFuryOn )
 			{
 				m_isFuryPaused = true;
-				m_animator.SetBool("breath", false);
+				m_animator.SetBool( GameConstants.Animator.BREATH , false);
 			}
 		}
 	}

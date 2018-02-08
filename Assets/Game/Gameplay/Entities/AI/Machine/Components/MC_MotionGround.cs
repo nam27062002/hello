@@ -58,7 +58,7 @@ namespace AI {
 				m_onGround = true;
 			}
 
-			m_gravity = Vector3.zero;
+			m_gravity = GameConstants.Vector3.zero;
 			m_fallTimer = FREE_FALL_THRESHOLD;
 
 			m_subState = SubState.Idle;
@@ -76,7 +76,7 @@ namespace AI {
 				m_direction = m_pilot.direction;
 
 				if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
-					m_direction = (m_direction.x >= 0)? Vector3.right : Vector3.left;
+					m_direction = (m_direction.x >= 0)? GameConstants.Vector3.right : GameConstants.Vector3.left;
 				}
 			}
 
@@ -123,7 +123,7 @@ namespace AI {
 			if (m_subState <= SubState.Move) {
 				if (!m_onGround) {
 					m_fallTimer -= Time.deltaTime;
-					if (m_fallTimer <= 0f) {
+					if (m_fallTimer <= 0f) {						
 						FreeFall();
 						m_fallTimer = FREE_FALL_THRESHOLD;
 					}
@@ -134,7 +134,7 @@ namespace AI {
 		}
 
 		protected override void ExtendedFixedUpdate() {
-			Vector3 gv = Vector3.down * GRAVITY * Time.fixedDeltaTime;
+			Vector3 gv = GameConstants.Vector3.down * GRAVITY * Time.fixedDeltaTime;
 
 			if (m_subState >= SubState.Jump_Start && m_subState <= SubState.Jump_Down) {
 				// ----------------------------- gravity :3
@@ -169,7 +169,10 @@ namespace AI {
 			}
 		}
 
-		protected override void OnFreeFall() { }
+		protected override void OnFreeFall() { 
+			m_velocity *= 0.5f;
+		}
+
 		protected override void ExtendedUpdateFreeFall() {
 			if (m_faceDirection) {
 				m_direction = m_velocity.normalized;
@@ -186,7 +189,7 @@ namespace AI {
 		}
 
 		protected override void UpdateOrientation() {
-			m_targetRotation = Quaternion.LookRotation(m_direction + Vector3.back * 0.1f, m_upVector);
+			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
 
 			if (m_limitHorizontalRotation) {
 				if (m_direction.x < 0f) 	 m_targetRotation = Quaternion.AngleAxis(m_faceLeftAngle, m_upVector) * m_targetRotation; 
@@ -201,7 +204,7 @@ namespace AI {
 		}
 
 		private Vector3 GetGroundNormal(float _onGroundHeight) {
-			Vector3 normal = Vector3.up;
+			Vector3 normal = GameConstants.Vector3.up;
 			Vector3 hitPos = position;
 			Vector3 pos = position + (m_upVector * 3f);
 
@@ -215,13 +218,13 @@ namespace AI {
 			}
 
 			if (m_heightFromGround < 0.3f) {
-				m_gravity = Vector3.zero;
+				m_gravity = GameConstants.Vector3.zero;
 			}
 
 			m_onGround = m_heightFromGround < _onGroundHeight;
 			m_groundNormal = normal;
 
-			m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
+			m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_groundNormal);
 
 			m_viewControl.Height(m_heightFromGround);
 
@@ -299,9 +302,9 @@ namespace AI {
 
 				if (error <= 0.3f) {					
 					m_groundNormal = _collision.contacts[i].normal;
-					m_groundDirection = Vector3.Cross(Vector3.back, m_groundNormal);
+					m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_groundNormal);
 
-					m_gravity = Vector3.zero;
+					m_gravity = GameConstants.Vector3.zero;
 					m_fallTimer = FREE_FALL_THRESHOLD;
 
 					m_heightFromGround = 0f;

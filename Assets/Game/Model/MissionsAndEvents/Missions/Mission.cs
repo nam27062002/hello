@@ -176,10 +176,10 @@ public class Mission {
 
 		// Broadcast messages
 		switch(oldState) {
-			case State.LOCKED: Messenger.Broadcast<Mission>(GameEvents.MISSION_UNLOCKED, this);	break;
-			case State.COOLDOWN: Messenger.Broadcast<Mission>(GameEvents.MISSION_COOLDOWN_FINISHED, this);	break;
+			case State.LOCKED: Messenger.Broadcast<Mission>(MessengerEvents.MISSION_UNLOCKED, this);	break;
+			case State.COOLDOWN: Messenger.Broadcast<Mission>(MessengerEvents.MISSION_COOLDOWN_FINISHED, this);	break;
 		}
-		Messenger.Broadcast<Mission, State, State>(GameEvents.MISSION_STATE_CHANGED, this, oldState, _newState);
+		Messenger.Broadcast<Mission, State, State>(MessengerEvents.MISSION_STATE_CHANGED, this, oldState, _newState);
 	}
 
 	/// <summary>
@@ -195,7 +195,6 @@ public class Mission {
 		if(_seconds < 0) {
 			_seconds = (float)cooldownRemaining.TotalSeconds;
 		}
-
 
 		m_skipTimeWithAds = _useAd;
 		m_skipTimeWithHC = _useHC;
@@ -258,6 +257,26 @@ public class Mission {
 	private int ComputeSkipCostPC() {
 		// [AOC] Standard time/PC equivalence
 		return GameSettings.ComputePCForTime(cooldownRemaining);
+	}
+
+	//------------------------------------------------------------------//
+	// DEBUG															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Skip the specified amount of seconds on the cooldown timer.
+	/// </summary>
+	/// <param name="_seconds">Seconds.</param>
+	public void DEBUG_SkipCooldownTimer(float _seconds) {
+		// Nothing to do if mission is not on cooldown
+		if(state != Mission.State.COOLDOWN) return;
+
+		// Full cooldown completion?
+		if(_seconds < 0) {
+			_seconds = (float)cooldownRemaining.TotalSeconds;
+		}
+
+		// Do it!
+		m_cooldownStartTimestamp = m_cooldownStartTimestamp.AddSeconds(-_seconds);	// Simulate that cooldown started earlier than it actually did
 	}
 
 	//------------------------------------------------------------------//
@@ -342,6 +361,6 @@ public class Mission {
 	private void OnObjectiveComplete() {
 		// Dispatch global game event
 		DebugUtils.Log("<color=green>MISSION COMPLETED!</color>\n" + m_def.sku + " | " + m_objective.currentValue + "/" + m_objective.targetValue + " | " + m_difficulty);
-		Messenger.Broadcast<Mission>(GameEvents.MISSION_COMPLETED, this);
+		Messenger.Broadcast<Mission>(MessengerEvents.MISSION_COMPLETED, this);
 	}
 }

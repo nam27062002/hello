@@ -23,16 +23,41 @@ public class ChestViewController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PREFAB_PATH = "UI/Metagame/Chests/PF_ChestView";
 
+	[System.Serializable]
+	public class RewardSetup {
+		[HideEnumValues(false, true)]
+		public Chest.RewardType type = Chest.RewardType.SC;
+		public GameObject view = null;
+		public ViewParticleSpawner openFX = null;
+		public ViewParticleSpawner openLoopFX = null;
+	}
+
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
-    // Exposed references
-	[SerializeField] private GameObject m_goldRewardView = null;
-	[SerializeField] private GameObject m_gemsRewardView = null;
+    // VFX
+	[SerializeField] private ViewParticleSpawner m_glowFX = null;
+	[SerializeField] private RewardSetup[] m_rewardSetups = new RewardSetup[(int)Chest.RewardType.COUNT];
+
+	// SFX
 	[Space]
-    [SerializeField] private GameObject m_glowFX = null;
-	[SerializeField] private ParticleData m_openParticle = null;
-	// [SerializeField] private ParticleData m_dustParticle = null;
+	[SerializeField] private string m_openSFX = "";
+	public string openSFX {
+		get { return m_openSFX; }
+		set { m_openSFX = value; }
+	}
+
+	[SerializeField] private string m_closeSFX = "";
+	public string closeSFX {
+		get { return m_closeSFX; }
+		set { m_closeSFX = value; }
+	}
+
+	[SerializeField] private string m_resultsSFX = "";
+	public string resultsSFX {
+		get { return m_resultsSFX; }
+		set { m_resultsSFX = value; }
+	}
 
 	// Exposed setup
 	[Space]
@@ -48,7 +73,11 @@ public class ChestViewController : MonoBehaviour {
 
 	// Internal
 	private Animator m_animator = null;
-	private GameObject[] m_rewardViews = null;
+	private Chest.RewardType m_rewardType = Chest.RewardType.SC;
+
+	private RewardSetup currentRewardSetup {
+		get { return m_rewardSetups[(int)m_rewardType]; }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -57,20 +86,18 @@ public class ChestViewController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Sort reward setup to match enum
+		RewardSetup[] sortedSetups = new RewardSetup[(int)Chest.RewardType.COUNT];
+		for(int i = 0; i < m_rewardSetups.Length; ++i) {
+			sortedSetups[(int)m_rewardSetups[i].type] = m_rewardSetups[i];
+		}
+		m_rewardSetups = sortedSetups;
+
 		// Get animator ref
 		m_animator = GetComponent<Animator>();
 
 		// Start with all particles stopped
-		ToggleFX(m_glowFX, false);
-
-		// Get references (from FBX names)
-		// Respect enum name
-		m_rewardViews = new GameObject[] {
-			m_goldRewardView,
-			m_gemsRewardView
-		};
-
-		m_openParticle.CreatePool();
+		StopAllFX();
 	}
 
 	//------------------------------------------------------------------------//
@@ -92,18 +119,26 @@ public class ChestViewController : MonoBehaviour {
 	public void Open(Chest.RewardType _reward, bool _instant) {
 		// Launch animation
 		if(_instant) {
-			m_animator.SetTrigger("open_pose");
+			m_animator.SetTrigger( GameConstants.Animator.OPEN_POSE );
 		} else {
 			// Particle effect will be launched with the animation event
-			m_animator.SetTrigger("open");
+			m_animator.SetTrigger( GameConstants.Animator.OPEN);
+
+			// Play SFX
+			AudioController.Play(m_openSFX);
 		}
 
 		// Show the right reward
-		if(m_rewardViews != null) {
-			for(int i = 0; i < m_rewardViews.Length; i++) {
-				m_rewardViews[i].SetActive(i == (int)_reward);
-			}
+		for(int i = 0; i < m_rewardSetups.Length; i++) {
+			m_rewardSetups[i].view.SetActive(m_rewardSetups[i].type == _reward);
 		}
+
+		// Stop current reward FX - target reward FX will be triggered synched with the animation (OnLidOpen event)
+		ToggleFX(currentRewardSetup.openFX, false);
+		ToggleFX(currentRewardSetup.openLoopFX, false);
+
+		// Store reward type to spawn the right FX once the lid is open
+		m_rewardType = _reward;
 	}
 
 	/// <summary>
@@ -111,7 +146,13 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void Close() {
 		// Launch close animation
-		m_animator.SetTrigger("close");
+		m_animator.SetTrigger( GameConstants.Animator.CLOSE );
+
+		// Stop FX
+		StopAllFX();
+
+		// Play SFX
+		AudioController.Play(m_closeSFX);
 	}
 
 	/// <summary>
@@ -119,41 +160,37 @@ public class ChestViewController : MonoBehaviour {
 	/// </summary>
 	public void ResultsAnim() {
 		// Stop all particles
-		ToggleFX(m_glowFX, false);
+		StopAllFX();
 
 		// Launch animation
-		m_animator.SetTrigger("results_in");
+		m_animator.SetTrigger(GameConstants.Animator.RESULTS_IN);
+
+		// SFX will be played on the ChestLanded animation event so it's fully synced
 	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Aux method to quickly toggle a particle system on/off.
+	/// Stops all FX.
 	/// </summary>
-	/// <param name="_fx">The system to be toggled.</param>
-	/// <param name="_active">Whether to turn it on or off.</param>
-	private void ToggleFX(GameObject _fx, bool _active) {
-		// Ignore if given FX is not valid
-		if(_fx == null) return;
-		_fx.SetActive( _active );
-
-		/*
-		// Activate?
-		if(_active) {
-			_fx.gameObject.SetActive(true);
-			_fx.Play();
-
-            // If it has a CustomParticlesCulling assigned then it checks if it's invisible, if so then it has to pause the effect
-            if (CustomParticlesCulling != null && !CustomParticlesCulling.IsVisible())
-            {
-                _fx.Pause();
-            }
-		} else {
-			_fx.Stop();
-			_fx.gameObject.SetActive(false);
+	private void StopAllFX() {
+		ToggleFX(m_glowFX, false);
+		for(int i = 0; i < m_rewardSetups.Length; ++i) {
+			if(m_rewardSetups[i] == null) continue;
+			ToggleFX(m_rewardSetups[i].openFX, false);
+			ToggleFX(m_rewardSetups[i].openLoopFX, false);
 		}
-		*/
+	}
+
+	/// <summary>
+	/// Enable/Disable FX, making sure it's a valid reference.
+	/// </summary>
+	/// <param name="_fx">The FX to be toggled.</param>
+	/// <param name="_toggle">Whether to enable or disable it.</param>
+	private void ToggleFX(ViewParticleSpawner _fx, bool _toggle) {
+		if(_fx == null) return;
+		_fx.gameObject.SetActive(_toggle);
 	}
 
 	//------------------------------------------------------------------------//
@@ -163,15 +200,15 @@ public class ChestViewController : MonoBehaviour {
 	/// Lid open animation event.
 	/// </summary>
 	public void OnLidOpen() {
-		// Launch particle system
-		// ToggleFX(m_openFX, true);
-		GameObject go = m_openParticle.Spawn(this.transform, m_openParticle.offset);
-		if (go != null) {
-			go.SetLayerRecursively(this.gameObject.layer);
-			go.transform.rotation = transform.rotation;
-		}
-		
+		// Turn off glow FX
 		ToggleFX(m_glowFX, false);
+
+		// Trigger open and loop FXs corresponding to current reward type
+		ToggleFX(currentRewardSetup.openFX, true);
+		ToggleFX(currentRewardSetup.openLoopFX, true);
+
+		// Disable openFX after some delay so it's not triggered again
+		UbiBCN.CoroutineManager.DelayedCall(() => { ToggleFX(currentRewardSetup.openFX, false); }, 1.5f);
 
 		// Notify delegates
 		OnChestOpenEvent.Invoke();
@@ -181,16 +218,9 @@ public class ChestViewController : MonoBehaviour {
 	/// Event to sync with the animation.
 	/// </summary>
 	public void OnChestLanded() {
-		// [AOC] TODO!! Play some SFX
+		// Play SFX
+		AudioController.Play(m_resultsSFX);
 
-		// Play some VFX
-		/*
-		if ( m_dustParticle.IsValid() )
-		{
-			GameObject go = ParticleManager.Spawn(m_dustParticle, transform.position + m_dustParticle.offset );
-			go.transform.rotation = transform.rotation;
-		}
-		*/
 		// Notify delegates
 		OnChestAnimLandedEvent.Invoke();
 	}
@@ -199,6 +229,6 @@ public class ChestViewController : MonoBehaviour {
 	/// Event to sync with the animation.
 	/// </summary>
 	public void OnCameraShake() {
-		Messenger.Broadcast<float, float>(GameEvents.CAMERA_SHAKE, 0.1f, 0.5f);
+		Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 0.1f, 0.5f);
 	}
 }

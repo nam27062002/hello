@@ -21,7 +21,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
-	private const float FAR_LAYER_Z = 8f;
+	public const float FAR_LAYER_Z = 8f;
 	public const float BACKGROUND_LAYER_Z = 60f;
     public const float SPAWNING_MAX_TIME = 4f; // Max time (in milliseconds) allowed to spend on spawning entities
     
@@ -91,11 +91,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     /// </summary>
     private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(GameEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.AddListener(GameEvents.PLAYER_LEAVING_AREA, DisableManager);
-		Messenger.AddListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
-		Messenger.AddListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
+		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -103,11 +103,11 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(GameEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.RemoveListener(GameEvents.PLAYER_LEAVING_AREA, DisableManager);
-		Messenger.RemoveListener(GameEvents.GAME_AREA_EXIT, OnAreaExit);
-		Messenger.RemoveListener(GameEvents.GAME_ENDED, OnGameEnded);
+		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
+		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}        
 
 	/// <summary>
@@ -238,9 +238,14 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
 				bool cancelSpawn = false;
 
-				if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
+
+				if (sp.transform.position.z < FAR_LAYER_Z) 
 				{
 					cancelSpawn = m_camera.IsInsideDeactivationArea(sp.boundingRect);
+				}
+				else if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
+				{
+					cancelSpawn = m_camera.IsInsideDeactivationAreaFar(sp.boundingRect);
 				}
 				else 
 				{
@@ -457,7 +462,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_selectedSpawners.Clear();
     }
 
-	private void DisableManager() {
+	private void DisableManager(float estimatedTime) {
 		m_enabled = false;
 	}
 
@@ -631,14 +636,14 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 #region debug
     private void Debug_Awake() {        
-        Messenger.AddListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+        Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 
         // Enable/Disable object depending on the flag
         Debug_SetActive();
     }
 
     private void Debug_OnDestroy() {        
-		Messenger.RemoveListener<string, bool>(GameEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnChanged(string _id, bool _newValue) {        

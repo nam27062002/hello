@@ -23,6 +23,7 @@ public class CPStats : MonoBehaviour {
     // MEMBERS															//
     //------------------------------------------------------------------//
     public TextMeshProUGUI m_DeviceModel;
+    public TextMeshProUGUI m_ProcessorType;
     public TextMeshProUGUI m_DeviceGeneration;    
     public TextMeshProUGUI m_FpsLabel;
 	public TextMeshProUGUI m_ScreenSize;
@@ -40,6 +41,7 @@ public class CPStats : MonoBehaviour {
 	{
 		// Just initialize text
 		m_DeviceModel.text = "Model: " + SystemInfo.deviceModel;
+        m_ProcessorType.text = "Processor: " + SystemInfo.processorType;
 #if UNITY_IOS
         m_DeviceGeneration.text = "Generation: " + UnityEngine.iOS.Device.generation;
 #else
@@ -55,7 +57,7 @@ public class CPStats : MonoBehaviour {
 
 	private void Update()
 	{
-		m_FpsLabel.text = "FPS: " + m_ControlPanel.GetFPS();
+		m_FpsLabel.text = "FPS: " + FeatureSettingsManager.instance.AverageSystemFPS;
         m_ScreenSize.text = "Screen Size: " + Screen.currentResolution.width + "x" + Screen.currentResolution.height;
 
         if (NotificationsManager.SharedInstance != null)

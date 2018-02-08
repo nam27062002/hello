@@ -24,7 +24,7 @@ public class TrackerFireRush : TrackerBase {
 	/// </summary>
 	public TrackerFireRush() {
 		// Subscribe to external events
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
 	}
 
 	/// <summary>
@@ -42,7 +42,7 @@ public class TrackerFireRush : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(GameEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
+		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
 
 		// Call parent
 		base.Clear();

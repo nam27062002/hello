@@ -88,6 +88,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		}
 	}
 
+	private int m_lastGetEventId = -1;
+
 	// Shortcuts
 	private static DateTime serverTime {
 		get { return GameServerManager.SharedInstance.GetEstimatedServerTime(); }
@@ -110,6 +112,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		GameServerManager.ServerResponse response = CreateTestResponse( "tmp_customizer.json" );
 		instance.OnTMPCustomizerResponse( null, response );
 	#else
+		Debug.Log("<color=magenta>EVENT TMP CUSTOMIZER</color>");
 		GameServerManager.SharedInstance.GlobalEvent_TMPCustomizer(instance.OnTMPCustomizerResponse);
 	#endif
 	}
@@ -126,29 +129,56 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 #endif
 
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+
+		if ( _error != null ){
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
+			return;
+		}
+
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			if ( responseJson != null && responseJson.ContainsKey("liveEvents") ){
+			Debug.Log("<color=purple>EVENT TMP CUSTOMIZER</color>\n" + (responseJson == null ? "<color=red>NULL RESPONSE!</color>" : responseJson.ToString(4)));
+			if ( responseJson != null && responseJson.ContainsKey("liveEvents") && responseJson["liveEvents"].IsArray ){
+				// Parse all events
 				SimpleJSON.JSONArray arr = responseJson["liveEvents"].AsArray;
-				SimpleJSON.JSONClass liveEvent = arr[0].AsObject;
-				int globalEventKey = liveEvent["code"].AsInt;
-				if ( globalEventKey >= 0 ){
-					GlobalEventUserData globalEventUserData = null;
-					if ( user.globalEvents.ContainsKey(globalEventKey) ){
-						globalEventUserData = user.globalEvents[globalEventKey];
-					}else{
-						globalEventUserData = new GlobalEventUserData();
-						globalEventUserData.eventID = globalEventKey;
-						user.globalEvents.Add(globalEventKey, globalEventUserData);
+				foreach(SimpleJSON.JSONClass liveEvent in arr) {
+					int globalEventKey = liveEvent["code"].AsInt;
+					if ( globalEventKey > 0 ){
+						// Retrieve end timestamp
+						long secondsToEnd = 0;
+						if(liveEvent.ContainsKey("timeToEnd")) {
+							secondsToEnd = liveEvent["timeToEnd"].AsLong;
+						}
+
+						// If we already have a local event data for this event ID, use it
+						GlobalEventUserData globalEventUserData = null;
+						if(user.globalEvents.ContainsKey(globalEventKey)) {
+							globalEventUserData = user.globalEvents[globalEventKey];
+						} else {
+							// We don't know anything about this event!
+							// If it hasn't yet ended, create a new local data object for it. Otherwise just ignore it (it's an old event that we have either already collected the reward or never participated).
+							if(secondsToEnd >= 0) {
+								globalEventUserData = new GlobalEventUserData();
+								globalEventUserData.eventID = globalEventKey;
+								user.globalEvents.Add(globalEventKey, globalEventUserData);
+							}
+						}
+
+						// If we got a valid timestamp, update local event data
+						if(globalEventUserData != null && secondsToEnd > 0) {
+							globalEventUserData.endTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() + (secondsToEnd * 1000);
+						}
 					}
-					if ( liveEvent.ContainsKey("end") )
-						globalEventUserData.endTimestamp = liveEvent["end"].AsLong;
 				}
 			}
 		}
 
-		if (user.globalEvents.Count > 0)
+		if (user.globalEvents.Count > 0){
 			RequestCurrentEventData();
+		}else{
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS);
+		}
+
 	}
 
 
@@ -164,19 +194,28 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	public static void RequestCurrentEventData() {
 		// First we have to resolve all the stored events (profile)
 		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+
 		int currentEventId = -1;
+
 
 		if (storedEvents.Count > 0) {
 			List<int> deleteEvents = new List<int>();
 			long minEndTimestamp = long.MaxValue;
+			bool currentEventIsChecked = true;
 
 			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
 				if (pair.Value.rewardCollected) {
 					deleteEvents.Add(pair.Key);
 				} else {
-					if (pair.Value.endTimestamp < minEndTimestamp) {
-						currentEventId = pair.Key;
-						minEndTimestamp = pair.Value.endTimestamp;
+
+					if ( pair.Value.endTimestamp < minEndTimestamp || (currentEventIsChecked && !pair.Value.hasBeenChecked) )  
+					{
+						if ( !pair.Value.hasBeenChecked || currentEventIsChecked )
+						{
+							currentEventId = pair.Key;
+							minEndTimestamp = pair.Value.endTimestamp;
+							currentEventIsChecked = pair.Value.hasBeenChecked;	
+						}
 					}
 				}
 			}
@@ -186,6 +225,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 		}
 
+		instance.m_lastGetEventId = currentEventId;
 		if (currentEventId >= 0) {
 			// We've found an event stored, lets get its data
 			Debug.Log("<color=magenta>EVENT DATA</color>");
@@ -197,8 +237,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			#endif
 		} else {
 			ClearCurrentEvent();
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_DATA_UPDATED);
 		}
 	}
 
@@ -249,8 +289,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			#endif
 		} else {
 			// Notify game that leaderboard data is ready
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 		}
 	}
 
@@ -261,7 +301,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		if(instance.m_currentEvent == null) return;
 
 		Debug.Log("<color=magenta>EVENT REWARDS</color>");
+
+		#if TEST_GLOBAL_EVENT
+			GameServerManager.ServerResponse response = CreateTestResponse( "eventResult.json" );
+			instance.OnEventRewardResponse(null, response);
+		#else
 		GameServerManager.SharedInstance.GlobalEvent_GetRewards(instance.m_currentEvent.id, instance.OnEventRewardResponse);
+		#endif
 	}
 
 	/// <summary>
@@ -316,7 +362,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 				// Notify game that server response was received
 				Debug.Log("<color=purple>REGISTER SCORE</color>");
-				Messenger.Broadcast<bool>(GameEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
+				Messenger.Broadcast<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
 			}
 		);
 
@@ -391,6 +437,21 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	}
 
 	/// <summary>
+	/// Resets the has checked flag on all events to start looking everything again
+	/// </summary>
+	public static void ResetHasChecked(){
+		// First we have to resolve all the stored events (profile)
+		Dictionary<int, GlobalEventUserData> storedEvents = user.globalEvents;
+
+		if (storedEvents.Count > 0) {
+			foreach (KeyValuePair<int, GlobalEventUserData> pair in storedEvents) {
+				pair.Value.hasBeenChecked = false;
+			}
+		}
+	}
+
+
+	/// <summary>
 	/// Tells the manager with which user data he should work.
 	/// </summary>
 	/// <param name="_user">Profile to work with.</param>
@@ -405,7 +466,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				TMP_RequestCustomizer();
 			}
             
-            Messenger.AddListener<bool>(GameEvents.LOGGED, OnLoggedIn);            
+            Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);            
         }
 	}
 
@@ -436,15 +497,20 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	private void OnCurrentEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 		// Error?
 		if(_error != null) {
-			// [AOC] Do something or just ignore?
-			// Probably store somewhere that there was an error so retry timer is reset or smth
+			// What event id are we talking about?! -> m_lastGetEventId? Need to do this better
+			if ( instance.m_user.globalEvents.ContainsKey( instance.m_lastGetEventId) ) 
+				instance.m_user.globalEvents[ instance.m_lastGetEventId ].hasBeenChecked = true;
+
+			if(m_currentEvent != null){
+				ClearCurrentEvent();
+			}
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_DATA_UPDATED);
 			return;
 		}
-
+		bool markAsChecked = false;
 		// Did the server gave us an event?
 		if(_response != null && _response["response"] != null) {
 			// If the ID is different from the stored event, load the new event's data!
@@ -460,16 +526,29 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 					m_currentEvent.InitFromJson(responseJson);
 				}
 			}else{
-				if(m_currentEvent != null) ClearCurrentEvent();
+				markAsChecked = true;
 			}
 		} else {
-			// No! Clear current event (if any)
-			if(m_currentEvent != null) ClearCurrentEvent();
+			markAsChecked = true;
+		}
+
+		if (markAsChecked)
+		{
+			// What event id are we talking about?! -> m_lastGetEventId? Need to do this better
+			if ( instance.m_user.globalEvents.ContainsKey( instance.m_lastGetEventId) ) 
+				instance.m_user.globalEvents[ instance.m_lastGetEventId ].hasBeenChecked = true;
+
+			if(m_currentEvent != null){
+				ClearCurrentEvent();
+			}
+
+			// How to avoid infinite loop if we only have an event with has been checked?
+				// RequestCurrentEventData();
 		}
 
 		// Notify game that we have new data concerning the current event
-		Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
-		Messenger.Broadcast(GameEvents.GLOBAL_EVENT_DATA_UPDATED);
+		Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_DATA);
+		Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_DATA_UPDATED);
 
 		// If we have a valid event, request its state too
 		if(m_currentEvent != null) {
@@ -490,8 +569,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Probably store somewhere that there was an error so retry timer is reset or smth
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_STATE_UPDATED);
 			return;
 		}
 
@@ -510,13 +589,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 				Debug.Log("<color=purple>EVENT STATE</color>\n" + responseJson.ToString(4));
 				m_currentEvent.UpdateFromJson(responseJson);
 
-				if (m_currentEvent.isRewardAvailable) {
+				if (m_currentEvent.isFinished) {
 					GlobalEventManager.RequestCurrentEventRewards();
 				}
 
 				// Notify game that we have new data concerning the current event
-				Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
-				Messenger.Broadcast(GameEvents.GLOBAL_EVENT_STATE_UPDATED);
+				Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_STATE);
+				Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_STATE_UPDATED);
 			}
 		}
 	}
@@ -567,8 +646,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Probably store somewhere that there was an error so retry timer is reset or smth
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 			return;
 		}
 
@@ -585,7 +664,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Debug.Log("<color=purple>EVENT LEADERBOARD</color>\n" + responseJson.ToString(4));
 			m_currentEvent.UpdateLeaderboardFromJson(responseJson);
 
-			if (m_currentEvent.isRewardAvailable) {
+			if (m_currentEvent.isFinished) {
 				GlobalEventManager.RequestCurrentEventRewards();
 			}
 
@@ -617,8 +696,8 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 
 			// Notify game that we have new data concerning the current event
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
-			Messenger.Broadcast(GameEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_LEADERBOARD);
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 		}
 	}
 
@@ -646,7 +725,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 
 			// Notify game
-			Messenger.Broadcast<RequestType>(GameEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_REWARDS);
+			Messenger.Broadcast<RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, RequestType.EVENT_REWARDS);
 		}
 	}
 }

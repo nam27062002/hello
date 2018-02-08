@@ -87,9 +87,20 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	protected void Start() {
 		// Start with canvas camera disabled (for performance)
-		//m_canvas.gameObject.SetActive(false);
-		m_canvasRaycaster.enabled = false;
-		m_canvas.worldCamera.gameObject.SetActive(false);
+		RefreshCameraActive();
+	}
+
+	public void RefreshCameraActive()
+	{
+		if(m_openedPopups.Count == 0) {
+			m_canvasRaycaster.enabled = false;
+			m_canvas.worldCamera.gameObject.SetActive(false);
+		}
+		else
+		{
+			m_canvasRaycaster.enabled = true;
+			m_canvas.worldCamera.gameObject.SetActive(true);
+		}
 	}
 
 	/// <summary>
@@ -97,9 +108,9 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.AddListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
 	}
 
 	/// <summary>
@@ -107,9 +118,9 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.RemoveListener<PopupController>(EngineEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
 	}
 
 	/// <summary>
@@ -279,11 +290,7 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 		m_closedPopups.Add(_popup);
 
 		// If there are no more open popups, disable canvas camera for performance
-		if(openPopupsCount == 0) {
-			m_canvas.worldCamera.gameObject.SetActive(false);
-			m_canvasRaycaster.enabled = false;
-			//m_canvas.gameObject.SetActive(false);
-		}
+		RefreshCameraActive();
 	}
 
 	/// <summary>
@@ -296,11 +303,8 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 		m_closedPopups.Remove(_popup);
 
 		// If there are no more open popups, disable canvas camera for performance
-		if(openPopupsCount == 0) {
-			m_canvas.worldCamera.gameObject.SetActive(false);
-			m_canvasRaycaster.enabled = false;
-			//m_canvas.gameObject.SetActive(false);
-		}
+		RefreshCameraActive();
+
 	}
     
     public static PopupController PopupMessage_Open(PopupMessage.Config _config)

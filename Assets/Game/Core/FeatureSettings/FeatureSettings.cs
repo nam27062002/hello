@@ -68,21 +68,42 @@ public class FeatureSettings
     // This key decides the quality level used in the particles manager
     public const string KEY_PARTICLES = "particles";
 
-	// This key decides the quality level used in the particles manager
-	public const string MAX_ZOOM_COST = "max_zoom_cost";
+    // This key decides whether or not the feedback particles (score spawned when eating,...) are enabled
+    public const string KEY_PARTICLES_FEEDBACK = "particlesFeedback";
+
+    // This key decides the quality level used in the particles manager
+    public const string MAX_ZOOM_COST = "max_zoom_cost";
 
     // This key decides the resolution factor, screen size is multiplied by this float value
     public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
 
+    // This key decides the minimum gfx memory amount
+    public const string KEY_GFX_MEMORY = "gfxMemory";
+
+    // This key decides if lightmap will be used on this profile
+    public const string KEY_LIGHTMAP = "lightmap";
+
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
+
+    // Whether or not Performance Tracking is enabled
+    public const string KEY_PERFORMANCE_TRACKING = "performanceTracking";
+
+    // Delay in seconds between every performance track event
+    public const string KEY_PERFORMANCE_TRACKING_DELAY = "performanceTrackingDelay";
 
     // Whether or not the events that couldn't be sent over the network should be cached
     public const string KEY_TRACKING_OFFLINE_CACHED = "trackingOfflineCached";
 
     public const string KEY_CONTENT_DELTAS = "contentDeltas";
 
-    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";    
+    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
+
+    // Whether or not automatic relogin is enabled (this features tries to login to our server and to the cloud if network is up)
+    public const string KEY_AUTOMATIC_RELOGIN = "automaticRelogin";
+
+    // Period in seconds between two automatic relogin checks
+    public const string KEY_AUTOMATIC_RELOGIN_PERIOD = "automaticReloginPeriod";
 
     // Examples of how to use different type datas
     /*
@@ -103,6 +124,7 @@ public class FeatureSettings
             ValueTypeDatas.Add(EValueType.String, null);            
             ValueTypeDatas.Add(EValueType.Level2, GetValueTypeValuesAsString<ELevel2Values>());            
             ValueTypeDatas.Add(EValueType.Level3, GetValueTypeValuesAsString<ELevel3Values>());
+            ValueTypeDatas.Add(EValueType.Level4, GetValueTypeValuesAsString<ELevel4Values>());
             ValueTypeDatas.Add(EValueType.Level5, GetValueTypeValuesAsString<ELevel5Values>());            
             ValueTypeDatas.Add(EValueType.QualityLevel, GetValueTypeValuesAsString<EQualityLevelValues>());            
         }
@@ -125,11 +147,14 @@ public class FeatureSettings
             data = new DataRangeInt(key, 0, 0, int.MaxValue);
             Datas.Add(key, data);
 
+            key = KEY_GFX_MEMORY;
+            data = new DataRangeInt(key, 0, 0, int.MaxValue);
+            Datas.Add(key, data);
+
             // profile
             key = KEY_PROFILE;
             data = new DataString(key, null);
             Datas.Add(key, data);
-
 
             // qualityLevel: Unity quality settings level
             key = KEY_QUALITY_LEVEL;
@@ -141,6 +166,10 @@ public class FeatureSettings
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
 
+            // lightmap: enable/disable lightmap
+            key = KEY_LIGHTMAP;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
 
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW_EFFECT;
@@ -162,7 +191,7 @@ public class FeatureSettings
 
             // levelsLOD
             key = KEY_LEVELS_LOD;
-            data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
+            data = new DataInt(key, EValueType.Level4, (int)ELevel4Values.low);            
             Datas.Add(key, data);
 
             // bossZoomOut
@@ -185,8 +214,13 @@ public class FeatureSettings
 			data = new DataInt(key, EValueType.Level5, (int)ELevel5Values.mid);
 			Datas.Add(key, data);
 
-			// zoom
-			key = MAX_ZOOM_COST;
+            // particles feedback
+            key = KEY_PARTICLES_FEEDBACK;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // zoom
+            key = MAX_ZOOM_COST;
 			data = new DataInt(key, EValueType.Int, 3);
 			Datas.Add(key, data);
 
@@ -198,6 +232,16 @@ public class FeatureSettings
             // tracking
             key = KEY_TRACKING;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // performance tracking
+            key = KEY_PERFORMANCE_TRACKING;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            // performance tracking delay
+            key = KEY_PERFORMANCE_TRACKING_DELAY;
+            data = new DataInt(key, EValueType.Int, 0);
             Datas.Add(key, data);
 
             // tracking offline cached
@@ -213,7 +257,15 @@ public class FeatureSettings
             // Content deltas need to be cached. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS_CACHED;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
-            Datas.Add(key, data);            
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN_PERIOD;
+            data = new DataInt(key, EValueType.Int, 60);
+            Datas.Add(key, data);
 
             /*
             // intTest
@@ -259,7 +311,8 @@ public class FeatureSettings
         Float,
         String,
         Level2,
-        Level3,
+        Level3,        
+        Level4,
         Level5,
         QualityLevel        
     };
@@ -289,6 +342,14 @@ public class FeatureSettings
         high
     };
 
+    public enum ELevel4Values
+    {
+        very_low,
+        low,
+        mid,
+        high        
+    };
+
     public enum ELevel5Values
     {
         very_low,
@@ -307,6 +368,8 @@ public class FeatureSettings
         very_high,
         deprecated
     };
+
+    public static List<string> EQualityLevelValuesNames = new List<string>(Enum.GetNames(typeof(EQualityLevelValues)));
 
     public abstract class Data
     {        
@@ -759,6 +822,28 @@ public class FeatureSettings
         }
     }
 
+    public int GfxMemory
+    {
+        get
+        {
+            return GetValueAsInt(KEY_GFX_MEMORY);
+        }
+
+        set
+        {
+            string key = KEY_GFX_MEMORY;
+            if (Values.ContainsKey(key))
+            {
+                Values[key] = value;
+            }
+            else
+            {
+                Values.Add(key, value);
+            }
+        }
+    }
+
+
     public string Profile
     {
         get
@@ -804,6 +889,11 @@ public class FeatureSettings
     public ELevel3Values GetValueAsLevel3(string key)
     {
         return (Values.ContainsKey(key)) ? (ELevel3Values)Values[key] : (ELevel3Values)(Datas[key].DefaultValueAsInt);
+    }
+
+    public ELevel4Values GetValueAsLevel4(string key)
+    {
+        return (Values.ContainsKey(key)) ? (ELevel4Values)Values[key] : (ELevel4Values)(Datas[key].DefaultValueAsInt);
     }
 
     public ELevel5Values GetValueAsLevel5(string key)

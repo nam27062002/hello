@@ -2,6 +2,19 @@
 // Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _LightmapIntensity)
 #pragma exclude_renderers d3d11
 
+struct appdata_t
+{
+	float4 vertex : POSITION;
+	float2 texcoord : TEXCOORD0;
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
+	float4 texcoord1 : TEXCOORD1;
+#endif
+
+	float4 color : COLOR;
+
+	float3 normal : NORMAL;
+	float4 tangent : TANGENT;
+};
 
 //#define EMISSIVE_LIGHTMAPCONTRAST
 
@@ -9,7 +22,7 @@ struct v2f {
 	float4 vertex : SV_POSITION;
 	float2 texcoord : TEXCOORD0;
 
-#ifdef LIGHTMAP_ON
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
 	float2 lmap : TEXCOORD1;
 #endif	
 
@@ -45,6 +58,8 @@ struct v2f {
 
 sampler2D _MainTex;
 float4 _MainTex_ST;
+
+float4 _Panning;
 
 #ifdef BLEND_TEXTURE	
 sampler2D _SecondTexture;
@@ -92,12 +107,32 @@ uniform float _LightmapContrastMargin;
 uniform float _LightmapContrastPhase;
 #endif
 
+
+//Used by plants, simulates wind movement
+#if defined(CUSTOM_VERTEXPOSITION)
+float _SpeedWave;
+float _Amplitude;
+float4 getCustomVertexPosition(inout appdata_t v)
+{
+	float hMult = v.vertex.y;
+	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
+	float wave = sin((_Time.y * _SpeedWave) + hMult + worldPos.x) * hMult * _Amplitude;
+
+	//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	float4 tvertex = v.vertex + float4(wave, 0.0, wave, 0.0f);
+	//					tvertex.w = -0.5f;
+	return UnityObjectToClipPos(tvertex);
+}
+#endif
+
+//used by automatic blend to blend grass and stone from up to down
+#if defined(CUSTOM_VERTEXCOLOR)
 float4 getCustomVertexColor(inout appdata_t v)
 {
 	//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
 	return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
 }
-
+#endif
 
 v2f vert (appdata_t v) 
 {
@@ -109,10 +144,10 @@ v2f vert (appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 
-	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
-	
+	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Time.y * _Panning.xy);
+
 #ifdef BLEND_TEXTURE	
-	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture);
+	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture) + (_Time.y * _Panning.zw);
 #endif
 
 #ifdef CUSTOM_VERTEXCOLOR
@@ -147,7 +182,7 @@ v2f vert (appdata_t v)
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
 
-#if defined(LIGHTMAP_ON) //&& !defined(EMISSIVE_BLINK)
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP) //&& !defined(EMISSIVE_BLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
@@ -189,9 +224,14 @@ fixed4 frag (v2f i) : SV_Target
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
+#ifdef ADDITIVE_BLEND
+	col += col2 * (1.0 - i.color.a);
+#else
 	float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
-//					float l = clamp(col.a + (i.color.a * 2.0) - 1.0, 0.0, 1.0);
 	col = lerp( col2, col, l);
+#endif
+
+
 #endif	
 
 #if defined (VERTEXCOLOR_OVERLAY)
@@ -224,14 +264,14 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 
-#if defined(LIGHTMAP_ON) && defined(EMISSIVE_LIGHTMAPCONTRAST)
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP) && defined(EMISSIVE_LIGHTMAPCONTRAST)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	fixed lmintensity = (lm.r + lm.g + lm.b) - _LightmapContrastMargin;
 //	col.rgb *= lm * _LightmapContrastIntensity * (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)) * (lm.r + lm.g + lm.b);
 	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity * (sin(_Time.y * _LightmapContrastPhase) + 1.0)));
 //	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity));
 
-#elif defined(LIGHTMAP_ON)// && !defined(EMISSIVE_BLINK)
+#elif defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)// && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
 
@@ -261,7 +301,7 @@ fixed4 frag (v2f i) : SV_Target
 /*
 #if defined(FOG) && !defined(EMISSIVE_BLINK)
 
-#if defined (LIGHTMAP_ON)
+#if defined (LIGHTMAP_ON && FORCE_LIGHTMAP)
 
 #ifdef EMISSIVE_LIGHTMAPCONTRAST
 	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
@@ -276,7 +316,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif	// LIGHTMAP_ON
+#endif	// LIGHTMAP_ON && FORCE_LIGHTMAP
 
 #endif	// defined(FOG) && !defined(EMISSIVE_BLINK)
 */

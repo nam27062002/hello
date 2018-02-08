@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public abstract class EatBehaviour : MonoBehaviour {
+public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	protected class PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
@@ -76,6 +76,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 	protected IMotion m_motion;
 
+	private bool m_useBlood = true;
 	private List<GameObject> m_bloodEmitter;
 	private List<GameObject> m_freezeEmitter;
 
@@ -191,6 +192,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
     protected virtual void Start () {
+		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
 		m_eatingEntitiesEnabled = m_canEatEntities;
 
 		m_holdingBloodParticle.CreatePool();
@@ -205,6 +207,12 @@ public abstract class EatBehaviour : MonoBehaviour {
             }
         }
     }
+
+	public void Spawn(ISpawner _spawner) {
+		if (m_mouth == null) {
+			MouthCache();
+		}
+	}
 
 	// find mouth transform 
 	protected virtual void MouthCache() 
@@ -310,6 +318,9 @@ public abstract class EatBehaviour : MonoBehaviour {
 	{
 		return m_grabbingPrey && m_holdingPrey != null;
 	}
+
+
+	public void CustomUpdate() {}
 
 	// Update is called once per frame
 	protected virtual void Update() 
@@ -711,7 +722,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 				// release prey
 				// Escaped Event
 				if ( m_isPlayer )
-					Messenger.Broadcast<Transform>(GameEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
+					Messenger.Broadcast<Transform>(MessengerEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
 				EndHold();
 			}	
 		}
@@ -1004,7 +1015,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 								tier = entity.grabFromTier;
 							if ( entity.canBeLatchedOn && entity.latchFromTier < tier )
 								tier = entity.latchFromTier;
-							Messenger.Broadcast<DragonTier, string>(GameEvents.BIGGER_DRAGON_NEEDED, tier, entity.sku);
+							Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, tier, entity.sku);
 						}
 					}
 				}
@@ -1040,6 +1051,10 @@ public abstract class EatBehaviour : MonoBehaviour {
 
 
 	private void StartBlood(){
+		m_holdingBlood = 0.5f;
+
+		if (!m_useBlood)return;
+
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
 		GameObject go = m_holdingBloodParticle.Spawn(bloodPos + m_holdingBloodParticle.offset);
@@ -1054,7 +1069,6 @@ public abstract class EatBehaviour : MonoBehaviour {
 				
 		}
 		m_bloodEmitter.Add(go);
-		m_holdingBlood = 0.5f;
 	}
 
 	private void StartFreezing(){
@@ -1075,6 +1089,7 @@ public abstract class EatBehaviour : MonoBehaviour {
 	}
 
 	private void UpdateBlood() {
+		if ( !m_useBlood ) return;
 		if (m_bloodEmitter.Count > 0) {
 			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;

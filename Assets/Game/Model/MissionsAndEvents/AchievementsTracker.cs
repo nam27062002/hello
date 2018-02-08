@@ -20,7 +20,7 @@ public class AchievementsTracker {
 				m_objectives.Add( kEntry.Key, newObjective);
 			}
 		}
-		Messenger.AddListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
 		m_initialized = true;
 	}
 
@@ -28,7 +28,7 @@ public class AchievementsTracker {
     {
         if (m_initialized)
         {
-			Messenger.RemoveListener(EngineEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
+			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, OnGooglePlayEvent);
 			m_objectives.Clear();
 			m_initialized = false;
         }

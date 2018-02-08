@@ -17,7 +17,7 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 	{
 		Pass
 		{
-			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
+			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 			
 			Stencil
 			{
