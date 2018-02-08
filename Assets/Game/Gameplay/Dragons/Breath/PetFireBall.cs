@@ -170,7 +170,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		if (m_pMotion != null)
 			m_pMotion.enabled = false;
 		m_fireView.Pause();
-		DelayedDeactivate();
+		StartCoroutine(DelayedDeactivate());
 	}
 
 	IEnumerator DelayedDeactivate()
