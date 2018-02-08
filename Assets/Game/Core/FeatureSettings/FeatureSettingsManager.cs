@@ -365,7 +365,29 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     #endregion
 
     #region device
+    public int Device_GetSystemMemorySize()
+    {
+        return SystemInfo.systemMemorySize;
+    }
+
+    public int Device_GetGraphicsMemorySize()
+    {
+        return SystemInfo.graphicsMemorySize;
+    }
+
     public string Device_Model { get; set; }
+
+    /// <summary>
+    /// Returns whether or not the device is supported by the app. IMPORTANT: Rules have to be loaded to rely on this method
+    /// </summary>
+    /// <returns></returns>
+    public bool Device_IsSupported()
+    {
+        int minMemory = m_deviceQualityManager.Profiles_GetMinMemoryRequired();
+
+        // Makes sure that the device has enough memory to run the game (min memory required is read from rules so this method should be called after rules are loaded)
+        return Device_GetSystemMemorySize() >= minMemory;
+    }
 
     private float Device_CalculateRating()
     {
@@ -373,7 +395,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         float finalDeviceRating = 0.0f;
 
         int processorCount = SystemInfo.processorCount;        
-        int graphicsMemorySize = SystemInfo.graphicsMemorySize;
+        int graphicsMemorySize = Device_GetGraphicsMemorySize();
         int cpuFreq = SystemInfo.processorFrequency;
 
         Dictionary<string, DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DEVICE_RATING_SETTINGS);        
@@ -537,18 +559,18 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         System.Text.StringBuilder strBuilder = new System.Text.StringBuilder();
         strBuilder.AppendLine("");
-        strBuilder.AppendLine("MODEL : " + SystemInfo.deviceModel);
+        strBuilder.AppendLine("MODEL : " + FeatureSettingsManager.instance.Device_Model);
         strBuilder.AppendLine("GPU ID : " + SystemInfo.graphicsDeviceID.ToString());
         strBuilder.AppendLine("GPU VENDOR : " + SystemInfo.graphicsDeviceVendor);
         strBuilder.AppendLine("GPU VENDOR ID : " + SystemInfo.graphicsDeviceVendorID.ToString());
         strBuilder.AppendLine("GPU VERSION : " + SystemInfo.graphicsDeviceVersion);
-        strBuilder.AppendLine("GPU MEMORY : " + SystemInfo.graphicsMemorySize.ToString());
+        strBuilder.AppendLine("GPU MEMORY : " + Device_GetGraphicsMemorySize().ToString());
         strBuilder.AppendLine("GPU SHADER LEVEL : " + SystemInfo.graphicsShaderLevel.ToString());
         strBuilder.AppendLine("MAX TEX SIZE : " + SystemInfo.maxTextureSize.ToString());
         strBuilder.AppendLine("OS : " + SystemInfo.operatingSystem);
         strBuilder.AppendLine("CPU COUNT : " + SystemInfo.processorCount.ToString());
         strBuilder.AppendLine("CPU TYPE : " + SystemInfo.processorType);
-        strBuilder.AppendLine("SYSTEM MEMORY : " + SystemInfo.systemMemorySize);
+        strBuilder.AppendLine("SYSTEM MEMORY : " + Device_GetSystemMemorySize().ToString());
         return strBuilder.ToString();
     }
     #endregion    
@@ -853,8 +875,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // Gets the FeatureSettings object of the profile that corresponds to the calculated rating
         if (string.IsNullOrEmpty(profileName))
         {
-            int systemMemorySize = SystemInfo.systemMemorySize;
-            int gfxMemorySize = SystemInfo.graphicsMemorySize;
+            int systemMemorySize = Device_GetSystemMemorySize();
+            int gfxMemorySize = Device_GetGraphicsMemorySize();
             profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
 
 			if (IsDebugEnabled)
@@ -1099,7 +1121,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     /// <returns>A value in [0, NUM_PROFILES -1]. The bigger the value the better the profile</returns>
     public int GetMaxProfileLevelSupported()
     {
-        int systemMemorySize = SystemInfo.systemMemorySize;
+        int systemMemorySize = Device_GetSystemMemorySize();
         return m_deviceQualityManager.Profiles_GetMaxProfileLevel(systemMemorySize);
     }
 
@@ -1225,7 +1247,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             return m_deviceQualityManager.Profiles_Names;
         }
-    }
+    }    
 
     /// <summary>
     /// Returns whether or not debug mode is enabled. 
@@ -1299,7 +1321,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return true;
         }
     }
-
+    
     /// <summary>
     /// When <c>true</c> tracking is enabled. When <c>false</c> no tracking stuff is done at all
     /// </summary>

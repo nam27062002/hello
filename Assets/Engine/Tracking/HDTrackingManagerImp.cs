@@ -215,7 +215,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 }
             }
         }
-    }   
+    }       
 
     private void StartSession()
     {     
@@ -347,15 +347,20 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }        
 
+    private void UpdateWaitingForSessionStart()
+    {
+        if (TrackingPersistenceSystem != null && IsStartSessionNotified)
+        {
+            StartSession();
+        }
+    }
+
     public override void Update()
     {
         switch (State)
         {
-            case EState.WaitingForSessionStart:                
-                if (TrackingPersistenceSystem != null && IsStartSessionNotified)
-                {
-                	StartSession();
-                }
+            case EState.WaitingForSessionStart:
+                UpdateWaitingForSessionStart();
                 break;
         }
 
@@ -440,6 +445,9 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (State == EState.WaitingForSessionStart)
         {
             IsStartSessionNotified = true;
+
+            // We want to start as soon as possible in order to reduce problems when sending early events
+            UpdateWaitingForSessionStart();
         }        
     }
 
@@ -760,7 +768,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
         int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
         // TODO: To debug with server
-        //GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
+        GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);
@@ -1011,6 +1019,11 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void Notify_PopupSurveyShown(EPopupSurveyAction action) {
         Track_PopupSurveyShown(action);
+    }
+
+    public override void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action)
+    {
+        Track_PopupUnsupportedDevice(action);        
     }
     #endregion
 
@@ -1747,6 +1760,19 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private void Track_PopupUnsupportedDevice(EPopupUnsupportedDeviceAction action)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_PopupUnsupportedDevice action = " + action);
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.leave.popup");
+        if (e != null)
+        {            
+            Track_AddParamString(e, TRACK_PARAM_POPUP_ACTION, action.ToString());
+            Track_SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -2298,7 +2324,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (elapsedTime > Performance_TrackingDelay)
         {
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
-            int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
+            //int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
             Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
             //            Track_PerformanceTrack();
 
