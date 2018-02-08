@@ -175,7 +175,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 colspec = tex2D(_SpecMask, i.uv);
 	fixed specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
 #else
-	fixed specMask = col.a;// 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 #endif
 
 
@@ -208,10 +208,10 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined(SPECMASK)
 	col = lerp(col, colspec, specular);
+	col.a = max(col.a, specular);
 #else
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
 #endif
-	col.a = max(col.a, specular);
 
 #endif
 
