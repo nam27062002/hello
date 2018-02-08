@@ -47,8 +47,8 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
-//			#pragma multi_compile __ NORMALMAP
-//			#pragma multi_compile __ SPECULAR
+			#pragma multi_compile __ NORMALMAP
+			#pragma multi_compile __ SPECULAR
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
@@ -69,6 +69,7 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 
 			#define VERTEX_ANIMATION
 			#define JELLY
+//			#define DYNAMIC_LIGHT
 			#define AMBIENTCOLOR
 
 
