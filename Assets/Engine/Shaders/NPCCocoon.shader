@@ -8,18 +8,10 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 		_MainTex ("Texture", 2D) = "white" {}
 		_SpecMask("Spec Mask", 2D) = "white" {}
 
-//		_SpecularPower( "Specular power", float ) = 1
-//		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
-
 		_SpecExponent("Specular Exponent", float) = 1.0
 		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
 		_SecondLightColor("Ambient color", Color) = (0.0, 0.0, 0.0, 0.0)
 
-
-		_Tint("Tint", Color) = (1,1,1,1)
-
-//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_VertexAnimation("Vertex Animation", Vector) = (1.0, 1.0, 1.0, 1.0)
 		_TimePhase("Animation Phase", Float) = 1.0
 		_Period("Period", Float) = 1.0
@@ -73,7 +65,7 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 
 			#define SPECMASK
 			#define VERTEX_ANIMATION
-			#define TINT
+//			#define TINT
 
 			#include "entities.cginc"
 
