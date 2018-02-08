@@ -166,7 +166,11 @@ namespace AI {
 				int layerMask = m_groundMask;
 
 				if (m_avoidWater) {
-					layerMask = m_groundWaterMask;
+					if (m_avoidCollisions) {
+						layerMask = m_groundWaterMask;
+					} else {
+						layerMask = m_waterMask;
+					}
 					isInsideWater = m_machine.GetSignal(Signals.Type.InWater);
 				}
 

@@ -308,9 +308,9 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 7
-    m_maxRadius: 3
-    m_minRadius: 3
+    m_sightRadius: 15
+    m_maxRadius: 10
+    m_minRadius: 5
     m_hysteresisOffset: 1
     m_senseAbove: 1
     m_senseBelow: 1
@@ -334,7 +334,7 @@ MonoBehaviour:
     m_orientationSpeed: 100
     m_dragonStyleRotation: 0
     m_faceDirection: 1
-    m_rollRotation: 1
+    m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: 90
@@ -353,19 +353,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 5
-  m_energy: 0.3
-  m_energyDrainSec: 0.7
-  m_energyRecoverSec: 0.025
-  m_brainResource: {fileID: 11400000, guid: 35a662e89e7a340ab9f035ee4612930b, type: 2}
+  m_blendSpeedFactor: 15
+  m_energy: 10
+  m_energyDrainSec: 0.5
+  m_energyRecoverSec: 0.25
+  m_brainResource: {fileID: 11400000, guid: 4ba7435daa9fe452e9b853e4708fa163, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"boostSpeed":5,"panicSpeed":5,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":3,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":5,"catchUpSpeed":6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"boostSpeed":10,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":3,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.5,"catchUpSpeed":0.75,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":0.5,"catchUpSpeed":0.75,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"timeBeforeBackHome":2,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Firefly
-  m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 5
-  m_avoidCollisions: 1
+  m_preciseDestArrival: 1
+  m_avoidDistanceAttenuation: 10
+  m_avoidCollisions: 0
   m_avoidWater: 1
 --- !u!114 &114893824462528586
 MonoBehaviour:
