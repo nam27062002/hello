@@ -21,7 +21,7 @@ struct v2f
 	float3 vLight : TEXCOORD2;
 #endif
 
-#ifdef SPECULAR
+#if defined(SPECULAR) || defined(SPECMASK)
 	float3 halfDir : TEXCOORD7;
 #endif
 
@@ -96,6 +96,10 @@ uniform float4 _VertexAnimation3;
 
 #if defined(SPECMASK)
 uniform sampler2D _SpecMask;
+uniform float _SpecExponent;
+uniform float4 _SecondLightDir;
+uniform float4 _SecondLightColor;
+
 #endif
 
 v2f vert(appdata_t v)
@@ -140,15 +144,20 @@ v2f vert(appdata_t v)
 
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 
-#if defined(FRESNEL) || defined(FREEZE) || defined(SPECULAR)
+#if defined(FRESNEL) || defined(FREEZE) || defined(SPECULAR) || defined(SPECMASK)
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
 #endif
 
-#ifdef SPECULAR
+#if defined(SPECULAR)
 	// Half View - See: Blinn-Phong
 	//	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 	float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
+
+#elif defined(SPECMASK)
+	float3 lightDirection = normalize(_SecondLightDir.xyz);
+	o.halfDir = normalize(lightDirection + viewDirection);
+
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)
@@ -178,7 +187,6 @@ fixed4 frag(v2f i) : SV_Target
 	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 #endif
 
-
 #if defined(EMISSIVE)
 	float anim = (sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity * col.a;
 	col.xyz *= 1.0 + anim;
@@ -203,16 +211,14 @@ fixed4 frag(v2f i) : SV_Target
 	col.xyz *= diffuse + i.vLight;
 #endif
 
-#ifdef SPECULAR
-	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask * 5.0;
-
-#if defined(SPECMASK)
-	col = lerp(col, colspec, specular);
-	col.a = max(col.a, specular);
-#else
+#if defined(SPECULAR)
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
-#endif
 
+#elif defined(SPECMASK)
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * specMask;
+	col.xyz = lerp(col.xyz, colspec.xyz, specular) + _SecondLightColor.xyz;
+	col.a = max(col.a, specular);
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)

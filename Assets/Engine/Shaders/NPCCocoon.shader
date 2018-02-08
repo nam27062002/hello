@@ -7,8 +7,15 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_SpecMask("Spec Mask", 2D) = "white" {}
-		_SpecularPower( "Specular power", float ) = 1
-		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
+
+//		_SpecularPower( "Specular power", float ) = 1
+//		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
+
+		_SpecExponent("Specular Exponent", float) = 1.0
+		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
+		_SecondLightColor("Second Light color", Color) = (0.0, 0.0, 0.0, 0.0)
+
+
 		_Tint("Tint", Color) = (1,1,1,1)
 
 //		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
@@ -45,8 +52,8 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
-			#pragma multi_compile __ NORMALMAP
-			#pragma multi_compile __ SPECULAR
+//			#pragma multi_compile __ NORMALMAP
+			#pragma multi_compile __ SPECMASK
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
@@ -57,11 +64,11 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 			#endif
 
 			#if MEDIUM_DETAIL_ON
-			#define SPECULAR
+			#define SPECMASK
 			#endif
 
 			#if HI_DETAIL_ON
-			#define SPECULAR
+			#define SPECMASK
 			#endif
 
 			#define SPECMASK
