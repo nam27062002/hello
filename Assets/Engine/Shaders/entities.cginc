@@ -62,10 +62,9 @@ uniform float4 _SpecularColor;
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)
-
 uniform float _FresnelPower;
-
 uniform float4 _FresnelColor;
+
 #ifdef FREEZE
 uniform float4 _FresnelColor2;
 #endif
@@ -95,12 +94,15 @@ uniform float4 _VertexAnimation3;
 
 #endif
 
+#if defined(SPECMASK)
+uniform sampler2D _SpecMask;
+#endif
+
 v2f vert(appdata_t v)
 {
 	v2f o;
 
 #if defined(VERTEX_ANIMATION)
-//	float s = step(0.0, v.vertex.y);
 
 #if defined(JELLY)
 	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
@@ -168,8 +170,14 @@ fixed4 frag(v2f i) : SV_Target
 {
 	// sample the texture
 	fixed4 col = tex2D(_MainTex, i.uv);
+
+#if defined(SPECMASK)
+	fixed4 colspec = tex2D(_SpecMask, i.uv);
+	fixed specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
+#else
 	fixed specMask = col.a;// 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
-//	return i.color;
+#endif
+
 
 #if defined(EMISSIVE)
 	float anim = (sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity * col.a;
@@ -196,8 +204,15 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 #ifdef SPECULAR
-	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask * 5.0;
+
+#if defined(SPECMASK)
+	col = lerp(col, colspec, specular);
+#else
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
+#endif
+	col.a = max(col.a, specular);
+
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)
