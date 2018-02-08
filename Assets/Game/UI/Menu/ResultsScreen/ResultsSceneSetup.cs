@@ -41,6 +41,10 @@ public class ResultsSceneSetup : MonoBehaviour {
 	[Comment("DragonLoader should be set to \"CURRENT\" mode", 10)]
 	[SerializeField] private MenuDragonLoader m_dragonSlot = null;
 	[SerializeField] private Transform m_dragonSlotViewPosition = null;
+	public MenuDragonLoader dragonSlot {
+		get { return m_dragonSlot; }
+	}
+
 	[SerializeField] private ResultsSceneEggSlot m_eggSlot = null;
 	public ResultsSceneEggSlot eggSlot {
 		get { return m_eggSlot; }

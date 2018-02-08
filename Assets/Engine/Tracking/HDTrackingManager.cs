@@ -101,7 +101,7 @@ public class HDTrackingManager
 	public static EEconomyGroup StringToEconomyGroup(string _str) {
 		try {
 			return (EEconomyGroup)System.Enum.Parse(typeof(EEconomyGroup), _str);
-		} catch(System.ArgumentException _e) {
+		} catch(System.ArgumentException) {
 			return EEconomyGroup.UNKNOWN;
 		}
 	}
@@ -253,16 +253,22 @@ public class HDTrackingManager
     public virtual void Notify_MenuLoaded() {}
 
     /// <summary>
-    /// The game has reached a step in the loading funnel.
+    /// The game has reached a step in the loading funnel according to the sequence defined for Calety
     /// </summary>
     /// <param name="_step">Step to notify.</param>
-    public virtual void Notify_Funnel_Load(FunnelData_Load.Steps _step) {}
+    public virtual void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {}
 
-	/// <summary>
-	/// The game has reached a step in the firts user experience funnel.
-	/// </summary>
-	/// <param name="_step">Step to notify.</param>
-	public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
+    /// <summary>
+    /// The game has reached a step in the loading funnel according to the sequence defined for Razolytics 
+    /// </summary>
+    /// <param name="_step">Step to notify.</param>
+    public virtual void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {}    
+
+    /// <summary>
+    /// The game has reached a step in the firts user experience funnel.
+    /// </summary>
+    /// <param name="_step">Step to notify.</param>
+    public virtual void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {}
 
     /// <summary>
     /// The user has logged in the social platform.
@@ -355,10 +361,28 @@ public class HDTrackingManager
 
 	public virtual void Notify_Hacker(){}
 
+    public enum EPopupSurveyAction
+    {
+        Yes,
+        No,
+        Later
+    };
+
+    public virtual void Notify_PopupSurveyShown(EPopupSurveyAction action) {}        
+
+    public enum EPopupUnsupportedDeviceAction
+    {
+        Shown,
+        Quit,
+        Leave2HSE
+    };
+
+    public virtual void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action) { }
+
     #endregion
 
     #region log
-    private const bool LOG_USE_COLOR = true;
+    private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 

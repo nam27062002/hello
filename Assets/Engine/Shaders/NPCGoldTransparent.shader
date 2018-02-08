@@ -16,7 +16,7 @@ Shader "Hungry Dragon/NPC/NPC Gold Transparent"
 	{
 		Pass
 		{
-			Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "LightMode" = "ForwardBase" "RenderType" = "Transparent" }
+			Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 			ZWrite Off
 			Blend SrcAlpha OneMinusSrcAlpha
 			Cull back

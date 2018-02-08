@@ -22,7 +22,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	public Localizer m_priceText;
-	
+	private MenuShowConditionally m_showConditions;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -32,6 +32,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	private void Awake() {
 		// Required fields
 		DebugUtils.Assert(m_priceText != null, "Required reference missing!");
+		m_showConditions = transform.parent.GetComponent<MenuShowConditionally>();
 	}
 
 	/// <summary>
@@ -70,28 +71,27 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	/// The unlock button has been pressed.
 	/// </summary>
 	public void OnUnlock() {
-		// Get price and start purchase flow
-		DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_COINS");
-		purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
-				bool wasntLocked = dragonData.GetLockState() <= DragonData.LockState.LOCKED;
-				// Just acquire target dragon!
-				dragonData.Acquire();
+		if (m_showConditions.CheckDragon(InstanceManager.menuSceneController.selectedDragon)){
+			// Get price and start purchase flow
+			DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+			ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_COINS");
+			purchaseFlow.OnSuccess.AddListener(
+				(ResourcesFlow _flow) => {
+					bool wasntLocked = dragonData.GetLockState() <= DragonData.LockState.LOCKED;
+					// Just acquire target dragon!
+					dragonData.Acquire();
 
-				if ( wasntLocked && dragonData.def.sku.CompareTo( MenuSceneController.RATING_DRAGON ) == 0 ){
-					MenuSceneController.CheckRatingFlow();
+					if ( wasntLocked && dragonData.def.sku.CompareTo( MenuSceneController.RATING_DRAGON ) == 0 ){
+						MenuSceneController.CheckRatingFlow();
+					}
+
+	                HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
+
+	                // Show a nice animation!
+					InstanceManager.menuSceneController.GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>().LaunchAcquireAnim(dragonData.def.sku);
 				}
-
-                HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
-
-                // Throw out some fireworks!
-                InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
-
-				// Trigger SFX
-				AudioController.Play("hd_unlock_dragon");
-			}
-		);
-		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, dragonData.def);
+			);
+			purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, dragonData.def);
+		}
 	}
 }

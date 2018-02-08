@@ -87,19 +87,21 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma vertex vert
 				#pragma fragment frag
 //				#pragma multi_compile_fwdbase
-				#pragma multi_compile __ BLEND_TEXTURE
-				#pragma multi_compile __ ADDITIVE_BLEND
-				#pragma multi_compile __ CUSTOM_VERTEXCOLOR
-				#pragma multi_compile __ SPECULAR
-				#pragma multi_compile __ NORMALMAP
-				#pragma multi_compile __ FOG
-				#pragma multi_compile __ CUTOFF
-				#pragma multi_compile __ OPAQUEALPHA
-				#pragma multi_compile __ REFLECTIVE
-				#pragma multi_compile __ LIGHTMAP_ON
+				#pragma shader_feature __ BLEND_TEXTURE
+				#pragma shader_feature __ ADDITIVE_BLEND
+				#pragma shader_feature __ CUSTOM_VERTEXCOLOR
+				#pragma shader_feature __ SPECULAR
+				#pragma shader_feature __ NORMALMAP
+				#pragma shader_feature __ FOG
+				#pragma shader_feature __ CUTOFF
+				#pragma shader_feature __ OPAQUEALPHA
+				#pragma shader_feature __ REFLECTIVE
 			
-				#pragma multi_compile VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
-				#pragma multi_compile EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
+				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
+				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
+
+				#pragma multi_compile __ LIGHTMAP_ON
+				#pragma multi_compile __ FORCE_LIGHTMAP
 				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 				#include "UnityCG.cginc"

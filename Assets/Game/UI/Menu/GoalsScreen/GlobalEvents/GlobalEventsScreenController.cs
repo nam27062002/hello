@@ -56,12 +56,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
 
 	/// <summary>
 	/// Component has been enabled.
@@ -69,6 +63,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
+		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
 	}
 
 	/// <summary>
@@ -77,20 +73,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
+		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
 	}
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -101,9 +87,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	public void Refresh() {
 		// Do we need to go to the rewards screen?
 		if ( GlobalEventManager.currentEvent != null ){
-			// By checking isRewardAvailable, we make sure the event is finished
-			// By checking the reward level, we make sure that the rewards have been received from server!
-			if (GlobalEventManager.currentEvent.isRewardAvailable && GlobalEventManager.currentEvent.rewardLevel > -1) {
+			// If the current global event has a reward pending, go to the event reward screen
+			if(GlobalEventManager.currentEvent.isRewardAvailable) {
 				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.EVENT_REWARD).GetComponent<EventRewardScreen>();
 				scr.StartFlow();
 				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.EVENT_REWARD);
@@ -218,6 +203,46 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			case GlobalEventManager.RequestType.EVENT_STATE: {
 				Refresh();
 			} break;
+		}
+	}
+
+	private void OnNoEvent(){
+		Refresh();
+	}
+
+	/// <summary>
+	/// The retry button on the offline panel has been pressed.
+	/// </summary>
+	public void OnOfflineRetryButton() {
+
+		if(GlobalEventManager.user != null){
+
+			if (Application.internetReachability != NetworkReachability.NotReachable)
+			{
+				// Show loading panel
+				SetActivePanel(Panel.LOADING);
+
+				// Do we have an event?
+				if(GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0) {
+					// No! Ask for live events again
+					GlobalEventManager.TMP_RequestCustomizer();
+					// Wait for events GLOBAL_EVENT_UPDATED GLOBAL_EVENT_CUSTOMIZER_ERROR or GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS
+				} else {
+					// Yes! Refresh data
+					GlobalEventManager.RequestCurrentEventData();
+					// Wait for events GLOBAL_EVENT_UPDATED
+				}
+			}
+			else
+			{
+				// Message no connection
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
+		}
+		else
+		{
+			// Message no user
+			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 

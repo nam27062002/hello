@@ -36,7 +36,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Model_Init();
         Social_Init();
         Resync_Init();
-        User_Init();        
+        User_Init();  
+        Notifications_Init();      
     }
 
     void OnEnable()
@@ -51,6 +52,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Social_Refresh();
         Resync_Refresh();
         Cloud_Refresh();
+        Notifications_Refresh();
     }
 
     private bool IsLoadingPopupOpen { get; set; }
@@ -411,6 +413,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
                 Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
                 m_userAvatarImage.sprite = sprite;
+				m_userAvatarImage.color = Color.white;
                 m_userAvatarImage.gameObject.SetActive(true);
                 // m_profileSpinner.SetActive(false);
             }
@@ -528,6 +531,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private Slider m_notificationsSlider;
 
     public void Notifications_Init(){        
+        m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
+    }
+
+	public void Notifications_Refresh(){        
         m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
     }
 

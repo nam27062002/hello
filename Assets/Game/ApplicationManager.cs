@@ -208,6 +208,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 // ---------------------------         
 
                 // ---------------------------
+                // Test user profile level
+                //Debug_TestUserProfileLevel();
+                // ---------------------------
+
+                // ---------------------------
                 // Test toggling entities visibility
                 //Debug_TestToggleEntitiesVisibility();
                 // ---------------------------        
@@ -667,7 +672,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Load achievements
 		GameCenterManager.GameCenterItemData[] kAchievementsData = null;
 		Dictionary<string, DefinitionNode> kAchievementSKUs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.ACHIEVEMENTS);
-		if (kAchievementSKUs.Count > 0)
+		if (kAchievementSKUs != null && kAchievementSKUs.Count > 0)
 		{
 			kAchievementsData = new GameCenterManager.GameCenterItemData[kAchievementSKUs.Count];
 			int iSKUIdx = 0;
@@ -736,9 +741,67 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	return ret;
     }
 
-#endregion
+    #endregion
 
-#region debug
+    #region apps
+    public enum EApp
+    {
+        HungryDragon,
+        HungrySharkEvo
+    };
+
+    public static void Apps_OpenAppInStore(EApp app)
+    {
+        string appId = Apps_GetAppIdInStore(app);
+        if (string.IsNullOrEmpty(appId))
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)            
+                LogError("No appId found for app " + app.ToString());
+            
+        }
+        else
+        {			
+            MiscUtils.OpenAppInStore(appId);
+        }
+    }
+
+    public static string Apps_GetAppIdInStore(EApp app)
+    {
+        string returnValue = null;
+
+        switch (app)
+        {
+            case EApp.HungryDragon:
+                returnValue = Apps_GetHDIdInStore();
+                break;
+
+            case EApp.HungrySharkEvo:
+                returnValue = Apps_GetHSEIdInStore();
+                break;
+        }
+
+        return returnValue;
+    }
+
+    private static string Apps_GetHDIdInStore()
+    {
+		return Application.identifier;
+    }
+
+    private static string Apps_GetHSEIdInStore()
+    {
+        string returnValue = null;
+#if UNITY_IOS
+        returnValue = "535500008"; //HSE App Store ID
+#elif UNITY_ANDROID
+        returnValue = "com.fgol.HungrySharkEvolution"; //HSE Google play ID
+#endif
+
+        return returnValue;
+    }
+    #endregion
+
+    #region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
@@ -796,6 +859,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         key = FeatureSettings.KEY_PROFILE;
         Debug.Log(key + " as string = " + FeatureSettingsManager.instance.Device_CurrentFeatureSettings.GetValueAsString(key));                        
         */
+    }
+
+    private int m_DebugUserProfileLevel = -1;
+    private void Debug_TestUserProfileLevel()
+    {
+        int currentUserProfileLevel = FeatureSettingsManager.instance.GetUserProfileLevel();
+        int currentProfileLevel = FeatureSettingsManager.instance.GetCurrentProfileLevel();
+        int maxProfileLevel = FeatureSettingsManager.instance.GetMaxProfileLevelSupported();
+        m_DebugUserProfileLevel = (m_DebugUserProfileLevel + 1) % (maxProfileLevel + 1);
+        FeatureSettingsManager.Log("before maxProfileLevel = " + maxProfileLevel + " currentUserProfileLevel = " + currentUserProfileLevel + " currentProfileLevel = " + currentProfileLevel + " to set " + m_DebugUserProfileLevel);        
+        FeatureSettingsManager.instance.SetUserProfileLevel(m_DebugUserProfileLevel);
+        FeatureSettingsManager.Log("after currentUserProfileLevel = " + FeatureSettingsManager.instance.GetUserProfileLevel() + " currentProfileLevel = " + FeatureSettingsManager.instance.GetCurrentProfileLevel());
     }
 
     private bool Debug_IsDrunkOn { get; set; }
@@ -1173,19 +1248,19 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
-    private void Log(string msg)
+    private static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.Log(msg);
     }
 
-    private void LogWarning(string msg)
+    private static void LogWarning(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogWarning(msg);
     }
 
-    private void LogError(string msg)
+    private static void LogError(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogError(msg);

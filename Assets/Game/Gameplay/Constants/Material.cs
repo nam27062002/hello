@@ -15,6 +15,7 @@ namespace GameConstants
 		public static readonly int ORIGINAL_TEX = Shader.PropertyToID("_OriginalTex");
 		public static readonly int COLOR = Shader.PropertyToID("_Color");
 		public static readonly int INTENSITY = Shader.PropertyToID("_Intensity");
+		public static readonly int ASH_LEVEL = Shader.PropertyToID("_AshLevel");
 
 
 		public static readonly int FOG_START = Shader.PropertyToID("_FogStart");

@@ -332,7 +332,7 @@ public class CPQualitySettings : MonoBehaviour
 
         if (m_memory != null)
         {
-            m_memory.text = "" + SystemInfo.systemMemorySize;
+            m_memory.text = "" + FeatureSettingsManager.instance.Device_GetSystemMemorySize();
         }
 
         if (m_memoryRating != null)
@@ -342,7 +342,7 @@ public class CPQualitySettings : MonoBehaviour
 
         if (m_gfxMemory != null)
         {
-            m_gfxMemory.text = "" + SystemInfo.graphicsMemorySize;
+            m_gfxMemory.text = "" + FeatureSettingsManager.instance.Device_GetGraphicsMemorySize();
         }
 
         if (m_gfxMemoryRating != null)

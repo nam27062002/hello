@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
 {
+	private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
+
+
     public void Initialise()
     {
         if (!NotificationsManager.SharedInstance.CheckIfInitialised())
@@ -17,8 +20,8 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 			NotificationsManager.SharedInstance.Initialise();			          
 #endif
 
-            //int notificationsEnabled = PlayerPrefs.GetInt(PopupSettings.KEY_SETTINGS_NOTIFICATIONS, 1);
-            //NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0);
+            int notificationsEnabled = PlayerPrefs.GetInt(HD_NOTIFICATIONS, 1);
+            NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0);
 
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("Notifications enabled = " + GetNotificationsEnabled());
@@ -33,7 +36,21 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     public void SetNotificationsEnabled(bool enabled)
     {
         Log("SetNotificationsEnabled = " + enabled);
+
+		int v  = enabled ? 1 : 0;
+		PlayerPrefs.SetInt(HD_NOTIFICATIONS,v);
+
         NotificationsManager.SharedInstance.SetNotificationsEnabled(enabled);
+
+		// Clear all notifications
+        NotificationsManager.SharedInstance.CancelAllNotifications();
+
+        // If enabled reschedule all notifications
+		if (enabled){
+			if ( UsersManager.currentUser != null && EggManager.incubatingEgg != null){
+				EggManager.incubatingEgg.ScheduleEggNotification();
+	        }
+        }
     }
 
     public void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)

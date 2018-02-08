@@ -397,8 +397,7 @@
                 "etl"
             ]
         },
-
-    "custom.gameplay.fps": {
+		"custom.gameplay.fps": {
             "Parameters": [
 				{"sessionsCount": {"Status": "OK"}},
 				{"gameRunNb": {"Status": "OK"}},
@@ -413,7 +412,34 @@
                 "etl"
             ]
         },
-
+		"custom.session.started": {
+            "Parameters": [
+				{"versionRevision": {"Status": "OK"}}				
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.survey.popup": {
+            "Parameters": [
+				{"popupName": {"Status": "OK"}},
+				{"popupAction": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.leave.popup": {
+            "Parameters": [
+				{"popupAction": {"Status": "OK"}}				
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -858,7 +884,7 @@
             "Values": []
         },
         "playerProgress": {
-            "Type": "STRING:4",
+            "Type": "INT:4",
             "Values": []
         },
         "stepDuration": {
@@ -885,23 +911,23 @@
             "Type": "STRING:45",
             "Values": []
         },
-		    "yearOfBirth": {
+		"yearOfBirth": {
             "Type": "INT:4",
             "Values": []
         },
-		    "gender": {
+		"gender": {
             "Type": "STRING:2",
             "Values": []
         },
-		    "nbViews": {
+		"nbViews": {
             "Type": "INT:4",
             "Values": []
         },
-		    "legalPopupType": {
+		"legalPopupType": {
             "Type": "STRING:15",
             "Values": []
         },
-		    "duration": {
+		"duration": {
             "Type": "INT:4",
             "Values": []
         },		
@@ -909,111 +935,115 @@
             "Type": "INT:4",
             "Values": []
         },				
-		    "localTime": {
+		"localTime": {
             "Type": "TRACK_LOCAL_TIME",
             "Values": []
         },				
-		    "language": {
+		"language": {
             "Type": "STRING:2",
             "Values": []
         },				
-		    "country": {
+		"country": {
             "Type": "TRACK_COUNTRY_CODE",
             "Values": []
         },				
-		    "connectionType": {
+		"connectionType": {
             "Type": "TRACK_CONNECTION",
             "Values": []
         },				
-		    "userTimezone": {
+		"userTimezone": {
             "Type": "STRING:80",
             "Values": []
         },
-		    "popupName": {
-	  		    "Type": "STRING:45",
-			      "Values": []
-  		  },
-  		  "action": {
-			      "Type": "STRING:40",
-			      "Values": []
-		    },
-		    "loadingTime": {
-			      "Type": "INT:4",
-			      "Values": []
-		    },
-		    "originalArea": {
-			      "Type": "STRING:45",
-			      "Values": []
-		    },
-		    "newArea": {
-			      "Type": "STRING:45",
-			      "Values": []
-		    },
-		    "petName": {
-			      "Type": "STRING:45",
-			      "Values": []
-		    },
-		    "sourceOfPet": {
-			      "Type": "STRING:45",
-			      "Values": []
-		    },
-		    "missionType": {
+		"popupAction": {
+			"Type": "STRING:15",
+			"Values": []
+  		},
+		"popupName": {
+			"Type": "STRING:45",
+			"Values": []
+  		},		
+  		"action": {
+			"Type": "STRING:40",
+			"Values": []
+		},
+		"loadingTime": {
+			"Type": "INT:4",
+			"Values": []
+		},
+		"originalArea": {
+		    "Type": "STRING:45",
+		    "Values": []
+		},
+		"newArea": {
+		    "Type": "STRING:45",
+		    "Values": []
+		},
+		"petName": {
+		    "Type": "STRING:45",
+		    "Values": []
+		},
+		"sourceOfPet": {
+		    "Type": "STRING:45",
+		    "Values": []
+		},
+		"missionType": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "missionTarget": {
+		"missionTarget": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "missionDifficulty": {
+		"missionDifficulty": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "missionValue": {
+		"missionValue": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "glbEventID": {
+		"glbEventID": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "glbEventType": {
+		"glbEventType": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "scoreRun": {
+		"scoreRun": {
             "Type": "INT:4",
             "Values": []
         },
-		    "scoreTotal": {
+		"scoreTotal": {
             "Type": "INT:4",
             "Values": []
         },
-		    "multiplier": {
+		"multiplier": {
             "Type": "STRING:5",
             "Values": []
         },
-		    "rewardTier": {
+		"rewardTier": {
             "Type": "STRING:5",
             "Values": []
         },
-		    "topContributor": {
+		"topContributor": {
             "Type": "INT:4",
             "Values": []
         },
-		    "playingMode": {
+		"playingMode": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "rank": {
+		"rank": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "isSuccess": {
+		"isSuccess": {
             "Type": "INT:4",
             "Values": []
         },
-		    "storeInstalled": {
+		"storeInstalled": {
             "Type": "INT:4",
             "Values": []
         },    
@@ -1038,8 +1068,12 @@
             "Values": []
         },
         "deviceProfile": {
-        "Type": "STRING:15",
-        "Values": []
-        }
+			"Type": "STRING:15",
+			"Values": []
+        },
+		"versionRevision": {
+			"Type": "STRING:15",
+			"Values": []
+        }		
     }
 }

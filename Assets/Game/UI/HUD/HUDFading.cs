@@ -17,7 +17,7 @@ public class HUDFading : MonoBehaviour {
 	};
 	private State m_state = State.NONE;
 
-	const float FADE_DURATION = 1.0f;
+	float FADE_DURATION = 1.0f;
     float m_startTime = 0.0f;
 	Color m_color = Color.black;
 
@@ -46,14 +46,14 @@ public class HUDFading : MonoBehaviour {
 
         m_oldMaterial = m_originalCurtain = m_blackImage.material;
 
-		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
+		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaStart);
 	}
 	
 	// Update is called once per frame
 	void OnDestroy () 
 	{
-		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
+		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaStart);
 	}
 
@@ -121,8 +121,9 @@ public class HUDFading : MonoBehaviour {
     }
 
 
-    void PlayerLeavingArea()
+    void PlayerLeavingArea(float estimatedLeavingTime)
 	{
+		FADE_DURATION = 0.75f * estimatedLeavingTime;
 		StartFadeOut();
 	}
 

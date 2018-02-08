@@ -77,6 +77,12 @@ public class FeatureSettings
     // This key decides the resolution factor, screen size is multiplied by this float value
     public const string KEY_RESOLUTION_FACTOR = "resolutionFactor";
 
+    // This key decides the minimum gfx memory amount
+    public const string KEY_GFX_MEMORY = "gfxMemory";
+
+    // This key decides if lightmap will be used on this profile
+    public const string KEY_LIGHTMAP = "lightmap";
+
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
 
@@ -91,7 +97,13 @@ public class FeatureSettings
 
     public const string KEY_CONTENT_DELTAS = "contentDeltas";
 
-    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";    
+    public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
+
+    // Whether or not automatic relogin is enabled (this features tries to login to our server and to the cloud if network is up)
+    public const string KEY_AUTOMATIC_RELOGIN = "automaticRelogin";
+
+    // Period in seconds between two automatic relogin checks
+    public const string KEY_AUTOMATIC_RELOGIN_PERIOD = "automaticReloginPeriod";
 
     // Examples of how to use different type datas
     /*
@@ -135,6 +147,10 @@ public class FeatureSettings
             data = new DataRangeInt(key, 0, 0, int.MaxValue);
             Datas.Add(key, data);
 
+            key = KEY_GFX_MEMORY;
+            data = new DataRangeInt(key, 0, 0, int.MaxValue);
+            Datas.Add(key, data);
+
             // profile
             key = KEY_PROFILE;
             data = new DataString(key, null);
@@ -148,6 +164,11 @@ public class FeatureSettings
             // shadersLevel: Configuration for shaders
             key = KEY_SHADERS_LEVEL;
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
+            Datas.Add(key, data);
+
+            // lightmap: enable/disable lightmap
+            key = KEY_LIGHTMAP;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
@@ -236,7 +257,15 @@ public class FeatureSettings
             // Content deltas need to be cached. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS_CACHED;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
-            Datas.Add(key, data);            
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_AUTOMATIC_RELOGIN_PERIOD;
+            data = new DataInt(key, EValueType.Int, 60);
+            Datas.Add(key, data);
 
             /*
             // intTest
@@ -339,6 +368,8 @@ public class FeatureSettings
         very_high,
         deprecated
     };
+
+    public static List<string> EQualityLevelValuesNames = new List<string>(Enum.GetNames(typeof(EQualityLevelValues)));
 
     public abstract class Data
     {        
@@ -790,6 +821,28 @@ public class FeatureSettings
             }
         }
     }
+
+    public int GfxMemory
+    {
+        get
+        {
+            return GetValueAsInt(KEY_GFX_MEMORY);
+        }
+
+        set
+        {
+            string key = KEY_GFX_MEMORY;
+            if (Values.ContainsKey(key))
+            {
+                Values[key] = value;
+            }
+            else
+            {
+                Values.Add(key, value);
+            }
+        }
+    }
+
 
     public string Profile
     {
