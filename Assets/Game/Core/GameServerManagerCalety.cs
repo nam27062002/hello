@@ -448,15 +448,16 @@ public class GameServerManagerCalety : GameServerManager {
 	}
 
     public override void SendTrackLoading(string step, int deltaTime, bool isFirstTime, int sessionsCount, ServerCallback callback) {
-        Dictionary<string, string> parameters = new Dictionary<string, string>();
-
         deltaTime = Mathf.Max(1, deltaTime);
-        
-        parameters.Add("step", step);
-        parameters.Add("delta", deltaTime.ToString());
-        parameters.Add("newUser", isFirstTime.ToString());
-        parameters.Add("appLaunches", sessionsCount.ToString());
-        parameters.Add("millis", ServerManager.SharedInstance.GetCurrentTimeMillis().ToString());
+
+        JSONNode json = new JSONClass();
+        json["step"] = step;
+        json["delta"] = deltaTime.ToString();
+        json["appLaunches"] = sessionsCount.ToString();
+        json["freshInstall"] = isFirstTime.ToString();
+
+        Dictionary<string, string> parameters = new Dictionary<string, string>();                
+        parameters.Add("body", json.ToString());        
         Commands_EnqueueCommand(ECommand.TrackLoading, parameters, callback);                       
     }
 
@@ -823,18 +824,8 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommand(cmd, kParams, null, parameters["trackingData"]);
 				} break;
 
-                case ECommand.TrackLoading: {                        
-                        /*
-                        JSONNode json = new JSONClass();
-                        json["step"] = parameters["step"];
-                        json["delta"] = parameters["delta"];
-                        json["appLaunches"] = parameters["appLaunches"];
-                        json["newUser"] = parameters["newUser"];
-                        json["millis"] = json["millis"];
-                        Command_SendCommand(COMMAND_TRACK_LOADING, null, null, json.ToString());
-                        */
-
-                        Command_SendCommand(COMMAND_TRACK_LOADING, null, parameters, null);                        
+                case ECommand.TrackLoading: {                    
+                    Command_SendCommand(COMMAND_TRACK_LOADING, null, null, parameters["body"]);                    
                 } break;
 
                 case ECommand.GlobalEvents_TMPCustomizer:{
@@ -1259,7 +1250,7 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_GET_GAME_SETTINGS, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-        nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
 
         nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
