@@ -98,9 +98,13 @@ uniform float4 _VertexAnimation3;
 uniform sampler2D _SpecMask;
 uniform float _SpecExponent;
 uniform float4 _SecondLightDir;
-uniform float4 _SecondLightColor;
 
 #endif
+
+#if defined(AMBIENTCOLOR)
+uniform float4 _AmbientColor;
+#endif
+
 
 v2f vert(appdata_t v)
 {
@@ -217,8 +221,12 @@ fixed4 frag(v2f i) : SV_Target
 
 #elif defined(SPECMASK)
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * specMask;
-	col.xyz = lerp(col.xyz, colspec.xyz, specular) + _SecondLightColor.xyz;
+	col.xyz = lerp(col.xyz, colspec.xyz, specular);
 	col.a = max(col.a, specular);
+#endif
+
+#if defined(AMBIENTCOLOR)
+	col.xyz += _AmbientColor.xyz;
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)

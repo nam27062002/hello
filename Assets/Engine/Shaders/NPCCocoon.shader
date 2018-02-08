@@ -10,7 +10,7 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 
 		_SpecExponent("Specular Exponent", float) = 1.0
 		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
-		_SecondLightColor("Ambient color", Color) = (0.0, 0.0, 0.0, 0.0)
+		_AmbientColor("Ambient color", Color) = (0.0, 0.0, 0.0, 0.0)
 
 		_VertexAnimation("Vertex Animation", Vector) = (1.0, 1.0, 1.0, 1.0)
 		_TimePhase("Animation Phase", Float) = 1.0
@@ -65,6 +65,7 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 
 			#define SPECMASK
 			#define VERTEX_ANIMATION
+			#define AMBIENTCOLOR
 //			#define TINT
 
 			#include "entities.cginc"

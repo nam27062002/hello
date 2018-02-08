@@ -10,6 +10,8 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 		_NormalStrength("Normal Strength", float) = 3
 		_SpecularPower( "Specular power", float ) = 1
 		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
+		_AmbientColor("Ambient color", Color) = (0.0, 0.0, 0.0, 0.0)
+
 //		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 //		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 		_TimePhase("Head Time Phase", Float) = 1.0
@@ -67,6 +69,8 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 
 			#define VERTEX_ANIMATION
 			#define JELLY
+			#define AMBIENTCOLOR
+
 
 			#include "entities.cginc"
 
