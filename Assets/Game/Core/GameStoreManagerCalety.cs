@@ -126,30 +126,27 @@ public class GameStoreManagerCalety : GameStoreManager
 
             StoreManager.SharedInstance.AddListener(m_storeListener);
             CacheStoreSkus();
+
+			m_isFirstInit = false;
         }
 
 		m_storeListener.Reset();
-		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);
-
-        if (m_isFirstInit)
-        {
-            m_isFirstInit = false;
+		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);		          
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-	        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-	        if(settingsInstance != null)
-	        {
-	            if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_GOOGLE_PLAY)
-	            {
-	                StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysGoogle[settingsInstance.m_iBuildEnvironmentSelected]);
-	            }
-	            else if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_AMAZON)
-	            {
-	                StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysAmazon[settingsInstance.m_iBuildEnvironmentSelected]);
-	            }
-	        }
-#endif
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+        if(settingsInstance != null)
+        {
+            if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_GOOGLE_PLAY)
+            {
+                StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysGoogle[settingsInstance.m_iBuildEnvironmentSelected]);
+            }
+            else if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_AMAZON)
+            {
+                StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysAmazon[settingsInstance.m_iBuildEnvironmentSelected]);
+            }
         }
+#endif        
 	}
 
     private void OnConnectionRecovered()
