@@ -13,7 +13,7 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 
 		_SpecExponent("Specular Exponent", float) = 1.0
 		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
-		_SecondLightColor("Second Light color", Color) = (0.0, 0.0, 0.0, 0.0)
+		_SecondLightColor("Ambient color", Color) = (0.0, 0.0, 0.0, 0.0)
 
 
 		_Tint("Tint", Color) = (1,1,1,1)
