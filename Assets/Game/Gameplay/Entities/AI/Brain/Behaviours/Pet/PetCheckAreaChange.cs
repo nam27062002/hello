@@ -22,7 +22,7 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) 
 			{
 				Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-				Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+				Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
 				Messenger.AddListener<DragonMotion.PetsEatingTest>(MessengerEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
 			}
@@ -30,7 +30,7 @@ namespace AI {
 			protected override void OnExit(State _newState)
 			{
 				Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-				Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+				Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
 				Messenger.RemoveListener<DragonMotion.PetsEatingTest>(MessengerEvents.PLAYER_ASK_PETS_EATING, OnEatingQuestion);
 			}
@@ -46,7 +46,7 @@ namespace AI {
 				}
 			}
 
-			void OnLeavingArea()
+			void OnLeavingArea(float estimatedTime)
 			{
 				if ( m_eatBehaviour != null )	
 				{
