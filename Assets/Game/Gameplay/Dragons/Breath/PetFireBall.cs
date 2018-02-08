@@ -169,7 +169,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		m_hasBeenShot = false;
 		if (m_pMotion != null)
 			m_pMotion.enabled = false;
-		m_fireView.Pause();
+		m_fireView.Stop();
 		StartCoroutine(DelayedDeactivate());
 	}
 
