@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -122,8 +123,19 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// </summary>
 	/// <param name="_success">Has the ad been played?</param>
 	private void OnAdResult(bool _success) {
+		StartCoroutine(RealOnAdResult(_success));
+	}
+
+	IEnumerator RealOnAdResult( bool _success )
+	{
+		PopupController controller = GetComponent<PopupController>();
+		// Sometime we recieve the callback before the popup is completely open, so we wait to be ready and then we close it
+		while ( !controller.isReady ){
+			yield return null;
+		}
+
 		// Close popup
-		GetComponent<PopupController>().Close(true);
+		controller.Close(true);
 
 		// If the ad couldn't be displayed, show message
 		if(!_success) {
@@ -143,7 +155,9 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
 		// If an Ad is pending, launch it!
-		if(m_adPending) LaunchAd();
+		if(m_adPending) {
+			LaunchAd();
+		}
 	}
 
 	/// <summary>
