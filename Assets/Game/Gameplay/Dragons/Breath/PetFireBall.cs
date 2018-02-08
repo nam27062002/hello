@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class PetFireBall :  MonoBehaviour, IProjectile { 
 
+	[SerializeField] private string m_viewParticle;
 	[SerializeField] private ParticleData m_explosionParticle;
 	[SerializeField] private DragonTier m_fireTier;
 
@@ -16,11 +17,47 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	private Rect m_rect;
 
 	private PoolHandler m_poolHandler;
-
+	private ParticleSystem m_fireView;
 
 	// Use this for initialization
 	void Start () 
 	{
+
+		// View particle
+		string version = "";
+		switch(FeatureSettingsManager.instance.Particles)
+		{
+			default:
+			case FeatureSettings.ELevel5Values.very_low:							
+			case FeatureSettings.ELevel5Values.low:
+					version = "Low/";
+				break;
+			case FeatureSettings.ELevel5Values.mid:
+					version = "Master/";
+				break;
+			case FeatureSettings.ELevel5Values.very_high:
+			case FeatureSettings.ELevel5Values.high:
+					version = "High/";
+				break;
+		}
+
+		string path = "Particles/" + version + m_viewParticle;
+
+		GameObject prefab = Resources.Load<GameObject>(path);
+		if ( prefab )
+		{
+			m_fireView = Instantiate<GameObject>(prefab).GetComponent<ParticleSystem>();
+			if ( m_fireView )
+			{
+				// Anchor
+				m_fireView.transform.SetParent(transform, true);
+				m_fireView.transform.localPosition = GameConstants.Vector3.zero;
+				m_fireView.transform.localRotation = GameConstants.Quaternion.identity;
+			}
+		}
+		////
+
+		
 		m_area = GetComponent<CircleArea2D>();
 		m_rect = new Rect();
 
@@ -92,6 +129,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 			m_pMotion.enabled = true;
 			m_pMotion.Shoot(_target);
 		}
+		m_fireView.Play();
 		m_hasBeenShot = true;
 	}
 
@@ -110,6 +148,8 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 
 	public void Explode( bool _hitsDragon )
 	{		
+		if ( !m_hasBeenShot ) return;
+
 		m_explosionParticle.Spawn(transform.position);
 
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
@@ -126,6 +166,16 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 		m_rect.height = m_rect.width = m_area.radius;
 		FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_fireTier, Vector3.zero);
 
+		m_hasBeenShot = false;
+		if (m_pMotion != null)
+			m_pMotion.enabled = false;
+		m_fireView.Pause();
+		DelayedDeactivate();
+	}
+
+	IEnumerator DelayedDeactivate()
+	{
+		yield return new WaitForSeconds(1.0f);
 		gameObject.SetActive(false);
 		m_poolHandler.ReturnInstance( gameObject );
 	}
