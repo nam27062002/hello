@@ -1,6 +1,6 @@
 ﻿// PopupSettingsOptionsTab.cs
 // Hungry Dragon
-// 
+//
 // Created by David Germade on 30th August 2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -14,7 +14,7 @@ using DG.Tweening;
 /// This class is responsible for handling the options tab in the settings popup.
 /// </summary>
 public class PopupSettingsOptionsTab : MonoBehaviour
-{    
+{
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -248,7 +248,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// The popup has been closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
-		
+
 	}
 
 	public void RefreshGooglePlayView(){
@@ -327,7 +327,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			}
 			else
 			{
-				// No curatin -> something failed, we are not authenticating -> tell the player there was an error	
+				// No curatin -> something failed, we are not authenticating -> tell the player there was an error
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			}
 
@@ -356,19 +356,17 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	    // Apple does NOT login the user, we need to check it.
 	    if (!GameCenterManager.SharedInstance.CheckIfAuthenticated ())
 	    {
-			PopupMessage.Config config = PopupMessage.GetConfig();
-			// config.TitleText = LocalizationManager.SharedInstance.Localize("TID_GAMECENTER_CONNECTION_TITLE");
-			config.TitleText = "Connect to Game Center";
-			config.ShowTitle = true;
-			// config.MessageText = LocalizationManager.SharedInstance.Localize("TID_GAMECENTER_CONNECTION_BODY");
-			config.MessageText = "Sign in with Game Center via the device settings";
-            // This popup ignores back button and stays open so the user makes a decision
-            config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.PerformConfirm;
-			config.ConfirmButtonTid = "TID_GEN_OK";
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-			config.IsButtonCloseVisible = false;
-			m_confirmPopup = PopupManager.PopupMessage_Open(config);
-			m_confirmPopup.OnClosePreAnimation.AddListener( OnPopupDismissed );	
+  			PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_GAMECENTER_CONNECTION_TITLE";
+  			config.ShowTitle = true;
+  			config.MessageTid = "TID_GAMECENTER_CONNECTION_BODY";
+        // This popup ignores back button and stays open so the user makes a decision
+        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.PerformConfirm;
+  			config.ConfirmButtonTid = "TID_GEN_OK";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+  			config.IsButtonCloseVisible = false;
+  			m_confirmPopup = PopupManager.PopupMessage_Open(config);
+  			m_confirmPopup.OnClosePreAnimation.AddListener( OnPopupDismissed );
 	    }
 	    else
 	    {
