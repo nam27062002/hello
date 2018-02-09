@@ -1492,6 +1492,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+	public bool IfPetRigidbodyInterpolates
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_PET_INTERPOLATES);
+        }
+    }
+
     public int MaxZoomPerformanceCost
 	{
 		get
