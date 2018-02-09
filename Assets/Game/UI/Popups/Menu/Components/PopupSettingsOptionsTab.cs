@@ -96,7 +96,6 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 		// Do the same for the GameCenter group!
 		m_gameCenterGroup.SetActive(Application.platform == RuntimePlatform.IPhonePlayer);
-		m_gameCenterGroup.SetActive(true);
     }
 
     void OnDestroy(){
@@ -358,12 +357,14 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	    if (!GameCenterManager.SharedInstance.CheckIfAuthenticated ())
 	    {
 			PopupMessage.Config config = PopupMessage.GetConfig();
-			config.TitleText = LocalizationManager.SharedInstance.Localize("TID_GAMECENTER_CONNECTION_TITLE");
+			// config.TitleText = LocalizationManager.SharedInstance.Localize("TID_GAMECENTER_CONNECTION_TITLE");
+			config.TitleText = "Connect to Game Center";
 			config.ShowTitle = true;
-			config.MessageText = LocalizationManager.SharedInstance.Localize("TID_GAMECENTER_CONNECTION_BODY");
+			// config.MessageText = LocalizationManager.SharedInstance.Localize("TID_GAMECENTER_CONNECTION_BODY");
+			config.MessageText = "Sign in with Game Center via the device settings";
             // This popup ignores back button and stays open so the user makes a decision
             config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.PerformConfirm;
-			config.ConfirmButtonTid = LocalizationManager.SharedInstance.Localize("TID_GEN_OK");
+			config.ConfirmButtonTid = "TID_GEN_OK";
             config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
 			config.IsButtonCloseVisible = false;
 			m_confirmPopup = PopupManager.PopupMessage_Open(config);
