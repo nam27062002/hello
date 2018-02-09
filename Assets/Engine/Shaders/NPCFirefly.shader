@@ -36,6 +36,7 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 			#include "HungryDragon.cginc"
 
 			#define EMISSIVE
+			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"

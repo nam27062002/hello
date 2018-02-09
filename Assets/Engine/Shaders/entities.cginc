@@ -17,7 +17,7 @@ struct v2f
 	float2 uv : TEXCOORD0;
 	float4 color : COLOR;
 
-#if !defined(GHOST)
+#if defined(DYNAMIC_LIGHT)
 	float3 vLight : TEXCOORD2;
 #endif
 
@@ -132,7 +132,7 @@ v2f vert(appdata_t v)
 
 	float3 normal = UnityObjectToWorldNormal(v.normal);
 
-#if !defined(GHOST)
+#if defined(DYNAMIC_LIGHT)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
 #endif
 	// To calculate tangent world
@@ -210,8 +210,9 @@ fixed4 frag(v2f i) : SV_Target
 	float3 normalDirection = i.normalWorld;
 #endif
 
-#if !defined(GHOST)
-	fixed3 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
+
+#if defined(DYNAMIC_LIGHT)
+	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 	col.xyz *= diffuse + i.vLight;
 #endif
 
