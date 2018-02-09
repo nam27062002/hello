@@ -1316,12 +1316,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public bool IsIncentivisedLoginEnabled()
     {
-#if UNIT_EDITOR
+#if UNITY_EDITOR
         return true;
 #elif UNITY_IOS
         return false;
 #else
-        return false;
+        return true;
 #endif
     }
     
