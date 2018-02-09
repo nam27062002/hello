@@ -117,6 +117,7 @@ v2f vert(appdata_t v)
 	v.vertex.xyz += anim.y * _VertexAnimation.y * v.normal * v.color.g;
 	anim = sin(_Time.y * _TimePhase2 + v.vertex.y * _Period2);
 	v.vertex += anim * _VertexAnimation2 * v.color.r; //* (1.0 - s);
+	anim = sin(_Time.y * _TimePhase2 * 0.85 + v.vertex.y * _Period2);
 	v.vertex += anim * _VertexAnimation3 * v.color.b; // *(1.0 - s);
 
 #else
