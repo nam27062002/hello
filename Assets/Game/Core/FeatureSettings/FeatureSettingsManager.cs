@@ -1321,6 +1321,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return true;
         }
     }
+
+    public bool IsIncentivisedLoginEnabled()
+    {
+#if UNIT_EDITOR
+        return true;
+#elif UNITY_IOS
+        return false;
+#else
+        return false;
+#endif
+    }
     
     /// <summary>
     /// When <c>true</c> tracking is enabled. When <c>false</c> no tracking stuff is done at all
