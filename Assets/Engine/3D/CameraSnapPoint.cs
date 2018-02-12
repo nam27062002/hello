@@ -43,16 +43,6 @@ public class CameraSnapPoint : MonoBehaviour {
 	public bool changeFar = true;
 	public float far = 1000f;
 
-	// Optional fog setup
-	public bool changeFogColor = true;
-	public Color fogColor = Colors.silver;
-
-	public bool changeFogStart = true;
-	public float fogStart = 20f;
-
-	public bool changeFogEnd = true;
-	public float fogEnd = 100f;
-
 	// Optional screen darkening setup
 	public bool darkenScreen = false;
 	public float darkScreenDistance = 50f;
@@ -99,11 +89,6 @@ public class CameraSnapPoint : MonoBehaviour {
 		if(changeFov) _cam.fieldOfView = fov;
 		if(changeNear) _cam.nearClipPlane = near;
 		if(changeFar) _cam.farClipPlane = far;
-
-		// Fog params
-		if(changeFogColor) RenderSettings.fogColor = fogColor;
-		if(changeFogStart) RenderSettings.fogStartDistance = fogStart;
-		if(changeFogEnd) RenderSettings.fogEndDistance = fogEnd;
 
 		// Dark screen
 		// Apply values
@@ -185,31 +170,6 @@ public class CameraSnapPoint : MonoBehaviour {
 				() => { return _cam.farClipPlane; },
 				(_newValue) => { _cam.farClipPlane = _newValue; },
 				far, _duration
-			).SetAs(_params));
-		}
-
-		// Fog params
-		if(changeFogColor) {
-			seq.Join(DOTween.To(
-				() => { return RenderSettings.fogColor; },
-				(_newValue) => { RenderSettings.fogColor = _newValue; },
-				fogColor, _duration
-			).SetAs(_params));
-		}
-
-		if(changeFogStart) {
-			seq.Join(DOTween.To(
-				() => { return RenderSettings.fogStartDistance; },
-				(_newValue) => { RenderSettings.fogStartDistance = _newValue; },
-				fogStart, _duration
-			).SetAs(_params));
-		}
-
-		if(changeFogEnd) {
-			seq.Join(DOTween.To(
-				() => { return RenderSettings.fogEndDistance; },
-				(_newValue) => { RenderSettings.fogEndDistance = _newValue; },
-				fogEnd, _duration
 			).SetAs(_params));
 		}
 

@@ -32,12 +32,6 @@ public class MenuSceneController : SceneController {
 		get { return m_hud; }
 	}
 
-	[SerializeField]
-	private FogManager.FogAttributes m_fogSetup;
-	public FogManager.FogAttributes fogSetup {
-		get { return m_fogSetup; }
-	}
-
 	// Temp vars
 	private string m_selectedDragon = "";
 	public string selectedDragon {
@@ -108,13 +102,6 @@ public class MenuSceneController : SceneController {
 
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
-
-		if (m_fogSetup.texture == null)
-		{
-			m_fogSetup.CreateTexture();
-			m_fogSetup.RefreshTexture();
-		}
-		m_fogSetup.FogSetup();
 
 		// Define initial selected dragon
 		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
@@ -212,7 +199,6 @@ public class MenuSceneController : SceneController {
 	}
 
 	protected override void OnDestroy() {
-		m_fogSetup.DestroyTexture();
 		base.OnDestroy();
 	}
 	
@@ -261,19 +247,6 @@ public class MenuSceneController : SceneController {
 	public void SetSelectedDragon(string _sku) {
 		// Let the dragon selector do the job
 		dragonSelector.SetSelectedDragon(_sku);
-	}
-
-	/// <summary>
-	/// Recreate fog texture using current parameters.
-	/// </summary>
-	public void RecreateFogTexture() {
-		if(m_fogSetup.texture != null) {
-			m_fogSetup.DestroyTexture();
-		}
-
-		m_fogSetup.CreateTexture();
-		m_fogSetup.RefreshTexture();
-		m_fogSetup.FogSetup();
 	}
 
 	/// <summary>

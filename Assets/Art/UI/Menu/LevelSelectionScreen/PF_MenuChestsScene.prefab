@@ -1734,6 +1734,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1543788509824238
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4590001175447298}
+  - component: {fileID: 114713585303252832}
+  - component: {fileID: 114906896216157492}
+  m_Layer: 0
+  m_Name: ChestsSnapPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1544354839502264
 GameObject:
   m_ObjectHideFlags: 1
@@ -3678,7 +3695,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1751811231770794}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.2, y: -6.1, z: 200.53}
+  m_LocalPosition: {x: -13.2, y: -5.5, z: 200.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4910183485359592}
@@ -4887,6 +4904,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4176458651491090}
+  - {fileID: 4590001175447298}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5029,6 +5047,19 @@ Transform:
   m_Father: {fileID: 4045726269930476}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -0.00000019151031, y: 40.259254, z: -0.000000015810713}
+--- !u!4 &4590001175447298
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1543788509824238}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -13.089996, y: 0, z: 193.21}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4560284335253934}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4598720943105766
 Transform:
   m_ObjectHideFlags: 1
@@ -7962,6 +7993,32 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0
+--- !u!114 &114713585303252832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1543788509824238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ff496381399492a9aae003c352473a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  changePosition: 1
+  changeRotation: 1
+  changeFov: 1
+  fov: 44
+  changeNear: 1
+  near: 1
+  changeFar: 1
+  far: 500
+  darkenScreen: 0
+  darkScreenDistance: 50
+  darkScreenColor: {r: 0, g: 0, b: 0, a: 0.8}
+  darkScreenRenderQueue: 3030
+  livePreview: 1
+  drawGizmos: 1
+  gizmoColor: {r: 0, g: 0.7931032, b: 1, a: 0.49803922}
 --- !u!114 &114725877906527540
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8213,6 +8270,23 @@ MonoBehaviour:
   m_jumpForce: 0.15
   m_jumpEase: 6
   m_jumpDuration: 0.25
+--- !u!114 &114906896216157492
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1543788509824238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84bce71a0f6d243409968290ee318b06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_updateMode: 1
+  m_linkedPoints:
+  - curve: {fileID: 0}
+    pointId: CHESTS
+  - curve: {fileID: 0}
+    pointId: CHESTS
 --- !u!114 &114919665145367554
 MonoBehaviour:
   m_ObjectHideFlags: 1

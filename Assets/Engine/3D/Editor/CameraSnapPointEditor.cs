@@ -134,34 +134,6 @@ public class CameraSnapPointEditor : Editor {
 			GUI.enabled = true;
 		} EditorGUILayoutExt.EndHorizontalSafe();
 
-		// Fog setup
-		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("Optional Fog Setup", CustomEditorStyles.commentLabelLeft);
-
-		// Fog Color
-		EditorGUILayout.BeginHorizontal(); {
-			m_targetSnapPoint.changeFogColor = GUILayout.Toggle(m_targetSnapPoint.changeFogColor, GUIContent.none, GUILayout.Width(10f));
-			GUI.enabled = m_targetSnapPoint.changeFogColor;
-			m_targetSnapPoint.fogColor = EditorGUILayout.ColorField("Fog Color", m_targetSnapPoint.fogColor);
-			GUI.enabled = true;
-		} EditorGUILayoutExt.EndHorizontalSafe();
-
-		// Fog Start
-		EditorGUILayout.BeginHorizontal(); {
-			m_targetSnapPoint.changeFogStart = GUILayout.Toggle(m_targetSnapPoint.changeFogStart, GUIContent.none, GUILayout.Width(10f));
-			GUI.enabled = m_targetSnapPoint.changeFogStart;
-			m_targetSnapPoint.fogStart = EditorGUILayout.FloatField("Fog Start", m_targetSnapPoint.fogStart);
-			GUI.enabled = true;
-		} EditorGUILayoutExt.EndHorizontalSafe();
-
-		// Fog End
-		EditorGUILayout.BeginHorizontal(); {
-			m_targetSnapPoint.changeFogEnd = GUILayout.Toggle(m_targetSnapPoint.changeFogEnd, GUIContent.none, GUILayout.Width(10f));
-			GUI.enabled = m_targetSnapPoint.changeFogEnd;
-			m_targetSnapPoint.fogEnd = EditorGUILayout.FloatField("Fog End", m_targetSnapPoint.fogEnd);
-			GUI.enabled = true;
-		} EditorGUILayoutExt.EndHorizontalSafe();
-
 		// Dark screen
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Optional Dark Screen Setup", CustomEditorStyles.commentLabelLeft);

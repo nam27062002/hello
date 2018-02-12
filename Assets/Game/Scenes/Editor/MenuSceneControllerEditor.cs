@@ -78,36 +78,6 @@ public class MenuSceneControllerEditor : Editor {
 				// Do nothing
 			}
 
-			// Fog Setup
-			else if(p.name == "m_fogSetup") {
-				// Draw default property
-				EditorGUILayout.PropertyField(p, true);
-
-				// Add test button
-				EditorGUILayout.Space();
-				bool wasEnabled = GUI.enabled;
-				GUI.enabled = EditorApplication.isPlaying;
-				if(GUILayout.Button("APPLY\n(Only in playing mode)", GUILayout.Height(50f))) {
-					m_targetMenuSceneController.RecreateFogTexture();
-				}
-				GUI.enabled = wasEnabled;
-				EditorGUILayout.Space();
-
-				if ( !Application.isPlaying )
-				{
-					FogManager.FogAttributes fog = m_targetMenuSceneController.fogSetup;
-					if ( fog.texture == null )
-					{
-						fog.CreateTexture();
-						Shader.SetGlobalTexture("_FogTexture", fog.texture);
-					}
-					fog.RefreshTexture();
-					Shader.SetGlobalFloat("_FogStart", fog.m_fogStart);
-					Shader.SetGlobalFloat("_FogEnd", fog.m_fogEnd);
-				}
-
-			}
-
 			// Default property display
 			else {
 				EditorGUILayout.PropertyField(p, true);
@@ -122,16 +92,6 @@ public class MenuSceneControllerEditor : Editor {
 	/// The scene is being refreshed.
 	/// </summary>
 	public void OnSceneGUI() {
-		// Scene-related stuff
-		float posY = 50f;
-		Range xRange = new Range(-500, 500);
-		Range zRange = new Range(m_targetMenuSceneController.fogSetup.m_fogStart, m_targetMenuSceneController.fogSetup.m_fogEnd);
-		Vector3[] verts = new Vector3[] {
-			new Vector3(xRange.min, posY, zRange.min),
-			new Vector3(xRange.min, posY, zRange.max),
-			new Vector3(xRange.max, posY, zRange.max),
-			new Vector3(xRange.max, posY, zRange.min),
-		};
-		Handles.DrawSolidRectangleWithOutline(verts, Colors.WithAlpha(Colors.cyan, 0.25f), Colors.cyan);
+		
 	}
 }
