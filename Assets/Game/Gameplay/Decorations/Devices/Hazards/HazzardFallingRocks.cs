@@ -11,13 +11,13 @@ public class HazzardFallingRocks : MonoBehaviour {
 	private class SpawnData {
 		public int x;
 		public float seconds;
+		public float speed;
 	}
 
 
 	//-----------------------------------------------------------
 	[SerializeField] private string m_projectileName;
 	[SerializeField] private float m_damage;
-	[SerializeField] private float m_speed;
 	[SeparatorAttribute]
 	[SerializeField] private HazzardTrigger[] m_triggers;
 	[SeparatorAttribute]
@@ -81,7 +81,7 @@ public class HazzardFallingRocks : MonoBehaviour {
 						if (projectileGO != null) {
 							IProjectile projectile = projectileGO.GetComponent<IProjectile>();
 							projectile.AttachTo(transform, GameConstants.Vector3.right * m_spawnData[i].x);
-							projectile.ShootTowards(GameConstants.Vector3.down, m_speed, m_damage, null);
+							projectile.ShootTowards(GameConstants.Vector3.down, m_spawnData[i].speed, m_damage, null);
 						}
 					}
 				}
