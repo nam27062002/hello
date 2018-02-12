@@ -55,7 +55,11 @@ public class MenuScreensControllerToolbar {
 	private const string REWARD_SCREENS_EXPANDED_KEY = "MenuScreensControllerToolbar.RewardScreensExpanded";
 
 	// Other consts
+	private const float MARGIN = 5f;
 	private const float INDENT_SIZE = 10f;
+	private static readonly Vector2 POSITION = new Vector2(5f, 5f);
+	private static readonly Vector2 ELEMENT_SIZE = new Vector2(130f, 20f);
+	private static readonly Color BACKGROUND_COLOR = new Color(0.25f, 0.25f, 0.25f, 0.75f);
 
 	//----------------------------------------------------------------------//
 	// MEMBERS																//
@@ -65,6 +69,9 @@ public class MenuScreensControllerToolbar {
 	private static Queue<SelectionAction> s_pendingSelections = new Queue<SelectionAction>();
 	private static int s_frameCount = 0;
 	private static Dictionary<string, List<MenuScreen>> s_screenGroups = new Dictionary<string, List<MenuScreen>>();
+
+	private static Rect s_rect = new Rect();
+	private static Rect s_lastTotalRect = new Rect();
 
 	//----------------------------------------------------------------------//
 	// METHODS																//
@@ -112,6 +119,12 @@ public class MenuScreensControllerToolbar {
 		s_screenGroups[MAIN_SCREENS_EXPANDED_KEY] = mainScreens;
 		s_screenGroups[GOALS_SCREENS_EXPANDED_KEY] = goalsScreens;
 		s_screenGroups[REWARD_SCREENS_EXPANDED_KEY] = rewardScreens;
+
+		// Initialize rects
+		s_rect = new Rect(POSITION.x + MARGIN, POSITION.y + MARGIN, ELEMENT_SIZE.x, ELEMENT_SIZE.y);
+		s_lastTotalRect = new Rect(s_rect);
+		s_lastTotalRect.x -= MARGIN;
+		s_lastTotalRect.y -= MARGIN;
 	}
 
 	/// <summary>
@@ -143,13 +156,22 @@ public class MenuScreensControllerToolbar {
 		// http://answers.unity3d.com/questions/19321/onscenegui-called-without-any-object-selected.html
 		MenuScreen screenToEdit = MenuScreen.NONE;
 		Handles.BeginGUI(); {
-			// In this particular case it's easier to just go with old school GUI calls
-			Rect rect = new Rect(5f, 5f, 130f, 20f);
-			GUI.enabled = true;
+			// Background - using last known total rect
+			s_lastTotalRect.width += 2 * MARGIN;
+			s_lastTotalRect.height += 2 * MARGIN;
+			EditorGUI.DrawRect(s_lastTotalRect, BACKGROUND_COLOR);
 
-			DoGroup(ref rect, MAIN_SCREENS_EXPANDED_KEY, "Main Screens", ref screenToEdit);
-			DoGroup(ref rect, GOALS_SCREENS_EXPANDED_KEY, "Goals Screens", ref screenToEdit);
-			DoGroup(ref rect, REWARD_SCREENS_EXPANDED_KEY, "Rewards Screens", ref screenToEdit);
+			// In this particular case it's easier to just go with old school GUI calls
+			// Reset position
+			s_rect.x = POSITION.x + MARGIN;
+			s_rect.y = POSITION.y + MARGIN;
+			s_lastTotalRect.height = LAYOUT == Layout.HORIZONTAL ? s_rect.height : 0f;
+			s_lastTotalRect.width = LAYOUT == Layout.VERTICAL ? s_rect.width : 0f;
+
+			GUI.enabled = true;
+			DoGroup(ref s_rect, MAIN_SCREENS_EXPANDED_KEY, "Main Screens", ref screenToEdit);
+			DoGroup(ref s_rect, GOALS_SCREENS_EXPANDED_KEY, "Goals Screens", ref screenToEdit);
+			DoGroup(ref s_rect, REWARD_SCREENS_EXPANDED_KEY, "Rewards Screens", ref screenToEdit);
 		} Handles.EndGUI();
 
 		// If the user has selected a screen to edit, react to it!
@@ -211,23 +233,29 @@ public class MenuScreensControllerToolbar {
 		switch(LAYOUT) {
 			case Layout.HORIZONTAL: {
 				// Advance pos
-				_rect.x += _distance > 0 ? _distance : _rect.width;
+				float toAdvance = _distance > 0 ? _distance : _rect.width;
+				_rect.x += toAdvance;
+				s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + toAdvance);
 
 				// New row if we go off-viewport
 				if(_rect.x + _rect.width > viewport.xMax) {
-					_rect.x = viewport.xMin + 5f;
-					_rect.y += _rect.height + 5f;
+					_rect.x = viewport.xMin + POSITION.x;
+					_rect.y += _rect.height + POSITION.y;
+					s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + toAdvance);
 				}
 			} break;
 
 			case Layout.VERTICAL: {
 				// Advance pos
-				_rect.y += _distance > 0 ? _distance : _rect.height;
+				float toAdvance = _distance > 0 ? _distance : _rect.height;
+				_rect.y += toAdvance;
+				s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + toAdvance);
 
 				// New column if we go off-viewport
 				if(_rect.y + _rect.height > viewport.yMax) {
 					_rect.y = viewport.yMin + 5f;
 					_rect.x += _rect.width + 5f;
+					s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + toAdvance);
 				}
 			} break;
 		}
@@ -249,6 +277,7 @@ public class MenuScreensControllerToolbar {
 		if(expanded) {
 			// Indent in
 			_pos.x += INDENT_SIZE;
+			_pos.width -= INDENT_SIZE;
 
 			// Do a button for each screen in the group
 			List<MenuScreen> screens = s_screenGroups[_groupKey];
@@ -262,6 +291,7 @@ public class MenuScreensControllerToolbar {
 
 			// Indent out
 			_pos.x -= INDENT_SIZE;
+			_pos.width += INDENT_SIZE;
 		}
 	}
 }
