@@ -177,7 +177,7 @@ public class AmbientHazard : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 

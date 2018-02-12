@@ -309,7 +309,9 @@ public class MenuDragonPreview : MonoBehaviour {
 
 	public void StartBlood()
 	{
-		m_bloodParticle.Play();
+		bool useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+		if ( useBlood )
+			m_bloodParticle.Play();
 	}
 
 	public void EndBlood()

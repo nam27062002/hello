@@ -36,7 +36,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Model_Init();
         Social_Init();
         Resync_Init();
-        User_Init();        
+        User_Init();  
+        Notifications_Init();      
     }
 
     void OnEnable()
@@ -51,6 +52,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Social_Refresh();
         Resync_Refresh();
         Cloud_Refresh();
+        Notifications_Refresh();
     }
 
     private bool IsLoadingPopupOpen { get; set; }
@@ -372,11 +374,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     break;
                 
                 case EState.NeverLoggedIn:
-                    m_userNotLoggedInRoot.SetActive(true);                    
-                    m_userNotLoggedInRewardText.gameObject.SetActive(true);
-                    PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
-                    m_userNotLoggedInMessageText.gameObject.SetActive(true);
-                    m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
+                    if (FeatureSettingsManager.instance.IsIncentivisedLoginEnabled())
+                    {
+                        m_userNotLoggedInRoot.SetActive(true);
+                        m_userNotLoggedInRewardText.gameObject.SetActive(true);
+                        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
+                        m_userNotLoggedInMessageText.gameObject.SetActive(true);
+                        m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
+                    }
                     break;
 
                     /*
@@ -529,6 +534,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private Slider m_notificationsSlider;
 
     public void Notifications_Init(){        
+        m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
+    }
+
+	public void Notifications_Refresh(){        
         m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
     }
 

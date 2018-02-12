@@ -567,6 +567,8 @@ public class PetsScreenController : MonoBehaviour {
 					LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SEASON", _pill.seasonDef.GetLocalized("tidName")), 
 					new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform
 				);
+			}else if ( _pill.m_isNotInGatcha ){
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(_pill.def.Get("tidUnlockCondition")), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			} else {
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			}

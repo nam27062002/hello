@@ -15,6 +15,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private enum Step {
 		INIT = 0,
 		INTRO,
+		DIDNT_CONTRIBUTE,	// When the player didn't contribute to the global event
 		GLOBAL_REWARD,		// As much times as needed
 		NO_GLOBAL_REWARD,	// When the global score hasn't reached the threshold for the minimum reward, show a special screen
 		TOP_REWARD_INTRO,	// When the player has been classified for the top reward
@@ -27,6 +28,7 @@ public class EventRewardScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Step screens
 	[SerializeField] private ShowHideAnimator m_introScreen = null;
+	[SerializeField] private ShowHideAnimator m_didntContribute = null;
 	[SerializeField] private ShowHideAnimator m_globalRewardScreen = null;
 	[SerializeField] private ShowHideAnimator m_noGlobalRewardScreen = null;
 	[SerializeField] private ShowHideAnimator m_topRewardIntroScreen = null;
@@ -188,6 +190,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private ShowHideAnimator GetScreen(Step _step) {
 		switch(_step) {
 			case Step.INTRO:			return m_introScreen;			break;
+			case Step.DIDNT_CONTRIBUTE: return m_didntContribute;		break;
 			case Step.GLOBAL_REWARD:	return m_globalRewardScreen;	break;
 			case Step.NO_GLOBAL_REWARD:	return m_noGlobalRewardScreen;	break;
 			case Step.TOP_REWARD_INTRO: return m_topRewardIntroScreen;	break;
@@ -218,13 +221,19 @@ public class EventRewardScreen : MonoBehaviour {
 		switch(m_step) {
 			case Step.INTRO: {
 				// Do we have global rewards?
-				if(m_event.rewardLevel > 0) {
+
+				GlobalEventUserData userData = UsersManager.currentUser.GetGlobalEventData( m_event.id );
+				if ( userData != null && userData.score <= 0){
+					nextStep = Step.DIDNT_CONTRIBUTE;
+				}else if(m_event.rewardLevel > 0) {
 					nextStep = Step.GLOBAL_REWARD;
 				} else {
 					nextStep = Step.NO_GLOBAL_REWARD;
 				}
 			} break;
-
+			case Step.DIDNT_CONTRIBUTE:{
+				nextStep = Step.FINISH;
+			}break;
 			case Step.GLOBAL_REWARD: {
 				// There are still rewards to collect?
 				if(m_givenGlobalRewards < m_event.rewardLevel) {
@@ -315,6 +324,21 @@ public class EventRewardScreen : MonoBehaviour {
 					0.5f
 				);
 			} break;
+
+			case Step.DIDNT_CONTRIBUTE: {
+				// Clear 3D scene
+				m_sceneController.Clear();
+
+				// Restore tap to continue after some delay
+				UbiBCN.CoroutineManager.DelayedCall(
+					() => { 
+						m_state = State.IDLE;
+						m_tapToContinue.Show(); 
+					}, 
+					0.5f
+				);
+			} break;
+
 
 			case Step.TOP_REWARD_INTRO: {
 				// Clear 3D scene

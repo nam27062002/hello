@@ -1,6 +1,6 @@
 ﻿// PopupSettingsOptionsTab.cs
 // Hungry Dragon
-// 
+//
 // Created by David Germade on 30th August 2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -14,7 +14,7 @@ using DG.Tweening;
 /// This class is responsible for handling the options tab in the settings popup.
 /// </summary>
 public class PopupSettingsOptionsTab : MonoBehaviour
-{    
+{
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -47,6 +47,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 	private int m_graphicsMaxLevel = 4;
 	private int m_initialGraphicsQualityLevel = -1;
+
+	private PopupController m_confirmPopup = null;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -246,24 +248,34 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// The popup has been closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
-		
+
 	}
 
 	public void RefreshGooglePlayView(){
-		if ( m_loadingPopupController != null ){
-			m_loadingPopupController.Close(true);
-			m_loadingPopupController = null;
-		}
 
-		if ( ApplicationManager.instance.GameCenter_IsAuthenticated() ){
-			m_googlePlayLoginButton.SetActive(false);
-			m_googlePlayLogoutButton.SetActive(true);
-			m_googlePlayAchievementsButton.interactable = true;
-		}else{
-			m_googlePlayLoginButton.SetActive(true);
-			m_googlePlayLogoutButton.SetActive(false);
-			m_googlePlayAchievementsButton.interactable = false;
-		}
+		#if UNITY_ANDROID
+			if ( m_loadingPopupController != null ){
+				m_loadingPopupController.Close(true);
+				m_loadingPopupController = null;
+			}
+
+			if ( ApplicationManager.instance.GameCenter_IsAuthenticated() ){
+				m_googlePlayLoginButton.SetActive(false);
+				m_googlePlayLogoutButton.SetActive(true);
+				m_googlePlayAchievementsButton.interactable = true;
+			}else{
+				m_googlePlayLoginButton.SetActive(true);
+				m_googlePlayLogoutButton.SetActive(false);
+				m_googlePlayAchievementsButton.interactable = false;
+			}
+		#elif UNITY_IOS
+			if ( m_confirmPopup != null )
+			{
+				m_confirmPopup.Close( true );
+				OnGameCenterButton();
+			}
+		#endif
+
 	}
 
 	public void GooglePlayAuthCancelled(){
@@ -286,20 +298,19 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	public void OnShow(){
 		#if UNITY_ANDROID
 			RefreshGooglePlayView();
-			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
 			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
-
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 		m_dirty = true;
 	}
 
 	public void OnHide(){
 		#if UNITY_ANDROID
-			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
 			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
+		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 	}
 
 	public void OnGooglePlayLogIn(){
@@ -316,7 +327,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			}
 			else
 			{
-				// No curatin -> something failed, we are not authenticating -> tell the player there was an error	
+				// No curatin -> something failed, we are not authenticating -> tell the player there was an error
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			}
 
@@ -342,7 +353,28 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	}
 
 	public void OnGameCenterButton() {
-		// Black magic from Calety xD
-		GameCenterManager.SharedInstance.LaunchGameCenterApp();
+	    // Apple does NOT login the user, we need to check it.
+	    if (!GameCenterManager.SharedInstance.CheckIfAuthenticated ())
+	    {
+  			PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "TID_GAMECENTER_CONNECTION_TITLE";
+  			config.ShowTitle = true;
+  			config.MessageTid = "TID_GAMECENTER_CONNECTION_BODY";
+        // This popup ignores back button and stays open so the user makes a decision
+        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.PerformConfirm;
+  			config.ConfirmButtonTid = "TID_GEN_OK";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+  			config.IsButtonCloseVisible = false;
+  			m_confirmPopup = PopupManager.PopupMessage_Open(config);
+  			m_confirmPopup.OnClosePreAnimation.AddListener( OnPopupDismissed );
+	    }
+	    else
+	    {
+	        GameCenterManager.SharedInstance.LaunchGameCenterApp ();
+	    }
+	}
+
+	void OnPopupDismissed(){
+		m_confirmPopup = null;
 	}
 }
