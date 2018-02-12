@@ -524,10 +524,16 @@ public class BezierCurveEditor : Editor {
 					// Point name: editable textfield, shpw default name if none is defined
 					EditorGUI.BeginChangeCheck();
 					string pointName = string.IsNullOrEmpty(p.name) ? ("P" + i.ToString()) : p.name;
-					pointName = GUILayout.TextField(pointName);
+					int indentBackup = EditorGUI.indentLevel;
+					EditorGUI.indentLevel = 0;
+					pointName = EditorGUILayout.DelayedTextField(
+						pointName, 
+						GUILayout.Width(Mathf.Max(EditorStyles.textField.CalcSize(new GUIContent(pointName)).x, 50f))
+					);
 					if(EditorGUI.EndChangeCheck()) {
 						p.name = pointName;
 					}
+					EditorGUI.indentLevel = indentBackup;
 
 					// If selected or locked (or both), show it!
 					if(p.locked) {
