@@ -63,7 +63,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	// Screen-based visibility
 	[SerializeField] private bool m_checkScreens = false;
 	[SerializeField] private ScreenVisibilityMode m_mode = ScreenVisibilityMode.HIDE_ON_TARGET_SCREENS;
-	[SerializeField] private List<MenuScreens> m_screens = new List<MenuScreens>();
+	[SerializeField] private List<MenuScreen> m_targetScreens = new List<MenuScreen>();
 
 	// Animation options
 	[SerializeField] private bool m_restartShowAnimation = false;
@@ -79,8 +79,8 @@ public class MenuShowConditionally : MonoBehaviour {
 		}
 	}
 
-	private MenuScreens currentMenuScreen {
-		get { return InstanceManager.menuSceneController.screensController.currentMenuScreen; }
+	private MenuScreen currentMenuScreen {
+		get { return InstanceManager.menuSceneController.currentScreen; }
 	}
 
 
@@ -100,7 +100,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 
 		m_coroutine = null;
 	}
@@ -127,7 +127,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -139,7 +139,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <returns>Whether the visibility checks are passed or not with the given parameters.</returns>
 	/// <param name="_dragonSku">Dragon sku to be considered.</param>
 	/// <param name="_screen">Menu screen to be considered.</param>
-	public bool Check(string _dragonSku, MenuScreens _screen) {
+	public bool Check(string _dragonSku, MenuScreen _screen) {
 		// Both conditions must be satisfied
 		return CheckDragon(_dragonSku) && CheckScreen(_screen);
 	}
@@ -188,12 +188,12 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <returns>Whether the visibility checks are passed or not with the given parameters.</returns>
 	/// <param name="_screen">Menu screen to be considered.</param>
-	public bool CheckScreen(MenuScreens _screen) {
+	public bool CheckScreen(MenuScreen _screen) {
 		// Skip if screen check disabled
 		if(!m_checkScreens) return true;
 
 		// Is screen in the list?
-		bool isScreenOnTheList = m_screens.IndexOf(_screen) >= 0;
+		bool isScreenOnTheList = m_targetScreens.IndexOf(_screen) >= 0;
 
 		// Determine visibility
 		bool show = true;
@@ -253,7 +253,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_screen">Menu screen to be considered.</param>
 	/// <param name="_useAnims">Whether to animate or not.</param>
 	/// <param name="_resetAnim">Optionally force the animation to be played, even if going to the same state.</param>
-	private void Apply(string _dragonSku, MenuScreens _screen, bool _useAnims, bool _resetAnim) {
+	private void Apply(string _dragonSku, MenuScreen _screen, bool _useAnims, bool _resetAnim) {
 		Apply(Check(_dragonSku, _screen), _useAnims, m_restartShowAnimation);
 	}
 
@@ -295,18 +295,14 @@ public class MenuShowConditionally : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// A navigation screen has changed.
+	/// A menu screen has changed.
 	/// </summary>
-	/// <param name="_data">The event's data.</param>
-	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _data) {
+	public void OnScreenChanged(MenuScreen _from, MenuScreen _to) {
 		// Ignore if component not enabled
 		if(!this.enabled) return;
 
-		// Is it the main menu screen system?
-		if(_data.dispatcher == InstanceManager.menuSceneController.screensController) {
-			// Refresh
-			Apply(targetDragonSku, currentMenuScreen, true, false);
-		}
+		// Refresh
+		Apply(targetDragonSku, currentMenuScreen, true, false);
 	}
 
 	/// <summary>

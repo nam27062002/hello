@@ -112,8 +112,10 @@ public class CameraSnapPoint : MonoBehaviour {
 			if(darkenScreen) {
 				screen.gameObject.SetActive(true);
 				screen.transform.localPosition = Vector3.forward * darkScreenDistance;
-                screen.material.SetColor("_TintColor", FixColorForDarkScreen(this.darkScreenColor));
-				screen.material.renderQueue = this.darkScreenRenderQueue;
+				if(Application.isPlaying) {
+	                screen.material.SetColor("_TintColor", FixColorForDarkScreen(this.darkScreenColor));
+					screen.material.renderQueue = this.darkScreenRenderQueue;
+				}
 			} else {
 //				screen.color = Colors.WithAlpha(screen.color, 0f);
 				screen.gameObject.SetActive(false);

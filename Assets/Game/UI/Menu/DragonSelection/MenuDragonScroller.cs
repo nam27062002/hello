@@ -30,6 +30,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	// Exposed setup
 	[SerializeField] private GameObject m_dragonPurchasedFX = null;
 	[SerializeField] private GameObject m_disguisePurchasedFX = null;
+	[SerializeField] private float m_lerpSpeed = 10f;
 
 	// References
 	private MenuCameraAnimatorByCurves m_cameraAnimator = null;
@@ -46,7 +47,12 @@ public class MenuDragonScroller : MonoBehaviour {
 	private Dictionary<string, MenuDragonSlot> m_dragonSlots = new Dictionary<string, MenuDragonSlot>();
 
 	// Internal refs
-	private MenuScreensController m_menuScreensController = null;
+	private MenuTransitionManager m_menuTransitionManager = null;
+	private Transform m_cameraTransform = null;
+	private Transform m_cameraAnchor = null;
+
+	// Internal logic
+	private bool m_snapCamera = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -64,6 +70,8 @@ public class MenuDragonScroller : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	/// <summary>
@@ -71,8 +79,9 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Store reference to menu screens controller for faster access
-		m_menuScreensController = InstanceManager.menuSceneController.screensController;
-		m_menuScreensController.OnScreenChanged.AddListener(OnMenuScreenChanged);
+		m_menuTransitionManager = InstanceManager.menuSceneController.transitionManager;
+		m_cameraTransform = m_menuTransitionManager.camera.transform;
+		m_cameraAnchor = cameraAnimator.cameraPath.target;
 
 		// Find game object linked to currently selected dragon
 		FocusDragon(InstanceManager.menuSceneController.selectedDragon, false);
@@ -84,7 +93,25 @@ public class MenuDragonScroller : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		m_menuScreensController.OnScreenChanged.RemoveListener(OnMenuScreenChanged);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+	}
+
+	/// <summary>
+	/// Called every frame
+	/// </summary>
+	private void Update() {
+		// If the camera is not animating, snap it to the curve
+		if(m_snapCamera) {
+			if(m_cameraAnimator.isTweening || (m_cameraAnchor.position - m_cameraTransform.position).sqrMagnitude < 0.0001f) {
+				// If animating, just snap camera to the path
+				m_cameraTransform.position = m_cameraAnchor.position;
+			} else {
+				// Otherwise lerp a bit so we don't see camera jumps
+				float amount = m_lerpSpeed * Time.fixedDeltaTime;
+				m_cameraTransform.position = Vector3.Lerp(m_cameraTransform.position, m_cameraAnchor.position, amount);
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -215,8 +242,8 @@ public class MenuDragonScroller : MonoBehaviour {
 	private void OnDragonSelected(string _sku) {
 		// Move camera to the newly selected dragon
 		// If the current menu screen is not using the dragon selection 3D scene, skip animation
-		MenuScreenScene currentScene = m_menuScreensController.currentScene;
-		MenuScreenScene dragonSelectionScene = m_menuScreensController.GetScene((int)MenuScreens.DRAGON_SELECTION);
+		MenuScreenScene currentScene = m_menuTransitionManager.currentScreenData.scene3d;
+		MenuScreenScene dragonSelectionScene = m_menuTransitionManager.GetScreenData(MenuScreen.DRAGON_SELECTION).scene3d;
 		if(currentScene == dragonSelectionScene) {
 			FocusDragon(_sku, true);
 		} else {
@@ -225,20 +252,34 @@ public class MenuDragonScroller : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// The active screen on the menu has changed.
+	/// The current menu screen has changed (animation starts now).
 	/// </summary>
-	/// <param name="_evtData">Event data.</param>
-	private void OnMenuScreenChanged(NavigationScreenSystem.ScreenChangedEventData _evtData) {
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
 		// If the new screen is not the dragon selection screen, hide all dragons except the selected one
 		// To prevent seeing the head/tail of the previous/next dragons in pets/disguises/photo screens.
-		bool showAll = (_evtData.toScreenIdx == (int)MenuScreens.DRAGON_SELECTION);
-		bool animate = _evtData.fromScreenIdx != (int)MenuScreens.PLAY;
+		bool showAll = _to == MenuScreen.DRAGON_SELECTION;
+		bool animate = _from != MenuScreen.PLAY;
 		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
 			// Use slot's ShowHideAnimator
 			// Show always if it's the selected dragon!
 			DragonData data = DragonManager.GetDragonData(kvp.Key);
 			kvp.Value.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || kvp.Key == InstanceManager.menuSceneController.selectedDragon, animate);
 		}
+
+		// Don't snap the camera!
+		m_snapCamera = false;
+	}
+
+	/// <summary>
+	/// The current menu screen has changed (animation ends now).
+	/// </summary>
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnMenuScreenTransitionEnd(MenuScreen _from, MenuScreen _to) {
+		// If entering dragon selection screen, start snapping the camera!
+		m_snapCamera = (_to == MenuScreen.DRAGON_SELECTION);
 	}
 }
 

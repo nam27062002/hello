@@ -35,6 +35,11 @@ public class PetSlot : MonoBehaviour {
 		get { return m_powerIcon; }
 	}
 
+	[SerializeField] private MenuPetLoader m_petLoader = null;
+	public MenuPetLoader petLoader {
+		get { return m_petLoader; }
+	}
+
 	[Space]
 	[Comment("Optional")]
 	[SerializeField] private ShowHideAnimator m_equippedAnim = null;
@@ -58,41 +63,7 @@ public class PetSlot : MonoBehaviour {
 		// If the required references are not initialized via inspector, look for them in the nested hierarchy
 		if(m_slotInfo == null) m_slotInfo = this.GetComponentInChildren<PetSlotInfo>();
 		if(m_powerIcon == null) m_powerIcon = this.GetComponentInChildren<PowerIcon>();
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
+		if(m_petLoader == null) m_petLoader = this.GetComponentInChildren<MenuPetLoader>();
 	}
 
 	//------------------------------------------------------------------------//
@@ -154,6 +125,32 @@ public class PetSlot : MonoBehaviour {
 			// Equipped or empty?
 			if(m_equippedAnim != null) m_equippedAnim.ForceSet(equipped, _animate);
 			if(m_emptyAnim != null) m_emptyAnim.ForceSet(!equipped, _animate);
+		}
+
+		// Pet preview
+		if(show) {
+			// Equip or unequip?
+			if(equipped) {
+				// Don't reload if pet is already loaded
+				if(petLoader.petSku != petDef.sku || petLoader.petInstance == null) {
+					// The loader will do everything!
+					petLoader.Load(petDef.sku);
+				}
+			} else {
+				if(petLoader.petInstance != null) {
+					// Animate?
+					if(_animate) {
+						// Toggle the OUT anim
+						MenuPetPreview pet = petLoader.petInstance.GetComponent<MenuPetPreview>();
+						pet.SetAnim(MenuPetPreview.Anim.OUT);
+
+						// Program a delayed destruction of the pet preview (to give some time to see the anim)
+						UbiBCN.CoroutineManager.DelayedCall(() => petLoader.Unload(), 0.3f, true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
+					} else {
+						petLoader.Unload();
+					}
+				}
+			}
 		}
 	}
 

@@ -41,16 +41,6 @@ public class PetSlotInfo : MonoBehaviour {
 	// Internal refs
 	private DragonData m_dragonData = null;
 
-	private PetsSceneController m_petsScene = null;
-	private PetsSceneController petsScene {
-		get {
-			if(m_petsScene == null) {
-				m_petsScene = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.PETS).GetComponent<PetsSceneController>();
-			}
-			return m_petsScene;
-		}
-	}
-
 	private ShowHideAnimator m_anim = null;
 	public ShowHideAnimator anim {
 		get {
@@ -58,12 +48,6 @@ public class PetSlotInfo : MonoBehaviour {
 			return m_anim;
 		}
 	}
-
-	// Attach point logic
-	private Transform m_attachPoint = null;
-	private Camera m_worldCamera = null;
-	private Camera m_uiCamera = null;
-	private Vector3 m_attachPointOriginalPos = Vector3.zero;
 
 	// Internal objects
 	private Coroutine m_rarityGlowCoroutine = null;
@@ -82,24 +66,7 @@ public class PetSlotInfo : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		// Keep anchored
-		if(isActiveAndEnabled && anim.visible) {
-			KeepAttachPoint();
-		}
-		/*
-		if(isActiveAndEnabled && m_attachPoint != null) {
-			// Get camera and apply the inverse transformation
-			if(InstanceManager.sceneController.mainCamera != null) {
-				// From http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
-				// We can do it that easily because we've adjusted the containers to match the camera viewport coords
-				Vector2 posScreen = InstanceManager.sceneController.mainCamera.WorldToViewportPoint(m_attachPoint.position);
-				RectTransform rt = this.transform as RectTransform;
-				rt.anchoredPosition = Vector2.zero;
-				rt.anchorMin = posScreen;
-				rt.anchorMax = posScreen;
-			}
-		}
-		*/
+		
 	}
 
 	//------------------------------------------------------------------------//
@@ -112,12 +79,6 @@ public class PetSlotInfo : MonoBehaviour {
 	public void Init(int _slotIdx) {
 		// Store slot index
 		m_slotIdx = _slotIdx;
-
-		// Get corresponding anchor
-		m_attachPoint = petsScene.petAnchors[_slotIdx];
-		if(m_attachPoint != null) {
-			m_attachPointOriginalPos = m_attachPoint.position;
-		}
 	}
 
 	/// <summary>
@@ -154,33 +115,6 @@ public class PetSlotInfo : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Put attached 3D slot matching the position of the slot info in the UI.
-	/// </summary>
-	private void KeepAttachPoint() {
-		// We need an attach point :D
-		if(m_attachPoint == null) return;
-
-		// Get required cameras
-		if(m_worldCamera == null) {
-			m_worldCamera = InstanceManager.sceneController.mainCamera;
-		}
-		if(m_worldCamera == null) return;
-
-		if(m_uiCamera == null) {
-			m_uiCamera = GetComponentInParent<Canvas>().worldCamera;
-		}
-		if(m_uiCamera == null) return;	// Should never happen
-
-		// Apply the inverse transformation!
-		// Based on http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
-		RectTransform rt = this.transform as RectTransform;
-		Vector2 viewportPos = m_uiCamera.WorldToViewportPoint(this.transform.position);
-		Vector3 worldPos = m_worldCamera.ViewportToWorldPoint(new Vector3(viewportPos.x, viewportPos.y, m_attachPointOriginalPos.z));
-		worldPos.z = m_attachPointOriginalPos.z;	// Keep Z distance the same ^^
-		m_attachPoint.position = worldPos;
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -201,7 +135,7 @@ public class PetSlotInfo : MonoBehaviour {
 
 		// Select equipped pet (tell the pets screen controller to do so)
 		MenuSceneController menuController = InstanceManager.menuSceneController;
-		PetsScreenController petsScreen = menuController.GetScreen(MenuScreens.PETS).GetComponent<PetsScreenController>();
+		PetsScreenController petsScreen = menuController.GetScreenData(MenuScreen.PETS).scene3d.GetComponent<PetsScreenController>();
 		petsScreen.ScrollToPet(m_dragonData.pets[m_slotIdx], false);
 	}
 

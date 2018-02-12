@@ -75,16 +75,6 @@ public class PetsScreenController : MonoBehaviour {
 		}
 	}
 
-	private PetsSceneController m_petsScene = null;
-	public PetsSceneController petsScene {
-		get {
-			if(m_petsScene == null) {
-				m_petsScene = InstanceManager.menuSceneController.GetScreenScene(MenuScreens.PETS).GetComponent<PetsSceneController>();
-			}
-			return m_petsScene;
-		}
-	}
-
 	private PetFilters m_petFilters = null;
 	public PetFilters petFilters {
 		get {
@@ -436,11 +426,11 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
-		// Propagate to scene
-		petsScene.OnShowPreAnimation();
-
 		// Refresh with initial data!
 		Initialize();
+
+		// Hide dragon's pets
+		InstanceManager.menuSceneController.selectedDragonPreview.equip.TogglePets(false, true);
 
 		// Reset scroll list postiion
 		scrollList.horizontalNormalizedPosition = 0f;
@@ -495,8 +485,8 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnHidePreAnimation(ShowHideAnimator _animator) {
-		// Propagate to scene
-		petsScene.OnHidePreAnimation();
+		// Restore dragon's pets
+		InstanceManager.menuSceneController.selectedDragonPreview.equip.TogglePets(true, true);
 	}
 
 	/// <summary>

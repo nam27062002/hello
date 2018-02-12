@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 114000014061330322}
   - component: {fileID: 114000012716698238}
   m_Layer: 5
-  m_Name: Arroright
+  m_Name: ArrowRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -240,7 +240,6 @@ GameObject:
   - component: {fileID: 22420846}
   - component: {fileID: 22282046}
   - component: {fileID: 11447616}
-  - component: {fileID: 11496978}
   - component: {fileID: 11473938}
   - component: {fileID: 11419494}
   - component: {fileID: 95000012633125252}
@@ -368,9 +367,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 1
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 0
 --- !u!114 &11410068
 MonoBehaviour:
@@ -383,7 +382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_targetScreen: 4
+  m_targetScreen: 6
 --- !u!114 &11412488
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -442,9 +441,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 0
   m_showIfOwned: 0
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &11419494
 MonoBehaviour:
@@ -485,17 +484,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11496978}
-        m_MethodName: OnNavigationButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 114000010788612620}
         m_MethodName: Play
         m_Mode: 1
@@ -1169,9 +1157,9 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 1
   m_showIfOwned: 0
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &11462712
 MonoBehaviour:
@@ -1436,18 +1424,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &11496978
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 2
 --- !u!114 &11498108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3302,7 +3278,7 @@ GameObject:
   - component: {fileID: 114860035727590564}
   - component: {fileID: 114128694274428180}
   m_Layer: 5
-  m_Name: AnimationAnchor
+  m_Name: LockAnimationAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6445,9 +6421,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 1
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 01000000
   m_restartShowAnimation: 0
 --- !u!114 &114000012407090692
 MonoBehaviour:
@@ -9172,9 +9148,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 1
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &114325650467012756
 MonoBehaviour:
@@ -9999,7 +9975,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_targetScreen: 3
+  m_targetScreen: 5
 --- !u!114 &114593051717722782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10487,9 +10463,9 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &114709952110053542
 MonoBehaviour:
@@ -11134,9 +11110,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 0
   m_showIfOwned: 0
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 01000000
   m_restartShowAnimation: 1
 --- !u!114 &114862524374661678
 MonoBehaviour:
