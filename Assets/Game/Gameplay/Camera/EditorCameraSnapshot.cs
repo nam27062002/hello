@@ -31,10 +31,15 @@ public class EditorCameraSnapshot : MonoBehaviour {
     private int m_screenShotcount = 0;
 
     private string m_screenshotPath;
+    private string m_videoPath;
 
 
-	// Use this for initialization
-	void Start () {
+    public bool m_Video = false;
+
+    private float m_maximumDeltaTimeBackUp;
+
+    // Use this for initialization
+    void Start () {
 
         m_originalCamera = gameObject.GetComponent<Camera>();
         m_renderCamera = new GameObject("Background tint camera", typeof(Camera)).GetComponent<Camera>();
@@ -56,8 +61,11 @@ public class EditorCameraSnapshot : MonoBehaviour {
         m_layermaskOriginal = m_originalCamera.cullingMask | m_layermaskUI;
 
         m_screenshotPath = Directory.GetCurrentDirectory() + "/" + "HD_SS_";
+        m_videoPath = Directory.GetCurrentDirectory() + "/" + "HD_VID_";
 
         m_screenShotcount = checkScreenshotCount(m_screenshotPath);
+
+        m_maximumDeltaTimeBackUp = Time.maximumDeltaTime;
     }
 
     int checkScreenshotCount(string path)
@@ -101,7 +109,17 @@ public class EditorCameraSnapshot : MonoBehaviour {
     void Update () {
 		if (Input.GetKeyDown(KeyCode.Space))
         {
-            m_doSnapshot = true;
+            if (m_Video)
+            {
+                m_screenShotcount = checkScreenshotCount(m_videoPath);
+                m_doSnapshot = !m_doSnapshot;
+                Time.maximumDeltaTime = m_doSnapshot ? (1.0f / 30.0f) : m_maximumDeltaTimeBackUp;
+            }
+            else
+            {
+                m_screenShotcount = checkScreenshotCount(m_screenshotPath);
+                m_doSnapshot = true;
+            }
         }
 	}
 
@@ -150,28 +168,38 @@ public class EditorCameraSnapshot : MonoBehaviour {
 
         if (m_doSnapshot)
         {
-            string filePath = m_screenshotPath + m_screenShotcount.ToString();
+            if (m_Video)
+            {
+                string filePath = m_videoPath + m_screenShotcount.ToString();
+                doSnapshot(m_layermaskOriginal);
+                saveSnapshot(filePath + "5");
 
-            doSnapshot(m_layermaskBackground);
-            saveSnapshot(filePath + "1");
+            }
+            else
+            {
+                string filePath = m_screenshotPath + m_screenShotcount.ToString();
 
-            doSnapshot(m_layermaskDefault);
-            saveSnapshot(filePath + "2");
+                doSnapshot(m_layermaskBackground);
+                saveSnapshot(filePath + "1");
 
-            doSnapshot(m_layermaskNPC);
-            saveSnapshot(filePath + "3");
+                doSnapshot(m_layermaskDefault);
+                saveSnapshot(filePath + "2");
 
-            doSnapshot(m_layermaskPlayer);
-            saveSnapshot(filePath + "4");
+                doSnapshot(m_layermaskNPC);
+                saveSnapshot(filePath + "3");
 
-//            doSnapshot(m_layermaskUI);
-//            saveSnapshot(filePath + "5");
+                doSnapshot(m_layermaskPlayer);
+                saveSnapshot(filePath + "4");
 
-            doSnapshot(m_layermaskOriginal);
-            saveSnapshot(filePath + "5");
+                //            doSnapshot(m_layermaskUI);
+                //            saveSnapshot(filePath + "5");
 
+                doSnapshot(m_layermaskOriginal);
+                saveSnapshot(filePath + "5");
+
+                m_doSnapshot = false;
+            }
             m_screenShotcount++;
-            m_doSnapshot = false;
         }
 
     }
