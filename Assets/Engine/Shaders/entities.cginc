@@ -78,6 +78,7 @@ uniform float4 _Tint;
 #if defined(EMISSIVE)
 uniform float _EmissiveIntensity;
 uniform float _EmissiveBlink;
+uniform float _EmissiveOffset;
 #endif
 
 #if defined(VERTEX_ANIMATION)
@@ -193,7 +194,7 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 #if defined(EMISSIVE)
-	float anim = (sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity * col.a;
+	float anim = (((sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity) + _EmissiveOffset) * col.a;
 	col.xyz *= 1.0 + anim;
 #endif
 
