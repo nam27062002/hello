@@ -26,6 +26,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private bool m_isReady;
 
+    public static float m_OriginalScreenWidth = Screen.width;
+	public static float m_OriginalScreenHeight = Screen.height;
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -42,6 +44,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
 //        Device_Model = SystemInfo.deviceModel;    //Allows same behaviour as device in UNITY_EDITOR 
 
+		m_OriginalScreenWidth = Screen.width;
+		m_OriginalScreenHeight = Screen.height;
 
         Server_Reset();
 
@@ -1019,17 +1023,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         float resolutionFactor = settings.GetValueAsFloat(FeatureSettings.KEY_RESOLUTION_FACTOR);
 
-        if (resolutionFactor < (float)Screen.height)
+		if (resolutionFactor < (float)m_OriginalScreenHeight)
         {
-            resolutionFactor /= (float)Screen.height;
+			resolutionFactor /= (float)m_OriginalScreenHeight;
         }
         else
         {
             resolutionFactor = 1.0f;
         }
 
-        int width = (int)((float)Screen.width * resolutionFactor);
-        int height = (int)((float)Screen.height * resolutionFactor);
+        int width = (int)((float)m_OriginalScreenWidth * resolutionFactor);
+		int height = (int)((float)m_OriginalScreenHeight * resolutionFactor);
 
         Screen.SetResolution(width, height, true);
 
