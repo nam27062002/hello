@@ -32,11 +32,7 @@ public class PopupUpgrade : MonoBehaviour
     public void OnConfirm()
     {
     	CacheServerManager.SharedInstance.RemoveObsoleteVersion();
-		#if UNITY_IOS
-			Application.OpenURL("itms-apps://itunes.apple.com/app/idYOUR_ID");
-		#elif UNITY_ANDROID
-			Application.OpenURL ("market://details?id="+Application.identifier);
-		#endif
+        ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungryDragon);		
     }
 
 

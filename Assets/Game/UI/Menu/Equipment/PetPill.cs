@@ -123,6 +123,8 @@ public class PetPill : MonoBehaviour {
 		get { return m_seasonDef; }
 	}
 
+	public bool m_isNotInGatcha = false;
+
 	private DragonData m_dragonData = null;
 
 	// Events
@@ -238,7 +240,7 @@ public class PetPill : MonoBehaviour {
 			m_seasonalIconRoot.SetActive(true);
 			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
 		}
-
+		m_isNotInGatcha = _petDef.GetAsBool("notInGatcha", false);
 		// Refresh contextual elements
 		Refresh();
 	}
