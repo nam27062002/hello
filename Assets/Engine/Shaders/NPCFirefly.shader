@@ -8,6 +8,7 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 		_MainTex ("Texture", 2D) = "white" {}
 		_EmissiveIntensity("Emissive intensity", float) = 1.0
 		_EmissiveBlink("Emissive blink", float) = 1.0
+		_EmissiveOffset("Emissive offset", float) = 0.0
 
 		_StencilMask("Stencil Mask", int) = 10
 	}

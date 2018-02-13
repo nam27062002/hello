@@ -86,7 +86,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 907f9d243fe7fc24d8f479370f1c1f49, type: 2}
+  - {fileID: 2100000, guid: f00a2cae1da8c5e4eb32f28885692cb6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -138,19 +138,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69843bc5296534848970ecd538e50246, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_motionType: 0
+  m_motionType: 3
   m_chargeTime: 0
   m_speed: 20
   m_rotationSpeed: 0
   m_rotationAxis: 0
-  m_maxTime: 5
+  m_maxTime: 0
   m_scaleTime: 1
   m_stopAtTarget: 0
+  m_dieOutsideFrustum: 0
   m_defaultDamage: 0
   m_damageType: 8
   m_radius: 0
-  m_knockback: 1
-  m_knockbackTier: 2
+  m_knockback: 5
+  m_knockbackTier: 5
   m_activateOnShoot: []
   m_onAttachParticle:
     name: 

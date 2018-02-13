@@ -104,7 +104,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
     void SetEnable(bool enter, CandleData candleData)
     {
-
+//        Debug.Log("Dark zone SetEnable: " + enter + " from: " + m_currentCandle.m_id + " to: " + candleData.m_id + " tick: " + Time.frameCount);
         if (enter)
         {
             candleData.IsInside = true;
@@ -119,6 +119,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
             {
                 m_nextCandle = candleData;
                 m_transitionTime = Time.time + candleData.m_time;
+//                Debug.Log("Set transition: " + enter + " from: " + m_currentCandle.m_id + " to: " + candleData.m_id + " tick: " + Time.frameCount);
             }
 
             if (!m_enableState)
@@ -139,6 +140,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                     {
                         m_nextCandle = m_candleList[c];
                         m_transitionTime = Time.time + m_nextCandle.m_time;
+//                        Debug.Log("Set transition: " + enter + " from: " + m_currentCandle.m_id + " to: " + candleData.m_id + " tick: " + Time.frameCount);
                     }
                     break;
                 }
@@ -173,6 +175,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 m_candleMaterial.SetColor("_Tint2", color2);
                 m_candleMaterial.SetFloat("_Radius", radius);
                 m_candleMaterial.SetFloat("_FallOff", falloff);
+//                Debug.Log("Transition from " + m_currentCandle.m_id + " to " + m_nextCandle.m_id + " time: " + delta + " tick: " + Time.frameCount);
             }
             else
             {
@@ -181,6 +184,11 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                     m_blackImage.material = m_oldMaterial;
                     m_blackImage.enabled = false;
                     m_enableState = false;
+//                    Debug.Log("Disabling candle: " + m_currentCandle.m_id + " to " + m_nextCandle.m_id + " tick: " + Time.frameCount);
+                }
+                else
+                {
+//                    Debug.Log("Current candle: " + m_currentCandle.m_id + " to " + m_nextCandle.m_id + " tick: " + Time.frameCount);
                 }
                 m_currentCandle = m_nextCandle;
             }
