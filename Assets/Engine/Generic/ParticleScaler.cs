@@ -95,6 +95,11 @@ public class ParticleScaler : MonoBehaviour
 			DoScale();
 	}
 
+	public void ReloadOriginalData() {
+		m_originalData.Clear();
+		SaveOriginalData();
+	}
+
 	void SaveOriginalData()
 	{
 		if ( m_scaleAllChildren )
