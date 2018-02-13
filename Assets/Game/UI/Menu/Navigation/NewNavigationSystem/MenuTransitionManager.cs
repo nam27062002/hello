@@ -178,6 +178,7 @@ public class MenuTransitionManager : MonoBehaviour {
 		// Perform transition
 		// Do we have a valid transition data from current screen to target screen?
 		Transition t = FindTransition(m_prevScreen, _targetScreen);
+		if(t == null) Debug.Log(Color.red.Tag("Screen transition not defined! " + m_prevScreen + " -> " + m_currentScreen));
 		if(t != null && _animate) {
 			// Yes! Use it
 			// Get some aux vars first
