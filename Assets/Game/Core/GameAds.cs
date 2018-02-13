@@ -35,8 +35,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
 				string interstitialId = "";
 				string rewardId = "";
-				// TODO: Check if tablet
-				bool isPhone = !MiscUtils.IsDeviceTablet();
+				bool isPhone = !MiscUtils.IsDeviceTablet( FeatureSettingsManager.m_OriginalScreenWidth, FeatureSettingsManager.m_OriginalScreenHeight, Screen.dpi );
 				if ( UnityEngine.Debug.isDebugBuild )
 				{
 					if (Application.platform == RuntimePlatform.Android) {
@@ -80,6 +79,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
 				CurrentAdPurpose = EAdPurpose.NONE;
 				CurrentAdStartTimestamp = 0f;
+
 				MopubAdsManager.SharedInstance.Init (interstitialId, false, rewardId, true, 30);
 			}
         }
