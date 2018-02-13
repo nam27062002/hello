@@ -74,6 +74,11 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
 
+			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
+			m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
+			m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
+			m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
+
 			if (m_pilot != null)
 				m_pilot.OnDie();
 

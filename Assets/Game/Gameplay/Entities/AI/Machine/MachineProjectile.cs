@@ -78,6 +78,7 @@ namespace AI {
 		public void CheckCollisions(bool _value)	{}
 		public void FaceDirection(bool _value) 		{}
 		public bool IsFacingDirection() 			{ return true; }
+		public virtual bool IsInFreeFall() 			{ return false; }
 		public bool HasCorpse() 					{ return true; }
 
 		public void	EnterGroup(ref Group _group) 	{}

@@ -39,6 +39,7 @@ namespace AI {
 		void CheckCollisions(bool _value);
 		void FaceDirection(bool _value);
 		bool IsFacingDirection();
+		bool IsInFreeFall();
 		bool HasCorpse();
 
 		// Group membership -> for collective behaviours

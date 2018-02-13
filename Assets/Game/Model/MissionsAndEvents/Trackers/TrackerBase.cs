@@ -177,12 +177,15 @@ public class TrackerBase {
 			case "dive_time":		return new TrackerDiveTime();
 			case "fire_rush":		return new TrackerFireRush();
 			case "destroy":			return new TrackerDestroy(_params);
-			case "unlock_dragon":	return new TrackerUnlockDragon( _params );
+			case "unlock_dragon":	return new TrackerUnlockDragon(_params);
 			case "buy_skins":		return new TrackerBuySkins();
 			case "daily_chest":		return new TrackerDailyChests();
 
-			// new missions
-			case "eat_golden":		return new TrackerEatGolden(_params);
+			// new missions TODO
+			//case "eat_golden": return new TrackerEatGolden(_params);
+			//case "": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
+			//case "": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.PilotActionA, _params);
+			//-----------------------------------
 
 			// Collect is quite special: depending on first parameter, create one of the existing trackers
 			case "collect": {

@@ -152,6 +152,7 @@ namespace AI {
 
 		public virtual void UseGravity(bool _value) { }
 		public virtual bool IsFacingDirection() { return false; }
+		public virtual bool IsInFreeFall() { return false; }
 		public bool IsDead(){ return false; }
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }

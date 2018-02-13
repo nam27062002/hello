@@ -485,6 +485,13 @@ namespace AI {
 		public virtual void CheckCollisions(bool _value) { }
 		public virtual void FaceDirection(bool _value) { }
 		public virtual bool IsFacingDirection() { return false; }
+		public virtual bool IsInFreeFall() { 
+			if (m_motion != null) {
+				return m_motion.IsInFreeFall();
+			} else {
+				return false; 
+			}
+		}
 
 		public bool HasCorpse() {
 			if (m_viewControl != null) {

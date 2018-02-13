@@ -116,6 +116,10 @@ namespace AI {
 			return false;
 		}
 
+		public bool IsInFreeFall() { 
+			return false; 
+		}
+
 		public bool HasCorpse() {
 			return false;
 		}

@@ -81,6 +81,11 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Panic, true);
 			m_machine.SetSignal(Signals.Type.Chewing, true);
 
+			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
+			m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
+			m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
+			m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
+
 			if (m_pilot != null)
 				m_pilot.OnDie();
 
@@ -92,11 +97,10 @@ namespace AI {
 			if (_rewardsPlayer) {
 				// Get the reward to be given from the entity
 				Reward reward = m_entity.GetOnKillReward(false);
-				if (!_isPlayer){
+				if (!_isPlayer) {
 					reward.alcohol = 0;
 					// Pets never harm player if they eat bad junk
-					if (reward.health < 0)
-					{
+					if (reward.health < 0) {
 						reward.health = 0;
 					}
 				}
