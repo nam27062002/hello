@@ -135,6 +135,14 @@ public class PetSlot : MonoBehaviour {
 				if(petLoader.petSku != petDef.sku || petLoader.petInstance == null) {
 					// The loader will do everything!
 					petLoader.Load(petDef.sku);
+
+					// Change render queue so the pet is renderd behind the UI!
+					Renderer[] targetRenderers = petLoader.GetComponentsInChildren<Renderer>();
+					for(int i = 0; i < targetRenderers.Length; ++i) {
+						for(int j = 0; j < targetRenderers[i].materials.Length; ++j) {
+							targetRenderers[i].materials[j].renderQueue = 3000;
+						}
+					}
 				}
 			} else {
 				if(petLoader.petInstance != null) {

@@ -28,20 +28,18 @@ public class MenuDragonScroller : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed setup
+	[SerializeField] private GameObject m_dragonSlotsContainer = null;
+	[SerializeField] private MenuCameraAnimatorByCurves m_cameraAnimator = null;
+	public MenuCameraAnimatorByCurves cameraAnimator {
+		get { return m_cameraAnimator; }
+	}
+
+	[Space]
 	[SerializeField] private GameObject m_dragonPurchasedFX = null;
 	[SerializeField] private GameObject m_disguisePurchasedFX = null;
-	[SerializeField] private float m_lerpSpeed = 10f;
 
-	// References
-	private MenuCameraAnimatorByCurves m_cameraAnimator = null;
-	public MenuCameraAnimatorByCurves cameraAnimator {
-		get {
-			if(m_cameraAnimator == null) {
-				m_cameraAnimator = GetComponent<MenuCameraAnimatorByCurves>();
-			}
-			return m_cameraAnimator;
-		}
-	}
+	[Space]
+	[SerializeField] private float m_lerpSpeed = 10f;
 
 	// Dragon previews
 	private Dictionary<string, MenuDragonSlot> m_dragonSlots = new Dictionary<string, MenuDragonSlot>();
@@ -62,7 +60,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Find and store dragon preview references
-		MenuDragonSlot[] dragonSlots = GetComponentsInChildren<MenuDragonSlot>();
+		MenuDragonSlot[] dragonSlots = m_dragonSlotsContainer.GetComponentsInChildren<MenuDragonSlot>();
 		for(int i = 0; i < dragonSlots.Length; i++) {
 			// Add it into the map
 			m_dragonSlots[dragonSlots[i].dragonPreview.sku] = dragonSlots[i];
@@ -165,7 +163,7 @@ public class MenuDragonScroller : MonoBehaviour {
 		// If not found on the dictionary, try to find it in the hierarchy
 		if(ret == null) {
 			// We have need to check all the dragons anyway, so update them all
-			MenuDragonSlot[] dragonSlots = GetComponentsInChildren<MenuDragonSlot>();
+			MenuDragonSlot[] dragonSlots = m_dragonSlotsContainer.GetComponentsInChildren<MenuDragonSlot>();
 			for(int i = 0; i < dragonSlots.Length; i++) {
 				// Add it into the map
 				m_dragonSlots[dragonSlots[i].dragonPreview.sku] = dragonSlots[i];

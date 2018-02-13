@@ -48,9 +48,6 @@ public class PetSlotInfo : MonoBehaviour {
 			return m_anim;
 		}
 	}
-
-	// Internal objects
-	private Coroutine m_rarityGlowCoroutine = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

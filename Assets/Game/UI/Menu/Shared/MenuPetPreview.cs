@@ -131,11 +131,9 @@ public class MenuPetPreview : MonoBehaviour {
 
 				// Create new instance - use root node if available so the glow follows the pet's animation
 				m_rarityGlow = GameObject.Instantiate<GameObject>(glowPrefab);
-				if(rootNode != null) {
-					m_rarityGlow.transform.SetParent(rootNode, false);
-				} else {
-					m_rarityGlow.transform.SetParent(this.transform, false);
-				}
+				Transform parent = (rootNode != null) ? rootNode : this.transform;
+				m_rarityGlow.transform.SetParent(parent, false);
+				m_rarityGlow.gameObject.SetLayerRecursively(parent.gameObject.layer);
 
 				// Create show/hide animator
 			/*	m_rarityGlowShowHideTween = m_rarityGlow.transform
