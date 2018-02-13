@@ -30,7 +30,15 @@ public class PetSlotInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private ShowHideAnimator m_emptySlotAnim = null;
+	public ShowHideAnimator emptySlotAnim {
+		get { return m_emptySlotAnim; }
+	}
+
 	[SerializeField] private ShowHideAnimator m_equippedSlotAnim = null;
+	public ShowHideAnimator equippedSlotAnim {
+		get { return m_equippedSlotAnim; }
+	}
+
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
 	[SerializeField] private Image m_rarityIcon = null;

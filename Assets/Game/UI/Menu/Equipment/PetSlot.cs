@@ -64,6 +64,27 @@ public class PetSlot : MonoBehaviour {
 		if(m_slotInfo == null) m_slotInfo = this.GetComponentInChildren<PetSlotInfo>();
 		if(m_powerIcon == null) m_powerIcon = this.GetComponentInChildren<PowerIcon>();
 		if(m_petLoader == null) m_petLoader = this.GetComponentInChildren<MenuPetLoader>();
+
+		// To make sure pet particles are properly scaled, but keeping in mind performance,
+		// have a ParticleScaler constantly checking particle scales during the pet slot
+		// show/hide animations, but disable it when idle
+		petLoader.pscaler.m_whenScale = ParticleScaler.WhenScale.ALWAYS;
+		DisableParticleScaler(m_slotInfo.equippedSlotAnim);
+		m_slotInfo.equippedSlotAnim.OnShowPreAnimation.AddListener(EnableParticleScaler);
+		m_slotInfo.equippedSlotAnim.OnShowPostAnimation.AddListener(DisableParticleScaler);
+		m_slotInfo.equippedSlotAnim.OnHidePreAnimation.AddListener(EnableParticleScaler);
+		m_slotInfo.equippedSlotAnim.OnHidePostAnimation.AddListener(DisableParticleScaler);
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unregister listeners
+		m_slotInfo.equippedSlotAnim.OnShowPreAnimation.RemoveListener(EnableParticleScaler);
+		m_slotInfo.equippedSlotAnim.OnShowPostAnimation.RemoveListener(DisableParticleScaler);
+		m_slotInfo.equippedSlotAnim.OnHidePreAnimation.RemoveListener(EnableParticleScaler);
+		m_slotInfo.equippedSlotAnim.OnHidePostAnimation.RemoveListener(DisableParticleScaler);
 	}
 
 	//------------------------------------------------------------------------//
@@ -165,4 +186,17 @@ public class PetSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Enable pet preview particle scaler.
+	/// </summary>
+	private void EnableParticleScaler(ShowHideAnimator _anim) {
+		m_petLoader.pscaler.enabled = true;
+	}
+
+	/// <summary>
+	/// Disable pet preview particle scaler.
+	/// </summary>
+	private void DisableParticleScaler(ShowHideAnimator _anim) {
+		m_petLoader.pscaler.enabled = false;
+	}
 }

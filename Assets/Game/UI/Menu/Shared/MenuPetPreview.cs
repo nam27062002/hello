@@ -39,10 +39,6 @@ public class MenuPetPreview : MonoBehaviour {
 
 	private const string RARITY_GLOW_PREFAB_PATH = "UI/Menu/Pets/PF_PetRarityGlow_";	// Attach rarity sku to it
 
-//    private static readonly Color EPIC_COLOR = new Color(255.0f / 255.0f, 237.0f / 255.0f, 0.0f / 255.0f);
-//    private static readonly Color RARE_COLOR = new Color(2.0f / 255.0f, 240.0f / 255.0f, 13.0f / 255.0f);
-//    private static readonly Color SPECIAL_COLOR = new Color(255.0f / 255.0f, 153.0f / 255.0f, 0.0f / 255.0f);
-
     //------------------------------------------------------------------//
     // MEMBERS															//
     //------------------------------------------------------------------//
@@ -153,24 +149,22 @@ public class MenuPetPreview : MonoBehaviour {
 				m_rarityGlow.SetActive(true);
 			}*/
 
-            foreach (Renderer rend in m_renderers)
+			// [AOC] PETS!!
+            /*foreach (Renderer rend in m_renderers)
             {
                 rend.material.renderQueue = 3060;   //Draw pet just after particle glow effect
-            }
+            }*/
 
             if (rarity == "epic")
             {
-//                setFresnelColor(EPIC_COLOR);
                 setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.EPIC]);
             }
             else if (rarity == "rare")
             {
-//                setFresnelColor(RARE_COLOR);
                 setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.RARE]);
             }
             else if (rarity == "special")
             {
-//                setFresnelColor(SPECIAL_COLOR);
                 setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.SPECIAL]);
             }
 
