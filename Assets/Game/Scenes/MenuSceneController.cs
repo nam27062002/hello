@@ -182,8 +182,13 @@ public class MenuSceneController : SceneController {
 						if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
 						{
 							// Start Asking!
-							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
-							ret = true;
+							if ( Application.platform == RuntimePlatform.Android ){
+								PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
+								ret = true;
+							}else if ( Application.platform == RuntimePlatform.IPhonePlayer ){
+								PopupAskRateUs.OpenIOSMarketForRating();
+								ret = true;
+							}
 						}
 					}
 				}
