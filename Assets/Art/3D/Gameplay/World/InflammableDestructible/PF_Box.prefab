@@ -119,7 +119,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 109638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07, y: 0.1, z: -0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 496988}
@@ -132,7 +132,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175384}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000016292068}
-  m_LocalPosition: {x: 551.67, y: 0.24, z: 0}
+  m_LocalPosition: {x: -29.495575, y: 41.503086, z: -783.1863}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 499074}
@@ -226,7 +226,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 109638}
-  m_Mesh: {fileID: 4300000, guid: fe5e006431c659041b39a8a866b97dc0, type: 3}
+  m_Mesh: {fileID: 4300000, guid: d9655f135c751c54bb25bf10e057fd64, type: 3}
 --- !u!33 &3347958
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -402,8 +402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnTime: 30
-  m_maxSpawns: 0
+  m_spawnTime: 35
   m_ground: []
 --- !u!1001 &100100000
 Prefab:
@@ -560,5 +559,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: deco_small
-  m_tier: 0
   m_disintegrable: 1
