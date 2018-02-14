@@ -55,7 +55,7 @@ public class IncubatorTutorial : MonoBehaviour {
 	private void Update() {
 		// If we must show the popup, do it with some delay
 		// Make sure we're on the right screen
-		if(m_showPending && InstanceManager.menuSceneController.screensController.currentMenuScreen == MenuScreens.DRAGON_SELECTION) {
+		if(m_showPending && InstanceManager.menuSceneController.currentScreen == MenuScreen.DRAGON_SELECTION) {
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
 					// Tracking

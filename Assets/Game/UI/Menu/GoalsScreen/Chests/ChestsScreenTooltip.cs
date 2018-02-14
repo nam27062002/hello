@@ -60,9 +60,9 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	private void Start() {
 		// Get anchor ref
 		MenuSceneController menuController = InstanceManager.menuSceneController;
-		MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
-		GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
-		m_3dAnchor = goalScene.chestSlots[m_chestIdx].uiAnchor;
+		MenuScreenScene scene = menuController.GetScreenData(MenuScreen.CHESTS).scene3d;
+		ChestsSceneController chestsScene = scene.GetComponent<ChestsSceneController>();
+		m_3dAnchor = chestsScene.chestSlots[m_chestIdx].uiAnchor;
 
 		// Set name
 		/* [AOC] Replacing with generic "REWARD" text, already set in the Localizer component
