@@ -20,7 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4231162966676560}
   - component: {fileID: 114994255531534602}
-  - component: {fileID: 65771786180444038}
+  - component: {fileID: 33483142310438464}
+  - component: {fileID: 64964921283326972}
+  - component: {fileID: 114895511736559898}
   m_Layer: 16
   m_Name: PF_DarkZoneCandleTrigger
   m_TagString: Untagged
@@ -34,15 +36,22 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1644344430791590}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 425.6, y: 66.8, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1035, y: 65.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65771786180444038
-BoxCollider:
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 82.28001}
+--- !u!33 &33483142310438464
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1644344430791590}
+  m_Mesh: {fileID: 0}
+--- !u!64 &64964921283326972
+MeshCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -51,8 +60,66 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Convex: 1
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 0}
+--- !u!114 &114895511736559898
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1644344430791590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e465a4fb08594de49a41e213281fe691, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyPoints:
+  - {x: -0.02866745, y: 16.823872, z: 0}
+  - {x: 4.9669037, y: -19.335388, z: 0}
+  - {x: 135.22742, y: -125.855515, z: 0}
+  - {x: 208.48526, y: -130.33131, z: 0}
+  - {x: 312.83716, y: -111.53182, z: 0}
+  - {x: 351.75528, y: -161.60461, z: 0}
+  - {x: 388.36755, y: -335.0769, z: 0}
+  - {x: 328.9971, y: -482.8902, z: 0}
+  - {x: 29.855148, y: -463.65637, z: 0}
+  - {x: -58.129105, y: -436.52536, z: 0}
+  - {x: -122.97305, y: -208.8831, z: 0}
+  - {x: -133.15224, y: -84.30433, z: 0}
+  - {x: -76.760056, y: -86.117836, z: 0}
+  - {x: -70.070206, y: 9.429775, z: 0}
+  curvePoints:
+  - {x: 2.469118, y: -1.2557583, z: 0}
+  - {x: 70.09716, y: -72.59545, z: 0}
+  - {x: 171.85634, y: -128.09341, z: 0}
+  - {x: 260.6612, y: -120.931564, z: 0}
+  - {x: 332.2962, y: -136.56822, z: 0}
+  - {x: 370.0614, y: -248.34076, z: 0}
+  - {x: 358.6823, y: -408.98355, z: 0}
+  - {x: 179.42612, y: -473.2733, z: 0}
+  - {x: -14.136978, y: -450.09088, z: 0}
+  - {x: -90.55108, y: -322.70422, z: 0}
+  - {x: -128.06265, y: -146.59372, z: 0}
+  - {x: -104.95615, y: -85.21108, z: 0}
+  - {x: -73.41513, y: -38.344032, z: 0}
+  - {x: -35.04944, y: 13.126823, z: 0}
+  isCurve: 0000000000000000000000000000
+  curveDetail: 0.1
+  colliderDepth: 10
+  buildColliderEdges: 1
+  buildColliderFront: 0
+  colliderParent: {fileID: 0}
+  uvPosition: {x: 0, y: 0}
+  uvScale: 1
+  uvRotation: 0
+  showNormals: 0
+  showOutline: 1
+  pinkMeshOffset: 0
+  mergeObject: {fileID: 0}
+  mergeStartPoint: 0
+  mergeEndPoint: 0
 --- !u!114 &114994255531534602
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -68,6 +135,6 @@ MonoBehaviour:
     m_id: 1
     m_radius: 0.099
     m_fallOff: 0.266
-    m_Color: {r: 0, g: 0, b: 0, a: 0}
-    m_Color2: {r: 0, g: 0, b: 0, a: 0}
-    m_time: 0
+    m_Color: {r: 0, g: 0, b: 0, a: 1}
+    m_Color2: {r: 0, g: 0, b: 0, a: 0.84}
+    m_time: 2
