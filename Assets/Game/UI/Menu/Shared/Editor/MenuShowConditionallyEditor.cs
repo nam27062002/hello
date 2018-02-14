@@ -117,7 +117,7 @@ public class MenuShowConditionallyEditor : Editor {
 			EditorGUI.indentLevel++;
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_mode"), true);
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_screens"), true);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_targetScreens"), true);
 
 			// Indent back out
 			EditorGUI.indentLevel--;

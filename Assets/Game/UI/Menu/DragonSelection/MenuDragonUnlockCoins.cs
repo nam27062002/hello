@@ -88,7 +88,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	                HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
 
 	                // Show a nice animation!
-					InstanceManager.menuSceneController.GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>().LaunchAcquireAnim(dragonData.def.sku);
+					InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>().LaunchAcquireAnim(dragonData.def.sku);
 				}
 			);
 			purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPriceCoins"), UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, dragonData.def);
