@@ -16,6 +16,9 @@ public class HungryLetterUiContainer : MonoBehaviour
 	[SerializeField]
 	private GameObject m_letterMoverPrefab;
 
+	[SerializeField]
+	private string m_onGoToPanelSound;
+
 	//------------------------------------------------------------
 	// Private Variables:
 	//------------------------------------------------------------
@@ -171,7 +174,10 @@ public class HungryLetterUiContainer : MonoBehaviour
 				}
 			}
 		}
-		
+
+		if ( !string.IsNullOrEmpty(m_onGoToPanelSound) )
+			AudioController.Play(m_onGoToPanelSound);
+
 		StartCoroutine( Delay(1, OnTweenCompleted));
 		DOTween.Restart( mover.gameObject, "transform");
 	}
