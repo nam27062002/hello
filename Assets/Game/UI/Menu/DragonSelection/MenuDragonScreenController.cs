@@ -39,7 +39,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private bool m_isAnimating = false;
 	private bool isAnimating {
 		get { return m_isAnimating; }
-		set { m_isAnimating = value; Debug.Log("IS ANIMATING SET TO <color=" + (value ? "green" : "red") + ">" + value + "</color>"); }
+		set { m_isAnimating = value; }
 	}
 
 	private MenuScreen m_goToScreen = MenuScreen.NONE;
@@ -171,7 +171,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_scrollDuration">Use it to sync with scrolling to target dragon.</param>
 	/// <param name="_gotoDragonUnlockScreen">Whether to go the DragonUnlockScreen after the animation or not.</param>
 	public void LaunchUnlockAnim(string _unlockedDragonSku, float _initialDelay, float _scrollDuration, bool _gotoDragonUnlockScreen) {
-		Debug.Log("<color=yellow>UNLOCK </color>" + _unlockedDragonSku);
 		// Program lock animation sequence
 		DOTween.Sequence()
 			.AppendCallback(() => {
@@ -272,8 +271,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_acquiredDragonSku">Acquired dragon sku.</param>
 	public void LaunchAcquireAnim(string _acquiredDragonSku) {
-		Debug.Log("<color=yellow>ACQUIRE </color>" + _acquiredDragonSku);
-
 		// Program animation
 		DOTween.Sequence()
 			.AppendCallback(() => {
@@ -310,7 +307,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_teaseDragonSku">Teased dragon sku.</param>
 	private void LaunchTeaseAnim(string _teaseDragonSku) {
 		// Aux vars
-		Debug.Log("<color=yellow>TEASE </color>" + _teaseDragonSku);
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
 		DragonData dragonData = DragonManager.GetDragonData(_teaseDragonSku);
 
@@ -373,7 +369,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_revealDragonSku">The revealed dragon sku.</param>
 	private void LaunchRevealAnim(string _revealDragonSku) {
 		// Aux vars
-		Debug.Log("<color=yellow>REVEAL </color>" + _revealDragonSku);
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
 		DragonData dragonData = DragonManager.GetDragonData(_revealDragonSku);
 
