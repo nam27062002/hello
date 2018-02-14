@@ -59,7 +59,7 @@ public class BuyEggButton : MonoBehaviour {
 				purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
 
 				// Start open egg flow
-				InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(purchasedEgg);
+				InstanceManager.menuSceneController.StartOpenEggFlow(purchasedEgg);
 			}
 		);
 		purchaseFlow.Begin(eggDef.GetAsLong("pricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.BUY_EGG, eggDef);

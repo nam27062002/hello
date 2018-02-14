@@ -146,8 +146,7 @@ public class DragonUnlockScreen : MonoBehaviour {
 		// Initialize drag controller with current dragon preview
 		if(m_dragController != null) {
 			MenuSceneController menuController = InstanceManager.menuSceneController;
-			MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DRAGON_UNLOCK);
-			MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
+			MenuDragonPreview dragonPreview = menuController.dragonScroller.GetDragonPreview(menuController.selectedDragon);
 			m_dragController.gameObject.SetActive(true);
 			m_dragController.target = dragonPreview.transform;
 		}

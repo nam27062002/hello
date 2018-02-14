@@ -177,6 +177,12 @@ public class CPTutorialSteps : MonoBehaviour {
 		for(int i = 0; i < m_toggles.Count; i++) {
 			UsersManager.currentUser.SetTutorialStepCompleted(m_toggles[i].step, _toggle);
 		}
+
+		// Add some games
+		int gamesToAdd = 5 - UsersManager.currentUser.gamesPlayed;
+		if(gamesToAdd > 0) OnAddGamesPlayed(gamesToAdd);
+
+		// Save!
 		PersistenceFacade.instance.Save_Request();
 	}
 

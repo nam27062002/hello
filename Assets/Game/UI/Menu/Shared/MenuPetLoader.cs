@@ -78,6 +78,27 @@ public class MenuPetLoader : MonoBehaviour {
 		get { return m_petInstance; }
 	}
 
+	private ParticleScaler m_pscaler = null;
+	public ParticleScaler pscaler {
+		get {
+			if(m_pscaler == null) {
+				// Try getting a defined scalre
+				m_pscaler = GetComponent<ParticleScaler>();
+				if(m_pscaler == null) {
+					// Instantiate a new scaler
+					m_pscaler = this.gameObject.AddComponent<ParticleScaler>();
+					pscaler.m_resetFirst = true;
+					pscaler.m_scaleAllChildren = true;
+					pscaler.m_scaleLifetime = false;
+					pscaler.m_whenScale = ParticleScaler.WhenScale.MANUALLY;
+					pscaler.m_scaleOrigin = ParticleScaler.ScaleOrigin.TRANSFORM_SCALE;
+					pscaler.m_transform = this.transform;
+				}
+			}
+			return m_pscaler;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -169,6 +190,10 @@ public class MenuPetLoader : MonoBehaviour {
 				if(m_resetScale) {
 					m_petInstance.transform.localScale = Vector3.one;
 				}
+
+				// Make sure particles are properly scaled as well
+				pscaler.ReloadOriginalData();
+				pscaler.DoScale();
 			}
 		}
 

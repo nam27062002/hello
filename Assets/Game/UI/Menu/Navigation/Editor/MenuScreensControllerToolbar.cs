@@ -51,18 +51,27 @@ public class MenuScreensControllerToolbar {
 
 	// Prefs keys
 	private const string MAIN_SCREENS_EXPANDED_KEY = "MenuScreensControllerToolbar.MainScreensExpanded";
-	private const string GOALS_SCREEN_EXPANDED_KEY = "MenuScreensControllerToolbar.GoalsScreenExpanded";
+	private const string GOALS_SCREENS_EXPANDED_KEY = "MenuScreensControllerToolbar.GoalsScreensExpanded";
+	private const string REWARD_SCREENS_EXPANDED_KEY = "MenuScreensControllerToolbar.RewardScreensExpanded";
 
 	// Other consts
+	private const float MARGIN = 5f;
 	private const float INDENT_SIZE = 10f;
+	private static readonly Vector2 POSITION = new Vector2(5f, 5f);
+	private static readonly Vector2 ELEMENT_SIZE = new Vector2(130f, 20f);
+	private static readonly Color BACKGROUND_COLOR = new Color(0.25f, 0.25f, 0.25f, 0.75f);
 
 	//----------------------------------------------------------------------//
 	// MEMBERS																//
 	//----------------------------------------------------------------------//
 	// Internal vars
-	private static MenuScreensController s_screensController = null;
+	private static MenuTransitionManager s_transitionManager = null;
 	private static Queue<SelectionAction> s_pendingSelections = new Queue<SelectionAction>();
 	private static int s_frameCount = 0;
+	private static Dictionary<string, List<MenuScreen>> s_screenGroups = new Dictionary<string, List<MenuScreen>>();
+
+	private static Rect s_rect = new Rect();
+	private static Rect s_lastTotalRect = new Rect();
 
 	//----------------------------------------------------------------------//
 	// METHODS																//
@@ -83,6 +92,39 @@ public class MenuScreensControllerToolbar {
 
 		// Do a first processing of the scene
 		FindMenuScreensController();
+
+		// Initialize screen groups
+		List<MenuScreen> mainScreens = new List<MenuScreen>();
+		List<MenuScreen> goalsScreens = new List<MenuScreen>();
+		List<MenuScreen> rewardScreens = new List<MenuScreen>();
+		for(MenuScreen scr = MenuScreen.PLAY; scr < MenuScreen.COUNT; ++scr) {
+			switch(scr) {
+				case MenuScreen.MISSIONS:
+				case MenuScreen.CHESTS:
+				case MenuScreen.GLOBAL_EVENTS: {
+					goalsScreens.Add(scr);
+				} break;
+
+				case MenuScreen.OPEN_EGG:
+				case MenuScreen.EVENT_REWARD:
+				case MenuScreen.PENDING_REWARD: {
+					rewardScreens.Add(scr);
+				} break;
+
+				default: {
+					mainScreens.Add(scr);
+				} break;
+			}
+		}
+		s_screenGroups[MAIN_SCREENS_EXPANDED_KEY] = mainScreens;
+		s_screenGroups[GOALS_SCREENS_EXPANDED_KEY] = goalsScreens;
+		s_screenGroups[REWARD_SCREENS_EXPANDED_KEY] = rewardScreens;
+
+		// Initialize rects
+		s_rect = new Rect(POSITION.x + MARGIN, POSITION.y + MARGIN, ELEMENT_SIZE.x, ELEMENT_SIZE.y);
+		s_lastTotalRect = new Rect(s_rect);
+		s_lastTotalRect.x -= MARGIN;
+		s_lastTotalRect.y -= MARGIN;
 	}
 
 	/// <summary>
@@ -90,10 +132,10 @@ public class MenuScreensControllerToolbar {
 	/// </summary>
 	private static void FindMenuScreensController() {
 		// Look for the menu screens controller in the current hierarchy
-		s_screensController = GameObject.FindObjectOfType<MenuScreensController>();
+		s_transitionManager = GameObject.FindObjectOfType<MenuTransitionManager>();
 
 		// If there is no valid screens controller, clear pending selections
-		if(s_screensController == null) s_pendingSelections.Clear();
+		if(s_transitionManager == null) s_pendingSelections.Clear();
 	}
 
 	/// <summary>
@@ -103,111 +145,65 @@ public class MenuScreensControllerToolbar {
 	private static void OnSceneGUI(SceneView _sceneview) {
 		// Extra processing for older Unity versions: always check for the menu screens controller
 		#if !UNITY_5_6_OR_NEWER
-		if(s_screensController == null) {
+		if(s_transitionManager == null) {
 			FindMenuScreensController();
 		}
 		#endif
 
 		// Ignore if there is no Screen controller in the scene
-		if(s_screensController == null) return;
+		if(s_transitionManager == null) return;
 
 		// http://answers.unity3d.com/questions/19321/onscenegui-called-without-any-object-selected.html
-		int screenToEdit = -1;
-		NavigationScreen tabToSelect = null;
+		MenuScreen screenToEdit = MenuScreen.NONE;
 		Handles.BeginGUI(); {
+			// Background - using last known total rect
+			s_lastTotalRect.width += 2 * MARGIN;
+			s_lastTotalRect.height += 2 * MARGIN;
+			EditorGUI.DrawRect(s_lastTotalRect, BACKGROUND_COLOR);
+
 			// In this particular case it's easier to just go with old school GUI calls
-			Rect rect = new Rect(5f, 5f, 130f, 20f);
+			// Reset position
+			s_rect.x = POSITION.x + MARGIN;
+			s_rect.y = POSITION.y + MARGIN;
+			s_lastTotalRect.height = LAYOUT == Layout.HORIZONTAL ? s_rect.height : 0f;
+			s_lastTotalRect.width = LAYOUT == Layout.VERTICAL ? s_rect.width : 0f;
+
 			GUI.enabled = true;
-
-			// Main Screens Foldable Group
-			bool expanded = Prefs.GetBoolEditor(MAIN_SCREENS_EXPANDED_KEY, true);
-			expanded = EditorGUI.Foldout(rect, expanded, "Main Screens");
-			Prefs.SetBoolEditor(MAIN_SCREENS_EXPANDED_KEY, expanded);
-			AdvancePos(ref rect);
-			if(expanded) {
-				// Indent in
-				rect.x += INDENT_SIZE;
-
-				// Do a button for each scene
-				MenuScreens scr = MenuScreens.NONE;
-				for(int i = 0; i < (int)MenuScreens.COUNT; i++) {
-					scr = (MenuScreens)i;
-					if(GUI.Button(rect, scr.ToString())) {
-						// Save it as target screen!
-						screenToEdit = i;
-					}
-					AdvancePos(ref rect);
-				}
-
-				// Indent out
-				rect.x -= INDENT_SIZE;
-			}
-
-			// Goals Screen Tabs
-			TabSystem goalTabs = s_screensController.GetScreen((int)MenuScreens.GOALS).GetComponentInChildren<TabSystem>();
-			if(goalTabs != null) {
-				// Foldable group
-				expanded = Prefs.GetBoolEditor(GOALS_SCREEN_EXPANDED_KEY, true);
-				expanded = EditorGUI.Foldout(rect, expanded, "Goals Screen Tabs");
-				Prefs.SetBoolEditor(GOALS_SCREEN_EXPANDED_KEY, expanded);
-				AdvancePos(ref rect);
-				if(expanded) {
-					// Indent in
-					rect.x += INDENT_SIZE;
-
-					// A button for each tab
-					foreach(NavigationScreen tab in goalTabs.screens) {
-						if(tab == null) continue;
-						if(GUI.Button(rect, tab.name)) {
-							// Store target screen and tab
-							screenToEdit = (int)MenuScreens.GOALS;
-							tabToSelect = tab;
-
-							// Enable/Disable each tab
-							foreach(NavigationScreen tab2 in goalTabs.screens) {
-								// Only show target tab
-								tab2.gameObject.SetActive(tab == tab2);
-							}
-						}
-						AdvancePos(ref rect);
-					}
-
-					// Indent out
-					rect.x -= INDENT_SIZE;
-				}
-			}
+			DoGroup(ref s_rect, MAIN_SCREENS_EXPANDED_KEY, "Main Screens", ref screenToEdit);
+			DoGroup(ref s_rect, GOALS_SCREENS_EXPANDED_KEY, "Goals Screens", ref screenToEdit);
+			DoGroup(ref s_rect, REWARD_SCREENS_EXPANDED_KEY, "Rewards Screens", ref screenToEdit);
 		} Handles.EndGUI();
 
 		// If the user has selected a screen to edit, react to it!
-		if(screenToEdit >= 0) {
+		if(screenToEdit != MenuScreen.NONE) {
 			// Disable all screens except the target one and ping the target screen
-			NavigationScreen scr = null;
-			for(int i = 0; i < (int)MenuScreens.COUNT; i++) {
-				scr = s_screensController.screens[i];
+			ScreenData scr = null;
+			for(int i = 0; i < (int)MenuScreen.COUNT; i++) {
+				scr = s_transitionManager.GetScreenData((MenuScreen)i);
 				if(scr != null) {
-					if(i == screenToEdit) {
+					if(i == (int)screenToEdit) {
 						// Select and ping 3D scene in hierarchy
-						s_pendingSelections.Enqueue(new SelectionAction(s_screensController.scenes[i].gameObject, false, true));
+						if(scr.scene3d != null) {
+							s_pendingSelections.Enqueue(new SelectionAction(scr.scene3d.gameObject, false, true));
+						}
 
 						// Select and ping screen in hierarchy, and focus scene view on it
-						scr.gameObject.SetActive(true);
-						s_pendingSelections.Enqueue(new SelectionAction(scr.gameObject, true, true));
+						if(scr.ui != null) {
+							scr.ui.gameObject.SetActive(true);
+							s_pendingSelections.Enqueue(new SelectionAction(scr.ui.gameObject, true, true));
+						}
 					} else {
-						scr.gameObject.SetActive(false);
+						if(scr.ui != null) scr.ui.gameObject.SetActive(false);
 					}
 				}
 			}
 
 			// Move main camera to screen's snap point (if any)
-			CameraSnapPoint targetSnapPoint = s_screensController.GetCameraSnapPoint(screenToEdit);
+			CameraSnapPoint targetSnapPoint = s_transitionManager.GetScreenData((MenuScreen)screenToEdit).cameraSetup;
 			if(targetSnapPoint != null) {
-				targetSnapPoint.Apply(s_screensController.GetComponent<MenuSceneController>().mainCamera);
+				targetSnapPoint.Apply(s_transitionManager.camera);
+				s_transitionManager.camera.transform.position = targetSnapPoint.transform.position;
 			}
-		}
-
-		// Similarly, if a sub-tab has been chosen, select it (after the scene and screen!)
-		if(tabToSelect != null) {
-			s_pendingSelections.Enqueue(new SelectionAction(tabToSelect.gameObject, true, true));
 		}
 
 		// We can only do one selection action every X frames, so store them in a queue
@@ -237,25 +233,65 @@ public class MenuScreensControllerToolbar {
 		switch(LAYOUT) {
 			case Layout.HORIZONTAL: {
 				// Advance pos
-				_rect.x += _distance > 0 ? _distance : _rect.width;
+				float toAdvance = _distance > 0 ? _distance : _rect.width;
+				_rect.x += toAdvance;
+				s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + toAdvance);
 
 				// New row if we go off-viewport
 				if(_rect.x + _rect.width > viewport.xMax) {
-					_rect.x = viewport.xMin + 5f;
-					_rect.y += _rect.height + 5f;
+					_rect.x = viewport.xMin + POSITION.x;
+					_rect.y += _rect.height + POSITION.y;
+					s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + toAdvance);
 				}
 			} break;
 
 			case Layout.VERTICAL: {
 				// Advance pos
-				_rect.y += _distance > 0 ? _distance : _rect.height;
+				float toAdvance = _distance > 0 ? _distance : _rect.height;
+				_rect.y += toAdvance;
+				s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + toAdvance);
 
 				// New column if we go off-viewport
 				if(_rect.y + _rect.height > viewport.yMax) {
 					_rect.y = viewport.yMin + 5f;
 					_rect.x += _rect.width + 5f;
+					s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + toAdvance);
 				}
 			} break;
+		}
+	}
+
+	/// <summary>
+	/// Displays a screen group.
+	/// </summary>
+	/// <param name="_pos">Cursor.</param>
+	/// <param name="_groupKey">Group key.</param>
+	/// <param name="_label">Label.</param>
+	/// <returns>If a screen button has been pressed, target screen..</returns>
+	private static void DoGroup(ref Rect _pos, string _groupKey, string _label, ref MenuScreen _screenToEdit) {
+		// Main Screens Foldable Group
+		bool expanded = Prefs.GetBoolEditor(_groupKey, true);
+		expanded = EditorGUI.Foldout(_pos, expanded, _label);
+		Prefs.SetBoolEditor(_groupKey, expanded);
+		AdvancePos(ref _pos);
+		if(expanded) {
+			// Indent in
+			_pos.x += INDENT_SIZE;
+			_pos.width -= INDENT_SIZE;
+
+			// Do a button for each screen in the group
+			List<MenuScreen> screens = s_screenGroups[_groupKey];
+			for(int i = 0; i < screens.Count; ++i) {
+				if(GUI.Button(_pos, screens[i].ToString())) {
+					// Save it as target screen!
+					_screenToEdit = screens[i];
+				}
+				AdvancePos(ref _pos);
+			}
+
+			// Indent out
+			_pos.x -= INDENT_SIZE;
+			_pos.width += INDENT_SIZE;
 		}
 	}
 }

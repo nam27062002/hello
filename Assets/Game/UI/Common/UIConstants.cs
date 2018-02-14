@@ -213,6 +213,20 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	#endregion
 
 	// -------------------------------------------------------------------------
+	// Menu animation setup
+	#region MenuAnimationSetup
+	[SerializeField] private float m_menuCameraTransitionDuration = 0.5f;
+	public static float menuCameraTransitionDuration {
+		get { 
+			// Check if it has been override in the Control Panel
+			float duration = PlayerPrefs.GetFloat(DebugSettings.MENU_CAMERA_TRANSITION_DURATION, instance.m_menuCameraTransitionDuration);
+			if(duration <= 0) duration = instance.m_menuCameraTransitionDuration;
+			return duration;
+		}
+	}
+	#endregion
+
+	// -------------------------------------------------------------------------
 	// Other constants
 	#region OtherConstants
 	[SerializeField] private float m_mapMarkersDepth = -50f;
