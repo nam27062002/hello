@@ -100,6 +100,7 @@ public class PathFollowerEditor : Editor {
 
 			// Link mode
 			EditorGUILayout.PropertyField(m_linkModeProp);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_keepUpdated"));
 
 			// Offset
 			EditorGUI.BeginChangeCheck();

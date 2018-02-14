@@ -350,13 +350,15 @@ if $BUILD_ANDROID; then
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
-  STAGE_APK_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}";
-  mkdir -p "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}"
-  mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.apk" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/"
+  APK_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}"
+  APK_FILE="${APK_NAME}.apk"
+  APK_OUTPUT_DIR="${OUTPUT_DIR}/apks/${APK_NAME}"
+  mkdir -p "${APK_OUTPUT_DIR}"
+  mv "${OUTPUT_DIR}/apks/${APK_FILE}" "${APK_OUTPUT_DIR}/"
 
   if $GENERATE_OBB; then
     OBB_FILE="main.${ANDROID_BUILD_VERSION}.${PACKAGE_NAME}.obb"
-    mv "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}.main.obb" "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}"
+    mv "${OUTPUT_DIR}/apks/${APK_NAME}.main.obb" "${APK_OUTPUT_DIR}/${OBB_FILE}"
   fi
 fi
 
@@ -373,7 +375,8 @@ if $BUILD_IOS; then
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}.xcarchive"
-    STAGE_IPA_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}.ipa"
+    IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}"
+    IPA_FILE="${IPA_NAME}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
     # Generate Archive
@@ -389,7 +392,7 @@ if $BUILD_IOS; then
 
     # Generate IPA file
     print_builder "Exporting IPA"
-    rm -f "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"    # just in case
+    rm -f "${OUTPUT_DIR}/ipas/${IPA_FILE}"    # just in case
 
     echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \
       <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\"> \
@@ -408,7 +411,7 @@ if $BUILD_IOS; then
       </plist>" > build.plist
 
     xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "build.plist"
-    mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}"
+    mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${IPA_FILE}"
 fi
 
 if $UPLOAD;then
@@ -416,16 +419,26 @@ if $UPLOAD;then
   print_builder "Sending to server"
 
   # Mount the server into a tmp folder
-  mkdir -p server
-  mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" server
+  # If the temp dir already exists, try to unmount and delete it first
+  SMB_MOUNT_DIR="server"
+  if [ -d "{$SMB_MOUNT_DIR}" ]
+    set +e  # Dont exit script on error (in case the server is not actually mounted but the directory exists anyway)
+    umount "{SMB_MOUNT_DIR}"
+    rmdir "{SMB_MOUNT_DIR}"
+    set -e
+  fi
+
+  # Now mount the server!
+  mkdir -p "{SMB_MOUNT_DIR}"
+  mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" "{SMB_MOUNT_DIR}"
 
   # In order to keep the server organized, replicate the branches structure on it
-  SMB_PATH="server/${BRANCH}"
+  SMB_PATH="{SMB_MOUNT_DIR}/${BRANCH}"
 
   # Copy IPA
   if $BUILD_IOS; then
-  	  mkdir -p "${SMB_PATH}/${STAGE_IPA_FILE}"
-      cp "${OUTPUT_DIR}/ipas/${STAGE_IPA_FILE}" "${SMB_PATH}/"
+  	  mkdir -p "${SMB_PATH}"
+      cp "${OUTPUT_DIR}/ipas/${IPA_FILE}" "${SMB_PATH}/"
   fi
 
   # Copy APK
@@ -433,24 +446,24 @@ if $UPLOAD;then
   	  # If generating OBBs, create a single folder with the APK + the OBBs
   	  SMB_PATH_APK="${SMB_PATH}"
   	  if $GENERATE_OBB; then
-	    SMB_PATH_APK="${SMB_PATH}/${STAGE_APK_FILE}"
+	    SMB_PATH_APK="${SMB_PATH}/${APK_NAME}"
   	  fi
 
   	  # Make sure path exists
   	  mkdir -p "${SMB_PATH_APK}"
 
   	  # Copy APK
-  	  cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${STAGE_APK_FILE}.apk" "${SMB_PATH_APK}/"
+  	  cp "${APK_OUTPUT_DIR}/${APK_FILE}" "${SMB_PATH_APK}/"
 
   	  # Copy OBBs
       if $GENERATE_OBB; then
-        cp "${OUTPUT_DIR}/apks/${STAGE_APK_FILE}/${OBB_FILE}" "${SMB_PATH_APK}/"
+        cp "${APK_OUTPUT_DIR}/${OBB_FILE}" "${SMB_PATH_APK}/"
       fi
   fi
 
   # Unmount server and remove tmp folder
-  umount server
-  rmdir server
+  umount "{SMB_MOUNT_DIR}"
+  rmdir "{SMB_MOUNT_DIR}"
 fi
 
 # Commit project changes

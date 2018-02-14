@@ -102,6 +102,13 @@ public class PathFollower : MonoBehaviour {
 		}
 	}
 
+	[Tooltip("Check for curve changes and keep position updated. Expensive, better avoid it.")]
+	[SerializeField] private bool m_keepUpdated = false;
+	public bool keepUpdated {
+		get { return m_keepUpdated; }
+		set { m_keepUpdated = value; }
+	}
+
 	// Extra
 	[Space]
 	[SerializeField] private Vector3 m_offset = Vector3.zero;
@@ -133,12 +140,15 @@ public class PathFollower : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Make sure target's position is updated - except if tweening!
-		// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
-		if(m_dirty || (m_path != null && m_path.dirty)) {
-			if(!isTweening) {
-				switch(m_linkMode) {
-					case LinkMode.DELTA: Apply(); break;
-					case LinkMode.SNAP_POINT: SnapTo(snapPoint); break;
+		// Skip if flag not set
+		if(m_keepUpdated || !Application.isPlaying) {
+			// [AOC] TODO!! This is highly inefficient, figure out a better way to do it
+			if(m_dirty || (m_path != null && m_path.dirty)) {
+				if(!isTweening) {
+					switch(m_linkMode) {
+						case LinkMode.DELTA: Apply(); break;
+						case LinkMode.SNAP_POINT: SnapTo(snapPoint); break;
+					}
 				}
 			}
 		}

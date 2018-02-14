@@ -55,9 +55,13 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	//------------------------------------------------------------------//
 	// Drawing parameters
 	public Color drawColor = Color.white;
-	public bool lockZ = false;	// Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public float lineThickness = 5f;
+
 	public float pointSize = 1f;
-	public float pickSize = 1.5f;
+	public bool constantSize = true;
+	
+	public bool[] lockAxis = new bool[] { false, false, false }; // Whether to allow editing the Z value of the points or not - useful for 2D curves
+	public bool[] lockHandlersAxis = new bool[] { false, false, false };
 
 	/// <summary>
 	/// Control points of the curve.
@@ -137,7 +141,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// <summary>
 	/// If enabled, handle points will be automatically computed.
 	/// </summary>
-	private bool m_autoSmooth = false;
+	private bool m_autoSmooth = true;
 	public bool autoSmooth {
 		get { return m_autoSmooth; }
 		set { 
@@ -179,6 +183,14 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Make sure there are always at least 2 points
+		if(pointCount < 1) AddPoint(Vector3.zero);
+		if(pointCount < 2) {
+			Vector3 pos = GetPoint(0).globalPosition;
+			pos.x += 10f;
+			AddPoint(pos);
+		}
+
 		// Make sure length is ok
 		ComputeLength();
 	}
@@ -189,14 +201,7 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	private void LateUpdate() {
 		// If curve is dirty, recalculate length and sample segments
 		if(dirty) {
-			// Do it
-			ComputeLength();
-
-			// If auto-smooth is enabled, apply it
-			if(autoSmooth) AutoSmooth(autoSmoothFactor);
-
-			// Not dirty anymore :)
-			dirty = false;
+			ForceUpdate();
 		}
 	}
 
@@ -206,6 +211,29 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// </summary>
 	public void SetDirty() {
 		dirty = true;
+	}
+
+	/// <summary>
+	/// Force an update on the curve.
+	/// Will refresh the length and the smoothing of it, and clear the dirty flag.
+	/// Use carefully!
+	/// </summary>
+	public void ForceUpdate() {
+		// Order is relevant!
+
+		// If auto-smooth is enabled, apply it
+		if(autoSmooth) AutoSmooth(autoSmoothFactor);
+
+		// Do it
+		ComputeLength();
+
+		// Not dirty anymore :)
+		dirty = false;
+
+		// Force a repaint of the curve
+		#if UNITY_EDITOR
+		EditorUtility.SetDirty(this.gameObject);
+		#endif
 	}
 
 	/// <summary>
@@ -390,12 +418,38 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	}
 
 	/// <summary>
+	/// Get the point with the given name.
+	/// </summary>
+	/// <returns>The <see cref="AOCBezierPoint"/> with the given name. <c>null</c> if no point with the given name is found.</returns>
+	/// <param name="_name">Name of the target point.</param>
+	public BezierPoint GetPoint(string _name) {
+		return m_points.Find(
+			(BezierPoint _p) => { 
+				return string.Compare(_p.name, _name) == 0;
+			}
+		);
+	}
+
+	/// <summary>
 	/// Find out the index of a given point in this curve.
 	/// </summary>
 	/// <returns>The point index, -1 if the point is not found.</returns>
 	/// <param name="_point">The point to search for.</param>
 	public int GetPointIdx(BezierPoint _point) {
 		return m_points.IndexOf(_point);
+	}
+
+	/// <summary>
+	/// Get the index matching a given point name in this curve.
+	/// </summary>
+	/// <returns>The point index, -1 if no point with the given name was found.</returns>
+	/// <param name="_name">Name to look for.</param>
+	public int GetPointIdx(string _name) {
+		return m_points.FindIndex(
+			(BezierPoint _p) => { 
+				return string.Compare(_p.name, _name) == 0;
+			}
+		);
 	}
 
 	/// <summary>
@@ -495,8 +549,8 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 		}
 
 		// Compute relative remaining percent between the two points and get the value at that segment
-		_t -= processedDelta;
-		return GetValue(p1, p2, _t/segmentDelta);
+		float remainingDelta = _t - processedDelta;
+		return GetValue(p1, p2, remainingDelta/segmentDelta);
 	}
 
 	/// <summary>

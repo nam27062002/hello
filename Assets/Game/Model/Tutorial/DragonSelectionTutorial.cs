@@ -82,7 +82,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_scroller = InstanceManager.menuSceneController.dragonScroller;
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -91,7 +91,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -260,15 +260,13 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The current menu screen has changed.
+	/// The current menu screen has changed (animation starts now).
 	/// </summary>
-	/// <param name="_event">Event data.</param>
-	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
-		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
-
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnScreenChanged(MenuScreen _from, MenuScreen _to) {
 		// If leaving the dragon selection screen, force the tutorial to stop (shouldn't happen)
-		if(_event.toScreenIdx != (int)MenuScreens.DRAGON_SELECTION) {
+		if(_to != MenuScreen.DRAGON_SELECTION) {
 			// Stop the tutorial if it's running
 			StopTutorial();
 			return;

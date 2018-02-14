@@ -214,7 +214,7 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	public void OnOpenButton() {
 		// Screen controller will take care of it
-		InstanceManager.sceneController.GetComponent<MenuScreensController>().StartOpenEggFlow(targetEgg);
+		InstanceManager.menuSceneController.StartOpenEggFlow(targetEgg);
 	}
 }
 
