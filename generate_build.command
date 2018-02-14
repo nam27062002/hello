@@ -421,7 +421,7 @@ if $UPLOAD;then
   # Mount the server into a tmp folder
   # If the temp dir already exists, try to unmount and delete it first
   SMB_MOUNT_DIR="server"
-  if [ -d "{$SMB_MOUNT_DIR}" ]
+  if [ -d "$SMB_MOUNT_DIR" ]; then
     set +e  # Dont exit script on error (in case the server is not actually mounted but the directory exists anyway)
     umount "{SMB_MOUNT_DIR}"
     rmdir "{SMB_MOUNT_DIR}"
