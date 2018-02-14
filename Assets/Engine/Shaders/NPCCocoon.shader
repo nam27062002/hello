@@ -29,7 +29,7 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 //			Lighting Off
 
 			Cull back
-//			ZWrite off
+			ZWrite off
 			Blend SrcAlpha OneMinusSrcAlpha
 
 			Stencil
