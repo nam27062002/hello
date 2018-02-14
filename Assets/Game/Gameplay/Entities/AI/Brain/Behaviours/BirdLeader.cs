@@ -68,8 +68,6 @@ namespace AI {
 				} else {
 					m_timer = 1f;
 				}
-
-				Debug.Log(m_timer);
 			}
 		}
 	}
