@@ -138,11 +138,11 @@ namespace AI {
 			m_sensor.Disable(_seconds);
 		}
 
-		public bool Burn(Transform _transform, bool instant = false) {
+		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, instant);
+					m_inflammable.Burn(_transform, _source, instant);
 				}
 				return true;
 			}
@@ -234,7 +234,7 @@ namespace AI {
 		public void EndSwallowed(Transform _transform){}
 		public void Bite() {}
 		public void Drown() {}
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {}
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {}
 
 		public void	EnterGroup(ref Group _group) {}
 		public Group GetGroup() {return null;}

@@ -363,11 +363,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				default:
 				case Type.Standard:
 				{
-					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, m_dragon.data.tier, direction);
+					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, m_dragon.data.tier, direction, IEntity.Type.PLAYER);
 				}break;
 				case Type.Mega:
 				{
-					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, DragonTier.COUNT - 1, direction);
+					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, DragonTier.COUNT - 1, direction, IEntity.Type.PLAYER);
 				}break;
 			}
 

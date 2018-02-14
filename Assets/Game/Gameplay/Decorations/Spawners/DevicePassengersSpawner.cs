@@ -187,10 +187,10 @@ public class DevicePassengersSpawner : AbstractSpawner {
 		}
 	}
 
-	public void PassengersBurn() {
+	public void PassengersBurn(IEntity.Type _source) {
 		for (int i = 0; i < m_machines.Length; i++) {
 			if (m_machines[i] != null) {
-				m_machines[i].Burn(transform);
+				m_machines[i].Burn(transform, _source);
 			}
 		}
 	}

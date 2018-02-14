@@ -180,6 +180,7 @@ public class TrackerBase {
 			case "unlock_dragon":	return new TrackerUnlockDragon(_params);
 			case "buy_skins":		return new TrackerBuySkins();
 			case "daily_chest":		return new TrackerDailyChests();
+			case "kill_chain":		return new TrackerKillChain(_params);
 
 			// new missions TODO
 			//case "eat_golden": return new TrackerEatGolden(_params);

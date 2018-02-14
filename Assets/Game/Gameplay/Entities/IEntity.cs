@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 abstract public class IEntity :  MonoBehaviour, ISpawnable {
+	// Used externally to differientiate between types of entities
+	public enum Type {
+		PLAYER,
+		PET,
+		OTHER
+	}
 
 	public const string ENTITY_PREFABS_PATH = "Game/Entities/NewEntites/";
 	public const string ENTITY_PREFABS_LOW_PATH = "Game/Entities/NewEntitesLow/";

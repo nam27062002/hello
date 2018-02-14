@@ -115,8 +115,8 @@ namespace AI {
 			}
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, bool _isPlayer) {
-			m_edible.BeingSwallowed(_transform, _rewardPlayer, _isPlayer); 
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) {
+			m_edible.BeingSwallowed(_transform, _rewardPlayer, _source); 
 		}
 
 		public void EndSwallowed(Transform _transform) {
@@ -134,10 +134,10 @@ namespace AI {
 		}
 
 		// Being burned
-		public bool Burn(Transform _transform, bool instant = false) {
+		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			if (!IsDying()) {
 				m_beingBurned = true;
-				m_inflammable.Burn(_transform, instant);
+				m_inflammable.Burn(_transform, _source, instant);
 			}
 			return false;
 		}

@@ -87,7 +87,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	private float m_holdingBlood = 0;
 
 	// config
-	protected bool m_isPlayer = true;		// If eating entity is the player
+	protected IEntity.Type m_type = IEntity.Type.OTHER;		// If eating entity is the player, a pet or other
 	protected bool m_rewardsPlayer = false;	
 	protected bool m_canLatchOnPlayer = false;
 	public bool canLatchOnPlayer
@@ -325,7 +325,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	// Update is called once per frame
 	protected virtual void Update() 
 	{
-		if (PreyCount <= 0 && m_attackTarget != null && m_isPlayer)
+		if (PreyCount <= 0 && m_attackTarget != null && m_type == IEntity.Type.PLAYER)
 		{
 			BiteKill( false );
 		}
@@ -721,7 +721,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 			{
 				// release prey
 				// Escaped Event
-				if ( m_isPlayer )
+				if ( m_type == IEntity.Type.PLAYER )
 					Messenger.Broadcast<Transform>(MessengerEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
 				EndHold();
 			}	
@@ -867,7 +867,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 				if (entity.transform != transform && entity.IsEdible())
 				{
 					// if not player check that it can be eaten
-					if ( !m_isPlayer )
+					if ( m_type != IEntity.Type.PLAYER )
 					{
 						SpecialEatAction specialAction = GetSpecialEatAction( entity.sku );
 						if ( specialAction != SpecialEatAction.Eat ){
@@ -1008,7 +1008,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					}
 					else 
 					{
-						if (m_isPlayer && !entity.hideNeedTierMessage)
+						if (m_type == IEntity.Type.PLAYER && !entity.hideNeedTierMessage)
 						{
 							DragonTier tier = entity.edibleFromTier;
 							if ( entity.canBeGrabbed && entity.grabFromTier < tier )
@@ -1133,7 +1133,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 
 	/// On kill function over prey. Eating or holding
 	protected void StartSwallow(AI.IMachine _prey) {
-		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_isPlayer);//( m_mouth );
+		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_type);//( m_mouth );
 	}
 
 	private void EndSwallow(AI.IMachine _prey){

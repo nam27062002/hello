@@ -71,7 +71,7 @@ namespace AI {
 			}
 		}
 
-		public bool ReduceDurability(bool _boost) {
+		public bool ReduceDurability(bool _boost, IEntity.Type _source) {
 			if (m_armorDurability.count > 0 && !GetSignal(Signals.Type.Burning)) {
 				if (m_armorDurability.count > 0) {
 					if (!m_armorDurability.needBoost || _boost) {

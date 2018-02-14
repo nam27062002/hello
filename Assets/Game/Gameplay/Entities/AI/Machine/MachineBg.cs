@@ -171,7 +171,7 @@ namespace AI {
 
 		public void Bite() { }
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, bool _isPlayer) { }
+		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) { }
 
 		public void EndSwallowed(Transform _transform) { }
 
@@ -185,7 +185,7 @@ namespace AI {
 			return Quaternion.identity;
 		}
 
-		public virtual bool Burn(Transform _transform, bool instant = false) {
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			
 			return false;
 		}

@@ -51,7 +51,7 @@ namespace AI {
 						} else if (collider.layer == LayerMask.NameToLayer("GroundPreys")) {
 							IMachine machine = collider.GetComponent<IMachine>();
 							if (machine != null) {
-								machine.Burn(m_machine.transform);
+								machine.Burn(m_machine.transform, IEntity.Type.OTHER);
 							}
 						}
 					}

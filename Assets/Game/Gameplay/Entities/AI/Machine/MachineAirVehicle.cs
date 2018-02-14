@@ -46,7 +46,7 @@ namespace AI {
 			base.Spawn(_spawner);
 		}
 
-		public bool ReduceDurability(bool _boost) {
+		public bool ReduceDurability(bool _boost, IEntity.Type _source) {
 			if (!GetSignal(Signals.Type.Burning)) {
 				if (m_armorDurability.count > 0) {
 					if (!m_armorDurability.needBoost || _boost) {
@@ -78,10 +78,10 @@ namespace AI {
 			return false;
 		}
 
-		public override bool Burn(Transform _transform, bool instant = false) {			
-			if (base.Burn(_transform, instant)) {				
+		public override bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {			
+			if (base.Burn(_transform, _source, instant)) {				
 				if (m_passengersSpawner != null) {
-					m_passengersSpawner.PassengersBurn();
+					m_passengersSpawner.PassengersBurn(_source);
 				}
 				return true;
 			}

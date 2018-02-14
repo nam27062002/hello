@@ -40,6 +40,9 @@ namespace AI {
 			if (_other.CompareTag("Player")) {				
 				Reward reward = m_entity.GetOnKillReward(false);
 
+				// Initialize some death info
+				m_entity.onDieStatus.source = IEntity.Type.PLAYER;
+
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
 
@@ -82,7 +85,7 @@ namespace AI {
 		public bool IsFreezing(){ return false; }
 		public void CustomFixedUpdate(){}
 
-		public virtual bool Burn(Transform _transform, bool instant = false) { return false; }
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
 		public void SetVelocity(Vector3 _v) {}
@@ -91,7 +94,7 @@ namespace AI {
 		public void EndSwallowed(Transform _transform){}
 		public void Bite() {}
 		public void Drown() {}
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {}
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {}
 
 
 		public void	EnterGroup(ref Group _group) {}

@@ -157,7 +157,7 @@ namespace AI {
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }
 		
-		public virtual bool Burn(Transform _transform, bool instant = false) { return false; }
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
 		public void SetVelocity(Vector3 _v) {}
@@ -166,7 +166,7 @@ namespace AI {
 		public void EndSwallowed(Transform _transform){}
 		public void Bite() {}
 		public void Drown() {}
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {}
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {}
 
 
 		public void	EnterGroup(ref Group _group) {}

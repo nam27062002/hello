@@ -175,8 +175,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		m_operator.LeaveDevice(false);
 	}
 
-	public void OperatorBurn() {
-		m_operator.Burn(transform);
+	public void OperatorBurn(IEntity.Type _source) {
+		m_operator.Burn(transform, _source);
 	}
 
 	private Vector3 GetLookAtVector() {

@@ -218,6 +218,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 						}
 						m_spawned = false;
 
+						// Update some die status data
+						m_entity.onDieStatus.source = IEntity.Type.PLAYER;
+
 						// [AOC] Notify game!
 						Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, m_entity.reward);
 					}
