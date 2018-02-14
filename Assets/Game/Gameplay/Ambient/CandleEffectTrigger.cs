@@ -12,17 +12,17 @@ public class CandleEffectTrigger : MonoBehaviour {
 
     void OnTriggerEnter( Collider other)
 	{
-        if (other.CompareTag("Player"))
-        {
+//        if (other.CompareTag("PlayerGroun"))
+//        {
             Messenger.Broadcast<bool, HUDDarkZoneEffect.CandleData>(MessengerEvents.DARK_ZONE_TOGGLE, true, m_candleData);
-        }
+//        }
 	}
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
+//        if (other.CompareTag("Player"))
+//        {
             Messenger.Broadcast<bool, HUDDarkZoneEffect.CandleData>(MessengerEvents.DARK_ZONE_TOGGLE, false, m_candleData);
-        }
+//        }
     }
 
 }
