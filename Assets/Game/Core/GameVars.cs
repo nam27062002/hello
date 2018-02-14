@@ -34,8 +34,8 @@ public class GameVars : UbiBCN.SingletonMonoBehaviour<GameVars> {
 	}
 
 	[Comment("Screen to go first when loading the menu scene. Will be reset after applied.")]
-	[SerializeField] private MenuScreens m_menuInitialScreen = MenuScreens.NONE;
-	public static MenuScreens menuInitialScreen {
+	[SerializeField] private MenuScreen m_menuInitialScreen = MenuScreen.NONE;
+	public static MenuScreen menuInitialScreen {
 		get { return instance.m_menuInitialScreen; }
 		set { instance.m_menuInitialScreen = value; }
 	}

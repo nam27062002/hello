@@ -216,7 +216,7 @@ public class PhotoScreenController : MonoBehaviour {
 			} break;
 
 			case Mode.EGG_REWARD: {
-				MenuScreenScene scene3D = InstanceManager.menuSceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+				MenuScreenScene scene3D = InstanceManager.menuSceneController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
 				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
 				switch(currentReward.type) {
 					case Metagame.RewardPet.TYPE_CODE: {
@@ -277,7 +277,7 @@ public class PhotoScreenController : MonoBehaviour {
 				m_eggRewardIcon.gameObject.SetActive(true);
 
 				// Depends on reward type
-				MenuScreenScene scene3D = InstanceManager.menuSceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+				MenuScreenScene scene3D = InstanceManager.menuSceneController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
 				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
 				switch(currentReward.type) {
 					case Metagame.RewardPet.TYPE_CODE: {
@@ -325,14 +325,12 @@ public class PhotoScreenController : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.DRAGON: {
 				// Initialize with current dragon preview
-				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.PHOTO);
-				MenuDragonPreview dragonPreview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(menuController.selectedDragon);
-				currentMode.dragControl.target = dragonPreview.transform;
+				currentMode.dragControl.target = menuController.selectedDragonPreview.transform;
 			} break;
 
 			case Mode.EGG_REWARD: {
 				// Initialize with egg reward view
-				MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+				MenuScreenScene scene3D = menuController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
 				RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
 				currentMode.dragControl.target = sceneController.currentRewardSetup.view.transform;
 
@@ -342,9 +340,6 @@ public class PhotoScreenController : MonoBehaviour {
 				}
 			} break;
 		}
-
-		// Disable camera snap point so we're able to zoom!
-		menuController.screensController.currentCameraSnapPoint.enabled = false;
 
 		// Initialize zoom controller with main camera
 		currentMode.zoomControl.gameObject.SetActive(true);
@@ -360,13 +355,10 @@ public class PhotoScreenController : MonoBehaviour {
 		currentMode.dragControl.gameObject.SetActive(false);
 		currentMode.zoomControl.gameObject.SetActive(false);
 
-		// Re-enable camera snap point so we're able to zoom!
-		InstanceManager.menuSceneController.screensController.currentCameraSnapPoint.enabled = true;
-
 		// Restore rarity godrays!
 		if(m_mode == Mode.EGG_REWARD) {
 			MenuSceneController menuController = InstanceManager.menuSceneController;
-			MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+			MenuScreenScene scene3D = menuController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
 			RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
 			if(sceneController.currentRewardSetup.godrays != null) {
 				sceneController.currentRewardSetup.godrays.gameObject.SetActive(true);
