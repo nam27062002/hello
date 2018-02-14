@@ -83,9 +83,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		get { return InstanceManager.menuSceneController.currentScreen; }
 	}
 
-
+	// Internal
 	private Coroutine m_coroutine;
-
+	private bool m_animatorCheckOverride = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -102,6 +102,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 
+		// The animator must ask for permission before showing itself!
+		m_targetAnimator.OnShowCheck.AddListener(OnAnimatorCheck);
+
 		m_coroutine = null;
 	}
 
@@ -112,12 +115,12 @@ public class MenuShowConditionally : MonoBehaviour {
 		// Apply for the first time with current values and without animation
 		Apply(targetDragonSku, currentMenuScreen, false, false);
 	}
-	
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
 
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		Apply(targetDragonSku, currentMenuScreen, true, false);
 	}
 
 	/// <summary>
@@ -128,6 +131,8 @@ public class MenuShowConditionally : MonoBehaviour {
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
+
+		m_targetAnimator.OnShowCheck.RemoveListener(OnAnimatorCheck);
 	}
 
 	//------------------------------------------------------------------//
@@ -232,17 +237,19 @@ public class MenuShowConditionally : MonoBehaviour {
 			m_targetAnimator.ForceHide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
 
 			// Program the animation to the target state in sync with the dragon scroll animation (more or less)
-			if (m_coroutine != null) {
+			if(m_coroutine != null) {
 				StopCoroutine(m_coroutine);
 				m_coroutine = null;
 			}
 			m_coroutine = StartCoroutine(LaunchDelayedAnimation(_show, _useAnims));
 		} else {
-			if (m_coroutine != null) {
+			if(m_coroutine != null) {
 				StopCoroutine(m_coroutine);
 				m_coroutine = null;
 			}
+			m_animatorCheckOverride = true;
 			m_targetAnimator.ForceSet(_show, _useAnims);
+			m_animatorCheckOverride = false;
 		}
 	}
 
@@ -266,14 +273,18 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_sku">The sku of the newly selected dragon.</param>
 	public void OnDragonSelected(string _sku) {
 		// Ignore if component not enabled
-		if(!this.enabled) return;
+		if(!this.enabled) {
+			return;
+		}
 
 		// Just update visibility
-		Apply(
-			string.IsNullOrEmpty(m_targetDragonSku) ? _sku : m_targetDragonSku,	// MenuSceneController.selectedDragon is not necessarily updated yet
-			currentMenuScreen,
-			true, m_restartShowAnimation
-		);
+		if(m_checkSelectedDragon) {
+			Apply(
+				string.IsNullOrEmpty(m_targetDragonSku) ? _sku : m_targetDragonSku,	// MenuSceneController.selectedDragon is not necessarily updated yet
+				currentMenuScreen,
+				true, m_restartShowAnimation
+			);
+		}
 	}
 
 	/// <summary>
@@ -282,7 +293,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_data">The data of the acquired dragon.</param>
 	public void OnDragonAcquired(DragonData _data) {
 		// Ignore if component not enabled
-		if(!this.enabled) return;
+		if(!this.enabled) {
+			return;
+		}
 
 		// Is it our target dragon?
 		// It should be the selected dragon, but check anyway
@@ -291,7 +304,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		}
 
 		// Update visibility
-		Apply(targetDragonSku, currentMenuScreen, true, false);
+		if(m_checkSelectedDragon) {
+			Apply(targetDragonSku, currentMenuScreen, true, false);
+		}
 	}
 
 	/// <summary>
@@ -299,10 +314,14 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	public void OnScreenChanged(MenuScreen _from, MenuScreen _to) {
 		// Ignore if component not enabled
-		if(!this.enabled) return;
+		if(!this.enabled) {
+			return;
+		}
 
 		// Refresh
-		Apply(targetDragonSku, currentMenuScreen, true, false);
+		if(m_checkScreens) {
+			Apply(targetDragonSku, currentMenuScreen, true, false);
+		}
 	}
 
 	/// <summary>
@@ -316,9 +335,31 @@ public class MenuShowConditionally : MonoBehaviour {
 		yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
 
 		// Do it! (If still enabled!)
-		if(this.enabled) m_targetAnimator.ForceSet(_toShow, _useAnims);
+		if(this.enabled) {
+			m_animatorCheckOverride = true;
+			m_targetAnimator.ForceSet(_toShow, _useAnims);
+			m_animatorCheckOverride = false;
+		}
 
 		m_coroutine = null;
+	}
+
+	/// <summary>
+	/// An animator is checking whether it can be displayed.
+	/// </summary>
+	/// <param name="_anim">Animator asking for permission.</param>
+	private void OnAnimatorCheck(ShowHideAnimator _anim) {
+		// Skip if component is disabled
+		if(!this.enabled) return;
+
+		// If check overriden, we triggered the animation ourselves so let it go through
+		if(m_animatorCheckOverride) return;
+
+		// Check whether we can actualy trigger the animator
+		if(!Check(targetDragonSku, currentMenuScreen)) {
+			// Interrupt animation
+			_anim.SetCheckFailed();
+		}
 	}
 }
 
