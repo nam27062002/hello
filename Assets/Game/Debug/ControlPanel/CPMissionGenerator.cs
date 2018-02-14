@@ -32,7 +32,6 @@ public class CPMissionGenerator : MonoBehaviour {
 	[SerializeField] private TMP_Dropdown m_missionTypeDropdown = null;
 	[SerializeField] private TMP_Dropdown m_missionSkuDropdown = null;
 	[SerializeField] private Toggle m_singleRunToggle = null;
-	[SerializeField] private GameObject m_singleRunToggleContainer = null;
 	[SerializeField] private Button m_generateNewMissionButton = null;
 	[Space]
 	[SerializeField] private GameObject m_blocker = null;
@@ -159,11 +158,20 @@ public class CPMissionGenerator : MonoBehaviour {
 	private void RefreshSingleRun() {
 		if(!m_init) return;
 
-		// Based on seleected mission def
+		// Based on selected type def
 		DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, GetSelectedOption(m_missionTypeDropdown));
+		float singleRunChance = typeDef.GetAsFloat("singleRunChance");
 
-		// Show/hide the whole toggle group
-		m_singleRunToggleContainer.SetActive(typeDef != null && typeDef.GetAsBool("canBeDuringOneRun"));
+		// Don't allow toggling if chance is either 0% or 100%
+		if(singleRunChance <= 0f) {
+			m_singleRunToggle.isOn = false;
+			m_singleRunToggle.interactable = false;
+		} else if(singleRunChance >= 1f) {
+			m_singleRunToggle.isOn = true;
+			m_singleRunToggle.interactable = false;
+		} else {
+			m_singleRunToggle.interactable = true;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -271,7 +279,7 @@ public class CPMissionGenerator : MonoBehaviour {
 		DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, GetSelectedOption(m_missionTypeDropdown));
 		DefinitionNode missionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSIONS, GetSelectedOption(m_missionSkuDropdown));
 		string ownedDragonSku = GetSelectedOption(m_ownedDragonDropdown);
-		bool singleRun = m_singleRunToggleContainer.activeSelf && m_singleRunToggle.isOn;
+		bool singleRun = m_singleRunToggle.isOn;
 
 		// Validate them
 		if(typeDef == null || missionDef == null || string.IsNullOrEmpty(ownedDragonSku)) {
