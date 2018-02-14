@@ -21,10 +21,10 @@ public class MiscUtils {
 		Application.OpenURL("mailto:" + SUPPORT_EMAIL_ADDRESS + "?subject=" + mailSubject);// + "&body=" + body);
 	}
 
-	public static bool IsDeviceTablet()
+	public static bool IsDeviceTablet( float width, float height, float dpi )
     {
-        float screenWidth = Screen.width / Screen.dpi;
-        float screenHeight = Screen.height / Screen.dpi;
+        float screenWidth = width / dpi;
+        float screenHeight = height / dpi;
         float diagonalInches = Mathf.Sqrt(Mathf.Pow(screenWidth, 2) + Mathf.Pow(screenHeight, 2));
         return diagonalInches > 6.5f;
     }

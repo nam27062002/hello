@@ -272,18 +272,28 @@ public static class EditorUtils {
 	public static void FocusObject(UnityEngine.Object _obj, bool _select = true, bool _focusScene = true, bool _ping = true) {
 		if(_select || _focusScene || _ping) Selection.activeObject = _obj;	// In order to ping/frame the object, it must be selected first
 		if(_ping) EditorGUIUtility.PingObject(_obj);
-		if(_focusScene) {
-			// Find the best scene view
-			SceneView sceneView = SceneView.lastActiveSceneView;
-			if(sceneView == null && SceneView.sceneViews.Count > 0) {
-				sceneView = SceneView.sceneViews[0] as SceneView;
-			}
+		if(_focusScene) FocusWorldPosition(Selection.activeGameObject.transform.position, false);
+	}
 
-			// If a SceneView couldn't be found, skip focusing
-			if(sceneView != null && sceneView.camera != null) {
-				// [AOC] The framing changes the camera zooming, which results quite annoying - use LookAt method instead ^______^
-				//sceneView.FrameSelected();
-				sceneView.LookAt(Selection.activeGameObject.transform.position);
+	/// <summary>
+	/// Focus current scene to the target world position.
+	/// </summary>
+	/// <param name="_worldPos">World position to be focused.</param>
+	/// <param name="_zoom">Whether to try to adjust zoom as well or not.</param> 
+	public static void FocusWorldPosition(Vector3 _worldPos, bool _zoom) {
+		// Find the best scene view
+		SceneView sceneView = SceneView.lastActiveSceneView;
+		if(sceneView == null && SceneView.sceneViews.Count > 0) {
+			sceneView = SceneView.sceneViews[0] as SceneView;
+		}
+
+		// If a SceneView couldn't be found, skip focusing
+		if(sceneView != null && sceneView.camera != null) {
+			// [AOC] The framing changes the camera zooming, which can result quite annoying - use LookAt method instead ^______^
+			if(_zoom) {
+				sceneView.FrameSelected();
+			} else {
+				sceneView.LookAt(_worldPos);
 			}
 		}
 	}

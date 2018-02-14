@@ -71,6 +71,9 @@ public class FeatureSettings
     // This key decides whether or not the feedback particles (score spawned when eating,...) are enabled
     public const string KEY_PARTICLES_FEEDBACK = "particlesFeedback";
 
+    // The ket decides if pets rigidbody interpolates
+	public const string KEY_PET_INTERPOLATES = "petRigidbodyInterpolate";
+
     // This key decides the quality level used in the particles manager
     public const string MAX_ZOOM_COST = "max_zoom_cost";
 
@@ -216,6 +219,10 @@ public class FeatureSettings
 
             // particles feedback
             key = KEY_PARTICLES_FEEDBACK;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+			key = KEY_PET_INTERPOLATES;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 

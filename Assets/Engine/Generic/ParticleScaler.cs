@@ -27,10 +27,14 @@ public class ParticleScaler : MonoBehaviour
 		START,
 		ENABLE,
 		AFTER_ENABLE,
-		MANUALLY
+		MANUALLY,
+		ALWAYS	// Use carefully!!
 	}
 	[Space]
 	public WhenScale m_whenScale;
+
+	// Internal
+	ParticleSystem.Particle[] m_particlesBuffer;	// [AOC] Prevent constant memory allocation by having a buffer to perform particle by particle operations
 
 
 	protected class PSDataRegistry
@@ -93,6 +97,17 @@ public class ParticleScaler : MonoBehaviour
 	{
 		if ( m_whenScale == WhenScale.START )
 			DoScale();
+	}
+
+	private void Update() {
+		if(m_whenScale == WhenScale.ALWAYS) {
+			DoScale();
+		}
+	}
+
+	public void ReloadOriginalData() {
+		m_originalData.Clear();
+		SaveOriginalData();
 	}
 
 	void SaveOriginalData()
@@ -295,7 +310,8 @@ public class ParticleScaler : MonoBehaviour
             		}break;
             	}
             }
-            mainModule.gravityModifierMultiplier = data.m_gravityModifierMultiplier;
+            
+			mainModule.gravityModifierMultiplier = data.m_gravityModifierMultiplier;
             mainModule.startSpeedMultiplier = data.m_startSpeedMultiplier;
             mainModule.startLifetimeMultiplier = data.m_startLifetimeMultiplier;
 
@@ -442,22 +458,22 @@ public class ParticleScaler : MonoBehaviour
 		if ( m_scaleAllChildren )
 		{
 			foreach(PSDataRegistry pdata in m_originalData )
-				ScaleParticle( pdata, scale );
+				ScalePS( pdata, scale );
 		}
 		else
 		{
-			ScaleParticle( m_originalData[0], scale );
+			ScalePS( m_originalData[0], scale );
 		}
 
 	}
 	
-	void ScaleParticle(PSDataRegistry data, float scale)
+	void ScalePS(PSDataRegistry data, float scale)
 	{
         if (data.m_psystem != null)
         {
-            ParticleSystem ps = data.m_psystem;
+			ParticleSystem ps = data.m_psystem;
 
-            ParticleSystem.MainModule mainModule = ps.main;
+			ParticleSystem.MainModule mainModule = ps.main;
             if (mainModule.startSize3D)
             {
                 mainModule.startSizeXMultiplier *= scale;
@@ -578,6 +594,16 @@ public class ParticleScaler : MonoBehaviour
             forceOverLifetime.xMultiplier *= scale;
             forceOverLifetime.yMultiplier *= scale;
             forceOverLifetime.zMultiplier *= scale;
+
+			// Apply to already spawned particles as well!
+			if(m_particlesBuffer == null || m_particlesBuffer.Length < ps.main.maxParticles) {
+				m_particlesBuffer = new ParticleSystem.Particle[ps.main.maxParticles];
+			}
+			int particleCount = ps.GetParticles(m_particlesBuffer);
+			for(int i = 0; i < particleCount; ++i) {
+				ApplySystemToParticle(ref m_particlesBuffer[i], ps);
+			}
+			ps.SetParticles(m_particlesBuffer, particleCount);
         }
         else if (data.m_cpsystem != null)
         {
@@ -589,5 +615,38 @@ public class ParticleScaler : MonoBehaviour
             cps.m_VelY = data.m_VelY * scale;
             cps.m_VelZ = data.m_VelZ * scale;
         }
-    }	
+    }
+
+	private void ApplySystemToParticle(ref ParticleSystem.Particle _p, ParticleSystem _ps) {
+		// Find out particle spawn time to re-evaluate its start values using the given system's data
+		float elapsedLifetime = _p.startLifetime - _p.remainingLifetime;
+		float spawnDelta = (_ps.time - elapsedLifetime)/_ps.main.duration;
+
+		// Size
+		ParticleSystem.MainModule mainModule = _ps.main;
+		if(mainModule.startSize3D) {
+			_p.startSize3D = new Vector3(
+				mainModule.startSizeX.Evaluate(spawnDelta),
+				mainModule.startSizeY.Evaluate(spawnDelta),
+				mainModule.startSizeZ.Evaluate(spawnDelta)
+			);
+		} else {
+			_p.startSize = mainModule.startSize.Evaluate(spawnDelta);
+		}
+
+		// Lifetime
+		if(m_scaleLifetime) {
+			_p.startLifetime = mainModule.startLifetime.Evaluate(spawnDelta);
+		}
+
+		// TODO!! Modify rest of properties
+		/*
+		_p.angularVelocity;
+		_p.angularVelocity3D;
+		_p.position;
+		_p.rotation;
+		_p.rotation3D;
+		_p.velocity;
+		*/
+	}
 }

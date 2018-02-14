@@ -33,6 +33,7 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 	[SerializeField] private PathFollower m_cameraPath = null;
 	public PathFollower cameraPath { get { return m_cameraPath; }}
 
+	[Tooltip("Optional")]
 	[SerializeField] private PathFollower m_lookAtPath = null;
 	public PathFollower lookAtPath { get { return m_lookAtPath; }}
 
@@ -59,7 +60,7 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 		}
 		set {
 			m_cameraPath.delta = value;
-			m_lookAtPath.delta = value;
+			if(m_lookAtPath != null) m_lookAtPath.delta = value;
 		}
 	}
 
@@ -69,7 +70,7 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 		}
 		set {
 			m_cameraPath.snapPoint = value;
-			m_lookAtPath.snapPoint = value;
+			if(m_lookAtPath != null) m_lookAtPath.snapPoint = value;
 		}
 	}
 
@@ -90,7 +91,6 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 	private void Awake() {
 		// Check required fields
 		Debug.Assert(m_cameraPath != null, "Required field");
-		Debug.Assert(m_lookAtPath != null, "Required field");
 	}
 
 	/// <summary>
@@ -137,7 +137,7 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 
 		// Just let the paths manage it
 		m_cameraPath.GoTo(_delta, duration, m_animEase);
-		m_lookAtPath.GoTo(_delta, duration, m_animEase);
+		if(m_lookAtPath != null) m_lookAtPath.GoTo(_delta, duration, m_animEase);
 	}
 
 
@@ -161,9 +161,8 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 		float duration = m_animSpeed.Lerp(delta);
 
 		// Just let the paths manage it
-		float targetDelta = 0f;
-		targetDelta = m_cameraPath.SnapTo(_snapPoint, duration, m_animEase);
-		m_lookAtPath.SnapTo(_snapPoint, duration, m_animEase);
+		float targetDelta = m_cameraPath.SnapTo(_snapPoint, duration, m_animEase);
+		if(m_lookAtPath != null) m_lookAtPath.SnapTo(_snapPoint, duration, m_animEase);
 		return targetDelta;
 	}
 

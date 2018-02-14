@@ -235,7 +235,7 @@ public class PopupCredits : MonoBehaviour {
 
 		// Menu
 		// Don't use animator, some things might break
-		InstanceManager.menuSceneController.screensController.currentScreen.gameObject.SetActive(false);
+		InstanceManager.menuSceneController.transitionManager.currentScreenData.ui.gameObject.SetActive(false);
 
 		// Popups
 		m_popupsToRestore = PopupManager.openedPopups;
@@ -276,7 +276,7 @@ public class PopupCredits : MonoBehaviour {
 
 		// Menu
 		// Don't use animator, some things might break
-		InstanceManager.menuSceneController.screensController.currentScreen.gameObject.SetActive(true);
+		InstanceManager.menuSceneController.transitionManager.currentScreenData.ui.gameObject.SetActive(true);
 
 		// Popups
 		for(int i = 0; i < m_popupsToRestore.Count; ++i) {
