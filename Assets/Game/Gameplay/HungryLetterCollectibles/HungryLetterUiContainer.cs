@@ -17,7 +17,7 @@ public class HungryLetterUiContainer : MonoBehaviour
 	private GameObject m_letterMoverPrefab;
 
 	[SerializeField]
-	private string m_onGoToPanelSound;
+	private string m_onGoToPanelSound = "hd_letter_whoosh";
 
 	//------------------------------------------------------------
 	// Private Variables:
