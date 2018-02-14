@@ -18,6 +18,8 @@ namespace AI {
 		[SerializeField] private bool m_avoidWater = false;
 		public override bool avoidWater { get { return m_avoidWater; } set { m_avoidWater = value; } }
 
+		[SerializeField] private float m_avoidCollisionsFactor = 10f;
+
 		private uint m_collisionCheckPool; // each prey will detect collisions at different frames
 		protected float m_collisionAvoidFactor;
 		protected Vector3 m_collisionNormal;
@@ -128,7 +130,7 @@ namespace AI {
 					// check near collisions 7
 					if (m_avoidCollisions || m_avoidWater) {
 						AvoidCollisions();
-						m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
+					//	m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					}
 
 					if (IsActionPressed(Action.Avoid)) {
@@ -175,22 +177,35 @@ namespace AI {
 				}
 
 				if (isInsideWater) {
-					m_collisionAvoidFactor = 15f;
+					m_collisionAvoidFactor = m_avoidCollisionsFactor * 1.5f;
 					m_collisionNormal = GameConstants.Vector3.up;
 					m_collisionNormal.z = 0f;
 				} else if (Physics.Linecast(m_machine.position, m_machine.position + (m_direction * distanceCheck), out ground, layerMask)) {
 					// 2- calc a big force to move away from the ground	
-					m_collisionAvoidFactor = (distanceCheck / ground.distance) * 10f;
+					m_collisionAvoidFactor = (distanceCheck / ground.distance) * m_avoidCollisionsFactor;
 					m_collisionNormal = ground.normal;
 					m_collisionNormal.z = 0f;
 				} else {
-					m_collisionAvoidFactor *= 0.75f;
+					m_collisionAvoidFactor *= 0.5f;
 				}
 			}
 
-			if (m_collisionAvoidFactor > 1f) {				
-				m_impulse /= m_collisionAvoidFactor;
-				m_impulse += (m_collisionNormal * m_collisionAvoidFactor);
+			if (m_collisionAvoidFactor > 1f) {
+				float dot = Vector3.Dot(m_impulse.normalized, m_collisionNormal);
+				if (dot <= DOT_START) {
+					m_perpendicularAvoid = true;
+				} else if (dot > DOT_END) {
+					m_perpendicularAvoid = false;
+				}
+
+				if (m_perpendicularAvoid) {
+					m_impulse.x = -m_impulse.y;
+					m_impulse.y = m_impulse.x;
+					m_impulse.z = m_impulse.z;
+				} else {
+					m_impulse /= m_collisionAvoidFactor;
+					m_impulse += (m_collisionNormal * m_collisionAvoidFactor);
+				}
 
 				#if UNITY_EDITOR
 				Debug.DrawLine(m_machine.position, m_machine.position + (m_collisionNormal * m_collisionAvoidFactor), Color.gray);
