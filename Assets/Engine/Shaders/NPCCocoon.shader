@@ -51,15 +51,15 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
-			#if LOW_DETAIL_ON
+			#ifdef LOW_DETAIL_ON
 //			#define SPECULAR
 			#endif
 
-			#if MEDIUM_DETAIL_ON
+			#ifdef MEDIUM_DETAIL_ON
 			#define SPECMASK
 			#endif
 
-			#if HI_DETAIL_ON
+			#ifdef HI_DETAIL_ON
 			#define SPECMASK
 			#endif
 
