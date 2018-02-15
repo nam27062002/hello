@@ -43,6 +43,18 @@ public class AOCQuickTestEditor : Editor {
 			targetTest.OnTestButton();
 		}
 
+		if(GUILayout.Button("0 -> 1", GUILayout.Height(50))) {
+			targetTest.OnTestButton2();
+		}
+
+		if(GUILayout.Button("1 -> 0", GUILayout.Height(50))) {
+			targetTest.OnTestButton3();
+		}
+
+		if(GUILayout.Button("INTERRUPT", GUILayout.Height(50))) {
+			targetTest.OnTestButton4();
+		}
+
 		EditorGUILayout.Space();
 		if(GUILayout.Button("CHECK BUILD SCENES", GUILayout.Height(50))) {
 			EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;

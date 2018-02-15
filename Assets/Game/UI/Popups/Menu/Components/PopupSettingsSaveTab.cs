@@ -374,11 +374,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     break;
                 
                 case EState.NeverLoggedIn:
-                    m_userNotLoggedInRoot.SetActive(true);                    
-                    m_userNotLoggedInRewardText.gameObject.SetActive(true);
-                    PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
-                    m_userNotLoggedInMessageText.gameObject.SetActive(true);
-                    m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
+                    if (FeatureSettingsManager.instance.IsIncentivisedLoginEnabled())
+                    {
+                        m_userNotLoggedInRoot.SetActive(true);
+                        m_userNotLoggedInRewardText.gameObject.SetActive(true);
+                        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
+                        m_userNotLoggedInMessageText.gameObject.SetActive(true);
+                        m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
+                    }
                     break;
 
                     /*

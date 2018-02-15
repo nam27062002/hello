@@ -15,6 +15,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private enum Step {
 		INIT = 0,
 		INTRO,
+		DIDNT_CONTRIBUTE,	// When the player didn't contribute to the global event
 		GLOBAL_REWARD,		// As much times as needed
 		NO_GLOBAL_REWARD,	// When the global score hasn't reached the threshold for the minimum reward, show a special screen
 		TOP_REWARD_INTRO,	// When the player has been classified for the top reward
@@ -27,6 +28,7 @@ public class EventRewardScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Step screens
 	[SerializeField] private ShowHideAnimator m_introScreen = null;
+	[SerializeField] private ShowHideAnimator m_didntContribute = null;
 	[SerializeField] private ShowHideAnimator m_globalRewardScreen = null;
 	[SerializeField] private ShowHideAnimator m_noGlobalRewardScreen = null;
 	[SerializeField] private ShowHideAnimator m_topRewardIntroScreen = null;
@@ -61,8 +63,8 @@ public class EventRewardScreen : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events.
-		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	/// <summary>
@@ -84,8 +86,8 @@ public class EventRewardScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	//------------------------------------------------------------------//
@@ -164,7 +166,7 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_sceneController == null) {
 			MenuSceneController sceneController = InstanceManager.menuSceneController;
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
-			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.EVENT_REWARD);
+			MenuScreenScene menuScene = sceneController.GetScreenData(MenuScreen.EVENT_REWARD).scene3d;
 			if (menuScene != null) {
 				// Get scene controller and initialize
 				m_sceneController = menuScene.GetComponent<RewardSceneController>();
@@ -188,6 +190,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private ShowHideAnimator GetScreen(Step _step) {
 		switch(_step) {
 			case Step.INTRO:			return m_introScreen;			break;
+			case Step.DIDNT_CONTRIBUTE: return m_didntContribute;		break;
 			case Step.GLOBAL_REWARD:	return m_globalRewardScreen;	break;
 			case Step.NO_GLOBAL_REWARD:	return m_noGlobalRewardScreen;	break;
 			case Step.TOP_REWARD_INTRO: return m_topRewardIntroScreen;	break;
@@ -218,13 +221,19 @@ public class EventRewardScreen : MonoBehaviour {
 		switch(m_step) {
 			case Step.INTRO: {
 				// Do we have global rewards?
-				if(m_event.rewardLevel > 0) {
+
+				GlobalEventUserData userData = UsersManager.currentUser.GetGlobalEventData( m_event.id );
+				if ( userData != null && userData.score <= 0){
+					nextStep = Step.DIDNT_CONTRIBUTE;
+				}else if(m_event.rewardLevel > 0) {
 					nextStep = Step.GLOBAL_REWARD;
 				} else {
 					nextStep = Step.NO_GLOBAL_REWARD;
 				}
 			} break;
-
+			case Step.DIDNT_CONTRIBUTE:{
+				nextStep = Step.FINISH;
+			}break;
 			case Step.GLOBAL_REWARD: {
 				// There are still rewards to collect?
 				if(m_givenGlobalRewards < m_event.rewardLevel) {
@@ -316,6 +325,21 @@ public class EventRewardScreen : MonoBehaviour {
 				);
 			} break;
 
+			case Step.DIDNT_CONTRIBUTE: {
+				// Clear 3D scene
+				m_sceneController.Clear();
+
+				// Restore tap to continue after some delay
+				UbiBCN.CoroutineManager.DelayedCall(
+					() => { 
+						m_state = State.IDLE;
+						m_tapToContinue.Show(); 
+					}, 
+					0.5f
+				);
+			} break;
+
+
 			case Step.TOP_REWARD_INTRO: {
 				// Clear 3D scene
 				m_sceneController.Clear();
@@ -354,7 +378,7 @@ public class EventRewardScreen : MonoBehaviour {
 				PersistenceFacade.instance.Save_Request();
 
 				// Go back to main screen
-				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_SELECTION);
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;
 		}
 
@@ -423,9 +447,9 @@ public class EventRewardScreen : MonoBehaviour {
 	/// </summary>
 	/// <param name="_from">Screen we come from.</param>
 	/// <param name="_to">Screen we're going to.</param>
-	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
 		// Leaving this screen
-		if(_from == MenuScreens.EVENT_REWARD && _to != MenuScreens.EVENT_REWARD) {
+		if(_from == MenuScreen.EVENT_REWARD && _to != MenuScreen.EVENT_REWARD) {
 			// Launch all the hide animations that are not automated
 			// Restore HUD
 			InstanceManager.menuSceneController.hud.animator.Show();
@@ -434,24 +458,24 @@ public class EventRewardScreen : MonoBehaviour {
 			m_rewardDragController.gameObject.SetActive(false);
 
 			// Put photo screen back in dragon mode and restore overriden setup
-			if(_to != MenuScreens.PHOTO) {
+			if(_to != MenuScreen.PHOTO) {
 				// Only if not going into it!
-				PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PHOTO).GetComponent<PhotoScreenController>();
+				PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).ui.GetComponent<PhotoScreenController>();
 				photoScreen.mode = PhotoScreenController.Mode.DRAGON;
 			}
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
-		if(_to == MenuScreens.EVENT_REWARD) {
+		if(_to == MenuScreen.EVENT_REWARD) {
 			// Hide HUD!
 			InstanceManager.menuSceneController.hud.animator.Hide();
 
 			// Put photo screen in EggReward mode and override some setup
-			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PHOTO).GetComponent<PhotoScreenController>();
+			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).ui.GetComponent<PhotoScreenController>();
 			photoScreen.mode = PhotoScreenController.Mode.EGG_REWARD;
 
 			// Special stuff if coming back from the photo screen
-			if(_from == MenuScreens.PHOTO) {
+			if(_from == MenuScreen.PHOTO) {
 				// Restore photo button
 				InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>().Show();
 			}
@@ -463,9 +487,9 @@ public class EventRewardScreen : MonoBehaviour {
 	/// </summary>
 	/// <param name="_from">Screen we come from.</param>
 	/// <param name="_to">Screen we're going to.</param>
-	private void OnMenuScreenTransitionEnd(MenuScreens _from, MenuScreens _to) {
+	private void OnMenuScreenTransitionEnd(MenuScreen _from, MenuScreen _to) {
 		// Entering this screen
-		if(_to == MenuScreens.EVENT_REWARD) {
+		if(_to == MenuScreen.EVENT_REWARD) {
 			// Enable drag control
 			m_rewardDragController.gameObject.SetActive(m_rewardDragController.target != null);
 		}
