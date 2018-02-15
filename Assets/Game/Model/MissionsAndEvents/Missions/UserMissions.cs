@@ -262,7 +262,7 @@ public class UserMissions {
 		}
 
 		// 5. If mission type supports single run mode, choose randomly whether to use it or not
-		bool singleRun = UnityEngine.Random.value < selectedTypeDef.GetAsFloat("singleRunChance");
+		bool singleRun = UnityEngine.Random.value < selectedMissionDef.GetAsFloat("singleRunChance");
 		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
 
 		// 6. All ready! Generate the mission!

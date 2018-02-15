@@ -158,9 +158,9 @@ public class CPMissionGenerator : MonoBehaviour {
 	private void RefreshSingleRun() {
 		if(!m_init) return;
 
-		// Based on selected type def
-		DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, GetSelectedOption(m_missionTypeDropdown));
-		float singleRunChance = typeDef.GetAsFloat("singleRunChance");
+		// Based on selected mission def
+		DefinitionNode missionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSIONS, GetSelectedOption(m_missionSkuDropdown));
+		float singleRunChance = missionDef == null ? 0.5f : missionDef.GetAsFloat("singleRunChance");
 
 		// Don't allow toggling if chance is either 0% or 100%
 		if(singleRunChance <= 0f) {
@@ -267,7 +267,8 @@ public class CPMissionGenerator : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newValueIdx">Index of the new selected option in the dropdown.</param>
 	public void OnSkuChanged(int _newValueIdx) {
-		// Nothing to do
+		// Refresh single run
+		RefreshSingleRun();
 	}
 
 	/// <summary>
