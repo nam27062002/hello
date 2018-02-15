@@ -161,8 +161,8 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         if (m_enableState)
         {
             //        Debug.Log("track ahead vector: " + m_gameCamera.m_trackAheadVector);
-            Vector3 offset = m_camera.WorldToViewportPoint(InstanceManager.player.transform.position);
-            m_candleMaterial.SetVector("_Offset", offset);
+//            Vector3 offset = m_camera.WorldToViewportPoint(InstanceManager.player.transform.position);
+//            m_candleMaterial.SetVector("_Offset", offset);
 
             if (Time.time < m_transitionTime)
             {
