@@ -63,7 +63,7 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 			#define SPECMASK
 			#endif
 
-			#define SPECMASK
+//			#define SPECMASK
 			#define VERTEX_ANIMATION
 			#define AMBIENTCOLOR
 //			#define TINT
