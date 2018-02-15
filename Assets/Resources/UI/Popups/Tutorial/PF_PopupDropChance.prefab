@@ -70,9 +70,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224000011409159718}
+  - component: {fileID: 114218292669803758}
   - component: {fileID: 95000010177209822}
   - component: {fileID: 114000013051864216}
-  - component: {fileID: 114234570942939274}
   - component: {fileID: 225000011566683882}
   - component: {fileID: 114955928169016000}
   - component: {fileID: 114474695288423008}
@@ -145,7 +145,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224755294888701272}
   - component: {fileID: 222125377869926536}
-  - component: {fileID: 114747641595394118}
   - component: {fileID: 114296858611509650}
   m_Layer: 5
   m_Name: Value
@@ -215,7 +214,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224152845161025706}
   - component: {fileID: 222608163466507994}
-  - component: {fileID: 114418009414653048}
   - component: {fileID: 114607073686165102}
   m_Layer: 5
   m_Name: Value
@@ -469,7 +467,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224959903860429868}
   - component: {fileID: 222228853779710986}
-  - component: {fileID: 114525086221630730}
   - component: {fileID: 114541709909744218}
   m_Layer: 5
   m_Name: Value
@@ -642,17 +639,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: hd_popup_open
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114234570942939274}
-        m_MethodName: OnShowPreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
@@ -930,6 +916,27 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114218292669803758
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012699222212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90af308b02a454c098330e8fd20f3623, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_rarityInfos:
+  - rarity: 0
+    messageText: {fileID: 114794201095341524}
+    chanceText: {fileID: 114296858611509650}
+  - rarity: 1
+    messageText: {fileID: 114426476437636858}
+    chanceText: {fileID: 114607073686165102}
+  - rarity: 2
+    messageText: {fileID: 114958109431675204}
+    chanceText: {fileID: 114541709909744218}
 --- !u!114 &114228758078533774
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -957,17 +964,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114234570942939274
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012699222212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc6f65ef91c56400fa3d51357c403951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114252009979823208
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1057,7 +1053,7 @@ MonoBehaviour:
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 44
+  m_fontSizeMin: 36
   m_fontSizeMax: 50
   m_fontStyle: 0
   m_textAlignment: 513
@@ -1068,7 +1064,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 3
   m_firstOverflowCharacterIndex: -1
@@ -1337,20 +1333,6 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
---- !u!114 &114418009414653048
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1189953178125206}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114426476437636858
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1509,21 +1491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_EGG_CHANCE_TITLE
-  m_caseType: 0
-  m_replacements: []
---- !u!114 &114525086221630730
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1680150150067618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
+  m_tid: TID_DROP_CHANCE_TITLE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114530033300076016
@@ -1576,7 +1544,7 @@ MonoBehaviour:
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 44
+  m_fontSizeMin: 36
   m_fontSizeMax: 50
   m_fontStyle: 0
   m_textAlignment: 513
@@ -1587,7 +1555,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 3
   m_firstOverflowCharacterIndex: -1
@@ -2052,20 +2020,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114747641595394118
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1048759407217438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114748303350904684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2165,7 +2119,7 @@ MonoBehaviour:
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 44
+  m_fontSizeMin: 36
   m_fontSizeMax: 50
   m_fontStyle: 0
   m_textAlignment: 513
@@ -2176,7 +2130,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 3
   m_firstOverflowCharacterIndex: -1
@@ -2284,9 +2238,9 @@ MonoBehaviour:
   m_fontSize: 75
   m_fontSizeBase: 75
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 36
-  m_fontSizeMax: 60
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 50
+  m_fontSizeMax: 75
   m_fontStyle: 0
   m_textAlignment: 4098
   m_isAlignmentEnumConverted: 1
@@ -2382,7 +2336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_RARITY_EPIC
+  m_tid: TID_EGG_CHANCE_EPIC
   m_caseType: 0
   m_replacements: []
 --- !u!222 &222000011362913320
@@ -2717,7 +2671,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 600, y: 0}
+  m_SizeDelta: {x: 630, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224135153515293718
 RectTransform:
@@ -2773,7 +2727,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 145.69666, y: 0}
+  m_SizeDelta: {x: 130, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224166617880586456
 RectTransform:
@@ -2922,7 +2876,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 600, y: 0}
+  m_SizeDelta: {x: 630, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224488290929557508
 RectTransform:
@@ -2940,7 +2894,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 600, y: 0}
+  m_SizeDelta: {x: 630, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224509890031190082
 RectTransform:
@@ -3053,7 +3007,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 145.69666, y: 0}
+  m_SizeDelta: {x: 130, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224767167837784970
 RectTransform:
@@ -3165,7 +3119,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 145.69666, y: 0}
+  m_SizeDelta: {x: 130, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &225000011279055338
 CanvasGroup:
