@@ -92,11 +92,9 @@ public class TrackerEatDizzy : TrackerBase {
 					currentValue++;
 				} else {
 					// Is it one of the target types?
-					if(prey != null) {
-						if(m_targetSkus.Contains(prey.sku)) {
-							// Found!
-							currentValue++;
-						}
+					if(m_targetSkus.Contains(prey.sku)) {
+						// Found!
+						currentValue++;
 					}
 				}
 			}

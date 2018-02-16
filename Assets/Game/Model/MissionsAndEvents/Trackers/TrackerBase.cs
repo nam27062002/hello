@@ -181,7 +181,6 @@ public class TrackerBase {
 			case "buy_skins":		return new TrackerBuySkins();
 			case "daily_chest":		return new TrackerDailyChests();
 			case "kill_chain":		return new TrackerKillChain(_params);
-
 			case "critical_time":	return new TrackerCriticalTime();
 			case "eat_dizzy":		return new TrackerEatDizzy(_params);
 			// new missions TODO
