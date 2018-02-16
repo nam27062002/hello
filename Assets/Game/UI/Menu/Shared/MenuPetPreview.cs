@@ -39,10 +39,6 @@ public class MenuPetPreview : MonoBehaviour {
 
 	private const string RARITY_GLOW_PREFAB_PATH = "UI/Menu/Pets/PF_PetRarityGlow_";	// Attach rarity sku to it
 
-//    private static readonly Color EPIC_COLOR = new Color(255.0f / 255.0f, 237.0f / 255.0f, 0.0f / 255.0f);
-//    private static readonly Color RARE_COLOR = new Color(2.0f / 255.0f, 240.0f / 255.0f, 13.0f / 255.0f);
-//    private static readonly Color SPECIAL_COLOR = new Color(255.0f / 255.0f, 153.0f / 255.0f, 0.0f / 255.0f);
-
     //------------------------------------------------------------------//
     // MEMBERS															//
     //------------------------------------------------------------------//
@@ -73,7 +69,7 @@ public class MenuPetPreview : MonoBehaviour {
 		m_animator = GetComponentInChildren<Animator>();
         m_renderers = GetComponentsInChildren<Renderer>();
 
-		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
     void setFresnelColor(Color col)
@@ -96,7 +92,7 @@ public class MenuPetPreview : MonoBehaviour {
 			m_rarityGlowShowHideTween = null;
 		}
 
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>
@@ -131,11 +127,9 @@ public class MenuPetPreview : MonoBehaviour {
 
 				// Create new instance - use root node if available so the glow follows the pet's animation
 				m_rarityGlow = GameObject.Instantiate<GameObject>(glowPrefab);
-				if(rootNode != null) {
-					m_rarityGlow.transform.SetParent(rootNode, false);
-				} else {
-					m_rarityGlow.transform.SetParent(this.transform, false);
-				}
+				Transform parent = (rootNode != null) ? rootNode : this.transform;
+				m_rarityGlow.transform.SetParent(parent, false);
+				m_rarityGlow.gameObject.SetLayerRecursively(parent.gameObject.layer);
 
 				// Create show/hide animator
 			/*	m_rarityGlowShowHideTween = m_rarityGlow.transform
@@ -155,24 +149,22 @@ public class MenuPetPreview : MonoBehaviour {
 				m_rarityGlow.SetActive(true);
 			}*/
 
-            foreach (Renderer rend in m_renderers)
+			// [AOC] PETS!!
+            /*foreach (Renderer rend in m_renderers)
             {
                 rend.material.renderQueue = 3060;   //Draw pet just after particle glow effect
-            }
+            }*/
 
             if (rarity == "epic")
             {
-//                setFresnelColor(EPIC_COLOR);
                 setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.EPIC]);
             }
             else if (rarity == "rare")
             {
-//                setFresnelColor(RARE_COLOR);
                 setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.RARE]);
             }
             else if (rarity == "special")
             {
-//                setFresnelColor(SPECIAL_COLOR);
                 setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.SPECIAL]);
             }
 
@@ -196,8 +188,8 @@ public class MenuPetPreview : MonoBehaviour {
 		}
 	}
 
-	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {		
-		ToggleRarityGlow(_to == MenuScreens.PETS);
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {		
+		ToggleRarityGlow(_to == MenuScreen.PETS);
 	}
 }
 

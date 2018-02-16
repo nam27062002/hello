@@ -67,37 +67,19 @@ public class SelectableButtonGroup : MonoBehaviour {
 		SelectButton(m_initialSelectedIdx);
 	}
 
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		
-	}
-
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the button at specific index.
+	/// </summary>
+	/// <returns>The button.</returns>
+	/// <param name="_buttonIdx">Button index.</param>
+	public SelectableButton GetButton(int _buttonIdx) {
+		if(_buttonIdx < 0 || _buttonIdx >= m_buttons.Count) return null;
+		return m_buttons[_buttonIdx];
+	}
+
 	/// <summary>
 	/// Select the target button.
 	/// Triggers OnSelectionChanged event.
