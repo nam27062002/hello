@@ -87,7 +87,7 @@ public class TrackerDestroy : TrackerBase {
 	/// <param name="_reward">The reward given.</param>
 	private void OnDestroy(Transform _entity, Reward _reward) {
 		IEntity prey = _entity.GetComponent<IEntity>();
-		if (prey != null && prey.onDieStatus.source == IEntity.Type.PLAYER){
+		if (prey != null && (prey.onDieStatus.source == IEntity.Type.PLAYER || prey.onDieStatus.source == IEntity.Type.PET)){
 			// Count automatically if we don't have any type filter
 			if(m_targetSkus.Count == 0) {
 				currentValue++;
