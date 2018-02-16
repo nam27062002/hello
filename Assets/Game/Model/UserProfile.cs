@@ -231,6 +231,13 @@ public class UserProfile : UserPersistenceSystem
 		set{ m_incubatingEgg = value;}
 	}
 
+	private long m_incubationTimeReference;
+	public long incubationTimeReference
+	{
+		get{ return m_incubationTimeReference; }
+		set{ m_incubationTimeReference = value;}
+	}
+
 	private DateTime m_incubationEndTimestamp;
 	public DateTime incubationEndTimestamp
 	{
@@ -423,6 +430,7 @@ public class UserProfile : UserPersistenceSystem
 
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
+        m_incubationTimeReference = 0;
         m_incubationEndTimestamp = DateTime.MinValue;
         eggsCollected = 0;
         m_goldenEggsCollected = 0;
@@ -1013,6 +1021,12 @@ public class UserProfile : UserPersistenceSystem
 			m_incubatingEgg.Load(_data["incubatingEgg"]);
 		}
 
+		if ( _data.ContainsKey("incubationTimeReference") ){
+			m_incubationTimeReference = _data["incubationTimeReference"].AsLong;
+		}else{
+			m_incubationTimeReference = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+		}
+
 		// Incubator timer
 		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
 
@@ -1167,6 +1181,9 @@ public class UserProfile : UserPersistenceSystem
 		{
 			data.Add("incubatingEgg", m_incubatingEgg.Save());
 		}
+
+		// Incubation Time Reference
+		data.Add( "incubationTimeReference", m_incubationTimeReference );
 
 		// Incubator timer
 		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
