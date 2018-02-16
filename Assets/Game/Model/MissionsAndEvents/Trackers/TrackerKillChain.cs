@@ -92,15 +92,19 @@ public class TrackerKillChain : TrackerBase {
 		if(m_targetSkus.Count == 0) {
 			currentValue++;
 		} else {
-			// Is it one of the target types?
+			// Valid entity?
 			IEntity prey = _entity.GetComponent<IEntity>();
-			if(prey != null && prey.onDieStatus.source == IEntity.Type.PLAYER) {	// Only entities eaten by the player!
-				if(m_targetSkus.Contains(prey.sku)) {
-					// Yes! Keep counting
-					currentValue++;
-				} else {
-					// No! Reset counter
-					currentValue = 0;
+			if(prey != null) {
+				// Only entities killed by player or pet
+				if(prey.onDieStatus.source == IEntity.Type.PLAYER || prey.onDieStatus.source == IEntity.Type.PET) {
+					// Is it one of the target types?
+					if(m_targetSkus.Contains(prey.sku)) {
+						// Yes! Keep counting
+						currentValue++;
+					} else {
+						// No! Reset counter
+						currentValue = 0;
+					}
 				}
 			}
 		}
