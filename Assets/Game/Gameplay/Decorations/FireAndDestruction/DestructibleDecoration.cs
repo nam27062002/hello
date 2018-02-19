@@ -79,7 +79,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		m_collider = GetComponent<BoxCollider>();
 	
 		m_zone = InstanceManager.zoneManager.GetZone(transform.position.z);
-		m_effect = InstanceManager.zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.data.tier);
+		m_effect = InstanceManager.zoneManager.GetDestructionEffectCode(m_entity, InstanceManager.player.GetTierWhenBreaking());
 
 		if (m_zone == ZoneManager.Zone.None || m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
@@ -101,11 +101,11 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 			if (m_zone == ZoneManager.Zone.Zone1) {
 				m_collider.enabled = true;
-				m_collider.isTrigger = true;
 
-				if (m_effect == ZoneManager.ZoneEffect.S
-				&&	m_zone1Interaction == InteractionType.Collision) {
+				if (m_zone1Interaction == InteractionType.Collision) {
 					m_collider.isTrigger = false;
+				} else {
+					m_collider.isTrigger = true;
 				}
 			} else if (m_zone == ZoneManager.Zone.Zone2) {
 				m_collider.enabled = true;
@@ -148,13 +148,16 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 			if (!m_breath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
-						ContactPoint contact = _other.contacts[0];
-
-						GameObject ps = m_feedbackParticle.Spawn(contact.point - (m_collider.center - m_colliderCenter) + m_feedbackParticle.offset);
-						if (ps != null) {
-							if (m_particleFaceDragonDirection) {
-								FaceDragon(ps);
+						if (m_effect == ZoneManager.ZoneEffect.S) {
+							ContactPoint contact = _other.contacts[0];
+							GameObject ps = m_feedbackParticle.Spawn(contact.point - (m_collider.center - m_colliderCenter) + m_feedbackParticle.offset);
+							if (ps != null) {
+								if (m_particleFaceDragonDirection) {
+									FaceDragon(ps);
+								}
 							}
+						} else {
+							Break();
 						}
 					}
 				}
@@ -185,41 +188,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 							}
 						}
 					
-						if ( !string.IsNullOrEmpty(m_onFeedbackAudio) )
+						if (!string.IsNullOrEmpty(m_onFeedbackAudio))
 							AudioController.Play(m_onFeedbackAudio, transform.position + m_colliderCenter);
 					} else {
-						GameObject ps = m_destroyParticle.Spawn(transform.position + m_destroyParticle.offset);
-						if (ps != null) {
-							if (m_particleFaceDragonDirection) {
-								FaceDragon(ps);
-							}
-						}
-
-						if (m_zone == ZoneManager.Zone.Zone1 && m_knockBackStrength > 0f) {
-							DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
-
-							Vector3 knockBack = dragonMotion.transform.position - (transform.position + m_collider.center);
-							knockBack.z = 0f;
-							knockBack.Normalize();
-
-							knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
-
-							dragonMotion.AddForce(knockBack);
-						}
-
-						if ( !string.IsNullOrEmpty(m_onDestroyAudio) )
-							AudioController.Play(m_onDestroyAudio, transform.position + m_collider.center);
-
-						m_autoSpawner.StartRespawn();
-						m_view.SetActive(false);
-						m_viewDestroyed.SetActive(true);
-						if (m_corpse != null) {
-							m_corpse.Spawn(false, false);
-						}
-						m_spawned = false;
-
-						// [AOC] Notify game!
-						Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, m_entity.reward);
+						Break();
 					}
 				}
 			}
@@ -253,6 +225,42 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 				}
 			}
 		}
+	}
+
+	void Break() {
+		GameObject ps = m_destroyParticle.Spawn(transform.position + m_destroyParticle.offset);
+		if (ps != null) {
+			if (m_particleFaceDragonDirection) {
+				FaceDragon(ps);
+			}
+		}
+
+		if (m_zone == ZoneManager.Zone.Zone1 && m_knockBackStrength > 0f) {
+			DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
+
+			Vector3 knockBack = dragonMotion.transform.position - (transform.position + m_collider.center);
+			knockBack.z = 0f;
+			knockBack.Normalize();
+
+			knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
+
+			dragonMotion.AddForce(knockBack);
+		}
+
+		if (!string.IsNullOrEmpty(m_onDestroyAudio))
+			AudioController.Play(m_onDestroyAudio, transform.position + m_collider.center);
+
+		m_view.SetActive(false);
+		m_viewDestroyed.SetActive(true);
+		if (m_autoSpawner) m_autoSpawner.StartRespawn();
+		if (m_corpse != null) m_corpse.Spawn(false, false);
+
+		m_spawned = false;
+
+		m_collider.isTrigger = true;
+
+		// [AOC] Notify game!
+		Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, m_entity.reward);
 	}
 
 	void FaceDragon(GameObject _ps) {
