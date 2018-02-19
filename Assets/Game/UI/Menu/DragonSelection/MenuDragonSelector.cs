@@ -133,7 +133,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 		if(results.Count <= 1) return;
 			
 		// Find pets and dragons!
-		MenuScreens targetScreen = MenuScreens.NONE;
+		MenuScreen targetScreen = MenuScreen.NONE;
 		MenuPetPreview pet = null;
 		MenuDragonPreview dragon = null;
 		for(int i = 0; i < results.Count; i++) {
@@ -145,7 +145,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 			// Look for pets first, since pets are children of dragons and looking for dragons will result in a false positive!
 			if(pet != null) {
 				// Yes! Go to the pet screen
-				targetScreen = MenuScreens.PETS;
+				targetScreen = MenuScreen.PETS;
 
 				// Do a fun animation on the pet!
 				pet.SetAnim(MenuPetPreview.Anim.IN);
@@ -166,7 +166,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 
 				// b) Goto Disguises Screen
 				// Yes! Go to the disguises screen
-				//targetScreen = MenuScreens.DISGUISES;
+				//targetScreen = MenuScreen.SKINS;
 
 				// Do a fun animation on the dragon!
 				// Only owned dragons!
@@ -197,7 +197,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 		// Go to the target screen, if any
 		// Only if enabled!
 		if(!Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) return;
-		if(targetScreen != MenuScreens.NONE) {
+		if(targetScreen != MenuScreen.NONE) {
 			// Check conditions
 			MenuSceneController menuController = InstanceManager.menuSceneController;
 
@@ -211,7 +211,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 			if(menuController.dragonScroller.cameraAnimator.isTweening) return;
 
 			// Everything ok! Go to the disguises screen
-			menuController.screensController.GoToScreen((int)targetScreen);
+			menuController.GoToScreen(targetScreen);
 		}
 	}
 }

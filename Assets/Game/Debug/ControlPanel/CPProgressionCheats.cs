@@ -522,7 +522,11 @@ public class CPProgressionCheats : MonoBehaviour {
     /// </summary>
     public void StartLikeGameFlow()
     {
-		PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
+    	if ( Application.platform == RuntimePlatform.Android ){
+			PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );
+		}else if ( Application.platform == RuntimePlatform.IPhonePlayer ){
+			PopupAskRateUs.OpenIOSMarketForRating();
+		}
     }
 
     public void OnResetAchievements()
