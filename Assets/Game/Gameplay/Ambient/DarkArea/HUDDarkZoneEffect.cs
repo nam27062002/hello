@@ -114,6 +114,12 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 m_candleMaterial.SetColor("_Tint2", color2);
                 m_candleMaterial.SetFloat("_Radius", radius);
                 m_candleMaterial.SetFloat("_FallOff", falloff);
+/*
+                if (sd > 1.0f)
+                {
+                    m_currentTrigger = null;
+                }
+*/
             }
         }
     }
