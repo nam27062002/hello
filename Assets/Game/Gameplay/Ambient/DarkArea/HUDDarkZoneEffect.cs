@@ -97,53 +97,24 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         {
             if (m_currentTrigger != null)
             {
+                CandleData inData = m_currentTrigger.m_inData.m_noEffect ? m_defaultCandleData : m_currentTrigger.m_inData;
+                CandleData outData = m_currentTrigger.m_outData.m_noEffect ? m_defaultCandleData : m_currentTrigger.m_outData;
+
                 Vector3 vd = m_camera.transform.position - m_currentTrigger.transform.position;
                 vd.z = 0.0f;
                 float sd = Vector3.Dot(m_currentTrigger.Direction, vd) / m_currentTrigger.SqrLength;
 
                 float delta = Mathf.Clamp01(sd);
 
-                Color color = Color.Lerp(m_currentTrigger.m_inData.m_Color, m_currentTrigger.m_outData.m_Color, delta);
-                Color color2 = Color.Lerp(m_currentTrigger.m_inData.m_Color2, m_currentTrigger.m_outData.m_Color2, delta);
-                float radius = Mathf.Lerp(m_currentTrigger.m_inData.m_radius, m_currentTrigger.m_outData.m_radius, delta);
-                float falloff = Mathf.Lerp(m_currentTrigger.m_inData.m_fallOff, m_currentTrigger.m_outData.m_fallOff, delta);
+                Color color = Color.Lerp(inData.m_Color, outData.m_Color, delta);
+                Color color2 = Color.Lerp(inData.m_Color2, outData.m_Color2, delta);
+                float radius = Mathf.Lerp(inData.m_radius, outData.m_radius, delta);
+                float falloff = Mathf.Lerp(inData.m_fallOff, outData.m_fallOff, delta);
                 m_candleMaterial.SetColor("_Tint", color);
                 m_candleMaterial.SetColor("_Tint2", color2);
                 m_candleMaterial.SetFloat("_Radius", radius);
                 m_candleMaterial.SetFloat("_FallOff", falloff);
-
-
             }
-            /*
-                        if (Time.time < m_transitionTime)
-                        {
-                            float delta = (m_transitionTime - Time.time) / m_nextCandle.m_time;
-                            Color color = Color.Lerp(m_nextCandle.m_Color, m_currentCandle.m_Color, delta);
-                            Color color2 = Color.Lerp(m_nextCandle.m_Color2, m_currentCandle.m_Color2, delta);
-                            float radius = Mathf.Lerp(m_nextCandle.m_radius, m_currentCandle.m_radius, delta);
-                            float falloff = Mathf.Lerp(m_nextCandle.m_fallOff, m_currentCandle.m_fallOff, delta);
-                            m_candleMaterial.SetColor("_Tint", color);
-                            m_candleMaterial.SetColor("_Tint2", color2);
-                            m_candleMaterial.SetFloat("_Radius", radius);
-                            m_candleMaterial.SetFloat("_FallOff", falloff);
-            //                Debug.Log("Transition from " + m_currentCandle.m_id + " to " + m_nextCandle.m_id + " time: " + delta + " tick: " + Time.frameCount);
-                        }
-                        else
-                        {
-                            if (m_nextCandle.m_id == 0)
-                            {
-                                m_blackImage.material = m_oldMaterial;
-                                m_blackImage.enabled = false;
-                                m_enableState = false;
-            //                    Debug.Log("Disabling candle: " + m_currentCandle.m_id + " to " + m_nextCandle.m_id + " tick: " + Time.frameCount);
-                            }
-                            else
-                            {
-            //                    Debug.Log("Current candle: " + m_currentCandle.m_id + " to " + m_nextCandle.m_id + " tick: " + Time.frameCount);
-                            }
-                            m_currentCandle = m_nextCandle;
-                        }
-            */
         }
     }
 }
