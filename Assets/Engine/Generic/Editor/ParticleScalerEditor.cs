@@ -89,6 +89,14 @@ public class ParticleScalerEditor : Editor {
 				}
 			}
 
+			else if(p.name == "m_whenScale") {
+				// Show a warning message when ALWAYS mode selected
+				EditorGUILayout.PropertyField(p, true);
+				if(p.enumValueIndex == (int)ParticleScaler.WhenScale.ALWAYS) {
+					EditorGUILayout.HelpBox("ALWAYS mode can be very CPU heavy. Use carefully!", MessageType.Warning);
+				}
+			}
+
 			// Properties we don't want to show
 			else if(p.name == "m_ObjectHideFlags") {
 				// Do nothing

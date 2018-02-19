@@ -768,7 +768,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
         int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
         // TODO: To debug with server
-        //GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
+        GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);

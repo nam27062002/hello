@@ -87,7 +87,7 @@ public class AdjustDarkScreenToViewport : MonoBehaviour {
 		Camera cam = m_camera;
 		if(m_camera == null) {
 	        // Main camera must be valid
-	        if (Application.isPlaying) {
+	        if (Application.isPlaying && InstanceManager.sceneController != null) {
 	            cam = InstanceManager.sceneController.mainCamera;
 	        } else if (m_executeInEditMode) {
 	            cam = Camera.main;

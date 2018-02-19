@@ -1,6 +1,6 @@
 ﻿// PopupSettingsOptionsTab.cs
 // Hungry Dragon
-// 
+//
 // Created by David Germade on 30th August 2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -14,7 +14,7 @@ using DG.Tweening;
 /// This class is responsible for handling the options tab in the settings popup.
 /// </summary>
 public class PopupSettingsOptionsTab : MonoBehaviour
-{    
+{
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -27,22 +27,12 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
 	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
 	[Space]
-	[SerializeField] private GameObject m_googlePlayGroup = null;
-	[SerializeField] private GameObject m_googlePlayLoginButton = null;
-	[SerializeField] private GameObject m_googlePlayLogoutButton = null;
-	[SerializeField] private Button m_googlePlayAchievementsButton = null;
-	[Space]
-	[SerializeField] private GameObject m_gameCenterGroup = null;
+	[SerializeField]
+	private Slider m_notificationsSlider;
 
-#if UNITY_ANDROID
-	const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
-#elif UNITY_IPHONE
-	const string TID_LOGIN_ERROR = "TID_GAME_CENTER_AUTH_ERROR";
-#endif
     // Internal
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
 
-	private PopupController m_loadingPopupController = null;
 	private bool m_dirty = false;
 
 	private int m_graphicsMaxLevel = 4;
@@ -82,22 +72,14 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 			m_languageScrollList.enabled = false;
 		}
 
+		// Notification slider
+		m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
+
 		m_dirty = true;
-
-		// Disable google play group if not available
-#if UNITY_ANDROID
-		m_googlePlayGroup.SetActive(true);
-		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-#else
-		m_googlePlayGroup.SetActive(false);
-#endif
-
-		// Do the same for the GameCenter group!
-		m_gameCenterGroup.SetActive(Application.platform == RuntimePlatform.IPhonePlayer);
     }
 
     void OnDestroy(){
-		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		
     }
 
 	void Update() {
@@ -246,103 +228,24 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// The popup has been closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
-		
-	}
 
-	public void RefreshGooglePlayView(){
-		if ( m_loadingPopupController != null ){
-			m_loadingPopupController.Close(true);
-			m_loadingPopupController = null;
-		}
-
-		if ( ApplicationManager.instance.GameCenter_IsAuthenticated() ){
-			m_googlePlayLoginButton.SetActive(false);
-			m_googlePlayLogoutButton.SetActive(true);
-			m_googlePlayAchievementsButton.interactable = true;
-		}else{
-			m_googlePlayLoginButton.SetActive(true);
-			m_googlePlayLogoutButton.SetActive(false);
-			m_googlePlayAchievementsButton.interactable = false;
-		}
-	}
-
-	public void GooglePlayAuthCancelled(){
-		if ( m_loadingPopupController != null ){
-			m_loadingPopupController.Close(true);
-			m_loadingPopupController = null;
-		}
-	}
-
-	public void GooglePlayAuthFailed(){
-		if ( m_loadingPopupController != null ){
-			m_loadingPopupController.Close(true);
-			m_loadingPopupController = null;
-		}
-
-		// Show generic message there was an error!
-		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
 	public void OnShow(){
-		#if UNITY_ANDROID
-			RefreshGooglePlayView();
-			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-			Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
-		#endif
-
 		m_dirty = true;
 	}
 
-	public void OnHide(){
-		#if UNITY_ANDROID
-			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-			Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
-		#endif
+	public void OnNotificationsSettingChanged(){
+		int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);        
+		HDNotificationsManager.instance.SetNotificationsEnabled(v > 0);        
 	}
 
-	public void OnGooglePlayLogIn(){
-		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
-			// Show curtain and wait for game center response
-			if ( !GameCenterManager.SharedInstance.GetAuthenticatingState() )	// if not authenticating
-			{
-				ApplicationManager.instance.GameCenter_Login();
-			}
-
-			if (GameCenterManager.SharedInstance.GetAuthenticatingState())
-			{
-				m_loadingPopupController = PopupManager.PopupLoading_Open();
-			}
-			else
-			{
-				// No curatin -> something failed, we are not authenticating -> tell the player there was an error	
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
-
-
+	public void Notifications_OnToggle() {
+		if(m_notificationsSlider.value > 0) {
+			m_notificationsSlider.value = 0;
+		} else {
+			m_notificationsSlider.value = 1;
 		}
-	}
-
-	public void OnGooglePlayLogOut(){
-		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
-			ApplicationManager.instance.GameCenter_LogOut();
-		}
-	}
-
-	public void OnGooglePlayAchievements(){
-		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
-			// Add some delay to give enough time for SFX to be played before losing focus
-			UbiBCN.CoroutineManager.DelayedCall(
-				() => {
-					ApplicationManager.instance.GameCenter_ShowAchievements();
-				}, 0.15f
-			);
-		}
-	}
-
-	public void OnGameCenterButton() {
-		// Black magic from Calety xD
-		GameCenterManager.SharedInstance.LaunchGameCenterApp();
+		OnNotificationsSettingChanged();
 	}
 }

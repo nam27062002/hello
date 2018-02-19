@@ -87,16 +87,22 @@ public class NavigationScreen : MonoBehaviour {
 
 		// If the screen has a ShowHideAnimator, use it
 		if(m_showHideAnimator != null) {
-			m_showHideAnimator.ForceShow(useAnim);
+			//m_showHideAnimator.ForceShow(useAnim);
+			if(useAnim) {
+				m_showHideAnimator.RestartShow();
+			} else {
+				m_showHideAnimator.ForceShow(false);
+			}
 		}
 
 		// Additionally look for all children containing a NavigationShowHideAnimator component and trigger it!
-		NavigationShowHideAnimator[] animators = GetComponentsInChildren<NavigationShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
+		// [AOC] Now animators automatically trigger nested animators, so this is no longer needed. Leave it in case we have issues with the new feature.
+		/*NavigationShowHideAnimator[] animators = GetComponentsInChildren<NavigationShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
 		for(int i = 0; i < animators.Length; i++) {
 			// Skip ourselves
 			if(animators[i] == m_showHideAnimator) continue;
 			animators[i].RestartShow();
-		}
+		}*/
 
 		// Notify listeners
 		OnShow.Invoke();

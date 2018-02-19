@@ -89,9 +89,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		if ( GlobalEventManager.currentEvent != null ){
 			// If the current global event has a reward pending, go to the event reward screen
 			if(GlobalEventManager.currentEvent.isRewardAvailable) {
-				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.EVENT_REWARD).GetComponent<EventRewardScreen>();
+				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 				scr.StartFlow();
-				InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.EVENT_REWARD);
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);
 				return;
 			}
 		}
