@@ -15,7 +15,7 @@ public class ExplosionProcController : MonoBehaviour {
 	}
 
 	public void Explode(float _delay) {
-		m_timer = _delay;
+		m_timer = _delay + 0.01f;
 		m_disableInSecs.activeTime = 1f + _delay;
 	}
 
