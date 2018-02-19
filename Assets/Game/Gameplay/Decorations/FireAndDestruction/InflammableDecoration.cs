@@ -193,7 +193,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
 				for (int i = 0; i < m_fireNodes.Length; ++i) {
-					if (i % 2 != 0) {
+					if (i % 2 == 0) {
 						FireNode n = m_fireNodes[i];
 						GameObject ex = m_explosionProcHandler.Spawn(null, n.transform.position);
 						if (ex != null) {
