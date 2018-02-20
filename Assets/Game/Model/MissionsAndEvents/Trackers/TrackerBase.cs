@@ -185,8 +185,8 @@ public class TrackerBase {
 			case "eat_dizzy":		return new TrackerEatDizzy(_params);
 			// new missions TODO
 			case "eat_gold": return new TrackerEatGolden(_params);
-			case "kill_suicidal": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
-			case "eat_hang_a": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.PilotActionA, _params);
+			case "eat_suicidal": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
+			case "eat_spec_anim_a": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.PilotActionA, _params);
 			//-----------------------------------
 
 			// Collect is quite special: depending on first parameter, create one of the existing trackers
