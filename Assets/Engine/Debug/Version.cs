@@ -21,7 +21,7 @@ using System;
 /// Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 /// </summary>
 [Serializable]
-public class Version {
+public class Version : IComparableWithOperators<Version> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -105,5 +105,36 @@ public class Version {
 		}
 
 		return "";
+	}
+
+	//------------------------------------------------------------------//
+	// IComparableWithOperators IMPLEMENTATION							//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Compare this instance with another one.
+	/// </summary>
+	/// <returns>The result of the comparison (-1, 0, 1).</returns>
+	/// <param name="_other">Instance to be compared to.</param>
+	override protected int CompareToImpl(Version _other) {
+		// Compare from major to patch
+		// Equal major?
+		int res = m_major.CompareTo(_other.m_major);
+		if(res != 0) return res;
+
+		// Equal minor?
+		res = m_minor.CompareTo(_other.m_minor);
+		if(res != 0) return res;
+
+		// Same major and minor: Result based on patch
+		return m_patch.CompareTo(_other.m_patch);
+	}
+
+	/// <summary>
+	/// Get the hash code corresponding to this object. Used in hashable classes such as Dictionary.
+	/// </summary>
+	/// <returns>The hash code corresponding to this object.</returns>
+	override protected int GetHashCodeImpl() {
+		// Generate a unique int from the string representation of the version
+		return ToString().GetHashCode();
 	}
 }
