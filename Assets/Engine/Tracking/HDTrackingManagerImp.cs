@@ -347,20 +347,17 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }        
 
-    private void UpdateWaitingForSessionStart()
-    {
-        if (TrackingPersistenceSystem != null && IsStartSessionNotified)
-        {
-            StartSession();
-        }
-    }
-
     public override void Update()
     {
         switch (State)
         {
             case EState.WaitingForSessionStart:
-                UpdateWaitingForSessionStart();
+				if (TrackingPersistenceSystem != null && IsStartSessionNotified)
+				{
+					// We need to start session here in Update() so GameCenterManager has time to get the acq_marketing_id, otherwise
+					// that field will be empty in "game.start" event
+					StartSession();
+				}               
                 break;
         }
 
@@ -445,9 +442,6 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (State == EState.WaitingForSessionStart)
         {
             IsStartSessionNotified = true;
-
-            // We want to start as soon as possible in order to reduce problems when sending early events
-            UpdateWaitingForSessionStart();
         }        
     }
 
