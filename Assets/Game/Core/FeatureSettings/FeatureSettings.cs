@@ -71,6 +71,9 @@ public class FeatureSettings
     // This key decides whether or not the feedback particles (score spawned when eating,...) are enabled
     public const string KEY_PARTICLES_FEEDBACK = "particlesFeedback";
 
+    // The ket decides if pets rigidbody interpolates
+	public const string KEY_PET_INTERPOLATES = "petRigidbodyInterpolate";
+
     // This key decides the quality level used in the particles manager
     public const string MAX_ZOOM_COST = "max_zoom_cost";
 
@@ -79,6 +82,9 @@ public class FeatureSettings
 
     // This key decides the minimum gfx memory amount
     public const string KEY_GFX_MEMORY = "gfxMemory";
+
+    // This key decides if lightmap will be used on this profile
+    public const string KEY_LIGHTMAP = "lightmap";
 
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
@@ -163,6 +169,11 @@ public class FeatureSettings
             data = new DataInt(key, EValueType.Level3, (int)ELevel3Values.low);            
             Datas.Add(key, data);
 
+            // lightmap: enable/disable lightmap
+            key = KEY_LIGHTMAP;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW_EFFECT;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
@@ -208,6 +219,10 @@ public class FeatureSettings
 
             // particles feedback
             key = KEY_PARTICLES_FEEDBACK;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+			key = KEY_PET_INTERPOLATES;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 

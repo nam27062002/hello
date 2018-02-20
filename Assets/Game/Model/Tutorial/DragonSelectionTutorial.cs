@@ -36,9 +36,12 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed setup
 	[SerializeField] private float m_delay = 1f;
-	[SerializeField] private float m_duration = 10f;
-	[SerializeField] private float m_backdelay = 1f;
-	[SerializeField] private float m_backDuration = 1.5f;
+	[SerializeField] private float m_backDelay = 1f;
+	[Space]
+	[Tooltip("World Units per Second")]
+	[SerializeField] private float m_forwardSpeed = 35f;
+	[Tooltip("World Units per Second")]
+	[SerializeField] private float m_backSpeed = 200f;
 	[Space]
 	[SerializeField] private CustomEase.EaseType m_easeForward = CustomEase.EaseType.quartInOut_01;
 	[SerializeField] private CustomEase.EaseType m_easeBackward = CustomEase.EaseType.quartInOut_01;
@@ -59,8 +62,14 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
 	private State m_state = State.IDLE;
-	private float m_targetDelta = 0f;
+
+	private float m_initialDelta = 0f;
 	private float m_lastDelta = 1f;
+	private float m_finalDelta = 0f;
+
+	// Durations will be computed based on speed and distance
+	private float m_forwardDuration = 10f;
+	private float m_backDuration = 1.5f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -73,7 +82,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_scroller = InstanceManager.menuSceneController.dragonScroller;
 
 		// Subscribe to external events. We want to receive these events even when disabled, so do it in the Awake/Destroy instead of the OnEnable/OnDisable.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -82,7 +91,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnScreenChanged);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -100,7 +109,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 				if(m_timer.IsFinished()) {
 					// Yes! Start scrolling
 					m_state = State.RUNNING;
-					m_timer.Start(m_duration * 1000);
+					m_timer.Start(m_forwardDuration * 1000);
 				}
 			} break;
 
@@ -109,10 +118,10 @@ public class DragonSelectionTutorial : MonoBehaviour {
 				if(m_timer.IsFinished()) {
 					// Yes! Pause before going back
 					m_state = State.BACK_DELAY;
-					m_timer.Start(m_backDuration * 1000);
+					m_timer.Start(m_backDelay * 1000);
 				} else {
-					// Timer not finished, scroll
-					m_scroller.cameraAnimator.delta = m_timer.GetDelta(m_easeForward) * m_lastDelta;
+					// Timer not finished, scroll from initial delta to last delta
+					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_initialDelta, m_lastDelta, m_timer.GetDelta(m_easeForward));
 				}
 			} break;
 
@@ -122,11 +131,6 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Yes! Start scroll back animation
 					m_state = State.BACK;
 					m_timer.Start(m_backDuration * 1000);
-
-					// Compute target delta
-					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentDragon);
-					int menuOrder = (def == null) ? 0 : def.GetAsInt("order");
-					m_targetDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(menuOrder);
 				}
 			} break;
 
@@ -157,8 +161,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 					PersistenceFacade.instance.Save_Request();
                 } else {
-					// Timer not finished, scroll
-					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_lastDelta, m_targetDelta, m_timer.GetDelta(m_easeBackward));	// [AOC] Reverse scroll!
+					// Timer not finished, scroll from last delta to final delta
+					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_lastDelta, m_finalDelta, m_timer.GetDelta(m_easeBackward));
 				}
 			} break;
 		}
@@ -194,13 +198,11 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			}
 		}
 
-		// Instant scroll to first dragon
-		m_scroller.cameraAnimator.delta = 0f;
+		// Compute deltas
+		// 1) Initial delta is always the first dragon
+		m_initialDelta = 0f;
 
-		// Start timer
-		m_timer.Start(m_delay * 1000 * 0.5f);
-
-		// Last dragon delta, next dragons are locked until player progress further in the game
+		// 2) Last delta is the last visible dragon (teased included)
 		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
 		for(int i = dragonsByOrder.Count - 1; i >= 0; --i) {
 			// First non-hidden dragon (including teased dragons)
@@ -211,8 +213,20 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			}
 		}
 
+		// 3) Final delta is the current selected dragon (most of the times will be the first one)
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentDragon);
+		int menuOrder = (def == null) ? 0 : def.GetAsInt("order");
+		m_finalDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(menuOrder);	// Taking advantadge that we have exactly one control point per dragon
+
+		// Compute durations based on distance to run
+		float pathLength = m_scroller.cameraAnimator.cameraPath.path.length;
+		m_forwardDuration = Mathf.Abs(m_lastDelta - m_initialDelta) * pathLength / m_forwardSpeed;
+		m_backDuration = Mathf.Abs(m_lastDelta - m_finalDelta) * pathLength / m_backSpeed;
+
 		// Toggle state!
 		m_state = State.DELAY;
+		m_scroller.cameraAnimator.delta = m_initialDelta;	// Instant scroll to initial delta (first dragon)
+		m_timer.Start(m_delay * 1000);	// Start timer with the initial delay
 	}
 
 	/// <summary>
@@ -246,15 +260,13 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The current menu screen has changed.
+	/// The current menu screen has changed (animation starts now).
 	/// </summary>
-	/// <param name="_event">Event data.</param>
-	public void OnScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
-		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
-
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnScreenChanged(MenuScreen _from, MenuScreen _to) {
 		// If leaving the dragon selection screen, force the tutorial to stop (shouldn't happen)
-		if(_event.toScreenIdx != (int)MenuScreens.DRAGON_SELECTION) {
+		if(_to != MenuScreen.DRAGON_SELECTION) {
 			// Stop the tutorial if it's running
 			StopTutorial();
 			return;

@@ -7,13 +7,25 @@ using UnityEngine;
 public class EditorCameraSnapshot : MonoBehaviour {
 
 #if UNITY_EDITOR
+    public enum ResolutionEnumerator
+    {
+        R_720p_1280X720,
+        R_1080p_1920X1080,
+        R_UHD4K_3840X2160,
+        R_8K_7680X4320
+    };
+
+    public ResolutionEnumerator m_resolution = ResolutionEnumerator.R_UHD4K_3840X2160;
+    private ResolutionEnumerator m_currentResolution = (ResolutionEnumerator)(-1);
 
     private readonly int m_4kWidth = 3840;
     private readonly int m_4kHeigth = 2160;
     private Camera m_renderCamera;
     private Camera m_originalCamera;
-    private RenderTexture m_4kRenderTexture;
-    private Texture2D m_4kTexture;
+
+    private RenderTexture m_RenderTexture = null;
+    private Texture2D m_Texture = null;
+
     private Rect m_rectArea;
 
     private bool m_doSnapshot = false;
@@ -31,21 +43,85 @@ public class EditorCameraSnapshot : MonoBehaviour {
     private int m_screenShotcount = 0;
 
     private string m_screenshotPath;
+    private string m_videoPath;
 
 
-	// Use this for initialization
-	void Start () {
+    public bool m_Video = false;
+
+    private float m_maximumDeltaTimeBackUp;
+
+
+
+    private Resolution getResolution(ResolutionEnumerator res)
+    {
+        Resolution resolution = new Resolution();
+        switch (res)
+        {
+            case ResolutionEnumerator.R_720p_1280X720:
+                resolution.width = 1280;
+                resolution.height = 720;
+                break;
+
+            case ResolutionEnumerator.R_1080p_1920X1080:
+                resolution.width = 1920;
+                resolution.height = 1080;
+                break;
+
+            case ResolutionEnumerator.R_UHD4K_3840X2160:
+                resolution.width = 3840;
+                resolution.height = 2160;
+                break;
+
+            case ResolutionEnumerator.R_8K_7680X4320:
+                resolution.width = 7680;
+                resolution.height = 4320;
+                break;
+        }
+
+        return resolution;
+    }
+
+
+    private void setResolutionTextures(ResolutionEnumerator resenum)
+    {
+        if (resenum != m_currentResolution)
+        {
+            if (m_RenderTexture != null)
+            {
+                DestroyImmediate(m_RenderTexture);
+                m_RenderTexture = null;
+            }
+            if (m_Texture != null)
+            {
+                DestroyImmediate(m_Texture);
+                m_Texture = null;
+            }
+
+            Resolution res = getResolution(resenum);
+
+            m_RenderTexture = new RenderTexture(res.width, res.height, 24, RenderTextureFormat.ARGB32);
+            m_Texture = new Texture2D(res.width, res.height, TextureFormat.ARGB32, false);
+
+            m_rectArea = new Rect(0, 0, res.width, res.height);
+
+            m_currentResolution = resenum;
+        }
+    }
+
+
+    // Use this for initialization
+    void Start () {
 
         m_originalCamera = gameObject.GetComponent<Camera>();
         m_renderCamera = new GameObject("Background tint camera", typeof(Camera)).GetComponent<Camera>();
         m_renderCamera.gameObject.SetActive(false);
 		m_renderCamera.useOcclusionCulling = false;
 
+        setResolutionTextures(m_resolution);
+/*        m_RenderTexture = new RenderTexture(m_4kWidth, m_4kHeigth, 24, RenderTextureFormat.ARGB32);
+        m_Texture = new Texture2D(m_4kWidth, m_4kHeigth, TextureFormat.ARGB32, false);
 
-        m_4kRenderTexture = new RenderTexture(m_4kWidth, m_4kHeigth, 24, RenderTextureFormat.ARGB32);
-        m_4kTexture = new Texture2D(m_4kWidth, m_4kHeigth, TextureFormat.ARGB32, false);
-
-        m_rectArea = new Rect(0, 0, m_4kWidth, m_4kHeigth);
+        m_rectArea = new Rect(0, 0, m_4kWidth, m_4kHeigth);*/
 
 //        m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Player", "AirPreys", "WaterPreys", "MachinePreys", "GroundPreys", "Mines");
         m_layermaskPlayer = LayerMask.GetMask("Player");
@@ -56,11 +132,14 @@ public class EditorCameraSnapshot : MonoBehaviour {
         m_layermaskOriginal = m_originalCamera.cullingMask | m_layermaskUI;
 
         m_screenshotPath = Directory.GetCurrentDirectory() + "/" + "HD_SS_";
+        m_videoPath = Directory.GetCurrentDirectory() + "/" + "HD_VID_";
 
         m_screenShotcount = checkScreenshotCount(m_screenshotPath);
+
+        m_maximumDeltaTimeBackUp = Time.maximumDeltaTime;
     }
 
-    int checkScreenshotCount(string path)
+    private int checkScreenshotCount(string path)
     {
         int count = -1;
         string spath;
@@ -73,6 +152,18 @@ public class EditorCameraSnapshot : MonoBehaviour {
         return count;
     }
 
+    private int checkVideoCount(string path)
+    {
+        int count = -1;
+        string spath;
+        do
+        {
+            count++;
+            spath = path + count.ToString() + ".png";
+
+        } while (File.Exists(spath));
+        return count;
+    }
 
     public void OnDestroy()
     {
@@ -82,16 +173,16 @@ public class EditorCameraSnapshot : MonoBehaviour {
             DestroyObject(m_renderCamera);
         }
 
-        if (m_4kRenderTexture != null)
+        if (m_RenderTexture != null)
         {
-            DestroyImmediate(m_4kRenderTexture);
-            m_4kRenderTexture = null;
+            DestroyImmediate(m_RenderTexture);
+            m_RenderTexture = null;
         }
 
-        if (m_4kTexture != null)
+        if (m_Texture != null)
         {
-            DestroyImmediate(m_4kTexture);
-            m_4kTexture = null;
+            DestroyImmediate(m_Texture);
+            m_Texture = null;
         }
 
     }
@@ -101,7 +192,18 @@ public class EditorCameraSnapshot : MonoBehaviour {
     void Update () {
 		if (Input.GetKeyDown(KeyCode.Space))
         {
-            m_doSnapshot = true;
+            setResolutionTextures(m_resolution);
+            if (m_Video)
+            {
+                m_screenShotcount = checkVideoCount(m_videoPath);
+                m_doSnapshot = !m_doSnapshot;
+                Time.maximumDeltaTime = m_doSnapshot ? (1.0f / 30.0f) : m_maximumDeltaTimeBackUp;
+            }
+            else
+            {
+                m_screenShotcount = checkScreenshotCount(m_screenshotPath);
+                m_doSnapshot = true;
+            }
         }
 	}
 
@@ -115,14 +217,14 @@ public class EditorCameraSnapshot : MonoBehaviour {
         m_renderCamera.renderingPath = RenderingPath.Forward;
         m_renderCamera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
         m_renderCamera.depthTextureMode = DepthTextureMode.Depth;
-        m_renderCamera.targetTexture = m_4kRenderTexture;
+        m_renderCamera.targetTexture = m_RenderTexture;
         m_renderCamera.cullingMask = layerMask;
         m_renderCamera.Render();
 
 
-        RenderTexture.active = m_4kRenderTexture;
+        RenderTexture.active = m_RenderTexture;
 
-        m_4kTexture.ReadPixels(m_rectArea, 0, 0);
+        m_Texture.ReadPixels(m_rectArea, 0, 0);
 
     }
 
@@ -139,7 +241,7 @@ public class EditorCameraSnapshot : MonoBehaviour {
         }
 
         // Save picture!
-        byte[] bytes = m_4kTexture.EncodeToPNG();
+        byte[] bytes = m_Texture.EncodeToPNG();
         File.WriteAllBytes(path, bytes);
 
     }
@@ -150,28 +252,38 @@ public class EditorCameraSnapshot : MonoBehaviour {
 
         if (m_doSnapshot)
         {
-            string filePath = m_screenshotPath + m_screenShotcount.ToString();
+            if (m_Video)
+            {
+                string filePath = m_videoPath + m_screenShotcount.ToString();
+                doSnapshot(m_layermaskOriginal);
+                saveSnapshot(filePath);
 
-            doSnapshot(m_layermaskBackground);
-            saveSnapshot(filePath + "1");
+            }
+            else
+            {
+                string filePath = m_screenshotPath + m_screenShotcount.ToString();
 
-            doSnapshot(m_layermaskDefault);
-            saveSnapshot(filePath + "2");
+                doSnapshot(m_layermaskBackground);
+                saveSnapshot(filePath + "1");
 
-            doSnapshot(m_layermaskNPC);
-            saveSnapshot(filePath + "3");
+                doSnapshot(m_layermaskDefault);
+                saveSnapshot(filePath + "2");
 
-            doSnapshot(m_layermaskPlayer);
-            saveSnapshot(filePath + "4");
+                doSnapshot(m_layermaskNPC);
+                saveSnapshot(filePath + "3");
 
-//            doSnapshot(m_layermaskUI);
-//            saveSnapshot(filePath + "5");
+                doSnapshot(m_layermaskPlayer);
+                saveSnapshot(filePath + "4");
 
-            doSnapshot(m_layermaskOriginal);
-            saveSnapshot(filePath + "5");
+                //            doSnapshot(m_layermaskUI);
+                //            saveSnapshot(filePath + "5");
 
+                doSnapshot(m_layermaskOriginal);
+                saveSnapshot(filePath + "5");
+
+                m_doSnapshot = false;
+            }
             m_screenShotcount++;
-            m_doSnapshot = false;
         }
 
     }

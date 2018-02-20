@@ -68,29 +68,9 @@ public class MapMarker : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 		Messenger.AddListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		
-	}
-
-	/// <summary>
-	/// Called every frame
-	/// </summary>
-	private void Update() {
-
 	}
 
 	/// <summary>
@@ -99,6 +79,7 @@ public class MapMarker : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
 		Messenger.RemoveListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
@@ -244,6 +225,17 @@ public class MapMarker : MonoBehaviour {
 		// If it's the map popup, refresh marker
 		if(_popup.GetComponent<PopupInGameMap>() != null) {
 			UpdateMarker();
+		}
+	}
+
+	/// <summary>
+	/// A popup has been closed.
+	/// </summary>
+	/// <param name="_popup">The popup that has just been closed.</param>
+	private void OnPopupClosed(PopupController _popup) {
+		// If it's the map popup, disable marker
+		if(_popup.GetComponent<PopupInGameMap>() != null) {
+			this.gameObject.SetActive(false);
 		}
 	}
 

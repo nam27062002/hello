@@ -2,6 +2,8 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+
 
 /// <summary>
 /// This class is responsible for handling the column dedicated to the spawner tool in the control panel
@@ -793,6 +795,283 @@ public class ProfilerControlPanelController : MonoBehaviour
                 }
             }
         }
+    }
+    #endregion
+
+    #region render_queues
+
+    private GameObject[] getBackgroundGameObjects(bool foreground)
+    {
+        List<GameObject> result = new List<GameObject>();
+
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        {
+            UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (foreground)
+            {
+                if (scene.name.Contains("ART") && !scene.name.Contains("ART_Levels_Background_Skies") && !scene.name.Contains("ART_L1_Background_Village") && !scene.name.Contains("ART_L1_Background_Castle") && !scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        result.AddRange(goRoots);
+                    }
+                }
+            }
+            else
+            {
+                if (scene.name.Contains("ART_Levels_Background_Skies") || scene.name.Contains("ART_L1_Background_Village") || scene.name.Contains("ART_L1_Background_Castle") || scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        result.AddRange(goRoots);
+                    }
+                }
+            }
+        }
+
+        return result.ToArray();
+    }
+
+    private Renderer[] getBackgroundRenderers(bool foreground)
+    {
+        List<Renderer> result = new List<Renderer>();
+
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        {
+            UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (foreground)
+            {
+                if (scene.name.Contains("ART") && !scene.name.Contains("ART_Levels_Background_Skies") && !scene.name.Contains("ART_L1_Background_Village") && !scene.name.Contains("ART_L1_Background_Castle") && !scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        for (int c = 0; c < goRoots.Length; c++)
+                        {
+                            result.AddRange(goRoots[c].GetComponentsInChildren<Renderer>(false));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (scene.name.Contains("ART_Levels_Background_Skies") || scene.name.Contains("ART_L1_Background_Village") || scene.name.Contains("ART_L1_Background_Castle") || scene.name.Contains("ART_L1_Background_Dark"))
+                {
+                    if (scene.isLoaded)
+                    {
+                        GameObject[] goRoots = scene.GetRootGameObjects();
+                        for (int c = 0; c < goRoots.Length; c++)
+                        {
+                            result.AddRange(goRoots[c].GetComponentsInChildren<Renderer>(false));
+                        }
+                    }
+                }
+            }
+        }
+
+        return result.ToArray();
+    }
+
+
+    public void Background_OnBackgroundValueChanged(bool newValue)
+    {
+        GameObject[] go = getBackgroundGameObjects(false);
+        for (int c = 0; c < go.Length; c++)
+        {
+//            if (renderers[c].material.shader.name.Contains("Hungry Dragon/Scenary/Scenary Standard"))
+                go[c].SetActive(newValue);
+        }
+    }
+    public void Foreground_OnForegroundValueChanged(bool newValue)
+    {
+        GameObject[] go = getBackgroundGameObjects(true);
+        for (int c = 0; c < go.Length; c++)
+        {
+//            if (renderers[c].material.shader.name.Contains("Hungry Dragon/Scenary/Scenary Standard"))
+                go[c].SetActive(newValue);
+        }
+    }
+
+    private struct QueueBackup
+    {
+        public bool isNPC;
+        public int oldQueue;
+    };
+
+    private QueueBackup[] m_oldQueues = null;
+    private int[] m_backgroundQueues = null;
+    private int[] m_foregroundQueues = null;
+
+    public void Queues_OnQueuesValueChanged(bool newValue)
+    {
+        int changed = 0;
+
+        List<Renderer> renderer = GameObjectExt.FindObjectsOfType<Renderer>(false);
+
+        if (!newValue)
+        {
+            m_oldQueues = new QueueBackup[renderer.Count];
+        }
+
+        for (int c = 0; c < renderer.Count; c++)
+        {
+            Material mat = renderer[c].material;
+            if (mat.shader.name.Contains("Hungry Dragon/Dragon/Dragon standard") && mat.GetTag("RenderType", false).Contains("Opaque"))
+            {
+                if (newValue)
+                {
+                    if (m_oldQueues != null)
+                    {
+                        mat.renderQueue = m_oldQueues[c].oldQueue;
+                        changed++;
+                    }
+                }
+                else
+                {
+                    m_oldQueues[c].oldQueue = mat.renderQueue;
+                    m_oldQueues[c].isNPC = false;
+                }
+            }
+            else if (mat.shader.name.Contains("NPC") && mat.GetTag("RenderType", false).Contains("Opaque"))
+            {
+                if (newValue)
+                {
+                    if (m_oldQueues != null)
+                    {
+                        mat.renderQueue = m_oldQueues[c].oldQueue;
+                        changed++;
+                    }
+                }
+                else
+                {
+                    m_oldQueues[c].oldQueue = mat.renderQueue;
+                    m_oldQueues[c].isNPC = true;
+                }
+            }
+            else
+            {
+                if (!newValue)
+                {
+                    m_oldQueues[c].oldQueue = -1;
+                }
+            }
+        }
+
+        if (newValue)
+        {
+            m_oldQueues = null;
+        }
+        else
+        {            
+            for (int c = 0; c < renderer.Count; c++)
+            {
+                if (c < m_oldQueues.Length && m_oldQueues[c].oldQueue != -1)
+                {
+                    if (m_oldQueues[c].isNPC)
+                    {
+                        renderer[c].material.renderQueue = 1000;
+                    }
+                    else
+                    {
+                        renderer[c].material.renderQueue = 500;
+                    }
+                    changed++;
+                }
+            }
+        }
+
+        renderer.Clear();
+        renderer.AddRange(getBackgroundRenderers(false));
+        if (!newValue)
+        {
+            m_backgroundQueues = new int[renderer.Count];
+        }
+
+        for (int c = 0; c < renderer.Count; c++)
+        {
+            string renderType = renderer[c].material.GetTag("RenderType", false);
+            if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
+            {
+                if (newValue)
+                {
+                    if (m_backgroundQueues != null)
+                    {
+                        renderer[c].material.renderQueue = m_backgroundQueues[c];
+                        changed++;
+                    }
+                }
+                else
+                {
+                    m_backgroundQueues[c] = renderer[c].material.renderQueue;
+                }
+            }
+        }
+
+        if (newValue)
+        {
+            m_backgroundQueues = null;
+        }
+        else
+        {
+            for (int c = 0; c < renderer.Count; c++)
+            {
+                string renderType = renderer[c].material.GetTag("RenderType", false);
+                if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
+                {
+                    renderer[c].material.renderQueue = 2500;
+                    changed++;
+                }
+            }
+        }
+
+
+        renderer.Clear();
+        renderer.AddRange(getBackgroundRenderers(true));
+        if (!newValue)
+        {
+            m_foregroundQueues = new int[renderer.Count];
+        }
+
+        for (int c = 0; c < renderer.Count; c++)
+        {
+            string renderType = renderer[c].material.GetTag("RenderType", false);
+            if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
+            {
+                if (newValue)
+                {
+                    if (m_foregroundQueues != null)
+                    {
+                        renderer[c].material.renderQueue = m_foregroundQueues[c];
+                        changed++;
+                    }
+                }
+                else
+                {
+                    m_foregroundQueues[c] = renderer[c].material.renderQueue;
+                }
+            }
+        }
+
+        if (newValue)
+        {
+            m_foregroundQueues = null;
+        }
+        else
+        {
+            for (int c = 0; c < renderer.Count; c++)
+            {
+                string renderType = renderer[c].material.GetTag("RenderType", false);
+                if (renderType.Contains("Opaque") || renderType.Contains("TransparentCutout"))
+                {
+                    renderer[c].material.renderQueue = 2000;
+                    changed++;
+                }
+            }
+        }
+
+        Debug.Log("Materials changed: " + changed);
     }
     #endregion
 }

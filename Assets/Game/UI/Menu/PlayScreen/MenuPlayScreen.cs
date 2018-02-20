@@ -109,7 +109,7 @@ public class MenuPlayScreen : MonoBehaviour {
         UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
         SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
 
-        m_incentivizeRoot.SetActive(socialState != UserProfile.ESocialState.LoggedInAndInventivised);
+        m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndInventivised);
         m_badge.SetActive(!SocialIsLoggedIn);        
 
 		m_showLegalPopup = PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION;

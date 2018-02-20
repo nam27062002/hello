@@ -267,19 +267,28 @@ public class PersistenceLocalDriver
 
 	private void ShowLogInReward(Action onDone)
 	{
-		int rewardAmount = PersistenceFacade.Rules_GetPCAmountToIncentivizeSocial();
-
-		Action onRewardCollected = delegate ()
+        if (FeatureSettingsManager.instance.IsIncentivisedLoginEnabled())
         {
-            // Gives the reward    
-            UserProfile.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardAmount, false, HDTrackingManager.EEconomyGroup.INCENTIVISE_SOCIAL_LOGIN);
+            int rewardAmount = PersistenceFacade.Rules_GetPCAmountToIncentivizeSocial();
 
+            Action onRewardCollected = delegate ()
+            {
+                // Gives the reward    
+                UserProfile.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardAmount, false, HDTrackingManager.EEconomyGroup.INCENTIVISE_SOCIAL_LOGIN);
+
+                // Mark it as already rewarded
+                UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndInventivised;
+                Save(onDone);
+            };
+
+            PersistenceFacade.Popups_OpenLoginComplete(rewardAmount, onRewardCollected);
+        }
+        else
+        {
             // Mark it as already rewarded
-            UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndInventivised;            
-            Save(onDone);            
-        };
-
-        PersistenceFacade.Popups_OpenLoginComplete(rewardAmount, onRewardCollected);        
+            UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndInventivised;
+            Save(onDone);
+        }
 	}
 
 	public void NotifyUserHasLoggedIn(string socialPlatform, string socialId, Action onDone)

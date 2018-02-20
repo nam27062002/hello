@@ -101,7 +101,7 @@ public class HDTrackingManager
 	public static EEconomyGroup StringToEconomyGroup(string _str) {
 		try {
 			return (EEconomyGroup)System.Enum.Parse(typeof(EEconomyGroup), _str);
-		} catch(System.ArgumentException _e) {
+		} catch(System.ArgumentException) {
 			return EEconomyGroup.UNKNOWN;
 		}
 	}
@@ -368,7 +368,16 @@ public class HDTrackingManager
         Later
     };
 
-    public virtual void Notify_PopupSurveyShown(EPopupSurveyAction action) {}    
+    public virtual void Notify_PopupSurveyShown(EPopupSurveyAction action) {}        
+
+    public enum EPopupUnsupportedDeviceAction
+    {
+        Shown,
+        Quit,
+        Leave2HSE
+    };
+
+    public virtual void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action) { }
 
     #endregion
 

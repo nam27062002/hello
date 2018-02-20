@@ -21,7 +21,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const float UPDATE_INTERVAL = 0.2f;	// Seconds, avoid updating all the spawners all the time for better performance
-	private const float FAR_LAYER_Z = 8f;
+	public const float FAR_LAYER_Z = 8f;
 	public const float BACKGROUND_LAYER_Z = 60f;
     public const float SPAWNING_MAX_TIME = 4f; // Max time (in milliseconds) allowed to spend on spawning entities
     
@@ -93,7 +93,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
@@ -105,7 +105,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}        
@@ -238,9 +238,14 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                 // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
 				bool cancelSpawn = false;
 
-				if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
+
+				if (sp.transform.position.z < FAR_LAYER_Z) 
 				{
 					cancelSpawn = m_camera.IsInsideDeactivationArea(sp.boundingRect);
+				}
+				else if (sp.transform.position.z < BACKGROUND_LAYER_Z) 
+				{
+					cancelSpawn = m_camera.IsInsideDeactivationAreaFar(sp.boundingRect);
 				}
 				else 
 				{
@@ -457,7 +462,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_selectedSpawners.Clear();
     }
 
-	private void DisableManager() {
+	private void DisableManager(float estimatedTime) {
 		m_enabled = false;
 	}
 

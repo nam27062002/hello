@@ -153,8 +153,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1085828141485312}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -399.0509, y: 102.78419, z: 5.4349008}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 497.85355, y: 1.8598561, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4613803462911376}
@@ -264,6 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: deco_small
+  m_tier: 1
   m_disintegrable: 0
 --- !u!114 &114856483156279824
 MonoBehaviour:
@@ -276,7 +277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_burningTime: 2
+  m_burningTime: 1
   m_feedbackParticle:
     name: 
     path: 
@@ -405,5 +406,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnTime: 25
+  m_spawnTime: 30
+  m_maxSpawns: 0
   m_ground: []

@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 114000014061330322}
   - component: {fileID: 114000012716698238}
   m_Layer: 5
-  m_Name: Arroright
+  m_Name: ArrowRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -240,7 +240,6 @@ GameObject:
   - component: {fileID: 22420846}
   - component: {fileID: 22282046}
   - component: {fileID: 11447616}
-  - component: {fileID: 11496978}
   - component: {fileID: 11473938}
   - component: {fileID: 11419494}
   - component: {fileID: 95000012633125252}
@@ -368,9 +367,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 1
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 0
 --- !u!114 &11410068
 MonoBehaviour:
@@ -383,7 +382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_targetScreen: 4
+  m_targetScreen: 6
 --- !u!114 &11412488
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -442,9 +441,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 0
   m_showIfOwned: 0
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &11419494
 MonoBehaviour:
@@ -485,17 +484,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11496978}
-        m_MethodName: OnNavigationButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 114000010788612620}
         m_MethodName: Play
         m_Mode: 1
@@ -917,6 +905,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &11443408
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1100,6 +1093,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &11454040
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1169,9 +1167,9 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 1
   m_showIfOwned: 0
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &11462712
 MonoBehaviour:
@@ -1254,6 +1252,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -1436,18 +1439,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &11496978
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 167170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 2
 --- !u!114 &11498108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1513,6 +1504,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -3203,22 +3199,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1252953185035950
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 224898281738157768}
-  - component: {fileID: 114739054596149022}
-  m_Layer: 5
-  m_Name: SafeSetter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1258640765137218
 GameObject:
   m_ObjectHideFlags: 1
@@ -3318,7 +3298,7 @@ GameObject:
   - component: {fileID: 114860035727590564}
   - component: {fileID: 114128694274428180}
   m_Layer: 5
-  m_Name: AnimationAnchor
+  m_Name: LockAnimationAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3513,6 +3493,7 @@ GameObject:
   - component: {fileID: 224301659070552766}
   - component: {fileID: 114491185582465046}
   - component: {fileID: 114305676363227036}
+  - component: {fileID: 114828311499197654}
   m_Layer: 5
   m_Name: Arrows
   m_TagString: Untagged
@@ -4897,6 +4878,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000010464095056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5416,6 +5402,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000011070543330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5489,6 +5480,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000011181884388
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5536,6 +5532,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000011211629116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5571,10 +5572,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd3b61d94a424db295af62616c9d348, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_delay: 1.5
-  m_duration: 4
-  m_backdelay: 0.5
-  m_backDuration: 0.75
+  m_delay: 1
+  m_backDelay: 0.75
+  m_forwardSpeed: 40
+  m_backSpeed: 200
   m_easeForward: 0
   m_easeBackward: 2
   m_uiCanvasGroup: {fileID: 22570220}
@@ -5621,6 +5622,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -5842,6 +5848,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -6435,6 +6446,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   m_targetScale: {x: 1.5, y: 1.5, z: 1.5}
   m_pauseDuration: 1.5
   m_scaleUpDuration: 0.15
@@ -6460,9 +6476,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 1
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 01000000
   m_restartShowAnimation: 0
 --- !u!114 &114000012407090692
 MonoBehaviour:
@@ -6600,6 +6616,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -6838,6 +6859,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000012714783750
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6996,6 +7022,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000012964683374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7056,6 +7087,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -7122,6 +7158,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -7346,6 +7387,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -7760,6 +7806,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114000013713281366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7895,6 +7946,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -8108,6 +8164,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   m_targetScale: {x: 1.5, y: 1.5, z: 1.5}
   m_pauseDuration: 1.5
   m_scaleUpDuration: 0.15
@@ -8186,6 +8247,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -8514,6 +8580,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114118139309949974
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8557,6 +8628,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -8610,6 +8686,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -9187,9 +9268,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 1
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &114325650467012756
 MonoBehaviour:
@@ -9249,6 +9330,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -9634,6 +9720,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114497360995486190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9853,6 +9944,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114539593394277698
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10014,7 +10110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_targetScreen: 3
+  m_targetScreen: 5
 --- !u!114 &114593051717722782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10124,6 +10220,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -10502,9 +10603,9 @@ MonoBehaviour:
   m_showIfLocked: 0
   m_showIfAvailable: 0
   m_showIfOwned: 1
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 
   m_restartShowAnimation: 1
 --- !u!114 &114709952110053542
 MonoBehaviour:
@@ -10618,24 +10719,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114739054596149022
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1252953185035950}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_adjustMode: 1
-  m_scale:
-    bottom: 1
-    left: 1
-    right: 1
-    top: 1
-  m_customSafeAreas: []
 --- !u!114 &114745872195996496
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11003,6 +11086,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114804230102694548
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11072,6 +11160,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114828311499197654
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1540974368994900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_adjustMode: 0
+  m_scale:
+    bottom: 1
+    left: 1
+    right: 1
+    top: 1
+  m_customSafeAreas: []
 --- !u!114 &114831321103675424
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11149,9 +11255,9 @@ MonoBehaviour:
   m_showIfLocked: 1
   m_showIfAvailable: 0
   m_showIfOwned: 0
-  m_checkScreens: 1
+  m_checkScreens: 0
   m_mode: 0
-  m_screens: 01000000
+  m_targetScreens: 01000000
   m_restartShowAnimation: 1
 --- !u!114 &114862524374661678
 MonoBehaviour:
@@ -11306,6 +11412,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   m_targetScale: {x: 1.5, y: 1.5, z: 1.5}
   m_pauseDuration: 1.5
   m_scaleUpDuration: 0.15
@@ -11355,6 +11466,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -11485,6 +11601,11 @@ MonoBehaviour:
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
@@ -16115,12 +16236,12 @@ RectTransform:
   m_Children:
   - {fileID: 224000010538492306}
   - {fileID: 224773784709814024}
-  m_Father: {fileID: 224898281738157768}
+  m_Father: {fileID: 224301659070552766}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 15, y: 0}
   m_SizeDelta: {x: 150, y: 850}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224000014163956468
@@ -16446,7 +16567,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 1024, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 76.3}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224281823425576766
@@ -16477,7 +16598,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 224898281738157768}
+  - {fileID: 224000014122871066}
   - {fileID: 22485316}
   m_Father: {fileID: 22499148}
   m_RootOrder: 5
@@ -17000,7 +17121,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -11, y: 28.1}
+  m_AnchoredPosition: {x: -18, y: 28.1}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224847995298848792
@@ -17056,7 +17177,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -65, y: 30.3}
+  m_AnchoredPosition: {x: -58, y: 30.3}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224872956904652202
@@ -17133,25 +17254,6 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: -45, y: 0}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0, y: 0.5}
---- !u!224 &224898281738157768
-RectTransform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1252953185035950}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 224000014122871066}
-  m_Father: {fileID: 224301659070552766}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 15, y: 0}
-  m_SizeDelta: {x: 150, y: 850}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224898703355611858
 RectTransform:

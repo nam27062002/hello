@@ -31,5 +31,4 @@ public class GameStoreManager
     public virtual StoreManager.StoreProduct GetStoreProduct( string sku ){ return null; }
     public virtual bool CanMakePayment(){ return false; }
     public virtual void Buy( string sku ){}    
-
 }

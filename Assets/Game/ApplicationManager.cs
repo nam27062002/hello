@@ -682,7 +682,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				kAchievementsData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
 				if (kEntry.Value.Has ("amount"))
 				{
+#if UNITY_IOS
+					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);
+#elif UNITY_ANDROID
 					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount");
+#endif				
 				}
 				else
 				{
@@ -741,9 +745,67 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	return ret;
     }
 
-#endregion
+    #endregion
 
-#region debug
+    #region apps
+    public enum EApp
+    {
+        HungryDragon,
+        HungrySharkEvo
+    };
+
+    public static void Apps_OpenAppInStore(EApp app)
+    {
+        string appId = Apps_GetAppIdInStore(app);
+        if (string.IsNullOrEmpty(appId))
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)            
+                LogError("No appId found for app " + app.ToString());
+            
+        }
+        else
+        {			
+            MiscUtils.OpenAppInStore(appId);
+        }
+    }
+
+    public static string Apps_GetAppIdInStore(EApp app)
+    {
+        string returnValue = null;
+
+        switch (app)
+        {
+            case EApp.HungryDragon:
+                returnValue = Apps_GetHDIdInStore();
+                break;
+
+            case EApp.HungrySharkEvo:
+                returnValue = Apps_GetHSEIdInStore();
+                break;
+        }
+
+        return returnValue;
+    }
+
+    private static string Apps_GetHDIdInStore()
+    {
+		return Application.identifier;
+    }
+
+    private static string Apps_GetHSEIdInStore()
+    {
+        string returnValue = null;
+#if UNITY_IOS
+        returnValue = "535500008"; //HSE App Store ID
+#elif UNITY_ANDROID
+        returnValue = "com.fgol.HungrySharkEvolution"; //HSE Google play ID
+#endif
+
+        return returnValue;
+    }
+    #endregion
+
+    #region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
@@ -1190,19 +1252,19 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
-    private void Log(string msg)
+    private static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.Log(msg);
     }
 
-    private void LogWarning(string msg)
+    private static void LogWarning(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogWarning(msg);
     }
 
-    private void LogError(string msg)
+    private static void LogError(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogError(msg);

@@ -168,7 +168,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		m_operator.EnterDevice(false);
 	}
 
-	public void OperatorLeaveDevice() {		
+	public void OperatorLeaveDevice() {
 		if (m_mustBeChild) {
 			m_operator.transform.parent = m_operatorParent;
 		}
@@ -197,7 +197,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	//-------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		if (m_spawnAtTransform != null) {
-			Gizmos.color = Colors.coral;
+			Gizmos.color = Colors.lime;
 			Gizmos.DrawSphere(m_spawnAtTransform.position, 0.5f);
 			Gizmos.DrawCube(m_spawnAtTransform.position + GetLookAtVector() * 0.5f, Vector3.one * 0.125f + GetLookAtVector() * 1f);
 		}

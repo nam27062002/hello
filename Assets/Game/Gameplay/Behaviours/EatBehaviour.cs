@@ -76,6 +76,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 
 	protected IMotion m_motion;
 
+	private bool m_useBlood = true;
 	private List<GameObject> m_bloodEmitter;
 	private List<GameObject> m_freezeEmitter;
 
@@ -191,6 +192,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	}
 
     protected virtual void Start () {
+		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
 		m_eatingEntitiesEnabled = m_canEatEntities;
 
 		m_holdingBloodParticle.CreatePool();
@@ -1052,6 +1054,10 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 
 
 	private void StartBlood(){
+		m_holdingBlood = 0.5f;
+
+		if (!m_useBlood)return;
+
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
 		GameObject go = m_holdingBloodParticle.Spawn(bloodPos + m_holdingBloodParticle.offset);
@@ -1066,7 +1072,6 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 				
 		}
 		m_bloodEmitter.Add(go);
-		m_holdingBlood = 0.5f;
 	}
 
 	private void StartFreezing(){
@@ -1087,6 +1092,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	private void UpdateBlood() {
+		if ( !m_useBlood ) return;
 		if (m_bloodEmitter.Count > 0) {
 			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;
