@@ -17,7 +17,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Define a camera setup.
 /// </summary>
-[RequireComponent(typeof(LookAt))]
 public class CameraSnapPoint : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -44,16 +43,6 @@ public class CameraSnapPoint : MonoBehaviour {
 	public bool changeFar = true;
 	public float far = 1000f;
 
-	// Optional fog setup
-	public bool changeFogColor = true;
-	public Color fogColor = Colors.silver;
-
-	public bool changeFogStart = true;
-	public float fogStart = 20f;
-
-	public bool changeFogEnd = true;
-	public float fogEnd = 100f;
-
 	// Optional screen darkening setup
 	public bool darkenScreen = false;
 	public float darkScreenDistance = 50f;
@@ -64,17 +53,6 @@ public class CameraSnapPoint : MonoBehaviour {
 	public bool livePreview = true;
 	public bool drawGizmos = true;
 	public Color gizmoColor = new Color(0f, 1f, 1f, 0.25f);
-
-	// Internal references
-	private LookAt m_lookAt = null;
-	public LookAt lookAtData {
-		get {
-			if(m_lookAt == null) {
-				m_lookAt = GetComponent<LookAt>();
-			}
-			return m_lookAt;
-		}
-	}
 
 	//------------------------------------------------------------------//
 	// STATIC MEMBERS													//
@@ -92,51 +70,6 @@ public class CameraSnapPoint : MonoBehaviour {
 		
 	}
 
-	/// <summary>
-	/// Draw scene gizmos.
-	/// </summary>
-	private void OnDrawGizmos() {
-		// Ignore if gizmos disabled
-		if(!drawGizmos) return;
-
-		// LookAt line
-		Gizmos.color = Colors.WithAlpha(Colors.cyan, 0.75f);
-		Gizmos.DrawLine(lookAtData.transform.position, lookAtData.lookAtPointGlobal);
-
-		// Position and lookAt points
-		Gizmos.color = Colors.WithAlpha(Colors.red, 0.75f);
-		Gizmos.DrawSphere(lookAtData.transform.position, 0.5f);
-		Gizmos.DrawSphere(lookAtData.lookAtPointGlobal, 0.5f);
-
-		// Camera frustum
-		// If not defined, use main camera values in a different color
-		// If there is no main camera, use default values in a different color
-		Gizmos.color = gizmoColor;
-		Camera refCamera = Camera.main;
-
-		// Fov
-		float targetFov = fov;
-		if(!changeFov) {
-			targetFov = (refCamera != null) ? refCamera.fieldOfView : 60f;
-		}
-
-		// Near
-		float targetNear = near;
-		if(!changeNear) {
-			targetNear = (refCamera != null) ? refCamera.nearClipPlane : 0.3f;
-		}
-
-		// Far
-		float targetFar = far;
-		if(!changeFar) {
-			targetFar = (refCamera != null) ? refCamera.farClipPlane : 1000f;
-		}
-
-		// Draw camera frustum
-		Gizmos.matrix = transform.localToWorldMatrix;
-		Gizmos.DrawFrustum(Vector3.zero, targetFov, targetFar, targetNear, (refCamera != null) ? refCamera.aspect : 4f/3f);
-	}
-
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
@@ -149,18 +82,13 @@ public class CameraSnapPoint : MonoBehaviour {
 		if(_cam == null) return;
 
 		// Camera position and orientation
-		if(changePosition) _cam.transform.position = lookAtData.transform.position;
-		if(changeRotation) _cam.transform.LookAt(lookAtData.lookAtPointGlobal);
+		if(changePosition) _cam.transform.position = this.transform.position;
+		if(changeRotation) _cam.transform.rotation = this.transform.rotation;
 
 		// Camera params
 		if(changeFov) _cam.fieldOfView = fov;
 		if(changeNear) _cam.nearClipPlane = near;
 		if(changeFar) _cam.farClipPlane = far;
-
-		// Fog params
-		if(changeFogColor) RenderSettings.fogColor = fogColor;
-		if(changeFogStart) RenderSettings.fogStartDistance = fogStart;
-		if(changeFogEnd) RenderSettings.fogEndDistance = fogEnd;
 
 		// Dark screen
 		// Apply values
@@ -169,8 +97,10 @@ public class CameraSnapPoint : MonoBehaviour {
 			if(darkenScreen) {
 				screen.gameObject.SetActive(true);
 				screen.transform.localPosition = Vector3.forward * darkScreenDistance;
-                screen.material.SetColor("_TintColor", FixColorForDarkScreen(this.darkScreenColor));
-				screen.material.renderQueue = this.darkScreenRenderQueue;
+				if(Application.isPlaying) {
+	                screen.material.SetColor("_TintColor", FixColorForDarkScreen(this.darkScreenColor));
+					screen.material.renderQueue = this.darkScreenRenderQueue;
+				}
 			} else {
 //				screen.color = Colors.WithAlpha(screen.color, 0f);
 				screen.gameObject.SetActive(false);
@@ -212,10 +142,10 @@ public class CameraSnapPoint : MonoBehaviour {
 		
 		// Camera position and orientation
 		if(changePosition){
-			seq.Join(_cam.transform.DOMove(lookAtData.transform.position, _duration).SetAs(_params));
+			seq.Join(_cam.transform.DOMove(this.transform.position, _duration).SetAs(_params));
 		}
 		if(changeRotation) {
-			seq.Join(_cam.transform.DORotateQuaternion(lookAtData.transform.rotation, _duration).SetAs(_params));
+			seq.Join(_cam.transform.DORotateQuaternion(this.transform.rotation, _duration).SetAs(_params));
 		}
 
 		// Camera params
@@ -240,31 +170,6 @@ public class CameraSnapPoint : MonoBehaviour {
 				() => { return _cam.farClipPlane; },
 				(_newValue) => { _cam.farClipPlane = _newValue; },
 				far, _duration
-			).SetAs(_params));
-		}
-
-		// Fog params
-		if(changeFogColor) {
-			seq.Join(DOTween.To(
-				() => { return RenderSettings.fogColor; },
-				(_newValue) => { RenderSettings.fogColor = _newValue; },
-				fogColor, _duration
-			).SetAs(_params));
-		}
-
-		if(changeFogStart) {
-			seq.Join(DOTween.To(
-				() => { return RenderSettings.fogStartDistance; },
-				(_newValue) => { RenderSettings.fogStartDistance = _newValue; },
-				fogStart, _duration
-			).SetAs(_params));
-		}
-
-		if(changeFogEnd) {
-			seq.Join(DOTween.To(
-				() => { return RenderSettings.fogEndDistance; },
-				(_newValue) => { RenderSettings.fogEndDistance = _newValue; },
-				fogEnd, _duration
 			).SetAs(_params));
 		}
 
@@ -331,6 +236,8 @@ public class CameraSnapPoint : MonoBehaviour {
 		if(m_darkScreen == null) {
 			// No! Do it now
 			GameObject screenPrefab = Resources.Load<GameObject>(DARK_SCREEN_PREFAB_PATH);
+			if(screenPrefab == null) return null;
+
 			GameObject screenInstance = GameObject.Instantiate<GameObject>(screenPrefab);
 			screenInstance.hideFlags = HideFlags.DontSave;
 			m_darkScreen = screenInstance.GetComponent<MeshRenderer>();

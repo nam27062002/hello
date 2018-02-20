@@ -28,10 +28,10 @@ public class MenuNavigationButton : MonoBehaviour {
 	[InfoBox("- Will only be used if the OnNavigationButton listener is added to the button's OnClick event.\n" +
 		"- Passing enum values as parameters for events is not possible in Unity, so we must do it this way.\n" +
 		"- For the OnBackButton callback, this is the screen to default if there is no previous screen in the navigation history.")]
-	[SerializeField] protected MenuScreens m_targetScreen = MenuScreens.NONE;
+	[SerializeField] protected MenuScreen m_targetScreen = MenuScreen.NONE;
 
 	// Internal References
-	protected MenuScreensController m_navigationSystem = null;
+	protected MenuTransitionManager m_transitionManager = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -41,8 +41,8 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// </summary>
 	protected void Start() {
 		// Get a reference to the navigation system, which in this particular case should be a component in the menu scene controller
-		m_navigationSystem = InstanceManager.sceneController.GetComponent<MenuScreensController>();
-		Debug.Assert(m_navigationSystem != null, "Required component missing!");
+		m_transitionManager = InstanceManager.menuSceneController.transitionManager;
+		Debug.Assert(m_transitionManager != null, "Required component missing!");
 	}
 
 	//------------------------------------------------------------------//
@@ -53,7 +53,7 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// </summary>
 	public void OnNavigationButton() {
 		// Just go to target screen
-		m_navigationSystem.GoToScreen((int)m_targetScreen);
+		m_transitionManager.GoToScreen(m_targetScreen, true);
 	}
 
 	/// <summary>
@@ -61,10 +61,10 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// </summary>
 	public void OnBackButton() {
 		// If history is empty, go to default screen
-		if(m_navigationSystem.screenHistory.Count == 0) {
+		if(m_transitionManager.screenHistory.Count == 0) {
 			OnNavigationButton();
 		} else {
-			m_navigationSystem.Back();
+			m_transitionManager.Back(true);
 		}
 	}
 

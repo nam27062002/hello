@@ -26,19 +26,41 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private const string TID_OPTIONS_USERPROFILE_LOG_RECEIVE = "TID_SOCIAL_USERPROFILE_LOG_RECEIVE";
     private const string TID_OPTIONS_USERPROFILE_LOG_NETWORK = "TID_SOCIAL_USERPROFILE_LOG_NETWORK";
 
-    void Awake()
+	#if UNITY_ANDROID
+	const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
+	#elif UNITY_IPHONE
+	const string TID_LOGIN_ERROR = "TID_GAME_CENTER_AUTH_ERROR";
+	#endif
+
+	void Awake()
     {            
-        Init();        
+		Model_Init();
+		Social_Init();
+		Resync_Init();
+		User_Init();  
+		GameCenter_Init(); 
     }
 
-    private void Init()
-    {        
-        Model_Init();
-        Social_Init();
-        Resync_Init();
-        User_Init();  
-        Notifications_Init();      
-    }
+	private void OnDestroy() {
+		GameCenter_Destroy();
+	}
+
+	public void OnShow(){
+		#if UNITY_ANDROID
+		RefreshGooglePlayView();
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+		#endif
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+	}
+
+	public void OnHide(){
+		#if UNITY_ANDROID
+		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+		#endif
+		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+	}
 
     void OnEnable()
     {        
@@ -52,7 +74,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Social_Refresh();
         Resync_Refresh();
         Cloud_Refresh();
-        Notifications_Refresh();
+		GameCenter_Refresh();
     }
 
     private bool IsLoadingPopupOpen { get; set; }
@@ -69,9 +91,156 @@ public class PopupSettingsSaveTab : MonoBehaviour
         PersistenceFacade.Popups_CloseLoadingPopup();
     }    
 
+	#region gamecenter
+	[SerializeField] private GameObject m_googlePlayGroup = null;
+	[SerializeField] private GameObject m_googlePlayLoginButton = null;
+	[SerializeField] private GameObject m_googlePlayLogoutButton = null;
+	[SerializeField] private Button m_googlePlayAchievementsButton = null;
+	[Space]
+	[SerializeField] private GameObject m_gameCenterGroup = null;
+
+	private PopupController m_loadingPopupController = null;
+	private PopupController m_confirmPopup = null;
+
+	private void GameCenter_Init() {
+		// Disable google play group if not available
+		#if UNITY_ANDROID
+		m_googlePlayGroup.SetActive(true);
+		m_gameCenterGroup.SetActive(false);
+		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		#elif UNITY_IOS
+		m_googlePlayGroup.SetActive(false);
+		m_gameCenterGroup.SetActive(true);
+		#else
+		m_googlePlayGroup.SetActive(false);
+		m_gameCenterGroup.SetActive(false);
+		#endif
+	}
+
+	private void GameCenter_Refresh() {
+
+	}
+
+	private void GameCenter_Destroy() {
+		#if UNITY_ANDROID
+		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		#endif
+	}
+
+	public void RefreshGooglePlayView(){
+
+		#if UNITY_ANDROID
+		if ( m_loadingPopupController != null ){
+			m_loadingPopupController.Close(true);
+			m_loadingPopupController = null;
+		}
+
+		if ( ApplicationManager.instance.GameCenter_IsAuthenticated() ){
+			m_googlePlayLoginButton.SetActive(false);
+			m_googlePlayLogoutButton.SetActive(true);
+			m_googlePlayAchievementsButton.interactable = true;
+		}else{
+			m_googlePlayLoginButton.SetActive(true);
+			m_googlePlayLogoutButton.SetActive(false);
+			m_googlePlayAchievementsButton.interactable = false;
+		}
+		#elif UNITY_IOS
+		if ( m_confirmPopup != null )
+		{
+			m_confirmPopup.Close( true );
+			OnGameCenterButton();
+		}
+		#endif
+
+	}
+
+	public void GooglePlayAuthCancelled(){
+		if ( m_loadingPopupController != null ){
+			m_loadingPopupController.Close(true);
+			m_loadingPopupController = null;
+		}
+	}
+
+	public void GooglePlayAuthFailed(){
+		if ( m_loadingPopupController != null ){
+			m_loadingPopupController.Close(true);
+			m_loadingPopupController = null;
+		}
+
+		// Show generic message there was an error!
+		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+	}
+
+	public void OnGooglePlayLogIn(){
+		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
+			// Show curtain and wait for game center response
+			if ( !GameCenterManager.SharedInstance.GetAuthenticatingState() )	// if not authenticating
+			{
+				ApplicationManager.instance.GameCenter_Login();
+			}
+
+			if (GameCenterManager.SharedInstance.GetAuthenticatingState())
+			{
+				m_loadingPopupController = PopupManager.PopupLoading_Open();
+			}
+			else
+			{
+				// No curatin -> something failed, we are not authenticating -> tell the player there was an error
+				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			}
+
+
+		}
+	}
+
+	public void OnGooglePlayLogOut(){
+		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
+			ApplicationManager.instance.GameCenter_LogOut();
+		}
+	}
+
+	public void OnGooglePlayAchievements(){
+		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
+			// Add some delay to give enough time for SFX to be played before losing focus
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					ApplicationManager.instance.GameCenter_ShowAchievements();
+				}, 0.15f
+			);
+		}
+	}
+
+	public void OnGameCenterButton() {
+		// Apple does NOT login the user, we need to check it.
+		if (!GameCenterManager.SharedInstance.CheckIfAuthenticated ())
+		{
+			PopupMessage.Config config = PopupMessage.GetConfig();
+			config.TitleTid = "TID_GAMECENTER_CONNECTION_TITLE";
+			config.ShowTitle = true;
+			config.MessageTid = "TID_GAMECENTER_CONNECTION_BODY";
+			// This popup ignores back button and stays open so the user makes a decision
+			config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.PerformConfirm;
+			config.ConfirmButtonTid = "TID_GEN_OK";
+			config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+			config.IsButtonCloseVisible = false;
+			m_confirmPopup = PopupManager.PopupMessage_Open(config);
+			m_confirmPopup.OnClosePreAnimation.AddListener( OnPopupDismissed );
+		}
+		else
+		{
+			GameCenterManager.SharedInstance.LaunchGameCenterApp ();
+		}
+	}
+
+	void OnPopupDismissed(){
+		m_confirmPopup = null;
+	}
+	#endregion
+
     #region social
     // This region is responsible for handling social stuff
 
+	[Space]
     [SerializeField]
     private Button m_socialEnableBtn;
 
@@ -529,30 +698,4 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
     #endregion
 
-	#region notifications_settings
-	[SerializeField]
-    private Slider m_notificationsSlider;
-
-    public void Notifications_Init(){        
-        m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
-    }
-
-	public void Notifications_Refresh(){        
-        m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
-    }
-
-    public void OnNotificationsSettingChanged(){
-        int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);        
-        HDNotificationsManager.instance.SetNotificationsEnabled(v > 0);        
-    }
-
-	public void Notifications_OnToggle() {
-		if(m_notificationsSlider.value > 0) {
-			m_notificationsSlider.value = 0;
-		} else {
-			m_notificationsSlider.value = 1;
-		}
-		OnNotificationsSettingChanged();
-	}
-    #endregion
 }

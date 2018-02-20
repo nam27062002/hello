@@ -39,10 +39,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private bool m_isAnimating = false;
 	private bool isAnimating {
 		get { return m_isAnimating; }
-		set { m_isAnimating = value; Debug.Log("IS ANIMATING SET TO <color=" + (value ? "green" : "red") + ">" + value + "</color>"); }
+		set { m_isAnimating = value; }
 	}
 
-	private MenuScreens m_goToScreen = MenuScreens.NONE;
+	private MenuScreen m_goToScreen = MenuScreen.NONE;
 	private DragonData m_dragonToTease = null;
 	private DragonData m_dragonToReveal = null;
 
@@ -70,15 +70,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events.
-		Messenger.AddListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
 		// Check whether we need to move to another screen
 		// Check order is relevant!
-		m_goToScreen = MenuScreens.NONE;
+		m_goToScreen = MenuScreen.NONE;
 
 		// Check pending rewards
 		if(UsersManager.currentUser.rewardStack.Count > 0) {
-			m_goToScreen = MenuScreens.PENDING_REWARD;
+			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
 
@@ -89,7 +89,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			if (ge != null) {
 				ge.UpdateState();
 				if (ge.isRewardAvailable) {
-					m_goToScreen = MenuScreens.EVENT_REWARD;
+					m_goToScreen = MenuScreen.EVENT_REWARD;
 					return;
 				}
 			}
@@ -101,7 +101,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<NavigationScreenSystem.ScreenChangedEventData>(MessengerEvents.NAVIGATION_SCREEN_CHANGED, OnNavigationScreenChanged);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 	}
 
 	/// <summary>
@@ -109,24 +109,24 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Do we have a screen change pending?
-		if(m_goToScreen != MenuScreens.NONE) {
+		if(m_goToScreen != MenuScreen.NONE) {
 			// Which screen?
 			switch(m_goToScreen) {
-				case MenuScreens.EVENT_REWARD: {
-					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.EVENT_REWARD).GetComponent<EventRewardScreen>();
+				case MenuScreen.EVENT_REWARD: {
+					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 					scr.StartFlow();
-					InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.EVENT_REWARD);
+					InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);
 				} break;
 
-				case MenuScreens.PENDING_REWARD: {
-					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreen(MenuScreens.PENDING_REWARD).GetComponent<PendingRewardScreen>();
+				case MenuScreen.PENDING_REWARD: {
+					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
 					scr.StartFlow();
-					InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.PENDING_REWARD);
+					InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 				} break;
 			}
 
 			// Clear var
-			m_goToScreen = MenuScreens.NONE;
+			m_goToScreen = MenuScreen.NONE;
 			return;
 		}
 
@@ -171,7 +171,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_scrollDuration">Use it to sync with scrolling to target dragon.</param>
 	/// <param name="_gotoDragonUnlockScreen">Whether to go the DragonUnlockScreen after the animation or not.</param>
 	public void LaunchUnlockAnim(string _unlockedDragonSku, float _initialDelay, float _scrollDuration, bool _gotoDragonUnlockScreen) {
-		Debug.Log("<color=yellow>UNLOCK </color>" + _unlockedDragonSku);
 		// Program lock animation sequence
 		DOTween.Sequence()
 			.AppendCallback(() => {
@@ -244,13 +243,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Restore HUD
 				InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 
-				// Navigate to dragon unlock screen if required
-				if(_gotoDragonUnlockScreen) {
-					InstanceManager.menuSceneController.screensController.GoToScreen((int)MenuScreens.DRAGON_UNLOCK);
-				}
-
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
+			})
+			.AppendInterval(0.1f)
+			.AppendCallback(() => {
+				// Navigate to dragon unlock screen if required
+				if(_gotoDragonUnlockScreen) {
+					InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_UNLOCK);
+				}
 			})
 			.AppendInterval(0.5f)		// Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {
@@ -270,8 +271,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_acquiredDragonSku">Acquired dragon sku.</param>
 	public void LaunchAcquireAnim(string _acquiredDragonSku) {
-		Debug.Log("<color=yellow>ACQUIRE </color>" + _acquiredDragonSku);
-
 		// Program animation
 		DOTween.Sequence()
 			.AppendCallback(() => {
@@ -308,7 +307,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_teaseDragonSku">Teased dragon sku.</param>
 	private void LaunchTeaseAnim(string _teaseDragonSku) {
 		// Aux vars
-		Debug.Log("<color=yellow>TEASE </color>" + _teaseDragonSku);
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
 		DragonData dragonData = DragonManager.GetDragonData(_teaseDragonSku);
 
@@ -371,7 +369,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_revealDragonSku">The revealed dragon sku.</param>
 	private void LaunchRevealAnim(string _revealDragonSku) {
 		// Aux vars
-		Debug.Log("<color=yellow>REVEAL </color>" + _revealDragonSku);
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
 		DragonData dragonData = DragonManager.GetDragonData(_revealDragonSku);
 
@@ -484,11 +481,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Navigation screen has changed (animation starts now).
+	/// The current menu screen has changed (animation starts now).
 	/// </summary>
-	/// <param name="_event">Event data.</param>
-	private void OnNavigationScreenChanged(NavigationScreenSystem.ScreenChangedEventData _event) {
-
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
+		// Hide all dragons that are not meant to be displayed
 		foreach (DragonData data in DragonManager.dragonsByOrder) {
 			if (data.lockState == DragonData.LockState.HIDDEN || data.lockState == DragonData.LockState.TEASE) {
 				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
@@ -496,11 +494,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 			}
 		}
 
-		// Only if it comes from the main screen navigation system
-		if(_event.dispatcher != InstanceManager.menuSceneController.screensController) return;
-
 		// If leaving this screen
-		if(_event.fromScreenIdx == (int)MenuScreens.DRAGON_SELECTION) {
+		if(_from == MenuScreen.DRAGON_SELECTION) {
 			// Remove "new" flag from incubating eggs
 			for(int i = 0; i < EggManager.INVENTORY_SIZE; i++) {
 				if(EggManager.inventory[i] != null) {
@@ -508,12 +503,30 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 			}
 
-            // Save persistence to store current dragon
-            PersistenceFacade.instance.Save_Request(true);
-        }
+			// Save persistence to store current dragon
+			PersistenceFacade.instance.Save_Request(true);
+		}
 	}
 
+	/// <summary>
+	/// Play button has been pressed.
+	/// </summary>
 	public void OnPlayButton() {
+		// Select target screen
+		MenuScreen nextScreen = MenuScreen.MISSIONS;
+
+		// If there is an active global event, go to the events screen
+		// Do it as well if the event is pending reward collection
+		if(GlobalEventManager.currentEvent != null
+			&& (GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
+			&& UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
+			nextScreen = MenuScreen.GLOBAL_EVENTS;
+		}
+
+		// Go to target screen
+		InstanceManager.menuSceneController.GoToScreen(nextScreen);
+
+		// Tutorial tracking
 		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
 		}

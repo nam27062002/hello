@@ -54,7 +54,9 @@ GameObject:
   - component: {fileID: 114718332413424846}
   - component: {fileID: 114183859500390618}
   - component: {fileID: 114517901214681318}
-  m_Layer: 0
+  - component: {fileID: 114165175981579656}
+  - component: {fileID: 65026767246519974}
+  m_Layer: 16
   m_Name: PF_straw_flamable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +190,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1285270853064130}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 397, y: 0.2, z: 5}
+  m_LocalPosition: {x: 447.9, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4594199957432692}
@@ -331,6 +333,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1443156431584930}
   m_Mesh: {fileID: 4300000, guid: 4611e61185051f640a94525ea8bf35fd, type: 3}
+--- !u!65 &65026767246519974
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1285270853064130}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.43, y: 5.26, z: 5.57}
+  m_Center: {x: 0, y: 2.53, z: 0}
 --- !u!114 &114099558289584232
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -353,6 +367,98 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114165175981579656
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1285270853064130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zone1Interaction: 0
+  m_knockBackStrength: 0
+  m_particleFaceDragonDirection: 0
+  m_feedbackParticle:
+    name: PS_C_Wheat
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+  m_destroyParticle:
+    name: PS_D_Wheat
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 2, z: 0}
+    scale: 1.75
+  m_onDestroyAudio: Strew_Destroyed
+  m_onFeedbackAudio: 
 --- !u!114 &114183859500390618
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -364,7 +470,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnTime: 45
+  m_spawnTime: 40
+  m_maxSpawns: 0
   m_ground: []
 --- !u!114 &114214850052567770
 MonoBehaviour:
@@ -529,4 +636,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: deco_medium
+  m_tier: 1
   m_disintegrable: 0

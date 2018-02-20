@@ -83,7 +83,7 @@ public class FogManager : MonoBehaviour
 	public float m_transitionDuration = 1.0f;
 
 	// Runtime variables
-	public List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
+	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
 	List<FogArea> m_activeFogAreaList = new List<FogArea>();
 
 	float m_start;

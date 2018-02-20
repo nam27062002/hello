@@ -325,9 +325,11 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	// Update is called once per frame
 	protected virtual void Update() 
 	{
-		if (PreyCount <= 0 && m_attackTarget != null && m_isPlayer)
+		if (m_isPlayer && PreyCount <= 0 && m_attackTarget != null && m_holdingPrey == null)
 		{
-			BiteKill( false );
+			BiteKill( true );
+			if ( PreyCount > 0 || m_holdingPrey != null )
+				StopAttackTarget();
 		}
 
 		if ( m_attackTarget != null )
@@ -387,6 +389,11 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
 		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
 		m_holdingPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
+		/*
+		Quaternion localRot = m_holdingPrey.transform.localRotation;
+		float fixRotStep = m_rotateToMouthSpeed * Time.deltaTime;
+		m_holdingPrey.transform.localRotation = Quaternion.RotateTowards( localRot, m_holdingPrey.GetDyingFixRot(), fixRotStep);
+*/
 
 		// Position
 		Vector3 pos = m_holdingPrey.transform.localPosition;
@@ -565,11 +572,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					prey.eatingAnimationTimer -= Time.deltaTime;
 					float t = 1.0f - Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
 
-					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, t);
-
-					if (!prey.prey.HasCorpse()) {						
-						prey.prey.transform.localScale = Vector3.Lerp(prey.startScale * 0.5f, prey.startScale * 0.25f, t);
-					}
+					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, 0);
 
 					// remaining time eating
 					if (prey.eatingAnimationTimer <= 0) 
@@ -708,7 +711,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 			StartBlood();
 			AI.IMachine toEat = m_holdingPrey;
 			EndHold();
-			Eat( toEat, true, 0.5f);
+			Eat( toEat, true, 0.1f);
 			// StartSwallow(m_holdingPrey);
 			// EndSwallow(m_holdingPrey);
 
