@@ -81,6 +81,13 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 m_enableState = true;
             }
         }
+        else
+        {
+            if (m_currentTrigger == trigger)
+            {
+                m_currentTrigger = null;
+            }
+        }
     }
 
 
