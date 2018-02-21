@@ -8,6 +8,8 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -46,6 +48,30 @@ public class TrackerFireRush : TrackerBase {
 
 		// Call parent
 		base.Clear();
+	}
+
+	/// <summary>
+	/// Localizes and formats the description according to this tracker's type
+	/// (i.e. "Eat 52 birds", "Dive 500m", "Survive 10 minutes").
+	/// </summary>
+	/// <returns>The localized and formatted description for this tracker's type.</returns>
+	/// <param name="_tid">Description TID to be formatted.</param>
+	/// <param name="_targetValue">Target value. Will be placed at the %U0 replacement slot.</param>
+	/// <param name="_replacements">Other optional replacements, starting at %U1.</param>
+	override public string FormatDescription(string _tid, float _targetValue, params string[] _replacements) {
+		// Singular/Plural issue (https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-1202)
+		// Figure out which tid to use
+		string timeTid = "TID_GEN_TIME";
+		if(_targetValue > 1) {
+			timeTid = "TID_GEN_TIME_PLURAL";
+		}
+
+		// Insert it at the start of the replacements array
+		List<string> replacementsList = (_replacements == null) ? new List<string>(1) : _replacements.ToList();
+		replacementsList.Insert(0, LocalizationManager.SharedInstance.Localize(timeTid));
+
+		// Call parent
+		return base.FormatDescription(_tid, _targetValue, replacementsList.ToArray());
 	}
 
 	//------------------------------------------------------------------------//

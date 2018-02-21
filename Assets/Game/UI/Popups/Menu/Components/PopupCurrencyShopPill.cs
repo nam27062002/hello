@@ -60,10 +60,13 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	// Internal
 	private UserProfile.Currency m_currency = UserProfile.Currency.REAL;
 	private float m_price = 0f;
+	private ResourceRequest m_iconLoadTask = null;
 
 	private FGOL.Server.Error m_checkConnectionError;
 	private PopupController m_loadingPopupController;
 	private bool m_awaitingPurchaseConfirmation = false;
+
+	private static int s_loadingTaskPriority = -1;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -80,6 +83,23 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		// Check if image has finished loading
+		if(m_iconLoadTask != null) {
+			if(m_iconLoadTask.isDone) {
+				// Instantiate icon
+				GameObject.Instantiate(m_iconLoadTask.asset, m_iconContainer, false);
+
+				// Clear loading task
+				m_iconLoadTask = null;
+				s_loadingTaskPriority--;
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -104,8 +124,14 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 		// Icon
 		// Destroy any existing icon
 		m_iconContainer.DestroyAllChildren(false);
-		GameObject iconPrefab = Resources.Load<GameObject>(UIConstants.SHOP_ICONS_PATH + _def.Get("icon"));
-		GameObject.Instantiate(iconPrefab, m_iconContainer, false);
+		int loadingTaskPriority = s_loadingTaskPriority;
+		if(m_iconLoadTask != null) {
+			loadingTaskPriority = m_iconLoadTask.priority;
+		} else {
+			s_loadingTaskPriority++;
+		}
+		m_iconLoadTask = Resources.LoadAsync<GameObject>(UIConstants.SHOP_ICONS_PATH + _def.Get("icon"));
+		m_iconLoadTask.priority = s_loadingTaskPriority;
 
 		// Amount
 		m_amountText.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
