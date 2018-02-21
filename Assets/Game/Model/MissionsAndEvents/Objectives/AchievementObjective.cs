@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -66,9 +67,18 @@ public class AchievementObjective : TrackingObjectiveBase {
 		m_stepSize = _achievementDef.GetAsInt("stepSize", 1);
 
 		// Use parent's initializer
+		// Check params in not empty before asking for a List
+		List<string> _params;
+		string paramCheck = _achievementDef.GetAsString("params", null);
+		if ( !string.IsNullOrEmpty( paramCheck ) ){
+			_params = _achievementDef.GetAsList<string>("params");
+		}else{
+			_params = new List<string>();
+		}
+
 		int _targetValue = _achievementDef.GetAsInt("amount", 1);
 		Init(
-			TrackerBase.CreateTracker(_achievementDef.Get("type"), _achievementDef.GetAsList<string>("params")),		// Create the tracker based on mission type
+			TrackerBase.CreateTracker(_achievementDef.Get("type"), _params),		// Create the tracker based on mission type
 			_targetValue,
 			null,
 			"",
