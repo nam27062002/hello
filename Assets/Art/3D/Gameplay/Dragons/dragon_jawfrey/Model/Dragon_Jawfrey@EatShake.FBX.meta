@@ -47,6 +47,12 @@ ModelImporter:
     100078: Fire_Dummy
     100080: SuctionPoint
     100082: SwallowPoint
+    100084: Dragon_LArm_2
+    100086: Dragon_LArm_Palm
+    100088: Dragon_LLeg_Platform
+    100090: Dragon_RArm_2
+    100092: Dragon_RArm_Palm
+    100094: Dragon_RLeg_Platform
     400000: Dragon_Chest
     400002: Dragon_Down_Snout
     400004: Dragon_Head
@@ -89,7 +95,13 @@ ModelImporter:
     400078: Fire_Dummy
     400080: SuctionPoint
     400082: SwallowPoint
-    7400000: Take 001
+    400084: Dragon_LArm_2
+    400086: Dragon_LArm_Palm
+    400088: Dragon_LLeg_Platform
+    400090: Dragon_RArm_2
+    400092: Dragon_RArm_Palm
+    400094: Dragon_RLeg_Platform
+    7400000: EatShake
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -113,7 +125,119 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: EatShake
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 1
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Dragon_Hip
+        weight: 1
+      - path: Dragon_Hip/Dragon_LLeg_1
+        weight: 1
+      - path: Dragon_Hip/Dragon_LLeg_1/Dragon_LLeg_2
+        weight: 1
+      - path: Dragon_Hip/Dragon_LLeg_1/Dragon_LLeg_2/Dragon_LLeg_4
+        weight: 1
+      - path: Dragon_Hip/Dragon_LLeg_1/Dragon_LLeg_2/Dragon_LLeg_4/Dragon_LLeg_Digit
+        weight: 1
+      - path: Dragon_Hip/Dragon_RLeg_1
+        weight: 1
+      - path: Dragon_Hip/Dragon_RLeg_1/Dragon_RLeg_2
+        weight: 1
+      - path: Dragon_Hip/Dragon_RLeg_1/Dragon_RLeg_2/Dragon_RLeg_4
+        weight: 1
+      - path: Dragon_Hip/Dragon_RLeg_1/Dragon_RLeg_2/Dragon_RLeg_4/Dragon_RLeg_Digit
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_Jaw
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_Jaw/Dragon_Down_Snout
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01/Dragon_Tongue_02
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01/Dragon_Tongue_02/Dragon_Tongue_03
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_L_Eye
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_L_Eye/Dragon_L_Down_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_L_Eye/Dragon_L_Pupil
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_L_Eye/Dragon_L_Up_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_Mouth_Comisure
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_R_Eye
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_R_Eye/Dragon_R_Down_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_R_Eye/Dragon_R_Pupil
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_R_Eye/Dragon_R_Up_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Dragon_Up_Snout
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/Fire_Dummy
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/SuctionPoint
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_Head/SwallowPoint
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_LArm_Collarbone
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_LArm_Collarbone/Dragon_LArm_1
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_RArm_Collarbone
+        weight: 1
+      - path: Dragon_Hip/Dragon_Spine/Dragon_Chest/Dragon_RArm_Collarbone/Dragon_RArm_1
+        weight: 1
+      - path: Dragon_Hip/Dragon_Tail1
+        weight: 1
+      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2
+        weight: 1
+      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3
+        weight: 1
+      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4
+        weight: 1
+      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5
+        weight: 1
+      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6
+        weight: 1
+      - path: Dragon_Master
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 17
     isReadable: 1
   meshes:
     lODScreenPercentages: []
