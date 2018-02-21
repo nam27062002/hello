@@ -42,7 +42,7 @@ public class TrackerEatDizzy : TrackerBase {
 	/// Destructor
 	/// </summary>
 	~TrackerEatDizzy() {
-		
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 	}
 
 	//------------------------------------------------------------------------//
