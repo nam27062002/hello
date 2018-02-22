@@ -4,6 +4,8 @@
 // Created by Marc Saña Forrellach on 18/07/2017.
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
+using System.Collections.Generic;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -20,6 +22,12 @@ namespace Metagame {
 			RARE, 
 			EPIC, 
 			SPECIAL 
+		}
+
+		public class Data {
+			public string typeCode = "";
+			public string sku = "";
+			public long amount = 1;
 		}
 
 		//------------------------------------------------------------------------//
@@ -82,33 +90,62 @@ namespace Metagame {
 		/// Constructor from json data, with economy group and source manually set.
 		/// </summary>
 		/// <param name="_data">Data to be parsed.</param>
-		public static Reward CreateFromJson(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
-			string type = _data["type"];
-			type = type.ToLower();
-			
-			string data = "";
+		public static Reward CreateFromJson(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {
+			Data rewardData = new Data();
+
+			rewardData.typeCode = _data["type"];
+			rewardData.typeCode = rewardData.typeCode.ToLower();
+
 			if(_data.ContainsKey("sku")) {
-				data = _data["sku"];
-			} else if(_data.ContainsKey("amount")) {
-				data = _data["amount"];
+				rewardData.sku = _data["sku"];
 			}
 
-			return CreateFromTypeCode(type, data, _economyGroup, _source);
+			if(_data.ContainsKey("amount")) {
+				rewardData.amount = _data["amount"].AsLong;
+			}
+
+			return CreateFromData(rewardData, _economyGroup, _source);
 		}
 
 		/// <summary>
-		/// Creates from type code. String codes used in server comunication are: sc, pc, fg, egg, gegg, pet.
+		/// Creates from data. String codes used in server comunication are: sc, pc, gf, egg, pet. TODO: skin, dragon
 		/// </summary>
 		/// <returns>A reward.</returns>
-		/// <param name="_typeCode">Type code.</param>
-		/// <param name="_data">Data.</param>
-		public static Reward CreateFromTypeCode(string _typeCode, string _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
-			switch(_typeCode) {
-				case RewardSoftCurrency.TYPE_CODE:	  return CreateTypeSoftCurrency(long.Parse(_data), _economyGroup, _source);
-				case RewardHardCurrency.TYPE_CODE:	  return CreateTypeHardCurrency(long.Parse(_data), _economyGroup, _source);
-				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments(int.Parse(_data), Rarity.COMMON, _economyGroup, _source);
-				case RewardEgg.TYPE_CODE:			  return CreateTypeEgg(_data, _source);
-				case RewardPet.TYPE_CODE:			  return CreateTypePet(_data, _source);
+		/// <param name="_data">Data for the reward to be created.</param>
+		public static Reward CreateFromData(Data _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
+			switch(_data.typeCode) {
+				// Currency rewards: pretty straight forward
+				case RewardSoftCurrency.TYPE_CODE:	  return CreateTypeSoftCurrency(_data.amount, _economyGroup, _source);
+				case RewardHardCurrency.TYPE_CODE:	  return CreateTypeHardCurrency(_data.amount, _economyGroup, _source);
+				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments((int)_data.amount, Rarity.COMMON, _economyGroup, _source);
+
+				// Egg reward: if amount is > 1, create a multi reward instead
+				case RewardEgg.TYPE_CODE: {
+					if(_data.amount > 1) {
+						List<Data> multiRewardData = new List<Data>();
+						for(int i = 0; i < _data.amount; ++i) {
+							Data newData = new Data();
+							newData.typeCode = _data.typeCode;
+							newData.sku = _data.sku;
+							newData.amount = 1;
+							multiRewardData.Add(newData);
+						}
+						return CreateTypeMulti(multiRewardData, _source, _economyGroup);
+					} else {
+						return CreateTypeEgg(_data.sku, _source);
+					}
+				} break;
+
+				// Pet reward - ignoring amount (pets can only be rewarded once)
+				case RewardPet.TYPE_CODE: {
+					return CreateTypePet(_data.sku, _source);
+				} break;
+
+				// Multi-reward: Cannot be created using this method
+				case RewardMulti.TYPE_CODE: { 
+					Debug.LogError("<color=red>ERROR! Attempting to create a multi-reward from data.</color>"); 
+					return null; 
+				} break;
 			}
 			return null;
 		}
@@ -116,9 +153,13 @@ namespace Metagame {
 		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source)						{ return new RewardSoftCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
 		public static RewardHardCurrency CreateTypeHardCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 						{ return new RewardHardCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
 		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 	{ return new RewardGoldenFragments(_amount, _rarity, _economyGroup, _source); }
+
 		public static RewardEgg CreateTypeEgg(string _sku, string _source) 				{ return new RewardEgg(_sku, _source); }
+
 		public static RewardPet CreateTypePet(string _sku, string _source)				{ return new RewardPet(_sku, _source); }
 		public static RewardPet CreateTypePet(DefinitionNode _def, string _source)		{ return new RewardPet(_def, _source); }
+
+		public static RewardMulti CreateTypeMulti(List<Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)	{ return new RewardMulti(_datas, _source, _economyGroup); }
 		#endregion
 
 		//------------------------------------------------------------------------//
@@ -234,19 +275,20 @@ namespace Metagame {
 		/// Create and return a persistence save data json initialized with this reward's data. 
 		/// </summary>
 		/// <returns>A new data json to be stored to persistence.</returns>
-		public SimpleJSON.JSONNode ToJson() {
+		public virtual SimpleJSON.JSONNode ToJson() {
 			// Create new object, initialize and return it
 			SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 			// Reward type
 			data.Add("type", type);
 
-			// Sku and amount - sku prevails
+			// Sku and amount
 			if(!string.IsNullOrEmpty(sku)) {
 				data.Add("sku", sku);
-			} else {
-				data.Add("amount", amount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			}
+
+			// Amount
+			data.Add("amount", amount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 			// Source
 			data.Add("source", source);
