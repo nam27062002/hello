@@ -17,7 +17,7 @@ public class RotationMotion : Initializable {
 		m_rotation = m_transform.localRotation.eulerAngles;
 	}
 
-	void Update() {
+	void LateUpdate() {
 		m_rotation += m_rotationSpeed * Time.deltaTime;
 		m_transform.localRotation = Quaternion.Euler(m_rotation);
 	}
