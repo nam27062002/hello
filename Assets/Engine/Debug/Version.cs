@@ -63,6 +63,16 @@ public class Version : IComparableWithOperators<Version> {
 	/// <param name="_minor">Initial minor number.</param>
 	/// <param name="_patch">Initial patch number.</param>
 	public Version(int _major = 0, int _minor = 0, int _patch = 0) {
+		Set(_major, _minor, _patch);
+	}
+
+	/// <summary>
+	/// Set patch version in a single call
+	/// </summary>
+	/// <param name="_major">Major number.</param>
+	/// <param name="_minor">Minor number.</param>
+	/// <param name="_patch">Patch number.</param>
+	public void Set(int _major, int _minor, int _patch) {
 		m_major = _major;
 		m_minor = _minor;
 		m_patch = _patch;
@@ -105,6 +115,23 @@ public class Version : IComparableWithOperators<Version> {
 		}
 
 		return "";
+	}
+
+	/// <summary>
+	/// Parse a version from string.
+	/// </summary>
+	/// <param name="_str">String, in the format major.minor.patch. Optionally no patch.</param>
+	public static Version Parse(string _str) {
+		// Split
+		string[] tokens = _str.Split('.');
+
+		// Parse tokens and store them in a new Version object
+		Version v = new Version();
+		if(tokens.Length > 0) int.TryParse(tokens[0], out v.m_major);
+		if(tokens.Length > 1) int.TryParse(tokens[1], out v.m_minor);
+		if(tokens.Length > 2) int.TryParse(tokens[2], out v.m_patch);
+
+		return v;
 	}
 
 	//------------------------------------------------------------------//
