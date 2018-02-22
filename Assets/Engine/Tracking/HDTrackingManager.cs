@@ -51,6 +51,7 @@ public class HDTrackingManager
         SKIP_EGG_INCUBATION,
         ACQUIRE_DISGUISE,
         SHOP_COINS_PACK,
+		SHOP_OFFER_PACK,
         NOT_ENOUGH_RESOURCES,
 		SHOP_KEYS_PACK,
         INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
