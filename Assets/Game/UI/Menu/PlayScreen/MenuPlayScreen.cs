@@ -21,6 +21,11 @@ public class MenuPlayScreen : MonoBehaviour {
     //------------------------------------------------------------------//
     // CONSTANTS														//
     //------------------------------------------------------------------//
+	private enum Action {
+		NONE,
+		SHOW_LEGAL_POPUP,
+		CHECK_OFFER_POPUP
+	}
 
     //------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES											//
@@ -34,7 +39,7 @@ public class MenuPlayScreen : MonoBehaviour {
     [SerializeField]
     private Localizer m_incentivizeLabelLocalizer = null;    
 
-	private bool m_showLegalPopup;
+	private Action m_pendingAction = Action.NONE;
         
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -60,12 +65,22 @@ public class MenuPlayScreen : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (m_showLegalPopup) {
-			Debug.LogError("LEGAL");
-			// Open terms and conditions popup
-			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
-			HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
-			m_showLegalPopup = false;
+		switch(m_pendingAction) {
+			case Action.SHOW_LEGAL_POPUP: {
+				Debug.LogError("LEGAL");
+				// Open terms and conditions popup
+				PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+				HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
+				m_pendingAction = Action.NONE;
+			} break;
+
+			case Action.CHECK_OFFER_POPUP: {
+				// Check whether the offers popup must be displayed, and do it!
+				if(OffersManager.featuredOffer != null) {
+					OffersManager.featuredOffer.ShowPopupIfPossible(OfferPack.WhereToShow.PLAY_SCREEN);
+				}
+				m_pendingAction = Action.NONE;
+			} break;
 		}
 
         if (NeedsToRefresh()) {
@@ -112,7 +127,11 @@ public class MenuPlayScreen : MonoBehaviour {
         m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndInventivised);
         m_badge.SetActive(!SocialIsLoggedIn);        
 
-		m_showLegalPopup = PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION;
+		if(PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
+			m_pendingAction = Action.SHOW_LEGAL_POPUP;
+		} else {
+			m_pendingAction = Action.CHECK_OFFER_POPUP;
+		}
     }    
     
    	

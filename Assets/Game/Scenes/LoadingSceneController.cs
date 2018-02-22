@@ -426,6 +426,7 @@ public class LoadingSceneController : SceneController {
 				RewardManager.CreateInstance(true);
 				EggManager.CreateInstance(true);
 				EggManager.InitFromDefinitions();
+				OffersManager.InitFromDefinitions();
 
 				// Settings and setup
 				GameSettings.CreateInstance(false);
