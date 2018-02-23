@@ -409,10 +409,11 @@ public class Spawner : AbstractSpawner {
 	}   
 
 	protected override void OnAllEntitiesRespawned() {
+		m_groupBonus = 0f;
 		if (m_hasGroupBonus) {
-			m_groupBonus = m_entities[0].score * EntitiesToSpawn * FLOCK_BONUS_MULTIPLIER;
-		} else {
-			m_groupBonus = 0f;
+			if (m_entities[0] != null) {
+				m_groupBonus = m_entities[0].score * EntitiesToSpawn * FLOCK_BONUS_MULTIPLIER;
+			}
 		}
 	}
 

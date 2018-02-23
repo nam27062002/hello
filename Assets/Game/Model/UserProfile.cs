@@ -903,8 +903,7 @@ public class UserProfile : UserPersistenceSystem
 
 			//m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// That will reset to 24hrs from now
 			// Reset timestamp to 00:00 of local time (but using server timezone!)
-			DateTime midnight = DateTime.Today.AddDays(1);
-			TimeSpan toMidnight = midnight - DateTime.Now;	// Local
+			TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now;	// Local
 			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 		}
 
