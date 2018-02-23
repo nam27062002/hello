@@ -35,7 +35,7 @@ namespace AI {
 					
 			protected override void OnUpdate() {
 				// Update guide function
-				if (m_pilot.guideFunction != null) {
+				if (m_pilot.guideFunction != null || m_pilot.area != null) {
 					float dsqr = (m_pilot.target - m_machine.position).sqrMagnitude;
 					float deltaDSqr = Mathf.Max(1f, m_pilot.speed * m_pilot.speed);
 
