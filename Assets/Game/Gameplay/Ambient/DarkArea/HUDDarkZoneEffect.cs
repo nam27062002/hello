@@ -14,7 +14,8 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     private Material m_oldMaterial;
     private bool m_enableState = false;
     private GameCamera m_gameCamera;
-    private Camera m_camera;
+    private DragonPlayer m_dragonPlayer;
+    private bool m_goOut;
 
     [Serializable]
     public class CandleData
@@ -51,8 +52,9 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         m_enableState = false;
 
         m_gameCamera = InstanceManager.gameCamera;
-        m_camera = m_gameCamera.gameObject.GetComponent<Camera>();
-//        m_defaultCandleData.IsInside = true;
+        m_dragonPlayer = InstanceManager.player;
+        //        m_defaultCandleData.IsInside = true;
+        m_goOut = false;
     }
 
     void OnEnable()
@@ -91,6 +93,15 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     }
 
 
+    private void setMaterialParameters(Color col1, Color col2, float radius, float falloff)
+    {
+        m_candleMaterial.SetColor("_Tint", col1);
+        m_candleMaterial.SetColor("_Tint2", col2);
+        m_candleMaterial.SetFloat("_Radius", radius);
+        m_candleMaterial.SetFloat("_FallOff", falloff);
+    }
+
+
     void Update()
     {
 /*
@@ -107,20 +118,21 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 CandleData inData = m_currentTrigger.m_inData.m_noEffect ? m_defaultCandleData : m_currentTrigger.m_inData;
                 CandleData outData = m_currentTrigger.m_outData.m_noEffect ? m_defaultCandleData : m_currentTrigger.m_outData;
 
-                Vector3 vd = m_camera.transform.position - m_currentTrigger.transform.position;
+//                Vector3 vd = m_gameCamera.transform.position - m_currentTrigger.transform.position;
+                Vector3 vd = m_dragonPlayer.transform.position - m_currentTrigger.transform.position;
                 vd.z = 0.0f;
-                float sd = Vector3.Dot(m_currentTrigger.Direction, vd) / m_currentTrigger.SqrLength;
+                float sd = Vector3.Dot(m_currentTrigger.Direction, vd) / m_currentTrigger.Length;
 
                 float delta = Mathf.Clamp01(sd);
+
+                m_goOut = delta > 0.5f;
 
                 Color color = Color.Lerp(inData.m_Color, outData.m_Color, delta);
                 Color color2 = Color.Lerp(inData.m_Color2, outData.m_Color2, delta);
                 float radius = Mathf.Lerp(inData.m_radius, outData.m_radius, delta);
                 float falloff = Mathf.Lerp(inData.m_fallOff, outData.m_fallOff, delta);
-                m_candleMaterial.SetColor("_Tint", color);
-                m_candleMaterial.SetColor("_Tint2", color2);
-                m_candleMaterial.SetFloat("_Radius", radius);
-                m_candleMaterial.SetFloat("_FallOff", falloff);
+
+                setMaterialParameters(color, color2, radius, falloff);
 /*
                 if (sd > 1.0f)
                 {

@@ -23,7 +23,7 @@ public class CandleEffectTrigger : MonoBehaviour {
     }
 
     private float m_vLength;
-    public float SqrLength
+    public float Length
     {
         get
         {
@@ -35,7 +35,8 @@ public class CandleEffectTrigger : MonoBehaviour {
     {
         m_tDirection = transform.Find("Direction").GetComponent<Transform>();
         m_vDirection = m_tDirection.position - transform.position;
-        m_vLength = m_vDirection.sqrMagnitude;
+        m_vLength = m_vDirection.magnitude;
+        m_vDirection = m_vDirection.normalized;
     }
 
 
