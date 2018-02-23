@@ -40,22 +40,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// First update call.
-	/// </summary>
-	private IEnumerator Start() {
-		// Wait one tick
-		yield return null;
-
-		// 1. Terms and Conditions
-
-		// 2. Rating
-
-		// 3. Survey
-
-		// 4. Featured Offer
-	}
-
-	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {

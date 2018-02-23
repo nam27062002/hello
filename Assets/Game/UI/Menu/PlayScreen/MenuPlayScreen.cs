@@ -21,13 +21,7 @@ public class MenuPlayScreen : MonoBehaviour {
     //------------------------------------------------------------------//
     // CONSTANTS														//
     //------------------------------------------------------------------//
-	private enum Action {
-		NONE,
-		SHOW_LEGAL_POPUP,
-		CHECK_OFFER_POPUP
-	}
-
-    //------------------------------------------------------------------//
+	 //------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//
     public GameObject m_badge;
@@ -37,9 +31,7 @@ public class MenuPlayScreen : MonoBehaviour {
     private GameObject m_incentivizeRoot = null;
 
     [SerializeField]
-    private Localizer m_incentivizeLabelLocalizer = null;    
-
-	private Action m_pendingAction = Action.NONE;
+    private Localizer m_incentivizeLabelLocalizer = null; 
         
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -65,25 +57,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	}
 
 	private void Update() {
-		switch(m_pendingAction) {
-			case Action.SHOW_LEGAL_POPUP: {
-				Debug.LogError("LEGAL");
-				// Open terms and conditions popup
-				PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
-				HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
-				m_pendingAction = Action.NONE;
-			} break;
-
-			case Action.CHECK_OFFER_POPUP: {
-				// Check whether the offers popup must be displayed, and do it!
-				if(OffersManager.featuredOffer != null) {
-					OffersManager.featuredOffer.ShowPopupIfPossible(OfferPack.WhereToShow.PLAY_SCREEN);
-				}
-				m_pendingAction = Action.NONE;
-			} break;
-		}
-
-        if (NeedsToRefresh()) {
+		if (NeedsToRefresh()) {
             Refresh();
         }
 	}
@@ -125,13 +99,7 @@ public class MenuPlayScreen : MonoBehaviour {
         SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
 
         m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndInventivised);
-        m_badge.SetActive(!SocialIsLoggedIn);        
-
-		if(PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
-			m_pendingAction = Action.SHOW_LEGAL_POPUP;
-		} else {
-			m_pendingAction = Action.CHECK_OFFER_POPUP;
-		}
+        m_badge.SetActive(!SocialIsLoggedIn);
     }    
     
    	
