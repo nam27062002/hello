@@ -70,6 +70,24 @@ public class TrackerCriticalTime : TrackerBase {
 		currentValue = 0;
 	}
 
+
+	/// <summary>
+	/// Localizes and formats a value according to this tracker's type
+	/// (i.e. "52", "500 meters", "10 minutes").
+	/// </summary>
+	/// <returns>The localized and formatted value for this tracker's type.</returns>
+	/// <param name="_value">Value to be formatted.</param>
+	override public string FormatValue(float _value) {
+		// Format value as time
+		// [AOC] Different formats for global events!
+		TimeUtils.EFormat format = TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES;
+		if(m_mode == Mode.GLOBAL_EVENT) {
+			format = TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES;
+		}
+		return TimeUtils.FormatTime(_value, format, 3, TimeUtils.EPrecision.DAYS);
+	}
+
+
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
