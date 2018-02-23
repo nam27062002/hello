@@ -48,9 +48,10 @@ namespace AI {
 
 		protected override void ExtendedFixedUpdate() {
 			if (m_mass != 1f) {
+				float impulseMagnitude = m_pilot.impulse.magnitude;
 				Vector3 impulse = (m_pilot.impulse - m_velocity);
 				impulse /= m_mass;
-				m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_pilot.speed);
+				m_velocity = (m_velocity + impulse).normalized * impulseMagnitude;
 			} else {
 				m_velocity = m_pilot.impulse;
 			}

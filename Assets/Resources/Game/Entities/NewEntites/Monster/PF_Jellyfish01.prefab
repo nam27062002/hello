@@ -29,7 +29,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138364}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -51.4, y: 0, z: -0}
+  m_LocalPosition: {x: 129.27489, y: 55.92783, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4611086838339758}
@@ -277,7 +277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: Ghost01
+  m_sku: Jellyfish01
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
 --- !u!114 &11441542
@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.047359467, y: 0.5577612}
+  offset: {x: -0.014736176, y: 0.084643364}
   radius: 1.7057247
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &11451040
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"damage":5,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.1,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"oscillationSpeed":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.2,"catchUpSpeed":0.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"damage":5,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.3,"catchUpSpeed":0.4,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"oscillationSpeed":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.3,"catchUpSpeed":0.4,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Jellyfish01
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -359,6 +359,7 @@ GameObject:
   - component: {fileID: 4611086838339758}
   - component: {fileID: 33092375620700518}
   - component: {fileID: 23571920355019028}
+  - component: {fileID: 136815946132441268}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -372,9 +373,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1219516523460452}
-  m_LocalRotation: {x: -0.00915127, y: -0.15097083, z: -0.001397655, w: 0.9884949}
-  m_LocalPosition: {x: 0, y: 0.91, z: 0.01}
-  m_LocalScale: {x: 5.514257, y: 3.747377, z: 3.7473822}
+  m_LocalRotation: {x: -0.011705224, y: -0.0641345, z: -0.0007523094, w: 0.99787235}
+  m_LocalPosition: {x: 0.02, y: 0.26, z: 0.41}
+  m_LocalScale: {x: 5.668224, y: 3.747377, z: 3.7473822}
   m_Children: []
   m_Father: {fileID: 443304}
   m_RootOrder: 1
@@ -385,13 +386,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1809203603482216}
-  m_LocalRotation: {x: -9.553427e-16, y: 1, z: -0.000000021855694, w: -0.00000004371139}
-  m_LocalPosition: {x: 0, y: 0.74, z: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  m_LocalPosition: {x: -0.04, y: 0.08, z: 0}
   m_LocalScale: {x: 1.1847751, y: 1.1847754, z: 1.1847754}
   m_Children: []
   m_Father: {fileID: 443304}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -4.9490004, y: 90.00001, z: -90.00001}
 --- !u!23 &23565862234954136
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -533,19 +534,32 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_airMotion:
-    m_mass: 1
+    m_mass: 30
     m_defaultUpVector: 0
-    m_orientationSpeed: 60
+    m_orientationSpeed: 15
     m_dragonStyleRotation: 0
     m_faceDirection: 0
     m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 1
-    m_faceLeftAngle: 90
-    m_faceRightAngle: 90
+    m_faceLeftAngle: -80
+    m_faceRightAngle: 80
     m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
+    m_faceUpAngle: -90
+    m_faceDownAngle: -70
+--- !u!136 &136815946132441268
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1809203603482216}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.2
+  m_Height: 4
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.48, z: 0}
 --- !u!136 &136926484593976340
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -558,4 +572,4 @@ CapsuleCollider:
   m_Radius: 0.97
   m_Height: 3.69
   m_Direction: 1
-  m_Center: {x: 0, y: 0.28, z: 0}
+  m_Center: {x: 0, y: -0.59, z: 0}

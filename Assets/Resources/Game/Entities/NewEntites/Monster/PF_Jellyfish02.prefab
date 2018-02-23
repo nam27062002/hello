@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 4519795826425924}
   - component: {fileID: 33873143289310106}
   - component: {fileID: 23630656127154032}
+  - component: {fileID: 136898244481175948}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -74,7 +75,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1885000097210690}
-  m_LocalRotation: {x: 0.012993502, y: 0.04366911, z: -0.0005680046, w: 0.9989614}
+  m_LocalRotation: {x: -0.002864508, y: 0.07796361, z: 0.00022401013, w: 0.99695206}
   m_LocalPosition: {x: 0, y: 1.6, z: 0.02}
   m_LocalScale: {x: 6.651152, y: 4.5037036, z: 4.50371}
   m_Children: []
@@ -101,7 +102,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1590119342891000}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -45.33, y: 0, z: -0}
+  m_LocalPosition: {x: 135.21976, y: 54.95326, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4519795826425924}
@@ -264,16 +265,16 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_airMotion:
-    m_mass: 1
+    m_mass: 30
     m_defaultUpVector: 0
-    m_orientationSpeed: 60
+    m_orientationSpeed: 15
     m_dragonStyleRotation: 0
     m_faceDirection: 0
     m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 1
-    m_faceLeftAngle: 90
-    m_faceRightAngle: 90
+    m_faceLeftAngle: -80
+    m_faceRightAngle: 80
     m_limitVerticalRotation: 0
     m_faceUpAngle: 320
     m_faceDownAngle: 40
@@ -517,7 +518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: Ghost02
+  m_sku: Jellyfish02
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
 --- !u!114 &114719402969299000
@@ -539,7 +540,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"damage":11,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.1,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"oscillationSpeed":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.2,"catchUpSpeed":0.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
+  m_serializedJson: '[{"damage":11,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":0.5,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":7,"oscillationSpeed":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":0.5,"catchUpSpeed":0.6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Jellyfish02
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -559,3 +560,16 @@ CapsuleCollider:
   m_Height: 5.34
   m_Direction: 1
   m_Center: {x: 0, y: 0.46, z: 0}
+--- !u!136 &136898244481175948
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1758190952999152}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.2
+  m_Height: 3.8
+  m_Direction: 1
+  m_Center: {x: 0.017649889, y: -0.5417557, z: 0.0057438016}
