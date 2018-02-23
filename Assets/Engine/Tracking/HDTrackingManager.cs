@@ -378,8 +378,9 @@ public class HDTrackingManager
         Leave2HSE
     };
 
-    public virtual void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action) { }
+    public virtual void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action) {}
 
+    public virtual void Notify_HungryLetterCollected() {}
     #endregion
 
     #region log
