@@ -106,7 +106,7 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 
 		// Bar
 		if(m_timerBar != null) {
-			m_timerBar.normalizedValue = (float)((ChestManager.RESET_PERIOD - timeToReset.TotalHours)/ChestManager.RESET_PERIOD);
+			m_timerBar.normalizedValue = (float)((24 - timeToReset.TotalHours)/24);
 		}
 	}
 

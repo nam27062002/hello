@@ -430,7 +430,7 @@ if $UPLOAD;then
 
   # Now mount the server!
   mkdir -p "${SMB_MOUNT_DIR}"
-  mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" "{SMB_MOUNT_DIR}"
+  mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" "${SMB_MOUNT_DIR}"
 
   # In order to keep the server organized, replicate the branches structure on it
   SMB_PATH="${SMB_MOUNT_DIR}/${BRANCH}"
