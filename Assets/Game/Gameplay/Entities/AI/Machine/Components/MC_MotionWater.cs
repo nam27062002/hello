@@ -7,6 +7,7 @@ namespace AI {
 		//--------------------------------------------------
 		[SerializeField] private bool m_spawnsInsideWater = true;
 		[SerializeField] private bool m_faceDirectionFreeFall = false;
+		[SerializeField] private Range m_diveTimeRange = new Range(0.25f, 0.75f);
 
 		//--------------------------------------------------
 		private float m_diveTimer;
@@ -30,7 +31,7 @@ namespace AI {
 			if (!m_machine.GetSignal(Signals.Type.InWater) 
 			&&  !m_machine.GetSignal(Signals.Type.Latching)) {
 				FreeFall();
-				m_diveTimer = UnityEngine.Random.Range(0.25f, 0.75f);
+				m_diveTimer = m_diveTimeRange.GetRandom();
 			}
 		}
 
