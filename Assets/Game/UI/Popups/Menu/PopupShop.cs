@@ -1,4 +1,4 @@
-// PopupCurrencyShop.cs
+// PopupShop.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 20/11/2015.
@@ -21,21 +21,23 @@ using DG.Tweening;
 /// Temp popup to "purchase" currencies.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupCurrencyShop : MonoBehaviour {
+public class PopupShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/ResourcesFlow/PF_PopupCurrencyShop";
+	public const string PATH = "UI/Popups/Economy/PF_PopupShop";
 
 	public enum Mode {
 		DEFAULT,
 		SC_ONLY,
-		PC_ONLY
+		PC_ONLY,
+		OFFERS_FIRST
 	};
 
 	public enum Tabs {
 		PC,
 		SC,
+		OFFERS,
 		COUNT
 	};
 
@@ -79,7 +81,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 		// Create pills for each tab
 		for(int i = 0; i < (int)Tabs.COUNT; ++i) {
 			// Get target tab
-			PopupCurrencyShopTab tab = m_tabs[i] as PopupCurrencyShopTab;
+			IPopupShopTab tab = m_tabs[i] as IPopupShopTab;
 
 			// Get de definitions corresponding to this tab
 			List<DefinitionNode> defs = null;;
@@ -101,7 +103,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 			float totalDelay = 0f;
 			for(int j = 0; j < tab.pills.Count; ++j) {
 				// Get pill
-				PopupCurrencyShopPill pill = tab.pills[j];
+				IPopupShopPill pill = tab.pills[j];
 
 				// Subscribe to purchase events
 				pill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
@@ -130,11 +132,14 @@ public class PopupCurrencyShop : MonoBehaviour {
 
 		// Reset scroll lists
 		for(int i = 0; i < (int)Tabs.COUNT; ++i) {
-			(m_tabs[i] as PopupCurrencyShopTab).scrollList.horizontalNormalizedPosition = 0f;
+			(m_tabs[i] as IPopupShopTab).scrollList.horizontalNormalizedPosition = 0f;
 		}
 
 		// If required, hide tab buttons
-		m_tabButtonsContainer.SetActive(_mode == Mode.DEFAULT);
+		m_tabButtonsContainer.SetActive(
+			_mode == Mode.DEFAULT
+		 || _mode == Mode.OFFERS_FIRST
+		);
 
 		// Select initial tab and scroll list
 		int initialTab = m_tabs.GetScreenIndex(m_tabs.initialScreen);
@@ -146,6 +151,10 @@ public class PopupCurrencyShop : MonoBehaviour {
 			case Mode.PC_ONLY: 
 			case Mode.DEFAULT: {
 				initialTab = (int)Tabs.PC;
+			} break;
+
+			case Mode.OFFERS_FIRST: {
+				initialTab = (int)Tabs.OFFERS;
 			} break;
 		}
 
@@ -160,7 +169,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	/// Successful purchase.
 	/// </summary>
 	/// <param name="_pill">The pill that triggered the event</param>
-	private void OnPurchaseSuccessful(PopupCurrencyShopPill _pill) {
+	private void OnPurchaseSuccessful(IPopupShopPill _pill) {
 		// Add to purchased packs list
 		m_packsPurchased.Add(_pill.def);
 

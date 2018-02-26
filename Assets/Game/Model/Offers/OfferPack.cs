@@ -70,8 +70,16 @@ public class OfferPack {
 	private int m_frequency = 0;
 	private int m_maxViews = 0;
 	private WhereToShow m_whereToShow = WhereToShow.SHOP_ONLY;
+
 	private DateTime m_startDate = new DateTime();
+	public DateTime startDate {
+		get { return m_startDate; }
+	}
+
 	private DateTime m_endDate = new DateTime();
+	public DateTime endDate {
+		get { return m_endDate; }
+	}
 
 	// Optional params
 	private string[] m_countriesAllowed = new string[0];

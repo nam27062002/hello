@@ -33,7 +33,7 @@ public class GameStoreManagerCalety : GameStoreManager
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, sku);
 			if ( def != null )
 			{
-				PopupCurrencyShopPill.ApplyShopPack( def );	
+				IPopupShopPill.ApplyShopPack( def );	
 			}
 			Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
 		}

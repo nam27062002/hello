@@ -1,4 +1,4 @@
-// PopupCurrencyShopTab.cs
+// PopupShopTab.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 10/08/2017.
@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Tab in the currency shop!
 /// </summary>
-public class PopupCurrencyShopTab : Tab {
+public class PopupShopCurrencyTab : Tab {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -35,8 +35,8 @@ public class PopupCurrencyShopTab : Tab {
 	}
 
 	// Internal
-	private List<PopupCurrencyShopPill> m_pills = new List<PopupCurrencyShopPill>();
-	public List<PopupCurrencyShopPill> pills {
+	private List<IPopupShopPill> m_pills = new List<IPopupShopPill>();
+	public List<IPopupShopPill> pills {
 		get { return m_pills; }
 	}
 	
@@ -69,7 +69,7 @@ public class PopupCurrencyShopTab : Tab {
 		for(int i = 0; i < _defs.Count; i++) {
 			// Create new instance and initialize it
 			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
-			PopupCurrencyShopPill newPill = newPillObj.GetComponent<PopupCurrencyShopPill>();
+			IPopupShopPill newPill = newPillObj.GetComponent<IPopupShopPill>();
 			newPill.InitFromDef(_defs[i]);
 
 			// Store to local collection for further use

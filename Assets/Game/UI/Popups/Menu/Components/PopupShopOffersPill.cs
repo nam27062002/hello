@@ -19,12 +19,12 @@ using DG.Tweening;
 /// <summary>
 /// Single pill in the currency shop.
 /// </summary>
-public class PopupCurrencyShopPill : MonoBehaviour {
+public class PopupShopOffersPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Parametrized event
-	public class CurrencyShopPillEvent : UnityEvent<PopupCurrencyShopPill> { }
+	public class CurrencyShopPillEvent : UnityEvent<PopupShopOffersPill> { }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -230,19 +230,6 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 					}
 				);
 				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, trackingId,  m_def);
-
-				// Without resources flow:
-				/*long pricePC = (long)m_price;
-				if(UsersManager.currentUser.pc >= pricePC) {
-					UsersManager.currentUser.AddCurrency(UserProfile.Currency.HARD, -pricePC);
-					ApplyShopPack( m_def );
-
-					// Trigger message
-					OnPurchaseSuccess.Invoke(this);
-				} else {
-					// Show feedback
-					UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PC_NOT_ENOUGH"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-				}*/
 			} break;
 
 			case UserProfile.Currency.REAL: {

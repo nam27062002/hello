@@ -21,13 +21,13 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/ResourcesFlow/PF_PopupMissingPC";
+	public const string PATH = "UI/Popups/Economy/PF_PopupMissingPC";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed Members
-	[SerializeField] private PopupCurrencyShopPill m_recommendedPackPill = null;
+	[SerializeField] private IPopupShopPill m_recommendedPackPill = null;
 
 	// Events
 	public UnityEvent OnRecommendedPackPurchased = new UnityEvent();
@@ -87,7 +87,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// The purchase flow on the pill has sucessfully ended.
 	/// </summary>
 	/// <param name="_pill">The pill that triggered the event</param>
-	private void OnPillPurchaseSuccess(PopupCurrencyShopPill _pill) {
+	private void OnPillPurchaseSuccess(IPopupShopPill _pill) {
 		// Notify listeners
 		OnRecommendedPackPurchased.Invoke();
 	}

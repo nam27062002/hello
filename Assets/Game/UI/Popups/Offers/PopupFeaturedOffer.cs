@@ -20,7 +20,7 @@ public class PopupFeaturedOffer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Offers/PF_PopupFeaturedOffer";
+	public const string PATH = "UI/Popups/Economy/PF_PopupFeaturedOffer";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

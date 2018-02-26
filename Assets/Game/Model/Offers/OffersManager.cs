@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -30,7 +31,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		get { return instance.m_activeOffers; }
 	}
 
-	private OfferPack m_featuredOffer = null;
+	private OfferPack m_featuredOffer = new OfferPack();
 	public static OfferPack featuredOffer {
 		get { return instance.m_featuredOffer; }
 	}
@@ -56,6 +57,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method.");
 
+		// Aux vars
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
 		// Clear current offers cache
 		instance.m_allOffers.Clear();
 		instance.m_activeOffers.Clear();
@@ -64,8 +68,16 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Create data for each known offer pack definition
 		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
 		for(int i = 0; i < offerDefs.Count; ++i) {
+			// Create new pack
 			OfferPack newPack = new OfferPack();
 			newPack.InitFromDefinition(offerDefs[i]);
+
+			// [AOC] Small optimization: remove featured offers that end in the past
+			if(newPack.featured && newPack.endDate < serverTime) {
+				continue;
+			}
+
+			// Store new pack
 			instance.m_allOffers.Add(newPack);
 		}
 
@@ -73,24 +85,16 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		instance.m_allOffers.Sort(OfferPackComparer);
 
 		// Refresh active and featured offers
-		Refresh();
-	}
-
-	/// <summary>
-	/// Will refresh the list of offers to be displayed as well as the featured offer.
-	/// </summary>
-	public static void Refresh() {
-		// Delegate to the non-static method
-		instance.RefreshInternal();
+		instance.Refresh();
 	}
 
 	//------------------------------------------------------------------------//
-	// INTERNAL METHODS														  //
+	// PUBLIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Will refresh the list of offers to be displayed as well as the featured offer.
 	/// </summary>
-	private void RefreshInternal() {
+	public void Refresh() {
 		// Iterate all offers checking which ones can be displayed
 		// Offers are already sorted
 		m_activeOffers.Clear();
@@ -109,6 +113,38 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 	}
 
+	/// <summary>
+	/// Refreshes the featured offer:
+	/// If a featured offer exists, check its expiring time and look for a new one if it has ended.
+	/// If a featured offer doesn't exist, look for a new one.
+	/// </summary>
+	/// <returns>The new featured offer, if any (or the current one if it haasn't changed).</returns>
+	public OfferPack RefreshFeaturedOffer() {
+		// Aux vars
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+		// If a fetured offer exists, check its expiration date
+		if(m_featuredOffer != null) {
+			// Has it expired?
+			if(serverTime > m_featuredOffer.endDate) {
+				// Offer has expired, remove it from active offers and clear reference
+				m_activeOffers.Remove(m_featuredOffer);
+				m_featuredOffer = null;
+			}
+		}
+
+		// If no featured offer, look for a new one
+		if(m_featuredOffer == null) {
+			// Actually refresh all active offers
+			Refresh();
+		}
+
+		return m_featuredOffer;
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Function used to sort offer packs.
 	/// </summary>
