@@ -37,7 +37,7 @@ public class TrackerKillChain : TrackerBase {
 		// Subscribe to external events
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		//Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 	}
 
 	/// <summary>
@@ -57,7 +57,7 @@ public class TrackerKillChain : TrackerBase {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		//Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 
 		// Call parent
 		base.Clear();
@@ -96,7 +96,7 @@ public class TrackerKillChain : TrackerBase {
 			IEntity prey = _entity.GetComponent<IEntity>();
 			if(prey != null) {
 				// Only entities killed by player or pet
-				if(prey.onDieStatus.source == IEntity.Type.PLAYER || prey.onDieStatus.source == IEntity.Type.PET) {
+				if(prey.onDieStatus.source == IEntity.Type.PLAYER/* || prey.onDieStatus.source == IEntity.Type.PET*/) {	// [AOC] Requirement change as of 20/02/2018 - Entities killed by pets no longer count -_-
 					// Is it one of the target types?
 					if(m_targetSkus.Contains(prey.sku)) {
 						// Yes! Keep counting
