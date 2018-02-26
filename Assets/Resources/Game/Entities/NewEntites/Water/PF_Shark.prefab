@@ -160,7 +160,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1535140798794654}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 200, y: -10, z: 1.046}
+  m_LocalPosition: {x: 90, y: -139.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4041818276129138}
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 2
   m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 0
+  m_hasNavigationLayer: 1
   m_hasRotationLayer: 0
   m_animA: latch
   m_animB: 
@@ -291,7 +291,7 @@ MonoBehaviour:
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
-  m_corpseAsset: PF_CrocodileCorpse
+  m_corpseAsset: PF_SharkCorpse
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
@@ -491,9 +491,9 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_waterMotion:
-    m_mass: 15
+    m_mass: 25
     m_defaultUpVector: 0
-    m_orientationSpeed: 160
+    m_orientationSpeed: 40
     m_spawnsInsideWater: 1
     m_faceDirectionFreeFall: 1
     m_diveTimeRange:
@@ -518,8 +518,8 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":1,"max":2},"onFailShutdown":{"min":10,"max":15},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"speed":5,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":0,"max":0},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
-  m_databaseKey: PF_Shark
+  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"arrivalRadius":0.25,"timeout":{"min":1.5,"max":2},"onFailShutdown":{"min":10,"max":15},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"speed":5,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":0,"max":0},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
+  m_databaseKey: PF_Shark (1)
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 2.5
   m_avoidCollisions: 1
@@ -550,9 +550,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_minEatAnimTime: 1
-  m_eatDistance: 3
-  m_eatDetectionRadiusMultiplier: 8
+  m_minEatAnimTime: 2.5
+  m_eatDistance: 2
+  m_eatDetectionRadiusMultiplier: 9
   m_eatDetectionSpeedRadiusMultiplier: 0.6
   m_holdingBloodParticle:
     name: PS_Blood_Explosion
