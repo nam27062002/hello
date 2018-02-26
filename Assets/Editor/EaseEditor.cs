@@ -108,7 +108,9 @@ public class EaseEditor : ExtendedPropertyDrawer {
 		// Draw the curve field showing a preview of the selected Ease function
 		if(curve != null) {
 			m_pos.height = 50f;
-			EditorGUI.CurveField(m_pos, "·", curve);
+			m_pos.x += EditorGUIUtility.labelWidth;
+			m_pos.width -= EditorGUIUtility.labelWidth;
+			EditorGUI.CurveField(m_pos, GUIContent.none, curve);
 			AdvancePos();
 		}
 	}

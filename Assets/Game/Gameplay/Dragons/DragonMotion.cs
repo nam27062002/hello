@@ -1136,11 +1136,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
                 impulse = m_directionWhenBoostPressed;
             }
         }
-        else
-        {
-        	m_directionWhenBoostPressed = m_direction;
-        }
-        
+
+		if (m_controls.moving )
+			m_directionWhenBoostPressed = impulse;
+
 		if ( impulse != GameConstants.Vector3.zero )
 		{
 			// http://stackoverflow.com/questions/667034/simple-physics-based-movement
@@ -1284,10 +1283,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
                 impulse = m_directionWhenBoostPressed;
             }
         }
-        else
-        {
-        	m_directionWhenBoostPressed = m_direction;
-        }
+
+        if ( m_controls.moving )
+			m_directionWhenBoostPressed = impulse;
 
         float yGravityModifier = impulse.y;
         if ( yGravityModifier > 0 )

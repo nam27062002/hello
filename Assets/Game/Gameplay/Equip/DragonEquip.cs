@@ -565,7 +565,7 @@ public class DragonEquip : MonoBehaviour {
 
 				// Show rarity glow only on Pets menu
 				if (InstanceManager.menuSceneController != null)
-					petPreview.ToggleRarityGlow((InstanceManager.menuSceneController.screensController.currentScreenIdx == (int)MenuScreens.PETS));
+					petPreview.ToggleRarityGlow((InstanceManager.menuSceneController.transitionManager.currentScreen == MenuScreen.PETS));
 			} else {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();
@@ -578,7 +578,7 @@ public class DragonEquip : MonoBehaviour {
 			m_attachPoints[attachPointIdx].EquipPet(newInstance.GetComponent<Equipable>());
 
 			// Apply current pets visibility
-			m_attachPoints[attachPointIdx].item.gameObject.SetActive(m_showPets);
+			m_attachPoints[attachPointIdx].gameObject.SetActive(m_showPets);
 		}
 	}
 

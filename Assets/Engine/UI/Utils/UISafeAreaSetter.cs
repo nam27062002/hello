@@ -135,7 +135,7 @@ public class UISafeAreaSetter : MonoBehaviour {
 				// [AOC] TODO!! Research interpolating offset based on actual anchor value
 
 				// X
-				Vector2 anchorMin = rt.anchorMin;
+				/*Vector2 anchorMin = rt.anchorMin;
 				Vector2 anchorMax = rt.anchorMax;
 				if(anchorMin.x < 0.5f && anchorMax.x < 0.5f) {
 					newAnchoredPos.x += scaledSafeArea.left;
@@ -152,7 +152,13 @@ public class UISafeAreaSetter : MonoBehaviour {
 					newAnchoredPos.y -= scaledSafeArea.top;
 				} else {
 					// Don't move!!
-				}
+				}*/
+
+				// Define the weights using the inspector
+				newAnchoredPos.x += scaledSafeArea.left;
+				newAnchoredPos.x -= scaledSafeArea.right;
+				newAnchoredPos.y += scaledSafeArea.bottom;
+				newAnchoredPos.y -= scaledSafeArea.top;
 
 				// Apply!
 				rt.anchoredPosition = newAnchoredPos;

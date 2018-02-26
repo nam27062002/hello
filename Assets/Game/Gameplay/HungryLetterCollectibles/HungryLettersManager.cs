@@ -133,11 +133,11 @@ public class HungryLettersManager : MonoBehaviour
 
 	public void LetterCollected(HungryLetter letter)
 	{
-		// report analytics before to move the letter in the UI.
-		// TODO: Recover this
-		// HSXAnalyticsManager.Instance.HungryLetterCollected(m_lettersCollected + 1, letter.cachedTransform.position);
-		// play the sfx.
-		if ( !string.IsNullOrEmpty(m_onCollectSound) )
+        // report analytics before to move the letter in the UI.
+        HDTrackingManager.Instance.Notify_HungryLetterCollected();
+
+        // play the sfx.
+        if ( !string.IsNullOrEmpty(m_onCollectSound) )
 			AudioController.Play( m_onCollectSound );
 		// AudioManager.PlaySfx(AudioManager.Ui.HungryLetter);
 		// place letter in the UI.

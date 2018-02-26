@@ -573,6 +573,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			_sp.ForceRemoveEntities();
 		}
 		m_spawners.Clear();
+		m_spawning.Clear();
+		m_spawningPeriodicallyWhileActive.Clear();
+		m_activeMustCheckCameraBounds.Clear();
 
 		m_spawnersTreeNear = null;
 		m_spawnersTreeFar = null;
@@ -599,6 +602,18 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         if (m_spawners != null) {
             m_spawners.Clear();
         }
+
+		if (m_spawning != null) {
+			m_spawning.Clear();
+		}
+
+		if (m_spawningPeriodicallyWhileActive != null) {
+			m_spawningPeriodicallyWhileActive.Clear();
+		}
+
+		if (m_activeMustCheckCameraBounds != null) {
+			m_activeMustCheckCameraBounds.Clear();
+		}
 
         if (m_spanwersData != null) {
             m_spanwersData.Clear();

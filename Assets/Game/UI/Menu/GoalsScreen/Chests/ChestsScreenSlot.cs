@@ -105,7 +105,7 @@ public class ChestsScreenSlot : MonoBehaviour, IPointerClickHandler {
 			.SetEase(m_jumpEase);
 
 		// Trigger UI tooltip as well
-		RectTransform parent = InstanceManager.menuSceneController.GetScreen(MenuScreens.GOALS).transform as RectTransform;
+		RectTransform parent = InstanceManager.menuSceneController.GetScreenData(MenuScreen.CHESTS).ui.transform as RectTransform;
 		string tid = m_collected ? "TID_CHEST_TIP_COLLECTED" : "TID_CHEST_TIP_NOT_COLLECTED";
 		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(tid), new Vector2(0.5f, 0.4f), parent);
 	}

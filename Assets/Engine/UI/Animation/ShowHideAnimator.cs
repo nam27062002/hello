@@ -118,7 +118,16 @@ public class ShowHideAnimator : MonoBehaviour {
 	// Other setup
 	[Tooltip("Children ShowHideAnimators belonging to active GameObjects will be triggered with this one when showing/hiding")]
 	[SerializeField] protected bool m_triggerChildren = true;
+	public bool triggerChildren {
+		get { return m_triggerChildren; }
+		set { m_triggerChildren = value; }
+	}
+
 	[SerializeField] protected bool m_canBeTriggeredByParents = true;
+	public bool canBeTriggeredByParents {
+		get { return m_canBeTriggeredByParents; }
+		set { m_canBeTriggeredByParents = value; }
+	}
 
 	// Events
 	public ShowHideAnimatorEvent OnShowPreAnimation = new ShowHideAnimatorEvent();
@@ -127,6 +136,9 @@ public class ShowHideAnimator : MonoBehaviour {
 	public ShowHideAnimatorEvent OnHidePreAnimation = new ShowHideAnimatorEvent();
 	public ShowHideAnimatorEvent OnHidePostAnimation = new ShowHideAnimatorEvent();
 
+	// Code-only events
+	public ShowHideAnimatorEvent OnShowCheck = new ShowHideAnimatorEvent();
+
 	// Internal references
 	protected CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
 
@@ -134,6 +146,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	protected Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
 	protected bool m_isDirty = true;
 	protected bool m_disableAfterHide = true;
+	protected bool m_checkPassed = true;
 
 	// To control delay on Animator-driven animations
 	private float m_delayTimer = 0f;
@@ -370,6 +383,13 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Mark check operation as failed.
+	/// </summary>
+	public void SetCheckFailed() {
+		m_checkPassed = false;
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
@@ -497,7 +517,10 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 
 		m_sequence.PrependCallback(() => {
-			OnShowPreAnimationAfterDelay.Invoke(this); 
+			// Only when going forward!!
+			if(!m_sequence.isBackwards) {
+				OnShowPreAnimationAfterDelay.Invoke(this); 
+			}
 		});
 
 		// Insert delay at the beginning of the sequence
@@ -511,6 +534,11 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_propagateToChildren">Whether to propagate to children ShowHideAnimators. Setup flags will be checked anyways.</param>
 	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
 	protected virtual void InternalShow(bool _animate, bool _propagateToChildren, bool _restartAnim) {
+		// First things first: execute any external checks that might interrupt the action
+		m_checkPassed = true;
+		OnShowCheck.Invoke(this);
+		if(!m_checkPassed) return;
+
 		// If restarting the animation, instantly force hide state without animation
 		if(_restartAnim) {
 			ForceHide(false);

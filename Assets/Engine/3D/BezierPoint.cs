@@ -41,6 +41,12 @@ public class BezierPoint {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private string m_name = "";
+	public string name {
+		get { return m_name; }
+		set { m_name = value; }
+	}
+
 	[SerializeField] private HandleStyle m_handleStyle = HandleStyle.CONNECTED;
 	public HandleStyle handleStyle {
 		get { return m_handleStyle; }
@@ -75,7 +81,11 @@ public class BezierPoint {
 			if(m_locked) return;
 
 			// Apply Z-lock
-			if(curve != null && curve.lockZ) value.z = m_position.z;
+			if(curve != null) {
+				for(int i = 0; i < 3; ++i) {
+					if(curve.lockAxis[i]) value[i] = 0;
+				}
+			}
 
 			// Skip if it hasn't changed
 			if(m_position == value) return;
@@ -104,10 +114,19 @@ public class BezierPoint {
 	public BezierCurve curve {
 		get{ return m_curve; }
 		set {
+			// Nothing to do if same curve
 			if(m_curve == value) return;
+
+			// Remove from previous curve
 			if(m_curve != null) m_curve.RemovePoint(this);
+
+			// Store new curve
 			m_curve = value;
-			m_curve.AddPoint(this);
+
+			// If not on the new curve, add it
+			if(m_curve.GetPointIdx(this) < 0) {
+				m_curve.AddPoint(this);
+			}
 		}
 	}
 
@@ -133,8 +152,12 @@ public class BezierPoint {
 			// Ignore if locked
 			if(m_locked) return;
 
-			// Apply Z-lock
-			if(curve != null && curve.lockZ) value.z = m_position.z;
+			// Apply Axis-lock
+			if(curve != null) {
+				for(int i = 0; i < 3; ++i) {
+					if(curve.lockHandlersAxis[i]) value[i] = 0;
+				}
+			}
 
 			// Skip if not changed
 			if(m_handle1 == value) return;
@@ -175,7 +198,11 @@ public class BezierPoint {
 			if(m_locked) return;
 
 			// Apply Z-lock
-			if(curve != null && curve.lockZ) value.z = m_position.z;
+			if(curve != null) {
+				for(int i = 0; i < 3; ++i) {
+					if(curve.lockHandlersAxis[i]) value[i] = 0;
+				}
+			}
 
 			// Skip if not changed
 			if(m_handle2 == value) return;
@@ -212,6 +239,19 @@ public class BezierPoint {
 	/// <param name="_pos">The local position of this point related to the curve transform.</param>
 	public BezierPoint(Vector3 _pos) {
 		m_position = _pos;
+	}
+
+	/// <summary>
+	/// Copy constructor.
+	/// </summary>
+	/// <param name="_p">Source point.</param>
+	public BezierPoint(BezierPoint _p) {
+		// Copy basic properties
+		m_handleStyle = _p.m_handleStyle;
+		m_locked = _p.m_locked;
+		m_position = _p.m_position;
+		m_handle1 = _p.m_handle1;
+		m_handle2 = _p.m_handle2;
 	}
 
 	//------------------------------------------------------------------//
