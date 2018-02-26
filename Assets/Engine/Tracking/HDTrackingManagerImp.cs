@@ -546,6 +546,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // Resets the amount of runs in the current round because a new round has just started
         Session_RunsAmountInCurrentRound = 0;
+        Session_HungryLettersCount = 0;
 
         // One more game round
         TrackingPersistenceSystem.GameRoundCount++;
@@ -1019,6 +1020,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Track_PopupUnsupportedDevice(action);        
     }
+
+    public override void Notify_HungryLetterCollected()
+    {
+        Session_HungryLettersCount++;
+    }
     #endregion
 
     #region track	
@@ -1412,7 +1418,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
 			e.SetParameterValue(TRACK_PARAM_BOOST_TIME, boostTimeMs);
             e.SetParameterValue(TRACK_PARAM_MAP_USAGE, mapUsage);
-			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
+            e.SetParameterValue(TRACK_PARAM_HUNGRY_LETTERS_NB, Session_HungryLettersCount);
+            Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
 
             Track_SendEvent(e);
         }
@@ -1816,6 +1823,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID     = "houstonTransactionID";
+    private const string TRACK_PARAM_HUNGRY_LETTERS_NB          = "hungryLettersNb";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
 	private const string TRACK_PARAM_IS_HACKER                  = "isHacker";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
@@ -1890,7 +1898,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_SendEvent(TrackingManager.TrackingEvent e)
 	{
 		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-#if !UNITY_EDITOR //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
+#if !UNITY_EDITOR  //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
 		TrackingManager.SharedInstance.SendEvent(e);
 #endif
 	}
@@ -2242,6 +2250,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private int Session_HungryLettersCount { get; set; }
+
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
@@ -2255,6 +2265,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_IsFirstTime = false;
         Session_IsNotifyOnPauseEnabled = true;
         Session_HasMenuEverLoaded = false;
+        Session_HungryLettersCount = 0;
      }
 #endregion
 

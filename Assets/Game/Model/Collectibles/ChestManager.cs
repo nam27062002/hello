@@ -24,7 +24,6 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public static readonly int NUM_DAILY_CHESTS = 5;
-	public static readonly int RESET_PERIOD = 24;	// [AOC] HARDCODED!! Hours
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -197,8 +196,9 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 			dailyChests[i].Reset();
 		}
 
-		// Reset timer
-		resetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(RESET_PERIOD);
+		// Reset timestamp to 00:00 of local time (but using server timezone!)
+		TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now;	// Local
+		resetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 
 		// Notify game
 		Messenger.Broadcast(MessengerEvents.CHESTS_RESET);
