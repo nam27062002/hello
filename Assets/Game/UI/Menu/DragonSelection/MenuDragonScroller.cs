@@ -128,7 +128,15 @@ public class MenuDragonScroller : MonoBehaviour {
 		if(_animate) {
 			cameraAnimator.SnapTo(menuOrder);
 		} else {
+			// Instantly move camera anchor
 			cameraAnimator.snapPoint = menuOrder;
+
+			// Instntly apply position to camera
+			if(m_snapCamera) {	// Only if allowed! (we're in the right screen)
+				if(m_cameraTransform != null && m_cameraAnchor != null) {
+					m_cameraTransform.position = m_cameraAnchor.position;
+				}
+			}
 		}
 
 		// Only show pets of the focused dragon
