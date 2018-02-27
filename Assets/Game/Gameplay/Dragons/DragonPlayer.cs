@@ -242,8 +242,8 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 
-		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
@@ -257,7 +257,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 	}
 
@@ -470,7 +470,7 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 
-	public void OnLeavingArea(){
+	public void OnLeavingArea(float estimatedLeavingTime){
 		m_dragonEatBehaviour.PauseEating();
 	}
 
@@ -757,7 +757,7 @@ public class DragonPlayer : MonoBehaviour {
 		{
 			m_dragonMotion.EndLatchedOnMovement();
 			if ( !m_breathBehaviour.IsFuryOn() )
-				m_dragonEatBehaviour.ResumeEating( 1.0f );
+				m_dragonEatBehaviour.ResumeEating();
 		}
 	}
 

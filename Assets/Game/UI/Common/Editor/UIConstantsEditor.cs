@@ -78,6 +78,8 @@ public class UIConstantsEditor : CategorizedEditor {
 				m_categories[CAT_ANIMATION_SETUPS].Add(p, "Results Screen");
 			} else if(p.name.Contains("m_openEgg")) {
 				m_categories[CAT_ANIMATION_SETUPS].Add(p, "Open Egg Screen");
+			} else if(p.name.Contains("m_menu")) {
+				m_categories[CAT_ANIMATION_SETUPS].Add(p, "Menu");
 			} else if(p.name.Contains("SafeArea")) {
 				m_categories[CAT_SAFE_AREA].Add(p);
 			}

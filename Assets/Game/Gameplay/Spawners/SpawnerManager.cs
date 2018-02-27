@@ -93,7 +93,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.AddListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
@@ -105,7 +105,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
-		Messenger.RemoveListener(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
+		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}        
@@ -462,7 +462,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 		m_selectedSpawners.Clear();
     }
 
-	private void DisableManager() {
+	private void DisableManager(float estimatedTime) {
 		m_enabled = false;
 	}
 
@@ -573,6 +573,9 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 			_sp.ForceRemoveEntities();
 		}
 		m_spawners.Clear();
+		m_spawning.Clear();
+		m_spawningPeriodicallyWhileActive.Clear();
+		m_activeMustCheckCameraBounds.Clear();
 
 		m_spawnersTreeNear = null;
 		m_spawnersTreeFar = null;
@@ -599,6 +602,18 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         if (m_spawners != null) {
             m_spawners.Clear();
         }
+
+		if (m_spawning != null) {
+			m_spawning.Clear();
+		}
+
+		if (m_spawningPeriodicallyWhileActive != null) {
+			m_spawningPeriodicallyWhileActive.Clear();
+		}
+
+		if (m_activeMustCheckCameraBounds != null) {
+			m_activeMustCheckCameraBounds.Clear();
+		}
 
         if (m_spanwersData != null) {
             m_spanwersData.Clear();

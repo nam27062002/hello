@@ -424,6 +424,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224086972115705864}
+  - component: {fileID: 114937870539621036}
   m_Layer: 5
   m_Name: DragonSetup
   m_TagString: Untagged
@@ -3033,7 +3034,7 @@ MonoBehaviour:
     spaceCount: 14
     wordCount: 14
     linkCount: 0
-    lineCount: 2
+    lineCount: 1
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -3283,6 +3284,29 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &114937870539621036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1333565799948448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_adjustMode: 1
+  m_scale:
+    bottom: 1
+    left: 0
+    right: 0
+    top: 0
+  m_customSafeAreas: []
 --- !u!114 &114946947107330492
 MonoBehaviour:
   m_ObjectHideFlags: 1

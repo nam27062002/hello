@@ -49,6 +49,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 	}
 
 	[Space]
+	[SerializeField] private float m_pillAnimDelay = 0.075f;
 	[SerializeField] private float[] m_pillRotationSequence = new float[0];
 	[SerializeField] private GameObject m_tabButtonsContainer = null;
 
@@ -97,6 +98,7 @@ public class PopupCurrencyShop : MonoBehaviour {
 			tab.InitWithDefs(defs);
 
 			// Do some extra initialization on the pills
+			float totalDelay = 0f;
 			for(int j = 0; j < tab.pills.Count; ++j) {
 				// Get pill
 				PopupCurrencyShopPill pill = tab.pills[j];
@@ -107,6 +109,13 @@ public class PopupCurrencyShop : MonoBehaviour {
 				// Apply "random" rotation to the pill
 				if(m_pillRotationSequence.Length > 0) {
 					pill.transform.localRotation = Quaternion.Euler(0f, 0f, m_pillRotationSequence[j % m_pillRotationSequence.Length]);
+				}
+
+				// Animation!
+				ShowHideAnimator anim = pill.GetComponent<ShowHideAnimator>();
+				if(anim != null) {
+					anim.tweenDelay += totalDelay;	// Keep original anim delay
+					totalDelay += m_pillAnimDelay;
 				}
 			}
 		}

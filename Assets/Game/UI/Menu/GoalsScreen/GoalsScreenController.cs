@@ -26,11 +26,10 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
 
-	public enum Tabs {
+	public enum Buttons {
 		MISSIONS,
-		CHESTS,
 		GLOBAL_EVENTS,
-		LEADERBOARDS
+		CHESTS
 	}
 
 	//------------------------------------------------------------------------//
@@ -42,12 +41,7 @@ public class GoalsScreenController : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_eventCountdownText = null;
 	[SerializeField] private Slider m_eventCountdownSlider = null;
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_chestsCountdownText = null;
-	[Space]
-	[SerializeField] private TabSystem m_tabs = null;
-	public TabSystem tabs {
-		get { return m_tabs; }
-	}
+	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
 	// Internal
 	private float m_countdownUpdateTimer = 0f;
@@ -62,13 +56,16 @@ public class GoalsScreenController : MonoBehaviour {
 		// Disable some tabs during FTUX
 		// Chests
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
-			m_tabs.GetTab((int)Tabs.CHESTS).tabEnabled = false;
+			m_buttons.GetButton((int)Buttons.CHESTS).button.interactable = false;
 		}
 
 		// Global Events
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
-			m_tabs.GetTab((int)Tabs.GLOBAL_EVENTS).tabEnabled = false;
+			m_buttons.GetButton((int)Buttons.GLOBAL_EVENTS).button.interactable = false;
 		}
+
+		// Subscribe to external events.
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 	}
 
 	/// <summary>
@@ -87,6 +84,14 @@ public class GoalsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Default destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events.
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+	}
+
+	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
@@ -95,13 +100,6 @@ public class GoalsScreenController : MonoBehaviour {
 		if(m_countdownUpdateTimer <= 0f) {
 			// Reset timer
 			m_countdownUpdateTimer = COUNTDOWN_UPDATE_INTERVAL;
-
-			// Chests timer
-			m_chestsCountdownText.text = TimeUtils.FormatTime(
-				ChestManager.timeToReset.TotalSeconds,
-				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
-				2
-			);
 
 			// Refresh visible event button based on event state
 			GlobalEvent evt = GlobalEventManager.currentEvent;
@@ -144,6 +142,9 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Play button has been pressed.
+	/// </summary>
 	public void OnPlayButton() {
 		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._10_continue_clicked);
@@ -151,23 +152,16 @@ public class GoalsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// The screen is about to be displayed.
+	/// The current menu screen has changed (animation starts now).
 	/// </summary>
-	public void OnShowPreAnimation() {
-		// If there is an active global event, go to the events tab
-		// Do it as well if the event is pending reward collection
-		if(GlobalEventManager.currentEvent != null
-			&& (GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
-			&& m_tabs.GetTab((int)Tabs.GLOBAL_EVENTS).tabEnabled) {
-			m_tabs.GoToScreenInstant((int)Tabs.GLOBAL_EVENTS);
-		}
-
-		// If active tab is the Events tab, force a refresh
-		if(m_tabs.currentScreen != null) {
-			if(m_tabs.currentScreenIdx == (int)Tabs.GLOBAL_EVENTS) {
-				// [AOC] Hardcore way to do it: simulate an OnShow() event like we just switched to this tab
-				m_tabs.currentScreen.OnShow.Invoke();
-			}
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
+		// If the new screen is any of our screens of interest, select the matching button!
+		switch(_to) {
+			case MenuScreen.MISSIONS:		m_buttons.SelectButton((int)Buttons.MISSIONS);	break;
+			case MenuScreen.CHESTS:			m_buttons.SelectButton((int)Buttons.CHESTS);	break;
+			case MenuScreen.GLOBAL_EVENTS:	m_buttons.SelectButton((int)Buttons.GLOBAL_EVENTS);	break;
 		}
 	}
 }

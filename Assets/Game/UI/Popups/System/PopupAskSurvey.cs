@@ -22,7 +22,7 @@ public class PopupAskSurvey : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Message/PF_PopupSurvey";
 
-	public const string SURVEY_URL = "https://ubisoft.ca1.qualtrics.com/jfe/form/SV_23Kqa1zeNPP6rT7?=%USER_ID%";	// Replace %USER_ID% with actual user tracking ID
+	public const string SURVEY_URL = "https://ubisoft.ca1.qualtrics.com/jfe/form/SV_23Kqa1zeNPP6rT7?UID=%USER_ID%";	// Replace %USER_ID% with actual user tracking ID
 
 	public const string PREF_CHECK = "PopupAskSurvey.Check";
 	public const string PREF_LAST_DISPLAYED_SESSION = "PopupAskSurvey.LastDisplayedSession";
@@ -48,6 +48,8 @@ public class PopupAskSurvey : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened.</returns>
 	public static bool Check() {
+		return false;	// [AOC] As of version 1.3, disable temporarily the survey popup
+
 		// Not if already checked!
 		if(!Prefs.GetBoolPlayer(PREF_CHECK, true)) return false;
 

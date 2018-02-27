@@ -31,9 +31,6 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[SerializeField] private Slider m_timerBar = null;
 
-	// Internal
-	private Transform m_3dAnchor = null;
-	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -41,15 +38,7 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		// Get anchor ref (if any)
-		MenuSceneController menuController = InstanceManager.menuSceneController;
-		if(menuController != null) {
-			MenuScreenScene scene = menuController.screensController.GetScene((int)MenuScreens.GOALS);
-			if(scene != null) {
-				GoalsSceneController goalScene = scene.GetComponent<GoalsSceneController>();
-				m_3dAnchor = goalScene.infoPanelUIAnchor;
-			}
-		}
+		
 	}
 
 	/// <summary>
@@ -78,20 +67,6 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		if(!isActiveAndEnabled) return;
-
-		// Keep anchored
-		if(m_3dAnchor != null) {
-			// Get camera and apply the inverse transformation
-			if(InstanceManager.sceneController.mainCamera != null) {
-				// From http://answers.unity3d.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
-				// We can do it that easily because we've adjusted the containers to match the camera viewport coords
-				Vector2 posScreen = InstanceManager.sceneController.mainCamera.WorldToViewportPoint(m_3dAnchor.position);
-				RectTransform rt = this.transform as RectTransform;
-				rt.anchoredPosition = Vector2.zero;
-				rt.anchorMin = posScreen;
-				rt.anchorMax = posScreen;
-			}
-		}
 
 		// Refresh time
 		RefreshTime();
@@ -131,7 +106,7 @@ public class ChestsScreenInfoPanel : MonoBehaviour {
 
 		// Bar
 		if(m_timerBar != null) {
-			m_timerBar.normalizedValue = (float)((ChestManager.RESET_PERIOD - timeToReset.TotalHours)/ChestManager.RESET_PERIOD);
+			m_timerBar.normalizedValue = (float)((24 - timeToReset.TotalHours)/24);
 		}
 	}
 

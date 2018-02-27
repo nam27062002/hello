@@ -6,7 +6,7 @@ struct appdata_t
 {
 	float4 vertex : POSITION;
 	float2 texcoord : TEXCOORD0;
-#ifdef LIGHTMAP_ON
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
 	float4 texcoord1 : TEXCOORD1;
 #endif
 
@@ -22,7 +22,7 @@ struct v2f {
 	float4 vertex : SV_POSITION;
 	float2 texcoord : TEXCOORD0;
 
-#ifdef LIGHTMAP_ON
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
 	float2 lmap : TEXCOORD1;
 #endif	
 
@@ -107,6 +107,7 @@ uniform float _LightmapContrastMargin;
 uniform float _LightmapContrastPhase;
 #endif
 
+
 //Used by plants, simulates wind movement
 #if defined(CUSTOM_VERTEXPOSITION)
 float _SpeedWave;
@@ -181,7 +182,7 @@ v2f vert (appdata_t v)
 	TRANSFER_VERTEX_TO_FRAGMENT(o);	// Shadows
 #endif
 
-#if defined(LIGHTMAP_ON) //&& !defined(EMISSIVE_BLINK)
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP) //&& !defined(EMISSIVE_BLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap
 #endif
 
@@ -263,14 +264,14 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 
-#if defined(LIGHTMAP_ON) && defined(EMISSIVE_LIGHTMAPCONTRAST)
+#if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP) && defined(EMISSIVE_LIGHTMAPCONTRAST)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	fixed lmintensity = (lm.r + lm.g + lm.b) - _LightmapContrastMargin;
 //	col.rgb *= lm * _LightmapContrastIntensity * (1.0 + sin((_Time.y * 2.0) + i.vertex.x * 0.01)) * (lm.r + lm.g + lm.b);
 	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity * (sin(_Time.y * _LightmapContrastPhase) + 1.0)));
 //	col.rgb *= lm * (1.0 + (lmintensity * _LightmapContrastIntensity));
 
-#elif defined(LIGHTMAP_ON)// && !defined(EMISSIVE_BLINK)
+#elif defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)// && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 	col.rgb *= lm * 1.3;
 
@@ -300,7 +301,7 @@ fixed4 frag (v2f i) : SV_Target
 /*
 #if defined(FOG) && !defined(EMISSIVE_BLINK)
 
-#if defined (LIGHTMAP_ON)
+#if defined (LIGHTMAP_ON && FORCE_LIGHTMAP)
 
 #ifdef EMISSIVE_LIGHTMAPCONTRAST
 	fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
@@ -315,7 +316,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #else
 	HG_APPLY_FOG(i, col);	// Fog
-#endif	// LIGHTMAP_ON
+#endif	// LIGHTMAP_ON && FORCE_LIGHTMAP
 
 #endif	// defined(FOG) && !defined(EMISSIVE_BLINK)
 */

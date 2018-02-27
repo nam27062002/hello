@@ -216,7 +216,6 @@ public class DeviceQualityManager
     {
         int returnValue = -1;
 
-
         // Max profile allowed depends on memory size
         if (Profiles_Names != null)
         {
@@ -245,6 +244,41 @@ public class DeviceQualityManager
 
         return returnValue;
     }     
+
+    /// <summary>
+    /// Returns the minimum amount of memory in megabytes required to run the game
+    /// </summary>
+    /// <returns></returns>
+    public int Profiles_GetMinMemoryRequired()
+    {
+        int returnValue = int.MaxValue;
+
+        // Max profile allowed depends on memory size
+        if (Profiles_Names != null)
+        {
+            int i;
+            int count = Profiles_Names.Count;
+
+            // Loops through all profiles checking their memory requirements
+            for (i = 0; i < count; i++)
+            {                
+                if (Profiles_Data[Profiles_Names[i]].MinMemory < returnValue)
+                {
+                    returnValue = Profiles_Data[Profiles_Names[i]].MinMemory;
+                }
+            }
+        }
+
+        if (returnValue == int.MaxValue)
+        {
+            returnValue = 0;
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+                LogWarning("No memory data loaded");
+        }
+
+        return returnValue;
+    }
     #endregion
 
     #region device

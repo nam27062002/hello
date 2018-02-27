@@ -75,7 +75,7 @@ Transform:
   m_GameObject: {fileID: 1201997476116874}
   m_LocalRotation: {x: -0.22312135, y: -0.30647394, z: 0.2728211, w: 0.88422805}
   m_LocalPosition: {x: 0.286, y: 0.312, z: 0}
-  m_LocalScale: {x: 20, y: 20, z: 20}
+  m_LocalScale: {x: 25, y: 25, z: 25}
   m_Children:
   - {fileID: 4965487906022398}
   m_Father: {fileID: 4969075833519892}
@@ -87,7 +87,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1889390929017582}
-  m_LocalRotation: {x: 0.2057449, y: 0.850939, z: 0.19341458, w: -0.44290262}
+  m_LocalRotation: {x: 0.28000605, y: 0.88039863, z: 0.24091356, w: -0.29741487}
   m_LocalPosition: {x: 0.0017, y: -0.0138, z: 0.013}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children: []
@@ -101,7 +101,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1967378273794162}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.168395, y: 0.6296692, z: -0.0016665459}
+  m_LocalPosition: {x: -9.47, y: -6.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4128615858546656}
@@ -217,6 +217,7 @@ MonoBehaviour:
   hasOnStepComplete: 0
   hasOnComplete: 0
   hasOnTweenCreated: 0
+  hasOnRewind: 0
   onStart:
     m_PersistentCalls:
       m_Calls: []
@@ -243,6 +244,11 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   onTweenCreated:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRewind:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
@@ -313,7 +319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 0.39918017
+  radius: 0.5894258
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114365328707832654
 MonoBehaviour:
@@ -342,7 +348,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -376,6 +381,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -384,7 +390,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -418,11 +423,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -456,13 +461,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_onEatenAudio: 
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -496,12 +501,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -535,6 +540,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
@@ -569,11 +575,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activationMode: 0
+  m_parent: {fileID: 0}
   m_view: {fileID: 23745088766330302}
   m_particleDatas:
   - name: PS_BadJunk
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 0, g: 0, b: 0, a: 0}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -607,6 +614,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
 --- !u!114 &114941505771576012
 MonoBehaviour:

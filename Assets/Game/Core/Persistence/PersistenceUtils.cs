@@ -40,7 +40,7 @@ public class PersistenceUtils
                 SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
                 _userProfile.Add("sc", _sc);
                 _userProfile.Add("pc", _pc);
-                _userProfile.Add("keys", 3);	// [AOC] HARDCODED!!
+                _userProfile.Add("keys", 0);	// [AOC] HARDCODED!!
                 _userProfile.Add("currentDragon", _initialDragonSku);
                 _userProfile.Add("currentLevel", "level_0");	// Only one level now
 

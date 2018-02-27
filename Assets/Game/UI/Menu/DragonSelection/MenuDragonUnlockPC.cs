@@ -22,7 +22,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	public Localizer m_priceText;
-	
+	private MenuShowConditionally m_showConditions;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -32,6 +32,7 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	private void Awake() {
 		// Required fields
 		DebugUtils.Assert(m_priceText != null, "Required reference missing!");
+		m_showConditions = transform.parent.GetComponent<MenuShowConditionally>();
 	}
 
 	/// <summary>
@@ -71,25 +72,27 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	/// </summary>
 	public void OnUnlock() 
 	{
-		// Get price and start purchase flow
-		DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_PC");
-		purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
-				bool wasntLocked = dragonData.GetLockState() <= DragonData.LockState.LOCKED;
-				// Just acquire target dragon!
-				dragonData.Acquire();
+		if (m_showConditions.CheckDragon(InstanceManager.menuSceneController.selectedDragon)){
+			// Get price and start purchase flow
+			DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+			ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_PC");
+			purchaseFlow.OnSuccess.AddListener(
+				(ResourcesFlow _flow) => {
+					bool wasntLocked = dragonData.GetLockState() <= DragonData.LockState.LOCKED;
+					// Just acquire target dragon!
+					dragonData.Acquire();
 
-				if ( wasntLocked && dragonData.def.sku.CompareTo( MenuSceneController.RATING_DRAGON ) == 0 ){
-					MenuSceneController.CheckRatingFlow();
+					if ( wasntLocked && dragonData.def.sku.CompareTo( MenuSceneController.RATING_DRAGON ) == 0 ){
+						MenuSceneController.CheckRatingFlow();
+					}
+
+	                HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
+
+	                // Show nice animation!
+	                InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>().LaunchUnlockAnim(dragonData.def.sku, 0.2f, 0.1f, true);
 				}
-
-                HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
-
-                // Show nice animation!
-                InstanceManager.menuSceneController.GetScreen(MenuScreens.DRAGON_SELECTION).GetComponent<MenuDragonScreenController>().LaunchUnlockAnim(dragonData.def.sku, 0.2f, 0.1f, true);
-			}
-		);
-		purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, dragonData.def);
+			);
+			purchaseFlow.Begin(dragonData.def.GetAsLong("unlockPricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, dragonData.def);
+		}
 	}
 }

@@ -155,7 +155,8 @@
 				{"hcEarned": {"Status": "OK"}},
 				{"boostTime": {"Status": "OK"}},
 				{"mapUsedNB": {"Status": "OK"}},
-				{"isHacker": {"Status": "OK"}}
+				{"isHacker": {"Status": "OK"}},
+				{"hungryLettersNb": {"Status": "OK"}}				
             ],
             "APIs": [
                 "dna",
@@ -397,7 +398,6 @@
                 "etl"
             ]
         },
-
 		"custom.gameplay.fps": {
             "Parameters": [
 				{"sessionsCount": {"Status": "OK"}},
@@ -413,7 +413,6 @@
                 "etl"
             ]
         },
-
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -423,7 +422,6 @@
                 "etl"
             ]
         },
-
 		"custom.survey.popup": {
             "Parameters": [
 				{"popupName": {"Status": "OK"}},
@@ -434,7 +432,15 @@
                 "etl"
             ]
         },
-		
+		"custom.leave.popup": {
+            "Parameters": [
+				{"popupAction": {"Status": "OK"}}				
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -879,7 +885,7 @@
             "Values": []
         },
         "playerProgress": {
-            "Type": "STRING:4",
+            "Type": "INT:4",
             "Values": []
         },
         "stepDuration": {
@@ -1069,6 +1075,10 @@
 		"versionRevision": {
 			"Type": "STRING:15",
 			"Values": []
+        },
+		"hungryLettersNb": {
+            "Type": "INT:4",
+            "Values": []
         }		
     }
 }

@@ -41,6 +41,8 @@ public class HungryDragonEditorMenu
 
         // By default we want all shaders to behave as if HIGH key was enabled when editing
         Shader.EnableKeyword(FeatureSettingsManager.SHADERS_KEY_HIGH);
+        // By default we want to force lightmap if exists
+        Shader.EnableKeyword("FORCE_LIGHTMAP");
     }
 
     /// <summary>
