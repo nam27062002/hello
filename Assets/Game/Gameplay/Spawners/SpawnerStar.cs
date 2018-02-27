@@ -9,12 +9,12 @@ public class SpawnerStar : AbstractSpawner {
 	[SerializeField] private string m_entityPrefab = "";
 	[SerializeField] private uint m_quantity = 5;
 
-
 	[Separator("Coin Bonus")]
-	[SerializeField] private int m_coinsReward = 1;
+	[SerializeField] private int m_coinsRewardFlock = 0;
 
 	[Separator("Respawn")]
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
+
 
 	private PoolHandler m_poolHandler;
 
@@ -108,9 +108,9 @@ public class SpawnerStar : AbstractSpawner {
 	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
 		if (_allKilledByPlayer) {
 			// check if player has destroyed all the flock
-			if (m_coinsReward > 0) {
+			if (m_coinsRewardFlock > 0) {
 				Reward reward = new Reward();
-				reward.coins = m_coinsReward;
+				reward.coins = m_coinsRewardFlock;
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.STAR_COMBO, _lastEntity.transform, reward);
 			}
 			// Program the next spawn time
