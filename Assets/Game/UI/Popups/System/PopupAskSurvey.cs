@@ -48,6 +48,8 @@ public class PopupAskSurvey : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened.</returns>
 	public static bool Check() {
+		return false;	// [AOC] As of version 1.3, disable temporarily the survey popup
+
 		// Not if already checked!
 		if(!Prefs.GetBoolPlayer(PREF_CHECK, true)) return false;
 
