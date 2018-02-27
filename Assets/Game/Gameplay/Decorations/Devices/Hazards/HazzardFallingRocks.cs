@@ -80,8 +80,12 @@ public class HazzardFallingRocks : MonoBehaviour {
 
 						if (projectileGO != null) {
 							IProjectile projectile = projectileGO.GetComponent<IProjectile>();
-							projectile.AttachTo(transform, GameConstants.Vector3.right * m_spawnData[i].x);
-							projectile.ShootTowards(GameConstants.Vector3.down, m_spawnData[i].speed, m_damage, null);
+							if (projectile != null) {
+								projectile.AttachTo(transform, GameConstants.Vector3.right * m_spawnData[i].x);
+								projectile.ShootTowards(GameConstants.Vector3.down, m_spawnData[i].speed, m_damage, null);
+							} else {
+								projectileGO.transform.position = transform.position + GameConstants.Vector3.right * m_spawnData[i].x;
+							}
 						}
 					}
 				}
