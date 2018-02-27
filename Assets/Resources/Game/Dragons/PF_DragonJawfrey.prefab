@@ -305,7 +305,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -145.92924, y: -0.5744052, z: 28.660147}
+  m_LocalPosition: {x: 504.8319, y: 110.52825, z: -1284.5706}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -412,6 +412,8 @@ Transform:
   - {fileID: 4874703391408238}
   - {fileID: 4432315361455416}
   - {fileID: 4744638619738022}
+  - {fileID: 4223964779829120}
+  - {fileID: 4566340759739554}
   m_Father: {fileID: 414586}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2233,6 +2235,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1503670800859540
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4566340759739554}
+  - component: {fileID: 114756965196527398}
+  - component: {fileID: 114482995476159930}
+  m_Layer: 12
+  m_Name: arm_L
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1505067685067580
 GameObject:
   m_ObjectHideFlags: 1
@@ -3059,6 +3078,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1991857344334046
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4223964779829120}
+  - component: {fileID: 114812211798691276}
+  - component: {fileID: 114752085627954470}
+  m_Layer: 12
+  m_Name: arm_R
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4000010372385576
 Transform:
   m_ObjectHideFlags: 1
@@ -3221,7 +3257,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.0007115494, y: 0.7363871, z: 0.0007744709, w: 0.67655975}
+  m_LocalRotation: {x: 0.049819414, y: 0.94915706, z: 0.24124366, w: -0.19601117}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3489,6 +3525,19 @@ Transform:
   - {fileID: 4866556113158946}
   m_Father: {fileID: 4981713535407110}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4223964779829120
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1991857344334046}
+  m_LocalRotation: {x: 0.4812329, y: 0.6415391, z: 0.49152988, w: 0.3394716}
+  m_LocalPosition: {x: 1.4453125, y: 0.10429382, z: -2.0759277}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 470162}
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4226107632081328
 Transform:
@@ -4158,6 +4207,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4146507874902456}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4566340759739554
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1503670800859540}
+  m_LocalRotation: {x: 0.49152988, y: 0.33947143, z: 0.48123297, w: 0.64153904}
+  m_LocalPosition: {x: -1.4590759, y: 0.104286194, z: -2.0759277}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 470162}
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4578540465008708
 Transform:
@@ -6887,7 +6949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_point: 26
+  m_point: 15
 --- !u!114 &114189387915678950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6899,7 +6961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_point: 15
+  m_point: 28
 --- !u!114 &114236530102441018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7075,6 +7137,20 @@ MonoBehaviour:
   m_parentName: Dragon_Down_Snout
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+--- !u!114 &114482995476159930
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1503670800859540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_LArm_1
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114483623526055878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7086,7 +7162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_point: 27
+  m_point: 16
 --- !u!114 &114507095663648060
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7165,6 +7241,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 5
+--- !u!114 &114752085627954470
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1991857344334046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_RArm_1
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+--- !u!114 &114756965196527398
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1503670800859540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 26
 --- !u!114 &114778013516139124
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7191,6 +7293,18 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_2
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+--- !u!114 &114812211798691276
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1991857344334046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 27
 --- !u!114 &114841687509511122
 MonoBehaviour:
   m_ObjectHideFlags: 1
