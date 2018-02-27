@@ -99,7 +99,7 @@ public class PrisonerSpawner : AbstractSpawner {
         machine.EnterDevice(true);
     }
 
-    protected override void OnRemoveEntity(GameObject _entity, int index) {        
+	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {        
         m_parents[index] = null;
     }
     
