@@ -23,7 +23,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_InnerLightWavePhase("Inner Light Wave Phase", float) = 1.0
 		_InnerLightWaveSpeed("Inner Light Wave Speed", float) = 1.0
 
-		_AmbientAdd("Ambient Add", Color) = (0,0,0,0)
+//		_AmbientAdd("Ambient Add", Color) = (0,0,0,0)
 
 		_Fresnel("Fresnel factor", Range(0, 10)) = 1.5
 		_FresnelColor("Fresnel Color", Color) = (1,1,1,1)

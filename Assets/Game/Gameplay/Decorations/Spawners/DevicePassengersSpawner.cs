@@ -154,7 +154,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
 		t.localScale = Vector3.one;
     }
 
-    protected override void OnRemoveEntity(GameObject _entity, int index) {
+	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
 		for (int i = 0; i < m_machines.Length; i++) {
 			if (m_machines[i] != null && _entity == m_machines[i].gameObject) {
 				m_machines[i] = null;

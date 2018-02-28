@@ -38,7 +38,7 @@ namespace AI {
 
 		protected virtual void OnTriggerEnter(Collider _other) {
 			if (_other.CompareTag("Player")) {				
-				Reward reward = m_entity.GetOnKillReward(false);
+				Reward reward = m_entity.GetOnKillReward(true);
 
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
