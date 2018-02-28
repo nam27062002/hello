@@ -37,6 +37,7 @@ GameObject:
   - component: {fileID: 114826283472321486}
   - component: {fileID: 114445072889786704}
   - component: {fileID: 65512963358344686}
+  - component: {fileID: 114301869855550984}
   m_Layer: 11
   m_Name: PF_Blocker_Fire
   m_TagString: Untagged
@@ -313,6 +314,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114301869855550984
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1189587967232188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 0
+  m_maxSpawns: 1
+  m_ground: []
 --- !u!114 &114367731949479658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -353,7 +368,6 @@ MonoBehaviour:
   m_feedbackParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -387,12 +401,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_feedbackParticleMatchDirection: 0
   m_burnParticle:
     name: PF_FireProc
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -426,11 +440,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_disintegrateParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -464,6 +478,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_boxelSize: 10
   m_hitRadius: 2
@@ -479,6 +494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: deco_medium
+  m_tier: 0
   m_disintegrable: 1
 --- !u!212 &212645453721776684
 SpriteRenderer:
