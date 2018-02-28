@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -508,4 +509,304 @@ public class Builder : MonoBehaviour
 
 		// Save Data ?
 	}
+
+    //[PostProcessBuild(1080)]
+    public static void OnPostProcessBuild(BuildTarget target, string path)
+    {
+        GenerateAdaptiveAPK(path);
+    }
+
+    [MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
+    public static void GenerateAdaptiveApkFromMenu()
+    {
+        string path = ValidatePath(Application.dataPath + "/../HD.apk");
+        GenerateAdaptiveAPK(path);
+    }
+
+    public static void GenerateAdaptiveAPK(string path)
+    {
+        string error = null;        
+
+        UnityEngine.Debug.Log("------------------------------------------------------");
+        UnityEngine.Debug.Log("Processing adaptive icons...");
+
+        if (File.Exists(path))
+        {
+            string apkFileName = null;
+            string[] tokens = path.Split('/');
+            if (tokens.Length == 0)
+            {
+                tokens = path.Split('\\');
+            }
+
+            if (tokens == null || tokens.Length == 0)
+            {
+                error = "Error when parsing " + path + " name";
+            }
+            else
+            {
+                apkFileName = tokens[tokens.Length - 1];
+            }
+
+            if (!string.IsNullOrEmpty(apkFileName))
+            {
+                string rootPath = ValidatePath(Application.dataPath + "/..");
+                string tempDirectoryPath = ValidatePath(rootPath + "/TempAPK");
+
+                // Deletes the directory if already exists
+                if (Directory.Exists(tempDirectoryPath))
+                {
+                    UnityEngine.Debug.Log("Deleting temp directory " + tempDirectoryPath + " ...");
+                    try
+                    {
+                        Directory.Delete(tempDirectoryPath, true);
+                    }
+                    catch (Exception)
+                    {
+                        UnityEngine.Debug.Log("Error deleting directory " + tempDirectoryPath);
+                    }
+                }
+
+                string decompressFolder = ValidatePath(tempDirectoryPath + "/DecompressFolder");
+
+                // Decompress apk            
+                DecompressApk(rootPath, path, decompressFolder);
+
+                // Makes sure the temp directory was created
+                if (Directory.Exists(decompressFolder))
+                {
+                    // Copy icons
+                    string sourcePath = ValidatePath(Application.dataPath + "/Game/UI/Icon/Android/AdaptiveIcons");
+                    string destPath = ValidatePath(decompressFolder + "/res");
+                    UnityEngine.Debug.Log("Copying adaptive icons from " + sourcePath + " to " + destPath + "...");
+                    CopyFilesRecursively(new DirectoryInfo(sourcePath), new DirectoryInfo(destPath));
+
+                    // Change manifest
+                    UnityEngine.Debug.Log("Changing icons in Manifest ...");
+                    SetMipmapIconsInManifest(decompressFolder);
+                    
+                    // Compress apk again
+                    string resultPath = ValidatePath(tempDirectoryPath + "/" + apkFileName);
+                    UnityEngine.Debug.Log("Compressing the APK file with adaptive icons ...");
+                    CompressApk(rootPath, decompressFolder, resultPath);
+
+                    // Makes sure that the file was created
+                    if (File.Exists(resultPath))
+                    {
+                        // Aligns the apk
+                        UnityEngine.Debug.Log("Aligning the APK file with adaptive icons ...");
+
+                        string apkFileNameNoExt = apkFileName;
+                        tokens = apkFileName.Split('.');
+                        if (tokens != null && tokens.Length > 0)
+                        {
+                            apkFileNameNoExt = tokens[0];
+                        }
+
+                        string apkAlignedFileName = apkFileNameNoExt + "_aligned" + ".apk";
+                        AlignApk(tempDirectoryPath, apkFileName, apkAlignedFileName);
+
+                        string apkAlignedPath = ValidatePath(tempDirectoryPath + "/" + apkAlignedFileName);
+                        if (File.Exists(apkAlignedPath))
+                        {
+                            // Signs the apk                            
+                            UnityEngine.Debug.Log("Signing the APK file with adaptive icons ...");
+
+                            try
+                            {
+                                SignApk(tempDirectoryPath, apkAlignedFileName);
+                            }
+                            catch (Exception e)
+                            {
+                                error = "Error when signing: " + e.ToString();
+                            }
+
+                            if (error == null)
+                            {
+                                UnityEngine.Debug.Log("Coping the APK file with adaptive icons to the original location ...");
+
+                                // Exchange the original APK for this final one
+                                try
+                                {
+                                    File.Delete(path);
+                                }
+                                catch (Exception e)
+                                {
+                                    error = "Error when deleting the original APK: " + e.ToString();
+                                }
+
+                                if (error == null)
+                                {
+                                    try
+                                    {
+                                        File.Copy(apkAlignedPath, path);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        error = "Error when copying the final APK to the original location: " + e.ToString();
+                                    }
+                                }
+
+                                // We're done so Temp directory is deleted
+                                if (error == null)
+                                {
+                                    try
+                                    {
+                                        Directory.Delete(tempDirectoryPath, true);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        error = "Error when deleting the temporal directory: " + e.ToString();
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            error = "Error when aligning the APK file";
+                        }
+                    }
+                    else
+                    {
+                        error = "Error when compressing the APK file";
+                    }
+                }
+                else
+                {
+                    error = "Error when decompressing the original APK file";
+                }
+            }
+        }
+        else
+        {
+            error = "No original APK file found at " + path + ": Unity probably failed when building the APK";
+        }
+
+        if (error == null)
+        {
+            UnityEngine.Debug.Log("Adaptive icons process finished SUCCESSFULLY");
+        }
+        else
+        {
+            UnityEngine.Debug.Log("Adaptive icons process FAILED: " + error);
+        }
+
+        UnityEngine.Debug.Log("------------------------------------------------------");
+    }
+
+    private static void DecompressApk(string rootPath, string apkPath, string destPath)
+    {
+        ApkTool(rootPath, "d " + apkPath + " -o " + destPath);
+    }
+
+    private static void CompressApk(string rootPath, string sourcePath, string destPath)
+    {
+        ApkTool(rootPath, "b " + sourcePath + " -o " + destPath);
+    }
+
+    private static void ApkTool(string rootPath, string arguments)
+    {
+        ProcessStartInfo start = new ProcessStartInfo();
+        start.WorkingDirectory = rootPath;
+        string fileName = rootPath + "/Tools/apktool/apktool";
+#if UNITY_EDITOR_OSX
+		fileName += ".sh";
+#else
+        fileName += ".bat";
+#endif
+
+        start.FileName = ValidatePath(fileName);
+        start.Arguments = arguments;
+        start.UseShellExecute = false;
+        start.RedirectStandardOutput = true;
+        using (Process process = Process.Start(start))
+        {
+            while (!process.HasExited)
+            {
+            }
+        }
+    }
+
+    private static string GetApkToolsPath()
+    {
+        return ValidatePath(EditorPrefs.GetString("AndroidSdkRoot") + "/build-tools/26.0.2");
+    }
+
+    private static void AlignApk(string workingDirectoryPath, string sourceApkName, string outputApkName)
+    {
+        ProcessStartInfo start = new ProcessStartInfo();
+        start.WorkingDirectory = workingDirectoryPath;
+        start.FileName = ValidatePath(GetApkToolsPath() + "/zipalign");
+        start.Arguments = "-f -v 4 " + sourceApkName + " " + outputApkName;
+        start.UseShellExecute = false;
+        start.RedirectStandardOutput = true;
+        using (Process process = Process.Start(start))
+        {
+            while (!process.HasExited)
+            {
+            }
+        }
+    }
+
+    private static void SignApk(string workingDirectoryPath, string apkName)
+    {
+        ProcessStartInfo start = new ProcessStartInfo();
+        start.WorkingDirectory = workingDirectoryPath;
+        start.FileName = ValidatePath(GetApkToolsPath() + "/apksigner");
+        start.Arguments = "sign --ks " + "../AndroidKeys/releaseKey.keystore" + " -ks-key-alias androidreleasekey --ks-pass pass:android " + apkName;
+        //start.UseShellExecute = false;
+        //start.RedirectStandardOutput = true;
+        using (Process process = Process.Start(start))
+        {
+            while (!process.HasExited)
+            {
+            }
+        }
+    }
+
+    private static string ValidatePath(string path)
+    {
+        return path;
+    }
+
+    public static void SetMipmapIconsInManifest(string workingDirectoryPath)            
+    {
+        // Patch android manifest to remove debuggable property
+        // the gradle build file will automatically turn debuggable to true/false
+        // lint will throw errors on a release build if the debuggable property is hard coded.
+        string manifestPath = ValidatePath(workingDirectoryPath + "/AndroidManifest.xml");
+        string manifestContent = File.ReadAllText(manifestPath);
+        manifestContent = manifestContent.Replace("android:icon=\"@drawable/app_icon\"", "android:icon=\"@mipmap/ic_launcher\" android_roundIcon=\"@mipmap/ic_launcher_round\"");        
+        File.WriteAllText(manifestPath, manifestContent);
+    }
+
+    //File Utility Functions
+    public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+    {
+        foreach (DirectoryInfo dir in source.GetDirectories())
+        {
+            string newPath = ValidatePath(target.FullName + "/" + dir.Name);
+            if (!Directory.Exists(newPath))
+            {
+                target.CreateSubdirectory(dir.Name);
+            }
+            CopyFilesRecursively(dir, new DirectoryInfo(newPath));
+        }
+        foreach (FileInfo file in source.GetFiles())
+        {
+            //never copy meta files
+            if (!file.Name.Contains(".meta") &&
+                !file.Name.Contains(".DS_Store"))
+            {
+                try
+                {
+                    file.CopyTo(Path.Combine(target.FullName, file.Name));
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogError("Copying file " + file.FullName + " to " + target.FullName + " failed with exception: " + e);
+                }
+            }
+        }
+    }
 }
