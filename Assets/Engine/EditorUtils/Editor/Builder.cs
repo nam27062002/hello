@@ -704,8 +704,35 @@ public class Builder : MonoBehaviour
         ApkTool(rootPath, "b " + sourcePath + " -o " + destPath);
     }
 
+    private static bool sm_apkToolUsed = false;
+
+    private static void InitApkTool(string rootPath)
+    {
+        ProcessStartInfo start = new ProcessStartInfo();
+        start.WorkingDirectory = rootPath;
+        string fileName = ValidatePath(rootPath + "/Tools/apktool/chmod");
+        start.Arguments = " +x *";
+        start.UseShellExecute = false;
+        start.RedirectStandardOutput = true;
+        using (Process process = Process.Start(start))
+        {
+            while (!process.HasExited)
+            {
+            }
+        }
+
+        sm_apkToolUsed = true;
+    }
+
     private static void ApkTool(string rootPath, string arguments)
     {
+#if UNITY_EDITOR_OSX
+        if (!sm_apkToolUsed)
+        {
+            InitApkTool();
+        }
+#endif
+
         ProcessStartInfo start = new ProcessStartInfo();
         start.WorkingDirectory = rootPath;
         string fileName = rootPath + "/Tools/apktool/apktool";
