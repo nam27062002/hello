@@ -94,6 +94,7 @@ public enum MessengerEvents {
     ENTITY_EATEN,				// params: Transform _entity, Reward _reward
 	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
 	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
+	BLOCKER_DESTROYED,			// no params
 	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
 	STAR_COMBO,
 	ENTITY_ESCAPED,				// params: Transform _entity
