@@ -26,6 +26,12 @@ public class UIFeedbackText : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public static string DEFAULT_PREFAB_PATH = "UI/Common/PF_UIFeedbackText";	// Just for comfort, change it if path changes
+
+	private class TweenValues {
+		public float alpha = 1f;
+		public Vector3 localScale = GameConstants.Vector3.one;
+		public Vector3 localPosition = GameConstants.Vector3.zero;
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -34,6 +40,7 @@ public class UIFeedbackText : MonoBehaviour {
 	[SerializeField] private float m_duration = 2f;
 	public float duration {
 		get { return m_duration; }
+		set { m_duration = value; GenerateSequence(true); }
 	}
 
 	// Internal
@@ -46,6 +53,8 @@ public class UIFeedbackText : MonoBehaviour {
 	public TextMeshProUGUI text {
 		get { return m_text; }
 	}
+
+	private TweenValues m_originalValues = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -72,12 +81,27 @@ public class UIFeedbackText : MonoBehaviour {
 	/// <summary>
 	/// Creates the sequence anew.
 	/// </summary>
-	public void GenerateSequence() {
+	/// <param name="_autoPlay">Play the sequence?</param>
+	public void GenerateSequence(bool _autoPlay) {
 		// Clear current sequence
 		ClearSequence();
 
 		// Aux vars
 		CanvasScaler parentCanvas = GetComponentInParent<CanvasScaler>();
+
+		// If it's the first time we're generating the sequence, backup original values (in case we need to regenerate the sequence
+		// Otherwise restore original values
+		if(m_originalValues == null) {
+			m_originalValues = new TweenValues();
+			m_originalValues.alpha = m_text.alpha;
+			m_originalValues.localScale = m_text.rectTransform.localScale;
+			m_originalValues.localPosition = m_text.rectTransform.localPosition;
+		} else {
+			m_text.alpha = m_originalValues.alpha;
+			m_text.rectTransform.localScale = m_originalValues.localScale;
+			m_text.rectTransform.SetLocalPosX(m_originalValues.localPosition.x);
+			m_text.rectTransform.SetLocalPosY(m_originalValues.localPosition.y);
+		}
 
 		// Compute different steps duration
 		float[] durations = new float[] {
@@ -86,7 +110,7 @@ public class UIFeedbackText : MonoBehaviour {
 			m_duration * 0.7f	// Out
 		};
 
-		// Create sequence, pause it
+		// Create sequence
 		m_sequence = DOTween.Sequence()
 			// In
 			.Append(m_text.rectTransform.DOScale(0f, durations[0]).From().SetEase(Ease.OutBack))
@@ -103,8 +127,14 @@ public class UIFeedbackText : MonoBehaviour {
 			.OnComplete(() => { 
 				GameObject.Destroy(this.gameObject); 
 			})	// Self-destroy on end
-			.Pause()
 			.SetUpdate(true);
+
+		// Auto play?
+		if(_autoPlay) {
+			m_sequence.Play();
+		} else {
+			m_sequence.Pause();
+		}
 	}
 
 	/// <summary>
@@ -227,8 +257,7 @@ public class UIFeedbackText : MonoBehaviour {
 		notificationRt.localPosition = _pos;
 
 		// Generate and start animation
-		feedbackText.GenerateSequence();
-		feedbackText.sequence.Play();
+		feedbackText.GenerateSequence(true);
 
 		return feedbackText;
 	}

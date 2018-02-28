@@ -124,15 +124,8 @@ public class AchievementObjective : TrackingObjectiveBase {
 
 			if ( GameCenterManager.SharedInstance.CheckIfAuthenticated() )
 			{
-				// Report Achievement
-				if ( m_reportProgress )
-				{
-					GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)(targetValue / m_stepSize));
-				}
-				else
-				{
-					GameCenterManager.SharedInstance.ReportAchievement( m_achievementSku );
-				}
+				GameCenterManager.SharedInstance.ReportAchievementTotal( m_achievementSku , (int)(targetValue / m_stepSize));
+
 				m_reported = true;
 
 				// Stop tracking
