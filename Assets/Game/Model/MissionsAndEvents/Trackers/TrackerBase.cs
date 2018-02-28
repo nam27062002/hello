@@ -170,6 +170,8 @@ public class TrackerBase {
 			case "score":			return new TrackerScore();
 			case "gold":			return new TrackerGold();
 			case "survive_time":	return new TrackerSurviveTime();
+			case "zone_survive":	return new TrackerZoneSurvive(_params);
+			case "visited_zones":	return new TrackerVisitedZones();
 			case "kill":			return new TrackerKill(_params);
 			case "burn":			return new TrackerBurn(_params);
 			case "distance":		return new TrackerDistance();

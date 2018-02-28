@@ -210,6 +210,8 @@ public enum MessengerEvents {
 
     CONNECTION_RECOVERED,
 
+	MISSION_ZONE,	// params: bool _inside, ZoneTrigger _zone
+
 	COUNT
 }
 
