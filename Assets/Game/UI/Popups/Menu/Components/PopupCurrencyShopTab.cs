@@ -46,9 +46,10 @@ public class PopupCurrencyShopTab : Tab {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	override protected void Awake() {
 		Debug.Assert(m_pillPrefab != null, "Missing required reference!");
 		Debug.Assert(m_scrollList != null, "Missing required reference!");
+		base.Awake();
 	}
 
 	//------------------------------------------------------------------------//

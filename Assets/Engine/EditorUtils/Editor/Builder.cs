@@ -39,6 +39,8 @@ public class Builder : MonoBehaviour
 
 		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.iOS);
 		UpdateCaletySettings();
+		string oldBundleVersion = PlayerSettings.bundleVersion;
+		PlayerSettings.bundleVersion = GameSettings.internalVersion.ToString();
 
 		// Figure out output file
 		string outputDir = GetArg("-outputDir");
@@ -55,11 +57,11 @@ public class Builder : MonoBehaviour
 
 		// Restore 
 		PlayerSettings.applicationIdentifier = oldBundleIdentifier;
-
         if (OVERRIDE_SYMBOLS)
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, oldSymbols);
         }
+		PlayerSettings.bundleVersion = oldBundleVersion;
 	}
 	
 	//[MenuItem ("Build/Android")]

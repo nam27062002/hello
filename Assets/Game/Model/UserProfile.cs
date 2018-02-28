@@ -231,6 +231,13 @@ public class UserProfile : UserPersistenceSystem
 		set{ m_incubatingEgg = value;}
 	}
 
+	private long m_incubationTimeReference;
+	public long incubationTimeReference
+	{
+		get{ return m_incubationTimeReference; }
+		set{ m_incubationTimeReference = value;}
+	}
+
 	private DateTime m_incubationEndTimestamp;
 	public DateTime incubationEndTimestamp
 	{
@@ -423,6 +430,7 @@ public class UserProfile : UserPersistenceSystem
 
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
+        m_incubationTimeReference = 0;
         m_incubationEndTimestamp = DateTime.MinValue;
         eggsCollected = 0;
         m_goldenEggsCollected = 0;
@@ -903,8 +911,7 @@ public class UserProfile : UserPersistenceSystem
 
 			//m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// That will reset to 24hrs from now
 			// Reset timestamp to 00:00 of local time (but using server timezone!)
-			DateTime midnight = DateTime.Today.AddDays(1);
-			TimeSpan toMidnight = midnight - DateTime.Now;	// Local
+			TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now;	// Local
 			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 		}
 
@@ -1011,6 +1018,12 @@ public class UserProfile : UserPersistenceSystem
 			m_incubatingEgg = null;
 		} else if(m_incubatingEgg != null && dataIncubatingEgg) {	// Update egg?
 			m_incubatingEgg.Load(_data["incubatingEgg"]);
+		}
+
+		if ( _data.ContainsKey("incubationTimeReference") ){
+			m_incubationTimeReference = _data["incubationTimeReference"].AsLong;
+		}else{
+			m_incubationTimeReference = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 		}
 
 		// Incubator timer
@@ -1167,6 +1180,9 @@ public class UserProfile : UserPersistenceSystem
 		{
 			data.Add("incubatingEgg", m_incubatingEgg.Save());
 		}
+
+		// Incubation Time Reference
+		data.Add( "incubationTimeReference", m_incubationTimeReference );
 
 		// Incubator timer
 		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));

@@ -1,44 +1,43 @@
 {
-        "bonusDragon": "dragon_titan",
-        "endTimestamp": 1918434140525,
-        "goal": {
-            "amount": 10,
-            "icon": "incon_egg",
-            "params": "eggs",
-            "tidDesc": "TID_EVENT_COLLECT_EGG",
-            "type": "collect"
+    "goal" : {
+        "tidDesc" : "TID_EVENT_FIRERUSH",
+        "amount" : 25,
+        "icon" : "icon_fireRush",
+        "type" : "fire_rush",
+        "params" : ""
+    },
+    "topReward" : {
+        "amount" : 1,
+        "targetPercentage" : 0.01,
+        "type" : "PET",
+        "sku" : "pet_30"
+    },
+    "name" : "Test JOSU",
+    "id" : 105,
+    "bonusDragon" : "dragon_chinese",
+    "endTimestamp" : 1618789600000,
+    "startTimestamp" : 1518782400000,
+    "rewards" : [
+        {
+            "amount" : 500,
+            "targetPercentage" : 0.25,
+            "type" : "SC"
         },
-        "id": 29,
-        "name": "test_collect_eggs",
-        "rewards": [
-            {
-                "amount": 1,
-                "sku": "pet_22",
-                "targetPercentage": 0.25,
-                "type": "PET"
-            },
-            {
-                "amount": 10,
-                "targetPercentage": 0.5,
-                "type": "PC"
-            },
-            {
-                "amount": 100,
-                "targetPercentage": 0.75,
-                "type": "PC"
-            },
-            {
-                "amount": 1,
-                "sku": "egg_event",
-                "targetPercentage": 1,
-                "type": "EGG"
-            }
-        ],
-        "startTimestamp": 1511180400000,
-        "teaserTimestamp": 1511180400000,
-        "topReward": {
-            "amount": 5,
-            "targetPercentage": 0.01,
-            "type": "GF"
+        {
+            "amount" : 1000,
+            "targetPercentage" : 0.5,
+            "type" : "SC"
+        },
+        {
+            "amount" : 10,
+            "targetPercentage" : 0.75,
+            "type" : "PC"
+        },
+        {
+            "amount" : 1,
+            "targetPercentage" : 1,
+            "type" : "EGG",
+            "sku" : "egg_event"
         }
-    }
+    ],
+}

@@ -37,6 +37,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	private AutoSpawnBehaviour m_autoSpawner;
 	private DestructibleDecoration m_destructibleBehaviour;
 	protected DeviceOperatorSpawner m_operatorSpawner;
+	protected DevicePassengersSpawner m_passengersSpawner;
 	private Vector3 m_startPosition;
 
 	private Renderer[] m_renderers;
@@ -120,6 +121,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_collider = GetComponent<BoxCollider>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
+		m_passengersSpawner = GetComponent<DevicePassengersSpawner>();
 		m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
 
 
@@ -176,6 +178,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					m_operatorSpawner.OperatorBurn();
 				}
 
+				if (m_passengersSpawner != null) {
+					m_passengersSpawner.PassengersBurn();
+				}
+
 				m_timer.Start(m_burningTime * 1000);
 
 				m_viewBurned.SetActive(true);
@@ -191,9 +197,13 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					m_operatorSpawner.OperatorBurn();
 				}
 
+				if (m_passengersSpawner != null) {
+					m_passengersSpawner.PassengersBurn();
+				}
+
 				//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
 				for (int i = 0; i < m_fireNodes.Length; ++i) {
-					if (i % 2 != 0) {
+					if (i % 2 == 0) {
 						FireNode n = m_fireNodes[i];
 						GameObject ex = m_explosionProcHandler.Spawn(null, n.transform.position);
 						if (ex != null) {

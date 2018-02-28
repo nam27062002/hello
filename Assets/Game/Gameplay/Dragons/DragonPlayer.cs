@@ -757,7 +757,7 @@ public class DragonPlayer : MonoBehaviour {
 		{
 			m_dragonMotion.EndLatchedOnMovement();
 			if ( !m_breathBehaviour.IsFuryOn() )
-				m_dragonEatBehaviour.ResumeEating( 1.0f );
+				m_dragonEatBehaviour.ResumeEating();
 		}
 	}
 

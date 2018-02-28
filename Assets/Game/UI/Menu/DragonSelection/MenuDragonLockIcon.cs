@@ -58,15 +58,27 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	/// </summary>
 	/// <param name="_event">Data related to the event.</param>
 	public void OnPointerClick(PointerEventData _event) {
-		string sku = InstanceManager.menuSceneController.selectedDragon;
-		DragonData data = DragonManager.GetDragonData(sku);
+		// Show feedback message
+		DragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		string textToDisplay = string.Empty;
+		switch(selectedDragonData.GetLockState()) {
+			case DragonData.LockState.SHADOW: {
+				textToDisplay = LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_UNKNOWN_MESSAGE");
+			} break;
 
-		if (data.GetLockState() == DragonData.LockState.SHADOW) {
-			DragonData needDragonData = DragonManager.GetDragonData(data.revealFromDragons[0]);
-			string[] replacements = new string[1];
-			replacements[0] = LocalizationManager.SharedInstance.Localize(needDragonData.def.GetAsString("tidName"));
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_UNKNOWN_MESSAGE", replacements), new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		} 
+			case DragonData.LockState.LOCKED: {
+				DefinitionNode previousDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, selectedDragonData.def.GetAsString("previousDragonSku"));
+				if(previousDragonDef != null) {
+					textToDisplay = LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_KNOWN_MESSAGE", previousDragonDef.GetLocalized("tidName"));
+				}
+			} break;
+		}
+
+		if(!string.IsNullOrEmpty(textToDisplay)) {
+			UIFeedbackText txt = UIFeedbackText.CreateAndLaunch(textToDisplay, new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			txt.transform.SetLocalPosZ(txt.transform.localPosition.z - 150f);	// Bring it forward so it doesn't conflict with the 3D lock
+			txt.duration = 3f;	// Text is quite long, make it last a bit longer
+		}
 
 		// Trigger bounce animation
 		view.LaunchBounceAnim();

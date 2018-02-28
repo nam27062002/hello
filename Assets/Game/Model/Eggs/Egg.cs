@@ -192,7 +192,14 @@ public class Egg {
 			// Incubating
 			case State.INCUBATING: {
 				// Reset incubation timer
-				m_incubationEndTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().Add(incubationDuration);
+				// Max between this and the reference timer
+				long t = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+				if ( t < UsersManager.currentUser.incubationTimeReference)
+					t = UsersManager.currentUser.incubationTimeReference;
+				DateTime dt = TimeUtils.TimestampToDate( t );
+				UsersManager.currentUser.incubationTimeReference = t;
+
+				m_incubationEndTimestamp = dt.Add(incubationDuration);
 
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(MessengerEvents.EGG_INCUBATION_STARTED, this);
@@ -204,6 +211,13 @@ public class Egg {
 			// Opening
 			case State.OPENING: {
 				// If no reward was generated, do it now
+				// Save Time as min time for start incubating again!
+				long t = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+				if ( t < UsersManager.currentUser.incubationTimeReference)
+					t = UsersManager.currentUser.incubationTimeReference;
+
+				UsersManager.currentUser.incubationTimeReference = t;
+
 				GenerateReward();
 			} break;
 			case State.READY:{
