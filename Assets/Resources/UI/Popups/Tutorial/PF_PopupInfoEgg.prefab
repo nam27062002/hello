@@ -392,7 +392,7 @@ GameObject:
   - component: {fileID: 222291719328752338}
   - component: {fileID: 114092883068003858}
   m_Layer: 5
-  m_Name: Pet
+  m_Name: RarityIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -617,7 +617,7 @@ GameObject:
   - component: {fileID: 222927686828853560}
   - component: {fileID: 114533449532870766}
   m_Layer: 5
-  m_Name: Pet
+  m_Name: RarityIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -648,10 +648,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224669896267297882}
-  - component: {fileID: 222024006294012528}
-  - component: {fileID: 114680795131726250}
   m_Layer: 5
-  m_Name: Pet
+  m_Name: RarityIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1612,6 +1610,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbfd4b1b6d6604fd5aab182877d77177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_rarityInfos:
+  - rarity: 0
+    messageText: {fileID: 114591498819845378}
+    chanceText: {fileID: 114901038766122538}
+  - rarity: 1
+    messageText: {fileID: 114523764957853848}
+    chanceText: {fileID: 114624217534345830}
+  - rarity: 2
+    messageText: {fileID: 114695415693906992}
+    chanceText: {fileID: 114025847021610462}
 --- !u!114 &114092883068003858
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2371,33 +2379,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114680795131726250
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1894394712485134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 2f3230c7e5e604890b15b23ff0514b8f, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 1
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
 --- !u!114 &114692967485086440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3124,12 +3105,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011930449328}
---- !u!222 &222024006294012528
-CanvasRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1894394712485134}
 --- !u!222 &222027132669592656
 CanvasRenderer:
   m_ObjectHideFlags: 1
