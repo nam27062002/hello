@@ -42,12 +42,24 @@ public class PopupInfoDropChance : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		InitInfos(m_rarityInfos);
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the given array of info objects with current data from content.
+	/// Moved into a static function to avoid duplicating code.
+	/// </summary>
+	/// <param name="_infos">Infos to be initialized.</param>
+	public static void InitInfos(RarityInfo[] _infos) {
 		// Apply replacements
-		for(int i = 0; i < m_rarityInfos.Length; ++i) {
+		for(int i = 0; i < _infos.Length; ++i) {
 			// Apply rarity color from UIConstants
-			m_rarityInfos[i].messageText.Localize(
-				m_rarityInfos[i].messageText.tid, 
-				UIConstants.GetRarityColor(m_rarityInfos[i].rarity).OpenTag()
+			_infos[i].messageText.Localize(
+				_infos[i].messageText.tid, 
+				UIConstants.GetRarityColor(_infos[i].rarity).OpenTag()
 			);
 
 			// Get rarity drop chance from content
@@ -55,7 +67,7 @@ public class PopupInfoDropChance : MonoBehaviour {
 			List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(
 				DefinitionsCategory.EGG_REWARDS,
 				"rarity",
-				Metagame.Reward.RarityToSku(m_rarityInfos[i].rarity)
+				Metagame.Reward.RarityToSku(_infos[i].rarity)
 			);
 
 			float totalProbability = 0f;
@@ -64,7 +76,7 @@ public class PopupInfoDropChance : MonoBehaviour {
 			}
 
 			// Format and set text
-			m_rarityInfos[i].chanceText.text = StringUtils.MultiplierToPercentage(totalProbability);
+			_infos[i].chanceText.text = StringUtils.MultiplierToPercentage(totalProbability);
 		}
 	}
 }

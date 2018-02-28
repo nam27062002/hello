@@ -9,12 +9,12 @@ public class SpawnerStar : AbstractSpawner {
 	[SerializeField] private string m_entityPrefab = "";
 	[SerializeField] private uint m_quantity = 5;
 
-
 	[Separator("Coin Bonus")]
-	[SerializeField] private int m_coinsReward = 1;
+	[SerializeField] private int m_coinsRewardFlock = 0;
 
 	[Separator("Respawn")]
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
+
 
 	private PoolHandler m_poolHandler;
 
@@ -24,6 +24,9 @@ public class SpawnerStar : AbstractSpawner {
 
 	[SerializeField][HideInInspector] private Vector3[] m_points = new Vector3[0];
 	public Vector3[] points { get { return m_points; } set { m_points = value; } }
+
+	private bool[] m_pointsAlive;
+	private int[] m_pointToEntityIndex;
 
 
 	private AreaBounds m_area;
@@ -42,6 +45,9 @@ public class SpawnerStar : AbstractSpawner {
 		m_respawnConditions = GetComponent<SpawnerConditions>();
 
 		if (m_respawnConditions.IsAvailable()) {
+			m_pointsAlive = new bool[m_quantity];
+			m_pointToEntityIndex = new int[m_quantity];
+
 			UpdateBounds();
 			RegisterInSpawnerManager();
 			SpawnerAreaManager.instance.Register(this);
@@ -60,6 +66,11 @@ public class SpawnerStar : AbstractSpawner {
 
 	protected override void OnInitialize() {
 		m_respawnTime = -1;
+
+		for (int i = 0; i < m_quantity; ++i) {
+			m_pointsAlive[i] = true;
+			m_pointToEntityIndex[i] = -1;
+		}
 
 		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
 
@@ -90,32 +101,64 @@ public class SpawnerStar : AbstractSpawner {
 	}
 
 	protected override uint GetEntitiesAmountToRespawn() {
-		return m_quantity;
+		return (EntitiesKilled == EntitiesToSpawn) ? m_quantity : EntitiesToSpawn - EntitiesKilled;
 	}
 
 	protected override PoolHandler GetPoolHandler(uint index) {
 		return m_poolHandler;
 	}
 
-	protected override string GetPrefabNameToSpawn(uint index) {		
+	protected override string GetPrefabNameToSpawn(uint index) {
 		return m_entityPrefab;
 	}
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {		
-		spawning.transform.position = transform.position + m_points[index]; // set position
+		int point = 0;
+		for (int i = 0; i < m_quantity; ++i) {
+			if (m_pointsAlive[i]) {
+				if (m_pointToEntityIndex[i] == -1) {
+					m_pointToEntityIndex[i] = (int)index;
+					point = i;
+					break;
+				}
+			}
+		}
+		spawning.transform.position = transform.position + m_points[point]; // set position
+	}
+
+	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
+		if (_killedByPlayer) {
+			for (int i = 0; i < m_quantity; ++i) {
+				if (m_pointToEntityIndex[i] == index) {
+					m_pointsAlive[i] = false;
+					m_pointToEntityIndex[i] = -1;
+					break;
+				}
+			}
+		}
 	}
 
 	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+		//
 		if (_allKilledByPlayer) {
+			// clear indexes
+			for (int i = 0; i < m_quantity; ++i) {
+				m_pointsAlive[i] = true;
+				m_pointToEntityIndex[i] = -1;
+			}
+
 			// check if player has destroyed all the flock
-			if (m_coinsReward > 0) {
+			if (m_coinsRewardFlock > 0) {
 				Reward reward = new Reward();
-				reward.coins = m_coinsReward;
+				reward.coins = m_coinsRewardFlock;
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.STAR_COMBO, _lastEntity.transform, reward);
 			}
 			// Program the next spawn time
 			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 		} else {
+			for (int i = 0; i < m_quantity; ++i) {
+				m_pointToEntityIndex[i] = -1;
+			}
 			ResetSpawnTimer(); // instant respawn, because player didn't kill all the entities
 		}
 	}    
