@@ -99,7 +99,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_specExponent;
     MaterialProperty mp_fresnel;
     MaterialProperty mp_fresnelColor;
-    MaterialProperty mp_ambientAdd;
+//    MaterialProperty mp_ambientAdd;
     MaterialProperty mp_secondLightDir;
     MaterialProperty mp_secondLightColor;
 
@@ -188,7 +188,7 @@ internal class DragonShaderGUI : ShaderGUI
 
         mp_fresnel = FindProperty("_Fresnel", props);
         mp_fresnelColor = FindProperty("_FresnelColor", props);
-        mp_ambientAdd = FindProperty("_AmbientAdd", props);
+//        mp_ambientAdd = FindProperty("_AmbientAdd", props);
 
         mp_reflectionMap = FindProperty("_ReflectionMap", props);
         mp_reflectionAmount = FindProperty("_ReflectionAmount", props);

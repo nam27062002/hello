@@ -45,6 +45,10 @@ public class HungryLettersManager : MonoBehaviour
 	[SeparatorAttribute("Audio")]
 	[SerializeField]
 	private string m_onCollectSound;
+	[SerializeField]
+	private string m_onStartLettersCollectedSound;
+	[SerializeField]
+	private string m_onLettersCollectedSound;
 	//------------------------------------------------------------
 	// Private Variables:
 	//------------------------------------------------------------
@@ -104,6 +108,7 @@ public class HungryLettersManager : MonoBehaviour
 	protected void OnEnable()
 	{
 		Messenger.AddListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+		Messenger.AddListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnAllCollectedStart);
 #if !PRODUCTION || UNITY_EDITOR
 		// TODO: Recover This!
 		// EventManager.Instance.RegisterEvent(Events.RespawnCollectiblesRandomly, OnDebugRespawn);
@@ -114,6 +119,7 @@ public class HungryLettersManager : MonoBehaviour
 	protected void OnDisable()
 	{
 		Messenger.RemoveListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+		Messenger.RemoveListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnAllCollectedStart);
 #if !PRODUCTION || UNITY_EDITOR
 		// TODO: Recover This!
 		// EventManager.Instance.DeregisterEvent(Events.RespawnCollectiblesRandomly, OnDebugRespawn);
@@ -127,11 +133,11 @@ public class HungryLettersManager : MonoBehaviour
 
 	public void LetterCollected(HungryLetter letter)
 	{
-		// report analytics before to move the letter in the UI.
-		// TODO: Recover this
-		// HSXAnalyticsManager.Instance.HungryLetterCollected(m_lettersCollected + 1, letter.cachedTransform.position);
-		// play the sfx.
-		if ( !string.IsNullOrEmpty(m_onCollectSound) )
+        // report analytics before to move the letter in the UI.
+        HDTrackingManager.Instance.Notify_HungryLetterCollected();
+
+        // play the sfx.
+        if ( !string.IsNullOrEmpty(m_onCollectSound) )
 			AudioController.Play( m_onCollectSound );
 		// AudioManager.PlaySfx(AudioManager.Ui.HungryLetter);
 		// place letter in the UI.
@@ -413,6 +419,12 @@ public class HungryLettersManager : MonoBehaviour
 	// Event Handlers:
 	//------------------------------------------------------------
 
+	private void OnAllCollectedStart()
+	{
+		if ( !string.IsNullOrEmpty( m_onStartLettersCollectedSound ) )
+			AudioController.Play(m_onStartLettersCollectedSound);
+	}
+
 	private void OnSuperSizeToggle(bool _activated)
 	{
 		if (!_activated)
@@ -422,6 +434,11 @@ public class HungryLettersManager : MonoBehaviour
 			{
 				Respawn();
 			}	
+		}
+		else
+		{
+			if ( !string.IsNullOrEmpty(m_onLettersCollectedSound) )
+				AudioController.Play(m_onLettersCollectedSound);
 		}
 
 	}

@@ -66,7 +66,15 @@ public class DragonSuperSize : MonoBehaviour {
 #if UNITY_EDITOR
 		if ( Input.GetKeyDown(KeyCode.F) )
 		{
-			StartSuperSize();
+			HungryLettersManager lettersManager = FindObjectOfType<HungryLettersManager>();
+			HungryLetter[] letters = FindObjectsOfType<HungryLetter>();
+			for( int i = 0; i<letters.Length; ++i )
+			{
+				if (!lettersManager.IsLetterCollected( letters[i].letter))
+				{
+					letters[i].OnLetterCollected();
+				}
+			}
 		}
 #endif
 	}

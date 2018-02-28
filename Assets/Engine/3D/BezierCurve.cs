@@ -423,12 +423,18 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// <returns>The <see cref="AOCBezierPoint"/> with the given name. <c>null</c> if no point with the given name is found.</returns>
 	/// <param name="_name">Name of the target point.</param>
 	public BezierPoint GetPoint(string _name) {
-		return m_points.Find(
-			(BezierPoint _p) => { 
-				return string.Compare(_p.name, _name) == 0;
-			}
-		);
-	}
+        BezierPoint _returnValue = null;
+        if (m_points != null) {
+            int _count = m_points.Count;            
+            for (int i = 0; i < _count; i++) {                
+                if (string.Compare(m_points[i].name, _name) == 0) {
+                    _returnValue = m_points[i];
+                    break;
+                }
+            }
+        }
+        return _returnValue;
+    }    
 
 	/// <summary>
 	/// Find out the index of a given point in this curve.
@@ -445,12 +451,18 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 	/// <returns>The point index, -1 if no point with the given name was found.</returns>
 	/// <param name="_name">Name to look for.</param>
 	public int GetPointIdx(string _name) {
-		return m_points.FindIndex(
-			(BezierPoint _p) => { 
-				return string.Compare(_p.name, _name) == 0;
-			}
-		);
-	}
+        int _returnValue = -1;
+        if (m_points != null) {
+            int _count = m_points.Count;
+            for (int i = 0; i < _count; i++) {
+                if (string.Compare(m_points[i].name, _name) == 0) {
+                    _returnValue = i;
+                    break;
+                }             
+            }
+        }
+        return _returnValue;        
+	}    
 
 	/// <summary>
 	/// Find the control point closest to a given curve delta.
