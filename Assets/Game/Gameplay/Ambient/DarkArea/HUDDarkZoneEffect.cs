@@ -85,8 +85,16 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         }
         else
         {
+
             if (m_currentTrigger == trigger)
             {
+                CandleData cd = m_goOut ? m_currentTrigger.m_outData : m_currentTrigger.m_inData;
+                if (cd.m_noEffect)  // disable dark screen and effect
+                {
+                    m_blackImage.material = m_oldMaterial;
+                    m_blackImage.enabled = false;
+                    m_enableState = false;
+                }
                 m_currentTrigger = null;
             }
         }
