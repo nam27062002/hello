@@ -120,6 +120,7 @@ public enum MessengerEvents {
 	EGG_COLLECTED_FAIL,			// params: CollectibleEgg _egg
 	LETTER_COLLECTED,			// params: Reward _r
 	EARLY_ALL_HUNGRY_LETTERS_COLLECTED, 	//
+	START_ALL_HUNGRY_LETTERS_COLLECTED,			//
 	ALL_HUNGRY_LETTERS_COLLECTED,			//
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
 	TICKET_COLLECTED,				// no params

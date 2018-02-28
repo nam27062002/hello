@@ -230,6 +230,7 @@ public class HungryLettersPanel : MonoBehaviour
 		{
 			m_letterPlaces[i].StartAllCollectedAnimation( m_letterTargets[i] );
 		}
+		Messenger.Broadcast(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED);
 	}
 
 	public void OnAllCollectedAnimationFinished()
@@ -241,7 +242,7 @@ public class HungryLettersPanel : MonoBehaviour
 			// TODO Recover situational text!
 			// TextSystem.Instance.ShowSituationalText(SituationalTextSystem.Type.HungryAllLettersCollected);
 			// AudioManager.PlaySfx(AudioManager.Ui.HungryComplete);
-			AudioController.Play("AudioManager.Ui.HungryComplete");
+			// AudioController.Play("AudioManager.Ui.HungryComplete");
 			// send out the event for all the hungry letters being collected.
 			Messenger.Broadcast(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED);
 			// release the lock and dismiss this panel.

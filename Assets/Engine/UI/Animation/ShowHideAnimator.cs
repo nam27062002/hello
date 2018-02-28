@@ -705,6 +705,7 @@ public class ShowHideAnimator : MonoBehaviour {
 					if(_animate) {
 						m_sequence.PlayForward();	// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
 					} else {
+						OnShowPreAnimationAfterDelay.Invoke(this); // Invoke event that would otherwise be ignored
 						m_sequence.Goto(1f);		// Instantly move to the end of the sequence
 					}
 				}
