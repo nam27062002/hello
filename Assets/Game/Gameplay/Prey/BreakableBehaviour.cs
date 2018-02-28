@@ -3,6 +3,7 @@ using System.Collections;
 
 public class BreakableBehaviour : MonoBehaviour 
 {	
+	[SerializeField] private bool m_isBlocker = false;
 	[SerializeField] private bool m_unbreakableBlocker = false;
 
 	[SerializeField] private DragonTier m_tierWithTurboBreak = 0;
@@ -157,6 +158,10 @@ public class BreakableBehaviour : MonoBehaviour
 
 		if (m_activateOnDestroy != null)
 			m_activateOnDestroy.SetActive(true);
+
+		if (m_isBlocker) {			
+			Messenger.Broadcast(MessengerEvents.BLOCKER_DESTROYED);
+		}
 
 		// Destroy
 		StartCoroutine(DestroyCountdown(0.15f));
