@@ -181,7 +181,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				}
 
 				if (m_passengersSpawner != null) {
-					m_passengersSpawner.PassengersBurn();
+					m_passengersSpawner.PassengersBurn(m_burnSource);
 				}
 
 				m_timer.Start(m_burningTime * 1000);
@@ -203,7 +203,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				}
 
 				if (m_passengersSpawner != null) {
-					m_passengersSpawner.PassengersBurn();
+					m_passengersSpawner.PassengersBurn(m_burnSource);
 				}
 
 				//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);

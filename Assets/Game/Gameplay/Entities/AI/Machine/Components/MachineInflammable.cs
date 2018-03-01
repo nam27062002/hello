@@ -77,12 +77,14 @@ namespace AI {
 			// Initialize some death info
 			m_entity.onDieStatus.source = _source;
 			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
-			m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
-			m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
-			m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
 
-			if (m_pilot != null)
+			if (m_pilot != null) {
+				m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
+				m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
+				m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
+
 				m_pilot.OnDie();
+			}				
 
 			// reward
 			Reward reward = m_entity.GetOnKillReward(true);
