@@ -709,9 +709,8 @@ public class Builder : MonoBehaviour
     private static void InitApkTool(string rootPath)
     {
         ProcessStartInfo start = new ProcessStartInfo();
-        start.WorkingDirectory = rootPath;
-        string fileName = ValidatePath(rootPath + "/Tools/apktool/chmod");
-        start.Arguments = " +x apktool.*";
+		start.FileName = "chmod";
+		start.Arguments = " +x " + ValidatePath(rootPath + "/Tools/apktool/apktool.sh");
         start.UseShellExecute = false;
         start.RedirectStandardOutput = true;
         using (Process process = Process.Start(start))
@@ -729,13 +728,13 @@ public class Builder : MonoBehaviour
 #if UNITY_EDITOR_OSX
         if (!sm_apkToolUsed)
         {
-            InitApkTool();
+            InitApkTool(rootPath);
         }
 #endif
 
         ProcessStartInfo start = new ProcessStartInfo();
-        start.WorkingDirectory = rootPath;
-        string fileName = rootPath + "/Tools/apktool/apktool";
+		start.WorkingDirectory = ValidatePath(rootPath + "/Tools/apktool/");
+        string fileName = "apktool";
 #if UNITY_EDITOR_OSX
 		fileName += ".sh";
 #else
