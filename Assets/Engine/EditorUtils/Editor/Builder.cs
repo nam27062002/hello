@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEditor.SceneManagement;
 using System;
 using System.Collections;
@@ -510,10 +511,13 @@ public class Builder : MonoBehaviour
 		// Save Data ?
 	}
 
-    //[PostProcessBuild(1080)]
+    [PostProcessBuild(1080)]
     public static void OnPostProcessBuild(BuildTarget target, string path)
     {
-        GenerateAdaptiveAPK(path);
+		if (target == BuildTarget.Android) 
+		{
+			GenerateAdaptiveAPK (path);
+		}
     }
 
     [MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
