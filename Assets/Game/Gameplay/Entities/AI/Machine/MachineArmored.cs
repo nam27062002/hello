@@ -22,7 +22,7 @@ namespace AI {
 			base.Spawn(_spawner);
 		}
 
-		public bool ReduceDurability(bool _boost) {
+		public bool ReduceDurability(bool _boost, IEntity.Type _source) {
 			if (m_armorDurability.count > 0) {
 				if (!m_armorDurability.needBoost || _boost) {
 					ReceiveHit();
@@ -32,8 +32,10 @@ namespace AI {
 
 						// Get the reward to be given from the entity
 						Reward reward = m_entity.GetOnKillReward(false);
+						// Initialize some death info
+						m_entity.onDieStatus.source = _source;
 						// Dispatch global event
-						Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
+						Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
 					}
 
 					return true;

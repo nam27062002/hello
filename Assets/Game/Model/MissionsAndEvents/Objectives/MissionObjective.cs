@@ -12,6 +12,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -72,9 +73,19 @@ public class MissionObjective : TrackingObjectiveBase {
 			tidDesc = _typeDef.GetAsString("tidDescMultiRun");
 		}
 
+			// Check params in not empty before asking for a List
+		List<string> _params;
+		string paramCheck = _missionDef.GetAsString("params", null);
+		if ( !string.IsNullOrEmpty( paramCheck ) ){
+			_params = _missionDef.GetAsList<string>("params");
+		}else{
+			_params = new List<string>();
+		}
+		 
+
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(_typeDef.sku, _missionDef.GetAsList<string>("params")),		// Create the tracker based on mission type
+			TrackerBase.CreateTracker(_typeDef.sku, _params ),		// Create the tracker based on mission type
 			_targetValue,
 			_typeDef,
 			tidDesc,

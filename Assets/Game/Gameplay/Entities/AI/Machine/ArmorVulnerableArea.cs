@@ -31,7 +31,7 @@ public class ArmorVulnerableArea : MonoBehaviour {
 		if (_other.CompareTag("Player") && m_timer <= 0f) {
 			DragonBoostBehaviour boost = InstanceManager.player.dragonBoostBehaviour;
 
-			bool isHitValid = m_machine.ReduceDurability(boost.IsBoostActive());
+			bool isHitValid = m_machine.ReduceDurability(boost.IsBoostActive(), IEntity.Type.PLAYER);
 
 			if (isHitValid)	{
 				m_hitParticle.Spawn(transform.position + m_hitParticle.offset);

@@ -32,6 +32,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.Awake();
 		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_animator.logWarnings = false;
+		m_type = IEntity.Type.PLAYER;
 	}
 
 
