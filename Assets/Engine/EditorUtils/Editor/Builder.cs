@@ -575,9 +575,26 @@ public class Builder : MonoBehaviour
                 // Makes sure the temp directory was created
                 if (Directory.Exists(decompressFolder))
                 {
-                    // Copy icons
-                    string sourcePath = ValidatePath(Application.dataPath + "/Game/UI/Icon/Android/AdaptiveIcons");
                     string destPath = ValidatePath(decompressFolder + "/res");
+
+                    // Delete old icons
+                    UnityEngine.Debug.Log("Deleting old icons...");
+                    try
+                    {
+                        File.Delete(ValidatePath(destPath + "/drawable-ldpi/app_icon.png"));
+                        File.Delete(ValidatePath(destPath + "/drawable-mdpi/app_icon.png"));
+                        File.Delete(ValidatePath(destPath + "/drawable-hdpi/app_icon.png"));
+                        File.Delete(ValidatePath(destPath + "/drawable-xhdpi/app_icon.png"));
+                        File.Delete(ValidatePath(destPath + "/drawable-xxhdpi/app_icon.png"));
+                        File.Delete(ValidatePath(destPath + "/drawable-xxxhdpi/app_icon.png"));
+                    }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.Log("No old icon found: " + e.ToString());
+                    }
+
+                    // Copy icons
+                    string sourcePath = ValidatePath(Application.dataPath + "/Game/UI/Icon/Android/AdaptiveIcons");                    
                     UnityEngine.Debug.Log("Copying adaptive icons from " + sourcePath + " to " + destPath + "...");
                     CopyFilesRecursively(new DirectoryInfo(sourcePath), new DirectoryInfo(destPath));
 
