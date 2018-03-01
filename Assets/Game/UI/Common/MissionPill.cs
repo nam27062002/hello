@@ -296,8 +296,8 @@ public class MissionPill : MonoBehaviour {
 				skipWithAdText.Localize(TID_SKIP_FREE);
 			} else {
 				skipWithAdText.Localize(
-					TID_SKIP_PARTIAL, 
-					TimeUtils.FormatTime(Mission.SECONDS_SKIPPED_WITH_AD, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1)
+					TID_SKIP_PARTIAL,
+					StringUtils.FormatNumber(Mission.SECONDS_SKIPPED_WITH_AD/60f, 0)
 				);
 			}
 		}

@@ -275,7 +275,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             // Returns the entity to the pool
 			ReturnEntityToPool(handler, _entity);
 
-            OnRemoveEntity(_entity, index);
+			OnRemoveEntity(_entity, index, _killedByPlayer);
 
             m_entities[index] = null;            
 
@@ -364,7 +364,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 	protected virtual void OnMachineSpawned(AI.IMachine machine) {}
     protected virtual void OnPilotSpawned(AI.Pilot pilot) {}
     protected virtual void OnAllEntitiesRespawned() {}    
-    protected virtual void OnRemoveEntity(GameObject _entity, int index) {}
+	protected virtual void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {}
     protected virtual void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {}
     protected virtual void OnForceRemoveEntities() {}
     public virtual void DrawStateGizmos() {}

@@ -73,7 +73,7 @@ public class HungryLetter : MonoBehaviour
 		OnLetterCollected();
 	}
 
-	void OnLetterCollected()
+	public void OnLetterCollected()
 	{
 		// notify that this letter has been collected.
 		m_letterManager.LetterCollected(this);

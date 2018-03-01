@@ -14,6 +14,8 @@ Properties {
 	_UpColor("Up Color", Color) = (1.0, 1.0, 1.0, 1.0)
 	_DownColor("Down Color", Color) = (1.0, 1.0, 1.0, 1.0)
 	_SatThreshold("Saturation threshold", Range(0.0, 1.0)) = 0.5
+	[Toggle(AUTOMATIC_PANNING)] _AutomaticPanning("Automatic Panning", Float) = 0
+	_PanSpeed("Pan speed", float) = 0.0
 }
 
 SubShader {
@@ -26,24 +28,29 @@ SubShader {
 			
 	CGINCLUDE
 	#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
+	#pragma shader_feature __ AUTOMATIC_PANNING
 	#include "UnityCG.cginc"
 	#include "../HungryDragon.cginc"
 
-	sampler2D _MainTex;
-	sampler2D _DetailTex;
-	sampler2D _MoonTex;
+	sampler2D	_MainTex;
+	sampler2D	_DetailTex;
+	sampler2D	_MoonTex;
 
-	float4 _MainTex_ST;
-	float4 _DetailTex_ST;
-	float4 _MoonTex_ST;
+	float4		_MainTex_ST;
+	float4		_DetailTex_ST;
+	float4		_MoonTex_ST;
 
-	float2 _DetailOffset;
-	float2 _MoonOffset;
-	float4 _UpColor;
-	float4 _DownColor;
-	float4 _MoonColor;
+	float2		_DetailOffset;
+	float2		_MoonOffset;
+	float4		_UpColor;
+	float4		_DownColor;
+	float4		_MoonColor;
 
-	float	_SatThreshold;
+	float		_SatThreshold;
+
+#ifdef AUTOMATIC_PANNING
+	float		_PanSpeed;
+#endif
 
 	HG_FOG_VARIABLES
 
@@ -84,8 +91,15 @@ SubShader {
 		#pragma fragmentoption ARB_precision_hint_fastest		
 		fixed4 frag (v2f i) : COLOR
 		{			
-			fixed4 tex = tex2D (_MainTex, i.uv);
+#ifdef AUTOMATIC_PANNING
+			float2 anim = float2(_Time.y * _PanSpeed, 0.0f);
+			fixed4 tex = tex2D(_MainTex, i.uv + anim);
+			anim = float2(_Time.y * _PanSpeed * 0.5, 0.0f);
+			fixed4 tex2 = tex2D(_DetailTex, i.uv2 + _DetailOffset + anim);
+#else
+			fixed4 tex = tex2D(_MainTex, i.uv);
 			fixed4 tex2 = tex2D (_DetailTex, i.uv2 + _DetailOffset);
+#endif
 			fixed4 tex3 = tex2D(_MoonTex, i.uv3 + _MoonOffset) * _MoonColor;
 
 			fixed4 one = fixed4(1,1,1,1);

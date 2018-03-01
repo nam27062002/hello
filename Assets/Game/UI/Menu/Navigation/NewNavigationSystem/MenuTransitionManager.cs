@@ -141,7 +141,8 @@ public class MenuTransitionManager : MonoBehaviour {
 	/// <param name="_targetScreen">Target screen.</param>
 	/// <param name="_animate">Whether to animate or do it instantly.</param>
 	public void GoToScreen(MenuScreen _targetScreen, bool _animate) {
-		Debug.Log("Changing screen from " + m_currentScreen + " to " + _targetScreen);
+		Debug.Log("Changing screen from " + Colors.coral.Tag(m_currentScreen.ToString()) + " to " + Colors.aqua.Tag(_targetScreen.ToString()));
+
 		// Ignore if screen is already active
 		if(_targetScreen == m_currentScreen) return;
 
@@ -389,7 +390,7 @@ public class MenuTransitionManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newValue">New value coming from the tween.</param>
 	private void OnCameraTweenSetValue(float _newValue) {
-		m_camera.transform.position = m_dynamicPath.GetValue(m_cameraTweenDelta);
+		m_camera.transform.position = m_dynamicPath.GetValue(_newValue);
 		m_cameraTweenDelta = _newValue;
 	}
 

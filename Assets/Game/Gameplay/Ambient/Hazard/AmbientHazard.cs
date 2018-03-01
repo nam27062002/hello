@@ -382,8 +382,8 @@ public class AmbientHazard : MonoBehaviour {
 
 				if ( m_visible )
 				{
-					//if ( !string.IsNullOrEmpty(m_onActiveSound) )
-					//	AudioController.Play(m_onActiveSound, transform.position);
+					if ( !string.IsNullOrEmpty(m_onActiveSound) )
+						AudioController.Play(m_onActiveSound, transform.position);
 				}
 
 				// Start particles! -> done on animation event
