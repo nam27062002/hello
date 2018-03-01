@@ -193,8 +193,29 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		}
 	}
 
-	public void OnGooglePlayLogOut(){
-		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
+	public void OnGooglePlayLogOut()
+	{
+		if (ApplicationManager.instance.GameCenter_IsAuthenticated())
+		{
+			// Show popup message
+			PopupMessage.Config config = PopupMessage.GetConfig();
+			config.ShowTitle = false;
+			config.MessageTid = "TID_GEN_CONFIRM_LOGOUT";
+			config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+			config.ConfirmButtonTid = "TID_GEN_YES";
+			config.OnConfirm = OnLogOutGooglePlay;
+			config.CancelButtonTid = "TID_GEN_NO";
+			config.OnCancel = null;
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+			config.IsButtonCloseVisible = false;
+			PopupManager.PopupMessage_Open(config);
+		}
+	}
+
+	private void OnLogOutGooglePlay()
+	{
+		if (ApplicationManager.instance.GameCenter_IsAuthenticated())
+		{
 			ApplicationManager.instance.GameCenter_LogOut();
 		}
 	}

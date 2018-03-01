@@ -34,7 +34,6 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_canHold = false;
 		m_limitEating = true;
 		m_limitEatingValue = 1;
-		m_isPlayer = false;
 		m_holdDuration = 10;
 		SetupHoldParametersForTier( DragonData.TierToSku(m_eaterTier));
 
@@ -47,9 +46,10 @@ public class MachineEatBehaviour : EatBehaviour {
 		}
 
 		if (m_isPet) {
+			m_type = IEntity.Type.PET;
 			m_canLatchOnPlayer = false;	
 		} else {
-			
+			m_type = IEntity.Type.OTHER;
 			m_canLatchOnPlayer = true;
 			m_canBitePlayer = false;
 		}

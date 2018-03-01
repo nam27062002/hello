@@ -81,6 +81,11 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Panic, true);
 			m_machine.SetSignal(Signals.Type.Chewing, true);
 
+			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
+			m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
+			m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
+			m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
+
 			if (m_pilot != null)
 				m_pilot.OnDie();
 
@@ -88,18 +93,20 @@ namespace AI {
 				EntityManager.instance.UnregisterEntity(m_entity as Entity);
 		}
 
-		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {			
+		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {			
 			if (_rewardsPlayer) {
 				// Get the reward to be given from the entity
 				Reward reward = m_entity.GetOnKillReward(false);
-				if (!_isPlayer){
+				if (_source != IEntity.Type.PLAYER) {
 					reward.alcohol = 0;
 					// Pets never harm player if they eat bad junk
-					if (reward.health < 0)
-					{
+					if (reward.health < 0) {
 						reward.health = 0;
 					}
 				}
+
+				// Update some die status data
+				m_entity.onDieStatus.source = _source;
 
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_machine.transform, reward);

@@ -69,13 +69,22 @@ namespace AI {
 			return m_renderers;
 		}
 
-		public void Burn(Transform _transform, bool instant = false) {
+		public void Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			// raise flags
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
 
-			if (m_pilot != null)
+			// Initialize some death info
+			m_entity.onDieStatus.source = _source;
+			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
+
+			if (m_pilot != null) {
+				m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
+				m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
+				m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
+
 				m_pilot.OnDie();
+			}				
 
 			// reward
 			Reward reward = m_entity.GetOnKillReward(true);

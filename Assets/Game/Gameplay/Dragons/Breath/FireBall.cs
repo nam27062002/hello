@@ -96,7 +96,7 @@ public class FireBall : MonoBehaviour
 			{
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {
-					machine.Burn(transform);
+					machine.Burn(transform, IEntity.Type.PLAYER);	// [AOC] TODO!! Verify it actually comes from the player
 				}
 			}
 			/*
