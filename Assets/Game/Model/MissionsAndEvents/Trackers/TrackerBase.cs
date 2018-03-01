@@ -191,6 +191,8 @@ public class TrackerBase {
 					case "chests":	return new TrackerChests();
 				}
 			} break;
+
+			case "destroy_blocker": return new TrackerDestroyBlockers(); break;
 		}
 
 		// Unrecoginzed mission type, aborting

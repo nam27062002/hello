@@ -25,7 +25,7 @@ public class TrackerDestroyBlockers : TrackerBase {
 	/// </summary>
 	public TrackerDestroyBlockers() {		
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.BLOCKER_DESTROYED, OnDestroy);
+		Messenger.AddListener(MessengerEvents.BLOCKER_DESTROYED, OnDestroy);
 	}
 
 	/// <summary>
@@ -43,7 +43,7 @@ public class TrackerDestroyBlockers : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.BLOCKER_DESTROYED, OnDestroy);
+		Messenger.RemoveListener(MessengerEvents.BLOCKER_DESTROYED, OnDestroy);
 
 		// Call parent
 		base.Clear();
