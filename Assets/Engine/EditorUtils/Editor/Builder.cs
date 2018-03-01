@@ -765,7 +765,7 @@ public class Builder : MonoBehaviour
 		fileName = "sh";
 		arguments = " apktool.sh " + arguments;
 #else
-        fileName += "apktool.bat";
+        fileName = ValidatePath(rootPath + "/Tools/apktool/apktool.bat");
 #endif
 
         start.FileName = ValidatePath(fileName);
