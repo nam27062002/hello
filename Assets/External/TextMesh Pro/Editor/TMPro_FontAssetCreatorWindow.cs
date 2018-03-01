@@ -82,6 +82,7 @@ namespace TMPro.EditorUtilities
         private Object font_TTF;
         private TMP_FontAsset m_fontAssetSelection;
         private TextAsset characterList;
+		private TextAsset[] m_inputCharactersFiles = new TextAsset[10];	// [AOC] Multiple input files
         private int font_size;
 
         private int font_padding = 5;
@@ -536,11 +537,27 @@ namespace TMPro.EditorUtilities
                     break;
 
                 case 8: // Character List from File
+				// [AOC] Support multiple input files
+				EditorGUILayout.BeginVertical(TMP_UIStyleManager.TextureAreaBox); {
+					GUILayout.Label("Input Files:", TMP_UIStyleManager.Label);
+					GUILayout.Space(10f);
+
+					characterSequence = string.Empty;
+					for(int i = 0; i < m_inputCharactersFiles.Length; ++i) {
+						m_inputCharactersFiles[i] = EditorGUILayout.ObjectField(m_inputCharactersFiles[i], typeof(TextAsset), false, GUILayout.Width(290)) as TextAsset;
+						if(m_inputCharactersFiles[i] != null) {
+							characterSequence += m_inputCharactersFiles[i].text;
+						}
+					}
+				} EditorGUILayout.EndVertical();
+
+				/*
                     characterList = EditorGUILayout.ObjectField("Character File", characterList, typeof(TextAsset), false, GUILayout.Width(290)) as TextAsset;
                     if (characterList != null)
                     {
                         characterSequence = characterList.text;
                     }
+				*/
                     break;
             }
 
