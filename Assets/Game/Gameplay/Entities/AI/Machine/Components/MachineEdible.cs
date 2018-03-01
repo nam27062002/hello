@@ -82,12 +82,13 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Chewing, true);
 
 			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
-			m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
-			m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
-			m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
+			if (m_pilot != null){
+				m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
+				m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
+				m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
 
-			if (m_pilot != null)
 				m_pilot.OnDie();
+			}
 
 			if (EntityManager.instance != null)
 				EntityManager.instance.UnregisterEntity(m_entity as Entity);
