@@ -156,12 +156,12 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 	public delegate bool CheckMethod( CircleAreaBounds _fireNodeBounds );
 
-	public void FireUpNodes(Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, Vector3 _direction, IEntity.Type _source)	{
+	public void FireUpNodes(Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, DragonBreathBehaviour.Type _breathType, Vector3 _direction, IEntity.Type _source)	{
 		FireNode[] nodes = m_fireNodesTree.GetItemsInRange(_rectArea);
 		for (int i = 0; i < nodes.Length; i++) {
 			FireNode fireNode = nodes[i];
 			if (_checkMethod(fireNode.area)) {
-				fireNode.Burn(_direction, true, _tier, _source);
+				fireNode.Burn(_direction, true, _tier, _breathType, _source);
 			}
 		}
 	}

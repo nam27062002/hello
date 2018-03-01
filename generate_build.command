@@ -421,19 +421,19 @@ if $UPLOAD;then
   # Mount the server into a tmp folder
   # If the temp dir already exists, try to unmount and delete it first
   SMB_MOUNT_DIR="server"
-  if [ -d "{$SMB_MOUNT_DIR}" ]
+  if [ -d "$SMB_MOUNT_DIR" ]; then
     set +e  # Dont exit script on error (in case the server is not actually mounted but the directory exists anyway)
-    umount "{SMB_MOUNT_DIR}"
-    rmdir "{SMB_MOUNT_DIR}"
+    umount "${SMB_MOUNT_DIR}"
+    rmdir "${SMB_MOUNT_DIR}"
     set -e
   fi
 
   # Now mount the server!
-  mkdir -p "{SMB_MOUNT_DIR}"
-  mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" "{SMB_MOUNT_DIR}"
+  mkdir -p "${SMB_MOUNT_DIR}"
+  mount -t smbfs "//${SMB_USER}:${SMB_PASS}@ubisoft.org/${SMB_FOLDER}" "${SMB_MOUNT_DIR}"
 
   # In order to keep the server organized, replicate the branches structure on it
-  SMB_PATH="{SMB_MOUNT_DIR}/${BRANCH}"
+  SMB_PATH="${SMB_MOUNT_DIR}/${BRANCH}"
 
   # Copy IPA
   if $BUILD_IOS; then
@@ -462,8 +462,8 @@ if $UPLOAD;then
   fi
 
   # Unmount server and remove tmp folder
-  umount "{SMB_MOUNT_DIR}"
-  rmdir "{SMB_MOUNT_DIR}"
+  umount "${SMB_MOUNT_DIR}"
+  rmdir "${SMB_MOUNT_DIR}"
 fi
 
 # Commit project changes

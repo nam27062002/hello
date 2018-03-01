@@ -50,6 +50,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
+		m_holdStunTime = 0;
 		m_rewardsPlayer = true;
 
 		DragonAnimationEvents animEvents = GetComponentInChildren<DragonAnimationEvents>();

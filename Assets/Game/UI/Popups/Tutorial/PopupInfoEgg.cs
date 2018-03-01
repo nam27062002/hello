@@ -20,4 +20,21 @@ public class PopupInfoEgg : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoEgg";
+
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Reusing Drop Info Popup logic
+	[SerializeField] private PopupInfoDropChance.RarityInfo[] m_rarityInfos = new PopupInfoDropChance.RarityInfo[3];
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Reusing Drop Info Popup logic
+		PopupInfoDropChance.InitInfos(m_rarityInfos);
+	}
 }

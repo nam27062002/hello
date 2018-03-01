@@ -32,6 +32,7 @@ public class Equipable : MonoBehaviour {
 		Forearm_2,
 		Extra_1,
 		Extra_2,
+		Extra_3,
 		Count
 	};
 

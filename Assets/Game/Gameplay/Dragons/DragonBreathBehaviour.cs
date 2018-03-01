@@ -358,19 +358,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_fireNodeTimer -= Time.deltaTime;
 		if (m_fireNodeTimer <= 0) {
 			m_fireNodeTimer += m_checkNodeFireTime;
-			switch( m_type )
-			{
-				default:
-				case Type.Standard:
-				{
-					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, m_dragon.data.tier, direction, IEntity.Type.PLAYER);
-				}break;
-				case Type.Mega:
-				{
-					FirePropagationManager.instance.FireUpNodes( bounds2D, Overlaps, DragonTier.COUNT - 1, direction, IEntity.Type.PLAYER);
-				}break;
-			}
-
+			FirePropagationManager.instance.FireUpNodes(bounds2D, Overlaps, m_dragon.data.tier, m_type, direction, IEntity.Type.PLAYER);
 		}
 	}
 

@@ -64,7 +64,10 @@ public class SelectableButtonGroup : MonoBehaviour {
 		}
 
 		// Set initial selection
-		SelectButton(m_initialSelectedIdx);
+		// If a selection has been performed before, keep it
+		if(m_selectedIdx == NO_SELECTION_IDX) {
+			SelectButton(m_initialSelectedIdx);
+		}
 	}
 
 	//------------------------------------------------------------------------//

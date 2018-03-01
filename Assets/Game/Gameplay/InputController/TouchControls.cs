@@ -138,9 +138,9 @@ abstract public class TouchControls : MonoBehaviour {
 		{
 			touchAction = false;
 			bool touchActionIs3DTouch = false;
-			//Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 0..!!!");
+			// Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 0..!!!");
 			TouchState touchState = GameInput.CheckTouchState(0);            
-			//Debug.Log("Got touchState 0 = " + touchState.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
+			// Debug.Log("Got touchState 0 = " + touchState.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
 			if(touchState == TouchState.pressed)
 			{                
                 if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) && m_registerFirstTouch) {
@@ -194,22 +194,6 @@ abstract public class TouchControls : MonoBehaviour {
 						m_decelerate = true;
 					}
 				}
-				
-#if UNITY_ANDROID
-				// on android, when releasing touch 0, release touch 1 as well... otherwise it becomes touch 0
-				// or set touch 0 with position and state as the earlier touch 1
-				if(m_currentTouchState2 != TouchState.none)
-				{
-					m_currentTouchState2 = TouchState.released;
-					
-					SetTouchObjRendering(false);
-					
-					if(m_boostWithSecondTouch)
-					{
-						// GameLogic.player.SetAction(false);
-					}
-				}
-#endif
 			}
 			else if(touchState == TouchState.none)
 			{
@@ -219,17 +203,23 @@ abstract public class TouchControls : MonoBehaviour {
 			
 			if(m_boostWithSecondTouch)
 			{
-				//Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 1..!!!");
+				// Debug.Log("ABOUT TO CHECK TOUCH STATE FOR 1..!!!");
 				TouchState touchState2 = GameInput.CheckTouchState(1);                
-                //Debug.Log("Got touchState 1 = " + touchState2.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
+                // Debug.Log("Got touchState 1 = " + touchState2.ToString()); 		// NO TOUCH STATE IS BEING RECEIVED AFTER APP COMES BACK
                 if (touchState2 == TouchState.pressed)
 				{
 					if(m_currentTouchState2 == TouchState.none)
 					{
 						m_currentTouchState2 = TouchState.pressed;
+
 						m_initialTouch2Pos.x = GameInput.touchPosition[1].x;
 						m_initialTouch2Pos.y = GameInput.touchPosition[1].y;
 						m_initialTouch2Pos.z = 0;
+
+						m_currentTouch2Pos.x = GameInput.touchPosition[1].x;
+						m_currentTouch2Pos.y = GameInput.touchPosition[1].y;
+						m_currentTouch2Pos.z = 0;
+
 					}
 					if ( m_currentTouchState2 == TouchState.pressed ) {
 						touchAction = true;
@@ -240,6 +230,9 @@ abstract public class TouchControls : MonoBehaviour {
 				{
 					if((m_currentTouchState2 == TouchState.pressed) || (m_currentTouchState2 == TouchState.held))
 					{
+						m_currentTouch2Pos.x = GameInput.touchPosition[1].x;
+						m_currentTouch2Pos.y = GameInput.touchPosition[1].y;
+
 						m_currentTouchState2 = TouchState.held;
 						touchAction = true;
 						touchActionIs3DTouch = false;

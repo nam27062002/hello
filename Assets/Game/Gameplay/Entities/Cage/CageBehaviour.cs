@@ -153,27 +153,29 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	public void Break() {
-		// Spawn particle
-		GameObject ps = m_onBreakParticle.Spawn();
-		if (ps != null) {
-			ps.transform.position = m_view.transform.TransformPoint(m_onBreakParticle.offset);
+		if (!m_broken) {
+			// Spawn particle
+			GameObject ps = m_onBreakParticle.Spawn();
+			if (ps != null) {
+				ps.transform.position = m_view.transform.TransformPoint(m_onBreakParticle.offset);
+			}
+
+			m_view.SetActive(false);
+			for (int i = 0; i < m_viewDestroyed.Length; i++) {
+				m_viewDestroyed[i].SetActive(true);
+			}
+			SetCollisionsEnabled(false);
+
+			m_prisonerSpawner.SetEntitiesFree();
+
+			if (!string.IsNullOrEmpty(m_onBreakSound)) {
+				AudioController.Play(m_onBreakSound);
+			}
+
+			m_entity.SetDestroyedByDragon();
+
+			m_broken = true;
 		}
-
-		m_view.SetActive(false);
-		for (int i = 0; i < m_viewDestroyed.Length; i++) {
-			m_viewDestroyed[i].SetActive(true);
-		}
-		SetCollisionsEnabled(false);
-
-		m_prisonerSpawner.SetEntitiesFree();
-
-		if (!string.IsNullOrEmpty(m_onBreakSound)) {
-			AudioController.Play(m_onBreakSound);
-		}
-
-		m_entity.SetDestroyedByDragon();
-
-		m_broken = true;
 	}
 
 	private void SetCollisionsEnabled(bool _value) {

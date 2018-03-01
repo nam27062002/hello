@@ -38,7 +38,7 @@ namespace AI {
 
 		protected virtual void OnTriggerEnter(Collider _other) {
 			if (_other.CompareTag("Player")) {				
-				Reward reward = m_entity.GetOnKillReward(false);
+				Reward reward = m_entity.GetOnKillReward(true);
 
 				// Initialize some death info
 				m_entity.onDieStatus.source = IEntity.Type.PLAYER;

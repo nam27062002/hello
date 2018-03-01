@@ -49,7 +49,7 @@ public class FireArea : MonoBehaviour {
 				m_rect.center = m_circle.center;
 				m_rect.height = m_rect.width = m_circle.radius;
 
-				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_tier, Vector3.zero, m_type);
+				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_tier, DragonBreathBehaviour.Type.None, Vector3.zero, m_type);
 			}
 		}
 	}

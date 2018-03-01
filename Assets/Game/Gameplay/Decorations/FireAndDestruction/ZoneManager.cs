@@ -37,26 +37,37 @@ public class ZoneManager : MonoBehaviour {
 	}
 
 	public ZoneEffect GetFireEffectCode(Decoration _deco, DragonTier _tier) {		
-		if (_tier >= _deco.minTierDisintegrate) {
-			return ZoneEffect.L;
-		} else if (_tier >= _deco.minTierBurn) {
-			return ZoneEffect.M;
-		} else if (_tier >= _deco.minTierBurnFeedback) {
+		if (_tier >= _deco.tier) {
+			int distance = ((int)_tier) - ((int)_deco.tier);
+			if (distance >= 2) {
+				return ZoneEffect.L;		
+			} else {
+				return ZoneEffect.M;
+			}
+		} else {
 			return ZoneEffect.S;
 		}
+	}
 
-		return ZoneEffect.None;
+	public ZoneEffect GetSuperFireEffectCode(Decoration _deco, DragonTier _tier) {		
+		if (_tier >= _deco.tier) {
+			return ZoneEffect.L;
+		} else {
+			int distance = ((int)_deco.tier) - ((int)_tier);
+			if (distance == 1) {
+				return ZoneEffect.M;
+			} else {
+				return ZoneEffect.S;
+			}
+		}
 	}
 
 	public ZoneEffect GetDestructionEffectCode(Decoration _deco, DragonTier _tier) {		
-		if (_tier >= _deco.minTierDisintegrate) {
-			return ZoneEffect.L;
-		} else if (_tier >= _deco.minTierDestruction) {
+		if (_tier >= _deco.tier) {			
 			return ZoneEffect.M;
-		} else if (_tier >= _deco.minTierDestructionFeedback) {
+		} else {
 			return ZoneEffect.S;
 		}
-		return ZoneEffect.None;
 	}
 
 	public Zone GetZone(float _z) {
