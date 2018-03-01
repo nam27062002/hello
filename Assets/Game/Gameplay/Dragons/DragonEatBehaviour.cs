@@ -32,6 +32,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.Awake();
 		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_animator.logWarnings = false;
+		m_type = IEntity.Type.PLAYER;
 	}
 
 
@@ -49,6 +50,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
+		m_holdStunTime = 0;
 		m_rewardsPlayer = true;
 
 		DragonAnimationEvents animEvents = GetComponentInChildren<DragonAnimationEvents>();

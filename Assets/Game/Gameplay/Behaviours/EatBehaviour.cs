@@ -76,6 +76,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 
 	protected IMotion m_motion;
 
+	private bool m_useBlood = true;
 	private List<GameObject> m_bloodEmitter;
 	private List<GameObject> m_freezeEmitter;
 
@@ -86,7 +87,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	private float m_holdingBlood = 0;
 
 	// config
-	protected bool m_isPlayer = true;		// If eating entity is the player
+	protected IEntity.Type m_type = IEntity.Type.OTHER;		// If eating entity is the player, a pet or other
 	protected bool m_rewardsPlayer = false;	
 	protected bool m_canLatchOnPlayer = false;
 	public bool canLatchOnPlayer
@@ -191,6 +192,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	}
 
     protected virtual void Start () {
+		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
 		m_eatingEntitiesEnabled = m_canEatEntities;
 
 		m_holdingBloodParticle.CreatePool();
@@ -323,9 +325,11 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	// Update is called once per frame
 	protected virtual void Update() 
 	{
-		if (PreyCount <= 0 && m_attackTarget != null && m_isPlayer)
+		if (PreyCount <= 0 && m_attackTarget != null && m_type == IEntity.Type.PLAYER && m_holdingPrey == null)
 		{
-			BiteKill( false );
+			BiteKill( true );
+			if ( PreyCount > 0 || m_holdingPrey != null )
+				StopAttackTarget();
 		}
 
 		if ( m_attackTarget != null )
@@ -385,6 +389,11 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
 		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
 		m_holdingPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
+		/*
+		Quaternion localRot = m_holdingPrey.transform.localRotation;
+		float fixRotStep = m_rotateToMouthSpeed * Time.deltaTime;
+		m_holdingPrey.transform.localRotation = Quaternion.RotateTowards( localRot, m_holdingPrey.GetDyingFixRot(), fixRotStep);
+*/
 
 		// Position
 		Vector3 pos = m_holdingPrey.transform.localPosition;
@@ -563,11 +572,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					prey.eatingAnimationTimer -= Time.deltaTime;
 					float t = 1.0f - Mathf.Max(0, prey.eatingAnimationTimer / prey.eatingAnimationDuration);
 
-					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, t);
-
-					if (!prey.prey.HasCorpse()) {						
-						prey.prey.transform.localScale = Vector3.Lerp(prey.startScale * 0.5f, prey.startScale * 0.25f, t);
-					}
+					prey.prey.transform.position = Vector3.Lerp(m_suction.position, m_swallow.position, 0);
 
 					// remaining time eating
 					if (prey.eatingAnimationTimer <= 0) 
@@ -706,7 +711,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 			StartBlood();
 			AI.IMachine toEat = m_holdingPrey;
 			EndHold();
-			Eat( toEat, true, 0.5f);
+			Eat( toEat, true, 0.1f);
 			// StartSwallow(m_holdingPrey);
 			// EndSwallow(m_holdingPrey);
 
@@ -719,7 +724,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 			{
 				// release prey
 				// Escaped Event
-				if ( m_isPlayer )
+				if ( m_type == IEntity.Type.PLAYER )
 					Messenger.Broadcast<Transform>(MessengerEvents.ENTITY_ESCAPED, m_holdingPrey.transform);
 				EndHold();
 			}	
@@ -865,7 +870,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 				if (entity.transform != transform && entity.IsEdible())
 				{
 					// if not player check that it can be eaten
-					if ( !m_isPlayer )
+					if ( m_type != IEntity.Type.PLAYER )
 					{
 						SpecialEatAction specialAction = GetSpecialEatAction( entity.sku );
 						if ( specialAction != SpecialEatAction.Eat ){
@@ -1006,7 +1011,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					}
 					else 
 					{
-						if (m_isPlayer && !entity.hideNeedTierMessage)
+						if (m_type == IEntity.Type.PLAYER && !entity.hideNeedTierMessage)
 						{
 							DragonTier tier = entity.edibleFromTier;
 							if ( entity.canBeGrabbed && entity.grabFromTier < tier )
@@ -1049,6 +1054,10 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 
 
 	private void StartBlood(){
+		m_holdingBlood = 0.5f;
+
+		if (!m_useBlood)return;
+
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
 		GameObject go = m_holdingBloodParticle.Spawn(bloodPos + m_holdingBloodParticle.offset);
@@ -1063,7 +1072,6 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 				
 		}
 		m_bloodEmitter.Add(go);
-		m_holdingBlood = 0.5f;
 	}
 
 	private void StartFreezing(){
@@ -1084,6 +1092,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 	private void UpdateBlood() {
+		if ( !m_useBlood ) return;
 		if (m_bloodEmitter.Count > 0) {
 			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;
@@ -1127,7 +1136,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 
 	/// On kill function over prey. Eating or holding
 	protected void StartSwallow(AI.IMachine _prey) {
-		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_isPlayer);//( m_mouth );
+		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_type);//( m_mouth );
 	}
 
 	private void EndSwallow(AI.IMachine _prey){

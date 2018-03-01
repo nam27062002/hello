@@ -128,7 +128,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         m_operatorPilot = pilot;
     }    
 
-    protected override void OnRemoveEntity(GameObject _entity, int index) {
+	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
         if (m_operator != null && _entity == m_operator.gameObject) {
             m_operator = null;
             m_operatorPilot = null;
@@ -168,15 +168,15 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		m_operator.EnterDevice(false);
 	}
 
-	public void OperatorLeaveDevice() {		
+	public void OperatorLeaveDevice() {
 		if (m_mustBeChild) {
 			m_operator.transform.parent = m_operatorParent;
 		}
 		m_operator.LeaveDevice(false);
 	}
 
-	public void OperatorBurn() {
-		m_operator.Burn(transform);
+	public void OperatorBurn(IEntity.Type _source) {
+		m_operator.Burn(transform, _source);
 	}
 
 	private Vector3 GetLookAtVector() {
@@ -197,7 +197,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	//-------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		if (m_spawnAtTransform != null) {
-			Gizmos.color = Colors.coral;
+			Gizmos.color = Colors.lime;
 			Gizmos.DrawSphere(m_spawnAtTransform.position, 0.5f);
 			Gizmos.DrawCube(m_spawnAtTransform.position + GetLookAtVector() * 0.5f, Vector3.one * 0.125f + GetLookAtVector() * 1f);
 		}

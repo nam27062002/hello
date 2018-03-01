@@ -17,7 +17,6 @@ using System.Collections;
 /// <summary>
 /// Main controller for the menu scene.
 /// </summary>
-[RequireComponent(typeof(MenuScreensController))]
 public class MenuSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
@@ -33,12 +32,6 @@ public class MenuSceneController : SceneController {
 		get { return m_hud; }
 	}
 
-	[SerializeField]
-	private FogManager.FogAttributes m_fogSetup;
-	public FogManager.FogAttributes fogSetup {
-		get { return m_fogSetup; }
-	}
-
 	// Temp vars
 	private string m_selectedDragon = "";
 	public string selectedDragon {
@@ -51,10 +44,14 @@ public class MenuSceneController : SceneController {
 	}
 
 	// Shortcuts to interesting elements of the menu
-	// Screens controller
-	private MenuScreensController m_screensController = null;
-	public MenuScreensController screensController {
-		get { return m_screensController; }
+	[SerializeField]
+	private MenuTransitionManager m_transitionManager = null;
+	public MenuTransitionManager transitionManager {
+		get { return m_transitionManager; }
+	}
+
+	public MenuScreen currentScreen {
+		get { return m_transitionManager.currentScreen; }
 	}
 
 	// Dragon selector - responsible to set selected dragon
@@ -62,7 +59,7 @@ public class MenuSceneController : SceneController {
 	public MenuDragonSelector dragonSelector {
 		get {
 			if(m_dragonSelector == null) {
-				m_dragonSelector = GetScreen(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonSelector>();
+				m_dragonSelector = GetScreenData(MenuScreen.DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
 			}
 			return m_dragonSelector;
 		}
@@ -74,7 +71,7 @@ public class MenuSceneController : SceneController {
 		get {
 			if(m_dragonScroller == null) {
 				// Use FindComponentRecursive rather than GetComponentInChildren to include inactive objects in the search
-				m_dragonScroller = GetScreenScene(MenuScreens.DRAGON_SELECTION).FindComponentRecursive<MenuDragonScroller>();
+				m_dragonScroller = GetScreenData(MenuScreen.DRAGON_SELECTION).scene3d.FindComponentRecursive<MenuDragonScroller>();
 			}
 			return m_dragonScroller;
 		}
@@ -106,16 +103,6 @@ public class MenuSceneController : SceneController {
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
-		// Shortcut to screens controller
-		m_screensController = GetComponent<MenuScreensController>();     
-
-		if (m_fogSetup.texture == null)
-		{
-			m_fogSetup.CreateTexture();
-			m_fogSetup.RefreshTexture();
-		}
-		m_fogSetup.FogSetup();
-
 		// Define initial selected dragon
 		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
 			// Default behaviour: Last dragon used
@@ -128,10 +115,16 @@ public class MenuSceneController : SceneController {
 		}
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
-	}
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_Awake();
+    }
 
 	protected IEnumerator Start()
 	{
+		// Start menu music!
+		AudioController.PlayMusic("hd_menu_music");
+
 		// Make sure loading screen is hidden
 		LoadingScreen.Toggle(false, false);
 
@@ -141,7 +134,7 @@ public class MenuSceneController : SceneController {
 		}
 
 		// Start loading pet pill's on the background!
-		PetsScreenController petsScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
+		PetsScreenController petsScreen = GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
 		StartCoroutine(petsScreen.InstantiatePillsAsync());
 
 		// Request latest global event data
@@ -169,9 +162,9 @@ public class MenuSceneController : SceneController {
 			OnPlayButton();
 		}
 
-	}
+	}    
 
-	public static string RATING_DRAGON = "dragon_crocodile";
+    public static string RATING_DRAGON = "dragon_crocodile";
 	public static bool CheckRatingFlow()
 	{
 		bool ret = false;
@@ -195,8 +188,13 @@ public class MenuSceneController : SceneController {
 						if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
 						{
 							// Start Asking!
-							PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
-							ret = true;
+							if ( Application.platform == RuntimePlatform.Android ){
+								PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
+								ret = true;
+							}else if ( Application.platform == RuntimePlatform.IPhonePlayer ){
+								PopupAskRateUs.OpenIOSMarketForRating();
+								ret = true;
+							}
 						}
 					}
 				}
@@ -212,9 +210,10 @@ public class MenuSceneController : SceneController {
 	}
 
 	protected override void OnDestroy() {
-		m_fogSetup.DestroyTexture();
 		base.OnDestroy();
-	}
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
+    }
 	
 	/// <summary>
 	/// Component enabled.
@@ -242,18 +241,16 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	/// <returns>The requested UI screen.</returns>
 	/// <param name="_screen">The screen to be obtained.</param>
-	public NavigationScreen GetScreen(MenuScreens _screen) {
-		return screensController.GetScreen((int)_screen);
+	public ScreenData GetScreenData(MenuScreen _screen) {
+		return transitionManager.GetScreenData(_screen);
 	}
 
 	/// <summary>
-	/// Quick access to one of the 3D scenes linked of each of the screens composing 
-	/// the menu scene.
+	/// Go to the target screen.
 	/// </summary>
-	/// <returns>The requested scene.</returns>
-	/// <param name="_screen">The screen whose scene we want.</param>
-	public MenuScreenScene GetScreenScene(MenuScreens _screen) {
-		return screensController.GetScene((int)_screen);
+	/// <param name="_targetScreen">Target screen.</param>
+	public void GoToScreen(MenuScreen _screen) {
+		transitionManager.GoToScreen(_screen, true);
 	}
 
 	/// <summary>
@@ -266,16 +263,20 @@ public class MenuSceneController : SceneController {
 	}
 
 	/// <summary>
-	/// Recreate fog texture using current parameters.
+	/// Start open flow on the given Egg.
 	/// </summary>
-	public void RecreateFogTexture() {
-		if(m_fogSetup.texture != null) {
-			m_fogSetup.DestroyTexture();
-		}
+	/// <returns>Whether the opening process was started or not.</returns>
+	/// <param name="_egg">The egg to be opened.</param>
+	public bool StartOpenEggFlow(Egg _egg) {
+		// Just in case, shouldn't happen anything if there is no egg incubating or it is not ready
+		if(_egg == null || _egg.state != Egg.State.READY) return false;
 
-		m_fogSetup.CreateTexture();
-		m_fogSetup.RefreshTexture();
-		m_fogSetup.FogSetup();
+		// Go to OPEN_EGG screen and start open flow
+		OpenEggScreenController openEggScreen = GetScreenData(MenuScreen.OPEN_EGG).ui.GetComponent<OpenEggScreenController>();
+		openEggScreen.StartFlow(_egg);
+		GoToScreen(MenuScreen.OPEN_EGG);
+
+		return true;
 	}
 
 	//------------------------------------------------------------------//
@@ -323,5 +324,37 @@ public class MenuSceneController : SceneController {
 		// Just make it the current dragon
 		OnDragonSelected(_data.def.sku);
 	}
+
+    #region debug
+    private GameObject m_debugUICanvas;
+
+    private GameObject Debug_GetUICanvas()
+    {
+        if (m_debugUICanvas == null) {
+            if (m_hud != null) {
+                m_debugUICanvas = m_hud.transform.parent.gameObject;
+            }
+        }
+
+        return m_debugUICanvas;
+    }
+
+    private void Debug_Awake() {
+        Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);        
+    }
+
+    private void Debug_OnDestroy() {
+        Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+    }
+
+    private void Debug_OnChanged(string _id, bool _newValue) {
+        if (_id == DebugSettings.INGAME_HUD) {
+            GameObject _uiCanvas = Debug_GetUICanvas();
+            if (_uiCanvas != null) {
+                _uiCanvas.gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD, true));
+            }
+        }      
+    }
+    #endregion
 }
 

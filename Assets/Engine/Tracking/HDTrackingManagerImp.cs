@@ -215,7 +215,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 }
             }
         }
-    }   
+    }       
 
     private void StartSession()
     {     
@@ -351,11 +351,13 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         switch (State)
         {
-            case EState.WaitingForSessionStart:                
-                if (TrackingPersistenceSystem != null && IsStartSessionNotified)
-                {
-                	StartSession();
-                }
+            case EState.WaitingForSessionStart:
+				if (TrackingPersistenceSystem != null && IsStartSessionNotified)
+				{
+					// We need to start session here in Update() so GameCenterManager has time to get the acq_marketing_id, otherwise
+					// that field will be empty in "game.start" event
+					StartSession();
+				}               
                 break;
         }
 
@@ -544,6 +546,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         // Resets the amount of runs in the current round because a new round has just started
         Session_RunsAmountInCurrentRound = 0;
+        Session_HungryLettersCount = 0;
 
         // One more game round
         TrackingPersistenceSystem.GameRoundCount++;
@@ -760,7 +763,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
         int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
         // TODO: To debug with server
-        //GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
+        GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);
@@ -1011,6 +1014,16 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void Notify_PopupSurveyShown(EPopupSurveyAction action) {
         Track_PopupSurveyShown(action);
+    }
+
+    public override void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action)
+    {
+        Track_PopupUnsupportedDevice(action);        
+    }
+
+    public override void Notify_HungryLetterCollected()
+    {
+        Session_HungryLettersCount++;
     }
     #endregion
 
@@ -1405,7 +1418,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_HC_EARNED, hcGained);
 			e.SetParameterValue(TRACK_PARAM_BOOST_TIME, boostTimeMs);
             e.SetParameterValue(TRACK_PARAM_MAP_USAGE, mapUsage);
-			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
+            e.SetParameterValue(TRACK_PARAM_HUNGRY_LETTERS_NB, Session_HungryLettersCount);
+            Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
 
             Track_SendEvent(e);
         }
@@ -1747,6 +1761,19 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private void Track_PopupUnsupportedDevice(EPopupUnsupportedDeviceAction action)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_PopupUnsupportedDevice action = " + action);
+
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.leave.popup");
+        if (e != null)
+        {            
+            Track_AddParamString(e, TRACK_PARAM_POPUP_ACTION, action.ToString());
+            Track_SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -1796,6 +1823,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER         = "highestMultiplier";
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID     = "houstonTransactionID";
+    private const string TRACK_PARAM_HUNGRY_LETTERS_NB          = "hungryLettersNb";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
 	private const string TRACK_PARAM_IS_HACKER                  = "isHacker";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
@@ -1870,7 +1898,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_SendEvent(TrackingManager.TrackingEvent e)
 	{
 		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-#if !UNITY_EDITOR //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
+#if !UNITY_EDITOR  //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
 		TrackingManager.SharedInstance.SendEvent(e);
 #endif
 	}
@@ -1942,7 +1970,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_AddParamPlayerProgress(TrackingManager.TrackingEvent e)
     {
         int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
-        Track_AddParamString(e, TRACK_PARAM_PLAYER_PROGRESS, value + "");
+        e.SetParameterValue(TRACK_PARAM_PLAYER_PROGRESS, value);
     }    
 
     private void Track_AddParamSessionsCount(TrackingManager.TrackingEvent e)
@@ -2222,6 +2250,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private int Session_HungryLettersCount { get; set; }
+
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
@@ -2235,6 +2265,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_IsFirstTime = false;
         Session_IsNotifyOnPauseEnabled = true;
         Session_HasMenuEverLoaded = false;
+        Session_HungryLettersCount = 0;
      }
 #endregion
 
@@ -2298,7 +2329,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (elapsedTime > Performance_TrackingDelay)
         {
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
-            int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
+            //int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
             Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
             //            Track_PerformanceTrack();
 

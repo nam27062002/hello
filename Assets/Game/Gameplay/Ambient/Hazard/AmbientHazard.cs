@@ -177,7 +177,7 @@ public class AmbientHazard : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -382,8 +382,8 @@ public class AmbientHazard : MonoBehaviour {
 
 				if ( m_visible )
 				{
-					//if ( !string.IsNullOrEmpty(m_onActiveSound) )
-					//	AudioController.Play(m_onActiveSound, transform.position);
+					if ( !string.IsNullOrEmpty(m_onActiveSound) )
+						AudioController.Play(m_onActiveSound, transform.position);
 				}
 
 				// Start particles! -> done on animation event

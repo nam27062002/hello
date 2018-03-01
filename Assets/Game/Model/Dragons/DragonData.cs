@@ -283,6 +283,7 @@ public class DragonData : IUISelectorItem {
 
 		m_progression.Load(0,0);
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
+		m_persistentDisguise = m_disguise;
 		m_pets = Enumerable.Repeat(string.Empty, m_tierDef.GetAsInt("maxPetEquipped", 0)).ToList();	// Use Linq to easily fill the list with the default value
 
 		m_gamesPlayed = 0;

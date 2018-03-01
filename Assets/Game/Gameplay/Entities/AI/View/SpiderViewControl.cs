@@ -50,7 +50,6 @@ public class SpiderViewControl : ViewControl {
 
 			// Check if eating!
 			if (m_bite) {
-				Debug.Log("dragon bites me");
 				float newBiteDistance = (transform.position - m_startHangingPos).sqrMagnitude;
 				if (newBiteDistance > m_startBiteDistance) {
 					float proportionToStretch = m_startBiteDistance/newBiteDistance;

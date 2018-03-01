@@ -134,13 +134,13 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Store original camera snap point for the photo screen
-		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.screensController.cameraSnapPoints[(int)MenuScreens.PHOTO];
+		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup;
 
 		// Don't show anything
 		Clear();
 
 		// Subscribe to external events
-		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>
@@ -167,7 +167,7 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 
 		// Clean up
 		Clear();
@@ -666,21 +666,24 @@ public class RewardSceneController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_from">Screen we come from.</param>
 	/// <param name="_to">Screen we're going to.</param>
-	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
+		// Check params
+		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
+
 		// Aux vars
-		MenuScreenScene fromScene = InstanceManager.menuSceneController.GetScreenScene(_from);
-		MenuScreenScene toScene = InstanceManager.menuSceneController.GetScreenScene(_to);
+		MenuScreenScene fromScene = InstanceManager.menuSceneController.GetScreenData(_from).scene3d;
+		MenuScreenScene toScene = InstanceManager.menuSceneController.GetScreenData(_to).scene3d;
 
 		// Entering a screen using this scene
-		if(toScene.gameObject == this.gameObject) {
+		if(toScene != null && toScene.gameObject == this.gameObject) {
 			// Override camera snap point for the photo screen so it looks to our reward
-			InstanceManager.menuSceneController.screensController.cameraSnapPoints[(int)MenuScreens.PHOTO] = m_photoCameraSnapPoint;
+			InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_photoCameraSnapPoint;
 		}
 
 		// Leaving a screen using this scene
-		else if(fromScene.gameObject == this.gameObject) {
+		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
 			// Do some stuff if not going to take a picture of the reward
-			if(_to != MenuScreens.PHOTO) {
+			if(_to != MenuScreen.PHOTO) {
 				// Clear the scene
 				Clear();
 
@@ -688,7 +691,7 @@ public class RewardSceneController : MonoBehaviour {
 				m_currentReward = null;
 
 				// Restore default camera snap point for the photo screen
-				InstanceManager.menuSceneController.screensController.cameraSnapPoints[(int)MenuScreens.PHOTO] = m_originalPhotoCameraSnapPoint;
+				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
 			}
 		}
 	}

@@ -427,8 +427,6 @@ public class GameSceneController : GameSceneControllerBase {
     /// End the current game. Wont reset the stats so they can be used.
     /// <param name="_quitGame">Whether or not the game is ended because the user has quit.</param>
     public void EndGame(bool _quitGame) {    
-		Screen.sleepTimeout = SleepTimeout.SystemSetting;
-
         //
         // Tracking
         //
@@ -441,6 +439,8 @@ public class GameSceneController : GameSceneControllerBase {
 
         // Make sure game is not paused
         PauseGame(false, true);
+
+		Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
 		// Change state
 		ChangeState(EStates.FINISHED);
@@ -468,6 +468,7 @@ public class GameSceneController : GameSceneControllerBase {
 					// Not if already paused, otherwise resume wont work!
 					if(!m_paused) m_timeScaleBackup = Time.timeScale;
 					Time.timeScale = 0.0f;
+					Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
                     //Stop Performance tracking 
                     HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
@@ -489,6 +490,7 @@ public class GameSceneController : GameSceneControllerBase {
 				if(m_pauseStacks == 0) {
 					// Restore previous timescale
 					Time.timeScale = m_timeScaleBackup;
+					Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 					// Notify the game
 					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, false);

@@ -64,8 +64,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events.
-		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.AddListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	/// <summary>
@@ -95,8 +95,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-		Messenger.RemoveListener<MenuScreens, MenuScreens>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
 	}
 
 	//------------------------------------------------------------------//
@@ -144,7 +144,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_scene == null) {
 			MenuSceneController sceneController = InstanceManager.menuSceneController;
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
-			MenuScreenScene menuScene = sceneController.screensController.GetScene((int)MenuScreens.OPEN_EGG);
+			MenuScreenScene menuScene = sceneController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
 			if(menuScene != null) {
 				// Get scene controller and initialize
 				m_scene = menuScene.GetComponent<RewardSceneController>();
@@ -286,16 +286,16 @@ public class OpenEggScreenController : MonoBehaviour {
 		m_tutorialCompletedPending = true;
 
 		// Depending on opened egg's reward, perform different actions
-		MenuScreensController screensController = InstanceManager.sceneController.GetComponent<MenuScreensController>();
+		MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
 		switch(m_scene.eggData.rewardData.reward.type) {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// Make sure selected dragon is owned
 				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 				// Go to the pets screen
-				PetsScreenController petScreen = screensController.GetScreen((int)MenuScreens.PETS).GetComponent<PetsScreenController>();
+				PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
 				petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
-				screensController.GoToScreen((int)MenuScreens.PETS);
+				screensController.GoToScreen(MenuScreen.PETS, true);
 			} break;
 		}
 	}
@@ -317,9 +317,9 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_from">Screen we come from.</param>
 	/// <param name="_to">Screen we're going to.</param>
-	private void OnMenuScreenTransitionStart(MenuScreens _from, MenuScreens _to) {
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
 		// Leaving this screen
-		if(_from == MenuScreens.OPEN_EGG && _to != MenuScreens.OPEN_EGG) {
+		if(_from == MenuScreen.OPEN_EGG && _to != MenuScreen.OPEN_EGG) {
 			// Launch all the hide animations that are not automated
 			// Restore HUD
 			InstanceManager.menuSceneController.hud.animator.Show();
@@ -328,21 +328,21 @@ public class OpenEggScreenController : MonoBehaviour {
 			m_rewardDragController.gameObject.SetActive(false);
 
 			// Put photo screen back in dragon mode and restore overriden setup
-			if(_to != MenuScreens.PHOTO) {
+			if(_to != MenuScreen.PHOTO) {
 				// Only if not going into it!
-				PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PHOTO).GetComponent<PhotoScreenController>();
+				PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).ui.GetComponent<PhotoScreenController>();
 				photoScreen.mode = PhotoScreenController.Mode.DRAGON;
 			}
 		}
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
-		if(_to == MenuScreens.OPEN_EGG) {
+		if(_to == MenuScreen.OPEN_EGG) {
 			// Put photo screen in EggReward mode and override some setup
-			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreen(MenuScreens.PHOTO).GetComponent<PhotoScreenController>();
+			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).ui.GetComponent<PhotoScreenController>();
 			photoScreen.mode = PhotoScreenController.Mode.EGG_REWARD;
 
 			// Special stuff if coming back from the photo screen
-			if(_from == MenuScreens.PHOTO) {
+			if(_from == MenuScreen.PHOTO) {
 				// Restore photo button
 				InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>().Show();
 			}
@@ -354,9 +354,9 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_from">Screen we come from.</param>
 	/// <param name="_to">Screen we're going to.</param>
-	private void OnMenuScreenTransitionEnd(MenuScreens _from, MenuScreens _to) {
+	private void OnMenuScreenTransitionEnd(MenuScreen _from, MenuScreen _to) {
 		// Entering this screen
-		if(_to == MenuScreens.OPEN_EGG) {
+		if(_to == MenuScreen.OPEN_EGG) {
 			// Enable drag control
 			m_rewardDragController.gameObject.SetActive(m_rewardDragController.target != null);
 		}

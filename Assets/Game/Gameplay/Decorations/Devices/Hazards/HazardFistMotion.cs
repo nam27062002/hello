@@ -28,11 +28,28 @@ public class HazardFistMotion : MonoBehaviour {
 	//
 	private bool m_spawnParticles;
 
+	[SeparatorAttribute]
+	[SerializeField] string m_goingDownSound;
+	[SerializeField] string m_goingUpSound;
+	private float m_lastSinValue;
+
+	private enum State
+	{
+		IDLE,
+		UP,
+		DOWN,
+	};
+	State m_state = State.IDLE;
+	private GameCamera m_camera;
 
 	//
 	// Use this for initialization
 	void Awake() {
 		if (m_speed > 0) {
+			if(Camera.main != null) {
+				m_camera = Camera.main.GetComponent<GameCamera>();
+			}
+
 			m_realDistance = m_distance * transform.localScale.x;
 
 			m_columnHeight = m_staticColumn.bounds.size.y * 0.95f;
@@ -69,6 +86,13 @@ public class HazardFistMotion : MonoBehaviour {
 			m_spawnParticles = true;
 
 			m_time = 0f;
+
+			m_lastSinValue = -1;
+			m_state = State.UP;
+
+
+		}else{
+			m_state = State.IDLE;
 		}
 	}
 	
@@ -88,6 +112,27 @@ public class HazardFistMotion : MonoBehaviour {
 				m_mobileColumnTransforms[i].localPosition = p;
 			}
 
+
+			switch( m_state )
+			{
+				case State.UP:
+				{
+					if ( sinValue < m_lastSinValue )
+					{
+						ChangeState(State.DOWN);
+					}
+				}break;
+				case State.DOWN:
+				{
+					if ( sinValue > m_lastSinValue )
+					{
+						ChangeState(State.UP);
+					}
+				}break;
+			}
+
+			m_lastSinValue = sinValue;
+
 			if (sinValue < -1.8f) {
 				if (m_spawnParticles) {
 					m_hitGroundParticles.Spawn(m_fistTransform.position);
@@ -96,6 +141,26 @@ public class HazardFistMotion : MonoBehaviour {
 			} else if (sinValue > -0.15f) {
 				m_spawnParticles = true;
 			}
+		}
+	}
+
+
+	void ChangeState( State _newState )
+	{
+		m_state = _newState;
+		switch( m_state )
+		{
+			case State.UP:
+			{
+				if ( !string.IsNullOrEmpty(m_goingUpSound) && m_camera.IsInsideCameraFrustrum(m_fistTransform.position) )
+					AudioController.Play(m_goingUpSound, m_fistTransform.position);
+					
+			}break;
+			case State.DOWN:
+			{
+				if ( !string.IsNullOrEmpty(m_goingDownSound) && m_camera.IsInsideCameraFrustrum(m_fistTransform.position) )
+					AudioController.Play(m_goingDownSound, m_fistTransform.position);
+			}break;
 		}
 	}
 }

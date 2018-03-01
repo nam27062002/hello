@@ -129,6 +129,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 #endif
 
 	private void OnTMPCustomizerResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+
+		if ( _error != null ){
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
+			return;
+		}
+
 		if(_response != null && _response["response"] != null) {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
 			Debug.Log("<color=purple>EVENT TMP CUSTOMIZER</color>\n" + (responseJson == null ? "<color=red>NULL RESPONSE!</color>" : responseJson.ToString(4)));
@@ -167,8 +173,12 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			}
 		}
 
-		if (user.globalEvents.Count > 0)
+		if (user.globalEvents.Count > 0){
 			RequestCurrentEventData();
+		}else{
+			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS);
+		}
+
 	}
 
 

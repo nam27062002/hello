@@ -180,7 +180,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		string currentDisguise = UsersManager.currentUser.GetEquipedDisguise(m_dragonData.def.sku);
 
 		// Find the 3D dragon preview
-		MenuScreenScene scene3D = menuController.screensController.GetScene((int)MenuScreens.DISGUISES);
+		MenuScreenScene scene3D = menuController.GetScreenData(MenuScreen.SKINS).scene3d;
 		if(scene3D != null) {
 			MenuDragonPreview preview = scene3D.GetComponent<MenuDragonScroller>().GetDragonPreview(m_dragonData.def.sku);
 			if(preview != null) m_previewAnchor = preview.transform;

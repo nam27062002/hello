@@ -65,7 +65,7 @@ public class MenuCameraAnimatorByCurvesByCurvesEditor : Editor {
 		EditorGUILayout.Space();
 
 		// Interactive controls - if required fields are set
-		if(targetMenuCameraAnimatorByCurves.cameraPath == null || targetMenuCameraAnimatorByCurves.lookAtPath == null) {
+		if(targetMenuCameraAnimatorByCurves.cameraPath == null) {
 			// Info box
 			EditorGUILayout.HelpBox("Required fields not set", MessageType.Error);
 		} else {
@@ -98,11 +98,14 @@ public class MenuCameraAnimatorByCurvesByCurvesEditor : Editor {
 		// Debug camera section
 		EditorGUILayout.Space();
 		EditorGUILayoutExt.Separator(new SeparatorAttribute("Debug Utils"));
-		PathFollower posPath = targetMenuCameraAnimatorByCurves.FindComponentRecursive<PathFollower>("PosPath");
-		PathFollower lookAtPath = targetMenuCameraAnimatorByCurves.FindComponentRecursive<PathFollower>("LookAtPath");
-		CameraSnapPoint camSnapPoint = targetMenuCameraAnimatorByCurves.FindComponentRecursive<CameraSnapPoint>();
+
+
+
+		PathFollower posPath = targetMenuCameraAnimatorByCurves.cameraPath;
+		PathFollower lookAtPath = targetMenuCameraAnimatorByCurves.lookAtPath;
+		CameraSnapPoint camSnapPoint = posPath.target.FindComponentRecursive<CameraSnapPoint>(); //targetMenuCameraAnimatorByCurves.FindComponentRecursive<CameraSnapPoint>();
 		GameObject menuCameraObj = GameObject.Find("Camera3D");
-		if(posPath == null || lookAtPath == null) {
+		if(posPath == null) {
 			EditorGUILayout.HelpBox("Either the PosPath or the LookAtPath followers couldn't be found.", MessageType.Error);
 		} else if(camSnapPoint == null) {
 			EditorGUILayout.HelpBox("Camera snap point couldn't be found.", MessageType.Error);
@@ -119,7 +122,7 @@ public class MenuCameraAnimatorByCurvesByCurvesEditor : Editor {
 			if(EditorGUI.EndChangeCheck()) {
 				// Set new delta
 				posPath.delta = debugDelta;
-				lookAtPath.delta = debugDelta;
+				if(lookAtPath != null) lookAtPath.delta = debugDelta;
 
 				// Apply to camera
 				camSnapPoint.Apply(menuCameraObj.GetComponent<Camera>());
@@ -138,7 +141,7 @@ public class MenuCameraAnimatorByCurvesByCurvesEditor : Editor {
 			if(EditorGUI.EndChangeCheck()) {
 				// Set new snap point
 				posPath.snapPoint = debugSnapPoint;
-				lookAtPath.snapPoint = debugSnapPoint;
+				if(lookAtPath != null) lookAtPath.snapPoint = debugSnapPoint;
 
 				// Apply to camera
 				camSnapPoint.Apply(menuCameraObj.GetComponent<Camera>());
