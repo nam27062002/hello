@@ -169,7 +169,8 @@ public class DragonCorpse : MonoBehaviour {
 				}
 			}
 			m_fadeMaterials.Clear();
-			SetSkin( dragonSku, def.Get("skin") );
+			string skin = def.Get("skin") + "_ingame";
+			SetSkin( dragonSku, skin );
 			RemoveAccessories();
 
 			// Now body parts!

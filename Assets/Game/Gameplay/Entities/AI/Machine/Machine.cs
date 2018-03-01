@@ -485,6 +485,13 @@ namespace AI {
 		public virtual void CheckCollisions(bool _value) { }
 		public virtual void FaceDirection(bool _value) { }
 		public virtual bool IsFacingDirection() { return false; }
+		public virtual bool IsInFreeFall() { 
+			if (m_motion != null) {
+				return m_motion.IsInFreeFall();
+			} else {
+				return false; 
+			}
+		}
 
 		public bool HasCorpse() {
 			if (m_viewControl != null) {
@@ -592,9 +599,9 @@ namespace AI {
 			}
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
 			m_viewControl.BeginSwallowed(_transform);
-			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _isPlayer);
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
 		}
 
 		public void EndSwallowed(Transform _transform){
@@ -643,11 +650,11 @@ namespace AI {
 			return m_edible.GetDyingFixRot();
 		}
 
-		public virtual bool Burn(Transform _transform, bool instant = false) {
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, instant);
+					m_inflammable.Burn(_transform, _source, instant);
 				}
 				return true;
 			}
