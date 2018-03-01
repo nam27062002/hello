@@ -10,6 +10,7 @@ public class FireArea : MonoBehaviour {
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 	public DragonTier m_tier = DragonTier.TIER_4;
+	public IEntity.Type m_type = IEntity.Type.PET;
 
 	private float m_checkNodeFireTime = 0.25f;
 	private float m_fireNodeTimer = 0;
@@ -33,7 +34,7 @@ public class FireArea : MonoBehaviour {
 				{
 					AI.IMachine machine =  prey.machine;
 					if (machine != null) {
-						machine.Burn(transform);
+						machine.Burn(transform, m_type);
 					}
 				}
 			}
@@ -48,7 +49,7 @@ public class FireArea : MonoBehaviour {
 				m_rect.center = m_circle.center;
 				m_rect.height = m_rect.width = m_circle.radius;
 
-				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_tier, DragonBreathBehaviour.Type.None, Vector3.zero);
+				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_tier, DragonBreathBehaviour.Type.None, Vector3.zero, m_type);
 			}
 		}
 	}

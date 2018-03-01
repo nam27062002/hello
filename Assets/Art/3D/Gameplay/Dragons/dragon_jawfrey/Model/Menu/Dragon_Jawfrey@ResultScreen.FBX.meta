@@ -208,7 +208,7 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    animationCompression: 3
+    animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -218,8 +218,8 @@ ModelImporter:
     - serializedVersion: 16
       name: ResultScreen_Intro
       takeName: Take 001
-      firstFrame: 80
-      lastFrame: 120
+      firstFrame: 0
+      lastFrame: 61
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -238,7 +238,14 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.7532519
+        functionName: CameraShake
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1
@@ -430,8 +437,8 @@ ModelImporter:
     - serializedVersion: 16
       name: ResultScreen_Loop
       takeName: Take 001
-      firstFrame: 80
-      lastFrame: 120
+      firstFrame: 61
+      lastFrame: 210
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
