@@ -157,14 +157,14 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 			if (preys[i].IsBurnable(m_fireTier)) {
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {
-					machine.Burn(transform);
+					machine.Burn(transform, IEntity.Type.PET);
 				}
 			}
 		}
 
 		m_rect.center = m_area.center;
 		m_rect.height = m_rect.width = m_area.radius;
-		FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_fireTier, DragonBreathBehaviour.Type.None, Vector3.zero);
+		FirePropagationManager.instance.FireUpNodes(m_rect, Overlaps, m_fireTier, DragonBreathBehaviour.Type.None, Vector3.zero, IEntity.Type.PET);
 
 		m_hasBeenShot = false;
 		if (m_pMotion != null)

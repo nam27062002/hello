@@ -35,7 +35,7 @@ public class TrackerDestroy : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
+		// Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 	}
 
@@ -54,7 +54,7 @@ public class TrackerDestroy : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
+		// Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 
 		// Call parent
@@ -86,17 +86,18 @@ public class TrackerDestroy : TrackerBase {
 	/// <param name="_entity">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
 	private void OnDestroy(Transform _entity, Reward _reward) {
-		// Count automatically if we don't have any type filter
-		if(m_targetSkus.Count == 0) {
-			currentValue++;
-		} else {
-			// Is it one of the target types?
-			IEntity prey = _entity.GetComponent<IEntity>();
-			if(prey != null) {
+		IEntity prey = _entity.GetComponent<IEntity>();
+		if (prey != null && (prey.onDieStatus.source == IEntity.Type.PLAYER || prey.onDieStatus.source == IEntity.Type.PET)){
+			// Count automatically if we don't have any type filter
+			if(m_targetSkus.Count == 0) {
+				currentValue++;
+			} else {
+				// Is it one of the target types?
 				if(m_targetSkus.Contains(prey.sku)) {
 					// Found!
 					currentValue++;
 				}
+				
 			}
 		}
 	}

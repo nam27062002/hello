@@ -154,4 +154,12 @@ public struct Reward  {
 		newReward.category = _r1.category;
 		return newReward;
 	}
+
+	/// <summary>
+	/// Sets the no reward.
+	/// </summary>
+	public void SetNoReward(){
+		score = coins = pc = 0;
+		health = energy = xp = alcohol = 0f;
+	}
 }
