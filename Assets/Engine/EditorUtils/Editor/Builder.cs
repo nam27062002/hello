@@ -583,20 +583,13 @@ public class Builder : MonoBehaviour
 
                     // Delete old icons
                     UnityEngine.Debug.Log("Deleting old icons...");
-                    try
-                    {
-                        File.Delete(ValidatePath(destPath + "/drawable-ldpi/app_icon.png"));
-                        File.Delete(ValidatePath(destPath + "/drawable-mdpi/app_icon.png"));
-                        File.Delete(ValidatePath(destPath + "/drawable-hdpi/app_icon.png"));
-                        File.Delete(ValidatePath(destPath + "/drawable-xhdpi/app_icon.png"));
-                        File.Delete(ValidatePath(destPath + "/drawable-xxhdpi/app_icon.png"));
-                        File.Delete(ValidatePath(destPath + "/drawable-xxxhdpi/app_icon.png"));
-                    }
-                    catch (Exception e)
-                    {
-                        UnityEngine.Debug.Log("No old icon found: " + e.ToString());
-                    }
-
+					DeleteOldIcon(destPath, "drawable-ldpi");      
+					DeleteOldIcon(destPath, "drawable-mdpi");
+					DeleteOldIcon(destPath, "drawable-hdpi");
+					DeleteOldIcon(destPath, "drawable-xhdpi");
+					DeleteOldIcon(destPath, "drawable-xxhdpi");
+					DeleteOldIcon(destPath, "drawable-xxxhdpi");
+					                     
                     // Copy icons
                     string sourcePath = ValidatePath(Application.dataPath + "/Game/UI/Icon/Android/AdaptiveIcons");                    
                     UnityEngine.Debug.Log("Copying adaptive icons from " + sourcePath + " to " + destPath + "...");
@@ -609,8 +602,8 @@ public class Builder : MonoBehaviour
                     // Compress apk again
                     string resultPath = ValidatePath(tempDirectoryPath + "/" + apkFileName);
                     UnityEngine.Debug.Log("Compressing the APK file with adaptive icons ...");
-                    CompressApk(rootPath, decompressFolder, resultPath);
-
+                    CompressApk(rootPath, decompressFolder, resultPath);									
+					
                     // Makes sure that the file was created
                     if (File.Exists(resultPath))
                     {
@@ -715,6 +708,18 @@ public class Builder : MonoBehaviour
         UnityEngine.Debug.Log("------------------------------------------------------");
     }
 
+	private static void DeleteOldIcon(string path, string folder)
+	{
+		try
+		{
+			File.Delete(ValidatePath(path + "/" + folder + "/app_icon.png"));
+		}
+		catch (Exception e) 
+		{
+			UnityEngine.Debug.Log("No old icon found: " + e.ToString());
+		}
+	}
+
     private static void DecompressApk(string rootPath, string apkPath, string destPath)
     {
         ApkTool(rootPath, "d " + apkPath + " -o " + destPath);
@@ -732,8 +737,8 @@ public class Builder : MonoBehaviour
         ProcessStartInfo start = new ProcessStartInfo();
 		start.FileName = "chmod";
 		start.Arguments = " +x " + ValidatePath(rootPath + "/Tools/apktool/apktool.*");
-        start.UseShellExecute = false;
-        start.RedirectStandardOutput = true;
+        //start.UseShellExecute = false;
+        start.RedirectStandardOutput = false;
         using (Process process = Process.Start(start))
         {
             while (!process.HasExited)
@@ -765,8 +770,8 @@ public class Builder : MonoBehaviour
 
         start.FileName = ValidatePath(fileName);
         start.Arguments = arguments;
-        start.UseShellExecute = false;
-        start.RedirectStandardOutput = true;
+        //start.UseShellExecute = false;
+        start.RedirectStandardOutput = false;
         using (Process process = Process.Start(start))
         {
             while (!process.HasExited)
@@ -786,8 +791,8 @@ public class Builder : MonoBehaviour
         start.WorkingDirectory = workingDirectoryPath;
         start.FileName = ValidatePath(GetApkToolsPath() + "/zipalign");
         start.Arguments = "-f -v 4 " + sourceApkName + " " + outputApkName;
-        start.UseShellExecute = false;
-        start.RedirectStandardOutput = true;
+        //start.UseShellExecute = false;
+        start.RedirectStandardOutput = false;
         using (Process process = Process.Start(start))
         {
             while (!process.HasExited)
@@ -803,7 +808,7 @@ public class Builder : MonoBehaviour
         start.FileName = ValidatePath(GetApkToolsPath() + "/apksigner");
         start.Arguments = "sign --ks " + "../AndroidKeys/releaseKey.keystore" + " -ks-key-alias androidreleasekey --ks-pass pass:android " + apkName;
         //start.UseShellExecute = false;
-        //start.RedirectStandardOutput = true;
+        start.RedirectStandardOutput = false;
         using (Process process = Process.Start(start))
         {
             while (!process.HasExited)
