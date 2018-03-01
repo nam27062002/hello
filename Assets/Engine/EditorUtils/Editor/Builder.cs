@@ -711,7 +711,7 @@ public class Builder : MonoBehaviour
         ProcessStartInfo start = new ProcessStartInfo();
         start.WorkingDirectory = rootPath;
         string fileName = ValidatePath(rootPath + "/Tools/apktool/chmod");
-        start.Arguments = " +x *";
+        start.Arguments = " +x apktool.*";
         start.UseShellExecute = false;
         start.RedirectStandardOutput = true;
         using (Process process = Process.Start(start))
