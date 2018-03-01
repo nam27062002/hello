@@ -472,6 +472,12 @@ namespace AI {
 		}
 
 		//--------------------------------------------------
+		// Queries
+		//--------------------------------------------------
+		public bool IsInFreeFall() { return m_state == State.FreeFall; }
+
+
+		//--------------------------------------------------
 		// Extend functionality
 		//--------------------------------------------------
 		protected abstract void ExtendedAttach();

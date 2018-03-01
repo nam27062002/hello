@@ -199,8 +199,8 @@ public class PetDogSpawner : AbstractSpawner {
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
 	}
 
-	public void OperatorBurn() {
-		m_operator.Burn(transform);
+	public void OperatorBurn(IEntity.Type _source) {
+		m_operator.Burn(transform, _source);
 	}
 
 	private Vector3 GetLookAtVector() {

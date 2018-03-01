@@ -82,13 +82,14 @@ namespace AI {
 					if (preys[i].IsBurnable(m_data.m_bombTier)) {
 						AI.IMachine machine =  preys[i].machine;
 						if (machine != null) {
-							machine.Burn(m_machine.transform);
+							machine.Burn(m_machine.transform, IEntity.Type.PET);
 						}
 					}
 				}
 				m_rect.center = m_machine.position;
 				m_rect.height = m_rect.width = m_data.m_bombArea;
-				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_data.m_bombTier, DragonBreathBehaviour.Type.None, Vector3.zero);
+
+				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_data.m_bombTier, DragonBreathBehaviour.Type.None, Vector3.zero, IEntity.Type.PET);
 			}
 
 

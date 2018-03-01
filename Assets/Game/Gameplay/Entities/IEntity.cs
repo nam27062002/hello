@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 abstract public class IEntity :  MonoBehaviour, ISpawnable {
+	// Used externally to differientiate between types of entities
+	public enum Type {
+		PLAYER,
+		PET,
+		OTHER
+	}
 
 	public const string ENTITY_PREFABS_PATH = "Game/Entities/NewEntites/";
 	public const string ENTITY_PREFABS_LOW_PATH = "Game/Entities/NewEntitesLow/";
@@ -39,10 +45,17 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	protected ISpawnable[] m_otherSpawnables;
 	protected int m_otherSpawnablesCount;
+	protected AI.AIPilot m_pilot;
+	public AI.AIPilot pilot { get { return m_pilot; } }
+
 	protected AI.IMachine m_machine;
 	public AI.IMachine machine { get { return m_machine; } }
 
 	protected IViewControl m_viewControl;
+
+
+	public OnDieStatus onDieStatus;
+
 
 	protected virtual void Awake() {
 		ISpawnable[] spawners = GetComponents<ISpawnable>();
@@ -56,8 +69,12 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 				m_otherSpawnablesCount++;
 			}
 		}
+
+		m_pilot = GetComponent<AI.AIPilot>();
 		m_machine = GetComponent<AI.IMachine>();
 		m_viewControl = GetComponent<IViewControl>();
+
+		onDieStatus = new OnDieStatus();
 	}
 
 	public virtual void Spawn(ISpawner _spawner) {
@@ -65,6 +82,11 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 		m_allowEdible = 0;
 		m_allowBurnable = 0;
+
+		onDieStatus.isInFreeFall = false;
+		onDieStatus.isPressed_ActionA = false;
+		onDieStatus.isPressed_ActionB = false;
+		onDieStatus.isPressed_ActionC = false;
 	}
 
 	protected bool m_isGolden = false;
