@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 114000011589734688}
   - component: {fileID: 135445350841108720}
   m_Layer: 23
-  m_Name: PF_Piranha_dark
+  m_Name: PF_PiranhaDark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -454,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: Piranha
+  m_sku: PiranhaDark
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114000011589734688
@@ -475,7 +475,6 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -509,11 +508,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -547,6 +546,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_burpSound: 
   m_canEatEntities: 0
@@ -575,12 +575,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"retreatTime":{"min":4,"max":6},"damage":2,"duration":1.5,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":6,"panicSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":40,"arrivalRadius":0.25,"timeout":{"min":2,"max":3},"onFailShutdown":{"min":4,"max":6},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"separation":2,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
-  m_databaseKey: PF_Piranha_dark (1)
+  m_databaseKey: PF_Piranha_dark
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 2.5
   m_avoidCollisions: 1
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114000013358587732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -622,7 +624,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: PS_Dive
     path: Water
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -656,6 +657,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -664,7 +666,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion_Fish
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -698,11 +699,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -736,13 +737,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.75
   m_onEatenAudio: hd_fish_dead
   m_firePoints: []
   m_burnParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -776,12 +777,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -815,6 +816,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
@@ -888,6 +890,9 @@ MonoBehaviour:
     m_orientationSpeed: 240
     m_spawnsInsideWater: 1
     m_faceDirectionFreeFall: 0
+    m_diveTimeRange:
+      min: 0.25
+      max: 0.75
 --- !u!135 &135445350841108720
 SphereCollider:
   m_ObjectHideFlags: 1
