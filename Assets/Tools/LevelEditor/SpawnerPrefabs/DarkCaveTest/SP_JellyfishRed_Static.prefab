@@ -9,10 +9,8 @@ GameObject:
   m_Component:
   - component: {fileID: 416572}
   - component: {fileID: 114000010812324944}
-  - component: {fileID: 114761392284472496}
-  - component: {fileID: 114399565168845096}
   m_Layer: 0
-  m_Name: SP_Jellyfish01
+  m_Name: SP_JellyfishRed_Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,7 +23,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 154690}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 128.9, y: 39.84, z: 0}
+  m_LocalPosition: {x: 175.6, y: 59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -61,17 +59,17 @@ MonoBehaviour:
     height: 2
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Monster/PF_Jellyfish01
+  - name: Monster/PF_JellyfishRed_Static
     chance: 100
   m_quantity:
-    min: 6
-    max: 6
+    min: 1
+    max: 1
   m_speedFactorRange:
-    min: 0.8
-    max: 1.2
+    min: 1
+    max: 1
   m_scale:
-    min: 0.9
-    max: 1.1
+    min: 1
+    max: 1
   m_rails: 0
   m_hasGroupBonus: 0
   m_eventOnly: 0
@@ -87,44 +85,9 @@ MonoBehaviour:
     min: 300
     max: 300
   m_isPremiumCurrencyNPC: 0
-  m_homePosMethod: 1
+  m_homePosMethod: 0
   m_homePosDistance:
-    min: -3
-    max: 3
+    min: 0
+    max: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
---- !u!114 &114399565168845096
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 154690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_guideFunction: 0
-  m_innerRadius: 5
-  m_outterRadius: 10
-  m_targetDistance: 4.18
-  m_depthAmplitude: 0.5
-  m_depthFrequency: 6
-  m_scale: {x: 0.75, y: 1, z: 1}
-  m_rotation: {x: 0, y: 25, z: -90}
-  m_boundsScale: {x: 0, y: 0, z: 30}
-  m_drawPreview: 1
-  m_previewStep: 0.1
-  m_previewMaxTime: 60
---- !u!114 &114761392284472496
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 154690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_formation: 0

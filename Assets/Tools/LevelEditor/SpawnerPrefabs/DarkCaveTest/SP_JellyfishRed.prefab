@@ -9,8 +9,10 @@ GameObject:
   m_Component:
   - component: {fileID: 416572}
   - component: {fileID: 114000010812324944}
+  - component: {fileID: 114677004029021334}
+  - component: {fileID: 114431478714479060}
   m_Layer: 0
-  m_Name: SP_Jellyfish01_Static
+  m_Name: SP_JellyfishRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 154690}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 149.3, y: 55, z: 0}
+  m_LocalPosition: {x: 165.3, y: 53.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -59,7 +61,7 @@ MonoBehaviour:
     height: 2
   m_mixEntities: 0
   m_entityPrefabList:
-  - name: Monster/PF_Jellyfish01_Static
+  - name: Monster/PF_JellyfishRed
     chance: 100
   m_quantity:
     min: 1
@@ -91,3 +93,38 @@ MonoBehaviour:
     max: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &114431478714479060
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 0
+  m_innerRadius: 4
+  m_outterRadius: 2
+  m_targetDistance: 1
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_drawPreview: 0
+  m_previewStep: 0.1
+  m_previewMaxTime: 60
+--- !u!114 &114677004029021334
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f42f7b158a14b55980a2ecfb845b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_formation: 0
