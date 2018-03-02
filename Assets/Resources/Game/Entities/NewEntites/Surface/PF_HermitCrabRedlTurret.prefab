@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 135000010922043936}
   - component: {fileID: 54000010949005978}
   m_Layer: 21
-  m_Name: PF_SpiderGreenTurret_dark
+  m_Name: PF_HermitCrabRedlTurret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -364,7 +364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: SpiderGreenTurret
+  m_sku: HermitCrabRedTurret
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &11444444
@@ -386,12 +386,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":2.5,"idleChance":0.1,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"projectileName":"PF_SpiderPoison","projectileSpawnTransformName":"spinneret","damage":10,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":-1,"forceFaceToShoot":true,"maxFacingAngle":10,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"hangDownChance":{"min":0,"max":0},"hangDownDistance":{"min":0,"max":0},"hangDownSpeed":0,"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false}]'
-  m_databaseKey: PF_SpiderGreenTurret_dark
+  m_databaseKey: PF_HermitCrabRedSmallTurret
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &11457276
 MonoBehaviour:
   m_ObjectHideFlags: 1
