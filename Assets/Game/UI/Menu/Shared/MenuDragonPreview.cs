@@ -186,14 +186,15 @@ public class MenuDragonPreview : MonoBehaviour {
 		}
 	}
 
-	public void DisableMoves()
+	public void DisableMovesOnResults()
 	{
 		DragonPartFollow[] moves = GetComponentsInChildren<DragonPartFollow>();
 		if ( moves != null )
 		{
 			for( int i = 0; i<moves.Length; ++i )
 			{
-				moves[i].enabled = false;
+				if ( moves[i].m_disableOnResults )
+					moves[i].enabled = false;
 			}
 		}
 	}

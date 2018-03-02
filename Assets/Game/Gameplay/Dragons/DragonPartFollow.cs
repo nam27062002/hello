@@ -19,6 +19,9 @@ public class DragonPartFollow : MonoBehaviour {
 	private Transform[] m_parts;
 	public Vector3 m_upDir = Vector3.up;
 	private float m_startScale;
+
+	public bool m_disableOnResults = false;
+
 	// Use this for initialization
 	void Start () 
 	{
