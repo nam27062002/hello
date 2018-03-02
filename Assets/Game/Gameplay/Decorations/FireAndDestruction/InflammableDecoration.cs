@@ -170,6 +170,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				break;
 
 			case State.Burning:
+				if (m_collider) m_collider.isTrigger = true;
 				if (m_destructibleBehaviour != null) {
 					m_destructibleBehaviour.enabled = false;
 				}
@@ -244,9 +245,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					if (m_timer.IsFinished()) {
 						bool extinguished = true;
 						for (int i = 0; i < m_fireNodes.Length; ++i) {
-							if (!m_fireNodes[i].IsExtinguishing()
-							&&  !m_fireNodes[i].IsExtinguished()) {
-								m_fireNodes[i].Extinguish();
+							if (!m_fireNodes[i].IsExtinguished()) {
+								if (!m_fireNodes[i].IsExtinguishing()) {
+									m_fireNodes[i].Extinguish();
+								}
 								extinguished = false;
 							}
 						}

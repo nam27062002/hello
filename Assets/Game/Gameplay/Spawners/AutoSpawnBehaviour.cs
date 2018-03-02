@@ -17,6 +17,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	[SeparatorAttribute("Spawner")]
 	[SerializeField] private float m_spawnTime;
 	[SerializeField] private int m_maxSpawns = 0;
+	[SerializeField] private bool m_mustBedestroyed = true;
 
 	[SeparatorAttribute("Ground")]
 	[SerializeField] private Collider[] m_ground;
@@ -145,7 +146,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
 			// we are not goin to use this spawner, lets destroy it
-			Destroy(gameObject);    
+			if (m_mustBedestroyed) {
+				Destroy(gameObject);
+			}
 		} else {
 			// Program the next spawn time
 			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime;
