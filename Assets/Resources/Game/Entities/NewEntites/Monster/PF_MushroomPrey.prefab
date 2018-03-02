@@ -77,7 +77,7 @@ GameObject:
   - component: {fileID: 54343284643111368}
   - component: {fileID: 136249852991239162}
   m_Layer: 21
-  m_Name: PF_Mushroom_small
+  m_Name: PF_MushroomPrey
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: Mushroom
+  m_sku: MushroomPrey
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114867331959196792
@@ -311,6 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f83cd17fe2614b66a918bf02219ccf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activationMode: 0
   m_parent: {fileID: 0}
   m_view: {fileID: 137351282822485280}
   m_particleDatas:
@@ -389,8 +390,9 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.75
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"damage":15,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":6,"isWallWalking":false,"timeToIdle":{"min":3,"max":6},"timeToChangeDirection":{"min":3,"max":6},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":2},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
-  m_databaseKey: PF_Mushroom_small
+  m_databaseKey: PF_MushroomPrey
 --- !u!114 &114952578268809638
 MonoBehaviour:
   m_ObjectHideFlags: 1
