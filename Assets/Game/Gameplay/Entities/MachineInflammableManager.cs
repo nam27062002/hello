@@ -21,7 +21,6 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 
 	private void Awake() {
 		Material sharedAshesMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
-		sharedAshesMaterial.renderQueue = 3000;
 
 		m_ashes_wait = new Material(sharedAshesMaterial);
 		m_ashes_wait.SetFloat( GameConstants.Material.ASH_LEVEL , 0f);
