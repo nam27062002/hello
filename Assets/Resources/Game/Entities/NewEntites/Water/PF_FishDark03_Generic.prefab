@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 136000011474095350}
   - component: {fileID: 54000010678131888}
   m_Layer: 23
-  m_Name: PF_Fish03_Generic_Dark
+  m_Name: PF_FishDark03_Generic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -338,7 +338,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: PS_Dive
     path: Water
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -372,6 +371,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -380,7 +380,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion_Fish
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -414,11 +413,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -452,13 +451,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_onEatenAudio: hd_fish_dead
   m_firePoints: []
   m_burnParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -492,12 +491,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -531,6 +530,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
@@ -551,7 +551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: Fish03_Generic
+  m_sku: FishDark
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114000012916486766
@@ -573,12 +573,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":3.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":7,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3.5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"timeBeforeBackHome":3,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
-  m_databaseKey: PF_Fish03_Generic_Dark
+  m_databaseKey: PF_FishDark03_Generic
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114365429087830574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -631,6 +633,10 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 170
     m_spawnsInsideWater: 1
+    m_faceDirectionFreeFall: 0
+    m_diveTimeRange:
+      min: 0.25
+      max: 0.75
 --- !u!136 &136000011474095350
 CapsuleCollider:
   m_ObjectHideFlags: 1
