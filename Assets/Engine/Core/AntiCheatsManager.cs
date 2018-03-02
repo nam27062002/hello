@@ -15,6 +15,11 @@ public class AntiCheatsManager : Singleton<AntiCheatsManager> {
 	private void OnMemoryHackAttempt()
 	{
 		Debug.Log("AntiCheatManager :: Memory hack attempt detected");
+		MarkUserAsCheater();
+	}
+
+	static public void MarkUserAsCheater()
+	{
 		if ( UsersManager.currentUser != null && !UsersManager.currentUser.isHacker )
 		{
 			UsersManager.currentUser.isHacker = true;
