@@ -179,7 +179,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 			List<Chest> pendingChests = new List<Chest>(ChestManager.dailyChests);
 			List<CollectibleChest> validSpawners = new List<CollectibleChest>();
 			List<CollectibleChest> toRemove = new List<CollectibleChest>();
-			DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
+			DragonTier maxOwnedTier = DragonManager.IsReady() ? DragonManager.biggestOwnedDragon.tier : DragonTier.TIER_0;
 			CollectibleChest spawner = null;
 			bool spawnerUsed = false;
 
@@ -207,7 +207,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 
 				// Check whether it's a valid spawner (filter by dragon tier)
 				//if(spawner.requiredTier <= currentTier) {
-				if (currentTier >= spawner.requiredTier && currentTier <= spawner.maxTier) {
+				if (maxOwnedTier >= spawner.requiredTier && maxOwnedTier <= spawner.maxTier) {
 					validSpawners.Add(spawner);
 				} else {
 					toRemove.Add(spawner);
