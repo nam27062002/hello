@@ -53,13 +53,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	// Use this for initialization
 	void Awake() {
 		m_transform = transform;
+		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
 	}
 
 	void Start() {
-		m_rect = new Rect((Vector2)m_transform.position, Vector2.zero);
-		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
-		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
-
 		gameObject.SetActive(false);
 	}
 
@@ -78,6 +75,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_hitRadius = _hitRadius;
 
 		Reset();
+
+		m_rect = new Rect((Vector2)m_transform.position, Vector2.one * m_hitRadius * 2f);
+		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
 
 		FirePropagationManager.Insert(this);
 	}

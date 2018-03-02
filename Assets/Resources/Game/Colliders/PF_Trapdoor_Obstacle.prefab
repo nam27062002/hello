@@ -257,7 +257,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnTime: 30
   m_maxSpawns: 1
-  m_ground: []
+  m_ground:
+  - {fileID: 65300761711516298}
 --- !u!114 &114110715325440984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -375,7 +376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_burningTime: 0.5
+  m_burningTime: 0.1
   m_feedbackParticle:
     name: 
     path: 
@@ -492,7 +493,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_boxelSize: 15
-  m_hitRadius: 2
+  m_hitRadius: 5
 --- !u!114 &114844443965364728
 MonoBehaviour:
   m_ObjectHideFlags: 1
