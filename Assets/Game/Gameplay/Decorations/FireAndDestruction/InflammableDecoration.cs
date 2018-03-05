@@ -55,6 +55,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 	private bool m_initialized = false;
 
+	private IEntity.Type m_burnSource = IEntity.Type.OTHER;
+
 	public string sku { get { return m_entity.sku; } }
 
 	// Use this for initialization
@@ -168,6 +170,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				break;
 
 			case State.Burning:
+				if (m_collider) m_collider.isTrigger = true;
 				if (m_destructibleBehaviour != null) {
 					m_destructibleBehaviour.enabled = false;
 				}
@@ -175,11 +178,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 			case State.Extinguish:
 				if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
-					m_operatorSpawner.OperatorBurn();
+					m_operatorSpawner.OperatorBurn(m_burnSource);
 				}
 
 				if (m_passengersSpawner != null) {
-					m_passengersSpawner.PassengersBurn();
+					m_passengersSpawner.PassengersBurn(m_burnSource);
 				}
 
 				m_timer.Start(m_burningTime * 1000);
@@ -188,17 +191,20 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				SwitchViewToDissolve();
 
+				// Initialize some death info
+				m_entity.onDieStatus.source = m_burnSource;
+
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 
 				break;
 
 			case State.Explode:
 				if (m_operatorSpawner != null && !m_operatorSpawner.IsOperatorDead()) {
-					m_operatorSpawner.OperatorBurn();
+					m_operatorSpawner.OperatorBurn(m_burnSource);
 				}
 
 				if (m_passengersSpawner != null) {
-					m_passengersSpawner.PassengersBurn();
+					m_passengersSpawner.PassengersBurn(m_burnSource);
 				}
 
 				//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
@@ -212,6 +218,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 						}
 					}
 				}
+
+				// Initialize some death info
+				m_entity.onDieStatus.source = m_burnSource;
 
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 
@@ -248,9 +257,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 					if (m_timer.IsFinished()) {
 						bool extinguished = true;
 						for (int i = 0; i < m_fireNodes.Length; ++i) {
-							if (!m_fireNodes[i].IsExtinguishing()
-							&&  !m_fireNodes[i].IsExtinguished()) {
-								m_fireNodes[i].Extinguish();
+							if (!m_fireNodes[i].IsExtinguished()) {
+								if (!m_fireNodes[i].IsExtinguishing()) {
+									m_fireNodes[i].Extinguish();
+								}
 								extinguished = false;
 							}
 						}
@@ -273,10 +283,12 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	public void LetsBurn(bool _explode) {
+	public void LetsBurn(bool _explode, IEntity.Type _source) {
 		if (m_state == State.Idle) {
 			if (_explode) 	m_nextState = State.Explode;
 			else 			m_nextState = State.Burning;
+
+			m_burnSource = _source;
 		}
 	}
 

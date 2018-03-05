@@ -20,6 +20,7 @@ if /I "%ERRORLEVEL%" NEQ "0" (
 	rem Perform some custom naming
 	rem /y overwrites the destination file if already existing
 	move /y "%EXPORT_DIR%\sim chinese.txt" "%EXPORT_DIR%\simplified_chinese.txt"
+	move /y "%EXPORT_DIR%\trad chinese.txt" "%EXPORT_DIR%\traditional_chinese.txt"
 
 	rem Delete some unwanted files
 	del /q "%EXPORT_DIR%\english proof.txt"

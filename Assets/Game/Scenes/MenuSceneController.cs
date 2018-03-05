@@ -115,7 +115,10 @@ public class MenuSceneController : SceneController {
 		}
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
-	}
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_Awake();
+    }
 
 	protected IEnumerator Start()
 	{
@@ -159,9 +162,9 @@ public class MenuSceneController : SceneController {
 			OnPlayButton();
 		}
 
-	}
+	}    
 
-	public static string RATING_DRAGON = "dragon_crocodile";
+    public static string RATING_DRAGON = "dragon_crocodile";
 	public static bool CheckRatingFlow()
 	{
 		bool ret = false;
@@ -208,7 +211,9 @@ public class MenuSceneController : SceneController {
 
 	protected override void OnDestroy() {
 		base.OnDestroy();
-	}
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
+    }
 	
 	/// <summary>
 	/// Component enabled.
@@ -319,5 +324,37 @@ public class MenuSceneController : SceneController {
 		// Just make it the current dragon
 		OnDragonSelected(_data.def.sku);
 	}
+
+    #region debug
+    private GameObject m_debugUICanvas;
+
+    private GameObject Debug_GetUICanvas()
+    {
+        if (m_debugUICanvas == null) {
+            if (m_hud != null) {
+                m_debugUICanvas = m_hud.transform.parent.gameObject;
+            }
+        }
+
+        return m_debugUICanvas;
+    }
+
+    private void Debug_Awake() {
+        Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);        
+    }
+
+    private void Debug_OnDestroy() {
+        Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
+    }
+
+    private void Debug_OnChanged(string _id, bool _newValue) {
+        if (_id == DebugSettings.INGAME_HUD) {
+            GameObject _uiCanvas = Debug_GetUICanvas();
+            if (_uiCanvas != null) {
+                _uiCanvas.gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD, true));
+            }
+        }      
+    }
+    #endregion
 }
 

@@ -39,6 +39,7 @@ namespace AI {
 		void CheckCollisions(bool _value);
 		void FaceDirection(bool _value);
 		bool IsFacingDirection();
+		bool IsInFreeFall();
 		bool HasCorpse();
 
 		// Group membership -> for collective behaviours
@@ -58,14 +59,14 @@ namespace AI {
 		HoldPreyPoint[] holdPreyPoints { get; }
 
 		void Bite();
-		void BeginSwallowed(Transform _transform, bool rewardPlayer, bool isPlayer);
+		void BeginSwallowed(Transform _transform, bool rewardPlayer, IEntity.Type _source);
 		void EndSwallowed(Transform _transform);
 		void BiteAndHold();
 		void ReleaseHold();
 
 		Quaternion GetDyingFixRot();
 
-		bool Burn(Transform _transform, bool instant = false );
+		bool Burn(Transform _transform, IEntity.Type _source, bool instant = false );
 
 		void SetVelocity(Vector3 _v);
 		void AddExternalForce(Vector3 _f);

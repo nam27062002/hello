@@ -39,16 +39,16 @@ Shader "Hungry Dragon/UnderWater2"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma glsl_no_auto_normalization
-				#pragma fragmentoption ARB_precision_hint_fastest
+//				#pragma glsl_no_auto_normalization
+//				#pragma fragmentoption ARB_precision_hint_fastest
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 				#include "HungryDragon.cginc"
 
 
-				#define CAUSTIC_ANIM_SCALE  2.0f
-				#define CAUSTIC_RADIUS 0.125f
+//				#define CAUSTIC_ANIM_SCALE  2.0f
+//				#define CAUSTIC_RADIUS 0.125f
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -59,7 +59,6 @@ Shader "Hungry Dragon/UnderWater2"
 				struct v2f {
 					float4 vertex : SV_POSITION;
 					float2 uv : TEXCOORD0;
-					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
 				};
 
@@ -82,7 +81,6 @@ Shader "Hungry Dragon/UnderWater2"
 					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * (1.0 - v.color.w);
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
-					o.scrPos = ComputeScreenPos(o.vertex);
 					o.uv = v.uv.xy;
 
 					o.color = v.color;
@@ -101,6 +99,7 @@ Shader "Hungry Dragon/UnderWater2"
 
 		Pass{
 			Blend SrcAlpha One
+//			Blend OneMinusDstColor One
 //			Blend SrcAlpha OneMinusSrcAlpha
 			ZWrite Off
 			Fog{ Color(0, 0, 0, 0) }
@@ -115,13 +114,13 @@ Shader "Hungry Dragon/UnderWater2"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-				#pragma glsl_no_auto_normalization
-				#pragma fragmentoption ARB_precision_hint_fastest
+//				#pragma glsl_no_auto_normalization
+//				#pragma fragmentoption ARB_precision_hint_fastest
 
 				#include "UnityCG.cginc"
 
-				#define CAUSTIC_ANIM_SCALE  2.0f
-				#define CAUSTIC_RADIUS  0.125f
+//				#define CAUSTIC_ANIM_SCALE  2.0f
+//				#define CAUSTIC_RADIUS  0.125f
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -132,7 +131,7 @@ Shader "Hungry Dragon/UnderWater2"
 				struct v2f {
 					float4 vertex : SV_POSITION;
 					half2 uv : TEXCOORD0;
-					float4 scrPos:TEXCOORD1;
+//					float4 scrPos:TEXCOORD1;
 					float4 color : COLOR;
 				};
 
@@ -155,7 +154,6 @@ Shader "Hungry Dragon/UnderWater2"
 					v.vertex.y += (sinX + sinY) * _WaveRadius * moveVertex * (1.0 - v.color.w);
 
 					o.vertex = UnityObjectToClipPos(v.vertex);
-					o.scrPos = ComputeScreenPos(o.vertex);
 					o.uv = v.uv;
 
 					o.color = v.color;
@@ -166,6 +164,8 @@ Shader "Hungry Dragon/UnderWater2"
 				{
 					float depth = pow(1.0 - abs(i.uv.y - 1.0), _PerspectivePower);
 					fixed4 frag = lerp(fixed4(_ColorBack), fixed4(_ColorFront), 1.0 - depth);
+
+//					frag = fixed4(0.2, 0.8, 0.2, 0.9);
 
 					return frag;
 				}
