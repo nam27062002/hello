@@ -1979,11 +1979,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
     {
 		if(m_impulse.y <= 0) 
         {
-        	float magnitude = m_impulse.magnitude;
-			m_impulse = m_impulse - Vector3.Dot( m_impulse, normal) * normal;
-		    m_impulse.z = 0;
-		    m_impulse = m_impulse.normalized * magnitude;
-			// m_prevImpulse.y = m_impulse.y;
+        	if ( normal.y >= 0.15f )
+        	{
+	        	float magnitude = m_impulse.magnitude;
+				m_impulse = m_impulse - Vector3.Dot( m_impulse, normal) * normal;
+			    m_impulse.z = 0;
+			    m_impulse = m_impulse.normalized * magnitude;
+				// m_prevImpulse.y = m_impulse.y;
+			}
         }
         else{
         	if ( normal.y <= -0.85f )
