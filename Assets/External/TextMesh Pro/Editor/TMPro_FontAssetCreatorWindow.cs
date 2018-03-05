@@ -547,6 +547,25 @@ namespace TMPro.EditorUtilities
 						m_inputCharactersFiles[i] = EditorGUILayout.ObjectField(m_inputCharactersFiles[i], typeof(TextAsset), false, GUILayout.Width(290)) as TextAsset;
 						if(m_inputCharactersFiles[i] != null) {
 							characterSequence += m_inputCharactersFiles[i].text;
+
+							// Add the capitals as well!
+							string isoCode = "";
+							switch(m_inputCharactersFiles[i].name) {
+								case "english": isoCode = "en-US"; break;
+								case "french": isoCode = "fr-FR"; break;
+								case "italian": isoCode = "it-IT"; break;
+								case "german": isoCode = "de-DE"; break;
+								case "spanish": isoCode = "es-ES"; break;
+								case "brazilian": isoCode = "pt-BR"; break;
+								case "russian": isoCode = "ru-RU"; break;
+								case "simplified_chinese": isoCode = "zh-CN"; break;
+								case "japanese": isoCode = "ja-JP"; break;
+								case "korean": isoCode = "ko-KR"; break;
+								case "traditional_chinese": isoCode = "zh-TW"; break;
+							}
+							if(!string.IsNullOrEmpty(isoCode)) {
+								characterSequence += m_inputCharactersFiles[i].text.ToUpper(CultureInfo.CreateSpecificCulture(isoCode));
+							}
 						}
 					}
 				} EditorGUILayout.EndVertical();
