@@ -190,7 +190,8 @@ public class EditorCameraSnapshot : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-		if (Input.GetKeyDown(KeyCode.Space))
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             setResolutionTextures(m_resolution);
             if (m_Video)
@@ -205,7 +206,8 @@ public class EditorCameraSnapshot : MonoBehaviour {
                 m_doSnapshot = true;
             }
         }
-	}
+#endif
+    }
 
 
     void doSnapshot(int layerMask)
