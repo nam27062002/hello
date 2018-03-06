@@ -33,6 +33,7 @@ public class SignalSetup : MonoBehaviour {
 
 	public void UpdateArrowRotation() {
 		m_arrow.transform.localRotation = Quaternion.Euler(m_arrowRotation);
+		m_arrowBurned.transform.localRotation = Quaternion.Euler(m_arrowRotation);
 	}
 
 	public void UpdateArrowVisibility() {
