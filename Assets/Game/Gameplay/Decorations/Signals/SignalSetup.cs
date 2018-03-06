@@ -7,6 +7,7 @@ public class SignalSetup : MonoBehaviour {
 	[SerializeField] private GameObject m_arrow;
 	[SerializeField] private GameObject m_arrowBurned;
 	[SerializeField] private Renderer m_sticker;
+	[SerializeField] private Material m_sharedStickerMaterial;
 
 	[SeparatorAttribute("Setup")]
 	[SerializeField] private bool m_arrowVisible = true;
@@ -23,11 +24,11 @@ public class SignalSetup : MonoBehaviour {
 
 	public void UpdateSticker() {
 		if (m_customMaterial == null) {
-			m_customMaterial = new Material(m_sticker.material);
+			m_customMaterial = new Material(m_sharedStickerMaterial);
+			m_sticker.material = m_customMaterial;
 		}
 
 		m_customMaterial.SetInt("_IDSignal", m_stickerIndex);
-		m_sticker.material = m_customMaterial;
 	}
 
 	public void UpdateArrowRotation() {
