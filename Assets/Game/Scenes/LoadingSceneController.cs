@@ -528,6 +528,9 @@ public class LoadingSceneController : SceneController {
         PopupManager.PopupMessage_Open(config);
 
         HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Shown);
+
+        // Game loaded event is sent to prevent users with a not supported devices from messing up with funnel metrics (it's only sent to Razolytics because Niko doesn't want this behaviour for Calety funnel)
+        HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
     }
 
     private void UnsupportedDevice_OnGoToLink()

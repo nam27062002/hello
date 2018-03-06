@@ -90,7 +90,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 			m_renderers[i].sharedMaterials = materials;
 		}
 		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
-		m_ashMaterial.renderQueue = 3000;// Force transparent
 
 		m_state = m_nextState = State.Idle;
 

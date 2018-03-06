@@ -179,6 +179,7 @@ public class TrackerBase {
 			case "dive_time":		return new TrackerDiveTime();
 			case "fire_rush":		return new TrackerFireRush();
 			case "destroy":			return new TrackerDestroy(_params);
+			case "kill_or_destroy":	return new TrackerKillOrDestroy(_params);
 			case "unlock_dragon":	return new TrackerUnlockDragon(_params);
 			case "buy_skins":		return new TrackerBuySkins();
 			case "daily_chest":		return new TrackerDailyChests();

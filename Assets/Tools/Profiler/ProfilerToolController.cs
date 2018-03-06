@@ -84,7 +84,9 @@ public class ProfilerToolController : MonoBehaviour
         if (
             m_spawnerNumEntities != ProfilerSettingsManager.Spawner_NumEntities
             || m_spawnerPrefab != ProfilerSettingsManager.Spawner_Prefab
+#if UNITY_EDITOR
             || Input.GetKeyDown(KeyCode.A)
+#endif
            )
         {            
             SpawnerManager.instance.ForceRespawn();

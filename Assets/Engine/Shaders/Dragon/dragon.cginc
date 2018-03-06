@@ -75,7 +75,9 @@ v2f vert(appdata_t v)
 	// Normal
 	float3 normal = UnityObjectToWorldNormal(v.normal);
 	// Light Probes
-	o.vLight = ShadeSH9(float4(normal, 1.0));
+//	o.vLight = ShadeSH9(float4(normal, 1.0));
+	o.vLight = float3(0.7, 0.7, 0.7);// ShadeSH9(float4(normal, 1.0));
+
 
 	// Half View - See: Blinn-Phong
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
