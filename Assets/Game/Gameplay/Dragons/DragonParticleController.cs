@@ -230,7 +230,7 @@ public class DragonParticleController : MonoBehaviour
 		// Skimming
 		if (m_skimmingParticle != null)
 		{
-			m_skimmingRay.origin = _transform.position;
+			m_skimmingRay.origin = m_skimmingAnchor.position;
 			bool speedToSkim = Mathf.Abs(m_dargonMotion.velocity.x) >= m_minSpeedSkimming;
 			if ( m_skimming )
 			{
