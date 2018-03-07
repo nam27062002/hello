@@ -117,7 +117,7 @@ public class Entity : IEntity {
 		m_reward.pc = m_def.GetAsInt("rewardPC");
 		m_reward.health = m_def.GetAsFloat("rewardHealth");
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
-		m_reward.fury = m_def.GetAsFloat("rewardFury");
+		m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
 
 		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
