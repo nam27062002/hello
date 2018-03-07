@@ -188,6 +188,11 @@ public class Entity : IEntity {
 		}
 	}
 
+	public void ForceGolden(){
+		m_spawner.ForceGolden( this );
+		m_viewControl.ForceGolden();
+	}
+
     public override void Disable(bool _destroyed) {		
 		if (m_viewControl != null)
 			m_viewControl.PreDisable();

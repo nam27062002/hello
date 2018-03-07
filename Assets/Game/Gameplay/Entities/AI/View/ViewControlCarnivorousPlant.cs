@@ -134,5 +134,8 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 
 	public void Aim(float _blendFactor) { m_animator.SetFloat(GameConstants.Animator.AIM, _blendFactor); }
 
+	public void ForceGolden(){}
+
+
 
 }

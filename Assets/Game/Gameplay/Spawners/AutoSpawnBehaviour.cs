@@ -141,6 +141,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
     public void ForceRemoveEntities() {}
     public void ForceReset() {}
 
+	public void ForceGolden( IEntity entity ){
+		// entity.SetGolden(Spawner.EntityGoldMode.Gold);
+	}
+
     public void StartRespawn() {	
 		m_respawnCount++;
 

@@ -394,6 +394,17 @@ public class Spawner : AbstractSpawner {
 		spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
 	}
 
+	public virtual void ForceGolden( IEntity entity ){
+		base.ForceGolden( entity );
+		int l = m_entities.Length;
+		for (int i = 0; i < l; ++i) {
+            if (m_entities[i] == entity) {
+				m_entityGoldMode[i] = (entity.isGolden) ? EntityGoldMode.Gold : EntityGoldMode.Normal;
+				break;
+            }
+        }
+    }
+
 	protected override void OnMachineSpawned(IMachine machine) {
 		if (m_groupController) {				
 			machine.EnterGroup(ref m_groupController.flock);
