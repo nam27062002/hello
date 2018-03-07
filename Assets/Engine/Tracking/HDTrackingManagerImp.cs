@@ -372,10 +372,9 @@ public class HDTrackingManagerImp : HDTrackingManager
             Session_PlayTime += Time.deltaTime;
         }
 
-        if (Debug_IsEnabled)
-        {
-            Debug_Update();
-        }
+#if UNITY_EDITOR
+        Debug_Update();
+#endif
 
         if (Performance_IsTrackingEnabled)
         {
@@ -2340,9 +2339,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endregion
 
 
-#region debug
-    private const bool Debug_IsEnabled = true;
-
+#region debug    
     private void Debug_Update()
     {
         if (Input.GetKeyDown(KeyCode.S))

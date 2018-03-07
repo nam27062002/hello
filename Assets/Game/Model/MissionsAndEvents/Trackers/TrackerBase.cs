@@ -170,6 +170,8 @@ public class TrackerBase {
 			case "score":			return new TrackerScore();
 			case "gold":			return new TrackerGold();
 			case "survive_time":	return new TrackerSurviveTime();
+			case "zone_survive":	return new TrackerZoneSurvive(_params);
+			case "visited_zones":	return new TrackerVisitedZones();
 			case "kill":			return new TrackerKill(_params);
 			case "burn":			return new TrackerBurn(_params);
 			case "distance":		return new TrackerDistance();
@@ -177,6 +179,7 @@ public class TrackerBase {
 			case "dive_time":		return new TrackerDiveTime();
 			case "fire_rush":		return new TrackerFireRush();
 			case "destroy":			return new TrackerDestroy(_params);
+			case "kill_or_destroy":	return new TrackerKillOrDestroy(_params);
 			case "unlock_dragon":	return new TrackerUnlockDragon(_params);
 			case "buy_skins":		return new TrackerBuySkins();
 			case "daily_chest":		return new TrackerDailyChests();
@@ -198,6 +201,8 @@ public class TrackerBase {
 					case "chests":	return new TrackerChests();
 				}
 			} break;
+
+			case "destroy_blocker": return new TrackerDestroyBlockers(); break;
 		}
 
 		// Unrecoginzed mission type, aborting
