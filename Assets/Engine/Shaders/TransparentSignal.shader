@@ -60,7 +60,7 @@ Shader "Hungry Dragon/Particles/Transparent Signal"
 				float c = fmod(_IDSignal, 3.0);
 				float f = floor(_IDSignal / 3.0);
 
-				float2 off = float2(c * 0.33333, -f * 0.1666666);
+				float2 off = float2(c * 0.33333, -f * 0.125);
 				o.texcoord = (TRANSFORM_TEX((v.texcoord), _MainTex)) + off;
 
 				return o;
