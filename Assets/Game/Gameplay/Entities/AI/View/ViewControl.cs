@@ -621,14 +621,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void ForceGolden(){
-		MaterialType matType = ViewControl.MaterialType.GOLD;
-		// Check Freezing
-		if (m_freezingLevel > 0) {
-			matType = MaterialType.GOLD_FREEZE;
-		}
-		if (matType != m_materialType) {
-			SetMaterialType(matType);
-    	}
+		RefreshMaterialType();
 	}
 
 	void CheckMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {

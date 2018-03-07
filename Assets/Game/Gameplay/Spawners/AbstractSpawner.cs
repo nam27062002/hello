@@ -247,7 +247,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     }    
 
     public virtual void ForceGolden( IEntity entity ){
-		entity.SetGolden(Spawner.EntityGoldMode.Gold);
+		if( !entity.isGolden && entity.edibleFromTier <= InstanceManager.player.data.tier)
+			entity.SetGolden(Spawner.EntityGoldMode.Gold);
     }
 
     public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
