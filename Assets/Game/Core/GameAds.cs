@@ -49,10 +49,10 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 					} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
 						if (isPhone) {
 							rewardId = "5e6b8e4e20004d2c97c8f3ffd0ed97e2";
-							interstitialId = "c3c79080175c42da94013bccf8b0c9a2";
+							interstitialId = "c3c79080175c42da94013bccf8b0c9a2"; // WRONG CONFIGURATION. Ask Alexis Rosa to check it!!!!
 						}else{
-							rewardId = "1ff446d39b244c25ab7fa62638d592fb";
-							interstitialId = "3ee1afec3ef5468ab65d65e3dc85025a";	
+                            rewardId = "3ee1afec3ef5468ab65d65e3dc85025a";
+                            interstitialId  = "1ff446d39b244c25ab7fa62638d592fb";                            
 						}
 					}
 				}
@@ -80,6 +80,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 				CurrentAdPurpose = EAdPurpose.NONE;
 				CurrentAdStartTimestamp = 0f;
 
+                // TODO: Validate all interstitialId values are configurated correctly (Ask Juan how to validate configuration for these ids)
 				MopubAdsManager.SharedInstance.Init (interstitialId, false, rewardId, true, 30);
 			}
         }
