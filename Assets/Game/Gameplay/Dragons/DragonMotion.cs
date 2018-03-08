@@ -1345,11 +1345,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			ComputeImpulseToZero(_deltaTime);
 		}
 		bool slowly = true;
-		if ( current == null && (m_rotateOnIdle || m_closeToGround) ){
-			if ( oldDirection.x > 0 ){
-				m_direction = GameConstants.Vector3.right;	
-			}else{
-				m_direction = GameConstants.Vector3.left;
+		if ( current == null ){
+			if (m_rotateOnIdle || m_closeToGround){
+				if ( oldDirection.x > 0 ){
+					m_direction = GameConstants.Vector3.right;	
+				}else{
+					m_direction = GameConstants.Vector3.left;
+				}
 			}
 		}else{
 			m_direction = (m_impulse + m_externalForce).normalized;
