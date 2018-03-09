@@ -1302,8 +1302,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
 		}
 
-		// Half righ/left movement and remove up movement
-        impulse.Scale(new Vector3(0.5f, 0, 1));
+
+		if ( boostSpeedMultiplier <= 1 ){
+			impulse.Scale(new Vector3(0.5f, 0, 1));
+		}
 		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
