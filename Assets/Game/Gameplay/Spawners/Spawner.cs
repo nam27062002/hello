@@ -594,7 +594,7 @@ public class Spawner : AbstractSpawner {
 		Vector3 v = Vector3.zero;
 		float dAngle = (2f * Mathf.PI) / EntitiesToSpawn;
 		float distance = m_homePosDistance.distance;
-		float randomDistance = Random.Range(distance * 0.5f, distance);
+		float randomDistance = Random.Range(distance * (0.5f + (0.25f * (_index % 2))), distance);
 
 		switch (m_homePosMethod) {
 			case SpawnPointSeparation.Sphere:
