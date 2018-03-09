@@ -233,6 +233,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
     public float m_dragonAirGravityModifier = 0.3f;
 	public float m_dragonAirExpMultiplier = 0.1f;
 	public float m_dragonAirExtraGravityModifier = 0.5f;
+	public float m_dragonAirBoostForce = 4;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
 	//------------------------------------------------------------------//
@@ -1274,6 +1275,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
     private void UpdateSpaceMovement(float _deltaTime)
     {
+    	// impulse direction
         Vector3 impulse = GameConstants.Vector3.zero;
         m_controls.GetImpulse(1, ref impulse);
         if (boostSpeedMultiplier > 1)
@@ -1287,11 +1289,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
         if ( m_controls.moving )
 			m_directionWhenBoostPressed = impulse;
 
+		// y Gravity modifier adds more gravity when going down?
         float yGravityModifier = impulse.y;
         if ( yGravityModifier > 0 )
         	yGravityModifier = 0;
 
-        impulse.Scale(new Vector3(0.5f, 0, 1));
+        // Calculate gravity acceleration
         Vector3 gravityAcceleration = GameConstants.Vector3.zero;
 		gravityAcceleration = GameConstants.Vector3.down * 9.81f * (m_dragonAirGravityModifier + m_dragonAirGravityModifier * -yGravityModifier);
 		float distance = (m_transform.position.y - m_startParabolicPosition.y);
@@ -1299,14 +1302,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
 		}
 
+		// Half righ/left movement and remove up movement
+        impulse.Scale(new Vector3(0.5f, 0, 1));
 		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
-        m_impulse = m_rbody.velocity;
-        if (m_impulse.y > m_prevImpulse.y)
-        {
-            m_impulse.y = m_prevImpulse.y;
-        }
         	// if going down push harder
         if ( m_impulse.y <= 0 )
         {
@@ -1315,9 +1315,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
         Vector3 impulseCapped = m_impulse;
       	impulseCapped.y = 0;
-            
-        float impulseMag = impulseCapped.magnitude;
+		float impulseMag = impulseCapped.magnitude;
         m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime);	// drag only on x coordinate
+
+        if ( boostSpeedMultiplier > 1 )	// if boosting push up
+        {
+			m_impulse += GameConstants.Vector3.up * m_dragonAirBoostForce;
+        }
+
         m_direction = m_impulse.normalized;
 
         RotateToDirection(m_direction);
