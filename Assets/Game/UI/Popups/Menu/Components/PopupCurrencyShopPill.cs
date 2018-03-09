@@ -284,9 +284,20 @@ public class PopupCurrencyShopPill : MonoBehaviour {
 			else
 			{
 				OnPurchaseError.Invoke(this);
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
-		}
+
+                string _feedback;
+#if UNITY_ANDROID
+                // In Android when the payment is not up we assume that the problem is that the user hasn't signed up with a valid Google account to make the payment so the user
+                // can check that out. We only do this for Android because iOS automatically prompts the sign in dialog if the user hasn't signed up yet and because knowing in advance
+                // whether or not the user has already signed up requires a dangerous permission to be requested and we prefer not to request that permission                
+                string _platform = LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE");                
+                _feedback = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", _platform);                
+#else
+                _feedback = LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY");                
+#endif
+                UIFeedbackText.CreateAndLaunch(_feedback, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            }
+        }
 		else
 		{
 			OnPurchaseError.Invoke(this);
