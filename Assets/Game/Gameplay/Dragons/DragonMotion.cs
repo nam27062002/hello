@@ -1308,10 +1308,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
         	// if going down push harder
+        /*
         if ( m_impulse.y <= 0 )
         {
 			acceleration.y += -9.81f * m_dragonAirExtraGravityModifier;
         }
+        */
 
         Vector3 impulseCapped = m_impulse;
       	impulseCapped.y = 0;
