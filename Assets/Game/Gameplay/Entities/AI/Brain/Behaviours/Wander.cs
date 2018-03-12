@@ -48,19 +48,12 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				m_pilot.SetMoveSpeed(m_data.speed); //TODO
+				float dsqr = (m_pilot.target - m_machine.position).sqrMagnitude;
+				float deltaDSqr = Mathf.Max(1f, m_pilot.speed * m_pilot.speed);
 
-				float m = (m_machine.position - m_target).sqrMagnitude;
-				float d = m_pilot.speed * Time.deltaTime;
+				m_timer -= Time.deltaTime;
 
-				if (m_data.alwaysSlowdown || m_goToIdle) {
-					d = 2f; 
-				} else {
-					d = Mathf.Max(2f, d);
-					m_timer -= Time.deltaTime;
-				}
-
-				if (m_timer < 0 || m < d * d) {
+				if (m_timer <= 0f || dsqr < deltaDSqr) {
 					if (m_goToIdle) {
 						Transition(OnRest);
 					} else {
