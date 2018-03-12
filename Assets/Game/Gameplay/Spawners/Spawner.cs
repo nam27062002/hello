@@ -103,6 +103,7 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] private bool m_isPremiumCurrencyNPC = false;
 	[SerializeField] private SpawnPointSeparation m_homePosMethod = SpawnPointSeparation.Sphere;
 	[SerializeField] private Range m_homePosDistance = new Range(1f, 2f);
+	[SerializeField] private float m_homePosLineRotation = 0f;
 
 	[SerializeField] private int m_maxSpawns;
 
@@ -382,10 +383,7 @@ public class Spawner : AbstractSpawner {
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
 		m_entitySku[index] = spawning.sku;
-
-		if (index > 0) {
-			originPos += RandomStartDisplacement((int)index); // don't let multiple entities spawn on the same point
-		}
+		originPos += RandomStartDisplacement((int)index); // don't let multiple entities spawn on the same point
 
 		spawning.SetGolden(m_entityGoldMode[index]);
 		m_entityGoldMode[index] = (spawning.isGolden)? EntityGoldMode.Gold : EntityGoldMode.Normal;
@@ -397,7 +395,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnMachineSpawned(IMachine machine) {
 		if (m_groupController) {				
 			machine.EnterGroup(ref m_groupController.flock);
-			machine.position = transform.position + m_groupController.flock.GetOffset(machine, 2f);
+		//	machine.position = transform.position + m_groupController.flock.GetOffset(machine, 2f);
 		}
 	}
 
@@ -590,21 +588,75 @@ public class Spawner : AbstractSpawner {
 		}
 	}
 
+
+	void OnDrawGizmosSelected() {
+		Gizmos.color = Colors.fuchsia;
+
+		if (m_homePosMethod == SpawnPointSeparation.Sphere) {
+			float distance = m_homePosDistance.distance;
+
+			Gizmos.DrawWireSphere(transform.position, distance * 0.5f);
+			Gizmos.DrawWireSphere(transform.position, distance);
+
+			Gizmos.color = Colors.WithAlpha(Colors.fuchsia, 0.5f);
+			Gizmos.DrawWireSphere(transform.position, distance * 0.625f);
+			Gizmos.DrawWireSphere(transform.position, distance * 0.75f);
+			Gizmos.DrawWireSphere(transform.position, distance * 0.875f);
+		} else if (m_homePosMethod == SpawnPointSeparation.Line) {
+			Quaternion rot = Quaternion.AngleAxis(m_homePosLineRotation, Vector3.forward);
+			Vector3 start = rot * (Vector3.right * m_homePosDistance.min);
+			Vector3 end = rot * (Vector3.right * m_homePosDistance.max);
+
+			start += transform.position;
+			end += transform.position;
+
+			Gizmos.DrawLine(start, end);
+
+			// preview entity positions
+			float distance = m_homePosDistance.distance;
+			float offset = distance / m_quantity.max;
+			float rndArea = offset * 0.125f;
+
+			Vector3 start_l1 = GameConstants.Vector3.zero;
+			Vector3 end_l1 = GameConstants.Vector3.zero;
+			Vector3 start_l2 = GameConstants.Vector3.zero;
+			Vector3 end_l2 = GameConstants.Vector3.zero;
+
+			Gizmos.color = Colors.WithAlpha(Colors.fuchsia, 0.5f);
+			for (int i = 0; i < m_quantity.max; ++i) {
+				start_l1 = rot * (Vector3.right * (m_homePosDistance.min + offset * i + rndArea) + Vector3.up * 0.125f) + transform.position;
+				end_l1 = rot * (Vector3.right * (m_homePosDistance.min + offset * (i + 1) - rndArea) + Vector3.up * 0.125f) + transform.position;
+
+				start_l2 = rot * (Vector3.right * (m_homePosDistance.min + offset * i + rndArea) + Vector3.down * 0.125f) + transform.position;
+				end_l2 = rot * (Vector3.right * (m_homePosDistance.min + offset * (i + 1) - rndArea) + Vector3.down * 0.125f) + transform.position;
+
+				Gizmos.DrawLine(start_l1, end_l1);
+				Gizmos.DrawLine(start_l1, start_l2);
+				Gizmos.DrawLine(start_l2, end_l2);
+				Gizmos.DrawLine(end_l1, end_l2);
+			}
+		}
+	}
+
 	protected Vector3 RandomStartDisplacement(int _index)	{
-		Vector3 v = Vector3.zero;
-		float dAngle = (2f * Mathf.PI) / EntitiesToSpawn;
+		Vector3 v = GameConstants.Vector3.zero;
+
 		float distance = m_homePosDistance.distance;
-		float randomDistance = Random.Range(distance * (0.5f + (0.25f * (_index % 2))), distance);
 
-		switch (m_homePosMethod) {
-			case SpawnPointSeparation.Sphere:
-				v.x = randomDistance * 0.5f * Mathf.Cos(dAngle * _index);
-				v.y = randomDistance * 0.5f * Mathf.Sin(dAngle * _index);
-				break;
+		if (m_homePosMethod == SpawnPointSeparation.Sphere) {
+			float dAngle = (2f * Mathf.PI) / EntitiesToSpawn;
+			float randomDistance = Random.Range(distance * (0.5f + (0.25f * (_index % 2))), distance);
 
-			case SpawnPointSeparation.Line:
-				v = Vector3.right * m_homePosDistance.GetRandom();
-				break;
+			v.x = randomDistance * 0.5f * Mathf.Cos(dAngle * _index);
+			v.y = randomDistance * 0.5f * Mathf.Sin(dAngle * _index);
+		} else if (m_homePosMethod == SpawnPointSeparation.Line) {
+			float offset = distance / EntitiesToSpawn;
+
+			float min = offset * _index;
+			float max = offset * (_index + 1);
+			float rndOffset = Random.Range(-offset * 0.875f * 0.5f, offset * 0.875f * 0.5f); //we use an smaller area so the entities won't appear too close to each other
+
+			v = Quaternion.AngleAxis(m_homePosLineRotation, Vector3.forward) * Vector3.right * (m_homePosDistance.min + min + ((max - min) * 0.5f) + rndOffset);
 		}
 
 		v.z = 0f;
