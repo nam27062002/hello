@@ -23,6 +23,7 @@ struct ObjMaterial
 {
 	public string name;
 	public string textureName;
+    public float specular_pow;
 }
  
 public class EditorObjExporter : ScriptableObject
@@ -34,7 +35,10 @@ public class EditorObjExporter : ScriptableObject
  
 	//User should probably be able to change this. It is currently left as an excercise for
 	//the reader.
-	private static string targetFolder = "ExportedObj";
+	private readonly static string targetFolder = "ExportedObj";
+    private readonly static string textureFolder = "Textures";
+
+    private static string texturePath;
  
  
 	private static string MeshToString(MeshFilter mf, Dictionary<string, ObjMaterial> materialList) 
@@ -90,6 +94,8 @@ public class EditorObjExporter : ScriptableObject
                     else
                         objMaterial.textureName = null;
 
+                    objMaterial.specular_pow = mats[material].IsKeywordEnabled("SPECULAR") ? mats[material].GetFloat("_SpecularPower") : 0.0f;
+
                     materialList.Add(objMaterial.name, objMaterial);
                 }
                 catch (ArgumentException)
@@ -139,27 +145,38 @@ public class EditorObjExporter : ScriptableObject
 				sw.Write("newmtl {0}\n", kvp.Key);
 				sw.Write("Ka  0.6 0.6 0.6\n");
 				sw.Write("Kd  0.6 0.6 0.6\n");
-				sw.Write("Ks  0.9 0.9 0.9\n");
-				sw.Write("d  1.0\n");
-				sw.Write("Ns  0.0\n");
+//				sw.Write("Ks  0.9 0.9 0.9\n");
+                sw.Write(string.Format("Ks {0} {0} {0}\n", kvp.Value.specular_pow > 0.01f ? 0.75f: 0.0f));
+                sw.Write(string.Format("Ns {0}\n", kvp.Value.specular_pow));
+
+                sw.Write("d  1.0\n");
 				sw.Write("illum 2\n");
  
 				if (kvp.Value.textureName != null)
 				{
-					string destinationFile = kvp.Value.textureName;
+					string destinationFile = kvp.Value.textureName; 
  
- 
-					int stripIndex = destinationFile.LastIndexOf(Path.DirectorySeparatorChar);
+					int stripIndex = destinationFile.LastIndexOf(Path.AltDirectorySeparatorChar);
  
 					if (stripIndex >= 0)
-						destinationFile = destinationFile.Substring(stripIndex + 1).Trim();
- 
- 
-					string relativeFile = destinationFile;
- 
-					destinationFile = folder + Path.DirectorySeparatorChar + destinationFile;
- 
-					Debug.Log("Copying texture from " + kvp.Value.textureName + " to " + destinationFile);
+                    {
+                        destinationFile = destinationFile.Substring(stripIndex + 1).Trim();
+                    }
+                    else
+                    {
+                        stripIndex = destinationFile.LastIndexOf('/');
+                        destinationFile = destinationFile.Substring(stripIndex + 1).Trim();
+                    }
+
+//                    string relativeFile = textureFolder + '/' + destinationFile;
+                    string relativeFile = textureFolder + Path.AltDirectorySeparatorChar + destinationFile;
+                    //                    string relativeFile = destinationFile;
+
+
+                    destinationFile = texturePath + Path.AltDirectorySeparatorChar + destinationFile;
+//                    destinationFile = texturePath + '/' + destinationFile;
+
+                    Debug.Log("Copying texture from " + kvp.Value.textureName + " to " + destinationFile);
  
 					try
 					{
@@ -216,8 +233,11 @@ public class EditorObjExporter : ScriptableObject
 		try
 		{
 			System.IO.Directory.CreateDirectory(targetFolder);
-		}
-		catch
+            texturePath = targetFolder + Path.DirectorySeparatorChar + textureFolder;
+            System.IO.Directory.CreateDirectory(texturePath);
+
+        }
+        catch
 		{
 			EditorUtility.DisplayDialog("Error!", "Failed to create target folder!", "");
 			return false;
