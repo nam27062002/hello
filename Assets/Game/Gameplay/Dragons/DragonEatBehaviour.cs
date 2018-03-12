@@ -89,14 +89,17 @@ public class DragonEatBehaviour : EatBehaviour {
 		float eatSpeed = 1;
 		if (m_dragonBoost.IsBoostActive())
 		{
+			eatSpeed = m_boostEatingSpeed;
+			/*
 			if (m_holdingPrey != null)
 			{
 				eatSpeed = m_holdBoostDamageMultiplier / 2.0f;
 			}
 			else
 			{
-				eatSpeed = m_boostEatingSpeed;
+		
 			}
+			*/
 		}
 		eatSpeed *= m_randomSpeed;
 
