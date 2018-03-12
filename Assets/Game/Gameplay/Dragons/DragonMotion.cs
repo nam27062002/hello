@@ -1210,9 +1210,11 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_externalForce = GameConstants.Vector3.zero;
 	}
 
-	float GetTargetForceMultiplier()
+	float GetTargetForceMultiplier( bool includeBoost = true )
 	{
-		return m_boostSpeedMultiplier * m_holdSpeedMultiplier * m_latchedOnSpeedMultiplier * m_superSizeSpeedMultiplier;
+		if ( includeBoost )
+			return m_boostSpeedMultiplier * m_holdSpeedMultiplier * m_latchedOnSpeedMultiplier * m_superSizeSpeedMultiplier;
+		return m_holdSpeedMultiplier * m_latchedOnSpeedMultiplier * m_superSizeSpeedMultiplier;
 	}
 
 	Vector3 Damping( Vector3 src, Vector3 dst, float dt, float factor)
@@ -1289,33 +1291,25 @@ public class DragonMotion : MonoBehaviour, IMotion {
         if ( m_controls.moving )
 			m_directionWhenBoostPressed = impulse;
 
-		// y Gravity modifier adds more gravity when going down?
-        float yGravityModifier = impulse.y;
-        if ( yGravityModifier > 0 )
-        	yGravityModifier = 0;
-
         // Calculate gravity acceleration
         Vector3 gravityAcceleration = GameConstants.Vector3.zero;
-		gravityAcceleration = GameConstants.Vector3.down * 9.81f * (m_dragonAirGravityModifier + m_dragonAirGravityModifier * -yGravityModifier);
+		gravityAcceleration = GameConstants.Vector3.down * 9.81f * m_dragonAirGravityModifier;
 		float distance = (m_transform.position.y - m_startParabolicPosition.y);
 		if (distance > 0) {
-			gravityAcceleration *= 1.0f + (distance) * m_dragonAirExpMultiplier;
+			gravityAcceleration = gravityAcceleration + (gravityAcceleration * distance * m_dragonAirExpMultiplier);
 		}
-
 
 		if ( boostSpeedMultiplier <= 1 ){
-			impulse.Scale(new Vector3(0.5f, 0, 1));
+			impulse.x *= 0.5f;
+			impulse.y = 0;
 		}
-		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
+		else
+		{
+			// if ( impulse.y > 0 )
+			impulse.y = 0;
+		}
+		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier(false)) / m_dragonMass;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
-
-        	// if going down push harder
-        /*
-        if ( m_impulse.y <= 0 )
-        {
-			acceleration.y += -9.81f * m_dragonAirExtraGravityModifier;
-        }
-        */
 
         Vector3 impulseCapped = m_impulse;
       	impulseCapped.y = 0;
