@@ -49,7 +49,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //		[Toggle(REFLECTIVE)] _EnableReflective("Enable reflective", Float) = 0
 //		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 		[KeywordEnum(None, Overlay, Additive, Modulate)] VertexColor("Vertex color mode", Float) = 0
-		[KeywordEnum(None, Blink, Reflective, LightmapContrast)] Emissive("Emission type", Float) = 0
+//		[KeywordEnum(None, Blink, Reflective, LightmapContrast)] Emissive("Emission type", Float) = 0
+		[KeywordEnum(None, Blink, Reflective)] Emissive("Emission type", Float) = 0
 /*
 		0.	Zero				Blend factor is(0, 0, 0, 0).
 		1.	One					Blend factor is(1, 1, 1, 1).
