@@ -533,4 +533,9 @@ public class CPProgressionCheats : MonoBehaviour {
     {
     	ApplicationManager.instance.GameCenter_ResetAchievements();
     }
+
+	public void PlayAd()
+	{
+		ApplicationManager.instance.Debug_TestPlayAd();
+	}
 }

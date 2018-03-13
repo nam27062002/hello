@@ -224,7 +224,7 @@ fixed4 frag (v2f i) : SV_Target
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
-#ifdef ADDITIVE_BLEND
+#ifdef ADDITIVE_BLEND			//Used in fog_tirilla_background to see night sky stars
 	col += col2 * (1.0 - i.color.a);
 #else
 	float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );

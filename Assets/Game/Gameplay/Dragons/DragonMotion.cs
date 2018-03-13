@@ -1246,8 +1246,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_direction = m_impulse.normalized;
 		RotateToDirection(m_direction);
 
-        m_rbody.velocity = m_impulse;
-
         if ( !m_canMoveInsideWater )
         {
 	        m_inverseGravityWater -= _deltaTime * 0.28f;
@@ -1269,6 +1267,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
         }
 
 		ApplyExternalForce();
+
+		m_rbody.velocity = m_impulse;
 	}
 
 
