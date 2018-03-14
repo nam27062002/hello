@@ -302,6 +302,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	float m_switchAreaStart;
 
 
+	public const float FlightCeiling = 300f;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -1326,6 +1328,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
         RotateToDirection(m_direction);
 
         ApplyExternalForce();
+
+		float topMargin = 10.0f;
+		if(m_transform.position.y > (FlightCeiling-topMargin))
+        {
+			float t = 1.0f - Mathf.Clamp01((FlightCeiling - m_transform.position.y) / topMargin);
+            float clamp = Mathf.Lerp(60, 0.0f, t);
+			m_impulse.y = Mathf.Min(m_impulse.y, clamp);
+        }
 
         m_rbody.velocity = m_impulse;
     }
