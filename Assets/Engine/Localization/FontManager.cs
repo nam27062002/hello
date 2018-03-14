@@ -78,8 +78,13 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 	// Font defs
 	private Dictionary<string, FontGroup> m_fontGroups = new Dictionary<string, FontGroup>();
 
+	// Initialization
+	private bool m_ready = false;
+	public bool isReady {
+		get { return m_ready; }
+	}
+
 	// Internal members
-	private bool m_init = false;
 	private State m_state = State.IDLE;
 	private float m_timer = 0f;
 
@@ -101,7 +106,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 	/// </summary>
 	public void Init() {
 		// Don't do anything if already initialized
-		if(m_init) return;
+		if(m_ready) return;
 
 		// Load font groups
 		List<DefinitionNode> fontGroupsDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.FONT_GROUPS);
@@ -134,7 +139,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 		ChangeState(State.IDLE);
 
 		// Done!
-		m_init = true;
+		m_ready = true;
 	}
 
 	/// <summary>

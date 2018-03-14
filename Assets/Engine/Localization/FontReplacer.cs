@@ -69,14 +69,18 @@ public class FontReplacer : MonoBehaviour {
 		// [AOC] Unfortunately, wrong font is already loaded into memory :(
 		//		 We'll workaround this issue by using a small font asset for edition, 
 		//		 one that we can afford to have always in memory.
-		OnFontChangeStarted();	// This will at least loose reference to any instantiated font
+		if(FontManager.instance.isReady) {
+			OnFontChangeStarted();	// This will at least loose reference to any instantiated font
+		}
 	}
 
 	/// <summary>
 	/// First update.
 	/// </summary>
 	public void Start() {
-		OnFontChangeFinished();	// Make sure we have the right font loaded!
+		if(FontManager.instance.isReady) {
+			OnFontChangeFinished();	// Make sure we have the right font loaded!
+		}
 	}
 
 	/// <summary>
