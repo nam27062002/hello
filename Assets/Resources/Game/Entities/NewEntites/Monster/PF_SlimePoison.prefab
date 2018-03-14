@@ -503,6 +503,7 @@ MonoBehaviour:
   m_parentName: view
   m_parentRoot: {fileID: 4688880569409630}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114342813304510218
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -536,12 +537,14 @@ MonoBehaviour:
   m_railSeparation:
     min: -1.25
     max: 1.25
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"isWallWalking":true,"timeToIdle":{"min":0,"max":0},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"damage":50,"type":1,"delay":1,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false}]'
   m_databaseKey: PF_SlimePoison
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114580451135360480
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -584,6 +587,7 @@ MonoBehaviour:
   m_parentName: Mucus_Head
   m_parentRoot: {fileID: 4688880569409630}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114680344640624328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -595,6 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activationMode: 0
   m_parent: {fileID: 0}
   m_view: {fileID: 137079305205350618}
   m_particleDatas:
@@ -653,13 +658,6 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
-  m_onMouseDown: 0
-  m_onMouseDrag: 0
-  m_onMouseUp: 0
-  m_onMouseUpAsButton: 0
-  m_onMouseEnter: 0
-  m_onMouseExit: 0
-  m_onMouseOver: 0
 --- !u!114 &114936245893518294
 MonoBehaviour:
   m_ObjectHideFlags: 1
