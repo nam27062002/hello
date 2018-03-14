@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 114459538183732310}
   - component: {fileID: 135000012920639798}
   - component: {fileID: 54000013072526688}
-  - component: {fileID: 114162588251770216}
   - component: {fileID: 114560590118873264}
   m_Layer: 21
   m_Name: PF_HermitCrabBlueBig
@@ -29,7 +28,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 29.191565, y: 1.7587018, z: 0}
+  m_LocalPosition: {x: -844.21, y: -292.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4915195938049758}
@@ -194,6 +193,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4915195938049758}
   - component: {fileID: 95126564407115204}
+  - component: {fileID: 114722228477544228}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -339,20 +339,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114162588251770216
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 174698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -0.0441615, y: 2.5691578}
-  radius: 2.6316085
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114305591848279004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -650,6 +636,20 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+--- !u!114 &114722228477544228
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1962351850435288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.0441615, y: 2.5691578}
+  radius: 2.6316085
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114824192205990706
 MonoBehaviour:
   m_ObjectHideFlags: 1

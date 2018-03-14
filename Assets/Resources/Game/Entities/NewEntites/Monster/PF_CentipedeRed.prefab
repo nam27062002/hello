@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 114029562522687476}
   - component: {fileID: 135908989521048960}
   - component: {fileID: 54983046190278370}
-  - component: {fileID: 114599001096254080}
   m_Layer: 21
   m_Name: PF_CentipedeRed
   m_TagString: Untagged
@@ -107,6 +106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4447043314194410}
   - component: {fileID: 95347194758967588}
+  - component: {fileID: 114886302626282872}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -175,7 +175,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1282978617482752}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 132.38524, y: 38.5761, z: -31.4}
+  m_LocalPosition: {x: -838.45526, y: -291.98105, z: -31.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4447043314194410}
@@ -499,20 +499,6 @@ MonoBehaviour:
   m_sku: CentipedeRed
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
---- !u!114 &114599001096254080
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1282978617482752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -0.0025666952, y: 0.74194175}
-  radius: 0.8061176
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114639534491506066
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -598,6 +584,20 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
+--- !u!114 &114886302626282872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1971624489225282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.0025666952, y: 0.74194175}
+  radius: 0.8061176
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114936245893518294
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 114459538183732310}
   - component: {fileID: 135000012920639798}
   - component: {fileID: 54000013072526688}
-  - component: {fileID: 114537561860813602}
   - component: {fileID: 114840945365429718}
   m_Layer: 21
   m_Name: PF_HermitCrabBlueSmall
@@ -29,7 +28,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -56.81, y: 0, z: 0}
+  m_LocalPosition: {x: -848.36, y: -292, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4503109075350688}
@@ -132,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4503109075350688}
   - component: {fileID: 95641623503101864}
+  - component: {fileID: 114271118815107136}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -201,7 +201,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1180305817743422}
-  m_LocalRotation: {x: -0.005994422, y: 0.98756844, z: 0.038900048, w: 0.15218239}
+  m_LocalRotation: {x: -0.00086624036, y: 0.9985759, z: 0.017122502, w: 0.050518718}
   m_LocalPosition: {x: -0.006, y: 1.369, z: -0.21}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
@@ -279,6 +279,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114271118815107136
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1638062577178580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.004061699, y: 0.92052376}
+  radius: 0.83766997
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114459538183732310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -321,20 +335,6 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
---- !u!114 &114537561860813602
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 174698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -0.004061699, y: 0.92052376}
-  radius: 0.83766997
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114764450163780210
 MonoBehaviour:
   m_ObjectHideFlags: 1
