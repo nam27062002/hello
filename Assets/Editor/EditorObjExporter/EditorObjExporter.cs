@@ -50,7 +50,7 @@ public class EditorObjExporter : ScriptableObject
  
 		StringBuilder sb = new StringBuilder();
  
-		sb.Append("g ").Append(mf.name).Append("\n");
+		sb.Append("g ").Append(trimSpaces(mf.name)).Append("\n");
 		foreach(Vector3 lv in m.vertices) 
 		{
 			Vector3 wv = mf.transform.TransformPoint(lv);
@@ -79,22 +79,22 @@ public class EditorObjExporter : ScriptableObject
             for (int material = 0; material < m.subMeshCount; material++)
             {
                 sb.Append("\n");
-                sb.Append("usemtl ").Append(mats[material].name).Append("\n");
-                sb.Append("usemap ").Append(mats[material].name).Append("\n");
+                sb.Append("usemtl ").Append(trimSpaces(mats[material].name)).Append("\n");
+                sb.Append("usemap ").Append(trimSpaces(mats[material].name)).Append("\n");
 
                 //See if this material is already in the materiallist.
                 try
                 {
                     ObjMaterial objMaterial = new ObjMaterial();
 
-                    objMaterial.name = mats[material].name;
+                    objMaterial.name = trimSpaces(mats[material].name);
 
                     if (mats[material].mainTexture)
                         objMaterial.textureName = AssetDatabase.GetAssetPath(mats[material].mainTexture);
                     else
                         objMaterial.textureName = null;
 
-                    objMaterial.specular_pow = mats[material].IsKeywordEnabled("SPECULAR") ? mats[material].GetFloat("_SpecularPower") : 0.0f;
+                    objMaterial.specular_pow = mats[material].IsKeywordEnabled("SPECULAR") ? mats[material].GetFloat("_SpecularPower") : 0.01f;
 
                     materialList.Add(objMaterial.name, objMaterial);
                 }
@@ -146,7 +146,7 @@ public class EditorObjExporter : ScriptableObject
 				sw.Write("Ka  0.6 0.6 0.6\n");
 				sw.Write("Kd  0.6 0.6 0.6\n");
 //				sw.Write("Ks  0.9 0.9 0.9\n");
-                sw.Write(string.Format("Ks {0} {0} {0}\n", kvp.Value.specular_pow > 0.01f ? 0.75f: 0.0f));
+                sw.Write(string.Format("Ks {0} {0} {0}\n", kvp.Value.specular_pow > 0.1f ? 0.75f: 0.01f));
                 sw.Write(string.Format("Ns {0}\n", kvp.Value.specular_pow));
 
                 sw.Write("d  1.0\n");
@@ -245,6 +245,15 @@ public class EditorObjExporter : ScriptableObject
  
 		return true;
 	}
+
+    static private string trimSpaces(string trim)
+    {
+        string trimed = trim.Replace(' ', '_');
+        trimed = trimed.Replace('(', '_');
+        trimed = trimed.Replace(')', '_');
+        Debug.Log("Trim before: " + trim + " after: " + trimed);
+        return trimed;
+    }
  
 	[MenuItem ("Custom/Export/Export all MeshFilters in selection to separate OBJs")]
 	static void ExportSelectionToSeparate()
@@ -269,7 +278,7 @@ public class EditorObjExporter : ScriptableObject
 			for (int m = 0; m < meshfilter.Length; m++)
 			{
 				exportedObjects++;
-				MeshToFile((MeshFilter)meshfilter[m], targetFolder, selection[i].name + "_" + i + "_" + m);
+				MeshToFile((MeshFilter)meshfilter[m], targetFolder, trimSpaces(selection[i].name) + "_" + i + "_" + m);
 			}
 		}
  
@@ -425,7 +434,7 @@ public class EditorObjExporter : ScriptableObject
 				mf[m] = (MeshFilter)meshfilter[m];
 			}
  
-			MeshesToFile(mf, targetFolder, selection[i].name + "_" + i);
+			MeshesToFile(mf, targetFolder, trimSpaces(selection[i].name) + "_" + i);
 		}
  
 		if (exportedObjects > 0)
