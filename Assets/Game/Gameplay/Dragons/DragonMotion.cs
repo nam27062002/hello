@@ -1300,17 +1300,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if (distance > 0) {
 			gravityAcceleration = gravityAcceleration + (gravityAcceleration * distance * m_dragonAirExpMultiplier);
 		}
+		impulse.y = 0;
 
-		if ( boostSpeedMultiplier <= 1 ){
-			impulse.x *= 0.5f;
-			impulse.y = 0;
-		}
-		else
-		{
-			// if ( impulse.y > 0 )
-			impulse.y = 0;
-		}
-		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier(false)) / m_dragonMass;
+		//if ( boostSpeedMultiplier <= 1 ){
+		//	impulse.x *= 0.5f;
+		// }
+
+		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
 
         Vector3 impulseCapped = m_impulse;
