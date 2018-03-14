@@ -11,6 +11,23 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1282978617482752}
   m_IsPrefabParent: 1
+--- !u!1 &1150624780091020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4940997064363620}
+  - component: {fileID: 114590648745537578}
+  - component: {fileID: 114527548829154932}
+  m_Layer: 21
+  m_Name: area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1282978617482752
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +123,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4447043314194410}
   - component: {fileID: 95347194758967588}
-  - component: {fileID: 114886302626282872}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -181,6 +197,7 @@ Transform:
   - {fileID: 4447043314194410}
   - {fileID: 4663745608040778}
   - {fileID: 4303449897139690}
+  - {fileID: 4940997064363620}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -196,6 +213,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4447043314194410}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4940997064363620
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150624780091020}
+  m_LocalRotation: {x: 0.086785406, y: -0.7017609, z: -0.08678517, w: 0.7017608}
+  m_LocalPosition: {x: 0, y: 0.64675903, z: 0.042276382}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4688880569409630}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54983046190278370
 Rigidbody:
@@ -458,6 +488,21 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+--- !u!114 &114527548829154932
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150624780091020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Centipede_Abdomen
+  m_parentRoot: {fileID: 4688880569409630}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114546924173360704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -499,6 +544,20 @@ MonoBehaviour:
   m_sku: CentipedeRed
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
+--- !u!114 &114590648745537578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1150624780091020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0.22174072}
+  radius: 0.8061176
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114639534491506066
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -584,20 +643,6 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
---- !u!114 &114886302626282872
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1971624489225282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: -0.0025666952, y: 0.74194175}
-  radius: 0.8061176
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114936245893518294
 MonoBehaviour:
   m_ObjectHideFlags: 1

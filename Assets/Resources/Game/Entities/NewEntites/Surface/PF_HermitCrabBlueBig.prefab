@@ -34,6 +34,7 @@ Transform:
   - {fileID: 4915195938049758}
   - {fileID: 4689736281578926}
   - {fileID: 4000013414574486}
+  - {fileID: 4641026083777614}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -150,6 +151,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1850833490215186
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4641026083777614}
+  - component: {fileID: 114429363797567220}
+  - component: {fileID: 114817881197580430}
+  m_Layer: 21
+  m_Name: area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1889321795101944
 GameObject:
   m_ObjectHideFlags: 1
@@ -193,7 +211,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4915195938049758}
   - component: {fileID: 95126564407115204}
-  - component: {fileID: 114722228477544228}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -266,6 +283,19 @@ Transform:
   m_Father: {fileID: 4689736281578926}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 24.7607}
+--- !u!4 &4641026083777614
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1850833490215186}
+  m_LocalRotation: {x: 0.50000006, y: -0.5, z: -0.4999999, w: 0.5}
+  m_LocalPosition: {x: 0, y: 2.0049438, z: 0.6063632}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 409022}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4689736281578926
 Transform:
   m_ObjectHideFlags: 1
@@ -354,6 +384,20 @@ MonoBehaviour:
   m_parentRoot: {fileID: 409022}
   m_worldPositionStays: 1
   m_resetScale: 0
+--- !u!114 &114429363797567220
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1850833490215186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.030456543, y: 0.42869872}
+  radius: 2.6316085
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114459538183732310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -636,20 +680,21 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
---- !u!114 &114722228477544228
+--- !u!114 &114817881197580430
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1962351850435288}
+  m_GameObject: {fileID: 1850833490215186}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.0441615, y: 2.5691578}
-  radius: 2.6316085
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  m_parentName: Spider_Head
+  m_parentRoot: {fileID: 409022}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114824192205990706
 MonoBehaviour:
   m_ObjectHideFlags: 1
