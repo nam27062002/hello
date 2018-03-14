@@ -232,7 +232,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float m_dragonGravityModifier = 0.3f;
     public float m_dragonAirGravityModifier = 0.3f;
 	public float m_dragonAirExpMultiplier = 0.1f;
-	public float m_dragonAirExtraGravityModifier = 0.5f;
 	public float m_dragonAirBoostForce = 4;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
