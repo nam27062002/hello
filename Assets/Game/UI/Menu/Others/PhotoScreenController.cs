@@ -83,6 +83,7 @@ public class PhotoScreenController : MonoBehaviour {
 	// Internal
 	private Texture2D m_picture = null;
 	private List<GameObject> m_objectsToRestore = new List<GameObject>();
+	private string m_targetName = "";	// Localized name of the target of the picture: Dragon name, pet name, etc.
 
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
@@ -228,7 +229,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
-		popup.Init(m_picture, caption);
+		popup.Init(m_picture, caption, m_targetName);
 	}
 
 	/// <summary>
@@ -265,6 +266,7 @@ public class PhotoScreenController : MonoBehaviour {
 			case Mode.DRAGON: {
 				// Initialize dragon info
 				DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+				m_targetName = dragonData.def.GetLocalized("tidName");
 				if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
 				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
 				if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
@@ -286,9 +288,10 @@ public class PhotoScreenController : MonoBehaviour {
 						DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, currentReward.def.GetAsString("powerup"));
 
 						// Pet name
+						m_targetName = currentReward.def.GetLocalized("tidName");
 						m_eggRewardName.Localize(
 							m_eggRewardName.tid,
-							currentReward.def.GetLocalized("tidName"),
+							m_targetName,
 							UIConstants.GetRarityColor(currentReward.rarity).ToHexString("#", false),
 							currentReward.rarity == Metagame.Reward.Rarity.COMMON ? "" : "(" + rarityDef.GetLocalized("tidName") + ")"	// Don't show for common
 						);
@@ -299,6 +302,7 @@ public class PhotoScreenController : MonoBehaviour {
 					} break;
 
 					default: {
+						m_targetName = "";
 						m_eggRewardName.gameObject.SetActive(false);
 						m_eggRewardDesc.gameObject.SetActive(false);
 						m_eggRewardIcon.gameObject.SetActive(false);
