@@ -100,7 +100,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	// Movement control
 	private Vector3 m_impulse;
 	private float m_impulseMagnitude = 0;
-    private Vector3 m_prevImpulse;
 	private Vector3 m_direction;
     private Vector3 m_directionWhenBoostPressed;
     private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
@@ -235,6 +234,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float m_dragonAirBoostForce = 4;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
+    public float m_spinSpeed = 90;
+    private bool m_spinning = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -577,7 +578,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.OuterSpace:
 				{
 					m_animator.SetBool(GameConstants.Animator.FLY_DOWN, true);
-                    m_prevImpulse = m_impulse;
 
                     if (m_state != State.Stunned && m_state != State.Reviving && m_state != State.Latching)
                     {
@@ -872,6 +872,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
 			backMultiplier = m_backBlendMultiplier;
 		}
+
+		if (m_spinning)
+			dir = m_transform.forward;
 
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
 
@@ -1323,7 +1326,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
         m_direction = m_impulse.normalized;
 
-        RotateToDirection(m_direction);
+		RotateToDirection(m_direction);
+        // RotateToDirection(m_direction, false, boostSpeedMultiplier > 1);
 
         ApplyExternalForce();
 
@@ -1462,7 +1466,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// m_direction = m_impulse.normalized;
 	}
 
-	protected virtual void RotateToDirection(Vector3 dir, bool slowly = false)
+	protected virtual void RotateToDirection(Vector3 dir, bool slowly = false, bool spin = false)
 	{
 		float blendRate = m_rotBlendRate;
 		if ( GetTargetForceMultiplier() > 1 )
@@ -1470,8 +1474,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		if ( slowly )
 			blendRate = m_rotBlendRate * 0.2f;
-		float slowRange = 0.05f;
-
 		
 		if(blendRate > Mathf.Epsilon)
 		{
@@ -1502,11 +1504,20 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 			m_desiredRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
 			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(m_transform.rotation, m_desiredRotation, blendRate);
+
+			if ( spin )
+			{
+				m_angularVelocity += m_transform.forward * m_spinSpeed;
+			}
 		}
 		else
 		{
 			m_angularVelocity = GameConstants.Vector3.zero;
 		}
+
+		m_spinning = spin;
+
+
 	}
 
 
@@ -1996,7 +2007,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_impulse = m_impulse - Vector3.Dot( m_impulse, normal) * normal;
 			    m_impulse.z = 0;
 			    m_impulse = m_impulse.normalized * magnitude;
-				// m_prevImpulse.y = m_impulse.y;
 			}
         }
         else{
