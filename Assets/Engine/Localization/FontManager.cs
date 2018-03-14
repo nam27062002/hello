@@ -379,6 +379,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 			if(m != null) {
 				// Apply the original material's properties to the current font material
 				// [AOC] Luckily for us TMP already has a tool for this!
+				_target.fontMaterial.shader = m.shader;
 				TMP_MaterialManager.CopyMaterialPresetProperties(m, _target.fontMaterial);
 				_target.SetMaterialDirty();
 				_target.UpdateMeshPadding();
