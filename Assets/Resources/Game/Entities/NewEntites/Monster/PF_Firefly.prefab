@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 114785092751622880}
   - component: {fileID: 114893824462528586}
   - component: {fileID: 54760520937648814}
+  - component: {fileID: 135906726511566252}
   m_Layer: 22
   m_Name: PF_Firefly
   m_TagString: Untagged
@@ -369,7 +370,7 @@ MonoBehaviour:
   m_avoidDistanceAttenuation: 5
   m_avoidCollisions: 1
   m_avoidWater: 1
-  m_avoidCollisionsFactor: 2
+  m_avoidCollisionsFactor: 5
 --- !u!114 &114893824462528586
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -608,6 +609,18 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.2
+  m_Center: {x: 0, y: 0.85, z: -0.34}
+--- !u!135 &135906726511566252
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1449915646723874}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 1.2
   m_Center: {x: 0, y: 0.85, z: -0.34}
