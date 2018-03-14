@@ -6,20 +6,23 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: L1_hieroglyphs_M
-  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: EMISSIVE_BLINK VERTEXCOLOR_NONE _EMISSION
+  m_Name: VFX_Hieroglyphs_Additive_01
+  m_Shader: {fileID: 4800000, guid: b6208e8b247e2a347b142062df6b6310, type: 3}
+  m_ShaderKeywords: EMISSIVE_BLINK OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3110
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorRamp:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -40,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 02d3066ccead3c146b83f2349152a0c3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2305e4ddee83eaf47a6c5d967b8c1d5a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -71,8 +74,9 @@ Material:
     - Emissive: 1
     - VertexColor: 0
     - _BlendMode: 1
-    - _BlinkTimeMultiplier: 2
+    - _BlinkTimeMultiplier: 0
     - _BumpScale: 1
+    - _ColorMultiplier: 0.67
     - _Cull: 0
     - _CutOff: 0.5
     - _Cutoff: 0.5
@@ -81,12 +85,17 @@ Material:
     - _DetailNormalMapScale: 1
     - _DoubleSided: 1
     - _DstBlend: 10
-    - _EmissivePower: 0.25
+    - _EmissionSaturation: 1.73
+    - _EmissivePower: 1
     - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
+    - _EnableAutomaticPanning: 0
     - _EnableBlendTexture: 0
+    - _EnableColorRamp: 0
+    - _EnableColorVertex: 0
     - _EnableCutoff: 0
     - _EnableDarken: 0
+    - _EnableDissolve: 0
     - _EnableEmissiveBlink: 0
     - _EnableFog: 0
     - _EnableLightmapContrast: 0
@@ -104,6 +113,7 @@ Material:
     - _Mode: 0
     - _NormalStrength: 1
     - _OcclusionStrength: 1
+    - _OpacitySaturation: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
@@ -112,9 +122,13 @@ Material:
     - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
+    - _ZTest: 2
     - _ZWrite: 0
     m_Colors:
+    - _BasicColor: {r: 0, g: 1, b: 0.8344829, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _SaturatedColor: {r: 0.6397059, g: 1, b: 0.7018255, a: 0.5}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
