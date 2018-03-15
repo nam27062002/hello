@@ -1344,7 +1344,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			//m_impulse += GameConstants.Vector3.up * m_dragonAirBoostForce;
 			//TONI
 			float distance = (m_transform.position.y - m_startParabolicPosition.y);
-			if (distance > 0)
+			if (distance >= 1)
 				m_impulse += GameConstants.Vector3.up * (m_dragonAirBoostForce/distance);
 			else
 				m_impulse += GameConstants.Vector3.up * m_dragonAirBoostForce;
