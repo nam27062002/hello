@@ -31,13 +31,14 @@ public class HUDMultiplier : HudWidget {
 	// Exposed setup	
 	[SerializeField] private Text m_maskText = null;
     [SerializeField] private TextMeshProUGUI m_overlayText = null;
+	[SerializeField] private TextMeshProUGUI m_progressFillText = null;
     [SerializeField] private Image m_progressFill = null;
 	[SerializeField] private ParticleSystem m_changePS = null;
     
 	// Internal logic
 	private int m_comboSFXIdx = 0;
-
     private long m_multiplierToShow;
+	private Vector2 m_fillTextureOffset = GameConstants.Vector2.zero;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -53,6 +54,7 @@ public class HUDMultiplier : HudWidget {
     protected override void Start() {
         base.Start();
         SetMultiplierToShow(RewardManager.currentScoreMultiplierData,RewardManager.currentFireRushMultiplier,true);                
+		UpdateProgress();
     }
 
     /// <summary>
@@ -79,15 +81,30 @@ public class HUDMultiplier : HudWidget {
 
 		// If we have a valid multiplier, show progress to reach next one
 		if(RewardManager.currentScoreMultiplierData != RewardManager.defaultScoreMultiplier) {
-			Vector3 scale = m_progressFill.rectTransform.localScale;
-			scale.y = RewardManager.scoreMultiplierProgress;
-			m_progressFill.rectTransform.localScale = scale;
+			UpdateProgress();
 		}
 	}
 
     //------------------------------------------------------------------//
     // INTERNAL UTILS													//
     //------------------------------------------------------------------//
+	private void UpdateProgress() {
+		if(m_progressFill != null) {
+			Vector3 scale = m_progressFill.rectTransform.localScale;
+			scale.y = RewardManager.scoreMultiplierProgress;
+			m_progressFill.rectTransform.localScale = scale;
+		}
+
+		if(m_progressFillText != null) {
+			// The fill texture is setup in a way that the top half is transparent and the bottom half is tinted
+			// When empty (value 0), map the top half to the text mesh
+			// When full (value 1), map the bottom half to the text mesh
+			// In between, interpolate fill texture offsetY between 0 and -0.5
+			m_fillTextureOffset.y = Mathf.Lerp(0, -0.5f, RewardManager.scoreMultiplierProgress);
+			m_progressFillText.fontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
+		}
+	}
+
     private void SetMultiplierToShow(ScoreMultiplier _mult, float fireRushMultiplier ,bool immediate)
     {
         // We just keep the integer part
@@ -114,6 +131,9 @@ public class HUDMultiplier : HudWidget {
         base.PrintValueExtended();
         if (m_maskText != null)
             m_maskText.text = m_valueTxt.text;
+
+		if(m_progressFillText != null)
+			m_progressFillText.text = m_valueTxt.text;
 
         if (m_overlayText != null)
             m_overlayText.text = m_valueTxt.text;
