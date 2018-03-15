@@ -161,6 +161,8 @@ public class BreakableBehaviour : MonoBehaviour
 
 		if (m_isBlocker) {			
 			Messenger.Broadcast(MessengerEvents.BLOCKER_DESTROYED);
+
+			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 1f, 1f);
 		}
 
 		// Destroy
