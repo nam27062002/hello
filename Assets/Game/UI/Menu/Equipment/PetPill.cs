@@ -133,6 +133,9 @@ public class PetPill : MonoBehaviour {
 	// Internal logic
 	private bool m_tapAllowed = true;
 
+	ResourceRequest m_previewRequest = null;
+	ResourceRequest m_powerIconRequest = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -198,6 +201,11 @@ public class PetPill : MonoBehaviour {
 
 		// Load preview
 		if(m_preview != null) {
+			/*
+			m_preview.sprite = null;
+			m_preview.enabled = false;
+			m_previewRequest = Resources.LoadAsync<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
+			*/
 			m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
 		}
 
@@ -206,8 +214,13 @@ public class PetPill : MonoBehaviour {
 		if(powerDef != null) {
 			// Power icon
 			if(m_powerIcon != null) {
-				Sprite powerIcon = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
-				m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
+				/*
+				m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
+				m_powerIcon.enabled = false;
+				m_powerIconRequest = Resources.LoadAsync<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+				*/
+				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+				m_powerIcon.enabled = true;
 			}
 
 			// Power short description
@@ -217,6 +230,7 @@ public class PetPill : MonoBehaviour {
 		} else {
 			if(m_powerIcon != null) {
 				m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
+				m_powerIcon.enabled = false;
 			}
 		}
 
@@ -244,6 +258,27 @@ public class PetPill : MonoBehaviour {
 		// Refresh contextual elements
 		Refresh();
 	}
+
+	/*
+	void Update(){
+		if ( m_previewRequest != null ){
+			if ( m_previewRequest.isDone ){
+				m_preview.sprite = m_previewRequest.asset as Sprite;
+				m_preview.enabled = true;
+				m_previewRequest = null;
+			}
+		}
+
+		if ( m_powerIconRequest != null ){
+			if ( m_powerIconRequest.isDone ){
+				m_powerIcon.sprite = m_powerIconRequest.asset as Sprite;
+				m_powerIcon.enabled = true;
+				m_powerIconRequest = null;
+			}
+		}
+	}
+	*/
+
 
 	/// <summary>
 	/// Refresh pill's contextual elements based on assigned pet's state.

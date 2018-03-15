@@ -75,7 +75,17 @@ public class PetFilters : MonoBehaviour {
 	private bool m_dirty = false;
 	private bool m_ignoreToggleEvents = false;	// Internal control var for when changing a toggle state from code
 	private Coroutine m_refreshPillsCoroutine = null;	// Pills are enabled asynchronously to prevent peaks of cpu load
+	private SnappingScrollRect m_scrollRect;
+	private SoftMasking.SoftMask m_softMask;
+	private RectTransform m_softMaskTransform;
 
+		
+	private int m_pillStart = -1;
+	private int m_defStart = -1;
+	private float m_pillWidth = 0;
+	private float m_paddingLeft = 0;
+	private float m_pillSpacing = 0;
+	private float m_containerSize = 0;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -83,6 +93,11 @@ public class PetFilters : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+
+		m_scrollRect = GetComponentInChildren<SnappingScrollRect>();
+		m_scrollRect.onValueChanged.AddListener(OnScrollMoved);
+		m_softMask = GetComponentInChildren<SoftMasking.SoftMask>();
+		m_softMaskTransform = m_softMask.GetComponent<RectTransform>();
 		// Start with all filters toggled!
 		// This will also create a new entry on the dictionary for each filter button
 		ResetFilters();
@@ -134,6 +149,26 @@ public class PetFilters : MonoBehaviour {
 			m_dirty = false;
 		}
 	}
+
+	void OnScrollMoved( Vector2 pos ){
+		// Refresh pet visibility
+			// Pos is normalized, transform it to size
+
+		float localX = petsScreen.scrollList.content.localPosition.x; 
+		float sizeStart = -localX + m_containerSize / 2.0f - m_softMaskTransform.rect.width / 2.0f;
+
+		sizeStart -= m_paddingLeft;
+		sizeStart = sizeStart / (m_pillWidth + m_pillSpacing);
+		int firstDef = (int)sizeStart;
+		if ( firstDef < 0 )
+			firstDef = 0;
+		
+		if ( firstDef != m_defStart )
+		{
+			SetPills(firstDef);
+		}
+	}
+
 
 	/// <summary>
 	/// Destructor.
@@ -255,6 +290,7 @@ public class PetFilters : MonoBehaviour {
 		// Skip if there are no pills
 		if(petsScreen.pills.Count <= 0) yield return null;
 
+		// Return all pills to the pool!
 		// Hide all pills
 		for(int i = 0; i < petsScreen.pills.Count; ++i) {
 			// Don't do animation when hiding
@@ -265,31 +301,55 @@ public class PetFilters : MonoBehaviour {
 		// [AOC] Usually we would use a content size fitter, but since we're enabling 
 		// the pills with delay, the scrolling logic goes all crazy
 		HorizontalLayoutGroup layout = petsScreen.scrollList.content.GetComponent<HorizontalLayoutGroup>();
+		layout.enabled = false;
 		//float pillWidth = petsScreen.pills[0].GetComponent<LayoutElement>().preferredWidth;
-		float pillWidth = petsScreen.pills[0].GetComponent<RectTransform>().sizeDelta.x;
+		m_pillWidth = petsScreen.pills[0].GetComponent<RectTransform>().sizeDelta.x;
+		m_paddingLeft = layout.padding.left;
+		m_pillSpacing = layout.spacing;
+
 		int numVisiblePills = m_filteredDefs.Count;
 		Vector2 contentSize = petsScreen.scrollList.content.sizeDelta;
-		contentSize.x = layout.padding.left
-			+ pillWidth * numVisiblePills
+		m_containerSize = layout.padding.left
+			+ m_pillWidth * numVisiblePills
 			+ layout.spacing * (numVisiblePills - 1) 
 			+ layout.padding.right;
+		contentSize.x = m_containerSize;
 		petsScreen.scrollList.content.sizeDelta = contentSize;
 
 		// Put scroll list at the start
 		StartCoroutine(petsScreen.scrollList.ScrollToPositionDelayedFrames(Vector2.zero, 1));
 
+		m_pillStart = 0;
+		m_defStart = 0;
+
+		SetPills(m_defStart);
+	}
+
+	void SetPills( int defIndex )
+	{
+		MenuSceneController menuController = InstanceManager.menuSceneController;
+		DragonData _dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 		// Show all pills asynchronously so we don't get massive CPU load peaks
 		for(int i = 0; i < petsScreen.pills.Count; i++) {
-			// Only if this pill must be displayed!
-			if(m_filteredDefs.Contains(petsScreen.pills[i].def)) {
-				// Launch show animation
+			if ( i + defIndex < m_filteredDefs.Count )
+			{
+				int index = i+defIndex;
+				petsScreen.pills[i].Init( m_filteredDefs[index], _dragonData);
+				petsScreen.pills[i].gameObject.SetActive(true);
 				petsScreen.pills[i].animator.Show();
-
-				// Wait before doing next pill
-				yield return new WaitForSeconds(0.05f);
+				// Recolocate?
+				Vector3 pillPos = petsScreen.pills[i].transform.localPosition;
+				pillPos.x = m_paddingLeft + m_pillWidth/2.0f + (m_pillWidth + m_pillSpacing) * index - m_containerSize/2.0f;
+				petsScreen.pills[i].transform.localPosition = pillPos;
+			}
+			else
+			{
+				petsScreen.pills[i].gameObject.SetActive(false);
 			}
 		}
+		m_defStart = defIndex;
 	}
+
 
 	/// <summary>
 	/// Toggle buttons on/off bsed on the current active filters.

@@ -134,8 +134,8 @@ public class MenuSceneController : SceneController {
 		}
 
 		// Start loading pet pill's on the background!
-		PetsScreenController petsScreen = GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
-		StartCoroutine(petsScreen.InstantiatePillsAsync());
+		// PetsScreenController petsScreen = GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+		// StartCoroutine(petsScreen.InstantiatePillsAsync());
 
 		// Request latest global event data
 		GlobalEventManager.RequestCurrentEventData();
