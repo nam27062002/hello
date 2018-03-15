@@ -720,12 +720,16 @@ public class GameCamera : MonoBehaviour
 		}
 
 		Vector3 desiredPos = targetPosition - m_trackAheadVector;
+
         // space-line camera position offsetiness
         if(m_targetObject != null)
         {
             UpdateSpaceLevelOffset ();
             desiredPos += m_spaceLineOffset;
         }
+
+		if ( desiredPos.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f )
+			desiredPos.y = DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f;
 
 		// If we just changed target and are not snapping, we fairly quickly lerp to our new position
 		// DB: Bypass this if we are being affected by boss cameras
@@ -751,7 +755,7 @@ public class GameCamera : MonoBehaviour
 
 			// SAFETY CATCH
 			//special case - if the camera is more than a certain distance from the shark, don't lerp. snap it instead
-			if((desiredPos - m_position).magnitude > m_maxLerpDistance)
+			if((desiredPos - m_position).sqrMagnitude > m_maxLerpDistance * m_maxLerpDistance)
 			{
 				m_position = desiredPos;
 			}
@@ -1172,6 +1176,8 @@ public class GameCamera : MonoBehaviour
 		{
 			Vector3 targetTrackAhead = m_trackAheadVector * m_trackAheadScale;
 			Vector3 targetTrackPos =  m_targetTransform.position + targetTrackAhead;
+			if ( targetTrackPos.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f )
+				targetTrackPos.y = DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f;
 
 			if(m_isLerpingBetweenTargets)
 			{
@@ -1180,7 +1186,7 @@ public class GameCamera : MonoBehaviour
 			else
 			{
 				// SAFETY CATCH
-				if((m_trackAheadPos - targetTrackPos).magnitude > m_maxLerpDistance)
+				if((m_trackAheadPos - targetTrackPos).sqrMagnitude > m_maxLerpDistance * m_maxLerpDistance)
 				{
 					m_trackAheadPos = targetTrackPos;
 				}
