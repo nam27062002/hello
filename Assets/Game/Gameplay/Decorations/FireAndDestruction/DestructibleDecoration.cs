@@ -112,9 +112,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 				m_collider.isTrigger = true;
 			}
 
+			Vector3 center = transform.rotation * m_collider.center;
 			Vector3 colliderCenterTransform = Vector3.zero;
 			colliderCenterTransform.x = transform.position.x;
-			colliderCenterTransform.y = transform.position.y + m_collider.center.y;
+			colliderCenterTransform.y = transform.position.y + center.y;
 			colliderCenterTransform.z = 0;
 			colliderCenterTransform = transform.InverseTransformPoint(colliderCenterTransform);
 			m_collider.center = colliderCenterTransform;
