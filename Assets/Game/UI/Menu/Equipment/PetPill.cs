@@ -136,16 +136,11 @@ public class PetPill : MonoBehaviour {
 	ResourceRequest m_previewRequest = null;
 	ResourceRequest m_powerIconRequest = null;
 
+	private static bool m_useAsycLoading = true;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		
-	}
-
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
@@ -201,12 +196,17 @@ public class PetPill : MonoBehaviour {
 
 		// Load preview
 		if(m_preview != null) {
-			/*
-			m_preview.sprite = null;
-			m_preview.enabled = false;
-			m_previewRequest = Resources.LoadAsync<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
-			*/
-			m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
+			if (m_useAsycLoading)
+			{
+				m_preview.sprite = null;
+				m_preview.enabled = false;
+				m_previewRequest = Resources.LoadAsync<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));	
+			}
+			else
+			{
+				m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));	
+			}
+
 		}
 
 		// Power data
@@ -214,13 +214,17 @@ public class PetPill : MonoBehaviour {
 		if(powerDef != null) {
 			// Power icon
 			if(m_powerIcon != null) {
-				/*
-				m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
-				m_powerIcon.enabled = false;
-				m_powerIconRequest = Resources.LoadAsync<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
-				*/
-				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
-				m_powerIcon.enabled = true;
+				if ( m_useAsycLoading )
+				{
+					m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
+					m_powerIcon.enabled = false;
+					m_powerIconRequest = Resources.LoadAsync<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+				}
+				else
+				{
+					m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+					m_powerIcon.enabled = true;
+				}
 			}
 
 			// Power short description
@@ -259,25 +263,28 @@ public class PetPill : MonoBehaviour {
 		Refresh();
 	}
 
-	/*
-	void Update(){
-		if ( m_previewRequest != null ){
-			if ( m_previewRequest.isDone ){
-				m_preview.sprite = m_previewRequest.asset as Sprite;
-				m_preview.enabled = true;
-				m_previewRequest = null;
-			}
-		}
 
-		if ( m_powerIconRequest != null ){
-			if ( m_powerIconRequest.isDone ){
-				m_powerIcon.sprite = m_powerIconRequest.asset as Sprite;
-				m_powerIcon.enabled = true;
-				m_powerIconRequest = null;
+	void Update(){
+		if (m_useAsycLoading)
+		{
+			if ( m_previewRequest != null ){
+				if ( m_previewRequest.isDone ){
+					m_preview.sprite = m_previewRequest.asset as Sprite;
+					m_preview.enabled = true;
+					m_previewRequest = null;
+				}
+			}
+
+			if ( m_powerIconRequest != null ){
+				if ( m_powerIconRequest.isDone ){
+					m_powerIcon.sprite = m_powerIconRequest.asset as Sprite;
+					m_powerIcon.enabled = true;
+					m_powerIconRequest = null;
+				}
 			}
 		}
 	}
-	*/
+
 
 
 	/// <summary>

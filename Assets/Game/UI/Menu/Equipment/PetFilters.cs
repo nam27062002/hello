@@ -79,8 +79,6 @@ public class PetFilters : MonoBehaviour {
 	private SoftMasking.SoftMask m_softMask;
 	private RectTransform m_softMaskTransform;
 
-		
-	private int m_pillStart = -1;
 	private int m_defStart = -1;
 	private float m_pillWidth = 0;
 	private float m_paddingLeft = 0;
@@ -319,35 +317,36 @@ public class PetFilters : MonoBehaviour {
 		// Put scroll list at the start
 		StartCoroutine(petsScreen.scrollList.ScrollToPositionDelayedFrames(Vector2.zero, 1));
 
-		m_pillStart = 0;
 		m_defStart = 0;
 
 		SetPills(m_defStart);
 	}
 
-	void SetPills( int defIndex )
+	void SetPills( int startDefIndex )
 	{
 		MenuSceneController menuController = InstanceManager.menuSceneController;
 		DragonData _dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 		// Show all pills asynchronously so we don't get massive CPU load peaks
 		for(int i = 0; i < petsScreen.pills.Count; i++) {
-			if ( i + defIndex < m_filteredDefs.Count )
+			int defIndex = i+startDefIndex;
+			int pillIndex = defIndex % petsScreen.pills.Count;
+			PetPill pill = petsScreen.pills[ pillIndex ];
+			if ( defIndex < m_filteredDefs.Count )
 			{
-				int index = i+defIndex;
-				petsScreen.pills[i].Init( m_filteredDefs[index], _dragonData);
-				petsScreen.pills[i].gameObject.SetActive(true);
-				petsScreen.pills[i].animator.Show();
+				pill.Init( m_filteredDefs[defIndex], _dragonData);
+				pill.gameObject.SetActive(true);
+				pill.animator.Show();
 				// Recolocate?
-				Vector3 pillPos = petsScreen.pills[i].transform.localPosition;
-				pillPos.x = m_paddingLeft + m_pillWidth/2.0f + (m_pillWidth + m_pillSpacing) * index - m_containerSize/2.0f;
-				petsScreen.pills[i].transform.localPosition = pillPos;
+				Vector3 pillPos = pill.transform.localPosition;
+				pillPos.x = m_paddingLeft + m_pillWidth/2.0f + (m_pillWidth + m_pillSpacing) * defIndex - m_containerSize/2.0f;
+				pill.transform.localPosition = pillPos;
 			}
 			else
 			{
-				petsScreen.pills[i].gameObject.SetActive(false);
+				pill.gameObject.SetActive(false);
 			}
 		}
-		m_defStart = defIndex;
+		m_defStart = startDefIndex;
 	}
 
 
