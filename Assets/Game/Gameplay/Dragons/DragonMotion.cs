@@ -305,6 +305,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 
 	public const float FlightCeiling = 300f;
+	public const float SpaceStart = 150f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -756,6 +757,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		// Update hitColliders Bounding box
 		UpdateHitCollidersBoundingBox();
+
+
+		if (!m_outterSpace && m_transform.position.y > SpaceStart){
+			OnEnterSpaceEvent();
+		}else if ( m_outterSpace && m_transform.position.y < SpaceStart ){
+			OnExitSpaceEvent();
+		}
+
 	}
 
  	private void CheckForCurrents()
@@ -1742,14 +1751,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
 	}
 
-	public void StartSpaceMovement(Collider _other)
+	public void StartSpaceMovement()
 	{
 		// Trigger animation
 		m_animationEventController.OnEnterOuterSpace();
         
         // Trigger particles (min. speed required)
         if (m_particleController != null) {
-			m_particleController.OnEnterOuterSpace( _other, Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
+			m_particleController.OnEnterOuterSpace( Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
 		}
 
 		if ( m_state != State.Latching )
@@ -1762,14 +1771,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
         Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, true);        
     }
 
-	public void EndSpaceMovement(Collider _other)
+	public void EndSpaceMovement()
 	{
 		// Trigger animation
 		m_animationEventController.OnExitOuterSpace();
 
 		// Trigger particles (min. speed required)
 		if(m_particleController != null ) {
-			m_particleController.OnExitOuterSpace( _other, Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
+			m_particleController.OnExitOuterSpace(  Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
 		}
 
 		if ( m_state != State.Latching )
@@ -1878,10 +1887,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		{
 			OnEnterWaterEvent( _other );
 		}
+		/*
 		else if ( _other.CompareTag("Space"))
 		{
-			OnEnterSpaceEvent( _other );
+			OnEnterSpaceEvent();
 		}
+		*/
 		else if ( _other.CompareTag("AreaChange")  )
 		{
 			OnAreaChangeEvent( _other );
@@ -1910,14 +1921,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 	}
 
-	public void OnEnterSpaceEvent(Collider _other)
+	public void OnEnterSpaceEvent()
 	{
 		if (!m_outterSpace)
 		{
 			m_outterSpace = true;
 			if (IsAliveState())
 			{
-				StartSpaceMovement( _other );
+				StartSpaceMovement();
 				m_previousState = State.OuterSpace;
 			}
 		}
@@ -1946,10 +1957,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		{
 			OnExitWaterEvent(_other);
 		}
+		/*
 		else if ( _other.CompareTag("Space") )
 		{
-			OnExitSpaceEvent( _other );
+			OnExitSpaceEvent( );
 		}
+		*/
 	}
 
 
@@ -1971,14 +1984,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 	}
 
-	public void OnExitSpaceEvent( Collider _other )
+	public void OnExitSpaceEvent()
 	{
 		if (m_outterSpace )
 		{
 			m_outterSpace = false;
 			if (IsAliveState())
 			{
-				EndSpaceMovement( _other );
+				EndSpaceMovement();
 				m_previousState = State.Idle;
 			}
 		}
