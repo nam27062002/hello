@@ -728,9 +728,6 @@ public class GameCamera : MonoBehaviour
             desiredPos += m_spaceLineOffset;
         }
 
-		if ( desiredPos.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f )
-			desiredPos.y = DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f;
-
 		// If we just changed target and are not snapping, we fairly quickly lerp to our new position
 		// DB: Bypass this if we are being affected by boss cameras
         if(m_isLerpingBetweenTargets)
@@ -1168,6 +1165,21 @@ public class GameCamera : MonoBehaviour
 	// from m_position and m_fov.
 	private void UpdateValues()
 	{
+		if ( m_position.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h )
+		{
+			
+			// 1.-
+			// m_position.y = DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f;
+
+			// 2.-
+			// float delta = 1.0f - Mathf.Clamp01((DragonMotion.FlightCeiling - m_position.y) / m_screenWorldBounds.h);
+			// m_position.y = Mathf.Lerp( m_position.y, DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f), delta);
+
+			// 3.-
+			float delta = Mathf.Clamp01( (m_position.y - (DragonMotion.FlightCeiling - m_screenWorldBounds.h)) / (m_screenWorldBounds.h) );
+			m_position.y = Mathf.Lerp( DragonMotion.FlightCeiling - m_screenWorldBounds.h , DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f) , delta);
+		}
+
 		m_transform.position = m_position;
 		if ( Time.timeScale > 0 )
 			m_transform.position += Random.insideUnitSphere * m_cameraShake;
@@ -1176,8 +1188,16 @@ public class GameCamera : MonoBehaviour
 		{
 			Vector3 targetTrackAhead = m_trackAheadVector * m_trackAheadScale;
 			Vector3 targetTrackPos =  m_targetTransform.position + targetTrackAhead;
-			if ( targetTrackPos.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f )
-				targetTrackPos.y = DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f;
+			if ( targetTrackPos.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h )
+			{
+				// 2.- 
+				// float delta = 1.0f - Mathf.Clamp01((DragonMotion.FlightCeiling - targetTrackPos.y) / m_screenWorldBounds.h);
+				// targetTrackPos.y = Mathf.Lerp( targetTrackPos.y, DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f), delta);
+
+				// 3.-
+				float delta = Mathf.Clamp01( (targetTrackPos.y - (DragonMotion.FlightCeiling - m_screenWorldBounds.h)) / (m_screenWorldBounds.h) );
+				targetTrackPos.y = Mathf.Lerp( DragonMotion.FlightCeiling - m_screenWorldBounds.h , DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f) , delta);
+			}
 
 			if(m_isLerpingBetweenTargets)
 			{
