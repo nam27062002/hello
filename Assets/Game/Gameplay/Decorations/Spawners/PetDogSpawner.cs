@@ -165,7 +165,7 @@ public class PetDogSpawner : AbstractSpawner {
         m_operatorPilot = pilot;
     }    
 
-    protected override void OnRemoveEntity(GameObject _entity, int index) {
+	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
         if (m_operator != null && _entity == m_operator.gameObject) {
             m_operator = null;
             m_operatorPilot = null;
@@ -199,8 +199,8 @@ public class PetDogSpawner : AbstractSpawner {
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
 	}
 
-	public void OperatorBurn() {
-		m_operator.Burn(transform);
+	public void OperatorBurn(IEntity.Type _source) {
+		m_operator.Burn(transform, _source);
 	}
 
 	private Vector3 GetLookAtVector() {

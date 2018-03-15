@@ -137,7 +137,11 @@ namespace TMPro.Examples
 
             float touchCount = Input.touchCount;
 
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || touchCount > 0)
+            if (
+#if UNITY_EDITOR
+                Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ||
+#endif      
+                touchCount > 0)
             {
                 mouseWheel *= 10;
 

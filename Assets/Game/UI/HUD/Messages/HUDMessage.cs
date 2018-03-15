@@ -72,7 +72,8 @@ public class HUDMessage : MonoBehaviour {
 		KEY_FOUND,
 		KEY_LIMIT,
 		BREAK_OBJECT_SHALL_NOT_PASS,
-		DAMAGE_RECEIVED
+		DAMAGE_RECEIVED,
+		MISSION_ZONE
 	}
 
 	// How to react with consecutive triggers
@@ -220,6 +221,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
+			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+
 		}
 
 		switch(m_hideMode) {
@@ -256,6 +259,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
+			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 		}
 
 		switch(m_hideMode) {
@@ -571,6 +575,17 @@ public class HUDMessage : MonoBehaviour {
 					Show();
 				}
 			}
+		}
+	}
+
+
+	private void OnMissionZone(bool toggle, ZoneTrigger zone){
+		if ( toggle ){
+			// Get text to show
+			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+	        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+	        text.text = localized;
+	        Show();
 		}
 	}
 

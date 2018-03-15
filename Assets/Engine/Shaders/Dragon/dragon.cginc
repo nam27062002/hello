@@ -40,7 +40,7 @@ uniform float _Fresnel;
 uniform float4 _FresnelColor;
 #endif
 
-uniform float4 _AmbientAdd;
+//uniform float4 _AmbientAdd;
 
 uniform float3 _SecondLightDir;
 uniform float4 _SecondLightColor;
@@ -75,7 +75,9 @@ v2f vert(appdata_t v)
 	// Normal
 	float3 normal = UnityObjectToWorldNormal(v.normal);
 	// Light Probes
-	o.vLight = ShadeSH9(float4(normal, 1.0));
+//	o.vLight = ShadeSH9(float4(normal, 1.0));
+	o.vLight = float3(0.7, 0.7, 0.7);// ShadeSH9(float4(normal, 1.0));
+
 
 	// Half View - See: Blinn-Phong
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
@@ -169,8 +171,9 @@ fixed4 frag(v2f i) : SV_Target
 	col = main;
 
 #endif
-	// Inner lights
-#if defined (SELFILLUMINATE_AUTOINNERLIGHT)				// Used in devil dragon
+	// Self illumination (fire rush & specific dragons)
+
+#if defined (SELFILLUMINATE_AUTOINNERLIGHT)			// Used in devil dragon
 	float wave = /*(i.texcoord.x * _InnerLightWavePhase) + */(_Time.y * _InnerLightWaveSpeed);
 	fixed satMask = (0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b) * detail.r;
 	satMask = lerp(satMask, 1.0, detail.b);
@@ -178,15 +181,16 @@ fixed4 frag(v2f i) : SV_Target
 	satMask *= blink * 10.0;
 	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
-#elif defined (SELFILLUMINATE_BLINKLIGHTS)					//Used by reptile rings
+#elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
 	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
-	fixed3 selfIlluminate = col.xyz * detail.r * anim;
+	fixed3 selfIlluminate = col.xyz * 1.0 * anim;
 
 #else
-	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));
+	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination
 
 #endif
-	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate + _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+
+	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 
 // Fresnel
 #ifdef FRESNEL

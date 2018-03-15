@@ -147,6 +147,16 @@ public class PopupCredits : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		if(m_tween != null) {
+			m_tween.Kill();
+			m_tween = null;
+		}
+	}
+
+	/// <summary>
 	/// Something has changed on the inspector.
 	/// </summary>
 	private void OnValidate() {

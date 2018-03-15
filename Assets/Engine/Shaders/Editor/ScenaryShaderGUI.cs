@@ -532,6 +532,41 @@ internal class ScenaryShaderGUI : ShaderGUI {
         Debug.Log(sChanged + " materials changed");
     }
 
+    /// <summary>
+    /// Seek for all transparent scenary standard materials and disable keyword OPAQUEALPHA
+    /// </summary>
+    [MenuItem("Tools/Scenary/Seek for additive blending materials")]
+    public static void SeekAdditiveBlending()
+    {
+        Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+
+//            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
+            if (mat.shader == shader)
+            {
+                if (mat.IsKeywordEnabled("ADDITIVE_BLEND"))
+                {
+                    Debug.Log("Material name:" + mat.name);
+                    sChanged++;
+                }
+            }
+        }
+
+        Debug.Log(sChanged + " materials changed");
+    }
+
 
 
 

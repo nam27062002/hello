@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -29,6 +30,7 @@ public class PopupPhotoShare : MonoBehaviour {
 	// Exposed
 	[SerializeField] private RawImage m_preview = null;
 	[SerializeField] private AspectRatioFitter m_aspectRatioFitter = null;
+	[SerializeField] private TextMeshProUGUI m_popupTitleText = null;
 
 	// Internal
 	private Texture2D m_photo = null;
@@ -61,9 +63,13 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// </summary>
 	/// <param name="_photo">The photo that has been taken.</param>
 	/// <param name="_caption">The caption to be posted.</param>
-	public void Init(Texture2D _photo, string _caption) {
+	/// <param name="_popupTitle">The title to be displayed on the popup, already localized.</param>
+	public void Init(Texture2D _photo, string _caption, string _popupTitle) {
 		// Skip if given photo is not valid
 		if(_photo == null) return;
+
+		// Set popup title
+		if(m_popupTitleText != null) m_popupTitleText.text = _popupTitle;
 
 		// Store photo and caption for future use
 		m_photo = _photo;

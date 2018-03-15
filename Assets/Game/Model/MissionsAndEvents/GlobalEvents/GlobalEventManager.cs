@@ -671,6 +671,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			GlobalEventUserData currentEventUserData = user.GetGlobalEventData(m_currentEvent.id);
 			if ( responseJson.ContainsKey("c") && responseJson["c"].AsBool ) // if cheater
 			{
+				AntiCheatsManager.MarkUserAsCheater();
 				// if cheater the player is not in the leaderboard, so we set position to -1 and let him position itself on the leaderboard
 				currentEventUserData.position = -1;
 				m_currentEvent.RefreshLeaderboardPosition( currentEventUserData );

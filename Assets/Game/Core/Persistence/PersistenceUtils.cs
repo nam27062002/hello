@@ -27,8 +27,11 @@ public class PersistenceUtils
             DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
             if (_def != null)
             {
-                string _sc = _def.Get("softCurrency");
-                string _pc = _def.Get("hardCurrency");
+            	// ignore xml to avoid hackers moding it
+                //string _sc = _def.Get("softCurrency");
+                // string _pc = _def.Get("hardCurrency");
+				string _sc = "0";
+                string _pc = "0";
                 if (_initialDragonSku == null)
                 {
                     _initialDragonSku = _def.Get("initialDragonSKU");
@@ -40,7 +43,7 @@ public class PersistenceUtils
                 SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
                 _userProfile.Add("sc", _sc);
                 _userProfile.Add("pc", _pc);
-                _userProfile.Add("keys", 3);	// [AOC] HARDCODED!!
+                _userProfile.Add("keys", 0);	// [AOC] HARDCODED!!
                 _userProfile.Add("currentDragon", _initialDragonSku);
                 _userProfile.Add("currentLevel", "level_0");	// Only one level now
 

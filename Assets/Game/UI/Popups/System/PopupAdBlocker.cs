@@ -40,6 +40,8 @@ public class PopupAdBlocker : MonoBehaviour {
 	// Internal
 	private bool m_adPending = false;
 
+	public static bool m_sBlocking = false;
+
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -67,10 +69,18 @@ public class PopupAdBlocker : MonoBehaviour {
 			return;
 		}
 
-		// Open and initialize popup with the given settings!
-		PopupController popup = PopupManager.LoadPopup(PopupAdBlocker.PATH);
-		popup.GetComponent<PopupAdBlocker>().Init(_rewarded, _adPurpose, _onAdFinishedCallback);
-		popup.Open();
+		if (!m_sBlocking)
+		{
+			m_sBlocking = true;
+			// Open and initialize popup with the given settings!
+			PopupController popup = PopupManager.LoadPopup(PopupAdBlocker.PATH);
+			popup.GetComponent<PopupAdBlocker>().Init(_rewarded, _adPurpose, _onAdFinishedCallback);
+			popup.Open();
+		}
+		else
+		{
+			if(_onAdFinishedCallback != null) _onAdFinishedCallback.Invoke(false);	// Unsuccessful
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -166,5 +176,6 @@ public class PopupAdBlocker : MonoBehaviour {
 	public void OnClosePostAnimation() {
 		// Remove all listeners
 		OnAdFinished.RemoveAllListeners();
+		m_sBlocking = false;
 	}
 }

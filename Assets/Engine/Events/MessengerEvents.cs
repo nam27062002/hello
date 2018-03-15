@@ -94,6 +94,7 @@ public enum MessengerEvents {
     ENTITY_EATEN,				// params: Transform _entity, Reward _reward
 	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
 	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
+	BLOCKER_DESTROYED,			// no params
 	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
 	STAR_COMBO,
 	ENTITY_ESCAPED,				// params: Transform _entity
@@ -120,6 +121,7 @@ public enum MessengerEvents {
 	EGG_COLLECTED_FAIL,			// params: CollectibleEgg _egg
 	LETTER_COLLECTED,			// params: Reward _r
 	EARLY_ALL_HUNGRY_LETTERS_COLLECTED, 	//
+	START_ALL_HUNGRY_LETTERS_COLLECTED,			//
 	ALL_HUNGRY_LETTERS_COLLECTED,			//
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
 	TICKET_COLLECTED,				// no params
@@ -208,6 +210,8 @@ public enum MessengerEvents {
 	GLOBAL_EVENT_SCORE_REGISTERED,	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
 
     CONNECTION_RECOVERED,
+
+	MISSION_ZONE,	// params: bool _inside, ZoneTrigger _zone
 
 	COUNT
 }

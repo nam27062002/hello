@@ -143,7 +143,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
-		m_dragonSlot.dragonInstance.DisableMoves();
+		m_dragonSlot.dragonInstance.DisableMovesOnResults();
 		m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 		m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
 		m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
