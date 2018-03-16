@@ -10,6 +10,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	[SerializeField] private InteractionType m_zone1Interaction = InteractionType.Collision;
 	[SerializeField] private float m_knockBackStrength = 5f;
+	[SerializeField] private float m_damageOnDestruction = 0f;
 
 	[SerializeField] private bool m_particleFaceDragonDirection = false;
 
@@ -41,7 +42,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	private bool m_spawned = false;
 
-	private DragonBreathBehaviour m_breath;
+	private DragonMotion m_dragonMotion;
+	private DragonHealthBehaviour m_dragonHealth;
+	private DragonBreathBehaviour m_dragonBreath;
 
 
 
@@ -112,17 +115,17 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 				m_collider.isTrigger = true;
 			}
 
-			Vector3 center = transform.rotation * m_collider.center;
-			Vector3 colliderCenterTransform = Vector3.zero;
-			colliderCenterTransform.x = transform.position.x;
-			colliderCenterTransform.y = transform.position.y + center.y;
+			Vector3 colliderCenterTransform = transform.position + (transform.up * m_collider.center.y);
 			colliderCenterTransform.z = 0;
 			colliderCenterTransform = transform.InverseTransformPoint(colliderCenterTransform);
 			m_collider.center = colliderCenterTransform;
 		}
 
 		m_spawned = true;
-		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
+
+		m_dragonMotion = InstanceManager.player.dragonMotion;
+		m_dragonBreath = InstanceManager.player.breathBehaviour;
+		m_dragonHealth = InstanceManager.player.dragonHealthBehaviour;
 	}
 
 	public void Spawn(ISpawner _spawner) {
@@ -146,7 +149,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {
-			if (!m_breath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
 						if (m_effect == ZoneManager.ZoneEffect.S) {
@@ -168,7 +171,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnTriggerEnter(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_breath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						GameObject ps = m_feedbackParticle.Spawn();
@@ -201,7 +204,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnTriggerExit(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_breath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						Vector3 particlePosition = transform.position + m_colliderCenter;
@@ -237,15 +240,17 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		}
 
 		if (m_zone == ZoneManager.Zone.Zone1 && m_knockBackStrength > 0f) {
-			DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
-
-			Vector3 knockBack = dragonMotion.transform.position - (transform.position + m_collider.center);
+			Vector3 knockBack = m_dragonMotion.transform.position - (transform.position + m_collider.center);
 			knockBack.z = 0f;
 			knockBack.Normalize();
 
-			knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
+			knockBack *= Mathf.Log(Mathf.Max(m_dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
 
-			dragonMotion.AddForce(knockBack);
+			m_dragonMotion.AddForce(knockBack);
+		}
+
+		if (m_damageOnDestruction > 0) {
+			m_dragonHealth.ReceiveDamage(m_damageOnDestruction, DamageType.NORMAL);
 		}
 
 		if (!string.IsNullOrEmpty(m_onDestroyAudio))
@@ -268,7 +273,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	}
 
 	void FaceDragon(GameObject _ps) {
-		DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
+		DragonMotion dragonMotion = m_dragonBreath.GetComponent<DragonMotion>();
 		Vector3 dir = dragonMotion.direction;
 		dir.z = 0;
 		dir.Normalize();
