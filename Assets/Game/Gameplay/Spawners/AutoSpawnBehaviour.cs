@@ -126,7 +126,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			m_respawnCount = 1;
 			m_state = State.Idle;
 		}
-
 	}
 
 	public void Initialize() {
