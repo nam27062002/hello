@@ -173,23 +173,29 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 	public void OnGooglePlayLogIn(){
 		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
-			// Show curtain and wait for game center response
-			if ( !GameCenterManager.SharedInstance.GetAuthenticatingState() )	// if not authenticating
-			{
-				ApplicationManager.instance.GameCenter_Login();
-			}
 
-			if (GameCenterManager.SharedInstance.GetAuthenticatingState())
-			{
-				m_loadingPopupController = PopupManager.PopupLoading_Open();
-			}
-			else
-			{
-				// No curatin -> something failed, we are not authenticating -> tell the player there was an error
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+            {                
+                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            }
+            else
+            {
+                // Show curtain and wait for game center response
+                if (!GameCenterManager.SharedInstance.GetAuthenticatingState()) // if not authenticating
+                {
+                    ApplicationManager.instance.GameCenter_Login();
+                }
 
-
+                if (GameCenterManager.SharedInstance.GetAuthenticatingState())
+                {
+                    m_loadingPopupController = PopupManager.PopupLoading_Open();
+                }
+                else
+                {
+                    // No curatin -> something failed, we are not authenticating -> tell the player there was an error
+                    UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+                }
+            }
 		}
 	}
 

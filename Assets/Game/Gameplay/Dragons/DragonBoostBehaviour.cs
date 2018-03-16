@@ -96,12 +96,16 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		bool activate = Input.GetKey(KeyCode.X) || m_controls.action || m_dragon.changingArea;
+		bool activate = m_controls.action || m_dragon.changingArea;
 
-		//if (m_insideWater)
-		//	activate = false;
+#if UNITY_EDITOR
+        activate = activate || Input.GetKey(KeyCode.X);
+#endif
 
-		if (activate) {
+        //if (m_insideWater)
+        //	activate = false;
+
+        if (activate) {
 			if (m_ready) {
 				if (m_dragon.energy >= m_energyRequiredToBoost || m_dragon.changingArea) {
 					m_ready = false;

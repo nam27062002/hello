@@ -27,8 +27,11 @@ public class PersistenceUtils
             DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
             if (_def != null)
             {
-                string _sc = _def.Get("softCurrency");
-                string _pc = _def.Get("hardCurrency");
+            	// ignore xml to avoid hackers moding it
+                //string _sc = _def.Get("softCurrency");
+                // string _pc = _def.Get("hardCurrency");
+				string _sc = "0";
+                string _pc = "0";
                 if (_initialDragonSku == null)
                 {
                     _initialDragonSku = _def.Get("initialDragonSKU");
