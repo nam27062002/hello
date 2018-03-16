@@ -66,11 +66,10 @@ public class Corpse : MonoBehaviour {
 			Renderer renderer = m_renderers[i];
 			Material[] materials = renderer.sharedMaterials;
 
-			List<Material> materialList = new List<Material>();	
-			materialList.AddRange(materials);
-			m_materials[renderer.GetInstanceID()] = materialList;
+			m_materials[renderer.GetInstanceID()] = new List<Material>();
 
 			for (int m = 0; m < materials.Length; ++m) {
+				m_materials[renderer.GetInstanceID()].Add(new Material(materials[m]));
 				materials[m] = null;
 			}
 			renderer.sharedMaterials = materials;

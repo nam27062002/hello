@@ -27,6 +27,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1125257904534250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4444460433069686}
+  - component: {fileID: 33240544233222720}
+  - component: {fileID: 23890362119426436}
+  - component: {fileID: 114045731007484010}
+  - component: {fileID: 114839420815980064}
+  m_Layer: 0
+  m_Name: glow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1154218429783266
 GameObject:
   m_ObjectHideFlags: 0
@@ -77,7 +96,7 @@ GameObject:
   - component: {fileID: 54343284643111368}
   - component: {fileID: 136249852991239162}
   m_Layer: 21
-  m_Name: PF_Mushroom
+  m_Name: PF_MushroomBig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,15 +140,29 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341144563950862}
   m_LocalRotation: {x: -0, y: -0.25077966, z: -0, w: 0.9680442}
-  m_LocalPosition: {x: -1231.077, y: -116.3366, z: -21.65039}
+  m_LocalPosition: {x: -1234.2982, y: -116.3391, z: -21.65039}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4709300955468130}
+  - {fileID: 4444460433069686}
   - {fileID: 4526279450032702}
   - {fileID: 4513157220395496}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -29.047, z: 0}
+--- !u!4 &4444460433069686
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1125257904534250}
+  m_LocalRotation: {x: 0.0014321741, y: 0.9816483, z: 0.007377989, w: -0.19055212}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_Children: []
+  m_Father: {fileID: 4064013338647004}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: -56.864002, y: -101.14001, z: -58.046}
 --- !u!4 &4513157220395496
 Transform:
   m_ObjectHideFlags: 1
@@ -141,7 +174,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4064013338647004}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4526279450032702
 Transform:
@@ -154,7 +187,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4064013338647004}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4548883565692358
 Transform:
@@ -190,13 +223,52 @@ Transform:
   m_GameObject: {fileID: 1636619659782710}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0.519, z: 0}
-  m_LocalScale: {x: 2.1, y: 2.1, z: 2.1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 4651143913899124}
   - {fileID: 4548883565692358}
   m_Father: {fileID: 4064013338647004}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23890362119426436
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1125257904534250}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 19d1e018851c15d439b040809575dc14, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &33240544233222720
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1125257904534250}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!54 &54343284643111368
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -229,6 +301,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114045731007484010
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1125257904534250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_overrideCamera: {fileID: 0}
 --- !u!114 &114119588032569970
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -301,6 +385,21 @@ MonoBehaviour:
   m_sku: Mushroom
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
+--- !u!114 &114839420815980064
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1125257904534250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: ToxicMushroomSpine2
+  m_parentRoot: {fileID: 4064013338647004}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114867331959196792
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -393,7 +492,7 @@ MonoBehaviour:
     max: 2.75
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"damage":15,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":6,"isWallWalking":false,"timeToIdle":{"min":3,"max":6},"timeToChangeDirection":{"min":3,"max":6},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":2},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
-  m_databaseKey: PF_Mushroom
+  m_databaseKey: PF_MushroomBig
 --- !u!114 &114952578268809638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -405,8 +504,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.00031539798, y: 0.92091906}
-  radius: 1.0283043
+  offset: {x: 0.0123799145, y: 1.6811424}
+  radius: 2.117965
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114976761183515434
 MonoBehaviour:
@@ -647,8 +746,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
-  m_Center: {x: 0, y: 0.8, z: 0}
+  m_Radius: 2.46
+  m_Center: {x: 0, y: 1.52, z: 0}
 --- !u!136 &136249852991239162
 CapsuleCollider:
   m_ObjectHideFlags: 1
