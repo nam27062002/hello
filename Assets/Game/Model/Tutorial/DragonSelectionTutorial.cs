@@ -123,6 +123,9 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Timer not finished, scroll from initial delta to last delta
 					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_initialDelta, m_lastDelta, m_timer.GetDelta(m_easeForward));
 				}
+
+				// Update Dragon Focus
+				UpdateLoadedDragons(m_scroller.cameraAnimator.delta);
 			} break;
 
 			case State.BACK_DELAY: {
@@ -164,8 +167,17 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Timer not finished, scroll from last delta to final delta
 					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_lastDelta, m_finalDelta, m_timer.GetDelta(m_easeBackward));
 				}
+
+				// Update Dragon Focus
+				UpdateLoadedDragons(m_scroller.cameraAnimator.delta);
 			} break;
 		}
+	}
+
+	private void UpdateLoadedDragons( float delta )
+	{
+		int menuOrder = m_scroller.cameraAnimator.cameraPath.path.GetPointAt(delta);
+		m_scroller.LoadDragonsAround( menuOrder );
 	}
 
 	//------------------------------------------------------------------------//

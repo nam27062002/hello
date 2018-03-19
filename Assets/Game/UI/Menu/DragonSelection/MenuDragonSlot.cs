@@ -26,6 +26,14 @@ public class MenuDragonSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Private references
 	private MenuDragonLoader m_dragonLoader;
+	public MenuDragonLoader dragonLoader {
+		get{
+			if(m_dragonLoader == null) {
+				m_dragonLoader = GetComponentInChildren<MenuDragonLoader>();
+			} 
+			return m_dragonLoader; 
+		}
+	}
 	private DragonData m_dragonData;
 
 	// Public references

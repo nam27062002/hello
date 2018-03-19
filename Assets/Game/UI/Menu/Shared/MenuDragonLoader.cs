@@ -107,6 +107,9 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_allowAltAnimations = value; }
 	}
 
+	public bool m_loadAsync = false;
+	private ResourceRequest m_asyncRequest = null;
+
 	private bool m_useShadowMaterial = false;
 	public bool useShadowMaterial {
 		get { return m_useShadowMaterial; }
@@ -123,6 +126,8 @@ public class MenuDragonLoader : MonoBehaviour {
 		get { return m_dragonInstance; }
 	}
 
+	public delegate void OnDragonLoaded( MenuDragonLoader loader );
+	public OnDragonLoaded onDragonLoaded;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -176,8 +181,19 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <param name="_sku">The sku of the dragon to be loaded</param>
 	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param> 
 	public void LoadDragon(string _sku, string _disguiseSku) {
+
+		if (m_dragonInstance != null || m_asyncRequest != null){
+			if (_sku == m_dragonSku && _disguiseSku == m_disguiseSku )
+				return;
+		}
+
 		// Unload current dragon if any
 		UnloadDragon();
+
+		// Update dragon and disguise skus
+		m_dragonSku = _sku;
+		m_disguiseSku = _disguiseSku;
+
 
 		// Load selected dragon
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
@@ -185,65 +201,89 @@ public class MenuDragonLoader : MonoBehaviour {
 			string prefabColumn = "menuPrefab";
 			if (  m_useResultsScreen )
 				prefabColumn = "resultsPrefab";
-			// Instantiate the prefab and add it as child of this object
-			GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
-			if(dragonPrefab != null) {
-				GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
-				newInstance.transform.SetParent(this.transform, false);
-				newInstance.transform.localPosition = Vector3.zero;
-				newInstance.transform.localRotation = Quaternion.identity;
 
-				// Keep layers?
-				if(!m_keepLayers) {
-					newInstance.SetLayerRecursively(this.gameObject.layer);
+			if (m_loadAsync){
+				m_asyncRequest = Resources.LoadAsync<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+			}else{
+				// Instantiate the prefab and add it as child of this object
+				GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+				if(dragonPrefab != null) {
+					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
+					ConfigureInstance( newInstance );
+					if (onDragonLoaded != null)
+						onDragonLoaded(this);
 				}
-
-				// Store dragon preview and launch the default animation
-				m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
-				m_dragonInstance.SetAnim(m_anim);
-
-				// Reset scale if required
-				if(m_resetDragonScale) {
-					m_dragonInstance.transform.localScale = Vector3.one;
-				}
-
-				// Apply equipment
-				DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
-				if(equip != null) {
-					if ( !Application.isPlaying )
-					{
-						equip.Init();
-					}
-					// Apply disguise (if any)
-					if(!string.IsNullOrEmpty(_disguiseSku)) {
-						equip.EquipDisguise(_disguiseSku);
-					}
-
-					// Toggle pets
-					equip.TogglePets(m_showPets, false);
-
-					if (m_hideResultsEquipment)
-						equip.HideResultsEquipment();
-				}
-
-				// Remove fresnel if required
-				if(m_removeFresnel) {
-					m_dragonInstance.SetFresnelColor(Color.black);
-				}
-
-				// Apply shadow material if required
-				if(m_useShadowMaterial) {
-					m_dragonInstance.equip.EquipDisguiseShadow();
-				}
-
-				// Allow alt animations?
-				m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
 			}
 		}
+	}
 
-		// Update dragon and disguise skus
-		m_dragonSku = _sku;
-		m_disguiseSku = _disguiseSku;
+	public void Reload(){
+		LoadDragon( m_dragonSku, m_disguiseSku );
+	}
+
+	void Update()
+	{
+		if ( m_asyncRequest != null && m_asyncRequest.isDone )
+		{
+			GameObject newInstance = GameObject.Instantiate<GameObject>( m_asyncRequest.asset as GameObject );
+			ConfigureInstance( newInstance );
+			m_asyncRequest = null;
+			if (onDragonLoaded != null)
+				onDragonLoaded(this);
+		}
+	}
+
+	public void ConfigureInstance(GameObject newInstance){
+
+		newInstance.transform.SetParent(this.transform, false);
+		newInstance.transform.localPosition = Vector3.zero;
+		newInstance.transform.localRotation = Quaternion.identity;
+
+		// Keep layers?
+		if(!m_keepLayers) {
+			newInstance.SetLayerRecursively(this.gameObject.layer);
+		}
+
+		// Store dragon preview and launch the default animation
+		m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
+		m_dragonInstance.SetAnim(m_anim);
+
+		// Reset scale if required
+		if(m_resetDragonScale) {
+			m_dragonInstance.transform.localScale = Vector3.one;
+		}
+
+		// Apply equipment
+		DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
+		if(equip != null) {
+			if ( !Application.isPlaying )
+			{
+				equip.Init();
+			}
+			// Apply disguise (if any)
+			if(!string.IsNullOrEmpty(m_disguiseSku)) {
+				equip.EquipDisguise(m_disguiseSku);
+			}
+
+			// Toggle pets
+			equip.TogglePets(m_showPets, false);
+
+			if (m_hideResultsEquipment)
+				equip.HideResultsEquipment();
+		}
+
+		// Remove fresnel if required
+		if(m_removeFresnel) {
+			m_dragonInstance.SetFresnelColor(Color.black);
+		}
+
+		// Apply shadow material if required
+		if(m_useShadowMaterial) {
+			m_dragonInstance.equip.EquipDisguiseShadow();
+		}
+
+		// Allow alt animations?
+		m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
 	}
 
 	/// <summary>
@@ -281,9 +321,10 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	public void UnloadDragon() {
 		// Just make sure the object doesn't have anything attached
+		m_asyncRequest = null;
 		m_dragonInstance = null;
 		foreach(Transform child in transform) {
-			GameObject.DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
+			GameObject.Destroy(child.gameObject);	// Immediate so it can be called from the editor
 		}
 	}
 

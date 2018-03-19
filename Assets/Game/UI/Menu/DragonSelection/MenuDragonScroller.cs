@@ -42,7 +42,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	[SerializeField] private float m_lerpSpeed = 10f;
 
 	// Dragon previews
-	private Dictionary<string, MenuDragonSlot> m_dragonSlots = new Dictionary<string, MenuDragonSlot>();
+	private List<MenuDragonSlot> m_dragonSlots;
 
 	// Internal refs
 	private MenuTransitionManager m_menuTransitionManager = null;
@@ -51,6 +51,8 @@ public class MenuDragonScroller : MonoBehaviour {
 
 	// Internal logic
 	private bool m_snapCamera = false;
+	private string m_focusingDragon = "";
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -61,9 +63,22 @@ public class MenuDragonScroller : MonoBehaviour {
 	private void Awake() {
 		// Find and store dragon preview references
 		MenuDragonSlot[] dragonSlots = m_dragonSlotsContainer.GetComponentsInChildren<MenuDragonSlot>();
+		Debug.Log("Dragon Slots: " + dragonSlots);
+		m_dragonSlots = new List<MenuDragonSlot>(dragonSlots.Length);
 		for(int i = 0; i < dragonSlots.Length; i++) {
-			// Add it into the map
-			m_dragonSlots[dragonSlots[i].dragonPreview.sku] = dragonSlots[i];
+			Debug.Log("Dragon Slots Index: " + i);
+			DragonData data = DragonManager.GetDragonData(dragonSlots[i].dragonPreview.sku);
+			Debug.Log("Dragon Data: "+ dragonSlots[i].dragonPreview.sku + " " + data);
+			int dragonIndex = data.GetOrder();
+			// Add it into the list
+			Debug.Log("Insert : " + dragonIndex);
+			m_dragonSlots.Insert(dragonIndex, dragonSlots[i]);
+			Debug.Log("Dragon Loader : " + dragonSlots[i].dragonLoader);
+			if (dragonSlots[i].dragonLoader != null ){
+				dragonSlots[i].dragonLoader.onDragonLoaded += OnDragonLoaded;
+			}else{
+				Debug.LogError("No Dragon Loader!!!");
+			}
 		}
 
 		// Subscribe to external events
@@ -121,6 +136,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// <param name="_sku">The dragon identifier.</param>
 	/// <param name="_animate">Whether to animate or do an instant camera swap.</param>
 	public void FocusDragon(string _sku, bool _animate) {
+		m_focusingDragon = _sku;
 		// Trust that snap points are placed based on dragons' menuOrder value
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
 		if(def == null) return;
@@ -139,21 +155,49 @@ public class MenuDragonScroller : MonoBehaviour {
 			}
 		}
 
+		LoadDragonsAround( menuOrder );
+	}
+
+	public void LoadDragonsAround(int menuIndex)
+	{
 		// Only show pets of the focused dragon
+		int viewSize = 2;
+		// foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) 
+		for( int i = 0; i<m_dragonSlots.Count; ++i )
+		{
+			if ( i < menuIndex - viewSize || i > menuIndex + viewSize)
+			{
+				m_dragonSlots[i].dragonLoader.UnloadDragon();
+			}
+			else
+			{
+				m_dragonSlots[i].dragonLoader.Reload();
+			}
+		}
+	}
+
+	void OnDragonLoaded( MenuDragonLoader loader ){
 		bool showPets = false;
 		bool allowAltAnimations = false;
-		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
-			showPets = allowAltAnimations = (kvp.Key == _sku);
+
+		showPets = allowAltAnimations = (loader.dragonSku == m_focusingDragon);
+		MenuDragonSlot slot = null;
+		for (int i = 0; i < m_dragonSlots.Count && slot == null; i++) {
+			if ( m_dragonSlots[i].dragonLoader == loader )
+				slot = m_dragonSlots[i];
+		}
+
+		if ( slot != null )
+		{
 			if ( allowAltAnimations)
 			{
-				MenuDragonSlot slot = GetDragonSlot( kvp.Key);
 				if ( slot.currentState < DragonData.LockState.LOCKED )
 					allowAltAnimations = false;
 			}
-			if(kvp.Value.dragonPreview.equip.showPets != showPets) {
-				kvp.Value.dragonPreview.equip.TogglePets(showPets, false);
+			if(slot.dragonPreview.equip.showPets != showPets) {
+				slot.dragonPreview.equip.TogglePets(showPets, false);
 			}
-			kvp.Value.dragonPreview.allowAltAnimations = allowAltAnimations;
+			slot.dragonPreview.allowAltAnimations = allowAltAnimations;
 		}
 	}
 
@@ -168,6 +212,7 @@ public class MenuDragonScroller : MonoBehaviour {
 		MenuDragonSlot slot = GetDragonSlot(_sku);
 		if(slot != null) ret = slot.dragonPreview;
 
+		/*
 		// If not found on the dictionary, try to find it in the hierarchy
 		if(ret == null) {
 			// We have need to check all the dragons anyway, so update them all
@@ -182,6 +227,7 @@ public class MenuDragonScroller : MonoBehaviour {
 				}
 			}
 		}
+		*/
 		return ret;
 	}
 
@@ -191,9 +237,8 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// <returns>The slot of the requested dragon.</returns>
 	/// <param name="_sku">The sku of the dragon whose slot we want.</param>
 	public MenuDragonSlot GetDragonSlot(string _sku) {
-		// Just get it from the dictionary
-		MenuDragonSlot slot = null;
-		m_dragonSlots.TryGetValue(_sku, out slot);
+		int index = DragonManager.GetDragonData(_sku).GetOrder();
+		MenuDragonSlot slot = m_dragonSlots[index];
 		return slot;
 	}
 
@@ -267,11 +312,17 @@ public class MenuDragonScroller : MonoBehaviour {
 		// To prevent seeing the head/tail of the previous/next dragons in pets/disguises/photo screens.
 		bool showAll = _to == MenuScreen.DRAGON_SELECTION;
 		bool animate = _from != MenuScreen.PLAY;
-		foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) {
+		// foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) 
+		for( int i = 0; i<m_dragonSlots.Count; ++i )
+		{
+			MenuDragonSlot slot = m_dragonSlots[i];
 			// Use slot's ShowHideAnimator
 			// Show always if it's the selected dragon!
-			DragonData data = DragonManager.GetDragonData(kvp.Key);
-			kvp.Value.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || kvp.Key == InstanceManager.menuSceneController.selectedDragon, animate);
+			if ( slot.dragonPreview != null )
+			{
+				DragonData data = DragonManager.GetDragonData(slot.dragonPreview.sku);
+				// slot.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || slot.dragonPreview.sku == InstanceManager.menuSceneController.selectedDragon, animate);
+			}
 		}
 
 		// Don't snap the camera!
