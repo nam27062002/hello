@@ -39,6 +39,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
     private static class Styles
     {
         readonly public static string mainTextureText = "MainTex";
+        readonly public static string mainColorText = "Main Color";
+
+        readonly public static string colorText = "Color";
 
         readonly public static string enableBlendTextureText = "Enable Blend Texture";
         readonly public static string blendTextureText = "Blend Texture";
@@ -117,13 +120,13 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EmissivePower;
     MaterialProperty mp_BlinkTimeMultiplier;
 
+    MaterialProperty mp_Color;
+
 //    MaterialProperty mp_reflectionColor;
     MaterialProperty mp_reflectionAmount;
     MaterialProperty mp_reflectionMap;
 
-
     MaterialProperty mp_Cull;
-
 
 /// <summary>
 /// Toggle Material Properties
@@ -146,6 +149,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
     /// </summary>
 
     MaterialProperty mp_VertexcolorMode;
+    MaterialProperty mp_MainColor;
+
     MaterialProperty mp_EmissionType;
 
     MaterialEditor m_materialEditor;
@@ -203,6 +208,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_lightmapContrastMargin = FindProperty("_LightmapContrastMargin", props);
         mp_lightmapContrastPhase = FindProperty("_LightmapContrastPhase", props);
 
+        mp_Color = FindProperty("_Color", props);
+
         /// Toggle Material Properties
 
         mp_EnableBlendTexture = FindProperty("_EnableBlendTexture", props);
@@ -215,11 +222,12 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_EnableCutoff = FindProperty("_EnableCutoff", props);
         mp_EnableFog = FindProperty("_EnableFog", props);
 
-//        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
-//        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
+        //        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
+        //        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
 
         /// Enum Material PProperties
 
+        mp_MainColor = FindProperty("MainColor", props);
         mp_VertexcolorMode = FindProperty("VertexColor", props);
         mp_EmissionType = FindProperty("Emissive", props);
         mp_Cull = FindProperty("_Cull", props);
@@ -302,7 +310,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
-
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
         materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
@@ -319,32 +326,42 @@ internal class ScenaryShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
         }
 
-        materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
-        materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
-
         Vector4 tem = mp_Panning.vectorValue;
         Vector2 p1 = new Vector2(tem.x, tem.y);
-        p1 = EditorGUILayout.Vector2Field("Panning:", p1);
-        tem.x = p1.x;
-        tem.y = p1.y;
 
-
-        bool normalMap = mp_normalTexture.textureValue != null as Texture;
-
-        if (EditorGUI.EndChangeCheck())
+        featureSet(mp_MainColor, Styles.mainColorText);
+        if (mp_MainColor.floatValue == 0.0f)
         {
-            SetKeyword(material, kw_normalmap, normalMap);
-            EditorUtility.SetDirty(material);
-            Debug.Log("EnableNormalMap " + (normalMap));
-//            DebugKeywords(material);
+            materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
+            materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
+
+            p1 = EditorGUILayout.Vector2Field("Panning:", p1);
+            tem.x = p1.x;
+            tem.y = p1.y;
+
+
+            bool normalMap = mp_normalTexture.textureValue != null as Texture;
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                SetKeyword(material, kw_normalmap, normalMap);
+                EditorUtility.SetDirty(material);
+                Debug.Log("EnableNormalMap " + (normalMap));
+                //            DebugKeywords(material);
+            }
+
+
+            if (normalMap)
+            {
+                materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
+            }
+        }
+        else
+        {
+            materialEditor.ShaderProperty(mp_Color, Styles.colorText);
         }
 
         EditorGUI.BeginChangeCheck();
-
-        if (normalMap)
-        {
-            materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
-        }
 
         if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
         {

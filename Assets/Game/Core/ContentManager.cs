@@ -123,6 +123,7 @@ public class ContentManager
 
         // Settings
         kDefinitionFiles.Add(DefinitionsCategory.LOCALIZATION, new string[] { "Rules/localizationDefinitions" });
+		kDefinitionFiles.Add(DefinitionsCategory.FONT_GROUPS, new string[] { "Rules/fontGroupsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, new string[]{
             "Rules/gameSettings",
             "Rules/dragonSettings",
