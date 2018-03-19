@@ -50,10 +50,11 @@ public class HDTrackingManager
         BUY_EGG,
         SKIP_EGG_INCUBATION,
         ACQUIRE_DISGUISE,
-        SHOP_COINS_PACK,
+		SHOP_PC_PACK,
+		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
-        NOT_ENOUGH_RESOURCES,
 		SHOP_KEYS_PACK,
+        NOT_ENOUGH_RESOURCES,
         INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
         CHEAT,                          // Use this if the currency comes from a cheat so it won't be tracked
         REWARD_CHEST,

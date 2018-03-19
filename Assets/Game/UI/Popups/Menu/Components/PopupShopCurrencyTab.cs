@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Tab in the currency shop!
 /// </summary>
-public class PopupShopCurrencyTab : Tab {
+public class PopupShopCurrencyTab : IPopupShopTab {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -27,50 +27,29 @@ public class PopupShopCurrencyTab : Tab {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[Space]
-	[SerializeField] private GameObject m_pillPrefab = null;
-	[SerializeField] private ScrollRect m_scrollList = null;
-	public ScrollRect scrollList {
-		get { return m_scrollList; }
-	}
-
-	// Internal
-	private List<IPopupShopPill> m_pills = new List<IPopupShopPill>();
-	public List<IPopupShopPill> pills {
-		get { return m_pills; }
-	}
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	override protected void Awake() {
-		Debug.Assert(m_pillPrefab != null, "Missing required reference!");
-		Debug.Assert(m_scrollList != null, "Missing required reference!");
-		base.Awake();
-	}
+	[List("sc", "hc")]
+	[SerializeField] private string m_type = "sc";
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// IPopupShopTab IMPLEMENTATION											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialize the tab with a list of shop pack definitions.
+	/// Initialize this tab and instantiate required pills.
 	/// </summary>
-	/// <param name="_defs">Shop pack definitions to be displayed in this tab.</param>
-	public void InitWithDefs(List<DefinitionNode> _defs) {
-		// Clear current content
-		m_scrollList.content.DestroyAllChildren(false);
-		m_pills.Clear();
+	override public void Init() {
+		// Clear current pills
+		Clear();
+
+		// Gather definitions based on type
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", m_type);
 
 		// Create pills
-		DefinitionsManager.SharedInstance.SortByProperty(ref _defs, "order", DefinitionsManager.SortType.NUMERIC);
-		for(int i = 0; i < _defs.Count; i++) {
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		for(int i = 0; i < defs.Count; i++) {
 			// Create new instance and initialize it
 			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
-			IPopupShopPill newPill = newPillObj.GetComponent<IPopupShopPill>();
-			newPill.InitFromDef(_defs[i]);
+			PopupShopCurrencyPill newPill = newPillObj.GetComponent<PopupShopCurrencyPill>();
+			newPill.InitFromDef(defs[i]);
 
 			// Store to local collection for further use
 			m_pills.Add(newPill);

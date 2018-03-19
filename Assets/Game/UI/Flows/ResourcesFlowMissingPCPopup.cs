@@ -27,7 +27,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed Members
-	[SerializeField] private IPopupShopPill m_recommendedPackPill = null;
+	[SerializeField] private PopupShopCurrencyPill m_recommendedPackPill = null;
 
 	// Events
 	public UnityEvent OnRecommendedPackPurchased = new UnityEvent();

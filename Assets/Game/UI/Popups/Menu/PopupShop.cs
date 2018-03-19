@@ -82,22 +82,8 @@ public class PopupShop : MonoBehaviour {
 		for(int i = 0; i < (int)Tabs.COUNT; ++i) {
 			// Get target tab
 			IPopupShopTab tab = m_tabs[i] as IPopupShopTab;
-
-			// Get de definitions corresponding to this tab
-			List<DefinitionNode> defs = null;;
-			switch((Tabs)i) {
-				case Tabs.SC: {
-					defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "sc");
-				} break;
-
-				case Tabs.PC: {
-					defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "hc");
-				} break;
-			}
-
-			// Initialize the tab
 			Debug.Assert(tab != null, "Unknown tab type!");
-			tab.InitWithDefs(defs);
+			tab.Init();
 
 			// Do some extra initialization on the pills
 			float totalDelay = 0f;

@@ -24,19 +24,20 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Parametrized event
-	public class CurrencyShopPillEvent : UnityEvent<IPopupShopPill> { }
+	public class ShopPillEvent : UnityEvent<IPopupShopPill> { }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Public
-	public abstract DefinitionNode def {
-		get;
+	protected DefinitionNode m_def = null;
+	public DefinitionNode def {
+		get { return m_def; }
 	}
 
 	// Events
-	public CurrencyShopPillEvent OnPurchaseSuccess = new CurrencyShopPillEvent();
-	public CurrencyShopPillEvent OnPurchaseError = new CurrencyShopPillEvent();
+	public ShopPillEvent OnPurchaseSuccess = new ShopPillEvent();
+	public ShopPillEvent OnPurchaseError = new ShopPillEvent();
 
 	// Internal
 	protected UserProfile.Currency m_currency = UserProfile.Currency.REAL;
@@ -46,35 +47,71 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	private PopupController m_loadingPopupController;
 	private bool m_awaitingPurchaseConfirmation = false;
 
-	protected static int s_loadingTaskPriority = -1;
-
 	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
+	// ABSTRACT METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Given a shop pack defintiion
+	/// Obtain the IAP sku as defined in the App Stores.
 	/// </summary>
-	/// <param name="_def">Def.</param>
-	public static void ApplyShopPack(DefinitionNode _def) {	
-		UserProfile.Currency type = UserProfile.SkuToCurrency(def.Get("type"));
-		// Add amount
-		// [AOC] Could be joined in a single instruction for all types, but keep it split in case we need some extra processing (i.e. tracking!)
-		switch(type) {
-			case UserProfile.Currency.SOFT: {
-				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
-			} break;
+	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
+	protected abstract string GetIAPSku();
+	
+	/// <summary>
+	/// Get the tracking id for transactions performed by this shop pill
+	/// </summary>
+	/// <returns>The tracking identifier.</returns>
+	protected abstract HDTrackingManager.EEconomyGroup GetTrackingId();
+	
+	/// <summary>
+	/// Apply the shop pack to the current user!
+	/// Invoked after a successful purchase.
+	/// </summary>
+	protected abstract void ApplyShopPack();
 
-			case UserProfile.Currency.HARD: {
-				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
-			} break;
+	/// <summary>
+	/// Shows the purchase success feedback.
+	/// </summary>
+	protected abstract void ShowPurchaseSuccessFeedback();
 
-			case UserProfile.Currency.KEYS: {
-				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
-			} break;
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Gets the localized IAP price, as returned from the App Store.
+	/// If the App Store is not reachable or the product is not found, return the given reference price instead.
+	/// </summary>
+	/// <returns>The localized IAP price.</returns>
+	/// <param name="_referencePriceDollars">The price to be used if the App Store can't be reached or can't find the requested product.</param>
+	protected string GetLocalizedIAPPrice(float _referencePriceDollars) {
+		// Price is localized by the store api, if available
+		if(GameStoreManager.SharedInstance.IsReady()) {
+			return GameStoreManager.SharedInstance.GetLocalisedPrice(GetIAPSku());
+		} else {
+			return "$" + StringUtils.FormatNumber(_referencePriceDollars, 2);
 		}
+	}
 
-		// Save persistence
-		PersistenceFacade.instance.Save_Request(true);
+	/// <summary>
+	/// Tell the pill whether to track purchases or not.
+	/// </summary>
+	/// <param name="_track">Track purchases?.</param>
+	private void TrackPurchaseResult(bool _track) {
+		// Skip if same state
+		if(_track == m_awaitingPurchaseConfirmation) return;
+
+		// Store new state
+		m_awaitingPurchaseConfirmation = _track;
+
+		// Update listeners
+		if(_track) {
+			Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
+			Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
+			Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
+		} else {
+			Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
+			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
+			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -90,33 +127,11 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// Depends on currency
 		switch(m_currency) {
 			case UserProfile.Currency.HARD: {
-				// What are we buying?
-				string resourcesFlowName = "";
-				HDTrackingManager.EEconomyGroup trackingId = HDTrackingManager.EEconomyGroup.SHOP_COINS_PACK;
-				switch(m_type) {
-					case UserProfile.Currency.SOFT: {
-						resourcesFlowName = "SHOP_COINS_PACK";
-						trackingId = HDTrackingManager.EEconomyGroup.SHOP_COINS_PACK;
-					} break;
-
-					case UserProfile.Currency.KEYS: {
-						resourcesFlowName = "SHOP_KEYS_PACK";
-						trackingId = HDTrackingManager.EEconomyGroup.SHOP_KEYS_PACK;
-					} break;
-				}
-
 				// Make sure we have enough and adjust new balance
 				// Resources flow makes it easy for us!
-				ResourcesFlow purchaseFlow = new ResourcesFlow(resourcesFlowName);
-				purchaseFlow.OnSuccess.AddListener(
-					(ResourcesFlow _flow) => {
-						ApplyShopPack(_flow.itemDef);
-
-						// Trigger message
-						OnPurchaseSuccessEnd(_flow.itemDef);
-					}
-				);
-				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, trackingId, def);
+				ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
+				purchaseFlow.OnSuccess.AddListener(OnResourcesFlowSuccess);
+				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
 			} break;
 
 			case UserProfile.Currency.REAL: {
@@ -146,48 +161,18 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// <summary>
 	/// 
 	/// </summary>
-	void OnConnectionCheck()
-	{
-		if ( m_checkConnectionError == null )
-		{
-			if ( GameStoreManager.SharedInstance.CanMakePayment() )
-			{
+	void OnConnectionCheck() {
+		if(m_checkConnectionError == null) {
+			if(GameStoreManager.SharedInstance.CanMakePayment()) {
 				TrackPurchaseResult(true);
-				GameStoreManager.SharedInstance.Buy( m_def.sku );
-			}	
-			else
-			{
+				GameStoreManager.SharedInstance.Buy(GetIAPSku());
+			} else {
 				OnPurchaseError.Invoke(this);
 				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			}
-		}
-		else
-		{
+		} else {
 			OnPurchaseError.Invoke(this);
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
-	}
-
-	/// <summary>
-	/// Tell the pill whether to track purchases or not.
-	/// </summary>
-	/// <param name="_track">Track purchases?.</param>
-	private void TrackPurchaseResult(bool _track) {
-		// Skip if same state
-		if(_track == m_awaitingPurchaseConfirmation) return;
-
-		// Store new state
-		m_awaitingPurchaseConfirmation = _track;
-
-		// Update listeners
-		if(_track) {
-			Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
-			Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
-			Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
-		} else {
-			Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
-			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
-			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
 		}
 	}
 
@@ -195,41 +180,53 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// Real money transaction has succeeded.
 	/// </summary>
 	/// <param name="_sku">Sku of the purchased item.</param>
-	private void OnPurchaseSuccessful(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
+	private void OnIAPSuccess(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
 		// Is it this one?
-		if(_sku == m_def.sku) {
+		if(_sku == GetIAPSku()) {
+			// Apply rewards
+			ApplyShopPack();
+
 			// Stop tracking
 			TrackPurchaseResult(false);
 
-			OnPurchaseSuccessEnd(m_def);
+			// Notify external listeners
+			OnPurchaseSuccess.Invoke(this);
+
+			// Show feedback!
+			ShowPurchaseSuccessFeedback();
 		}
-	}
-
-	private void OnPurchaseSuccessEnd(DefinitionNode _def) {
-		// Notify player
-		UINotificationShop.CreateAndLaunch(
-			UserProfile.SkuToCurrency(_def.Get("type")), 
-			_def.GetAsInt("amount"), 
-			Vector3.down * 150f, 
-			this.GetComponentInParent<Canvas>().transform as RectTransform
-		);
-
-		// Notify listeners
-		OnPurchaseSuccess.Invoke(this);
 	}
 
 	/// <summary>
 	/// Real money transaction has failed.
 	/// </summary>
 	/// <param name="_sku">Sku of the item to be purchased.</param>
-	private void OnPurchaseFailed(string _sku) {
+	private void OnIAPFailed(string _sku) {
 		// Is it this one?
-		if(_sku == m_def.sku) {
+		if(_sku == GetIAPSku()) {
 			// Stop tracking
 			TrackPurchaseResult(false);
 
-			// Notify listeners
+			// Notify external listeners
 			OnPurchaseError.Invoke(this);
+		}
+	}
+
+	/// <summary>
+	/// PC Transaction has succeeded.
+	/// </summary>
+	/// <param name="_flow">Flow.</param>
+	private void OnResourcesFlowSuccess(ResourcesFlow _flow) {
+		// Is it this one?
+		if(_flow.itemDef.sku == def.sku) {
+			// Apply rewards
+			ApplyShopPack();
+
+			// Notify external listeners
+			OnPurchaseSuccess.Invoke(this);
+
+			// Show feedback!
+			ShowPurchaseSuccessFeedback();
 		}
 	}
 }

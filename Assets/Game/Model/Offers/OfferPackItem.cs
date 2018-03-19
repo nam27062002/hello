@@ -60,6 +60,10 @@ public class OfferPackItem {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize from definition.
+	/// </summary>
+	/// <param name="_def">Def.</param>
 	public void InitFromDefinition(DefinitionNode _def) {
 		// Store definition
 		m_def = _def;

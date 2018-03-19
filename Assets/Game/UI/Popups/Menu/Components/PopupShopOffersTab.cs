@@ -18,59 +18,55 @@ using System.Collections.Generic;
 /// <summary>
 /// Tab in the currency shop!
 /// </summary>
-public class PopupShopOffersTab : Tab {
+public class PopupShopOffersTab : IPopupShopTab {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const float REFRESH_FREQUENCY = 1f;	// Seconds
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[Space]
-	[SerializeField] private GameObject m_pillPrefab = null;
-	[SerializeField] private ScrollRect m_scrollList = null;
-	public ScrollRect scrollList {
-		get { return m_scrollList; }
-	}
 
-	// Internal
-	private List<IPopupShopPill> m_pills = new List<IPopupShopPill>();
-	public List<IPopupShopPill> pills {
-		get { return m_pills; }
-	}
-	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialization.
+	/// First update call.
 	/// </summary>
-	override protected void Awake() {
-		Debug.Assert(m_pillPrefab != null, "Missing required reference!");
-		Debug.Assert(m_scrollList != null, "Missing required reference!");
-		base.Awake();
+	private void Start() {
+		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
+	}
+
+	/// <summary>
+	/// Called at regular intervals.
+	/// </summary>
+	private void PeriodicRefresh() {
+		// Propagate to pills
+		for(int i = 0; i < m_pills.Count; ++i) {
+			(m_pills[i] as PopupShopOffersPill).RefreshTimer();
+		}
 	}
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// IPopupShopTab IMPLEMENTATION											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialize the tab with a list of shop pack definitions.
+	/// Initialize this tab and instantiate required pills.
 	/// </summary>
-	/// <param name="_defs">Shop pack definitions to be displayed in this tab.</param>
-	public void InitWithDefs(List<DefinitionNode> _defs) {
-		// Clear current content
-		m_scrollList.content.DestroyAllChildren(false);
-		m_pills.Clear();
+	override public void Init() {
+		// Clear current pills
+		Clear();
 
-		// Create pills
-		DefinitionsManager.SharedInstance.SortByProperty(ref _defs, "order", DefinitionsManager.SortType.NUMERIC);
-		for(int i = 0; i < _defs.Count; i++) {
+		// Get list of active offer packs and create a pill for each one
+		// List should already be properly sorted
+		List<OfferPack> activeOffers = OffersManager.activeOffers;
+		for(int i = 0; i < activeOffers.Count; ++i) {
 			// Create new instance and initialize it
 			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
-			IPopupShopPill newPill = newPillObj.GetComponent<IPopupShopPill>();
-			newPill.InitFromDef(_defs[i]);
+			PopupShopOffersPill newPill = newPillObj.GetComponent<PopupShopOffersPill>();
+			newPill.InitFromOfferPack(activeOffers[i]);
 
 			// Store to local collection for further use
 			m_pills.Add(newPill);

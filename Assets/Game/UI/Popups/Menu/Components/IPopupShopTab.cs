@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Tab in the currency shop!
 /// </summary>
-public class IPopupShopTab : Tab {
+public abstract class IPopupShopTab : Tab {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -28,18 +28,26 @@ public class IPopupShopTab : Tab {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Space]
-	[SerializeField] private GameObject m_pillPrefab = null;
-	[SerializeField] private ScrollRect m_scrollList = null;
+	[SerializeField] protected GameObject m_pillPrefab = null;
+	[SerializeField] protected ScrollRect m_scrollList = null;
 	public ScrollRect scrollList {
 		get { return m_scrollList; }
 	}
 
 	// Internal
-	private List<IPopupShopPill> m_pills = new List<IPopupShopPill>();
+	protected List<IPopupShopPill> m_pills = new List<IPopupShopPill>();
 	public List<IPopupShopPill> pills {
 		get { return m_pills; }
 	}
-	
+
+	//------------------------------------------------------------------------//
+	// ABSTRACT METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize this tab and instantiate required pills.
+	/// </summary>
+	public abstract void Init();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -56,28 +64,12 @@ public class IPopupShopTab : Tab {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialize the tab with a list of shop pack definitions.
+	/// Clear scroll list.
 	/// </summary>
-	/// <param name="_defs">Shop pack definitions to be displayed in this tab.</param>
-	public void InitWithDefs(List<DefinitionNode> _defs) {
+	public virtual void Clear() {
 		// Clear current content
 		m_scrollList.content.DestroyAllChildren(false);
 		m_pills.Clear();
-
-		// Create pills
-		DefinitionsManager.SharedInstance.SortByProperty(ref _defs, "order", DefinitionsManager.SortType.NUMERIC);
-		for(int i = 0; i < _defs.Count; i++) {
-			// Create new instance and initialize it
-			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
-			IPopupShopPill newPill = newPillObj.GetComponent<IPopupShopPill>();
-			newPill.InitFromDef(_defs[i]);
-
-			// Store to local collection for further use
-			m_pills.Add(newPill);
-		}
-
-		// Reset scroll list position
-		m_scrollList.horizontalNormalizedPosition = 0f;
 	}
 
 	//------------------------------------------------------------------------//

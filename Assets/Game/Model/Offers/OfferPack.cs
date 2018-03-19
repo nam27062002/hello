@@ -81,6 +81,11 @@ public class OfferPack {
 		get { return m_endDate; }
 	}
 
+	private bool m_isTimed = false;
+	public bool isTimed {
+		get { return m_isTimed; }
+	}
+
 	// Optional params
 	private string[] m_countriesAllowed = new string[0];
 	private string[] m_countriesExcluded = new string[0];
@@ -164,7 +169,10 @@ public class OfferPack {
 					}
 				} break;
 				case "startDate":	m_startDate = TimeUtils.TimestampToDate(def.GetAsLong(KEY) * 1000);	break;
-				case "endDate": 	m_endDate = TimeUtils.TimestampToDate(def.GetAsLong(KEY) * 1000);	break;
+				case "endDate": {
+					m_endDate = TimeUtils.TimestampToDate(def.GetAsLong(KEY) * 1000);
+					m_isTimed = true;
+				} break;
 
 				// Optional params
 				case "countriesAllowed": 	m_countriesAllowed = def.GetAsArray<string>(KEY);	break;
@@ -189,6 +197,9 @@ public class OfferPack {
 				case "skinsOwned":		m_skinsOwned = def.GetAsArray<string>(KEY);			break;
 			}
 		}
+
+		// Featured offers are always timed
+		if(m_featured) m_isTimed = true;
 	}
 
 	/// <summary>
@@ -205,11 +216,12 @@ public class OfferPack {
 
 		// Mandatory for featured packs
 		m_featured = false;
+		m_isTimed = false;
 		m_frequency = 0;
 		m_maxViews = 0;
 		m_whereToShow = WhereToShow.SHOP_ONLY;
-		m_startDate = new DateTime();
-		m_endDate = new DateTime();
+		m_startDate = DateTime.MinValue;
+		m_endDate = DateTime.MinValue;
 
 		// Optional params
 		m_countriesAllowed = new string[0];
@@ -238,6 +250,53 @@ public class OfferPack {
 	/// </summary>
 	/// <returns><c>true</c> if this offer can be displayed to the current player, <c>false</c> otherwise.</returns>
 	public bool CanBeDisplayed() {
+		return CanBeApplied();
+	}
+
+	/// <summary>
+	/// Check whether the featured popup should be displayed or not, and do it.
+	/// </summary>
+	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
+	/// <param name="_areaToCheck">Area to check.</param>
+	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
+		// Not if not featured
+		if(!m_featured) return false;
+
+		// Not if segmentation fails
+		if(!CanBeDisplayed()) return false;
+
+		// Check max views
+		if(m_viewsCount >= m_maxViews) return false;
+
+		// Check area
+		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
+			// Special case for dragon selection screen: count both initial time and after run
+			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return false;
+		} else {
+			// Standard case: just make sure we're in the right place
+			if(_areaToCheck != m_whereToShow) return false;
+		}
+
+		// Check frequency
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
+		if(timeSinceLastView.TotalMinutes < m_frequency) return false;
+
+		// All checks passed!
+		// Show popup
+		PopupManager.OpenPopupInstant(PopupFeaturedOffer.PATH);
+
+		// Update control vars and return
+		m_viewsCount++;
+		m_lastViewTimestamp = serverTime;
+		return true;
+	}
+
+	/// <summary>
+	/// Validate that the pack can still be applied!
+	/// </summary>
+	/// <returns><c>true</c> if this pack can be applied; otherwise, <c>false</c>.</returns>
+	public bool CanBeApplied() {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 
@@ -245,7 +304,7 @@ public class OfferPack {
 		if(m_minAppVersion > GameSettings.internalVersion) return false;
 
 		// If featured, check extra conditions
-		if(m_featured) {
+		if(m_featured || m_isTimed) {
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			if(serverTime < m_startDate) return false;
 			if(serverTime > m_endDate) return false;
@@ -294,42 +353,20 @@ public class OfferPack {
 	}
 
 	/// <summary>
-	/// Check whether the featured popup should be displayed or not, and do it.
+	/// Apply this pack to current user.
 	/// </summary>
-	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
-	/// <param name="_areaToCheck">Area to check.</param>
-	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
-		// Not if not featured
-		if(!m_featured) return false;
-
-		// Not if segmentation fails
-		if(!CanBeDisplayed()) return false;
-
-		// Check max views
-		if(m_viewsCount >= m_maxViews) return false;
-
-		// Check area
-		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
-			// Special case for dragon selection screen: count both initial time and after run
-			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return false;
-		} else {
-			// Standard case: just make sure we're in the right place
-			if(_areaToCheck != m_whereToShow) return false;
+	public void Apply() {
+		// [AOC] TODO!! Figure out proper flow
+		// Push all the rewards to the pending rewards stack and trigger the pending rewards screen
+		for(int i = 0; i < m_items.Count; ++i) {
+			UsersManager.currentUser.PushReward(m_items[i].reward);
+			// [AOC] TODO!! Validate that the pack is only applied once?
 		}
 
-		// Check frequency
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
-		if(timeSinceLastView.TotalMinutes < m_frequency) return false;
-
-		// All checks passed!
-		// Show popup
-		PopupManager.OpenPopupInstant(PopupFeaturedOffer.PATH);
-
-		// Update control vars and return
-		m_viewsCount++;
-		m_lastViewTimestamp = serverTime;
-		return true;
+		// Close all open popups and go to the pending rewards screen
+		// [AOC] TODO!! Don't mix UI flow with logic code! Take this out of here!
+		PopupManager.Clear();
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 	}
 
 	//------------------------------------------------------------------------//
