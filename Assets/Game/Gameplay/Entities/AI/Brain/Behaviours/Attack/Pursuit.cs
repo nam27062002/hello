@@ -38,6 +38,7 @@ namespace AI {
 			protected Transform m_target;
 			protected AI.IMachine m_targetMachine;
 			protected Entity m_targetEntity;
+			private Transform m_mouth;
 
 			private PursuitState m_pursuitState;
 			private object[] m_transitionParam;
@@ -56,6 +57,8 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<PursuitData>();
 
+				m_mouth = m_machine.transform.FindTransformRecursive("Fire_Dummy");
+
 				m_machine.SetSignal(Signals.Type.Alert, true);
 				m_transitionParam = new object[1];
 				m_target = null;
@@ -73,14 +76,17 @@ namespace AI {
 					m_target = param[0] as Transform;
 					if (m_target) {
 						m_targetEntity = m_target.GetComponent<Entity>();
-						m_targetMachine = m_targetEntity.machine;
+						if (m_targetEntity != null) {
+							m_targetMachine = m_targetEntity.machine;
+						}
 					}
 				}
 
 				if (m_target == null && m_machine.enemy != null) {
-					m_target = m_machine.enemy.FindTransformRecursive(m_data.attackPoint);
-					if (m_target == null) {
-						m_target = m_machine.enemy;
+					if (m_targetMachine != null) {
+						m_target = SearchClosestHoldPoint(m_targetMachine.holdPreyPoints);
+					} else {
+						m_target = SearchClosestHoldPoint(InstanceManager.player.holdPreyPoints);
 					}
 
 					m_targetEntity = m_machine.enemy.GetComponent<Entity>();
@@ -173,6 +179,19 @@ namespace AI {
 				if (_newState != m_pursuitState) {
 					m_pursuitState = _newState;
 				}
+			}
+
+			protected Transform SearchClosestHoldPoint(HoldPreyPoint[] holdPreyPoints) {
+				float distance = float.MaxValue;
+				Transform holdTransform = null;
+				for (int i = 0; i<holdPreyPoints.Length; i++) {
+					HoldPreyPoint point = holdPreyPoints[i];
+					if (!point.holded && Vector3.SqrMagnitude( m_mouth.position - point.transform.position) < distance) {
+						distance = Vector3.SqrMagnitude(m_mouth.position - point.transform.position);
+						holdTransform = point.transform;
+					}
+				}
+				return holdTransform;
 			}
 		}
 	}
