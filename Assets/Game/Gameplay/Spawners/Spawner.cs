@@ -87,8 +87,8 @@ public class Spawner : AbstractSpawner {
 	[SerializeField] public SpawnCondition[] m_activationTriggers;
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
 
-	[SerializeField] public SpawnKillCondition[] m_activationKillTriggers;
-	public SpawnKillCondition[] activationKillTriggers { get { return m_activationKillTriggers; } }
+	[SerializeField] public SkuKillCondition[] m_activationKillTriggers;
+	public SkuKillCondition[] activationKillTriggers { get { return m_activationKillTriggers; } }
 
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers;
@@ -211,7 +211,7 @@ public class Spawner : AbstractSpawner {
 					m_pcProbCoefB = def.GetAsFloat("flyingPigsProbaCoefB", 1f);
 
 					if (m_activationKillTriggers == null) {
-						m_activationKillTriggers = new SpawnKillCondition[0];
+						m_activationKillTriggers = new SkuKillCondition[0];
 					}
 
 					if (m_quantity.max < m_quantity.min) {
@@ -501,10 +501,10 @@ public class Spawner : AbstractSpawner {
 		}
 
 		for (int i = 0; i < m_activationKillTriggers.Length; i++) {
-			string cat = m_activationKillTriggers[i].category;
+			string sku = m_activationKillTriggers[i].sku;
 
-			if (RewardManager.categoryKillCount.ContainsKey(cat)) {
-				startConditionsOk |= RewardManager.categoryKillCount[cat] >= m_activationKillTriggers[i].value;
+			if (RewardManager.killCount.ContainsKey(sku)) {
+				startConditionsOk |= RewardManager.killCount[sku] >= m_activationKillTriggers[i].value;
 			}
 		}
 
