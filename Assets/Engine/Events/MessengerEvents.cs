@@ -30,6 +30,8 @@ public enum MessengerEvents {
 
 	// Rules and localization
 	LANGUAGE_CHANGED,		// no params
+	FONT_CHANGE_STARTED,	// no params
+	FONT_CHANGE_FINISHED,	// no params
 	DEFINITIONS_LOADED,		// no params
 	GOOGLE_PLAY_STATE_UPDATE,// no params
 	GOOGLE_PLAY_AUTH_FAILED,// no params

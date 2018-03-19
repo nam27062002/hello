@@ -185,11 +185,11 @@ public class SpawnerConditionsEditor : Editor {
 		}
 
 		m_repeatedActivationKillTriggerTypeError = false;
-		foreach(SpawnerConditions.SpawnKillCondition trigger1 in m_targetSpawner.activationKillTriggers) {
-			foreach(SpawnerConditions.SpawnKillCondition trigger2 in m_targetSpawner.activationKillTriggers) {
+		foreach(SpawnerConditions.SkuKillCondition trigger1 in m_targetSpawner.activationKillTriggers) {
+			foreach(SpawnerConditions.SkuKillCondition trigger2 in m_targetSpawner.activationKillTriggers) {
 				// Start value is higher than end value for the same trigger type
 				if (trigger1 != trigger2
-				&& trigger1.category == trigger2.category) {
+				&& trigger1.sku == trigger2.sku) {
 					m_repeatedActivationKillTriggerTypeError = true;
 					break;	// Only show message once! :D
 				}
@@ -217,12 +217,12 @@ public class SpawnerConditionsEditor : Editor {
 
 		// Check incompatible values
 		m_incompatibleValuesError = false;
-		foreach(SpawnerConditions.SpawnCondition startTrigger in m_targetSpawner.activationTriggers) {
-			foreach(SpawnerConditions.SpawnCondition endTrigger in m_targetSpawner.deactivationTriggers) {
+		foreach(SpawnerConditions.SkuKillCondition trigger1 in m_targetSpawner.deactivationKillTriggers) {
+			foreach(SpawnerConditions.SkuKillCondition trigger2 in m_targetSpawner.deactivationKillTriggers) {
 				// Start value is higher than end value for the same trigger type
-				if(startTrigger.type == endTrigger.type
-				&& startTrigger.value > endTrigger.value) {
-					m_incompatibleValuesError = true;
+				if (trigger1 != trigger2
+					&& trigger1.sku == trigger2.sku) {
+					m_repeatedActivationKillTriggerTypeError = true;
 					break;	// Only show message once! :D
 				}
 			}
