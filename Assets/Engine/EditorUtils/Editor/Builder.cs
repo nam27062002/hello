@@ -516,7 +516,7 @@ public class Builder : MonoBehaviour
     {
 		if (target == BuildTarget.Android) 
 		{
-			GenerateAdaptiveAPK (path);
+			//GenerateAdaptiveAPK (path);
 		}
     }
 
@@ -581,7 +581,7 @@ public class Builder : MonoBehaviour
                 {
                     string destPath = ValidatePath(decompressFolder + "/res");
 
-                    // Delete old icons
+                    // Delete old icons                    
                     UnityEngine.Debug.Log("Deleting old icons...");
 					DeleteOldIcon(destPath, "drawable-ldpi");      
 					DeleteOldIcon(destPath, "drawable-mdpi");
@@ -597,7 +597,7 @@ public class Builder : MonoBehaviour
 
                     // Change manifest
                     UnityEngine.Debug.Log("Changing icons in Manifest ...");
-                    SetMipmapIconsInManifest(decompressFolder);
+                    SetMipmapIconsInManifest(decompressFolder);                    
                     
                     // Compress apk again
                     string resultPath = ValidatePath(tempDirectoryPath + "/" + apkFileName);

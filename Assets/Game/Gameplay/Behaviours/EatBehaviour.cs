@@ -335,7 +335,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 		if ( m_attackTarget != null )
 		{
 			m_attackTimer += Time.deltaTime;
-			if ( m_attackTimer > 0.2f && !m_waitJawsEvent)
+			if ( m_attackTimer > 0.2f )
 			{
 				OnJawsClose();
 			}
@@ -446,9 +446,11 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	{
 		if ( !enabled ) return;
 		// Bite kill!
+		if ( m_attackTarget != null )
+			StopAttackTarget();
+
 		if ( m_holdingPrey == null && !m_pauseEating && m_holdingPlayer == null)
 		{
-			StopAttackTarget();
 			BiteKill(PreyCount <= 0 && m_canHold);
 			 //if ( m_holdingPrey == null )
 			 //	TargetSomethingToEat();	// Buscar target -> al hacer el bite mirar si entran presas
@@ -881,7 +883,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					}
 					else
 					{
-						if ( (entity.hideNeedTierMessage || (Time.time - entity.lastTargetedTime <= 1f)) && !entity.IsEdible( m_tier ) && !eatEverything)
+						if ( (entity.hideNeedTierMessage /*|| (Time.time - entity.lastTargetedTime <= 1f)*/) && !entity.IsEdible( m_tier ) && !eatEverything)
 							continue;		
 					}
 

@@ -77,6 +77,13 @@ namespace TMPro
         {
             //Debug.Log("***** Awake() *****");
 
+			// [AOC] CUSTOM
+			// Add a font replacer component!
+			if(this.GetComponent<FontReplacer>() == null) {
+				FontReplacer fr = this.gameObject.AddComponent<FontReplacer>();
+				fr.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			}
+
             // Cache Reference to the Canvas
             m_canvas = this.canvas;
             m_isOrthographic = true;

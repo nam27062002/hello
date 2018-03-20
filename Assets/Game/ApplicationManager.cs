@@ -1249,6 +1249,16 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         PersistenceFacade.instance.Save_Request();
     }
 
+	public void Debug_TestPlayAd() 
+	{
+		GameAds.instance.ShowRewarded(GameAds.EAdPurpose.UPGRADE_MAP, Debug_OnAdResult);
+	}
+
+	private void Debug_OnAdResult(bool success) 
+	{
+		Debug.Log("OnAdPlayed result = " + success);
+	}
+
     private const string LOG_CHANNEL = "[ApplicationManager]";
     private static void Log(string msg)
     {

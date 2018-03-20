@@ -67,7 +67,7 @@ namespace UbiBCN
 		// If the container hasn't been created yet, it will be created and added to the current scene, activating its DontDestroyOnLoad flag.
 		// Give it protected access so only the class implementing the singleton can touch it.
 		// All operations must be performed by static funcions on the implementing class or by implementing a wrapper exposing the protected instance.
-		private static T m_instance = null;
+		protected static T m_instance = null;
 		public static T instance {
 			get {
 				// CreateInstance method does the hard work

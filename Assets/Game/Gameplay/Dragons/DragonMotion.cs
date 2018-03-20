@@ -235,6 +235,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float m_dragonAirExtraGravityModifier = 0.5f;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
+    private bool m_rotateOnIdle = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -531,10 +532,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.Idle:
 					m_animator.SetBool(GameConstants.Animator.MOVE, false);
 
-					// m_impulse = Vector3.zero;
-					// m_rbody.velocity = m_impulse;
-					if (m_direction.x < 0)	m_direction = Vector3.left;
-					else 					m_direction = Vector3.right;
+					if (m_rotateOnIdle){
+						if (m_direction.x < 0){	
+							m_direction = Vector3.left;
+						}else { 
+							m_direction = Vector3.right;
+						}
+					}
 					RotateToDirection( m_direction );
 					break;
 
@@ -1246,8 +1250,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_direction = m_impulse.normalized;
 		RotateToDirection(m_direction);
 
-        m_rbody.velocity = m_impulse;
-
         if ( !m_canMoveInsideWater )
         {
 	        m_inverseGravityWater -= _deltaTime * 0.28f;
@@ -1269,6 +1271,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
         }
 
 		ApplyExternalForce();
+
+		m_rbody.velocity = m_impulse;
 	}
 
 
@@ -1341,11 +1345,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			ComputeImpulseToZero(_deltaTime);
 		}
 		bool slowly = true;
-		if ( current == null){
-			if ( oldDirection.x > 0 ){
-				m_direction = GameConstants.Vector3.right;	
-			}else{
-				m_direction = GameConstants.Vector3.left;
+		if ( current == null ){
+			if (m_rotateOnIdle || m_closeToGround){
+				if ( oldDirection.x > 0 ){
+					m_direction = GameConstants.Vector3.right;	
+				}else{
+					m_direction = GameConstants.Vector3.left;
+				}
 			}
 		}else{
 			m_direction = (m_impulse + m_externalForce).normalized;
@@ -1358,11 +1364,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		ApplyExternalForce();
 
 		m_rbody.velocity = m_impulse;
-	}
-
-	private void IdleRotation( Vector3 oldRotation )
-	{
-		
 	}
 
 	private void DeadFall(float _deltaTime){
