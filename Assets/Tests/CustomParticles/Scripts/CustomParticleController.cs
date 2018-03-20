@@ -30,12 +30,14 @@ public class CustomParticleController : MonoBehaviour {
     }
 
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+#if UNITY_EDITOR
+    void Update () {
 		if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("CustomParticleController: " + m_status);
             SetParticles(m_status ? false : true);
         }
 	}
+#endif
 }

@@ -171,6 +171,7 @@ public class ShowHideAnimator : MonoBehaviour {
 					// If hidden, disable interactability
 					if(m_canvasGroup != null) {
 						m_canvasGroup.interactable = false;
+						m_canvasGroup.blocksRaycasts = false;
 					}
 				}
 			}
@@ -446,6 +447,7 @@ public class ShowHideAnimator : MonoBehaviour {
 			// If hidden, disable interactability
 			if(m_state == State.HIDDEN) {
 				m_canvasGroup.interactable = false;
+				m_canvasGroup.blocksRaycasts = false;
 			}
 		}
 
@@ -556,6 +558,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		// ...and interactable
 		if(m_canvasGroup != null) {
 			m_canvasGroup.interactable = true;
+			m_canvasGroup.blocksRaycasts = true;
 		}
 
 		// If dirty, re-create the tween (will be destroyed if not needed)
@@ -800,6 +803,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		// If hidden, object should never be interactable
 		if(m_canvasGroup != null) {
 			m_canvasGroup.interactable = false;
+			m_canvasGroup.blocksRaycasts = false;
 		}
 	}
 

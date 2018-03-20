@@ -19,6 +19,9 @@ public class DragonPartFollow : MonoBehaviour {
 	private Transform[] m_parts;
 	public Vector3 m_upDir = Vector3.up;
 	private float m_startScale;
+
+	public bool m_disableOnResults = false;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -112,7 +115,7 @@ public class DragonPartFollow : MonoBehaviour {
 			Transform partTransform = m_parts[i];
 			Vector3 dir = (partInfo.m_previousPos - follow.position).normalized;
 			Vector3 wanterDir = follow.TransformDirection( partInfo.m_direction );
-			Vector3 finalDir = Vector3.Slerp( dir, wanterDir, delta * springSpeed);
+			Vector3 finalDir = Vector3.Lerp( dir, wanterDir, delta * springSpeed);
 			partTransform.position = follow.position + finalDir * partInfo.m_distance * scale;
 
 			partTransform.LookAt( follow, follow.up );

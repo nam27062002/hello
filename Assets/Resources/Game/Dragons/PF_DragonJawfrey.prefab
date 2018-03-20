@@ -207,6 +207,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 488014}
+  - component: {fileID: 114728482980353986}
   m_Layer: 12
   m_Name: SkimmingAnchor
   m_TagString: Untagged
@@ -305,7 +306,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 504.8319, y: 110.52825, z: -1284.5706}
+  m_LocalPosition: {x: -178.58817, y: -98.95178, z: -32.171875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -597,7 +598,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
-  m_bubbles: {fileID: 1880290671506266, guid: 47f42336677c5dd4a9079111429c17e3, type: 2}
+  m_bubbles: {fileID: 105258, guid: f3cddb62f324a4668b40f72b9be4eb4e, type: 2}
   m_bubblesAnchor: {fileID: 4000012015477780}
   m_bubblesDrowningMultiplier: 3
   m_cloudTrail: {fileID: 1000011103382704, guid: 07168ca503d1d42c48cefb0bca335cec,
@@ -680,14 +681,15 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_minSpeedEnterSplash: 0
-  m_waterEnterSplash: 
+  m_waterEnterSplash: PS_DiveIn
   m_minSpeedExitSplash: 0
-  m_waterExitSplash: 
+  m_waterExitSplash: PS_DiveOut
   m_waterSplashFolder: Water
-  m_skimmingParticle: {fileID: 0}
-  m_skimmingAnchor: {fileID: 0}
+  m_skimmingParticle: {fileID: 1000010018702160, guid: b942671f031124e12ad02e4b82ec7f2e,
+    type: 2}
+  m_skimmingAnchor: {fileID: 488014}
   m_minSpeedSkimming: 0
-  m_skimmingDistance: 0
+  m_skimmingDistance: 4
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonJawfreyCorpse
@@ -902,7 +904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de3db92dd92254a81a8ebe0536116ec0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_curseColor: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
+  m_curseColor: {r: 0, g: 1, b: 0, a: 1}
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_reduceInnerColorInsideWater: 1
 --- !u!114 &11444004
@@ -3257,7 +3259,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.049819414, y: 0.94915706, z: 0.24124366, w: -0.19601117}
+  m_LocalRotation: {x: 0.016952591, y: -0.763517, z: 0.020059701, w: 0.6452534}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6652,7 +6654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_minEatAnimTime: 0.1
   m_eatDistance: 1.6
-  m_eatDetectionRadiusMultiplier: 2.25
+  m_eatDetectionRadiusMultiplier: 2.15
   m_eatDetectionSpeedRadiusMultiplier: 0.1
   m_holdingBloodParticle:
     name: PS_Blood_Explosion
@@ -7055,6 +7057,9 @@ MonoBehaviour:
   m_hiccupSound: 
   m_gruntSound: Dragon_Grunt
   m_gruntToEatProbability: 25
+  m_onDeadSound: hd_dragon_dead
+  m_onCorpseSound: hd_dragon_dead
+  m_onReviveSound: hd_dragon_revive
 --- !u!114 &114280685401513790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7241,6 +7246,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 5
+--- !u!114 &114728482980353986
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Spine
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
 --- !u!114 &114752085627954470
 MonoBehaviour:
   m_ObjectHideFlags: 1

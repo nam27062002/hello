@@ -8,9 +8,10 @@ public class DebugMatrix : MonoBehaviour {
 	void Start () {
 		
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+#if UNITY_EDITOR
+    void Update () {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Matrix4x4 mat = transform.localToWorldMatrix;
@@ -25,4 +26,5 @@ public class DebugMatrix : MonoBehaviour {
             Debug.Log("Scale Z: " + Vector4.Magnitude(mat.GetRow(2)));
         }
     }
+#endif
 }
