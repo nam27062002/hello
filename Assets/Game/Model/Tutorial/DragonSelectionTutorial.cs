@@ -119,13 +119,11 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					// Yes! Pause before going back
 					m_state = State.BACK_DELAY;
 					m_timer.Start(m_backDelay * 1000);
+					m_scroller.cameraAnimator.delta = m_lastDelta;
 				} else {
 					// Timer not finished, scroll from initial delta to last delta
 					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_initialDelta, m_lastDelta, m_timer.GetDelta(m_easeForward));
 				}
-
-				// Update Dragon Focus
-				UpdateLoadedDragons(m_scroller.cameraAnimator.delta);
 			} break;
 
 			case State.BACK_DELAY: {
@@ -140,6 +138,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			case State.BACK: {
 				// Timer finished?
 				if(m_timer.IsFinished()) {
+					m_scroller.cameraAnimator.delta = m_finalDelta;
+
 					// Yes! Stop tutorial
 					StopTutorial();
 
@@ -168,16 +168,9 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					m_scroller.cameraAnimator.delta = Mathf.Lerp(m_lastDelta, m_finalDelta, m_timer.GetDelta(m_easeBackward));
 				}
 
-				// Update Dragon Focus
-				UpdateLoadedDragons(m_scroller.cameraAnimator.delta);
+
 			} break;
 		}
-	}
-
-	private void UpdateLoadedDragons( float delta )
-	{
-		int menuOrder = m_scroller.cameraAnimator.cameraPath.path.GetPointAt(delta);
-		m_scroller.LoadDragonsAround( menuOrder );
 	}
 
 	//------------------------------------------------------------------------//
@@ -189,6 +182,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	public void StartTutorial() {
 		// Ignore if not in the IDLE state
 		if(m_state != State.IDLE) return;
+
 
 		// Lock all input
 		Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
@@ -214,6 +208,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// 1) Initial delta is always the first dragon
 		m_initialDelta = 0f;
 
+		int dragonsToView = 9;
 		// 2) Last delta is the last visible dragon (teased included)
 		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
 		for(int i = dragonsByOrder.Count - 1; i >= 0; --i) {
@@ -221,9 +216,12 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			if(dragonsByOrder[i].isRevealed || dragonsByOrder[i].isTeased) {
 				// Get delta corresponding to this dragon and break the loop!
 				m_lastDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(i);
+				dragonsToView = i;
 				break;
 			}
 		}
+		m_scroller.LoadTutorialDragonsScroll(dragonsToView);
+
 
 		// 3) Final delta is the current selected dragon (most of the times will be the first one)
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentDragon);
@@ -285,7 +283,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		}
 
 		// If the tutorial wasn't completed, launch it now
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && !DebugSettings.isPlayTest) {		// Skip tutorial for the playtests
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && !DebugSettings.isPlayTest) // Skip tutorial for the playtests
+		{		
 			StartTutorial();
 		}
 	}

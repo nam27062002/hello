@@ -66,14 +66,10 @@ public class MenuDragonScroller : MonoBehaviour {
 		Debug.Log("Dragon Slots: " + dragonSlots);
 		m_dragonSlots = new List<MenuDragonSlot>(dragonSlots.Length);
 		for(int i = 0; i < dragonSlots.Length; i++) {
-			Debug.Log("Dragon Slots Index: " + i);
 			DragonData data = DragonManager.GetDragonData(dragonSlots[i].dragonPreview.sku);
-			Debug.Log("Dragon Data: "+ dragonSlots[i].dragonPreview.sku + " " + data);
 			int dragonIndex = data.GetOrder();
 			// Add it into the list
-			Debug.Log("Insert : " + dragonIndex);
 			m_dragonSlots.Insert(dragonIndex, dragonSlots[i]);
-			Debug.Log("Dragon Loader : " + dragonSlots[i].dragonLoader);
 			if (dragonSlots[i].dragonLoader != null ){
 				dragonSlots[i].dragonLoader.onDragonLoaded += OnDragonLoaded;
 			}else{
@@ -161,7 +157,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	public void LoadDragonsAround(int menuIndex)
 	{
 		// Only show pets of the focused dragon
-		int viewSize = 2;
+		int viewSize = 3;
 		// foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) 
 		for( int i = 0; i<m_dragonSlots.Count; ++i )
 		{
@@ -172,6 +168,21 @@ public class MenuDragonScroller : MonoBehaviour {
 			else
 			{
 				m_dragonSlots[i].dragonLoader.Reload();
+			}
+		}
+	}
+
+	public void LoadTutorialDragonsScroll( int dragonToView)
+	{
+		for( int i = 0; i<m_dragonSlots.Count; ++i )
+		{
+			if ( i <= dragonToView)
+			{
+				m_dragonSlots[i].dragonLoader.Reload(true);
+			}
+			else
+			{
+				m_dragonSlots[i].dragonLoader.UnloadDragon();
 			}
 		}
 	}

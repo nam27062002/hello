@@ -180,7 +180,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon to be loaded</param>
 	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param> 
-	public void LoadDragon(string _sku, string _disguiseSku) {
+	public void LoadDragon(string _sku, string _disguiseSku, bool forceSync = false) {
 
 		if (m_dragonInstance != null || m_asyncRequest != null){
 			if (_sku == m_dragonSku && _disguiseSku == m_disguiseSku )
@@ -202,7 +202,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			if (  m_useResultsScreen )
 				prefabColumn = "resultsPrefab";
 
-			if (m_loadAsync){
+			if (m_loadAsync && !forceSync){
 				m_asyncRequest = Resources.LoadAsync<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
 			}else{
 				// Instantiate the prefab and add it as child of this object
@@ -217,8 +217,8 @@ public class MenuDragonLoader : MonoBehaviour {
 		}
 	}
 
-	public void Reload(){
-		LoadDragon( m_dragonSku, m_disguiseSku );
+	public void Reload( bool forceSync = false ){
+		LoadDragon( m_dragonSku, m_disguiseSku, forceSync );
 	}
 
 	void Update()
