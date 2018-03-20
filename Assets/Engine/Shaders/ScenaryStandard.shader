@@ -13,7 +13,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 		_Panning("Panning", Vector) = (0,0,0,0)
 
-		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		_Tint("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", Range(0.1, 5.0)) = 1.0
