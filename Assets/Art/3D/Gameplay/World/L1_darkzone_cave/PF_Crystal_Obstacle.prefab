@@ -444,7 +444,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1711923060905030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 124.8, y: 35.6, z: 0}
+  m_LocalPosition: {x: 157.88, y: 47.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4323677462073292}
@@ -853,8 +853,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 12, y: 13, z: 12}
-  m_Center: {x: 0, y: 4.7, z: 0}
+  m_Size: {x: 8.1, y: 10.43, z: 8}
+  m_Center: {x: 0, y: 4, z: 0}
 --- !u!114 &114092312810419282
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -866,7 +866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_spawnTime: 300
+  m_spawnTime: 0
   m_maxSpawns: 0
   m_mustBedestroyed: 0
   m_ground:
@@ -882,8 +882,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_zone1Interaction: 0
+  m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 0
   m_feedbackParticle:
     name: 
@@ -975,7 +976,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: deco_small
-  m_tier: 0
+  m_tier: 2
   m_disintegrable: 1
 --- !u!114 &114290620615759756
 MonoBehaviour:
@@ -1042,7 +1043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_burningTime: 0.1
+  m_burningTime: 1
   m_feedbackParticle:
     name: 
     path: 
@@ -1158,6 +1159,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+  m_useAnimator: 0
   m_boxelSize: 15
   m_hitRadius: 5
 --- !u!114 &114844443965364728
