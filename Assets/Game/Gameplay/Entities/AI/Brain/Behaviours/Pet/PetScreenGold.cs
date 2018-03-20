@@ -32,14 +32,18 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.PressAction(Pilot.Action.Button_A);
-				m_timer = 2.0f;
-				EntityManager.instance.ForceOnScreenEntitiesGolden();
+				m_timer = 1.0f;
 			}
 
 			protected override void OnUpdate(){
 				m_timer -= Time.deltaTime;
+
+				m_pilot.SlowDown(true);
+				m_pilot.SetDirection( Vector3.forward, true );
+
 				if ( m_timer <= 0 )	
 				{
+					EntityManager.instance.ForceOnScreenEntitiesGolden();
 					Transition( OnAnimFinished );
 				}
 			}
