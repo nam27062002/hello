@@ -47,7 +47,11 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 			//			#pragma multi_compile_particles
 
 			#include "UnityCG.cginc"
+			#define EXTENDED_PARTICLES
+			#define	ALPHABLEND
+			#include "transparentparticlesnew.cginc"
 
+/*
 			struct appdata_t {
 				float4 vertex : POSITION;
 				fixed4 color : COLOR;
@@ -123,6 +127,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 #endif
 				return col;
 			}
+*/
 			ENDCG
 		}
 	}
