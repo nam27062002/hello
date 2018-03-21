@@ -199,7 +199,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 			case State.Explode:
 				BurnOperators();
 
-				m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
 				for (int i = 0; i < m_fireNodes.Length; ++i) {
 					if (i % 2 == 0) {
 						FireNode n = m_fireNodes[i];
@@ -208,6 +207,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 							ex.transform.localScale = n.transform.localScale * 1.0f;
 							ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f); //delay
 						}
+
+						m_disintegrateParticle.Spawn(n.transform.position + m_disintegrateParticle.offset);
 					}
 				}
 
