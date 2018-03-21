@@ -34,7 +34,7 @@ Shader "Hungry Dragon/Particles/Transparent Alpha Blend"
 			#include "UnityCG.cginc"
 
 			#define	ALPHABLEND
-			#include "transparentparticles.cginc"
+			#include "transparentparticlesnew.cginc"
 
 			ENDCG
 		}

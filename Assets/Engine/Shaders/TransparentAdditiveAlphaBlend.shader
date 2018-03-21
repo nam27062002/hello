@@ -30,8 +30,11 @@ Shader "Hungry Dragon/Particles/Transparent Additive Alpha Blend"
 
 			#include "UnityCG.cginc"
 
+			#define ADDITIVE_ALPHABLEND
+			#include "transparentparticlesnew.cginc"
+
+/*
 			sampler2D _MainTex;
-			//fixed4 _TintColor;
 	
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -68,6 +71,7 @@ Shader "Hungry Dragon/Particles/Transparent Additive Alpha Blend"
 				float4 col = lerp(2.0 * (i.color * tex), one - 2.0 * (one - i.color) * (one - tex), luminance);
 				return col;
 			}
+*/
 			ENDCG
 		}
 	}

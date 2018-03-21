@@ -10,8 +10,8 @@ struct appdata_t {
 
 struct v2f {
 	float4 vertex : SV_POSITION;
-	float2 texcoord : TEXCOORD0;
 	fixed4 color : COLOR;
+	float2 texcoord : TEXCOORD0;
 };
 
 sampler2D _MainTex;
