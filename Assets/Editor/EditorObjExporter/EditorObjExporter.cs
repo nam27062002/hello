@@ -22,7 +22,9 @@ using System;
 struct ObjMaterial
 {
 	public string name;
-	public string textureName;
+	public string diffuseMapName;
+    public string normalMapName;
+    public string alphaMapName;
     public float specular_pow;
 }
  
@@ -86,15 +88,30 @@ public class EditorObjExporter : ScriptableObject
                 try
                 {
                     ObjMaterial objMaterial = new ObjMaterial();
+                    Material unityMaterial = mats[material];
 
-                    objMaterial.name = trimSpaces(mats[material].name);
+                    objMaterial.name = trimSpaces(unityMaterial.name);
 
-                    if (mats[material].mainTexture)
-                        objMaterial.textureName = AssetDatabase.GetAssetPath(mats[material].mainTexture);
+                    if (unityMaterial.mainTexture)
+                        objMaterial.diffuseMapName = AssetDatabase.GetAssetPath(unityMaterial.mainTexture);
                     else
-                        objMaterial.textureName = null;
+                        objMaterial.diffuseMapName = null;
 
-                    objMaterial.specular_pow = mats[material].IsKeywordEnabled("SPECULAR") ? mats[material].GetFloat("_SpecularPower") : 0.01f;
+                    objMaterial.specular_pow = unityMaterial.IsKeywordEnabled("SPECULAR") ? unityMaterial.GetFloat("_SpecularPower") : 0.01f;
+
+                    if (unityMaterial.IsKeywordEnabled("NORMALMAP"))
+                    {
+                        objMaterial.normalMapName = AssetDatabase.GetAssetPath(unityMaterial.GetTexture("_NormalTex"));
+                    }
+                    else
+                    {
+                        objMaterial.normalMapName = null;
+                    }
+
+                    if (unityMaterial.GetFloat("_BlendMode") != 0.0f)
+                    {
+                        objMaterial.alphaMapName = objMaterial.diffuseMapName;
+                    }
 
                     materialList.Add(objMaterial.name, objMaterial);
                 }
@@ -149,12 +166,24 @@ public class EditorObjExporter : ScriptableObject
                 sw.Write(string.Format("Ks {0} {0} {0}\n", kvp.Value.specular_pow > 0.1f ? 0.75f: 0.01f));
                 sw.Write(string.Format("Ns {0}\n", kvp.Value.specular_pow));
 
-                sw.Write("d  1.0\n");
-				sw.Write("illum 2\n");
- 
-				if (kvp.Value.textureName != null)
+                if (kvp.Value.alphaMapName != null)
+                {
+                    sw.Write("Ke  0.0 0.0 0.0\n");
+                    sw.Write("Ni  1.0\n");
+                    sw.Write("d  0.0\n");
+//                    sw.Write("illum 2\n");
+
+                }
+                else
+                {
+                    sw.Write("d  1.0\n");
+                    //                    sw.Write("illum 2\n");
+                }
+                sw.Write("illum 2\n");
+
+                if (kvp.Value.diffuseMapName != null)
 				{
-					string destinationFile = kvp.Value.textureName; 
+					string destinationFile = kvp.Value.diffuseMapName; 
  
 					int stripIndex = destinationFile.LastIndexOf(Path.AltDirectorySeparatorChar);
  
@@ -176,23 +205,69 @@ public class EditorObjExporter : ScriptableObject
                     destinationFile = texturePath + Path.AltDirectorySeparatorChar + destinationFile;
 //                    destinationFile = texturePath + '/' + destinationFile;
 
-                    Debug.Log("Copying texture from " + kvp.Value.textureName + " to " + destinationFile);
+                    Debug.Log("Copying texture from " + kvp.Value.diffuseMapName + " to " + destinationFile);
  
 					try
 					{
 						//Copy the source file
-						File.Copy(kvp.Value.textureName, destinationFile);
+						File.Copy(kvp.Value.diffuseMapName, destinationFile);
 					}
 					catch
 					{
  
-					}	
- 
- 
-					sw.Write("map_Kd {0}", relativeFile);
-				}
- 
-				sw.Write("\n\n\n");
+					}
+
+                    sw.Write("map_Ka {0}\n", relativeFile);
+                    sw.Write("map_Kd {0}\n", relativeFile);
+                    sw.Write("map_Ks {0}\n", relativeFile);
+
+                    if (kvp.Value.alphaMapName != null)
+                    {
+                        sw.Write("map_d {0}\n", relativeFile);
+//                        sw.Write("map_d - mm 0.200 0.800 {0}\n", relativeFile);                        
+                    }
+                    else
+                    {
+//                        sw.Write("d  1.0\n");
+                    }
+                }
+
+                if (kvp.Value.normalMapName != null)
+                {
+                    string destinationFile = kvp.Value.normalMapName;
+
+                    int stripIndex = destinationFile.LastIndexOf(Path.AltDirectorySeparatorChar);
+
+                    if (stripIndex >= 0)
+                    {
+                        destinationFile = destinationFile.Substring(stripIndex + 1).Trim();
+                    }
+                    else
+                    {
+                        stripIndex = destinationFile.LastIndexOf('/');
+                        destinationFile = destinationFile.Substring(stripIndex + 1).Trim();
+                    }
+
+                    string relativeFile = textureFolder + Path.AltDirectorySeparatorChar + destinationFile;
+
+                    destinationFile = texturePath + Path.AltDirectorySeparatorChar + destinationFile;
+
+                    Debug.Log("Copying texture from " + kvp.Value.normalMapName + " to " + destinationFile);
+
+                    try
+                    {
+                        //Copy the source file
+                        File.Copy(kvp.Value.normalMapName, destinationFile);
+                    }
+                    catch
+                    {
+
+                    }
+
+                    sw.Write("map_bump {0}\n", relativeFile);
+
+                }
+                sw.Write("\n\n\n");
 			}
 		}
 	}
