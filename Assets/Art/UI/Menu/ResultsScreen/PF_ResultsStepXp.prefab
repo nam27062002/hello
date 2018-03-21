@@ -460,7 +460,6 @@ GameObject:
   - component: {fileID: 224324079016429424}
   - component: {fileID: 222094174344099474}
   - component: {fileID: 114714263134540874}
-  - component: {fileID: 114224788982099498}
   - component: {fileID: 114672112387517738}
   m_Layer: 5
   m_Name: TextInfo
@@ -1382,19 +1381,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114224788982099498
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1656236109115114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 0
 --- !u!114 &114225827317008030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2007,13 +1993,13 @@ MonoBehaviour:
   m_fontSize: 50
   m_fontSizeBase: 50
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 36
   m_fontSizeMax: 50
   m_fontStyle: 0
   m_textAlignment: 258
   m_isAlignmentEnumConverted: 1
-  m_characterSpacing: 0
+  m_characterSpacing: -2
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2743,7 +2729,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 44
+  m_fontSize: 42.7
   m_fontSizeBase: 44
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2788,7 +2774,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 2
+    lineCount: 1
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -2839,7 +2825,7 @@ MonoBehaviour:
   m_text: "Lvl. \n10/10"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: ebfcc8f3b74044e31940c702b1f1ec3a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2905,7 +2891,7 @@ MonoBehaviour:
     textComponent: {fileID: 114912495803289374}
     characterCount: 11
     spriteCount: 0
-    spaceCount: 2
+    spaceCount: 3
     wordCount: 3
     linkCount: 0
     lineCount: 2
@@ -34559,7 +34545,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 445.39, y: -130}
+  m_AnchoredPosition: {x: 219.39, y: -125}
   m_SizeDelta: {x: 390.78, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224125758862217052
@@ -34670,8 +34656,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 70}
+  m_AnchoredPosition: {x: -18, y: 0}
+  m_SizeDelta: {x: 962, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224324306121281986
 RectTransform:
@@ -34866,8 +34852,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.001953125}
-  m_SizeDelta: {x: 890.78, y: 230}
+  m_AnchoredPosition: {x: 0, y: 0.0014648438}
+  m_SizeDelta: {x: 459.78, y: 230}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224528259788382582
 RectTransform:
