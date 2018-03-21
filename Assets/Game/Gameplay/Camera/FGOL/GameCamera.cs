@@ -53,6 +53,8 @@ public class GameCamera : MonoBehaviour
 
 	// camera-shake
 	private float				m_cameraShake = 0.0f;
+	public bool m_useSmoothDamp = true;
+	public float m_smoothDampValue = 0.25f;
 
 
 	public enum TrackAheadMode
@@ -701,13 +703,20 @@ public class GameCamera : MonoBehaviour
 
 		if ( m_introTimer <= 0 ){
 			targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
+			Vector3 vel = GameConstants.Vector3.zero;
 			if ( m_fury )
 			{
-				m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, Time.deltaTime * 2);
+				if ( m_useSmoothDamp )
+					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, ref vel, m_smoothDampValue);
+				else
+					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, Time.deltaTime * 2);
 			}
 			else
 			{
-				m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
+				if ( m_useSmoothDamp )
+					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, GameConstants.Vector3.zero, ref vel, m_smoothDampValue);
+				else
+					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
 			}
 			targetPosition += m_extraTargetDisplacement;
 			UpdateTrackAheadVector(m_targetMachine);
