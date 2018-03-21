@@ -411,7 +411,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1525119363675300}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.65, z: 0}
+  m_LocalPosition: {x: 0.02, y: 4.73, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4501915884253884}
@@ -425,7 +425,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1904282318041746}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.02, y: -0.16, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4904777580401078}
@@ -443,8 +443,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1711923060905030}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 130.11012, y: 60.178516, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: -0.00000004371139}
+  m_LocalPosition: {x: 159.97, y: 59.85, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4323677462073292}
@@ -760,9 +760,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1727206244336122}
   serializedVersion: 2
-  m_Mass: 15
+  m_Mass: 50
   m_Drag: 0.1
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.025
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -775,9 +775,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1284092793724230}
   serializedVersion: 2
-  m_Mass: 15
+  m_Mass: 50
   m_Drag: 0.1
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.025
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -790,9 +790,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1165928789326136}
   serializedVersion: 2
-  m_Mass: 15
+  m_Mass: 50
   m_Drag: 0.1
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.025
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -805,9 +805,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1456518368697290}
   serializedVersion: 2
-  m_Mass: 15
+  m_Mass: 50
   m_Drag: 0.1
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.025
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -820,9 +820,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1452369641885438}
   serializedVersion: 2
-  m_Mass: 15
+  m_Mass: 50
   m_Drag: 0.1
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.025
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -835,9 +835,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1747611134346320}
   serializedVersion: 2
-  m_Mass: 15
+  m_Mass: 50
   m_Drag: 0.1
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.025
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -991,7 +991,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_fadeDelay: 0.75
   m_fadeTime: 1.5
-  m_forceExplosion: 1
+  m_forceExplosion: 450
   m_view: {fileID: 4501915884253884}
   m_blood:
     name: 
@@ -1205,7 +1205,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.64
+  m_Radius: 2
   m_Center: {x: 0, y: 1.01, z: 0}
 --- !u!135 &135593726114817440
 SphereCollider:
@@ -1217,7 +1217,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.64
+  m_Radius: 2
   m_Center: {x: 0, y: -1.12, z: -0.88}
 --- !u!135 &135694737223359958
 SphereCollider:
@@ -1229,7 +1229,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.64
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135804012436096394
 SphereCollider:
@@ -1241,7 +1241,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.64
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135804056054277628
 SphereCollider:
@@ -1253,7 +1253,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.64
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135947337739607050
 SphereCollider:
@@ -1265,5 +1265,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.64
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
