@@ -207,7 +207,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// Compute deltas
 		// 1) Initial delta is always the first dragon
 		m_initialDelta = 0f;
-
+			
 		int dragonsToView = 9;
 		// 2) Last delta is the last visible dragon (teased included)
 		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
@@ -220,7 +220,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 				break;
 			}
 		}
-		m_scroller.LoadTutorialDragonsScroll(dragonsToView);
+		m_scroller.LoadTutorialDragonsScroll(dragonsToView + 1);	// One more to let it view 
 
 
 		// 3) Final delta is the current selected dragon (most of the times will be the first one)
