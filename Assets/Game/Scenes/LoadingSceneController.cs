@@ -460,8 +460,11 @@ public class LoadingSceneController : SceneController {
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
-				
-				StartLoadFlow();	            	                                
+
+                TransactionManager.CreateInstance();
+                TransactionManager.instance.Initialise();
+
+                    StartLoadFlow();	            	                                
           	}break;
         }
     }
