@@ -195,7 +195,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     /// </summary>
     private PopupController m_flowCurrentPopup;
 
-    private GameObject m_flowUICanvas;
+    /// <summary>
+    /// <c>RectTransform</c> of the canvas where the feedback for currencies will be displayed
+    /// </summary>
+    private RectTransform m_flowUICanvasRectTransform;
 
     private bool Flow_IsProcessingPopup()
     {
@@ -212,7 +215,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 
         Flow_CloseCurrentPendingTransactionPopup();
 
-        m_flowUICanvas = null;                  
+        m_flowUICanvasRectTransform = null;                  
     }
 
     private bool Flow_ArePendingTransactionsUnlocked()
@@ -221,16 +224,20 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         return UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
-    /// <summary>
-    /// Checks whether or not the flow that gives the pending transactions to the user should be triggered
-    /// </summary>
-    /// <returns><c>true</c> if the flow that gives the pending transactions to the user should be triggerd. Otherwise <c>false</c></returns>
-    public bool Flow_Check(GameObject uiCanvas)
+    public bool Flow_NeedsToShowPendingTransactions()
     {
-        m_flowUICanvas = uiCanvas;
-        
-        bool returnValue = Flow_ArePendingTransactionsUnlocked() && !Pending_IsEmpty();
-        if (returnValue)
+        // Pending transactions are unlocked and there are some to show
+        return Flow_ArePendingTransactionsUnlocked() && !Pending_IsEmpty();
+    }
+
+    /// <summary>
+    /// Triggers the flow that gives the pending transactions to the user should be triggered
+    /// </summary>
+    /// <param name="uiCanvas"><c>GameObject</c> of the UI canvas where the feedback for gaining currencies needs to be displayed</param>    
+    public void Flow_PerformPendingTransactions(GameObject uiCanvas)
+    {
+        m_flowUICanvasRectTransform = (uiCanvas) == null ? null : uiCanvas.transform as RectTransform;                
+        if (Flow_NeedsToShowPendingTransactions())
         {
             // m_flowCoroutine should be null at this point. If that's not the case, just in case, it's stopped
             if (m_flowCoroutine != null)
@@ -239,9 +246,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             }
 
             m_flowCoroutine = StartCoroutine(Flow_PerformPendingTransactions());
-        }
-
-        return returnValue;
+        }        
     }
 
     private IEnumerator Flow_PerformPendingTransactions()
@@ -285,13 +290,13 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     {
         // A popup notifying the user that she will have the chance to collect her pending transactions later is opened
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "Warning";
-        config.MessageTid = "You'll have the chance to collect these transactions later";        
+        config.TitleTid = "TID_TRANSACTION_CLOSE_TITLE";
+        config.MessageTid = "TID_TRANSACTION_CLOSE_DESC";        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
 
         // All pending transactions are cancelled because we assume that the user wants to skip this flow
-        config.OnConfirm = Flow_OnCancelPendingTransactions;                        
-        config.CancelButtonTid = "Ok";
+        config.OnConfirm = Flow_OnCancelPendingTransactions;
+        config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;
         config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.Close;
         PopupManager.PopupMessage_Open(config);
@@ -361,9 +366,9 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                 UserProfile.Currency currency = Flow_GetCurrency(transaction);
                 if (currency == UserProfile.Currency.SOFT || currency == UserProfile.Currency.HARD)
                 {
-                    if (m_flowUICanvas != null)
+                    if (m_flowUICanvasRectTransform != null)
                     {
-                        UINotificationShop.CreateAndLaunch(currency, transaction.GetCurrencyAmount(currency), Vector3.down * 150f, m_flowUICanvas.transform as RectTransform);
+                        UINotificationShop.CreateAndLaunch(currency, transaction.GetCurrencyAmount(currency), Vector3.down * 150f, m_flowUICanvasRectTransform);
                     }
                 }
             }
@@ -415,9 +420,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     private void Flow_OpenNoConnectionError()
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
-        config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;                      
+        config.TitleTid = "TID_TRANSACTION_CONN_LOST_TITLE";
+        config.MessageTid = "TID_TRANSACTION_CONN_LOST_DESC";        
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;        
         PopupManager.PopupMessage_Open(config);
     }
@@ -429,10 +435,11 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     private void Flow_OpenInternalError()
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "Internal error";
-        config.MessageTid = "Something went wrong when confirming the transaction. Don't worry you'll have the chance to collect it again later";        
+        config.TitleTid = "TID_TRANSACTION_INTERNAL_ERR_TITLE";
+        config.MessageTid = "TID_TRANSACTION_INTERNAL_ERR_DESC";
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = Flow_OnCancelPendingTransactions;                        
+        config.OnConfirm = Flow_OnCancelPendingTransactions;
+        config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
     }
@@ -512,8 +519,13 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 
     public void Debug_TestPendingTransactionsFlow()
     {
-        bool value = Flow_Check(m_flowUICanvas);
-        Log("Checking pending transactions flow... " + value);
+        bool needsToPerform = Flow_NeedsToShowPendingTransactions();
+        Log("Checking pending transactions flow... " + needsToPerform);
+        if (needsToPerform)
+        {
+            GameObject uiCanvas = (m_flowUICanvasRectTransform == null) ? null : m_flowUICanvasRectTransform.gameObject;
+            Flow_PerformPendingTransactions(uiCanvas);
+        }        
     }
     #endregion
 }
