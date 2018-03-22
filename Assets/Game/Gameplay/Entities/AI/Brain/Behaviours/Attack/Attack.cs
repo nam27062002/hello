@@ -109,7 +109,6 @@ namespace AI {
 									// Save shooting position
 									m_facingTarget = m_machine.enemy.position;
 								}
-
 							}
 
 							if (startAttack)
