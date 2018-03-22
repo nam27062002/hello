@@ -43,6 +43,15 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
     private CandleData m_defaultCandleData = new CandleData(0.5f, 0.5f, Color.black, Color.black);
 
+    private struct matInstanceBackup
+    {
+        public Material mat;
+        public int renderQueue;
+    };
+
+
+    private List<matInstanceBackup> fireRushMats = null;// new List<Material>();
+
     // Use this for initialization
     void Start () {
         m_blackImage = GetComponent<MeshRenderer>();
@@ -53,8 +62,11 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
         m_gameCamera = InstanceManager.gameCamera;
         m_dragonPlayer = InstanceManager.player;
-        //        m_defaultCandleData.IsInside = true;
+
+//        m_dragonPlayer.IsFuryOn;
+//        m_defaultCandleData.IsInside = true;
         m_goOut = false;
+
     }
 
     void OnEnable()
@@ -81,6 +93,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 m_blackImage.material = m_candleMaterial;
                 m_blackImage.enabled = true;
                 m_enableState = true;
+                setFireRushMaterials(true);
             }
         }
         else
@@ -92,6 +105,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 if (cd.m_noEffect)  // disable dark screen and effect
                 {
                     m_blackImage.material = m_oldMaterial;
+                    setFireRushMaterials(false);
                     m_blackImage.enabled = false;
                     m_enableState = false;
                 }
@@ -109,16 +123,53 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         m_candleMaterial.SetFloat("_FallOff", falloff);
     }
 
+    private void setFireRushMaterials(bool enable)
+    {
+        foreach(matInstanceBackup mb in fireRushMats)
+        {
+            if (enable)
+            {
+                mb.mat.renderQueue = mb.renderQueue + 1000;
+            }
+            else
+            {
+                mb.mat.renderQueue = mb.renderQueue;
+
+            }
+        }
+    }
 
     void Update()
     {
-/*
-        if (m_activate != m_oldActivate)
+        if (fireRushMats == null)
         {
-            SetEnable(m_activate);
-            m_oldActivate = m_activate;
+            FireBreathDynamic[] fireRush = m_dragonPlayer.GetComponentsInChildren<FireBreathDynamic>(true);
+
+            if (fireRush.Length != 0)
+            {
+                fireRushMats = new List<matInstanceBackup>();
+                foreach (FireBreathDynamic fr in fireRush)
+                {
+                    ParticleSystemRenderer[] particleRenderers = fr.GetComponentsInChildren<ParticleSystemRenderer>(true);
+                    foreach (ParticleSystemRenderer psr in particleRenderers)
+                    {
+                        matInstanceBackup mb = new matInstanceBackup();
+                        mb.mat = psr.material;
+                        mb.renderQueue = mb.mat.renderQueue;
+                        fireRushMats.Add(mb);
+                    }
+                }
+            }
         }
-*/
+
+
+        /*
+                if (m_activate != m_oldActivate)
+                {
+                    SetEnable(m_activate);
+                    m_oldActivate = m_activate;
+                }
+        */
         if (m_enableState)
         {
             if (m_currentTrigger != null)
