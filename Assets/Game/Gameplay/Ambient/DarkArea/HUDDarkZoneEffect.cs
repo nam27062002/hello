@@ -125,7 +125,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     private void setMaterialParameters(Color col1, Color col2, float radius, float falloff)
     {
         float frm = m_dragonPlayer.IsFuryOn() ? m_fireRushMultiplier : 1.0f;
-        m_currentFireRushMultiplier = Mathf.Lerp(m_currentFireRushMultiplier, frm, 0.05f);
+        m_currentFireRushMultiplier = Mathf.Lerp(m_currentFireRushMultiplier, frm, 0.1f);
         m_candleMaterial.SetColor("_Tint", col1);
         m_candleMaterial.SetColor("_Tint2", col2);
         m_candleMaterial.SetFloat("_Radius", Mathf.Clamp(radius * m_currentFireRushMultiplier, -0.1f, 2.0f));
