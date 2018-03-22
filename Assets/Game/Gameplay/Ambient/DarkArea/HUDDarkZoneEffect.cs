@@ -48,6 +48,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         public Material mat;
         public int renderQueue;
     };
+    public float m_fireRushMultiplier = 1.0f;
 
 
     private List<matInstanceBackup> fireRushMats = null;// new List<Material>();
@@ -108,19 +109,22 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                     setFireRushMaterials(false);
                     m_blackImage.enabled = false;
                     m_enableState = false;
+                    m_currentTrigger = null;
                 }
-                m_currentTrigger = null;
+//                m_currentTrigger = null;
             }
         }
     }
 
-
+    private float m_currentFireRushMultiplier = 1.0f;
     private void setMaterialParameters(Color col1, Color col2, float radius, float falloff)
     {
+        float frm = m_dragonPlayer.IsFuryOn() ? m_fireRushMultiplier : 1.0f;
+        m_currentFireRushMultiplier = Mathf.Lerp(m_currentFireRushMultiplier, frm, 0.05f);
         m_candleMaterial.SetColor("_Tint", col1);
         m_candleMaterial.SetColor("_Tint2", col2);
-        m_candleMaterial.SetFloat("_Radius", radius);
-        m_candleMaterial.SetFloat("_FallOff", falloff);
+        m_candleMaterial.SetFloat("_Radius", radius * m_currentFireRushMultiplier);
+        m_candleMaterial.SetFloat("_FallOff", falloff * m_currentFireRushMultiplier);
     }
 
     private void setFireRushMaterials(bool enable)
@@ -134,7 +138,6 @@ public class HUDDarkZoneEffect : MonoBehaviour {
             else
             {
                 mb.mat.renderQueue = mb.renderQueue;
-
             }
         }
     }
