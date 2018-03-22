@@ -1773,6 +1773,35 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+
+    private void Track_DeviceStats(string adType, string rewardType, bool adIsAvailable, string provider = null)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_DeviceStats adType = " + adType + " rewardType = " + rewardType + " adIsAvailable = " + adIsAvailable + " provider = " + provider);
+        }
+
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.device.stats");
+        if (e != null)
+        {
+            if (TrackingPersistenceSystem != null)
+            {
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingPersistenceSystem.AdsCount);
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, TrackingPersistenceSystem.AdsSessions);
+            }
+
+            Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
+            Track_AddParamString(e, TRACK_PARAM_REWARD_TYPE, rewardType);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);
+            Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
+
+            Track_SendEvent(e);
+        }
+    }
+
+
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
