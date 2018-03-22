@@ -19,12 +19,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4220151712659702}
-  - component: {fileID: 33785364867154300}
-  - component: {fileID: 23644767754113886}
-  - component: {fileID: 114417235628175554}
   - component: {fileID: 114126114673091630}
+  - component: {fileID: 114926688608995238}
   m_Layer: 0
-  m_Name: Glow
+  m_Name: area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,6 +87,25 @@ GameObject:
   - component: {fileID: 4766397541663226}
   m_Layer: 0
   m_Name: CarnivourusPlantHead
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1185341171792842
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4191424592182744}
+  - component: {fileID: 33785364867154300}
+  - component: {fileID: 23644767754113886}
+  - component: {fileID: 114417235628175554}
+  - component: {fileID: 114370623119511688}
+  m_Layer: 0
+  m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -280,18 +297,31 @@ Transform:
   m_Father: {fileID: 4462409530860446}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4191424592182744
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1185341171792842}
+  m_LocalRotation: {x: -0.0007651682, y: 0.9991791, z: -0.022872232, w: -0.033426564}
+  m_LocalPosition: {x: 0.03, y: 2.89, z: 0}
+  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_Children: []
+  m_Father: {fileID: 4222154512438098}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4220151712659702
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1045481628709382}
-  m_LocalRotation: {x: 0.000053231124, y: 0.99994314, z: -0.0060726693, w: 0.00876519}
-  m_LocalPosition: {x: 0.03, y: 2.89, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalRotation: {x: -0.000018524097, y: 0.999975, z: -0.006464051, w: -0.0028656384}
+  m_LocalPosition: {x: 0.029999733, y: 2.89, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4222154512438098}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4222154512438098
 Transform:
@@ -300,13 +330,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1408655062316516}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1009.7899, y: -226.17384, z: -1.8105206}
+  m_LocalPosition: {x: 137.51933, y: 36.58336, z: -2.448732}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4394579669599202}
   - {fileID: 4438028823653384}
   - {fileID: 4440066666187412}
   - {fileID: 4599314336237222}
+  - {fileID: 4191424592182744}
   - {fileID: 4220151712659702}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -466,7 +497,7 @@ MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1045481628709382}
+  m_GameObject: {fileID: 1185341171792842}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -498,7 +529,7 @@ MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1045481628709382}
+  m_GameObject: {fileID: 1185341171792842}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!65 &65914370060154042
 BoxCollider:
@@ -596,6 +627,21 @@ MonoBehaviour:
   m_serializedJson: '[{"damage":70,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3,"stop":false,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false}]'
   m_databaseKey: PF_CarnivourusPlantDark
   m_updateMachinePos: 0
+--- !u!114 &114370623119511688
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1185341171792842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: CarnivourusPlantHead
+  m_parentRoot: {fileID: 4222154512438098}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114381076780638902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -617,7 +663,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1045481628709382}
+  m_GameObject: {fileID: 1185341171792842}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
@@ -654,6 +700,8 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+  m_edible:
+    m_rotateToMouth: 0
 --- !u!114 &114717885134412074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -681,6 +729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_onAttackAudio: hd_carnivorous_plant
   m_onBurnAudio: 
+  m_corpseAsset: 
 --- !u!114 &114799394862637384
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -692,6 +741,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114926688608995238
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1045481628709382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.0219841, y: -1.438667}
+  radius: 1.3894973
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114947569853390176
 MonoBehaviour:
   m_ObjectHideFlags: 1
