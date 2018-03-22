@@ -22,10 +22,10 @@ GameObject:
   - component: {fileID: 95000013029732220}
   - component: {fileID: 114000011298517116}
   - component: {fileID: 114820666804171572}
-  - component: {fileID: 114222066084247720}
   - component: {fileID: 225000013469517432}
   - component: {fileID: 114276556279327646}
   - component: {fileID: 114881141996410276}
+  - component: {fileID: 114111652980796770}
   m_Layer: 5
   m_Name: PF_PopupTransaction
   m_TagString: Untagged
@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 222411123533269314}
   - component: {fileID: 114753559898753204}
   m_Layer: 5
-  m_Name: TMP SubMeshUI [TextMeshPro/Sprite]
+  m_Name: TMP SubMeshUI [FNT_Bold_Editor_Stroke_Shadow + FNT_Default_Editor Atlas]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -710,7 +710,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 75
+  m_fontSize: 62.45
   m_fontSizeBase: 75
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1086,6 +1086,21 @@ MonoBehaviour:
   m_tid: TID_TRANSACTION_AMOUNT_TITLE
   m_caseType: 0
   m_replacements: []
+--- !u!114 &114111652980796770
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010013748420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2f06f211da7f5438b0035ee96a2e93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buttonConfirm: {fileID: 114618639608405080}
+  m_buttonCloseGO: {fileID: 1278282922111038}
+  m_amountText: {fileID: 114144344280575956}
+  m_currencyImage: {fileID: 114183424163646344}
 --- !u!114 &114144344280575956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1132,7 +1147,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 100
+  m_fontSize: 93.65
   m_fontSizeBase: 75
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1179,7 +1194,7 @@ MonoBehaviour:
     linkCount: 0
     lineCount: 1
     pageCount: 1
-    materialCount: 2
+    materialCount: 3
   m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -1397,29 +1412,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114222066084247720
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000010013748420}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77c3d104123ac4e548d7a90f04354542, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_pcButton: {fileID: 0}
-  m_missingCoinsText: {fileID: 114144344280575956}
-  OnAccept:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  OnCancel:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114276556279327646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1727,17 +1719,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114000011298517116}
-        m_MethodName: Close
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 114867360105511076}
         m_MethodName: Play
         m_Mode: 1
@@ -1749,8 +1730,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114222066084247720}
-        m_MethodName: OnCancelButton
+      - m_Target: {fileID: 114111652980796770}
+        m_MethodName: OnCloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1880,12 +1861,12 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
-  m_isDefaultMaterial: 1
-  m_padding: 0
+  m_isDefaultMaterial: 0
+  m_padding: 1.9625001
   m_canvasRenderer: {fileID: 222411123533269314}
   m_TextComponent: {fileID: 114144344280575956}
   m_materialReferenceIndex: 1
@@ -1930,19 +1911,8 @@ MonoBehaviour:
   OnBackButton:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114000011298517116}
-        m_MethodName: Close
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114222066084247720}
-        m_MethodName: OnCancelButton
+      - m_Target: {fileID: 114111652980796770}
+        m_MethodName: OnBackButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2000,7 +1970,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 63
+  m_fontSize: 46.8
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2244,7 +2214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_audioId: 
+  m_audioId: UI_Click
 --- !u!222 &222000010223131798
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -2524,7 +2494,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -2048, y: -3874.3342}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000012422039530
 RectTransform:

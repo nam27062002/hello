@@ -43,13 +43,20 @@
         return GetCurrency() != UserProfile.Currency.NONE && GetAmount() > 0;
     }
     
-    public void Perform()
+    /// <summary>
+    /// Perform the transaction.
+    /// </summary>
+    /// <returns><c>true</c> if the transaction was performed successfully. Otherwise <c>false</c></returns>
+    public bool Perform()
     {
-        if (CanPerform())
+        bool canPerform = CanPerform();        
+        if (canPerform)
         {
             // Only positive transactions are supported for now
             UsersManager.currentUser.EarnCurrency(GetCurrency(), (ulong)GetAmount(), false, HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT);
-            PersistenceFacade.instance.Save_Request(true);
+            PersistenceFacade.instance.Save_Request(true);                   
         }
+
+        return canPerform;
     }    
 }

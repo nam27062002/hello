@@ -220,9 +220,10 @@ public class Transaction
         return returnValue;
     }
 
-    public void Perform()
+    public bool Perform()
     {
-        if (CanPerform())
+        bool canPerform = CanPerform();
+        if (canPerform)
         {
             if (m_transactionResources != null)
             {
@@ -239,6 +240,8 @@ public class Transaction
         {
             TransactionManager.LogWarning("Transaction can't be performed");
         }
+
+        return canPerform;
     }    
 
     private TransactionResource GetTransactionResource(UserProfile.Currency currency, int amount)
@@ -263,5 +266,24 @@ public class Transaction
     {
         return (m_transactionResources == null) ? 0 : m_transactionResources.Count;        
     }  
+
+    public int GetCurrencyAmount(UserProfile.Currency currency)
+    {
+        int returnValue = 0;
+
+        if (m_transactionResources != null)
+        {
+            int count = m_transactionResources.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (m_transactionResources[i].GetCurrency() == currency)
+                {
+                    returnValue += m_transactionResources[i].GetAmount();
+                }
+            }
+        }
+
+        return returnValue;
+    }
 }
  

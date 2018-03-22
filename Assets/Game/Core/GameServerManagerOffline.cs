@@ -205,7 +205,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
         _transaction = new SimpleJSON.JSONClass();
         _transaction["id"] = "1";
         _transaction["source"] = "crm";        
-        _transaction["sc"] = 100;
+        _transaction["sc"] = 100000;
         _array.Add(null, _transaction);
 
         SimpleJSON.JSONNode _json = new SimpleJSON.JSONClass();
@@ -222,14 +222,14 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
         // Success
         ServerResponse res = GetConfirmPendingTransactionsResponse(_transactions);
-        DelayedCall(() => _callback(null, res), 5f);
+        DelayedCall(() => _callback(null, res), 0f);
 
         // Error
         //ServerResponse res = GetConfirmPendingTransactionsResponse(_transactions, 77);
         //DelayedCall(() => _callback(null, res), 5f);
 
         // Internal Error
-        //Error error = error = GetLogicServerInternalError();
+        //Error error = error = GetLogicServerInternalError(77);
         // Connection Error
         //Error error = error = new ClientConnectionError("Status code: " + -1);
         //DelayedCall(() => _callback(error, null), 5f);

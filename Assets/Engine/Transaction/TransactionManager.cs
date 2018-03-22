@@ -55,6 +55,14 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         }
     }
 
+    /// <summary>
+    /// It should be used only for debug purposes. By calling this event the pending transactions request is forced to be sent so the flow can be easily
+    /// </summary>
+    public void Pending_ForceRequestTransactions()
+    {
+        Pending_SetNeedsToRequest(true);
+    }
+
     private void Pending_RequestTransactions()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -71,6 +79,9 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         {
             m_pendingTransactions.Clear();
         }
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("OnPendingTransactionResponse: " + ((response == null) ? " no response" : response.ToString()));
 
         if (error == null && response != null)
         {            
@@ -131,6 +142,23 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             if (FeatureSettingsManager.IsDebugEnabled)
                 LogWarning("Error when requesting pending transactions " + error.ToString());
         }
+        
+        /*
+        // Uncomment this piece of code to test a transaction that wasn't received from server
+        if (m_pendingTransactions == null || m_pendingTransactions.Count == 0)
+        {
+            JSONNode transactionJSON = new JSONClass();
+            transactionJSON["id"] = "1";
+            transactionJSON["source"] = "support";
+            transactionJSON["hc"] = 1;
+
+            Transaction transaction = Factory_GetTransaction();
+            bool isValid = transaction.FromJSON(transactionJSON);
+            if (isValid)
+            {
+                Pending_AddTransaction(transaction);
+            }            
+        }*/
     }
 
     private void Pending_SetNeedsToRequest(bool value)
@@ -161,16 +189,13 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     /// Coroutine used to give all pending transactions to the user
     /// </summary>
     private Coroutine m_flowCoroutine = null;
-
-    /// <summary>
-    /// Whether or not a popup that gives a pending transaction to the user is being processed
-    /// </summary>
-    private bool m_flowIsProcessingPopup;
-
+    
     /// <summary>
     /// Popup currently open by the flow
     /// </summary>
     private PopupController m_flowCurrentPopup;
+
+    private GameObject m_flowUICanvas;
 
     private bool Flow_IsProcessingPopup()
     {
@@ -185,20 +210,26 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             m_flowCoroutine = null;
         }
 
-        if (m_flowCurrentPopup != null)
-        {
-            m_flowCurrentPopup.Close(true);
-            m_flowCurrentPopup = null;
-        }              
+        Flow_CloseCurrentPendingTransactionPopup();
+
+        m_flowUICanvas = null;                  
+    }
+
+    private bool Flow_ArePendingTransactionsUnlocked()
+    {
+        // Pending transactions are unlocked after second run to prevent this flow from messing up with tutorials
+        return UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
     /// <summary>
     /// Checks whether or not the flow that gives the pending transactions to the user should be triggered
     /// </summary>
     /// <returns><c>true</c> if the flow that gives the pending transactions to the user should be triggerd. Otherwise <c>false</c></returns>
-    public bool Flow_Check()
+    public bool Flow_Check(GameObject uiCanvas)
     {
-        bool returnValue = !Pending_IsEmpty();
+        m_flowUICanvas = uiCanvas;
+        
+        bool returnValue = Flow_ArePendingTransactionsUnlocked() && !Pending_IsEmpty();
         if (returnValue)
         {
             // m_flowCoroutine should be null at this point. If that's not the case, just in case, it's stopped
@@ -230,18 +261,12 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     }
 
     private void Flow_OpenPendingTransactionPopup(Transaction transaction)
-    {        
-        PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
-        config.MessageTid = transaction.ToJSON().ToString();
-        config.IsButtonCloseVisible = false;
-        config.OnConfirm = Flow_OnAcceptPendingTransaction;
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.CloseOnConfirm = false;
-
-        // Back button is disabled in order to make sure that the user is aware
-        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
-        m_flowCurrentPopup = PopupManager.PopupMessage_Open(config);
+    {
+        // This popup only supports hc and sc for now        
+        UserProfile.Currency currency = Flow_GetCurrency(transaction);        
+        m_flowCurrentPopup = PopupManager.LoadPopup(PopupTransaction.PATH);
+        m_flowCurrentPopup.GetComponent<PopupTransaction>().Init(transaction.GetCurrencyAmount(currency), currency, Flow_OnAcceptPendingTransaction, Flow_OnClosePendingTransactionPopup);
+        m_flowCurrentPopup.Open();                        
     }
 
     /// <summary>
@@ -255,6 +280,22 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         Transaction transaction = m_pendingTransactions.Peek();        
         GameServerManager.SharedInstance.ConfirmPendingTransaction(transaction, Flow_OnConfirmPendingTransaction);
     }
+    
+    private void Flow_OnClosePendingTransactionPopup()
+    {
+        // A popup notifying the user that she will have the chance to collect her pending transactions later is opened
+        PopupMessage.Config config = PopupMessage.GetConfig();
+        config.TitleTid = "Warning";
+        config.MessageTid = "You'll have the chance to collect these transactions later";        
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+
+        // All pending transactions are cancelled because we assume that the user wants to skip this flow
+        config.OnConfirm = Flow_OnCancelPendingTransactions;                        
+        config.CancelButtonTid = "Ok";
+        config.IsButtonCloseVisible = false;
+        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.Close;
+        PopupManager.PopupMessage_Open(config);
+    }   
 
     private void Flow_OnConfirmPendingTransaction(FGOL.Server.Error error, GameServerManager.ServerResponse response)
     {        
@@ -312,10 +353,28 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             Transaction transaction = m_pendingTransactions.Dequeue();            
 
             // Apply the pending transaction
-            transaction.Perform();            
+            bool transactionSuccess = transaction.Perform();            
+
+            // Some visual feedback is launched
+            if (transactionSuccess)
+            {
+                UserProfile.Currency currency = Flow_GetCurrency(transaction);
+                if (currency == UserProfile.Currency.SOFT || currency == UserProfile.Currency.HARD)
+                {
+                    if (m_flowUICanvas != null)
+                    {
+                        UINotificationShop.CreateAndLaunch(currency, transaction.GetCurrencyAmount(currency), Vector3.down * 150f, m_flowUICanvas.transform as RectTransform);
+                    }
+                }
+            }
         }
         else
         {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("Error when confirming transaction code: " + internalErrorCode);
+            }
+
             needsToClosePopup = false;
 
             if (internalErrorCode > -1)
@@ -328,11 +387,26 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             }
         }        
 
-        if (needsToClosePopup && m_flowCurrentPopup != null)
-        {           
-            m_flowCurrentPopup.Close(false);
-            m_flowCurrentPopup = null;            
+        if (needsToClosePopup)
+        {
+            Flow_CloseCurrentPendingTransactionPopup();
         }
+    }
+
+    private UserProfile.Currency Flow_GetCurrency(Transaction transaction)
+    {
+        // So far only two currencies are supported
+        UserProfile.Currency currency = UserProfile.Currency.NONE;
+        if (transaction.GetCurrencyAmount(UserProfile.Currency.HARD) > 0)
+        {
+            currency = UserProfile.Currency.HARD;
+        }
+        else if (transaction.GetCurrencyAmount(UserProfile.Currency.SOFT) > 0)
+        {
+            currency = UserProfile.Currency.SOFT;
+        }
+
+        return currency;
     }
 
     /// <summary>
@@ -342,13 +416,9 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
         config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
-        config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
-        config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = null;
-        config.OnCancel = Flow_OnCancelPendingTransactions;
-        config.CancelButtonTid = "Try Later";
-        config.IsButtonCloseVisible = false;
+        config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";        
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;                      
+        config.IsButtonCloseVisible = false;        
         PopupManager.PopupMessage_Open(config);
     }
 
@@ -359,13 +429,22 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     private void Flow_OpenInternalError()
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
-        config.MessageTid = "Something went wrong when confirming the transaction";        
+        config.TitleTid = "Internal error";
+        config.MessageTid = "Something went wrong when confirming the transaction. Don't worry you'll have the chance to collect it again later";        
         config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = Flow_OnCancelPendingTransactions;        
-        config.ConfirmButtonTid = "Try Later";
+        config.OnConfirm = Flow_OnCancelPendingTransactions;                        
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
+    }
+
+    private void Flow_OnCancelCurrentPendingTransaction()
+    {
+        if (m_pendingTransactions != null && m_pendingTransactions.Count > 0)
+        {
+            m_pendingTransactions.Dequeue();
+        }
+
+        Flow_CloseCurrentPendingTransactionPopup();        
     }
 
     private void Flow_OnCancelPendingTransactions()
@@ -376,19 +455,27 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         }
 
         // If there's a popup open then it's closed
+        Flow_CloseCurrentPendingTransactionPopup();
+    }
+
+    private void Flow_CloseCurrentPendingTransactionPopup()
+    {
+        // If there's a popup open then it's closed
         if (m_flowCurrentPopup != null)
         {
-            m_flowCurrentPopup.Close(false);
+            m_flowCurrentPopup.Close(true);
             m_flowCurrentPopup = null;
         }
     }
     #endregion
 
     #region log
-    private const string LOG_CHANNEL = "[PendingTransactionsManager]";
+    private const string LOG_CHANNEL = "[TransactionsManager] ";
     public static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
+
+        msg = "<color=yellow>" + msg + "</color>";        
         Debug.Log(msg);
     }
 
@@ -425,7 +512,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 
     public void Debug_TestPendingTransactionsFlow()
     {
-        bool value = Flow_Check();
+        bool value = Flow_Check(m_flowUICanvas);
         Log("Checking pending transactions flow... " + value);
     }
     #endregion
