@@ -17,6 +17,11 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     private DragonPlayer m_dragonPlayer;
     private bool m_goOut;
 
+    private Color m_currentColor;
+    private Color m_currentColor2;
+    private float m_currentRadius;
+    private float m_currentFallOff;
+
     [Serializable]
     public class CandleData
     {
@@ -109,9 +114,9 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                     setFireRushMaterials(false);
                     m_blackImage.enabled = false;
                     m_enableState = false;
-                    m_currentTrigger = null;
+//                    m_currentTrigger = null;
                 }
-//                m_currentTrigger = null;
+                m_currentTrigger = null;
             }
         }
     }
@@ -123,7 +128,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         m_currentFireRushMultiplier = Mathf.Lerp(m_currentFireRushMultiplier, frm, 0.05f);
         m_candleMaterial.SetColor("_Tint", col1);
         m_candleMaterial.SetColor("_Tint2", col2);
-        m_candleMaterial.SetFloat("_Radius", radius * m_currentFireRushMultiplier);
+        m_candleMaterial.SetFloat("_Radius", Mathf.Clamp(radius * m_currentFireRushMultiplier, -0.1f, 2.0f));
         m_candleMaterial.SetFloat("_FallOff", falloff * m_currentFireRushMultiplier);
     }
 
@@ -165,14 +170,6 @@ public class HUDDarkZoneEffect : MonoBehaviour {
             }
         }
 
-
-        /*
-                if (m_activate != m_oldActivate)
-                {
-                    SetEnable(m_activate);
-                    m_oldActivate = m_activate;
-                }
-        */
         if (m_enableState)
         {
             if (m_currentTrigger != null)
@@ -189,12 +186,11 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
                 m_goOut = delta > 0.5f;
 
-                Color color = Color.Lerp(inData.m_Color, outData.m_Color, delta);
-                Color color2 = Color.Lerp(inData.m_Color2, outData.m_Color2, delta);
-                float radius = Mathf.Lerp(inData.m_radius, outData.m_radius, delta);
-                float falloff = Mathf.Lerp(inData.m_fallOff, outData.m_fallOff, delta);
+                m_currentColor = Color.Lerp(inData.m_Color, outData.m_Color, delta);
+                m_currentColor2 = Color.Lerp(inData.m_Color2, outData.m_Color2, delta);
+                m_currentRadius = Mathf.Lerp(inData.m_radius, outData.m_radius, delta);
+                m_currentFallOff = Mathf.Lerp(inData.m_fallOff, outData.m_fallOff, delta);
 
-                setMaterialParameters(color, color2, radius, falloff);
 /*
                 if (sd > 1.0f)
                 {
@@ -202,6 +198,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 }
 */
             }
+            setMaterialParameters(m_currentColor, m_currentColor2, m_currentRadius, m_currentFallOff);
         }
     }
 }
