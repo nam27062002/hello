@@ -271,18 +271,21 @@ public class MenuSceneController : SceneController {
 		OnDragonSelected(_data.def.sku);
 	}
 
-    #region debug
-    private GameObject m_debugUICanvas;
-
-    private GameObject Debug_GetUICanvas()
-    {
-        if (m_debugUICanvas == null) {
+    private GameObject m_uiCanvasGO;
+    public GameObject GetUICanvasGO() {
+        if (m_uiCanvasGO == null) {
             if (m_hud != null) {
-                m_debugUICanvas = m_hud.transform.parent.gameObject;
+                m_uiCanvasGO = m_hud.transform.parent.gameObject;
             }
         }
 
-        return m_debugUICanvas;
+        return m_uiCanvasGO;
+    }            
+
+    #region debug
+
+    private GameObject Debug_GetUICanvas() {
+        return GetUICanvasGO();
     }
 
     private void Debug_Awake() {
