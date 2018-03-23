@@ -44,6 +44,7 @@ namespace Metagame {
 
 			// Common stuff
 			m_source = _source;
+			m_amount = _datas.Count;
 
 			// Create individual reward for each given data
 			for(int i = 0; i < _datas.Count; ++i) {

@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Widget to display the info of an offer pack reward.
 /// </summary>
-public class OfferItemUI : MonoBehaviour {
+public class OfferItemSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -31,6 +31,8 @@ public class OfferItemUI : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_text = null;
 	[Space]
 	[SerializeField] private bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
+	[Space]
+	[SerializeField] private GameObject m_separator = null;
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -44,7 +46,7 @@ public class OfferItemUI : MonoBehaviour {
 		set { InitFromItem(value); }
 	}
 
-	private GameObject m_preview = null;
+	private IOfferItemPreview m_preview = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -69,6 +71,9 @@ public class OfferItemUI : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+
+		// Update associated separator
+		if(m_separator != null) m_separator.SetActive(true);
 	}
 
 	/// <summary>
@@ -77,6 +82,9 @@ public class OfferItemUI : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+
+		// Update associated separator
+		if(m_separator != null) m_separator.SetActive(false);
 	}
 
 	/// <summary>
@@ -99,9 +107,10 @@ public class OfferItemUI : MonoBehaviour {
 	/// <summary>
 	/// Refresh the widget with the data of a specific offer item.
 	/// </summary>
-	public void InitFromItem(OfferPackItem _item, bool _reloadPreview = true) {
+	public void InitFromItem(OfferPackItem _item) {
 		// Force reloading preview if item is different than the current one
-		if(m_item != _item) _reloadPreview = true;
+		bool reloadPreview = false;
+		if(m_item != _item) reloadPreview = true;
 
 		// Store new item
 		m_item = _item;
@@ -109,61 +118,37 @@ public class OfferItemUI : MonoBehaviour {
 		// If given item is null, disable game object and don't do anything else
 		if(m_item == null) {
 			this.gameObject.SetActive(false);
-			if(_reloadPreview) ClearPreview();
+			if(reloadPreview) ClearPreview();
 			return;
 		}
+
+		// Aux vars
+		Metagame.Reward reward = item.reward;
 
 		// Activate game object
 		this.gameObject.SetActive(true);
 
 		// If a preview was already created, destroy it
-		if(_reloadPreview) ClearPreview();
+		if(reloadPreview) ClearPreview();
 
-		// Set reward preview and text
-		// Based on type
-		Metagame.Reward reward = item.reward;
-		if(reward is Metagame.RewardPet) {
-			// Get the pet preview
-			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
-			if(petDef != null) {
-				if(_reloadPreview) {
-					// 3d preview?
-					if(m_allow3dPreview) {
-						// [AOC] TODO!!
-					} else {
-						// [AOC] TODO!!
-						//Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
-					}
-				}
-				m_text.text = petDef.GetLocalized("tidName");
-			} else {
-				// (shouldn't happen)
-				m_text.text = LocalizationManager.SharedInstance.Localize("TID_PET");
+		// Load new preview (if required)
+		if(reloadPreview) {
+			GameObject previewPrefab = OfferItemPrefabs.GetPrefab(item.type, m_allow3dPreview ? OfferItemPrefabs.PrefabType.PREVIEW_3D : OfferItemPrefabs.PrefabType.PREVIEW_2D);
+			if(previewPrefab != null) {
+				GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab);
+				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
 			}
-		} else if(reward is Metagame.RewardEgg) {
-			// Get the egg definition
-			DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, reward.sku);
-			if(eggDef != null) {
-				if(_reloadPreview) {
-					// 3d preview?
-					if(m_allow3dPreview) {
-						// [AOC] TODO!!
-					} else {
-						// [AOC] TODO!!
-						//Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
-					}
-				}
-				m_text.text = eggDef.GetLocalized("tidName");
-			} else {
-				// (shouldn't happen) Use generic
-				m_text.text = LocalizationManager.SharedInstance.Localize("TID_EGG");
-			}
-		} else if(reward is Metagame.RewardCurrency) {
-			if(_reloadPreview) {
-				// Get the icon linked to this currency
-				//UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(reward.currency));	// [AOC] TODO!!
-			}
-			m_text.text = StringUtils.FormatNumber(reward.amount, 0);	// [AOC] TODO!! Better text: 30 coins, 1000 gems, etc.
+		}
+
+		// Initialize preview with item data
+		if(m_preview != null) {
+			m_preview.InitFromItem(m_item);
+			m_preview.SetParentAndFit(m_previewContainer);
+		}
+
+		// Set text - preview will given us the text already localized and all
+		if(m_preview != null) {
+			m_text.text = m_preview.GetLocalizedDescription();
 		} else {
 			m_text.text = "Unknown reward type";
 		}
@@ -174,7 +159,7 @@ public class OfferItemUI : MonoBehaviour {
 	/// </summary>
 	private void ClearPreview() {
 		if(m_preview != null) {
-			Destroy(m_preview);
+			Destroy(m_preview.gameObject);
 			m_preview = null;
 		}
 	}
@@ -187,6 +172,6 @@ public class OfferItemUI : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Reapply current reward
-		InitFromItem(m_item, false);
+		InitFromItem(m_item);
 	}
 }

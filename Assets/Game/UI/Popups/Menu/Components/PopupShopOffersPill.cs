@@ -26,13 +26,12 @@ public class PopupShopOffersPill : IPopupShopPill {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float TIMER_REFRESH_INTERVAL = 1;	// Seconds
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private OfferItemUI[] m_itemsPreview = null;
+	[SerializeField] private OfferItemSlot[] m_itemSlots = null;
 
 	[Space]
 	[SerializeField] private Localizer m_packNameText = null;
@@ -41,6 +40,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	[Space]
 	[SerializeField] private Text m_priceText = null;
 	[SerializeField] private TextMeshProUGUI m_previousPriceText = null;
+	[SerializeField] private GameObject m_featuredHighlight = null;
 
 	// Public
 	private OfferPack m_pack = null;
@@ -71,12 +71,16 @@ public class PopupShopOffersPill : IPopupShopPill {
 	public void InitFromOfferPack(OfferPack _pack) {
 		// Store new pack
 		m_pack = _pack;
+		m_def = null;
 
 		// If null, or pack can't be displayed, hide this pill and return
 		if(m_pack == null || !m_pack.CanBeDisplayed()) {
 			this.gameObject.SetActive(false);
 			return;
 		}
+
+		// Store def
+		m_def = _pack.def;
 
 		// Pricing
 		m_currency = UserProfile.Currency.REAL;	// For now offer packs are only bought wtih real money!
@@ -98,6 +102,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 		m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
 
 		// Timer
+		m_remainingTimeText.gameObject.SetActive(m_pack.isTimed);	// Don't show if offer is not timed
 		RefreshTimer();
 
 		// Discount
@@ -116,13 +121,16 @@ public class PopupShopOffersPill : IPopupShopPill {
 		// [AOC] TODO!! Let's just put the formatted number for now
 		m_previousPriceText.text = StringUtils.FormatNumber(m_previousPrice, 0);
 
+		// Featured highlight
+		m_featuredHighlight.SetActive(m_pack.featured);
+
 		// Items
-		for(int i = 0; i < m_itemsPreview.Length; ++i) {
+		for(int i = 0; i < m_itemSlots.Length; ++i) {
 			// If there are not enough item, hide the slot!
 			if(i >= m_pack.items.Count) {
-				m_itemsPreview[i].InitFromItem(null);
+				m_itemSlots[i].InitFromItem(null);
 			} else {
-				m_itemsPreview[i].InitFromItem(m_pack.items[i]);
+				m_itemSlots[i].InitFromItem(m_pack.items[i]);
 			}
 		}
 	}
@@ -132,11 +140,9 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// https://docs.unity3d.com/ScriptReference/MonoBehaviour.InvokeRepeating.html
 	/// </summary>
 	public void RefreshTimer() {
-		// Skip if no target offer
+		// Skip if no target offer or target offer is not timed
 		if(m_pack == null) return;
-
-		// Don't show timer if offer is not timed
-		m_remainingTimeText.gameObject.SetActive(m_pack.isTimed);
+		if(!m_pack.isTimed) return;
 
 		// Update text
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
@@ -192,5 +198,4 @@ public class PopupShopOffersPill : IPopupShopPill {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-
 }

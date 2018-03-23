@@ -141,6 +141,11 @@ namespace Metagame {
 					return CreateTypePet(_data.sku, _source);
 				} break;
 
+				// Skin reward - ignoring amount (skins can only be rewarded once)
+				case RewardSkin.TYPE_CODE: {
+					return CreateTypeSkin(_data.sku, _source);
+				} break;
+
 				// Multi-reward: Cannot be created using this method
 				case RewardMulti.TYPE_CODE: { 
 					Debug.LogError("<color=red>ERROR! Attempting to create a multi-reward from data.</color>"); 
@@ -158,6 +163,9 @@ namespace Metagame {
 
 		public static RewardPet CreateTypePet(string _sku, string _source)				{ return new RewardPet(_sku, _source); }
 		public static RewardPet CreateTypePet(DefinitionNode _def, string _source)		{ return new RewardPet(_def, _source); }
+
+		public static RewardSkin CreateTypeSkin(string _sku, string _source)			{ return new RewardSkin(_sku, _source); }
+		public static RewardSkin CreateTypeSkin(DefinitionNode _def, string _source)	{ return new RewardSkin(_def, _source); }
 
 		public static RewardMulti CreateTypeMulti(List<Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)	{ return new RewardMulti(_datas, _source, _economyGroup); }
 		#endregion

@@ -233,7 +233,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224244353174680550}
-  - component: {fileID: 114078734629795390}
+  - component: {fileID: 114278156481472480}
   - component: {fileID: 114490522582883156}
   m_Layer: 5
   m_Name: PF_PopupShopSCPill
@@ -408,22 +408,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114078734629795390
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1400235556076558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6c39dfbe82ae4e7f97895f403b83267, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_iconContainer: {fileID: 224361326396389100}
-  m_amountText: {fileID: 114398664707241442}
-  m_bonusAmountText: {fileID: 114774112584543276}
-  m_priceButtons: {fileID: 114615467425035466}
-  m_bestValueObj: {fileID: 1380358298539324}
 --- !u!114 &114134019447817990
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -475,7 +459,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114078734629795390}
+      - m_Target: {fileID: 0}
         m_MethodName: OnBuyButton
         m_Mode: 1
         m_Arguments:
@@ -555,6 +539,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &114278156481472480
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1400235556076558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0759dce597b814b7195d492cb529387c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_iconContainer: {fileID: 224361326396389100}
+  m_amountText: {fileID: 114398664707241442}
+  m_bonusAmountText: {fileID: 114774112584543276}
+  m_priceButtons: {fileID: 114615467425035466}
+  m_bestValueObj: {fileID: 1380358298539324}
 --- !u!114 &114294542487908034
 MonoBehaviour:
   m_ObjectHideFlags: 1

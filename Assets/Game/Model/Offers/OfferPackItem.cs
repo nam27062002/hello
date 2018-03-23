@@ -30,6 +30,11 @@ public class OfferPackItem {
 		get { return m_featured; }
 	}
 
+	private string m_type = "";
+	public string type {
+		get { return m_type; }
+	}
+
 	private Metagame.Reward m_reward = null;
 	public Metagame.Reward reward {
 		get { return m_reward; }
@@ -69,12 +74,16 @@ public class OfferPackItem {
 		m_def = _def;
 		if(m_def == null) {
 			m_reward = null;
+			m_type = "";
 			return;
 		}
 
+		// Store type
+		m_type = _def.Get("itemType");
+
 		// Initialize reward
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
-		rewardData.typeCode = _def.Get("itemType");
+		rewardData.typeCode = m_type;
 		rewardData.sku = _def.Get("itemSku");
 		rewardData.amount = _def.GetAsLong("itemAmount", 1);
 		m_reward = Metagame.Reward.CreateFromData(

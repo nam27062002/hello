@@ -236,7 +236,7 @@ public class OfferPack {
 		m_openedEggs = 0;
 		m_petsOwnedCount = 0;
 		m_petsOwned = new string[0];
-		m_progressionRange = new RangeInt();
+		m_progressionRange = new RangeInt(0, int.MaxValue);
 		m_skinsUnlocked = new string[0];
 		m_skinsOwned = new string[0];
 
