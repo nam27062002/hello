@@ -1783,6 +1783,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_DeviceStats()
     {
+#if UNITY_ANDROID
         float rating = FeatureSettingsManager.instance.Device_CalculateRating();
 
         int processorFrequency = FeatureSettingsManager.instance.Device_GetProcessorFrequency();
@@ -1808,6 +1809,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Track_SendEvent(e);
         }
+#endif
     }
 
 
