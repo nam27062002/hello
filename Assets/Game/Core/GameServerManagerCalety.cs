@@ -177,7 +177,19 @@ public class GameServerManagerCalety : GameServerManager {
 			GameServerManager.SharedInstance.OnConnectionLost();
 		}
 
-		void ResetWaitingFlags() {
+        // When a gameplay action was successful it passes the result to gameplay
+        public override void onGamePlayActionProcessed(string strAction, JSONNode kResponseData)
+        {            
+            GameServerManager.SharedInstance.OnGameActionProcessed(strAction, kResponseData);
+        }
+
+        // When a gameplay action fails it returns the error code
+        public override void onGamePlayActionFailed(string strAction, int iErrorStatus)
+        {
+            GameServerManager.SharedInstance.OnGameActionFailed(strAction, iErrorStatus);            
+        } 
+
+        void ResetWaitingFlags() {
 			m_waitingLoginResponse = false;
 			m_waitingGetUniverse = false;
 			m_waitingMergeResponse = false;
@@ -252,10 +264,22 @@ public class GameServerManagerCalety : GameServerManager {
         Connection_Init();
     }
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public override void Ping(ServerCallback callback) {
+    public override void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response)
+    {
+        string responseAsString = (response == null) ? null : response.ToString();
+        CaletyExtensions_OnCommandDefaultResponse(responseAsString, cmd, 200);
+    }
+
+    public override void OnGameActionFailed(string cmd, int errorCode)
+    {
+        Error error = GetLogicServerInternalError(errorCode);
+        Commands_OnExecuteCommandDone(error, null);
+    }    
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void Ping(ServerCallback callback) {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
 
@@ -461,6 +485,18 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.TrackLoading, parameters, callback);                       
     }
 
+    public override void GetPendingTransactions(ServerCallback callback) {          
+        Commands_EnqueueCommand(ECommand.PendingTransactions_Get, null, callback);
+    }
+
+    protected override void DoConfirmPendingTransactions(List<Transaction> transactions, ServerCallback callback) {
+        JSONNode json = GetPendingTransactionsJSON(transactions);        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+
+        Commands_EnqueueCommand(ECommand.PendingTransactions_Confirm, parameters, callback);
+    }
+
     override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
 	}
@@ -551,20 +587,21 @@ public class GameServerManagerCalety : GameServerManager {
         GetGameSettings,
         PlayTest,
         TrackLoading,
+        PendingTransactions_Get,
+        PendingTransactions_Confirm,
 
-		GlobalEvents_TMPCustomizer,
+        GlobalEvents_TMPCustomizer,
 		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
 		GlobalEvents_GetState,		// params: int _eventID. Returns the current total value of an event
 		GlobalEvents_RegisterScore,	// params: int _eventID, float _score
 		GlobalEvents_GetRewards,	// params: int _eventID
 		GlobalEvents_GetLeadeboard	// params: int _eventID
-
-	}
+	}    
 
 	/// <summary>
 	/// 
 	/// </summary>
-	private class Command {
+	private class Command {        
 		public ECommand Cmd { get; private set; }
 		public Dictionary<string, string> Parameters { get; set; }
 		public ServerCallback Callback { get; private set; }
@@ -828,6 +865,21 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommand(COMMAND_TRACK_LOADING, null, null, parameters["body"]);                    
                 } break;
 
+                case ECommand.PendingTransactions_Get: {
+                    Command_SendCommand(COMMAND_PENDING_TRANSACTIONS_GET);
+                } break;
+
+                case ECommand.PendingTransactions_Confirm: {                    
+                    JSONClass data = null;
+                    string paramsAsString = parameters["body"];
+                    if (!string.IsNullOrEmpty(paramsAsString))
+                    {
+                        data = JSON.Parse(paramsAsString) as JSONClass;
+                    }
+                        
+                    Command_SendCommandAsGameAction(COMMAND_PENDING_TRANSACTIONS_CONFIRM, data, false);
+                } break;
+
                 case ECommand.GlobalEvents_TMPCustomizer:{
                     Command_SendCommand( COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, null, null, "" );
 				}break;
@@ -873,7 +925,7 @@ public class GameServerManagerCalety : GameServerManager {
     /// <summary>
     /// It sends the command request to the server.
     /// </summary>    
-    private void Command_SendCommand(string commandName, Dictionary<string, string> urlParams=null, Dictionary<string, string> headerParams=null, string body=null) {
+    private void Command_SendCommand(string commandName, Dictionary<string, string> urlParams=null, Dictionary<string, string> headerParams=null, string body=null) {        
         if (!Command_IsAnonymous(commandName)) {
             if (urlParams == null) {
                 urlParams = new Dictionary<string, string>();
@@ -894,6 +946,10 @@ public class GameServerManagerCalety : GameServerManager {
 
         // Connection checker timer is reseted because a request is already being sent
         Connection_ResetTimer();
+    }
+
+    private void Command_SendCommandAsGameAction(string commandName, JSONClass parameters, bool sendNow) {
+        GameSessionManager.SharedInstance.SendGamePlayActionInJSON(commandName, parameters, sendNow);
     }
 
     /// <summary>
@@ -1226,7 +1282,10 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/gevent/progress";
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/gevent/addProgress";
 	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/gevent/reward";
-	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";    
+	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
+    
+    private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
+    private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";
 
     /// <summary>
     /// Initialize Calety's NetworkManager.
@@ -1240,6 +1299,7 @@ public class GameServerManagerCalety : GameServerManager {
 		};
 
 		// Register all endpoints to the network manager
+        // CONTROLLERS
 		NetworkManager nm = NetworkManager.SharedInstance;	// Shorter notation
 		nm.RegistryEndPoint(COMMAND_PING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_TIME, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
@@ -1251,20 +1311,20 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_PENDING_TRANSACTIONS_GET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);                
 
         nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_STATE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_REWARDS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-	}
+		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);        
+    }    
 
-
-	/// <summary>
-	/// Default callback from Calety's NetworkManager, will propagate the response to the command system.
-	/// </summary>
-	private bool CaletyExtensions_OnCommandDefaultResponse(string strResponse, string strCmd, int iResponseCode) {
+    /// <summary>
+    /// Default callback from Calety's NetworkManager, will propagate the response to the command system.
+    /// </summary>
+    private bool CaletyExtensions_OnCommandDefaultResponse(string strResponse, string strCmd, int iResponseCode) {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Received response for command " + strCmd + ",  statusCode=" + iResponseCode);
 

@@ -442,6 +442,7 @@ public class LoadingSceneController : SceneController {
 				EntityManager.CreateInstance(true);
 				ViewManager.CreateInstance(true);
 				InstanceManager.CreateInstance(true);
+				FontManager.instance.Init();
 
 		        GameAds.CreateInstance(false);
 		        GameAds.instance.Init();
@@ -460,8 +461,11 @@ public class LoadingSceneController : SceneController {
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
-				
-				StartLoadFlow();	            	                                
+
+                TransactionManager.CreateInstance();
+                TransactionManager.instance.Initialise();
+
+                    StartLoadFlow();	            	                                
           	}break;
         }
     }

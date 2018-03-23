@@ -6,6 +6,7 @@ struct appdata_t
 {
 	float4 vertex : POSITION;
 	float2 texcoord : TEXCOORD0;
+
 #if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
 	float4 texcoord1 : TEXCOORD1;
 #endif
@@ -17,10 +18,11 @@ struct appdata_t
 };
 
 //#define EMISSIVE_LIGHTMAPCONTRAST
-
 struct v2f {
 	float4 vertex : SV_POSITION;
+#ifdef MAINCOLOR_TEXTURE
 	float2 texcoord : TEXCOORD0;
+#endif
 
 #if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
 	float2 lmap : TEXCOORD1;
@@ -56,10 +58,14 @@ struct v2f {
 
 };
 
+#ifdef MAINCOLOR_TEXTURE
 sampler2D _MainTex;
 float4 _MainTex_ST;
 
+#endif
+
 float4 _Panning;
+float4 _Color;
 
 #ifdef BLEND_TEXTURE	
 sampler2D _SecondTexture;
@@ -144,7 +150,9 @@ v2f vert (appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 
+#ifdef MAINCOLOR_TEXTURE
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Time.y * _Panning.xy);
+#endif
 
 #ifdef BLEND_TEXTURE	
 	o.texcoord2 = TRANSFORM_TEX(v.texcoord, _SecondTexture) + (_Time.y * _Panning.zw);
@@ -207,14 +215,17 @@ v2f vert (appdata_t v)
 	return o;
 }
 
-
 fixed4 frag (v2f i) : SV_Target
 {	
 #ifdef DEBUG
 	return fixed4(1.0, 0.0, 1.0, 1.0);
 #endif	
 
+#ifdef MAINCOLOR_TEXTURE
 	fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
+#else
+	fixed4 col = _Color;
+#endif
 
 #ifdef CUTOFF
 	clip(col.a - _CutOff);
@@ -224,7 +235,7 @@ fixed4 frag (v2f i) : SV_Target
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
-#ifdef ADDITIVE_BLEND
+#ifdef ADDITIVE_BLEND			//Used in fog_tirilla_background to see night sky stars
 	col += col2 * (1.0 - i.color.a);
 #else
 	float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
@@ -277,7 +288,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #endif
 
-#ifdef NORMALMAP
+#if defined(NORMALMAP) && defined(MAINCOLOR_TEXTURE)
 	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
