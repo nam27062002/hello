@@ -568,7 +568,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     {
         msg = LOG_CHANNEL + msg;
 
-        msg = "<color=yellow>" + msg + "</color>";        
+        //msg = "<color=yellow>" + msg + "</color>";        
         Debug.Log(msg);
     }
 
