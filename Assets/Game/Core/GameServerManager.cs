@@ -24,7 +24,7 @@ public class GameServerManager
             if (s_pInstance == null)
             {
 				// Test mode?
-				if(DebugSettings.useDebugServer) {
+				if (DebugSettings.useDebugServer) {
 					// Offline implementation is used
 					s_pInstance = new GameServerManagerOffline();
 				} else {
@@ -190,6 +190,14 @@ public class GameServerManager
         return (long)unixTimestamp * 1000;
     }
 
+    public virtual void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response) {}
+    public virtual void OnGameActionFailed(string cmd, int errorCode) {}
+
+    public Error GetLogicServerInternalError(int errorCode=-1)
+    {
+        return new ServerInternalError(null, null, ErrorCodes.LogicError, errorCode);
+    }
+
     //------------------------------------------------------------------------//
     // LOGIN																  //
     //------------------------------------------------------------------------//
@@ -220,12 +228,81 @@ public class GameServerManager
     // OTHERS																  //
     //------------------------------------------------------------------------//
     public virtual void SendPlayTest(bool silent, string playTestUserId, string trackingData, ServerCallback callback) {}
-    public virtual void SendTrackLoading(string step, int deltaTime, bool isFirstTime, int sessionsCount, ServerCallback callback) {}   
+    public virtual void SendTrackLoading(string step, int deltaTime, bool isFirstTime, int sessionsCount, ServerCallback callback) {}
+    public virtual void GetPendingTransactions(ServerCallback callback) {}
+    public void ConfirmPendingTransaction(Transaction transaction, ServerCallback callback)
+    {        
+        if (transaction == null)
+        {
+            ConfirmPendingTransactions(null, callback);
+        }
+        else
+        {
+            List<Transaction> transactions = new List<Transaction>();
+            transactions.Add(transaction);
+            DoConfirmPendingTransactions(transactions, callback);
+        }
+    }    
 
-	//------------------------------------------------------------------------//
-	// GLOBAL EVENTS														  //
-	//------------------------------------------------------------------------//
-	public virtual void GlobalEvent_TMPCustomizer(ServerCallback _callback) {}
+    public void ConfirmPendingTransactions(List<Transaction> transactions, ServerCallback callback)
+    {
+        if (transactions == null || transactions.Count == 0)
+        {            
+            callback(GetLogicServerInternalError(), null);
+        }
+        else
+        {
+            DoConfirmPendingTransactions(transactions, callback);
+        }
+    }
+
+    protected virtual void DoConfirmPendingTransactions(List<Transaction> transactions, ServerCallback callback) {}
+
+    protected ServerResponse GetConfirmPendingTransactionsResponse(List<Transaction> transactions, int errorCode=-1)
+    {
+        // JSON response       
+        SimpleJSON.JSONNode json = GetPendingTransactionsJSON(transactions);
+        if (errorCode > -1)
+        {
+            json["result"] = "false";
+            json["code"] = errorCode;
+        }
+
+        ServerResponse res = new ServerResponse();
+        res["response"] = json.ToString();                
+
+        return res;
+    }
+
+    protected SimpleJSON.JSONNode GetPendingTransactionsJSON(List<Transaction> transactions)
+    {
+        // JSON response
+        SimpleJSON.JSONArray array = new SimpleJSON.JSONArray();
+
+        if (transactions != null)
+        {
+            Transaction _transaction;
+            int count = transactions.Count;
+            for (int i = 0; i < count; i++)
+            {
+                _transaction = transactions[i];
+                if (_transaction != null)
+                {
+                    array.Add(null, _transaction.ToJSON());
+                }
+            }
+        }
+
+        SimpleJSON.JSONNode json = new SimpleJSON.JSONClass();
+        json["txs"] = array;
+
+        return json;
+    }
+
+    //------------------------------------------------------------------------//
+    // GLOBAL EVENTS														  //
+    //------------------------------------------------------------------------//
+    public virtual void GlobalEvent_TMPCustomizer(ServerCallback _callback) {}
 
 	/// <summary>
 	/// Get an event for this user from the server.
