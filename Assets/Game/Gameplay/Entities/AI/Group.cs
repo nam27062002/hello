@@ -130,6 +130,10 @@ namespace AI {
 			m_rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 		}
 
+		public int GetIndex(IMachine _machine) {
+			return m_members.IndexOf(_machine);
+		}
+
 		public Vector3 GetOffset(IMachine machine, float _radius) {
 			int machineIndex = m_members.IndexOf(machine);
 			int index = m_offsetIndex[machineIndex];

@@ -34,6 +34,7 @@ public class PopupMessage : MonoBehaviour
 
         public string ConfirmButtonTid { get; set; }
         public Action OnConfirm { get; set; }
+        public bool CloseOnConfirm;
 
         public string CancelButtonTid { get; set; }
         public Action OnCancel { get; set; }
@@ -83,26 +84,17 @@ public class PopupMessage : MonoBehaviour
             CancelButtonTid = "TID_GEN_CANCEL";
             OnCancel = null;
             ButtonMode = EButtonsMode.None;
-            IsButtonCloseVisible = true;			
+            IsButtonCloseVisible = true;
+            CloseOnConfirm = true; 
 
             // By default the popup stays open when the back button is pressed
             BackButtonStrategy = EBackButtonStratety.Default;
         }
     }
-
-    public static Config sm_config;
+    
     public static Config GetConfig()
     {
-        if (sm_config == null)
-        {
-            sm_config = new Config();
-        }
-        else
-        {
-            sm_config.Reset();
-        }
-
-        return sm_config;
+        return new Config();        
     }
 
     public const string PATH = "UI/Popups/Message/PF_PopupMessage";
@@ -335,19 +327,25 @@ public class PopupMessage : MonoBehaviour
             }
             break;
         }       
-    }
+    }    
 
     /// <summary>
     /// Method called when the user clicks on any Confirm buttom. It's called by the editor
     /// </summary>
     public void OnConfirm()
     {
-        if (m_config != null && m_config.OnConfirm != null)
+        if (m_config != null)
         {
-            m_config.OnConfirm();
+            if (m_config.OnConfirm != null)
+            {
+                m_config.OnConfirm();
+            }            
         }
 
-        Close();
+        if (m_config == null || m_config.CloseOnConfirm)
+        {
+            Close();
+        }
     }
 
     /// <summary>

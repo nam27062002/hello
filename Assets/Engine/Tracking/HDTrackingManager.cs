@@ -65,7 +65,8 @@ public class HDTrackingManager
 
 		GLOBAL_EVENT_KEYS_RESET,		// At the end of the event keys are reset back to 0
 		GLOBAL_EVENT_REFUND,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
-		GLOBAL_EVENT_BONUS				// Spend a key to duplicate score registered to a global event at the end of the run
+		GLOBAL_EVENT_BONUS,				// Spend a key to duplicate score registered to a global event at the end of the run
+        CUSTOMER_SUPPORT                // Reward received via customer support tool
     };
 
 	public enum EFunnels
@@ -263,7 +264,7 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="_step">Step to notify.</param>
     public virtual void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {}    
-
+    
     /// <summary>
     /// The game has reached a step in the firts user experience funnel.
     /// </summary>
