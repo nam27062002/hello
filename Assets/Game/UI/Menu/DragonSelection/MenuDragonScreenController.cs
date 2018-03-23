@@ -46,6 +46,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private DragonData m_dragonToTease = null;
 	private DragonData m_dragonToReveal = null;
 
+    private bool m_showPendingTransactions = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -69,12 +71,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events.
-		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+        m_showPendingTransactions = false;
 
-		// Check whether we need to move to another screen
-		// Check order is relevant!
-		m_goToScreen = MenuScreen.NONE;
+        // Subscribe to external events.
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnded);
+
+        // Check whether we need to move to another screen
+        // Check order is relevant!
+        m_goToScreen = MenuScreen.NONE;
 
 		// Check pending rewards
 		if(UsersManager.currentUser.rewardStack.Count > 0) {
@@ -94,7 +99,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 			}
 		}
-	}
+
+        // Lowest priority: show pending transactions. They're showing here because we know that the currencies are visible for the user on this screen
+        m_showPendingTransactions = TransactionManager.instance.Flow_NeedsToShowPendingTransactions();        
+    }
 
 	/// <summary>
 	/// Raises the disable event.
@@ -102,7 +110,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
-	}
+        Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnded);        
+    }
 
 	/// <summary>
 	/// Called every frame
@@ -508,10 +517,23 @@ public class MenuDragonScreenController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Play button has been pressed.
+    /// <summary>
+	/// The current menu screen has changed (animation ends now).
 	/// </summary>
-	public void OnPlayButton() {
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+    private void OnTransitionEnded(MenuScreen _from, MenuScreen _to) {
+        if (_to == MenuScreen.DRAGON_SELECTION && m_showPendingTransactions)
+        {
+            m_showPendingTransactions = false;
+            TransactionManager.instance.Flow_PerformPendingTransactions(InstanceManager.menuSceneController.GetUICanvasGO());
+        }        
+    }
+
+    /// <summary>
+    /// Play button has been pressed.
+    /// </summary>
+    public void OnPlayButton() {
 		// Select target screen
 		MenuScreen nextScreen = MenuScreen.MISSIONS;
 
