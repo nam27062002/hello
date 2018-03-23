@@ -17,7 +17,7 @@ namespace AI {
 
 			private float m_updateOffsetTimer;
 			private Vector3 m_offset;
-			private float m_fase;
+			private float m_phase;
 
 			private bool m_changeFormationOrientation;
 
@@ -51,12 +51,13 @@ namespace AI {
 
 				if (group != null && group.HasOffsets()) {
 					m_offset = group.GetOffset(m_machine, m_data.separation);
+					float phaseOffset = Mathf.PI * 2f / group.count;
+					m_phase = phaseOffset * group.GetIndex(m_machine);
 				} else {
 					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
+					m_phase = 0d;
 				}
 
-				float phaseOffset = Mathf.PI * 2f / group.count;
-				m_fase = phaseOffset * group.GetIndex(m_machine);
 
 				m_changeFormationOrientation = group != null && (group.formation == Group.Formation.Triangle);
 			}
@@ -83,8 +84,8 @@ namespace AI {
 				// add variation to movement
 				Vector3 offset = m_offset;
 				if (/*!m_machine.GetSignal(Signals.Type.Leader) &&*/ m_data.oscillationAmplitude > 0) {
-					offset.y += m_data.oscillationAmplitude * (Mathf.Sin(m_data.oscillationSpeed * Time.timeSinceLevelLoad) + Mathf.Cos(m_data.oscillationSpeed * Time.timeSinceLevelLoad + m_fase)) * m_data.separation * 0.5f;
-					offset.z += m_data.oscillationAmplitude * (Mathf.Sin(m_data.oscillationSpeed * Time.timeSinceLevelLoad + m_fase) + Mathf.Cos(m_data.oscillationSpeed * Time.timeSinceLevelLoad)) * m_data.separation * 0.25f;
+					offset.y += m_data.oscillationAmplitude * (Mathf.Sin(m_data.oscillationSpeed * Time.timeSinceLevelLoad) + Mathf.Cos(m_data.oscillationSpeed * Time.timeSinceLevelLoad + m_phase)) * m_data.separation * 0.5f;
+					offset.z += m_data.oscillationAmplitude * (Mathf.Sin(m_data.oscillationSpeed * Time.timeSinceLevelLoad + m_phase) + Mathf.Cos(m_data.oscillationSpeed * Time.timeSinceLevelLoad)) * m_data.separation * 0.25f;
 				}
 
 				m_pilot.GoTo(m_pilot.target + offset);
