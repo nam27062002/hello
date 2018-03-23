@@ -55,7 +55,7 @@ namespace AI {
 					m_phase = phaseOffset * group.GetIndex(m_machine);
 				} else {
 					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
-					m_phase = 0d;
+					m_phase = 0f;
 				}
 
 
