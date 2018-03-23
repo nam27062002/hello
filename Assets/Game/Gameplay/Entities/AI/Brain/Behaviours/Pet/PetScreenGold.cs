@@ -6,7 +6,7 @@ namespace AI {
 		
 		[System.Serializable]
 		public class PetScreenGoldData : StateComponentData {
-			public string m_audio;
+			public string audio;
 		}
 
 
@@ -20,11 +20,11 @@ namespace AI {
 			float m_timer;
 
 			public override StateComponentData CreateData() {
-				return new PetPlayerInfiniteBoostData();
+				return new PetScreenGoldData();
 			}
 
 			public override System.Type GetDataType() {
-				return typeof(PetPlayerInfiniteBoostData);
+				return typeof(PetScreenGoldData);
 			}
 
 			protected override void OnInitialise() {
@@ -34,9 +34,9 @@ namespace AI {
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.PressAction(Pilot.Action.Button_A);
 				m_timer = 1.0f;
-				if (!string.IsNullOrEmpty(m_data.m_audio))
+				if (!string.IsNullOrEmpty(m_data.audio))
 				{
-					AudioController.Play(m_data.m_audio);
+					AudioController.Play(m_data.audio);
 				}
 			}
 
