@@ -43,6 +43,9 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// Called at regular intervals.
 	/// </summary>
 	private void PeriodicRefresh() {
+		// Nothing if not enabled
+		if(!this.isActiveAndEnabled) return;
+
 		// Propagate to pills
 		for(int i = 0; i < m_pills.Count; ++i) {
 			(m_pills[i] as PopupShopOffersPill).RefreshTimer();

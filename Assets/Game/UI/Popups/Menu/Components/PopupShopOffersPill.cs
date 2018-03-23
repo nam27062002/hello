@@ -95,20 +95,24 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 		// Compute price before applying the discount
 		float discount = m_pack.def.GetAsFloat("discount");
-		m_previousPrice = m_price/discount;
+		m_previousPrice = m_price/(1f - discount);
 
 		// Init visuals
+		OfferColorGradient gradientSetup = OfferItemPrefabs.GetGradient(discount);
+
 		// Pack name
 		m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
+		m_packNameText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.titleGradient);
 
 		// Timer
 		m_remainingTimeText.gameObject.SetActive(m_pack.isTimed);	// Don't show if offer is not timed
 		RefreshTimer();
 
 		// Discount
+		m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
 		m_discountText.Localize(
 			"TID_OFFER_DISCOUNT_PERCENTAGE",
-			StringUtils.FormatNumber(m_pack.def.GetAsFloat("discount") * 100f, 0)
+			StringUtils.FormatNumber(discount * 100f, 0)
 		);
 
 		// Price
@@ -193,6 +197,23 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// </summary>
 	override protected void ShowPurchaseSuccessFeedback() {
 		// [AOC] TODO!!
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL UTILS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Convert from Gradient4 to TMP's VertexGradient.
+	/// </summary>
+	/// <returns>TMP's VertexGradient matching input Gradient4.</returns>
+	/// <param name="_gradient">Input Gradient4.</param>
+	private VertexGradient Gradient4ToVertexGradient(Gradient4 _gradient) {
+		return new VertexGradient(
+			_gradient.topLeft,
+			_gradient.topRight,
+			_gradient.bottomLeft,
+			_gradient.bottomRight
+		);
 	}
 
 	//------------------------------------------------------------------------//

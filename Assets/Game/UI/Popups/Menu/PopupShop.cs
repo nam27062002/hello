@@ -116,9 +116,10 @@ public class PopupShop : MonoBehaviour {
 	public void Init(Mode _mode) {
 		// Refresh pills?
 
-		// Reset scroll lists
+		// Reset scroll lists and hide all tabs
 		for(int i = 0; i < (int)Tabs.COUNT; ++i) {
 			(m_tabs[i] as IPopupShopTab).scrollList.horizontalNormalizedPosition = 0f;
+			m_tabs[i].Hide(NavigationScreen.AnimType.NONE);
 		}
 
 		// If required, hide tab buttons
