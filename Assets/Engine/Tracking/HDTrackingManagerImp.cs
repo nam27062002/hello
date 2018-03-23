@@ -746,6 +746,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Session_HasMenuEverLoaded = true;
             HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
             HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
+
+            HDTrackingManager.Instance.Notify_DeviceStats();
         }
     }
 
@@ -1018,6 +1020,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action)
     {
         Track_PopupUnsupportedDevice(action);        
+    }
+
+    public override void Notify_DeviceStats()
+    {
+        Track_DeviceStats();
     }
 
     public override void Notify_HungryLetterCollected()
@@ -1774,27 +1781,30 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
 
-    private void Track_DeviceStats(string adType, string rewardType, bool adIsAvailable, string provider = null)
+    private void Track_DeviceStats()
     {
+        float rating = FeatureSettingsManager.instance.Device_CalculateRating();
+
+        int processorFrequency = FeatureSettingsManager.instance.Device_GetProcessorFrequency();
+        int systemMemorySize = FeatureSettingsManager.instance.Device_GetSystemMemorySize();
+        int gfxMemorySize = FeatureSettingsManager.instance.Device_GetGraphicsMemorySize();
+        string profileName = FeatureSettingsManager.deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
+        string formulaVersion = FeatureSettingsManager.QualityFormulaVersion;
+
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_DeviceStats adType = " + adType + " rewardType = " + rewardType + " adIsAvailable = " + adIsAvailable + " provider = " + provider);
+            Log("Track_DeviceStats rating = " + rating + " processorFrequency = " + processorFrequency + " system memory = " + systemMemorySize + " gfx memory = " + gfxMemorySize + " quality profile = " + profileName + " quality formula version = " + formulaVersion);
         }
 
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.device.stats");
         if (e != null)
         {
-            if (TrackingPersistenceSystem != null)
-            {
-                e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingPersistenceSystem.AdsCount);
-                e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, TrackingPersistenceSystem.AdsSessions);
-            }
-
-            Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
-            Track_AddParamString(e, TRACK_PARAM_REWARD_TYPE, rewardType);
-            Track_AddParamPlayerProgress(e);
-            Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);
-            Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
+//            Track_
+            e.SetParameterValue(TRACK_PARAM_CPUFREQUENCY, processorFrequency);
+            e.SetParameterValue(TRACK_PARAM_CPURAM, systemMemorySize);
+            e.SetParameterValue(TRACK_PARAM_GPURAM, gfxMemorySize);
+            Track_AddParamString(e, TRACK_PARAM_INITIALQUALITY, profileName);
+            Track_AddParamString(e, TRACK_PARAM_VERSION_QUALITY_FORMULA, formulaVersion);
 
             Track_SendEvent(e);
         }
@@ -1825,6 +1835,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
     private const string TRACK_PARAM_COORDINATESBL              = "coordinatesBL";
     private const string TRACK_PARAM_COORDINATESTR              = "coordinatesTR";
+    private const string TRACK_PARAM_CPUFREQUENCY               = "cpuFrequency";
+    private const string TRACK_PARAM_CPURAM                     = "cpuRam";
     private const string TRACK_PARAM_DEATH_CAUSE                = "deathCause";
     private const string TRACK_PARAM_DEATH_COORDINATES          = "deathCoordinates";
     private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB    = "deathInCurrentRunNb";
@@ -1846,6 +1858,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_GENDER                     = "gender";
 	private const string TRACK_PARAM_GLOBAL_EVENT_ID 			= "glbEventID";
 	private const string TRACK_PARAM_GLOBAL_EVENT_TYPE 			= "glbEventType";
+    private const string TRACK_PARAM_GPURAM                     = "gpuRam";
     private const string TRACK_PARAM_HC_EARNED                  = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE                  = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER    = "highestBaseMultiplier";
@@ -1853,7 +1866,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID     = "houstonTransactionID";
     private const string TRACK_PARAM_HUNGRY_LETTERS_NB          = "hungryLettersNb";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
-	private const string TRACK_PARAM_IS_HACKER                  = "isHacker";
+    private const string TRACK_PARAM_INITIALQUALITY             = "initialQuality";
+    private const string TRACK_PARAM_IS_HACKER                  = "isHacker";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
     private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";
 	private const string TRACK_PARAM_IS_SUCCESS					= "isSuccess";
@@ -1919,6 +1933,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE              = "userTime<one";
+    private const string TRACK_PARAM_VERSION_QUALITY_FORMULA    = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION           = "versionRevision";
     private const string TRACK_PARAM_XP                         = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";

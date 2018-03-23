@@ -378,6 +378,7 @@ public class HDTrackingManager
     };
 
     public virtual void Notify_PopupUnsupportedDeviceAction(EPopupUnsupportedDeviceAction action) {}
+    public virtual void Notify_DeviceStats() { }
 
     public virtual void Notify_HungryLetterCollected() {}
     #endregion
