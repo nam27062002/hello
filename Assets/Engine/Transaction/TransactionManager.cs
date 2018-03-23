@@ -13,7 +13,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         Reset();
     }
 
-    private void Reset()
+    public void Reset()
     {
         Pending_Reset();
         Flow_Reset();
@@ -21,11 +21,22 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 
     public void Update()
     {
-        // Check if it's a good moment to request for pending transactions (if the user is playing a run then we don't want to mess up with performance by requesting pending transactions because we don't consider this stuff is so urgent)
-        if (m_pendingNeedsToRequest && !FlowManager.IsInGameScene())
+        Pending_Update();
+
+        /*
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            Pending_RequestTransactions();
+            // Requests pending transactions
+            Pending_ForceRequestTransactions();
         }
+        else if (Input.GetKeyDown(KeyCode.F))
+        {
+            // Test pending transactions flow (chain of popups giving resources)
+            Debug_TestPendingTransactionsFlow();
+        }
+#endif
+        */
     }
 
     #region factory
@@ -38,29 +49,99 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     #region pending
     /// This region is responsible for handling pending transactions, which are transactions received from server that are pending to be applied to the user's profile. 
     /// These pending transactions could have different sources but for now they all come from customer support.    
-
-    /// <summary>
-    /// Whether or not the pending transactions request has already been sent to the server
-    /// </summary>
-    private bool m_pendingNeedsToRequest;
+    
+    private float m_pendingTimeToRequest;
 
     private Queue<Transaction> m_pendingTransactions;
 
-    private void Pending_Reset()
+    private const float PENDING_TIME_BETWEEN_REQUESTS = 10 * 60f;
+
+    private enum EState
     {
-        Pending_SetNeedsToRequest(true);
+        None,
+        WaitingToRequest,
+        WaitingForResponse,
+        WaitingToPresent,
+        Presenting
+    };
+
+    private EState m_pendingState;
+
+    private void Pending_Reset()
+    {        
+        Pending_SetState(EState.WaitingToRequest);
+
+        // We want the pending transactions to be requested immediately when the game is launched so the user can get the rewards as soon as she's told to
+        Pending_SetTimeToRequest(0);
+
         if (m_pendingTransactions != null)
         {
             m_pendingTransactions.Clear();
         }
     }
 
+    private EState Pending_GetState()
+    {
+        return m_pendingState;
+    }
+
+    private void Pending_SetState(EState value)
+    {
+        switch (m_pendingState)
+        {
+            case EState.Presenting:
+                m_flowCoroutine = null;
+                break;
+        }
+
+        m_pendingState = value;
+
+        switch (m_pendingState)
+        {
+            case EState.WaitingToRequest:
+                Pending_SetTimeToRequest(PENDING_TIME_BETWEEN_REQUESTS);
+                break;            
+        }
+    }
+
+    private void Pending_Update()
+    {
+        switch (Pending_GetState())
+        {
+            case EState.WaitingToRequest:
+                float time = Pending_GetTimeToRequest();
+                if (time > 0f)
+                {
+                    time -= Time.deltaTime;
+                    Pending_SetTimeToRequest(time);
+                }
+
+                // Check if it's a good moment to request the pending transactions
+                if (time <= 0f && !FlowManager.IsInGameScene())
+                {
+                    Pending_RequestTransactions();
+                }
+                break;
+        }
+    }
+
+    private float Pending_GetTimeToRequest()
+    {
+        return m_pendingTimeToRequest;
+    }
+
+    private void Pending_SetTimeToRequest(float value)
+    {
+        m_pendingTimeToRequest = value;
+    }
+
     /// <summary>
     /// It should be used only for debug purposes. By calling this event the pending transactions request is forced to be sent so the flow can be easily
     /// </summary>
-    public void Pending_ForceRequestTransactions()
+    private void Pending_ForceRequestTransactions()
     {
-        Pending_SetNeedsToRequest(true);
+        Pending_SetState(EState.WaitingToRequest);        
+        Pending_SetTimeToRequest(0f);
     }
 
     private void Pending_RequestTransactions()
@@ -68,12 +149,12 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Requesting pending transactions...");
 
-        GameServerManager.SharedInstance.GetPendingTransactions(Pending_OnTransactionsResponse);
-        Pending_SetNeedsToRequest(false);
+        GameServerManager.SharedInstance.GetPendingTransactions(Pending_OnTransactionsResponse);        
+        Pending_SetState(EState.WaitingForResponse);
     }
 
     private void Pending_OnTransactionsResponse(FGOL.Server.Error error, GameServerManager.ServerResponse response)
-    {
+    {        
         // Previous pending transactions are reseted because the server is responsible for providing with all pending transactions for this user
         if (m_pendingTransactions != null)
         {
@@ -143,6 +224,14 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                 LogWarning("Error when requesting pending transactions " + error.ToString());
         }
         
+        if (Pending_IsEmpty())
+        {
+            Pending_SetState(EState.WaitingToRequest);
+        }
+        else
+        {
+            Pending_SetState(EState.WaitingToPresent);
+        }
         /*
         // Uncomment this piece of code to test a transaction that wasn't received from server
         if (m_pendingTransactions == null || m_pendingTransactions.Count == 0)
@@ -159,12 +248,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                 Pending_AddTransaction(transaction);
             }            
         }*/
-    }
-
-    private void Pending_SetNeedsToRequest(bool value)
-    {
-        m_pendingNeedsToRequest = value;
-    }
+    }    
 
     private void Pending_AddTransaction(Transaction value)
     {
@@ -220,8 +304,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 
     private bool Flow_ArePendingTransactionsUnlocked()
     {
-        // Pending transactions are unlocked after second run to prevent this flow from messing up with tutorials
-        return UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+        // Pending transactions are unlocked after egg info tutorial has being shown to prevent this flow from messing up with tutorials
+        return UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INFO);
     }
 
     public bool Flow_NeedsToShowPendingTransactions()
@@ -246,6 +330,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             }
 
             m_flowCoroutine = StartCoroutine(Flow_PerformPendingTransactions());
+            Pending_SetState(EState.Presenting);
         }        
     }
 
@@ -262,7 +347,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                 yield return null;
             }            
         }
-        m_flowCoroutine = null;
+
+        Pending_SetState(EState.WaitingToRequest);        
     }
 
     private void Flow_OpenPendingTransactionPopup(Transaction transaction)
@@ -500,7 +586,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     #endregion
 
     #region debug
-    public void Debug_TestTransaction()
+    private void Debug_TestTransaction()
     {
         JSONNode json = new JSONClass();
         json["id"] = "1";
@@ -517,7 +603,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         transaction.Perform();        
     }
 
-    public void Debug_TestPendingTransactionsFlow()
+    private void Debug_TestPendingTransactionsFlow()
     {
         bool needsToPerform = Flow_NeedsToShowPendingTransactions();
         Log("Checking pending transactions flow... " + needsToPerform);
