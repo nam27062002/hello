@@ -90,6 +90,7 @@ public enum MessengerEvents {
     BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
 	BREAK_OBJECT_SHALL_NOT_PASS,// no params
+	BREAK_OBJECT_WITH_FIRE,		// no params
     DARK_ZONE_TOGGLE,           // params: bool _enter / _exit, CandleEffectTrigger
 
     // Entity events
