@@ -85,7 +85,8 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.5
-  m_serializedJson: '[{"speed":1.5,"timeToIdle":{"min":0,"max":0},"timeToChangeDirection":{"min":10,"max":15},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
+  m_useSpawnerRotation: 0
+  m_serializedJson: '[{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":0,"max":0},"timeToChangeDirection":{"min":10,"max":15},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_databaseKey: PF_SnailUnka
 --- !u!114 &11485410
 MonoBehaviour:
@@ -114,7 +115,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -148,6 +148,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -156,7 +157,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -190,11 +190,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1.25
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -228,13 +228,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: 
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 1.15, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -268,12 +268,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 1.15, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -307,6 +307,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
@@ -573,6 +574,7 @@ MonoBehaviour:
   m_parentName: view
   m_parentRoot: {fileID: 458018}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!135 &135104039131475082
 SphereCollider:
   m_ObjectHideFlags: 1
