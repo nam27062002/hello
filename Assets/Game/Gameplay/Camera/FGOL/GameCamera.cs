@@ -1110,7 +1110,6 @@ public class GameCamera : MonoBehaviour
 		float trackBlendRate = trackAheadRangeX * m_trackBlendRate;
 
 		Vector3 desiredTrackAhead = machine.velocity / machine.absoluteMaxSpeed;
-		UnityEngine.Debug.Log(desiredTrackAhead);
 
 		desiredTrackAhead.x *= trackAheadRangeX;
 		desiredTrackAhead.y *= trackAheadRangeY;
