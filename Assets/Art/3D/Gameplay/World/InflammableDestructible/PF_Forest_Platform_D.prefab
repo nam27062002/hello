@@ -1647,6 +1647,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnTime: 50
   m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!114 &114506382609943616
 MonoBehaviour:
@@ -1675,6 +1676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 0
   m_feedbackParticle:
     name: PS_C_Splinters
@@ -1866,7 +1868,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_disintegrateParticle:
-    name: PS_FireExplosion
+    name: 
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1903,6 +1905,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 1.25, y: 4, z: -5}
     scale: 1
+  m_useAnimator: 0
   m_boxelSize: 4
   m_hitRadius: 2
 --- !u!114 &114823547586350030

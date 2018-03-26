@@ -636,6 +636,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0
+  m_useAnimator: 0
   m_boxelSize: 2
   m_hitRadius: 1.5
 --- !u!114 &114112770822411334
@@ -651,6 +652,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 1
   m_feedbackParticle:
     name: PS_C_Splinters
@@ -758,6 +760,7 @@ MonoBehaviour:
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4094244680475466}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114717036301677878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -783,6 +786,7 @@ MonoBehaviour:
   m_parentName: Human_Master
   m_parentRoot: {fileID: 4094244680475466}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114822189994626010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -806,6 +810,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 40
+  m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!137 &137660784778077890
 SkinnedMeshRenderer:
