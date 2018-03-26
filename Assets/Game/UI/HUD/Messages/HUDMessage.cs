@@ -73,7 +73,8 @@ public class HUDMessage : MonoBehaviour {
 		KEY_LIMIT,
 		BREAK_OBJECT_SHALL_NOT_PASS,
 		DAMAGE_RECEIVED,
-		MISSION_ZONE
+		MISSION_ZONE,
+		BREAK_OBJECT_WITH_FIRE
 	}
 
 	// How to react with consecutive triggers
@@ -216,12 +217,13 @@ public class HUDMessage : MonoBehaviour {
 			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
-			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;
+			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
 			case Type.DRUNK:				Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 
 		}
 
@@ -254,12 +256,13 @@ public class HUDMessage : MonoBehaviour {
 			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
-			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;
+			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
 			case Type.DRUNK:				Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
-			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 		}
 
 		switch(m_hideMode) {
@@ -630,6 +633,10 @@ public class HUDMessage : MonoBehaviour {
 	}
 
 	void OnBreakObjectShallNotPass() {
+		Show();
+	}
+
+	void OnBreakObjectWithFire() {
 		Show();
 	}
 

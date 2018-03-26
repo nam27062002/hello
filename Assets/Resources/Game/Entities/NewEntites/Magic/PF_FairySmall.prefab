@@ -412,6 +412,7 @@ MonoBehaviour:
   m_parentName: view
   m_parentRoot: {fileID: 4397797685203690}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114347388512881708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -494,12 +495,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"boostSpeed":7,"panicSpeed":9,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false}]'
   m_databaseKey: PF_FairySmall
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
   m_avoidWater: 1
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114668315100951032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -511,6 +514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activationMode: 0
   m_parent: {fileID: 0}
   m_view: {fileID: 137398252941822246}
   m_particleDatas:

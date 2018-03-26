@@ -20,6 +20,9 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	private AudioObject m_onAttackAudioAO;
 	[SerializeField] private string m_onBurnAudio;
 
+	[SerializeField] private string m_corpseAsset;
+	private ParticleHandler m_corpseHandler;
+
 	protected PreyAnimationEvents m_animEvents;
 	public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
@@ -70,6 +73,10 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 			}
 		}
 
+		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+		}
+
 		m_animEvents = transform.FindComponentRecursive<PreyAnimationEvents>();
 		if (m_animEvents != null) {
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
@@ -105,6 +112,8 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
     }
 	public void CustomUpdate() { }
 
+
+
 	public void Attack(bool _attack) { 
 		m_animator.SetBool( GameConstants.Animator.ATTACK , _attack); 
 	}
@@ -135,4 +144,19 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	public void Aim(float _blendFactor) { m_animator.SetFloat(GameConstants.Animator.AIM, _blendFactor); }
 
 
+	// Queries
+	public bool HasCorpseAsset() {
+		return !string.IsNullOrEmpty(m_corpseAsset);
+	}
+
+	public void Bite() {
+		if (m_corpseHandler != null) {
+			// spawn corpse
+			GameObject corpse = m_corpseHandler.Spawn(null);
+			if (corpse != null) {
+				corpse.transform.CopyFrom(transform);
+				corpse.GetComponent<Corpse>().Spawn(false, false);
+			}
+		}
+	}
 }

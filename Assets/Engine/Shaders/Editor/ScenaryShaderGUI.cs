@@ -210,7 +210,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_lightmapContrastMargin = FindProperty("_LightmapContrastMargin", props);
         mp_lightmapContrastPhase = FindProperty("_LightmapContrastPhase", props);
 
-        mp_Color = FindProperty("_Color", props);
+        mp_Color = FindProperty("_Tint", props);
 
         /// Toggle Material Properties
 

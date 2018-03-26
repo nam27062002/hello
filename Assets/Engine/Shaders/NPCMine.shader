@@ -57,6 +57,7 @@ Shader "Hungry Dragon/NPC/NPC Mine (Spawners)"
 			#define SPECULAR
 			#endif
 
+			#define DYNAMIC_LIGHT
 			#include "entities.cginc"
 
 			ENDCG

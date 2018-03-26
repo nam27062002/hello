@@ -23,6 +23,7 @@ public class AutoParenter : MonoBehaviour {
 		get{ return m_parentRoot; }
 	}
 	[SerializeField] private bool m_worldPositionStays = true;
+	[SerializeField] private bool m_resetScale = false;
 
 	void Awake() {
 		if (!string.IsNullOrEmpty(m_parentName)) {
@@ -33,6 +34,9 @@ public class AutoParenter : MonoBehaviour {
 				Debug.LogWarning(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
 			} else {
 				t.SetParent(p, m_worldPositionStays);
+				if (m_resetScale) {
+					t.localScale = GameConstants.Vector3.one;
+				}
 			}
 		}
 
