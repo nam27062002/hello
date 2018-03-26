@@ -21,140 +21,114 @@ using System.IO;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 internal class TransparentParticlesShaderGUI : ShaderGUI {
-    
+
     //------------------------------------------------------------------------//
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
-/*
-    public enum BlendMode
-    {
-        Opaque,
-        Cutout,
-        Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
-    }
-*/
+    /*
+        public enum BlendMode
+        {
+            Opaque,
+            Cutout,
+            Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
+        }
+    */
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
+
+
+
+    /*
+            _BasicColor("Basic Color", Color) = (0.5,0.5,0.5,0.5)
+            _SaturatedColor("Saturated Color", Color) = (0.5,0.5,0.5,0.5)
+            _MainTex("Particle Texture", 2D) = "white" {}
+            _ColorRamp("Color Ramp", 2D) = "white" {}
+            _EmissionSaturation("Emission saturation", Range(0.0, 8.0)) = 1.0
+            _OpacitySaturation("Opacity saturation", Range(0.0, 8.0)) = 1.0
+            _ColorMultiplier("Color multiplier", Range(0.0, 8.0)) = 1.0
+            [Toggle(DISSOLVE)] _EnableDissolve("Enable alpha dissolve", Float) = 0
+            [Toggle(COLOR_RAMP)] _EnableColorRamp("Enable color ramp", Float) = 0
+            [Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
+
+            _DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
+
+            [Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
+            _Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
+
+            _TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
+
+            [Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
+            _EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
+
+            [Toggle(EXTENDED_PARTICLES)] _EnableExtendedParticles("Enable Extended Particles", int) = 0.0
+
+            [Enum(Additive, 0, SoftAdditive, 1, AdditiveDouble, 2, AlphaBlend, 3, Premultiply, 4, AdditiveAlphaBlend, 5)] BlendMode("Blend mode", Float) = 0.0
+            [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 5.0 //"SrcAlpha"
+            [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 1.0 //"One"
+            [Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
+
+    */
+
+
+
     private static class Styles
     {
-        readonly public static string mainTextureText = "MainTex";
-        readonly public static string mainColorText = "Main Color";
-
-        readonly public static string colorText = "Color";
-
-        readonly public static string enableBlendTextureText = "Enable Blend Texture";
-        readonly public static string blendTextureText = "Blend Texture";
-
-        readonly public static string enableNormalMapText = "Enable Normal map";
-        readonly public static string normalTextureText = "Normal Texture";
-        readonly public static string normalStrengthText = "Normal Texture strength";
-
-        readonly public static string enableCutoffText = "Enable Alpha cutoff";
-        readonly public static string CutoffText = "Alpha cutoff threshold";
-
-        readonly public static string enableSpecularText = "Enable Specular";
-        readonly public static string specularPowerText = "Specular Power";
-        readonly public static string specularDirText = "Specular direction";
-
-//        readonly public static string reflectionColorText = "Reflection color";
-        readonly public static string reflectionAmountText = "Reflection amount";
-        readonly public static string reflectionMapText = "Reflection map";
-        readonly public static string reflectionAdviceText = "Reflection can be controled by painting object alfa vertex color: \n 0.0 = no reflect \n 1.0 = reflect";
-
-        readonly public static string enableFogText = "Enable Fog";
-
-        readonly public static string additiveBlendingText = "Additive blending";
-        readonly public static string automaticBlendingText = "Automatic blending";
-        readonly public static string overlayColorText = "Vertex Color Tint";
-
-        readonly public static string darkenPositionText = "Darken position";
-        readonly public static string darkenDistanceText = "Darken distance";
-
-        readonly public static string vertexColorModeText = "VertexColorMode";
-
-        readonly public static string enableEmissiveBlink = "Enable emissive blink";
-        readonly public static string emissivePowerText = "Emissive power";
-        readonly public static string blinkTimeMultiplierText = "Blink time multiplier";
-        readonly public static string emissionTypeText = "Emission type";
-
-        readonly public static string lightmapContrastIntensityText = "Intensity";
-        readonly public static string lightmapContrastMarginText = "Threshold";
-        readonly public static string lightmapContrastPhaseText = "Phase";
-
-        readonly public static string blendModeText = "Blend mode";
-        readonly public static string renderQueueText = "Render queue";
-
-        readonly public static string cullModeText = "Cull mode";
-        readonly public static string cullWarningText = "Warning! You have activated double sided in opaque object.";
-
+        readonly public static string basicColorText = "Basic Color";
+        readonly public static string saturatedColorText = "Saturated Color";
+        readonly public static string mainTexText = "Particle Texture";
+        readonly public static string colorRampText = "Color Ramp";
+        readonly public static string emissionSaturationText = "Emission Saturation";
+        readonly public static string opacitySaturationText = "Opacity Saturation";
+        readonly public static string colorMultiplierText = "Color Multiplier";
+        readonly public static string enableDissolveText = "Enable Alpha Dissolve";
+        readonly public static string enableColorRampText = "Enable Color Ramp";
+        readonly public static string enableColorVertexText = "Enable Color Vertex";
+        readonly public static string dissolveStepText = "Dissolve step";
+        readonly public static string enableAutomaticPanningText = "Enable Automatic Panning";
+        readonly public static string panningText = "Panning";
+        readonly public static string tintColorText = "Tint Color";
+        readonly public static string enableEmissivePowerText = "Enable Emissive Power";
+        readonly public static string emissivePowerText = "Enable Emissive Power";
+        readonly public static string enableExtendedParticles = "Enable Emissive Power";
 
     }
 
     /// <summary>
     /// Material Properties
     /// </summary>
-    MaterialProperty mp_mainTexture;
-    MaterialProperty mp_blendTexture;
+    MaterialProperty mp_basicColor;
+    MaterialProperty mp_saturatedColor;
+    MaterialProperty mp_mainTex;
+    MaterialProperty mp_colorRamp;
+    MaterialProperty mp_emissionSaturation;
+    MaterialProperty mp_opacitySaturation;
+    MaterialProperty mp_colorMultiplier;
+    MaterialProperty mp_dissolveStep;
+    MaterialProperty mp_panning;
+    MaterialProperty mp_tintColor;
+    MaterialProperty mp_emissivePower;
 
-    MaterialProperty mp_Panning;
-
-    MaterialProperty mp_lightmapContrastIntensity;
-    MaterialProperty mp_lightmapContrastMargin;
-    MaterialProperty mp_lightmapContrastPhase;
-
-    MaterialProperty mp_normalTexture;
-    MaterialProperty mp_normalStrength;
-
-    MaterialProperty mp_cutOff;
-
-    MaterialProperty mp_specularPower;
-    MaterialProperty mp_specularDirection;
-
-    MaterialProperty mp_darkenPosition;
-    MaterialProperty mp_darkenDistance;
-
-    MaterialProperty mp_BlendMode;
-    MaterialProperty mp_DoubleSided;
-
-    MaterialProperty mp_EmissivePower;
-    MaterialProperty mp_BlinkTimeMultiplier;
-
-    MaterialProperty mp_Color;
-
-//    MaterialProperty mp_reflectionColor;
-    MaterialProperty mp_reflectionAmount;
-    MaterialProperty mp_reflectionMap;
-
-    MaterialProperty mp_Cull;
-
-/// <summary>
-/// Toggle Material Properties
-/// </summary>
-    MaterialProperty mp_EnableBlendTexture;
-    MaterialProperty mp_EnableAdditiveBlend;
-    MaterialProperty mp_EnableAutomaticBlend;
-
-    MaterialProperty mp_EnableSpecular;
-    MaterialProperty mp_EnableNormalMap;
-
-    MaterialProperty mp_EnableCutoff;
-    MaterialProperty mp_EnableFog;
-
-//    MaterialProperty mp_EnableEmissiveBlink;
-//    MaterialProperty mp_EnableLightmapContrast;
+    /// <summary>
+    /// Toggle Material Properties
+    /// </summary>
+    MaterialProperty mp_enableDissolve;
+    MaterialProperty mp_enableColorRamp;
+    MaterialProperty mp_enableColorVertex;
+    MaterialProperty mp_enableAutomaticPanning;
+    MaterialProperty mp_enableEmissivePower;
+    MaterialProperty mp_enableExtendedParticles;
 
     /// <summary>
     /// Enum Material PProperties
     /// </summary>
 
-    MaterialProperty mp_VertexcolorMode;
-    MaterialProperty mp_MainColor;
-
-    MaterialProperty mp_EmissionType;
+    MaterialProperty mp_blendMode;
+    MaterialProperty mp_srcBlend;
+    MaterialProperty mp_dstBlend;
+    MaterialProperty mp_zTest;
 
     MaterialEditor m_materialEditor;
-    ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
     readonly static string kw_blendTexture = "BLEND_TEXTURE";
     readonly static string kw_automaticBlend = "CUSTOM_VERTEXPOSITION";
@@ -181,59 +155,34 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
     public void FindProperties(MaterialProperty[] props)
     {
-        mp_mainTexture = FindProperty("_MainTex", props);
-        mp_blendTexture = FindProperty("_SecondTexture", props);
-        //        mp_lightmapIntensity = FindProperty("_LightmapIntensity", props);
-        mp_Panning = FindProperty("_Panning", props);
-
-        mp_normalTexture = FindProperty("_NormalTex", props);
-        mp_normalStrength = FindProperty("_NormalStrength", props);
-
-        mp_cutOff = FindProperty("_CutOff", props);
-
-        mp_specularPower = FindProperty("_SpecularPower", props);
-        mp_specularDirection = FindProperty("_SpecularDir", props);
-
-        mp_darkenPosition = FindProperty("_DarkenPosition", props);
-        mp_darkenDistance = FindProperty("_DarkenDistance", props);
-
-        mp_EmissivePower = FindProperty("_EmissivePower", props);
-        mp_BlinkTimeMultiplier = FindProperty("_BlinkTimeMultiplier", props);
-
-//        mp_reflectionColor = FindProperty("_ReflectionColor", props);
-        mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
-        mp_reflectionMap = FindProperty("_ReflectionMap", props);
-
-        mp_lightmapContrastIntensity = FindProperty("_LightmapContrastIntensity", props);
-        mp_lightmapContrastMargin = FindProperty("_LightmapContrastMargin", props);
-        mp_lightmapContrastPhase = FindProperty("_LightmapContrastPhase", props);
-
-        mp_Color = FindProperty("_Color", props);
-
+        mp_basicColor = FindProperty("_BasicColor", props);
+        mp_saturatedColor = FindProperty("_SaturatedColor", props);
+        mp_mainTex = FindProperty("_MainTex", props);
+        mp_colorRamp = FindProperty("_ColorRamp", props);
+        mp_emissionSaturation = FindProperty("_EmissionSaturation", props);
+        mp_opacitySaturation = FindProperty("_OpacitySaturation", props);
+        mp_colorMultiplier = FindProperty("_ColorMultiplier", props);
+        mp_dissolveStep = FindProperty("_DissolveStep", props);
+        mp_panning = FindProperty("_Panning", props);
+        mp_tintColor = FindProperty("_TintColor", props);
+        mp_emissivePower = FindProperty("_EmissivePower", props);
+       
         /// Toggle Material Properties
 
-        mp_EnableBlendTexture = FindProperty("_EnableBlendTexture", props);
-        mp_EnableAutomaticBlend = FindProperty("_EnableAutomaticBlend", props);
-        mp_EnableAdditiveBlend = FindProperty("_EnableAdditiveBlend", props);
-
-        mp_EnableSpecular = FindProperty("_EnableSpecular", props);
-        mp_EnableNormalMap = FindProperty("_EnableNormalMap", props);
-
-        mp_EnableCutoff = FindProperty("_EnableCutoff", props);
-        mp_EnableFog = FindProperty("_EnableFog", props);
-
-        //        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
-        //        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
+        mp_enableDissolve = FindProperty("_EnableDissolve", props);
+        mp_enableColorRamp = FindProperty("_EnableColorRamp", props);
+        mp_enableColorVertex = FindProperty("_EnableColorVertex", props);
+        mp_enableAutomaticPanning = FindProperty("_EnableAutomaticPanning", props);
+        mp_enableEmissivePower = FindProperty("_EnableEmissivePower", props);
+        mp_enableExtendedParticles = FindProperty("_EnableExtendedParticles", props);
 
         /// Enum Material PProperties
 
-        mp_MainColor = FindProperty("MainColor", props);
-        mp_VertexcolorMode = FindProperty("VertexColor", props);
-        mp_EmissionType = FindProperty("Emissive", props);
-        mp_Cull = FindProperty("_Cull", props);
+        mp_blendMode = FindProperty("BlendMode", props);
+        mp_srcBlend = FindProperty("_SrcBlend", props);
+        mp_dstBlend = FindProperty("_DstBlend", props);
+        mp_zTest = FindProperty("_ZTest", props);
 
-        mp_BlendMode = FindProperty("_BlendMode", props);
-        mp_DoubleSided = FindProperty("_DoubleSided", props);
     }
 
     private bool featureSet(MaterialProperty feature, string label)
@@ -304,12 +253,14 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
         m_materialEditor = materialEditor;
 
-        GUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+        GUILayout.BeginHorizontal(editorSkin.customStyles[2]);
         GUILayout.FlexibleSpace();
-        EditorGUILayout.LabelField("Scenary standard shader", editorSkin.customStyles[0]);
+        EditorGUILayout.LabelField("Transparent particles shader", editorSkin.customStyles[2]);
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
+
+/*
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
         materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
@@ -420,12 +371,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 break;
 
         }
-        /*
-                if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
-                {
-                    material.shaderKeywords = null;
-                }
-        */
         if (mp_BlendMode.floatValue == 0.0f)
         {
 
@@ -454,6 +399,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
+*/
     }
 
     static void DebugKeywords(Material mat)

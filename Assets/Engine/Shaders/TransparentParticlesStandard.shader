@@ -21,17 +21,21 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
 
 		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
+
 		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
 		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
 
+		[Toggle(EXTENDED_PARTICLES)] _EnableExtendedParticles("Enable Extended Particles", int) = 0.0
+
 		[Enum(Additive, 0, SoftAdditive, 1, AdditiveDouble, 2, AlphaBlend, 3, Premultiply, 4, AdditiveAlphaBlend, 5)] BlendMode("Blend mode", Float) = 0.0
+		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 5.0 //"SrcAlpha"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 1.0 //"One"
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
 	}
 
 	Category{
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-		Blend SrcAlpha [_DstBlend]
+		Blend [_SrcBlend] [_DstBlend]
 		Cull Off
 		Lighting Off
 		ZWrite Off
@@ -51,6 +55,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma shader_feature _ APPLY_RGB_COLOR_VERTEX
 				#pragma shader_feature _ AUTOMATICPANNING
 				#pragma shader_feature BLENDMODE_ADDITIVE BLENDMODE_SOFTADDITIVE BLENDMODE_ADDITIVEDOUBLE BLENDMODE_ALPHABLEND BLENDMODE_PREMULTIPLY BLENDMODE_ADDITIVEALPHABLEND
+				#pragma shader_feature _ EXTENDED_PARTICLES
 
 				#include "UnityCG.cginc"
 				#include "transparentparticlesnew.cginc"
