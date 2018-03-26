@@ -7,6 +7,7 @@ namespace AI {
 		[System.Serializable]
 		public class PetScreenGoldData : StateComponentData {
 			public string audio;
+			public string particle;
 		}
 
 
@@ -18,6 +19,8 @@ namespace AI {
 
 			PetScreenGoldData m_data;
 			float m_timer;
+			private GameObject m_particle;
+			private ParticleSystem m_particleSystem;
 
 			public override StateComponentData CreateData() {
 				return new PetScreenGoldData();
@@ -29,6 +32,38 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<PetScreenGoldData>();
+				string version = "";
+				switch(FeatureSettingsManager.instance.Particles)
+				{
+					default:
+					case FeatureSettings.ELevel5Values.very_low:							
+					case FeatureSettings.ELevel5Values.low:
+						// No particle!
+						break;
+					case FeatureSettings.ELevel5Values.mid:
+					case FeatureSettings.ELevel5Values.very_high:
+					case FeatureSettings.ELevel5Values.high:
+					{
+						string path = "Particles/Master/" + m_data.particle;
+						GameObject prefab = Resources.Load<GameObject>(path);
+						if ( prefab )
+						{
+							m_particle = Instantiate<GameObject>(prefab);
+							if ( m_particle )
+							{
+								// Anchor
+								Transform p = m_pilot.transform;
+								m_particle.transform.SetParent(p, true);
+								m_particle.transform.localPosition = GameConstants.Vector3.zero;
+								m_particle.transform.localRotation = GameConstants.Quaternion.identity;
+								m_particleSystem = m_particle.GetComponent<ParticleSystem>();
+							}
+						}
+
+					}
+					break;
+				}
+
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
@@ -37,6 +72,10 @@ namespace AI {
 				if (!string.IsNullOrEmpty(m_data.audio))
 				{
 					AudioController.Play(m_data.audio);
+				}
+				if ( m_particleSystem )
+				{
+					m_particleSystem.Play();
 				}
 			}
 
@@ -55,6 +94,11 @@ namespace AI {
 
 			protected override void OnExit(State _newState){
 				m_pilot.ReleaseAction(Pilot.Action.Button_A);
+				if ( m_particleSystem )
+				{
+					m_particleSystem.Stop();
+				}
+
 			}
 		}
 	}
