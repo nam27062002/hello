@@ -72,7 +72,6 @@ GameObject:
   - component: {fileID: 114054112896508892}
   - component: {fileID: 135988244375781024}
   - component: {fileID: 54756509201626368}
-  - component: {fileID: 114536853369661980}
   m_Layer: 21
   m_Name: PF_Slime
   m_TagString: Untagged
@@ -90,6 +89,23 @@ GameObject:
   - component: {fileID: 4428905623053040}
   m_Layer: 21
   m_Name: groundSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1970752523542544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4839027410201350}
+  - component: {fileID: 114053036921542278}
+  - component: {fileID: 114470045309908370}
+  m_Layer: 21
+  m_Name: area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120,6 +136,7 @@ Transform:
   m_Children:
   - {fileID: 4666257081071246}
   - {fileID: 4428905623053040}
+  - {fileID: 4839027410201350}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -150,6 +167,19 @@ Transform:
   - {fileID: 4927534334574404}
   m_Father: {fileID: 4301509735828010}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4839027410201350
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1970752523542544}
+  m_LocalRotation: {x: 0.50000006, y: -0.5, z: -0.4999999, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0.20524025, z: 0.040939897}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4301509735828010}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4927534334574404
 Transform:
@@ -196,6 +226,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114053036921542278
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1970752523542544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: -0.022269249, y: 0}
+  radius: 0.6838343
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114054112896508892
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -467,20 +511,21 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
---- !u!114 &114536853369661980
+--- !u!114 &114470045309908370
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1448014202897300}
+  m_GameObject: {fileID: 1970752523542544}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.022269249, y: 0.24937886}
-  radius: 0.5171473
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  m_parentName: Mucus_Head
+  m_parentRoot: {fileID: 4301509735828010}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114590567634954062
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -514,12 +559,14 @@ MonoBehaviour:
   m_railSeparation:
     min: -1.25
     max: 1.25
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"isWallWalking":true,"timeToIdle":{"min":0,"max":0},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_databaseKey: PF_Slime
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!135 &135988244375781024
 SphereCollider:
   m_ObjectHideFlags: 1

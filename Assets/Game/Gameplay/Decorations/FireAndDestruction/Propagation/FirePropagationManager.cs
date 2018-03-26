@@ -14,7 +14,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	private CullingGroup m_cullingGroup;
 
 	void Awake() {
-		m_fireNodesTree = new QuadTree<FireNode>(-600f, -100f, 1000f, 400f);
+		m_fireNodesTree = new QuadTree<FireNode>(-1600f, -600f, 2600f, 1400f);
 		m_fireNodes = new List<FireNode>();
 		m_burningFireNodes = new List<FireNode>();
 
@@ -61,7 +61,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 		// Create and populate QuadTree
 		// Get map bounds!
-		Rect bounds = new Rect(-440, -100, 1120, 305);	// Default hardcoded values
+		Rect bounds = new Rect(-1600f, -600f, 2600f, 1400f);	// Default hardcoded values
 		LevelData data = LevelManager.currentLevelData;
 		if(data != null) {
 			bounds = data.bounds;
