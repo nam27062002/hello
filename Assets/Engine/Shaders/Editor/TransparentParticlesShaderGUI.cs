@@ -20,12 +20,11 @@ using System.IO;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
-internal class ScenaryShaderGUI : ShaderGUI {
+internal class TransparentParticlesShaderGUI : ShaderGUI {
     
     //------------------------------------------------------------------------//
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
-
 /*
     public enum BlendMode
     {
@@ -34,7 +33,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
         Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
     }
 */
-
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//

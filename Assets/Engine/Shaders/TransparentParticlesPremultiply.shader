@@ -48,6 +48,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Premultiply"
 
 			#include "UnityCG.cginc"
 			#define EXTENDED_PARTICLES
+			#define BLENDMODE_PREMULTIPLY
 			#include "transparentparticlesnew.cginc"
 /*
 			struct appdata_t {

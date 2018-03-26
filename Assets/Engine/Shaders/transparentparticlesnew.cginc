@@ -50,7 +50,7 @@ float _EmissivePower;
 float2 _Panning;
 #endif
 
-#ifdef ADDITIVE_ALPHABLEND
+#ifdef BLENDMODE_ADDITIVEALPHABLEND
 float _ABOffset;
 #endif
 
@@ -93,7 +93,7 @@ fixed4 frag(v2f i) : COLOR
 #endif	//DISSOLVE
 
 	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier, 0.0, 1.0);
-#ifdef ALPHABLEND
+#ifdef BLENDMODE_ALPHABLEND
 #if COLOR_RAMP
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * _EmissionSaturation;
 #else
@@ -108,17 +108,17 @@ fixed4 frag(v2f i) : COLOR
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
-#endif	//ALPHABLEND
+#endif	//BLENDMODE_ALPHABLEND
 
 #else	//EXTENDED_PARTICLES
 
-#ifdef ADDITIVE_ALPHABLEND
+#ifdef BLENDMODE_ADDITIVEALPHABLEND
 	tex *= _TintColor;
 	float luminance = clamp(dot(tex, float4(0.2126, 0.7152, 0.0722, 0.0)) * tex.a * _ABOffset, 0.0, 1.0);
 	fixed4 one = fixed4(1, 1, 1, 1);
 	col = lerp(2.0 * (i.color * tex), one - 2.0 * (one - i.color) * (one - tex), luminance);
 
-#else	//ADDITIVE_ALPHABLEND
+#else	//BLENDMODE_ADDITIVEALPHABLEND
 
 	col = i.color * tex;
 #ifdef EMISSIVEPOWER
@@ -127,15 +127,15 @@ fixed4 frag(v2f i) : COLOR
 
 	col *= _TintColor;
 
-#if defined(SOFTADDITIVE)
+#if defined(BLENDMODE_SOFTADDITIVE)
 	col.rgb *= col.a;
-#elif defined(ALPHABLEND)
+#elif defined(BLENDMODE_ALPHABLEND)
 	col *= 2.0;
 #elif defined(ADDITIVE_DOUBLE)
 	col *= 4.0;
-#endif	//SOFTADDITIVE
+#endif	//BLENDMODE_SOFTADDITIVE
 
-#endif	//ADDITIVE_ALPHABLEND
+#endif	//BLENDMODE_ADDITIVEALPHABLEND
 
 #endif	//EXTENDED_PARTICLES
 
