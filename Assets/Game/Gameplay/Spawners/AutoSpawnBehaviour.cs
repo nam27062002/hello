@@ -106,7 +106,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
     void OnDestroy() {
 		if (SpawnerManager.isInstanceCreated)
-            SpawnerManager.instance.Unregister(this, false);
+            SpawnerManager.instance.Unregister(this, true);
 	
 		if (m_decoration != null) {
 			EntityManager.instance.UnregisterDecoration(m_decoration);
