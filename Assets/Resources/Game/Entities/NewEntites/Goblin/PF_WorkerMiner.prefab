@@ -659,13 +659,6 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
-  m_onMouseDown: 0
-  m_onMouseDrag: 0
-  m_onMouseUp: 0
-  m_onMouseUpAsButton: 0
-  m_onMouseEnter: 0
-  m_onMouseExit: 0
-  m_onMouseOver: 0
 --- !u!114 &114579171284987900
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -691,6 +684,7 @@ MonoBehaviour:
   m_parentName: Goblin_Ribcage
   m_parentRoot: {fileID: 4197126876914112}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114743077953924372
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -705,6 +699,7 @@ MonoBehaviour:
   m_parentName: Goblin_MinerHat
   m_parentRoot: {fileID: 4197126876914112}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114797398696745052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -716,6 +711,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activationMode: 0
   m_parent: {fileID: 0}
   m_view: {fileID: 23543960807811434}
   m_particleDatas:
@@ -1027,6 +1023,7 @@ MonoBehaviour:
   m_parentName: Goblin_Ribcage
   m_parentRoot: {fileID: 4197126876914112}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114977868653219834
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1089,6 +1086,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.75
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":2,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":9,"checkDragonPositionTime":1,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":2,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":9,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_WorkerMiner
 --- !u!135 &135404990409175278

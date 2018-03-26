@@ -176,16 +176,21 @@ public class DeviceQualityManager
         {            
             int i;
             int count = Profiles_Names.Count;
-            
-            // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
-            for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating <= rating; i++)
+
+            if (count > 0)
             {
-                // Makes sure that it has memory and rating enough to use this profile
-                if (memorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
+                returnValue = Profiles_Names[0];
+                // Loops through all profiles, which are sorted in ascending order per rating, until one with bigger rating than the passed as an argument is found
+                for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating <= rating; i++)
                 {
-                    returnValue = Profiles_Names[i];
-                }                
-            }                                   
+                    // Makes sure that it has memory and rating enough to use this profile
+//                  Controlled mistake!!! it must be --> if (gfxMemorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
+                    if (memorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
+                    {
+                        returnValue = Profiles_Names[i];
+                    }
+                }
+            }
         }
 
         if (returnValue == null && FeatureSettingsManager.IsDebugEnabled)

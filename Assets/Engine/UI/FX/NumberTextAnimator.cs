@@ -86,6 +86,25 @@ public class NumberTextAnimator : MonoBehaviour {
 		// Set initial value
 		SetValue(m_currentValue, false);
 	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+
+		// Make sure text is properly set (in case language changed while disabled)
+		ApplyValue(m_currentValue);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+	}
 	
 	/// <summary>
 	/// Called every frame
@@ -171,5 +190,16 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// <param name="_value">The value to be formatted.</param>
 	protected virtual string FormatValue(long _value) {
 		return StringUtils.FormatNumber(_value);
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Localization language has changed, update textfield.
+	/// </summary>
+	protected void OnLanguageChanged() {
+		// Update with current value
+		ApplyValue(m_currentValue);
 	}
 }

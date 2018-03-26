@@ -283,11 +283,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		float healthReward = m_healthBehaviour.GetBoostedHp(reward.origin, reward.health);
 		m_dragon.AddLife( healthReward, DamageType.NONE, t );
 		m_dragon.AddEnergy(reward.energy);
+		//AddFury(reward.fury);??
 	}
 
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
+		AddFury( _reward.fury );
 	}
 
 	protected virtual void OnGamePaused( bool _paused )
@@ -358,8 +360,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_fireNodeTimer -= Time.deltaTime;
 		if (m_fireNodeTimer <= 0) {
 			m_fireNodeTimer += m_checkNodeFireTime;
-
-			FirePropagationManager.instance.FireUpNodes(bounds2D, Overlaps, m_dragon.data.tier, m_type, direction);
+			FirePropagationManager.instance.FireUpNodes(bounds2D, Overlaps, m_dragon.data.tier, m_type, direction, IEntity.Type.PLAYER);
 		}
 	}
 

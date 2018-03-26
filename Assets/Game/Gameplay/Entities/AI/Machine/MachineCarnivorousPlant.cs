@@ -5,6 +5,7 @@ namespace AI {
 	public class MachineCarnivorousPlant : MonoBehaviour, IMachine, ISpawnable {
 		[SerializeField] protected MachineSensor m_sensor = new MachineSensor();
 		[SerializeField] protected MachineInflammable m_inflammable = new MachineInflammable();
+		[SerializeField] protected MachineEdible m_edible = new MachineEdible();
 
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 
@@ -43,7 +44,6 @@ namespace AI {
 		public Vector3 velocity			{ get { return Vector3.zero; } }
 		public Vector3 angularVelocity	{ get { return Vector3.zero; } }
 
-		public float biteResistance { get { return 0; } }
 		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
 
 		protected void Awake() {
@@ -54,6 +54,7 @@ namespace AI {
 			m_entity = GetComponent<IEntity>();	
 
 			m_sensor.Attach(this, m_entity, m_pilot);
+			m_edible.Attach(this, m_entity, m_pilot);
 			m_inflammable.Attach(this, m_entity, m_pilot);
 
 			m_signals = new Signals(this);
@@ -83,11 +84,13 @@ namespace AI {
 		public void Spawn(ISpawner _spawner) {
 			m_signals.Init();
 			m_sensor.Init();
+			m_edible.Init();
 			m_inflammable.Init();
 
 			if (InstanceManager.player != null)	{
 				DragonPlayer player = InstanceManager.player;
-				m_sensor.SetupEnemy(player.dragonEatBehaviour.mouth, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
+				HoldPreyPoint t = player.holdPreyPoints[player.holdPreyPoints.Length - 1];
+				m_sensor.SetupEnemy(t.transform, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
 			}
 
 			m_upVector = Vector3.up;
@@ -138,11 +141,11 @@ namespace AI {
 			m_sensor.Disable(_seconds);
 		}
 
-		public bool Burn(Transform _transform, bool instant = false) {
+		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, instant);
+					m_inflammable.Burn(_transform, _source, instant);
 				}
 				return true;
 			}
@@ -213,15 +216,48 @@ namespace AI {
 		}
 
 
+		public virtual bool CanBeBitten() {
+			if (!enabled)
+				return false;
+			if ( IsDead() || IsDying() )
+				return false;
+			
+			return true;
+		}
+
+		public float biteResistance { get { return m_edible.biteResistance; } }
+
+		public void Bite() {
+			if (!IsDead()) {
+				m_edible.Bite();
+			}
+		}
+
+		public bool HasCorpse() {
+			if (m_viewControl != null) {
+				return m_viewControl.HasCorpseAsset();
+			}
+			return false;
+		}
+
+		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
+			m_viewControl.Bite();
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
+		}
+
+		public void EndSwallowed(Transform _transform){
+			m_edible.EndSwallowed(_transform);
+		}
+
 		/**************************************************************************************************************/
 
 		public virtual void CheckCollisions(bool _value) {}
 		public virtual void FaceDirection(bool _value) {}
-		public bool HasCorpse() { return false; }
 		public void ReceiveDamage(float _damage) {}
 
 		public virtual void UseGravity(bool _value) { }
 		public virtual bool IsFacingDirection() { return false; }
+		public virtual bool IsInFreeFall() { return false; }
 		public bool IsFreezing(){ return false; }
 		public void CustomFixedUpdate(){}
 
@@ -230,10 +266,8 @@ namespace AI {
 		public void SetVelocity(Vector3 _v) {}
 		public void BiteAndHold() {}
 		public void ReleaseHold() {}
-		public void EndSwallowed(Transform _transform){}
-		public void Bite() {}
+
 		public void Drown() {}
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, bool _isPlayer) {}
 
 		public void	EnterGroup(ref Group _group) {}
 		public Group GetGroup() {return null;}
@@ -241,6 +275,6 @@ namespace AI {
 
 		public void EnterDevice(bool _isCage) {}
 		public void LeaveDevice(bool _isCage) {}
-		public virtual bool CanBeBitten() {return false;}
+
 	}
 }

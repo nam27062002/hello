@@ -173,28 +173,55 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 	public void OnGooglePlayLogIn(){
 		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
-			// Show curtain and wait for game center response
-			if ( !GameCenterManager.SharedInstance.GetAuthenticatingState() )	// if not authenticating
-			{
-				ApplicationManager.instance.GameCenter_Login();
-			}
 
-			if (GameCenterManager.SharedInstance.GetAuthenticatingState())
-			{
-				m_loadingPopupController = PopupManager.PopupLoading_Open();
-			}
-			else
-			{
-				// No curatin -> something failed, we are not authenticating -> tell the player there was an error
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+            {                
+                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            }
+            else
+            {
+                // Show curtain and wait for game center response
+                if (!GameCenterManager.SharedInstance.GetAuthenticatingState()) // if not authenticating
+                {
+                    ApplicationManager.instance.GameCenter_Login();
+                }
 
-
+                if (GameCenterManager.SharedInstance.GetAuthenticatingState())
+                {
+                    m_loadingPopupController = PopupManager.PopupLoading_Open();
+                }
+                else
+                {
+                    // No curatin -> something failed, we are not authenticating -> tell the player there was an error
+                    UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+                }
+            }
 		}
 	}
 
-	public void OnGooglePlayLogOut(){
-		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
+	public void OnGooglePlayLogOut()
+	{
+		if (ApplicationManager.instance.GameCenter_IsAuthenticated())
+		{
+			// Show popup message
+			PopupMessage.Config config = PopupMessage.GetConfig();
+			config.ShowTitle = false;
+			config.MessageTid = "TID_GEN_CONFIRM_LOGOUT";
+			config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+			config.ConfirmButtonTid = "TID_GEN_YES";
+			config.OnConfirm = OnLogOutGooglePlay;
+			config.CancelButtonTid = "TID_GEN_NO";
+			config.OnCancel = null;
+            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+			config.IsButtonCloseVisible = false;
+			PopupManager.PopupMessage_Open(config);
+		}
+	}
+
+	private void OnLogOutGooglePlay()
+	{
+		if (ApplicationManager.instance.GameCenter_IsAuthenticated())
+		{
 			ApplicationManager.instance.GameCenter_LogOut();
 		}
 	}
@@ -698,4 +725,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
     #endregion
 
+	public void ForceLayoutRefresh(HorizontalOrVerticalLayoutGroup _layout) {
+		// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+		//		 Luckily for us Unity provides us with the right tools to rebuild it
+		//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+		if(_layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_layout.transform as RectTransform);
+	}
 }

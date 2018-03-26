@@ -442,6 +442,7 @@ public class LoadingSceneController : SceneController {
 				EntityManager.CreateInstance(true);
 				ViewManager.CreateInstance(true);
 				InstanceManager.CreateInstance(true);
+				FontManager.instance.Init();
 
 		        GameAds.CreateInstance(false);
 		        GameAds.instance.Init();
@@ -460,8 +461,11 @@ public class LoadingSceneController : SceneController {
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
-				
-				StartLoadFlow();	            	                                
+
+                TransactionManager.CreateInstance();
+                TransactionManager.instance.Initialise();
+
+                    StartLoadFlow();	            	                                
           	}break;
         }
     }
@@ -528,6 +532,9 @@ public class LoadingSceneController : SceneController {
         PopupManager.PopupMessage_Open(config);
 
         HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Shown);
+
+        // Game loaded event is sent to prevent users with a not supported devices from messing up with funnel metrics (it's only sent to Razolytics because Niko doesn't want this behaviour for Calety funnel)
+        HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
     }
 
     private void UnsupportedDevice_OnGoToLink()

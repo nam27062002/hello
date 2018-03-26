@@ -56,6 +56,11 @@ public class DeviceOperatorSpawner : AbstractSpawner {
     public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
 
     protected override void OnStart() {
+		Area area = GetComponent<Area>();
+		if (area != null) {
+			m_areaBounds = area.bounds;
+		}
+
         // Progressive respawn disabled because it respawns only one instance and it's triggered by Catapult which is not prepared to loop until Respawn returns true
         UseProgressiveRespawn = false;        
         UseSpawnManagerTree = false;        
@@ -175,8 +180,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		m_operator.LeaveDevice(false);
 	}
 
-	public void OperatorBurn() {
-		m_operator.Burn(transform);
+	public void OperatorBurn(IEntity.Type _source) {
+		m_operator.Burn(transform, _source);
 	}
 
 	private Vector3 GetLookAtVector() {

@@ -834,6 +834,7 @@ MonoBehaviour:
   m_parentName: vagon_lamp
   m_parentRoot: {fileID: 4501537186221194}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114057638664432322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -845,11 +846,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activationMode: 0
+  m_parent: {fileID: 0}
   m_view: {fileID: 23355122911854020}
   m_particleDatas:
   - name: PS_TorchFire
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 0, g: 0, b: 0, a: 0}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -883,6 +885,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.25
 --- !u!114 &114284664940186790
 MonoBehaviour:
@@ -923,7 +926,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -957,6 +959,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -965,7 +968,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_D_MetalBreaking
     path: 
-    offset: {x: 0, y: 2.4, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 0, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -999,11 +1001,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 2.4, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1037,13 +1039,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_minewagon_break
   m_firePoints: []
   m_burnParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1077,12 +1079,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: PS_D_MetalBreaking
     path: 
-    offset: {x: 0, y: 2.4, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -1116,6 +1118,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 2.4, z: 0}
     scale: 1
   m_onExplosionAudio: hd_minewagon_break
   m_explodeWhenBurned: 1

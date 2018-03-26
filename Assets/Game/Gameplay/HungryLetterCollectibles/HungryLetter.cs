@@ -12,15 +12,26 @@ public class HungryLetter : MonoBehaviour
 	private HungryLettersManager.CollectibleLetters m_letter = HungryLettersManager.CollectibleLetters.H;
 	[SerializeField]
 	private GameObject m_mesh;
+	public GameObject mesh {
+		get { return m_mesh; }
+	}
 
 	//------------------------------------------------------------
 	// Private Variables:
 	//------------------------------------------------------------
 
 	private Collider m_collider;
+	public Collider collider {
+		get { return m_collider; }
+	}
+
 	private HungryLettersManager m_letterManager;
 	private ParticleSystem m_particle;
+
 	private HungryLetterMapMarker m_mapMarker;
+	public HungryLetterMapMarker mapMarker {
+		get { return m_mapMarker; }
+	}
 
 	//------------------------------------------------------------
 	// Public Properties:

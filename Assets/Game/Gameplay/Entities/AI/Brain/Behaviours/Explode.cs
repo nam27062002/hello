@@ -16,7 +16,7 @@ namespace AI {
 
 			private ExplodeData m_data;
 			private Explosive m_explosive;
-
+			private Entity m_entity;
 
 			public override StateComponentData CreateData() {
 				return new ExplodeData();
@@ -29,6 +29,7 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<ExplodeData>();
 				m_explosive = new Explosive(m_data.isMine, m_data.damage, m_data.radius, m_data.cameraShakeDuration);
+				m_entity = m_machine.GetComponent<Entity>();
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
@@ -36,22 +37,26 @@ namespace AI {
 				bool playerTriggeredExplosion = false;
 				DragonPlayer dragon = InstanceManager.player;
 
+				m_entity.onDieStatus.source = IEntity.Type.OTHER;
+
 				if (m_data.damage > 0) {
 					if (_param != null && _param.Length > 0) {
 						GameObject collider = (GameObject)_param[0];
 
 						if (collider.CompareTag("Player")) {
 							playerTriggeredExplosion = true;
+							m_entity.onDieStatus.source = IEntity.Type.PLAYER;
 						} else if ( collider.CompareTag("Pet") ){
 							// is armored pet we should push it
 							Pet pet = collider.GetComponent<Pet>();
 							if ( pet != null && !pet.CanExplodeMines)
 								return;
 							// Check powerup is explode_mine
+							m_entity.onDieStatus.source = IEntity.Type.PET;
 						} else if (collider.layer == LayerMask.NameToLayer("GroundPreys")) {
 							IMachine machine = collider.GetComponent<IMachine>();
 							if (machine != null) {
-								machine.Burn(m_machine.transform);
+								machine.Burn(m_machine.transform, IEntity.Type.OTHER);
 							}
 						}
 					}
@@ -62,6 +67,12 @@ namespace AI {
 				}
 
 				m_machine.SetSignal(Signals.Type.Destroyed, true);
+
+				// [AOC] Notify game!
+				Reward r = m_entity.reward;
+				r.SetNoReward();
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_machine.transform, r);
+
 			}
 		}
 	}

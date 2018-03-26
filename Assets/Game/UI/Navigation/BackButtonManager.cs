@@ -63,12 +63,12 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 		m_handlers.Remove(_handler);
 	}
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {		
-		// Back button pressed?
-		if (Input.GetKeyDown(KeyCode.Escape)) {
+    /// <summary>
+    /// Called every frame.
+    /// </summary>
+    private void Update() {
+        // Back button pressed?
+        if (Input.GetKeyDown(KeyCode.Escape)) {	// On Android Escape es the same as Back Button
 			if (!InputLocker.locked) {
 				if (m_handlers.Count > 0) {
 					m_handlers.Last().Trigger();
@@ -76,9 +76,9 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
 				}
 			}
 		}
-	}
+    }
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
 }

@@ -234,8 +234,10 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
                 m_activateTimer = 0;
             }
 
+#if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.Tab))
                 Toggle();
+#endif
         }
 
 
@@ -317,6 +319,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 			}
 		}
 
+#if UNITY_EDITOR
         // Quick Cheats
         if ( Input.GetKeyDown(KeyCode.L )){
 			if ( InstanceManager.player != null ){
@@ -324,7 +327,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
 			}
 		}
-	}
+#endif
+    }
 
 	/// <summary>
 	/// Check whether canvas should be active (performance).

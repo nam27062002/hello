@@ -35,6 +35,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private DragonTier m_breathTier;
 	public DragonTier breathTier { get{ return m_breathTier; } }
 
+	private IEntity.Type m_sourceType = IEntity.Type.OTHER;
+	private IEntity.Type sourceType { get { return m_sourceType; }}
 	private DragonBreathBehaviour.Type m_breathType;
 
 	private List<FireNode> m_neighbours;
@@ -51,13 +53,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	// Use this for initialization
 	void Awake() {
 		m_transform = transform;
+		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
 	}
 
 	void Start() {
-		m_rect = new Rect((Vector2)m_transform.position, Vector2.zero);
-		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
-		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
-
 		gameObject.SetActive(false);
 	}
 
@@ -76,6 +75,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_hitRadius = _hitRadius;
 
 		Reset();
+
+		m_rect = new Rect((Vector2)m_transform.position, Vector2.one * m_hitRadius * 2f);
+		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
 
 		FirePropagationManager.Insert(this);
 	}
@@ -103,11 +105,12 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public bool IsExtinguished() 	{ return m_state == State.Extinguished;		}
 
 
-	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier, DragonBreathBehaviour.Type _breathType) {
+	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier, DragonBreathBehaviour.Type _breathType, IEntity.Type _source) {
 		if (m_state == State.Idle) {
 			ZoneManager.ZoneEffect effect = ZoneManager.ZoneEffect.None; 
 			m_breathTier = _tier;
 			m_breathType = _breathType;
+			m_sourceType = _source;
 
 			if (_breathType == DragonBreathBehaviour.Type.Mega) {
 				effect = InstanceManager.zoneManager.GetSuperFireEffectCode(m_decoration, _tier);
@@ -120,10 +123,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 				if (effect == ZoneManager.ZoneEffect.L) {
 					m_nextState = State.GoingToExplode;
-					m_parent.LetsBurn(true);
+					m_parent.LetsBurn(true, m_sourceType);
 				} else {
 					m_nextState = State.Spreading;
-					m_parent.LetsBurn(false);
+					m_parent.LetsBurn(false, m_sourceType);
 				}
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
@@ -181,7 +184,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 						if (m_neihboursFireResistance[i] > 0.1f) {
 							m_neihboursFireResistance[i] *= 0.5f;						
 						} else {
-							m_neighbours[i].Burn(Vector2.zero, false, m_breathTier, m_breathType);
+							m_neighbours[i].Burn(Vector2.zero, false, m_breathTier, m_breathType, m_sourceType);
 						}
 					}
 				}

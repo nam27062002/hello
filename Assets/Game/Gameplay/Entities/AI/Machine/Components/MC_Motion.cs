@@ -17,7 +17,7 @@ namespace AI {
 			StandUp
 		};
 
-		private enum UpVector {
+		public enum UpVector {
 			Up = 0,
 			Down,
 			Right,
@@ -470,6 +470,12 @@ namespace AI {
 					break;
 			}
 		}
+
+		//--------------------------------------------------
+		// Queries
+		//--------------------------------------------------
+		public bool IsInFreeFall() { return m_state == State.FreeFall; }
+
 
 		//--------------------------------------------------
 		// Extend functionality

@@ -30,6 +30,8 @@ public enum MessengerEvents {
 
 	// Rules and localization
 	LANGUAGE_CHANGED,		// no params
+	FONT_CHANGE_STARTED,	// no params
+	FONT_CHANGE_FINISHED,	// no params
 	DEFINITIONS_LOADED,		// no params
 	GOOGLE_PLAY_STATE_UPDATE,// no params
 	GOOGLE_PLAY_AUTH_FAILED,// no params
@@ -88,12 +90,14 @@ public enum MessengerEvents {
     BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
 	BREAK_OBJECT_SHALL_NOT_PASS,// no params
-    DARK_ZONE_TOGGLE,           // params: bool _enter / _exit
+	BREAK_OBJECT_WITH_FIRE,		// no params
+    DARK_ZONE_TOGGLE,           // params: bool _enter / _exit, CandleEffectTrigger
 
     // Entity events
     ENTITY_EATEN,				// params: Transform _entity, Reward _reward
 	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
 	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
+	BLOCKER_DESTROYED,			// no params
 	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
 	STAR_COMBO,
 	ENTITY_ESCAPED,				// params: Transform _entity
@@ -209,6 +213,8 @@ public enum MessengerEvents {
 	GLOBAL_EVENT_SCORE_REGISTERED,	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
 
     CONNECTION_RECOVERED,
+
+	MISSION_ZONE,	// params: bool _inside, ZoneTrigger _zone
 
 	COUNT
 }

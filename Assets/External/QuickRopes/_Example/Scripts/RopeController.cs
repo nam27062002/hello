@@ -45,11 +45,13 @@ public class RopeController : MonoBehaviour
         rope.velocityAccel = acceleration;
         rope.velocityDampen = dampening;
 
+#if UNITY_EDITOR
         if (Input.GetKey(KeyCode.UpArrow))
             rope.Velocity = maxSpeed;
         else if (Input.GetKey(KeyCode.DownArrow))
             rope.Velocity = -maxSpeed;
         else
+#endif
             rope.Velocity = 0;
     }
 }

@@ -46,7 +46,7 @@ namespace AI {
 			base.Spawn(_spawner);
 		}
 
-		public bool ReduceDurability(bool _boost) {
+		public bool ReduceDurability(bool _boost, IEntity.Type _source) {
 			if (!GetSignal(Signals.Type.Burning)) {
 				if (m_armorDurability.count > 0) {
 					if (!m_armorDurability.needBoost || _boost) {
@@ -60,6 +60,14 @@ namespace AI {
 								m_ground[i].isTrigger = true;
 							}
 							SetSignal(Signals.Type.Destroyed, true);
+
+							// Get the reward to be given from the entity
+							Reward reward = m_entity.GetOnKillReward(false);
+							InstanceManager.player.AddLife(InstanceManager.player.dragonHealthBehaviour.GetBoostedHp(reward.origin, reward.health), DamageType.NONE, m_transform);
+							// Initialize some death info
+							m_entity.onDieStatus.source = _source;
+							// Dispatch global event
+							Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
 						}
 						return true;
 					} else {
@@ -78,10 +86,10 @@ namespace AI {
 			return false;
 		}
 
-		public override bool Burn(Transform _transform, bool instant = false) {			
-			if (base.Burn(_transform, instant)) {				
+		public override bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {			
+			if (base.Burn(_transform, _source, instant)) {				
 				if (m_passengersSpawner != null) {
-					m_passengersSpawner.PassengersBurn();
+					m_passengersSpawner.PassengersBurn(_source);
 				}
 				return true;
 			}

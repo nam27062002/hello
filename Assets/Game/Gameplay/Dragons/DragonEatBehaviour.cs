@@ -7,6 +7,7 @@ public class DragonEatBehaviour : EatBehaviour {
 	private DragonPlayer m_dragon;
 	private DragonBoostBehaviour m_dragonBoost;
 	private DragonHealthBehaviour m_dragonHealth;
+	private DragonBreathBehaviour m_dragonBreath;
 	private Animator m_animator;
     private float m_eatingSpeed = -1;
     public Range m_randomSpeedRange = new Range(1.0f, 1.5f);
@@ -32,6 +33,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		base.Awake();
 		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_animator.logWarnings = false;
+		m_type = IEntity.Type.PLAYER;
 	}
 
 
@@ -41,6 +43,7 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_dragon = GetComponent<DragonPlayer>();
 		m_dragonBoost = m_dragon.dragonBoostBehaviour;
 		m_dragonHealth = m_dragon.dragonHealthBehaviour;
+		m_dragonBreath = m_dragon.breathBehaviour;
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_motion = m_dragonMotion;
 		m_origin = "player";
@@ -88,14 +91,17 @@ public class DragonEatBehaviour : EatBehaviour {
 		float eatSpeed = 1;
 		if (m_dragonBoost.IsBoostActive())
 		{
+			eatSpeed = m_boostEatingSpeed;
+			/*
 			if (m_holdingPrey != null)
 			{
 				eatSpeed = m_holdBoostDamageMultiplier / 2.0f;
 			}
 			else
 			{
-				eatSpeed = m_boostEatingSpeed;
+		
 			}
+			*/
 		}
 		eatSpeed *= m_randomSpeed;
 
@@ -146,6 +152,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			}
 		}
 		m_dragon.AddEnergy(reward.energy);
+		m_dragonBreath.AddFury(reward.fury);
 		if (reward.alcohol != 0)
 			m_dragon.AddAlcohol(reward.alcohol);
 	}
