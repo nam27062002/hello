@@ -32,6 +32,7 @@ namespace AI {
 
 						// Get the reward to be given from the entity
 						Reward reward = m_entity.GetOnKillReward(false);
+						InstanceManager.player.AddLife(InstanceManager.player.dragonHealthBehaviour.GetBoostedHp(reward.origin, reward.health), DamageType.NONE, m_transform);
 						// Initialize some death info
 						m_entity.onDieStatus.source = _source;
 						// Dispatch global event
