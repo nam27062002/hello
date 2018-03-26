@@ -15,6 +15,7 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 namespace AI {
 	public abstract class AIPilot : Pilot, ISerializationCallbackReceiver {
+		protected static int m_waterMask;
 		protected static int m_groundMask;
 		protected static int m_groundWaterMask;
 
@@ -26,6 +27,8 @@ namespace AI {
 
 		[SerializeField] private Range m_railSeparation = new Range(0.5f, 1f);
 		protected override float railSeparation { get { return m_railSeparation.GetRandom(); } }
+
+		[SerializeField] private bool m_useSpawnerRotation = false;
 
 		private float m_speedFactor = 1f;
 		public override float speedFactor { get { return m_speedFactor; } set { m_speedFactor = value; } }
@@ -54,6 +57,7 @@ namespace AI {
 		// METHODS															  //
 		//--------------------------------------------------------------------//
 		public override void Spawn(ISpawner _spawner) {
+			m_waterMask = LayerMask.GetMask("Water");
 			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
 			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");
 
@@ -63,19 +67,19 @@ namespace AI {
 
 			SetArea(_spawner);
 
-
-			Quaternion rot = GameConstants.Quaternion.identity;
-			if ( _spawner != null )
-			 	rot = _spawner.rotation;
-
-			if (rot == Quaternion.identity) {
+			if (m_useSpawnerRotation) {
+				Quaternion rot = GameConstants.Quaternion.identity;
+				if (_spawner != null) {
+					rot = _spawner.rotation;
+				}
+				m_direction = rot * GameConstants.Vector3.forward;
+				m_machine.upVector = rot * m_machine.upVector;
+			} else { 
 				if (UnityEngine.Random.Range(0f, 1f) < 0.5f) {
 					m_direction = GameConstants.Vector3.right;
 				} else {
 					m_direction = GameConstants.Vector3.left;
 				}
-			} else {
-				m_direction = rot * GameConstants.Vector3.forward;
 			}
 
 			Stop();

@@ -385,12 +385,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":2.5,"idleChance":0.1,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"projectileName":"PF_SpiderPoison","projectileSpawnTransformName":"spinneret","damage":10,"canFollowTarget":false,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":2,"stop":true,"faceEnemy":true,"faceEnemyY":true,"facing":-1,"forceFaceToShoot":true,"maxFacingAngle":10,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"hangDownChance":{"min":0,"max":0},"hangDownDistance":{"min":0,"max":0},"hangDownSpeed":0,"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false}]'
   m_databaseKey: PF_SpiderGreenTurret
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &11457276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -405,6 +407,7 @@ MonoBehaviour:
   m_parentName: Spider_Abdomen_2
   m_parentRoot: {fileID: 480662}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -609,6 +612,7 @@ MonoBehaviour:
   m_parentName: Spider_Abdomen_2
   m_parentRoot: {fileID: 480662}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114146071563085198
 MonoBehaviour:
   m_ObjectHideFlags: 1

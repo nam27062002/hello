@@ -461,6 +461,7 @@ MonoBehaviour:
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -502,6 +503,7 @@ MonoBehaviour:
     path: 
     changeStartColor: 1
     startColor: {r: 0.16117775, g: 0, b: 0.4044118, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -539,6 +541,7 @@ MonoBehaviour:
     path: 
     changeStartColor: 1
     startColor: {r: 0.31764707, g: 0.7176471, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -578,6 +581,7 @@ MonoBehaviour:
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -616,6 +620,7 @@ MonoBehaviour:
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -703,12 +708,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"boostSpeed":4,"panicSpeed":7,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1.9,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3,"catchUpSpeed":4,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":3,"catchUpSpeed":4,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
+  m_useSpawnerRotation: 0
+  m_serializedJson: '[{"boostSpeed":4,"panicSpeed":7,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1.9,"oscillationSpeed":1,"oscillationAmplitude":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3,"catchUpSpeed":4,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"speed":3,"catchUpSpeed":4,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false}]'
   m_databaseKey: PF_Canary03_Flock
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 30
   m_avoidCollisions: 1
   m_avoidWater: 1
+  m_avoidCollisionsFactor: 10
 --- !u!137 &13761280
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

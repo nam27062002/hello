@@ -103,6 +103,11 @@ public class HungryLettersManager : MonoBehaviour
 	protected void Start()
 	{
 		Spawn();
+
+		// [AOC] If cheating, instantiate a dummy letter for every spawner!
+		if(Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
+			SpawnDebug();
+		}
 	}
 
 	protected void OnEnable()
@@ -334,6 +339,39 @@ public class HungryLettersManager : MonoBehaviour
 			m_instantiatedHungryLetter[i].Init(this, placeholder.transform);
 		}
 		// Assert.Fatal(m_instantiatedLetters.Length == m_data.coinsAwarded.Length && m_instantiatedLetters.Length == m_data.scoreAwarded.Length && m_instantiatedLetters.Length == m_data.gemsAwarded.Length && m_instantiatedLetters.Length == m_data.spinsAwarded.Length, "The number of instantiated collectibles don't match with the number of rewards defined in the DB.");
+	}
+
+	/// <summary>
+	/// Spawn a debug dummy letter for each spawn point. Debug only!
+	/// </summary>
+	private void SpawnDebug() {
+		// Go through all spawn points
+		List<HungryLettersPlaceholder> allSpawnPoints = new List<HungryLettersPlaceholder>(m_easySpawnerPoints.Count + m_normalSpawnerPoints.Count + m_hardSpawnerPoints.Count);
+		allSpawnPoints.AddRange(m_easySpawnerPoints);
+		allSpawnPoints.AddRange(m_normalSpawnerPoints);
+		allSpawnPoints.AddRange(m_hardSpawnerPoints);
+
+		// Create a new letter instance for each spawn point
+		GameObject letterPrefab = m_letterPrefabs[0];
+		GameObject letterObj = null;
+		HungryLetter letter = null;
+		Color debugColor = Colors.WithAlpha(Color.red, 0.5f);
+		for(int i = 0; i < allSpawnPoints.Count; ++i) {
+			// Create a new letter instance
+			letterObj = GameObject.Instantiate<GameObject>(letterPrefab);
+			letter = letterObj.GetComponent<HungryLetter>();
+			letter.Init(this, allSpawnPoints[i].transform);
+
+			// Do some customization to let know everyone these are debug letters
+			// Tint map marker
+			letter.mapMarker.GetComponentInChildren<SpriteRenderer>().color = debugColor;
+
+			// Move a bit further away so we can see actual letters in the map
+			letter.transform.SetPosZ(letter.transform.position.z + 1);
+
+			// Disable collider
+			letter.collider.enabled = false;
+		}
 	}
 
 	private void InstantiateLetters(GameObject[] prefabList)

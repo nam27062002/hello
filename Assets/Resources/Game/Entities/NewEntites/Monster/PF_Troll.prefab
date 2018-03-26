@@ -683,7 +683,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1540537496476636}
   m_LocalRotation: {x: -0.06895224, y: 0.085492246, z: -0.005930862, w: 0.99393237}
-  m_LocalPosition: {x: -4.54, y: 4.95, z: 3.61}
+  m_LocalPosition: {x: -4.12, y: 4.95, z: 2.39}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4324929205792548}
@@ -823,7 +823,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.3493843, y: -4.4858327, z: 1.752573}
+  m_LocalPosition: {x: 123.22748, y: 53.00729, z: 1.752573}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4893368449749230}
@@ -972,6 +972,7 @@ MonoBehaviour:
   m_parentName: Troll_Head
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114246830796204986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -986,6 +987,7 @@ MonoBehaviour:
   m_parentName: Troll_L_Upperarm
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114254740084036980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1000,6 +1002,7 @@ MonoBehaviour:
   m_parentName: Troll_L_Calf
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114434468782048086
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1014,6 +1017,7 @@ MonoBehaviour:
   m_parentName: Troll_R_Calf
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114479907087994030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1028,6 +1032,7 @@ MonoBehaviour:
   m_parentName: Troll_R_Forearm
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114544284418125734
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1042,6 +1047,7 @@ MonoBehaviour:
   m_parentName: Troll_L_Weapon_01
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 1
 --- !u!114 &114605653605623280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1112,6 +1118,7 @@ MonoBehaviour:
   m_parentName: Troll_Spine2
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114626060187900646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1408,6 +1415,7 @@ MonoBehaviour:
   m_parentName: Troll_Spine2
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114883298474649214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1487,6 +1495,7 @@ MonoBehaviour:
   m_parentName: Troll_L_Forearm
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114940713762393002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1501,6 +1510,7 @@ MonoBehaviour:
   m_parentName: Troll_R_Upperarm
   m_parentRoot: {fileID: 4889497157332238}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114942837333358150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1520,6 +1530,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 3
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":2.5,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":10,"max":16},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":7,"max":35},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":60,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":1,"stop":true,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"damage":40,"weaponA":"weapon","dataType":"AI.Behaviour.AttackTurnAroundData","editorFolded":false},{"speed":3,"arrivalRadius":1,"hasGuardState":true,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"speed":2.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Troll
 --- !u!114 &114973253395767282
@@ -1588,8 +1599,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 3.5
-  m_Height: 8.5
+  m_Radius: 2
+  m_Height: 8
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &136844319213412122

@@ -566,6 +566,7 @@ MonoBehaviour:
   m_parentName: WarBoat_Cannon
   m_parentRoot: {fileID: 4024577532912938}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114328933247242056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -636,12 +637,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":25,"cannonRotationSpeed":120,"consecutiveAttacks":3,"attackDelay":2,"retreatTime":5,"projectileName":"PF_GoblinWarBoatBomb","projectileSpawnTransformName":"ProjectileSpawn","dataType":"AI.Behaviour.GoblinWarBoatAttackData","editorFolded":false}]'
   m_databaseKey: PF_GoblinWarMachine
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114348080906714530
 MonoBehaviour:
   m_ObjectHideFlags: 1
