@@ -47,8 +47,8 @@ public class SpawnerConditions : MonoBehaviour {
 	[SerializeField] public SpawnCondition[] m_activationTriggers = new SpawnCondition[0];
 	public SpawnCondition[] activationTriggers { get { return m_activationTriggers; }}
 
-	[SerializeField] public SpawnKillCondition[] m_activationKillTriggers = new SpawnKillCondition[0];
-	public SpawnKillCondition[] activationKillTriggers { get { return m_activationKillTriggers; } }
+	[SerializeField] public SkuKillCondition[] m_activationKillTriggers = new SkuKillCondition[0];
+	public SkuKillCondition[] activationKillTriggers { get { return m_activationKillTriggers; } }
 
 	[Tooltip("Stop spawning when any of the deactivation conditions is triggered.\nLeave empty for infinite spawning.")]
 	[SerializeField] private SpawnCondition[] m_deactivationTriggers = new SpawnCondition[0];
@@ -103,10 +103,10 @@ public class SpawnerConditions : MonoBehaviour {
 		}
 
 		for (int i = 0; i < m_activationKillTriggers.Length; i++) {
-			string cat = m_activationKillTriggers[i].category;
+			string sku = m_activationKillTriggers[i].sku;
 
-			if (RewardManager.categoryKillCount.ContainsKey(cat)) {
-				startConditionsOk |= RewardManager.categoryKillCount[cat] >= m_activationKillTriggers[i].value;
+			if (RewardManager.categoryKillCount.ContainsKey(sku)) {
+				startConditionsOk |= RewardManager.categoryKillCount[sku] >= m_activationKillTriggers[i].value;
 			}
 		}
 

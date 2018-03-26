@@ -281,7 +281,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: PS_Dive
     path: Water
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -315,6 +314,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -323,7 +323,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion_Fish
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -357,11 +356,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -395,13 +394,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.5
   m_onEatenAudio: hd_fish_dead
   m_firePoints: []
   m_burnParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -435,12 +434,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -474,6 +473,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
@@ -502,12 +502,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_serializedJson: '[{"speed":3.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3.5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"timeBeforeBackHome":3,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
+  m_useSpawnerRotation: 0
+  m_serializedJson: '[{"speed":3.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":1,"oscillationSpeed":1,"oscillationAmplitude":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":3.5,"catchUpSpeed":6,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false},{"timeBeforeBackHome":3,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false}]'
   m_databaseKey: PF_Fish01_Generic
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114436497994483538
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -548,6 +550,10 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 170
     m_spawnsInsideWater: 1
+    m_faceDirectionFreeFall: 0
+    m_diveTimeRange:
+      min: 0.25
+      max: 0.75
 --- !u!136 &136000013630646580
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -725,4 +725,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
     }
     #endregion
 
+	public void ForceLayoutRefresh(HorizontalOrVerticalLayoutGroup _layout) {
+		// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+		//		 Luckily for us Unity provides us with the right tools to rebuild it
+		//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+		if(_layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_layout.transform as RectTransform);
+	}
 }

@@ -20,6 +20,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	//PF_FireProc
 	[SerializeField] private ParticleData m_disintegrateParticle;
 
+	[SerializeField] private bool m_useAnimator;
+
 	[SeparatorAttribute("Fire Nodes auto setup")]
 	[SerializeField] private int m_boxelSize = 2;
 	[SerializeField] private float m_hitRadius = 1.5f;
@@ -180,6 +182,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				m_timer.Start(m_burningTime * 1000);
 
+				if (m_useAnimator) {
+					m_view.SetActive(false);
+				}
 				m_viewBurned.SetActive(true);
 
 				SwitchViewToDissolve();
@@ -194,7 +199,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 			case State.Explode:
 				BurnOperators();
 
-				//m_disintegrateParticle.Spawn(transform.position + m_disintegrateParticle.offset);
 				for (int i = 0; i < m_fireNodes.Length; ++i) {
 					if (i % 2 == 0) {
 						FireNode n = m_fireNodes[i];
@@ -203,6 +207,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 							ex.transform.localScale = n.transform.localScale * 1.0f;
 							ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f); //delay
 						}
+
+						m_disintegrateParticle.Spawn(n.transform.position + m_disintegrateParticle.offset);
 					}
 				}
 
@@ -232,14 +238,16 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 							allNodesBurning = allNodesBurning && m_fireNodes[i].IsBurning();
 						}
 
-						if (allNodesBurning) {
+						if (allNodesBurning || m_useAnimator) {
 							m_nextState = State.Extinguish;
 						}
 					} break;
 
 				case State.Extinguish:
 					// Advance dissolve!
-					m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
+					if (!m_useAnimator) {
+						m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
+					}
 
 					if (m_timer.IsFinished()) {
 						bool extinguished = true;
@@ -279,7 +287,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		}
 	}
 
-	private void Destroy() {		
+	private void Destroy() {
 		m_view.SetActive(false);
 		m_viewBurned.SetActive(true);
 		if (m_collider) m_collider.isTrigger = true;

@@ -27,6 +27,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 
 				#define FOG
 				#define CUSTOM_VERTEXPOSITION
+				#define MAINCOLOR_TEXTURE
 				#define OPAQUEALPHA
 
 				#include "scenary.cginc"

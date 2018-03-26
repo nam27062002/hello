@@ -17,13 +17,13 @@ struct v2f
 	float2 uv : TEXCOORD0;
 	float4 color : COLOR;
 
-#if !defined(GHOST)
+#if defined(DYNAMIC_LIGHT)
 	float3 vLight : TEXCOORD2;
 #endif
 
-#ifdef SPECULAR
+#if defined(SPECULAR) || defined(SPECMASK)
 	float3 halfDir : TEXCOORD7;
-#endif	
+#endif
 
 #if defined(FRESNEL) || defined(FREEZE)
 	float3 viewDir : VECTOR;
@@ -62,37 +62,81 @@ uniform float4 _SpecularColor;
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)
-
 uniform float _FresnelPower;
-
 uniform float4 _FresnelColor;
+
 #ifdef FREEZE
 uniform float4 _FresnelColor2;
 #endif
 
 #endif
 
-#if defined (TINT) || defined (CUSTOM_TINT)
+#if defined(TINT)
 uniform float4 _Tint;
 #endif
+
+#if defined(EMISSIVE)
+uniform float _EmissiveIntensity;
+uniform float _EmissiveBlink;
+uniform float _EmissiveOffset;
+#endif
+
+#if defined(VERTEX_ANIMATION)
+uniform float _TimePhase;
+uniform float _Period;
+uniform float4 _VertexAnimation;
+
+#if defined(JELLY)
+uniform float _TimePhase2;
+uniform float _Period2;
+uniform float4 _VertexAnimation2;
+uniform float4 _VertexAnimation3;
+#endif
+
+#endif
+
+#if defined(SPECMASK)
+uniform sampler2D _SpecMask;
+uniform float _SpecExponent;
+uniform float4 _SecondLightDir;
+
+#endif
+
+#if defined(AMBIENTCOLOR)
+uniform float4 _AmbientColor;
+#endif
+
 
 v2f vert(appdata_t v)
 {
 	v2f o;
 
-#ifdef CUSTOM_VERTEXPOSITION
-	o.vertex = getCustomVertexPosition(v);
+#if defined(VERTEX_ANIMATION)
+
+#if defined(JELLY)
+	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
+	v.vertex.xyz += anim.y * _VertexAnimation.y * v.normal * v.color.g;
+	anim = sin(_Time.y * _TimePhase2 + v.vertex.y * _Period2);
+	v.vertex += anim * _VertexAnimation2 * v.color.r; //* (1.0 - s);
+	anim = sin(_Time.y * _TimePhase2 * 0.85 + v.vertex.y * _Period2);
+	v.vertex += anim * _VertexAnimation3 * v.color.b; // *(1.0 - s);
+
 #else
-	o.vertex = UnityObjectToClipPos(v.vertex);
+	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
+	v.vertex += anim * _VertexAnimation * v.color.g;
+
 #endif
+
+#endif
+	o.vertex = UnityObjectToClipPos(v.vertex);
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+
 	float3 normal = UnityObjectToWorldNormal(v.normal);
 
-#if !defined(GHOST)
+#if defined(DYNAMIC_LIGHT)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
 #endif
-
 	// To calculate tangent world
 #ifdef NORMALMAP
 	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
@@ -105,13 +149,21 @@ v2f vert(appdata_t v)
 #endif
 
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
 
-#ifdef SPECULAR
+#if defined(FRESNEL) || defined(FREEZE) || defined(SPECULAR) || defined(SPECMASK)
+	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
+#endif
+
+#if defined(SPECULAR)
 	// Half View - See: Blinn-Phong
 	//	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 	float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
+
+#elif defined(SPECMASK)
+	float3 lightDirection = normalize(_SecondLightDir.xyz);
+	o.halfDir = normalize(lightDirection + viewDirection);
+
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)
@@ -133,17 +185,22 @@ fixed4 frag(v2f i) : SV_Target
 {
 	// sample the texture
 	fixed4 col = tex2D(_MainTex, i.uv);
-//	fixed specMask = col.a;
-	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 
+#if defined(SPECMASK)
+	fixed4 colspec = tex2D(_SpecMask, i.uv);
+	fixed specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
+#else
+	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+#endif
+
+#if defined(EMISSIVE)
+	float anim = (((sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity) + _EmissiveOffset) * col.a;
+	col.xyz *= 1.0 + anim;
+#endif
 
 #if defined (TINT)
 	col.xyz *= _Tint.xyz;
-#elif defined (CUSTOM_TINT)
-	col = getCustomTint(col, _Tint, i.color);
 #endif
-
-	fixed4 unlitColor = col;
 
 #ifdef NORMALMAP
 	// Calc normal from detail texture normal and tangent world
@@ -155,19 +212,25 @@ fixed4 frag(v2f i) : SV_Target
 	float3 normalDirection = i.normalWorld;
 #endif
 
-#if !defined(GHOST)
-	fixed3 diffuse = max(0,dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
+
+#if defined(DYNAMIC_LIGHT)
+	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 	col.xyz *= diffuse + i.vLight;
 #endif
 
-#ifdef SPECULAR
-//	specMask = 1.0;
+#if defined(SPECULAR)
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
-#else
 
+#elif defined(SPECMASK)
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * specMask;
+	col.xyz = lerp(col.xyz, colspec.xyz, specular);
+	col.a = max(col.a, specular);
 #endif
-//				fixed fresnel = pow(max(dot(normalDirection, i.viewDir), 0), _FresnelFactor);
+
+#if defined(AMBIENTCOLOR)
+	col.xyz += _AmbientColor.xyz;
+#endif
 
 #if defined(FRESNEL) || defined(FREEZE)
 	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
@@ -196,9 +259,8 @@ fixed4 frag(v2f i) : SV_Target
 	col.a = clamp(fresnel + specMask, 0.0, 1.0);
 #endif
 
-#if defined (TINT) || defined (CUSTOM_TINT)
+#if defined (TINT)
 	col.a *= _Tint.a;
-
 #endif
 	return col;
 }

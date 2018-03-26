@@ -283,6 +283,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		float healthReward = m_healthBehaviour.GetBoostedHp(reward.origin, reward.health);
 		m_dragon.AddLife( healthReward, DamageType.NONE, t );
 		m_dragon.AddEnergy(reward.energy);
+		//AddFury(reward.fury);??
 	}
 
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)

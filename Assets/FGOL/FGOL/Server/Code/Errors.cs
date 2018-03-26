@@ -31,7 +31,8 @@ namespace FGOL.Server
         CorruptedFileError = -20,
         SaveError = -21,
         S3TokenInvalid = -22,
-        UserAuthError = -23
+        UserAuthError = -23,
+        LogicError = -24 // Logic related error returned by our server
     }
 
     #region Errors
@@ -39,13 +40,15 @@ namespace FGOL.Server
     {
         protected string m_message = null;
         protected ErrorCodes m_code = ErrorCodes.Unset;
+        public int m_errorCode;
 
         private string m_stackTrace = null;
 
-        public Error(string message, ErrorCodes code)
+        public Error(string message, ErrorCodes code, int errorCode = -1)
         {
             m_message = message;
             m_code = code;
+            m_errorCode = errorCode;
             m_stackTrace = System.Environment.StackTrace;
         }
 
@@ -90,8 +93,8 @@ namespace FGOL.Server
     {
         private string m_errorName = null;
 
-        public ServerInternalError(string message, string errorName, ErrorCodes code = ErrorCodes.Unset)
-            : base(message != null ? message : "Error occured on server", code == ErrorCodes.Unset ? ErrorCodes.UnknownError : code)
+        public ServerInternalError(string message, string errorName, ErrorCodes code = ErrorCodes.Unset, int errorCode=-1)
+            : base(message != null ? message : "Error occured on server", code == ErrorCodes.Unset ? ErrorCodes.UnknownError : code, errorCode)
         {
             m_errorName = errorName;
         }

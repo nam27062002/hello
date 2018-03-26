@@ -657,12 +657,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":8,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":16,"acceleration":15,"damage":25,"retreatTime":5,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"boostSpeed":20,"panicSpeed":40,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":20,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"timeBeforeBackHome":0.5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"seconds":3,"dataType":"AI.Behaviour.TimerBData","editorFolded":false}]'
   m_databaseKey: PF_Hawk
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 1
   m_avoidWater: 1
+  m_avoidCollisionsFactor: 10
 --- !u!114 &11422592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -677,6 +679,7 @@ MonoBehaviour:
   m_parentName: Eagle_Legs_Palms
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &11431294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -715,9 +718,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -748,6 +751,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -756,9 +760,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PF_feathers_3D_noblood
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 0.14705884, g: 0.097546, b: 0.06596022, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -789,13 +793,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -826,15 +831,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_hawk_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -865,14 +871,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -903,6 +910,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1

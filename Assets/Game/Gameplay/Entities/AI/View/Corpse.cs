@@ -66,11 +66,10 @@ public class Corpse : MonoBehaviour {
 			Renderer renderer = m_renderers[i];
 			Material[] materials = renderer.sharedMaterials;
 
-			List<Material> materialList = new List<Material>();	
-			materialList.AddRange(materials);
-			m_materials[renderer.GetInstanceID()] = materialList;
+			m_materials[renderer.GetInstanceID()] = new List<Material>();
 
 			for (int m = 0; m < materials.Length; ++m) {
+				m_materials[renderer.GetInstanceID()].Add(new Material(materials[m]));
 				materials[m] = null;
 			}
 			renderer.sharedMaterials = materials;
@@ -98,7 +97,8 @@ public class Corpse : MonoBehaviour {
 				m_gibs[i].position = m_gibs[i].transform.position;
 				m_gibs[i].velocity = Vector3.zero;
 
-				m_gibs[i].AddForce(m_forceDirection[i] * m_forceExplosion * forceFactor, ForceMode.Impulse);
+				//m_gibs[i].AddForce(m_forceDirection[i] * m_forceExplosion * forceFactor, ForceMode.Impulse);
+				m_gibs[i].AddForceAtPosition(m_forceDirection[i] * m_forceExplosion * forceFactor, transform.position, ForceMode.Impulse);
 			}
 
 			if (!string.IsNullOrEmpty(m_blood.name) && m_bloodPoints != null) {
@@ -149,11 +149,14 @@ public class Corpse : MonoBehaviour {
 				}
 
 				m_time -= Time.deltaTime;
-				if (m_time <= 0) m_time = 0f;
+				if (m_time <= 0) {
+					m_time = 0f;
+					gameObject.SetActive(false);
+				}
 			}
 
 			for (int i = 0; i < m_gibs.Length; i++) {
-				m_gibs[i].AddForce(Vector3.down * 25f);
+				m_gibs[i].AddForce(Vector3.down * 250f);
 			}
 		}
 	}
