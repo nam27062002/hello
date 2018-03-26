@@ -380,6 +380,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 0
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 0
   m_feedbackParticle:
     name: PS_C_Wheat
@@ -471,6 +472,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 40
+  m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!114 &114214850052567770
 MonoBehaviour:
@@ -584,7 +587,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_disintegrateParticle:
-    name: PS_NewFireExplosion
+    name: 
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -621,6 +624,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 1, z: 0}
     scale: 0.5
+  m_useAnimator: 0
   m_boxelSize: 6
   m_hitRadius: 1.5
 --- !u!114 &114718332413424846
