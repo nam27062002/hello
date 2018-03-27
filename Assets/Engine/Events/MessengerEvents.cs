@@ -215,6 +215,9 @@ public enum MessengerEvents {
 
 	MISSION_ZONE,	// params: bool _inside, ZoneTrigger _zone
 
+	// Shop/Offers events
+	OFFERS_RELOADED,	// no params
+
 	COUNT
 }
 

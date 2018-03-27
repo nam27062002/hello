@@ -28,7 +28,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private ShowHideAnimator m_anim = null;
+	[SerializeField] private MenuShowConditionally m_showConditioner = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 
 	// Internal
@@ -41,8 +41,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Subscribe to external events
-		m_anim.OnShowCheck.AddListener(OnShowCheck);
+		
 	}
 
 	/// <summary>
@@ -50,10 +49,14 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get latest data from the manager
-		RefreshData();
+		RefreshData(true);
 
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
+
+		// Subscribe to external events
+		m_showConditioner.targetAnimator.OnShowCheck.AddListener(OnShowCheck);
+		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
 	}
 
 	/// <summary>
@@ -72,7 +75,8 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		m_anim.OnShowCheck.RemoveListener(OnShowCheck);
+		m_showConditioner.targetAnimator.OnShowCheck.RemoveListener(OnShowCheck);
+		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
 	}
 
 	//------------------------------------------------------------------------//
@@ -81,15 +85,21 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Force a refresh of the offers manager asking for new featured offers to be displayed
 	/// </summary>
-	public void RefreshData() {
+	/// <param name="_refreshManager">Force a refresh on the manager?</param>
+	public void RefreshData(bool _refreshManager) {
 		// Tell the manager to update packs
-		OffersManager.instance.Refresh();
+		if(_refreshManager) {
+			OffersManager.instance.Refresh();
+		}
 
 		// Get featured offer
 		m_targetOffer = OffersManager.featuredOffer;
 
 		// Update the timer
 		RefreshTimer();
+
+		// Update visibility
+		RefreshVisibility();
 	}
 
 	/// <summary>
@@ -111,8 +121,19 @@ public class OfferFeaturedIcon : MonoBehaviour {
 			);
 		} else {
 			// No!! Hide ourselves
-			m_anim.Hide();
+			m_showConditioner.targetAnimator.Hide();
 		}
+	}
+
+	/// <summary>
+	/// Check whether the icon can be displayed or not.
+	/// </summary>
+	private void RefreshVisibility() {
+		// Consider conditional shower
+		m_showConditioner.targetAnimator.Set(
+			m_targetOffer != null
+			&& m_showConditioner.Check()
+		);
 	}
 
 	//------------------------------------------------------------------------//
@@ -133,5 +154,12 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	public void OnTap() {
 		// Show popup!
 		PopupManager.OpenPopupInstant(PopupFeaturedOffer.PATH);
+	}
+
+	/// <summary>
+	/// The offers manager has been reloaded.
+	/// </summary>
+	private void OnOffersReloaded() {
+		RefreshData(false);
 	}
 }

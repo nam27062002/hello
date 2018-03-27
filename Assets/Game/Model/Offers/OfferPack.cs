@@ -34,6 +34,15 @@ public class OfferPack {
 		PAYER,
 		NON_PAYER
 	}
+
+	public static readonly string[] ITEM_TYPE_ORDER = {
+		Metagame.RewardSoftCurrency.TYPE_CODE,
+		Metagame.RewardHardCurrency.TYPE_CODE,
+		Metagame.RewardGoldenFragments.TYPE_CODE,
+		Metagame.RewardEgg.TYPE_CODE,
+		Metagame.RewardPet.TYPE_CODE,
+		Metagame.RewardSkin.TYPE_CODE
+	};
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -356,17 +365,23 @@ public class OfferPack {
 	/// Apply this pack to current user.
 	/// </summary>
 	public void Apply() {
-		// [AOC] TODO!! Figure out proper flow
-		// Push all the rewards to the pending rewards stack and trigger the pending rewards screen
-		for(int i = 0; i < m_items.Count; ++i) {
-			UsersManager.currentUser.PushReward(m_items[i].reward);
-			// [AOC] TODO!! Validate that the pack is only applied once?
-		}
+		// [AOC] TODO!! Validate that the pack is only applied once?
 
-		// Close all open popups and go to the pending rewards screen
-		// [AOC] TODO!! Don't mix UI flow with logic code! Take this out of here!
-		PopupManager.Clear();
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
+		// We want the rewards to be given in a specific order: do so
+		List<OfferPackItem> sortedItems = new List<OfferPackItem>(m_items);
+		sortedItems.Sort(
+			(OfferPackItem _item1, OfferPackItem _item2) => {
+				// Depends on type
+				return ITEM_TYPE_ORDER.IndexOf(_item1.type).CompareTo(ITEM_TYPE_ORDER.IndexOf(_item2.type));
+			}
+		);
+
+
+		// Push all the rewards to the pending rewards stack
+		// Reverse order so last rewards pushed are collected first!
+		for(int i = sortedItems.Count - 1; i >= 0; --i) {
+			UsersManager.currentUser.PushReward(sortedItems[i].reward);
+		}
 	}
 
 	//------------------------------------------------------------------------//

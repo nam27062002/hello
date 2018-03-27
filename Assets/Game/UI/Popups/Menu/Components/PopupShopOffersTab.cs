@@ -113,5 +113,23 @@ public class PopupShopOffersTab : IPopupShopTab {
 	public void OnShow() {
 		// Refresh pills list
 		RefreshOfferPills();
+
+		// React to offers being reloaded while tab is active
+		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+	}
+
+	/// <summary>
+	/// The tab has been hidden.
+	/// </summary>
+	public void OnHide() {
+		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+	}
+
+	/// <summary>
+	/// Offers have been reloaded.
+	/// </summary>
+	private void OnOffersReloaded() {
+		// Refresh pills list
+		RefreshOfferPills();
 	}
 }

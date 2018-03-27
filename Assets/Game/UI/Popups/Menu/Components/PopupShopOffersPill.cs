@@ -186,10 +186,19 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Invoked after a successful purchase.
 	/// </summary>
 	override protected void ApplyShopPack() {
-		// [AOC] TODO!!
+		// The pack will push all rewards to the reward stack
+		m_pack.Apply();
 
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(true);
+
+		// Close all open popups
+		PopupManager.Clear();
+
+		// Move to the rewards screen
+		PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
+		scr.StartFlow(false);	// No intro
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 	}
 
 	/// <summary>

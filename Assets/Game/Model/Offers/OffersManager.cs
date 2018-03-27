@@ -86,6 +86,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 		// Refresh active and featured offers
 		instance.Refresh();
+
+		// Notiy game
+		Messenger.Broadcast(MessengerEvents.OFFERS_RELOADED);
 	}
 
 	//------------------------------------------------------------------------//

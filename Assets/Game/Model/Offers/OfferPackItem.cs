@@ -30,7 +30,7 @@ public class OfferPackItem {
 		get { return m_featured; }
 	}
 
-	private string m_type = "";
+	private string m_type = "";		// Matching Metagame.Reward.TYPE_CODEs
 	public string type {
 		get { return m_type; }
 	}

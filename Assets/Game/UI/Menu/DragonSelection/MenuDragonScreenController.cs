@@ -129,7 +129,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				case MenuScreen.PENDING_REWARD: {
 					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
-					scr.StartFlow();
+					scr.StartFlow(true);
 					InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 				} break;
 			}

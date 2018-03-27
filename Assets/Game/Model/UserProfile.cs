@@ -981,7 +981,10 @@ public class UserProfile : UserPersistenceSystem
 				Metagame.Reward r = Metagame.Reward.CreateFromJson(rewardsData[i]);
 				m_rewards.Push(r);
 			}
-		}        
+		}
+
+		// Reload offers - need persistence to properly initialize offer packs rewards
+		OffersManager.InitFromDefinitions();
 	}
 
 	/// <summary>

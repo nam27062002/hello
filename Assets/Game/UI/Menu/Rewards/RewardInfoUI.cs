@@ -194,6 +194,11 @@ public class RewardInfoUI : MonoBehaviour {
 			case Metagame.RewardEgg.TYPE_CODE: {
 				// Nothing to do
 			} break;
+
+			// Skin
+			case Metagame.RewardSkin.TYPE_CODE: {
+				// [AOC] TODO!!
+			} break;
 		}
 
 		// Launch animation!
