@@ -113,7 +113,11 @@ public class MenuDragonLoader : MonoBehaviour {
 	private bool m_useShadowMaterial = false;
 	public bool useShadowMaterial {
 		get { return m_useShadowMaterial; }
-		set { m_useShadowMaterial = value; RefreshDragon(); }
+		set { 
+			m_useShadowMaterial = value; 
+			if (m_dragonInstance)
+				RefreshDragon();
+		}
 	}
 
 	// Debug
@@ -182,6 +186,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param> 
 	public void LoadDragon(string _sku, string _disguiseSku, bool forceSync = false) {
 
+		Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
 		if (m_dragonInstance != null || m_asyncRequest != null){
 			if (_sku == m_dragonSku && _disguiseSku == m_disguiseSku )
 				return;
@@ -202,7 +207,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			if (  m_useResultsScreen )
 				prefabColumn = "resultsPrefab";
 
-			if (m_loadAsync && !forceSync){
+			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
 				m_asyncRequest = Resources.LoadAsync<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
 			}else{
 				// Instantiate the prefab and add it as child of this object

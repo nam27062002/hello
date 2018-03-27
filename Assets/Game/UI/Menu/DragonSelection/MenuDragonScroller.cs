@@ -66,7 +66,9 @@ public class MenuDragonScroller : MonoBehaviour {
 		Debug.Log("Dragon Slots: " + dragonSlots);
 		m_dragonSlots = new List<MenuDragonSlot>(dragonSlots.Length);
 		for(int i = 0; i < dragonSlots.Length; i++) {
-			DragonData data = DragonManager.GetDragonData(dragonSlots[i].dragonPreview.sku);
+			if (!FeatureSettingsManager.MenuDragonsAsyncLoading)
+				dragonSlots[i].dragonLoader.Reload(true);
+			DragonData data = DragonManager.GetDragonData(dragonSlots[i].dragonLoader.dragonSku);
 			int dragonIndex = data.GetOrder();
 			// Add it into the list
 			m_dragonSlots.Insert(dragonIndex, dragonSlots[i]);
@@ -150,12 +152,16 @@ public class MenuDragonScroller : MonoBehaviour {
 				}
 			}
 		}
-
-		LoadDragonsAround( menuOrder );
+		UpdateFocusSetup();
+		if ( FeatureSettingsManager.MenuDragonsAsyncLoading ){
+			LoadDragonsAround( menuOrder );
+		}
 	}
 
 	public void LoadDragonsAround(int menuIndex)
 	{
+		if (!FeatureSettingsManager.MenuDragonsAsyncLoading)
+			return;
 		// Only show pets of the focused dragon
 		int viewSize = 3;
 		// foreach(KeyValuePair<string, MenuDragonSlot> kvp in m_dragonSlots) 
@@ -174,6 +180,8 @@ public class MenuDragonScroller : MonoBehaviour {
 
 	public void LoadTutorialDragonsScroll( int dragonToView)
 	{
+		if (!FeatureSettingsManager.MenuDragonsAsyncLoading)
+			return;
 		for( int i = 0; i<m_dragonSlots.Count; ++i )
 		{
 			if ( i <= dragonToView)
@@ -187,29 +195,34 @@ public class MenuDragonScroller : MonoBehaviour {
 		}
 	}
 
-	void OnDragonLoaded( MenuDragonLoader loader ){
-		bool showPets = false;
-		bool allowAltAnimations = false;
-
-		showPets = allowAltAnimations = (loader.dragonSku == m_focusingDragon);
-		MenuDragonSlot slot = null;
-		for (int i = 0; i < m_dragonSlots.Count && slot == null; i++) {
-			if ( m_dragonSlots[i].dragonLoader == loader )
-				slot = m_dragonSlots[i];
-		}
-
-		if ( slot != null )
-		{
-			if ( allowAltAnimations)
+	void UpdateFocusSetup()
+	{
+		for (int i = 0; i < m_dragonSlots.Count; i++) {
+			MenuDragonSlot slot = m_dragonSlots[i];
+			if ( slot.dragonLoader.dragonSku != m_focusingDragon ){
+				if ( slot.dragonPreview )
+				{
+					slot.dragonPreview.allowAltAnimations = false;
+					if(slot.dragonPreview.equip.showPets != false){
+						slot.dragonPreview.equip.TogglePets(false, false);
+					}
+				}
+			}
+			else
 			{
-				if ( slot.currentState < DragonData.LockState.LOCKED )
-					allowAltAnimations = false;
+				if ( slot.dragonPreview )
+				{
+					if(slot.dragonPreview.equip.showPets != true) {
+						slot.dragonPreview.equip.TogglePets(true, false);
+					}
+					slot.dragonPreview.allowAltAnimations = slot.currentState >= DragonData.LockState.LOCKED;
+				}
 			}
-			if(slot.dragonPreview.equip.showPets != showPets) {
-				slot.dragonPreview.equip.TogglePets(showPets, false);
-			}
-			slot.dragonPreview.allowAltAnimations = allowAltAnimations;
 		}
+	}
+
+	void OnDragonLoaded( MenuDragonLoader loader ){
+		UpdateFocusSetup();
 	}
 
 	/// <summary>
