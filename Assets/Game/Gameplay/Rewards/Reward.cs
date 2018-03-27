@@ -10,7 +10,7 @@ public struct Reward  {
 	[Separator("", 7)]
 	public float health;
 	public float energy;
-	public float fury;
+	public float fury;	// Main source for fury is score, this is an extra
 
 	[Separator("", 7)]
 	public float xp;
@@ -160,6 +160,6 @@ public struct Reward  {
 	/// </summary>
 	public void SetNoReward(){
 		score = coins = pc = 0;
-		health = energy = xp = alcohol = 0f;
+		health = energy = xp = alcohol = fury = 0f;
 	}
 }

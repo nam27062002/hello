@@ -196,17 +196,17 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
         // T1: pc:1
         SimpleJSON.JSONNode _transaction = new SimpleJSON.JSONClass();
-        _transaction["id"] = "1";
-        _transaction["source"] = "crm";
+        _transaction["order_id"] = "1";
+        _transaction["source"] = "support";
         _transaction["hc"] = 1;        
         _array.Add(null, _transaction);
 
         // T2: sc:100 
         _transaction = new SimpleJSON.JSONClass();
-        _transaction["id"] = "1";
-        _transaction["source"] = "crm";        
+        _transaction["order_id"] = "1";
+        _transaction["source"] = "support";        
         _transaction["sc"] = 100000;
-        _array.Add(null, _transaction);
+        _array.Add(null, _transaction);        
 
         SimpleJSON.JSONNode _json = new SimpleJSON.JSONClass();
         _json["txs"] = _array;
@@ -222,7 +222,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 
         // Success
         ServerResponse res = GetConfirmPendingTransactionsResponse(_transactions);
-        DelayedCall(() => _callback(null, res), 0f);
+        DelayedCall(() => _callback(null, res), 5f);
 
         // Error
         //ServerResponse res = GetConfirmPendingTransactionsResponse(_transactions, 77);

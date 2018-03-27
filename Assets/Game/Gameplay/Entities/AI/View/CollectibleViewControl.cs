@@ -87,4 +87,6 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 
 		m_onCollectParticle.Spawn(transform.position + m_onCollectParticle.offset);
 	}
+
+	public void ForceGolden(){}
 }

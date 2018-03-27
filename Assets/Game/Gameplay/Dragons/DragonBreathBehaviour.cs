@@ -289,6 +289,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
+		AddFury( _reward.fury );
 	}
 
 	protected virtual void OnGamePaused( bool _paused )

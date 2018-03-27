@@ -292,6 +292,10 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 		Initialize();
 	}
 
+	public void ForceGolden( IEntity entity ){
+		// entity.SetGolden(Spawner.EntityGoldMode.Gold);
+	}
+
 	public void DrawStateGizmos() {}
 
 

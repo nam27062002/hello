@@ -185,6 +185,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 								particlePosition.x -= m_collider.size.x * 0.5f;
 							}
 
+							ps.transform.localRotation = transform.rotation;
 							ps.transform.position = particlePosition + m_feedbackParticle.offset;
 
 							if (m_particleFaceDragonDirection) {
@@ -216,8 +217,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 							particlePosition.x -= m_collider.size.x * 0.5f;
 						}
 
-						GameObject ps = m_feedbackParticle.Spawn(particlePosition + m_feedbackParticle.offset);
+						GameObject ps = m_feedbackParticle.Spawn(particlePosition + (transform.rotation * m_feedbackParticle.offset));
 						if (ps != null) {
+							ps.transform.localRotation = transform.rotation;
 							if (m_particleFaceDragonDirection) {
 								FaceDragon(ps);
 							}
@@ -232,7 +234,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	}
 
 	void Break() {
-		GameObject ps = m_destroyParticle.Spawn(transform.position + m_destroyParticle.offset);
+		GameObject ps = m_destroyParticle.Spawn(transform.position + (transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
 				FaceDragon(ps);
