@@ -31,7 +31,7 @@ Shader "Hungry Dragon/Particles/Transparent Additive Alpha Blend"
 			#include "UnityCG.cginc"
 
 			#define BLENDMODE_ADDITIVEALPHABLEND
-			#include "transparentparticlesnew.cginc"
+			#include "transparentparticles.cginc"
 
 /*
 			sampler2D _MainTex;

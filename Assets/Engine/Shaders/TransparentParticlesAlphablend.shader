@@ -49,7 +49,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Alpha Blend"
 			#include "UnityCG.cginc"
 			#define EXTENDED_PARTICLES
 			#define	BLENDMODE_ALPHABLEND
-			#include "transparentparticlesnew.cginc"
+			#include "transparentparticles.cginc"
 
 /*
 			struct appdata_t {

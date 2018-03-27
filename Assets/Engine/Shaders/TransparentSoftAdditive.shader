@@ -39,7 +39,7 @@ Shader "Hungry Dragon/Particles/Transparent Soft Additive"
 				#include "UnityCG.cginc"
 
 				#define BLENDMODE_SOFTADDITIVE
-				#include "transparentparticlesnew.cginc"
+				#include "transparentparticles.cginc"
 
 /*
 				sampler2D _MainTex;

@@ -37,7 +37,7 @@
 				#include "UnityCG.cginc"
 
 				#define	BLENDMODE_ADDITIVEDOUBLE
-				#include "transparentparticlesnew.cginc"
+				#include "transparentparticles.cginc"
 
 				ENDCG
 

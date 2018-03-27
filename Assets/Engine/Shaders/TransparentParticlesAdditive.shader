@@ -48,7 +48,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Additive"
 
 			#include "UnityCG.cginc"
 			#define EXTENDED_PARTICLES
-			#include "transparentparticlesnew.cginc"
+			#include "transparentparticles.cginc"
 
 /*
 			struct appdata_t {

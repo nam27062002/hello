@@ -35,7 +35,7 @@ Shader "Hungry Dragon/Particles/Transparent Additive"
 				#pragma shader_feature  __ AUTOMATICPANNING
 
 				#include "UnityCG.cginc"
-				#include "transparentparticlesnew.cginc"
+				#include "transparentparticles.cginc"
 				ENDCG
 			}
 		}

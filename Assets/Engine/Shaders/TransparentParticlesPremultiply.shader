@@ -49,7 +49,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Premultiply"
 			#include "UnityCG.cginc"
 			#define EXTENDED_PARTICLES
 			#define BLENDMODE_PREMULTIPLY
-			#include "transparentparticlesnew.cginc"
+			#include "transparentparticles.cginc"
 /*
 			struct appdata_t {
 				float4 vertex : POSITION;

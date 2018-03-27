@@ -58,7 +58,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma shader_feature _ EXTENDED_PARTICLES
 
 				#include "UnityCG.cginc"
-				#include "transparentparticlesnew.cginc"
+				#include "transparentparticles.cginc"
 				ENDCG
 			}
 		}
