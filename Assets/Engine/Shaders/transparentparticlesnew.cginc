@@ -60,7 +60,7 @@ v2f vert(appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.color = v.color;
 #ifdef AUTOMATICPANNING
-	v.texcoord.xy += _Panning * _Time.yy;
+	v.texcoord.xy += _Panning.xy * _Time.yy;
 #endif
 
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
@@ -76,6 +76,10 @@ fixed4 frag(v2f i) : COLOR
 {
 	fixed4 tex = tex2D(_MainTex, i.texcoord);
 	fixed4 col;
+
+//#ifdef AUTOMATICPANNING
+//	return fixed4(1.0, 1.0, 0.0, 1.0);
+//#endif
 
 #ifdef EXTENDED_PARTICLES
 

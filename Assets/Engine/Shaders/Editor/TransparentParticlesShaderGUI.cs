@@ -90,7 +90,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string tintColorText = "Tint Color";
         readonly public static string enableEmissivePowerText = "Enable Emissive Power";
         readonly public static string emissivePowerText = "Enable Emissive Power";
-        readonly public static string enableExtendedParticles = "Enable Emissive Power";
+        readonly public static string enableExtendedParticlesText = "Enable extended particles";
+        readonly public static string blendModeText = "Blend Mode";
 
     }
 
@@ -187,7 +188,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
     private bool featureSet(MaterialProperty feature, string label)
     {
-        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
         m_materialEditor.ShaderProperty(feature, label);
         EditorGUILayout.EndVertical();
 
@@ -198,45 +199,57 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     public static void setBlendMode(Material material, int blendMode)
     {
         material.SetFloat("_BlendMode", blendMode);
+        material.DisableKeyword("BLENDMODE_ADDITIVE");
+        material.DisableKeyword("BLENDMODE_SOFTADDITIVE");
+        material.DisableKeyword("BLENDMODE_ADDITIVEDOUBLE");
+        material.DisableKeyword("BLENDMODE_ALPHABLEND");
+        material.DisableKeyword("BLENDMODE_ADDITIVEALPHABLEND");
+        material.DisableKeyword("BLENDMODE_PREMULTIPLY");
 
         switch (blendMode)
         {
-            case 0:
-                material.SetOverrideTag("RenderType", "Opaque");
-                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetFloat("_ZWrite", 1.0f);
-///                material.renderQueue = 2000;
-                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
-                material.DisableKeyword("CUTOFF");
-                material.EnableKeyword("OPAQUEALPHA");
-                Debug.Log("Blend mode opaque");
+            case 0:                                                         //Additive
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.EnableKeyword("BLENDMODE_ADDITIVE");
+                Debug.Log("Blend mode additive");
                 break;
 
-            case 1:
-                material.SetOverrideTag("RenderType", "Transparent");
+            case 1:                                                         //Soft Additive
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
+                material.EnableKeyword("BLENDMODE_SOFTADDITIVE");
+                Debug.Log("Blend mode soft additive");
+                break;
+
+            case 2:                                                         //Additive Double
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
+                material.EnableKeyword("BLENDMODE_ADDITIVEDOUBLE");
+                Debug.Log("Blend mode additive double");
+                break;
+
+            case 3:                                                         //Alpha blend
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-//                material.renderQueue = 3000;
-                material.SetFloat("_ZWrite", 0.0f);
-                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
-                material.DisableKeyword("CUTOFF");
-                material.DisableKeyword("OPAQUEALPHA");
-                Debug.Log("Blend mode transparent");
+                material.EnableKeyword("BLENDMODE_ALPHABLEND");
+                Debug.Log("Blend mode alpha blend");
                 break;
 
-            case 2:
-                material.SetOverrideTag("RenderType", "TransparentCutout");
+            case 4:                                                         //Additive Alpha blend
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.EnableKeyword("BLENDMODE_ADDITIVEALPHABLEND");
+                Debug.Log("Blend mode additive alpha blend");
+                break;
+
+            case 5:                                                         //Premultiply
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetFloat("_ZWrite", 1.0f);
-//                material.renderQueue = 2500;
-                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
-                material.EnableKeyword("CUTOFF");
-                material.EnableKeyword("OPAQUEALPHA");
-
-                Debug.Log("Blend mode cutout");
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.EnableKeyword("BLENDMODE_PREMULTIPLY");
+                Debug.Log("Blend mode premultiply");
                 break;
+
         }
 
     }
@@ -259,147 +272,194 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
-
-/*
         EditorGUI.BeginChangeCheck();
-        EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
-        materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
+        materialEditor.ShaderProperty(mp_blendMode, Styles.blendModeText);
         EditorGUILayout.EndVertical();
 
-        int blendMode = (int)mp_BlendMode.floatValue;
+        int blendMode = (int)mp_blendMode.floatValue;
         if (EditorGUI.EndChangeCheck())
         {
-            mp_DoubleSided.floatValue = blendMode == 0 ? 0.0f : 1.0f;
+            Debug.Log("Blend Mode: " + blendMode);
             setBlendMode(material, blendMode);
         }
-        if (blendMode == 2)
+
+        materialEditor.ShaderProperty(mp_tintColor, Styles.tintColorText);
+        materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
+
+        if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
         {
-            materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
+            Vector4 tem = mp_panning.vectorValue;
+            Vector2 p1 = new Vector2(tem.x, tem.y);
+            p1 = EditorGUILayout.Vector2Field(Styles.panningText, p1);
+            //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
+            tem.x = p1.x; tem.y = p1.y;
+            mp_panning.vectorValue = tem;
         }
 
-        Vector4 tem = mp_Panning.vectorValue;
-        Vector2 p1 = new Vector2(tem.x, tem.y);
-
-        featureSet(mp_MainColor, Styles.mainColorText);
-        if (mp_MainColor.floatValue == 0.0f)
+        if (featureSet(mp_enableEmissivePower, Styles.enableEmissivePowerText))
         {
-            materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
-            materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
-
-            p1 = EditorGUILayout.Vector2Field("Panning:", p1);
-            tem.x = p1.x;
-            tem.y = p1.y;
-
-
-            bool normalMap = mp_normalTexture.textureValue != null as Texture;
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                SetKeyword(material, kw_normalmap, normalMap);
-                EditorUtility.SetDirty(material);
-                Debug.Log("EnableNormalMap " + (normalMap));
-                //            DebugKeywords(material);
-            }
-
-
-            if (normalMap)
-            {
-                materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
-            }
-        }
-        else
-        {
-            materialEditor.ShaderProperty(mp_Color, Styles.colorText);
+            materialEditor.ShaderProperty(mp_emissivePower, Styles.emissivePowerText);
         }
 
         EditorGUI.BeginChangeCheck();
-
-        if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
+        if (featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText))
         {
-            materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
-            p1.Set(tem.z, tem.w);
-            p1 = EditorGUILayout.Vector2Field("Panning:", p1);
-            tem.z = p1.x;
-            tem.w = p1.y;
 
-            materialEditor.ShaderProperty(mp_EnableAdditiveBlend, Styles.additiveBlendingText);
-            materialEditor.ShaderProperty(mp_EnableAutomaticBlend, Styles.automaticBlendingText);
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            Debug.Log("Extended particles: " + (int)mp_enableExtendedParticles.floatValue);
+
+        }
+
+        if (GUILayout.Button("Log keywords", editorSkin.customStyles[2]))
+        {
+            //            material.shaderKeywords = null;
+            DebugKeywords(material);
         }
 
 
-        mp_Panning.vectorValue = tem;
+        /*
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+                materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
+                EditorGUILayout.EndVertical();
 
-        if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
-        {
-            materialEditor.ShaderProperty(mp_specularPower, Styles.specularPowerText);
-//            RotationDrawer.setColor(mp_secondLightColor.colorValue);
-//            RotationDrawer.setTargetPoint(mp_specularDirection.vectorValue.x, mp_specularDirection.vectorValue.y);
-            RotationDrawer.setSpecularPow(mp_specularPower.floatValue);
+                int blendMode = (int)mp_BlendMode.floatValue;
+                if (EditorGUI.EndChangeCheck())
+                {
+                    mp_DoubleSided.floatValue = blendMode == 0 ? 0.0f : 1.0f;
+                    setBlendMode(material, blendMode);
+                }
+                if (blendMode == 2)
+                {
+                    materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
+                }
 
-            materialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText);
-        }
+                Vector4 tem = mp_Panning.vectorValue;
+                Vector2 p1 = new Vector2(tem.x, tem.y);
 
-        featureSet(mp_EnableFog, Styles.enableFogText);
+                featureSet(mp_MainColor, Styles.mainColorText);
+                if (mp_MainColor.floatValue == 0.0f)
+                {
+                    materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
+                    materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
 
-        featureSet(mp_VertexcolorMode, Styles.vertexColorModeText);
-        featureSet(mp_EmissionType, Styles.emissionTypeText);
-
-//        if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
-        switch((int)mp_EmissionType.floatValue)
-        {
-            case 0:         //Emission none
-            default:
-                break;
-
-            case 1:         //Emission blink
-                materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
-                materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
-                break;
-
-            case 2:         //Emission reflective
-                materialEditor.ShaderProperty(mp_reflectionMap, Styles.reflectionMapText);
-//                materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
-                materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
-                EditorGUILayout.HelpBox(Styles.reflectionAdviceText, MessageType.Info);                
-                break;
-
-            case 3:         //Lightmap contrast
-                materialEditor.ShaderProperty(mp_lightmapContrastIntensity, Styles.lightmapContrastIntensityText);
-                materialEditor.ShaderProperty(mp_lightmapContrastMargin, Styles.lightmapContrastMarginText);
-                materialEditor.ShaderProperty(mp_lightmapContrastPhase, Styles.lightmapContrastPhaseText);
-                
-                break;
-
-        }
-        if (mp_BlendMode.floatValue == 0.0f)
-        {
-
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
-            materialEditor.ShaderProperty(mp_DoubleSided, Styles.cullModeText);
-            EditorGUILayout.EndVertical();
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                material.SetFloat("_Cull", mp_DoubleSided.floatValue == 1.0f ? (float)UnityEngine.Rendering.CullMode.Off : (float)UnityEngine.Rendering.CullMode.Back);
-            }
-
-            if (mp_Cull.floatValue == (float)UnityEngine.Rendering.CullMode.Off)
-            {
-                EditorGUILayout.HelpBox(Styles.cullWarningText, MessageType.Warning);
-            }
-        }
+                    p1 = EditorGUILayout.Vector2Field("Panning:", p1);
+                    tem.x = p1.x;
+                    tem.y = p1.y;
 
 
-        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
-        EditorGUILayout.LabelField(Styles.renderQueueText);
-        int renderQueue = EditorGUILayout.IntField(material.renderQueue);
-        if (material.renderQueue !=  renderQueue)
-        {
-            material.renderQueue = renderQueue;
-        }
-        EditorGUILayout.EndHorizontal();
-*/
+                    bool normalMap = mp_normalTexture.textureValue != null as Texture;
+
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        SetKeyword(material, kw_normalmap, normalMap);
+                        EditorUtility.SetDirty(material);
+                        Debug.Log("EnableNormalMap " + (normalMap));
+                        //            DebugKeywords(material);
+                    }
+
+
+                    if (normalMap)
+                    {
+                        materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
+                    }
+                }
+                else
+                {
+                    materialEditor.ShaderProperty(mp_Color, Styles.colorText);
+                }
+
+                EditorGUI.BeginChangeCheck();
+
+                if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
+                {
+                    materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
+                    p1.Set(tem.z, tem.w);
+                    p1 = EditorGUILayout.Vector2Field("Panning:", p1);
+                    tem.z = p1.x;
+                    tem.w = p1.y;
+
+                    materialEditor.ShaderProperty(mp_EnableAdditiveBlend, Styles.additiveBlendingText);
+                    materialEditor.ShaderProperty(mp_EnableAutomaticBlend, Styles.automaticBlendingText);
+                }
+
+
+                mp_Panning.vectorValue = tem;
+
+                if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
+                {
+                    materialEditor.ShaderProperty(mp_specularPower, Styles.specularPowerText);
+        //            RotationDrawer.setColor(mp_secondLightColor.colorValue);
+        //            RotationDrawer.setTargetPoint(mp_specularDirection.vectorValue.x, mp_specularDirection.vectorValue.y);
+                    RotationDrawer.setSpecularPow(mp_specularPower.floatValue);
+
+                    materialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText);
+                }
+
+                featureSet(mp_EnableFog, Styles.enableFogText);
+
+                featureSet(mp_VertexcolorMode, Styles.vertexColorModeText);
+                featureSet(mp_EmissionType, Styles.emissionTypeText);
+
+        //        if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
+                switch((int)mp_EmissionType.floatValue)
+                {
+                    case 0:         //Emission none
+                    default:
+                        break;
+
+                    case 1:         //Emission blink
+                        materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
+                        materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
+                        break;
+
+                    case 2:         //Emission reflective
+                        materialEditor.ShaderProperty(mp_reflectionMap, Styles.reflectionMapText);
+        //                materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
+                        materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+                        EditorGUILayout.HelpBox(Styles.reflectionAdviceText, MessageType.Info);                
+                        break;
+
+                    case 3:         //Lightmap contrast
+                        materialEditor.ShaderProperty(mp_lightmapContrastIntensity, Styles.lightmapContrastIntensityText);
+                        materialEditor.ShaderProperty(mp_lightmapContrastMargin, Styles.lightmapContrastMarginText);
+                        materialEditor.ShaderProperty(mp_lightmapContrastPhase, Styles.lightmapContrastPhaseText);
+
+                        break;
+
+                }
+                if (mp_BlendMode.floatValue == 0.0f)
+                {
+
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
+                    materialEditor.ShaderProperty(mp_DoubleSided, Styles.cullModeText);
+                    EditorGUILayout.EndVertical();
+
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        material.SetFloat("_Cull", mp_DoubleSided.floatValue == 1.0f ? (float)UnityEngine.Rendering.CullMode.Off : (float)UnityEngine.Rendering.CullMode.Back);
+                    }
+
+                    if (mp_Cull.floatValue == (float)UnityEngine.Rendering.CullMode.Off)
+                    {
+                        EditorGUILayout.HelpBox(Styles.cullWarningText, MessageType.Warning);
+                    }
+                }
+
+
+                EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
+                EditorGUILayout.LabelField(Styles.renderQueueText);
+                int renderQueue = EditorGUILayout.IntField(material.renderQueue);
+                if (material.renderQueue !=  renderQueue)
+                {
+                    material.renderQueue = renderQueue;
+                }
+                EditorGUILayout.EndHorizontal();
+        */
     }
 
     static void DebugKeywords(Material mat)
@@ -415,7 +475,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         else
             m.DisableKeyword(keyword);
     }
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     //  Tools
