@@ -63,7 +63,11 @@ namespace AI {
 		// Update is called once per frame
 		public void SetSignal(Signals.Type _signal, bool _activated) {
 			if (_signal == Signals.Type.Destroyed) {
-				m_projectile.OnEaten();
+				if (m_beingBurned) {
+					m_projectile.OnBurned();	
+				} else {
+					m_projectile.OnEaten();
+				}
 				m_entity.Disable(true);
 			}
 		}
@@ -137,7 +141,8 @@ namespace AI {
 		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			if (!IsDying()) {
 				m_beingBurned = true;
-				m_inflammable.Burn(_transform, _source, instant);
+				SetSignal(Signals.Type.Destroyed, true);
+				//m_inflammable.Burn(_transform, _source, instant);
 			}
 			return false;
 		}
