@@ -104,11 +104,16 @@ namespace Metagame {
 				rewardData.amount = _data["amount"].AsLong;
 			}
 
-			return CreateFromData(rewardData, _economyGroup, _source);
+			Reward newReward = CreateFromData(rewardData, _economyGroup, _source);
+
+			// In case the new reward has extra data to be parsed
+			newReward.LoadCustomJsonData(_data);
+
+			return newReward;
 		}
 
 		/// <summary>
-		/// Creates from data. String codes used in server comunication are: sc, pc, gf, egg, pet. TODO: skin, dragon
+		/// Creates from data. String codes used in server comunication are: sc, pc, gf, egg, pet, skin. TODO: dragon
 		/// </summary>
 		/// <returns>A reward.</returns>
 		/// <param name="_data">Data for the reward to be created.</param>
@@ -148,8 +153,7 @@ namespace Metagame {
 
 				// Multi-reward: Cannot be created using this method
 				case RewardMulti.TYPE_CODE: { 
-					Debug.LogError("<color=red>ERROR! Attempting to create a multi-reward from data.</color>"); 
-					return null; 
+					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
 				} break;
 			}
 			return null;
@@ -290,7 +294,7 @@ namespace Metagame {
 			// Reward type
 			data.Add("type", type);
 
-			// Sku and amount
+			// Sku
 			if(!string.IsNullOrEmpty(sku)) {
 				data.Add("sku", sku);
 			}
@@ -301,12 +305,15 @@ namespace Metagame {
 			// Source
 			data.Add("source", source);
 
-			// Economy group (only for currency rewards)
-			if(this is Metagame.RewardCurrency) {
-				data.Add("economyGroup", HDTrackingManager.EconomyGroupToString((this as Metagame.RewardCurrency).EconomyGroup));
-			}
-
 			return data;
+		}
+
+		/// <summary>
+		/// For those types requiring it, parse extra data from a json node.
+		/// </summary>
+		/// <param name="_data">Json to be parsed.</param>
+		public virtual void LoadCustomJsonData(SimpleJSON.JSONNode _data) {
+			// To be overriden if needed
 		}
 	}
 }

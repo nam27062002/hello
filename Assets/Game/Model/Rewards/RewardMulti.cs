@@ -68,14 +68,14 @@ namespace Metagame {
 		/// </summary>
 		override protected void DoCollect() {
 			// Collect all rewards internally
-			for(int i = 0; i< m_rewards.Count; ++i) {
+			/*for(int i = 0; i< m_rewards.Count; ++i) {
 				m_rewards[i].Collect();
-			}
+			}*/
 
-			/*// Push all rewards to the rewards stack
+			// Push all rewards to the rewards stack
 			for(int i = 0; i < m_rewards.Count; ++i) {
 				UsersManager.currentUser.PushReward(m_rewards[i]);
-			}*/
+			}
 		}
 
 		/// <summary>
@@ -83,8 +83,33 @@ namespace Metagame {
 		/// </summary>
 		/// <returns>A new data json to be stored to persistence.</returns>
 		override public SimpleJSON.JSONNode ToJson() {
-			Debug.LogError(Color.red.Tag("ERROR! Rewards of type Multi can't be saved!"));
-			return null;
+			// Basic data
+			SimpleJSON.JSONNode data = base.ToJson();
+
+			// Add array with child rewards
+			SimpleJSON.JSONArray rewardsData = new SimpleJSON.JSONArray();
+			for(int i = 0; i < m_rewards.Count; ++i) {
+				rewardsData.Add(m_rewards[i].ToJson());
+			}
+			data.Add("rewards", rewardsData);
+
+			// Done!
+			return data;
+		}
+
+		/// <summary>
+		/// For those types requiring it, parse extra data from a json node.
+		/// </summary>
+		/// <param name="_data">Json to be parsed.</param>
+		override public void LoadCustomJsonData(SimpleJSON.JSONNode _data) {
+			// Parse child rewards array and add create child rewards
+			if(_data.ContainsKey("rewards")) {
+				SimpleJSON.JSONArray rewardsData = _data["rewards"].AsArray;
+				for(int i = 0; i < rewardsData.Count; ++i) {
+					Reward r = Reward.CreateFromJson(rewardsData[i]);
+					m_rewards.Add(r);
+				}
+			}
 		}
 
 		//------------------------------------------------------------------------//
