@@ -36,11 +36,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4701590609195472}
-  - component: {fileID: 114224511681680832}
   - component: {fileID: 114206456404744088}
-  - component: {fileID: 114495216672545078}
   - component: {fileID: 54933701087512626}
-  - component: {fileID: 114517384358741086}
   - component: {fileID: 136820803545484754}
   m_Layer: 16
   m_Name: PF_FallingRock_BG
@@ -69,7 +66,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1348504098302126}
   m_LocalRotation: {x: 0.00000013155935, y: 0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: -771.6094, y: -201.35602, z: -30.57756}
+  m_LocalPosition: {x: -12.35, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4455536892987766}
@@ -312,51 +309,6 @@ MonoBehaviour:
   m_stickOnDragonTime: 0
   m_dieTime: 0
   m_onHitAudio: 
---- !u!114 &114224511681680832
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1348504098302126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: FallingRock
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 0
---- !u!114 &114495216672545078
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1348504098302126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dc78035f46ce4e73a5767fdae738d86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_edible:
-    m_rotateToMouth: 0
-  m_inflammable:
-    m_burningTime: 0
-    m_canBeDissolved: 1
-    m_ashExceptions: []
---- !u!114 &114517384358741086
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1348504098302126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 1.9674683
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!136 &136820803545484754
 CapsuleCollider:
   m_ObjectHideFlags: 1
