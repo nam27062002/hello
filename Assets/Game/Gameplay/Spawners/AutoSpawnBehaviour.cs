@@ -140,6 +140,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
     public void ForceRemoveEntities() {}
     public void ForceReset() {}
 
+	public void ForceGolden( IEntity entity ){
+		// entity.SetGolden(Spawner.EntityGoldMode.Gold);
+	}
+
     public void StartRespawn() {	
 		m_respawnCount++;
 
@@ -169,12 +173,15 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public bool IsRespawingPeriodically() 	{ return false; }
 
     public bool CanRespawn() {
+		if (m_spawnConditions != null && m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+			if (!m_newCamera.IsInsideActivationMinArea(m_bounds)) {
+				Destroy(gameObject);
+				return false;
+			}
+		}
+
 		if (m_state == State.Respawning) {
-			if (m_spawnConditions != null && m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
-				if (!m_newCamera.IsInsideActivationMinArea(m_bounds)) {
-					Destroy(gameObject);
-				}
-			} else if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+			if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
 					bool isInsideActivationArea = m_newCamera.IsInsideCameraFrustrum(m_bounds);
 					if (!isInsideActivationArea) {

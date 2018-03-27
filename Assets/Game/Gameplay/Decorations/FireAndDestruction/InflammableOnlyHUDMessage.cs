@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class InflammableOnlyHUDMessage : MonoBehaviour {
 
+	private float m_timer = 0f;
+
+	void Update() {
+		if (m_timer > 0f) {
+			m_timer -= Time.deltaTime;
+		}
+	}
+
 	void OnCollisionEnter(Collision collision) {
-		if (collision.transform.CompareTag("Player")) {
-			if (InstanceManager.player.dragonBoostBehaviour.IsBoostActive()) {
-				// Message : You need boost!
+		if (m_timer <= 0f) {
+			if (collision.transform.CompareTag("Player")) {
 				Messenger.Broadcast(MessengerEvents.BREAK_OBJECT_WITH_FIRE);
-				Debug.Log("ONLYWITHFIRE");
+				m_timer = 3f;
 			}
 		}
 	}
