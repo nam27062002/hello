@@ -57,6 +57,10 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner {
 		Initialize();
 	}
 
+	public void ForceGolden( IEntity entity ){
+		// entity.SetGolden(Spawner.EntityGoldMode.Gold);	
+	}
+
 	void CreatePool() {
 		for (int i = 0; i<m_possibleSpawners.Count; i++) {
 			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], IEntity.EntityPrefabsPath, 2, false, false);

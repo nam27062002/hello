@@ -56,12 +56,13 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	private PoolHandler m_flockBonusFeedbackPoolHandler;
 	private PoolHandler m_escapedFeedbackPoolHandler;
 
+	private bool m_particlesFeedbackEnabled = false;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//      	
     private void Awake() {
-        enabled = FeatureSettingsManager.instance.IsParticlesFeedbackEnabled;
+		m_particlesFeedbackEnabled = FeatureSettingsManager.instance.IsParticlesFeedbackEnabled;
     }
 
     private void Start() {
@@ -69,59 +70,61 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// No more than X simultaneous messages on screen!
 		// Use container if defined to keep hierarchy clean
 
-		// Score
-		if(m_scoreFeedbackPrefab != null) {
-			// Must be created within the canvas
-			Transform parent = this.transform;
-			if(m_scoreFeedbackContainer != null) {
-				parent = m_scoreFeedbackContainer.transform;
+		if ( m_particlesFeedbackEnabled ){
+			// Score
+			if(m_scoreFeedbackPrefab != null) {
+				// Must be created within the canvas
+				Transform parent = this.transform;
+				if(m_scoreFeedbackContainer != null) {
+					parent = m_scoreFeedbackContainer.transform;
+				}
+				m_scoreFeedbackPoolHandler = UIPoolManager.CreatePool(m_scoreFeedbackPrefab, parent, m_scoreFeedbackMax, true, false);
 			}
-			m_scoreFeedbackPoolHandler = UIPoolManager.CreatePool(m_scoreFeedbackPrefab, parent, m_scoreFeedbackMax, true, false);
-		}
 
-		// Coins
-		if(m_coinsFeedbackPrefab != null) {
-			m_coinsFeedbackPoolHandler = UIPoolManager.CreatePool(m_coinsFeedbackPrefab, m_coinsFeedbackMax, true, false);
-		}
+			// Coins
+			if(m_coinsFeedbackPrefab != null) {
+				m_coinsFeedbackPoolHandler = UIPoolManager.CreatePool(m_coinsFeedbackPrefab, m_coinsFeedbackMax, true, false);
+			}
 
+			// Kill Feedback
+			if(m_killFeedbackPrefab != null) {
+				Transform parent = this.transform;
+				if(m_killFeedbackContainer != null) {
+					parent = m_killFeedbackContainer.transform;
+				}
+				m_killFeedbackPoolHandler = UIPoolManager.CreatePool(m_killFeedbackPrefab, parent, m_killFeedbackMax, false, false);
+			}
+				
+			// Flock Bonus
+			if(m_flockBonusFeedbackPrefab != null) { 
+				Transform parent = this.transform;
+				if(m_scoreFeedbackContainer != null) {
+					parent = m_scoreFeedbackContainer.transform;
+				}
+				m_flockBonusFeedbackPoolHandler = UIPoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, m_flockBonusFeedbackMax, true, false);
+			}
+
+			// Escape
+			if ( m_escapedFeedbackPrefab != null )
+			{
+				Transform parent = this.transform;
+				if(m_escapeFeedbackContainer != null) {
+					parent = m_escapeFeedbackContainer.transform;
+				}
+				m_escapedFeedbackPoolHandler = UIPoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false, false);
+			}
+		}
 		// PC
 		if(m_pcFeedbackPrefab != null) {
 			// Use a dedicated camera as parent, that way the feedback will be positioned relative to the viewport
 			m_pcFeedbackPoolHandler = UIPoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false, false);
 		}
 
-		// Kill Feedback
-		if(m_killFeedbackPrefab != null) {
-			Transform parent = this.transform;
-			if(m_killFeedbackContainer != null) {
-				parent = m_killFeedbackContainer.transform;
-			}
-			m_killFeedbackPoolHandler = UIPoolManager.CreatePool(m_killFeedbackPrefab, parent, m_killFeedbackMax, false, false);
-		}
-			
-		// Flock Bonus
-		if(m_flockBonusFeedbackPrefab != null) { 
-			Transform parent = this.transform;
-			if(m_scoreFeedbackContainer != null) {
-				parent = m_scoreFeedbackContainer.transform;
-			}
-			m_flockBonusFeedbackPoolHandler = UIPoolManager.CreatePool(m_flockBonusFeedbackPrefab, parent, m_flockBonusFeedbackMax, true, false);
-		}
-
-		// Escape
-		if ( m_escapedFeedbackPrefab != null )
-		{
-			Transform parent = this.transform;
-			if(m_escapeFeedbackContainer != null) {
-				parent = m_escapeFeedbackContainer.transform;
-			}
-			m_escapedFeedbackPoolHandler = UIPoolManager.CreatePool(m_escapedFeedbackPrefab, parent, m_escapedFeedbackMax, false, false);
-		}
-
 		// Start with the 3D feedback container disabled - will be enabled on demand
 		m_3dFeedbackContainer.SetActive(false);
 
-        Cache_Init();
+		if ( m_particlesFeedbackEnabled )
+        	Cache_Init();
         Offsets_Init();
 
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -134,14 +137,20 @@ public class WorldFeedbackSpawner : MonoBehaviour {
     private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-		Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);        
 		Messenger.AddListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+
+		if ( m_particlesFeedbackEnabled )
+		{
+			Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+			Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+			Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.AddListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+			Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
+			Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
+	        
+        }
+		
     }
 	
 	/// <summary>
@@ -150,14 +159,19 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-		Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
-        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 		Messenger.RemoveListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+
+		if ( m_particlesFeedbackEnabled )
+		{
+			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
+			Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
+        }
+		
     }
 
 	/// <summary>
@@ -244,34 +258,38 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	/// <param name="_reward">The reward that has been applied.</param>
 	/// <param name="_entity">The entity that triggered the reward. Can be null.</param>
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
-		// Find out spawn position
-		Vector3 worldPos = Vector3.zero;
-        if (_entity != null) {
-            // A random offset is added in order to prevent several particles from being located at the same position
-            worldPos = _entity.position + Offsets_GetRandomOffset();            
-        }        
 
-        // Show different feedback for different reward types
-        // Score
-        if (_reward.score > 0) {
-			// Get a score feedback instance and initialize it with the target reward
-			if(m_scoreFeedbackPrefab != null) {               
-                ScoreCacheItemData itemData = m_cacheDatas[ECacheTypes.Score].GetCacheItemDataAvailable() as ScoreCacheItemData;
-                if (itemData != null)
-                {
-                    itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.score);
-                    m_feedbacksQueue.Enqueue(itemData.Controller);
-                }
+		if ( m_particlesFeedbackEnabled )
+		{
+			// Find out spawn position
+			Vector3 worldPos = Vector3.zero;
+	        if (_entity != null) {
+	            // A random offset is added in order to prevent several particles from being located at the same position
+	            worldPos = _entity.position + Offsets_GetRandomOffset();            
+	        }        
+
+	        // Show different feedback for different reward types
+	        // Score
+	        if (_reward.score > 0) {
+				// Get a score feedback instance and initialize it with the target reward
+				if(m_scoreFeedbackPrefab != null) {               
+	                ScoreCacheItemData itemData = m_cacheDatas[ECacheTypes.Score].GetCacheItemDataAvailable() as ScoreCacheItemData;
+	                if (itemData != null)
+	                {
+	                    itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.score);
+	                    m_feedbacksQueue.Enqueue(itemData.Controller);
+	                }
+				}
 			}
-		}
 
-		// Coins
-		if(m_coinsFeedbackPrefab != null && _reward.coins > 0 && ((_reward.origin != null && _reward.origin.CompareTo("GoodJunkCoin") != 0 && _reward.origin.CompareTo("letter") != 0) || _reward.origin == null )) {	// if its no coin
-            CacheItemData itemData = m_cacheDatas[ECacheTypes.Coins].GetCacheItemDataAvailable();
-            if (itemData != null)
-            {
-                itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.coins);                
-            }
+			// Coins
+			if(m_coinsFeedbackPrefab != null && _reward.coins > 0 && ((_reward.origin != null && _reward.origin.CompareTo("GoodJunkCoin") != 0 && _reward.origin.CompareTo("letter") != 0) || _reward.origin == null )) {	// if its no coin
+	            CacheItemData itemData = m_cacheDatas[ECacheTypes.Coins].GetCacheItemDataAvailable();
+	            if (itemData != null)
+	            {
+	                itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.coins);                
+	            }
+			}
 		}
 
 		// PC
