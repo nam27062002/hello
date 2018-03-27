@@ -33,43 +33,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
         }
     */
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES												  //
-    //------------------------------------------------------------------------//
-
-
-
-    /*
-            _BasicColor("Basic Color", Color) = (0.5,0.5,0.5,0.5)
-            _SaturatedColor("Saturated Color", Color) = (0.5,0.5,0.5,0.5)
-            _MainTex("Particle Texture", 2D) = "white" {}
-            _ColorRamp("Color Ramp", 2D) = "white" {}
-            _EmissionSaturation("Emission saturation", Range(0.0, 8.0)) = 1.0
-            _OpacitySaturation("Opacity saturation", Range(0.0, 8.0)) = 1.0
-            _ColorMultiplier("Color multiplier", Range(0.0, 8.0)) = 1.0
-            [Toggle(DISSOLVE)] _EnableDissolve("Enable alpha dissolve", Float) = 0
-            [Toggle(COLOR_RAMP)] _EnableColorRamp("Enable color ramp", Float) = 0
-            [Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
-
-            _DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
-
-            [Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
-            _Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
-
-            _TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
-
-            [Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
-            _EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
-
-            [Toggle(EXTENDED_PARTICLES)] _EnableExtendedParticles("Enable Extended Particles", int) = 0.0
-
-            [Enum(Additive, 0, SoftAdditive, 1, AdditiveDouble, 2, AlphaBlend, 3, Premultiply, 4, AdditiveAlphaBlend, 5)] BlendMode("Blend mode", Float) = 0.0
-            [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 5.0 //"SrcAlpha"
-            [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 1.0 //"One"
-            [Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
-
-    */
-
 
 
     private static class Styles
@@ -94,6 +57,11 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string blendModeText = "Blend Mode";
 
     }
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+
 
     /// <summary>
     /// Material Properties
