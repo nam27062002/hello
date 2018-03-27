@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4909484713752990}
   - component: {fileID: 33481535846584840}
   - component: {fileID: 23033323117499312}
-  m_Layer: 0
+  - component: {fileID: 65864186693794278}
+  m_Layer: 11
   m_Name: CrystalIceBlocker1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +73,8 @@ GameObject:
   - component: {fileID: 4060321684823848}
   - component: {fileID: 33508792351776232}
   - component: {fileID: 23145991204963258}
-  m_Layer: 0
+  - component: {fileID: 65743782545965418}
+  m_Layer: 11
   m_Name: CrystalIceBlocker5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +91,6 @@ GameObject:
   - component: {fileID: 4906404528764924}
   - component: {fileID: 114826283472321486}
   - component: {fileID: 114445072889786704}
-  - component: {fileID: 65512963358344686}
   - component: {fileID: 114301869855550984}
   - component: {fileID: 114347282888825220}
   m_Layer: 11
@@ -125,7 +126,8 @@ GameObject:
   - component: {fileID: 4397165325891492}
   - component: {fileID: 33337869015097810}
   - component: {fileID: 23732997819635656}
-  m_Layer: 0
+  - component: {fileID: 65190541169685378}
+  m_Layer: 11
   m_Name: CrystalIceBlocker3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +142,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4353816359372472}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,6 +174,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4225981433546592}
+  - component: {fileID: 65100467596109686}
   m_Layer: 11
   m_Name: view
   m_TagString: Untagged
@@ -205,7 +208,8 @@ GameObject:
   - component: {fileID: 4927414730789002}
   - component: {fileID: 33261374124490048}
   - component: {fileID: 23678450557530360}
-  m_Layer: 0
+  - component: {fileID: 65978175078458668}
+  m_Layer: 11
   m_Name: CrystalIceBlocker2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,7 +226,7 @@ GameObject:
   - component: {fileID: 4255178230152262}
   - component: {fileID: 198003159411023052}
   - component: {fileID: 199019124300393714}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GlobalSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +292,7 @@ GameObject:
   - component: {fileID: 4539112459447238}
   - component: {fileID: 198186038790966424}
   - component: {fileID: 199758076379659220}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GlobalSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,7 +309,8 @@ GameObject:
   - component: {fileID: 4467359148121964}
   - component: {fileID: 33333600263713206}
   - component: {fileID: 23135952777124446}
-  m_Layer: 0
+  - component: {fileID: 65192850223872522}
+  m_Layer: 11
   m_Name: CrystalIceBlocker4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -354,7 +359,7 @@ GameObject:
   - component: {fileID: 4189443448419224}
   - component: {fileID: 198123392458179178}
   - component: {fileID: 199825223574580140}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -386,7 +391,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4379388850869538}
   - component: {fileID: 95546332899479034}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: view_burned
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -678,7 +683,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1189587967232188}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 156.2, y: 46.8, z: 3.872986}
+  m_LocalPosition: {x: -706.58966, y: 62.458, z: -96.81329}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 4225981433546592}
@@ -1104,18 +1109,78 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1186268254736358}
   m_Mesh: {fileID: 4300000, guid: e6ba13f8aa3f5da4baadb41a560acbd2, type: 3}
---- !u!65 &65512963358344686
+--- !u!65 &65100467596109686
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1189587967232188}
+  m_GameObject: {fileID: 1435190704987318}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 15.7, y: 36.9, z: 18.6}
   m_Center: {x: -0.5, y: 18.1, z: 0}
+--- !u!65 &65190541169685378
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1307272416319592}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.8802166, y: 9.375945, z: 6.5838847}
+  m_Center: {x: 0.019676497, y: 4.3885922, z: -1.2758305}
+--- !u!65 &65192850223872522
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1736488832816248}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.0357633, y: 7.427102, z: 4.488166}
+  m_Center: {x: 0.083670795, y: 3.1234913, z: -0.12312651}
+--- !u!65 &65743782545965418
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1186268254736358}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.6118183, y: 7.7953258, z: 5.514751}
+  m_Center: {x: 1.0666885, y: 3.1844246, z: -0.7018549}
+--- !u!65 &65864186693794278
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1110130611317088}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.013609, y: 12.33583, z: 4.10749}
+  m_Center: {x: -0.19615155, y: 6.148499, z: 0.25678372}
+--- !u!65 &65978175078458668
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1601763986720124}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.7489343, y: 8.264392, z: 4.6183944}
+  m_Center: {x: 0.22315957, y: 4.1613936, z: -0.4241313}
 --- !u!95 &95546332899479034
 Animator:
   serializedVersion: 3
