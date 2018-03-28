@@ -160,6 +160,7 @@ public class OfferItemSlot : MonoBehaviour {
 		} else {
 			rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
 		}
+		m_text.enableVertexGradient = true;
 		m_text.colorGradient = new VertexGradient(
 			rarityGradient.topLeft,
 			rarityGradient.topRight,

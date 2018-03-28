@@ -103,6 +103,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 		// Pack name
 		m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
+		m_packNameText.text.enableVertexGradient = true;
 		m_packNameText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.titleGradient);
 
 		// Timer
