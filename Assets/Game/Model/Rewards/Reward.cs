@@ -18,10 +18,14 @@ namespace Metagame {
 		// CONSTANTS															  //
 		//------------------------------------------------------------------------//
 		public enum Rarity {
-			COMMON = 0, 
+			UNKNOWN = -1,
+
+			COMMON, 
 			RARE, 
 			EPIC, 
-			SPECIAL 
+			SPECIAL,
+
+			COUNT
 		}
 
 		public class Data {
@@ -43,8 +47,9 @@ namespace Metagame {
 				case "rare":	return Rarity.RARE;	
 				case "epic":	return Rarity.EPIC;	
 				case "special":	return Rarity.SPECIAL;
+				default:		return Rarity.UNKNOWN;
 			}
-			return Rarity.COMMON;
+			return Rarity.UNKNOWN;
 		}
 
 		/// <summary>

@@ -157,15 +157,15 @@ public class MenuPetPreview : MonoBehaviour {
 
             if (rarity == "epic")
             {
-                setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.EPIC]);
+				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.EPIC]);
             }
             else if (rarity == "rare")
             {
-                setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.RARE]);
+				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.RARE]);
             }
             else if (rarity == "special")
             {
-                setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.SPECIAL]);
+				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.SPECIAL]);
             }
 
         } else {

@@ -54,7 +54,7 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private Image m_seasonalIcon = null;
 	[SerializeField] private GameObject m_seasonalIconRoot = null;
 	[Space]
-	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)Metagame.Reward.Rarity.COUNT];
 	[Space]
 	[SerializeField] private UIColorFX m_frameColorFX = null;
 	public UIColorFX frameColorFX {
@@ -170,7 +170,7 @@ public class PetPill : MonoBehaviour {
 	/// </summary>
 	private void OnValidate() {
 		// Make sure the rarity array has exactly the same length as rarities in the game.
-		m_rarityDecorations.Resize((int)EggReward.Rarity.COUNT);
+		m_rarityDecorations.Resize((int)Metagame.Reward.Rarity.COUNT);
 	}
 
 	//------------------------------------------------------------------------//
@@ -193,8 +193,8 @@ public class PetPill : MonoBehaviour {
 
 		// Store definition and some data
 		m_def = _petDef;
-		EggReward.Rarity rarity = EggReward.SkuToRarity(_petDef.Get("rarity"));
-		m_special = (rarity == EggReward.Rarity.SPECIAL);
+		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(_petDef.Get("rarity"));
+		m_special = (rarity == Metagame.Reward.Rarity.SPECIAL);
 
 		// Load preview
 		if(m_preview != null) {

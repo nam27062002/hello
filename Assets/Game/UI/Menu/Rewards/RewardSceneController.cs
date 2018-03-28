@@ -72,12 +72,12 @@ public class RewardSceneController : MonoBehaviour {
 		get { return m_rewardAnchor; }
 	}
 
-	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)Metagame.Reward.Rarity.COUNT];
 	[SerializeField] private RewardSetup m_petRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_skinRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_hcRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
-	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)EggReward.Rarity.COUNT - 1];
+	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT - 1];
 
 	[Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;

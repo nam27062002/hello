@@ -53,7 +53,7 @@ public class OpenEggTest : MonoBehaviour {
 	[Space]
 	[SerializeField] private Transform m_eggAnchor = null;
 	[SerializeField] private Transform m_tapFXPool = null;
-	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)Metagame.Reward.Rarity.COUNT];
 	[Space]
 	[SerializeField] private float m_newEggDelay = 1f;
 
