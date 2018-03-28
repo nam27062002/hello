@@ -112,7 +112,6 @@ public class PetsScreenController : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-
 	}
 
 	/// <summary>
@@ -404,14 +403,16 @@ public class PetsScreenController : MonoBehaviour {
 	/// Initialize all the pills with current dragon data, and create new ones if needed.
 	/// </summary>
 	private void InitPills() {
-		for(int i = 0; i < 8; i++) {
-			// Instantiate pill
-			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
-			m_pills.Add(newPillObj.GetComponent<PetPill>());
-			m_pills[i].animator.ForceHide(false);	// Start hidden
+		if ( m_pills.Count == 0 ){
+			for(int i = 0; i < 8; i++) {
+				// Instantiate pill
+				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
+				m_pills.Add(newPillObj.GetComponent<PetPill>());
+				m_pills[i].animator.ForceHide(false);	// Start hidden
 
-			// React if the pill is tapped!
-			m_pills[i].OnPillTapped.AddListener(OnPillTapped);
+				// React if the pill is tapped!
+				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
+			}
 		}
 	}
 

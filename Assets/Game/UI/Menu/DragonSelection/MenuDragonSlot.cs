@@ -138,9 +138,12 @@ public class MenuDragonSlot : MonoBehaviour {
 	/// </summary>
 	public void OnShowPostAnimation() {
 		// Rescale all particles
-		ParticleScaler[] scalers = m_dragonPreview.GetComponentsInChildren<ParticleScaler>();
-		for(int i = 0;i<scalers.Length; ++i) {
-			scalers[i].DoScale();
+		if ( m_dragonPreview )
+		{
+			ParticleScaler[] scalers = m_dragonPreview.GetComponentsInChildren<ParticleScaler>();
+			for(int i = 0;i<scalers.Length; ++i) {
+				scalers[i].DoScale();
+			}
 		}
 	}
 }

@@ -345,6 +345,7 @@ public class MenuDragonScroller : MonoBehaviour {
 			if ( slot.dragonPreview != null )
 			{
 				DragonData data = DragonManager.GetDragonData(slot.dragonPreview.sku);
+				slot.gameObject.SetActive((showAll && data.lockState != DragonData.LockState.HIDDEN) || slot.dragonPreview.sku == InstanceManager.menuSceneController.selectedDragon);
 				// slot.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || slot.dragonPreview.sku == InstanceManager.menuSceneController.selectedDragon, animate);
 			}
 		}
