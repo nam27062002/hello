@@ -1328,6 +1328,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			float distance = (m_transform.position.y - m_startParabolicPosition.y);
 			if (distance > 0) {
 				gravityAcceleration = gravityAcceleration + (GameConstants.Vector3.down * 9.81f * distance * m_dragonAirExpMultiplier);
+				//TONI
+				if (m_lastSpeed > (absoluteMaxSpeed * 2f) && m_direction.y < 0f) gravityAcceleration = GameConstants.Vector3.zero;
+				//TONI
 			}
 		}
 		impulse.y = 0;
@@ -1338,7 +1341,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
         Vector3 acceleration = gravityAcceleration + dragonAcceleration;
-
         Vector3 impulseCapped = m_impulse;
       	impulseCapped.y = 0;
 		float impulseMag = impulseCapped.magnitude;
