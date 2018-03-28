@@ -71,14 +71,15 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 		get { return m_points; }
 	}
 
+#if UNITY_EDITOR
 	/// <summary>
 	/// Segments computed every time the curve is dirty using the target resolution.
 	/// </summary>
 	private List<SampledSegment> m_sampledSegments = new List<SampledSegment>();
-	public List<SampledSegment> sampledSegments { 
+	public List<SampledSegment> editorSampledSegments { 
 		get { return m_sampledSegments; }
 	}
-
+#endif
 	/// <summary>
 	/// Whether this <see cref="AOCBezierCurve"/> is dirty or not. Set internally.
 	/// </summary>
@@ -246,7 +247,9 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 		// Add length between every control point
 		// Only if the curve has enough control points
 		m_length = 0;
-		m_sampledSegments = new List<SampledSegment>();
+#if UNITY_EDITOR
+		m_sampledSegments.Clear();
+#endif
 		if(m_points.Count > 1) {
 			// Some aux vars
 			BezierPoint p1;
@@ -270,7 +273,9 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 				for(int j = 0; j < samplingLoops; j++) {
 					// Do it!
 					currentPos = GetValue(p1, p2, j/fResolution);
-					m_sampledSegments.Add(new SampledSegment(lastPos, currentPos, p1, p2));
+					#if UNITY_EDITOR
+						m_sampledSegments.Add(new SampledSegment(lastPos, currentPos, p1, p2));
+					#endif
 					lastPos = currentPos;
 				}
 			}
