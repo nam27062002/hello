@@ -117,8 +117,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1651250478086252}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 261.81, y: 4.08, z: 13.5925865}
+  m_LocalRotation: {x: -0, y: -0.49718177, z: -0, w: 0.86764646}
+  m_LocalPosition: {x: 134.73, y: 39.5, z: 13.5925865}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4830151452172614}
@@ -127,7 +127,7 @@ Transform:
   - {fileID: 4583791812487054}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -50.628002, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -59.627003, z: 0}
 --- !u!4 &4093828507064148
 Transform:
   m_ObjectHideFlags: 1
@@ -135,8 +135,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1606778329671250}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.1116943, y: -1.1964626, z: 1.8478394}
-  m_LocalScale: {x: 1.1665685, y: 1.1665686, z: 1.1665686}
+  m_LocalPosition: {x: -2.7842913, y: -1.3358727, z: -1.9843496}
+  m_LocalScale: {x: 1.7341741, y: 1.7341743, z: 1.7341743}
   m_Children: []
   m_Father: {fileID: 4446272070179140}
   m_RootOrder: 0
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: machine_medium
-  m_tier: 2
+  m_tier: 1
   m_disintegrable: 1
 --- !u!114 &114183905367586464
 MonoBehaviour:
@@ -436,6 +436,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0
+  m_useAnimator: 0
   m_boxelSize: 6
   m_hitRadius: 2
 --- !u!114 &114390940912064476
@@ -451,6 +452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 0
   m_feedbackParticle:
     name: PS_C_Splinters
@@ -530,6 +532,7 @@ MonoBehaviour:
     scale: 1
   m_onDestroyAudio: 
   m_onFeedbackAudio: 
+  m_cameraShake: 0
 --- !u!114 &114848081646466154
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -543,4 +546,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnTime: 50
   m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
