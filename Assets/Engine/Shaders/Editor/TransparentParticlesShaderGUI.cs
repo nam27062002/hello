@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using System.IO;
+using System.Collections.Generic;
 
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used.
@@ -54,6 +55,9 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string tintColorText = "Tint Color";
         readonly public static string enableEmissivePowerText = "Enable Emissive Power";
         readonly public static string emissivePowerText = "Enable Emissive Power";
+        readonly public static string particlesText = "Particles";
+        readonly public static string standardParticlesText = "Standard";
+        readonly public static string extendedParticlesText = "Extended";
         readonly public static string enableExtendedParticlesText = "Enable extended particles";
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string rgbColorVertexText = "Use RGB color vertex";
@@ -168,6 +172,15 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         return feature.floatValue > 0.0f;
     }
 
+    private static string[] blendModes =
+    {
+        "BLENDMODE_ADDITIVE",
+        "BLENDMODE_SOFTADDITIVE",
+        "BLENDMODE_ADDITIVEDOUBLE",
+        "BLENDMODE_ALPHABLEND",
+        "BLENDMODE_ADDITIVEALPHABLEND",
+        "BLENDMODE_PREMULTIPLY"
+    };
 
     public static void setBlendMode(Material material, int blendMode)
     {
@@ -179,53 +192,84 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         material.DisableKeyword("BLENDMODE_ADDITIVEALPHABLEND");
         material.DisableKeyword("BLENDMODE_PREMULTIPLY");
 
+        material.EnableKeyword(blendModes[blendMode]);
+
         switch (blendMode)
         {
             case 0:                                                         //Additive
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
-                material.EnableKeyword("BLENDMODE_ADDITIVE");
                 Debug.Log("Blend mode additive");
                 break;
 
             case 1:                                                         //Soft Additive
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
-                material.EnableKeyword("BLENDMODE_SOFTADDITIVE");
                 Debug.Log("Blend mode soft additive");
                 break;
 
             case 2:                                                         //Additive Double
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
-                material.EnableKeyword("BLENDMODE_ADDITIVEDOUBLE");
                 Debug.Log("Blend mode additive double");
                 break;
 
             case 3:                                                         //Alpha blend
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.EnableKeyword("BLENDMODE_ALPHABLEND");
                 Debug.Log("Blend mode alpha blend");
                 break;
 
             case 4:                                                         //Additive Alpha blend
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.EnableKeyword("BLENDMODE_ADDITIVEALPHABLEND");
                 Debug.Log("Blend mode additive alpha blend");
                 break;
 
             case 5:                                                         //Premultiply
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.EnableKeyword("BLENDMODE_PREMULTIPLY");
                 Debug.Log("Blend mode premultiply");
                 break;
-
         }
-
     }
+
+    private static string[] validKeyWords =
+    {
+        "EMISSIVEPOWER",
+        "DISSOLVE",
+        "COLOR_RAMP",
+        "APPLY_RGB_COLOR_VERTEX",
+        "AUTOMATICPANNING",
+        "EXTENDED_PARTICLES"
+    };
+
+
+    public static void changeMaterial(Material mat, Shader _newShader, int blendMode)
+    {
+        int rQueue = mat.renderQueue;
+        mat.shader = _newShader;
+
+        List<string> mlist = new List<string>();
+
+        foreach (string keyWord in validKeyWords)
+        {
+            if (mat.IsKeywordEnabled(keyWord))
+            {
+                mlist.Add(keyWord);
+            }
+        }
+       
+        mat.shaderKeywords = null;
+        setBlendMode(mat, blendMode);
+        mat.renderQueue = rQueue;
+
+        foreach (string keyWord in mlist)
+        {
+            mat.EnableKeyword(keyWord);
+        }
+    }
+
 
     /// <summary>
     /// Draw the inspector.
@@ -259,7 +303,25 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
 
         EditorGUI.BeginChangeCheck();
-        if (featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText))
+
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField(Styles.particlesText, GUILayout.Width(70));
+        if (GUILayout.Button(Styles.standardParticlesText))
+        {
+            mp_enableExtendedParticles.floatValue = 0.0f;
+        }
+        if (GUILayout.Button(Styles.extendedParticlesText))
+        {
+            mp_enableExtendedParticles.floatValue = 1.0f;
+        }
+        //        m_materialEditor.ShaderProperty(feature, label);
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
+
+        featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText);
+
+        if (mp_enableExtendedParticles.floatValue > 0.5f)
         {
             materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
             if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
@@ -505,74 +567,72 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     /// <summary>
-    /// Seek for all scenary standard shaders and set cull mode to back
+    /// Seek for all oldest particle shaders and replace with current Transparent Particles Standard shader
     /// </summary>
-    [MenuItem("Tools/Scenary/set opaque to cull back")]
-    public static void SetOpaqueToCullBack()
+    [MenuItem("Tools/Particles/Replace old particles shaders")]
+    public static void ReplaceOldParticleShaders()
     {
         Debug.Log("Obtaining material list");
-
-        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
 
         Material[] materialList;
         AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
 
-        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
+        Shader shader = Shader.Find("Hungry Dragon/Particles/Transparent particles standard");
 
         int sChanged = 0;
 
         for (int c = 0; c < materialList.Length; c++)
         {
             Material mat = materialList[c];
-            // UnlitShadowLightmap.shader
-            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
+            // TransparentAdditive.shader
+            if (mat.shader.name == "Hungry Dragon/Particles/Transparent Additive")
             {
-                int blendMode = (int)mat.GetFloat("_BlendMode");
-                int cullMode = (int)mat.GetFloat("_Cull");
-
-                if (blendMode == 0 && cullMode == 0)
-                {
-                    setBlendMode(mat, 0);
-                    sChanged++;
-                }
+                changeMaterial(mat, shader, 0);
+                sChanged++;
             }
-        }
-
-        Debug.Log(sChanged + " materials changed");
-    }
-
-
-    /// <summary>
-    /// Seek for all transparent scenary standard materials and disable keyword OPAQUEALPHA
-    /// </summary>
-    [MenuItem("Tools/Scenary/disable OPAQUEALPHA in transparent materials")]
-    public static void DisableOPAQUEALPHAinTransparent()
-    {
-        Debug.Log("Obtaining material list");
-
-        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
-
-        Material[] materialList;
-        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
-
-        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
-
-        int sChanged = 0;
-
-        for (int c = 0; c < materialList.Length; c++)
-        {
-            Material mat = materialList[c];
-            // UnlitShadowLightmap.shader
-            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
+            // TransparentSoftAdditive.shader
+            if (mat.shader.name == "Hungry Dragon/Particles/Transparent Soft Additive")
             {
-                int blendMode = (int)mat.GetFloat("_BlendMode");
-
-                if (blendMode == 1 && mat.IsKeywordEnabled("OPAQUEALPHA"))
-                {
-                    mat.DisableKeyword("OPAQUEALPHA");
-                    sChanged++;
-                }
+                changeMaterial(mat, shader, 1);
+                sChanged++;
             }
+            // TransparentAdditiveDouble.shader
+            else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Additive Double")
+            {
+                changeMaterial(mat, shader, 2);
+                sChanged++;
+            }
+            // TransparentAlphaBlend.shader
+            else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Alpha Blend")
+            {
+                changeMaterial(mat, shader, 3);
+                sChanged++;
+            }
+            // TransparentAdditiveAlphaBlend.shader
+            else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Additive Alpha Blend")
+            {
+                changeMaterial(mat, shader, 4);
+                sChanged++;
+            }
+            // TransparentParticlesAdditive.shader
+            else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Particles Additive")
+            {
+                changeMaterial(mat, shader, 0);
+                sChanged++;
+            }
+            // TransparentParticlesAlphaBlend.shader
+            else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Particles Alpha Blend")
+            {
+                changeMaterial(mat, shader, 3);
+                sChanged++;
+            }
+            // TransparentParticlesPremultiply.shader
+            else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Particles Premultiply")
+            {
+                changeMaterial(mat, shader, 5);
+                sChanged++;
+            }
+
         }
 
         Debug.Log(sChanged + " materials changed");
@@ -612,10 +672,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
         Debug.Log(sChanged + " materials changed");
     }
-
-
-
-
 
     /// <summary>
     /// Seek for old scenary shaders and change by new scenary standard material
