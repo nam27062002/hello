@@ -99,7 +99,7 @@ public class MenuSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
-
+		Application.lowMemory += OnLowMemory;
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
@@ -210,6 +210,7 @@ public class MenuSceneController : SceneController {
 	}
 
 	protected override void OnDestroy() {
+		Application.lowMemory -= OnLowMemory;
 		base.OnDestroy();
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
@@ -231,6 +232,13 @@ public class MenuSceneController : SceneController {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+	}
+
+
+	void OnLowMemory()
+	{
+		Resources.UnloadUnusedAssets();
+		System.GC.Collect();
 	}
 
 	//------------------------------------------------------------------//
