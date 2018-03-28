@@ -267,17 +267,17 @@ public class BezierCurve : MonoBehaviour, ISerializationCallbackReceiver {
 				// Add length
 				m_length += ApproximateLength(p1, p2, resolution);
 
+				#if UNITY_EDITOR
 				// Compute samples between this point and the next one
 				Vector3 currentPos = Vector3.zero;
 				Vector3 lastPos = p1.globalPosition;
 				for(int j = 0; j < samplingLoops; j++) {
 					// Do it!
 					currentPos = GetValue(p1, p2, j/fResolution);
-					#if UNITY_EDITOR
-						m_sampledSegments.Add(new SampledSegment(lastPos, currentPos, p1, p2));
-					#endif
+					m_sampledSegments.Add(new SampledSegment(lastPos, currentPos, p1, p2));
 					lastPos = currentPos;
 				}
+				#endif
 			}
 		}
 	}
