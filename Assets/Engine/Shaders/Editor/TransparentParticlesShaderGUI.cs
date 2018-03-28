@@ -57,7 +57,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string enableExtendedParticlesText = "Enable extended particles";
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string rgbColorVertexText = "Use RGB color vertex";
-
+        readonly public static string renderQueueText = "Render queue";
+        readonly public static string zTestText = "Z Test";
     }
 
     //------------------------------------------------------------------------//
@@ -322,11 +323,18 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
         }
 
-        if (EditorGUI.EndChangeCheck())
-        {
-            Debug.Log("Extended particles: " + (int)mp_enableExtendedParticles.floatValue);
 
+        featureSet(mp_zTest, Styles.zTestText);
+
+        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[2]);
+        EditorGUILayout.LabelField(Styles.renderQueueText);
+        int renderQueue = EditorGUILayout.IntField(material.renderQueue);
+        if (material.renderQueue != renderQueue)
+        {
+            material.renderQueue = renderQueue;
         }
+        EditorGUILayout.EndHorizontal();
+
 
 
         if (GUILayout.Button("Log keywords", editorSkin.customStyles[2]))
