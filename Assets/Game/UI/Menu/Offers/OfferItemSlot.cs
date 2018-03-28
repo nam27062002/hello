@@ -152,6 +152,20 @@ public class OfferItemSlot : MonoBehaviour {
 		} else {
 			m_text.text = "Unknown reward type";
 		}
+
+		// Text color based on item rarity!
+		Gradient4 rarityGradient = null;
+		if(m_item.reward != null) {
+			rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
+		} else {
+			rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
+		}
+		m_text.colorGradient = new VertexGradient(
+			rarityGradient.topLeft,
+			rarityGradient.topRight,
+			rarityGradient.bottomLeft,
+			rarityGradient.bottomRight
+		);
 	}
 
 	/// <summary>

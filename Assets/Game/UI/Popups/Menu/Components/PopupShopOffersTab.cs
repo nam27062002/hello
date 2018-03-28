@@ -97,7 +97,8 @@ public class PopupShopOffersTab : IPopupShopTab {
 
 		// Hide unused pills (if any)
 		for(int i = activeOffers.Count; i < m_pills.Count; ++i) {
-			pill.gameObject.SetActive(false);
+			pill = m_pills[i] as PopupShopOffersPill;
+			pill.InitFromOfferPack(null);	// This will do it
 		}
 
 		// Reset scroll list position

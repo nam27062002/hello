@@ -78,6 +78,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 			this.gameObject.SetActive(false);
 			return;
 		}
+		this.gameObject.SetActive(true);
 
 		// Store def
 		m_def = _pack.def;
@@ -158,6 +159,11 @@ public class PopupShopOffersPill : IPopupShopPill {
 				4
 			)
 		);
+
+		// If pack has expired, hide this pill
+		if(!m_pack.CheckTimers()) {
+			InitFromOfferPack(null);	// This will do it
+		}
 	}
 
 	//------------------------------------------------------------------------//

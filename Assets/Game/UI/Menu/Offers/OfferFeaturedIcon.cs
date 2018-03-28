@@ -153,7 +153,9 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	public void OnTap() {
 		// Show popup!
-		PopupManager.OpenPopupInstant(PopupFeaturedOffer.PATH);
+		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
+		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
+		popup.Open();
 	}
 
 	/// <summary>

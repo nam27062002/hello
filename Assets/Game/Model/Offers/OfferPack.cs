@@ -255,6 +255,22 @@ public class OfferPack {
 	}
 
 	/// <summary>
+	/// Check timers for this pack.
+	/// Only applies for timed offers, the rest will always return true.
+	/// </summary>
+	/// <returns>Whether this offer has started and not yet expired or not.</returns>
+	public bool CheckTimers() {
+		if(!m_isTimed) return true;
+
+		// Check both start and end dates
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		if(serverTime < m_startDate) return false;
+		if(serverTime > m_endDate) return false;
+
+		return true;
+	}
+
+	/// <summary>
 	/// Validate all segmentation parameters to see if the offer can be displayed to the current player.
 	/// </summary>
 	/// <returns><c>true</c> if this offer can be displayed to the current player, <c>false</c> otherwise.</returns>
@@ -314,9 +330,7 @@ public class OfferPack {
 
 		// If featured, check extra conditions
 		if(m_featured || m_isTimed) {
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-			if(serverTime < m_startDate) return false;
-			if(serverTime > m_endDate) return false;
+			if(!CheckTimers()) return false;
 		}
 
 		// Payer profile
