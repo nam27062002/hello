@@ -1,5 +1,6 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
+#undef DYNAMIC_LIGHT
 
 struct appdata_t
 {
