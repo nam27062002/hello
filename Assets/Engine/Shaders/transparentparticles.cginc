@@ -104,7 +104,6 @@ fixed4 frag(v2f i) : COLOR
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
-
 #else
 #if COLOR_RAMP
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * col.a * _EmissionSaturation;

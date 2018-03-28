@@ -47,7 +47,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string enableDissolveText = "Enable Alpha Dissolve";
         readonly public static string enableColorRampText = "Enable Color Ramp";
         readonly public static string enableColorVertexText = "Enable Color Vertex";
-        readonly public static string dissolveStepText = "Dissolve step";
+        readonly public static string dissolveStepMinText = "Dissolve step min";
+        readonly public static string dissolveStepMaxText = "Dissolve step max";
         readonly public static string enableAutomaticPanningText = "Enable Automatic Panning";
         readonly public static string panningText = "Panning";
         readonly public static string tintColorText = "Tint Color";
@@ -55,6 +56,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string emissivePowerText = "Enable Emissive Power";
         readonly public static string enableExtendedParticlesText = "Enable extended particles";
         readonly public static string blendModeText = "Blend Mode";
+        readonly public static string rgbColorVertexText = "Use RGB color vertex";
 
     }
 
@@ -87,6 +89,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_enableAutomaticPanning;
     MaterialProperty mp_enableEmissivePower;
     MaterialProperty mp_enableExtendedParticles;
+    MaterialProperty mp_enableRBGColorVertex;
 
     /// <summary>
     /// Enum Material PProperties
@@ -144,6 +147,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_enableAutomaticPanning = FindProperty("_EnableAutomaticPanning", props);
         mp_enableEmissivePower = FindProperty("_EnableEmissivePower", props);
         mp_enableExtendedParticles = FindProperty("_EnableExtendedParticles", props);
+        mp_enableColorVertex = FindProperty("_EnableColorVertex", props);
 
         /// Enum Material PProperties
 
@@ -252,34 +256,78 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             setBlendMode(material, blendMode);
         }
 
-        materialEditor.ShaderProperty(mp_tintColor, Styles.tintColorText);
-        materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
-
-        if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
-        {
-            Vector4 tem = mp_panning.vectorValue;
-            Vector2 p1 = new Vector2(tem.x, tem.y);
-            p1 = EditorGUILayout.Vector2Field(Styles.panningText, p1);
-            //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
-            tem.x = p1.x; tem.y = p1.y;
-            mp_panning.vectorValue = tem;
-        }
-
-        if (featureSet(mp_enableEmissivePower, Styles.enableEmissivePowerText))
-        {
-            materialEditor.ShaderProperty(mp_emissivePower, Styles.emissivePowerText);
-        }
 
         EditorGUI.BeginChangeCheck();
         if (featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText))
         {
+            materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
+            if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
+            {
+                Vector4 tem = mp_panning.vectorValue;
+                Vector2 p1 = new Vector2(tem.x, tem.y);
+                p1 = EditorGUILayout.Vector2Field(Styles.panningText, p1);
+                //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
+                tem.x = p1.x; tem.y = p1.y;
+                mp_panning.vectorValue = tem;
+            }
+
+            featureSet(mp_enableColorVertex, Styles.enableColorVertexText);
+
+            if (featureSet(mp_enableDissolve, Styles.enableDissolveText))
+            {
+                Vector4 tem = mp_dissolveStep.vectorValue;
+                Vector2 p1 = new Vector2(tem.x, tem.y);
+
+                p1.x = EditorGUILayout.Slider(Styles.dissolveStepMinText, p1.x, -1.0f, 1.0f);
+                p1.y = EditorGUILayout.Slider(Styles.dissolveStepMaxText, p1.y, -1.0f, 1.0f);
+                //                p1 = EditorGUILayout.Vector2Field(Styles.dissolveStepText, p1);
+                //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
+                tem.x = p1.x; tem.y = p1.y;
+                mp_dissolveStep.vectorValue = tem;
+//                materialEditor.ShaderProperty(mp_dissolveStep, Styles.dissolveStepText);
+            }
+            materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
+
+            if (featureSet(mp_enableColorRamp, Styles.enableColorRampText))
+            {
+                materialEditor.ShaderProperty(mp_colorRamp, Styles.colorRampText);
+            }
+            else
+            {
+                materialEditor.ShaderProperty(mp_basicColor, Styles.basicColorText);
+                materialEditor.ShaderProperty(mp_saturatedColor, Styles.saturatedColorText);
+            }
+
+            materialEditor.ShaderProperty(mp_emissionSaturation, Styles.emissionSaturationText);
+        }
+        else
+        {
+            materialEditor.ShaderProperty(mp_tintColor, Styles.tintColorText);
+            materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
+
+            if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
+            {
+                Vector4 tem = mp_panning.vectorValue;
+                Vector2 p1 = new Vector2(tem.x, tem.y);
+                p1 = EditorGUILayout.Vector2Field(Styles.panningText, p1);
+                //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
+                tem.x = p1.x; tem.y = p1.y;
+                mp_panning.vectorValue = tem;
+            }
+
+            if (featureSet(mp_enableEmissivePower, Styles.enableEmissivePowerText))
+            {
+                materialEditor.ShaderProperty(mp_emissivePower, Styles.emissivePowerText);
+            }
 
         }
+
         if (EditorGUI.EndChangeCheck())
         {
             Debug.Log("Extended particles: " + (int)mp_enableExtendedParticles.floatValue);
 
         }
+
 
         if (GUILayout.Button("Log keywords", editorSkin.customStyles[2]))
         {
