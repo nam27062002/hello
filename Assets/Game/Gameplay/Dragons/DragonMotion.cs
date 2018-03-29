@@ -237,7 +237,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
     public float m_spinSpeed = 90;
-    private bool m_spinning = false;
+    private bool m_spinning = true;
     private bool m_rotateOnIdle = false;
 
 	//------------------------------------------------------------------//
@@ -1360,8 +1360,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
         m_direction = m_impulse.normalized;
 
-		RotateToDirection(m_direction);
-        // RotateToDirection(m_direction, false, boostSpeedMultiplier > 1);
+		//RotateToDirection(m_direction);
+		RotateToDirection(m_direction, false, (boostSpeedMultiplier > 1 && (m_transform.position.y - 150) < 20 && (m_transform.position.y - 150) > 0));
 
         ApplyExternalForce();
 
