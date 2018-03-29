@@ -217,6 +217,7 @@ public enum MessengerEvents {
 
 	// Shop/Offers events
 	OFFERS_RELOADED,	// no params
+	OFFERS_CHANGED,		// no params
 
 	COUNT
 }

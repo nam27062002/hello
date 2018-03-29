@@ -46,7 +46,24 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Subscribe to game events that might change offers list (segmentation)
+		Messenger.AddListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
+		Messenger.AddListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
+		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
+		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
+		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
+	}
 
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
+		Messenger.RemoveListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
+		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
+		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
+		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
 	}
 
 	/// <summary>
@@ -114,6 +131,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 				}
 			}
 		}
+
+		// Notify game
+		Messenger.Broadcast(MessengerEvents.OFFERS_CHANGED);
 	}
 
 	/// <summary>
@@ -169,4 +189,28 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Something generic has changed in the game that requires the offers segmentation
+	/// to be checked.
+	/// Different overloads to support different event parameters, but we don't actually care about them.
+	/// </summary>
+	private void OnGameStateChanged1(UserProfile.Currency _p1, long _p2, long _p3) {
+		Debug.Log("<color=orange>OnGameStateChanged1</color>");
+		OnGameStateChanged(); 
+	}
+	private void OnGameStateChanged2(string _p1) { 
+		Debug.Log("<color=orange>OnGameStateChanged2</color>");
+		OnGameStateChanged(); 
+	}
+	private void OnGameStateChanged3(DragonData _p1) { 
+		Debug.Log("<color=orange>OnGameStateChanged3</color>");
+		OnGameStateChanged(); 
+	}
+	private void OnGameStateChanged4(Egg _p1) { 
+		Debug.Log("<color=orange>OnGameStateChanged4</color>");
+		OnGameStateChanged(); 
+	}
+	private void OnGameStateChanged() {
+		Refresh();
+	}
 }

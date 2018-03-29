@@ -37,6 +37,10 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// </summary>
 	private void Start() {
 		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
+
+		// React to offers being reloaded while tab is active
+		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	/// <summary>
@@ -52,6 +56,15 @@ public class PopupShopOffersTab : IPopupShopTab {
 		}
 	}
 
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+		Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+	}
+
 	//------------------------------------------------------------------------//
 	// IPopupShopTab IMPLEMENTATION											  //
 	//------------------------------------------------------------------------//
@@ -63,16 +76,19 @@ public class PopupShopOffersTab : IPopupShopTab {
 		Clear();
 
 		// Re-create pills
-		RefreshOfferPills();
+		RefreshOfferPills(true);
 	}
 
 	/// <summary>
 	/// Refresh the offer pills, adding new active offers and removing expired ones.
 	/// Reuses existing pills and creates new ones if needed.
 	/// </summary>
-	private void RefreshOfferPills() {
+	/// <param name="_refreshManager">Force a refresh on the manager?</param>
+	private void RefreshOfferPills(bool _refreshManager) {
 		// Make sure manager is updated
-		OffersManager.instance.Refresh();
+		if(_refreshManager) {
+			OffersManager.instance.Refresh();
+		}
 
 		// Get list of active offer packs and create a pill for each one
 		// List should already be properly sorted
@@ -111,26 +127,37 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// <summary>
 	/// The tab is about to be displayed.
 	/// </summary>
-	public void OnShow() {
+	public void OnTabShow() {
 		// Refresh pills list
-		RefreshOfferPills();
-
-		// React to offers being reloaded while tab is active
-		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+		RefreshOfferPills(true);
 	}
 
 	/// <summary>
 	/// The tab has been hidden.
 	/// </summary>
-	public void OnHide() {
-		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+	public void OnTabHide() {
+		
 	}
 
 	/// <summary>
 	/// Offers have been reloaded.
 	/// </summary>
 	private void OnOffersReloaded() {
+		// Ignore if not active
+		if(!this.isActiveAndEnabled) return;
+
 		// Refresh pills list
-		RefreshOfferPills();
+		RefreshOfferPills(false);
+	}
+
+	/// <summary>
+	/// Offers list has changed.
+	/// </summary>
+	private void OnOffersChanged() {
+		// Ignore if not active
+		if(!this.isActiveAndEnabled) return;
+
+		// Refresh pills list
+		RefreshOfferPills(false);
 	}
 }

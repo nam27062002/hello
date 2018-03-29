@@ -57,6 +57,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		// Subscribe to external events
 		m_showConditioner.targetAnimator.OnShowCheck.AddListener(OnShowCheck);
 		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	/// <summary>
@@ -77,6 +78,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		// Unsubscribe from external events
 		m_showConditioner.targetAnimator.OnShowCheck.RemoveListener(OnShowCheck);
 		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+		Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -162,6 +164,13 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// The offers manager has been reloaded.
 	/// </summary>
 	private void OnOffersReloaded() {
+		RefreshData(false);
+	}
+
+	/// <summary>
+	/// Offers list has changed.
+	/// </summary>
+	private void OnOffersChanged() {
 		RefreshData(false);
 	}
 }
