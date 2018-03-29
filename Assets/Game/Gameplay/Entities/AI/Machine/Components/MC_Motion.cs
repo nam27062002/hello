@@ -17,7 +17,7 @@ namespace AI {
 			StandUp
 		};
 
-		private enum UpVector {
+		public enum UpVector {
 			Up = 0,
 			Down,
 			Right,

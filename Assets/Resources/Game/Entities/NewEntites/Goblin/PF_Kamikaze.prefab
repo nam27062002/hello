@@ -304,12 +304,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"lightUpTime":1,"speed":10,"acceleration":30,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":40,"radius":8,"cameraShakeDuration":0.7,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_Kamikaze
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
   m_avoidWater: 1
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114151275997144362
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -338,6 +340,7 @@ MonoBehaviour:
   m_parentName: Goblin_Fish
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114272332680742080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -415,6 +418,7 @@ MonoBehaviour:
   m_parentName: Goblin_Wick
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114934887099262908
 MonoBehaviour:
   m_ObjectHideFlags: 1

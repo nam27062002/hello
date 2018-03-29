@@ -446,6 +446,7 @@ MonoBehaviour:
   m_parentName: Bat_Tail_1
   m_parentRoot: {fileID: 476310}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &11452102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -465,12 +466,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":35,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":15,"panicSpeed":20,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_BatSmall02_Flock
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 14
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &11477742
 MonoBehaviour:
   m_ObjectHideFlags: 1

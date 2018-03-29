@@ -10,6 +10,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	[SerializeField] private InteractionType m_zone1Interaction = InteractionType.Collision;
 	[SerializeField] private float m_knockBackStrength = 5f;
+	[SerializeField] private float m_damageOnDestruction = 0f;
 
 	[SerializeField] private bool m_particleFaceDragonDirection = false;
 
@@ -24,6 +25,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	[SerializeField] private string m_onDestroyAudio = "";
 	[CommentAttribute("Audio When Dragon interacts with object but does not destroy it.")]
 	[SerializeField] private string m_onFeedbackAudio = "";
+
+	[SeparatorAttribute]
+	[SerializeField] private float m_cameraShake = 0;
 
 
 	private ZoneManager.ZoneEffect m_effect;
@@ -41,7 +45,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	private bool m_spawned = false;
 
-	private DragonBreathBehaviour m_breath;
+	private DragonMotion m_dragonMotion;
+	private DragonHealthBehaviour m_dragonHealth;
+	private DragonBreathBehaviour m_dragonBreath;
 
 
 
@@ -112,16 +118,17 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 				m_collider.isTrigger = true;
 			}
 
-			Vector3 colliderCenterTransform = Vector3.zero;
-			colliderCenterTransform.x = transform.position.x;
-			colliderCenterTransform.y = transform.position.y + m_collider.center.y;
+			Vector3 colliderCenterTransform = transform.position + (transform.up * m_collider.center.y * transform.localScale.y);
 			colliderCenterTransform.z = 0;
 			colliderCenterTransform = transform.InverseTransformPoint(colliderCenterTransform);
 			m_collider.center = colliderCenterTransform;
 		}
 
 		m_spawned = true;
-		m_breath = InstanceManager.player.GetComponent<DragonBreathBehaviour>();
+
+		m_dragonMotion = InstanceManager.player.dragonMotion;
+		m_dragonBreath = InstanceManager.player.breathBehaviour;
+		m_dragonHealth = InstanceManager.player.dragonHealthBehaviour;
 	}
 
 	public void Spawn(ISpawner _spawner) {
@@ -145,7 +152,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {
-			if (!m_breath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
 						if (m_effect == ZoneManager.ZoneEffect.S) {
@@ -167,7 +174,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnTriggerEnter(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_breath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						GameObject ps = m_feedbackParticle.Spawn();
@@ -181,6 +188,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 								particlePosition.x -= m_collider.size.x * 0.5f;
 							}
 
+							ps.transform.localRotation = transform.rotation;
 							ps.transform.position = particlePosition + m_feedbackParticle.offset;
 
 							if (m_particleFaceDragonDirection) {
@@ -200,7 +208,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnTriggerExit(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_breath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn()) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						Vector3 particlePosition = transform.position + m_colliderCenter;
@@ -212,8 +220,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 							particlePosition.x -= m_collider.size.x * 0.5f;
 						}
 
-						GameObject ps = m_feedbackParticle.Spawn(particlePosition + m_feedbackParticle.offset);
+						GameObject ps = m_feedbackParticle.Spawn(particlePosition + (transform.rotation * m_feedbackParticle.offset));
 						if (ps != null) {
+							ps.transform.localRotation = transform.rotation;
 							if (m_particleFaceDragonDirection) {
 								FaceDragon(ps);
 							}
@@ -228,7 +237,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	}
 
 	void Break() {
-		GameObject ps = m_destroyParticle.Spawn(transform.position + m_destroyParticle.offset);
+		GameObject ps = m_destroyParticle.Spawn(transform.position + (transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
 				FaceDragon(ps);
@@ -236,15 +245,17 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		}
 
 		if (m_zone == ZoneManager.Zone.Zone1 && m_knockBackStrength > 0f) {
-			DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
-
-			Vector3 knockBack = dragonMotion.transform.position - (transform.position + m_collider.center);
+			Vector3 knockBack = m_dragonMotion.transform.position - (transform.position + m_collider.center);
 			knockBack.z = 0f;
 			knockBack.Normalize();
 
-			knockBack *= Mathf.Log(Mathf.Max(dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
+			knockBack *= Mathf.Log(Mathf.Max(m_dragonMotion.velocity.magnitude * m_knockBackStrength, 1f));
 
-			dragonMotion.AddForce(knockBack);
+			m_dragonMotion.AddForce(knockBack);
+		}
+
+		if (m_damageOnDestruction > 0) {
+			m_dragonHealth.ReceiveDamage(m_damageOnDestruction, DamageType.NORMAL);
 		}
 
 		if (!string.IsNullOrEmpty(m_onDestroyAudio))
@@ -264,10 +275,14 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 		// [AOC] Notify game!
 		Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, m_entity.reward);
+
+		if (m_cameraShake > 0) {
+			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShake, 1f);
+		}
 	}
 
 	void FaceDragon(GameObject _ps) {
-		DragonMotion dragonMotion = m_breath.GetComponent<DragonMotion>();
+		DragonMotion dragonMotion = m_dragonBreath.GetComponent<DragonMotion>();
 		Vector3 dir = dragonMotion.direction;
 		dir.z = 0;
 		dir.Normalize();

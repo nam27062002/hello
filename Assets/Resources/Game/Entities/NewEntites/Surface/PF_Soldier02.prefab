@@ -96,6 +96,7 @@ MonoBehaviour:
   m_parentName: Sword_01
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &11414130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -388,6 +389,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":240,"max":240},"timeToChangeDirection":{"min":240,"max":240},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":0,"max":0},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"timeBeforeBackHome":0,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"damage":40,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":4,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"speed":6,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"speed":7.5,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false}]'
   m_databaseKey: PF_Soldier02
 --- !u!1001 &100100000
@@ -1530,6 +1532,7 @@ MonoBehaviour:
   m_parentName: Soldier_Spine1
   m_parentRoot: {fileID: 425314}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114465428233667816
 MonoBehaviour:
   m_ObjectHideFlags: 1

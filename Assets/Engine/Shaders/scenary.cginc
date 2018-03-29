@@ -65,7 +65,7 @@ float4 _MainTex_ST;
 #endif
 
 float4 _Panning;
-float4 _Color;
+float4 _Tint;
 
 #ifdef BLEND_TEXTURE	
 sampler2D _SecondTexture;
@@ -224,7 +224,7 @@ fixed4 frag (v2f i) : SV_Target
 #ifdef MAINCOLOR_TEXTURE
 	fixed4 col = tex2D(_MainTex, i.texcoord);	// Color
 #else
-	fixed4 col = _Color;
+	fixed4 col = _Tint;
 #endif
 
 #ifdef CUTOFF

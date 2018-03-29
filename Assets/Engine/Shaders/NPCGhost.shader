@@ -42,7 +42,7 @@ Shader "Hungry Dragon/NPC/NPC Ghost (Spawners)"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
-			//			#define SPECULAR
+//			#define SPECULAR
 			#define FRESNEL
 			#define GHOST
 			#define TINT

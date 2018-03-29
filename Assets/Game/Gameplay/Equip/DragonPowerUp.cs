@@ -45,8 +45,9 @@ public class DragonPowerUp : MonoBehaviour {
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
 		if (def != null) {
 			string powerUp = def.Get("powerup");
-			if(!string.IsNullOrEmpty(powerUp))
+			if(!string.IsNullOrEmpty(powerUp)){
 				SetPowerUp(powerUp);
+			}
 		}
 
 
@@ -242,6 +243,15 @@ public class DragonPowerUp : MonoBehaviour {
 							eatBehaviour.AddImmuneTrash( immuneTrash[i] );
 						}
 					}
+				}break;
+				case "combined":
+				{
+					string powerUp1 = def.Get("param1");
+					if ( !string.IsNullOrEmpty(powerUp1) )
+						SetPowerUp( powerUp1 );
+					string powerUp2 = def.Get("param2");
+					if ( !string.IsNullOrEmpty(powerUp2) )
+						SetPowerUp( powerUp2 );
 				}break;
 				default:
 				{

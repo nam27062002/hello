@@ -385,6 +385,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"projectileName":"PF_WitchMagic","projectileSpawnTransformName":"projectile","damage":10,"canFollowTarget":true,"consecutiveAttacks":2,"attackDelay":0.25,"retreatTime":2,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":10,"max":15},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":1},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":7.5,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"timeBeforeBackHome":2,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":4,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
   m_databaseKey: PF_WitchBad
 --- !u!1001 &100100000
@@ -788,6 +789,7 @@ MonoBehaviour:
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 462874}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114005693158260244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -802,6 +804,7 @@ MonoBehaviour:
   m_parentName: Human_L_Weapon_01
   m_parentRoot: {fileID: 462874}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114473450975401028
 MonoBehaviour:
   m_ObjectHideFlags: 1

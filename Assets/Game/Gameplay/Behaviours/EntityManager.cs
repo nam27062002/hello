@@ -302,6 +302,13 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 		for(i = count; i >= 0; i--) {
 			m_decorations[i].CustomUpdate();
 		}
+
+#if UNITY_EDITOR
+		if ( Input.GetKey(KeyCode.G) )
+		{
+			ForceOnScreenEntitiesGolden();
+		}
+#endif
     }
 
     void FixedUpdate()
@@ -427,5 +434,22 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             }
         }
     }
+
+
+    public void ForceOnScreenEntitiesGolden()
+    {
+		int count = m_entities.Count;
+        // Inverse loop because the current entity could be deleted from the list if it's disabled
+        for (int i = count - 1; i > -1; i--)
+        {
+			if ( m_entities[i].isOnScreen )
+            {
+                m_entities[i].ForceGolden();
+            }
+        }
+    }
+
+    // Check if alive and not dying prior to force golden
+
     #endregion
 }
