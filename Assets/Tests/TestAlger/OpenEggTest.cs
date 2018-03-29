@@ -79,7 +79,7 @@ public class OpenEggTest : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Initialize some required managers
-		ContentManager.InitContent(true);
+		ContentManager.InitContent(true, false);
 
 		// Don't show anything
 		Clear();
