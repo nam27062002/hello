@@ -54,7 +54,6 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	// Internal
 	private State m_state = State.IDLE;
-	private bool m_tutorialCompletedPending = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -258,10 +257,13 @@ public class OpenEggScreenController : MonoBehaviour {
 			}
 
 			// Don't show back button if we've completed a golden egg!
-			m_backButton.SetActive(!goldenEggCompleted);
+			// Don't show either if rewarding a pet and tutorial not yet completed (force going to collection)
+			bool hideBackButton = goldenEggCompleted
+				|| (!finalReward.WillBeReplaced() && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD));
+			m_backButton.SetActive(!hideBackButton);
 
 			// Same with egg buy button
-			m_buyEggButton.SetActive(!goldenEggCompleted);
+			m_buyEggButton.SetActive(!hideBackButton);
 
 			// Change logic state
 			m_state = State.REWARD_IN;
@@ -290,8 +292,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		if(m_scene.eggData.state != Egg.State.COLLECTED) return;
 
 		// Mark reward tutorial as completed
-		// [AOC] Delay it until the screen animation has finished so we don't see elements randomly appearing!
-		m_tutorialCompletedPending = true;
+		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_REWARD, true);
 
 		// Depending on opened egg's reward, perform different actions
 		MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
@@ -305,18 +306,6 @@ public class OpenEggScreenController : MonoBehaviour {
 				petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
 				screensController.GoToScreen(MenuScreen.PETS, true);
 			} break;
-		}
-	}
-
-	/// <summary>
-	/// Navigation screen animation has finished.
-	/// Must be connected in the inspector.
-	/// </summary>
-	public void OnClosePostAnimation() {
-		// If the tutorial was completed, update flag now!
-		if(m_tutorialCompletedPending) {
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.EGG_REWARD, true);
-			m_tutorialCompletedPending = false;
 		}
 	}
 
