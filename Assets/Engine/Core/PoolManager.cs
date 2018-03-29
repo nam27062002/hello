@@ -130,6 +130,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private void __Rebuild() {
 		List<string> keys;
+		List<string> toDelete = new List<string>();
 
 		// First eliminate non using prefabs and reduce bigger than need pools
 		keys = new List<string>(m_pools.Keys);
@@ -149,9 +150,15 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 					container.pool = null;
 					container.handler.Invalidate();
+					toDelete.Add(keys[i]);
 				}
 			}
 		}
+
+		for (int i = 0; i < toDelete.Count; ++i) {
+			m_pools.Remove(toDelete[i]);
+		}
+		toDelete.Clear();
 
 		Resources.UnloadUnusedAssets();
 
