@@ -101,16 +101,24 @@ public class OfferPack {
 	private int m_gamesPlayed = 0;
 	private PayerType m_payerType = PayerType.ANYONE;
 	private float m_minSpent = 0f;
-	private string[] m_dragonOwned = new string[0];
+
 	private string[] m_dragonUnlocked = new string[0];
+	private string[] m_dragonOwned = new string[0];
+	private string[] m_dragonNotOwned = new string[0];
+
 	private Range m_scBalanceRange = new Range(0, float.MaxValue);
 	private Range m_hcBalanceRange = new Range(0, float.MaxValue);
 	private int m_openedEggs = 0;
+
 	private int m_petsOwnedCount = 0;
 	private string[] m_petsOwned = new string[0];
+	private string[] m_petsNotOwned = new string[0];
+
 	private RangeInt m_progressionRange = new RangeInt();
+
 	private string[] m_skinsUnlocked = new string[0];
 	private string[] m_skinsOwned = new string[0];
+	private string[] m_skinsNotOwned = new string[0];
 
 	// Internal vars
 	private int m_viewsCount = 0;	// Only auto-triggered views
@@ -194,16 +202,24 @@ public class OfferPack {
 					}
 				} break;
 				case "minSpent": 		m_minSpent = def.GetAsFloat(KEY);					break;
-				case "dragonOwned": 	m_dragonOwned = def.GetAsArray<string>(KEY);		break;
+
 				case "dragonUnlocked": 	m_dragonUnlocked = def.GetAsArray<string>(KEY);		break;
+				case "dragonOwned": 	m_dragonOwned = def.GetAsArray<string>(KEY);		break;
+				case "dragonNotOwned": 	m_dragonNotOwned = def.GetAsArray<string>(KEY);		break;
+
 				case "scBalanceRange":	m_scBalanceRange = ParseRange(def.Get(KEY));		break;
 				case "hcBalanceRange":	m_hcBalanceRange = ParseRange(def.Get(KEY));		break;
 				case "openedEggs":		m_openedEggs = def.GetAsInt(KEY);					break;
+
 				case "petsOwnedCount":	m_petsOwnedCount = def.GetAsInt(KEY);				break;
 				case "petsOwned":		m_petsOwned = def.GetAsArray<string>(KEY);			break;
+				case "petsNotOwned":	m_petsNotOwned = def.GetAsArray<string>(KEY);		break;
+
 				case "progressionRange": m_progressionRange = ParseRangeInt(def.Get(KEY));	break;
+
 				case "skinsUnlocked":	m_skinsUnlocked = def.GetAsArray<string>(KEY);		break;
 				case "skinsOwned":		m_skinsOwned = def.GetAsArray<string>(KEY);			break;
+				case "skinsNotOwned":	m_skinsNotOwned = def.GetAsArray<string>(KEY);		break;
 			}
 		}
 
@@ -238,16 +254,24 @@ public class OfferPack {
 		m_gamesPlayed = 0;
 		m_payerType = PayerType.ANYONE;
 		m_minSpent = 0f;
-		m_dragonOwned = new string[0];
+
 		m_dragonUnlocked = new string[0];
+		m_dragonOwned = new string[0];
+		m_dragonNotOwned = new string[0];
+
 		m_scBalanceRange = new Range(0, float.MaxValue);
 		m_hcBalanceRange = new Range(0, float.MaxValue);
 		m_openedEggs = 0;
+
 		m_petsOwnedCount = 0;
 		m_petsOwned = new string[0];
+		m_petsNotOwned = new string[0];
+
 		m_progressionRange = new RangeInt(0, int.MaxValue);
+
 		m_skinsUnlocked = new string[0];
 		m_skinsOwned = new string[0];
+		m_skinsNotOwned = new string[0];
 
 		// Internal vars
 		m_viewsCount = 0;
@@ -345,11 +369,14 @@ public class OfferPack {
 		if(!m_progressionRange.Contains(profile.GetPlayerProgress())) return false;
 
 		// Dragons
+		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
+			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= DragonData.LockState.LOCKED) return false;
+		}
 		for(int i = 0; i < m_dragonOwned.Length; ++i) {
 			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) return false;
 		}
-		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
-			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= DragonData.LockState.LOCKED) return false;
+		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
+			if(DragonManager.IsDragonOwned(m_dragonNotOwned[i])) return false;
 		}
 
 		// Pets
@@ -357,13 +384,19 @@ public class OfferPack {
 		for(int i = 0; i < m_petsOwned.Length; ++i) {
 			if(!profile.petCollection.IsPetUnlocked(m_petsOwned[i])) return false;
 		}
+		for(int i = 0; i < m_petsNotOwned.Length; ++i) {
+			if(profile.petCollection.IsPetUnlocked(m_petsNotOwned[i])) return false;
+		}
 
 		// Skins
+		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
+			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) == Wardrobe.SkinState.LOCKED) return false;
+		}
 		for(int i = 0; i < m_skinsOwned.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) != Wardrobe.SkinState.OWNED) return false;
 		}
-		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
-			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) == Wardrobe.SkinState.LOCKED) return false;
+		for(int i = 0; i < m_skinsNotOwned.Length; ++i) {
+			if(profile.wardrobe.GetSkinState(m_skinsNotOwned[i]) == Wardrobe.SkinState.OWNED) return false;
 		}
 
 		// Countries
