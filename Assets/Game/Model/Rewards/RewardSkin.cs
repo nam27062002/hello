@@ -70,9 +70,6 @@ namespace Metagame {
 
 			// Immediately equip it!
 			UsersManager.currentUser.EquipDisguise(m_def.GetAsString("dragonSku"), m_sku, true);
-
-			// Notify game
-			Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, m_sku);
 		}
 	}
 }
