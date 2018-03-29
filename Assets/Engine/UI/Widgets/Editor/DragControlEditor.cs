@@ -131,13 +131,21 @@ public class DragControlEditor : Editor {
 				} EditorGUILayout.EndToggleGroup();
 			}
 
-			// Restore on disable
+			// Restore on disable/on release
 			else if(p.name == "m_restoreOnDisable") {
-				p.boolValue = EditorGUILayout.BeginToggleGroup(p.displayName, p.boolValue); {
+				// Restore On Disable
+				p.boolValue = EditorGUILayout.ToggleLeft(p.displayName, p.boolValue);
+
+				// Restore On Release
+				SerializedProperty onReleaseProp = serializedObject.FindProperty("m_restoreOnRelease");
+				onReleaseProp.boolValue = EditorGUILayout.ToggleLeft(onReleaseProp.displayName, onReleaseProp.boolValue);
+
+				// Restore Duration
+				EditorGUI.BeginDisabledGroup(!p.boolValue && !onReleaseProp.boolValue); {
 					EditorGUI.indentLevel++;
 					EditorGUILayout.PropertyField(serializedObject.FindProperty("m_restoreDuration"), new GUIContent("Duration"), true);
 					EditorGUI.indentLevel--;
-				} EditorGUILayout.EndToggleGroup();
+				} EditorGUI.EndDisabledGroup();
 			}
 
 			// Properties we don't want to show
@@ -151,7 +159,8 @@ public class DragControlEditor : Editor {
 				|| p.name == "m_clampSetup"
 				|| p.name == "m_axisEnabled"
 				|| p.name == "m_initialValue"
-				|| p.name == "m_restoreDuration") {
+				|| p.name == "m_restoreDuration"
+				|| p.name == "m_restoreOnRelease") {
 				// Do nothing
 			}
 
