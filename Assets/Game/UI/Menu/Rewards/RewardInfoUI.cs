@@ -181,7 +181,7 @@ public class RewardInfoUI : MonoBehaviour {
 				if(m_skinPower != null) {
 					// Initialize with powers data
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
-					m_petPower.InitFromDefinition(powerDef, false);
+					m_skinPower.InitFromDefinition(powerDef, false);
 				}
 			} break;
 
