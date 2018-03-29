@@ -164,7 +164,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224000011149787436}
-  - component: {fileID: 114733263318452350}
+  - component: {fileID: 114515135327671868}
   - component: {fileID: 114654752730302636}
   m_Layer: 5
   m_Name: PackGemsGroup
@@ -1854,6 +1854,8 @@ MonoBehaviour:
       action: 0
   - sku: halloween
     targets: []
+  - sku: spring
+    targets: []
 --- !u!114 &114480575922559236
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1898,6 +1900,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114515135327671868
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014194709188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0759dce597b814b7195d492cb529387c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_iconContainer: {fileID: 224834454659087796}
+  m_amountText: {fileID: 114144344280575956}
+  m_bonusAmountText: {fileID: 114100408433220784}
+  m_priceButtons: {fileID: 114654752730302636}
+  m_bestValueObj: {fileID: 0}
 --- !u!114 &114566062137662682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1958,7 +1976,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d605565f0d22f4707bcbeca2284b809b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_recommendedPackPill: {fileID: 114733263318452350}
+  m_recommendedPackPill: {fileID: 114515135327671868}
   OnRecommendedPackPurchased:
     m_PersistentCalls:
       m_Calls: []
@@ -2242,7 +2260,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114733263318452350}
+      - m_Target: {fileID: 114515135327671868}
         m_MethodName: OnBuyButton
         m_Mode: 1
         m_Arguments:
@@ -2376,22 +2394,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
---- !u!114 &114733263318452350
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000014194709188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6c39dfbe82ae4e7f97895f403b83267, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_iconContainer: {fileID: 224834454659087796}
-  m_amountText: {fileID: 114144344280575956}
-  m_bonusAmountText: {fileID: 114100408433220784}
-  m_priceButtons: {fileID: 114654752730302636}
-  m_bestValueObj: {fileID: 0}
 --- !u!114 &114745989500263950
 MonoBehaviour:
   m_ObjectHideFlags: 1
