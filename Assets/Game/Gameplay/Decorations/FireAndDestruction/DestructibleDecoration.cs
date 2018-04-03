@@ -26,6 +26,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	[CommentAttribute("Audio When Dragon interacts with object but does not destroy it.")]
 	[SerializeField] private string m_onFeedbackAudio = "";
 
+	[SeparatorAttribute]
+	[SerializeField] private float m_cameraShake = 0;
+
 
 	private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
@@ -272,6 +275,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 		// [AOC] Notify game!
 		Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, m_entity.reward);
+
+		if (m_cameraShake > 0) {
+			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShake, 1f);
+		}
 	}
 
 	void FaceDragon(GameObject _ps) {
