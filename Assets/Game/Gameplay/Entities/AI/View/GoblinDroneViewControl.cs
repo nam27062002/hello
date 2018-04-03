@@ -31,18 +31,20 @@ public class GoblinDroneViewControl : ViewControl {
 	}
 
 	void LateUpdate() {
-		// lets find the position of the target relative to the cabin
-		Vector3 targetDir = m_player.position - m_head.position;
-		targetDir.z = 0f;
-		targetDir.Normalize();
+		if (m_head != null) {
+			// lets find the position of the target relative to the cabin
+			Vector3 targetDir = m_player.position - m_head.position;
+			targetDir.z = 0f;
+			targetDir.Normalize();
 
-		Vector3 cross = Vector3.Cross(targetDir, Vector3.down);
+			Vector3 cross = Vector3.Cross(targetDir, Vector3.down);
 
-		//the goblin should follow our target!
-		float angle = (cross.z) * -40f;
+			//the goblin should follow our target!
+			float angle = (cross.z) * -40f;
 
-		m_headAngle = Mathf.Lerp(m_headAngle, angle, m_headRotationSpeed * Time.smoothDeltaTime);
-		m_head.localRotation = Quaternion.Euler(m_headAngle, 0, 0);
+			m_headAngle = Mathf.Lerp(m_headAngle, angle, m_headRotationSpeed * Time.smoothDeltaTime);
+			m_head.localRotation = Quaternion.Euler(m_headAngle, 0, 0);
+		}
 
 		m_helixRotation += m_helixRotationSpeed * Time.deltaTime;
 		m_helixLeft01.localRotation = Quaternion.AngleAxis(m_helixRotation, GameConstants.Vector3.left);
