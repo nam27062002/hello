@@ -484,7 +484,8 @@ public class PetsScreenController : MonoBehaviour {
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnHidePreAnimation(ShowHideAnimator _animator) {
 		// Restore dragon's pets
-		InstanceManager.menuSceneController.selectedDragonPreview.equip.TogglePets(true, true);
+		if (InstanceManager.menuSceneController.selectedDragonPreview)
+			InstanceManager.menuSceneController.selectedDragonPreview.equip.TogglePets(true, true);
 	}
 
 	/// <summary>
