@@ -1360,8 +1360,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
         m_direction = m_impulse.normalized;
 
-		//RotateToDirection(m_direction);
-		RotateToDirection(m_direction, false, (boostSpeedMultiplier > 1 && (m_transform.position.y - 150) < 20 && (m_transform.position.y - 150) > 0));
+		//TONI
+		RotateToDirection(m_direction);
+		//RotateToDirection(m_direction, false, (boostSpeedMultiplier > 1 && (m_transform.position.y - 150) < 20 && (m_transform.position.y - 150) > 0));
 
         ApplyExternalForce();
 
