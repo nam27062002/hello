@@ -272,6 +272,19 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     }
 
 
+    private static void setExtendedParticles(Material mat, bool enable)
+    {
+        mat.SetFloat("_EnableExtendedParticles", enable ? 1.0f: 0.0f);
+
+        if (enable)
+        {
+            mat.EnableKeyword("EXTENDED_PARTICLES");
+        }
+        else
+        {
+            mat.DisableKeyword("EXTENDED_PARTICLES");
+        }
+    }
     /// <summary>
     /// Draw the inspector.
     /// </summary>
@@ -310,17 +323,17 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         EditorGUILayout.LabelField(Styles.particlesText, GUILayout.Width(70));
         if (GUILayout.Button(Styles.standardParticlesText))
         {
-            mp_enableExtendedParticles.floatValue = 0.0f;
+            setExtendedParticles(material, false);
         }
         if (GUILayout.Button(Styles.extendedParticlesText))
         {
-            mp_enableExtendedParticles.floatValue = 1.0f;
+            setExtendedParticles(material, true);
         }
         //        m_materialEditor.ShaderProperty(feature, label);
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
 
-        featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText);
+//        featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText);
 
         if (mp_enableExtendedParticles.floatValue > 0.5f)
         {
@@ -589,48 +602,56 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             if (mat.shader.name == "Hungry Dragon/Particles/Transparent Additive")
             {
                 changeMaterial(mat, shader, 0);
+                setExtendedParticles(mat, false);
                 sChanged++;
             }
             // TransparentSoftAdditive.shader
             if (mat.shader.name == "Hungry Dragon/Particles/Transparent Soft Additive")
             {
                 changeMaterial(mat, shader, 1);
+                setExtendedParticles(mat, false);
                 sChanged++;
             }
             // TransparentAdditiveDouble.shader
             else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Additive Double")
             {
                 changeMaterial(mat, shader, 2);
+                setExtendedParticles(mat, false);
                 sChanged++;
             }
             // TransparentAlphaBlend.shader
             else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Alpha Blend")
             {
                 changeMaterial(mat, shader, 3);
+                setExtendedParticles(mat, false);
                 sChanged++;
             }
             // TransparentAdditiveAlphaBlend.shader
             else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Additive Alpha Blend")
             {
                 changeMaterial(mat, shader, 4);
+                setExtendedParticles(mat, false);
                 sChanged++;
             }
             // TransparentParticlesAdditive.shader
             else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Particles Additive")
             {
                 changeMaterial(mat, shader, 0);
+                setExtendedParticles(mat, true);
                 sChanged++;
             }
             // TransparentParticlesAlphaBlend.shader
             else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Particles Alpha Blend")
             {
                 changeMaterial(mat, shader, 3);
+                setExtendedParticles(mat, true);
                 sChanged++;
             }
             // TransparentParticlesPremultiply.shader
             else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Particles Premultiply")
             {
                 changeMaterial(mat, shader, 5);
+                setExtendedParticles(mat, true);
                 sChanged++;
             }
 
