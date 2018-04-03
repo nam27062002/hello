@@ -134,7 +134,7 @@ fixed4 frag(v2f i) : COLOR
 	col.rgb *= col.a;
 #elif defined(BLENDMODE_ALPHABLEND)
 	col *= 2.0;
-#elif defined(ADDITIVE_DOUBLE)
+#elif defined(BLENDMODE_ADDITIVEDOUBLE)
 	col *= 4.0;
 #endif	//BLENDMODE_SOFTADDITIVE
 

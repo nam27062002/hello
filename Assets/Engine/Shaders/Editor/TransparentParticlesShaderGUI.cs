@@ -193,6 +193,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         material.DisableKeyword("BLENDMODE_PREMULTIPLY");
 
         material.EnableKeyword(blendModes[blendMode]);
+        material.SetFloat("BlendMode", (float)blendMode);
 
         switch (blendMode)
         {
@@ -209,8 +210,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 break;
 
             case 2:                                                         //Additive Double
-                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 Debug.Log("Blend mode additive double");
                 break;
 
