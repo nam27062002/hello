@@ -132,23 +132,28 @@ public class GameServerManager
     /// 
     /// </summary>
     public void CheckConnection(Action<Error> callback)
-	{        
-       if (Application.internetReachability == NetworkReachability.NotReachable)
+	{
+        InternalCheckConnection(callback, false);
+    }
+
+    protected void InternalCheckConnection(Action<Error> callback, bool highPriority = false)
+    {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             Debug.Log("GameServerManager (CheckConnection) :: InternetReachability NotReachable");
             callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
         }
         else
         {
-            Ping((Error _error, GameServerManager.ServerResponse _response) =>
+            InternalPing((Error _error, GameServerManager.ServerResponse _response) =>
             {
                 if (callback != null)
                 {
                     callback(_error);
                 }
-            });           
-        }        
-	}
+            }, highPriority);
+        }
+    }
 
 	public virtual void OnConnectionLost() {}
 
@@ -158,7 +163,13 @@ public class GameServerManager
     // GENERIC SERVER MANAGEMENT											  //
     //------------------------------------------------------------------------//
     protected virtual void ExtendedConfigure() {}    
-	public virtual void Ping(ServerCallback callback) {}
+	public void Ping(ServerCallback callback)
+    {
+        InternalPing(callback, false);
+    }
+
+    protected virtual void InternalPing(ServerCallback callback, bool highPriority=false) { }
+  
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
 
 	//------------------------------------------------------------------------//
@@ -201,8 +212,13 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     // LOGIN																  //
     //------------------------------------------------------------------------//
-    public virtual void Auth(ServerCallback callback) {}        
-	public virtual void LogOut() {}
+    public void Auth(ServerCallback callback)
+    {
+        InternalAuth(callback, false);
+    }
+
+    protected virtual void InternalAuth(ServerCallback callback, bool highPriority=false) { }
+    public virtual void LogOut() {}
     public virtual bool IsLoggedIn() { return false; }
     public virtual void OnLogOut() {}    
 

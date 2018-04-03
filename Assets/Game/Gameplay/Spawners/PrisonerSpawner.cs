@@ -21,6 +21,9 @@ public class PrisonerSpawner : AbstractSpawner {
 
     private uint m_maxEntities;	
 
+	private bool m_allKilledByPlayer;
+
+
     //---------------------------------------------------------------------------------------------------------    
     // AbstractSpawner implementation
     //-------------------------------------------------------------------	
@@ -93,6 +96,8 @@ public class PrisonerSpawner : AbstractSpawner {
 		t.parent = parent;
 		t.localPosition = Vector3.zero;
 		t.localScale = Vector3.one * m_scale.GetRandom();
+
+		m_allKilledByPlayer = false;
 	}
 
 	protected override void OnMachineSpawned(AI.IMachine machine) {
@@ -103,6 +108,9 @@ public class PrisonerSpawner : AbstractSpawner {
         m_parents[index] = null;
     }
     
+	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+		m_allKilledByPlayer = _allKilledByPlayer;
+	}
 
 	//---------------------------------------------------------------------------------------------------------   
     public void SetEntitiesFree() {
@@ -125,6 +133,10 @@ public class PrisonerSpawner : AbstractSpawner {
 		}
 
 		return true;
+	}
+
+	public bool AreAllKilledByPlayer() {
+		return m_allKilledByPlayer;
 	}
 
     private uint GroupIndexToSpawn { get; set; }
