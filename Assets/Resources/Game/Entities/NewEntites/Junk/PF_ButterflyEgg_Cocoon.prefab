@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 135386216034871644}
   - component: {fileID: 114947871010151056}
   - component: {fileID: 114673415286876546}
-  - component: {fileID: 114565454761138478}
+  - component: {fileID: 114896087079233202}
   m_Layer: 26
   m_Name: PF_ButterflyEgg_Cocoon
   m_TagString: Untagged
@@ -457,7 +457,7 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
---- !u!114 &114565454761138478
+--- !u!114 &114673415286876546
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -465,7 +465,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012775619424}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f93ed7f285df419eab41bba47611a20, type: 3}
+  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
+  m_energyRecoverSec: 1
+  m_brainResource: {fileID: 0}
+  m_railSeparation:
+    min: 0.5
+    max: 1
+  m_useSpawnerRotation: 0
+  m_serializedJson: '[]'
+  m_databaseKey: PF_ButterflyEgg_Cocoon
+  m_updateMachinePos: 0
+--- !u!114 &114896087079233202
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012775619424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
@@ -492,32 +515,6 @@ MonoBehaviour:
     m_canBeDissolved: 1
     m_ashExceptions: []
   m_onSpawnSound: 
-  m_defaultUpVector: 0
-  m_orientationSpeed: 500
-  m_canBeflipped: 1
---- !u!114 &114673415286876546
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012775619424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
-  m_energyRecoverSec: 1
-  m_brainResource: {fileID: 0}
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_useSpawnerRotation: 1
-  m_serializedJson: '[]'
-  m_databaseKey: PF_ButterflyEgg_Cocoon
-  m_updateMachinePos: 0
 --- !u!114 &114947871010151056
 MonoBehaviour:
   m_ObjectHideFlags: 1
