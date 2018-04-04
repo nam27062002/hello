@@ -55,6 +55,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string tintColorText = "Tint Color";
         readonly public static string enableEmissivePowerText = "Enable Emissive Power";
         readonly public static string emissivePowerText = "Enable Emissive Power";
+        readonly public static string alphaBlendOffsetText = "Alpha Blend Offset";
         readonly public static string particlesText = "Particles";
         readonly public static string standardParticlesText = "Standard";
         readonly public static string extendedParticlesText = "Extended";
@@ -84,6 +85,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_panning;
     MaterialProperty mp_tintColor;
     MaterialProperty mp_emissivePower;
+    MaterialProperty mp_alphaBlendOffset;
 
     /// <summary>
     /// Toggle Material Properties
@@ -143,10 +145,10 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_panning = FindProperty("_Panning", props);
         mp_tintColor = FindProperty("_TintColor", props);
         mp_emissivePower = FindProperty("_EmissivePower", props);
-       
+        mp_alphaBlendOffset = FindProperty("_ABOffset", props);
+
         /// Toggle Material Properties
 
-        mp_enableDissolve = FindProperty("_EnableDissolve", props);
         mp_enableColorRamp = FindProperty("_EnableColorRamp", props);
         mp_enableColorVertex = FindProperty("_EnableColorVertex", props);
         mp_enableAutomaticPanning = FindProperty("_EnableAutomaticPanning", props);
@@ -156,6 +158,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
         /// Enum Material PProperties
 
+        mp_enableDissolve = FindProperty("Dissolve", props);
         mp_blendMode = FindProperty("BlendMode", props);
         mp_srcBlend = FindProperty("_SrcBlend", props);
         mp_dstBlend = FindProperty("_DstBlend", props);
@@ -238,7 +241,9 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     private static string[] validKeyWords =
     {
         "EMISSIVEPOWER",
-        "DISSOLVE",
+        "DISSOLVE_NONE",
+        "DISSOLVE_ENABLED",
+        "DISSOLVE_EXTENDED",
         "COLOR_RAMP",
         "APPLY_RGB_COLOR_VERTEX",
         "AUTOMATICPANNING",
@@ -313,6 +318,12 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         {
             Debug.Log("Blend Mode: " + blendMode);
             setBlendMode(material, blendMode);
+        }
+
+        if (blendMode == 4)
+        {
+            materialEditor.ShaderProperty(mp_alphaBlendOffset, Styles.alphaBlendOffsetText);
+
         }
 
 

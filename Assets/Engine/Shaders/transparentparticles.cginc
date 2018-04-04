@@ -4,17 +4,17 @@
 
 struct appdata_t {
 	float4 vertex : POSITION;
-	float4 texcoord : TEXCOORD0;
 	fixed4 color : COLOR;
+	float4 texcoord : TEXCOORD0;
 };
 
 struct v2f {
 	float4 vertex : SV_POSITION;
-	float2 texcoord : TEXCOORD0;
 #ifdef EXTENDED_PARTICLES
 	float2 particledata : TEXCOORD1;
 #endif
 	fixed4 color : COLOR;
+	float2 texcoord : TEXCOORD0;
 };
 
 sampler2D _MainTex;
@@ -27,13 +27,18 @@ float _EmissionSaturation;
 float _OpacitySaturation;
 float _ColorMultiplier;
 
-#ifdef DISSOLVE
-float4 _DissolveStep;
-#endif
-
 #ifdef COLOR_RAMP
 sampler2D _ColorRamp;
 float4 _ColorRamp_ST;
+#endif
+
+#if defined(DISSOLVE_ENABLED) || defined(DISSOLVE_EXTENDED)
+float4 _DissolveStep;
+#endif
+
+#if defined(DISSOLVE_EXTENDED)
+sampler2D _DissolveTex;
+float4 _DissolveTex_ST;
 #endif
 
 #else
@@ -77,10 +82,6 @@ fixed4 frag(v2f i) : COLOR
 	fixed4 tex = tex2D(_MainTex, i.texcoord);
 	fixed4 col;
 
-//#ifdef AUTOMATICPANNING
-//	return fixed4(1.0, 1.0, 0.0, 1.0);
-//#endif
-
 #ifdef EXTENDED_PARTICLES
 
 #ifdef APPLY_RGB_COLOR_VERTEX
@@ -89,12 +90,19 @@ fixed4 frag(v2f i) : COLOR
 	float4 vcolor = float4(1.0, 1.0, 1.0, i.color.w);
 #endif	//APPLY_RGB_COLOR_VERTEX
 
-#ifdef DISSOLVE
+#if defined(DISSOLVE_ENABLED) || defined(DISSOLVE_EXTENDED)
 	float ramp = -1.0 + (i.particledata.x * 2.0);
+
+#if defined(DISSOLVE_EXTENDED)
+	float4 t2 = tex2D(_DissolveTex, i.uv);
+	col.a = clamp(tex.w * smoothstep(_DissolveStep.x, _DissolveStep.y, t2.x + ramp) * _OpacitySaturation * vcolor.w, 0.0, 1.0);
+#else
 	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, tex.b + ramp) * _OpacitySaturation * vcolor.w, 0.0, 1.0);
+#endif
+
 #else
 	col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0);
-#endif	//DISSOLVE
+#endif	//DISSOLVE_ENABLED || DISSOLVE_EXTENDED
 
 	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier, 0.0, 1.0);
 #ifdef BLENDMODE_ALPHABLEND
