@@ -76,7 +76,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 		Reset();
 
-		m_rect = new Rect((Vector2)m_transform.position, Vector2.one * m_hitRadius * 2f);
+		m_rect = new Rect((Vector2)m_transform.position - Vector2.one * m_hitRadius, Vector2.one * m_hitRadius * 2f);
 		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
 
 		FirePropagationManager.Insert(this);
