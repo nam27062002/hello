@@ -1294,8 +1294,78 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_rbody.velocity = m_impulse;
 	}
 
+	private void UpdateSpaceMovement(float _deltaTime)
+	{
+		// impulse direction
+		Vector3 impulse = GameConstants.Vector3.zero;
+		m_controls.GetImpulse(1, ref impulse);
+		if (boostSpeedMultiplier > 1)
+		{
+			if (impulse == GameConstants.Vector3.zero)
+			{
+				impulse = m_directionWhenBoostPressed;
+			}
+			if (m_startingParabolic == false) {
+				m_startingParabolic = true;
+				m_startParabolicPosition.y = m_transform.position.y;
+			}
+		}
+		if (boostSpeedMultiplier <= 1 && m_startingParabolic)
+			m_startingParabolic = false;
 
-    private void UpdateSpaceMovement(float _deltaTime)
+		if ( m_controls.moving )
+			m_directionWhenBoostPressed = impulse;
+
+		// Calculate gravity acceleration
+		Vector3 gravityAcceleration = GameConstants.Vector3.zero;
+		gravityAcceleration = GameConstants.Vector3.down * 9.81f * m_dragonAirGravityModifier;
+		if ( boostSpeedMultiplier <= 1 )
+		{
+			float distance = (m_transform.position.y - 150);
+			if (distance > 0) {
+				gravityAcceleration = gravityAcceleration + (GameConstants.Vector3.down * 9.81f * distance * m_dragonAirExpMultiplier);
+			}
+			if (m_lastSpeed > (absoluteMaxSpeed * 1.0f) && m_direction.y < 0f) gravityAcceleration = GameConstants.Vector3.zero;
+		}
+		impulse.y = 0;
+
+		Vector3 dragonAcceleration = (impulse * m_dragonForce * GetTargetForceMultiplier()) / m_dragonMass;
+		Vector3 acceleration = gravityAcceleration + dragonAcceleration;
+		Vector3 impulseCapped = m_impulse;
+		impulseCapped.y = 0;
+		float impulseMag = impulseCapped.magnitude;
+		m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime);	// drag only on x coordinate
+
+		if ( boostSpeedMultiplier > 1 )	// if boosting push up
+		{
+
+			float distance = (m_transform.position.y - m_startParabolicPosition.y);
+			if (distance >= 1)
+				m_impulse += m_directionWhenBoostPressed * (m_dragonAirBoostForce / distance); //BOOST to player direction
+			else 
+				if (m_directionWhenBoostPressed.y > 0) m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce;
+				else m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce * 1.0f * _deltaTime;
+		}
+
+		m_direction = m_impulse.normalized;
+
+
+		RotateToDirection(m_direction);
+
+		ApplyExternalForce();
+
+		float topMargin = 10.0f;
+		if(m_transform.position.y > (FlightCeiling-topMargin))
+		{
+			float t = 1.0f - Mathf.Clamp01((FlightCeiling - m_transform.position.y) / topMargin);
+			float clamp = Mathf.Lerp(60, 0.0f, t);
+			m_impulse.y = Mathf.Min(m_impulse.y, clamp);
+		}
+
+		m_rbody.velocity = m_impulse;
+	}
+
+/*    private void UpdateSpaceMovement(float _deltaTime)
     {
     	// impulse direction
         Vector3 impulse = GameConstants.Vector3.zero;
@@ -1352,18 +1422,18 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			//TONI
 			float distance = (m_transform.position.y - m_startParabolicPosition.y);
 			if (distance >= 1)
-				m_impulse += GameConstants.Vector3.up * (m_dragonAirBoostForce/distance);
-			else
-				m_impulse += GameConstants.Vector3.up * m_dragonAirBoostForce;
+				//m_impulse += GameConstants.Vector3.up * (m_dragonAirBoostForce/distance); //BOOST to impulse up
+				m_impulse += m_directionWhenBoostPressed * (m_dragonAirBoostForce / distance); //BOOST to player direction
+			else 
+				//m_impulse += GameConstants.Vector3.up * m_dragonAirBoostForce; //BOOST to impulse up
+				m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce;
 			//TONI
         }
 
         m_direction = m_impulse.normalized;
 
-		//TONI
+
 		RotateToDirection(m_direction);
-		//RotateToDirection(m_direction, false, (boostSpeedMultiplier > 1 && (m_transform.position.y - 150) < 20 && (m_transform.position.y - 150) > 0));
-		//RotateToDirection(m_direction, false, boostSpeedMultiplier <= 1 && m_direction.y < 0f);
 
         ApplyExternalForce();
 
@@ -1377,7 +1447,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
         m_rbody.velocity = m_impulse;
     }
-
+*/
 	private void UpdateIdleMovement(float _deltaTime) {
 
 		Vector3 oldDirection = m_direction;
