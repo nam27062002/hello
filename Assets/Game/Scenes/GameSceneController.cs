@@ -340,9 +340,9 @@ public class GameSceneController : GameSceneControllerBase {
 							}
 
 							if ( done )
-							{								
-								PoolManager.Rebuild();
+							{	
 								Messenger.Broadcast(MessengerEvents.GAME_AREA_ENTER);
+								PoolManager.Rebuild();
                                 HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 								m_switchingArea = false;
 							}
