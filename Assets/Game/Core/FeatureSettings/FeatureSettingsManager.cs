@@ -419,7 +419,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return Device_GetSystemMemorySize() >= minMemory;
     }
 
-    public float Device_CalculateRating()
+	public bool Device_SupportedWarning()
+	{
+		bool ret = UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad3Gen;
+		ret = true;
+		return ret;
+	}
+
+	public float Device_CalculateRating()
     {
         //Average the devices RAM, CPU and GPU details to give a rating betwen 0 and 1
         float finalDeviceRating = 0.0f;
