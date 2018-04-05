@@ -564,6 +564,16 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 setExtendedParticles(mat, true);
                 sChanged++;
             }
+            // TransparentDissolve.shader
+            else if (mat.shader.name == "Hungry Dragon/Particles/Transparent Dissolve")
+            {
+                int blendMode = (int)mat.GetFloat("_BlendMode");
+                changeMaterial(mat, shader, (blendMode == 1) ? 0: 3);
+                setExtendedParticles(mat, true);
+                setDissolve(mat, 2);
+                mat.SetFloat("Dissolve", 2);
+                sChanged++;
+            }
 
         }
 
