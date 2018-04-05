@@ -268,7 +268,11 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 mlist.Add(keyWord);
             }
         }
-       
+        if (mat.IsKeywordEnabled("DISSOLVE"))
+        {
+            mlist.Add(validKeyWords[2]);
+        }
+
         mat.shaderKeywords = null;
         setBlendMode(mat, blendMode);
         mat.renderQueue = rQueue;
@@ -579,4 +583,22 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
         Debug.Log(sChanged + " materials changed");
     }
+
+    /// <summary>
+    /// Seek for all oldest particle shaders and replace with current Transparent Particles Standard shader
+    /// </summary>
+    [MenuItem("Tools/Dump material keywords")]
+    public static void DumpMaterialKeywords()
+    {
+        Material mat = Selection.activeObject as Material;
+        if (mat != null)
+        {
+            DebugKeywords(mat);
+        }
+        else
+        {
+            Debug.Log("Selected asset isn't a Material!");
+        }
+    }
+
 }
