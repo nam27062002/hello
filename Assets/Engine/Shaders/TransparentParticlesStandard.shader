@@ -8,6 +8,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		_SaturatedColor("Saturated Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex("Particle Texture", 2D) = "white" {}
 		_ColorRamp("Color Ramp", 2D) = "white" {}
+		_DissolveTex("Dissolve Texture", 2D) = "white" {}
 		_EmissionSaturation("Emission saturation", Range(0.0, 8.0)) = 1.0
 		_OpacitySaturation("Opacity saturation", Range(0.0, 8.0)) = 1.0
 		_ColorMultiplier("Color multiplier", Range(0.0, 8.0)) = 1.0

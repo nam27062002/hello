@@ -42,6 +42,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string saturatedColorText = "Saturated Color";
         readonly public static string mainTexText = "Particle Texture";
         readonly public static string colorRampText = "Color Ramp";
+        readonly public static string dissolveTexText = "Dissolve Texture";
         readonly public static string emissionSaturationText = "Emission Saturation";
         readonly public static string opacitySaturationText = "Opacity Saturation";
         readonly public static string colorMultiplierText = "Color Multiplier";
@@ -78,6 +79,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_saturatedColor;
     MaterialProperty mp_mainTex;
     MaterialProperty mp_colorRamp;
+    MaterialProperty mp_dissolveTex;
     MaterialProperty mp_emissionSaturation;
     MaterialProperty mp_opacitySaturation;
     MaterialProperty mp_colorMultiplier;
@@ -138,6 +140,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_saturatedColor = FindProperty("_SaturatedColor", props);
         mp_mainTex = FindProperty("_MainTex", props);
         mp_colorRamp = FindProperty("_ColorRamp", props);
+        mp_dissolveTex = FindProperty("_DissolveTex", props);
         mp_emissionSaturation = FindProperty("_EmissionSaturation", props);
         mp_opacitySaturation = FindProperty("_OpacitySaturation", props);
         mp_colorMultiplier = FindProperty("_ColorMultiplier", props);
@@ -290,6 +293,22 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             mat.DisableKeyword("EXTENDED_PARTICLES");
         }
     }
+
+    private static string[] dissolveKeywords =
+    {
+        "DISSOLVE_NONE",
+        "DISSOLVE_ENABLED",
+        "DISSOLVE_EXTENDED",
+    };
+
+    private static void setDissolve(Material mat, int dissolve)
+    {
+        mat.DisableKeyword("DISSOLVE_NONE");
+        mat.DisableKeyword("DISSOLVE_ENABLED");
+        mat.DisableKeyword("DISSOLVE_EXTENDED");
+
+        mat.EnableKeyword(dissolveKeywords[dissolve]);
+    }
     /// <summary>
     /// Draw the inspector.
     /// </summary>
@@ -323,9 +342,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         if (blendMode == 4)
         {
             materialEditor.ShaderProperty(mp_alphaBlendOffset, Styles.alphaBlendOffsetText);
-
         }
-
 
         EditorGUI.BeginChangeCheck();
 
@@ -361,7 +378,17 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
             featureSet(mp_enableColorVertex, Styles.enableColorVertexText);
 
-            if (featureSet(mp_enableDissolve, Styles.enableDissolveText))
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
+            m_materialEditor.ShaderProperty(mp_enableDissolve, Styles.enableDissolveText);
+            EditorGUILayout.EndVertical();
+            int dissolve = (int)mp_enableDissolve.floatValue;
+            if (EditorGUI.EndChangeCheck())
+            {
+                setDissolve(material, dissolve);
+            }
+
+            if (dissolve > 0 )
             {
                 Vector4 tem = mp_dissolveStep.vectorValue;
                 Vector2 p1 = new Vector2(tem.x, tem.y);
@@ -374,16 +401,24 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 mp_dissolveStep.vectorValue = tem;
 //                materialEditor.ShaderProperty(mp_dissolveStep, Styles.dissolveStepText);
             }
-            materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
 
-            if (featureSet(mp_enableColorRamp, Styles.enableColorRampText))
+            if (dissolve < 2)
             {
-                materialEditor.ShaderProperty(mp_colorRamp, Styles.colorRampText);
+                materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
+
+                if (featureSet(mp_enableColorRamp, Styles.enableColorRampText))
+                {
+                    materialEditor.ShaderProperty(mp_colorRamp, Styles.colorRampText);
+                }
+                else
+                {
+                    materialEditor.ShaderProperty(mp_basicColor, Styles.basicColorText);
+                    materialEditor.ShaderProperty(mp_saturatedColor, Styles.saturatedColorText);
+                }
             }
             else
             {
-                materialEditor.ShaderProperty(mp_basicColor, Styles.basicColorText);
-                materialEditor.ShaderProperty(mp_saturatedColor, Styles.saturatedColorText);
+                materialEditor.ShaderProperty(mp_dissolveTex, Styles.dissolveTexText);
             }
 
             materialEditor.ShaderProperty(mp_emissionSaturation, Styles.emissionSaturationText);

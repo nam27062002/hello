@@ -44,8 +44,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Premultiply"
 			#pragma multi_compile _ COLOR_RAMP
 			#pragma multi_compile _ APPLY_RGB_COLOR_VERTEX
 			#pragma multi_compile _ AUTOMATICPANNING
-			//			#pragma multi_compile_particles
-
+//
 			#include "UnityCG.cginc"
 			#define EXTENDED_PARTICLES
 			#define BLENDMODE_PREMULTIPLY
@@ -126,7 +125,7 @@ Shader "Hungry Dragon/Particles/Transparent Particles Premultiply"
 #endif
 				return col;
 			}
-*/
+			*/
 			ENDCG
 		}
 	}

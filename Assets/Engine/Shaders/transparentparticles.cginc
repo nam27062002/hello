@@ -1,6 +1,6 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 // Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _LightmapIntensity)
-#pragma exclude_renderers d3d11
+//#pragma exclude_renderers d3d11
 
 struct appdata_t {
 	float4 vertex : POSITION;
@@ -81,7 +81,15 @@ fixed4 frag(v2f i) : COLOR
 {
 	fixed4 tex = tex2D(_MainTex, i.texcoord);
 	fixed4 col;
-
+/*
+#if defined(DISSOLVE_NONE)
+	return fixed4(1.0, 0.0, 0.0, 1.0);
+#elif defined(DISSOLVE_ENABLED)
+	return fixed4(0.0, 1.0, 0.0, 1.0);
+#elif defined(DISSOLVE_EXTENDED)
+	return fixed4(0.0, 0.0, 1.0, 1.0);
+#endif
+*/
 #ifdef EXTENDED_PARTICLES
 
 #ifdef APPLY_RGB_COLOR_VERTEX
@@ -94,7 +102,7 @@ fixed4 frag(v2f i) : COLOR
 	float ramp = -1.0 + (i.particledata.x * 2.0);
 
 #if defined(DISSOLVE_EXTENDED)
-	float4 t2 = tex2D(_DissolveTex, i.uv);
+	float4 t2 = tex2D(_DissolveTex, i.texcoord);
 	col.a = clamp(tex.w * smoothstep(_DissolveStep.x, _DissolveStep.y, t2.x + ramp) * _OpacitySaturation * vcolor.w, 0.0, 1.0);
 #else
 	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, tex.b + ramp) * _OpacitySaturation * vcolor.w, 0.0, 1.0);
@@ -103,6 +111,11 @@ fixed4 frag(v2f i) : COLOR
 #else
 	col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0);
 #endif	//DISSOLVE_ENABLED || DISSOLVE_EXTENDED
+
+
+#if defined(DISSOLVE_EXTENDED)
+	col.xyz = tex.xyz * vcolor.xyz * _EmissionSaturation;
+#else
 
 	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier, 0.0, 1.0);
 #ifdef BLENDMODE_ALPHABLEND
@@ -120,6 +133,8 @@ fixed4 frag(v2f i) : COLOR
 #endif	//COLOR_RAMP
 
 #endif	//BLENDMODE_ALPHABLEND
+
+#endif	// DISSOLVE_EXTENDED
 
 #else	//EXTENDED_PARTICLES
 
