@@ -712,6 +712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_spawnTime: 90
   m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!114 &114547019613662806
 MonoBehaviour:
@@ -814,7 +815,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_disintegrateParticle:
-    name: PS_NewFireExplosion
+    name: 
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -851,5 +852,6 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 1, z: 0}
     scale: 0.5
+  m_useAnimator: 0
   m_boxelSize: 10
   m_hitRadius: 1.5

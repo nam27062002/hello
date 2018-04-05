@@ -285,5 +285,27 @@ public class Transaction
 
         return returnValue;
     }
+
+    public override bool Equals(object obj)
+    {
+        bool returnValue = false;
+        Transaction item = obj as Transaction;
+        if (item != null)
+        {
+            returnValue = item.GetId() == GetId() && item.GetSource() == GetSource() && item.GetResourceTypesAmount() == GetResourceTypesAmount();
+
+            // Checks the currencies
+            if (returnValue)
+            {
+                int count = GetResourceTypesAmount();
+                for (int i = 0; i < count && returnValue; i++)
+                {
+                    returnValue = (m_transactionResources[i].Equals(item.m_transactionResources[i]));
+                }
+            }
+        }
+
+        return returnValue;
+    }
 }
  

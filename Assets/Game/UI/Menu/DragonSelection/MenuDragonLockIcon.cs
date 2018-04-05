@@ -75,7 +75,7 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 		}
 
 		if(!string.IsNullOrEmpty(textToDisplay)) {
-			UIFeedbackText txt = UIFeedbackText.CreateAndLaunch(textToDisplay, new Vector2(0.5f, 0.4f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			UIFeedbackText txt = UIFeedbackText.CreateAndLaunch(textToDisplay, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 			txt.transform.SetLocalPosZ(txt.transform.localPosition.z - 150f);	// Bring it forward so it doesn't conflict with the 3D lock
 			txt.duration = 3f;	// Text is quite long, make it last a bit longer
 		}
