@@ -294,11 +294,8 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_OnExecuteCommandDone(error, null);
     }    
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public override void Ping(ServerCallback callback) {
-		Commands_EnqueueCommand(ECommand.Ping, null, callback);
+    protected override void InternalPing(ServerCallback callback, bool highPriority=false) {
+		Commands_EnqueueCommand(ECommand.Ping, null, callback, highPriority);
 	}
 
 	public override void OnConnectionLost() {
@@ -343,7 +340,7 @@ public class GameServerManagerCalety : GameServerManager {
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
     }
 
-    public override void Auth(ServerCallback callback)
+    protected override void InternalAuth(ServerCallback callback, bool highPriority=false)
     {
         if (callback != null)
         {
@@ -364,7 +361,7 @@ public class GameServerManagerCalety : GameServerManager {
             if (Login_State == ELoginState.NotLoggedIn)
             {
                 Login_State = ELoginState.LoggingIn;
-                Commands_EnqueueCommand(ECommand.Auth, null, Login_OnAuthResponse);
+                Commands_EnqueueCommand(ECommand.Auth, null, Login_OnAuthResponse, highPriority);
             }
         }                
     }
@@ -705,23 +702,24 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallback callback) {
+	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallback callback, bool highPriority=false) {
 		Command cmd = Commands_GetCommand();
-		cmd.Setup(command, parameters, callback);
+		cmd.Setup(command, parameters, callback);       
 
-		// If no command is being processed and the queue is empty then it's run immeditaly
-		if(Commands_CurrentCommand == null && Commands_IsQueueEmpty()) {			
+        // If no command is being processed and the queue is empty then it's run immeditaly
+        if (Commands_CurrentCommand == null && (Commands_IsQueueEmpty() || highPriority)) {			
 			Commands_PrepareToRunCommand(cmd);
 		} else {
-			Commands_Queue.Enqueue(cmd);
+
+            Commands_Queue.Enqueue(cmd);            
 		}       
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	private Command Commands_DequeueCommand() {        
-		return Commands_Queue.Dequeue();                
+	private Command Commands_DequeueCommand() {
+        return Commands_Queue.Dequeue();
 	}
 
 	/// <summary>
@@ -762,6 +760,12 @@ public class GameServerManagerCalety : GameServerManager {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("PrepareToRunCommand " + command.Cmd);
 
+        // If the command requires to be logged to the server and the game is not logged yet then we need to login before sending the command
+        if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn() && m_connectionState != EConnectionState.Recovering)
+        {
+            Connection_SetState(EConnectionState.Down);
+        }
+
         if (FeatureSettingsManager.instance.IsAutomaticReloginEnabled() && m_connectionState == EConnectionState.Down)
         {
             Connection_Recover(onReady);
@@ -785,6 +789,8 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.GlobalEvents_GetRewards:
             case ECommand.GlobalEvents_GetLeadeboard:
             case ECommand.GlobalEvents_RegisterScore:
+            case ECommand.PendingTransactions_Get:
+            case ECommand.PendingTransactions_Confirm:
                 returnValue = true;
                 break;
         }
@@ -1263,7 +1269,7 @@ public class GameServerManagerCalety : GameServerManager {
 		m_CommandsIsEnabled = true;
 	}
 
-		private string Commands_ToString() {
+	private string Commands_ToString() {
 		string str = "COMMANDS QUEUE: ";
 		if (Commands_Queue != null) {
 			Command[] commands = Commands_Queue.ToArray();
@@ -1449,26 +1455,28 @@ public class GameServerManagerCalety : GameServerManager {
 
         Connection_ResetTimer();
 
-        CheckConnection((Error checkError) => {
+        InternalCheckConnection((Error checkError) => {
             if (checkError == null) {
                 // Logs in server
-                Auth((Error error, GameServerManager.ServerResponse response) => {
+                InternalAuth((Error error, GameServerManager.ServerResponse response) => {
                     bool isLoggedInServer = IsLoggedIn();
 
                     // If it's logged in server then tries to sync
-                    if (isLoggedInServer) {
+                    /*if (isLoggedInServer) {
                         PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => {
                             onRecoverDone(isLoggedInServer);
                         }
                         );
                     } else {
                         onRecoverDone(isLoggedInServer);
-                    }
-                });
+                    }*/
+                    onRecoverDone(isLoggedInServer);
+                }, true);
             } else {
                 onRecoverDone(false);
             }
-        }
+        },
+        true
         );
     }     
    
