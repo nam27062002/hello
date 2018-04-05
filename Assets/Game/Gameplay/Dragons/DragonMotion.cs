@@ -1321,7 +1321,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		gravityAcceleration = GameConstants.Vector3.down * 9.81f * m_dragonAirGravityModifier;
 		if ( boostSpeedMultiplier <= 1 )
 		{
-			float distance = (m_transform.position.y - 150);
+			float distance = (m_transform.position.y - SpaceStart);
 			if (distance > 0) {
 				gravityAcceleration = gravityAcceleration + (GameConstants.Vector3.down * 9.81f * distance * m_dragonAirExpMultiplier);
 			}
