@@ -30,6 +30,8 @@ public enum MessengerEvents {
 
 	// Rules and localization
 	LANGUAGE_CHANGED,		// no params
+	FONT_CHANGE_STARTED,	// no params
+	FONT_CHANGE_FINISHED,	// no params
 	DEFINITIONS_LOADED,		// no params
 	GOOGLE_PLAY_STATE_UPDATE,// no params
 	GOOGLE_PLAY_AUTH_FAILED,// no params
@@ -88,7 +90,8 @@ public enum MessengerEvents {
     BREAK_OBJECT_BIGGER_DRAGON, // no params
 	BREAK_OBJECT_NEED_TURBO,	// no params
 	BREAK_OBJECT_SHALL_NOT_PASS,// no params
-    DARK_ZONE_TOGGLE,           // params: bool _enter / _exit
+	BREAK_OBJECT_WITH_FIRE,		// no params
+    DARK_ZONE_TOGGLE,           // params: bool _enter / _exit, CandleEffectTrigger
 
     // Entity events
     ENTITY_EATEN,				// params: Transform _entity, Reward _reward

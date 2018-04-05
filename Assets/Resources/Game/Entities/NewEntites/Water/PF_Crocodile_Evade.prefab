@@ -267,6 +267,9 @@ MonoBehaviour:
     m_orientationSpeed: 360
     m_spawnsInsideWater: 1
     m_faceDirectionFreeFall: 0
+    m_diveTimeRange:
+      min: 0.25
+      max: 0.75
 --- !u!114 &114185850136965936
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -285,7 +288,6 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -319,11 +321,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1.2
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -357,6 +359,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_burpSound: 
   m_canEatEntities: 0
@@ -385,12 +388,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":20,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
   m_databaseKey: PF_Crocodile_Evade
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 7
   m_avoidCollisions: 1
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114374007850489848
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -432,7 +437,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: PS_Dive
     path: Water
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -466,6 +470,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
@@ -474,7 +479,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -508,11 +512,11 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -546,13 +550,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatenAudio: hd_crocodile_dead
   m_firePoints: []
   m_burnParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -586,12 +590,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -625,6 +629,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1

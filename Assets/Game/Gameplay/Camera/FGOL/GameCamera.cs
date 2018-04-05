@@ -53,6 +53,8 @@ public class GameCamera : MonoBehaviour
 
 	// camera-shake
 	private float				m_cameraShake = 0.0f;
+	public bool m_useSmoothDamp = true;
+	public float m_smoothDampValue = 0.25f;
 
 
 	public enum TrackAheadMode
@@ -145,6 +147,7 @@ public class GameCamera : MonoBehaviour
 	
 	private GameObject			m_targetObject = null;			// this is the object we're currently tracking
 	private Transform			m_targetTransform = null;		// this is the target object's cached transform component
+	private Vector3 			m_extraTargetDisplacement = GameConstants.Vector3.zero;
 	private DragonMotion		m_targetMachine = null;			// this is the target object's Machine component, if it has one (can be null)
 	private GameObject			m_queuedTargetObject = null;	// if someone attempts to assign the target on level start before our Awake, queue the request here
 
@@ -297,7 +300,7 @@ public class GameCamera : MonoBehaviour
 
 		m_posFrom = m_posTo = m_transform.position;
 
-		UpdateValues();
+		UpdateValues(m_position);
 		m_hasInitialized = true;
 		
 		// If an attempt was made to assign the target object before this Awake()
@@ -526,7 +529,7 @@ public class GameCamera : MonoBehaviour
 			// m_position = m_targetTransform.position;
 			// m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 
-			UpdateValues();
+			UpdateValues(m_targetMachine.position);
 		}
 
 		m_currentLookAt = m_lookAt = m_position;
@@ -700,6 +703,22 @@ public class GameCamera : MonoBehaviour
 
 		if ( m_introTimer <= 0 ){
 			targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
+			Vector3 vel = GameConstants.Vector3.zero;
+			if ( m_fury )
+			{
+				if ( m_useSmoothDamp )
+					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, ref vel, m_smoothDampValue);
+				else
+					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, Time.deltaTime * 2);
+			}
+			else
+			{
+				if ( m_useSmoothDamp )
+					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, GameConstants.Vector3.zero, ref vel, m_smoothDampValue);
+				else
+					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
+			}
+			targetPosition += m_extraTargetDisplacement;
 			UpdateTrackAheadVector(m_targetMachine);
 		}else{
 			m_introTimer -= Time.deltaTime;
@@ -760,6 +779,7 @@ public class GameCamera : MonoBehaviour
 			{
 				m_rotateLerpTimer = 0.0f;
 			}
+
         }
 
 		float frameWidth = m_frameWidthDefault;
@@ -803,7 +823,7 @@ public class GameCamera : MonoBehaviour
 
 
 		UpdateCameraShake();
-		UpdateValues();
+		UpdateValues(targetPosition);
 
 		m_snap = false;
 		m_firstTime = false;
@@ -1088,8 +1108,9 @@ public class GameCamera : MonoBehaviour
 		float trackAheadRangeX = m_screenWorldBounds.w * m_maxTrackAheadScaleX;	// todo: have maxTrackAheadScale account for size of target?
 		float trackAheadRangeY = m_screenWorldBounds.h * m_maxTrackAheadScaleY;
 		float trackBlendRate = trackAheadRangeX * m_trackBlendRate;
+
 		Vector3 desiredTrackAhead = machine.velocity / machine.absoluteMaxSpeed;
-		//UnityEngine.Debug.Log(desiredTrackAhead);
+
 		desiredTrackAhead.x *= trackAheadRangeX;
 		desiredTrackAhead.y *= trackAheadRangeY;
 		if(m_snap)
@@ -1162,7 +1183,7 @@ public class GameCamera : MonoBehaviour
 
 	// This should be called after all camera movement/zooming logic has finished, to set the final position, culling bounds etc.
 	// from m_position and m_fov.
-	private void UpdateValues()
+	private void UpdateValues( Vector3 targetPosition )
 	{
 		m_transform.position = m_position;
 		if ( Time.timeScale > 0 )
@@ -1171,7 +1192,8 @@ public class GameCamera : MonoBehaviour
 		if((m_targetTransform != null) && !PlayingIntro())
 		{
 			Vector3 targetTrackAhead = m_trackAheadVector * m_trackAheadScale;
-			Vector3 targetTrackPos =  m_targetTransform.position + targetTrackAhead;
+			Vector3 targetTrackPos =  targetPosition + targetTrackAhead;
+			targetTrackPos.z = 0;
 
 			if(m_isLerpingBetweenTargets)
 			{

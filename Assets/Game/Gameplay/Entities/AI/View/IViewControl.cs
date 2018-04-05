@@ -6,4 +6,6 @@ public interface IViewControl {
 	void PreDisable();
 
 	void Spawn(ISpawner _spawner);
+
+	void ForceGolden();
 }

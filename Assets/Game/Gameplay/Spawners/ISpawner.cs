@@ -16,6 +16,7 @@ public interface ISpawner : IQuadTreeItem {
 	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
 	void ForceRemoveEntities();
     void ForceReset(); // Used for debug purpose    
+    void ForceGolden( IEntity entity );
     
 	void DrawStateGizmos();
 

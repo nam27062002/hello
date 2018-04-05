@@ -24,6 +24,27 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 {
     private DeviceQualityManager m_deviceQualityManager;
 
+    public static DeviceQualityManager deviceQualityManager
+    {
+        get
+        {
+            return instance.m_deviceQualityManager;
+        }
+    }
+
+#if FREQFORMULA
+    private static string m_qualityFormulaVersion = "2.0";
+#else
+    private static string m_qualityFormulaVersion = "1.0";
+#endif
+    public static string QualityFormulaVersion
+    {
+        get
+        {
+            return m_qualityFormulaVersion;
+        }
+    }
+
     private bool m_isReady;
 
     public static float m_OriginalScreenWidth = Screen.width;
@@ -379,6 +400,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return SystemInfo.graphicsMemorySize;
     }
 
+    public int Device_GetProcessorFrequency()
+    {
+        return SystemInfo.processorFrequency;
+    }
+
     public string Device_Model { get; set; }
 
     /// <summary>
@@ -393,7 +419,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return Device_GetSystemMemorySize() >= minMemory;
     }
 
-    private float Device_CalculateRating()
+    public float Device_CalculateRating()
     {
         //Average the devices RAM, CPU and GPU details to give a rating betwen 0 and 1
         float finalDeviceRating = 0.0f;
@@ -1545,12 +1571,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     
     public bool IsAutomaticReloginEnabled()
     {        
-        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
     }
     
     public int GetAutomaticReloginPeriod()
     {     
-        return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
+        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
     }
     #endregion
 

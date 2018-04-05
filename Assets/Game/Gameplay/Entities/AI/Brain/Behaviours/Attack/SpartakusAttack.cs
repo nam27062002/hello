@@ -64,7 +64,6 @@ namespace AI {
 				m_animEvents.onDizzyRecover  += new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);
 
 				m_pilot.PressAction(Pilot.Action.Attack);
-				m_machine.SetSignal(Signals.Type.InvulnerableBite, true);
 
 				if (m_attacksLeft <= 0) 
 					m_attacksLeft = m_data.consecutiveAttacks;
@@ -109,6 +108,8 @@ namespace AI {
 
 			private void StartAttack() {
 				m_pilot.PressAction(Pilot.Action.Jump);
+
+				m_machine.SetSignal(Signals.Type.InvulnerableBite, true);
 
 				m_attacksLeft--;
 

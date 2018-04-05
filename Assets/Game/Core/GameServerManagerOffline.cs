@@ -75,7 +75,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// 
 	/// </summary>
 	/// <param name="_callback">Action called once the server response arrives.</param>
-	override public void Ping(ServerCallback _callback) {
+	override protected void InternalPing(ServerCallback _callback, bool highPriority=false) {
 		// No response
 		DelayedCall(() => _callback(null, null));
 	}
@@ -190,10 +190,55 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		return TimeUtils.DateToTimestamp(_startDate.AddDays(7)).ToString(JSON_FORMAT); // Lasts 7 days
 	}
 
-	//------------------------------------------------------------------------//
-	// GLOBAL EVENTS														  //
-	//------------------------------------------------------------------------//
-	override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
+    public override void GetPendingTransactions(ServerCallback _callback) {
+        // JSON response
+        SimpleJSON.JSONArray _array = new SimpleJSON.JSONArray();
+
+        // T1: pc:1
+        SimpleJSON.JSONNode _transaction = new SimpleJSON.JSONClass();
+        _transaction["order_id"] = "1";
+        _transaction["source"] = "support";
+        _transaction["hc"] = 1;        
+        _array.Add(null, _transaction);
+
+        // T2: sc:100 
+        _transaction = new SimpleJSON.JSONClass();
+        _transaction["order_id"] = "1";
+        _transaction["source"] = "support";        
+        _transaction["sc"] = 100000;
+        _array.Add(null, _transaction);        
+
+        SimpleJSON.JSONNode _json = new SimpleJSON.JSONClass();
+        _json["txs"] = _array;
+
+        // Server response
+        ServerResponse res = new ServerResponse();
+        res["response"] = _json.ToString();
+
+        DelayedCall(() => _callback(null, res), 5f);
+    }
+
+    protected override void DoConfirmPendingTransactions(List<Transaction> _transactions, ServerCallback _callback) {
+
+        // Success
+        ServerResponse res = GetConfirmPendingTransactionsResponse(_transactions);
+        DelayedCall(() => _callback(null, res), 5f);
+
+        // Error
+        //ServerResponse res = GetConfirmPendingTransactionsResponse(_transactions, 77);
+        //DelayedCall(() => _callback(null, res), 5f);
+
+        // Internal Error
+        //Error error = error = GetLogicServerInternalError(77);
+        // Connection Error
+        //Error error = error = new ClientConnectionError("Status code: " + -1);
+        //DelayedCall(() => _callback(error, null), 5f);
+    }
+
+    //------------------------------------------------------------------------//
+    // GLOBAL EVENTS														  //
+    //------------------------------------------------------------------------//
+    override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		ServerResponse res = new ServerResponse();
 
 		// Check debug settings

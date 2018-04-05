@@ -54,8 +54,7 @@ GameObject:
   - component: {fileID: 114380405714978822}
   - component: {fileID: 114947380596267484}
   - component: {fileID: 54037777246095102}
-  - component: {fileID: 136793907546751736}
-  - component: {fileID: 136156041293190920}
+  - component: {fileID: 135327214818918328}
   m_Layer: 25
   m_Name: PF_CatapultSheep
   m_TagString: Untagged
@@ -515,7 +514,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1158475915581136}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -146.41963, y: 8.13199, z: -0.01}
+  m_LocalPosition: {x: -24.9, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4970188233702686}
@@ -826,6 +825,7 @@ MonoBehaviour:
   m_maxTime: 30
   m_scaleTime: 0.5
   m_stopAtTarget: 0
+  m_dieOutsideFrustum: 1
   m_defaultDamage: 75
   m_damageType: 0
   m_radius: 0
@@ -835,9 +835,9 @@ MonoBehaviour:
   m_onAttachParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -868,13 +868,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onChargeParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -905,13 +906,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onHitParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -942,13 +944,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_onEatParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -979,6 +982,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_missHitSpawnsParticle: 1
   m_stickOnDragonTime: 0
@@ -998,8 +1002,8 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 2.3632088
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!136 &136156041293190920
-CapsuleCollider:
+--- !u!135 &135327214818918328
+SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1007,23 +1011,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.74
-  m_Height: 2.03
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: -0.51}
---- !u!136 &136793907546751736
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1158475915581136}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.74
-  m_Height: 2.19
-  m_Direction: 0
-  m_Center: {x: 0, y: 0, z: -0.57}
+  serializedVersion: 2
+  m_Radius: 0.98
+  m_Center: {x: 0, y: 0, z: -0.46}
 --- !u!137 &137819518653702650
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

@@ -17,6 +17,7 @@ namespace AI {
 
 			private HomeData m_data;
 			private bool m_alertRestoreValue;
+			private Group m_group;
 
 
 			public override StateComponentData CreateData() {
@@ -36,6 +37,8 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Alert, false);
 				m_pilot.SetMoveSpeed(m_data.speed);
 				m_pilot.SlowDown(true);
+
+				m_group = m_machine.GetGroup();
 			}
 
 			protected override void OnExit(State _newState) {
@@ -44,6 +47,11 @@ namespace AI {
 
 			protected override void OnUpdate() {
 				m_pilot.GoTo(m_pilot.homePosition);
+
+				float deltaSqr = 2f * 2f;
+				if (m_group != null) {
+					deltaSqr *= 2f;
+				}
 
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
 				if (dSqr < 2f * 2f) {

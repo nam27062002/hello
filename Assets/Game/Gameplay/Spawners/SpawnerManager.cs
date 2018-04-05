@@ -436,6 +436,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
                     m_spawnersTreeFar.Remove(_spawner);
                 }
             }
+
+			m_spawning.Remove(_spawner);
+			m_spawningPeriodicallyWhileActive.Remove(_spawner);
+			m_activeMustCheckCameraBounds.Remove(_spawner);
         }
 	}
 

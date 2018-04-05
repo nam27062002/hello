@@ -13,6 +13,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_SecondTexture("Second Texture (RGB)", 2D) = "white" {}
 		_Panning("Panning", Vector) = (0,0,0,0)
 
+		_Tint("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_NormalStrength("Normal Strength", Range(0.1, 5.0)) = 1.0
 		_SpecularPower("Specular Power", float) = 3
@@ -51,6 +53,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[KeywordEnum(None, Overlay, Additive, Modulate)] VertexColor("Vertex color mode", Float) = 0
 //		[KeywordEnum(None, Blink, Reflective, LightmapContrast)] Emissive("Emission type", Float) = 0
 		[KeywordEnum(None, Blink, Reflective)] Emissive("Emission type", Float) = 0
+		[KeywordEnum(Texture, Color)] MainColor("Main color", Float) = 0.0
 /*
 		0.	Zero				Blend factor is(0, 0, 0, 0).
 		1.	One					Blend factor is(1, 1, 1, 1).
@@ -100,6 +103,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 			
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
+				#pragma shader_feature MAINCOLOR_TEXTURE MAINCOLOR_COLOR
 
 				#pragma multi_compile __ LIGHTMAP_ON
 				#pragma multi_compile __ FORCE_LIGHTMAP
