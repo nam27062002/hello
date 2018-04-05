@@ -421,7 +421,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
 	public bool Device_SupportedWarning()
 	{
-		bool ret = UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad3Gen;
+		bool ret = false;
+		#if UNITY_IOS
+		ret = UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad3Gen;
+		#endif
 		return ret;
 	}
 
