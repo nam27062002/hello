@@ -153,15 +153,6 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 
 	public bool CanRespawn() {
 		if (m_state == State.Idle) {
-			// lets find the spline
-			if (m_railSpline == null) {
-				m_railSpline = RailManager.GetRailByName(m_railName);
-				if (m_railSpline == null) {
-					Destroy(gameObject);
-					return false;
-				}
-			}
-
 			if (m_respawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				if (!m_camera.IsInsideActivationMaxArea(area.bounds)) {
 					Destroy(gameObject);
@@ -182,7 +173,6 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 		m_state = State.Respawning;
 
 		if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 			Spawn();
 		}
 
@@ -191,9 +181,11 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 	}
 		
 	private void Spawn() {
-		// drop a Wagon
-		int index = GetPrefabIndex();
+		if (m_currentEntity != null) {
+			m_currentEntity.Disable(false);
+		}
 
+		int index = GetPrefabIndex();
 		PoolHandler handler = m_poolHandlers[index];
 		GameObject spawning = handler.GetInstance(true);
 
@@ -202,6 +194,11 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 			spawningTransform.rotation = Quaternion.identity;
 			spawningTransform.localRotation = Quaternion.identity;
 			spawningTransform.localScale = Vector3.one;
+			spawningTransform.position = transform.position;
+
+			if (!spawning.activeSelf) {
+				spawning.SetActive(true);
+			}
 
 			IEntity entity = spawning.GetComponent<IEntity>();
 			if (entity != null) {
@@ -210,8 +207,7 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 			}
 
 			AI.MachineWagon machine = spawning.GetComponent<AI.MachineWagon>();
-			if (machine != null) { 
-				machine.SetRails(m_railSpline);
+			if (machine != null) {
 				machine.Spawn(this); 
 			}
 
@@ -231,55 +227,40 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 				SpawnerManager.AddToTotalLogicUnits(1, m_entityPrefabList[index].name);
 			}
 
-			m_wagonList.Add(entity);
-			m_poolHandlerIndex.Add(index);
+			m_currentEntity = entity;
+			m_currentPoolHandlerIndex = index;
 		}
 	}
 
-	private int GetPrefabIndex() {
-		int i = 0;
-		float rand = Random.Range(0f, 100f);
-		float prob = 0;
-
-		for (i = 0; i < m_entityPrefabList.Length - 1; i++) {
-			prob += m_entityPrefabList[i].chance;
-
-			if (rand <= prob) {
-				break;
-			} 
-
-			rand -= prob;
-		}
-
-		return i;
-	}
+	private int GetPrefabIndex() { return (m_currentPoolHandlerIndex + 1) % m_entityPrefabList.Length; }
 
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
-		int index = -1;
-		for (int i = 0; i < m_wagonList.Count && index == -1; ++i) {
-			if (m_wagonList[i].gameObject == _entity) {
-				index = i;                                                
-			}
-		}
 
-		if (index > -1) {
-			PoolHandler handler = m_poolHandlers[m_poolHandlerIndex[index]];
+		if (m_currentEntity != null && m_currentEntity.gameObject == _entity) {			
 			if (ProfilerSettingsManager.ENABLED) {               
-				SpawnerManager.RemoveFromTotalLogicUnits(1, m_entityPrefabList[m_poolHandlerIndex[index]].name);
+				SpawnerManager.RemoveFromTotalLogicUnits(1, m_entityPrefabList[m_currentPoolHandlerIndex].name);
 			}
 
 			// Unregisters the entity
-			EntityManager.instance.UnregisterEntity(m_wagonList[index] as Entity);
+			EntityManager.instance.UnregisterEntity(m_currentEntity as Entity);
 
 			// Returns the entity to the pool
-			handler.ReturnInstance(m_wagonList[index].gameObject);
+			m_poolHandlers[m_currentPoolHandlerIndex].ReturnInstance(m_currentEntity.gameObject);
 
-			m_wagonList.RemoveAt(index);
-			m_poolHandlerIndex.RemoveAt(index);
+			m_currentEntity = null;
+			m_currentPoolHandlerIndex = -1;
+		}
+
+		if (_killedByPlayer) {
+			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+		} else {
+			m_respawnTime = m_gameSceneController.elapsedSeconds + m_rouletteChangeTime;
 		}
 	}
 
 	public void ForceRemoveEntities() {
+		RemoveEntity(m_currentEntity.gameObject, false);
+		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 		m_state = State.Idle;
 	}
 
