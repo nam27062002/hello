@@ -55,13 +55,13 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma fragment frag
 
 				#pragma shader_feature _ EMISSIVEPOWER
+				#pragma shader_feature _ AUTOMATICPANNING
+				#pragma shader_feature _ EXTENDED_PARTICLES
 				#pragma shader_feature _ DISSOLVE
 				#pragma shader_feature _ COLOR_RAMP
 				#pragma shader_feature _ APPLY_RGB_COLOR_VERTEX
-				#pragma shader_feature _ AUTOMATICPANNING
 				#pragma shader_feature BLENDMODE_ADDITIVE BLENDMODE_SOFTADDITIVE BLENDMODE_ADDITIVEDOUBLE BLENDMODE_ALPHABLEND BLENDMODE_ADDITIVEALPHABLEND BLENDMODE_PREMULTIPLY
 				#pragma shader_feature DISSOLVE_NONE DISSOLVE_ENABLED DISSOLVE_EXTENDED
-				#pragma shader_feature _ EXTENDED_PARTICLES
 
 				#include "UnityCG.cginc"
 				#include "transparentparticles.cginc"

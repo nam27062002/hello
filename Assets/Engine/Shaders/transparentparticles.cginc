@@ -10,11 +10,11 @@ struct appdata_t {
 
 struct v2f {
 	float4 vertex : SV_POSITION;
+	fixed4 color : COLOR;
+	float2 texcoord : TEXCOORD0;
 #ifdef EXTENDED_PARTICLES
 	float2 particledata : TEXCOORD1;
 #endif
-	fixed4 color : COLOR;
-	float2 texcoord : TEXCOORD0;
 };
 
 sampler2D _MainTex;
@@ -82,6 +82,7 @@ fixed4 frag(v2f i) : COLOR
 	fixed4 tex = tex2D(_MainTex, i.texcoord);
 	fixed4 col;
 /*
+///////////// Debug
 #if defined(DISSOLVE_NONE)
 	return fixed4(1.0, 0.0, 0.0, 1.0);
 #elif defined(DISSOLVE_ENABLED)
