@@ -8,7 +8,7 @@ public class ParticleDataPlace : MonoBehaviour {
 	private ParticleHandler m_handler;
 	private GameObject m_particleInstance = null;
 
-	void Start()
+	public void Init()
 	{
 		m_handler = ParticleManager.CreatePool(m_particle);
 	}
