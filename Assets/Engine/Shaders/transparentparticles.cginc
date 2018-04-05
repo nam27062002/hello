@@ -147,11 +147,13 @@ fixed4 frag(v2f i) : COLOR
 #else	//BLENDMODE_ADDITIVEALPHABLEND
 
 	col = i.color * tex;
+
+	col *= _TintColor;
+
 #ifdef EMISSIVEPOWER
 	col *= _EmissivePower;
 #endif	//EMISSIVEPOWER
 
-	col *= _TintColor;
 
 #if defined(BLENDMODE_SOFTADDITIVE)
 	col.rgb *= col.a;

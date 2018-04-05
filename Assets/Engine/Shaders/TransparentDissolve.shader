@@ -31,7 +31,11 @@ Shader "Hungry Dragon/Particles/Transparent Dissolve"
 				#pragma fragment frag
 
 				#include "UnityCG.cginc"
+				#define EXTENDED_PARTICLES
+				#define DISSOLVE_EXTENDED
+				#include "transparentparticles.cginc"
 
+/*
 				sampler2D _MainTex;
 				float4 _MainTex_ST;
 				sampler2D _DissolveTex;
@@ -74,7 +78,7 @@ Shader "Hungry Dragon/Particles/Transparent Dissolve"
 
 					return col;
 				}
-
+				*/
 				ENDCG
 			}
 		}

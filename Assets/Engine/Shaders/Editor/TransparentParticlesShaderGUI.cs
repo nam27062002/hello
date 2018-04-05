@@ -344,26 +344,31 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_alphaBlendOffset, Styles.alphaBlendOffsetText);
         }
 
-        EditorGUI.BeginChangeCheck();
+/*
+        bool isExtended = mp_enableExtendedParticles.floatValue > 0.5f ? true : false;
 
         EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(Styles.particlesText, GUILayout.Width(70));
+//        if (GUILayout.Button(Styles.standardParticlesText, editorSkin.customStyles[isExtended ? 2: 0]))
         if (GUILayout.Button(Styles.standardParticlesText))
         {
-            setExtendedParticles(material, false);
+                setExtendedParticles(material, false);
+            isExtended = false;
         }
+//        if (GUILayout.Button(Styles.extendedParticlesText, editorSkin.customStyles[isExtended ? 0 : 2]))
         if (GUILayout.Button(Styles.extendedParticlesText))
         {
-            setExtendedParticles(material, true);
+                setExtendedParticles(material, true);
+            isExtended = true;
         }
         //        m_materialEditor.ShaderProperty(feature, label);
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
+*/
+        if(featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText))
 
-//        featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText);
-
-        if (mp_enableExtendedParticles.floatValue > 0.5f)
+//        if (isExtended)
         {
             materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
             if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
@@ -404,7 +409,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
             if (dissolve < 2)
             {
-                materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
 
                 if (featureSet(mp_enableColorRamp, Styles.enableColorRampText))
                 {
@@ -421,6 +425,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 materialEditor.ShaderProperty(mp_dissolveTex, Styles.dissolveTexText);
             }
 
+            materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
             materialEditor.ShaderProperty(mp_emissionSaturation, Styles.emissionSaturationText);
         }
         else
@@ -465,147 +470,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             DebugKeywords(material);
         }
 
-
-        /*
-                EditorGUI.BeginChangeCheck();
-                EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
-                materialEditor.ShaderProperty(mp_BlendMode, Styles.blendModeText);
-                EditorGUILayout.EndVertical();
-
-                int blendMode = (int)mp_BlendMode.floatValue;
-                if (EditorGUI.EndChangeCheck())
-                {
-                    mp_DoubleSided.floatValue = blendMode == 0 ? 0.0f : 1.0f;
-                    setBlendMode(material, blendMode);
-                }
-                if (blendMode == 2)
-                {
-                    materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
-                }
-
-                Vector4 tem = mp_Panning.vectorValue;
-                Vector2 p1 = new Vector2(tem.x, tem.y);
-
-                featureSet(mp_MainColor, Styles.mainColorText);
-                if (mp_MainColor.floatValue == 0.0f)
-                {
-                    materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
-                    materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
-
-                    p1 = EditorGUILayout.Vector2Field("Panning:", p1);
-                    tem.x = p1.x;
-                    tem.y = p1.y;
-
-
-                    bool normalMap = mp_normalTexture.textureValue != null as Texture;
-
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        SetKeyword(material, kw_normalmap, normalMap);
-                        EditorUtility.SetDirty(material);
-                        Debug.Log("EnableNormalMap " + (normalMap));
-                        //            DebugKeywords(material);
-                    }
-
-
-                    if (normalMap)
-                    {
-                        materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
-                    }
-                }
-                else
-                {
-                    materialEditor.ShaderProperty(mp_Color, Styles.colorText);
-                }
-
-                EditorGUI.BeginChangeCheck();
-
-                if (featureSet(mp_EnableBlendTexture, Styles.enableBlendTextureText))
-                {
-                    materialEditor.TextureProperty(mp_blendTexture, Styles.blendTextureText);
-                    p1.Set(tem.z, tem.w);
-                    p1 = EditorGUILayout.Vector2Field("Panning:", p1);
-                    tem.z = p1.x;
-                    tem.w = p1.y;
-
-                    materialEditor.ShaderProperty(mp_EnableAdditiveBlend, Styles.additiveBlendingText);
-                    materialEditor.ShaderProperty(mp_EnableAutomaticBlend, Styles.automaticBlendingText);
-                }
-
-
-                mp_Panning.vectorValue = tem;
-
-                if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
-                {
-                    materialEditor.ShaderProperty(mp_specularPower, Styles.specularPowerText);
-        //            RotationDrawer.setColor(mp_secondLightColor.colorValue);
-        //            RotationDrawer.setTargetPoint(mp_specularDirection.vectorValue.x, mp_specularDirection.vectorValue.y);
-                    RotationDrawer.setSpecularPow(mp_specularPower.floatValue);
-
-                    materialEditor.ShaderProperty(mp_specularDirection, Styles.specularDirText);
-                }
-
-                featureSet(mp_EnableFog, Styles.enableFogText);
-
-                featureSet(mp_VertexcolorMode, Styles.vertexColorModeText);
-                featureSet(mp_EmissionType, Styles.emissionTypeText);
-
-        //        if (featureSet(mp_EnableEmissiveBlink, Styles.enableEmissiveBlink))
-                switch((int)mp_EmissionType.floatValue)
-                {
-                    case 0:         //Emission none
-                    default:
-                        break;
-
-                    case 1:         //Emission blink
-                        materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
-                        materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
-                        break;
-
-                    case 2:         //Emission reflective
-                        materialEditor.ShaderProperty(mp_reflectionMap, Styles.reflectionMapText);
-        //                materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
-                        materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
-                        EditorGUILayout.HelpBox(Styles.reflectionAdviceText, MessageType.Info);                
-                        break;
-
-                    case 3:         //Lightmap contrast
-                        materialEditor.ShaderProperty(mp_lightmapContrastIntensity, Styles.lightmapContrastIntensityText);
-                        materialEditor.ShaderProperty(mp_lightmapContrastMargin, Styles.lightmapContrastMarginText);
-                        materialEditor.ShaderProperty(mp_lightmapContrastPhase, Styles.lightmapContrastPhaseText);
-
-                        break;
-
-                }
-                if (mp_BlendMode.floatValue == 0.0f)
-                {
-
-                    EditorGUI.BeginChangeCheck();
-                    EditorGUILayout.BeginVertical(editorSkin.customStyles[0]);
-                    materialEditor.ShaderProperty(mp_DoubleSided, Styles.cullModeText);
-                    EditorGUILayout.EndVertical();
-
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        material.SetFloat("_Cull", mp_DoubleSided.floatValue == 1.0f ? (float)UnityEngine.Rendering.CullMode.Off : (float)UnityEngine.Rendering.CullMode.Back);
-                    }
-
-                    if (mp_Cull.floatValue == (float)UnityEngine.Rendering.CullMode.Off)
-                    {
-                        EditorGUILayout.HelpBox(Styles.cullWarningText, MessageType.Warning);
-                    }
-                }
-
-
-                EditorGUILayout.BeginHorizontal(editorSkin.customStyles[0]);
-                EditorGUILayout.LabelField(Styles.renderQueueText);
-                int renderQueue = EditorGUILayout.IntField(material.renderQueue);
-                if (material.renderQueue !=  renderQueue)
-                {
-                    material.renderQueue = renderQueue;
-                }
-                EditorGUILayout.EndHorizontal();
-        */
     }
 
     static void DebugKeywords(Material mat)
@@ -704,301 +568,5 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         }
 
         Debug.Log(sChanged + " materials changed");
-    }
-
-    /// <summary>
-    /// Seek for all transparent scenary standard materials and disable keyword OPAQUEALPHA
-    /// </summary>
-    [MenuItem("Tools/Scenary/Seek for additive blending materials")]
-    public static void SeekAdditiveBlending()
-    {
-        Debug.Log("Obtaining material list");
-
-        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
-
-        Material[] materialList;
-        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
-
-        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
-
-        int sChanged = 0;
-
-        for (int c = 0; c < materialList.Length; c++)
-        {
-            Material mat = materialList[c];
-
-//            if (mat.shader.name == "Hungry Dragon/Scenary/Scenary Standard")
-            if (mat.shader == shader)
-            {
-                if (mat.IsKeywordEnabled("ADDITIVE_BLEND"))
-                {
-                    Debug.Log("Material name:" + mat.name);
-                    sChanged++;
-                }
-            }
-        }
-
-        Debug.Log(sChanged + " materials changed");
-    }
-
-    /// <summary>
-    /// Seek for old scenary shaders and change by new scenary standard material
-    /// </summary>
-    [MenuItem("Tools/Scenary/Replace old scenary shaders")]
-    public static void ReplaceOldScenaryShaders()
-    {
-        Debug.Log("Obtaining material list");
-
-        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
-
-        Material[] materialList;
-        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
-
-        Shader shader = Shader.Find("Hungry Dragon/Scenary/Scenary Standard");
-
-        int sChanged = 0;
-
-        for (int c = 0; c < materialList.Length; c++)
-        {
-            Material mat = materialList[c];
-
-            // UnlitShadowLightmap.shader
-            if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // UnlitShadowLightmapDarken.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Darken")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // UnlitShadowLightmapEmissive.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Emissive blink")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableEmissiveBlink", 1.0f);
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-                mat.EnableKeyword("EMISSIVEBLINK");
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // UnlitShadowLightmapNormal.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Normal Map")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableSpecular", 1.0f);
-                mat.SetFloat("_SpecularPower", 20.0f);
-                mat.SetFloat("_EnableNormalMap", 1.0f);
-                mat.SetFloat("_NormalStrength", 1.0f);
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-
-                mat.EnableKeyword("NORMALMAP");
-                mat.EnableKeyword("SPECULAR");
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // UnlitShadowLightmapCutoff.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + LightMap + AlphaCutoff (cutoff vegetation)")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableCutoff", 1.0f);
-                mat.SetFloat("_Cutoff", 0.5f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("CUTOFF");
-
-                EditorUtility.SetDirty(mat);
-
-                setBlendMode(mat, 2);   //Cutoff
-                Debug.Log("Cutoff: " + mat.name);
-                sChanged++;
-            }
-            // UnlitShadowLightmapVColorMultiply.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Vertex Color Multiply")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("VertexColor", 3.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("VERTEXCOLOR_MODULATE");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // AutomaticTextureBlending.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("_EnableBlendTexture", 1.0f);
-                mat.SetFloat("_EnableAutomaticBlend", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("BLEND_TEXTURE");
-                mat.EnableKeyword("CUSTOM_VERTEXCOLOR");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // AutomaticTextureBlendingDarken.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Automatic Texture Blending + Lightmap + Darken")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("_EnableBlendTexture", 1.0f);
-                mat.SetFloat("_EnableAutomaticBlend", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("BLEND_TEXTURE");
-                mat.EnableKeyword("CUSTOM_VERTEXCOLOR");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // TextureBlendingBasic.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("_EnableBlendTexture", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("BLEND_TEXTURE");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // TextureBlendingAdditive.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Additive")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("_EnableBlendTexture", 1.0f);
-                mat.SetFloat("VertexColor", 2.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("BLEND_TEXTURE");
-                mat.EnableKeyword("VERTEXCOLOR_ADDITIVE");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // TextureBlendingDarken.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Darken")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("_EnableBlendTexture", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("BLEND_TEXTURE");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // TextureBlendingNormal.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay + Normal Map")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableSpecular", 1.0f);
-                mat.SetFloat("_SpecularPower", 20.0f);
-                mat.SetFloat("_EnableNormalMap", 1.0f);
-                mat.SetFloat("_NormalStrength", 1.0f);
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("VertexColor", 1.0f);
-
-                mat.EnableKeyword("NORMALMAP");
-                mat.EnableKeyword("SPECULAR");
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("VERTEXCOLOR_OVERLAY");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // TextureBlendingOverlay.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Texture Blending + Lightmap + Vertex Color Overlay")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-                mat.SetFloat("_EnableOpaqueAlpha", 1.0f);
-                mat.SetFloat("_EnableBlendTexture", 1.0f);
-                mat.SetFloat("VertexColor", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                mat.EnableKeyword("OPAQUEALPHA");
-                mat.EnableKeyword("BLEND_TEXTURE");
-                mat.EnableKeyword("VERTEXCOLOR_OVERLAY");
-
-                setBlendMode(mat, 0);   //Opaque
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-            // UnlitShadowLightmapTransparent.shader
-            else if (mat.shader.name == "Hungry Dragon/Scenary/Diffuse + Lightmap + Transparent (On Line Decorations)")
-            {
-                mat.shader = shader;
-                mat.SetFloat("_EnableFog", 1.0f);
-
-                mat.EnableKeyword("FOG");
-                //                mat.EnableKeyword("CUTOFF");
-
-                setBlendMode(mat, 1);   //Transparent
-                EditorUtility.SetDirty(mat);
-                sChanged++;
-            }
-        }
-        Debug.Log(sChanged + " materials changed.");
     }
 }
