@@ -993,12 +993,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             Device_CurrentFeatureSettings.OverrideFromJSON(serverGameSettingsJSON);
         }        
 
-        ApplyCurrentFeatureSetting();
+        ApplyCurrentFeatureSetting(false);
     }
 
     public void RecalculateAndApplyProfile()
     {
         SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null, null);
+        AdjustScreenResolution(Device_CurrentFeatureSettings);
     }
 
     public void RestoreCurrentFeatureSettingsToDevice()
@@ -1014,9 +1015,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return new FeatureSettings();
     }
 
-    public void ApplyCurrentFeatureSetting()
+    public void ApplyCurrentFeatureSetting(bool resolution)
     {
         ApplyFeatureSetting(Device_CurrentFeatureSettings);
+
+        if (resolution)
+        {
+            AdjustScreenResolution(Device_CurrentFeatureSettings);
+        }
 
         //JSONNode json = Device_CurrentFeatureSettings.ToJSON();
         //Debug.Log(json);
@@ -1024,8 +1030,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private int CurrentQualityIndex { get; set; }	   
 
-
-    private void AdjustScreenResolution(FeatureSettings settings)
+    public void AdjustScreenResolution(FeatureSettings settings)
     {
         float resolutionFactor = settings.GetValueAsFloat(FeatureSettings.KEY_RESOLUTION_FACTOR);
 
@@ -1083,7 +1088,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         Screen.SetResolution(width, height, true);
 */
-        AdjustScreenResolution(settings);
+//        AdjustScreenResolution(settings);
 
         Log("Device Rating:" + settings.Rating);
         Log("Profile:" + settings.Profile);

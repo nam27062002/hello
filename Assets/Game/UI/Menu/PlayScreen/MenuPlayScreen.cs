@@ -35,6 +35,8 @@ public class MenuPlayScreen : MonoBehaviour {
     private Localizer m_incentivizeLabelLocalizer = null;    
 
 	private bool m_showLegalPopup;
+
+    private static bool m_firstTimeMenu = true;
         
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -48,7 +50,7 @@ public class MenuPlayScreen : MonoBehaviour {
         Refresh();
     }
 	
-	/// <summary>
+    /// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() 
@@ -57,9 +59,15 @@ public class MenuPlayScreen : MonoBehaviour {
 
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
-	}
 
-	private void Update() {
+        if (m_firstTimeMenu)
+        {
+            FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
+            m_firstTimeMenu = false;
+        }
+    }
+
+    private void Update() {
 		if (m_showLegalPopup) {
 			Debug.LogError("LEGAL");
 			// Open terms and conditions popup
