@@ -534,7 +534,7 @@ public class LoadingSceneController : SceneController {
         config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 
         if ( _warningSupport ){
-			config.TitleTid = "TID_TITLE_SUPPORT_WARNING_DEVICE";
+			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
         	config.MessageTid = "TID_BODY_SUPPORT_WARNING_DEVICE";
 
 			config.OnConfirm = UnsupportedDevice_Continue;
