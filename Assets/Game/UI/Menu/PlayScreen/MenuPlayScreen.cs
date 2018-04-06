@@ -48,13 +48,6 @@ public class MenuPlayScreen : MonoBehaviour {
 	{    
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
-
-        if (m_firstTimeMenu)
-        {
-            FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
-            m_firstTimeMenu = false;
-        }
-
     }
 
     /// <summary>
@@ -80,12 +73,19 @@ public class MenuPlayScreen : MonoBehaviour {
         if (NeedsToRefresh()) {
             Refresh();
         }
-	}
 
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
+        if (m_firstTimeMenu)
+        {
+            FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
+            m_firstTimeMenu = false;
+        }
+
+    }
+
+    /// <summary>
+    /// Component has been disabled.
+    /// </summary>
+    private void OnDisable() {
        
 	}
 
