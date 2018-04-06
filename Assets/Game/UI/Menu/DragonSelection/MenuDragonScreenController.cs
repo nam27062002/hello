@@ -94,17 +94,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 			if (ge != null) {
 				ge.UpdateState();
 				if (ge.isRewardAvailable) {
-					GlobalEventUserData playerData = GlobalEventManager.user.GetGlobalEventData(GlobalEventManager.currentEvent.id);
-					if ( GlobalEventManager.currentEvent.rewardLevel > 0 || playerData.score > 0 )
-					{
-						m_goToScreen = MenuScreen.EVENT_REWARD;
-						return;
-					}
-					else
-					{
-						// if no reward and no contribution then I didn't participate in this event, so I don't have to watch the rewards screen
-						GlobalEventManager.currentEvent.FinishRewardCollection(false);
-					}
+					m_goToScreen = MenuScreen.EVENT_REWARD;
+					return;
 				}
 			}
 		}
