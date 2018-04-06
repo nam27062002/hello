@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 4984298777523620}
   - component: {fileID: 198453010683041924}
   - component: {fileID: 199420080603735980}
+  - component: {fileID: 114154236353315332}
   m_Layer: 0
   m_Name: PF_PetRarityGlow_special
   m_TagString: Untagged
@@ -72,6 +73,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114154236353315332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1365151817344272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 1
+  m_targets:
+  - renderer: {fileID: 199420080603735980}
+    newRenderQueue: 2050
 --- !u!198 &198347727173123790
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -129,7 +145,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -97055479
+  randomSeed: -794023145
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3223,7 +3239,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1365151817344272}
   serializedVersion: 5
-  lengthInSec: 5
+  lengthInSec: 1
   simulationSpeed: 0.45
   looping: 1
   prewarm: 1
@@ -3273,7 +3289,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1525629478
+  randomSeed: -1717259875
   InitialModule:
     serializedVersion: 3
     enabled: 1
