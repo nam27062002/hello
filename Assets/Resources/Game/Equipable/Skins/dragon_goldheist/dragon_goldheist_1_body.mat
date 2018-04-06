@@ -6,22 +6,21 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_goldheist_2_ingame_wings
+  m_Name: dragon_goldheist_1_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL
+  m_ShaderKeywords: BLENDFRESNEL FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL
+    SPECULAR
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    QUEUE: AlphaTest
-    RenderType: TransparentCutout
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: c25613a00a965ea4585c74b4cc43c4e7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5e7d5087e2e6a5e4ba90c29c12e0fbb2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 205d38d2e7ae8984bb6d44301e01d68b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7bdf7f7dcb1bd714ba68fcd364e0c6e4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 870211aad97f9f44ca4a0e4a363196dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9a93b57e0ac03f84faf3c325615309be, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -71,23 +70,23 @@ Material:
     m_Floats:
     - FXLayer: 0
     - SelfIlluminate: 0
-    - _BlendMode: 1
+    - _BlendMode: 0
     - _BumpScale: 1
     - _Cull: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 10
-    - _EnableBlendFresnel: 0
-    - _EnableCutoff: 1
-    - _EnableDoublesided: 1
+    - _DstBlend: 0
+    - _EnableBlendFresnel: 1
+    - _EnableCutoff: 0
+    - _EnableDoublesided: 0
     - _EnableFresnel: 1
     - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
-    - _EnableSpecular: 0
+    - _EnableSpecular: 1
     - _FireAmount: 0
-    - _Fresnel: 7.19
+    - _Fresnel: 3.07
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -101,9 +100,9 @@ Material:
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 1
+    - _SpecExponent: 27.27
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
     - _ZWrite: 1
@@ -111,8 +110,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.32471886, g: 0.33637542, b: 0.5661765, a: 1}
+    - _FresnelColor: {r: 0.32536763, g: 0.6881338, b: 0.86764705, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint: {r: 0.9191176, g: 0.93306285, b: 1, a: 1}
