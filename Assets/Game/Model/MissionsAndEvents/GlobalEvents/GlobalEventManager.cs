@@ -272,12 +272,14 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		#endif
 	}
 
+	#if TEST_GLOBAL_EVENT
 	static IEnumerator DelayedCall2()
 	{
 		yield return new WaitForSeconds(1.0f);
 		GameServerManager.ServerResponse response = CreateTestResponse( "eventState.json" );
 		instance.OnEventStateResponse(null, response);
 	}
+	#endif
 
 	/// <summary>
 	/// Requests the current event leaderboard.
@@ -306,13 +308,14 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 		}
 	}
-
+	#if TEST_GLOBAL_EVENT
 	static IEnumerator DelayedCall()
 	{
 		yield return new WaitForSeconds(1.0f);
 		GameServerManager.ServerResponse response = CreateTestResponse( "leaderboard.json" );
 		instance.OnEventLeaderboardResponse(null, response);
 	}
+	#endif
 
 
 	/// <summary>
