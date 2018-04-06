@@ -669,6 +669,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// </summary>
 	void Update() {
 
+#if UNITY_EDITOR	
+	if ( Input.GetKeyDown(KeyCode.B) )
+		Bounce( GameConstants.Vector3.up );
+#endif
 		switch (m_state) {
 			case State.Idle:
 				if (m_controls.moving || boostSpeedMultiplier > 1) {
@@ -1340,13 +1344,16 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		if ( boostSpeedMultiplier > 1 )	// if boosting push up
 		{
-
 			float distance = (m_transform.position.y - m_startParabolicPosition.y);
-			if (distance >= 1)
+			if (distance >= 1){
 				m_impulse += m_directionWhenBoostPressed * (m_dragonAirBoostForce / distance); //BOOST to player direction
-			else 
-				if (m_directionWhenBoostPressed.y > 0) m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce;
-				else m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce * m_dragonAirBoostFallMultiplier * _deltaTime;
+			}else{
+				if (m_directionWhenBoostPressed.y > 0) {
+					m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce;
+				}else{
+					m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce * m_dragonAirBoostFallMultiplier * _deltaTime;
+				}
+			}
 		}
 
 		m_direction = m_impulse.normalized;
@@ -1842,6 +1849,13 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if ( m_state != State.Latching )
 		{
 			// Change state
+
+			// Check min speed!
+			if (m_impulse.magnitude < absoluteMaxSpeed * 0.5f)
+			{
+				m_impulse = m_impulse.normalized * absoluteMaxSpeed * 0.5f;
+			}
+
 			ChangeState(State.OuterSpace);
 		}
 
@@ -1975,6 +1989,19 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		{
 			OnAreaChangeEvent( _other );
 		}
+		else if ( _other.CompareTag("Bounce") )
+		{
+			Bounce(GameConstants.Vector3.up);
+		}
+	}
+
+	private void Bounce( Vector3 inNormal )
+	{
+		m_impulse = Vector3.Reflect( m_impulse, inNormal);
+		if ( m_impulse.magnitude < absoluteMaxSpeed * 0.5f )
+		{
+			m_impulse = m_impulse.normalized * absoluteMaxSpeed * 0.5f;
+		}
 	}
 
 	public void OnEnterWaterEvent( Collider _other )
@@ -2077,6 +2104,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	public void OnCollisionEnter(Collision collision)
 	{
+		if ( collision.collider.CompareTag("Bounce") )
+		{
+			if (Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
+				Bounce( collision.contacts[0].normal );
+		}
+
 		switch( m_state )
 		{
 			case State.InsideWater:
@@ -2091,7 +2124,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			{
 			}break;
 		}
-
 	}
 
     public void OnCollisionStay(Collision collision)
