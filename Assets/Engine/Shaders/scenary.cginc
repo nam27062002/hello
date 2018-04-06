@@ -284,7 +284,12 @@ fixed4 frag (v2f i) : SV_Target
 
 #elif defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)// && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
+
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_REFLECTIVE)
+	col.xyz = lerp(col.xyz * lm * 1.3, col.xyz, diffuseAlpha);
+#else
 	col.rgb *= lm * 1.3;
+#endif
 
 #endif
 
