@@ -48,23 +48,24 @@ public class MenuPlayScreen : MonoBehaviour {
 	{    
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
-    }
-	
-    /// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() 
-	{
-        HDTrackingManager.Instance.Notify_MenuLoaded();        
-
-		// Check Facebook/Weibo Connect visibility        
-        Refresh();
 
         if (m_firstTimeMenu)
         {
             FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
             m_firstTimeMenu = false;
         }
+
+    }
+
+    /// <summary>
+    /// Component has been enabled.
+    /// </summary>
+    private void OnEnable() 
+	{
+        HDTrackingManager.Instance.Notify_MenuLoaded();        
+
+		// Check Facebook/Weibo Connect visibility        
+        Refresh();
     }
 
     private void Update() {
