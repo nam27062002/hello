@@ -1853,7 +1853,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			// Check min speed!
 			if (m_impulse.magnitude < absoluteMaxSpeed * 0.5f)
 			{
-				m_impulse = m_impulse.normalized * absoluteMaxSpeed * 0.5f;
+				m_impulse = m_impulse.normalized * absoluteMaxSpeed * 1.0f;
 			}
 
 			ChangeState(State.OuterSpace);
@@ -1998,9 +1998,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private void Bounce( Vector3 inNormal )
 	{
 		m_impulse = Vector3.Reflect( m_impulse, inNormal);
-		if ( m_impulse.magnitude < absoluteMaxSpeed * 0.5f )
+		if ( m_impulse.magnitude < absoluteMaxSpeed * 3.5f )
 		{
-			m_impulse = m_impulse.normalized * absoluteMaxSpeed * 0.5f;
+			m_impulse = m_impulse.normalized * absoluteMaxSpeed * 4f;
 		}
 	}
 
