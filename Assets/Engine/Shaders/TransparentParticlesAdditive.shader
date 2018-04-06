@@ -47,7 +47,13 @@ Shader "Hungry Dragon/Particles/Transparent Particles Additive"
 			//			#pragma multi_compile_particles
 
 			#include "UnityCG.cginc"
+
 			#define EXTENDED_PARTICLES
+
+			#ifdef DISSOLVE
+				#define DISSOLVE_ENABLED
+			#endif
+
 			#include "transparentparticles.cginc"
 
 /*
