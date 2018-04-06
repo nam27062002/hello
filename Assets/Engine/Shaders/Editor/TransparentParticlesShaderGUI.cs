@@ -65,6 +65,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string rgbColorVertexText = "Use RGB color vertex";
         readonly public static string renderQueueText = "Render queue";
         readonly public static string zTestText = "Z Test";
+        readonly public static string dissolveTipText = "Alpha dissolve receives custom data from particle system in TEXCOORD0.zw and MainTex.gb.";
     }
 
     //------------------------------------------------------------------------//
@@ -399,6 +400,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
             if (dissolve > 0 )
             {
+                EditorGUILayout.HelpBox(Styles.dissolveTipText, MessageType.Info);
+
                 Vector4 tem = mp_dissolveStep.vectorValue;
                 Vector2 p1 = new Vector2(tem.x, tem.y);
 
