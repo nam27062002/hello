@@ -35,6 +35,8 @@ public class MenuPlayScreen : MonoBehaviour {
     private Localizer m_incentivizeLabelLocalizer = null;    
 
 	private bool m_showLegalPopup;
+
+    private static bool m_firstTimeMenu = true;
         
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -47,19 +49,19 @@ public class MenuPlayScreen : MonoBehaviour {
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
     }
-	
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() 
+
+    /// <summary>
+    /// Component has been enabled.
+    /// </summary>
+    private void OnEnable() 
 	{
         HDTrackingManager.Instance.Notify_MenuLoaded();        
 
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
-	}
+    }
 
-	private void Update() {
+    private void Update() {
 		if (m_showLegalPopup) {
 			Debug.LogError("LEGAL");
 			// Open terms and conditions popup
@@ -71,12 +73,19 @@ public class MenuPlayScreen : MonoBehaviour {
         if (NeedsToRefresh()) {
             Refresh();
         }
-	}
 
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
+        if (m_firstTimeMenu)
+        {
+            FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
+            m_firstTimeMenu = false;
+        }
+
+    }
+
+    /// <summary>
+    /// Component has been disabled.
+    /// </summary>
+    private void OnDisable() {
        
 	}
 

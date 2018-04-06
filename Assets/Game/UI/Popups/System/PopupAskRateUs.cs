@@ -22,13 +22,6 @@ public class PopupAskRateUs : MonoBehaviour {
 		GetComponent<PopupController>().Close(true);
 	}
 
-	public static void OpenIOSMarketForRating()
-	{
-		DeviceUtilsManager.SharedInstance.OpenMarketForRating( Application.identifier , true);
-		// Set to never ask again
-		Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
-	}
-
 	public void OnLater()
 	{
 		int laters = Prefs.GetIntPlayer( Prefs.RATE_LATERS, 0);
