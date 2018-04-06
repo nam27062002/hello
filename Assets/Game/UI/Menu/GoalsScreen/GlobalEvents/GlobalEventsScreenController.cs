@@ -89,17 +89,11 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		if ( GlobalEventManager.currentEvent != null ){
 			// If the current global event has a reward pending, go to the event reward screen
 			if(GlobalEventManager.currentEvent.isRewardAvailable) {
-				GlobalEventUserData playerData = GlobalEventManager.user.GetGlobalEventData(GlobalEventManager.currentEvent.id);
-				if ( GlobalEventManager.currentEvent.rewardLevel > 0 || playerData.score > 0 )
-				{
-					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
-					scr.StartFlow();
-					InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);	
-					return;
-				}
-
-				// if no reward and no contribution then I didn't participate in this event, so I don't have to watch the rewards screen
-				GlobalEventManager.currentEvent.FinishRewardCollection(false);
+				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
+				scr.StartFlow();
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);	
+				return;
+				
 			}
 		}
 

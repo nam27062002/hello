@@ -247,14 +247,12 @@ public partial class GlobalEvent {
 		}
 	}
 
-	public void FinishRewardCollection( bool _notify = true ) {
+	public void FinishRewardCollection() {
 		GlobalEventUserData globalEventUserData = UsersManager.currentUser.GetGlobalEventData(m_id);
 		globalEventUserData.rewardCollected = true;
 
 		// Track global event Reward
-		if ( _notify ){
-			HDTrackingManager.Instance.Notify_GlobalEventReward(id, objective.typeDef.sku, m_rewardLevel, globalEventUserData.score, m_topContributor);
-		}
+		HDTrackingManager.Instance.Notify_GlobalEventReward(id, objective.typeDef.sku, m_rewardLevel, globalEventUserData.score, m_topContributor);
 		m_state = State.REWARD_COLLECTED;
 	}
 	//--------------------------------------------------------------------------------------------------------------
