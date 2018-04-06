@@ -194,6 +194,7 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 			spawningTransform.rotation = Quaternion.identity;
 			spawningTransform.localRotation = Quaternion.identity;
 			spawningTransform.localScale = Vector3.one;
+			spawningTransform.localPosition = Vector3.zero;
 			spawningTransform.position = transform.position;
 
 			if (!spawning.activeSelf) {
@@ -248,7 +249,6 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 			m_poolHandlers[m_currentPoolHandlerIndex].ReturnInstance(m_currentEntity.gameObject);
 
 			m_currentEntity = null;
-			m_currentPoolHandlerIndex = -1;
 		}
 
 		if (_killedByPlayer) {
