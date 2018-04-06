@@ -333,7 +333,15 @@ fixed4 frag (v2f i) : SV_Target
 */
 
 #if defined(FOG)// && !defined(EMISSIVE_BLINK)
+
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_REFLECTIVE)
+	fixed4 colc = col;
 	HG_APPLY_FOG(i, col);	// Fog
+	col = lerp(col, colc, diffuseAlpha);
+#else
+	HG_APPLY_FOG(i, col);	// Fog
+#endif
+
 #endif
 
 
