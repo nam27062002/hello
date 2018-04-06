@@ -459,6 +459,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				m_materialList[i].DisableKeyword("TINT");
 		}
 
+		if (m_corpseHandler != null && !m_corpseHandler.isValid) {
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+		}
+
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
 

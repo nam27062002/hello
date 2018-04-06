@@ -44,6 +44,13 @@ public class PrisonerSpawner : AbstractSpawner {
 		m_poolHandlers = new PoolHandler[m_groups.Length, maxHandlers];
 
 		Initialize();
+
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePools);
+	}
+
+	protected override void OnDestroy() {
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePools);
+		base.OnDestroy();
 	}
 
     protected override uint GetMaxEntities() {
@@ -51,18 +58,22 @@ public class PrisonerSpawner : AbstractSpawner {
     }
 
     protected override void OnInitialize() {     		
-        string prefabName;
-        for (int g = 0; g < m_groups.Length; g++) {			
-			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
-                prefabName = m_groups[g].m_entityPrefabsStr[e];
-				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
-			}
-		}
+		CreatePools();
 
 		if (m_maxEntities > 0f) {            			
 			m_parents = new Transform[m_maxEntities];
 		}
 	}    
+
+	private void CreatePools() {
+		string prefabName;
+		for (int g = 0; g < m_groups.Length; g++) {			
+			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
+				prefabName = m_groups[g].m_entityPrefabsStr[e];
+				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
+			}
+		}
+	}
 
     protected override void OnPrepareRespawning() {
         GroupIndexToSpawn = (uint)UnityEngine.Random.Range(0, m_groups.Length);        
