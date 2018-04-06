@@ -232,6 +232,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
     public float m_dragonAirGravityModifier = 0.3f;
 	public float m_dragonAirExpMultiplier = 0.1f;
 	public float m_dragonAirBoostForce = 4;
+	public float m_dragonAirFreeFallMultiplier = 1;
+	public float m_dragonAirBoostFallMultiplier = 1;
 	//TONI
 	public bool m_startingParabolic = false;
     public float m_dragonWaterGravityModifier = 0.3f;
@@ -1325,7 +1327,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			if (distance > 0) {
 				gravityAcceleration = gravityAcceleration + (GameConstants.Vector3.down * 9.81f * distance * m_dragonAirExpMultiplier);
 			}
-			if (m_lastSpeed > (absoluteMaxSpeed * 1.0f) && m_direction.y < 0f) gravityAcceleration = GameConstants.Vector3.zero;
+			if (m_lastSpeed > (absoluteMaxSpeed * m_dragonAirFreeFallMultiplier) && m_direction.y < 0f) gravityAcceleration = GameConstants.Vector3.zero;
 		}
 		impulse.y = 0;
 
@@ -1344,7 +1346,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				m_impulse += m_directionWhenBoostPressed * (m_dragonAirBoostForce / distance); //BOOST to player direction
 			else 
 				if (m_directionWhenBoostPressed.y > 0) m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce;
-				else m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce * 1.0f * _deltaTime;
+				else m_impulse += m_directionWhenBoostPressed * m_dragonAirBoostForce * m_dragonAirBoostFallMultiplier * _deltaTime;
 		}
 
 		m_direction = m_impulse.normalized;
