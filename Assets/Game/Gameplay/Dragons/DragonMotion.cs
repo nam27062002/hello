@@ -306,7 +306,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	float m_switchAreaStart;
 
 
-	public const float FlightCeiling = 350f;
+	public const float FlightCeiling = 370f;
 	public const float SpaceStart = 165f;
 
 	//------------------------------------------------------------------//
