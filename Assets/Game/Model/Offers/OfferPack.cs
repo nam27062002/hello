@@ -333,7 +333,9 @@ public class OfferPack {
 
 		// All checks passed!
 		// Show popup
-		PopupManager.OpenPopupInstant(PopupFeaturedOffer.PATH);
+		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
+		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
+		popup.Open();
 
 		// Update control vars and return
 		m_viewsCount++;
