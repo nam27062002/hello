@@ -78,6 +78,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
+        Application.logMessageReceived += OnHandleLog;
     }
 
     protected void Start()
@@ -143,6 +144,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         base.OnApplicationQuit();
     }
 
+    private void OnHandleLog(string logString, string stackTrace, LogType type)
+    {
+        if (type == LogType.Exception || type == LogType.Error)
+        {
+            HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
+        }
+    }
 
     private void Reset()
     {
