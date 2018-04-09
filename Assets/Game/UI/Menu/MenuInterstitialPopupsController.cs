@@ -54,20 +54,24 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Checks whether the Terms and Conditions popup must be opened or not and does it.
 	/// </summary>
 	private void CheckTermsAndConditions() {
-		if(!m_popupDisplayed) return;
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed) return;
 
-		Debug.LogError("LEGAL");
-		PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
-		HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
-
-		m_popupDisplayed = true;
+		// Is the last accepted version the same as the current one?
+		if(PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
+			Debug.Log("<color=RED>LEGAL</color>");
+			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
+			m_popupDisplayed = true;
+		}
 	}
 
 	/// <summary>
 	/// Checks whether the Rating popup must be opened or not and does it.
 	/// </summary>
 	private void CheckRating() {
-		if(!m_popupDisplayed) return;
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed) return;
 
 		// Is dragon unlocked?
 		DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
@@ -104,7 +108,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Checks whether the Survey popup must be opened or not and does it.
 	/// </summary>
 	private void CheckSurvey() {
-		if(!m_popupDisplayed) return;
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed) return;
 		m_popupDisplayed = PopupAskSurvey.Check();
 	}
 
@@ -113,7 +118,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_whereToShow">Where are we attempting to show the popup?</param>
 	private void CheckFeaturedOffer(OfferPack.WhereToShow _whereToShow) {
-		if(!m_popupDisplayed) return;
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed) return;
 
 		if(OffersManager.featuredOffer != null) {
 			m_popupDisplayed = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
