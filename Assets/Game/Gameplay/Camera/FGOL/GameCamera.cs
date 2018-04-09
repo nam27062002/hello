@@ -799,7 +799,7 @@ public class GameCamera : MonoBehaviour
 	        {
 	            if(!hasBoss)
 	            {
-	            	if ( m_fury )
+					if ( m_fury || targetPosition.y > DragonMotion.SpaceStart)
 	            	{
 	            		frameWidth = m_frameWidthFury;
 	            	}
