@@ -10,6 +10,7 @@ public class ViewParticleSpawner : MonoBehaviour {
 
 	private enum State {
 		IDLE = 0,
+		SPAWN_WHEN_VISIBLE,
 		SPAWNED,
 		RETURN
 	}
@@ -70,6 +71,13 @@ public class ViewParticleSpawner : MonoBehaviour {
 			}
 			break;
 
+			case State.SPAWN_WHEN_VISIBLE: {
+				if(isInsideActivationMaxArea) {
+					SpawnInternal();
+				}
+			}
+			break;
+
 			case State.SPAWNED: {
 				if(!isInsideActivationMaxArea) {
 					m_state = State.RETURN;
@@ -97,7 +105,10 @@ public class ViewParticleSpawner : MonoBehaviour {
 		if(m_activationMode != ActivationMode.MANUAL) return;
 
 		// Are we inside the activation area?
-		if(!CheckActivationArea()) return;
+		if(!CheckActivationArea()) {
+			m_state = State.SPAWN_WHEN_VISIBLE;
+			return;
+		}
 
 		// Only if not already spawned
 		if(m_state == State.IDLE) {		
@@ -115,6 +126,11 @@ public class ViewParticleSpawner : MonoBehaviour {
 	public void Stop() {
 		// Only for manual activation mode
 		if(m_activationMode != ActivationMode.MANUAL) return;
+
+		if(m_state == State.SPAWN_WHEN_VISIBLE) { 
+			m_state = State.IDLE;
+			return;
+		}
 
 		// Only if actually spawned
 		if(m_state != State.SPAWNED) return;
