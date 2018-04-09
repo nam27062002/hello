@@ -1359,8 +1359,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		m_direction = m_impulse.normalized;
 
-
-		RotateToDirection(m_direction);
+		if ((boostSpeedMultiplier > 1) && (m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 18 && (m_directionWhenBoostPressed.y > 0)) {
+			RotateToDirection (m_direction, false, true);
+		} else 
+		{
+			RotateToDirection (m_direction);
+		}
 
 		ApplyExternalForce();
 
