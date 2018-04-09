@@ -197,6 +197,7 @@ public class ContentManager
         // Economy
         kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.OFFER_ITEMS, new string[]{"Rules/offerItemsDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
 
         // ADD HERE ANY NEW DEFINITIONS FILE!

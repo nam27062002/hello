@@ -87,6 +87,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Create data for each known offer pack definition
 		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
 		for(int i = 0; i < offerDefs.Count; ++i) {
+			// Skip if offer is not enabled
+			if(!offerDefs[i].GetAsBool("enabled", false)) continue;
+
 			// Create new pack
 			OfferPack newPack = new OfferPack();
 			newPack.InitFromDefinition(offerDefs[i]);

@@ -79,13 +79,13 @@ public class OfferPackItem {
 		}
 
 		// Store type
-		m_type = _def.Get("itemType");
+		m_type = _def.GetAsString("type", "sc");	// Default to SC to prevent crashes in case of bad config
 
 		// Initialize reward
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
 		rewardData.typeCode = m_type;
-		rewardData.sku = _def.Get("itemSku");
-		rewardData.amount = _def.GetAsLong("itemAmount", 1);
+		rewardData.sku = _def.GetAsString("itemSku", "");
+		rewardData.amount = _def.GetAsLong("amount", 1);
 		m_reward = Metagame.Reward.CreateFromData(
 			rewardData,
 			HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK,
@@ -93,7 +93,7 @@ public class OfferPackItem {
 		);
 
 		// Featured?
-		m_featured = _def.GetAsBool("itemFeatured", false);
+		m_featured = _def.GetAsBool("featured", false);
 	}
 
 	//------------------------------------------------------------------------//

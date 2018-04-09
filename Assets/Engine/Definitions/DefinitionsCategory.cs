@@ -91,6 +91,7 @@ public class DefinitionsCategory
 	// Economy
 	public const string SHOP_PACKS = "SHOP_PACKS";
 	public const string OFFER_PACKS = "OFFER_PACKS";
+	public const string OFFER_ITEMS = "OFFER_ITEMS";
 	public const string CURRENCY_TIERS = "CURRENCY_TIERS";
 };
     

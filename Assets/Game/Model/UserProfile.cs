@@ -982,9 +982,6 @@ public class UserProfile : UserPersistenceSystem
 				m_rewards.Push(r);
 			}
 		}
-
-		// Reload offers - need persistence to properly initialize offer packs rewards
-		OffersManager.InitFromDefinitions();
 	}
 
 	/// <summary>

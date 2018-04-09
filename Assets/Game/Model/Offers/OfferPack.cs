@@ -43,6 +43,8 @@ public class OfferPack {
 		Metagame.RewardPet.TYPE_CODE,
 		Metagame.RewardSkin.TYPE_CODE
 	};
+
+	public const int MAX_ITEMS = 3;	// For now
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -52,7 +54,7 @@ public class OfferPack {
 		get { return m_def; }
 	}
 
-	private List<OfferPackItem> m_items = new List<OfferPackItem>();
+	private List<OfferPackItem> m_items = new List<OfferPackItem>(MAX_ITEMS);
 	public List<OfferPackItem> items {
 		get { return m_items; }
 	}
@@ -155,73 +157,71 @@ public class OfferPack {
 		// Store def
 		m_def = _def;
 
-		// Parse definition
-		m_minAppVersion = Version.Parse(_def.Get("minAppVersion"));
-		m_order = _def.GetAsInt("order", 0);
+		// Items - limited to 3 for now
+		for(int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
+			// Find out item definition
+			DefinitionNode itemDef = DefinitionsManager.SharedInstance.GetDefinition(
+				DefinitionsCategory.OFFER_ITEMS,
+				_def.GetAsString("item" + i, "")
+			);
+			if(itemDef == null) continue;
 
-		// Items
-		List<DefinitionNode> itemDefs = _def.GetChildNodesByTag("Item");
-		for(int i = 0; i < itemDefs.Count; ++i) {
+			// Create and store new item
 			OfferPackItem item = new OfferPackItem();
-			item.InitFromDefinition(itemDefs[i]);
+			item.InitFromDefinition(itemDef);
 			m_items.Add(item);
 		}
 
 		// Params
-		List<DefinitionNode> paramDefs = _def.GetChildNodesByTag("Param");
-		const string KEY = "paramValue";
-		DefinitionNode def = null;
-		for(int i = 0; i < paramDefs.Count; ++i) {
-			def = paramDefs[i];
-			switch(def.sku) {
-				// Only for featured packs
-				case "featured":	m_featured = def.GetAsBool(KEY);	break;
-				case "frequency": 	m_frequency = def.GetAsInt(KEY);	break;
-				case "maxViews": 	m_maxViews = def.GetAsInt(KEY);		break;
-				case "zone": {
-					switch(def.Get(KEY)) {
-						case "dragonSelection":			m_whereToShow = WhereToShow.DRAGON_SELECTION;			break;
-						case "dragonSelectionAfterRun":	m_whereToShow = WhereToShow.DRAGON_SELECTION_AFTER_RUN;	break;
-						case "playScreen":				m_whereToShow = WhereToShow.PLAY_SCREEN;				break;
-					}
-				} break;
-				case "startDate":	m_startDate = TimeUtils.TimestampToDate(def.GetAsLong(KEY) * 1000);	break;
-				case "endDate": {
-					m_endDate = TimeUtils.TimestampToDate(def.GetAsLong(KEY) * 1000);
-					m_isTimed = true;
-				} break;
+		// We have just done a Reset(), so variables have the desired default values
 
-				// Optional params
-				case "countriesAllowed": 	m_countriesAllowed = def.GetAsArray<string>(KEY);	break;
-				case "countriesExcluded": 	m_countriesExcluded = def.GetAsArray<string>(KEY);	break;
-				case "gamesPlayed": 		m_gamesPlayed = def.GetAsInt(KEY);					break;
-				case "payerType": {
-					switch(def.Get(KEY)) {
-						case "payer":		m_payerType = PayerType.PAYER;			break;
-						case "nonPayer":	m_payerType = PayerType.NON_PAYER;		break;
-					}
-				} break;
-				case "minSpent": 		m_minSpent = def.GetAsFloat(KEY);					break;
+		// General
+		m_order = _def.GetAsInt("order", m_order);
 
-				case "dragonUnlocked": 	m_dragonUnlocked = def.GetAsArray<string>(KEY);		break;
-				case "dragonOwned": 	m_dragonOwned = def.GetAsArray<string>(KEY);		break;
-				case "dragonNotOwned": 	m_dragonNotOwned = def.GetAsArray<string>(KEY);		break;
-
-				case "scBalanceRange":	m_scBalanceRange = ParseRange(def.Get(KEY));		break;
-				case "hcBalanceRange":	m_hcBalanceRange = ParseRange(def.Get(KEY));		break;
-				case "openedEggs":		m_openedEggs = def.GetAsInt(KEY);					break;
-
-				case "petsOwnedCount":	m_petsOwnedCount = def.GetAsInt(KEY);				break;
-				case "petsOwned":		m_petsOwned = def.GetAsArray<string>(KEY);			break;
-				case "petsNotOwned":	m_petsNotOwned = def.GetAsArray<string>(KEY);		break;
-
-				case "progressionRange": m_progressionRange = ParseRangeInt(def.Get(KEY));	break;
-
-				case "skinsUnlocked":	m_skinsUnlocked = def.GetAsArray<string>(KEY);		break;
-				case "skinsOwned":		m_skinsOwned = def.GetAsArray<string>(KEY);			break;
-				case "skinsNotOwned":	m_skinsNotOwned = def.GetAsArray<string>(KEY);		break;
-			}
+		// Featuring
+		m_featured = _def.GetAsBool("featured", m_featured);
+		m_frequency = _def.GetAsInt("frequency", m_frequency);
+		m_maxViews = _def.GetAsInt("maxViews", m_maxViews);
+		switch(_def.GetAsString("zone", "")) {
+			case "dragonSelection":			m_whereToShow = WhereToShow.DRAGON_SELECTION;			break;
+			case "dragonSelectionAfterRun":	m_whereToShow = WhereToShow.DRAGON_SELECTION_AFTER_RUN;	break;
+			case "playScreen":				m_whereToShow = WhereToShow.PLAY_SCREEN;				break;
+			default:						break;	// Already has the default value
 		}
+
+		m_startDate = TimeUtils.TimestampToDate(_def.GetAsLong("startDate", 0) * 1000);
+		m_endDate = TimeUtils.TimestampToDate(_def.GetAsLong("endDate", 0) * 1000);
+		m_isTimed = !m_startDate.Equals(m_endDate);
+
+		// Segmentation
+		m_minAppVersion = Version.Parse(_def.GetAsString("minAppVersion", "1.0.0"));
+		m_countriesAllowed = ParseArray(_def.GetAsString("countriesAllowed"));
+		m_countriesExcluded = ParseArray(_def.GetAsString("countriesExcluded"));
+		m_gamesPlayed = _def.GetAsInt("gamesPlayed", m_gamesPlayed);
+		switch(_def.GetAsString("payerType", "")) {
+			case "payer":		m_payerType = PayerType.PAYER;			break;
+			case "nonPayer":	m_payerType = PayerType.NON_PAYER;		break;
+			default:			break;	// Already has the default value
+		}
+		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent);
+
+		m_dragonUnlocked = ParseArray(_def.GetAsString("dragonUnlocked"));
+		m_dragonOwned = ParseArray(_def.GetAsString("dragonOwned"));
+		m_dragonNotOwned = ParseArray(_def.GetAsString("dragonNotOwned"));
+
+		m_scBalanceRange = ParseRange(_def.GetAsString("scBalanceRange"));
+		m_hcBalanceRange = ParseRange(_def.GetAsString("hcBalanceRange"));
+		m_openedEggs = _def.GetAsInt("openedEggs", m_openedEggs);
+
+		m_petsOwnedCount = _def.GetAsInt("petsOwnedCount", m_petsOwnedCount);
+		m_petsOwned = ParseArray(_def.GetAsString("petsOwned"));
+		m_petsNotOwned = ParseArray(_def.GetAsString("petsNotOwned"));
+
+		m_progressionRange = ParseRangeInt(_def.GetAsString("progressionRange"));
+
+		m_skinsUnlocked = ParseArray(_def.GetAsString("skinsUnlocked"));
+		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
+		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
 		// Featured offers are always timed
 		if(m_featured) m_isTimed = true;
@@ -441,7 +441,7 @@ public class OfferPack {
 	/// <param name="_str">String to be parsed. Must be in the format "min:max".</param>
 	private Range ParseRange(string _str) {
 		string[] tokens = _str.Split(':');
-		Range r = new Range();
+		Range r = new Range(0, float.MaxValue);
 
 		float val = r.min;
 		if(tokens.Length > 0) {
@@ -464,9 +464,36 @@ public class OfferPack {
 	/// <returns>New range initialized with data parsed from the input string.</returns>
 	/// <param name="_str">String to be parsed. Must be in the format "min:max".</param>
 	private RangeInt ParseRangeInt(string _str) {
-		// Use float version and just convert to int
-		Range r = ParseRange(_str);
-		return new RangeInt((int)r.min, (int)r.max);
+		string[] tokens = _str.Split(':');
+		RangeInt r = new RangeInt(0, int.MaxValue);
+
+		int val = r.min;
+		if(tokens.Length > 0) {
+			int.TryParse(tokens[0], out val);
+			r.min = val;
+		}
+
+		val = r.max;
+		if(tokens.Length > 1) {
+			int.TryParse(tokens[1], out val);
+			r.max = val;
+		}
+
+		return r;
+	}
+
+	/// <summary>
+	/// Wrapper of the DefinitionNode GetAsArray<T> method working around the fact
+	/// that it returns a length 1 array when the field is empty (issue pending
+	/// to be fixed in Calety).
+	/// </summary>
+	/// <returns>The given string as a array of values splited with the ";" character.</returns>
+	/// <param name="_str">String to be parsed. Must use ";" as separator.</param>
+	private string[] ParseArray(string _str) {
+		// Empty array if string is empty
+		if(string.IsNullOrEmpty(_str)) return new string[0];
+
+		return _str.Split(new string[] {";"}, StringSplitOptions.None);
 	}
 
 	//------------------------------------------------------------------------//
