@@ -148,6 +148,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         if (type == LogType.Exception || type == LogType.Error)
         {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("OnHandleLog logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());    
+            }   
+
             HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
         }
     }
