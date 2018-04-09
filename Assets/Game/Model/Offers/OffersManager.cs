@@ -200,19 +200,15 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// Different overloads to support different event parameters, but we don't actually care about them.
 	/// </summary>
 	private void OnGameStateChanged1(UserProfile.Currency _p1, long _p2, long _p3) {
-		Debug.Log("<color=orange>OnGameStateChanged1</color>");
 		OnGameStateChanged(); 
 	}
 	private void OnGameStateChanged2(string _p1) { 
-		Debug.Log("<color=orange>OnGameStateChanged2</color>");
 		OnGameStateChanged(); 
 	}
 	private void OnGameStateChanged3(DragonData _p1) { 
-		Debug.Log("<color=orange>OnGameStateChanged3</color>");
 		OnGameStateChanged(); 
 	}
 	private void OnGameStateChanged4(Egg _p1) { 
-		Debug.Log("<color=orange>OnGameStateChanged4</color>");
 		OnGameStateChanged(); 
 	}
 	private void OnGameStateChanged() {
