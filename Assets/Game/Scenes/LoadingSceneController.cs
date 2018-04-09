@@ -412,6 +412,8 @@ public class LoadingSceneController : SceneController {
 		        }
 
 				HDTrackingManager.Instance.Init();
+                HDCustomizerManager.instance.Initialise();
+
 				UsersManager.CreateInstance();
 
 		        // Game		        

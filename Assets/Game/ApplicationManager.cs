@@ -273,10 +273,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 #endif
 
         PersistenceFacade.instance.Update();
-        HDTrackingManager.Instance.Update();        
+        HDTrackingManager.Instance.Update();
 
-		#if UNITY_EDITOR
-		GameServerManager.SharedInstance.Update();
+        HDCustomizerManager.instance.Update();
+
+        #if UNITY_EDITOR
+        GameServerManager.SharedInstance.Update();
 		#endif
 
         if (NeedsToRestartFlow)

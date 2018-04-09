@@ -298,7 +298,7 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback, highPriority);
 	}
 
-	public override void OnConnectionLost() {
+	protected override void InternalOnConnectionLost() {
 		if (FeatureSettingsManager.IsDebugEnabled) {
 			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
 		}
