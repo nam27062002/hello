@@ -75,12 +75,17 @@ public class ParticleData {
 
 	public void CreatePool() {
 		if (IsValid()) {
-			m_handler = ParticleManager.CreatePool(this);
+			if (m_handler == null || !m_handler.isValid) {
+				m_handler = ParticleManager.CreatePool(this);
+			}
 		}
 	}
 
 	public GameObject Spawn(Vector3 _at = default(Vector3)) {
 		if (m_handler != null) {
+			if (!m_handler.isValid) {
+				CreatePool();
+			}
 			return m_handler.Spawn(this, _at);
 		}
 		return null;
@@ -88,6 +93,9 @@ public class ParticleData {
 
 	public GameObject Spawn(Transform _parent, Vector3 _offset = default(Vector3), bool _prewarm = true) {
 		if (m_handler != null) {
+			if (!m_handler.isValid) {
+				CreatePool();
+			}
 			return m_handler.Spawn(this, _parent, _offset, _prewarm);
 		}
 		return null;
