@@ -767,7 +767,12 @@ public class ShowHideAnimator : MonoBehaviour {
 				if(m_sequence != null) {
 					// Animate?
 					if(_animate) {
-						m_sequence.PlayBackwards();	// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
+						if ( delta <= 0 && m_sequence.IsPlaying() && !m_sequence.isBackwards){
+							m_sequence.Goto(0);
+							DoHidePostProcessing();
+						}else{
+							m_sequence.PlayBackwards();	// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
+						}
 					} else {
 						m_sequence.Goto(0f);		// Instantly move to the start point
 					}
