@@ -234,6 +234,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float m_dragonAirBoostForce = 4;
 	public float m_dragonAirFreeFallMultiplier = 1;
 	public float m_dragonAirBoostFallMultiplier = 1;
+	public float m_dragonAirEnterSpeedMultiplier = 1;
 	//TONI
 	public bool m_startingParabolic = false;
     public float m_dragonWaterGravityModifier = 0.3f;
@@ -1851,9 +1852,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			// Change state
 
 			// Check min speed!
-			if (m_impulse.magnitude < absoluteMaxSpeed * 0.5f)
+			if (m_impulse.magnitude < absoluteMaxSpeed * 0.75f)
 			{
-				m_impulse = m_impulse.normalized * absoluteMaxSpeed * 1.0f;
+				m_impulse = m_impulse.normalized * absoluteMaxSpeed * m_dragonAirEnterSpeedMultiplier;
 			}
 
 			ChangeState(State.OuterSpace);
