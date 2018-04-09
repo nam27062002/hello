@@ -370,7 +370,7 @@ public class HDCustomizerManager
     }
 
     #region log
-    private const bool DEBUG_ENABLED = true;
+    private const bool DEBUG_ENABLED = false;
     private const string LOG_CHANNEL = "[HDCustomizerManager] ";
     public static void Log(string msg)
     {
