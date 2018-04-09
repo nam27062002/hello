@@ -500,11 +500,22 @@ public class LoadingSceneController : SceneController {
                 // tracking id since the user's interaction with this popup has to be tracked
                 if (FeatureSettingsManager.instance.Device_IsSupported())
                 {
-                    m_loadingDone = true;
+					//If on iPad3 and we have no shown the warning message before
+					if ( 	FeatureSettingsManager.instance.Device_SupportedWarning()   
+							&& (PlayerPrefs.GetInt("SUPPORT_WARNING_SHOWN", 0) != 1)
+		                 )
+		            {
+						PlayerPrefs.SetInt("SUPPORT_WARNING_SHOWN", 1);
+						Popup_ShowUnsupportedDevice(true);
+		            }
+		            else
+		            {
+						m_loadingDone = true;
+		            }
                 }
                 else
                 {
-                    Popup_ShowUnsupportedDevice();
+                    Popup_ShowUnsupportedDevice( false );
                 }
             };
 
@@ -517,18 +528,34 @@ public class LoadingSceneController : SceneController {
     }
 
     #region unsupported_device
-    private void Popup_ShowUnsupportedDevice()
+    private void Popup_ShowUnsupportedDevice( bool _warningSupport )
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-        config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
-        config.MessageTid = "TID_BODY_UNSUPPORTED_DEVICE";
+
         config.IsButtonCloseVisible = false;
 
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;        
-        config.OnConfirm = UnsupportedDevice_OnGoToLink;
-        config.ConfirmButtonTid = "TID_BUTTON_UNSUPPORTED_DEVICE";
-        config.OnCancel = UnsupportedDevice_OnQuit;
-        config.CancelButtonTid = "TID_PAUSE_TAB_OPTIONS_QUIT";
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+
+        if ( _warningSupport ){
+			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
+        	config.MessageTid = "TID_BODY_SUPPORT_WARNING_DEVICE";
+
+			config.OnConfirm = UnsupportedDevice_Continue;
+			config.ConfirmButtonTid = "TID_BUTTON_SUPPORT_WARNING_CONTINUE";
+
+			config.OnCancel = UnsupportedDevice_OnGoToLink;
+			config.CancelButtonTid = "TID_BUTTON_SUPPORT_WARNING_GO";
+        }else{
+			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
+        	config.MessageTid = "TID_BODY_UNSUPPORTED_DEVICE";
+
+			config.OnConfirm = UnsupportedDevice_OnGoToLink;
+        	config.ConfirmButtonTid = "TID_BUTTON_UNSUPPORTED_DEVICE";
+
+			config.OnCancel = UnsupportedDevice_OnQuit;
+	        config.CancelButtonTid = "TID_PAUSE_TAB_OPTIONS_QUIT";
+			
+        }
 
         // Back button is disabled in order to make sure that the user is aware when making such an important decision
         config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
@@ -555,6 +582,12 @@ public class LoadingSceneController : SceneController {
         // The user quits the application
         Application.Quit();
     }
+
+    private void UnsupportedDevice_Continue()
+    {
+		m_loadingDone = true;
+    }
+
     #endregion
 
     #region log
