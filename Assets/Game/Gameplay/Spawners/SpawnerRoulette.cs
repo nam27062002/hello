@@ -259,7 +259,9 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 	}
 
 	public void ForceRemoveEntities() {
-		RemoveEntity(m_currentEntity.gameObject, false);
+		if (m_currentEntity != null) {
+			RemoveEntity(m_currentEntity.gameObject, false);
+		}
 		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 		m_state = State.Idle;
 	}
