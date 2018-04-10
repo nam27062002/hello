@@ -315,7 +315,8 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
 //	float intensity = 1.3 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
-	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
+//	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
+	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01)) * _EmissivePower * diffuseAlpha;
 	col *= intensity;
 #endif
 
@@ -344,7 +345,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(FOG)// && !defined(EMISSIVE_BLINK)
 
-#if defined(EMISSIVE_BLINK)// || defined(EMISSIVE_REFLECTIVE)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)// || defined(EMISSIVE_REFLECTIVE)
 	fixed4 colc = col;
 	HG_APPLY_FOG(i, col);	// Fog
 	col = lerp(col, colc, diffuseAlpha);
