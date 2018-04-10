@@ -364,7 +364,7 @@ public class PhotoScreenController : MonoBehaviour {
 			MenuSceneController menuController = InstanceManager.menuSceneController;
 			MenuScreenScene scene3D = menuController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
 			RewardSceneController sceneController = scene3D.GetComponent<RewardSceneController>();
-			if(sceneController.currentRewardSetup.godrays != null) {
+			if(sceneController.currentRewardSetup != null && sceneController.currentRewardSetup.godrays != null) {
 				sceneController.currentRewardSetup.godrays.gameObject.SetActive(true);
 			}
 		}
