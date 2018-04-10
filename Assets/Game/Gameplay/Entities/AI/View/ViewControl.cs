@@ -459,6 +459,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				m_materialList[i].DisableKeyword("TINT");
 		}
 
+		if (m_corpseHandler != null && !m_corpseHandler.isValid) {
+			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+		}
+
 		m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
 
@@ -615,6 +619,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		return matType;
 	}
 
+	public void RefreshMaterialType(){
+		DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+		CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
+	}
+
+	public void ForceGolden(){
+		RefreshMaterialType();
+	}
+
 	void CheckMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
 		MaterialType matType = GetMaterialType(_isGolden, _furyActive, _type);
 		if (matType != m_materialType) {
@@ -655,12 +668,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
         if (m_freezingLevel > 0) {
 			m_wasFreezing = true;
-			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
+			RefreshMaterialType();
         } else if (m_wasFreezing) {
 			m_wasFreezing = false;
-			DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
-			CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
+			RefreshMaterialType();
         }
 
 		if (m_damageFeedbackTimer > 0f) {

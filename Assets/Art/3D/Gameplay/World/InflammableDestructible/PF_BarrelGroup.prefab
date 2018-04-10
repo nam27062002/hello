@@ -412,7 +412,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1568565354609362}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -5.15, y: 0, z: 0}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_Children:
   - {fileID: 4155951456096146}
@@ -900,8 +900,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.15, y: 1.4, z: 1.15}
-  m_Center: {x: 0, y: 0.64, z: 0}
+  m_Size: {x: 3, y: 4.5, z: 3}
+  m_Center: {x: 0, y: 2.04, z: 0.5}
 --- !u!114 &114248192661279468
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -915,6 +915,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 1
   m_feedbackParticle:
     name: PS_C_Splinters
@@ -1121,6 +1122,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+  m_useAnimator: 0
   m_boxelSize: 2
   m_hitRadius: 1.5
 --- !u!114 &114354989926650170
@@ -1135,6 +1137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 30
+  m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!114 &114502087202039368
 MonoBehaviour:

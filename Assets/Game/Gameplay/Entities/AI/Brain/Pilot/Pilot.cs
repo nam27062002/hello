@@ -225,7 +225,7 @@ namespace AI {
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, 0f, Time.deltaTime * m_energyDrainSec);
 				m_boostAvailable = m_currentEnergy > 0.1f;
 			} else {
-				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime * m_blendSpeedFactor);
+				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_moveSpeed, Time.deltaTime /* m_blendSpeedFactor*/);
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, m_energy, Time.deltaTime * m_energyRecoverSec);
 				m_boostAvailable = m_currentEnergy > (m_energy * 0.75f);
 			}

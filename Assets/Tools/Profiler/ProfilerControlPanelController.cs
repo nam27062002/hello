@@ -331,9 +331,11 @@ public class ProfilerControlPanelController : MonoBehaviour
 
         //---------------------- Dark area ----------------------
         Village_TunnelToDark,
+		Village_TwisterCaveToDark,
         Dark_TunnelToVillage,
+		Dark_ToTwisterCave,
         Dark_WitchesTree
-    }
+	}
 
     private Vector3[] m_checkpointsPositions = new Vector3[]
     {
@@ -363,8 +365,10 @@ public class ProfilerControlPanelController : MonoBehaviour
 
         //---------------------- Dark area ----------------------
         new Vector3(-625, 100, 0f),
+		new Vector3(-665, -105, 0f),
         new Vector3(-663, 92, 0f),
-        new Vector3(-736, 107),
+		new Vector3(-729, -103, 0f),
+		new Vector3(-736, 107),
     };
 
     public TMP_Dropdown m_checkpoints;

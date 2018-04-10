@@ -87,6 +87,13 @@ namespace TMPro
         {
             //Debug.Log("Awake() called on Object ID " + GetInstanceID());
 
+			// [AOC] CUSTOM
+			// Add a font replacer component!
+			if(this.GetComponent<FontReplacer>() == null) {
+				FontReplacer fr = this.gameObject.AddComponent<FontReplacer>();
+				fr.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+			}
+
             // Code to handle Compatibility related to the switch from Color32 to Color
             if (m_fontColor == Color.white && m_fontColor32 != Color.white)
             {

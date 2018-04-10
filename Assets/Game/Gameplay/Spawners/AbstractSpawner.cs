@@ -57,7 +57,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         OnStart();
     }
 
-    private void OnDestroy() {
+    protected virtual void OnDestroy() {
         if (SpawnerManager.isInstanceCreated)
             SpawnerManager.instance.Unregister(this, UseSpawnManagerTree);
     }
@@ -245,6 +245,11 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         ForceRemoveEntities();
         Initialize();        
     }    
+
+    public virtual void ForceGolden( IEntity entity ){
+		if( !entity.isGolden && entity.edibleFromTier <= InstanceManager.player.data.tier)
+			entity.SetGolden(Spawner.EntityGoldMode.Gold);
+    }
 
     public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
         int index = -1;

@@ -102,6 +102,10 @@ public class SpawnerEditor : Editor {
 		m_deactivationTriggersProp = null;
 	}    
 
+	public virtual bool HasCustomPropertyDraw(SerializedProperty _p) {
+		return false;
+	}
+
 	/// <summary>
 	/// Draw the inspector.
 	/// </summary>
@@ -120,140 +124,142 @@ public class SpawnerEditor : Editor {
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
 		do {
-			// Properties requiring special treatment
-			if (p.name == m_maxTierProp.name) {
+			if (!(HasCustomPropertyDraw(p))) {
+				// Properties requiring special treatment
+				if (p.name == m_maxTierProp.name) {
 
-			} else if (p.name == "m_checkMaxTier") {
-				EditorGUILayout.PropertyField(p, true);
-				if (p.boolValue) {	
-					EditorGUILayout.PropertyField(m_maxTierProp, true);
+				} else if (p.name == "m_checkMaxTier") {
+					EditorGUILayout.PropertyField(p, true);
+					if (p.boolValue) {	
+						EditorGUILayout.PropertyField(m_maxTierProp, true);
+					}
+	            }
+	            else if (p.name == m_activationTriggersProp.name) { 
+					// Draw activation properties
+					EditorGUI.BeginChangeCheck();
+					EditorGUILayout.PropertyField(m_activationTriggersProp, true);
+					EditorGUILayout.PropertyField(m_activationKillTriggersProp, true);
+					EditorGUILayout.PropertyField(m_deactivationTriggersProp, true);
+					if(EditorGUI.EndChangeCheck()) {
+						// Check for wrong setups (once the property changes have been applied!)
+						checkForErrors = true;
+					}
+
+					// Show feedback messages
+					if(m_repeatedActivationTriggerTypeError) {
+						EditorGUILayout.HelpBox("Two or more activation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+					}
+
+					if(m_repeatedActivationKillTriggerTypeError) {
+						EditorGUILayout.HelpBox("Two or more activation kill triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+					}
+
+					if(m_repeatedDeactivationTriggerTypeError) {
+						EditorGUILayout.HelpBox("Two or more deactivation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+					}
+
+					if(m_incompatibleValuesError) {
+						EditorGUILayout.HelpBox("A deactivation trigger's value is lower than an activation trigger of the same type!\nSpawner will never be active.", MessageType.Error);
+					}
 				}
-            }
-            else if (p.name == m_activationTriggersProp.name) { 
-				// Draw activation properties
-				EditorGUI.BeginChangeCheck();
-				EditorGUILayout.PropertyField(m_activationTriggersProp, true);
-				EditorGUILayout.PropertyField(m_activationKillTriggersProp, true);
-				EditorGUILayout.PropertyField(m_deactivationTriggersProp, true);
-				if(EditorGUI.EndChangeCheck()) {
-					// Check for wrong setups (once the property changes have been applied!)
-					checkForErrors = true;
+
+	            else if (p.name == m_activationKillTriggersProp.name) { 
+					// Do nothing
 				}
 
-				// Show feedback messages
-				if(m_repeatedActivationTriggerTypeError) {
-					EditorGUILayout.HelpBox("Two or more activation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
+	            // Ignore both activation triggers (we're showing them manually)
+	            else if (p.name == m_deactivationTriggersProp.name) { 
+					// Do nothing
 				}
 
-				if(m_repeatedActivationKillTriggerTypeError) {
-					EditorGUILayout.HelpBox("Two or more activation kill triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
-				}
+				// Default
+				else {
+	                if (isRangeRegisteredProperty(p))
+	                {
+						SerializedProperty min = p.FindPropertyRelative("min");
+						SerializedProperty max = p.FindPropertyRelative("max");
+						float ovMin = min.floatValue;
+						float ovMax = max.floatValue;
+	                    EditorGUI.BeginChangeCheck();
+	                    EditorGUILayout.PropertyField(p, true);
+	                    if (EditorGUI.EndChangeCheck())
+	                    {
+							if (ovMin != min.floatValue)
+							{
+	                            if (max.floatValue < min.floatValue)
+		                        {
+		                            max.floatValue = min.floatValue;
+		                        }
+	                        }
+	/*                        else
+							{
+	                            if (max.floatValue < min.floatValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
+								{
+									min.floatValue = max.floatValue;
+	                                m_timeOfLastInput = currentTime;
+								}
+	                        }*/
+	                    }
 
-				if(m_repeatedDeactivationTriggerTypeError) {
-					EditorGUILayout.HelpBox("Two or more deactivation triggers are of the same type. Only the one with the lower value will be effective.", MessageType.Warning);
-				}
+	                }
+	                else if (isRangeRegisteredProperty(p, true))
+	                {
+						SerializedProperty min = p.FindPropertyRelative("min");
+						SerializedProperty max = p.FindPropertyRelative("max");
+						int ovMin = min.intValue;
+						int ovMax = max.intValue;
+	                    EditorGUI.BeginChangeCheck();
+	                    EditorGUILayout.PropertyField(p, true);
+	                    if (EditorGUI.EndChangeCheck())
+	                    {
+							if (ovMin != min.intValue)
+							{
+	                            if (max.intValue < min.intValue)
+								{
+									max.intValue = min.intValue;
+								}
+	                        }
 
-				if(m_incompatibleValuesError) {
-					EditorGUILayout.HelpBox("A deactivation trigger's value is lower than an activation trigger of the same type!\nSpawner will never be active.", MessageType.Error);
-				}
-			}
+	                        if (p.name == m_quantityProp.name)
+	                        {
+	                            m_groupBonus.boolValue = ovMin >= 5;
+	                        }
 
-            else if (p.name == m_activationKillTriggersProp.name) { 
-				// Do nothing
-			}
 
-            // Ignore both activation triggers (we're showing them manually)
-            else if (p.name == m_deactivationTriggersProp.name) { 
-				// Do nothing
-			}
-
-			// Default
-			else {
-                if (isRangeRegisteredProperty(p))
-                {
-					SerializedProperty min = p.FindPropertyRelative("min");
-					SerializedProperty max = p.FindPropertyRelative("max");
-					float ovMin = min.floatValue;
-					float ovMax = max.floatValue;
-                    EditorGUI.BeginChangeCheck();
-                    EditorGUILayout.PropertyField(p, true);
-                    if (EditorGUI.EndChangeCheck())
-                    {
-						if (ovMin != min.floatValue)
-						{
-                            if (max.floatValue < min.floatValue)
+	/*                        else
+							{
+								if (max.intValue < min.intValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
+	                            {
+									min.intValue = max.intValue;
+	                                m_timeOfLastInput = currentTime;
+	                            }
+	                        }*/
+	                    }
+	                }
+	                else if (p.name == m_spawnTimeProp.name)
+	                {
+	                    SerializedProperty min = p.FindPropertyRelative("min");
+	                    SerializedProperty max = p.FindPropertyRelative("max");
+	                    float ovMin = min.floatValue;
+	                    float ovMax = max.floatValue;
+	                    EditorGUI.BeginChangeCheck();
+	                    EditorGUILayout.PropertyField(p, true);
+	                    if (EditorGUI.EndChangeCheck())
+	                    {
+	                        if (ovMax == max.floatValue && ovMin != min.floatValue)
 	                        {
 	                            max.floatValue = min.floatValue;
 	                        }
-                        }
-/*                        else
-						{
-                            if (max.floatValue < min.floatValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
-							{
-								min.floatValue = max.floatValue;
-                                m_timeOfLastInput = currentTime;
-							}
-                        }*/
-                    }
-
-                }
-                else if (isRangeRegisteredProperty(p, true))
-                {
-					SerializedProperty min = p.FindPropertyRelative("min");
-					SerializedProperty max = p.FindPropertyRelative("max");
-					int ovMin = min.intValue;
-					int ovMax = max.intValue;
-                    EditorGUI.BeginChangeCheck();
-                    EditorGUILayout.PropertyField(p, true);
-                    if (EditorGUI.EndChangeCheck())
-                    {
-						if (ovMin != min.intValue)
-						{
-                            if (max.intValue < min.intValue)
-							{
-								max.intValue = min.intValue;
-							}
-                        }
-
-                        if (p.name == m_quantityProp.name)
-                        {
-                            m_groupBonus.boolValue = ovMin >= 5;
-                        }
 
 
-/*                        else
-						{
-							if (max.intValue < min.intValue || (ovMin == ovMax && ((currentTime - m_timeOfLastInput) < INPUTDELAY)))
-                            {
-								min.intValue = max.intValue;
-                                m_timeOfLastInput = currentTime;
-                            }
-                        }*/
-                    }
-                }
-                else if (p.name == m_spawnTimeProp.name)
-                {
-                    SerializedProperty min = p.FindPropertyRelative("min");
-                    SerializedProperty max = p.FindPropertyRelative("max");
-                    float ovMin = min.floatValue;
-                    float ovMax = max.floatValue;
-                    EditorGUI.BeginChangeCheck();
-                    EditorGUILayout.PropertyField(p, true);
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        if (ovMax == max.floatValue && ovMin != min.floatValue)
-                        {
-                            max.floatValue = min.floatValue;
-                        }
-
-
-                    }
-                }
-                else
-                {
-                    EditorGUILayout.PropertyField(p, true);
-                }
-            }
+	                    }
+	                }
+	                else
+	                {
+	                    EditorGUILayout.PropertyField(p, true);
+	                }
+	            }
+	       }
 		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		EditorGUILayout.LabelField("Id: " + m_targetSpawner.GetSpawnerID());
@@ -299,11 +305,11 @@ public class SpawnerEditor : Editor {
 		}
 
 		m_repeatedActivationKillTriggerTypeError = false;
-		foreach(Spawner.SpawnKillCondition trigger1 in m_targetSpawner.activationKillTriggers) {
-			foreach(Spawner.SpawnKillCondition trigger2 in m_targetSpawner.activationKillTriggers) {
+		foreach(Spawner.SkuKillCondition trigger1 in m_targetSpawner.activationKillTriggers) {
+			foreach(Spawner.SkuKillCondition trigger2 in m_targetSpawner.activationKillTriggers) {
 				// Start value is higher than end value for the same trigger type
 				if (trigger1 != trigger2
-				&& trigger1.category == trigger2.category) {
+				&& trigger1.sku == trigger2.sku) {
 					m_repeatedActivationKillTriggerTypeError = true;
 					break;	// Only show message once! :D
 				}
@@ -330,19 +336,19 @@ public class SpawnerEditor : Editor {
 		}
 
 		// Check incompatible values
-		m_incompatibleValuesError = false;
-		foreach(Spawner.SpawnCondition startTrigger in m_targetSpawner.activationTriggers) {
-			foreach(Spawner.SpawnCondition endTrigger in m_targetSpawner.deactivationTriggers) {
+		m_repeatedDeactivationTriggerTypeError = false;
+		foreach(Spawner.SkuKillCondition trigger1 in m_targetSpawner.deactivationKillTriggers) {
+			foreach(Spawner.SkuKillCondition trigger2 in m_targetSpawner.deactivationKillTriggers) {
 				// Start value is higher than end value for the same trigger type
-				if(startTrigger.type == endTrigger.type
-				&& startTrigger.value > endTrigger.value) {
-					m_incompatibleValuesError = true;
+				if (trigger1 != trigger2
+				&& trigger1.sku == trigger2.sku) {
+					m_repeatedDeactivationTriggerTypeError = true;
 					break;	// Only show message once! :D
 				}
 			}
 
 			// Break from outer loop as well
-			if(m_incompatibleValuesError) break;
+			if(m_repeatedDeactivationTriggerTypeError) break;
 		}
 	}
 

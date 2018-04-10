@@ -24,6 +24,27 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 {
     private DeviceQualityManager m_deviceQualityManager;
 
+    public static DeviceQualityManager deviceQualityManager
+    {
+        get
+        {
+            return instance.m_deviceQualityManager;
+        }
+    }
+
+#if FREQFORMULA
+    private static string m_qualityFormulaVersion = "2.0";
+#else
+    private static string m_qualityFormulaVersion = "1.0";
+#endif
+    public static string QualityFormulaVersion
+    {
+        get
+        {
+            return m_qualityFormulaVersion;
+        }
+    }
+
     private bool m_isReady;
 
     public static float m_OriginalScreenWidth = Screen.width;
@@ -379,6 +400,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return SystemInfo.graphicsMemorySize;
     }
 
+    public int Device_GetProcessorFrequency()
+    {
+        return SystemInfo.processorFrequency;
+    }
+
     public string Device_Model { get; set; }
 
     /// <summary>
@@ -393,7 +419,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return Device_GetSystemMemorySize() >= minMemory;
     }
 
-    private float Device_CalculateRating()
+	public bool Device_SupportedWarning()
+	{
+		bool ret = false;
+		#if UNITY_IOS
+		ret = UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad3Gen;
+		#endif
+		return ret;
+	}
+
+	public float Device_CalculateRating()
     {
         //Average the devices RAM, CPU and GPU details to give a rating betwen 0 and 1
         float finalDeviceRating = 0.0f;
@@ -967,12 +1002,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             Device_CurrentFeatureSettings.OverrideFromJSON(serverGameSettingsJSON);
         }        
 
-        ApplyCurrentFeatureSetting();
+        ApplyCurrentFeatureSetting(false);
     }
 
     public void RecalculateAndApplyProfile()
     {
         SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null, null);
+        AdjustScreenResolution(Device_CurrentFeatureSettings);
     }
 
     public void RestoreCurrentFeatureSettingsToDevice()
@@ -988,9 +1024,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return new FeatureSettings();
     }
 
-    public void ApplyCurrentFeatureSetting()
+    public void ApplyCurrentFeatureSetting(bool resolution)
     {
         ApplyFeatureSetting(Device_CurrentFeatureSettings);
+
+        if (resolution)
+        {
+            AdjustScreenResolution(Device_CurrentFeatureSettings);
+        }
 
         //JSONNode json = Device_CurrentFeatureSettings.ToJSON();
         //Debug.Log(json);
@@ -998,6 +1039,25 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private int CurrentQualityIndex { get; set; }	   
 
+    public void AdjustScreenResolution(FeatureSettings settings)
+    {
+        float resolutionFactor = settings.GetValueAsFloat(FeatureSettings.KEY_RESOLUTION_FACTOR);
+
+        if (resolutionFactor < (float)m_OriginalScreenHeight)
+        {
+            resolutionFactor /= (float)m_OriginalScreenHeight;
+        }
+        else
+        {
+            resolutionFactor = 1.0f;
+        }
+
+        int width = (int)((float)m_OriginalScreenWidth * resolutionFactor);
+        int height = (int)((float)m_OriginalScreenHeight * resolutionFactor);
+
+        Screen.SetResolution(width, height, true);
+
+    }
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
 		FeatureSettings.EQualityLevelValues quality = settings.GetValueAsQualityLevel(FeatureSettings.KEY_QUALITY_LEVEL);
@@ -1020,7 +1080,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         FeatureSettings.ELevel3Values shadersLevel = settings.GetValueAsLevel3(FeatureSettings.KEY_SHADERS_LEVEL);
         Shaders_ApplyQuality(shadersLevel);
-
+/*
         float resolutionFactor = settings.GetValueAsFloat(FeatureSettings.KEY_RESOLUTION_FACTOR);
 
 		if (resolutionFactor < (float)m_OriginalScreenHeight)
@@ -1036,6 +1096,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 		int height = (int)((float)m_OriginalScreenHeight * resolutionFactor);
 
         Screen.SetResolution(width, height, true);
+*/
+//        AdjustScreenResolution(settings);
 
         Log("Device Rating:" + settings.Rating);
         Log("Profile:" + settings.Profile);
@@ -1050,7 +1112,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             Shader.DisableKeyword("FORCE_LIGHTMAP");
         }
+
+        if (Camera.main != null)
+            Camera.main.Render();
+
+        m_featureSettingsApplied = true;
     }
+
+    public bool IsFeatureSettingsApplied { get { return m_featureSettingsApplied; } }
+    private bool m_featureSettingsApplied = false;
+
 
     private JSONNode FormatJSON(JSONNode json)
     {
@@ -1514,12 +1585,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     
     public bool IsAutomaticReloginEnabled()
     {        
-        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
     }
     
     public int GetAutomaticReloginPeriod()
     {     
-        return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
+        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
     }
     #endregion
 

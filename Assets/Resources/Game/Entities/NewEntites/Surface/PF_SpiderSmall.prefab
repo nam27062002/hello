@@ -351,6 +351,7 @@ MonoBehaviour:
   m_parentName: Spider_Abdomen_2
   m_parentRoot: {fileID: 409022}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &11439598
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -384,12 +385,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"hangDownChance":{"min":0.5,"max":3},"hangDownDistance":{"min":2,"max":6},"hangDownSpeed":2.5,"restTime":{"min":1,"max":5},"randomLookAt":true,"dataType":"AI.Behaviour.SpiderIdleData","editorFolded":false},{"speed":1.5,"isWallWalking":true,"timeToIdle":{"min":5,"max":20},"timeToChangeDirection":{"min":5,"max":30},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false}]'
   m_databaseKey: PF_SpiderSmall
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -666,6 +669,7 @@ MonoBehaviour:
   m_parentName: Spider_Abdomen_2
   m_parentRoot: {fileID: 409022}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114598852436924440
 MonoBehaviour:
   m_ObjectHideFlags: 1

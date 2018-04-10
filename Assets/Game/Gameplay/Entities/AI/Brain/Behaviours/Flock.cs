@@ -6,7 +6,8 @@ namespace AI {
 		[System.Serializable]
 		public class FlockData : StateComponentData {			
 			public float separation;
-			public float oscillationSpeed = 1f;
+			public float frequency = 1f;
+			public float amplitude = 0f;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Flock")]
@@ -16,7 +17,7 @@ namespace AI {
 
 			private float m_updateOffsetTimer;
 			private Vector3 m_offset;
-			private float m_fase;
+			private float m_phase;
 
 			private bool m_changeFormationOrientation;
 
@@ -35,7 +36,7 @@ namespace AI {
 				Group group = m_machine.GetGroup();
 
 				if (group != null && group.HasOffsets()) {
-					m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
+					m_offset = group.GetOffset(m_machine, m_data.separation);
 				} else {
 					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
 				}
@@ -49,12 +50,14 @@ namespace AI {
 				Group group = m_machine.GetGroup();
 
 				if (group != null && group.HasOffsets()) {
-					m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
+					m_offset = group.GetOffset(m_machine, m_data.separation);
+					float phaseOffset = Mathf.PI * 2f / group.count;
+					m_phase = phaseOffset * group.GetIndex(m_machine);
 				} else {
 					m_offset = UnityEngine.Random.insideUnitSphere * m_data.separation;
+					m_phase = 0f;
 				}
 
-				m_fase = Random.Range(0.5f, 4f);
 
 				m_changeFormationOrientation = group != null && (group.formation == Group.Formation.Triangle);
 			}
@@ -80,9 +83,8 @@ namespace AI {
 
 				// add variation to movement
 				Vector3 offset = m_offset;
-				if (!m_machine.GetSignal(Signals.Type.Leader) && m_data.oscillationSpeed > 0.05f) {
-					offset.y += m_data.oscillationSpeed * (Mathf.Sin(Time.timeSinceLevelLoad) + Mathf.Cos(Time.timeSinceLevelLoad * m_fase)) * m_data.separation * 0.5f;
-					offset.z += m_data.oscillationSpeed * (Mathf.Sin(Time.timeSinceLevelLoad * m_fase) + Mathf.Cos(Time.timeSinceLevelLoad)) * m_data.separation * 0.25f;
+				if (/*!m_machine.GetSignal(Signals.Type.Leader) &&*/ m_data.amplitude > 0) {					
+					offset += m_data.amplitude * Mathf.Cos(m_data.frequency * Time.timeSinceLevelLoad + m_phase) * m_machine.upVector;
 				}
 
 				m_pilot.GoTo(m_pilot.target + offset);

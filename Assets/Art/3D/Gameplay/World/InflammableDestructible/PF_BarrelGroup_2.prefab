@@ -890,8 +890,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.15, y: 1.4, z: 1.15}
-  m_Center: {x: 0, y: 0.64, z: 0}
+  m_Size: {x: 4, y: 3, z: 4.5}
+  m_Center: {x: 0.5, y: 1.28, z: 1}
 --- !u!114 &114078496658279536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -905,6 +905,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 1
   m_feedbackParticle:
     name: PS_C_Splinters
@@ -996,6 +997,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 30
+  m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!114 &114242151375792152
 MonoBehaviour:
@@ -1171,5 +1174,6 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+  m_useAnimator: 0
   m_boxelSize: 2
   m_hitRadius: 1.5

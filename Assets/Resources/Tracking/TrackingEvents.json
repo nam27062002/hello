@@ -413,6 +413,19 @@
                 "etl"
             ]
         },
+		"custom.game.device.stats": {
+            "Parameters": [
+				{"cpuFrequency": {"Status": "OK"}},
+				{"cpuRam": {"Status": "OK"}},
+				{"gpuRam": {"Status": "OK"}},
+				{"initialQuality": {"Status": "OK"}},
+				{"versionQualityFormula": {"Status": "OK"}}            
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -435,6 +448,18 @@
 		"custom.leave.popup": {
             "Parameters": [
 				{"popupAction": {"Status": "OK"}}				
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.game.crash": {
+            "Parameters": [
+				{"playerProgress": {"Status": "OK"}},
+				{"isFatal": {"Status": "OK"}},
+				{"errorType": {"Status": "OK"}},
+				{"errorMessage": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -644,6 +669,10 @@
             "Type": "INT:4",
             "Values": []
         },
+		"isFatal": {
+            "Type": "INT:4",
+            "Values": []
+        },
         "amountDelta": {
             "Type": "INT:4",
             "Values": []
@@ -665,6 +694,14 @@
             "Values": []
         },
         "typeNotif": {
+            "Type": "STRING:75",
+            "Values": []
+        },
+		"errorType": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"errorMessage": {
             "Type": "STRING:75",
             "Values": []
         },
@@ -988,63 +1025,63 @@
 		    "Type": "STRING:45",
 		    "Values": []
 		},
-		"missionType": {
+		    "missionType": {
             "Type": "STRING:45",
             "Values": []
         },
-		"missionTarget": {
+		    "missionTarget": {
             "Type": "STRING:45",
             "Values": []
         },
-		"missionDifficulty": {
+		    "missionDifficulty": {
             "Type": "STRING:45",
             "Values": []
         },
-		"missionValue": {
+		    "missionValue": {
             "Type": "STRING:45",
             "Values": []
         },
-		"glbEventID": {
+		    "glbEventID": {
             "Type": "STRING:45",
             "Values": []
         },
-		"glbEventType": {
+		    "glbEventType": {
             "Type": "STRING:45",
             "Values": []
         },
-		"scoreRun": {
+		    "scoreRun": {
             "Type": "INT:4",
             "Values": []
         },
-		"scoreTotal": {
+		    "scoreTotal": {
             "Type": "INT:4",
             "Values": []
         },
-		"multiplier": {
+		    "multiplier": {
             "Type": "STRING:5",
             "Values": []
         },
-		"rewardTier": {
+		    "rewardTier": {
             "Type": "STRING:5",
             "Values": []
         },
-		"topContributor": {
+		    "topContributor": {
             "Type": "INT:4",
             "Values": []
         },
-		"playingMode": {
+		    "playingMode": {
             "Type": "STRING:45",
             "Values": []
         },
-		"rank": {
+		    "rank": {
             "Type": "STRING:45",
             "Values": []
         },
-		"isSuccess": {
+		    "isSuccess": {
             "Type": "INT:4",
             "Values": []
         },
-		"storeInstalled": {
+    		"storeInstalled": {
             "Type": "INT:4",
             "Values": []
         },    
@@ -1064,21 +1101,41 @@
             "Type": "INT:4",
             "Values": []
         },
-		"isHacker": {
+		    "isHacker": {
             "Type": "INT:4",
             "Values": []
         },
         "deviceProfile": {
-			"Type": "STRING:15",
-			"Values": []
+			      "Type": "STRING:15",
+			      "Values": []
         },
-		"versionRevision": {
-			"Type": "STRING:15",
-			"Values": []
+    		"versionRevision": {
+			      "Type": "STRING:15",
+			      "Values": []
         },
-		"hungryLettersNb": {
+		    "hungryLettersNb": {
             "Type": "INT:4",
             "Values": []
-        }		
+        },
+        "cpuFrequency": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "cpuRam": {
+            "Type": "INT:4",
+            "Values": []
+        },
+        "gpuRam": {
+            "Type": "INT:4",
+            "Values": []
+        },
+    		"initialQuality": {
+			      "Type": "STRING:15",
+			      "Values": []
+        },
+    		"versionQualityFormula": {
+			      "Type": "STRING:15",
+			      "Values": []
+        }
     }
 }

@@ -200,6 +200,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void Update() {
 		if (!m_dragon.changingArea) {
 
+			#if UNITY_EDITOR
+			if (Input.GetKeyDown(KeyCode.F)) {
+				AddFury(m_furyMax);
+			}
+			#endif
+				
+
 			// Cheat for infinite fire
 			bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
@@ -283,11 +290,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		float healthReward = m_healthBehaviour.GetBoostedHp(reward.origin, reward.health);
 		m_dragon.AddLife( healthReward, DamageType.NONE, t );
 		m_dragon.AddEnergy(reward.energy);
+		//AddFury(reward.fury);??
 	}
 
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
+		AddFury( _reward.fury );
 	}
 
 	protected virtual void OnGamePaused( bool _paused )

@@ -7,7 +7,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 	private enum MotionType {
 		Linear = 0,
 		Homing,
-		Parabolic
+		Parabolic,
+		FreeFall
 	}
 
 	private enum State {
@@ -35,6 +36,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
 	[SerializeField] private float m_scaleTime = 1f;
 	[SerializeField] private bool m_stopAtTarget = false;
+	[SerializeField] private bool m_dieOutsideFrustum = true;
 
 	[SeparatorAttribute("Weapon")]
 	[SerializeField] private float m_defaultDamage = 0f;
@@ -49,6 +51,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	[SerializeField] private ParticleData m_onChargeParticle;
 	[SerializeField] private ParticleData m_onHitParticle;
 	[SerializeField] private ParticleData m_onEatParticle;
+	[SerializeField] private ParticleData m_onBurnParticle;
 	[SerializeField] private bool m_missHitSpawnsParticle = true;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
 	[SerializeField] private float m_dieTime = 0f;
@@ -122,6 +125,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_onChargeParticle.CreatePool();
 		m_onAttachParticle.CreatePool();
 		m_onEatParticle.CreatePool();
+		m_onBurnParticle.CreatePool();
 
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
@@ -252,6 +256,10 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_timer = m_maxTime;
 			m_state = State.Shot;
 		}
+
+		if (m_motionType == MotionType.FreeFall) {
+			m_velocity = GameConstants.Vector3.zero;
+		}
 	}
 
 	// Update is called once per frame
@@ -276,11 +284,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 					}
 				}
 
-				if (InstanceManager.gameCamera != null) {
-					bool rem = InstanceManager.gameCamera.IsInsideDeactivationArea(m_position);
-					if (rem) {
-						Explode(false);
-						return;
+				if (m_dieOutsideFrustum) {
+					if (InstanceManager.gameCamera != null) {
+						bool rem = InstanceManager.gameCamera.IsInsideDeactivationArea(m_position);
+						if (rem) {
+							Explode(false);
+							return;
+						}
 					}
 				}
 
@@ -349,6 +359,10 @@ public class Projectile : MonoBehaviour, IProjectile {
 					case MotionType.Parabolic: 
 						m_position = m_startPosition + (m_velocity + Vector3.down * 0.5f * 9.8f * m_elapsedTime) * m_elapsedTime;
 						break;
+
+					case MotionType.FreeFall: 
+						m_position = m_startPosition + (m_velocity + Vector3.down * 0.5f * 0.98f * m_elapsedTime) * m_elapsedTime;
+						break;
 				}
 				m_trasnform.position = m_position;
 
@@ -364,6 +378,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			}
 		}
 	}
+
 	private void OnTriggerEnter(Collider _other) {
 		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
@@ -374,11 +389,27 @@ public class Projectile : MonoBehaviour, IProjectile {
 					Explode(false);
 				}
 			}
+
+			Debug.Log(name + " >> " + _other.name);
 		}
 	}
 
 	public void OnEaten() {		
 		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+
+		if (m_entity != null) {
+			if (EntityManager.instance != null)	{
+				EntityManager.instance.UnregisterEntity(m_entity);
+			}
+		}
+
+		m_state = State.Idle;
+		gameObject.SetActive(false);
+		m_poolHandler.ReturnInstance(gameObject);
+	}
+
+	public void OnBurned() {
+		m_onBurnParticle.Spawn(m_position + m_onBurnParticle.offset);
 
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{

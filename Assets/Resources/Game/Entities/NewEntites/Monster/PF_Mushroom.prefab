@@ -120,8 +120,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341144563950862}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -829.8939, y: -10.322567, z: -21.65039}
+  m_LocalRotation: {x: -0, y: -0.25077966, z: -0, w: 0.9680442}
+  m_LocalPosition: {x: -828.49634, y: -4.4959364, z: -21.65039}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4709300955468130}
@@ -129,15 +129,15 @@ Transform:
   - {fileID: 4513157220395496}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -29.047, z: 0}
 --- !u!4 &4513157220395496
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1272665225850346}
-  m_LocalRotation: {x: 0.50000006, y: -0.5, z: -0.4999999, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0.9647293, z: -0.00000022873911}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.9647293, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4064013338647004}
@@ -190,7 +190,7 @@ Transform:
   m_GameObject: {fileID: 1636619659782710}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0.519, z: 0}
-  m_LocalScale: {x: 1.6688159, y: 1.6688159, z: 1.6688159}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 4651143913899124}
   - {fileID: 4548883565692358}
@@ -286,6 +286,7 @@ MonoBehaviour:
   m_parentName: ToxicMushroomSpine2
   m_parentRoot: {fileID: 4709300955468130}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114678433579008006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -311,6 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f83cd17fe2614b66a918bf02219ccf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activationMode: 0
   m_parent: {fileID: 0}
   m_view: {fileID: 137351282822485280}
   m_particleDatas:
@@ -370,13 +372,6 @@ MonoBehaviour:
   m_onTriggerEnter: 1
   m_onTriggerStay: 1
   m_onTriggerExit: 1
-  m_onMouseDown: 0
-  m_onMouseDrag: 0
-  m_onMouseUp: 0
-  m_onMouseUpAsButton: 0
-  m_onMouseEnter: 0
-  m_onMouseExit: 0
-  m_onMouseOver: 0
 --- !u!114 &114934410790466528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -396,7 +391,8 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.75
-  m_serializedJson: '[{"damage":15,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":6,"isWallWalking":false,"timeToIdle":{"min":3,"max":6},"timeToChangeDirection":{"min":3,"max":6},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":2},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
+  m_useSpawnerRotation: 0
+  m_serializedJson: '[{"damage":15,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false},{"speed":6,"isWallWalking":false,"timeToIdle":{"min":3,"max":6},"timeToChangeDirection":{"min":3,"max":6},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":2},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
   m_databaseKey: PF_Mushroom
 --- !u!114 &114952578268809638
 MonoBehaviour:
@@ -651,8 +647,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.4
-  m_Center: {x: 0, y: 1.12, z: 0}
+  m_Radius: 2
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!136 &136249852991239162
 CapsuleCollider:
   m_ObjectHideFlags: 1
