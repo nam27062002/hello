@@ -29,6 +29,8 @@ namespace AI {
 			private float m_elapsedTime;
 			private IMeleeWeapon m_meleeWeapon;
 
+			private bool m_avoidCollisionsRestoreValue = false;
+			private bool m_avoidWaterRestoreValue = false;
 
 			public override StateComponentData CreateData() {
 				return new ChargeData();
@@ -75,9 +77,11 @@ namespace AI {
 				RaycastHit groundHit;
 				if (Physics.Linecast(m_machine.position, m_target, out groundHit, m_groundMask)) {
 					m_target = groundHit.point;
-					m_target -= (m_target - m_machine.position).normalized * 1f;
+					m_target -= (m_target - m_machine.position).normalized * 2f;
 				}
-
+			
+				m_avoidCollisionsRestoreValue = m_pilot.avoidCollisions;
+				m_avoidWaterRestoreValue = m_pilot.avoidWater;
 				m_elapsedTime = 0f;
 
 				m_machine.SetSignal(Signals.Type.InvulnerableBite, true);
@@ -89,13 +93,17 @@ namespace AI {
 				m_pilot.ReleaseAction(Pilot.Action.Button_A);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
 
+				m_pilot.avoidCollisions = m_avoidCollisionsRestoreValue;
+				m_pilot.avoidWater = m_avoidWaterRestoreValue;
 				m_meleeWeapon.enabled = false;
 			}
 
 			protected override void OnUpdate() {
 				m_pilot.SetMoveSpeed(m_speed, false);
-				m_speed = m_data.speed + m_data.acceleration * m_elapsedTime;
-				m_elapsedTime += Time.deltaTime;
+				m_speed = m_data.acceleration * m_elapsedTime;
+				if (m_speed < m_data.speed * 1.35f) {
+					m_elapsedTime += Time.deltaTime;
+				}
 
 				//
 				if (m_machine.GetSignal(Signals.Type.Danger)) {
