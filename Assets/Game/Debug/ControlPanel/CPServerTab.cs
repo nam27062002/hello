@@ -188,8 +188,12 @@ public class CPServerTab : MonoBehaviour {
 		// Get optional parameters
 		string paramString = GetInputText(_input);
 
+        // Forces a crash
+        DragonData data = null;
+        data.ToString();
+
 		// Do stuff!
-		Debug.Log("Button 2 pressed with params " + paramString + " - TODO!!");
+		Debug.Log("Button 2 pressed with params " + paramString + " - Forces a crash!!");
 		Output("Button 2 pressed with params " + paramString);
 	}
 
