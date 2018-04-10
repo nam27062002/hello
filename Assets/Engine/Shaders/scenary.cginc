@@ -266,7 +266,8 @@ fixed4 frag (v2f i) : SV_Target
 	float2 uvc = i.reflectionData.xy + float2(s, c) * 0.09;
 //	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
 	fixed4 mc = tex2D(_ReflectionMap, uvc) * 3.0;
-	col = lerp(col, mc, _ReflectionAmount * i.reflectionData.z);
+//	col = lerp(col, mc, _ReflectionAmount * i.reflectionData.z);
+	col += mc * _ReflectionAmount * i.reflectionData.z;
 #endif
 
 #ifdef DYNAMIC_SHADOWS
@@ -284,7 +285,12 @@ fixed4 frag (v2f i) : SV_Target
 
 #elif defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)// && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
+
+#if defined(EMISSIVE_BLINK)// || defined(EMISSIVE_REFLECTIVE)
+	col.xyz = lerp(col.xyz * lm * 1.3, col.xyz, diffuseAlpha);
+#else
 	col.rgb *= lm * 1.3;
+#endif
 
 #endif
 
@@ -333,7 +339,15 @@ fixed4 frag (v2f i) : SV_Target
 */
 
 #if defined(FOG)// && !defined(EMISSIVE_BLINK)
+
+#if defined(EMISSIVE_BLINK)// || defined(EMISSIVE_REFLECTIVE)
+	fixed4 colc = col;
 	HG_APPLY_FOG(i, col);	// Fog
+	col = lerp(col, colc, diffuseAlpha);
+#else
+	HG_APPLY_FOG(i, col);	// Fog
+#endif
+
 #endif
 
 

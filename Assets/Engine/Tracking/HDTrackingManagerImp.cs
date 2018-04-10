@@ -1031,6 +1031,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Session_HungryLettersCount++;
     }
+
+    public override void Notify_Crash(bool isFatal, string errorType, string errorMessage)
+    {
+        Track_Crash(isFatal, errorType, errorMessage);
+    }
     #endregion
 
     #region track	
@@ -1812,7 +1817,24 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
     }
 
+    private void Track_Crash(bool isFatal, string errorType, string errorMessage)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_Crash isFatal = " + isFatal + " errorType = " + errorType + " errorMessage = " + errorMessage);
+        }
 
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.crash");
+        if (e != null)
+        {
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamBool(e, TRACK_PARAM_IS_FATAL, isFatal);            
+            Track_AddParamString(e, TRACK_PARAM_ERROR_TYPE, errorType);
+            Track_AddParamString(e, TRACK_PARAM_ERROR_MESSAGE, errorMessage);            
+
+            Track_SendEvent(e);
+        }
+    }
 
     // -------------------------------------------------------------
     // Params
@@ -1851,6 +1873,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
+    private const string TRACK_PARAM_ERROR_MESSAGE              = "errorMessage";
+    private const string TRACK_PARAM_ERROR_TYPE                 = "errorType";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
     private const string TRACK_PARAM_FIRE_RUSH                  = "fireRush";
@@ -1869,6 +1893,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_HUNGRY_LETTERS_NB          = "hungryLettersNb";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
     private const string TRACK_PARAM_INITIALQUALITY             = "initialQuality";
+    private const string TRACK_PARAM_IS_FATAL                   = "isFatal";
     private const string TRACK_PARAM_IS_HACKER                  = "isHacker";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
     private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";

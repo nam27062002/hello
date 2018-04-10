@@ -488,27 +488,29 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_requiredTier">The required tier. DragonTier.COUNT if not defined.</param>
 	/// <param name="_entitySku">The entity we're trying to eat.</param>
 	private void OnBiggerDragonNeeded(DragonTier _requiredTier, string _entitySku)  {
-		// Setup text
-		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, "order", ((int)_requiredTier).ToString());
-		TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-		if(tierDef == null) {
-			// We don't know the exact tier, use generic text
-			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_BIGGER_DRAGON");
-		} else {
-			// Use tier icon
-			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", UIConstants.GetSpriteTag(tierDef.Get("icon")));
-		}
+		if (_requiredTier < DragonTier.COUNT) {
+			// Setup text
+			DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, "order", ((int)_requiredTier).ToString());
+			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			if(tierDef == null) {
+				// We don't know the exact tier, use generic text
+				text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_BIGGER_DRAGON");
+			} else {
+				// Use tier icon
+				text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", UIConstants.GetSpriteTag(tierDef.Get("icon")));
+			}
 
-		// If already visible and trying to eat the same entity, don't restart the animation
-		if(m_visible && m_needBiggerDragonEntitySku == _entitySku) {
-			m_repeatType = RepeatType.RESTART_TIMER;
-		} else {
-			m_repeatType = RepeatType.RESTART_ANIM;
-		}
-		m_needBiggerDragonEntitySku = _entitySku;
+			// If already visible and trying to eat the same entity, don't restart the animation
+			if(m_visible && m_needBiggerDragonEntitySku == _entitySku) {
+				m_repeatType = RepeatType.RESTART_TIMER;
+			} else {
+				m_repeatType = RepeatType.RESTART_ANIM;
+			}
+			m_needBiggerDragonEntitySku = _entitySku;
 
-		// Show!
-		Show();
+			// Show!
+			Show();
+		}
 	}
 
 	/// <summary>
