@@ -280,6 +280,7 @@ public class GameServerManagerCalety : GameServerManager {
         Login_Init();
         Commands_Init();
         Connection_Init();
+        m_isProcessingConnectionLost = false;
     }
 
     public override void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response)
@@ -298,18 +299,29 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback, highPriority);
 	}
 
+    private bool m_isProcessingConnectionLost;
+
 	public override void OnConnectionLost() {
 		if (FeatureSettingsManager.IsDebugEnabled) {
 			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
 		}
 
-		Commands_OnServerDown();
+        // This stuff is done only if it's not already being processed
+        if (!m_isProcessingConnectionLost)
+        {
+            // We need to use this flag because this method could be called several times when processing NetworkManager.SharedInstance.CancelRequest()
+            m_isProcessingConnectionLost = true;
 
-		NetworkManager.SharedInstance.CancelRequests();        
-		ServerManager.SharedInstance.CancelPendingCommands();
-		NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
-        
-        Connection_OnServerDown();
+            Commands_OnServerDown();
+
+            NetworkManager.SharedInstance.CancelRequests();
+            ServerManager.SharedInstance.CancelPendingCommands();
+            NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
+
+            Connection_OnServerDown();
+
+            m_isProcessingConnectionLost = false;
+        }
     }
 
     #region login
@@ -630,8 +642,8 @@ public class GameServerManagerCalety : GameServerManager {
 		public void Reset() {
 			Cmd = ECommand.None;
 			Parameters = null;
-			Callback = null;
-		}
+			Callback = null;            
+        }
 
 		/// <summary>
 		/// 
