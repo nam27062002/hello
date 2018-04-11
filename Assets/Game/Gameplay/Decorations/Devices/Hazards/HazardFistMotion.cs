@@ -135,7 +135,9 @@ public class HazardFistMotion : MonoBehaviour {
 
 			if (sinValue < -1.8f) {
 				if (m_spawnParticles) {
-					m_hitGroundParticles.Spawn(m_fistTransform.position);
+					if (m_camera.IsInsideCameraFrustrum(m_fistTransform.position)) {
+						m_hitGroundParticles.Spawn(m_fistTransform.position);
+					}
 					m_spawnParticles = false;
 				}
 			} else if (sinValue > -0.15f) {

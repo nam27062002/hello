@@ -50,7 +50,7 @@ public class AdjustCameraViewportToRectTransform : MonoBehaviour {
 	/// <summary>
 	/// Called every frame
 	/// </summary>
-	private void Update() {
+	public void Update() {
 		// Make sure we have required references
 		if(!isActiveAndEnabled) return;
 		if(m_camera == null) return;
