@@ -298,7 +298,12 @@ public class HDCustomizerManager
 
     private void NotifyTimeToNextReceived(long secondsToNext)
     {
-        SetTimeToRequest(secondsToNext);        
+        // Time to next received is stored in Time to Expire because if it's smaller than Time to Expire then we need to request for customizer again
+        if (secondsToNext < GetTimeToExpire())
+        {
+            SetTimeToExpireModified(true);
+            SetTimeToExpire(secondsToNext);
+        }        
     }        
 
     private void NotifyCustomizationFinished()
