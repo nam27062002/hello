@@ -1,4 +1,4 @@
-// ScenaryShaderGUI.cs
+// DragonShaderGUI.cs
 // Hungry Dragon
 // 
 // Created by Diego Campos on 26/05/2017.
