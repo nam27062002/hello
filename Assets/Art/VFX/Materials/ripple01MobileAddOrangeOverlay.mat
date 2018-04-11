@@ -7,9 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ripple01MobileAddOrangeOverlay
-  m_Shader: {fileID: 4800000, guid: 4e1e1141bde9f85439ec41b6eead491d, type: 3}
-  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
-    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_ADDITIVEDOUBLE
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -23,6 +22,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ColorRamp:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -32,6 +35,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -56,10 +63,21 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendMode: 2
+    - Dissolve: 0
+    - _ABOffset: 0
     - _BumpScale: 1
+    - _ColorMultiplier: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 1
+    - _EmissionSaturation: 1
+    - _EmissivePower: 1
+    - _EnableAutomaticPanning: 0
+    - _EnableColorRamp: 0
+    - _EnableColorVertex: 0
+    - _EnableEmissivePower: 0
+    - _EnableExtendedParticles: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -67,16 +85,21 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _OpacitySaturation: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _UVSec: 0
     - _ZTest: 6
     - _ZWrite: 1
     m_Colors:
+    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _TintColor: {r: 0.60294116, g: 0.23574999, b: 0, a: 0.2509804}
     - _Tint_Color: {r: 1, g: 1, b: 1, a: 1}
     - _Tint_color: {r: 1, g: 1, b: 1, a: 1}

@@ -7,9 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: VFX_Snowflake_AlphaBlend_01
-  m_Shader: {fileID: 4800000, guid: 8b20bf6446afbf04abca7473b3e7365f, type: 3}
-  m_ShaderKeywords: DISSOLVE GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
-    GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_ALPHABLEND DISSOLVE_ENABLED EXTENDED_PARTICLES
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -23,12 +22,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 35a1b9211a8bb794b89c0e57ad117df9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendMode: 3
+    - Dissolve: 0
+    - _ABOffset: 0
     - _ColorMultiplier: 1.42
+    - _DstBlend: 10
     - _EmissionSaturation: 1
     - _EmissivePower: 1
     - _EnableAutomaticPanning: 0
@@ -36,7 +43,9 @@ Material:
     - _EnableColorVertex: 0
     - _EnableDissolve: 1
     - _EnableEmissivePower: 0
+    - _EnableExtendedParticles: 1
     - _OpacitySaturation: 1
+    - _SrcBlend: 5
     - _ZTest: 6
     m_Colors:
     - _BasicColor: {r: 1, g: 1, b: 1, a: 0.5}
