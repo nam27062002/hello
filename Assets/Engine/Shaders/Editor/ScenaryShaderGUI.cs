@@ -400,6 +400,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
             default:
                 break;
 
+            case 3:         //Emission custom
             case 1:         //Emission blink
                 materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
                 materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
@@ -411,14 +412,14 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
                 EditorGUILayout.HelpBox(Styles.reflectionAdviceText, MessageType.Info);                
                 break;
-
+/*
             case 3:         //Lightmap contrast
                 materialEditor.ShaderProperty(mp_lightmapContrastIntensity, Styles.lightmapContrastIntensityText);
                 materialEditor.ShaderProperty(mp_lightmapContrastMargin, Styles.lightmapContrastMarginText);
                 materialEditor.ShaderProperty(mp_lightmapContrastPhase, Styles.lightmapContrastPhaseText);
                 
                 break;
-
+*/
         }
         /*
                 if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
