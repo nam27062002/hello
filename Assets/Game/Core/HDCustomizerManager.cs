@@ -44,7 +44,7 @@ public class HDCustomizerManager
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Log("onTimeToEndReceived");
+                Log("onTimeToEndReceived " + iSecondsToEnd);
             }
 
             HDCustomizerManager.instance.NotifyTimeToEndReceived(iSecondsToEnd);
@@ -54,10 +54,10 @@ public class HDCustomizerManager
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Log("onTimeToNextReceived");
+                Log("onTimeToNextReceived " + iSecondsToNext);
             }
 
-            HDCustomizerManager.instance.NotifyTimeToEndReceived(iSecondsToNext);
+            HDCustomizerManager.instance.NotifyTimeToNextReceived(iSecondsToNext);
         }
     }
 
@@ -76,6 +76,14 @@ public class HDCustomizerManager
             return sm_instance;
         }
     }
+
+    private enum EMode
+    {
+        ApplyWhenResponseIsReceived, // Customizer is applied as soon as the response is received by server. This is Calety's original implementation
+        ApplyOnDemmand               // Customizer is applied when Apply() is called by the game
+    };
+
+    private const EMode MODE = EMode.ApplyWhenResponseIsReceived;
 
     private enum EState
     {
@@ -102,7 +110,12 @@ public class HDCustomizerManager
     /// </summary>
     private double m_timeToExpire;
 
-    private const float TIME_TO_WAIT_BETWEEN_REQUESTS = 20f;
+    /// <summary>
+    /// Bool used to know whether or not m_timeToExpire was changed by customizer
+    /// </summary>
+    private bool m_timeToExpireModified;
+
+    private const float TIME_TO_WAIT_BETWEEN_REQUESTS = (DEBUG_ENABLED) ? 20f : 10 * 60f;
 
     /// <summary>
     /// Time in seconds to wait to request customizer
@@ -112,7 +125,12 @@ public class HDCustomizerManager
     /// <summary>
     /// Whether or not the changes defined by the current customizer have been applied by the client
     /// </summary>
-    private bool m_hasBeenApplied;    
+    private bool m_hasBeenApplied;
+
+    /// <summary>
+    /// Whether or not the notification when a file is changed by CustomizerManager should be considered. It's used to avoid files reverted to the original content from being considered as files changed by Customizer
+    /// </summary>
+    private bool m_isNotifyFilesChangedEnabled;
 
     public void Initialise()
     {
@@ -128,6 +146,7 @@ public class HDCustomizerManager
 
         SetTimeToRequest(0f);
         SetState(EState.WaitingToRequest);
+        SetIsNotifyFilesChangedEnabled(true);
     }
 
     public void Destroy()
@@ -137,16 +156,16 @@ public class HDCustomizerManager
 
     public void Update()
     {
+        float timeToRequest = GetTimeToRequest();
+        if (timeToRequest > 0f)
+        {
+            timeToRequest -= Time.deltaTime;
+            SetTimeToRequest(timeToRequest);
+        }
+
         switch (m_state)
         {
-            case EState.WaitingToRequest:
-                float timeToRequest = GetTimeToRequest();
-                if (timeToRequest > 0f)
-                {
-                    timeToRequest -= Time.deltaTime;
-                    SetTimeToRequest(timeToRequest);
-                }
-
+            case EState.WaitingToRequest:                
                 // Checks if it's a good moment to request the customizer
                 if (IsRequestCustomizerAllowed() && timeToRequest <= 0f)
                 {                                     
@@ -160,9 +179,10 @@ public class HDCustomizerManager
                 if (timeToExpire > 0)
                 {
                     timeToExpire -= Time.deltaTime;
+                    SetTimeToExpire(timeToExpire);
                 }
 
-                if (timeToExpire < 0f)
+                if (timeToExpire <= 0f)
                 {
                     SetState(EState.WaitingToRequest);
                 }                
@@ -173,17 +193,21 @@ public class HDCustomizerManager
         if (DEBUG_ENABLED)
         {
             if (Input.GetKeyDown(KeyCode.R))
-            {                
+            {
                 SetTimeToRequest(0f);
                 SetState(EState.WaitingToRequest);
-            }                
+            }
+            /*else if (Input.GetKeyDown(KeyCode.A))
+            {
+                Apply();
+            }*/
         }
 #endif
     }
 
     private void RequestCustomizer()
     {        
-        SetState(EState.WaitingForResponse);
+        SetState(EState.WaitingForResponse);        
         CustomizerManager.SharedInstance.GetCustomizationsFromServer();
     }
 
@@ -209,9 +233,42 @@ public class HDCustomizerManager
         return !GetHasBeenApplied() && m_state == EState.Done && m_filesChangedByCustomizer != null && m_filesChangedByCustomizer.Count > 0;
     }
 
+    public void Apply()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Applying customizer needsToRevertAnyFiles = " + NeedsToRevertAnyFiles() + " needsToApplyCustomizerChanges = " + NeedsToApplyCustomizerChanges());
+        }
+
+        if (NeedsToRevertAnyFiles())
+        {
+            SetIsNotifyFilesChangedEnabled(false);
+            CustomizerManager.SharedInstance.ResetContentToOriginalValues();
+            SetIsNotifyFilesChangedEnabled(true);
+
+            if (m_filesToRevert != null)
+            {
+                m_filesToRevert.Clear();
+            }
+        }
+
+        if (NeedsToApplyCustomizerChanges())
+        {
+            SetHasBeenApplied(true);
+        }
+
+#if UNITY_EDITOR
+        if (DEBUG_ENABLED)
+        {
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.OFFER_PACKS, "offer_pack_1");
+            Log("offer_pack_1 enabled = " + def.GetAsBool("enabled"));
+        }
+#endif
+    }
+
     private void NotifyFilesChanged(List<string> files)
     {
-        if (files != null && files.Count > 0)
+        if (files != null && files.Count > 0 && m_isNotifyFilesChangedEnabled)
         {
             if (m_filesChangedByCustomizer == null)
             {
@@ -232,35 +289,17 @@ public class HDCustomizerManager
 
     private void NotifyTimeToEndReceived(long secondsToEnd)
     {
-        if (secondsToEnd < m_timeToExpire)
+        if (secondsToEnd < GetTimeToExpire())
         {
+            SetTimeToExpireModified(true);
             SetTimeToExpire(secondsToEnd);
         }
     }
 
     private void NotifyTimeToNextReceived(long secondsToNext)
     {
-        if (secondsToNext < m_timeToExpire)
-        {
-            SetTimeToExpire(secondsToNext);
-        }
-    }
-
-    public void NotifyRulesReloaded()
-    {
-        if (NeedsToRevertAnyFiles())
-        {
-            if (m_filesToRevert != null)
-            {
-                m_filesToRevert.Clear();
-            }
-        }
-
-        if (NeedsToApplyCustomizerChanges())
-        {
-            SetHasBeenApplied(true);
-        }
-    }
+        SetTimeToRequest(secondsToNext);        
+    }        
 
     private void NotifyCustomizationFinished()
     {        
@@ -277,7 +316,11 @@ public class HDCustomizerManager
             }
 
             // We wait some time before requesting again in order to avoid spamming
-            SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
+            if (GetTimeToRequest() <= 0f)
+            {
+                SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
+            }
+
             SetState(EState.WaitingToRequest);
         }
     }
@@ -292,10 +335,20 @@ public class HDCustomizerManager
         m_timeToExpire = value;
     }
 
+    private bool GetTimeToExpireModified()
+    {
+        return m_timeToExpireModified;
+    }
+
+    private void SetTimeToExpireModified(bool value)
+    {
+        m_timeToExpireModified = value;
+    }
+
     private float GetTimeToRequest()
     {
         return m_timeToRequest;
-    }
+    }    
 
     private void SetTimeToRequest(float value)
     {       
@@ -312,6 +365,11 @@ public class HDCustomizerManager
         m_hasBeenApplied = value;
     }    
 
+    private void SetIsNotifyFilesChangedEnabled(bool value)
+    {
+        m_isNotifyFilesChangedEnabled = value;
+    }
+
     private void SetState(EState value)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -326,7 +384,7 @@ public class HDCustomizerManager
                 {
                     // Files changed by current customizer need to be undone only if those changed had been applied
                     AddyFilesChangedByCustomizerToFilesToRevert();
-                }                
+                }                                  
                 break;
         }
 
@@ -341,9 +399,28 @@ public class HDCustomizerManager
                 }
 
                 SetHasBeenApplied(false);
-
+                SetIsNotifyFilesChangedEnabled(true);
                 SetTimeToExpire(double.MaxValue);
-                break;            
+                SetTimeToExpireModified(false);
+                break;
+
+            case EState.Done:                
+                if (MODE == EMode.ApplyWhenResponseIsReceived)
+                {
+                    Apply();
+                }            
+                
+                // If there's no customizer then we need to schedule the next request
+                if (!GetTimeToExpireModified())
+                {
+                    if (GetTimeToRequest() <= 0f)
+                    {
+                        SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
+                    }                    
+
+                    SetState(EState.WaitingToRequest);
+                }    
+                break;     
         }
     }  
 
