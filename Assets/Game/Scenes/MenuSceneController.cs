@@ -192,7 +192,7 @@ public class MenuSceneController : SceneController {
 								PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
 								ret = true;
 							}else if ( Application.platform == RuntimePlatform.IPhonePlayer ){
-								PopupAskRateUs.OpenIOSMarketForRating();
+								PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
 								ret = true;
 							}
 						}

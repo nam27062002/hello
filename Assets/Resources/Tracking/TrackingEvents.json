@@ -454,6 +454,18 @@
                 "etl"
             ]
         },
+		"custom.game.crash": {
+            "Parameters": [
+				{"playerProgress": {"Status": "OK"}},
+				{"isFatal": {"Status": "OK"}},
+				{"errorType": {"Status": "OK"}},
+				{"errorMessage": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -657,6 +669,10 @@
             "Type": "INT:4",
             "Values": []
         },
+		"isFatal": {
+            "Type": "INT:4",
+            "Values": []
+        },
         "amountDelta": {
             "Type": "INT:4",
             "Values": []
@@ -678,6 +694,14 @@
             "Values": []
         },
         "typeNotif": {
+            "Type": "STRING:75",
+            "Values": []
+        },
+		"errorType": {
+            "Type": "STRING:45",
+            "Values": []
+        },
+		"errorMessage": {
             "Type": "STRING:75",
             "Values": []
         },

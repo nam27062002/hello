@@ -667,7 +667,7 @@ public class GameCamera : MonoBehaviour
 
 	private void UpdateFrustumPlanes()
 	{
-		// m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
+		//m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
 		CalculateFrustumPlanes( m_frustumPlanes, m_unityCamera.projectionMatrix * m_unityCamera.worldToCameraMatrix);
 	}
 
@@ -1459,12 +1459,14 @@ public class GameCamera : MonoBehaviour
 	}
 
 	public bool IsInsideCameraFrustrum(Vector3 _p) {
+		Bounds b = new Bounds(_p, Vector3.one);
+		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, b);
+		/*
 		for (int i = 0; i < m_numFrustumPlanes; ++i) {
-			if (!m_frustumPlanes[i].GetSide(_p)) return true;
+			if (m_frustumPlanes[i].GetSide(_p)) return false;
 		}
-
-		return false;
-	}
+		return true;*/
+	} 
 
 	public bool IsInsideCameraFrustrum(Bounds _bounds) {
 		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, _bounds);

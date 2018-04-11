@@ -7,6 +7,10 @@ public class FogArea : MonoBehaviour
 	public float m_insideScale = 1.5f;
 	FogManager m_fogManager;
 	public FogManager.FogAttributes m_attributes;
+
+	public bool m_fireFog = false;
+	public FogManager.FogAttributes m_fireAttributes;
+
 	public bool m_drawInside = false;
 	public Vector3 m_startScale;
 	private bool m_playerInside = false;

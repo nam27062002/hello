@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4309800837719780}
   - component: {fileID: 198979476387150342}
   - component: {fileID: 199393991403417120}
+  - component: {fileID: 114324304178370294}
   m_Layer: 0
   m_Name: PF_PetRarityGlow_rare
   m_TagString: Untagged
@@ -41,6 +42,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114324304178370294
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1181171583105700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 1
+  m_targets:
+  - renderer: {fileID: 199393991403417120}
+    newRenderQueue: 2050
 --- !u!198 &198979476387150342
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -48,8 +64,8 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1181171583105700}
   serializedVersion: 5
-  lengthInSec: 5
-  simulationSpeed: 0.45
+  lengthInSec: 1
+  simulationSpeed: 0.2
   looping: 1
   prewarm: 1
   playOnAwake: 1
@@ -98,14 +114,14 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -406770928
+  randomSeed: -2036019321
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -655,7 +671,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 2
       minScalar: 10
       maxCurve:
         serializedVersion: 2
