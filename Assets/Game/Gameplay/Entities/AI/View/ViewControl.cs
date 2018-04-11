@@ -195,6 +195,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private bool m_applyRootMotion;
 	private AnimatorCullingMode m_animatorCullingMode;
 
+	private GameCamera m_camera;
+
 
     //-----------------------------------------------
     // Use this for initialization
@@ -413,6 +415,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		#if DETACH_VIEW_ON_DISABLE
 		GetViewFromManager();
 		#endif
+
+		if(Camera.main != null && m_camera == null) {
+			m_camera = Camera.main.GetComponent<GameCamera>();
+		}
 
 		if (m_scared) 		{ AnimatorSetBool(GameConstants.Animator.SCARED, 	 false); 	m_scared 	 = false; }
 		if (m_panic) 		{ AnimatorSetBool(GameConstants.Animator.HOLDED, 	 false); 	m_panic 	 = false; }
@@ -1086,10 +1092,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	public void PlayExplosion()
 	{
-		m_explosionParticles.Spawn(m_transform.position + m_explosionParticles.offset);
+		if (m_camera.IsInsideCameraFrustrum(m_transform.position)) {
+			m_explosionParticles.Spawn(m_transform.position + m_explosionParticles.offset);
 
-		if (!string.IsNullOrEmpty(m_onExplosionAudio))
-			AudioController.Play(m_onExplosionAudio, m_transform.position);
+			if (!string.IsNullOrEmpty(m_onExplosionAudio))
+				AudioController.Play(m_onExplosionAudio, m_transform.position);
+		}
 	}
 
 	/// <summary>
