@@ -27,6 +27,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 
 		_EmissivePower("Emissive Power", Float) = 1.0
 		_BlinkTimeMultiplier("Blink time multiplier", Float) = 0.0
+		_WaveEmission("Emission phase", Range(0.0, 0.1)) = 0.1
 
 //		_ReflectionColor("Reflection color", Color) = (1.0, 1.0, 0.0, 1.0)
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 1.0
@@ -46,6 +47,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
 		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
+		[Toggle(WAVE_EMISSION)] _EnableWaveEmission("Enable wave emission", Float) = 0
 
 //		[Toggle(EMISSIVEBLINK)] _EnableEmissiveBlink("Enable emissive blink", Float) = 0
 //		[Toggle(REFLECTIVE)] _EnableReflective("Enable reflective", Float) = 0
@@ -99,7 +101,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma shader_feature __ FOG
 				#pragma shader_feature __ CUTOFF
 				#pragma shader_feature __ OPAQUEALPHA
-				#pragma shader_feature __ REFLECTIVE
+//				#pragma shader_feature __ REFLECTIVE
+				#pragma shader_feature __ WAVE_EMISSION
 			
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 //				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST

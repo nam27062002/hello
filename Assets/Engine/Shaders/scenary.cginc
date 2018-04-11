@@ -101,6 +101,10 @@ HG_FOG_VARIABLES
 uniform float _EmissivePower;
 uniform float _BlinkTimeMultiplier;
 
+#if defined(WAVE_EMISSION)
+uniform float _WaveEmission;
+#endif
+
 #elif defined(EMISSIVE_REFLECTIVE)
 uniform sampler2D _ReflectionMap;
 uniform float4 _ReflectionMap_ST;
@@ -316,7 +320,14 @@ fixed4 frag (v2f i) : SV_Target
 #if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
 //	float intensity = 1.3 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
 //	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
-	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01)) * _EmissivePower * diffuseAlpha;
+//	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01)) * _EmissivePower * diffuseAlpha;
+
+#if defined(WAVE_EMISSION)
+	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
+#else 
+	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
+
+#endif
 	col *= intensity;
 #endif
 
