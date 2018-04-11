@@ -205,8 +205,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 402722}
-  - component: {fileID: 135837622739733112}
-  - component: {fileID: 114682071833433602}
+  - component: {fileID: 135963186532841286}
   m_Layer: 17
   m_Name: ground
   m_TagString: Untagged
@@ -236,8 +235,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193748}
-  m_LocalRotation: {x: -0.0000006854534, y: -1.9481758e-20, z: -2.842171e-14, w: 1}
-  m_LocalPosition: {x: 0, y: 1.81, z: -1.61}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.705, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 431226}
@@ -289,7 +288,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 149.16049, y: 48.37621, z: -23.720142}
+  m_LocalPosition: {x: -214.14584, y: 92.36159, z: -12.50498}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -3232,7 +3231,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.055560775, y: 0.6791435, z: 0.05168492, w: 0.7300725}
+  m_LocalRotation: {x: -0.015319849, y: 0.6823151, z: 0.014304282, w: 0.73075765}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -7177,20 +7176,6 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
---- !u!114 &114682071833433602
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 193748}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45582ef88ee8e4b8a9abda1345f85c14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_offset: {x: 0, y: 0, z: 0}
-  m_follow: {fileID: 4527597463707474}
-  m_speed: 5
 --- !u!114 &114770034754832102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7248,7 +7233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 6
---- !u!135 &135837622739733112
+--- !u!135 &135963186532841286
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -7258,7 +7243,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2.12
+  m_Radius: 2.4
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &137519170511776932
 SkinnedMeshRenderer:

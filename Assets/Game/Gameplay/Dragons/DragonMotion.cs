@@ -660,7 +660,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
-		
 		switch (m_state) {
 			case State.Idle:
 				if (m_controls.moving || boostSpeedMultiplier > 1) {
@@ -1945,23 +1944,37 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 	}
 
+
 	public void OnCollisionEnter(Collision collision) 
 	{
 		switch( m_state )
 		{
 			case State.InsideWater:
 			{
+				CorrectSlide( collision.contacts );
 			}break;
-
 			case State.OuterSpace: {
 				OutterSpaceCollision( collision.contacts[0].normal );
             } break;
-
 			default:
 			{
+				CorrectSlide( collision.contacts );
 			}break;
 		}
+	}
 
+	private void CorrectSlide(  ContactPoint[] contacts )
+	{
+		int max = contacts.Length;
+		for (int i = 0; i < max; i++) 
+		{
+			float dot = Vector3.Dot( m_impulse, contacts[i].normal );
+			if ( dot < 0 )
+			{
+				m_impulse = m_impulse - contacts[i].normal * dot;
+				m_rbody.velocity = m_impulse;
+			}
+		}
 	}
 
     public void OnCollisionStay(Collision collision)
@@ -1973,6 +1986,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				OutterSpaceCollision( collision.contacts[0].normal );
             }
             break;
+            default:
+            {
+				CorrectSlide( collision.contacts );
+            }break;
         }
     }
 
