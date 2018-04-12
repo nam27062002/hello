@@ -5446,6 +5446,84 @@ MonoBehaviour:
         FadeOut: 5
         RandomStartPosition: 0
         individualSettings: []
+    - Name: dragonfat_flap
+      Loop: 1
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 0.9
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 1
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 8949f0f56ccf0ad4e9514f7568bd5900, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: dragonfat_flap_idle
+      Loop: 1
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 0.85
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 1
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 2460cb651a998fe45bc58b737ebc0dd7, type: 3}
+        Volume: 1
+        PitchShift: -2
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
   musicPlaylists:
@@ -5461,7 +5539,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 15
+    currentItemIndex: 16
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -5593,6 +5671,7 @@ MonoBehaviour:
   m_parentName: Dragon_LLeg_4
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114043855092487234
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5618,6 +5697,7 @@ MonoBehaviour:
   m_parentName: Dragon_Neck
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114172556035412070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5655,6 +5735,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_Palm
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114203880325784482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5669,6 +5750,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114228706375277902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5720,6 +5802,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114268830838241434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5734,6 +5817,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114273215893796742
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5759,6 +5843,7 @@ MonoBehaviour:
   m_parentName: Dragon_Hip
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114331133484317870
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5827,8 +5912,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Idle_Flaps
-  m_wingsFlyingSound: Dragon_Flaps
+  m_wingsIdleSound: dragonfat_flap_idle
+  m_wingsFlyingSound: dragonfat_flap
   m_eatSound: Dragon_Eat_2
   m_eatHoldSound: 
   m_wingsWindSound: Dragon_wind_boost
@@ -5888,6 +5973,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail2
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114626458753400776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5913,6 +5999,7 @@ MonoBehaviour:
   m_parentName: Fire_Dummy
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114670516413665144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5927,6 +6014,7 @@ MonoBehaviour:
   m_parentName: Dragon_Spine
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114673937617531080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5941,6 +6029,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114731096060678930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5955,6 +6044,7 @@ MonoBehaviour:
   m_parentName: Dragon_Neck
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114777803639561814
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5969,6 +6059,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail5
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114791472055404572
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5983,6 +6074,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail1
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114796680808979406
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6009,6 +6101,7 @@ MonoBehaviour:
   m_parentName: Dragon_RLeg_4
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114887854939168130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6023,6 +6116,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114930952077136908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6037,6 +6131,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114931670651145150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6051,6 +6146,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail4
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114998690069533076
 MonoBehaviour:
   m_ObjectHideFlags: 1
