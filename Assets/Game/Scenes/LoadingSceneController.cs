@@ -429,6 +429,7 @@ public class LoadingSceneController : SceneController {
 				EggManager.CreateInstance(true);
 				EggManager.InitFromDefinitions();
 				OffersManager.CreateInstance(true);	// Don't initialize yet, we'll wait for persistence to be loaded and customizer to received
+				OffersManager.ValidateContent();	// Do this before customizer is applied (here is ok!)
 
 				// Settings and setup
 				GameSettings.CreateInstance(false);

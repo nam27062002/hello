@@ -192,6 +192,39 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 
 	//------------------------------------------------------------------------//
+	// PUBLIC UTILS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Very custom method to make sure all definitions related to offers contain
+	/// all required default values.
+	/// This is a requirement before applying customizations via CRM.
+	/// If a parameter is missing in a definition, it will be added with the right
+	/// default value for that parameter.
+	/// </summary>
+	public static void ValidateContent() {
+		// Content must be loaded!
+		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method!");
+
+		// Offer packs
+		// Create a dummy offer pack with default values and use it to validate the definitions
+		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
+		OfferPack defaultPack = new OfferPack();
+		defaultPack.Reset();
+		for(int i = 0; i < offerDefs.Count; ++i) {
+			defaultPack.ValidateDefinition(offerDefs[i]);
+		}
+
+
+		// Offer items
+		// Create a dummy item with default values and use it to validate the definitions
+		OfferPackItem defaultItem = new OfferPackItem();
+		List<DefinitionNode> itemDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_ITEMS);
+		for(int i = 0; i < itemDefs.Count; ++i) {
+			defaultItem.ValidateDefinition(itemDefs[i]);
+		}
+	}
+
+	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>

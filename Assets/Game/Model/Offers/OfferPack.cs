@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -133,7 +134,7 @@ public class OfferPack {
 	/// Default constructor.
 	/// </summary>
 	public OfferPack() {
-
+		
 	}
 
 	/// <summary>
@@ -434,6 +435,70 @@ public class OfferPack {
 	}
 
 	//------------------------------------------------------------------------//
+	// EXTERNAL UTILS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Very custom method to make sure a definition corresponding to an offer pack 
+	/// contains all required default values.
+	/// If a parameter is missing in the definition, it will be added with this pack's
+	/// current value for that parameter.
+	/// The pack should have the default values (as applied in the Reset() method).
+	/// </summary>
+	/// <param name="_def">Definition to be filled.</param>
+	public void ValidateDefinition(DefinitionNode _def) {
+		// Items
+		for(int i = 1; i <= MAX_ITEMS; ++i) {
+			SetValueIfMissing(ref _def, "item" + i, "");
+		}
+
+		// General
+		SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+
+		// Featuring
+		SetValueIfMissing(ref _def, "featured", m_featured.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "frequency", m_frequency.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "maxViews", m_maxViews.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "zone", "");
+		SetValueIfMissing(ref _def, "startDate", (TimeUtils.DateToTimestamp(m_startDate) / 1000).ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "endDate", (TimeUtils.DateToTimestamp(m_endDate) / 1000).ToString(CultureInfo.InvariantCulture));
+
+		// Segmentation
+		SetValueIfMissing(ref _def, "minAppVersion", m_minAppVersion.ToString(Version.Format.FULL));
+		SetValueIfMissing(ref _def, "countriesAllowed", string.Join(";", m_countriesAllowed));
+		SetValueIfMissing(ref _def, "countriesExcluded", string.Join(";", m_countriesExcluded));
+		SetValueIfMissing(ref _def, "gamesPlayed", m_gamesPlayed.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "payerType", "");
+		SetValueIfMissing(ref _def, "minSpent", m_minSpent.ToString(CultureInfo.InvariantCulture));
+
+		SetValueIfMissing(ref _def, "dragonUnlocked", string.Join(";", m_dragonUnlocked));
+		SetValueIfMissing(ref _def, "dragonOwned", string.Join(";", m_dragonOwned));
+		SetValueIfMissing(ref _def, "dragonNotOwned", string.Join(";", m_dragonNotOwned));
+
+		SetValueIfMissing(ref _def, "scBalanceRange", string.Join(":", new string[] {
+			m_scBalanceRange.min.ToString(CultureInfo.InvariantCulture),
+			m_scBalanceRange.max.ToString(CultureInfo.InvariantCulture)
+		}));
+		SetValueIfMissing(ref _def, "hcBalanceRange", string.Join(":", new string[] {
+			m_hcBalanceRange.min.ToString(CultureInfo.InvariantCulture),
+			m_hcBalanceRange.max.ToString(CultureInfo.InvariantCulture)
+		}));
+		SetValueIfMissing(ref _def, "openedEggs", m_openedEggs.ToString(CultureInfo.InvariantCulture));
+
+		SetValueIfMissing(ref _def, "petsOwnedCount", m_petsOwnedCount.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "petsOwned", string.Join(";", m_petsOwned));
+		SetValueIfMissing(ref _def, "petsNotOwned", string.Join(";", m_petsNotOwned));
+
+		SetValueIfMissing(ref _def, "progressionRange", string.Join(":", new string[] {
+			m_progressionRange.min.ToString(CultureInfo.InvariantCulture),
+			m_progressionRange.max.ToString(CultureInfo.InvariantCulture)
+		}));
+
+		SetValueIfMissing(ref _def, "skinsUnlocked", string.Join(";", m_skinsUnlocked));
+		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
+		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
+	}
+
+	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -496,6 +561,20 @@ public class OfferPack {
 		if(string.IsNullOrEmpty(_str)) return new string[0];
 
 		return _str.Split(new string[] {";"}, StringSplitOptions.None);
+	}
+
+	/// <summary>
+	/// If a property is missing from a definition node, add it with a given value.
+	/// </summary>
+	/// <param name="_def">Definition to be modified.</param>
+	/// <param name="_key">Key of the property to be checked.</param>
+	/// <param name="_value">Value to be set if the property is missing from the definition node.</param>
+	private void SetValueIfMissing(ref DefinitionNode _def, string _key, string _value) {
+		// [AOC] This is disgusting because the SetValue() method also performs the Has() operation,
+		//		 but proper solution requires changing Calety and all the bureaucracy around it -_-
+		if(!_def.Has(_key)) {
+			_def.SetValue(_key, _value);
+		}
 	}
 
 	//------------------------------------------------------------------------//

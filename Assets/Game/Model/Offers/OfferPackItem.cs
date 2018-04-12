@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -94,6 +95,20 @@ public class OfferPackItem {
 
 		// Featured?
 		m_featured = _def.GetAsBool("featured", false);
+	}
+
+	/// <summary>
+	/// Very custom method to make sure a definition corresponding to an offer pack 
+	/// item contains all required default values.
+	/// If a parameter is missing in the definition, it will be added with the right
+	/// default value for that parameter.
+	/// </summary>
+	/// <param name="_def">Definition to be filled.</param>
+	public void ValidateDefinition(DefinitionNode _def) {
+		if(!_def.Has("featured"))	_def.SetValue("featured",	bool.FalseString.ToLowerInvariant());
+		if(!_def.Has("type")) 		_def.SetValue("type",		string.Empty);
+		if(!_def.Has("amount"))		_def.SetValue("amount",		1.ToString(CultureInfo.InvariantCulture));
+		if(!_def.Has("itemSku"))	_def.SetValue("itemSku",	string.Empty);
 	}
 
 	//------------------------------------------------------------------------//
