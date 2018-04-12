@@ -43,7 +43,8 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
 		[Enum(Opaque, 0, CutOff, 1, Transparent, 2)] _BlendMode("Blend mode", Float) = 0.0
-		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+//		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+		[Toggle] _ZWrite("__zw", Float) = 1.0
 
 		_StencilMask("Stencil Mask", int) = 10
 
