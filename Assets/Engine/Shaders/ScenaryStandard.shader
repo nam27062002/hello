@@ -48,6 +48,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
 		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
 		[Toggle(WAVE_EMISSION)] _EnableWaveEmission("Enable wave emission", Float) = 0
+		[Toggle(TINT)] _EnableTint("Enable tint", Float) = 0
 
 //		[Toggle(EMISSIVEBLINK)] _EnableEmissiveBlink("Enable emissive blink", Float) = 0
 //		[Toggle(REFLECTIVE)] _EnableReflective("Enable reflective", Float) = 0
