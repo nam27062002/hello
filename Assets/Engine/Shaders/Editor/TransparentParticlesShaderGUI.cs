@@ -432,8 +432,9 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 materialEditor.ShaderProperty(mp_dissolveTex, Styles.dissolveTexText);
             }
 
-            materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
+            materialEditor.ShaderProperty(mp_colorMultiplier, Styles.colorMultiplierText);
             materialEditor.ShaderProperty(mp_emissionSaturation, Styles.emissionSaturationText);
+            materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
         }
         else
         {
