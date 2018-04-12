@@ -405,8 +405,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 Vector4 tem = mp_dissolveStep.vectorValue;
                 Vector2 p1 = new Vector2(tem.x, tem.y);
 
-                p1.x = EditorGUILayout.Slider(Styles.dissolveStepMinText, p1.x, -1.0f, 1.0f);
-                p1.y = EditorGUILayout.Slider(Styles.dissolveStepMaxText, p1.y, -1.0f, 1.0f);
+                p1.x = EditorGUILayout.Slider(Styles.dissolveStepMinText, p1.x, 0.0f, 1.0f);
+                p1.y = EditorGUILayout.Slider(Styles.dissolveStepMaxText, p1.y, 0.0f, 1.0f);
                 //                p1 = EditorGUILayout.Vector2Field(Styles.dissolveStepText, p1);
                 //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
                 tem.x = p1.x; tem.y = p1.y;
@@ -432,8 +432,9 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 materialEditor.ShaderProperty(mp_dissolveTex, Styles.dissolveTexText);
             }
 
-            materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
+            materialEditor.ShaderProperty(mp_colorMultiplier, Styles.colorMultiplierText);
             materialEditor.ShaderProperty(mp_emissionSaturation, Styles.emissionSaturationText);
+            materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
         }
         else
         {

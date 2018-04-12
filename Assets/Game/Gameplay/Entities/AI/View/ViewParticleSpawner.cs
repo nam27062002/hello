@@ -52,6 +52,21 @@ public class ViewParticleSpawner : MonoBehaviour {
 		m_state = State.IDLE;
 	}
 
+	void Start()
+	{
+		Messenger.AddListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
+	}
+
+	void OnDestroy()
+	{
+		Messenger.RemoveListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
+	}
+
+	void OnScenePreunload(string _scene)
+	{
+		enabled = false;
+	}
+
 	void OnDisable() {
 		ForceReturn();
 	}

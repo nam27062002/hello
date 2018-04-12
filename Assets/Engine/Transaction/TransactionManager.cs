@@ -22,21 +22,22 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     public void Update()
     {
         Pending_Update();
-        
-/*
+
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.R))
+        if (DEBUG_ENABLED)
         {
-            // Requests pending transactions
-            Pending_ForceRequestTransactions();
-        }
-        else if (Input.GetKeyDown(KeyCode.F))
-        {
-            // Test pending transactions flow (chain of popups giving resources)
-            Debug_TestPendingTransactionsFlow();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                // Requests pending transactions
+                Pending_ForceRequestTransactions();
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                // Test pending transactions flow (chain of popups giving resources)
+                Debug_TestPendingTransactionsFlow();
+            }
         }
 #endif    
-*/ 
     }
 
     #region factory
@@ -611,7 +612,13 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     {
         msg = LOG_CHANNEL + msg;
 
-        //msg = "<color=yellow>" + msg + "</color>";        
+#if UNITY_EDITOR
+        if (DEBUG_ENABLED)
+        {
+            msg = "<color=yellow>" + msg + "</color>";
+        }
+#endif
+
         Debug.Log(msg);
     }
 
@@ -629,6 +636,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     #endregion
 
     #region debug
+    private const bool DEBUG_ENABLED = false;
     private void Debug_TestTransaction()
     {
         JSONNode json = new JSONClass();
