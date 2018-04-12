@@ -104,7 +104,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma shader_feature __ OPAQUEALPHA
 //				#pragma shader_feature __ REFLECTIVE
 				#pragma shader_feature __ WAVE_EMISSION
-			
+				#pragma shader_feature _ TINT
+
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 //				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
 				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_CUSTOM

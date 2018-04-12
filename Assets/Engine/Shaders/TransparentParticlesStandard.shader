@@ -60,7 +60,6 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma shader_feature _ DISSOLVE
 				#pragma shader_feature _ COLOR_RAMP
 				#pragma shader_feature _ APPLY_RGB_COLOR_VERTEX
-				#pragma shader_feature _ TINT
 				#pragma shader_feature BLENDMODE_ADDITIVE BLENDMODE_SOFTADDITIVE BLENDMODE_ADDITIVEDOUBLE BLENDMODE_ALPHABLEND BLENDMODE_ADDITIVEALPHABLEND BLENDMODE_PREMULTIPLY
 				#pragma shader_feature DISSOLVE_NONE DISSOLVE_ENABLED DISSOLVE_EXTENDED
 
