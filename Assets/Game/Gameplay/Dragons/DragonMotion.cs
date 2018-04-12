@@ -1308,20 +1308,20 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_controls.GetImpulse(1, ref impulse);
 		if (boostSpeedMultiplier > 1)
 		{
-			if (impulse == GameConstants.Vector3.zero)
-			{
-				impulse = m_directionWhenBoostPressed;
-			}
-			if (m_startingParabolic == false) {
+			if (!m_startingParabolic) {
 				m_startingParabolic = true;
 				m_startParabolicPosition.y = m_transform.position.y;
 			}
 		}
-		if (boostSpeedMultiplier <= 1 && m_startingParabolic)
+		else
+		{
 			m_startingParabolic = false;
+		}
 
 		if ( m_controls.moving )
 			m_directionWhenBoostPressed = impulse;
+		else
+			impulse = m_directionWhenBoostPressed;
 
 		// Calculate gravity acceleration
 		Vector3 gravityAcceleration = GameConstants.Vector3.zero;
