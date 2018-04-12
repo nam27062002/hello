@@ -90,17 +90,18 @@ public class DragonEquip : MonoBehaviour {
 			if (renderers != null) {
 				for (int i = 0; i < renderers.Length; i++) {
 					Renderer renderer = renderers[i];
-					if ( renderer.tag == "DragonBody" || renderer.tag == "DragonWings" )
+					Material material;
+					if ( Application.isPlaying )
 					{
-						Material material;
-						if ( Application.isPlaying )
-						{
-							material = renderer.material;
-						}else{
-							material = renderer.sharedMaterial;	
-						}
+						material = renderer.material;
+					}else{
+						material = renderer.sharedMaterial;	
+					}
 
-						if ( material != null )
+					if ( material != null )
+					{
+						string name = material.shader.name;
+						if ( name.Contains("Dragon standard") )
 						{
 							m_renderers.Add( renderer );
 							// Stores the materials of this renderer in a dictionary for direct access//
@@ -427,29 +428,30 @@ public class DragonEquip : MonoBehaviour {
 		}
 
 		for (int i = 0; i < m_renderers.Count; i++) {
-			if ( m_renderers[i].tag == "DragonBody" || m_renderers[i].tag == "DragonWings" )
-			{
-				bool isWings = m_renderers[i].tag == "DragonWings";
-				int id = m_renderers[i].GetInstanceID();
-				List<Material> materials = m_materials[id];
-				int count = materials.Count;
-				for (int m = 0; m < count; m++) 
-				{
+			int id = m_renderers[i].GetInstanceID();
+			List<Material> materials = m_materials[id];
+			int count = materials.Count;
+			for (int m = 0; m < count; m++) {
+				string shaderName = materials[m].shader.name;
+                if (shaderName.Contains("Dragon standard"))
+                {
                     if (lockEffect)
                     {
                         materials[m].SetOverrideTag("Lock", "");
                     }
-                    if (isWings)
+
+                    string tag = materials[m].GetTag("RenderType", false);
+                    if (tag.Contains("TransparentCutout"))
                     {
                         materials[m] = m_wingsMaterial;
                     }
-                    else
+                    else if (tag.Contains("Opaque"))
                     {
                         materials[m] = m_bodyMaterial;
                     }
-				}
-				m_renderers[i].materials = materials.ToArray();
+                }
 			}
+			m_renderers[i].materials = materials.ToArray();
 		}
 	}
 
