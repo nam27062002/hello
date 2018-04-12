@@ -7,18 +7,22 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: VFX SparksFire 02
-  m_Shader: {fileID: 4800000, guid: b985e9b06f3e83f47bcbda6c26e7022e, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_ADDITIVEALPHABLEND
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorRamp:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -31,6 +35,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -67,14 +75,24 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendMode: 4
+    - Dissolve: 0
     - _ABOffset: 0
     - _BumpScale: 1
+    - _ColorMultiplier: 1
     - _Cutoff: 0.5
     - _Depth: 0.1
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EmisPowa: 1
     - _EmissionPower: 1
+    - _EmissionSaturation: 1
+    - _EmissivePower: 1
+    - _EnableAutomaticPanning: 0
+    - _EnableColorRamp: 0
+    - _EnableColorVertex: 0
+    - _EnableEmissivePower: 0
+    - _EnableExtendedParticles: 0
     - _FinalEmissive: 1
     - _FinalOpacityPower: 1
     - _FinalPower: 1
@@ -93,11 +111,12 @@ Material:
     - _OpacityMaskMulti: 1
     - _OpacityMaskPower: 1
     - _OpacityPower: 1
+    - _OpacitySaturation: 1
     - _Parallax: 0.02
     - _PoweredNoise: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _USpeed: 0
     - _UVSec: 0
     - _VSpeed: 0
@@ -106,6 +125,9 @@ Material:
     m_Colors:
     - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _TintColor: {r: 0.61764705, g: 0.61764705, b: 0.61764705, a: 0.484}
     - _VColor: {r: 1, g: 1, b: 1, a: 1}

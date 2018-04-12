@@ -26,12 +26,14 @@ internal class ScenaryShaderGUI : ShaderGUI {
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
 
+/*
     public enum BlendMode
     {
         Opaque,
         Cutout,
         Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
     }
+*/
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
