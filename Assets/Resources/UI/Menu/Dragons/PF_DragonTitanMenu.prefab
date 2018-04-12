@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 185464}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 132.56543, y: 13.257887, z: 16.320705}
+  m_LocalPosition: {x: -200.19218, y: -534.6316, z: -60.562675}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4766388478193662}
@@ -82,14 +82,21 @@ MonoBehaviour:
     m_allowFaceDetails: 1
     m_loopsMin: 3
     m_loopsMax: 4
+    m_special: 0
     m_timeToNext: 0
+    m_isPreferedAnimation: 0
   - m_range:
       min: 10
       max: 20
     m_allowFaceDetails: 0
     m_loopsMin: 1
     m_loopsMax: 1
+    m_special: 0
     m_timeToNext: 0
+    m_isPreferedAnimation: 0
+  m_hasFire: 0
+  m_dragonFlameStandard: {fileID: 0}
+  m_bloodParticle: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -219,7 +226,7 @@ GameObject:
   - component: {fileID: 137283018138322060}
   m_Layer: 0
   m_Name: Wings_Titan_HI
-  m_TagString: Untagged
+  m_TagString: DragonWings
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -857,7 +864,7 @@ GameObject:
   - component: {fileID: 137215972539784528}
   m_Layer: 0
   m_Name: Dragon_Titan_HI
-  m_TagString: Untagged
+  m_TagString: DragonBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3146,6 +3153,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_2
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114032994858406880
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3160,6 +3168,7 @@ MonoBehaviour:
   m_parentName: Dragon_Hip
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114045875854805948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3174,6 +3183,7 @@ MonoBehaviour:
   m_parentName: Dragon_LArm_1
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114069877254323192
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3211,6 +3221,7 @@ MonoBehaviour:
   m_parentName: Dragon_LArm_Palm
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114122418111249528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3237,6 +3248,7 @@ MonoBehaviour:
   m_parentName: Dragon_LArm_2
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114160123535724340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3323,6 +3335,7 @@ MonoBehaviour:
   m_parentName: Dragon_LLeg_2
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114240888778812342
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3349,6 +3362,7 @@ MonoBehaviour:
   m_parentName: Dragon_Up_Snout
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114269494639929456
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3411,6 +3425,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail1
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114535810273995746
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3425,6 +3440,7 @@ MonoBehaviour:
   m_parentName: Dragon_RLeg_2
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114541648704142376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3451,6 +3467,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114548978984474454
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3465,6 +3482,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_Palm
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114557851302248600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3479,6 +3497,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_1
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114564506299635264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3529,6 +3548,7 @@ MonoBehaviour:
   m_parentName: Dragon_Neck2
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114775927758932544
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3555,6 +3575,7 @@ MonoBehaviour:
   m_parentName: Dragon_LArm_Collarbone
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114801750042195796
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3581,6 +3602,7 @@ MonoBehaviour:
   m_parentName: Dragon_LLeg_1
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114839496334744102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3595,6 +3617,7 @@ MonoBehaviour:
   m_parentName: Dragon_Hip
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 0
+  m_resetScale: 0
 --- !u!114 &114840945267420180
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3633,6 +3656,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_Collarbone
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114984704826009648
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3647,6 +3671,7 @@ MonoBehaviour:
   m_parentName: Dragon_RLeg_1
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114999077693579266
 MonoBehaviour:
   m_ObjectHideFlags: 1
