@@ -26,6 +26,14 @@ public class MenuDragonSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Private references
 	private MenuDragonLoader m_dragonLoader;
+	public MenuDragonLoader dragonLoader {
+		get{
+			if(m_dragonLoader == null) {
+				m_dragonLoader = GetComponentInChildren<MenuDragonLoader>();
+			} 
+			return m_dragonLoader; 
+		}
+	}
 	private DragonData m_dragonData;
 
 	// Public references
@@ -130,9 +138,12 @@ public class MenuDragonSlot : MonoBehaviour {
 	/// </summary>
 	public void OnShowPostAnimation() {
 		// Rescale all particles
-		ParticleScaler[] scalers = m_dragonPreview.GetComponentsInChildren<ParticleScaler>();
-		for(int i = 0;i<scalers.Length; ++i) {
-			scalers[i].DoScale();
+		if ( m_dragonPreview )
+		{
+			ParticleScaler[] scalers = m_dragonPreview.GetComponentsInChildren<ParticleScaler>();
+			for(int i = 0;i<scalers.Length; ++i) {
+				scalers[i].DoScale();
+			}
 		}
 	}
 }

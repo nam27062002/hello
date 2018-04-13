@@ -329,7 +329,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
 
-				slot.animator.ForceHide(false);
+				// Do not desactivate to allow async loading
+				slot.animator.ForceHide(false, false);
 
 				// Toggle flag
 				isAnimating = true;
@@ -392,7 +393,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 
 				if (!dragonData.isTeased) {
-					slot.animator.ForceHide(false);
+					// Do not desactivate to allow async loading
+					slot.animator.ForceHide(false, false);
 				}
 
 				// Toggle flag

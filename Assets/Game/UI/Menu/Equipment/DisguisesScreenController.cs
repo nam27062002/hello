@@ -312,9 +312,12 @@ public class DisguisesScreenController : MonoBehaviour {
 		Finalize();
 
 		// Restore pets on the current dragon preview
-		DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
-		if(equip != null) {
-			equip.TogglePets(true, true);
+		if (InstanceManager.menuSceneController.selectedDragonPreview)
+		{
+			DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+			if(equip != null) {
+				equip.TogglePets(true, true);
+			}
 		}
 
 		// Restore photo button

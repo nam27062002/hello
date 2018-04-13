@@ -1,6 +1,6 @@
 ﻿// MenuDragonLoader.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 25/02/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -24,7 +24,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		SELECTED_DRAGON,	// Automatically loads and updates SELECTED dragon (MenuSceneController.selectedDragon)
 		MANUAL				// Manual control via the LoadDragon() method and the exposed m_dragonSku parameter
 	}
-	
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -33,7 +33,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	public Mode mode {
 		get { return m_mode; }
 		set {
-			m_mode = value; 
+			m_mode = value;
 			RefreshDragon();
 		}
 	}
@@ -107,10 +107,17 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_allowAltAnimations = value; }
 	}
 
+	public bool m_loadAsync = false;
+	private ResourceRequest m_asyncRequest = null;
+
 	private bool m_useShadowMaterial = false;
 	public bool useShadowMaterial {
 		get { return m_useShadowMaterial; }
-		set { m_useShadowMaterial = value; RefreshDragon(); }
+		set {
+			m_useShadowMaterial = value;
+			if (m_dragonInstance)
+				RefreshDragon();
+		}
 	}
 
 	// Debug
@@ -143,6 +150,9 @@ public class MenuDragonLoader : MonoBehaviour {
 			return m_pscaler;
 		}
 	}
+
+	public delegate void OnDragonLoaded( MenuDragonLoader loader );
+	public OnDragonLoaded onDragonLoaded;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -194,10 +204,22 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// Load the dragon with the given sku.
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon to be loaded</param>
-	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param> 
-	public void LoadDragon(string _sku, string _disguiseSku) {
+	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param>
+	public void LoadDragon(string _sku, string _disguiseSku, bool forceSync = false) {
+
+		Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
+		if (m_dragonInstance != null || m_asyncRequest != null){
+			if (_sku == m_dragonSku && _disguiseSku == m_disguiseSku )
+				return;
+		}
+
 		// Unload current dragon if any
 		UnloadDragon();
+
+		// Update dragon and disguise skus
+		m_dragonSku = _sku;
+		m_disguiseSku = _disguiseSku;
+
 
 		// Load selected dragon
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
@@ -205,70 +227,94 @@ public class MenuDragonLoader : MonoBehaviour {
 			string prefabColumn = "menuPrefab";
 			if (  m_useResultsScreen )
 				prefabColumn = "resultsPrefab";
-			// Instantiate the prefab and add it as child of this object
-			GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
-			if(dragonPrefab != null) {
-				GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
-				newInstance.transform.SetParent(this.transform, false);
-				newInstance.transform.localPosition = Vector3.zero;
-				newInstance.transform.localRotation = Quaternion.identity;
 
-				// Keep layers?
-				if(!m_keepLayers) {
-					newInstance.SetLayerRecursively(this.gameObject.layer);
+			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
+				m_asyncRequest = Resources.LoadAsync<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+			}else{
+				// Instantiate the prefab and add it as child of this object
+				GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+				if(dragonPrefab != null) {
+					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
+					ConfigureInstance( newInstance );
+					if (onDragonLoaded != null)
+						onDragonLoaded(this);
 				}
-
-				// Store dragon preview and launch the default animation
-				m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
-				m_dragonInstance.SetAnim(m_anim);
-
-				// Reset scale if required
-				if(m_resetDragonScale) {
-					m_dragonInstance.transform.localScale = Vector3.one;
-				}
-
-				// Apply equipment
-				DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
-				if(equip != null) {
-					if ( !Application.isPlaying )
-					{
-						equip.Init();
-					}
-					// Apply disguise (if any)
-					if(!string.IsNullOrEmpty(_disguiseSku)) {
-						equip.EquipDisguise(_disguiseSku);
-					}
-
-					// Toggle pets
-					equip.TogglePets(m_showPets, false);
-
-					if (m_hideResultsEquipment)
-						equip.HideResultsEquipment();
-				}
-
-				// Remove fresnel if required
-				if(m_removeFresnel) {
-					m_dragonInstance.SetFresnelColor(Color.black);
-				}
-
-				// Apply shadow material if required
-				if(m_useShadowMaterial) {
-					m_dragonInstance.equip.EquipDisguiseShadow();
-				}
-
-				// Allow alt animations?
-				m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
-
-				// Make sure particles are properly scaled as well
-				pscaler.ReloadOriginalData();
-				pscaler.DoScale();
-				UbiBCN.CoroutineManager.DelayedCallByFrames(() => { pscaler.DoScale(); }, 1);	// In case some initial scale transformation is performed during this frame (i.e. child of a UI3DScaler)
 			}
 		}
+	}
 
-		// Update dragon and disguise skus
-		m_dragonSku = _sku;
-		m_disguiseSku = _disguiseSku;
+	public void Reload( bool forceSync = false ){
+		LoadDragon( m_dragonSku, m_disguiseSku, forceSync );
+	}
+
+	void Update()
+	{
+		if ( m_asyncRequest != null && m_asyncRequest.isDone )
+		{
+			GameObject newInstance = GameObject.Instantiate<GameObject>( m_asyncRequest.asset as GameObject );
+			ConfigureInstance( newInstance );
+			m_asyncRequest = null;
+			if (onDragonLoaded != null)
+				onDragonLoaded(this);
+		}
+	}
+
+	public void ConfigureInstance(GameObject newInstance){
+
+		newInstance.transform.SetParent(this.transform, false);
+		newInstance.transform.localPosition = Vector3.zero;
+		newInstance.transform.localRotation = Quaternion.identity;
+
+		// Keep layers?
+		if(!m_keepLayers) {
+			newInstance.SetLayerRecursively(this.gameObject.layer);
+		}
+
+		// Store dragon preview and launch the default animation
+		m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
+		m_dragonInstance.SetAnim(m_anim);
+
+		// Reset scale if required
+		if(m_resetDragonScale) {
+			m_dragonInstance.transform.localScale = Vector3.one;
+		}
+
+		// Apply equipment
+		DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
+		if(equip != null) {
+			if ( !Application.isPlaying )
+			{
+				equip.Init();
+			}
+			// Apply disguise (if any)
+			if(!string.IsNullOrEmpty(m_disguiseSku)) {
+				equip.EquipDisguise(m_disguiseSku);
+			}
+
+			// Toggle pets
+			equip.TogglePets(m_showPets, false);
+
+			if (m_hideResultsEquipment)
+				equip.HideResultsEquipment();
+		}
+
+		// Remove fresnel if required
+		if(m_removeFresnel) {
+			m_dragonInstance.SetFresnelColor(Color.black);
+		}
+
+		// Apply shadow material if required
+		if(m_useShadowMaterial) {
+			m_dragonInstance.equip.EquipDisguiseShadow();
+		}
+
+		// Allow alt animations?
+		m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
+
+		// Make sure particles are properly scaled as well
+		pscaler.ReloadOriginalData();
+		pscaler.DoScale();
+		UbiBCN.CoroutineManager.DelayedCallByFrames(() => { pscaler.DoScale(); }, 1);	// In case some initial scale transformation is performed during this frame (i.e. child of a UI3DScaler)
 	}
 
 	/// <summary>
@@ -276,12 +322,12 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	public void RefreshDragon() {
 		// Load different dragons based on mode
-		// If the game is not running, we don't have any data on current dragon/skin, 
+		// If the game is not running, we don't have any data on current dragon/skin,
 		// so load a placeholder one manually instead
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON: {
 				if(Application.isPlaying) {
-					LoadDragon(UsersManager.currentUser.currentDragon);	
+					LoadDragon(UsersManager.currentUser.currentDragon);
 				} else {
 					LoadDragon(m_placeholderDragonSku);
 				}
@@ -306,9 +352,10 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	public void UnloadDragon() {
 		// Just make sure the object doesn't have anything attached
+		m_asyncRequest = null;
 		m_dragonInstance = null;
 		foreach(Transform child in transform) {
-			GameObject.DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
+			GameObject.Destroy(child.gameObject);	// Immediate so it can be called from the editor
 		}
 	}
 
