@@ -384,6 +384,8 @@ public class HDTrackingManager
     public virtual void Notify_DeviceStats() { }
 
     public virtual void Notify_HungryLetterCollected() {}
+
+    public virtual void Notify_Crash(bool isFatal, string errorType, string errorMessage) {}
     #endregion
 
     #region log

@@ -32,6 +32,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_targetText = null;
 	[Space]
 	[SerializeField] private bool m_showNameForEggsAndPets = true;	// [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
+	[SerializeField] private GameObject m_nameContainer = null;
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -157,6 +158,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 		// Apply
 		if(m_icon != null) m_icon.sprite = iconSprite;
 		if(m_rewardText != null) m_rewardText.text = rewardText;
+		if(m_nameContainer) m_nameContainer.SetActive(!string.IsNullOrEmpty(rewardText));	// If empty, hide the whole object
 
 		// Set target text
 		if(m_targetText != null) {
