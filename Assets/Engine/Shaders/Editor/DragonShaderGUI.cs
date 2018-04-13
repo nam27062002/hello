@@ -88,6 +88,7 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string cullModeText = "Cull Mode";
         readonly public static string zWriteText = "Z Write";
+        readonly public static string enableCutoffText = "Enable CutOff";
         readonly public static string renderQueueText = "Render queue";
         readonly public static string stencilMaskText = "Stencil mask";
 
@@ -158,6 +159,8 @@ internal class DragonShaderGUI : ShaderGUI
     readonly static string kw_autoInnerLight = "SELFILLUMINATE_AUTOINNERLIGHT";
     readonly static string kw_blinkLights = "SELFILLUMINATE_BLINKLIGHTS";
     readonly static string kw_fire = "FXLAYER_FIRE";
+
+    readonly static int m_labelWidth = 150;
 
     private GUISkin editorSkin;
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
@@ -250,11 +253,12 @@ internal class DragonShaderGUI : ShaderGUI
         {
             setBlendMode(material, blendMode);
         }
+/*
         if (blendMode == 1)
         {
             materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
         }
-
+*/
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
         materialEditor.TextureProperty(mp_detailTexture, Styles.detailTextureText, false);
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
@@ -340,6 +344,15 @@ internal class DragonShaderGUI : ShaderGUI
 
         materialEditor.ShaderProperty(mp_cullMode, Styles.cullModeText);
         materialEditor.ShaderProperty(mp_zWrite, Styles.zWriteText);
+
+        EditorGUILayout.BeginHorizontal();
+        materialEditor.ShaderProperty(mp_EnableCutoff, Styles.enableCutoffText);
+        if (mp_EnableCutoff.floatValue > 0.0f)
+        {
+            materialEditor.ShaderProperty(mp_cutOff, "");
+        }
+        EditorGUILayout.EndHorizontal();
+
         EditorGUILayout.BeginHorizontal(/*editorSkin.customStyles[1]*/);
         EditorGUILayout.LabelField(Styles.renderQueueText);
         int renderQueue = EditorGUILayout.IntField(material.renderQueue);
