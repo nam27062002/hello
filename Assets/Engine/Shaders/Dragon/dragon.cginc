@@ -213,7 +213,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #else
 //	col.w = 0.0f;
-	float opaqueLight = 1.0;
+	float opaqueLight = 0.0;
 #if defined(FRESNEL) && defined(OPAQUEFRESNEL)
 	opaqueLight = fresnel;
 //	col.w += fresnel;
@@ -224,7 +224,7 @@ fixed4 frag(v2f i) : SV_Target
 //	col.w += specularLight;
 #endif
 
-	col.w = min(col.w, opaqueLight);
+	col.w = max(col.w, opaqueLight);
 	col.w *= _Tint.w;
 #endif
 
