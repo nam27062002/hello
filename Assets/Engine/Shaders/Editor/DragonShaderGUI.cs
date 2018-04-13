@@ -75,9 +75,10 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string reflectionAmountText = "Reflection amount";
         readonly public static string fireMapText = "Fire Texture";
         readonly public static string fireAmountText = "Fire amount";
+        readonly public static string fireSpeedText = "Fire speed";
 
         readonly public static string reflectionLayerText = "Reflection layer are actually used by chinese dragon. Applied as (Reflection Texture intensity) * (Reflection Amount) * (Detail Texture.b)";
-        readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix. Applied as (Fire Amount) * (Detail Texture.b)";
+        readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix and water dragon. Applied as (Fire Amount) * (Detail Texture.b)";
 
         readonly public static string selfIluminationText = "Self ilumination";
 
@@ -110,6 +111,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_reflectionAmount;
     MaterialProperty mp_fireMap;
     MaterialProperty mp_fireAmount;
+    MaterialProperty mp_fireSpeed;
 
     MaterialProperty mp_colorMultiply;
     MaterialProperty mp_colorAdd;
@@ -203,6 +205,7 @@ internal class DragonShaderGUI : ShaderGUI
         mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
         mp_fireMap = FindProperty("_FireMap", props);
         mp_fireAmount = FindProperty("_FireAmount", props);
+        mp_fireSpeed = FindProperty("_FireSpeed", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
         mp_stencilMask = FindProperty("_StencilMask", props);
@@ -306,8 +309,9 @@ internal class DragonShaderGUI : ShaderGUI
 
             case 2:     //FXLayer_Fire
                 EditorGUILayout.HelpBox(Styles.fireLayerText, MessageType.Info);
-                materialEditor.TextureProperty(mp_fireMap, Styles.fireMapText, false);
+                materialEditor.TextureProperty(mp_fireMap, Styles.fireMapText, true);
                 materialEditor.ShaderProperty(mp_fireAmount, Styles.fireAmountText);
+                materialEditor.ShaderProperty(mp_fireSpeed, Styles.fireSpeedText);
                 break;
         }
 

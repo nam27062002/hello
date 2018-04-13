@@ -37,6 +37,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 		_FireMap("Fire Map", 2D) = "white" {}
 		_FireAmount("Fire amount", Range(0.0, 1.0)) = 0.0
+		_FireSpeed("Fire speed", float) = 1.0
 
 		// Blending state
 		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
