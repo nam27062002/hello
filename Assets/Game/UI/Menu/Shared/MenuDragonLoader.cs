@@ -130,27 +130,6 @@ public class MenuDragonLoader : MonoBehaviour {
 		get { return m_dragonInstance; }
 	}
 
-	private ParticleScaler m_pscaler = null;
-	public ParticleScaler pscaler {
-		get {
-			if(m_pscaler == null) {
-				// Try getting a defined scaler
-				m_pscaler = GetComponent<ParticleScaler>();
-				if(m_pscaler == null) {
-					// Instantiate a new scaler
-					m_pscaler = this.gameObject.AddComponent<ParticleScaler>();
-					pscaler.m_resetFirst = true;
-					pscaler.m_scaleAllChildren = true;
-					pscaler.m_scaleLifetime = false;
-					pscaler.m_whenScale = ParticleScaler.WhenScale.MANUALLY;
-					pscaler.m_scaleOrigin = ParticleScaler.ScaleOrigin.TRANSFORM_SCALE;
-					pscaler.m_transform = this.transform;
-				}
-			}
-			return m_pscaler;
-		}
-	}
-
 	public delegate void OnDragonLoaded( MenuDragonLoader loader );
 	public OnDragonLoaded onDragonLoaded;
 
@@ -312,9 +291,20 @@ public class MenuDragonLoader : MonoBehaviour {
 		m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
 
 		// Make sure particles are properly scaled as well
-		pscaler.ReloadOriginalData();
-		pscaler.DoScale();
-		UbiBCN.CoroutineManager.DelayedCallByFrames(() => { pscaler.DoScale(); }, 1);	// In case some initial scale transformation is performed during this frame (i.e. child of a UI3DScaler)
+		RescaleParticles();
+		UbiBCN.CoroutineManager.DelayedCallByFrames(() => { RescaleParticles(); }, 2);	// In case some initial scale transformation is performed during this frame (i.e. child of a UI3DScaler)
+	}
+
+	public void RescaleParticles()
+	{
+		if ( m_dragonInstance )
+		{
+			ParticleScaler[] scalers = m_dragonInstance.GetComponentsInChildren<ParticleScaler>();
+			for( int i = 0;i<scalers.Length; ++i )
+			{
+				scalers[i].DoScale();
+			}
+		}
 	}
 
 	/// <summary>
