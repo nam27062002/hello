@@ -57,8 +57,9 @@ uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
 #elif defined (FXLAYER_FIRE)
 uniform sampler2D _FireMap;
-float4 _FireMap_ST;
+uniform float4 _FireMap_ST;
 uniform float _FireAmount;
+uniform float _FireSpeed;
 #endif
 
 #ifdef SELFILLUMINATE_AUTOINNERLIGHT
@@ -108,8 +109,7 @@ v2f vert(appdata_t v)
 #endif
 
 #if defined(FXLAYER_FIRE)
-	o.screenPos = o.vertex.xy / o.vertex.w;
-
+	o.screenPos = (o.vertex.xy / o.vertex.w) * _FireMap_ST.xy + _FireMap_ST.zw;
 #endif
 
 	return o;
@@ -171,8 +171,8 @@ fixed4 frag(v2f i) : SV_Target
 //	i.texcoord.y = 1.0 - (i.texcoord.y * 0.75);
 //	i.texcoord.y *= i.texcoord.y;
 
-	fixed4 intensity = tex2D(_FireMap, (i.screenPos.xy + half2(_Time.y * 0.666, 0.25)));
-	intensity *= tex2D(_FireMap, (i.screenPos.xy + float2(_Time.y * 0.333, -0.25)));// +pow(i.uv.y, 3.0);
+	fixed4 intensity = tex2D(_FireMap, (i.screenPos.xy + half2(_Time.y * _FireSpeed, 0.25)));
+	intensity *= tex2D(_FireMap, (i.screenPos.xy + float2(_Time.y * _FireSpeed, -0.25)));// +pow(i.uv.y, 3.0);
 
 	float fireMask = _FireAmount * detail.b;
 	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
