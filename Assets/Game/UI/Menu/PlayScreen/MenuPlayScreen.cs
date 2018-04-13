@@ -32,8 +32,6 @@ public class MenuPlayScreen : MonoBehaviour {
 
     [SerializeField]
     private Localizer m_incentivizeLabelLocalizer = null; 
-
-    private static bool m_firstTimeMenu = true;
         
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -46,35 +44,28 @@ public class MenuPlayScreen : MonoBehaviour {
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
     }
-
-    /// <summary>
-    /// Component has been enabled.
-    /// </summary>
-    private void OnEnable() 
+	
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() 
 	{
         HDTrackingManager.Instance.Notify_MenuLoaded();        
 
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
-    }
+	}
 
 	private void Update() {
 		if (NeedsToRefresh()) {
             Refresh();
         }
+	}
 
-        if (m_firstTimeMenu)
-        {
-            FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
-            m_firstTimeMenu = false;
-        }
-
-    }
-
-    /// <summary>
-    /// Component has been disabled.
-    /// </summary>
-    private void OnDisable() {
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
        
 	}
 

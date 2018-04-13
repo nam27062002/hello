@@ -57,7 +57,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         OnStart();
     }
 
-    protected virtual void OnDestroy() {
+    private void OnDestroy() {
         if (SpawnerManager.isInstanceCreated)
             SpawnerManager.instance.Unregister(this, UseSpawnManagerTree);
     }

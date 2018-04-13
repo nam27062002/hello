@@ -115,15 +115,11 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 
         HDTrackingManager.Instance.Destroy();
 
-        HDCustomizerManager.instance.Destroy();
-
         // [DGR] We need to destroy SaveFacade system because a new instance of UserProfile will be created when restarting so we need to make sure this system
         // is going to use the new UserProfile instance        
         PersistenceFacade.instance.Reset();
 
         TransactionManager.instance.Reset();
-
-        HDCustomizerManager.instance.Reset();
 
         // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
         // from the editor)

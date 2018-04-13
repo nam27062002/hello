@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class ParticleHandler {
 	private Pool m_pool;
 	private bool m_isValid;
-	public bool isValid { get { return m_isValid; } }
+
 
 	//-------------------------------------------------//
 	public ParticleHandler() {
@@ -34,7 +34,7 @@ public class ParticleHandler {
 
 
 	//-------------------------------------------------//
-	public GameObject Spawn(ParticleData _data, Vector3 _at = default(Vector3), bool _prewarm = true) {		
+	public GameObject Spawn(ParticleData _data, Vector3 _at = default(Vector3), bool _prewarm = true) {
 		if (m_isValid) {
 			GameObject system = m_pool.Get(false);
 			StartSystem(system, null, _data, _at, _prewarm);

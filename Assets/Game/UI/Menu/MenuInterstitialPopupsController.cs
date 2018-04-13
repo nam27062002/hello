@@ -92,7 +92,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 							PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
 							m_popupDisplayed = true;
 						} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-							PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
+							PopupAskRateUs.OpenIOSMarketForRating();
 							m_popupDisplayed = true;
 						}
 					}

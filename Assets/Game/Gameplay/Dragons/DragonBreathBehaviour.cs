@@ -200,13 +200,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void Update() {
 		if (!m_dragon.changingArea) {
 
-			#if UNITY_EDITOR
-			if (Input.GetKeyDown(KeyCode.F)) {
-				AddFury(m_furyMax);
-			}
-			#endif
-				
-
 			// Cheat for infinite fire
 			bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 

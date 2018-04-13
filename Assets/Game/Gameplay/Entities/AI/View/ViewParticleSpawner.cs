@@ -96,16 +96,14 @@ public class ViewParticleSpawner : MonoBehaviour {
 		// Only for manual activation mode
 		if(m_activationMode != ActivationMode.MANUAL) return;
 
+		// Only if not already spawned
+		if(m_state != State.IDLE) return;
+
 		// Are we inside the activation area?
 		if(!CheckActivationArea()) return;
 
-		// Only if not already spawned
-		if(m_state == State.IDLE) {		
-			// Everything ok! Spawn the particle
-			SpawnInternal();
-		} else {
-			CancelReturn();
-		}
+		// Everything ok! Spawn the particle
+		SpawnInternal();
 	}
 
 	/// <summary>

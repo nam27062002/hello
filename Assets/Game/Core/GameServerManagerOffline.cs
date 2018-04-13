@@ -75,7 +75,7 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 	/// 
 	/// </summary>
 	/// <param name="_callback">Action called once the server response arrives.</param>
-	override protected void InternalPing(ServerCallback _callback, bool highPriority=false) {
+	override public void Ping(ServerCallback _callback) {
 		// No response
 		DelayedCall(() => _callback(null, null));
 	}
