@@ -9,13 +9,16 @@ struct appdata_t {
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
-	float3 vLight : TEXCOORD1;
-	float3 normalWorld : TEXCOORD3;
+	float3 vLight : COLOR;
+	float3 normalWorld : NORMAL;
 #ifdef NORMALMAP
 	float3 tangentWorld : TEXCOORD2;
 	float3 binormalWorld : TEXCOORD4;
 #endif
 	fixed3 viewDir : TEXCOORD5;
+#if defined(FXLAYER_FIRE)
+	fixed2 screenPos : TEXCOORD1;
+#endif
 };
 
 sampler2D _MainTex;
@@ -54,6 +57,7 @@ uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
 #elif defined (FXLAYER_FIRE)
 uniform sampler2D _FireMap;
+float4 _FireMap_ST;
 uniform float _FireAmount;
 #endif
 
@@ -102,6 +106,12 @@ v2f vert(appdata_t v)
 //#endif
 
 #endif
+
+#if defined(FXLAYER_FIRE)
+	o.screenPos = o.vertex.xy / o.vertex.w;
+
+#endif
+
 	return o;
 }
 
@@ -158,11 +168,11 @@ fixed4 frag(v2f i) : SV_Target
 	col = (1.0 - ref) * main + ref * reflection;
 
 #elif defined (FXLAYER_FIRE)	//Used by pet phoenix
-	i.texcoord.y = 1.0 - (i.texcoord.y * 0.75);
-	i.texcoord.y *= i.texcoord.y;
+//	i.texcoord.y = 1.0 - (i.texcoord.y * 0.75);
+//	i.texcoord.y *= i.texcoord.y;
 
-	fixed4 intensity = tex2D(_FireMap, (i.texcoord.xy + half2(0.25, _Time.y * 0.666)));
-	intensity *= tex2D(_FireMap, (i.texcoord.xy + float2(-0.25, _Time.y * 0.333)));// +pow(i.uv.y, 3.0);
+	fixed4 intensity = tex2D(_FireMap, (i.screenPos.xy + half2(_Time.y * 0.666, 0.25)));
+	intensity *= tex2D(_FireMap, (i.screenPos.xy + float2(_Time.y * 0.333, -0.25)));// +pow(i.uv.y, 3.0);
 
 	float fireMask = _FireAmount * detail.b;
 	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
