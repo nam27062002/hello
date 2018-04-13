@@ -432,7 +432,7 @@ public partial class GlobalEvent {
 		if(_timestamp >= m_startTimestamp) return State.ACTIVE;
 
 		// Teasing?
-		if(_timestamp >= m_teasingStartTimestamp) return State.TEASING;
+		if(_timestamp < m_startTimestamp) return State.TEASING;
 
 		// Not even teasing
 		return State.INIT;
