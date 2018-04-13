@@ -8,14 +8,14 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_balrog_4_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA SPECULAR _ZWRITE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2010
   stringTagMap:
-    QUEUE: Transparent
-    RenderType: Transparent
+    QUEUE: Geometry
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -71,16 +71,16 @@ Material:
     m_Floats:
     - FXLayer: 0
     - SelfIlluminate: 0
-    - _BlendMode: 2
+    - _BlendMode: 0
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _EmissionScaleUI: 0
     - _EnableBlendFresnel: 0
-    - _EnableCutoff: 1
-    - _EnableDoublesided: 1
+    - _EnableCutoff: 0
+    - _EnableDoublesided: 0
     - _EnableFresnel: 1
     - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
@@ -95,15 +95,15 @@ Material:
     - _InnerLightWaveSpeed: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1.32
+    - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SpecExponent: 29.59
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
-    - _ZWrite: 0
+    - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
@@ -114,5 +114,5 @@ Material:
     - _FresnelColor: {r: 0.38110945, g: 0.95324457, b: 0.97794116, a: 1}
     - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
     - _SecondLightColor: {r: 0.61764705, g: 0.03179065, b: 0.52875865, a: 0}
-    - _SecondLightDir: {r: 0.53888404, g: -0.5083812, b: -0.67167896, a: 0}
+    - _SecondLightDir: {r: 0.74740934, g: -0.66436386, b: -0, a: 0}
     - _Tint: {r: 0.85294116, g: 0.85294116, b: 0.85294116, a: 1}
