@@ -1,4 +1,4 @@
-// ScenaryShaderGUI.cs
+// DragonShaderGUI.cs
 // Hungry Dragon
 // 
 // Created by Diego Campos on 26/05/2017.
@@ -86,6 +86,8 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string blinkLightsSelfIluminationText = "Reptile dragon rings self ilumination.";
 
         readonly public static string blendModeText = "Blend Mode";
+        readonly public static string cullModeText = "Cull Mode";
+        readonly public static string zWriteText = "Z Write";
         readonly public static string renderQueueText = "Render queue";
         readonly public static string stencilMaskText = "Stencil mask";
 
@@ -117,6 +119,10 @@ internal class DragonShaderGUI : ShaderGUI
 
     MaterialProperty mp_BlendMode;
     MaterialProperty mp_stencilMask;
+
+    MaterialProperty mp_zWrite;
+    MaterialProperty mp_cullMode;
+
 
     /// <summary>
     /// Toggle Material Properties
@@ -208,6 +214,8 @@ internal class DragonShaderGUI : ShaderGUI
         mp_EnableOpaqueFresnel = FindProperty("_EnableOpaqueFresnel", props);
         mp_EnableBlendFresnel = FindProperty("_EnableBlendFresnel", props);
         mp_EnableOpaqueSpecular = FindProperty("_EnableOpaqueSpecular", props);
+        mp_zWrite = FindProperty("_ZWrite", props);
+        mp_cullMode = FindProperty("_Cull", props);
 
         /// Enum Material Properties
 
@@ -328,7 +336,11 @@ internal class DragonShaderGUI : ShaderGUI
         materialEditor.ShaderProperty(mp_colorMultiply, Styles.colorMultiplyText);
         materialEditor.ShaderProperty(mp_colorAdd, Styles.colorAddText);
 
-        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
+
+        materialEditor.ShaderProperty(mp_cullMode, Styles.cullModeText);
+        materialEditor.ShaderProperty(mp_zWrite, Styles.zWriteText);
+        EditorGUILayout.BeginHorizontal(/*editorSkin.customStyles[1]*/);
         EditorGUILayout.LabelField(Styles.renderQueueText);
         int renderQueue = EditorGUILayout.IntField(material.renderQueue);
         if (material.renderQueue != renderQueue)
@@ -336,8 +348,7 @@ internal class DragonShaderGUI : ShaderGUI
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
+//        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
         materialEditor.ShaderProperty(mp_stencilMask, Styles.stencilMaskText);
 
 /*      EditorGUILayout.LabelField(Styles.stencilMaskText);
@@ -347,8 +358,9 @@ internal class DragonShaderGUI : ShaderGUI
             material.renderQueue = renderQueue;
         }
 */
-        EditorGUILayout.EndHorizontal();
+//        EditorGUILayout.EndHorizontal();
 
+        EditorGUILayout.EndVertical();
 
 
         if (GUILayout.Button("Log keywords", editorSkin.customStyles[1]))
