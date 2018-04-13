@@ -97,9 +97,13 @@ uniform float _CutOff;
 HG_FOG_VARIABLES
 #endif
 
-#if defined(EMISSIVE_BLINK)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
 uniform float _EmissivePower;
 uniform float _BlinkTimeMultiplier;
+
+#if defined(WAVE_EMISSION)
+uniform float _WaveEmission;
+#endif
 
 #elif defined(EMISSIVE_REFLECTIVE)
 uniform sampler2D _ReflectionMap;
@@ -308,11 +312,19 @@ fixed4 frag (v2f i) : SV_Target
 	col = col + (specular * diffuseAlpha * i.color * _LightColor0);
 #endif	
 
-#if defined(EMISSIVE_BLINK)
-//	float intensity = 1.3 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
-	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
-	col *= intensity;
+#if defined(EMISSIVE_CUSTOM)
+	diffuseAlpha = frac(diffuseAlpha + (1.0 / 255.0));
+#endif
 
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
+
+#if defined(WAVE_EMISSION)
+	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
+#else 
+	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
+
+#endif
+	col *= intensity;
 #endif
 
 /*
@@ -340,7 +352,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(FOG)// && !defined(EMISSIVE_BLINK)
 
-#if defined(EMISSIVE_BLINK)// || defined(EMISSIVE_REFLECTIVE)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)// || defined(EMISSIVE_REFLECTIVE)
 	fixed4 colc = col;
 	HG_APPLY_FOG(i, col);	// Fog
 	col = lerp(col, colc, diffuseAlpha);
@@ -350,10 +362,14 @@ fixed4 frag (v2f i) : SV_Target
 
 #endif
 
-
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
+
+#if !defined(MAINCOLOR_TEXTURE) && defined(TINT)
+	col *= _Tint;
+#endif
+
 	return col;
 }
 

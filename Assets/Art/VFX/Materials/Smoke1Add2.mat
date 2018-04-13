@@ -7,9 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Smoke1Add2
-  m_Shader: {fileID: 4800000, guid: e2e52a5da952247b0a2b911f92db4e3c, type: 3}
-  m_ShaderKeywords: EMISSIVEPOWER GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
-    GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_ADDITIVE EMISSIVEPOWER
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -19,6 +18,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _ColorRamp:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DissolveTex:
         m_Texture: {fileID: 2800000, guid: 8c86290b5d805ac4fb0f4397b58308aa, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -32,18 +35,25 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendMode: 0
+    - Dissolve: 0
     - _ABOffset: 0
     - _BlendA: 5
     - _BlendB: 10
     - _BlendC: 5
     - _BlendD: 1
-    - _BlendMode: 10
+    - _BlendMode: 0
+    - _ColorMultiplier: 1
     - _Cutoff: 0.5
+    - _DstBlend: 1
     - _EmissionSaturation: 1.2
     - _EmissivePower: 4
     - _EmissiveVal: 0
     - _EnableAutomaticPanning: 0
+    - _EnableColorRamp: 0
+    - _EnableColorVertex: 0
     - _EnableEmissivePower: 1
+    - _EnableExtendedParticles: 0
     - _FresnelPow: 2
     - _FresnelScale: 0
     - _InvFade: 1
@@ -58,14 +68,17 @@ Material:
     - _ShineScale: 0
     - _ShineShadowScale: 1
     - _SpecularVal: 0.001
+    - _SrcBlend: 5
     - _ZTest: 2
     m_Colors:
+    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _Center: {r: -0.9990177, g: -3.2205462, b: 0.5887885, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0.2, g: 0.8, b: 0, a: 0}
     - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _Scaling: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 0}
     - _ShineColor: {r: 1, g: 1, b: 1, a: 1}

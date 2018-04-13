@@ -60,7 +60,8 @@ public class HUDSpeed : MonoBehaviour {
 		// Do it!
 		if ( m_dragonMotion != null )
 		{
-			m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##");
+			m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##") + "\nHIGH: " + (m_dragonMotion.position.y - 165f).ToString(".#");
+			//m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##") + "\nDEEP: " + (m_dragonMotion.position.y + 157f).ToString(".#");
 		}
 	}
 }
