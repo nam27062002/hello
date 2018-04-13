@@ -450,7 +450,7 @@ internal class DragonShaderGUI : ShaderGUI
                 //                material.renderQueue = 3000;
                 material.SetFloat("_ZWrite", 0.0f);
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
-                SetKeyword(material, kw_cutOff, true);
+                SetKeyword(material, kw_cutOff, false);
                 SetKeyword(material, kw_doubleSided, true);
                 SetKeyword(material, kw_opaqueAlpha, false);
                 material.SetFloat("_EnableCutoff", 1.0f);
