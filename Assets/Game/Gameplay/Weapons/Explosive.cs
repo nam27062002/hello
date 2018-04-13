@@ -10,7 +10,6 @@ public class Explosive {
 	private DamageType m_damageType;
 	private float m_radiusSqr;
 
-	private GameCamera m_camera;
 	private float m_cameraShakeTime;
 
 	private ParticleData m_particleData;
@@ -30,8 +29,6 @@ public class Explosive {
 		if (m_particleData != null) {
 			m_particleData.CreatePool();
 		}
-
-		m_camera = InstanceManager.gameCamera;
 	}
 
 	public void Explode(Transform _at, float _knockback, bool _triggeredByPlayer) {
@@ -67,11 +64,8 @@ public class Explosive {
 			}
 		}
 
-		if (m_particleData != null) {
-			Vector3 point = _at.position + m_particleData.offset;
-			if (m_camera.IsInsideCameraFrustrum(point)) {
-				m_particleData.Spawn(point);
-			}
+		if (m_particleData != null) {			
+			m_particleData.Spawn(_at.position + m_particleData.offset);
 		}
 	}
 }

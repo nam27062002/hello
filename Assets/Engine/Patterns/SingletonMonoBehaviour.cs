@@ -8,7 +8,10 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.EventSystems;
+
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -20,7 +23,8 @@ using System.Collections.Generic;
 /// A new GameObject will be created for each one of them (called as the class) and
 /// added as child of a single GameObject in the current scene's hierarchy which 
 /// will persist throughout scene changes.
-/// Alternatively, if a prefab named after the class with the "PF_" (i.e. PF_MySingleton) prefix exists
+/// If the target class has a "PATH" string constant, the instance will be created by loading the prefab pointed by such constant.
+/// If no PATH constant exists, or no prefab is found at the PATH location, and a prefab named after the class with the "PF_" (i.e. PF_MySingleton) prefix exists
 /// in a "Singletons" folder within the Resources folder, it will be used instead of creating a new GameObject
 /// for that class. This allows users to initialize singletons from Unity's inspector by editing the prefab values.
 /// The singleton instance has protected access, so only the implementing class can access it.
@@ -142,39 +146,36 @@ namespace UbiBCN
 						}
 						//containerObj.hideFlags = HideFlags.DontSave;
 					}
-					
-					// Is there a pre-made prefab for this class in the Resources folder?
-					GameObject singletonObj = null;
-					GameObject prefabObj = Resources.Load<GameObject>(ISingleton.PARENT_OBJECT_NAME + "/PF_" + typeof(T).Name);
-					if(prefabObj != null) {
-						// Make sure the prefab contains a component of the required type
-						if(prefabObj.GetComponent<T>() == null) {
-							// Component wasn't found, throw a warning
-							Debug.LogWarning("[Singleton] Prefab for singleton " + typeof(T) + " doesn't contain a component of type " + typeof(T) + ".\nCreating singleton with default values instead.");
-							
-							// Destroy the object we just loaded
-							GameObject.DestroyImmediate(prefabObj);
-							prefabObj = null;
-						}
-						
-						// Everything's ok, use it as singleton object and get the instance from it
-						else {
-							// Instantiate the loaded prefab
-							singletonObj = GameObject.Instantiate(prefabObj);
-							singletonObj.name = prefabObj.name;		// Get rid of the "(Clone)" that Unity adds by default
-							
-							// Get the singleton's instance from it
-							m_instance = singletonObj.GetComponent<T>();
 
-                            // Prevents this game object which has been created by scripts to be saved in the scene if a instance stayed in the scene after playing by mistake
-							m_instance.hideFlags = HideFlags.DontSave;
-                        }
+					// Check if there is a prefab for this singleton at the Resources directory
+					Type t = typeof(T);
+
+					// a) From PATH constant
+					// Use reflection to determine whether the target type has a PATH constant
+					// IsLiteral determines if its value is written at compile time and not changeable
+					// IsInitOnly determine if the field can be set in the body of the constructor
+					// for C# a field which is readonly keyword would have both true but a const
+					// field would have only IsLiteral equal to true
+					List<string> pathConstants = t
+						.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+						.Where(fi => fi.Name == "PATH" && fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
+						.Select(x => (string)x.GetRawConstantValue())
+						.ToList();
+					for(int i = 0; i < pathConstants.Count && m_instance == null; ++i) {
+						LoadPrefabAndCreateInstance(pathConstants[i]);
+					}
+
+					// b) Default Singletons folder
+					// No instance could be loaded from a PATH constant, try with default singletons folder
+					if(m_instance == null) {
+						LoadPrefabAndCreateInstance(ISingleton.RESOURCES_FOLDER + "PF_" + t.Name);	// Default path
 					}
 					
+					// c) Mew instance
 					// If there wasn't a valid prefab, create a new object to hold the instance
-					if(singletonObj == null) {
+					if(m_instance == null) {
 						// Create the object and give it the name of the class
-						singletonObj = new GameObject(typeof(T).Name);
+						GameObject singletonObj = new GameObject(typeof(T).Name);
 						
 						// Create the instance by adding it as a component of the game object we just created
 						// Store its reference so this is only done once
@@ -185,7 +186,7 @@ namespace UbiBCN
                     }                    
 
                     // Attach the singleton object as child of the Singletons container to make it have the DontDestroyOnLoad flag and to keep the hierarchy clean
-                    singletonObj.transform.SetParent(containerObj.transform, false);
+                    m_instance.transform.SetParent(containerObj.transform, false);
 					
 					// Instance has been created and stored, unlock instance creation
 					m_state = ISingleton.EState.READY;
@@ -205,6 +206,39 @@ namespace UbiBCN
 			
 			// Immediately destroy game object holding the singleton
 			DestroyImmediate(m_instance.gameObject);
+		}
+
+		/// <summary>
+		/// Try to load a prefab from a Resources path and create a new instance from it.
+		/// </summary>
+		/// <param name="_prefab">Prefab to be validated.</param>
+		private static void LoadPrefabAndCreateInstance(string _path) {
+			// Ignore if instance is already initialized
+			if(m_instance != null) return;
+
+			// Load prefab
+			GameObject prefabObj = Resources.Load<GameObject>(_path);
+			if(prefabObj == null) return;
+
+			// Make sure the prefab contains a component of the required type
+			if(prefabObj.GetComponent<T>() == null) {
+				// Component wasn't found, throw a warning
+				Debug.LogWarning("[Singleton] Prefab " + _path + " for singleton " + typeof(T) + " doesn't contain a component of type " + typeof(T));
+
+				// Destroy the prefab object we just loaded
+				GameObject.DestroyImmediate(prefabObj);
+				prefabObj = null;
+			} else {
+				// Instantiate the loaded prefab
+				GameObject singletonObj = GameObject.Instantiate(prefabObj);
+				singletonObj.name = prefabObj.name;		// Get rid of the "(Clone)" that Unity adds by default
+
+				// Get the singleton's instance from it
+				m_instance = singletonObj.GetComponent<T>();
+
+				// Prevents this game object which has been created by scripts to be saved in the scene if a instance stayed in the scene after playing by mistake
+				m_instance.hideFlags = HideFlags.DontSave;
+			}
 		}
 	}
 }

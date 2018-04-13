@@ -419,16 +419,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return Device_GetSystemMemorySize() >= minMemory;
     }
 
-	public bool Device_SupportedWarning()
-	{
-		bool ret = false;
-		#if UNITY_IOS
-		ret = UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPad3Gen;
-		#endif
-		return ret;
-	}
-
-	public float Device_CalculateRating()
+    public float Device_CalculateRating()
     {
         //Average the devices RAM, CPU and GPU details to give a rating betwen 0 and 1
         float finalDeviceRating = 0.0f;
@@ -1549,12 +1540,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     
     public bool IsAutomaticReloginEnabled()
     {        
-        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
+        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
     }
     
     public int GetAutomaticReloginPeriod()
     {     
-        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
+        return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
     }
     #endregion
 

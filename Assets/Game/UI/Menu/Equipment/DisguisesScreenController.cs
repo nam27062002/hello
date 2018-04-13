@@ -491,9 +491,6 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Save!
 				PersistenceFacade.instance.Save_Request(true);
 
-				// Notify game
-				Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, _flow.itemDef.sku);
-
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDisguisePurchasedFX();
 			}

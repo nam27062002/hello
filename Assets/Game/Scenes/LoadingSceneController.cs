@@ -426,6 +426,8 @@ public class LoadingSceneController : SceneController {
 				RewardManager.CreateInstance(true);
 				EggManager.CreateInstance(true);
 				EggManager.InitFromDefinitions();
+				OffersManager.CreateInstance(true);	// Don't initialize yet, we'll wait for persistence to be loaded and customizer to received
+				OffersManager.ValidateContent();	// Do this before customizer is applied (here is ok!)
 
 				// Settings and setup
 				GameSettings.CreateInstance(false);
@@ -488,6 +490,7 @@ public class LoadingSceneController : SceneController {
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
+				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
@@ -497,22 +500,11 @@ public class LoadingSceneController : SceneController {
                 // tracking id since the user's interaction with this popup has to be tracked
                 if (FeatureSettingsManager.instance.Device_IsSupported())
                 {
-					//If on iPad3 and we have no shown the warning message before
-					if ( 	FeatureSettingsManager.instance.Device_SupportedWarning()   
-							&& (PlayerPrefs.GetInt("SUPPORT_WARNING_SHOWN", 0) != 1)
-		                 )
-		            {
-						PlayerPrefs.SetInt("SUPPORT_WARNING_SHOWN", 1);
-						Popup_ShowUnsupportedDevice(true);
-		            }
-		            else
-		            {
-						m_loadingDone = true;
-		            }
+                    m_loadingDone = true;
                 }
                 else
                 {
-                    Popup_ShowUnsupportedDevice( false );
+                    Popup_ShowUnsupportedDevice();
                 }
             };
 
@@ -525,34 +517,18 @@ public class LoadingSceneController : SceneController {
     }
 
     #region unsupported_device
-    private void Popup_ShowUnsupportedDevice( bool _warningSupport )
+    private void Popup_ShowUnsupportedDevice()
     {
         PopupMessage.Config config = PopupMessage.GetConfig();
-
+        config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
+        config.MessageTid = "TID_BODY_UNSUPPORTED_DEVICE";
         config.IsButtonCloseVisible = false;
 
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-
-        if ( _warningSupport ){
-			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
-        	config.MessageTid = "TID_BODY_SUPPORT_WARNING_DEVICE";
-
-			config.OnConfirm = UnsupportedDevice_Continue;
-			config.ConfirmButtonTid = "TID_BUTTON_SUPPORT_WARNING_CONTINUE";
-
-			config.OnCancel = UnsupportedDevice_OnGoToLink;
-			config.CancelButtonTid = "TID_BUTTON_SUPPORT_WARNING_GO";
-        }else{
-			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
-        	config.MessageTid = "TID_BODY_UNSUPPORTED_DEVICE";
-
-			config.OnConfirm = UnsupportedDevice_OnGoToLink;
-        	config.ConfirmButtonTid = "TID_BUTTON_UNSUPPORTED_DEVICE";
-
-			config.OnCancel = UnsupportedDevice_OnQuit;
-	        config.CancelButtonTid = "TID_PAUSE_TAB_OPTIONS_QUIT";
-			
-        }
+        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;        
+        config.OnConfirm = UnsupportedDevice_OnGoToLink;
+        config.ConfirmButtonTid = "TID_BUTTON_UNSUPPORTED_DEVICE";
+        config.OnCancel = UnsupportedDevice_OnQuit;
+        config.CancelButtonTid = "TID_PAUSE_TAB_OPTIONS_QUIT";
 
         // Back button is disabled in order to make sure that the user is aware when making such an important decision
         config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
@@ -579,12 +555,6 @@ public class LoadingSceneController : SceneController {
         // The user quits the application
         Application.Quit();
     }
-
-    private void UnsupportedDevice_Continue()
-    {
-		m_loadingDone = true;
-    }
-
     #endregion
 
     #region log

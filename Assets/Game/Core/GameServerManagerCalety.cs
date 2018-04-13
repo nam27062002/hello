@@ -107,14 +107,8 @@ public class GameServerManagerCalety : GameServerManager {
             Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(MessengerEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
         }
 
-        public override void onSessionExpired() {
-            Debug.TaggedLog(tag, "onSessionExpired");
-            GameServerManager.SharedInstance.OnLogOut();
-        }
-
-        public override void onShowMaintenanceMode() {         
+		public override void onShowMaintenanceMode() {         
 			Debug.TaggedLog(tag, "onShowMaintenanceMode");
-            GameServerManager.SharedInstance.OnLogOut();
 		}
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
@@ -151,9 +145,7 @@ public class GameServerManagerCalety : GameServerManager {
 			Debug.TaggedLog(tag, "onNewAppVersionNeeded");
 			CacheServerManager.SharedInstance.SaveCurrentVersionAsObsolete();
 			IsNewAppVersionNeeded = true;
-
-            GameServerManager.SharedInstance.OnLogOut();
-        }
+		}
 
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onUserBlackListed() {
@@ -175,17 +167,7 @@ public class GameServerManagerCalety : GameServerManager {
 			Debug.TaggedLog(tag, "onRequestGameReset");
 		}
 
-        public override void onShowAccountsConflict() { // When the same GC account is used in different devices this will make the game to show a popup for exit 
-            Debug.TaggedLog(tag, "onShowAccountsConflict");
-            GameServerManager.SharedInstance.OnLogOut();
-        }
-
-        public override void onUserBanned(long iMilliseconds) {  // Called when user is banned
-            Debug.TaggedLog(tag, "onUserBanned");
-            GameServerManager.SharedInstance.OnLogOut();
-        }
-
-        public override void onShowLostConnection () {
+		public override void onShowLostConnection () {
 			Debug.TaggedLog(tag, "onShowLostConnection");
 			GameServerManager.SharedInstance.OnConnectionLost();
 		} 
@@ -295,8 +277,11 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_OnExecuteCommandDone(error, null);
     }    
 
-    protected override void InternalPing(ServerCallback callback, bool highPriority=false) {
-		Commands_EnqueueCommand(ECommand.Ping, null, callback, highPriority);
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void Ping(ServerCallback callback) {
+		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
 
     private bool m_isProcessingConnectionLost;
@@ -352,7 +337,7 @@ public class GameServerManagerCalety : GameServerManager {
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, Login_OnLogged);
     }
 
-    protected override void InternalAuth(ServerCallback callback, bool highPriority=false)
+    public override void Auth(ServerCallback callback)
     {
         if (callback != null)
         {
@@ -373,7 +358,7 @@ public class GameServerManagerCalety : GameServerManager {
             if (Login_State == ELoginState.NotLoggedIn)
             {
                 Login_State = ELoginState.LoggingIn;
-                Commands_EnqueueCommand(ECommand.Auth, null, Login_OnAuthResponse, highPriority);
+                Commands_EnqueueCommand(ECommand.Auth, null, Login_OnAuthResponse);
             }
         }                
     }
@@ -408,9 +393,6 @@ public class GameServerManagerCalety : GameServerManager {
     public override void OnLogOut()
     {
         Login_State = ELoginState.NotLoggedIn;
-
-        // Something went wrong on server side so we should cancel commands
-        OnConnectionLost();
     }
 
 	/// <summary>
@@ -714,24 +696,23 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallback callback, bool highPriority=false) {
+	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallback callback) {
 		Command cmd = Commands_GetCommand();
-		cmd.Setup(command, parameters, callback);       
+		cmd.Setup(command, parameters, callback);
 
-        // If no command is being processed and the queue is empty then it's run immeditaly
-        if (Commands_CurrentCommand == null && (Commands_IsQueueEmpty() || highPriority)) {			
+		// If no command is being processed and the queue is empty then it's run immeditaly
+		if(Commands_CurrentCommand == null && Commands_IsQueueEmpty()) {			
 			Commands_PrepareToRunCommand(cmd);
 		} else {
-
-            Commands_Queue.Enqueue(cmd);            
+			Commands_Queue.Enqueue(cmd);
 		}       
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	private Command Commands_DequeueCommand() {
-        return Commands_Queue.Dequeue();
+	private Command Commands_DequeueCommand() {        
+		return Commands_Queue.Dequeue();                
 	}
 
 	/// <summary>
@@ -772,12 +753,6 @@ public class GameServerManagerCalety : GameServerManager {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("PrepareToRunCommand " + command.Cmd);
 
-        // If the command requires to be logged to the server and the game is not logged yet then we need to login before sending the command
-        if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn() && m_connectionState != EConnectionState.Recovering)
-        {
-            Connection_SetState(EConnectionState.Down);
-        }
-
         if (FeatureSettingsManager.instance.IsAutomaticReloginEnabled() && m_connectionState == EConnectionState.Down)
         {
             Connection_Recover(onReady);
@@ -801,8 +776,6 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.GlobalEvents_GetRewards:
             case ECommand.GlobalEvents_GetLeadeboard:
             case ECommand.GlobalEvents_RegisterScore:
-            case ECommand.PendingTransactions_Get:
-            case ECommand.PendingTransactions_Confirm:
                 returnValue = true;
                 break;
         }
@@ -1281,7 +1254,7 @@ public class GameServerManagerCalety : GameServerManager {
 		m_CommandsIsEnabled = true;
 	}
 
-	private string Commands_ToString() {
+		private string Commands_ToString() {
 		string str = "COMMANDS QUEUE: ";
 		if (Commands_Queue != null) {
 			Command[] commands = Commands_Queue.ToArray();
@@ -1467,28 +1440,26 @@ public class GameServerManagerCalety : GameServerManager {
 
         Connection_ResetTimer();
 
-        InternalCheckConnection((Error checkError) => {
+        CheckConnection((Error checkError) => {
             if (checkError == null) {
                 // Logs in server
-                InternalAuth((Error error, GameServerManager.ServerResponse response) => {
+                Auth((Error error, GameServerManager.ServerResponse response) => {
                     bool isLoggedInServer = IsLoggedIn();
 
                     // If it's logged in server then tries to sync
-                    /*if (isLoggedInServer) {
+                    if (isLoggedInServer) {
                         PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => {
                             onRecoverDone(isLoggedInServer);
                         }
                         );
                     } else {
                         onRecoverDone(isLoggedInServer);
-                    }*/
-                    onRecoverDone(isLoggedInServer);
-                }, true);
+                    }
+                });
             } else {
                 onRecoverDone(false);
             }
-        },
-        true
+        }
         );
     }     
    

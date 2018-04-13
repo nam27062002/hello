@@ -16,7 +16,7 @@ public class DragonCorpseEditor : Editor {
 		m_target.GetReferences();
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
-			ContentManager.InitContent(true);
+			ContentManager.InitContent(true, false);
 		}
 
 		// Cache some important data

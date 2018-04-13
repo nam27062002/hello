@@ -21,9 +21,6 @@ public class PrisonerSpawner : AbstractSpawner {
 
     private uint m_maxEntities;	
 
-	private bool m_allKilledByPlayer;
-
-
     //---------------------------------------------------------------------------------------------------------    
     // AbstractSpawner implementation
     //-------------------------------------------------------------------	
@@ -44,13 +41,6 @@ public class PrisonerSpawner : AbstractSpawner {
 		m_poolHandlers = new PoolHandler[m_groups.Length, maxHandlers];
 
 		Initialize();
-
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePools);
-	}
-
-	protected override void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePools);
-		base.OnDestroy();
 	}
 
     protected override uint GetMaxEntities() {
@@ -58,22 +48,18 @@ public class PrisonerSpawner : AbstractSpawner {
     }
 
     protected override void OnInitialize() {     		
-		CreatePools();
+        string prefabName;
+        for (int g = 0; g < m_groups.Length; g++) {			
+			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
+                prefabName = m_groups[g].m_entityPrefabsStr[e];
+				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
+			}
+		}
 
 		if (m_maxEntities > 0f) {            			
 			m_parents = new Transform[m_maxEntities];
 		}
 	}    
-
-	private void CreatePools() {
-		string prefabName;
-		for (int g = 0; g < m_groups.Length; g++) {			
-			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
-				prefabName = m_groups[g].m_entityPrefabsStr[e];
-				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
-			}
-		}
-	}
 
     protected override void OnPrepareRespawning() {
         GroupIndexToSpawn = (uint)UnityEngine.Random.Range(0, m_groups.Length);        
@@ -107,8 +93,6 @@ public class PrisonerSpawner : AbstractSpawner {
 		t.parent = parent;
 		t.localPosition = Vector3.zero;
 		t.localScale = Vector3.one * m_scale.GetRandom();
-
-		m_allKilledByPlayer = false;
 	}
 
 	protected override void OnMachineSpawned(AI.IMachine machine) {
@@ -119,9 +103,6 @@ public class PrisonerSpawner : AbstractSpawner {
         m_parents[index] = null;
     }
     
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
-		m_allKilledByPlayer = _allKilledByPlayer;
-	}
 
 	//---------------------------------------------------------------------------------------------------------   
     public void SetEntitiesFree() {
@@ -144,10 +125,6 @@ public class PrisonerSpawner : AbstractSpawner {
 		}
 
 		return true;
-	}
-
-	public bool AreAllKilledByPlayer() {
-		return m_allKilledByPlayer;
 	}
 
     private uint GroupIndexToSpawn { get; set; }

@@ -72,11 +72,12 @@ public class RewardSceneController : MonoBehaviour {
 		get { return m_rewardAnchor; }
 	}
 
-	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private RaritySetup[] m_rarityFXSetup = new RaritySetup[(int)Metagame.Reward.Rarity.COUNT];
 	[SerializeField] private RewardSetup m_petRewardSetup = new RewardSetup();
+	[SerializeField] private RewardSetup m_skinRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_hcRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
-	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)EggReward.Rarity.COUNT - 1];
+	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT - 1];
 
 	[Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
@@ -214,7 +215,12 @@ public class RewardSceneController : MonoBehaviour {
 	/// Hide all reward views.
 	/// </summary>
 	private void HideAllRewards() {
+		m_skinRewardSetup.Clear();
+		m_skinRewardSetup.view.GetComponent<MenuDragonLoader>().UnloadDragon();
+
 		m_petRewardSetup.Clear();
+		m_petRewardSetup.view.GetComponent<MenuPetLoader>().Unload();
+
 		m_hcRewardSetup.Clear();
 		m_scRewardSetup.Clear();
 		for(int i = 0; i < m_goldenFragmentsRewardsSetup.Length; ++i) {
@@ -249,12 +255,33 @@ public class RewardSceneController : MonoBehaviour {
 		m_rewardInfoUI.SetRewardType(string.Empty);
 
 		// Launch the animation based on reward type
-		if (m_currentReward is Metagame.RewardEgg) {
+		// Egg
+		if(m_currentReward is Metagame.RewardEgg) {
 			OpenEggReward(m_currentReward as Metagame.RewardEgg);
-		} else if (m_currentReward is Metagame.RewardPet) {
+		}
+
+		// Pet
+		else if(m_currentReward is Metagame.RewardPet) {
 			m_currentReward.Collect();
 			OpenPetReward(m_currentReward as Metagame.RewardPet);
-		} else { // reward currency
+		}
+
+		// Skin
+		else if(m_currentReward is Metagame.RewardSkin) {
+			// TODO!!
+			m_currentReward.Collect();
+			OpenSkinReward(m_currentReward as Metagame.RewardSkin);
+		}
+
+		// Multi
+		else if(m_currentReward is Metagame.RewardMulti) {
+			m_currentReward.Collect();	// This will push all sub-rewards to the stack
+			OpenReward();	// Call ourselves to open the newly pushed rewards
+			return;	// Don't do anything else
+		}
+
+		// Currency
+		else {
 			m_currentReward.Collect();
 			OpenCurrencyReward(m_currentReward as Metagame.RewardCurrency);
 		}
@@ -415,6 +442,41 @@ public class RewardSceneController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Start the skin reward flow.
+	/// </summary>
+	/// <param name="_skinReward">Skin reward.</param>
+	private void OpenSkinReward(Metagame.RewardSkin _skinReward) {
+		// Initialize skin view
+		InitSkinView(_skinReward);
+
+		// Animate it!
+		Sequence seq = DOTween.Sequence();
+		seq.AppendInterval(0.05f);	// Initial delay
+		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+
+		// Trigger UI animation
+		seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_skinReward); });
+
+		// Make it target of the drag controller
+		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
+
+
+
+		// Show reward godrays
+		// Except if duplicate! (for now)
+		if(m_currentRewardSetup.godrays != null) {
+			// Custom color based on reward's rarity
+			m_petRewardSetup.godrays.gameObject.SetActive(true);
+			//m_petRewardSetup.godrays.Tint(UIConstants.GetRarityColor(m_currentReward.rarity));
+
+			// Show with some delay to sync with reward's animation
+			seq.Insert(0.15f, m_petRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+		}
+
+		seq.OnComplete(OnAnimationFinish);
+	}
+
+	/// <summary>
 	/// Start the currency reward flow.
 	/// </summary>
 	/// <param name="_currencyReward">Currency reward.</param>
@@ -497,6 +559,22 @@ public class RewardSceneController : MonoBehaviour {
 		MenuPetLoader loader = m_currentRewardSetup.view.GetComponent<MenuPetLoader>();
 		loader.Setup(MenuPetLoader.Mode.MANUAL, MenuPetPreview.Anim.IN, true);
 		loader.Load(_petReward.sku);
+	}
+
+	/// <summary>
+	/// Initialize the skin reward view with the given reward data.
+	/// </summary>
+	/// <param name="_skinReward">Skin reward data.</param>
+	private void InitSkinView(Metagame.RewardSkin _skinReward) {
+		HideAllRewards();
+
+		m_currentRewardSetup = m_skinRewardSetup;
+		m_currentRewardSetup.view.SetActive(true);
+
+		// Use a DragonLoader to simplify things
+		MenuDragonLoader loader = m_currentRewardSetup.view.GetComponent<MenuDragonLoader>();
+		loader.Setup(MenuDragonLoader.Mode.MANUAL, MenuDragonPreview.Anim.IDLE, true);
+		loader.LoadDragon(_skinReward.def.GetAsString("dragonSku"), _skinReward.sku);
 	}
 
 	/// <summary>
