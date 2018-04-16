@@ -28,8 +28,6 @@ public class DragonParticleController : MonoBehaviour
 	public GameObject m_cloudTrail;
 	public Transform m_cloudTrailAnchor;
 	private ParticleSystem m_cloudTrailInstance;
-	public ParticleData m_spaceEnterSplash = new ParticleData("PS_DiveIn", "Water" , Vector3.zero);
-	public ParticleData m_spaceExitSplash = new ParticleData("PS_DiveOut", "Water" , Vector3.zero);
 
 	[Space]
 	public float m_minSpeedEnterSplash;
@@ -170,11 +168,6 @@ public class DragonParticleController : MonoBehaviour
 			m_landingInstance = go.GetComponent<ParticleSystem>();
 			m_landingInstance.gameObject.SetActive(false);
 		}
-
-		if ( m_spaceEnterSplash.IsValid() )
-			m_spaceEnterSplash.CreatePool();
-		if ( m_spaceExitSplash.IsValid() )
-			m_spaceExitSplash.CreatePool();
 	}
 
 	void OnEnable() {
@@ -485,7 +478,7 @@ public class DragonParticleController : MonoBehaviour
 		}
 	}
 
-	public void OnEnterOuterSpace( Collider _spaceCollider, bool fast ) {
+	public void OnEnterOuterSpace( bool fast ) {
 		// Launch cloud trail, will stop automatically
 		if(fast && m_cloudTrailInstance != null) 
 		{
@@ -493,30 +486,16 @@ public class DragonParticleController : MonoBehaviour
 			m_cloudTrailInstance.Play();
 			m_toDeactivate.Add( m_cloudTrailInstance );
 		}
-		if ( m_spaceEnterSplash.IsValid() )
-		{
-			Vector3 pos = _transform.position;
-			float spaceY = _spaceCollider.bounds.center.y - _spaceCollider.bounds.extents.y;
-			pos.y = spaceY;
-			m_spaceEnterSplash.Spawn(pos);
-		}
 			
 	}
 
-	public void OnExitOuterSpace(Collider _spaceCollider, bool fast) {
+	public void OnExitOuterSpace(bool fast) {
 		// Launch cloud trail again!
 		if(fast && m_cloudTrailInstance != null) 
 		{
 			m_cloudTrailInstance.gameObject.SetActive(true);
 			m_cloudTrailInstance.Play();
 			m_toDeactivate.Add( m_cloudTrailInstance );
-		}
-		if ( m_spaceExitSplash.IsValid() )
-		{
-			Vector3 pos = _transform.position;
-			float spaceY = _spaceCollider.bounds.center.y - _spaceCollider.bounds.extents.y;
-			pos.y = spaceY;
-			m_spaceExitSplash.Spawn( pos );
 		}
 	}
 

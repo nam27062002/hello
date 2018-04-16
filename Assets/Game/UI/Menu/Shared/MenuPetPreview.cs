@@ -68,8 +68,6 @@ public class MenuPetPreview : MonoBehaviour {
 	private void Awake() {
 		m_animator = GetComponentInChildren<Animator>();
         m_renderers = GetComponentsInChildren<Renderer>();
-
-		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
     void setFresnelColor(Color col)
@@ -91,8 +89,6 @@ public class MenuPetPreview : MonoBehaviour {
 			m_rarityGlowShowHideTween.Kill(false);
 			m_rarityGlowShowHideTween = null;
 		}
-
-		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>
@@ -157,15 +153,15 @@ public class MenuPetPreview : MonoBehaviour {
 
             if (rarity == "epic")
             {
-                setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.EPIC]);
+				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.EPIC]);
             }
             else if (rarity == "rare")
             {
-                setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.RARE]);
+				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.RARE]);
             }
             else if (rarity == "special")
             {
-                setFresnelColor(UIConstants.RARITY_COLORS[(int)EggReward.Rarity.SPECIAL]);
+				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.SPECIAL]);
             }
 
         } else {
@@ -186,10 +182,6 @@ public class MenuPetPreview : MonoBehaviour {
 		if (m_rarityGlow != null) {
 			m_rarityGlow.SetActive(_show);
 		}
-	}
-
-	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {		
-		ToggleRarityGlow(_to == MenuScreen.PETS);
 	}
 }
 

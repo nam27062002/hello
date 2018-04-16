@@ -113,7 +113,7 @@ public class PetSlotInfo : MonoBehaviour {
 
 				// Rarity icon
 				string raritySku = petDef.Get("rarity");
-				EggReward.Rarity rarity = EggReward.SkuToRarity(raritySku);
+				Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
 				m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
 				m_rarityIcon.gameObject.SetActive(m_rarityIcon.sprite != null);	// Hide if no icon
 			}

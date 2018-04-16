@@ -75,6 +75,7 @@ public class ParticleHandler {
 	private void StartSystem(GameObject _system, Transform _parent, ParticleData _data, Vector3 _at, bool _prewarm) {
 		// Skip if system is not valid
 		if (_system != null) {
+
 			// Setup system's transform
 			Transform t = _system.transform;
 			if (_parent != null) {
@@ -86,13 +87,15 @@ public class ParticleHandler {
 			t.position = Vector3.zero;
 			t.localPosition = _at;
 
+			_system.SetActive(true);
+
 			// Restart all particle systems within the instance
 			ParticleControl pc = _system.GetComponent<ParticleControl>();
 			if (pc != null) {
 				pc.Play(_data, _prewarm);
 			}
 
-			_system.SetActive(true);
+
 		}
 	}
 }
