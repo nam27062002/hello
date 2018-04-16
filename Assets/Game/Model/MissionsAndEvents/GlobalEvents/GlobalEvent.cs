@@ -124,6 +124,10 @@ public partial class GlobalEvent {
 		set { SetState(value); }
 	}
 
+	public bool isTeasing {
+		get { return m_state == State.TEASING; }
+	}
+
 	public bool isActive {
 		get { return m_state == State.ACTIVE; }
 	}
