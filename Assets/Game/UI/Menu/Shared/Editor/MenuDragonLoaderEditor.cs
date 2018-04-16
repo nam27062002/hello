@@ -57,7 +57,7 @@ public class MenuDragonLoaderEditor : Editor {
 
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
-			ContentManager.InitContent(true);
+			ContentManager.InitContent(true, false);
 		}
 
 		// Cache some important data
@@ -203,7 +203,7 @@ public class MenuDragonLoaderEditor : Editor {
 	private void GetDisguiseSkus(string _dragonSku) {
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
-			ContentManager.InitContent(true);
+			ContentManager.InitContent(true, false);
 		}
 
 		// Get all disguises linked to the requested dragon

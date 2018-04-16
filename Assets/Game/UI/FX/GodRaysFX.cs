@@ -26,7 +26,7 @@ public class GodRaysFX : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Tooltip("One per rarity, matching order")]
-	[SerializeField] private ParticleSystem[] m_rarityPS = new ParticleSystem[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private ParticleSystem[] m_rarityPS = new ParticleSystem[(int)Metagame.Reward.Rarity.COUNT];
 
 	// Internal
 	private ParticleSystem m_basePS = null;
@@ -51,7 +51,7 @@ public class GodRaysFX : MonoBehaviour {
 	/// </summary>
 	private void OnValidate() {
 		// Make sure the rarity array has exactly the same length as rarities in the game.
-		m_rarityPS.Resize((int)EggReward.Rarity.COUNT);
+		m_rarityPS.Resize((int)Metagame.Reward.Rarity.COUNT);
 	}
 
 	//------------------------------------------------------------------------//
@@ -61,7 +61,7 @@ public class GodRaysFX : MonoBehaviour {
 	/// Start (or restart) the FX with a given rarity.
 	/// </summary>
 	/// <param name="_rarity">The rarity to be used to initialize the FX.</param>
-	public void StartFX(EggReward.Rarity _rarity) {
+	public void StartFX(Metagame.Reward.Rarity _rarity) {
 		// Toggle proper sub-system based on given rarity
 		for(int i = 0; i < m_rarityPS.Length; i++) {
 			if(m_rarityPS[i] != null) {

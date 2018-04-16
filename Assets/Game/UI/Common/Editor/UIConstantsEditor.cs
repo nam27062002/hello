@@ -82,6 +82,8 @@ public class UIConstantsEditor : CategorizedEditor {
 				m_categories[CAT_ANIMATION_SETUPS].Add(p, "Menu");
 			} else if(p.name.Contains("SafeArea")) {
 				m_categories[CAT_SAFE_AREA].Add(p);
+			} else if(p.name.Contains("Gradient")) {
+				m_categories[CAT_COLORS].Add(p);
 			}
 
 			// Unidentified property
@@ -133,14 +135,15 @@ public class UIConstantsEditor : CategorizedEditor {
 	override protected void DoProperty(SerializedProperty _p) {
 		// Properties requiring special treatment
 		if(_p.name == "m_rarityColors"
+		|| _p.name == "m_rarityTextGradients"
 		|| _p.name == "m_rarityIcons") {
 			// Fixed length arrays!
 			EditorGUILayoutExt.FixedLengthArray(
 				_p, 
 				(SerializedProperty _prop, int _idx) => {
-					EditorGUILayout.PropertyField(_prop, new GUIContent(((EggReward.Rarity)_idx).ToString()), true);
+					EditorGUILayout.PropertyField(_prop, new GUIContent(((Metagame.Reward.Rarity)_idx).ToString()), true);
 				}, 
-				(int)EggReward.Rarity.COUNT
+				(int)Metagame.Reward.Rarity.COUNT
 			);
 		}
 

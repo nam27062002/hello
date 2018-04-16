@@ -34,9 +34,8 @@ public class ListAttributeEditor : ExtendedPropertyDrawer {
 		// Obtain the attribute
 		ListAttribute attr = attribute as ListAttribute;
 
-		// Use hardcore reflection stuff to access the object being changed
-		// [AOC] Small trick from http://answers.unity3d.com/questions/425012/get-the-instance-the-serializedproperty-belongs-to.html
-		object target = fieldInfo.GetValue(_property.serializedObject.targetObject) as object;
+		// Get current value of the target property
+		object currentValue = _property.GetValue();
 
 		// Validate list values
 		attr.ValidateOptions();
@@ -44,20 +43,20 @@ public class ListAttributeEditor : ExtendedPropertyDrawer {
 		// Options list - at least empty value!
 		// Find out current selected value as well
 		int selectedIdx = -1;
-		List<string> options = new List<string>(attr.m_options.Length);
+		List<string> optionsLabels = new List<string>(attr.m_options.Length);
 		string label = "";
 		if(attr.m_options.Length == 0) {
-			options.Add("-");
+			optionsLabels.Add("-");
 		} else {
 			for(int i = 0; i < attr.m_options.Length; i++) {
 				// Add string representing this option
 				// Empty strings don't appear on the list, use "-" instead
 				label = attr.m_options[i].ToString();
 				if(string.IsNullOrEmpty(label)) label = "-";
-				options.Add(label);
+				optionsLabels.Add(label);
 
 				// Is it the current value?
-				if(target.Equals(attr.m_options[i])) {
+				if(currentValue.Equals(attr.m_options[i])) {
 					selectedIdx = i;
 				}
 			}
@@ -70,11 +69,10 @@ public class ListAttributeEditor : ExtendedPropertyDrawer {
 
 		// Display the property
 		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
-		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, selectedIdx, options.ToArray());
+		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, selectedIdx, optionsLabels.ToArray());
 
 		// Store new value
-		// Again use hardcore reflection to do it
-		fieldInfo.SetValue(_property.serializedObject.targetObject, attr.m_options[newSelectedIdx]);
+		_property.SetValue(attr.m_options[newSelectedIdx]);
 
 		// Leave room for next property drawer
 		AdvancePos();
