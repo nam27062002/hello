@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// When enabled the customizer is applied when Apply() is called by the game
+// When disabled the customizer is applied as soon as the response is received by server. This is Calety's original implementation.
+//#define APPLY_ON_DEMAND
+
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -6,9 +10,17 @@ using UnityEngine;
 /// </summary>
 public class HDCustomizerManager
 {
+#if APPLY_ON_DEMAND
+    private class HDCustomizerListener : CyCustomiser.CustomizerListener
+#else
     private class HDCustomizerListener : CustomizerManager.CustomizerListener
+#endif
     {
+#if APPLY_ON_DEMAND
+        public override void onCustomizationError(CyCustomiser.eCustomizerError eError, string strSKU, string strAttrib)
+#else
         public override void onCustomizationError(CustomizerManager.eCustomizerError eError, string strSKU, string strAttrib)
+#endif
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
@@ -28,7 +40,11 @@ public class HDCustomizerManager
 
         public override void onNewPopupReceived() { }
 
+#if APPLY_ON_DEMAND
+        public override void onPopupIsPrepared(CyCustomiser.CustomiserPopupConfig kPopupConfig) { }
+#else
         public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig) { }
+#endif
 
         public override void onCustomizationFinished()
         {
@@ -70,25 +86,22 @@ public class HDCustomizerManager
             if (sm_instance == null)
             {
                 sm_instance = new HDCustomizerManager();
+
+#if APPLY_ON_DEMAND
+                CustomizerManager.SharedInstance.Initialise(false);
+#endif
                 CustomizerManager.SharedInstance.SetListener(new HDCustomizerListener());
             }
 
             return sm_instance;
         }
-    }
-
-    private enum EMode
-    {
-        ApplyWhenResponseIsReceived, // Customizer is applied as soon as the response is received by server. This is Calety's original implementation
-        ApplyOnDemmand               // Customizer is applied when Apply() is called by the game
-    };
-
-    private const EMode MODE = EMode.ApplyWhenResponseIsReceived;
+    }    
 
     private enum EState
     {
-        None,        
-        WaitingToRequest,
+        None, 
+        WaitingToRequestCache,       
+        WaitingToRequestServer,
         WaitingForResponse,
         Done
     };
@@ -132,6 +145,8 @@ public class HDCustomizerManager
     /// </summary>
     private bool m_isNotifyFilesChangedEnabled;
 
+    private bool m_needsToNotifyRulesChanged;
+
     public void Initialise()
     {
         Reset();
@@ -145,8 +160,14 @@ public class HDCustomizerManager
         }
 
         SetTimeToRequest(0f);
-        SetState(EState.WaitingToRequest);
+
+#if APPLY_ON_DEMAND        
+        SetState(EState.WaitingToRequestCache);
+#else
+        SetState(EState.WaitingToRequestServer);
+#endif
         SetIsNotifyFilesChangedEnabled(true);
+        SetNeedsToNotifyRulesChanged(false);
     }
 
     public void Destroy()
@@ -165,9 +186,15 @@ public class HDCustomizerManager
 
         switch (m_state)
         {
-            case EState.WaitingToRequest:                
+            case EState.WaitingToRequestCache:
+                UpdateWaitingToRequestCache();
+                break;
+
+            case EState.WaitingToRequestServer:                
                 // Checks if it's a good moment to request the customizer
-                if (IsRequestCustomizerAllowed() && timeToRequest <= 0f)
+                if (IsRequestCustomizerAllowed() &&
+                    GameSessionManager.SharedInstance.IsLogged() &&  // CustomizerManager requires the user to be logged in. This is checked here because CustomizerManager doesn't call any callback if the user is not logged in
+                    timeToRequest <= 0f)
                 {                                     
                     RequestCustomizer();                    
                 }
@@ -184,7 +211,7 @@ public class HDCustomizerManager
 
                 if (timeToExpire <= 0f)
                 {
-                    SetState(EState.WaitingToRequest);
+                    SetState(EState.WaitingToRequestServer);
                 }                
                 break;
         }
@@ -195,7 +222,7 @@ public class HDCustomizerManager
             if (Input.GetKeyDown(KeyCode.R))
             {
                 SetTimeToRequest(0f);
-                SetState(EState.WaitingToRequest);
+                SetState(EState.WaitingToRequestServer);
             }
             /*else if (Input.GetKeyDown(KeyCode.A))
             {
@@ -203,6 +230,31 @@ public class HDCustomizerManager
             }*/
         }
 #endif
+    }
+
+    private void UpdateWaitingToRequestCache()
+    {
+        if (IsRequestCustomizerAllowed())
+        {
+#if APPLY_ON_DEMAND            
+            bool applyOk = CustomizerManager.SharedInstance.ApplyStoredCustomiserFile();
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("Customizer applied with success: " + applyOk);
+            }
+
+            if (applyOk)
+            {
+                SetHasBeenApplied(true);
+            }
+            else
+            {
+                SetState(EState.WaitingToRequestServer);
+            }            
+#else                 
+            SetState(EState.WaitingToRequestServer);
+#endif  
+        }
     }
 
     private void RequestCustomizer()
@@ -213,12 +265,11 @@ public class HDCustomizerManager
 
     private bool IsRequestCustomizerAllowed()
     {        
-        return GameSessionManager.SharedInstance.IsLogged() &&  // CustomizerManager requires the user to be logged in. This is checked here because CustomizerManager doesn't call any callback if the user is not logged in
-               !FlowManager.IsInGameScene() &&                  // We don't want this request to interfere with performance when the user is playing a run
+        return !FlowManager.IsInGameScene() &&                  // We don't want this request to interfere with performance when the user is playing a run
                ContentManager.ready;                            // We need the content to be loaded because CustomizerManager may reload some rules
     }
 
-    public bool NeedsToReloadRules()
+    private bool NeedsToReloadRules()
     {
         return NeedsToRevertAnyFiles() || NeedsToApplyCustomizerChanges();
     }
@@ -230,15 +281,31 @@ public class HDCustomizerManager
 
     private bool NeedsToApplyCustomizerChanges()
     {
-        return !GetHasBeenApplied() && m_state == EState.Done && m_filesChangedByCustomizer != null && m_filesChangedByCustomizer.Count > 0;
+        bool returnValue = !GetHasBeenApplied();
+        if (returnValue)
+        {
+#if APPLY_ON_DEMAND
+            returnValue = m_state == EState.WaitingForResponse;
+#else                 
+            returnValue = m_state == EState.Done && m_filesChangedByCustomizer != null && m_filesChangedByCustomizer.Count > 0;
+#endif            
+        }
+
+        return returnValue;
     }
 
-    public void Apply()
+    /// <summary>
+    /// Applies changes to rules if current customizer requires so
+    /// </summary>
+    /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
+    private bool InternalApply()
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Applying customizer needsToRevertAnyFiles = " + NeedsToRevertAnyFiles() + " needsToApplyCustomizerChanges = " + NeedsToApplyCustomizerChanges());
         }
+
+        bool returnValue = false;
 
         if (NeedsToRevertAnyFiles())
         {
@@ -250,19 +317,59 @@ public class HDCustomizerManager
             {
                 m_filesToRevert.Clear();
             }
-        }
 
+            returnValue = true;
+        }
+        
         if (NeedsToApplyCustomizerChanges())
         {
+#if APPLY_ON_DEMAND
+            bool applyOk = CustomizerManager.SharedInstance.ApplyStoredCustomiserFile();
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("Customizer applied with success: " + applyOk);
+            }
+#endif            
+
             SetHasBeenApplied(true);
+
+            returnValue = true;
         }
 
+/*
 #if UNITY_EDITOR
         if (DEBUG_ENABLED)
         {
             DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.OFFER_PACKS, "offer_pack_1");
             Log("offer_pack_1 enabled = " + def.GetAsBool("enabled"));
         }
+#endif
+*/
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Applies changes to rules if current customizer requires so
+    /// </summary>
+    /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
+    public bool Apply()
+    {
+#if APPLY_ON_DEMAND
+        return InternalApply();
+#else
+        bool returnValue = NeedsToReloadRules();
+        if (returnValue)
+        {
+            InternalApply();
+        }
+        else
+        {
+            returnValue = GetNeedsToNotifyRulesChanged();
+            SetNeedsToNotifyRulesChanged(false);
+        }
+
+        return returnValue;
 #endif
     }
 
@@ -326,7 +433,7 @@ public class HDCustomizerManager
                 SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
             }
 
-            SetState(EState.WaitingToRequest);
+            SetState(EState.WaitingToRequestServer);
         }
     }
 
@@ -375,6 +482,16 @@ public class HDCustomizerManager
         m_isNotifyFilesChangedEnabled = value;
     }
 
+    private bool GetNeedsToNotifyRulesChanged()
+    {
+        return m_needsToNotifyRulesChanged;
+    }
+
+    private void SetNeedsToNotifyRulesChanged(bool value)
+    {
+        m_needsToNotifyRulesChanged = value;
+    }
+
     private void SetState(EState value)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
@@ -388,7 +505,7 @@ public class HDCustomizerManager
                 if (GetHasBeenApplied())
                 {
                     // Files changed by current customizer need to be undone only if those changed had been applied
-                    AddyFilesChangedByCustomizerToFilesToRevert();
+                    AddFilesChangedByCustomizerToFilesToRevert();
                 }                                  
                 break;
         }
@@ -398,6 +515,7 @@ public class HDCustomizerManager
         switch (m_state)
         {            
             case EState.WaitingForResponse:
+            case EState.WaitingToRequestCache:
                 if (m_filesChangedByCustomizer != null)
                 {
                     m_filesChangedByCustomizer.Clear();
@@ -407,14 +525,19 @@ public class HDCustomizerManager
                 SetIsNotifyFilesChangedEnabled(true);
                 SetTimeToExpire(double.MaxValue);
                 SetTimeToExpireModified(false);
+
+                // We want to apply customizer changes as soon as possible in order to change rules before the rest of the game access to them
+                if (m_state == EState.WaitingToRequestCache)
+                {
+                    UpdateWaitingToRequestCache();
+                }
                 break;
 
-            case EState.Done:                
-                if (MODE == EMode.ApplyWhenResponseIsReceived)
-                {
-                    Apply();
-                }            
-                
+            case EState.Done:
+#if !APPLY_ON_DEMAND
+                bool needsToNotifyRulesChanged = InternalApply();
+                SetNeedsToNotifyRulesChanged(needsToNotifyRulesChanged);
+#endif
                 // If there's no customizer then we need to schedule the next request
                 if (!GetTimeToExpireModified())
                 {
@@ -423,13 +546,13 @@ public class HDCustomizerManager
                         SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
                     }                    
 
-                    SetState(EState.WaitingToRequest);
+                    SetState(EState.WaitingToRequestServer);
                 }    
                 break;     
         }
     }  
 
-    private void AddyFilesChangedByCustomizerToFilesToRevert()
+    private void AddFilesChangedByCustomizerToFilesToRevert()
     {        
         if (m_filesChangedByCustomizer != null)
         {
@@ -451,7 +574,7 @@ public class HDCustomizerManager
         }
     }
 
-    #region log
+#region log
     private const bool DEBUG_ENABLED = false;
     private const string LOG_CHANNEL = "[HDCustomizerManager] ";
     public static void Log(string msg)
@@ -477,9 +600,5 @@ public class HDCustomizerManager
         msg = LOG_CHANNEL + msg;
         Debug.LogError(msg);
     }
-    #endregion
-
-    #region offline
-    // This region is responsible for mocking server response so client can be tested before server
-    #endregion
+#endregion
 }
