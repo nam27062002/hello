@@ -185,7 +185,7 @@ public class DragonPlayer : MonoBehaviour {
 		set{ m_superSizeInvulnerable = value; }
 	}
 
-	public AnimationCurve m_reviveScaleCurve;
+	public DragonCommonSettings m_dragonCommonSettings;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -288,7 +288,7 @@ public class DragonPlayer : MonoBehaviour {
 		while( timer < duration )
 		{
 			timer += Time.deltaTime;
-			gameObject.transform.localScale = Vector3.one * data.scale * m_reviveScaleCurve.Evaluate( timer );
+			gameObject.transform.localScale = Vector3.one * data.scale * m_dragonCommonSettings.m_reviveScaleCurve.Evaluate( timer );
 			yield return null;
 		}
 		gameObject.transform.localScale = Vector3.one * data.scale;
