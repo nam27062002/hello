@@ -637,7 +637,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_rbody.velocity = Vector3.zero;
 					m_revivePosition = m_transform.position;
 					m_animator.Play(GameConstants.Animator.BASE_IDLE);
-
+					m_transform.position = m_diePosition;
 					if ( m_direction.x > 0 ){
 						m_direction = Vector3.right;
 					}else{

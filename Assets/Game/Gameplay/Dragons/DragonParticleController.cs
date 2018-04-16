@@ -113,6 +113,7 @@ public class DragonParticleController : MonoBehaviour
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
 		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
+		m_reviveInstance.transform.SetParentAndReset(null);
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
@@ -400,6 +401,7 @@ public class DragonParticleController : MonoBehaviour
 			default:
 			{
 				m_reviveInstance.gameObject.SetActive(true);
+				m_reviveInstance.transform.position = m_reviveAnchor.position;
 				m_reviveInstance.Play();
 				m_toDeactivate.Add( m_reviveInstance );
 			}break;

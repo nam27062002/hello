@@ -363,7 +363,6 @@ public class DragonPlayer : MonoBehaviour {
 		{
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
 			m_dragonMotion.Revive();
-			ReviveScale();
 
 			// If health modifier changed, notify game
 			if(m_currentHealthModifier != oldHealthModifier) {
@@ -372,6 +371,8 @@ public class DragonPlayer : MonoBehaviour {
 
 			// Notify revive to game
 			Messenger.Broadcast<ReviveReason>(MessengerEvents.PLAYER_REVIVE, reason);
+
+			ReviveScale();
 		}
 		else
 		{
