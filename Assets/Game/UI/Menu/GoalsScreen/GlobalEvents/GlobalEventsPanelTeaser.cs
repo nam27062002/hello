@@ -27,6 +27,9 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
+	[SerializeField] private Image m_icon;
+	[SerializeField] private TextMeshProUGUI m_text;
+	[SerializeField] private GlobalEventsRewardInfo m_rewardInfo;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -52,6 +55,15 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	override public void Refresh() {
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
+		m_text.text = def.GetLocalized("tidName");
+
+		GlobalEvent evt = GlobalEventManager.currentEvent;
+		m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
+
+		m_rewardInfo.rewardSlot = evt.topContributorsRewardSlot;
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -60,4 +72,5 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+
 }
