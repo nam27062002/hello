@@ -293,7 +293,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public Vector3 diePosition{ get{return m_diePosition;} }
 	private Vector3 m_revivePosition;
 	private float m_reviveTimer;
-	private const float m_reviveDuration = 1;
+	private const float m_reviveDuration = 1.3f;
 	private float m_deadTimer = 0;
 	private const float m_deadGravityMultiplier = 5;
 
