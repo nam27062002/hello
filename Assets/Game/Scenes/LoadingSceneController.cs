@@ -1,4 +1,4 @@
-﻿// LoadingSceneController.cs
+// LoadingSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 20/08/2015.
@@ -40,12 +40,13 @@ public class LoadingSceneController : SceneController {
             if (FeatureSettingsManager.IsDebugEnabled)
                 LoadingSceneController.Log("onAndroidPermissionPopupNeeded: " + kPopupConfig.m_strMessage);
 
-			PopupMessage.Config config = PopupMessage.GetConfig();
+			IPopupMessage.Config config = IPopupMessage.GetConfig();
+			config.TextType = IPopupMessage.Config.ETextType.SYSTEM;	// [AOC] Fonts are not loaded at this point, so we must use system's dynamic font
             config.TitleText = kPopupConfig.m_strTitle;
 			config.ShowTitle = !string.IsNullOrEmpty( kPopupConfig.m_strTitle);
 			config.MessageText = kPopupConfig.m_strMessage;
             // This popup ignores back button and stays open so the user makes a decision
-            config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+            config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;
 
 			m_popupConfig = kPopupConfig;
             if (kPopupConfig.m_kPopupButtons.Count == 2)
@@ -58,14 +59,14 @@ public class LoadingSceneController : SceneController {
 				config.CancelButtonTid = cancelButtonConfig.m_strText;
 				config.OnCancel = onCancel;
 
-	            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+	            config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
             }
             else if (kPopupConfig.m_kPopupButtons.Count == 1)
             {
 				AndroidPermissionsManager.AndroidPermissionsPopupButton kAndroidPermissionButton = (AndroidPermissionsManager.AndroidPermissionsPopupButton) kPopupConfig.m_kPopupButtons [0];
 				config.ConfirmButtonTid = kAndroidPermissionButton.m_strText;
 	            config.OnConfirm = onConfirm;
-	            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+	            config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
             }
 
 			// Allow actions
@@ -179,8 +180,6 @@ public class LoadingSceneController : SceneController {
 		}
 		CacheServerManager.SharedInstance.Init(m_buildVersion);
 		ContentManager.InitContent();
-		// Check required references
-		DebugUtils.Assert(m_loadingTxt != null, "Required component!"); 
 
 		// Used for android permissions
 		PopupManager.CreateInstance(true);
@@ -298,6 +297,8 @@ public class LoadingSceneController : SceneController {
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
 
+		// TO REMOVE to enable multilanguage support. Quick implementation to make sure only english will be set
+		strLanguageSku = "lang_english";
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
@@ -351,13 +352,15 @@ public class LoadingSceneController : SceneController {
             default:
     		{
 				// Update load progress
-				//m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(SceneManager.loadProgress * 100f, 0));
-
 				// [AOC] TODO!! Fake timer for now
 				timer += Time.deltaTime;
 				float loadProgress = Mathf.Min(timer/1f, 1f);	// Divide by the amount of seconds to simulate
-				//m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
-				m_loadingTxt.text = "Loading";	// Don't show percentage (too techy), don't localize (language data not yet loaded)
+
+				if(m_loadingTxt != null) {
+					//m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(SceneManager.loadProgress * 100f, 0));
+					//m_loadingTxt.text = System.String.Format("LOADING {0}%", StringUtils.FormatNumber(loadProgress * 100f, 0));
+					m_loadingTxt.text = "Loading";	// Don't show percentage (too techy), don't localize (language data not yet loaded)
+				}
 
 				if (m_loadingBar != null)
 					m_loadingBar.normalizedValue = loadProgress;                    		        	        
@@ -412,6 +415,8 @@ public class LoadingSceneController : SceneController {
 		        }
 
 				HDTrackingManager.Instance.Init();
+                HDCustomizerManager.instance.Initialise();
+
 				UsersManager.CreateInstance();
 
 		        // Game		        
@@ -426,6 +431,8 @@ public class LoadingSceneController : SceneController {
 				RewardManager.CreateInstance(true);
 				EggManager.CreateInstance(true);
 				EggManager.InitFromDefinitions();
+				OffersManager.CreateInstance(true);	// Don't initialize yet, we'll wait for persistence to be loaded and customizer to received
+				OffersManager.ValidateContent();	// Do this before customizer is applied (here is ok!)
 
 				// Settings and setup
 				GameSettings.CreateInstance(false);
@@ -465,7 +472,9 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.CreateInstance();
                 TransactionManager.instance.Initialise();
 
-                    StartLoadFlow();	            	                                
+                HDCustomizerManager.instance.Initialise();
+
+                StartLoadFlow();	            	                                
           	}break;
         }
     }
@@ -488,6 +497,7 @@ public class LoadingSceneController : SceneController {
 
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
+				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
@@ -527,11 +537,11 @@ public class LoadingSceneController : SceneController {
     #region unsupported_device
     private void Popup_ShowUnsupportedDevice( bool _warningSupport )
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
 
         config.IsButtonCloseVisible = false;
 
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 
         if ( _warningSupport ){
 			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
@@ -555,7 +565,7 @@ public class LoadingSceneController : SceneController {
         }
 
         // Back button is disabled in order to make sure that the user is aware when making such an important decision
-        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;
         PopupManager.PopupMessage_Open(config);
 
         HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Shown);

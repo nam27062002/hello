@@ -17,7 +17,7 @@ public class DragonEquipEditor : Editor {
 		m_target.CacheAttachPoints();
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
-			ContentManager.InitContent(true);
+			ContentManager.InitContent(true, false);
 		}
 
 		// Cache some important data

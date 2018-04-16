@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible for offering the interface for all stuff related to server. This interface satisfies the requirements of the code taken from HSX in order to make the integration
 /// easier. This class also hides its implementation, so we could have different implementations for this class and we could decide in the implementation of the method <c>SharedInstance</c> 
 /// which one to use. 
@@ -155,7 +155,13 @@ public class GameServerManager
         }
     }
 
-	public virtual void OnConnectionLost() {}
+	public void OnConnectionLost()
+    {
+        InternalOnConnectionLost();
+        HDCustomizerManager.instance.NotifyServerDown();
+    }
+
+    protected virtual void InternalOnConnectionLost() {}
 
     public virtual void Connection_SetIsCheckEnabled(bool value) {}
 
@@ -175,6 +181,11 @@ public class GameServerManager
 	//------------------------------------------------------------------------//
 	// SERVER TIME															  //
 	//------------------------------------------------------------------------//
+	// Cache values and update at most once per tick
+	private long m_lastServerTimeCheckTick = -1;
+	private long m_lastKnownServerTimeAsLong = 0;
+	private DateTime m_lastKnownServerTime = new DateTime();
+
 	/// <summary>
 	/// Get the current timestamp directly from the server.
 	/// </summary>
@@ -187,9 +198,8 @@ public class GameServerManager
 	/// </summary>
 	/// <returns>The estimated server time.</returns>
 	public DateTime GetEstimatedServerTime() {
-        // Calety already manages this, just convert it to a nice DateTime object.		
-        long timestamp = GetEstimatedServerTimeAsLong();
-        return TimeUtils.TimestampToDate( timestamp );
+		UpdateServerTime();
+		return m_lastKnownServerTime;
 	}
 
     /// <summary>
@@ -197,9 +207,25 @@ public class GameServerManager
     /// </summary>
     /// <returns>The estimated server time in milliseconds</returns>
     public long GetEstimatedServerTimeAsLong() {
-        double unixTimestamp = ServerManager.SharedInstance.GetServerTime();    // Seconds since 1970
-        return (long)unixTimestamp * 1000;
+		UpdateServerTime();
+		return m_lastKnownServerTimeAsLong;
     }
+
+	private void UpdateServerTime() {
+		// Is an update required?
+		if(Time.frameCount > m_lastServerTimeCheckTick) {
+			// Yes! Do it
+			// Update long timestamp
+			double unixTimestamp = ServerManager.SharedInstance.GetServerTime();	// Seconds since 1970
+			m_lastKnownServerTimeAsLong = (long)unixTimestamp * 1000;	// Millis since 1970
+
+			// Update DateTime object
+			m_lastKnownServerTime = TimeUtils.TimestampToDate(m_lastKnownServerTimeAsLong);
+
+			// Reset flag
+			m_lastServerTimeCheckTick = Time.frameCount;
+		}
+	}
 
     public virtual void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response) {}
     public virtual void OnGameActionFailed(string cmd, int errorCode) {}
