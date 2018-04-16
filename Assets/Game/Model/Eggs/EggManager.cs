@@ -136,7 +136,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			for(int i = 0; i < 4; ++i) {
 				FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 				prop.SetValue(s, PlayerPrefs.GetInt("EggManager.RandomState.s" + i));
-				Debug.Log("<color=magenta>Restoring RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
+				//Debug.Log("<color=magenta>Restoring RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
 			}
 			instance.m_rewardDropRate.randomState = s;
 		}
@@ -272,7 +272,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 					for(int i = 0; i < 4; ++i) {
 						FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 						PlayerPrefs.SetInt("EggManager.RandomState.s" + i, (int)prop.GetValue(s));
-						Debug.Log("<color=magenta>Saving RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
+						//Debug.Log("<color=magenta>Saving RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
 					}
 				} else {
 					rewardSku = "pet_common";

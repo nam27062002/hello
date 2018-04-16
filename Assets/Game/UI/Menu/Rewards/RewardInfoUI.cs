@@ -64,9 +64,13 @@ public class RewardInfoUI : MonoBehaviour {
 	[SerializeField] private Localizer m_scTitle = null;
 	[SerializeField] private string m_scSFX = "";
 
-	[SeparatorAttribute("PC Reward")]
+	[Separator("PC Reward")]
 	[SerializeField] private Localizer m_pcTitle = null;
 	[SerializeField] private string m_pcSFX = "";
+
+	[Separator("Skin Reward")]
+	[SerializeField] private Localizer m_skinTitle = null;
+	[SerializeField] private PowerIcon m_skinPower = null;
 
 	// Events
 	[Separator("Events")]
@@ -163,6 +167,21 @@ public class RewardInfoUI : MonoBehaviour {
 					// Initialize with powers data
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
 					m_petPower.InitFromDefinition(powerDef, false);
+				}
+			} break;
+
+			// Skin
+			case Metagame.RewardSkin.TYPE_CODE: {
+				// Skin name
+				if(m_skinTitle != null) {
+					m_skinTitle.Localize(_rewardData.def.GetAsString("tidName"));
+				}
+
+				// Power icon
+				if(m_skinPower != null) {
+					// Initialize with powers data
+					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
+					m_skinPower.InitFromDefinition(powerDef, false);
 				}
 			} break;
 

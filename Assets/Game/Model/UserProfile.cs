@@ -981,7 +981,7 @@ public class UserProfile : UserPersistenceSystem
 				Metagame.Reward r = Metagame.Reward.CreateFromJson(rewardsData[i]);
 				m_rewards.Push(r);
 			}
-		}        
+		}
 	}
 
 	/// <summary>

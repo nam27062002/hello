@@ -143,14 +143,14 @@ public class PopupInfoPet : MonoBehaviour {
 
 		// Initialize rarity info
 		// Don't show if common
-		EggReward.Rarity rarity = EggReward.SkuToRarity(petDef.Get("rarity"));
+		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(petDef.Get("rarity"));
 		if(m_rarityIcon != null) {
-			m_rarityIcon.gameObject.SetActive(rarity != EggReward.Rarity.COMMON);
+			m_rarityIcon.gameObject.SetActive(rarity != Metagame.Reward.Rarity.COMMON);
 			m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
 		}
 		if(m_rarityText != null) {
 			DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, petDef.Get("rarity"));
-			m_rarityText.gameObject.SetActive(rarity != EggReward.Rarity.COMMON);
+			m_rarityText.gameObject.SetActive(rarity != Metagame.Reward.Rarity.COMMON);
 			m_rarityText.Localize(rarityDef.Get("tidName"));
 			m_rarityText.text.color = UIConstants.RARITY_COLORS[(int)rarity];
 		}
@@ -169,7 +169,7 @@ public class PopupInfoPet : MonoBehaviour {
 		// Initialize lock info
 		if(!owned) {
 			// Special pets are unlocked with golden fragments!
-			bool isSpecial = (rarity == EggReward.Rarity.SPECIAL);
+			bool isSpecial = (rarity == Metagame.Reward.Rarity.SPECIAL);
 			m_basicLock.SetActive(!isSpecial);
 			m_specialLock.SetActive(isSpecial);
 			if(isSpecial) {

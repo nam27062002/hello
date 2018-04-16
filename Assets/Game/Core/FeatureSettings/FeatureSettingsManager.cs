@@ -1592,6 +1592,15 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {     
         return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
     }
+
+	public static bool MenuDragonsAsyncLoading
+    {
+        get
+        {                  
+            return true;
+        }
+    }
+
     #endregion
 
     #region log
@@ -1741,6 +1750,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
 
     }
+
+	
 
     #endregion //fps
 }

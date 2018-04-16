@@ -411,9 +411,9 @@ public class BezierCurveEditor : Editor {
 	/// <param name="_useHandles">Use Handles library? Beautiful, but not pickable.</param>
 	private static void DrawLine(BezierCurve _curve, bool _useGizmos, bool _useHandles) {
 		// Gather sampled points
-		Vector3[] sampledPoints = new Vector3[_curve.sampledSegments.Count];
-		for(int i = 0; i < _curve.sampledSegments.Count; i++) {
-			sampledPoints[i] = _curve.sampledSegments[i].p1;
+		Vector3[] sampledPoints = new Vector3[_curve.editorSampledSegments.Count];
+		for(int i = 0; i < _curve.editorSampledSegments.Count; i++) {
+			sampledPoints[i] = _curve.editorSampledSegments[i].p1;
 		}
 
 		// Draw selectable Gizmo line
