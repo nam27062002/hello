@@ -342,12 +342,19 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 
 	}
     
-    public static PopupController PopupMessage_Open(PopupMessage.Config _config)
+    public static PopupController PopupMessage_Open(IPopupMessage.Config _config)
     {    
-        PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupMessage");
+		// Load different prefabs depending on text type
+		string path = PopupMessage.PATH;
+		switch(_config.TextType) {
+			case IPopupMessage.Config.ETextType.DEFAULT:	path = PopupMessage.PATH;		break;
+			case IPopupMessage.Config.ETextType.SYSTEM:		path = PopupMessageSystem.PATH;	break;
+		}
+
+        PopupController _popup = OpenPopupInstant(path);
         if (_popup != null)
         {
-            PopupMessage _popupMessage = _popup.GetComponent<PopupMessage>();
+            IPopupMessage _popupMessage = _popup.GetComponent<IPopupMessage>();
             _popupMessage.Configure(_config);
         }
 
@@ -359,12 +366,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
         return OpenPopupInstant("UI/Popups/Message/PF_PopupLoading");        
     }
 
-    public static PopupController PopupEnableCloud_Open(PopupMessage.Config _config)
+    public static PopupController PopupEnableCloud_Open(IPopupMessage.Config _config)
     {
         PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupEnableCloud");
         if (_popup != null)
         {
-            PopupMessage _popupMessage = _popup.GetComponent<PopupMessage>();
+            IPopupMessage _popupMessage = _popup.GetComponent<IPopupMessage>();
             _popupMessage.Configure(_config);
         }
 

@@ -89,18 +89,20 @@ public class SeasonTrigger : MonoBehaviour {
 		HashSet<GameObject> processedObjs = new HashSet<GameObject>();
 
 		// Current season has priority
-		SeasonalObject[] season = m_seasons[currentSeason];
-		for(int i = 0; i < season.Length; ++i) {
-			switch(season[i].action) {
-				case Action.ACTIVATE: {
-					toActivate.Add(season[i].obj);
-				} break;
+		SeasonalObject[] season = null;
+		if(m_seasons.TryGetValue(currentSeason, out season)) {
+			for(int i = 0; i < season.Length; ++i) {
+				switch(season[i].action) {
+					case Action.ACTIVATE: {
+						toActivate.Add(season[i].obj);
+					} break;
 
-				case Action.DESTROY: {
-					toDestroy.Add(season[i].obj);
-				} break;
+					case Action.DESTROY: {
+						toDestroy.Add(season[i].obj);
+					} break;
+				}
+				processedObjs.Add(season[i].obj);
 			}
-			processedObjs.Add(season[i].obj);
 		}
 
 		// Process the rest of seasons

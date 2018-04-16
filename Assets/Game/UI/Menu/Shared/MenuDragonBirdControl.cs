@@ -18,7 +18,7 @@ public class MenuDragonBirdControl : MonoBehaviour {
 	private static int SELECTION_SCREEN = Animator.StringToHash("SelectionScreen");
 
 	// Use this for initialization
-	void Awake () {
+	void Start () {
 		m_AnimHash = Animator.StringToHash(m_AnimationName);
 
 		Transform view = transform.Find("view");
