@@ -21,7 +21,9 @@ public class GameCamera : MonoBehaviour
 	private const float			m_frameWidthDefault = 20.0f;
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
     private const float         m_frameWidthBoost = 30.0f;
-	private const float         m_frameWidthFury = 30.0f;
+	private const float         m_frameWidthFury = 30.0f; 
+	private const float         m_frameWidthSpace = 40.0f; 
+
 
     // camera zoom blending values for bosses
     private float               m_zBlendRateBoss = 20.0f;
@@ -799,7 +801,11 @@ public class GameCamera : MonoBehaviour
 	        {
 	            if(!hasBoss)
 	            {
-					if ( m_fury || targetPosition.y > DragonMotion.SpaceStart)
+					if (targetPosition.y > DragonMotion.SpaceStart) 
+					{
+						frameWidth = m_frameWidthSpace;
+					}
+					else if ( m_fury )
 	            	{
 	            		frameWidth = m_frameWidthFury;
 	            	}
