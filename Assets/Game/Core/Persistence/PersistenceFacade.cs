@@ -155,6 +155,9 @@ public class PersistenceFacade
 
                 Config.LocalDriver.IsLoadedInGame = true;
 
+                // We need to wait until this moment to send the first Razolytics funnel step because we need to send some information stored in the local persistence too
+                HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._00_start);
+
                 // Since local is already loaded then we consider the operation done. Sync will happen in background
                 if (onDone != null)
                 {

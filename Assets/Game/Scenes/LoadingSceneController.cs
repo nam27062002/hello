@@ -366,8 +366,10 @@ public class LoadingSceneController : SceneController {
 					m_loadingBar.normalizedValue = loadProgress;                    		        	        
 
 		        // Once load is finished, navigate to the menu scene
-		        if (loadProgress >= 1f && !GameSceneManager.isLoading && m_loadingDone) {
-		            FlowManager.GoToMenu();
+		        if (loadProgress >= 1f && !GameSceneManager.isLoading && m_loadingDone) {                    
+                    HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_03_loading_done);
+
+                    FlowManager.GoToMenu();
 		        }
     		}break;
     	}		
@@ -493,12 +495,16 @@ public class LoadingSceneController : SceneController {
             {                
                 HDTrackingManager.Instance.Notify_ApplicationStart();
 
+                HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
+
                 // Initialize managers needing data from the loaded profile
                 GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
+
+                HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_01_persistance_applied);
 
                 // Game will be loaded only if the device is supported, otherwise a popup is shown suggesting the user download HSE. 
                 // We need to wait until this point to open this popup because we need to read local persistence to have access to
@@ -511,13 +517,13 @@ public class LoadingSceneController : SceneController {
                 {
                     Popup_ShowUnsupportedDevice();
                 }
-            };
+
+                HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_02_persistance_ready);
+            };            
 
             // Automatic connection check disabled during loading because network is already being used
             GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);
-            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);
-
-            HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._00_start);        			
+            PersistenceFacade.instance.Sync_FromLaunchApplication(onDone);            
         }
     }
 
@@ -539,10 +545,7 @@ public class LoadingSceneController : SceneController {
         config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;
         PopupManager.PopupMessage_Open(config);
 
-        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Shown);
-
-        // Game loaded event is sent to prevent users with a not supported devices from messing up with funnel metrics (it's only sent to Razolytics because Niko doesn't want this behaviour for Calety funnel)
-        HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Shown);        
     }
 
     private void UnsupportedDevice_OnGoToLink()
