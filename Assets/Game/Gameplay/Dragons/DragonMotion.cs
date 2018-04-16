@@ -1000,7 +1000,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			case State.Reviving:
 			{
 				m_reviveTimer -= Time.deltaTime;
-				m_transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
+				// m_transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
+				m_transform.position = m_diePosition;
 
 				RotateToDirection(m_direction, false);
 				m_desiredRotation = m_transform.rotation;
