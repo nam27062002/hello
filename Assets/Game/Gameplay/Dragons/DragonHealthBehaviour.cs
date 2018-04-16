@@ -185,7 +185,12 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			Messenger.Broadcast<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, _amount, _type, _source);
 
 			if (_entity != null && _entity.hasToShowTierNeeded(m_dragon.data.tier)) {
-				Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
+				DragonTier tier = _entity.edibleFromTier;
+				if ( _entity.canBeGrabbed && _entity.grabFromTier < tier )
+					tier = _entity.grabFromTier;
+				if ( _entity.canBeLatchedOn && _entity.latchFromTier < tier )
+					tier = _entity.latchFromTier;
+				Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, tier, _entity.sku);
 			}
 		}
 	}
@@ -242,7 +247,12 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		}
 
 		if (_entity != null && _entity.hasToShowTierNeeded(m_dragon.data.tier)) {
-			Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, _entity.edibleFromTier, _entity.sku);
+			DragonTier tier = _entity.edibleFromTier;
+			if ( _entity.canBeGrabbed && _entity.grabFromTier < tier )
+				tier = _entity.grabFromTier;
+			if ( _entity.canBeLatchedOn && _entity.latchFromTier < tier )
+				tier = _entity.latchFromTier;
+			Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, tier, _entity.sku);
 		}
 	}
 

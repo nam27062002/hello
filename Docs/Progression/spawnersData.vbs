@@ -12,15 +12,16 @@ Public damage
 Set objFSO 				= CreateObject("Scripting.FileSystemObject")
 Set objShell 			= WScript.CreateObject("WScript.Shell")
 
-REM Set SpawnersFolder 		= objFSO.GetFolder("D:\Projects\HungryDragon\Assets\Tools\LevelEditor\SpawnerPrefabs")
 Set SpawnersFolder 		= objFSO.GetFolder("..\..\Assets\Tools\LevelEditor\SpawnerPrefabs")
 Public EntityFile 
-REM Set objOutputFile 		= objFSO.CreateTextFile("D:\Projects\HungryDragon\Docs\Progression\spawnersData.txt", 2, true)
 Set objOutputFile 		= objFSO.CreateTextFile("spawnersData.txt", 2, true)
 
 
+
 For Each CurrentSpawner In SpawnersFolder.Files
-	If Right(CurrentSpawner.Path,7) = ".prefab" Then
+	blackList1 = "SP_Seasonal.prefab"
+	blackList2 = "SP_ButterflyEgg_Root.prefab"
+	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false  And foundStrMatch(CurrentSpawner.Path, blackList2) = false Then
 		Set objInputFile = objFSO.OpenTextFile(CurrentSpawner)
 		Dim substrToFind
 		Do until objInputFile.AtEndOfStream
@@ -56,7 +57,7 @@ Function spawnerInfo()
 		aux = Replace(Replace(prefabFolder,"/","\")," ","")
 		REM prefabFile = "D:\Projects\HungryDragon\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
 		prefabFile = "..\..\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
-		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/",""),"Vehicles/",""),"Magic/",""),"Dragon/","")
+		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/",""),"Vehicles/",""),"Magic/",""),"Dragon/",""),"Seasonal/","")
 	End If			
 	substrToFind = "m_spawnTime:"
 	If foundStrMatch(tmpStr,substrToFind) = true Then

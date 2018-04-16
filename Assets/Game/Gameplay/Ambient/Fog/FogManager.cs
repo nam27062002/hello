@@ -113,6 +113,8 @@ public class FogManager : MonoBehaviour
 	bool m_updateBlitOriginTexture = false;
 	FogAttributes m_forcedAttributes = null;
 	bool m_forceUpdate = false;
+	bool m_usingFire = false;
+	bool m_wasUsingFire = false;
 
 	void Awake()
 	{
@@ -158,6 +160,7 @@ public class FogManager : MonoBehaviour
 		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 	}
 
 	void OnDestroy()
@@ -168,6 +171,7 @@ public class FogManager : MonoBehaviour
 			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 			Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 			Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		}
 	}
 
@@ -227,8 +231,22 @@ public class FogManager : MonoBehaviour
 				if ( m_activeFogAreaList.Count > 0)
 				{
 					FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
-					m_selectedAttributes = selectedFogArea.m_attributes;
-					transitionDuration = selectedFogArea.m_enterTransitionDuration;
+					if (m_usingFire && selectedFogArea.m_fireFog)
+					{
+						m_selectedAttributes = selectedFogArea.m_fireAttributes;
+						transitionDuration = 0.1f;
+						m_wasUsingFire = true;
+					}
+					else
+					{
+						if ( m_wasUsingFire ){
+							transitionDuration = 0.1f;
+						}else{
+							transitionDuration = selectedFogArea.m_enterTransitionDuration;	
+						}
+						m_selectedAttributes = selectedFogArea.m_attributes;
+						m_wasUsingFire = false;
+					}
 					m_lastSelectedArea = selectedFogArea;
 				}
 				else
@@ -396,6 +414,8 @@ public class FogManager : MonoBehaviour
 	public void ActivateArea( FogArea _area )
 	{
 		CheckTextureAvailability( _area.m_attributes );
+		if ( _area.m_fireFog )
+			CheckTextureAvailability( _area.m_fireAttributes );	
 		m_activeFogAreaList.Add( _area );
 	}
 
@@ -513,5 +533,10 @@ public class FogManager : MonoBehaviour
 			m_updateBlitOriginTexture = true;
 			SetAsSelectedAttributes();
 		}
+	}
+
+	private void OnFury(bool _active, DragonBreathBehaviour.Type _type)
+	{
+		m_usingFire = _active;
 	}
 }

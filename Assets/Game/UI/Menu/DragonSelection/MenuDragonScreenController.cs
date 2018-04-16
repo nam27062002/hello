@@ -542,7 +542,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// If there is an active global event, go to the events screen
 		// Do it as well if the event is pending reward collection
 		if(GlobalEventManager.currentEvent != null
-			&& (GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
+			&& (GlobalEventManager.currentEvent.isTeasing || GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
 			&& UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
 			nextScreen = MenuScreen.GLOBAL_EVENTS;
 		}

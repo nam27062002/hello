@@ -67,7 +67,7 @@ GameObject:
   - component: {fileID: 137942118794740010}
   - component: {fileID: 135452778139195462}
   - component: {fileID: 114399510732729160}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: DroneGoblin_geo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,7 +265,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1809048272085242}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 503.28723, y: -274.36923, z: 0}
+  m_LocalPosition: {x: 103.83447, y: 41.55149, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4012497656067864}
@@ -422,7 +422,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"panicSpeed":6,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":4,"acceleration":2,"damage":25,"retreatTime":0,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"timeBeforeBackHome":5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"seconds":3.5,"dataType":"AI.Behaviour.TimerBData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":4,"panicSpeed":6,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":10,"acceleration":10,"damage":25,"retreatTime":0,"attackPoint":"attack_4","dataType":"AI.Behaviour.ChargeData","editorFolded":false},{"timeBeforeBackHome":5,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"seconds":3.5,"dataType":"AI.Behaviour.TimerBData","editorFolded":false}]'
   m_databaseKey: PF_GoblinDrone
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
@@ -489,7 +489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: GoblinWarMachine
+  m_sku: GoblinDrone
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114399510732729160
@@ -590,7 +590,7 @@ MonoBehaviour:
   m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
-    name: 
+    name: PS_D_Splinters
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -753,7 +753,7 @@ MonoBehaviour:
   m_idleAudio: 
   m_skins: []
   m_headRotationSpeed: 3
-  m_helixRotationSpeed: 800
+  m_helixRotationSpeed: 1600
   m_head: {fileID: 4402319604612638}
   m_helixLeft01: {fileID: 4920386280618338}
   m_helixLeft02: {fileID: 4052017376926240}

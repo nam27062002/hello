@@ -157,7 +157,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4360086454360084}
   - component: {fileID: 137628509064765654}
-  m_Layer: 0
+  - component: {fileID: 114024370984847600}
+  - component: {fileID: 135308574001298470}
+  m_Layer: 24
   m_Name: drone_food001wwwww
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +250,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1467635041401210}
-  m_LocalRotation: {x: -7.105422e-15, y: 2.5410982e-21, z: -7.1054257e-15, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.29453647, y: 0, z: 0}
   m_LocalScale: {x: 1.0000002, y: 1.0000005, z: 1.0000002}
   m_Children:
@@ -281,7 +283,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1809048272085242}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 129.5887, y: 48.15127, z: 0}
+  m_LocalPosition: {x: 112.979, y: 37.542, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4752669568031416}
@@ -456,6 +458,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114024370984847600
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1678521302577182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0}
+  radius: 1.439621
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114043121378977230
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -471,12 +487,12 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
+  m_brainResource: {fileID: 11400000, guid: 35a662e89e7a340ab9f035ee4612930b, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false}]'
+  m_serializedJson: '[{"boostSpeed":5,"panicSpeed":10,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":1,"catchUpSpeed":1.5,"dataType":"AI.Behaviour.BirdLeaderData","editorFolded":false},{"separation":5,"frequency":1,"amplitude":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false},{"speed":1,"catchUpSpeed":1.5,"dataType":"AI.Behaviour.FollowLeaderData","editorFolded":false}]'
   m_databaseKey: PF_GoblinDroneFood
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -543,7 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: GoblinWarMachine
+  m_sku: GoblinDroneFood
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114445699699165290
@@ -557,12 +573,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 4681498942336368}
+  m_root: {fileID: 4614574864620212}
   m_partsNames:
   - DroneGoblin_Rope_02
   - DroneGoblin_Rope_03
   - DroneGoblin_Beef_01
-  springSpeed: 0.125
+  springSpeed: 15
   m_upDir: {x: 0, y: -90, z: 0}
   m_disableOnResults: 0
 --- !u!114 &114637707101380934
@@ -632,7 +648,7 @@ MonoBehaviour:
   m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
-    name: 
+    name: PS_D_Splinters
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -801,6 +817,18 @@ MonoBehaviour:
   m_helixLeft02: {fileID: 4409361457284202}
   m_helixRight01: {fileID: 4101550807853020}
   m_helixRight02: {fileID: 4628728324405048}
+--- !u!135 &135308574001298470
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1678521302577182}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2.57
+  m_Center: {x: 0.0033373386, y: 2, z: 0.079443395}
 --- !u!137 &137628509064765654
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
