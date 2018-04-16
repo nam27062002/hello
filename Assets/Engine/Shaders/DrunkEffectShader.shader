@@ -60,15 +60,14 @@ Shader "Hungry Dragon/DrunkEffectShader"
 				float s = sin(_Time.y * SPEED);
 
 				fixed4 col;
-				col.x = tex2D(_MainTex, i.uv + float2(-c * RADIUS, s * RADIUS) * _Intensity).x;
-				col.y = tex2D(_MainTex, i.uv + float2(c * RADIUS, -s * RADIUS) * _Intensity).y;
-				col.z = tex2D(_MainTex, i.uv + float2(-c * RADIUS, -s * RADIUS) * _Intensity).z;
+//				col.x = tex2D(_MainTex, i.uv + float2(-c * RADIUS, s * RADIUS) * _Intensity).x;
+//				col.y = tex2D(_MainTex, i.uv + float2(c * RADIUS, -s * RADIUS) * _Intensity).y;
+//				col.z = tex2D(_MainTex, i.uv + float2(-c * RADIUS, -s * RADIUS) * _Intensity).z;
 
-//				col = tex2D(_MainTex, i.uv + float2(-c * RADIUS, s * RADIUS) * _Intensity);
-//				col *= tex2D(_MainTex, i.uv + float2(c * RADIUS, -s * RADIUS) * _Intensity);
-//				col *= tex2D(_MainTex, i.uv + float2(-c * RADIUS, -s * RADIUS) * _Intensity);
-
-//				col *= 0.33333;
+				col = tex2D(_MainTex, i.uv + float2(-c * RADIUS, s * RADIUS) * _Intensity);
+				col += tex2D(_MainTex, i.uv + float2(c * RADIUS, -s * RADIUS) * _Intensity);
+				col += tex2D(_MainTex, i.uv + float2(-c * RADIUS, -s * RADIUS) * _Intensity);
+				col *= 0.33333;
 
 				return col;
 //				return col * 0.5;

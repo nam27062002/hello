@@ -26,12 +26,14 @@ internal class ScenaryShaderGUI : ShaderGUI {
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
 
+/*
     public enum BlendMode
     {
         Opaque,
         Cutout,
         Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
     }
+*/
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
@@ -84,6 +86,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         readonly public static string blendModeText = "Blend mode";
         readonly public static string renderQueueText = "Render queue";
+
+        readonly public static string enableWaveEmissionText = "Enable Wave Emission";
+        readonly public static string waveEmissionText = "Wave Emission";
 
         readonly public static string cullModeText = "Cull mode";
         readonly public static string cullWarningText = "Warning! You have activated double sided in opaque object.";
@@ -141,8 +146,11 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EnableCutoff;
     MaterialProperty mp_EnableFog;
 
-//    MaterialProperty mp_EnableEmissiveBlink;
-//    MaterialProperty mp_EnableLightmapContrast;
+    MaterialProperty mp_EnableWaveEmission;
+    MaterialProperty mp_WaveEmission;
+
+    //    MaterialProperty mp_EnableEmissiveBlink;
+    //    MaterialProperty mp_EnableLightmapContrast;
 
     /// <summary>
     /// Enum Material PProperties
@@ -209,6 +217,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_lightmapContrastPhase = FindProperty("_LightmapContrastPhase", props);
 
         mp_Color = FindProperty("_Tint", props);
+        mp_WaveEmission = FindProperty("_WaveEmission", props);
 
         /// Toggle Material Properties
 
@@ -221,6 +230,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         mp_EnableCutoff = FindProperty("_EnableCutoff", props);
         mp_EnableFog = FindProperty("_EnableFog", props);
+
+        mp_EnableWaveEmission = FindProperty("_EnableWaveEmission", props);
 
         //        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
         //        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
@@ -404,6 +415,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
             case 1:         //Emission blink
                 materialEditor.ShaderProperty(mp_EmissivePower, Styles.emissivePowerText);
                 materialEditor.ShaderProperty(mp_BlinkTimeMultiplier, Styles.blinkTimeMultiplierText);
+                if (featureSet(mp_EnableWaveEmission, Styles.enableWaveEmissionText))
+                {
+                    materialEditor.ShaderProperty(mp_WaveEmission, Styles.waveEmissionText);
+                }
                 break;
 
             case 2:         //Emission reflective
