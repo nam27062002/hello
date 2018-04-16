@@ -92,7 +92,6 @@ GameObject:
   - component: {fileID: 114826283472321486}
   - component: {fileID: 114445072889786704}
   - component: {fileID: 114301869855550984}
-  - component: {fileID: 114347282888825220}
   m_Layer: 11
   m_Name: PF_Blocker_Fire
   m_TagString: Untagged
@@ -175,6 +174,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4225981433546592}
   - component: {fileID: 65100467596109686}
+  - component: {fileID: 114738833036250298}
   m_Layer: 11
   m_Name: view
   m_TagString: Untagged
@@ -1235,17 +1235,6 @@ MonoBehaviour:
   m_maxSpawns: 1
   m_mustBedestroyed: 0
   m_ground: []
---- !u!114 &114347282888825220
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1189587967232188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aba011a4897b47d98b73018c2385058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114367731949479658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1401,6 +1390,17 @@ MonoBehaviour:
   m_useAnimator: 1
   m_boxelSize: 10
   m_hitRadius: 2
+--- !u!114 &114738833036250298
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1435190704987318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aba011a4897b47d98b73018c2385058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114826283472321486
 MonoBehaviour:
   m_ObjectHideFlags: 1
