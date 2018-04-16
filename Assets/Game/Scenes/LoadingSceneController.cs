@@ -467,7 +467,9 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.CreateInstance();
                 TransactionManager.instance.Initialise();
 
-                    StartLoadFlow();	            	                                
+                HDCustomizerManager.instance.Initialise();
+
+                StartLoadFlow();	            	                                
           	}break;
         }
     }
