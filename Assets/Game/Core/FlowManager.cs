@@ -120,6 +120,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
         PersistenceFacade.instance.Reset();
 
         TransactionManager.instance.Reset();
+        HDCustomizerManager.instance.Reset();
 
         // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
         // from the editor)

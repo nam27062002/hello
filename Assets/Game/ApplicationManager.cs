@@ -122,6 +122,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         m_isAlive = false;
 
         GameServerManager.SharedInstance.Destroy();
+        HDCustomizerManager.instance.Destroy();
     }
 
     protected override void OnApplicationQuit()
@@ -286,7 +287,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 #endif
 
         PersistenceFacade.instance.Update();
-        HDTrackingManager.Instance.Update();        
+        HDTrackingManager.Instance.Update();
+        HDCustomizerManager.instance.Update();  
 
 		#if UNITY_EDITOR
 		GameServerManager.SharedInstance.Update();
