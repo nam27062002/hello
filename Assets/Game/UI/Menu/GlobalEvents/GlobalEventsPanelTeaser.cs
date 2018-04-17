@@ -28,6 +28,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	// Exposed References
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
