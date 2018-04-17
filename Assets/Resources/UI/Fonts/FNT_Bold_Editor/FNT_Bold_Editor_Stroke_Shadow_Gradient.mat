@@ -7,12 +7,12 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: FNT_Bold_Editor_Stroke_Shadow_Gradient
-  m_Shader: {fileID: 4800000, guid: cafd18099dfc0114896e0a8b277b81b6, type: 3}
-  m_ShaderKeywords: OUTLINE_ON UNDERLAY_ON
+  m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
+  m_ShaderKeywords: BEVEL_ON OUTLINE_ON UNDERLAY_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -44,14 +44,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Ambient: 0.5
-    - _Bevel: 0.5
+    - _Ambient: 0
+    - _Bevel: 0.431
     - _BevelClamp: 0
-    - _BevelOffset: 0
-    - _BevelRoundness: 0
-    - _BevelWidth: 0
+    - _BevelOffset: 0.014
+    - _BevelRoundness: 1
+    - _BevelWidth: 0.08
     - _BumpFace: 0
-    - _BumpOutline: 0
+    - _BumpOutline: 1
     - _ColorMask: 15
     - _Diffuse: 0.5
     - _FaceDilate: 0
@@ -62,7 +62,7 @@ Material:
     - _GlowOuter: 0.05
     - _GlowPower: 0.75
     - _GradientScale: 4
-    - _LightAngle: 3.1416
+    - _LightAngle: 6.28
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _OutlineSoftness: 0
@@ -70,13 +70,13 @@ Material:
     - _OutlineUVSpeedY: 0
     - _OutlineWidth: 0.061
     - _PerspectiveFilter: 0.875
-    - _Reflectivity: 10
+    - _Reflectivity: 10.1
     - _ScaleRatioA: 0.75
-    - _ScaleRatioB: 0.8333333
+    - _ScaleRatioB: 0.609375
     - _ScaleRatioC: 0.609375
     - _ScaleX: 1
     - _ScaleY: 1
-    - _ShaderFlags: 0
+    - _ShaderFlags: 1
     - _SpecularPower: 2
     - _Stencil: 0
     - _StencilComp: 8
@@ -96,11 +96,11 @@ Material:
     m_Colors:
     - _ClipRect: {r: -10000, g: -10000, b: 10000, a: 10000}
     - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
-    - _FaceColor: {r: 1, g: 0.68823403, b: 0, a: 1}
+    - _FaceColor: {r: 1, g: 0.6958333, b: 0, a: 1}
     - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
     - _MaskCoord: {r: 0, g: 0, b: 10000, a: 10000}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0.509}
-    - _ReflectFaceColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ReflectFaceColor: {r: 0.58823526, g: 0.5233266, b: 0, a: 0}
     - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _UnderlayColor: {r: 0, g: 0, b: 0, a: 1}
