@@ -27,7 +27,17 @@ namespace Metagame {
 
 		override protected void DoCollect() {
 			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)m_amount, false, EconomyGroup);
-		}		
+		}
+
+		override public SimpleJSON.JSONNode ToJson() {
+			// Basic data
+			SimpleJSON.JSONNode data = base.ToJson();
+
+			// Custom data
+			data.Add("economyGroup", HDTrackingManager.EconomyGroupToString(this.EconomyGroup));
+
+			return data;
+		}
 	}
 	
 	/// <summary>

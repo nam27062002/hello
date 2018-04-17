@@ -204,15 +204,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		if (ApplicationManager.instance.GameCenter_IsAuthenticated())
 		{
 			// Show popup message
-			PopupMessage.Config config = PopupMessage.GetConfig();
+			IPopupMessage.Config config = IPopupMessage.GetConfig();
 			config.ShowTitle = false;
 			config.MessageTid = "TID_GEN_CONFIRM_LOGOUT";
-			config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+			config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;
 			config.ConfirmButtonTid = "TID_GEN_YES";
 			config.OnConfirm = OnLogOutGooglePlay;
 			config.CancelButtonTid = "TID_GEN_NO";
 			config.OnCancel = null;
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+            config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 			config.IsButtonCloseVisible = false;
 			PopupManager.PopupMessage_Open(config);
 		}
@@ -241,14 +241,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		// Apple does NOT login the user, we need to check it.
 		if (!GameCenterManager.SharedInstance.CheckIfAuthenticated ())
 		{
-			PopupMessage.Config config = PopupMessage.GetConfig();
+			IPopupMessage.Config config = IPopupMessage.GetConfig();
 			config.TitleTid = "TID_GAMECENTER_CONNECTION_TITLE";
 			config.ShowTitle = true;
 			config.MessageTid = "TID_GAMECENTER_CONNECTION_BODY";
 			// This popup ignores back button and stays open so the user makes a decision
-			config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.PerformConfirm;
+			config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformConfirm;
 			config.ConfirmButtonTid = "TID_GEN_OK";
-			config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+			config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
 			config.IsButtonCloseVisible = false;
 			m_confirmPopup = PopupManager.PopupMessage_Open(config);
 			m_confirmPopup.OnClosePreAnimation.AddListener( OnPopupDismissed );

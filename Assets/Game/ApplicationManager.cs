@@ -78,6 +78,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
+        Application.logMessageReceived += OnHandleLog;
     }
 
     protected void Start()
@@ -121,6 +122,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         m_isAlive = false;
 
         GameServerManager.SharedInstance.Destroy();
+        HDCustomizerManager.instance.Destroy();
     }
 
     protected override void OnApplicationQuit()
@@ -143,6 +145,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         base.OnApplicationQuit();
     }
 
+    private void OnHandleLog(string logString, string stackTrace, LogType type)
+    {
+        if (type == LogType.Exception || type == LogType.Error)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Log("OnHandleLog logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());    
+            }   
+
+            HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
+        }
+    }
 
     private void Reset()
     {
@@ -273,7 +287,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 #endif
 
         PersistenceFacade.instance.Update();
-        HDTrackingManager.Instance.Update();        
+        HDTrackingManager.Instance.Update();
+        HDCustomizerManager.instance.Update();  
 
 		#if UNITY_EDITOR
 		GameServerManager.SharedInstance.Update();

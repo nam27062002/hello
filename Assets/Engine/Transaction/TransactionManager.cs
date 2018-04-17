@@ -22,8 +22,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     public void Update()
     {
         Pending_Update();
-
-        /*
+        
+/*
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -35,8 +35,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             // Test pending transactions flow (chain of popups giving resources)
             Debug_TestPendingTransactionsFlow();
         }
-#endif
-        */
+#endif    
+*/ 
     }
 
     #region factory
@@ -368,25 +368,34 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         PersistenceFacade.Popups_OpenLoadingPopup();
 
         // Sends a request to the server to confirm that the user is allowed to collect this transaction and in order to let the server delete this transaction from the list of pending transactions
-        Transaction transaction = m_pendingTransactions.Peek();        
+        Transaction transaction = m_pendingTransactions.Peek();
+        
+        // Uncomment to test that the server is able to confirm a set of transactions
+        //List<Transaction> list = new List<Transaction>(m_pendingTransactions);
+        //GameServerManager.SharedInstance.ConfirmPendingTransactions(list, Flow_OnConfirmPendingTransaction);
+
         GameServerManager.SharedInstance.ConfirmPendingTransaction(transaction, Flow_OnConfirmPendingTransaction);
     }
     
     private void Flow_OnClosePendingTransactionPopup()
     {
         // A popup notifying the user that she will have the chance to collect her pending transactions later is opened
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_TRANSACTION_CLOSE_TITLE";
         config.MessageTid = "TID_TRANSACTION_CLOSE_DESC";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
 
         // All pending transactions are cancelled because we assume that the user wants to skip this flow
         config.OnConfirm = Flow_OnCancelPendingTransactions;
         config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;
-        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.Close;
+        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.Close;
         PopupManager.PopupMessage_Open(config);
-    }   
+    }
+
+    private const int FLOW_INTERNAL_ERROR_TRANSACTIONS_MISMATCH = 77;
+    private const int FLOW_INTERNAL_ERROR_GENERIC = 78;
+    private const int FLOW_INTERNAL_ERROR_NO_RESPONSE = 79;
 
     private void Flow_OnConfirmPendingTransaction(FGOL.Server.Error error, GameServerManager.ServerResponse response)
     {        
@@ -394,7 +403,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         bool needsToClosePopup = true;
 
         bool success = error == null;
-        int internalErrorCode = -1;
+        int internalErrorCode = -1;        
         if (error == null)
         {
             if (response != null && response.ContainsKey("response"))
@@ -406,31 +415,65 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                     if (json != null)
                     {
                         JSONNode txs = json["txs"];
-                        if (txs != null)
+                        if (txs == null)
                         {
-                            // TODO: Check that transactions received from server and the ones that the client is about to perform are the same
+                            internalErrorCode = FLOW_INTERNAL_ERROR_TRANSACTIONS_MISMATCH;
+                        }
+                        else
+                        {                            
+                            // Process every transaction
+                            JSONArray transactions = txs.AsArray;
+                            if (transactions != null)
+                            {                                
+                                if (transactions.Count != 1)
+                                {
+                                    internalErrorCode = FLOW_INTERNAL_ERROR_TRANSACTIONS_MISMATCH;
+                                }
+                                else
+                                {
+                                    Transaction transactionToPerform = m_pendingTransactions.Peek();
+                                    Transaction transaction = Factory_GetTransaction();
+                                    transaction.FromJSON(transactions[0]);                                    
+                                    // Check if this transaction matches with the one that the client is processing
+                                    if (!transactionToPerform.Equals(transaction))
+                                    {
+                                        internalErrorCode = FLOW_INTERNAL_ERROR_TRANSACTIONS_MISMATCH;
+                                    }                                    
+                                }
+                            }
                         }
 
-                        string key = "result";
-                        if (json.ContainsKey(key))
+                        if (internalErrorCode != -1)
                         {
-                            success = json[key].AsBool;
+                            success = false;
                         }
-
-                        if (!success)
+                        else
                         {
-                            key = "code";
+                            string key = "result";
                             if (json.ContainsKey(key))
                             {
-                                internalErrorCode = json[key].AsInt;
+                                success = json[key].AsBool;
                             }
-                            else
+
+                            if (!success)
                             {
-                                internalErrorCode = 99;
+                                key = "code";
+                                if (json.ContainsKey(key))
+                                {
+                                    internalErrorCode = json[key].AsInt;
+                                }
+                                else
+                                {
+                                    internalErrorCode = FLOW_INTERNAL_ERROR_GENERIC;
+                                }
                             }
                         }
                     }
                 }
+            }
+            else
+            {
+                internalErrorCode = FLOW_INTERNAL_ERROR_NO_RESPONSE;
             }
         }
         else if (error.code == FGOL.Server.ErrorCodes.LogicError)
@@ -505,10 +548,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     /// </summary>
     private void Flow_OpenNoConnectionError()
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_TRANSACTION_CONN_LOST_TITLE";
         config.MessageTid = "TID_TRANSACTION_CONN_LOST_DESC";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;        
         PopupManager.PopupMessage_Open(config);
@@ -520,10 +563,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     /// </summary>
     private void Flow_OpenInternalError()
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_TRANSACTION_INTERNAL_ERR_TITLE";
         config.MessageTid = "TID_TRANSACTION_INTERNAL_ERR_DESC";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = Flow_OnCancelPendingTransactions;
         config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;

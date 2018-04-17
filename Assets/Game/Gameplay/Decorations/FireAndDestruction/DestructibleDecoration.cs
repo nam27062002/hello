@@ -26,6 +26,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	[CommentAttribute("Audio When Dragon interacts with object but does not destroy it.")]
 	[SerializeField] private string m_onFeedbackAudio = "";
 
+	[SeparatorAttribute]
+	[SerializeField] private float m_cameraShake = 0;
+
 
 	private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
@@ -185,6 +188,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 								particlePosition.x -= m_collider.size.x * 0.5f;
 							}
 
+							ps.transform.localRotation = transform.rotation;
 							ps.transform.position = particlePosition + m_feedbackParticle.offset;
 
 							if (m_particleFaceDragonDirection) {
@@ -216,8 +220,9 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 							particlePosition.x -= m_collider.size.x * 0.5f;
 						}
 
-						GameObject ps = m_feedbackParticle.Spawn(particlePosition + m_feedbackParticle.offset);
+						GameObject ps = m_feedbackParticle.Spawn(particlePosition + (transform.rotation * m_feedbackParticle.offset));
 						if (ps != null) {
+							ps.transform.localRotation = transform.rotation;
 							if (m_particleFaceDragonDirection) {
 								FaceDragon(ps);
 							}
@@ -232,7 +237,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	}
 
 	void Break() {
-		GameObject ps = m_destroyParticle.Spawn(transform.position + m_destroyParticle.offset);
+		GameObject ps = m_destroyParticle.Spawn(transform.position + (transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
 				FaceDragon(ps);
@@ -270,6 +275,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 		// [AOC] Notify game!
 		Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, m_entity.reward);
+
+		if (m_cameraShake > 0) {
+			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShake, 1f);
+		}
 	}
 
 	void FaceDragon(GameObject _ps) {

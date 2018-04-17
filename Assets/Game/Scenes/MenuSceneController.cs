@@ -99,7 +99,7 @@ public class MenuSceneController : SceneController {
 	override protected void Awake() {
 		// Call parent
 		base.Awake();
-
+		Application.lowMemory += OnLowMemory;
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
@@ -134,23 +134,14 @@ public class MenuSceneController : SceneController {
 		}
 
 		// Start loading pet pill's on the background!
-		PetsScreenController petsScreen = GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
-		StartCoroutine(petsScreen.InstantiatePillsAsync());
+		// PetsScreenController petsScreen = GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+		// StartCoroutine(petsScreen.InstantiatePillsAsync());
 
 		// Request latest global event data
 		GlobalEventManager.RequestCurrentEventData();
 
 		// wait one tick
 		yield return null;
-
-		// Check interstitial popups
-		bool popupDisplayed = false;
-
-		// 1. Rating popup
-		if(!popupDisplayed) popupDisplayed = CheckRatingFlow();
-
-		// 2. Survey popup
-		if(!popupDisplayed) popupDisplayed = PopupAskSurvey.Check();        
 
 		// Test mode
 		yield return new WaitForSeconds(5.0f);
@@ -164,52 +155,8 @@ public class MenuSceneController : SceneController {
 
 	}    
 
-    public static string RATING_DRAGON = "dragon_crocodile";
-	public static bool CheckRatingFlow()
-	{
-		bool ret = false;
-		DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
-		if ( data.GetLockState() > DragonData.LockState.LOCKED )
-		{
-			// Check if first time here!
-			bool _checked = Prefs.GetBoolPlayer( Prefs.RATE_CHECK_DRAGON, false );
-			if ( _checked )
-			{
-				// Check we come form a run!
-				// Check if we need to make the player rate the game
-				if ( Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true))
-				{
-					if ( GameSceneManager.prevScene.CompareTo(ResultsScreenController.NAME) == 0 || GameSceneManager.prevScene.CompareTo(GameSceneController.NAME) == 0)
-					{
-						string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
-						System.DateTime futureDate = System.DateTime.Now;
-						if (!System.DateTime.TryParse(dateStr, out futureDate))
-							futureDate = System.DateTime.Now;
-						if ( System.DateTime.Compare( System.DateTime.Now, futureDate) > 0 )
-						{
-							// Start Asking!
-							if ( Application.platform == RuntimePlatform.Android ){
-								PopupManager.OpenPopupInstant( PopupAskLikeGame.PATH );	
-								ret = true;
-							}else if ( Application.platform == RuntimePlatform.IPhonePlayer ){
-								PopupAskRateUs.OpenIOSMarketForRating();
-								ret = true;
-							}
-						}
-					}
-				}
-			}
-			else
-			{
-				// Next time we will
-				Prefs.SetBoolPlayer( Prefs.RATE_CHECK_DRAGON, true );
-			}
-		}
-
-		return ret;
-	}
-
 	protected override void OnDestroy() {
+		Application.lowMemory -= OnLowMemory;
 		base.OnDestroy();
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
@@ -231,6 +178,13 @@ public class MenuSceneController : SceneController {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+	}
+
+
+	void OnLowMemory()
+	{
+		Resources.UnloadUnusedAssets();
+		System.GC.Collect();
 	}
 
 	//------------------------------------------------------------------//

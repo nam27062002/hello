@@ -58,5 +58,17 @@
         }
 
         return canPerform;
-    }    
+    }
+
+    public override bool Equals(object obj)
+    {
+        bool returnValue = false;
+        TransactionResource item = obj as TransactionResource;
+        if (item != null)
+        {
+            returnValue = item.GetCurrency() == GetCurrency() && item.GetAmount() == GetAmount();            
+        }
+
+        return returnValue;
+    }
 }

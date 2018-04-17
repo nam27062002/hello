@@ -51,6 +51,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	[SerializeField] private ParticleData m_onChargeParticle;
 	[SerializeField] private ParticleData m_onHitParticle;
 	[SerializeField] private ParticleData m_onEatParticle;
+	[SerializeField] private ParticleData m_onBurnParticle;
 	[SerializeField] private bool m_missHitSpawnsParticle = true;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
 	[SerializeField] private float m_dieTime = 0f;
@@ -124,6 +125,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_onChargeParticle.CreatePool();
 		m_onAttachParticle.CreatePool();
 		m_onEatParticle.CreatePool();
+		m_onBurnParticle.CreatePool();
 
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
@@ -394,6 +396,20 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	public void OnEaten() {		
 		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+
+		if (m_entity != null) {
+			if (EntityManager.instance != null)	{
+				EntityManager.instance.UnregisterEntity(m_entity);
+			}
+		}
+
+		m_state = State.Idle;
+		gameObject.SetActive(false);
+		m_poolHandler.ReturnInstance(gameObject);
+	}
+
+	public void OnBurned() {
+		m_onBurnParticle.Spawn(m_position + m_onBurnParticle.offset);
 
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{

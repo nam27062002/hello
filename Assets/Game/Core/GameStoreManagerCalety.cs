@@ -30,11 +30,6 @@ public class GameStoreManagerCalety : GameStoreManager
                 Debug.Log("onPurchaseCompleted");
 
 			// string gameSku = PlatformSkuToGameSku( sku );
-			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.SHOP_PACKS, sku);
-			if ( def != null )
-			{
-				PopupCurrencyShopPill.ApplyShopPack( def );	
-			}
 			Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
 		}
 
