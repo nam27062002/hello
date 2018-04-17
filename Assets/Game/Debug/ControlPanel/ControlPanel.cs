@@ -372,4 +372,10 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Toggle();
 		Toggle();
 	}
+
+    #region console    
+    public void Log(string text) {
+        CPConsoleTab.Log(text);
+    }   
+    #endregion
 }
