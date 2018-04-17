@@ -22,7 +22,7 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/ResourcesFlow/PF_PopupBigAmountConfirmation";
+	public const string PATH = "UI/Popups/Economy/PF_PopupBigAmountConfirmation";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

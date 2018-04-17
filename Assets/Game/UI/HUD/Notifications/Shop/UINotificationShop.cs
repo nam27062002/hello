@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UINotificationShop : MonoBehaviour {
-	public static string DEFAULT_PREFAB_PATH = "UI/Popups/ResourcesFlow/PF_UINotificationShop";	// Just for comfort, change it if path changes
+	public static string DEFAULT_PREFAB_PATH = "UI/Popups/Economy/PF_UINotificationShop";	// Just for comfort, change it if path changes
 
 
 	[SerializeField] private float m_timeOnScreen;

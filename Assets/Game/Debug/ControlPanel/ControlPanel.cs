@@ -372,4 +372,12 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Toggle();
 		Toggle();
 	}
+
+    #region console    
+    public void Log(string text) {
+        if (FeatureSettingsManager.IsControlPanelEnabled) {
+            CPConsoleTab.Log(text);
+        }
+    }   
+    #endregion
 }

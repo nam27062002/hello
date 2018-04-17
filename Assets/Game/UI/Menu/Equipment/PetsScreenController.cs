@@ -112,7 +112,6 @@ public class PetsScreenController : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-
 	}
 
 	/// <summary>
@@ -262,6 +261,9 @@ public class PetsScreenController : MonoBehaviour {
 			m_petSlots[i].Init(i);
 		}
 
+		//
+		InitPills();
+
 		// Reset filters
 		petFilters.ResetFilters();
 
@@ -269,7 +271,7 @@ public class PetsScreenController : MonoBehaviour {
 		Refresh(false);
 
 		// Initialize the pills!
-		InitPillsWithDragonData();
+		// InitPillsWithDragonData();
 
 		// We're done! Restore original object state
 		this.gameObject.SetActive(wasActive);
@@ -357,6 +359,7 @@ public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
+	/*
 	/// <summary>
 	/// Instantiates the required amount of pills in a background process.
 	/// Do this to prevent massive Awake() lag spike.
@@ -394,16 +397,14 @@ public class PetsScreenController : MonoBehaviour {
 			}
 		}
 	}
+	*/
 
 	/// <summary>
 	/// Initialize all the pills with current dragon data, and create new ones if needed.
 	/// </summary>
-	private void InitPillsWithDragonData() {
-		// Initialize one pill for each pet
-		for(int i = 0; i < m_defs.Count; i++) {
-			// If we don't have enough pills, instantiate new ones
-			// This should never happen since we've already instantiated all the necessary pills in the InstantiatePillsAsync method, but leave it just in case
-			if(i >= m_pills.Count) {
+	private void InitPills() {
+		if ( m_pills.Count == 0 ){
+			for(int i = 0; i < 8; i++) {
 				// Instantiate pill
 				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
 				m_pills.Add(newPillObj.GetComponent<PetPill>());
@@ -412,9 +413,6 @@ public class PetsScreenController : MonoBehaviour {
 				// React if the pill is tapped!
 				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
 			}
-
-			// Initialize pill
-			m_pills[i].Init(m_defs[i], m_dragonData);
 		}
 	}
 
@@ -486,7 +484,8 @@ public class PetsScreenController : MonoBehaviour {
 	/// <param name="_animator">The animator that triggered the event.</param>
 	public void OnHidePreAnimation(ShowHideAnimator _animator) {
 		// Restore dragon's pets
-		InstanceManager.menuSceneController.selectedDragonPreview.equip.TogglePets(true, true);
+		if (InstanceManager.menuSceneController.selectedDragonPreview)
+			InstanceManager.menuSceneController.selectedDragonPreview.equip.TogglePets(true, true);
 	}
 
 	/// <summary>

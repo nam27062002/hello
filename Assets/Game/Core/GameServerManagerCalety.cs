@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
@@ -301,7 +301,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private bool m_isProcessingConnectionLost;
 
-	public override void OnConnectionLost() {
+	protected override void InternalOnConnectionLost() {
 		if (FeatureSettingsManager.IsDebugEnabled) {
 			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
 		}
