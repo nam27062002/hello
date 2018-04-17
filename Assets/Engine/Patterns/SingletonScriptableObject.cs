@@ -8,7 +8,10 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.EventSystems;
+
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -106,10 +109,33 @@ public class SingletonScriptableObject<T> : ScriptableObject where T : Singleton
 				// Lock instance creation
 				m_state = ISingleton.EState.CREATING_INSTANCE;
 				
-				// Check if there is a stored SO at the resources directory
-				m_instance = Resources.Load<T>(ISingleton.RESOURCES_FOLDER + typeof(T).Name);
+				// Check if there is a stored Scriptable Object instance at the resources directory
+				Type t = typeof(T);
+
+				// a) From PATH constant
+				// Use reflection to determine whether the target type has a PATH constant
+				// IsLiteral determines if its value is written at compile time and not changeable
+				// IsInitOnly determine if the field can be set in the body of the constructor
+				// for C# a field which is readonly keyword would have both true but a const
+				// field would have only IsLiteral equal to true
+				List<string> pathConstants = t
+					.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+					.Where(fi => fi.Name == "PATH" && fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
+					.Select(x => (string)x.GetRawConstantValue())
+					.ToList();
+				for(int i = 0; i < pathConstants.Count && m_instance == null; ++i) {
+					m_instance = Resources.Load<T>(pathConstants[i]);
+				}
+
+				// b) Default singletons folder
+				// No instance could be loaded from a PATH constant, try with default singletons folder
 				if(m_instance == null) {
-					// There is no stored object for this class, create a new SingletonScriptableObject instance
+					m_instance = Resources.Load<T>(ISingleton.RESOURCES_FOLDER + t.Name);	// Default path
+				}
+
+				// c) New instance
+				// There is no stored object for this class, create a new SingletonScriptableObject instance
+				if(m_instance == null) {
 					m_instance = ScriptableObject.CreateInstance<T>();
 				}
 				

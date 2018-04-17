@@ -79,11 +79,13 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 			purchaseFlow.OnSuccess.AddListener(
 				(ResourcesFlow _flow) => {
 					bool wasntLocked = dragonData.GetLockState() <= DragonData.LockState.LOCKED;
+
 					// Just acquire target dragon!
 					dragonData.Acquire();
 
-					if ( wasntLocked && dragonData.def.sku.CompareTo( MenuSceneController.RATING_DRAGON ) == 0 ){
-						MenuSceneController.CheckRatingFlow();
+					// If unlocking the required dragon for the rating popup, mark the popup as it can be displayed
+					if(wasntLocked && dragonData.def.sku.CompareTo(MenuInterstitialPopupsController.RATING_DRAGON) == 0) {
+						Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
 					}
 
 	                HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());

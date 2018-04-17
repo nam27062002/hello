@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5410560}
   - component: {fileID: 11441044}
   - component: {fileID: 11482966}
+  - component: {fileID: 114389693578249134}
   m_Layer: 0
   m_Name: PF_DragonJawfreyMenu
   m_TagString: Untagged
@@ -25,7 +26,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -192.5141, y: -536.28094, z: -48.81458}
+  m_LocalPosition: {x: 508.99268, y: 112.69838, z: -1287.9454}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4807580802722984}
@@ -69,6 +70,15 @@ MonoBehaviour:
     m_loopsMin: 3
     m_loopsMax: 4
     m_special: 0
+    m_timeToNext: 0
+    m_isPreferedAnimation: 0
+  - m_range:
+      min: 4
+      max: 8
+    m_allowFaceDetails: 0
+    m_loopsMin: 1
+    m_loopsMax: 1
+    m_special: 1
     m_timeToNext: 0
     m_isPreferedAnimation: 0
   m_hasFire: 0
@@ -2337,7 +2347,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1185479154588550}
-  m_LocalRotation: {x: 0.6920171, y: -0.17142619, z: -0.6806888, w: -0.1684884}
+  m_LocalRotation: {x: 0.692017, y: -0.17142618, z: -0.68068874, w: -0.16848838}
   m_LocalPosition: {x: -1.6939217, y: 1.1732426, z: -1.2758614}
   m_LocalScale: {x: 0.99999994, y: 0.9999998, z: 1.0000001}
   m_Children: []
@@ -3774,6 +3784,20 @@ MonoBehaviour:
   m_parentRoot: {fileID: 480186}
   m_worldPositionStays: 1
   m_resetScale: 0
+--- !u!114 &114389693578249134
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 184332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5079a9557e28740cba2dc15aa05422d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prefab: {fileID: 1927669451800062, guid: 27baa6231f15c4068b3ab40e262221ac, type: 2}
+  m_materials: []
+  m_AnimationName: MenuAlt1
 --- !u!114 &114431253773379474
 MonoBehaviour:
   m_ObjectHideFlags: 1

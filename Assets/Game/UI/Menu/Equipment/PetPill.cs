@@ -54,7 +54,7 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private Image m_seasonalIcon = null;
 	[SerializeField] private GameObject m_seasonalIconRoot = null;
 	[Space]
-	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)Metagame.Reward.Rarity.COUNT];
 	[Space]
 	[SerializeField] private UIColorFX m_frameColorFX = null;
 	public UIColorFX frameColorFX {
@@ -133,16 +133,14 @@ public class PetPill : MonoBehaviour {
 	// Internal logic
 	private bool m_tapAllowed = true;
 
+	ResourceRequest m_previewRequest = null;
+	ResourceRequest m_powerIconRequest = null;
+
+	private static bool m_useAsycLoading = true;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		
-	}
-
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
@@ -170,7 +168,7 @@ public class PetPill : MonoBehaviour {
 	/// </summary>
 	private void OnValidate() {
 		// Make sure the rarity array has exactly the same length as rarities in the game.
-		m_rarityDecorations.Resize((int)EggReward.Rarity.COUNT);
+		m_rarityDecorations.Resize((int)Metagame.Reward.Rarity.COUNT);
 	}
 
 	//------------------------------------------------------------------------//
@@ -193,12 +191,22 @@ public class PetPill : MonoBehaviour {
 
 		// Store definition and some data
 		m_def = _petDef;
-		EggReward.Rarity rarity = EggReward.SkuToRarity(_petDef.Get("rarity"));
-		m_special = (rarity == EggReward.Rarity.SPECIAL);
+		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(_petDef.Get("rarity"));
+		m_special = (rarity == Metagame.Reward.Rarity.SPECIAL);
 
 		// Load preview
 		if(m_preview != null) {
-			m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
+			if (m_useAsycLoading)
+			{
+				m_preview.sprite = null;
+				m_preview.enabled = false;
+				m_previewRequest = Resources.LoadAsync<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));	
+			}
+			else
+			{
+				m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));	
+			}
+
 		}
 
 		// Power data
@@ -206,8 +214,17 @@ public class PetPill : MonoBehaviour {
 		if(powerDef != null) {
 			// Power icon
 			if(m_powerIcon != null) {
-				Sprite powerIcon = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
-				m_powerIcon.sprite = powerIcon;	// If null it will look ugly, that way we know we have a miniIcon missing
+				if ( m_useAsycLoading )
+				{
+					m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
+					m_powerIcon.enabled = false;
+					m_powerIconRequest = Resources.LoadAsync<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+				}
+				else
+				{
+					m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_MINI_ICONS_PATH + powerDef.Get("miniIcon"));
+					m_powerIcon.enabled = true;
+				}
 			}
 
 			// Power short description
@@ -217,6 +234,7 @@ public class PetPill : MonoBehaviour {
 		} else {
 			if(m_powerIcon != null) {
 				m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
+				m_powerIcon.enabled = false;
 			}
 		}
 
@@ -244,6 +262,30 @@ public class PetPill : MonoBehaviour {
 		// Refresh contextual elements
 		Refresh();
 	}
+
+
+	void Update(){
+		if (m_useAsycLoading)
+		{
+			if ( m_previewRequest != null ){
+				if ( m_previewRequest.isDone ){
+					m_preview.sprite = m_previewRequest.asset as Sprite;
+					m_preview.enabled = true;
+					m_previewRequest = null;
+				}
+			}
+
+			if ( m_powerIconRequest != null ){
+				if ( m_powerIconRequest.isDone ){
+					m_powerIcon.sprite = m_powerIconRequest.asset as Sprite;
+					m_powerIcon.enabled = true;
+					m_powerIconRequest = null;
+				}
+			}
+		}
+	}
+
+
 
 	/// <summary>
 	/// Refresh pill's contextual elements based on assigned pet's state.
