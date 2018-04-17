@@ -8,19 +8,21 @@ public class MenuDragonBirdView : MonoBehaviour {
 	private Material m_originalMaterial;
 	private Material m_ashMaterial;
 	private const float DISINTEGRATE_TIME = 1.25f;
-
+	public bool m_prepareForBurning = false;
 	void Awake()
 	{
 		// Search renderer
 		m_renderer = transform.GetComponentInChildren<Renderer>();
 		m_originalMaterial = m_renderer.material;
-		m_ashMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
+		if ( m_prepareForBurning )
+			m_ashMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
 	}
 
 	void OnEnable()
 	{
 		m_renderer.enabled = true;
-		m_ashMaterial.SetFloat( GameConstants.Material.ASH_LEVEL , 0);
+		if ( m_prepareForBurning )
+			m_ashMaterial.SetFloat( GameConstants.Material.ASH_LEVEL , 0);
 		m_renderer.material = m_originalMaterial;
 	}
 
@@ -47,5 +49,8 @@ public class MenuDragonBirdView : MonoBehaviour {
 		m_renderer.enabled = false;
 	}
 
-
+	void Disappear()
+	{
+		m_renderer.enabled = false;
+	}
 }

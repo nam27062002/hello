@@ -100,6 +100,13 @@ public class EventRewardScreen : MonoBehaviour {
 		// Make sure all required references are set
 		ValidateReferences();
 
+		// Listen to 3D scene events - remove first to avoid receiving the event twice! (shouldn't happen, just in case)
+		m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+		m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+
+		m_sceneController.OnAnimStarted.AddListener(OnSceneAnimStarted);
+		m_sceneController.OnAnimFinished.AddListener(OnSceneAnimFinished);
+
 		// Clear 3D scene
 		m_sceneController.Clear();
 
@@ -162,23 +169,20 @@ public class EventRewardScreen : MonoBehaviour {
 	/// Make sure all required references are initialized.
 	/// </summary>
 	private void ValidateReferences() {
-		// 3d scene for this screen
+		// Get 3D scene reference for this screen
 		if(m_sceneController == null) {
 			MenuSceneController sceneController = InstanceManager.menuSceneController;
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
 			MenuScreenScene menuScene = sceneController.GetScreenData(MenuScreen.EVENT_REWARD).scene3d;
 			if (menuScene != null) {
-				// Get scene controller and initialize
+				// Get scene controller reference
 				m_sceneController = menuScene.GetComponent<RewardSceneController>();
-				if(m_sceneController != null) {
-					// Initialize
-					m_sceneController.InitReferences(m_rewardDragController, m_rewardInfo);
-
-					// Subscribe to listeners
-					m_sceneController.OnAnimStarted.AddListener(OnSceneAnimStarted);
-					m_sceneController.OnAnimFinished.AddListener(OnSceneAnimFinished);
-				}
 			}
+		}
+
+		// Tell the scene it will be working with this screen
+		if(m_sceneController != null) {
+			m_sceneController.InitReferences(m_rewardDragController, m_rewardInfo);
 		}
 	}
 
@@ -366,6 +370,10 @@ public class EventRewardScreen : MonoBehaviour {
 			} break;
 
 			case Step.FINISH: {
+				// Stop listeneing the 3D scene
+				m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+
 				// Purge event list
 				GlobalEventManager.ClearRewardedEvents();
 				GlobalEventManager.ResetHasChecked();

@@ -252,8 +252,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
 
-        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_persistance);
-        Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
+        // We need to wait for the session to be started to send the first Calety funnel step
+        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_persistance);        
     }    
 
     private void InitSDKs()
@@ -649,7 +649,6 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
         UserProfile.Currency moneyCurrency, int moneyPrice, int amountBalance)
     {
-
     	if ( economyGroup == EEconomyGroup.BUY_EGG )
     	{
 			if (TrackingPersistenceSystem != null)
@@ -744,8 +743,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (!Session_HasMenuEverLoaded)
         {
             Session_HasMenuEverLoaded = true;
-            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
             HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
+            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);            
 
             HDTrackingManager.Instance.Notify_DeviceStats();
         }
@@ -755,19 +754,25 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// The game has reached a step in the loading funnel.
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
-	public override void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {        
+	public override void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {  
+        // Calety funnel, unlike Razolytics funnel, sends all steps for all devices even for those that are not supported by the game. This is done because we can filter out those devices when  checking
+        // the loading funnel on DNA
         Track_Funnel(m_loadFunnelCalety.name, m_loadFunnelCalety.GetStepName(_step), m_loadFunnelCalety.GetStepDuration(_step), m_loadFunnelCalety.GetStepTotalTime(_step), Session_IsFirstTime);                                            
 	}  
     
     public override void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {
-        int _sessionsCount = (TrackingPersistenceSystem == null) ? 0 : TrackingPersistenceSystem.SessionCount;
-        string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
-        int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
-        // TODO: To debug with server
-        GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
+        // Makes sure that the device is fully supported by the game. If we didn't do this then the last funnel step would never be sent because that step is sent when the main menu is loaded. This'd be misleading
+        // because it could make us think there's a crash when loading the game because we can't filter the unsupported devices out in Razolytics analytics
+        if (FeatureSettingsManager.instance.Device_IsSupported() && !FeatureSettingsManager.instance.Device_SupportedWarning())  {
+            int _sessionsCount = (TrackingPersistenceSystem == null) ? 0 : TrackingPersistenceSystem.SessionCount;
+            string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
+            int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
+            
+            GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
 
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);
+        }
     }
 
     /// <summary>

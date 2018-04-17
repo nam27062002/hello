@@ -48,8 +48,12 @@ public class PetCollection
 	/// </summary>
 	/// <param name="_sku">Sku of the pet to be unlocked.</param>
 	public void UnlockPet(string _sku) {
-		if ( !m_pets.Contains( _sku ) )
+		if ( !m_pets.Contains( _sku ) ) {
 			m_pets.Add( _sku );
+
+			// Notify game!
+			Messenger.Broadcast<string>(MessengerEvents.PET_ACQUIRED, _sku);
+		}
 	}
 
 	/// <summary>

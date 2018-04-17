@@ -68,7 +68,7 @@ public class HungryDragonEditorMenu
     public static void ShowUIConstants() { OpenFile("UIConstants.asset", SINGLETONS_FOLDER); }
 
     [MenuItem("Hungry Dragon/Content/Reload Rules", false, 50)]
-    public static void ReloadDefinitions() { ContentManager.InitContent(true); }
+	public static void ReloadDefinitions() { ContentManager.InitContent(true, false); }
 
     //---------------------------------------------------- TOOLS -----------------------------------------------------//
     /// <summary>

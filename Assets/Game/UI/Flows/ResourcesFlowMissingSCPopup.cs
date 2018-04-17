@@ -21,7 +21,7 @@ public class ResourcesFlowMissingSCPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/ResourcesFlow/PF_PopupMissingSC";
+	public const string PATH = "UI/Popups/Economy/PF_PopupMissingSC";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

@@ -7,7 +7,7 @@ public class PopupTransaction : MonoBehaviour {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
-    public const string PATH = "UI/Popups/ResourcesFlow/PF_PopupTransaction";
+    public const string PATH = "UI/Popups/Economy/PF_PopupTransaction";
 
     [SerializeField]
     private Button m_buttonConfirm;
