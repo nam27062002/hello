@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 using System.Collections.Generic;
 
@@ -28,6 +29,8 @@ public class PopupShopOffersTab : IPopupShopTab {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private TextMeshProUGUI m_textOffersEmpty;
+	[SerializeField] private TextMeshProUGUI m_offersCount;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -90,6 +93,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 			OffersManager.instance.Refresh();
 		}
 
+
 		// Get list of active offer packs and create a pill for each one
 		// List should already be properly sorted
 		List<OfferPack> activeOffers = OffersManager.activeOffers;
@@ -119,6 +123,10 @@ public class PopupShopOffersTab : IPopupShopTab {
 
 		// Reset scroll list position
 		m_scrollList.horizontalNormalizedPosition = 0f;
+
+		//update texts
+		m_textOffersEmpty.gameObject.SetActive(activeOffers.Count == 0);
+		m_offersCount.text = OffersManager.activeOffers.Count.ToString();
 	}
 
 	//------------------------------------------------------------------------//

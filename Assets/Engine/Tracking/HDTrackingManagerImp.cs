@@ -761,9 +761,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 	}  
     
     public override void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {
-        // Makes sure that the device is supported by the game. If we didn't do this then the last funnel step would never be sent because that step is sent when the main menu is loaded. This'd be misleading
+        // Makes sure that the device is fully supported by the game. If we didn't do this then the last funnel step would never be sent because that step is sent when the main menu is loaded. This'd be misleading
         // because it could make us think there's a crash when loading the game because we can't filter the unsupported devices out in Razolytics analytics
-        if (FeatureSettingsManager.instance.Device_IsSupported()) {
+        if (FeatureSettingsManager.instance.Device_IsSupported() && !FeatureSettingsManager.instance.Device_SupportedWarning())  {
             int _sessionsCount = (TrackingPersistenceSystem == null) ? 0 : TrackingPersistenceSystem.SessionCount;
             string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
             int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
