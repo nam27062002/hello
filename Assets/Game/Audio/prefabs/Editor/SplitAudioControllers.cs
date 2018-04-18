@@ -18,19 +18,33 @@ public class SplitAudioControllers : MonoBehaviour {
 		int max = files.Length;
 		for (int i = 0; i < max; i++) 
 		{
-			GameObject go = AssetDatabase.LoadAssetAtPath( prefabsFolder + prefabNames[i],typeof(GameObject)) as GameObject;
-			if ( go == null )
+			string destinationFilePath = prefabsFolder + prefabNames[i];
+			bool metaExists = false;
+			string guid = "";
+			if (File.Exists(AssetDatabase.GetTextMetaFilePathFromAssetPath(destinationFilePath)))
 			{
-				// if this not exists then copy original
-				AssetDatabase.CopyAsset( prefabsFolder + "AudioController_Gameplay.prefab", prefabsFolder + prefabNames[i]);
-				go = AssetDatabase.LoadAssetAtPath( prefabsFolder + prefabNames[i],typeof(GameObject)) as GameObject;
+				metaExists = true;
+				guid = AssetDatabase.AssetPathToGUID(destinationFilePath);
 			}
-			else
+			// if this not exists then copy original
+			AssetDatabase.CopyAsset( prefabsFolder + "AudioController_Gameplay.prefab", destinationFilePath);
+			if ( metaExists )
 			{
-				GameObject originalGo = AssetDatabase.LoadAssetAtPath(  prefabsFolder + "AudioController_Gameplay.prefab" ,typeof(GameObject)) as GameObject;
-				EditorUtility.CopySerialized( originalGo, go);
-			}
+				// Set guid to new created file
+				string[] fileLines = File.ReadAllLines(AssetDatabase.GetTextMetaFilePathFromAssetPath(destinationFilePath));
+				for (int lineIndex = 0; lineIndex < fileLines.Length; lineIndex++) 
+				{
+					if ( fileLines[lineIndex].StartsWith("guid:") )
+					{
+						fileLines[lineIndex] = "guid: " + guid;
+						File.WriteAllLines(AssetDatabase.GetTextMetaFilePathFromAssetPath(destinationFilePath), fileLines);
+						AssetDatabase.Refresh();
+						break;
+					}
+				}
 
+			}
+			GameObject go = AssetDatabase.LoadAssetAtPath( destinationFilePath ,typeof(GameObject)) as GameObject;
 
 			// Remove all unused audios
 			AudioController audioController = go.GetComponent<AudioController>();
