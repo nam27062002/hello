@@ -96,8 +96,11 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	// Internal
 	UserProfile m_user;
 
-	// Reward Definitions
+	// Dynamic Probability coeficients
 	private List<float> m_probabilities;
+	private float m_globalGatchaAdjustmentCoef;
+	private float m_formulaCoef1;
+	private float m_formulaCoef2;
 
 
 	//------------------------------------------------------------------//
@@ -129,7 +132,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			instance.m_rewardDropRate.AddElement(rewardDefs[i].sku);
 			instance.m_probabilities.Add(rewardDefs[i].GetAsFloat("droprate"));
 		}
-		instance.BuildProbabilities();
+		instance.BuildDynamicProbabilities();
 
 		// Restore saved random state from preferences so the distribution is respected
 		// Only if we have a state saved!
@@ -187,6 +190,18 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
+
+	public void BuildDynamicProbabilities() {
+		for(int i = 0; i < m_probabilities.Count; i++) {
+			// Dynamic probability
+			float a = m_globalGatchaAdjustmentCoef - (m_formulaCoef1 * Mathf.Pow(m_user.openEggTriesWithoutRares, m_formulaCoef2));
+			float weigth = m_probabilities[i];
+			float dp = 100f / Mathf.Pow(weigth, a);
+
+			m_rewardDropRate.SetProbability(i, dp);
+		}
+	}
+
 	/// <summary>
 	/// Add a new egg to the first empty slot in the inventory. 
 	/// If the inventory is full, egg won't be added.
@@ -268,7 +283,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
 
 
-					instance.BuildProbabilities();
+					instance.BuildDynamicProbabilities();
 
 
 
@@ -317,18 +332,6 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
 	}
 
-
-	//------------------------------------------------------------------//
-	// PUBLIC UTILS														//
-	//------------------------------------------------------------------//
-	private void BuildProbabilities() {
-		for(int i = 0; i < rewardDefs.Count; i++) {
-			m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("droprate"));
-		}
-
-
-
-	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
