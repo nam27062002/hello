@@ -375,8 +375,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
     #region console    
     public void Log(string text) {
+        // It's logged to control panel console
         if (FeatureSettingsManager.IsControlPanelEnabled) {
             CPConsoleTab.Log(text);
+        }
+
+        // It's logged to Unity console too
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Debug.Log(text);
         }
     }   
     #endregion
