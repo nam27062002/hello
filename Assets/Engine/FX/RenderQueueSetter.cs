@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 //----------------------------------------------------------------------------//
@@ -26,11 +27,18 @@ public class RenderQueueSetter : MonoBehaviour {
 		public int newRenderQueue = 0;
 	}
 
+	[Serializable]
+	public class UITarget {
+		public Graphic target = null;
+		public int newRenderQueue = 0;
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private bool m_applyOnStart = true;
 	[SerializeField] private Target[] m_targets = new Target[0];
+	[SerializeField] private UITarget[] m_uiTargets = new UITarget[0];
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -60,6 +68,10 @@ public class RenderQueueSetter : MonoBehaviour {
 			for(int j = 0; j < m_targets[i].renderer.materials.Length; ++j) {
 				m_targets[i].renderer.materials[j].renderQueue = m_targets[i].newRenderQueue;
 			}
+		}
+
+		for(int i = 0; i < m_uiTargets.Length; ++i) {
+			m_uiTargets[i].target.material.renderQueue = m_uiTargets[i].newRenderQueue;
 		}
 	}
 
