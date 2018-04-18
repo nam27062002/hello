@@ -314,13 +314,9 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(EMISSIVE_CUSTOM)
 	diffuseAlpha = frac(diffuseAlpha + (1.0 / 255.0));
-//	return fixed4(diffuseAlpha, diffuseAlpha, diffuseAlpha, 1.0);
 #endif
 
 #if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
-//	float intensity = 1.3 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01 )) * _EmissivePower;
-//	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
-//	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * 0.01)) * _EmissivePower * diffuseAlpha;
 
 #if defined(WAVE_EMISSION)
 	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
@@ -366,10 +362,14 @@ fixed4 frag (v2f i) : SV_Target
 
 #endif
 
-
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
+
+#if !defined(MAINCOLOR_TEXTURE) && defined(TINT)
+	col *= _Tint;
+#endif
+
 	return col;
 }
 

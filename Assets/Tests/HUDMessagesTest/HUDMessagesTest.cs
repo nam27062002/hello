@@ -43,7 +43,7 @@ public class HUDMessagesTest : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// We need missions definitions for the test, as well as localization
-		ContentManager.InitContent(true);
+		ContentManager.InitContent(true, false);
 		LocalizationManager.SharedInstance.SetLanguage("lang_english");
 		
 		// Init health modifiers

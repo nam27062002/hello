@@ -7,12 +7,12 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: L1_crystal_dark_caves_M1_Corpse
-  m_Shader: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
+  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
   m_ShaderKeywords: EMISSIVE_BLINK VERTEXCOLOR_NONE _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3500
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -68,6 +68,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Emissive: 1
+    - MainColor: 0
     - VertexColor: 0
     - _BlendMode: 1
     - _BlinkTimeMultiplier: 2
@@ -92,6 +93,8 @@ Material:
     - _EnableNormalMap: 0
     - _EnableOpaqueAlpha: 1
     - _EnableSpecular: 0
+    - _EnableTint: 0
+    - _EnableWaveEmission: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -111,10 +114,11 @@ Material:
     - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
+    - _WaveEmission: 0.1
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}

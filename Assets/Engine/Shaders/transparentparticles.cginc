@@ -81,16 +81,7 @@ fixed4 frag(v2f i) : COLOR
 {
 	fixed4 tex = tex2D(_MainTex, i.texcoord);
 	fixed4 col;
-/*
-///////////// Debug
-#if defined(DISSOLVE_NONE)
-	return fixed4(1.0, 0.0, 0.0, 1.0);
-#elif defined(DISSOLVE_ENABLED)
-	return fixed4(0.0, 1.0, 0.0, 1.0);
-#elif defined(DISSOLVE_EXTENDED)
-	return fixed4(0.0, 0.0, 1.0, 1.0);
-#endif
-*/
+
 #ifdef EXTENDED_PARTICLES
 
 #ifdef APPLY_RGB_COLOR_VERTEX

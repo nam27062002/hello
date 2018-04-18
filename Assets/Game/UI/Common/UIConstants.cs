@@ -76,12 +76,17 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	// -------------------------------------------------------------------------
 	// Rarities
 	#region Rarities
-	[SerializeField] private Color[] m_rarityColors = new Color[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private Color[] m_rarityColors = new Color[(int)Metagame.Reward.Rarity.COUNT];
 	public static Color[] RARITY_COLORS {
 		get { return instance.m_rarityColors; }
 	}
 
-	[SerializeField] private Sprite[] m_rarityIcons = new Sprite[(int)EggReward.Rarity.COUNT];
+	[SerializeField] private Gradient4[] m_rarityTextGradients = new Gradient4[(int)Metagame.Reward.Rarity.COUNT];
+	public static Gradient4[] RARITY_TEXT_GRADIENTS {
+		get { return instance.m_rarityTextGradients; }
+	}
+
+	[SerializeField] private Sprite[] m_rarityIcons = new Sprite[(int)Metagame.Reward.Rarity.COUNT];
 	public static Sprite[] RARITY_ICONS {
 		get { return instance.m_rarityIcons; }
 	}
@@ -324,6 +329,15 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color GetRarityColor(string _raritySku) {
 		// Get rarity enum equivalent from sku
 		return GetRarityColor(Metagame.Reward.SkuToRarity(_raritySku));
+	}
+
+	/// <summary>
+	/// Gets the text color gradient corresponding to a given rarity.
+	/// </summary>
+	/// <returns>The rarity text gradient.</returns>
+	/// <param name="_rarity">The rarity to be checked.</param>
+	public static Gradient4 GetRarityTextGradient(Metagame.Reward.Rarity _rarity) {
+		return RARITY_TEXT_GRADIENTS[(int)_rarity];
 	}
 
 	/// <summary>

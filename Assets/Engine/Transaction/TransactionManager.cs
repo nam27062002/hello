@@ -22,21 +22,22 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     public void Update()
     {
         Pending_Update();
-        
-/*
+
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.R))
+        if (DEBUG_ENABLED)
         {
-            // Requests pending transactions
-            Pending_ForceRequestTransactions();
-        }
-        else if (Input.GetKeyDown(KeyCode.F))
-        {
-            // Test pending transactions flow (chain of popups giving resources)
-            Debug_TestPendingTransactionsFlow();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                // Requests pending transactions
+                Pending_ForceRequestTransactions();
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                // Test pending transactions flow (chain of popups giving resources)
+                Debug_TestPendingTransactionsFlow();
+            }
         }
 #endif    
-*/ 
     }
 
     #region factory
@@ -380,16 +381,16 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     private void Flow_OnClosePendingTransactionPopup()
     {
         // A popup notifying the user that she will have the chance to collect her pending transactions later is opened
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_TRANSACTION_CLOSE_TITLE";
         config.MessageTid = "TID_TRANSACTION_CLOSE_DESC";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
 
         // All pending transactions are cancelled because we assume that the user wants to skip this flow
         config.OnConfirm = Flow_OnCancelPendingTransactions;
         config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;
-        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.Close;
+        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.Close;
         PopupManager.PopupMessage_Open(config);
     }
 
@@ -548,10 +549,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     /// </summary>
     private void Flow_OpenNoConnectionError()
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_TRANSACTION_CONN_LOST_TITLE";
         config.MessageTid = "TID_TRANSACTION_CONN_LOST_DESC";        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;        
         PopupManager.PopupMessage_Open(config);
@@ -563,10 +564,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     /// </summary>
     private void Flow_OpenInternalError()
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_TRANSACTION_INTERNAL_ERR_TITLE";
         config.MessageTid = "TID_TRANSACTION_INTERNAL_ERR_DESC";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = Flow_OnCancelPendingTransactions;
         config.ConfirmButtonTid = "TID_GEN_OK";
         config.IsButtonCloseVisible = false;
@@ -611,7 +612,13 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     {
         msg = LOG_CHANNEL + msg;
 
-        //msg = "<color=yellow>" + msg + "</color>";        
+#if UNITY_EDITOR
+        if (DEBUG_ENABLED)
+        {
+            msg = "<color=yellow>" + msg + "</color>";
+        }
+#endif
+
         Debug.Log(msg);
     }
 
@@ -629,6 +636,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     #endregion
 
     #region debug
+    private const bool DEBUG_ENABLED = false;
     private void Debug_TestTransaction()
     {
         JSONNode json = new JSONClass();
