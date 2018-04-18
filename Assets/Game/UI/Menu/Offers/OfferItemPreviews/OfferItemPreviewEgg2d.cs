@@ -40,7 +40,7 @@ public class OfferItemPreviewEgg2d : IOfferItemPreview {
 		Debug.Assert(m_item.type == Metagame.RewardEgg.TYPE_CODE, "ITEM OF THE WRONG TYPE!", this);
 
 		// Initialize image with the target egg icon
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.def.GetAsString("itemSku"));
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.sku);
 		if(m_def == null) {
 			m_image.sprite = null;
 		} else {

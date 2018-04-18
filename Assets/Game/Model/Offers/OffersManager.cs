@@ -213,15 +213,6 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			defaultPack.ValidateDefinition(offerDefs[i]);
 		}
-
-
-		// Offer items
-		// Create a dummy item with default values and use it to validate the definitions
-		OfferPackItem defaultItem = new OfferPackItem();
-		List<DefinitionNode> itemDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_ITEMS);
-		for(int i = 0; i < itemDefs.Count; ++i) {
-			defaultItem.ValidateDefinition(itemDefs[i]);
-		}
 	}
 
 	//------------------------------------------------------------------------//
