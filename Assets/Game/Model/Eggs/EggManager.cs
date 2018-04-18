@@ -194,7 +194,11 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	public void BuildDynamicProbabilities() {
 		for(int i = 0; i < m_probabilities.Count; i++) {
 			// Dynamic probability
-			float a = m_globalGatchaAdjustmentCoef - (m_formulaCoef1 * Mathf.Pow(m_user.openEggTriesWithoutRares, m_formulaCoef2));
+			int triesWithoutRares = 0;
+			if (m_user != null) {
+				triesWithoutRares = m_user.openEggTriesWithoutRares;
+			}
+			float a = m_globalGatchaAdjustmentCoef - (m_formulaCoef1 * Mathf.Pow(triesWithoutRares, m_formulaCoef2));
 			float weigth = m_probabilities[i];
 			float dp = 100f / Mathf.Pow(weigth, a);
 
