@@ -23,6 +23,8 @@ public class OfferPack {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string EMPTY_VALUE = "-";
+
 	public enum WhereToShow {
 		SHOP_ONLY,
 		DRAGON_SELECTION,
@@ -160,16 +162,12 @@ public class OfferPack {
 
 		// Items - limited to 3 for now
 		for(int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
-			// Find out item definition
-			DefinitionNode itemDef = DefinitionsManager.SharedInstance.GetDefinition(
-				DefinitionsCategory.OFFER_ITEMS,
-				_def.GetAsString("item" + i, "")
-			);
-			if(itemDef == null) continue;
-
-			// Create and store new item
+			// Create and initialize new item
 			OfferPackItem item = new OfferPackItem();
-			item.InitFromDefinition(itemDef);
+			item.InitFromDefinition(_def, i);
+
+			// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it
+			if(item.reward == null) continue;
 			m_items.Add(item);
 		}
 
@@ -447,8 +445,10 @@ public class OfferPack {
 	/// <param name="_def">Definition to be filled.</param>
 	public void ValidateDefinition(DefinitionNode _def) {
 		// Items
+		// Create a dummy item with default values and use it to validate the definitions
+		OfferPackItem item = new OfferPackItem();
 		for(int i = 1; i <= MAX_ITEMS; ++i) {
-			SetValueIfMissing(ref _def, "item" + i, "");
+			item.ValidateDefinition(_def, i);
 		}
 
 		// General
@@ -499,14 +499,14 @@ public class OfferPack {
 	}
 
 	//------------------------------------------------------------------------//
-	// INTERNAL UTILS														  //
+	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Custom range parser. Do it here to avoid changing Calety -_-
 	/// </summary>
 	/// <returns>New range initialized with data parsed from the input string.</returns>
 	/// <param name="_str">String to be parsed. Must be in the format "min:max".</param>
-	private Range ParseRange(string _str) {
+	public static Range ParseRange(string _str) {
 		string[] tokens = _str.Split(':');
 		Range r = new Range(0, float.MaxValue);
 
@@ -530,7 +530,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>New range initialized with data parsed from the input string.</returns>
 	/// <param name="_str">String to be parsed. Must be in the format "min:max".</param>
-	private RangeInt ParseRangeInt(string _str) {
+	public static RangeInt ParseRangeInt(string _str) {
 		string[] tokens = _str.Split(':');
 		RangeInt r = new RangeInt(0, int.MaxValue);
 
@@ -556,7 +556,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>The given string as a array of values splited with the ";" character.</returns>
 	/// <param name="_str">String to be parsed. Must use ";" as separator.</param>
-	private string[] ParseArray(string _str) {
+	public static string[] ParseArray(string _str) {
 		// Empty array if string is empty
 		if(string.IsNullOrEmpty(_str)) return new string[0];
 
@@ -569,10 +569,10 @@ public class OfferPack {
 	/// <param name="_def">Definition to be modified.</param>
 	/// <param name="_key">Key of the property to be checked.</param>
 	/// <param name="_value">Value to be set if the property is missing from the definition node.</param>
-	private void SetValueIfMissing(ref DefinitionNode _def, string _key, string _value) {
+	public static void SetValueIfMissing(ref DefinitionNode _def, string _key, string _value) {
 		// [AOC] This is disgusting because the SetValue() method also performs the Has() operation,
 		//		 but proper solution requires changing Calety and all the bureaucracy around it -_-
-		if(!_def.Has(_key)) {
+		if(!_def.Has(_key) || _def.GetAsString(_key) == EMPTY_VALUE) {
 			_def.SetValue(_key, _value);
 		}
 	}
