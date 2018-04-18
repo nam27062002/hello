@@ -64,13 +64,19 @@ public class RenderQueueSetter : MonoBehaviour {
 	/// Do the actual render queue change.
 	/// </summary>
 	public void Apply() {
+		// Renderers
 		for(int i = 0; i < m_targets.Length; ++i) {
 			for(int j = 0; j < m_targets[i].renderer.materials.Length; ++j) {
 				m_targets[i].renderer.materials[j].renderQueue = m_targets[i].newRenderQueue;
 			}
 		}
 
+		// UI Graphics
 		for(int i = 0; i < m_uiTargets.Length; ++i) {
+			// If using the default material, create a new instance (we don't want to change the shared material!!)
+			if(m_uiTargets[i].target.material == m_uiTargets[i].target.defaultMaterial) {
+				m_uiTargets[i].target.material = new Material(m_uiTargets[i].target.defaultMaterial);
+			}
 			m_uiTargets[i].target.material.renderQueue = m_uiTargets[i].newRenderQueue;
 		}
 	}
