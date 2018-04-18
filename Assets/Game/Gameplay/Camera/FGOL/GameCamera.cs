@@ -221,8 +221,6 @@ public class GameCamera : MonoBehaviour
 
 	private TouchControlsDPad	m_touchControls = null;
 
-	public bool m_useDampCamera = false;
-
 	public float m_introDuration = 10.0f;
 	private float m_introTimer = 0;
 	public float m_introDisplacement = 10;
@@ -237,6 +235,8 @@ public class GameCamera : MonoBehaviour
 		PLAY
 	};
 	State m_state = State.INTRO;
+	bool m_targetIsDead = false;
+	Vector3 m_targetDeadPosition;
 
 	//----------------------------------------------------------------------------
 
@@ -263,9 +263,11 @@ public class GameCamera : MonoBehaviour
 		Messenger.AddListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
 		Messenger.AddListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
 
+		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 
-		// Subscribe to external events
-		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+
+
 		Messenger.AddListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 	}
 
@@ -318,8 +320,6 @@ public class GameCamera : MonoBehaviour
         // We can't setup post process effects here because FeatureSettings means to be ready first. Since Gamecamera and FeatureSettings are initialized at the same time when the game is
         // launched from the level editor, we need to synchronize this stuff
         NeedsToSetupPostProcessEffects = true;
-
-        UpdateUseDampCamera();
     }
 
 	/*
@@ -406,9 +406,10 @@ public class GameCamera : MonoBehaviour
 		Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.RemoveListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
 		Messenger.RemoveListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
+		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 
         // Unsubscribe from external events.
-        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
 		Messenger.RemoveListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 
 		InstanceManager.gameCamera = null;
@@ -416,14 +417,6 @@ public class GameCamera : MonoBehaviour
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
     }
-
-    private void OnDebugSettingChanged(string _id) {
-        switch (_id) {
-            case DebugSettings.NEW_CAMERA_SYSTEM:
-                UpdateUseDampCamera();
-                break;
-        }
-	}
 
 	public void UpdatePixelData()
 	{
@@ -442,10 +435,6 @@ public class GameCamera : MonoBehaviour
 		Debug.Log("New resolution " + resolution);
 		UpdatePixelData ();
 	}
-
-    private void UpdateUseDampCamera() {
-        m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
-    }
 
 	private void OnFury(bool _active, DragonBreathBehaviour.Type _type)
 	{
@@ -635,14 +624,8 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-		if (m_useDampCamera)
-		{
-			PlayDampUpdate();
-		}
-		else
-		{
-			PlayUpdate();
-		}
+		
+		PlayUpdate();
 
         if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.instance.IsReady())
         {
@@ -702,24 +685,35 @@ public class GameCamera : MonoBehaviour
 		Vector3 targetPosition;
 
 		if ( m_introTimer <= 0 ){
-			targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
-			Vector3 vel = GameConstants.Vector3.zero;
-			if ( m_fury )
+			if ( m_targetObject == null )
 			{
-				if ( m_useSmoothDamp )
-					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, ref vel, m_smoothDampValue);
-				else
-					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, Time.deltaTime * 2);
+				targetPosition = m_position;
+			}
+			else if ( m_targetIsDead )
+			{
+				targetPosition = m_targetDeadPosition;
 			}
 			else
 			{
-				if ( m_useSmoothDamp )
-					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, GameConstants.Vector3.zero, ref vel, m_smoothDampValue);
+				targetPosition = m_targetTransform.position;
+				Vector3 vel = GameConstants.Vector3.zero;
+				if ( m_fury )
+				{
+					if ( m_useSmoothDamp )
+						m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, ref vel, m_smoothDampValue);
+					else
+						m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, Time.deltaTime * 2);
+				}
 				else
-					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
+				{
+					if ( m_useSmoothDamp )
+						m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, GameConstants.Vector3.zero, ref vel, m_smoothDampValue);
+					else
+						m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
+				}
+				targetPosition += m_extraTargetDisplacement;
+				UpdateTrackAheadVector(m_targetMachine);
 			}
-			targetPosition += m_extraTargetDisplacement;
-			UpdateTrackAheadVector(m_targetMachine);
 		}else{
 			m_introTimer -= Time.deltaTime;
 			float delta = m_introTimer / m_introDuration;
@@ -834,68 +828,6 @@ public class GameCamera : MonoBehaviour
 #if DEBUG_DRAW_BOUNDS
 		DebugDraw.DrawBounds2D(m_screenWorldBounds);
 #endif
-	}
-
-	public static float m_moveDamp = 0.46f;
-	public static float m_lookDamp = 0.1f;
-
-	void PlayDampUpdate()
-	{
-		Vector3 targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
-		Vector3 desiredPos = targetPosition;
-		UpdateDampPos(desiredPos);
-		UpdateLookAt(desiredPos);
-
-        bool hasBoss = HasBoss();
-		float frameWidth = m_frameWidthDefault;
-		if(m_targetMachine != null)
-        {
-            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-            if(/*(machineFish != null) &&*/ !hasBoss)
-            {
-                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
-				frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-            }
-        }
-		frameWidth += m_frameWidthIncrement;
-		if(m_hasSlowmo)
-		{
-			frameWidth -= m_frameWidthDecrement;
-		}
-		else if(hasBoss)
-		{
-			frameWidth += m_largestBossFrameIncrement;
-		}
-		UpdateZooming(frameWidth, hasBoss);	// Sets m_position.z
-
-		m_transform.position = m_position + Random.insideUnitSphere * m_cameraShake;
-		m_transform.LookAt( m_lookAt );
-		UpdateBounds();
-
-		m_snap = false;
-		m_firstTime = false;
-		m_prevNumBosses = m_bossCamAffectors.Count;
-
-	}
-
-
-	void UpdateDampPos(Vector3 desiredPos)
-	{
-		m_currentPos.x = Damping( m_currentPos.x, desiredPos.x, Time.deltaTime, m_moveDamp);
-		m_currentPos.y = Damping( m_currentPos.y, desiredPos.y, Time.deltaTime, m_moveDamp);
-
-		m_position.x = desiredPos.x + (desiredPos.x - m_currentPos.x);
-		m_position.y = desiredPos.y + (desiredPos.y - m_currentPos.y);
-	}
-
-	void UpdateLookAt(Vector3 desiredPos)
-	{
-		m_currentLookAt.x = Damping( m_currentLookAt.x, desiredPos.x, Time.deltaTime, m_lookDamp);
-		m_currentLookAt.y = Damping( m_currentLookAt.y, desiredPos.y, Time.deltaTime, m_lookDamp);
-
-		m_lookAt.x = desiredPos.x + (desiredPos.x - m_currentLookAt.x);
-		m_lookAt.y = desiredPos.y + (desiredPos.y - m_currentLookAt.y);
-		m_lookAt.z = 0;
 	}
 
 	// Also called DampIIR (wiki search ...)
@@ -1580,6 +1512,18 @@ public class GameCamera : MonoBehaviour
             effect.enabled = FeatureSettingsManager.instance.IsFrameColorEffectEnabled;
         }
     }
+
+	private void OnPlayerRevive(DragonPlayer.ReviveReason _reason)
+	{
+		m_targetIsDead = false;
+
+	}
+
+	private void OnPlayerKo( DamageType _type, Transform _tr)
+	{
+		m_targetIsDead = true;
+		m_targetDeadPosition = m_targetTransform.position;
+	}
 
     #region debug
     // This region is responsible for enabling/disabling the glow effect for profiling purposes. This code is placed here because GlowEffect is a third-party code so

@@ -109,7 +109,7 @@ v2f vert(appdata_t v)
 #endif
 
 #if defined(FXLAYER_FIRE)
-	o.screenPos = (o.vertex.xy / o.vertex.w) * _FireMap_ST.xy + _FireMap_ST.zw;
+	o.screenPos = (v.vertex.xy / v.vertex.w) * _FireMap_ST.xy * 0.1;
 #endif
 
 	return o;
@@ -174,7 +174,7 @@ fixed4 frag(v2f i) : SV_Target
 //	i.texcoord.y *= i.texcoord.y;
 
 	fixed4 intensity = tex2D(_FireMap, (i.screenPos.xy + half2(_Time.y * _FireSpeed, 0.25)));
-	intensity *= tex2D(_FireMap, (i.screenPos.xy + float2(_Time.y * _FireSpeed, -0.25)));// +pow(i.uv.y, 3.0);
+	intensity *= tex2D(_FireMap, (i.screenPos.xy + float2(_Time.y * _FireSpeed * 0.5, -0.25)));// +pow(i.uv.y, 3.0);
 
 	float fireMask = _FireAmount * detail.b;
 	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);

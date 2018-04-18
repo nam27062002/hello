@@ -10,7 +10,7 @@ public class DragonParticleController : MonoBehaviour
 	private ParticleSystem m_levelUpInstance;
 
 	[Space]
-	public GameObject m_revive;
+	public string m_reviveParticle = "Dragon/PS_Revive";
 	public Transform m_reviveAnchor;
 	private ParticleSystem m_reviveInstance;
 	public ParticleData m_petRevive;
@@ -112,7 +112,10 @@ public class DragonParticleController : MonoBehaviour
 		
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
-		m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
+		// m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
+		if (!string.IsNullOrEmpty(m_reviveParticle)){
+			m_reviveInstance = InitLeveledParticle( m_reviveParticle, null );
+		}
 		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
@@ -319,6 +322,44 @@ public class DragonParticleController : MonoBehaviour
 
 	}
 
+	private ParticleSystem InitLeveledParticle( string particle, Transform _anchor)
+	{
+		ParticleSystem ret = null;
+		for(  	FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
+				level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
+				level = level - 1
+				)
+		{
+			string path = "";
+			switch(level) {
+				case FeatureSettings.ELevel5Values.very_low:	
+						path = "Particles/VeryLow/";
+					break;
+				case FeatureSettings.ELevel5Values.low:
+						path = "Particles/Low/";
+					break;
+				case FeatureSettings.ELevel5Values.mid:
+						path = "Particles/Master/";
+					break;
+				case FeatureSettings.ELevel5Values.high:
+						path = "Particles/High/";
+					break;
+				case FeatureSettings.ELevel5Values.very_high:
+						path = "Particles/VeryHigh/";
+					break;
+			}
+			if ( !string.IsNullOrEmpty(path) )
+			{
+				GameObject go = Resources.Load<GameObject>( path + particle );
+				if ( go != null )
+				{
+					 ret = InitParticles( go,  _anchor);
+				}
+			}
+		}
+		return ret;
+	}
+
 	private ParticleSystem InitParticles(string particle, Transform _anchor)
 	{
 		ParticleSystem ret = null;
@@ -332,7 +373,7 @@ public class DragonParticleController : MonoBehaviour
 
 	private ParticleSystem InitParticles(GameObject _prefab, Transform _anchor)
 	{
-		if(_prefab == null || _anchor == null) return null;
+		if(_prefab == null) return null;
 
 		GameObject go = Instantiate(_prefab);
 		ParticleSystem psInstance = go.GetComponent<ParticleSystem>();
@@ -399,9 +440,13 @@ public class DragonParticleController : MonoBehaviour
 		{
 			default:
 			{
-				m_reviveInstance.gameObject.SetActive(true);
-				m_reviveInstance.Play();
-				m_toDeactivate.Add( m_reviveInstance );
+				if ( m_reviveInstance != null)
+				{
+					m_reviveInstance.gameObject.SetActive(true);
+					m_reviveInstance.transform.position = m_reviveAnchor.position;
+					m_reviveInstance.Play();
+					m_toDeactivate.Add( m_reviveInstance );
+				}
 			}break;
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{

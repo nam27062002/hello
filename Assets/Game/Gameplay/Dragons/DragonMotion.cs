@@ -293,7 +293,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public Vector3 diePosition{ get{return m_diePosition;} }
 	private Vector3 m_revivePosition;
 	private float m_reviveTimer;
-	private const float m_reviveDuration = 1;
+	private const float m_reviveDuration = 1.3f;
 	private float m_deadTimer = 0;
 	private const float m_deadGravityMultiplier = 5;
 
@@ -637,7 +637,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_rbody.velocity = Vector3.zero;
 					m_revivePosition = m_transform.position;
 					m_animator.Play(GameConstants.Animator.BASE_IDLE);
-
+					m_transform.position = m_diePosition;
 					if ( m_direction.x > 0 ){
 						m_direction = Vector3.right;
 					}else{
@@ -1000,7 +1000,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			case State.Reviving:
 			{
 				m_reviveTimer -= Time.deltaTime;
-				m_transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
+				// m_transform.position = Vector3.Lerp(m_diePosition, m_revivePosition, m_reviveTimer/ m_reviveDuration);
+				m_transform.position = m_diePosition;
 
 				RotateToDirection(m_direction, false);
 				m_desiredRotation = m_transform.rotation;
