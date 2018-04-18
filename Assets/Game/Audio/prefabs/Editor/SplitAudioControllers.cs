@@ -18,61 +18,60 @@ public class SplitAudioControllers : MonoBehaviour {
 		int max = files.Length;
 		for (int i = 0; i < max; i++) 
 		{
-			// Duplicate original prefab
-			if (AssetDatabase.CopyAsset( prefabsFolder + "AudioController_Gameplay.prefab", prefabsFolder + prefabNames[i]))
+			GameObject go = AssetDatabase.LoadAssetAtPath( prefabsFolder + prefabNames[i],typeof(GameObject)) as GameObject;
+			if ( go == null )
 			{
-				GameObject go = AssetDatabase.LoadAssetAtPath( prefabsFolder + prefabNames[i],typeof(GameObject)) as GameObject;
-				if ( go != null )
-				{
-					// Remove all unused audios
-					AudioController audioController = go.GetComponent<AudioController>();
-					List<string> regexs = new List<string>{};
-
-					using (StreamReader reader = new StreamReader(textFilesFolder + files[i]))
-		            {
-						while (reader.Peek () >= 0)
-		                {
-							string line = reader.ReadLine ();
-							if ( !string.IsNullOrEmpty(line) )
-								regexs.Add( line );
-		                }
-		            }
-
-					int maxCategories = audioController.AudioCategories.Length;
-					for (int categoryIndex = 0; categoryIndex < maxCategories; categoryIndex++) 
-					{
-						AudioCategory audioCategory = audioController.AudioCategories[categoryIndex];
-						int maxAudioItems = audioCategory.AudioItems.Length;
-						for (int itemIndex = maxAudioItems - 1; itemIndex >= 0; itemIndex--) 
-						{
-							string id = audioCategory.AudioItems[itemIndex].Name;
-							bool valid = false;
-							for (int regexIndex = 0; regexIndex < regexs.Count && !valid; regexIndex++) {
-								valid = Regex.IsMatch( id, regexs[regexIndex]);
-							}
-
-							// if id is not in list then remove it
-							if (!valid)
-							{
-								ArrayHelper.DeleteArrayElement( ref audioCategory.AudioItems, itemIndex );
-							}
-						}
-					}
-
-					// Save
-					EditorUtility.SetDirty( go );
-					AssetDatabase.SaveAssets();
-					AssetDatabase.Refresh();
-				}
-				else
-				{
-					Debug.Log("Cannot load " + prefabNames[i]);
-				}
+				// if this not exists then copy original
+				AssetDatabase.CopyAsset( prefabsFolder + "AudioController_Gameplay.prefab", prefabsFolder + prefabNames[i]);
+				go = AssetDatabase.LoadAssetAtPath( prefabsFolder + prefabNames[i],typeof(GameObject)) as GameObject;
 			}
 			else
 			{
-				Debug.Log("Cannot duplicate AudioController_Gameplay to " + prefabNames[i]);
+				GameObject originalGo = AssetDatabase.LoadAssetAtPath(  prefabsFolder + "AudioController_Gameplay.prefab" ,typeof(GameObject)) as GameObject;
+				EditorUtility.CopySerialized( originalGo, go);
 			}
+
+
+			// Remove all unused audios
+			AudioController audioController = go.GetComponent<AudioController>();
+			List<string> regexs = new List<string>{};
+
+			using (StreamReader reader = new StreamReader(textFilesFolder + files[i]))
+            {
+				while (reader.Peek () >= 0)
+                {
+					string line = reader.ReadLine ();
+					if ( !string.IsNullOrEmpty(line) )
+						regexs.Add( line );
+                }
+            }
+
+			int maxCategories = audioController.AudioCategories.Length;
+			for (int categoryIndex = 0; categoryIndex < maxCategories; categoryIndex++) 
+			{
+				AudioCategory audioCategory = audioController.AudioCategories[categoryIndex];
+				int maxAudioItems = audioCategory.AudioItems.Length;
+				for (int itemIndex = maxAudioItems - 1; itemIndex >= 0; itemIndex--) 
+				{
+					string id = audioCategory.AudioItems[itemIndex].Name;
+					bool valid = false;
+					for (int regexIndex = 0; regexIndex < regexs.Count && !valid; regexIndex++) {
+						valid = Regex.IsMatch( id, regexs[regexIndex]);
+					}
+
+					// if id is not in list then remove it
+					if (!valid)
+					{
+						ArrayHelper.DeleteArrayElement( ref audioCategory.AudioItems, itemIndex );
+					}
+				}
+			}
+
+			// Save
+			EditorUtility.SetDirty( go );
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
+				
 
 		}
 		
