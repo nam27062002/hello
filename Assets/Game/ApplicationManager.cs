@@ -614,7 +614,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         public override void onAuthenticationFinished()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationFinished");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.instance.Log("GameCenterDelegate onAuthenticationFinished");
+            }            
 
 #if UNITY_ANDROID
 			// On android if player login we make sure it will try at start again
@@ -628,13 +631,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         public override void onAuthenticationFailed()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationFailed");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.instance.Log("GameCenterDelegate onAuthenticationFailed");
+            }
+             
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED);
         }
 
         public override void onAuthenticationCancelled()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationCancelled");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.instance.Log("GameCenterDelegate onAuthenticationCancelled");
+            }
+
 #if UNITY_ANDROID
 			// On android if player cancells the authentication we will not ask again
 			CacheServerManager.SharedInstance.SetVariable(GC_ON_START_KEY, "false" , false);
@@ -644,25 +655,38 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         public override void onUnauthenticated()
         {
-            Debug.Log("GameCenterDelegate onUnauthenticated");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.instance.Log("GameCenterDelegate onUnauthenticated");
+            }
+
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onGetToken(JSONNode kTokenDataJSON)
         {
-            Debug.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() + 
-                " userID = " + GameCenterManager.SharedInstance.GetUserId() + 
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.instance.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() +
+                " userID = " + GameCenterManager.SharedInstance.GetUserId() +
                 " userName = " + GameCenterManager.SharedInstance.GetUserName());
+            }
         }
 
         public override void onNotAuthenticatedException()
         {
-            Debug.Log("GameCenterDelegate onNotAuthenticatedException");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                Debug.Log("GameCenterDelegate onNotAuthenticatedException");
+            }
         }
 
         public override void onGetAchievementsInfo(Dictionary<string, GameCenterManager.GameCenterAchievement> kAchievementsInfo)
         {
-            Debug.Log("GameCenterListener: onGetAchievementsInfo");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.instance.Log("GameCenterListener: onGetAchievementsInfo");
+            }
 
             foreach (KeyValuePair<string, GameCenterManager.GameCenterAchievement> kEntry in kAchievementsInfo)
             {
@@ -673,7 +697,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
         public override void onGetLeaderboardScore(string strLeaderboardSKU, int iScore, int iRank)
         {
-            Debug.Log("GameCenterListener: onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank);
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.instance.Log("GameCenterListener: onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank);
+            }
         }
     }
     private GameCenterListener m_gameCenterListener = null;
