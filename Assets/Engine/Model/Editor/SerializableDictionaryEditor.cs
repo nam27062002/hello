@@ -88,9 +88,12 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 				pos.height = EditorGUI.GetPropertyHeight(prop, GUIContent.none, true);
 				maxHeight = Mathf.Max(maxHeight, pos.height);
 
-				// If of unknown type, display the type as label to give the suer a hint on what it is
+				// If of unknown type, display the type as label to give the user a hint on what it is
+				// If string, use a delayed textfield to detect duplicated keys
 				if(prop.propertyType == SerializedPropertyType.Generic) {
 					EditorGUI.PropertyField(pos, prop, new GUIContent(prop.propertyType.ToString()), true);
+				} else if(prop.propertyType == SerializedPropertyType.String) {
+					EditorGUI.DelayedTextField(pos, prop, GUIContent.none);
 				} else {
 					EditorGUI.PropertyField(pos, prop, GUIContent.none, true);
 				}
