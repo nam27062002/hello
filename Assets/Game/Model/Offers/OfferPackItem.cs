@@ -41,9 +41,9 @@ public class OfferPackItem {
 		get { return m_reward; }
 	}
 
-	private DefinitionNode m_def = null;
-	public DefinitionNode def {
-		get { return m_def; }
+	private string m_sku = null;
+	public string sku {
+		get { return m_sku; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -63,6 +63,14 @@ public class OfferPackItem {
 
 	}
 
+	/// <summary>
+	/// Clear the item.
+	/// </summary>
+	public void Clear() {
+		m_reward = null;
+		m_type = "";
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -70,23 +78,32 @@ public class OfferPackItem {
 	/// Initialize from definition.
 	/// </summary>
 	/// <param name="_def">Def.</param>
-	public void InitFromDefinition(DefinitionNode _def) {
-		// Store definition
-		m_def = _def;
-		if(m_def == null) {
-			m_reward = null;
-			m_type = "";
+	/// <param name="_itemIdx">Index of the item within the pack (0..N-1)</param>
+	public void InitFromDefinition(DefinitionNode _def, int _itemIdx) {
+		// Aux vars
+		string prefix = GetPrefix(_itemIdx);
+
+		// Check definition
+		if(_def == null) {
+			Clear();
 			return;
 		}
 
-		// Store type
-		m_type = _def.GetAsString("type", "sc");	// Default to SC to prevent crashes in case of bad config
+		// If unknown type, clear data and return
+		m_type = _def.GetAsString(prefix + "Type", OfferPack.EMPTY_VALUE);
+		if(m_type == OfferPack.EMPTY_VALUE || string.IsNullOrEmpty(m_type)) {
+			Clear();
+			return;
+		}
+
+		// Item Sku
+		m_sku = _def.GetAsString(prefix + "Sku");
 
 		// Initialize reward
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
 		rewardData.typeCode = m_type;
-		rewardData.sku = _def.GetAsString("itemSku", "");
-		rewardData.amount = _def.GetAsLong("amount", 1);
+		rewardData.sku = m_sku;
+		rewardData.amount = _def.GetAsLong(prefix + "Amount", 1);
 		m_reward = Metagame.Reward.CreateFromData(
 			rewardData,
 			HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK,
@@ -94,7 +111,7 @@ public class OfferPackItem {
 		);
 
 		// Featured?
-		m_featured = _def.GetAsBool("featured", false);
+		m_featured = _def.GetAsBool(prefix + "Featured", false);
 	}
 
 	/// <summary>
@@ -104,11 +121,25 @@ public class OfferPackItem {
 	/// default value for that parameter.
 	/// </summary>
 	/// <param name="_def">Definition to be filled.</param>
-	public void ValidateDefinition(DefinitionNode _def) {
-		if(!_def.Has("featured"))	_def.SetValue("featured",	bool.FalseString.ToLowerInvariant());
-		if(!_def.Has("type")) 		_def.SetValue("type",		string.Empty);
-		if(!_def.Has("amount"))		_def.SetValue("amount",		1.ToString(CultureInfo.InvariantCulture));
-		if(!_def.Has("itemSku"))	_def.SetValue("itemSku",	string.Empty);
+	/// <param name="_itemIdx">Index of the item within the pack (0..N-1)</param>
+	public void ValidateDefinition(DefinitionNode _def, int _itemIdx) {
+		string prefix = GetPrefix(_itemIdx);
+		OfferPack.SetValueIfMissing(ref _def, prefix + "Featured", 	bool.FalseString.ToLowerInvariant());
+		OfferPack.SetValueIfMissing(ref _def, prefix + "Type", 		string.Empty);
+		OfferPack.SetValueIfMissing(ref _def, prefix + "Amount", 	1.ToString(CultureInfo.InvariantCulture));
+		OfferPack.SetValueIfMissing(ref _def, prefix + "Sku", 		string.Empty);
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Generate the prefix used in definitions columns for the item with the given index.
+	/// </summary>
+	/// <returns>The prefix.</returns>
+	/// <param name="_itemIdx">Index of the item within the pack (0..N-1)</param>
+	public static string GetPrefix(int _itemIdx) {
+		return "item" + _itemIdx;
 	}
 
 	//------------------------------------------------------------------------//

@@ -668,4 +668,22 @@ internal class DragonShaderGUI : ShaderGUI
         Debug.Log(sChanged + " materials changed.");
 
     }
+
+    [MenuItem("Tools/Dragon/Mesh bounds")]
+    public static void MeshBounds()
+    {
+        Mesh mesh = Selection.activeObject as Mesh;
+        if (mesh != null)
+        {
+            Bounds bounds = mesh.bounds;
+            Debug.Log("Bounds: x: " + mesh.bounds.size.x + " y: " + mesh.bounds.size.y + " z: " + mesh.bounds.size.z);
+        }
+        else
+        {
+            Debug.Log("Object isn't a valid mesh");
+        }
+
+    }
+
+
 }
