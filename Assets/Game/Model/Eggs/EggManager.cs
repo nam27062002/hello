@@ -96,6 +96,10 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	// Internal
 	UserProfile m_user;
 
+	// Reward Definitions
+	private List<float> m_probabilities;
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -118,14 +122,14 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// Perform a double loop since every time we add a new element the probabilities 
 		// are readjusted - therefore we need to first add all the elements and then 
 		// define the probabilities for each one
-		instance.m_rewardDropRate = new ProbabilitySet();
+		instance.m_rewardDropRate = new ProbabilitySet();	
+		instance.m_probabilities = new List<float>();
 		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.EGG_REWARDS);
 		for(int i = 0; i < rewardDefs.Count; i++) {
 			instance.m_rewardDropRate.AddElement(rewardDefs[i].sku);
+			instance.m_probabilities.Add(rewardDefs[i].GetAsFloat("droprate"));
 		}
-		for(int i = 0; i < rewardDefs.Count; i++) {
-			instance.m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("droprate"));
-		}
+		instance.BuildProbabilities();
 
 		// Restore saved random state from preferences so the distribution is respected
 		// Only if we have a state saved!
@@ -262,6 +266,12 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			case CPGachaTest.RewardChanceMode.DEFAULT: {
 				// [AOC] Force common pet during tutorial
 				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+
+
+					instance.BuildProbabilities();
+
+
+
 					// Get a weighted element
 					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
 
@@ -305,6 +315,19 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			} break;
 		}
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
+	}
+
+
+	//------------------------------------------------------------------//
+	// PUBLIC UTILS														//
+	//------------------------------------------------------------------//
+	private void BuildProbabilities() {
+		for(int i = 0; i < rewardDefs.Count; i++) {
+			m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("droprate"));
+		}
+
+
+
 	}
 
 	//------------------------------------------------------------------//
