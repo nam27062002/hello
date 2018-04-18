@@ -74,11 +74,18 @@ uniform float _Cutoff;
 v2f vert(appdata_t v)
 {
 	v2f o;
+
+#if defined(FXLAYER_FIRE)
+	float smooth = smoothstep(0.7, -0.0, v.vertex.x);
+	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 10.0) * 0.12 * smooth;
+#endif
+
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
 	// Normal
 	float3 normal = UnityObjectToWorldNormal(v.normal);
+
 	// Light Probes
 //	o.vLight = ShadeSH9(float4(normal, 1.0));
 	o.vLight = float3(0.7, 0.7, 0.7);// ShadeSH9(float4(normal, 1.0));
@@ -195,7 +202,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
 	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
-	fixed3 selfIlluminate = col.xyz * 1.0 * anim;
+	fixed3 selfIlluminate = col.xyz * 1.0 * anim * detail.b;
 
 #else
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination
