@@ -90,7 +90,6 @@ v2f vert(appdata_t v)
 //	o.vLight = ShadeSH9(float4(normal, 1.0));
 	o.vLight = float3(0.7, 0.7, 0.7);// ShadeSH9(float4(normal, 1.0));
 
-
 	// Half View - See: Blinn-Phong
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
 	o.viewDir = viewDirection;
@@ -197,7 +196,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed satMask = (0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b) * detail.r;
 	satMask = lerp(satMask, 1.0, detail.b);
 	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
-	satMask *= blink * 10.0;
+	satMask *= blink;
 	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
 #elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
