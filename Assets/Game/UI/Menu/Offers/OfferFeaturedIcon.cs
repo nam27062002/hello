@@ -118,7 +118,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			m_timerText.text = TimeUtils.FormatTime(
 				System.Math.Max(0, (m_targetOffer.endDate - serverTime).TotalSeconds), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			);
 		} else {
