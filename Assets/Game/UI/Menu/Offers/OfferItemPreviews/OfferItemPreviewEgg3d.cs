@@ -41,7 +41,7 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 		Debug.Assert(m_item.type == Metagame.RewardEgg.TYPE_CODE, "ITEM OF THE WRONG TYPE!", this);
 
 		// Initialize loader with the target egg
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.def.GetAsString("itemSku"));
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.sku);
 		if(m_def == null) {
 			m_eggLoader.Load("");
 		} else {

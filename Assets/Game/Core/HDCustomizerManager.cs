@@ -32,7 +32,12 @@ public class HDCustomizerManager
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Log("Files changed: " + kChangedContentFiles.ToString());
+				string msg = "Files changed: ";
+				for(int i = 0; i < kChangedContentFiles.Count; ++i) {
+					if(i > 0) msg += ", ";
+					msg += kChangedContentFiles[i];
+				}
+				Log(msg);
             }
 
             HDCustomizerManager.instance.NotifyFilesChanged(kChangedContentFiles);
