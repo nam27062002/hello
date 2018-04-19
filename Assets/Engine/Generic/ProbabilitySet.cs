@@ -220,6 +220,16 @@ public class ProbabilitySet {
 		return m_elements[_elementIdx].probability;
 	}
 
+	public float GetProbability(string _sku) {
+		for (int i = 0; i < numElements; ++i) {
+			if (m_elements[i].label.Equals(_sku)) {
+				return m_elements[i].probability;
+			}
+		}
+
+		return -1;
+	}
+
 	/// <summary>
 	/// Define the probability of the target element.
 	/// The probabilities of the whole set will be redistributed accordingly.
