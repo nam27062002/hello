@@ -434,7 +434,7 @@ public class CPProgressionCheats : MonoBehaviour {
 			UsersManager.currentUser.eggsCollected++;
 
 			// If special, increase collected golden eggs
-			if(petDef.Get("rarity") == EggReward.RarityToSku(EggReward.Rarity.SPECIAL)) {
+			if(petDef.Get("rarity") == Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL)) {
 				UsersManager.currentUser.goldenEggsCollected++;
 			}
 		}
@@ -452,7 +452,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetSpecialPets() {
 		// Get all special pets
-		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", EggReward.RarityToSku(EggReward.Rarity.SPECIAL));
+		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL));
 
 		// Clear equipped pets
 		foreach(DragonData dragon in DragonManager.dragonsByOrder) {

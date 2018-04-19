@@ -43,6 +43,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private ShowHideAnimator m_targetAnimator = null;
+	public ShowHideAnimator targetAnimator {
+		get { return m_targetAnimator; }
+	}
 
 	// Config
 	// Dragon-based visibility
@@ -138,6 +141,14 @@ public class MenuShowConditionally : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Check whether the obejct must be visible with the current dragon and menu screen.
+	/// </summary>
+	/// <returns>Whether the visibility checks are passed or not with the current dragon and menu screen..</returns>
+	public bool Check() {
+		return Check(targetDragonSku, currentMenuScreen);
+	}
+
 	/// <summary>
 	/// Check whether the object must be visible with a given param set.
 	/// </summary>

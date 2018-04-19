@@ -118,17 +118,20 @@ public class MenuTransitionManager : MonoBehaviour {
 	private void Start() {
 		// Hide all screens
 		for(int i = 0; i < m_screens.Length; ++i) {
-			m_screens[i].ui.Hide(NavigationScreen.AnimType.NONE);
+			if ( (int)m_currentScreen != i )
+				m_screens[i].ui.Hide(NavigationScreen.AnimType.NONE);
 		}
 
 		// Set initial screen
-		if(GameVars.menuInitialScreen != MenuScreen.NONE) {
-			GoToScreen(GameVars.menuInitialScreen, false);	// Forced initial screen
-			GameVars.menuInitialScreen = MenuScreen.NONE;
-		} else if(GameVars.playScreenShown) {
-			GoToScreen(MenuScreen.DRAGON_SELECTION, false);
-		} else {
-			GoToScreen(MenuScreen.PLAY, false);
+		if ( m_currentScreen == MenuScreen.NONE ){
+			if(GameVars.menuInitialScreen != MenuScreen.NONE) {
+				GoToScreen(GameVars.menuInitialScreen, false);	// Forced initial screen
+				GameVars.menuInitialScreen = MenuScreen.NONE;
+			} else if(GameVars.playScreenShown) {
+				GoToScreen(MenuScreen.DRAGON_SELECTION, false);
+			} else {
+				GoToScreen(MenuScreen.PLAY, false);
+			}
 		}
 	}
 

@@ -75,7 +75,7 @@ public class OpenEggTestEditor : Editor {
 
 			else if(p.name == "m_rarityFXSetup") {
 				// Fixed length array, rarity as element label
-				int size = (int)EggReward.Rarity.COUNT;
+				int size = (int)Metagame.Reward.Rarity.COUNT;
 				p.arraySize = size;
 
 				// Group in a foldout
@@ -87,7 +87,7 @@ public class OpenEggTestEditor : Editor {
 						// Default drawer, using rarity name as label
 						EditorGUILayout.PropertyField(
 							p.GetArrayElementAtIndex(i), 
-							new GUIContent(((EggReward.Rarity)i).ToString()),
+							new GUIContent(((Metagame.Reward.Rarity)i).ToString()),
 							true
 						);
 					}

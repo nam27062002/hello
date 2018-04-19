@@ -62,7 +62,7 @@ public class SpawnersCaptureTool : CaptureTool {
 
 		// If definitions are not loaded, do it now
 		if(!ContentManager.ready){
-			ContentManager.InitContent(true);
+			ContentManager.InitContent(true, false);
 		}
 
 		// Same for localization

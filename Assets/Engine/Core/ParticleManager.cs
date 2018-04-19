@@ -277,7 +277,6 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				pc.handler.Invalidate();
 			}
 		}
-		m_pools.Clear();
 		m_iterator.Clear();
 	}
 }

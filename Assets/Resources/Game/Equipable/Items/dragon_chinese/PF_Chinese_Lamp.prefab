@@ -9,6 +9,7 @@ GameObject:
   m_Component:
   - component: {fileID: 427576}
   - component: {fileID: 11438106}
+  - component: {fileID: 114964868230270780}
   m_Layer: 0
   m_Name: PF_Chinese_Lamp
   m_TagString: Untagged
@@ -23,7 +24,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 170330}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.714149, y: 26.251007, z: -25.500317}
+  m_LocalPosition: {x: -151.29509, y: -174.462, z: -14.39418}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4142644633275794}
@@ -104,6 +105,7 @@ GameObject:
   - component: {fileID: 4187214934054478}
   - component: {fileID: 198500343225327598}
   - component: {fileID: 199620808591443844}
+  - component: {fileID: 114630555026123840}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -221,6 +223,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1007511888903784}
   m_Mesh: {fileID: 4300000, guid: 9ff8cf47f5dd4c24ca3a9ab9cf1390ff, type: 3}
+--- !u!114 &114630555026123840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1610072565365538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 1
+  m_scale: 1
+  m_transform: {fileID: 427576}
+  m_resetFirst: 1
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 1
 --- !u!114 &114671161526279214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -237,6 +257,21 @@ MonoBehaviour:
   - lamp
   springSpeed: 13
   m_upDir: {x: 0, y: 0, z: 0}
+  m_disableOnResults: 0
+--- !u!114 &114964868230270780
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4cedaa499f74e61b5a72ac7f18311d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_addToBodyParts: 0
+  m_stopInsideWater: 0
+  m_stopWhenDead: 0
 --- !u!198 &198500343225327598
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -294,7 +329,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -880094056
+  randomSeed: -969669629
   InitialModule:
     serializedVersion: 3
     enabled: 1

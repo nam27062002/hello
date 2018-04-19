@@ -252,8 +252,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
 
-        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_persistance);
-        Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
+        // We need to wait for the session to be started to send the first Calety funnel step
+        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_persistance);        
     }    
 
     private void InitSDKs()
@@ -649,7 +649,6 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_PurchaseWithResourcesCompleted(EEconomyGroup economyGroup, string itemID, string promotionType, 
         UserProfile.Currency moneyCurrency, int moneyPrice, int amountBalance)
     {
-
     	if ( economyGroup == EEconomyGroup.BUY_EGG )
     	{
 			if (TrackingPersistenceSystem != null)
@@ -744,8 +743,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (!Session_HasMenuEverLoaded)
         {
             Session_HasMenuEverLoaded = true;
-            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);
             HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
+            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);            
 
             HDTrackingManager.Instance.Notify_DeviceStats();
         }
@@ -755,19 +754,25 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// The game has reached a step in the loading funnel.
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
-	public override void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {        
+	public override void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {  
+        // Calety funnel, unlike Razolytics funnel, sends all steps for all devices even for those that are not supported by the game. This is done because we can filter out those devices when  checking
+        // the loading funnel on DNA
         Track_Funnel(m_loadFunnelCalety.name, m_loadFunnelCalety.GetStepName(_step), m_loadFunnelCalety.GetStepDuration(_step), m_loadFunnelCalety.GetStepTotalTime(_step), Session_IsFirstTime);                                            
 	}  
     
     public override void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {
-        int _sessionsCount = (TrackingPersistenceSystem == null) ? 0 : TrackingPersistenceSystem.SessionCount;
-        string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
-        int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
-        // TODO: To debug with server
-        GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
+        // Makes sure that the device is supported by the game. If we didn't do this then the last funnel step would never be sent because that step is sent when the main menu is loaded. This'd be misleading
+        // because it could make us think there's a crash when loading the game because we can't filter the unsupported devices out in Razolytics analytics
+        if (FeatureSettingsManager.instance.Device_IsSupported()) {
+            int _sessionsCount = (TrackingPersistenceSystem == null) ? 0 : TrackingPersistenceSystem.SessionCount;
+            string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
+            int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
+            
+            GameServerManager.SharedInstance.SendTrackLoading(m_loadFunnelRazolytics.GetStepName(_step), _stepDuration, Session_IsFirstTime, _sessionsCount, null);
 
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Log("Notify_Razolytics_Funnel_Load " + _stepName + " duration = " + _stepDuration + " isFirstTime = " + Session_IsFirstTime + " sessionsCount = " + _sessionsCount);
+        }
     }
 
     /// <summary>
@@ -1030,6 +1035,11 @@ public class HDTrackingManagerImp : HDTrackingManager
     public override void Notify_HungryLetterCollected()
     {
         Session_HungryLettersCount++;
+    }
+
+    public override void Notify_Crash(bool isFatal, string errorType, string errorMessage)
+    {
+        Track_Crash(isFatal, errorType, errorMessage);
     }
     #endregion
 
@@ -1812,7 +1822,24 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
     }
 
+    private void Track_Crash(bool isFatal, string errorType, string errorMessage)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_Crash isFatal = " + isFatal + " errorType = " + errorType + " errorMessage = " + errorMessage);
+        }
 
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.crash");
+        if (e != null)
+        {
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamBool(e, TRACK_PARAM_IS_FATAL, isFatal);            
+            Track_AddParamString(e, TRACK_PARAM_ERROR_TYPE, errorType);
+            Track_AddParamString(e, TRACK_PARAM_ERROR_MESSAGE, errorMessage);            
+
+            Track_SendEvent(e);
+        }
+    }
 
     // -------------------------------------------------------------
     // Params
@@ -1851,6 +1878,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ECO_GROUP                  = "ecoGroup";
     private const string TRACK_PARAM_ECONOMY_GROUP              = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND                  = "eggFound";
+    private const string TRACK_PARAM_ERROR_MESSAGE              = "errorMessage";
+    private const string TRACK_PARAM_ERROR_TYPE                 = "errorType";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE         = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY            = "fb_def_currency";
     private const string TRACK_PARAM_FIRE_RUSH                  = "fireRush";
@@ -1869,6 +1898,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_HUNGRY_LETTERS_NB          = "hungryLettersNb";
     private const string TRACK_PARAM_IN_GAME_ID                 = "InGameId";
     private const string TRACK_PARAM_INITIALQUALITY             = "initialQuality";
+    private const string TRACK_PARAM_IS_FATAL                   = "isFatal";
     private const string TRACK_PARAM_IS_HACKER                  = "isHacker";
     private const string TRACK_PARAM_IS_LOADED                  = "isLoaded";
     private const string TRACK_PARAM_IS_PAYING_SESSION          = "isPayingSession";

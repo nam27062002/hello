@@ -107,14 +107,8 @@ public class GameServerManagerCalety : GameServerManager {
             Messenger.Broadcast<CaletyConstants.PopupMergeType, JSONNode, JSONNode>(MessengerEvents.MERGE_SHOW_POPUP_NEEDED, eType, kLocalAccount, kCloudAccount);
         }
 
-        public override void onSessionExpired() {
-            Debug.TaggedLog(tag, "onSessionExpired");
-            GameServerManager.SharedInstance.OnLogOut();
-        }
-
-        public override void onShowMaintenanceMode() {         
+		public override void onShowMaintenanceMode() {         
 			Debug.TaggedLog(tag, "onShowMaintenanceMode");
-            GameServerManager.SharedInstance.OnLogOut();
 		}
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
@@ -151,9 +145,7 @@ public class GameServerManagerCalety : GameServerManager {
 			Debug.TaggedLog(tag, "onNewAppVersionNeeded");
 			CacheServerManager.SharedInstance.SaveCurrentVersionAsObsolete();
 			IsNewAppVersionNeeded = true;
-
-            GameServerManager.SharedInstance.OnLogOut();
-        }
+		}
 
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onUserBlackListed() {
@@ -175,17 +167,7 @@ public class GameServerManagerCalety : GameServerManager {
 			Debug.TaggedLog(tag, "onRequestGameReset");
 		}
 
-        public override void onShowAccountsConflict() { // When the same GC account is used in different devices this will make the game to show a popup for exit 
-            Debug.TaggedLog(tag, "onShowAccountsConflict");
-            GameServerManager.SharedInstance.OnLogOut();
-        }
-
-        public override void onUserBanned(long iMilliseconds) {  // Called when user is banned
-            Debug.TaggedLog(tag, "onUserBanned");
-            GameServerManager.SharedInstance.OnLogOut();
-        }
-
-        public override void onShowLostConnection () {
+		public override void onShowLostConnection () {
 			Debug.TaggedLog(tag, "onShowLostConnection");
 			GameServerManager.SharedInstance.OnConnectionLost();
 		} 
@@ -280,6 +262,7 @@ public class GameServerManagerCalety : GameServerManager {
         Login_Init();
         Commands_Init();
         Connection_Init();
+        m_isProcessingConnectionLost = false;
     }
 
     public override void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response)
@@ -301,18 +284,29 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.Ping, null, callback);
 	}
 
+    private bool m_isProcessingConnectionLost;
+
 	public override void OnConnectionLost() {
 		if (FeatureSettingsManager.IsDebugEnabled) {
 			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
 		}
 
-		Commands_OnServerDown();
+        // This stuff is done only if it's not already being processed
+        if (!m_isProcessingConnectionLost)
+        {
+            // We need to use this flag because this method could be called several times when processing NetworkManager.SharedInstance.CancelRequest()
+            m_isProcessingConnectionLost = true;
 
-		NetworkManager.SharedInstance.CancelRequests();        
-		ServerManager.SharedInstance.CancelPendingCommands();
-		NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
-        
-        Connection_OnServerDown();
+            Commands_OnServerDown();
+
+            NetworkManager.SharedInstance.CancelRequests();
+            ServerManager.SharedInstance.CancelPendingCommands();
+            NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
+
+            Connection_OnServerDown();
+
+            m_isProcessingConnectionLost = false;
+        }
     }
 
     #region login
@@ -399,9 +393,6 @@ public class GameServerManagerCalety : GameServerManager {
     public override void OnLogOut()
     {
         Login_State = ELoginState.NotLoggedIn;
-
-        // Something went wrong on server side so we should cancel commands
-        OnConnectionLost();
     }
 
 	/// <summary>
@@ -633,8 +624,8 @@ public class GameServerManagerCalety : GameServerManager {
 		public void Reset() {
 			Cmd = ECommand.None;
 			Parameters = null;
-			Callback = null;
-		}
+			Callback = null;            
+        }
 
 		/// <summary>
 		/// 

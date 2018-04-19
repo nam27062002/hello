@@ -21,8 +21,7 @@ public class MenuPlayScreen : MonoBehaviour {
     //------------------------------------------------------------------//
     // CONSTANTS														//
     //------------------------------------------------------------------//
-
-    //------------------------------------------------------------------//
+	 //------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//
     public GameObject m_badge;
@@ -32,9 +31,7 @@ public class MenuPlayScreen : MonoBehaviour {
     private GameObject m_incentivizeRoot = null;
 
     [SerializeField]
-    private Localizer m_incentivizeLabelLocalizer = null;    
-
-	private bool m_showLegalPopup;
+    private Localizer m_incentivizeLabelLocalizer = null; 
         
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -60,15 +57,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (m_showLegalPopup) {
-			Debug.LogError("LEGAL");
-			// Open terms and conditions popup
-			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
-			HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
-			m_showLegalPopup = false;
-		}
-
-        if (NeedsToRefresh()) {
+		if (NeedsToRefresh()) {
             Refresh();
         }
 	}
@@ -110,9 +99,7 @@ public class MenuPlayScreen : MonoBehaviour {
         SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
 
         m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndInventivised);
-        m_badge.SetActive(!SocialIsLoggedIn);        
-
-		m_showLegalPopup = PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION;
+        m_badge.SetActive(!SocialIsLoggedIn);
     }    
     
    	
