@@ -19,10 +19,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224000011541814836}
-  - component: {fileID: 95000013029732220}
+  - component: {fileID: 114017549308617518}
   - component: {fileID: 114000011298517116}
-  - component: {fileID: 114820666804171572}
+  - component: {fileID: 95000013029732220}
   - component: {fileID: 225000013469517432}
+  - component: {fileID: 114820666804171572}
   - component: {fileID: 114276556279327646}
   - component: {fileID: 114881141996410276}
   m_Layer: 5
@@ -492,6 +493,38 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114017549308617518
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010013748420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e97db3116f5b469a885d67987e6cdc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_dynamicFields:
+    m_valueList:
+    - type: 0
+      target: {fileID: 114111792616384966}
+    - type: 0
+      target: {fileID: 114725290914212568}
+    - type: 0
+      target: {fileID: 114974040918757058}
+    - type: 0
+      target: {fileID: 114000011504845374}
+    - type: 1
+      target: {fileID: 114017178014464228}
+    - type: 2
+      target: {fileID: 114618639608405080}
+    m_keyList:
+    - title
+    - message
+    - reward
+    - bonusDragon
+    - image
+    - buttonConfirm
 --- !u!114 &114111792616384966
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1109,11 +1142,7 @@ MonoBehaviour:
   - sku: none
     targets: []
   - sku: xmas
-    targets:
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
+    targets: []
   - sku: halloween
     targets: []
   - sku: spring
