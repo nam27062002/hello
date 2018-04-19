@@ -156,7 +156,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 			m_remainingTimeText.tid, 
 			TimeUtils.FormatTime(
 				System.Math.Max(0, (m_pack.endDate - serverTime).TotalSeconds), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			)
 		);
