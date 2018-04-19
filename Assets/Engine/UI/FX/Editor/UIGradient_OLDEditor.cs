@@ -54,11 +54,20 @@ public class UIGradient_OLDEditor : Editor {
 		// Button to replace it by the new UIGradient
 		GUI.color = Color.yellow;
 		if(GUILayout.Button("REPLACE WITH NEW UIGradient\n(All selected targets)", GUILayout.Height(40f))) {
+			// Copy array to allow destroying within the loop
+			Object[] targetsCopy = new Object[targets.Length];
+			targets.CopyTo(targetsCopy, 0);
+
 			// Apply to all selected targets
-			for(int i = 0; i < targets.Length; ++i) {
-				// Create a new UIGradient and clone values to it
-				UIGradient_OLD oldGradient = targets[i] as UIGradient_OLD;
-				UIGradient newGradient = oldGradient.gameObject.ForceGetComponent<UIGradient>();	// Reuse existing one if possible
+			for(int i = 0; i < targetsCopy.Length; ++i) {
+				// Create a new UIGradient
+				UIGradient_OLD oldGradient = targetsCopy[i] as UIGradient_OLD;
+				UIGradient newGradient = oldGradient.gameObject.GetComponent<UIGradient>();		// Reuse existing one if possible
+				if(newGradient == null) {
+					newGradient = Undo.AddComponent<UIGradient>(oldGradient.gameObject);
+				}
+
+				// Clone values to it
 				switch(oldGradient.direction) {
 					case UIGradient_OLD.Direction.HORIZONTAL: {
 						newGradient.gradient.Set(
@@ -89,14 +98,21 @@ public class UIGradient_OLDEditor : Editor {
 
 					case UIGradient_OLD.Direction.DIAGONAL_2: {
 						newGradient.gradient.Set(
-							oldGradient.color2,
 							oldGradient.color1,
-							oldGradient.color1,
+							Color.Lerp(oldGradient.color1, oldGradient.color2, 0.5f),
+							Color.Lerp(oldGradient.color1, oldGradient.color2, 0.5f),
 							oldGradient.color2
 						);
 					} break;
 				}
+
+				// Destroy old component
+				Undo.DestroyObjectImmediate(targetsCopy[i]);
+				targetsCopy[i] = null;
 			}
+
+			// Feedback
+			Debug.Log(Color.green.Tag("DONE! ") + targetsCopy.Length + " successfully replaced");
 		}
 		GUI.color = Color.white;
 	}
