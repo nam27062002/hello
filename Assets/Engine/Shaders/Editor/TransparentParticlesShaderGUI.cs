@@ -319,12 +319,12 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         "DISSOLVE_ENABLED",
     };
 
-    private static void setDissolve(Material mat, int dissolve)
+    private static void setDissolve(Material mat, bool dissolve)
     {
         mat.DisableKeyword("DISSOLVE_NONE");
         mat.DisableKeyword("DISSOLVE_ENABLED");
 
-        mat.EnableKeyword(dissolveKeywords[dissolve]);
+        mat.EnableKeyword(dissolveKeywords[dissolve ? 1: 0]);
     }
 
 
@@ -366,6 +366,11 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 mat.EnableKeyword(colorSourceKeywords[1]);
                 break;
         }
+    }
+
+    private static bool getDissolve(Material mat)
+    {
+        return mat.IsKeywordEnabled(dissolveKeywords[1]);
     }
 
     /// <summary>
@@ -440,6 +445,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
             featureSet(mp_enableColorVertex, Styles.enableColorVertexText);
 
+            mp_enableDissolve.floatValue = getDissolve(material) ? 1.0f : 0.0f;
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
             m_materialEditor.ShaderProperty(mp_enableDissolve, Styles.enableDissolveText);
@@ -447,7 +453,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             int dissolve = (int)mp_enableDissolve.floatValue;
             if (EditorGUI.EndChangeCheck())
             {
-                setDissolve(material, dissolve > 1 ? 1: 0);
+                setDissolve(material, dissolve > 1);
             }
 
             if (dissolve != 0)
@@ -477,20 +483,22 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 setColorSource(material, ncol);
             }
 
-
-
-
             if (ncol == ColorSource.TextureRamp)
             {
                 materialEditor.ShaderProperty(mp_colorRamp, Styles.colorRampText);
+                materialEditor.ShaderProperty(mp_colorMultiplier, Styles.colorMultiplierText);
+            }
+            else if (ncol == ColorSource.OneColor)
+            {
+                materialEditor.ShaderProperty(mp_basicColor, Styles.basicColorText);
             }
             else
             {
                 materialEditor.ShaderProperty(mp_basicColor, Styles.basicColorText);
                 materialEditor.ShaderProperty(mp_saturatedColor, Styles.saturatedColorText);
+                materialEditor.ShaderProperty(mp_colorMultiplier, Styles.colorMultiplierText);
             }
 
-            materialEditor.ShaderProperty(mp_colorMultiplier, Styles.colorMultiplierText);
             materialEditor.ShaderProperty(mp_emissionSaturation, Styles.emissionSaturationText);
             materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
 
@@ -649,7 +657,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 int blendMode = (int)mat.GetFloat("_BlendMode");
                 changeMaterial(mat, shader, (blendMode == 1) ? 0: 3);
                 setExtendedParticles(mat, true);
-                setDissolve(mat, 2);
+                setDissolve(mat, true);
                 mat.SetFloat("Dissolve", 1);
                 sChanged++;
             }

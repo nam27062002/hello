@@ -21,8 +21,6 @@ sampler2D _MainTex;
 float4 _MainTex_ST;
 
 #if defined(EXTENDED_PARTICLES)
-float4 _BasicColor;
-float4 _SaturatedColor;
 float _EmissionSaturation;
 float _OpacitySaturation;
 float _ColorMultiplier;
@@ -30,6 +28,13 @@ float _ColorMultiplier;
 #if defined(COLOR_RAMP)
 sampler2D _ColorRamp;
 float4 _ColorRamp_ST;
+
+#elif defined(COLOR_TINT)
+float4 _BasicColor;
+
+#else
+float4 _BasicColor;
+float4 _SaturatedColor;
 #endif	//COLOR_RAMP
 
 #if defined(DISSOLVE_ENABLED)
@@ -129,24 +134,31 @@ fixed4 frag(v2f i) : COLOR
 	col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0) * nAlpha;
 #endif	//DISSOLVE_ENABLED
 
+#ifndef COLOR_TINT
 	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier * nEmission, 0.0, 1.0);
+#endif
 
 #ifdef BLENDMODE_ALPHABLEND
+
 #if COLOR_RAMP
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * _EmissionSaturation;
-#else	//COLOR_RAMP
+#elif !defined(COLOR_TINT)
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
 #else	//BLENDMODE_ALPHABLEND
 
-#if COLOR_RAMP
+#if defined(COLOR_RAMP)
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * col.a * _EmissionSaturation;
-#else	//COLOR_RAMP
+#elif !defined(COLOR_TINT)
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
 #endif	//BLENDMODE_ALPHABLEND
+
+#ifdef COLOR_TINT
+	col.xyz = tex.x * _BasicColor.xyz * vcolor.xyz * nEmission * _EmissionSaturation;
+#endif
 
 #else	//EXTENDED_PARTICLES
 
