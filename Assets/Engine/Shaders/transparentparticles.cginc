@@ -157,7 +157,7 @@ fixed4 frag(v2f i) : COLOR
 #endif	//BLENDMODE_ALPHABLEND
 
 #ifdef COLOR_TINT
-	col.xyz = tex.x * _BasicColor.xyz * vcolor.xyz * nEmission * _EmissionSaturation;
+	col.xyz = tex.x * _BasicColor.xyz * vcolor.xyz * nEmission * _EmissionSaturation * col.a;
 #endif
 
 #else	//EXTENDED_PARTICLES

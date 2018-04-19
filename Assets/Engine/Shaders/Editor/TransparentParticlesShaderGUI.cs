@@ -453,7 +453,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             int dissolve = (int)mp_enableDissolve.floatValue;
             if (EditorGUI.EndChangeCheck())
             {
-                setDissolve(material, dissolve > 1);
+                setDissolve(material, dissolve > 0);
             }
 
             if (dissolve != 0)
