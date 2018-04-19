@@ -42,6 +42,15 @@ public class Gradient4Editor : ExtendedPropertyDrawer {
 	/// <param name="_property">The property we're drawing.</param>
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
+		// Don't support multi-editing (all values would be overwritten!)
+		if(_property.hasMultipleDifferentValues || _property.serializedObject.isEditingMultipleObjects) {
+			GUIContent message = new GUIContent("Doesn't support multi-editing");
+			m_pos.height = CustomEditorStyles.commentLabelLeft.CalcSize(message).y;
+			EditorGUI.LabelField(m_pos, _label, message, CustomEditorStyles.commentLabelLeft);
+			AdvancePos();
+			return;
+		}
+
 		// Get important properties
 		m_topLeftProp = m_rootProperty.FindPropertyRelative("topLeft");
 		m_topRightProp = m_rootProperty.FindPropertyRelative("topRight");
