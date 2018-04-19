@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114868477671073850}
   - component: {fileID: 65786598957906686}
   m_Layer: 26
-  m_Name: PF_GoodJunkRandomCoins
+  m_Name: PF_GoodJunkRandomHealth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,7 +87,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012775619424}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1473.92, y: -616.66, z: -0.0016665459}
+  m_LocalPosition: {x: -1468.26, y: -609.82, z: -0.0016665459}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4692774276776710}
@@ -105,7 +105,7 @@ Transform:
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 4692774276776710}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4659967298213120
 Transform:
@@ -113,12 +113,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1529257536355122}
-  m_LocalRotation: {x: -0.5271221, y: 0.5489844, z: -0.46789306, w: 0.44926}
-  m_LocalPosition: {x: -0.37999982, y: 0.14, z: -0.11}
-  m_LocalScale: {x: 4.149233, y: 4.149233, z: 4.149233}
+  m_LocalRotation: {x: -0.44968516, y: 0.5401514, z: -0.5466942, w: 0.45513216}
+  m_LocalPosition: {x: -0.37999982, y: 0.01, z: 0.07}
+  m_LocalScale: {x: 4.317486, y: 4.317486, z: 4.317486}
   m_Children: []
   m_Father: {fileID: 4692774276776710}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 196.205, y: -21.461975, z: -9.6779785}
 --- !u!4 &4692774276776710
 Transform:
@@ -130,8 +130,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
   m_Children:
-  - {fileID: 4659967298213120}
   - {fileID: 4242977247759652}
+  - {fileID: 4659967298213120}
   m_Father: {fileID: 4000010793146780}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -21.080002, y: 15.206, z: -7.945}
@@ -148,7 +148,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: a934e3ff53f9247bba729a88164bcc55, type: 2}
+  - {fileID: 2100000, guid: 5894f885cb36d48d9b5975dab9b15841, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: GoodJunkRandomCoins
+  m_sku: GoodJunkRandomHealth
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114584224448975534
