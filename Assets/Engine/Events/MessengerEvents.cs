@@ -135,8 +135,9 @@ public enum MessengerEvents {
 	DRAGON_ACQUIRED,			// params: DragonData _data
 	DRAGON_LEVEL_UP,			// params: DragonData _data
 
-	// Dragon skin events
-	SKIN_ACQUIRED,			// params: string _skin_sku
+	// Metagame events
+	SKIN_ACQUIRED,			// params: string _skinSku
+	PET_ACQUIRED,			// params: string _petSku
 
 	// Menu events
 	MENU_DRAGON_SELECTED,		 // params: string _selectedDragonSku	// [AOC] Triggered when the dragon hovered in the dragon selection screen changes
@@ -215,6 +216,10 @@ public enum MessengerEvents {
     CONNECTION_RECOVERED,
 
 	MISSION_ZONE,	// params: bool _inside, ZoneTrigger _zone
+
+	// Shop/Offers events
+	OFFERS_RELOADED,	// no params
+	OFFERS_CHANGED,		// no params
 
 	COUNT
 }

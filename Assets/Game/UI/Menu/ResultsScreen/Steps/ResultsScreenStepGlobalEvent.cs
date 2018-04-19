@@ -396,6 +396,9 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 
 				// Sequence has finished
 				else if(m_continueEnabled) {
+					// Success! Wait for the confirmation from the server
+					BusyScreen.Show(this);
+
 					// Attempt to do the contribution (we may have lost connectivity)
 					GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
 						m_bonusDragon ? 2f : 1f,
@@ -403,15 +406,13 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 						m_keyPurchased,
 						m_keyFromAds
 					);
-					if(res == GlobalEventManager.ErrorCode.NONE) {
-						// Success! Wait for the confirmation from the server
-						BusyScreen.Show(this);						
-					} else {
+					if(res != GlobalEventManager.ErrorCode.NONE) {
+						BusyScreen.Hide(this);
 						// We can't contribute! Refresh panel
 						InitPanel(true, false);
 
 						// Reset submission attempts
-						m_submitAttempts = 0;
+						m_submitAttempts = 0;						
 					}
 				}
 			} break;

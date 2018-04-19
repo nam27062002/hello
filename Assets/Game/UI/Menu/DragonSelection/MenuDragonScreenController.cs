@@ -129,7 +129,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				case MenuScreen.PENDING_REWARD: {
 					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
-					scr.StartFlow();
+					scr.StartFlow(true);
 					InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 				} break;
 			}
@@ -329,7 +329,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
 
-				slot.animator.ForceHide(false);
+				// Do not desactivate to allow async loading
+				slot.animator.ForceHide(false, false);
 
 				// Toggle flag
 				isAnimating = true;
@@ -392,7 +393,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 
 				if (!dragonData.isTeased) {
-					slot.animator.ForceHide(false);
+					// Do not desactivate to allow async loading
+					slot.animator.ForceHide(false, false);
 				}
 
 				// Toggle flag

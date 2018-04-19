@@ -241,6 +241,41 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	}
 
 	/// <summary>
+	/// Find an open popup instance by its path.
+	/// </summary>
+	/// <returns>The opened popup. <c>null</c> if no popup is opened with the given path.</returns>
+	/// <param name="_resourcesPath">Resources path to be checked.</param>
+	public static PopupController GetOpenPopup(string _resourcesPath) {
+		// Strip prefab name from input path
+		string prefabName = System.IO.Path.GetFileNameWithoutExtension(_resourcesPath);
+
+		// Find the popup matching this prefab name among the opened popups
+		PopupController popup = null;
+		popup = instance.m_openedPopups.Find(
+			(PopupController _popup) => {
+				return _popup.name == prefabName;
+			}
+		);
+		return popup;
+	}
+
+	/// <summary>
+	/// Close a target opened popup.
+	/// Nothing will happen if the requested popup is not open.
+	/// </summary>
+	/// <returns>The popup to be closed.</returns>
+	/// <param name="_resourcesPath">The path of the popup in the resources folder.</param>
+	public static void ClosePopup(string _resourcesPath, bool _destroy = true) {
+		// Is the popup opened?
+		PopupController popup = GetOpenPopup(_resourcesPath);
+
+		// Yes! Close it
+		if(popup != null) {
+			popup.Close(_destroy);
+		}
+	}
+
+	/// <summary>
 	/// Clear will delete all popups registered with the manager (whether they're open or not).
 	/// It will also stop any active loading task.
 	/// </summary>
@@ -307,12 +342,19 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 
 	}
     
-    public static PopupController PopupMessage_Open(PopupMessage.Config _config)
+    public static PopupController PopupMessage_Open(IPopupMessage.Config _config)
     {    
-        PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupMessage");
+		// Load different prefabs depending on text type
+		string path = PopupMessage.PATH;
+		switch(_config.TextType) {
+			case IPopupMessage.Config.ETextType.DEFAULT:	path = PopupMessage.PATH;		break;
+			case IPopupMessage.Config.ETextType.SYSTEM:		path = PopupMessageSystem.PATH;	break;
+		}
+
+        PopupController _popup = OpenPopupInstant(path);
         if (_popup != null)
         {
-            PopupMessage _popupMessage = _popup.GetComponent<PopupMessage>();
+            IPopupMessage _popupMessage = _popup.GetComponent<IPopupMessage>();
             _popupMessage.Configure(_config);
         }
 
@@ -324,12 +366,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
         return OpenPopupInstant("UI/Popups/Message/PF_PopupLoading");        
     }
 
-    public static PopupController PopupEnableCloud_Open(PopupMessage.Config _config)
+    public static PopupController PopupEnableCloud_Open(IPopupMessage.Config _config)
     {
         PopupController _popup = OpenPopupInstant("UI/Popups/Message/PF_PopupEnableCloud");
         if (_popup != null)
         {
-            PopupMessage _popupMessage = _popup.GetComponent<PopupMessage>();
+            IPopupMessage _popupMessage = _popup.GetComponent<IPopupMessage>();
             _popupMessage.Configure(_config);
         }
 

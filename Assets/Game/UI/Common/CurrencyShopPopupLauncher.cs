@@ -23,7 +23,7 @@ public class CurrencyShopPopupLauncher : PopupLauncher {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SerializeField] private PopupCurrencyShop.Mode m_mode = PopupCurrencyShop.Mode.DEFAULT;
+	[SerializeField] private PopupShop.Mode m_mode = PopupShop.Mode.DEFAULT;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,6 +55,6 @@ public class CurrencyShopPopupLauncher : PopupLauncher {
 	/// <param name="_popup">The popup that has just been destroyed.</param>
 	private void OnInitPopup(PopupController _popup) {
 		// Initialize target popup with the requested mode
-		_popup.GetComponent<PopupCurrencyShop>().Init(m_mode);
+		_popup.GetComponent<PopupShop>().Init(m_mode);
 	}
 }

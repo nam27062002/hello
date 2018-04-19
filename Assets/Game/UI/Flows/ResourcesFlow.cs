@@ -500,9 +500,9 @@ public class ResourcesFlow {
 	/// </summary>
 	private void OpenPCShopPopup() {
 		// [AOC] We could show only the packs covering the required amount
-		PopupController popup = PopupManager.LoadPopup(PopupCurrencyShop.PATH);
-		PopupCurrencyShop shopPopup = popup.GetComponent<PopupCurrencyShop>();
-		shopPopup.Init(PopupCurrencyShop.Mode.PC_ONLY);
+		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
+		PopupShop shopPopup = popup.GetComponent<PopupShop>();
+		shopPopup.Init(PopupShop.Mode.PC_ONLY);
 		shopPopup.closeAfterPurchase = true;
 
 		// Wait for the popup to close
@@ -571,7 +571,7 @@ public class ResourcesFlow {
 	/// </summary>
 	private void OnPCShopClosed() {
 		// Get the popup from the list
-		PopupCurrencyShop shopPopup = GetPopup<PopupCurrencyShop>();	// [AOC] Should never be null
+		PopupShop shopPopup = GetPopup<PopupShop>();	// [AOC] Should never be null
 		PopupController shopPopupController = shopPopup.GetComponent<PopupController>();
 
 		// Remove the listener

@@ -49,7 +49,7 @@ public class EntityCategoryListAttributeEditor : ExtendedPropertyDrawer {
 		}
 
 		// If definitions are not loaded, do it now
-		if(!ContentManager.ready) ContentManager.InitContent(true);
+		if(!ContentManager.ready) ContentManager.InitContent(true, false);
 
 		// Get the definitions and sort them by category
 		m_skus = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.ENTITY_CATEGORIES);

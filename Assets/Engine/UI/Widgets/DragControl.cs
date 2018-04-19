@@ -128,6 +128,12 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 		get { return m_restoreOnDisable; }
 		set { m_restoreOnDisable = value; }
 	}
+
+	[SerializeField] protected bool m_restoreOnRelease = false;
+	public bool restoreOnRelease {
+		get { return m_restoreOnRelease; }
+		set { m_restoreOnRelease = value; }
+	}
 	
 	[SerializeField] protected float m_restoreDuration = 0.25f;
 	public float restoreDuration {
@@ -445,6 +451,9 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 			m_tween = null;
 		}
 
+		// Stop movement
+		m_velocity = Vector2.zero;
+
 		// Launch new tween
 		m_tween = DOTween.To(
 			() => { return value; }, 			// Getter
@@ -509,6 +518,11 @@ public class DragControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 	public void OnEndDrag(PointerEventData _event) {
 		// Reset flag
 		m_dragging = false;
+
+		// Restore original value?
+		if(m_restoreOnRelease) {
+			RestoreOriginalValue();
+		}
 	}
 
 	/// <summary>

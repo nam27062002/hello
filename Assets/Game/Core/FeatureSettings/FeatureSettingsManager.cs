@@ -1540,13 +1540,22 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     
     public bool IsAutomaticReloginEnabled()
     {        
-        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
+        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_AUTOMATIC_RELOGIN);        
     }
     
     public int GetAutomaticReloginPeriod()
     {     
-        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
+        return Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
     }
+
+	public static bool MenuDragonsAsyncLoading
+    {
+        get
+        {                  
+            return true;
+        }
+    }
+
     #endregion
 
     #region log
@@ -1696,6 +1705,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
 
     }
+
+	
 
     #endregion //fps
 }

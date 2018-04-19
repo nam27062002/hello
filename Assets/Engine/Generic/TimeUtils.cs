@@ -81,7 +81,7 @@ public class TimeUtils {
 	// CONVERSION METHODS												//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Retrieve the unix timestamp (seconds elapsed since 00:00:00 1 January 1970) given a DateTime object.
+	/// Retrieve the unix timestamp (milliseconds elapsed since 00:00:00 1 January 1970) given a DateTime object.
 	/// Use DateTime.UtcNow to get current unix timestamp.
 	/// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
 	/// </summary>
