@@ -41,6 +41,10 @@ public class PopupShopOffersPill : IPopupShopPill {
 	[SerializeField] private Text m_priceText = null;
 	[SerializeField] private TextMeshProUGUI m_previousPriceText = null;
 	[SerializeField] private GameObject m_featuredHighlight = null;
+	[Separator("Optional Decorations")]
+	[SerializeField] private UIGradient m_backgroundGradient = null;
+	[SerializeField] private UIGradient m_frameGradientLeft = null;
+	[SerializeField] private UIGradient m_frameGradientRight = null;
 
 	// Public
 	private OfferPack m_pack = null;
@@ -138,6 +142,19 @@ public class PopupShopOffersPill : IPopupShopPill {
 			} else {
 				m_itemSlots[i].InitFromItem(m_pack.items[i]);
 			}
+		}
+
+		// Optional decorations
+		if(m_backgroundGradient != null) {
+			m_backgroundGradient.gradient.Set(gradientSetup.pillBackgroundGradient);
+		}
+
+		if(m_frameGradientLeft != null) {
+			m_frameGradientLeft.gradient.Set(gradientSetup.pillFrameGradient);
+		}
+
+		if(m_frameGradientRight != null) {
+			m_frameGradientRight.gradient.Set(gradientSetup.pillFrameGradient);
 		}
 	}
 
