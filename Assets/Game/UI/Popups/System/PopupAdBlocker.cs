@@ -41,7 +41,7 @@ public class PopupAdBlocker : MonoBehaviour {
 	private bool m_adPending = false;
 
 	public static bool m_sBlocking = false;
-
+	private bool m_forcedCancel = false;
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -148,13 +148,15 @@ public class PopupAdBlocker : MonoBehaviour {
 		controller.Close(true);
 
 		// If the ad couldn't be displayed, show message
-		if(!_success) {
+		if(!_success && !m_forcedCancel) {
 			UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"),
 				Vector2.one * 0.5f,
 				PopupManager.canvas.transform as RectTransform
 			);
 		}
+
+		m_forcedCancel = false;
 
 		// Broadcast result
 		OnAdFinished.Invoke(_success);
@@ -177,5 +179,19 @@ public class PopupAdBlocker : MonoBehaviour {
 		// Remove all listeners
 		OnAdFinished.RemoveAllListeners();
 		m_sBlocking = false;
+	}
+
+
+	public void OnForceCancel()
+	{
+		m_forcedCancel = true;
+		if (GameAds.instance.IsWaitingToPlayAnAd())
+		{
+			GameAds.instance.StopWaitingToPlayAnAd();
+		}
+		else
+		{
+			OnAdResult(false);
+		}
 	}
 }
