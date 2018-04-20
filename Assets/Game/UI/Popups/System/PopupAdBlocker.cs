@@ -42,6 +42,8 @@ public class PopupAdBlocker : MonoBehaviour {
 
 	public static bool m_sBlocking = false;
 	private bool m_forcedCancel = false;
+
+	public GameObject m_cancelButton;
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -93,6 +95,8 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// <param name="_adPurpose">Purpose of the ad.</param>
 	/// <param name="_onAdFinishedCallback">Callback to be invoked when Ad has finished.</param>
 	private void Init(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
+		m_cancelButton.SetActive(false);
+
 		// Mark as pending
 		m_adPending = true;
 
@@ -170,6 +174,14 @@ public class PopupAdBlocker : MonoBehaviour {
 		if(m_adPending) {
 			LaunchAd();
 		}
+	}
+
+	public void OnOpenPostAnimation(){
+		m_cancelButton.SetActive( true );
+	}
+
+	public void OnClosePreAnimation(){
+		m_cancelButton.SetActive( false );
 	}
 
 	/// <summary>
