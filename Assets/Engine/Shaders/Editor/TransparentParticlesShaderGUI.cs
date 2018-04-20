@@ -323,6 +323,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     {
         mat.DisableKeyword("DISSOLVE_NONE");
         mat.DisableKeyword("DISSOLVE_ENABLED");
+        mat.DisableKeyword("DISSOLVE_EXTENDED");
 
         mat.EnableKeyword(dissolveKeywords[dissolve ? 1: 0]);
     }
@@ -471,7 +472,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 mp_dissolveStep.vectorValue = tem;
 //                materialEditor.ShaderProperty(mp_dissolveStep, Styles.dissolveStepText);
             }
-
 
             EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
             ColorSource col = getColorSource(material);
@@ -668,7 +668,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     }
 
     /// <summary>
-    /// Seek for all oldest particle shaders and replace with current Transparent Particles Standard shader
+    /// Dumps material keywords
     /// </summary>
     [MenuItem("Tools/Dump material keywords")]
     public static void DumpMaterialKeywords()
@@ -683,5 +683,42 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             Debug.Log("Selected asset isn't a Material!");
         }
     }
+
+
+    /// <summary>
+    /// Fix png textures
+    /// </summary>
+    [MenuItem("Tools/Fix png")]
+    public static void FixPng()
+    {
+        string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+        Debug.Log("Asset path: " + path);
+
+
+        Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        if (tex != null)
+        {
+
+            Color[] colarray = tex.GetPixels();
+            for (int c = 0; c < colarray.Length; c++)
+            {
+                Color tem = colarray[c];
+                tem.g = tem.a;
+                colarray[c] = tem;
+            }
+
+            tex.SetPixels(colarray);
+            tex.Apply();
+
+            byte[] pngarray = tex.EncodeToPNG();
+
+            File.WriteAllBytes(path, pngarray);
+        }
+        else
+        {
+            Debug.Log("Selected asset isn't a texture");
+        }
+    }
+
 
 }
