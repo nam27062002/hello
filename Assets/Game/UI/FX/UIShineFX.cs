@@ -29,6 +29,10 @@ public class UIShineFX : MonoBehaviour {
 
 
 	//-------------------------------------------------------------//
+	[SeparatorAttribute]
+	[SerializeField] private Transform m_spawnPointsRoot;
+
+	[SeparatorAttribute]
 	[SerializeField] private SpriteAndSize[] m_sprites;
 
 	[SeparatorAttribute]
@@ -58,9 +62,8 @@ public class UIShineFX : MonoBehaviour {
 
 	//-------------------------------------------------------------//
 	// Use this for initialization
-	void Start () {
-		Transform spawnRoot = transform.Find("spawnPoints");
-		m_spawnPoints = spawnRoot.GetComponentsInChildren<Transform>();
+	void Start () {		
+		m_spawnPoints = m_spawnPointsRoot.GetComponentsInChildren<Transform>();
 		m_freeSpawnPoints = new bool[m_spawnPoints.Length];
 
 		m_spawnMax = Mathf.Min(m_maxAlive, m_spawnPoints.Length);
