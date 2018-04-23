@@ -135,7 +135,7 @@ public class UIShineFX : MonoBehaviour {
 		if (freeIndex >= 0) {
 			ShineElement se = m_elements[freeIndex];
 
-			se.spriteIdx = Random.Range(0, 2);
+			se.spriteIdx = Random.Range(0, m_sprites.Length);
 
 			if (freeIndex % 2 == 0) {
 				se.spawnPointIdx = Random.Range(0, Mathf.FloorToInt(m_freeSpawnPoints.Length * 0.5f));
