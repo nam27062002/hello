@@ -43,6 +43,7 @@ public class UIShineFX : MonoBehaviour {
 	[SerializeField] private Range m_delay;
 	[SerializeField] private Range m_scale;
 	[SerializeField] private Range m_rotation;
+	[SerializeField] private Color[] m_colors;
 
 
 	//-------------------------------------------------------------//
@@ -76,12 +77,15 @@ public class UIShineFX : MonoBehaviour {
 		for (int i = 0; i < m_spawnMax; ++i) {
 			GameObject go = new GameObject();
 			m_images[i] = go.AddComponent<Image>();
+			m_images[i].raycastTarget = false;
+
 			m_elements[i] = new ShineElement();
 
 			go.name = "shine";
-			go.transform.parent = transform;
+			go.transform.SetParent (transform, false);
 			m_transforms[i] = go.transform;
 
+			go.layer = transform.gameObject.layer;
 			go.SetActive(false);
 
 			m_free[i] = true;
@@ -156,6 +160,10 @@ public class UIShineFX : MonoBehaviour {
 			m_images[freeIndex].sprite = m_sprites[se.spriteIdx].sprite;
 			m_images[freeIndex].rectTransform.sizeDelta = Vector2.one * m_sprites[se.spriteIdx].size;
 			m_images[freeIndex].gameObject.SetActive(true);
+
+			if (m_colors.Length > 0) {
+				m_images[freeIndex].color = m_colors[Random.Range (0, m_colors.Length)];
+			}
 
 			m_spawnCount++;
 
