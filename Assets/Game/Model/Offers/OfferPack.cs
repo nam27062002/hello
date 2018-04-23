@@ -317,7 +317,7 @@ public class OfferPack {
 		if(!CanBeDisplayed()) return false;
 
 		// Check max views
-		if(m_viewsCount >= m_maxViews) return false;
+		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return false;
 
 		// Check area
 		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
