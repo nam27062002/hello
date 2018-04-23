@@ -8,6 +8,7 @@ public class DragonMissileLauncher : MonoBehaviour {
 	private float m_timer;
 
 	DragonBoostBehaviour m_playerBoost;
+	DragonMotion m_playerMotion;
 	private PoolHandler m_poolHandler;
 	public List<Transform> m_firePositions = new List<Transform>();
 	private int m_fireAnchorIndex = 0;
@@ -17,6 +18,7 @@ public class DragonMissileLauncher : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
+		m_playerMotion = InstanceManager.player.dragonMotion;
 		m_rangeSize = InstanceManager.player.data.scale * 10;
 		CreatePool();
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
@@ -29,7 +31,7 @@ public class DragonMissileLauncher : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if ( m_playerBoost.IsBoostActive() )
+		if ( m_playerBoost.IsBoostActive() && !m_playerMotion.IsInsideWater() )
 		{
 			m_timer -= Time.deltaTime;
 			if ( m_timer <= 0 )

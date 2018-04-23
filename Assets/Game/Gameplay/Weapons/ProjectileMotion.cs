@@ -79,7 +79,7 @@ public class ProjectileMotion : MonoBehaviour {
 				}
 				else
 				{
-					m_direction = Vector3.Lerp(m_direction, (m_target - m_position).normalized, Time.deltaTime);
+					m_direction = Vector3.Lerp(m_direction, (m_target - m_position).normalized, Time.deltaTime * 2);
 					m_position += m_direction * m_arrowSpeed * Time.deltaTime;
 				}
 			}break;
