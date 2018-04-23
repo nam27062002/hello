@@ -272,10 +272,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	private void InitDNA(CaletySettings settingsInstance)
 	{
-        string clientVersion = GameSettings.internalVersion.ToString();
-
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
 #if !UNITY_EDITOR
+        string clientVersion = GameSettings.internalVersion.ToString();
+
 		if (settingsInstance != null)
 		{
 		string strDNAGameVersion = "UAT";
@@ -2226,11 +2226,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_AddParamLanguage(TrackingEvent e)
     {        
-        string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();
-        string value = language;
+        string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();        
         if (string.IsNullOrEmpty(language))
         {
-            value = "ERROR";
+            language = "ERROR";
         }
         else
         {
