@@ -84,6 +84,7 @@ GameObject:
   - component: {fileID: 4868651182237432}
   - component: {fileID: 114184557641357098}
   - component: {fileID: 114585341861065924}
+  - component: {fileID: 114711928036937368}
   m_Layer: 0
   m_Name: PF_dark_plant
   m_TagString: Untagged
@@ -136,16 +137,16 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1574461698360696}
-  m_LocalRotation: {x: -0.5146296, y: -0.48492926, z: -0.48492932, w: 0.51462954}
-  m_LocalPosition: {x: -164.77472, y: -77.3976, z: -20.123314}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.49202657, y: 0.50784826, z: 0.49202657, w: -0.50784826}
+  m_LocalPosition: {x: -181.5138, y: 111.99, z: 2.09}
+  m_LocalScale: {x: 1.1841904, y: 1.1841904, z: 1.1841904}
   m_Children:
   - {fileID: 4475561583598158}
   - {fileID: 4389620705332228}
   - {fileID: 4996990701331764}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -88.187004, y: -90.00001, z: 0}
 --- !u!4 &4996990701331764
 Transform:
   m_ObjectHideFlags: 1
@@ -235,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45621ed86b8be4423a139facfa23c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_burningTime: 0
+  m_burningTime: 2
   m_feedbackParticle:
     name: 
     path: 
@@ -276,7 +277,7 @@ MonoBehaviour:
     scale: 1
   m_feedbackParticleMatchDirection: 0
   m_burnParticle:
-    name: 
+    name: PF_FireProc
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -354,3 +355,18 @@ MonoBehaviour:
   m_useAnimator: 0
   m_boxelSize: 1
   m_hitRadius: 1.5
+--- !u!114 &114711928036937368
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1574461698360696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a1bc0ef8a094962879a399f7cd6fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spawnTime: 30
+  m_maxSpawns: 0
+  m_mustBedestroyed: 1
+  m_ground: []
