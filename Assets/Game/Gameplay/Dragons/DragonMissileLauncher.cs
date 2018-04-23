@@ -14,12 +14,12 @@ public class DragonMissileLauncher : MonoBehaviour {
 	private int m_fireAnchorIndex = 0;
 	public string m_projectileName;
 	private float m_rangeSize;
-
+	public float m_dragonRangeMultiplier = 10;
 	// Use this for initialization
 	void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
 		m_playerMotion = InstanceManager.player.dragonMotion;
-		m_rangeSize = InstanceManager.player.data.scale * 10;
+		m_rangeSize = InstanceManager.player.data.scale * m_dragonRangeMultiplier;
 		CreatePool();
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
 	}
