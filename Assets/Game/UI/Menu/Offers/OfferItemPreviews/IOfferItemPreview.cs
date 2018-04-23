@@ -56,12 +56,20 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// Set this preview's parent and adjust its size to fit it.
 	/// </summary>
 	/// <param name="_t">New parent!</param>
-	public virtual void SetParentAndFit(Transform _t) {
+	public virtual void SetParentAndFit(RectTransform _t) {
 		this.transform.SetParent(_t, false);
-		rectTransform.anchorMin = GameConstants.Vector2.zero;
+
+		// [AOC] Adjusting the rect transformt makes it super-difficult to keep all child hierarchy properly positioned and scaled
+		//		 Let's go with a scale change instead
+		/*rectTransform.anchorMin = GameConstants.Vector2.zero;
 		rectTransform.anchorMax = GameConstants.Vector2.one;
 		rectTransform.offsetMin = GameConstants.Vector2.zero;
-		rectTransform.offsetMax = GameConstants.Vector2.zero;
+		rectTransform.offsetMax = GameConstants.Vector2.zero;*/
+		rectTransform.localScale = new Vector3(
+			_t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon),	// Prevent division by 0
+			_t.rect.height / Mathf.Max(rectTransform.rect.height, float.Epsilon),	// Prevent division by 0
+			1f
+		);
 	}
 
 	//------------------------------------------------------------------------//
