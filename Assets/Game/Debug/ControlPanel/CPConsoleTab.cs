@@ -58,7 +58,7 @@ public class CPConsoleTab : MonoBehaviour {
 	/// Add a new line into the output console.
 	/// </summary>
 	/// <param name="_text">The text to be output.</param>
-	private void Output(string _text) {
+	private void Output(string _text, string color=null) {
         // Add new line and timestamp
         if (m_outputSb.Length > 0) m_outputSb.AppendLine(); // Don't add new line for the very first line
 
@@ -67,6 +67,11 @@ public class CPConsoleTab : MonoBehaviour {
         m_outputSb.AppendFormat("<color={4}>{0:D2}:{1:D2}:{2:D2}.{3:D2}", t.Hours, t.Minutes, t.Seconds, t.Milliseconds, Colors.WithAlpha(Colors.white, 0.25f).ToHexString("#"));   // [AOC] Unfortunately, this version of Mono still doesn't support TimeSpan formatting (added at .Net 4)
         m_outputSb.Append(": </color>");
         */
+
+        if (!string.IsNullOrEmpty(color))
+        {
+            m_outputSb.AppendFormat("<color={0}>", color);
+        }
 
         // Add text
         m_outputSb.Append(_text);
@@ -90,7 +95,7 @@ public class CPConsoleTab : MonoBehaviour {
 
         int count = sm_logs.Count;
         for (int i = 0; i < count; i++) {
-            Output(sm_logs[i]);
+            Output(sm_logs[i].message, sm_logs[i].color);
         }
     }
 
@@ -118,15 +123,26 @@ public class CPConsoleTab : MonoBehaviour {
     } 
 
     #region log
-    private static List<string> sm_logs = new List<string>();
+    private struct LogData
+    {
+        public string message;
+        public string color;
+    };
+
+    private static List<LogData> sm_logs = new List<LogData>();    
 
     private static CPConsoleTab sm_instance;
 
-    public static void Log(string line) {
-        sm_logs.Add(line);
+    public static void Log(string message, string color=null) {
+        LogData data = new LogData();
+        data.message = message;
+        data.color = color;
 
-        if (sm_instance != null && sm_instance.enabled) {
-            sm_instance.Output(line);
+        sm_logs.Add(data);
+
+
+        if (sm_instance != null && sm_instance.isActiveAndEnabled) {
+            sm_instance.Output(message, color);
         }
     }
 

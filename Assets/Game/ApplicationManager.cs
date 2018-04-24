@@ -446,7 +446,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
             */            
         }        
-    }    
+    }        
 
     #region game
     private bool Game_IsInGame { get; set; }
@@ -466,6 +466,32 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Game_OnPaused(bool value)
     {
         Game_IsPaused = value;
+    }
+
+    /// <summary>
+    /// Checks whether or not the customizer needs to reload rules and if so the cached data are reloaded.
+    /// </summary>
+    /// <returns><c>true</c> if the customizer had changes pending to be applied.</returns>
+    public bool Game_ApplyCustomizer()
+    {
+        bool rulesReloaded = HDCustomizerManager.instance.Apply();
+
+        // If rules have been reloaded then cached data have to be updated
+        if (rulesReloaded)
+        {
+            Game_OnRulesUpdated();
+        }
+
+        return rulesReloaded;
+    }
+
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    private void Game_OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions();
     }
     #endregion
 
@@ -616,7 +642,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                ControlPanel.instance.Log("GameCenterDelegate onAuthenticationFinished");
+                ControlPanel.Log("onAuthenticationFinished", ControlPanel.ELogChannel.GameCenter);
             }            
 
 #if UNITY_ANDROID
@@ -633,7 +659,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                ControlPanel.instance.Log("GameCenterDelegate onAuthenticationFailed");
+                ControlPanel.Log("onAuthenticationFailed", ControlPanel.ELogChannel.GameCenter);
             }
              
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED);
@@ -643,7 +669,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                ControlPanel.instance.Log("GameCenterDelegate onAuthenticationCancelled");
+                ControlPanel.Log("onAuthenticationCancelled", ControlPanel.ELogChannel.GameCenter);
             }
 
 #if UNITY_ANDROID
@@ -657,7 +683,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                ControlPanel.instance.Log("GameCenterDelegate onUnauthenticated");
+                ControlPanel.Log("onUnauthenticated", ControlPanel.ELogChannel.GameCenter);
             }
 
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE);
@@ -667,9 +693,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                ControlPanel.instance.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() +
+                ControlPanel.Log("onGetToken: " + kTokenDataJSON.ToString() +
                 " userID = " + GameCenterManager.SharedInstance.GetUserId() +
-                " userName = " + GameCenterManager.SharedInstance.GetUserName());
+                " userName = " + GameCenterManager.SharedInstance.GetUserName(), 
+                ControlPanel.ELogChannel.GameCenter);
             }
         }
 
@@ -677,7 +704,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Debug.Log("GameCenterDelegate onNotAuthenticatedException");
+                ControlPanel.Log("onNotAuthenticatedException", ControlPanel.ELogChannel.GameCenter);
             }
         }
 
@@ -685,21 +712,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                ControlPanel.instance.Log("GameCenterListener: onGetAchievementsInfo");
+                ControlPanel.Log("onGetAchievementsInfo", ControlPanel.ELogChannel.GameCenter);
             }
 
             foreach (KeyValuePair<string, GameCenterManager.GameCenterAchievement> kEntry in kAchievementsInfo)
             {
                 GameCenterManager.GameCenterAchievement kAchievement = (GameCenterManager.GameCenterAchievement)kEntry.Value;
 
-                Debug.Log("-----------------------------------------\nachievement: " + kEntry.Key + "\ndesc: " + kAchievement.m_strDescription + "\npercent: " + kAchievement.m_fPercentComplete + "\nunlocked: " + kAchievement.m_iIsUnlocked + "\ncurrent: " + kAchievement.m_iCurrentAmount + "\namount: " + kAchievement.m_iTotalAmount);
+                ControlPanel.Log("-----------------------------------------\nachievement: " + kEntry.Key + "\ndesc: " + kAchievement.m_strDescription + "\npercent: " + kAchievement.m_fPercentComplete + "\nunlocked: " + kAchievement.m_iIsUnlocked + "\ncurrent: " + kAchievement.m_iCurrentAmount + "\namount: " + kAchievement.m_iTotalAmount, ControlPanel.ELogChannel.GameCenter);
             }
         }
         public override void onGetLeaderboardScore(string strLeaderboardSKU, int iScore, int iRank)
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                ControlPanel.instance.Log("GameCenterListener: onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank);
+                ControlPanel.Log("onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank, ControlPanel.ELogChannel.GameCenter);
             }
         }
     }

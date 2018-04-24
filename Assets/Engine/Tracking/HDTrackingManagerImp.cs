@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
@@ -158,19 +158,21 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         int moneyUSD = 0;
+        bool isSpecialOffer = false;
         if (!string.IsNullOrEmpty(_sku))
         {
             DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
             if (def != null)
             {
                 moneyUSD = Convert.ToInt32(def.GetAsFloat("price") * 100f);
+                isSpecialOffer = def.GetAsString("type", "").Equals("offer");
             }
         }
 
         // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
         string houstonTransactionID = _storeTransactionID;
         string promotionType = null; // Not implemented yet            
-        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
+        Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isSpecialOffer);
 
         Session_IsNotifyOnPauseEnabled = true;
 	}
@@ -270,10 +272,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	private void InitDNA(CaletySettings settingsInstance)
 	{
-        string clientVersion = GameSettings.internalVersion.ToString();
-
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
 #if !UNITY_EDITOR
+        string clientVersion = GameSettings.internalVersion.ToString();
+
 		if (settingsInstance != null)
 		{
 		string strDNAGameVersion = "UAT";
@@ -620,7 +622,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
     /// <param name="moneyPrice">Price paid by the user in her currency</param>
     /// <param name="moneyUSD">Price paid by the user in cents of dollar</param>
-    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD)
+    /// <param name="isOffer"><c>true</c> if it's an offer. <c>false</c> otherwise</param>
+    public override void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD, bool isOffer)
     {
         Session_IsPayingSession = true;
 
@@ -634,7 +637,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	        }
         }
       
-        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD);
+        Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isOffer);
     }
 
     /// <summary>
@@ -1041,6 +1044,12 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Track_Crash(isFatal, errorType, errorMessage);
     }
+
+    public override void Notify_OfferShown(bool onDemand, string itemID)
+    {
+        string action = (onDemand) ? "Opened" : "Shown";
+        Track_OfferShown(action, itemID);
+    }
     #endregion
 
     #region track	
@@ -1153,12 +1162,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD)
+    private void Track_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD, bool isOffer)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Track_IAPCompleted storeTransactionID = " + storeTransactionID + " houstonTransactionID = " + houstonTransactionID + " itemID = " + itemID + 
-                " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice + " moneyUSD = " + moneyUSD);
+                " promotionType = " + promotionType + " moneyCurrencyCode = " + moneyCurrencyCode + " moneyPrice = " + moneyPrice + " moneyUSD = " + moneyUSD +
+                " isOffer = " + isOffer);
         }        
                 
         // iap event
@@ -1183,7 +1193,9 @@ public class HDTrackingManagerImp : HDTrackingManager
                 e.SetParameterValue(TRACK_PARAM_TOTAL_STORE_VISITS, TrackingPersistenceSystem.TotalStoreVisits);
             }
 
-			Track_SendEvent(e);
+            e.SetParameterValue(TRACK_PARAM_TRIGGERED, isOffer);
+
+            Track_SendEvent(e);
         }
 
         // af_purchase event
@@ -1841,6 +1853,23 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private void Track_OfferShown(string action, string itemID)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_OfferShown action = " + action + " itemID = " + itemID);
+        }
+
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.specialoffer");
+        if (e != null)
+        {            
+            Track_AddParamString(e, TRACK_PARAM_SPECIAL_OFFER_ACTION, action);
+            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
+
+            Track_SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -1950,7 +1979,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
 	private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
-	private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
+    private const string TRACK_PARAM_SPECIAL_OFFER_ACTION       = "specialOfferAction";
+    private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
 	private const string TRACK_PARAM_STEP_NAME	                = "stepName";
 	private const string TRACK_PARAM_STOP_CAUSE                 = "stopCause";
     private const string TRACK_PARAM_STORE_INSTALLED            = "storeInstalled";
@@ -1963,6 +1993,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
+    private const string TRACK_PARAM_TRIGGERED                  = "triggered";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE              = "userTime<one";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA    = "versionQualityFormula";
@@ -2195,11 +2226,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_AddParamLanguage(TrackingEvent e)
     {        
-        string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();
-        string value = language;
+        string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();        
         if (string.IsNullOrEmpty(language))
         {
-            value = "ERROR";
+            language = "ERROR";
         }
         else
         {

@@ -307,6 +307,9 @@ public class OfferPack {
 	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
 	/// <param name="_areaToCheck">Area to check.</param>
 	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
+		// Just in case
+		if(m_def == null) return false;
+
 		// Not if not featured
 		if(!m_featured) return false;
 
@@ -314,7 +317,7 @@ public class OfferPack {
 		if(!CanBeDisplayed()) return false;
 
 		// Check max views
-		if(m_viewsCount >= m_maxViews) return false;
+		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return false;
 
 		// Check area
 		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
@@ -335,6 +338,9 @@ public class OfferPack {
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
 		popup.Open();
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"));
 
 		// Update control vars and return
 		m_viewsCount++;
