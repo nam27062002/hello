@@ -9,7 +9,7 @@ Material:
   m_Name: dragon_balrog_2_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: BLENDFRESNEL DOUBLESIDED FRESNEL FXLAYER_FIRE NORMALMAP OPAQUEFRESNEL
-    OPAQUESPECULAR SPECULAR _ZWRITE_ON
+    OPAQUESPECULAR SPECULAR VERTEXOFFSET _ZWRITE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -88,6 +88,7 @@ Material:
     - _EnableOpaqueSpecular: 1
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
+    - _EnableVertexOffset: 1
     - _FireAmount: 1
     - _FireSpeed: 0.5
     - _Fresnel: 0.77
