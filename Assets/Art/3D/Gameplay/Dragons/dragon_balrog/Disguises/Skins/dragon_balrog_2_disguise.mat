@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_balrog_4_disguise
+  m_Name: dragon_balrog_2_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP SELFILLUMINATE_NORMAL SPECULAR
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 44376cd72ac8fe84aa39b8d23f4d5ebc, type: 3}
+        m_Texture: {fileID: 2800000, guid: 96c8ecfabd687c348bcbcc9d9df86370, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 90bddd7767e7bb144a9d5ea82edbaac0, type: 3}
+        m_Texture: {fileID: 2800000, guid: 361ceb41bb60e6747ad2d9a0fae502db, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: f8340db0b43a61845a4877594e7c1dfe, type: 3}
+        m_Texture: {fileID: 2800000, guid: ee5ecdd1ac03f1e438a768457b6bfd74, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -69,7 +69,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 0
+    - FXLayer: 1
     - SelfIlluminate: 0
     - _BlendMode: 0
     - _BumpScale: 1
@@ -86,9 +86,10 @@ Material:
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
+    - _EnableVertexOffset: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 2.23
+    - _Fresnel: 4.88
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -100,9 +101,9 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.8
+    - _ReflectionAmount: 0.438
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 94.4
+    - _SpecExponent: 16.09
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -113,8 +114,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.49264705, g: 0.40126252, b: 0.3803525, a: 1}
+    - _FresnelColor: {r: 0.9041097, g: 0.7636786, b: 0.9191176, a: 1}
     - _InnerLightColor: {r: 0.13235295, g: 0.13235295, b: 0.13235295, a: 1}
-    - _SecondLightColor: {r: 0, g: 0.33088237, b: 0.23504058, a: 0}
-    - _SecondLightDir: {r: 0.1389083, g: -0.32168242, b: -0.9366029, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.8455882, g: 0.062175613, b: 0.823977, a: 0}
+    - _SecondLightDir: {r: 0.4509858, g: -0.49896303, b: -0.7400322, a: 0}
+    - _Tint: {r: 0.9485294, g: 0.64862674, b: 0.7292903, a: 1}
