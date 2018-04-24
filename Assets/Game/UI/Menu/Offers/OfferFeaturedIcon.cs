@@ -158,6 +158,9 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
 		popup.Open();
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_OfferShown(true, m_targetOffer.def.GetAsString("iapSku"));
 	}
 
 	/// <summary>

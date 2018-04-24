@@ -41,6 +41,10 @@ public class PopupShopOffersPill : IPopupShopPill {
 	[SerializeField] private Text m_priceText = null;
 	[SerializeField] private TextMeshProUGUI m_previousPriceText = null;
 	[SerializeField] private GameObject m_featuredHighlight = null;
+	[Separator("Optional Decorations")]
+	[SerializeField] private UIGradient m_backgroundGradient = null;
+	[SerializeField] private UIGradient m_frameGradientLeft = null;
+	[SerializeField] private UIGradient m_frameGradientRight = null;
 
 	// Public
 	private OfferPack m_pack = null;
@@ -139,6 +143,19 @@ public class PopupShopOffersPill : IPopupShopPill {
 				m_itemSlots[i].InitFromItem(m_pack.items[i]);
 			}
 		}
+
+		// Optional decorations
+		if(m_backgroundGradient != null) {
+			m_backgroundGradient.gradient.Set(gradientSetup.pillBackgroundGradient);
+		}
+
+		if(m_frameGradientLeft != null) {
+			m_frameGradientLeft.gradient.Set(gradientSetup.pillFrameGradient);
+		}
+
+		if(m_frameGradientRight != null) {
+			m_frameGradientRight.gradient.Set(gradientSetup.pillFrameGradient);
+		}
 	}
 
 	/// <summary>
@@ -174,7 +191,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Obtain the IAP sku as defined in the App Stores.
 	/// </summary>
 	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-	override protected string GetIAPSku() {
+	override public string GetIAPSku() {
 		// Only for REAL money packs
 		if(m_currency != UserProfile.Currency.REAL) return string.Empty;
 		return m_def.GetAsString("iapSku");
