@@ -366,7 +366,7 @@ public class FireLightning : DragonBreathBehaviour {
         SetWidthCurve(m_rays2, m_widthCurve2);
 
         // Look entities to damage!
-        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude2, m_actualLength);
+        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude2 * 2, m_actualLength);
 		for (int i = 0; i < preys.Length; i++) 
 		{
 			if (preys[i].IsBurnable(m_tier) || m_type == Type.Mega) {
