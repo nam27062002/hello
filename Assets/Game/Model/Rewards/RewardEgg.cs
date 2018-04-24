@@ -100,7 +100,7 @@ namespace Metagame {
 
 			// Nothing else to do if def is null
 			if(rewardTypeDef == null) {
-				Debug.Log("<color=red>COULDN'T DO IT!</color>");
+				Debug.Log("<color=red>COULDN'T BUILD EGG REWARD!</color>");
 				return;
 			}
 

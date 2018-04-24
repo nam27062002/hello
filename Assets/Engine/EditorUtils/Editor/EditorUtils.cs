@@ -454,4 +454,57 @@ public static class EditorUtils {
 			case SerializedPropertyType.Vector4: _prop.vector4Value = default(Vector4); break;
 		}
 	}
+
+	/// <summary>
+	/// Get the current value of the property based on its type.
+	/// </summary>
+	/// <returns>The value.</returns>
+	/// <param name="_prop">Property to be checked.</param>
+	public static object GetValue(this SerializedProperty _prop) {
+		// Get the value from the right field based on type
+		switch(_prop.propertyType) {
+			case SerializedPropertyType.AnimationCurve: return _prop.animationCurveValue;
+			case SerializedPropertyType.Boolean: return _prop.boolValue;
+			case SerializedPropertyType.Bounds: return _prop.boundsValue;
+			case SerializedPropertyType.Color: return _prop.colorValue;
+			case SerializedPropertyType.Enum: return _prop.enumValueIndex;
+			case SerializedPropertyType.Float: return _prop.floatValue;
+			case SerializedPropertyType.Integer: return _prop.intValue;
+			case SerializedPropertyType.LayerMask: return _prop.intValue;
+			case SerializedPropertyType.ObjectReference: return _prop.objectReferenceValue;
+			case SerializedPropertyType.Quaternion: return _prop.quaternionValue;
+			case SerializedPropertyType.Rect: return _prop.rectValue;
+			case SerializedPropertyType.String: return _prop.stringValue;
+			case SerializedPropertyType.Vector2: return _prop.vector2Value;
+			case SerializedPropertyType.Vector3: return _prop.vector3Value;
+			case SerializedPropertyType.Vector4: return _prop.vector4Value;
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Set the value of the property based on its type.
+	/// </summary>
+	/// <param name="_prop">Property to be modified.</param>
+	/// <param name="_newValue">The value to be set.</param>
+	public static void SetValue(this SerializedProperty _prop, object _newValue) {
+		// Set the value from the right field based on type
+		switch(_prop.propertyType) {
+			case SerializedPropertyType.AnimationCurve: _prop.animationCurveValue = (AnimationCurve)_newValue; break;
+			case SerializedPropertyType.Boolean: _prop.boolValue = (bool)_newValue; break;
+			case SerializedPropertyType.Bounds: _prop.boundsValue = (Bounds)_newValue; break;
+			case SerializedPropertyType.Color: _prop.colorValue = (Color)_newValue; break;
+			case SerializedPropertyType.Enum: _prop.enumValueIndex = (int)_newValue; break;
+			case SerializedPropertyType.Float: _prop.floatValue = (float)_newValue; break;
+			case SerializedPropertyType.Integer: _prop.intValue = (int)_newValue; break;
+			case SerializedPropertyType.LayerMask: _prop.intValue = (int)_newValue; break;
+			case SerializedPropertyType.ObjectReference: _prop.objectReferenceValue = (UnityEngine.Object)_newValue; break;
+			case SerializedPropertyType.Quaternion: _prop.quaternionValue = (Quaternion)_newValue; break;
+			case SerializedPropertyType.Rect: _prop.rectValue = (Rect)_newValue; break;
+			case SerializedPropertyType.String: _prop.stringValue = (string)_newValue; break;
+			case SerializedPropertyType.Vector2: _prop.vector2Value = (Vector2)_newValue; break;
+			case SerializedPropertyType.Vector3: _prop.vector3Value = (Vector3)_newValue; break;
+			case SerializedPropertyType.Vector4: _prop.vector4Value = (Vector4)_newValue; break;
+		}
+	}
 }

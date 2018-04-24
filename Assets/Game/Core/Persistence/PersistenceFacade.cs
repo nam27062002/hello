@@ -44,6 +44,10 @@ public class PersistenceFacade
 		Popups_Init();
 
 		GameServerManager.SharedInstance.Configure();
+
+        // Tries to log in as soon as possible so the chances to have online stuff such as customizer (which may contain offers) ready when main menu is loaded are higher
+        GameServerManager.SharedInstance.Auth(null);
+
         SocialPlatformManager.SharedInstance.Init();
 	}
 
@@ -154,6 +158,9 @@ public class PersistenceFacade
                     Log("Ready lo load local persistence in game ");
 
                 Config.LocalDriver.IsLoadedInGame = true;
+
+                // We need to wait until this moment to send the first Razolytics funnel step because we need to send some information stored in the local persistence too
+                HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._00_start);
 
                 // Since local is already loaded then we consider the operation done. Sync will happen in background
                 if (onDone != null)
@@ -405,43 +412,43 @@ public class PersistenceFacade
     /// </summary>     
     private static void Popups_OpenLoadLocalCorruptedError(Action onReset)
 	{                
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_DESC";
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onReset;                
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;        
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;        
 
         // Back button is disabled in order to make sure that the user is aware when making such an important decision
-        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;
         PopupManager.PopupMessage_Open(config);        
 	}
 
     private static void Popups_OpenLoadLocalCorruptedNoAccessToCloudError(Action onReset, Action onRetry)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_OFFLINE_DESC";
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onRetry;
         config.OnCancel = onReset;
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.CancelButtonTid = "TID_GEN_CONTINUE";
 
         // Back button is disabled in order to make sure that the user is aware when making such an important decision
-        config.BackButtonStrategy = PopupMessage.Config.EBackButtonStratety.None;
+        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;
         PopupManager.PopupMessage_Open(config);
     }
 
     public static void Popups_OpenLoadLocalCorruptedButCloudOkError(Action onDone)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_LOCAL_CORRUPTED_CLOUD_SAVE_DESC";
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onDone;        
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;        
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;        
         
         PopupManager.PopupMessage_Open(config);        
     }
@@ -452,11 +459,11 @@ public class PersistenceFacade
     /// </summary>    
     public static void Popups_OpenLocalLoadPermissionError(Action onConfirm)
     {					
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_LOAD_FAILED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_LOAD_FAILED_DESC";
         config.ConfirmButtonTid = "TID_GEN_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);                
@@ -468,11 +475,11 @@ public class PersistenceFacade
     /// </summary>    
     public static void Popups_OpenLocalSaveDiskOutOfSpaceError(Action onConfirm)
     {					
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_DISABLED_SPACE_DESC";
         config.ConfirmButtonTid = "TID_GEN_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);     
@@ -484,11 +491,11 @@ public class PersistenceFacade
     /// </summary>    
     public static void Popups_OpenLocalSavePermissionError(Action onConfirm)
     {			
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_DISABLED_ACCESS_DESC";
         config.ConfirmButtonTid = "TID_GEN_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);     	        
@@ -500,11 +507,11 @@ public class PersistenceFacade
     /// </summary>    
     public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
         config.MessageTid = "Corrupted progress saved. Please, retry";
         config.ConfirmButtonTid = "TID_GEN_RETRY";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
@@ -516,11 +523,11 @@ public class PersistenceFacade
     /// </summary>    
     public static void Popups_OpenErrorConnection(Action onConfirm)
     {				
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
         config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
         config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);              
@@ -528,11 +535,11 @@ public class PersistenceFacade
 
     public static void Popups_OpenLoginComplete(int rewardAmount, Action onConfirm)
     {		
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SOCIAL_LOGIN_COMPLETE_NAME";
         config.MessageTid = "TID_SOCIAL_LOGIN_COMPLETE_DESC";
         config.MessageParams = new string[] { rewardAmount + "" };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);                
@@ -544,11 +551,11 @@ public class PersistenceFacade
     /// </summary>   
     public static void Popups_OpenLogoutWarning(bool cloudSaveEnabled, Action onConfirm, Action onCancel)
     {				
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_NAME" : "TID_SOCIAL_WARNING_LOGOUT_TITLE";
         config.MessageTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_DESC" : "TID_SOCIAL_WARNING_LOGOUT_DESC";
         config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         config.IsButtonCloseVisible = false;
@@ -575,10 +582,10 @@ public class PersistenceFacade
     /// </summary>    
     public static void Popups_OpenSyncConfirmation(Action onConfirm)
     {        
-		PopupMessage.Config config = PopupMessage.GetConfig();
+		IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_WARN_CLOUD_WRONG_CHOICE_NAME";
         config.MessageTid = "TID_SAVE_WARN_CLOUD_WRONG_CHOICE_DESC";                
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);       
@@ -586,12 +593,12 @@ public class PersistenceFacade
 
     public static void Popup_OpenMergeConflict(Action onLocal, Action onCloud)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
         config.MessageTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_DESC";
         string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
         config.MessageParams = new string[] { platformName, platformName };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onCloud;
         config.OnCancel = onLocal;
         config.IsButtonCloseVisible = false;
@@ -600,11 +607,11 @@ public class PersistenceFacade
 
     private static void Popup_OpenSyncGenericError(int errorCode, Action onConfirm)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_SYNC_FAILED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_SYNC_FAILED_DESC";
         config.MessageParams = new string[] { "" + errorCode };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
@@ -640,12 +647,12 @@ public class PersistenceFacade
 
     public static void Popup_OpenMergeWithADifferentAccount(Action onConfirm, Action onCancel)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
         config.MessageTid = "TID_SAVE_WARN_CLOUD_SWITCH_DESC";
         string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
         config.MessageParams = new string[] { platformName };
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         config.IsButtonCloseVisible = false;
@@ -654,21 +661,21 @@ public class PersistenceFacade
 
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
 	{                
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_NAME";
         config.MessageTid = "TID_SAVE_ERROR_CLOUD_INACCESSIBLE_DESC";
 
         if (onRetry == null)
         {
             config.ConfirmButtonTid = "TID_GEN_CONTINUE";            
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+            config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
             config.OnConfirm = onContinue;            
         }
         else
         {
             config.ConfirmButtonTid = "TID_GEN_RETRY";
             config.CancelButtonTid = "TID_GEN_CONTINUE";
-            config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+            config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
             config.OnConfirm = onRetry;
             config.OnCancel = onContinue;
         }
@@ -706,22 +713,22 @@ public class PersistenceFacade
         // lets the user override cloud save with local save when cloud save is corrupted
         string msg = "Corrupted cloud save was fixed";
 
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "Cloud save";
         config.MessageTid = msg;
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onContinue;
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;        
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;        
 
         PopupManager.PopupMessage_Open(config);
     }
 
     public static void Popup_OpenLocalAndCloudCorrupted(Action onReset)
 	{
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_BOTH_SAVE_CORRUPTED_NAME";
         config.MessageTid = "TID_SAVE_ERROR_BOTH_SAVE_CORRUPTED_DESC";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.IsButtonCloseVisible = false;
         config.OnConfirm = onReset;
         PopupManager.PopupMessage_Open(config);        
@@ -729,7 +736,7 @@ public class PersistenceFacade
 
     public static void Popups_OpenCloudSync(Action onConfirm, Action onCancel)
     {
-        PopupMessage.Config config = PopupMessage.GetConfig();
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
 
         long lastUploadTime = instance.Sync_LatestSyncTime;
@@ -748,7 +755,7 @@ public class PersistenceFacade
 
         config.ConfirmButtonTid = "TID_SAVE_CLOUD_SAVE_SYNC_NOW";
         config.CancelButtonTid = "TID_GEN_CONTINUE";
-        config.ButtonMode = PopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         config.IsButtonCloseVisible = false;

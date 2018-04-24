@@ -38,6 +38,7 @@ public class PendingRewardScreen : MonoBehaviour {
 	// Internal logic
 	private Step m_step;
 	private State m_state;
+	private bool m_showIntro = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -80,9 +81,17 @@ public class PendingRewardScreen : MonoBehaviour {
 	/// <summary>
 	/// Start the pending rewards flow.
 	/// </summary>
-	public void StartFlow() {
+	/// <param name="_showIntroScreen">Whether to show the intro screen or go straight to the chicha.</param>
+	public void StartFlow(bool _showIntroScreen) {
 		// Make sure all required references are set
 		ValidateReferences();
+
+		// Listen to 3D scene events - remove first to avoid receiving the event twice! (shouldn't happen, just in case)
+		m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+		m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+
+		m_sceneController.OnAnimStarted.AddListener(OnSceneAnimStarted);
+		m_sceneController.OnAnimFinished.AddListener(OnSceneAnimFinished);
 
 		// Clear 3D scene
 		m_sceneController.Clear();
@@ -90,6 +99,7 @@ public class PendingRewardScreen : MonoBehaviour {
 		// Set initial state
 		m_step = Step.INIT;
 		m_state = State.IDLE;
+		m_showIntro = _showIntroScreen;
 
 		// Hide all screens
 		for(int i = 0; i < (int)Step.FINISH; ++i) {
@@ -116,23 +126,20 @@ public class PendingRewardScreen : MonoBehaviour {
 	/// Make sure all required references are initialized.
 	/// </summary>
 	private void ValidateReferences() {
-		// 3d scene for this screen
+		// Get 3D scene reference for this screen
 		if(m_sceneController == null) {
 			MenuSceneController sceneController = InstanceManager.menuSceneController;
 			Debug.Assert(sceneController != null, "This component must be only used in the menu scene!");
 			MenuScreenScene menuScene = sceneController.GetScreenData(MenuScreen.PENDING_REWARD).scene3d;
-			if (menuScene != null) {
+			if(menuScene != null) {
 				// Get scene controller and initialize
 				m_sceneController = menuScene.GetComponent<RewardSceneController>();
-				if(m_sceneController != null) {
-					// Initialize
-					m_sceneController.InitReferences(m_rewardDragController, m_rewardInfo);
-
-					// Subscribe to listeners
-					m_sceneController.OnAnimStarted.AddListener(OnSceneAnimStarted);
-					m_sceneController.OnAnimFinished.AddListener(OnSceneAnimFinished);
-				}
 			}
+		}
+
+		// Tell the scene it will be working with this screen
+		if(m_sceneController != null) {
+			m_sceneController.InitReferences(m_rewardDragController, m_rewardInfo);
 		}
 	}
 
@@ -182,6 +189,15 @@ public class PendingRewardScreen : MonoBehaviour {
 					nextStep = Step.FINISH;
 				}
 			} break;
+
+			default: {
+				// Coming from INIT or FINISH steps: Show intro?
+				if(m_showIntro) {
+					nextStep = Step.INTRO;
+				} else {
+					nextStep = Step.REWARD;
+				}
+			} break;
 		}
 
 		// Hide tap to continue text
@@ -218,6 +234,10 @@ public class PendingRewardScreen : MonoBehaviour {
 			} break;
 
 			case Step.FINISH: {
+				// Stop listeneing the 3D scene
+				m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+
 				// Go back to main screen
 				InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;

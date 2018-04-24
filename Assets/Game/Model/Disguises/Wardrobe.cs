@@ -70,6 +70,11 @@ public class Wardrobe
 
 		// Just do it!
 		m_disguises[_skinSku] = _newSkinState;
+
+		// If skin has been acquired, notify game
+		if(_newSkinState == SkinState.OWNED) {
+			Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, _skinSku);
+		}
 	}
 
 	/// <summary>
