@@ -9,7 +9,7 @@ struct appdata_t {
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
-	float3 vLight : COLOR;
+//	float3 vLight : COLOR;
 	float3 normalWorld : NORMAL;
 #ifdef NORMALMAP
 	float3 tangentWorld : TEXCOORD2;
@@ -88,7 +88,6 @@ v2f vert(appdata_t v)
 
 	// Light Probes
 //	o.vLight = ShadeSH9(float4(normal, 1.0));
-	o.vLight = float3(0.7, 0.7, 0.7);// ShadeSH9(float4(normal, 1.0));
 
 	// Half View - See: Blinn-Phong
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
@@ -201,7 +200,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
 	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
-	fixed3 selfIlluminate = col.xyz * 1.0 * anim * detail.b;
+	fixed3 selfIlluminate = col.xyz * 1.0 * anim * detail.r;
 
 #else
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination
@@ -211,7 +210,7 @@ fixed4 frag(v2f i) : SV_Target
 //#if defined (FXLAYER_REFLECTION)
 //	col.xyz = lerp((diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate, col.xyz * _Tint.xyz + _ColorAdd.xyz, ref); //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 //#else
-	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+	col.xyz = (diffuse.xyz/* + i.vLight*/) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 //#endif
 
 // Fresnel
@@ -233,7 +232,7 @@ fixed4 frag(v2f i) : SV_Target
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);
 
-#else
+#else	// OPAQUEALPHA
 //	col.w = 0.0f;
 	float opaqueLight = 0.0;
 #if defined(FRESNEL) && defined(OPAQUEFRESNEL)
@@ -248,7 +247,7 @@ fixed4 frag(v2f i) : SV_Target
 
 	col.w = max(col.w, opaqueLight);
 	col.w *= _Tint.w;
-#endif
+#endif	// OPAQUEALPHA
 
 	return col;
 }
