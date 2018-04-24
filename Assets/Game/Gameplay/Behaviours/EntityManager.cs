@@ -200,6 +200,39 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         return m_searchList.ToArray();
     }
 
+	public int GetEntitiesInNonAlloc(Vector2 position, Vector2 dir, float amplitude, float length, Entity[] _results)
+    {
+		int numResult = 0;
+
+        float halfAmplitude = amplitude / 2.0f;
+        float angle = Mathf.Atan2(dir.y, dir.x);
+
+		int size = m_entities.Count;
+		int resultsLength = _results.Length;
+
+		for (int i = 0; i < size && numResult < resultsLength; ++i)
+        {
+            Entity e = m_entities[i];
+            if (e != null)
+            {
+                Vector2 entityPos = (Vector2)e.transform.position;
+                Vector2 inversePos = entityPos - position;
+                inversePos = inversePos.RotateRadians(-angle);
+                if (inversePos.x >= 0 && inversePos.x <= length)
+                {
+                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
+                    {
+						_results[numResult] = e;
+						numResult++;
+                    }
+                }
+            }
+        }
+
+        return numResult;
+    }
+
+
 	public int GetOverlapingCages(Vector3 position, float distance, Cage[] results)
     {
 		int numResult = 0;

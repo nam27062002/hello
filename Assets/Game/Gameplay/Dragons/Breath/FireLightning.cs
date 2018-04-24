@@ -20,6 +20,8 @@ public class FireLightning : DragonBreathBehaviour {
     public float m_offsetRays2 = 0.5f;
     public Material m_rayMaterial2;
 
+    public float m_logicDetectionSize = 1;
+
     public int m_numRays2 = 1;
 
 
@@ -57,6 +59,9 @@ public class FireLightning : DragonBreathBehaviour {
 
     Lightning[] m_rays = null;// new Lightning[3];
     Lightning[] m_rays2 = null;// new Lightning[3];
+
+	private Entity[] m_checkEntities = new Entity[50];
+	private int m_numCheckEntities = 0;
 
 
     public class Lightning
@@ -366,11 +371,11 @@ public class FireLightning : DragonBreathBehaviour {
         SetWidthCurve(m_rays2, m_widthCurve2);
 
         // Look entities to damage!
-        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude2 * 2, m_actualLength);
-		for (int i = 0; i < preys.Length; i++) 
+		m_numCheckEntities = EntityManager.instance.GetEntitiesInNonAlloc((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_logicDetectionSize * 2, m_actualLength, m_checkEntities);
+		for (int i = 0; i < m_numCheckEntities; i++) 
 		{
-			if (preys[i].IsBurnable(m_tier) || m_type == Type.Mega) {
-				AI.IMachine machine =  preys[i].machine;
+			if (m_checkEntities[i].IsBurnable(m_tier) || m_type == Type.Mega) {
+				AI.IMachine machine =  m_checkEntities[i].machine;
 				if (machine != null) {					
 					machine.Burn(transform, IEntity.Type.PLAYER, m_type == Type.Mega);
 				}
@@ -444,11 +449,11 @@ public class FireLightning : DragonBreathBehaviour {
 			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_actualLength );
 
 			Vector2 up = m_direction.RotateDegrees(90).normalized;
-			Vector3 upStart = m_mouthTransform.position + (Vector3)up * m_maxAmplitude2; 
+			Vector3 upStart = m_mouthTransform.position + (Vector3)up * m_logicDetectionSize; 
 			Gizmos.DrawLine( upStart, upStart + (Vector3)m_direction * m_actualLength );
 
 			Vector2 down = m_direction.RotateDegrees(-90).normalized;
-			Vector3 downStart = m_mouthTransform.position + (Vector3)down * m_maxAmplitude2; 
+			Vector3 downStart = m_mouthTransform.position + (Vector3)down * m_logicDetectionSize; 
 			Gizmos.DrawLine( downStart, downStart + (Vector3)m_direction * m_actualLength );
 		}
 	}
