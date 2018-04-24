@@ -210,7 +210,7 @@ fixed4 frag(v2f i) : SV_Target
 //#if defined (FXLAYER_REFLECTION)
 //	col.xyz = lerp((diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate, col.xyz * _Tint.xyz + _ColorAdd.xyz, ref); //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 //#else
-	col.xyz = (diffuse.xyz/* + i.vLight*/) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+	col.xyz = (diffuse.xyz + UNITY_LIGHTMODEL_AMBIENT.xyz/* + i.vLight*/) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 //#endif
 
 // Fresnel
