@@ -77,7 +77,7 @@ namespace AI {
 				if (m_pilot.IsActionPressed(Pilot.Action.Avoid)) {
 					m_timer = 0.25f;
 				} else if (m_data.speed > 0f) {
-					m_timer = 2f * (m_machine.position - m_target).magnitude / Mathf.Max(m_pilot.speed, m_data.speed);
+					m_timer = (m_machine.position - m_target).magnitude / Mathf.Max(m_pilot.speed, m_data.speed);
 				} else {
 					m_timer = 1f;
 				}

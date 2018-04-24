@@ -134,13 +134,13 @@ fixed4 frag(v2f i) : COLOR
 	col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0) * nAlpha;
 #endif	//DISSOLVE_ENABLED
 
-#ifndef COLOR_TINT
+#if !defined(COLOR_TINT)
 	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier * nEmission, 0.0, 1.0);
 #endif
 
 #ifdef BLENDMODE_ALPHABLEND
 
-#if COLOR_RAMP
+#if defined(COLOR_RAMP)
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * _EmissionSaturation;
 #elif !defined(COLOR_TINT)
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;

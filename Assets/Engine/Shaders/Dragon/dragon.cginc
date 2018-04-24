@@ -75,7 +75,7 @@ v2f vert(appdata_t v)
 {
 	v2f o;
 
-#if defined(FXLAYER_FIRE)
+#if defined(VERTEXOFFSET)
 	float smooth = smoothstep(0.7, -0.0, v.vertex.x);
 	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 10.0) * 0.12 * smooth;
 #endif
