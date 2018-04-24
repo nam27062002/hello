@@ -363,7 +363,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"boostSpeed":15,"panicSpeed":20,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"timeBeforeBackHome":2,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":5,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"speed":5,"idleChance":85,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"restTime":{"min":4,"max":8},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"separation":5,"oscillationSpeed":0,"oscillationAmplitude":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
+  m_serializedJson: '[{"boostSpeed":15,"panicSpeed":20,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"timeBeforeBackHome":2,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"speed":5,"dataType":"AI.Behaviour.HomeData","editorFolded":false},{"speed":5,"idleChance":85,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"restTime":{"min":4,"max":8},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"separation":5,"frequency":1,"amplitude":0,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_Firefly
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 5
@@ -437,10 +437,10 @@ MonoBehaviour:
   m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PF_feathers_3D_noblood
-    path: 
+    name: PS_Blood_Explosion
+    path: Blood
     changeStartColor: 1
-    startColor: {r: 0.2205882, g: 0.18318217, b: 0.184, a: 1}
+    startColor: {r: 0.05490196, g: 0.69803923, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:

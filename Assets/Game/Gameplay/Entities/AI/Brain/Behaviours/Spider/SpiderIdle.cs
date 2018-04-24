@@ -24,6 +24,9 @@ namespace AI {
 			private Vector3 m_target;
 
 			private IdleState m_idleState;
+			private float m_elapsedTime;
+			private float m_timeInIdle;
+			private float m_idleRandom;
 
 
 			public override StateComponentData CreateData() {
@@ -61,6 +64,13 @@ namespace AI {
 			protected override void OnUpdate() {		
 				float m = 0;
 				float d = 1f;//((SpiderIdleData)m_data).hangDownSpeed * Time.deltaTime;
+
+				if (m_idleState != IdleState.Normal) {
+					m_elapsedTime += 5f * Time.deltaTime;
+					m_pilot.SetMoveSpeed(((SpiderIdleData)m_data).hangDownSpeed);
+					m_pilot.GoTo(m_target + Vector3.right * Mathf.Sin(m_elapsedTime) * 1f * m_idleRandom);
+					m_pilot.SetDirection(Vector3.down, true);
+				}
 
 				switch (m_idleState) {
 					case IdleState.Hang_down:
@@ -113,7 +123,10 @@ namespace AI {
 						m_machine.UseGravity(false);
 						m_pilot.SetDirection(Vector3.down, true);
 						m_pilot.SetMoveSpeed(0f, false);
-						m_timer = m_data.restTime.GetRandom();
+						m_timeInIdle = m_data.restTime.GetRandom();
+						m_timer = m_timeInIdle;
+						m_idleRandom = (Random.Range(0f, 1f) < 0.5f)? -1 : 1;
+						m_elapsedTime = 0f;
 						break;
 
 					case IdleState.Hang_up:

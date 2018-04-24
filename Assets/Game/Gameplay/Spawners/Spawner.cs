@@ -609,10 +609,22 @@ public class Spawner : AbstractSpawner {
 			Gizmos.DrawWireSphere(transform.position, distance * 0.5f);
 			Gizmos.DrawWireSphere(transform.position, distance);
 
-			Gizmos.color = Colors.WithAlpha(Colors.fuchsia, 0.5f);
-			Gizmos.DrawWireSphere(transform.position, distance * 0.625f);
-			Gizmos.DrawWireSphere(transform.position, distance * 0.75f);
-			Gizmos.DrawWireSphere(transform.position, distance * 0.875f);
+			Gizmos.color = Colors.WithAlpha(Colors.slateBlue, 0.85f);
+			for (int i = 0; i < m_quantity.max; ++i) {
+				float dAngle = (2f * Mathf.PI) / m_quantity.max;
+				float d = distance * (0.5f + (0.25f * (i % 2)));
+
+				Vector3 vs = transform.position;
+				vs.x += d * Mathf.Cos(dAngle * i);
+				vs.y += d * Mathf.Sin(dAngle * i);
+
+				Vector3 ve = transform.position;
+				ve.x += distance * Mathf.Cos(dAngle * i);
+				ve.y += distance * Mathf.Sin(dAngle * i);
+
+				Gizmos.DrawLine(vs, ve);
+				Gizmos.DrawWireSphere(vs + (ve - vs) * 0.5f, 0.125f);
+			}
 		} else if (m_homePosMethod == SpawnPointSeparation.Line) {
 			Quaternion rot = Quaternion.AngleAxis(m_homePosLineRotation, Vector3.forward);
 			Vector3 start = rot * (Vector3.right * m_homePosDistance.min);
@@ -633,7 +645,7 @@ public class Spawner : AbstractSpawner {
 			Vector3 start_l2 = GameConstants.Vector3.zero;
 			Vector3 end_l2 = GameConstants.Vector3.zero;
 
-			Gizmos.color = Colors.WithAlpha(Colors.fuchsia, 0.5f);
+			Gizmos.color = Colors.WithAlpha(Colors.slateBlue, 0.85f);
 			for (int i = 0; i < m_quantity.max; ++i) {
 				start_l1 = rot * (Vector3.right * (m_homePosDistance.min + offset * i + rndArea) + Vector3.up * 0.125f) + transform.position;
 				end_l1 = rot * (Vector3.right * (m_homePosDistance.min + offset * (i + 1) - rndArea) + Vector3.up * 0.125f) + transform.position;
@@ -658,8 +670,8 @@ public class Spawner : AbstractSpawner {
 			float dAngle = (2f * Mathf.PI) / EntitiesToSpawn;
 			float randomDistance = Random.Range(distance * (0.5f + (0.25f * (_index % 2))), distance);
 
-			v.x = randomDistance * 0.5f * Mathf.Cos(dAngle * _index);
-			v.y = randomDistance * 0.5f * Mathf.Sin(dAngle * _index);
+			v.x = randomDistance * Mathf.Cos(dAngle * _index);
+			v.y = randomDistance * Mathf.Sin(dAngle * _index);
 		} else if (m_homePosMethod == SpawnPointSeparation.Line) {
 			float offset = distance / EntitiesToSpawn;
 
