@@ -170,7 +170,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 		}
 
-        m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
+        m_mouthTransform = transform.FindTransformRecursive("Fire_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
 
 		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
