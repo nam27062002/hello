@@ -202,7 +202,8 @@ public class HDTrackingManager
     /// <param name="moneyCurrencyCode">Code of the currency that the user used to pay for the item</param>
     /// <param name="moneyPrice">Price paid by the user in her currency</param>
     /// <param name="moneyUSD">Price paid by the user in cents of dollar</param>
-    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD) {}
+    /// <param name="isOffer"><c>true</c> if it's an offer. <c>false</c> otherwise</param>
+    public virtual void Notify_IAPCompleted(string storeTransactionID, string houstonTransactionID, string itemID, string promotionType, string moneyCurrencyCode, float moneyPrice, int moneyUSD, bool isOffer) {}
 
     /// <summary>
     /// Called when the user completed a purchase by using game resources (either soft currency or hard currency)
@@ -386,6 +387,13 @@ public class HDTrackingManager
     public virtual void Notify_HungryLetterCollected() {}
 
     public virtual void Notify_Crash(bool isFatal, string errorType, string errorMessage) {}
+
+    /// <summary>
+    /// Notifies that the user has seen an offer.
+    /// </summary>
+    /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
+    /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
+    public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
     #endregion
 
     #region log
