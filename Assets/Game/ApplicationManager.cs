@@ -290,9 +290,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDTrackingManager.Instance.Update();
         HDCustomizerManager.instance.Update();  
 
-		#if UNITY_EDITOR
 		GameServerManager.SharedInstance.Update();
-		#endif
 
         if (NeedsToRestartFlow)
         {
