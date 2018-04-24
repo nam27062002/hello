@@ -372,7 +372,7 @@ public class FireLightning : DragonBreathBehaviour {
 			if (preys[i].IsBurnable(m_tier) || m_type == Type.Mega) {
 				AI.IMachine machine =  preys[i].machine;
 				if (machine != null) {					
-					machine.Burn(transform, IEntity.Type.PLAYER);
+					machine.Burn(transform, IEntity.Type.PLAYER, m_type == Type.Mega);
 				}
 			}
 			/*
@@ -385,6 +385,8 @@ public class FireLightning : DragonBreathBehaviour {
         m_bounds2D.center = m_mouthTransform.position;
 		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
 		m_bounds2D.height = Mathf.Max( m_actualLength, m_maxAmplitude);
+
+		base.Breath();
 	}
 
 
@@ -415,9 +417,9 @@ public class FireLightning : DragonBreathBehaviour {
     {
     	if ( m_dragon )
     	{
-//			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
-//			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
-//	        m_length *= transform.localScale.x;
+			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
+			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+			m_length *= transform.localScale.x;
 		}
     }
 
@@ -440,6 +442,14 @@ public class FireLightning : DragonBreathBehaviour {
 		{
 			Gizmos.color = Color.magenta;
 			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_actualLength );
+
+			Vector2 up = m_direction.RotateDegrees(90).normalized;
+			Vector3 upStart = m_mouthTransform.position + (Vector3)up * m_maxAmplitude2; 
+			Gizmos.DrawLine( upStart, upStart + (Vector3)m_direction * m_actualLength );
+
+			Vector2 down = m_direction.RotateDegrees(-90).normalized;
+			Vector3 downStart = m_mouthTransform.position + (Vector3)down * m_maxAmplitude2; 
+			Gizmos.DrawLine( downStart, downStart + (Vector3)m_direction * m_actualLength );
 		}
 	}
 
@@ -479,4 +489,8 @@ public class FireLightning : DragonBreathBehaviour {
 			m_insideWater = false;
 		}
 	}
+
+
+
+
 }
