@@ -184,16 +184,25 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             Entity e = m_entities[i];
             if (e != null)
             {
-                Vector2 entityPos = (Vector2)e.transform.position;
-                Vector2 inversePos = entityPos - position;
-                inversePos = inversePos.RotateRadians(-angle);
-                if (inversePos.x >= 0 && inversePos.x <= length)
-                {
-                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
-                    {
-                        m_searchList.Add(e);
-                    }
-                }
+				if (e.circleArea == null)
+            	{
+	                Vector2 entityPos = (Vector2)e.transform.position;
+	                Vector2 inversePos = entityPos - position;
+	                inversePos = inversePos.RotateRadians(-angle);
+	                if (inversePos.x >= 0 && inversePos.x <= length)
+	                {
+	                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
+	                    {
+	                        m_searchList.Add(e);
+	                    }
+	                }
+	          	}else{
+					float distanceSqr = e.circleArea.SqrDistanceToSegment( position, position + dir * length);
+					if ( distanceSqr <= (amplitude + e.circleArea.radius) * (amplitude + e.circleArea.radius) )
+					{
+						m_searchList.Add(e);
+					}
+	          	}
             }
         }
 
@@ -215,21 +224,38 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             Entity e = m_entities[i];
             if (e != null)
             {
-                Vector2 entityPos = (Vector2)e.transform.position;
-                Vector2 inversePos = entityPos - position;
-                inversePos = inversePos.RotateRadians(-angle);
-                if (inversePos.x >= 0 && inversePos.x <= length)
+            	if (e.circleArea == null)
+            	{
+	                Vector2 entityPos = (Vector2)e.transform.position;
+	                Vector2 inversePos = entityPos - position;
+	                inversePos = inversePos.RotateRadians(-angle);
+	                if (inversePos.x >= 0 && inversePos.x <= length)
+	                {
+	                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
+	                    {
+							_results[numResult] = e;
+							numResult++;
+	                    }
+	                }
+                }
+                else
                 {
-                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
-                    {
+					float distanceSqr = e.circleArea.SqrDistanceToSegment( position, position + dir * length);
+					if ( distanceSqr <= (amplitude + e.circleArea.radius) * (amplitude + e.circleArea.radius) )
+					{
 						_results[numResult] = e;
 						numResult++;
-                    }
+					}
                 }
             }
         }
 
         return numResult;
+
+
+
+        // 1 seach closest line point
+        // Check distance to center?
     }
 
 
@@ -244,7 +270,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             if (e != null)
             {
 				float sqrMagnitude = (position - e.behaviour.centerTarget.position).sqrMagnitude;
-				if ( sqrMagnitude <= distance * distance );	
+				if ( sqrMagnitude <= distance * distance )
                 {
                     results[numResult] = e;
                     numResult++;
