@@ -217,7 +217,7 @@ fixed4 frag(v2f i) : SV_Target
 #if defined(DYNAMIC_LIGHT)
 	col.xyz *= diffuse + i.vLight;
 #else
-	col.xyz *= diffuse;
+	col.xyz *= diffuse + UNITY_LIGHTMODEL_AMBIENT.xyz;
 #endif
 
 #if defined(SPECULAR)
