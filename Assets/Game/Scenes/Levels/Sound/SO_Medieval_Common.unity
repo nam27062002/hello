@@ -497,6 +497,60 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2a59ea7b60218af41aeb0422f10aea3a, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &651877703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 651877706}
+  - component: {fileID: 651877705}
+  - component: {fileID: 651877704}
+  m_Layer: 16
+  m_Name: hd_music_amb_04_dark
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &651877704
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 651877703}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 550, y: 400, z: 50}
+  m_Center: {x: -1.8565674, y: 72.98358, z: -1.5}
+--- !u!114 &651877705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 651877703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78c58ff63a8ed4da39b03f6d907bcbce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ambientSound: hd_music_amb_04
+--- !u!4 &651877706
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 651877703}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -933, y: -334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &725563447
 GameObject:
   m_ObjectHideFlags: 0
