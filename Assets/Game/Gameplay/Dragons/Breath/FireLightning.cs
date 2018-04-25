@@ -22,6 +22,8 @@ public class FireLightning : DragonBreathBehaviour {
 
     public float m_logicDetectionSize = 1;
 
+    private float relativeSizeMultiplier = 1;
+
     public int m_numRays2 = 1;
 
 
@@ -364,14 +366,14 @@ public class FireLightning : DragonBreathBehaviour {
             m_rays2[i].Draw(p1, p2);
         }
 
-        SetWidthMultiplier(m_rays, m_widthMultiplier);
-        SetWidthMultiplier(m_rays2, m_widthMultiplier2);
+		SetWidthMultiplier(m_rays, m_widthMultiplier * relativeSizeMultiplier);
+		SetWidthMultiplier(m_rays2, m_widthMultiplier2 * relativeSizeMultiplier);
 
         SetWidthCurve(m_rays, m_widthCurve);
         SetWidthCurve(m_rays2, m_widthCurve2);
 
         // Look entities to damage!
-		m_numCheckEntities = EntityManager.instance.GetEntitiesInNonAlloc((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_logicDetectionSize * 2, m_actualLength, m_checkEntities);
+		m_numCheckEntities = EntityManager.instance.GetEntitiesInNonAlloc((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_logicDetectionSize * 2 * relativeSizeMultiplier, m_actualLength, m_checkEntities);
 		for (int i = 0; i < m_numCheckEntities; i++) 
 		{
 			if (m_checkEntities[i].IsBurnable(m_tier) || m_type == Type.Mega) {
@@ -399,6 +401,14 @@ public class FireLightning : DragonBreathBehaviour {
 	override protected void BeginFury( Type _type ) 
 	{
 		base.BeginFury( _type );
+
+		if (_type == Type.Mega){
+			relativeSizeMultiplier = 2;
+		}else{
+			relativeSizeMultiplier = 1;
+		}
+
+
 		if ( m_particleStart )
 		{
 			m_particleStart.transform.position = m_mouthTransform.position;
