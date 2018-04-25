@@ -1191,7 +1191,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 
 			m_direction = m_impulse.normalized;
-			RotateToDirection( m_direction );
+			RotateToDirection( impulse );
 		}
 		else
 		{
@@ -1275,7 +1275,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		float impulseMag = m_impulse.magnitude;
 		m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
-		RotateToDirection(m_direction);
+		RotateToDirection(impulse);
 
         if ( !m_canMoveInsideWater )
         {
