@@ -14,6 +14,7 @@ public class ElectricBoostArea : MonoBehaviour {
 	public float m_waterMultiplier = 2;
 	float m_extraRadius;
 	DragonBoostBehaviour m_boost;
+	DragonBreathBehaviour m_breath;
 	DragonMotion m_motion;
 	private float m_originalRadius;
 	private bool m_active = false;
@@ -24,6 +25,7 @@ public class ElectricBoostArea : MonoBehaviour {
 		m_originalRadius = m_circle.radius;
 		m_rect = new Rect();
 		m_boost = InstanceManager.player.dragonBoostBehaviour;
+		m_breath = InstanceManager.player.breathBehaviour;
 		m_motion = InstanceManager.player.dragonMotion;
 		m_extraRadius = 1;
 		m_tier = InstanceManager.player.data.tier;
@@ -33,7 +35,7 @@ public class ElectricBoostArea : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if ( m_boost.IsBoostActive() )
+		if ( m_boost.IsBoostActive() || m_breath.IsFuryOn())
 		{
 			if (!m_active)
 			{
@@ -43,7 +45,7 @@ public class ElectricBoostArea : MonoBehaviour {
 			for (int i = 0; i < m_numCheckEntities; i++) 
 			{
 				Entity prey = m_checkEntities[i];
-				if ( prey.IsBurnable() && prey.IsBurnable(m_tier))
+				if ( prey.IsBurnable() && (prey.IsBurnable(m_tier) || ( m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega )))
 				{
 					AI.IMachine machine =  prey.machine;
 					if (machine != null) {
