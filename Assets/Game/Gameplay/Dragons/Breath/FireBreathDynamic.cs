@@ -78,11 +78,18 @@ public class FireBreathDynamic : MonoBehaviour
 	private float m_showFlameTimer = 0.0f;
     private bool m_showFlame = false;
 
-    public List<ParticleSystem> m_fireParticles;
-	public List<int> m_fireParticlesMaxParticles;
+    [System.Serializable]
+    public struct ParticleSetup
+    {
+    	public string name;
+    	public Transform anchor;
+    }
 
-	public List<ParticleSystem> m_underWaterParticles;
-	public List<int> m_underWaterParticlesMaxParticles;
+	public List<ParticleSetup> m_fireParticles;
+	protected List<ParticleSystem> m_fireParticlesInstances = new List<ParticleSystem>();
+
+	public List<ParticleSetup> m_underWaterParticles;
+	protected List<ParticleSystem> m_underWaterParticlesInstances = new List<ParticleSystem>();
 
 	private bool m_insideWater = false;
 	private float m_waterHeigth = 0;
@@ -128,17 +135,34 @@ public class FireBreathDynamic : MonoBehaviour
 
         m_collisionMaxDistance *= 2.0f;
 
-        for (int i = 0; i < m_fireParticles.Count; i++)
-            m_fireParticles[i].transform.SetLocalScale(m_effectScale);
+        for (int i = 0; i < m_fireParticlesInstances.Count; i++)
+            m_fireParticlesInstances[i].transform.SetLocalScale(m_effectScale);
 
-        for (int i = 0; i < m_underWaterParticles.Count; i++)
-            m_underWaterParticles[i].transform.SetLocalScale(m_effectScale);
+        for (int i = 0; i < m_underWaterParticlesInstances.Count; i++)
+            m_underWaterParticlesInstances[i].transform.SetLocalScale(m_effectScale);
 
     }
 
     // Use this for initialization
     void Start () 
 	{
+		// Instantiate all particles
+		int max;
+		max = m_fireParticles.Count;
+		for (int i = 0; i < max; i++) {
+			ParticleSystem ps = ParticleManager.InitLeveledParticle( m_fireParticles[i].name, m_fireParticles[i].anchor);
+			if ( ps != null )
+				m_fireParticlesInstances.Add( ps );
+		}
+
+		max = m_underWaterParticles.Count;
+		for (int i = 0; i < max; i++) {
+			ParticleSystem ps = ParticleManager.InitLeveledParticle( m_underWaterParticles[i].name, m_underWaterParticles[i].anchor);
+			if ( ps != null )
+				m_underWaterParticlesInstances.Add( ps );
+		}
+
+
 		m_WaterLayerMask = 1 << LayerMask.NameToLayer("Water");
         m_AllLayerMask = 0;
         for (int i = 0; i < m_collisionPrefabs.Length; i++)
@@ -322,21 +346,21 @@ public class FireBreathDynamic : MonoBehaviour
 
     void SetParticleCollisionsPlane( Transform _tr )
     {
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			m_fireParticles[i].collision.SetPlane(0, _tr);
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			m_fireParticlesInstances[i].collision.SetPlane(0, _tr);
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			m_underWaterParticles[i].collision.SetPlane(0, _tr);
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			m_underWaterParticlesInstances[i].collision.SetPlane(0, _tr);
     }
 
     bool HasParticleAlive()
     {
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			if (m_fireParticles[i].IsAlive())
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			if (m_fireParticlesInstances[i].IsAlive())
 				return true;
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			if (m_underWaterParticles[i].IsAlive())
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			if (m_underWaterParticlesInstances[i].IsAlive())
 				return true;
 		return false;
     }
@@ -348,23 +372,23 @@ public class FireBreathDynamic : MonoBehaviour
 			gameObject.active = true;
 			m_showFlame = !insideWater;
     		// Check if inside water!
-			for( int i = 0; i<m_fireParticles.Count; i++ )
+			for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
 			{
 				if (!insideWater)
-					m_fireParticles[i].Play();
+					m_fireParticlesInstances[i].Play();
 			}
 
-			for( int i = 0; i<m_underWaterParticles.Count; i++ )
+			for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
 				if (insideWater)
-					m_underWaterParticles[i].Play();
+					m_underWaterParticlesInstances[i].Play();
     	}
     	else
     	{
-			for( int i = 0; i<m_fireParticles.Count; i++ )
-				m_fireParticles[i].Stop();
+			for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+				m_fireParticlesInstances[i].Stop();
 
-			for( int i = 0; i<m_underWaterParticles.Count; i++ )
-				m_underWaterParticles[i].Stop();
+			for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+				m_underWaterParticlesInstances[i].Stop();
 
 			m_showFlame = false;
     	}
@@ -377,21 +401,21 @@ public class FireBreathDynamic : MonoBehaviour
 		m_insideWater = true;
 		m_showFlame = false;
 		m_waterHeigth = transform.position.y;
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			m_fireParticles[i].Stop();
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			m_fireParticlesInstances[i].Stop();
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			m_underWaterParticles[i].Play();
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			m_underWaterParticlesInstances[i].Play();
     }
 
     public void SwitchToNormalMode()
     {
 		m_insideWater = false;
 		m_showFlame = true;
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			m_fireParticles[i].Play();
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			m_fireParticlesInstances[i].Play();
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			m_underWaterParticles[i].Stop();
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			m_underWaterParticlesInstances[i].Stop();
     }
 }

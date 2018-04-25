@@ -115,19 +115,19 @@ public class DragonParticleController : MonoBehaviour
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
 		
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
-		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
+		m_levelUpInstance = ParticleManager.InitParticle(m_levelUp, m_levelUpAnchor);
 		// m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
 		if (!string.IsNullOrEmpty(m_reviveParticle)){
-			m_reviveInstance = InitLeveledParticle( m_reviveParticle, null );
+			m_reviveInstance = ParticleManager.InitLeveledParticle( m_reviveParticle, null );
 		}
-		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
+		m_bubblesInstance = ParticleManager.InitParticle(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
 			m_defaultRate = m_bubblesInstance.emission.rateOverTimeMultiplier;
 			m_rateMultiplier = m_defaultRate * m_bubblesDrowningMultiplier;
 		}
 
-		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
+		m_cloudTrailInstance = ParticleManager.InitParticle(m_cloudTrail, m_cloudTrailAnchor);
 		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
 		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
 		m_dragonEquip = transform.parent.GetComponent<DragonEquip>();
@@ -140,7 +140,7 @@ public class DragonParticleController : MonoBehaviour
 			m_waterExitSplashHandler = ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
 
 
-		m_skimmingInstance = InitParticles(m_skimmingParticle, m_skimmingAnchor);
+		m_skimmingInstance = ParticleManager.InitParticle(m_skimmingParticle, m_skimmingAnchor);
 
 		m_skimmingRay = new Ray();
 		m_skimmingRay.direction = Vector3.down;
@@ -148,12 +148,12 @@ public class DragonParticleController : MonoBehaviour
 		m_waterLayer = 1<<LayerMask.NameToLayer("Water");
 
 		if (m_waterAirLimitParticle != null)
-			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
+			m_waterAirLimitInstance = ParticleManager.InitParticle( m_waterAirLimitParticle, m_dragonEat.mouth);
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
-		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
+		m_hiccupInstance = ParticleManager.InitLeveledParticle( m_hiccupParticle, m_hiccupAnchor);
 
 		if (dragonAnimEvents != null)
 			dragonAnimEvents.onHiccupEvent += OnHiccup;
@@ -178,7 +178,7 @@ public class DragonParticleController : MonoBehaviour
 
 
 		if (!string.IsNullOrEmpty(m_megaFireRush)){
-			m_megaFireRushInstance = InitLeveledParticle( m_megaFireRush, m_megaFireRushAnchor );
+			m_megaFireRushInstance = ParticleManager.InitLeveledParticle( m_megaFireRush, m_megaFireRushAnchor );
 		}
 	}
 
@@ -331,69 +331,6 @@ public class DragonParticleController : MonoBehaviour
 
 #endif
 
-	}
-
-	private ParticleSystem InitLeveledParticle( string particle, Transform _anchor)
-	{
-		ParticleSystem ret = null;
-		for(  	FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
-				level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
-				level = level - 1
-				)
-		{
-			string path = "";
-			switch(level) {
-				case FeatureSettings.ELevel5Values.very_low:	
-						path = "Particles/VeryLow/";
-					break;
-				case FeatureSettings.ELevel5Values.low:
-						path = "Particles/Low/";
-					break;
-				case FeatureSettings.ELevel5Values.mid:
-						path = "Particles/Master/";
-					break;
-				case FeatureSettings.ELevel5Values.high:
-						path = "Particles/High/";
-					break;
-				case FeatureSettings.ELevel5Values.very_high:
-						path = "Particles/VeryHigh/";
-					break;
-			}
-			if ( !string.IsNullOrEmpty(path) )
-			{
-				GameObject go = Resources.Load<GameObject>( path + particle );
-				if ( go != null )
-				{
-					 ret = InitParticles( go,  _anchor);
-				}
-			}
-		}
-		return ret;
-	}
-
-	private ParticleSystem InitParticles(string particle, Transform _anchor)
-	{
-		ParticleSystem ret = null;
-		GameObject go = Resources.Load<GameObject>( "Particles/Master/" + particle );
-		if ( go != null )
-		{
-			 ret = InitParticles( go,  _anchor);
-		}
-		return ret;
-	}
-
-	private ParticleSystem InitParticles(GameObject _prefab, Transform _anchor)
-	{
-		if(_prefab == null) return null;
-
-		GameObject go = Instantiate(_prefab);
-		ParticleSystem psInstance = go.GetComponent<ParticleSystem>();
-		if(psInstance != null) {
-			psInstance.transform.SetParentAndReset(_anchor);
-			psInstance.Stop();
-			go.SetActive(false);
-		}
-		return psInstance;
 	}
 
 	void OnLevelUp( DragonData data )
