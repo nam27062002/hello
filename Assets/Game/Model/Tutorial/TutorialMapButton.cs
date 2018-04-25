@@ -73,6 +73,8 @@ public class TutorialMapButton : MonoBehaviour {
 	private void StartAnim(Transform _t, Reward _reward) {
 		m_timer.Start(500f);
 		m_state = State.Intro;
+
+		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
 	}
 
 	void Update() {
