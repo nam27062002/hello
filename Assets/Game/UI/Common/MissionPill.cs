@@ -86,11 +86,13 @@ public class MissionPill : MonoBehaviour {
 	/// Default destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
-		if(FeatureSettingsManager.IsControlPanelEnabled) {
-			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		if (ApplicationManager.IsAlive) {
+			// Unsubscribe from external events
+			Messenger.RemoveListener<Mission> (MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+			Messenger.RemoveListener<Mission, Mission.State, Mission.State> (MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+			if (FeatureSettingsManager.IsControlPanelEnabled) {
+				Messenger.RemoveListener (MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+			}
 		}
 	}
 
