@@ -83,6 +83,7 @@ public class FireBreathDynamic : MonoBehaviour
     {
     	public string name;
     	public Transform anchor;
+    	public bool deactivate;
     }
 
 	public List<ParticleSetup> m_fireParticles;
@@ -151,8 +152,9 @@ public class FireBreathDynamic : MonoBehaviour
 		max = m_fireParticles.Count;
 		for (int i = 0; i < max; i++) {
 			ParticleSystem ps = ParticleManager.InitLeveledParticle( m_fireParticles[i].name, m_fireParticles[i].anchor);
-			if ( ps != null )
+			if ( ps != null ){
 				m_fireParticlesInstances.Add( ps );
+			}
 		}
 
 		max = m_underWaterParticles.Count;
@@ -376,19 +378,33 @@ public class FireBreathDynamic : MonoBehaviour
 			{
 				if (!insideWater)
 					m_fireParticlesInstances[i].Play();
+				m_fireParticlesInstances[i].gameObject.SetActive(true);
 			}
 
 			for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			{
 				if (insideWater)
 					m_underWaterParticlesInstances[i].Play();
+				m_underWaterParticlesInstances[i].gameObject.SetActive(true);
+			}
     	}
     	else
     	{
 			for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			{
 				m_fireParticlesInstances[i].Stop();
+				if ( m_fireParticles[i].deactivate ){
+					m_fireParticlesInstances[i].gameObject.SetActive(false);	
+				}
+			}
 
 			for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			{
 				m_underWaterParticlesInstances[i].Stop();
+				if ( m_underWaterParticles[i].deactivate ){
+					m_underWaterParticlesInstances[i].gameObject.SetActive(false);	
+				}
+			}
 
 			m_showFlame = false;
     	}
