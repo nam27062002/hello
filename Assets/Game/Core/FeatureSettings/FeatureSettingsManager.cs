@@ -1380,12 +1380,21 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         get
         {
+			// When the application is not alive that means that the application is being shutting down so ServerManager might have already been destroyed so we don't want
+			// to create it again
+			if (ApplicationManager.IsAlive) 
+			{
 #if UNITY_EDITOR
-            return true;
+				return true;
 #else
-            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);               
+	            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+	            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);               
 #endif
+			} 
+			else 
+			{
+				return false;
+			}
         }
     }
 

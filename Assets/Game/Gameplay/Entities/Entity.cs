@@ -98,10 +98,12 @@ public class Entity : IEntity {
 	}
 
 	void OnDestroy() {
-		if (EntityManager.instance != null) {
-			EntityManager.instance.UnregisterEntity(this);
+		if (ApplicationManager.IsAlive) {
+			if (EntityManager.instance != null) {
+				EntityManager.instance.UnregisterEntity (this);
+			}
+			Messenger.RemoveListener (MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 		}
-		Messenger.RemoveListener(MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 
 	private void InitFromDef() {
