@@ -103,8 +103,12 @@ public class DragonParticleController : MonoBehaviour
 	public ParticleData m_landingParticle;
 	ParticleSystem m_landingInstance;
 
-	private List<ParticleSystem> m_toDeactivate = new List<ParticleSystem>();
+	[Space]
+	public string m_megaFireRush = "Dragon/PS_Revive";
+	public Transform m_megaFireRushAnchor;
+	private ParticleSystem m_megaFireRushInstance;
 
+	private List<ParticleSystem> m_toDeactivate = new List<ParticleSystem>();
 
 	void Start () 
 	{
@@ -171,6 +175,11 @@ public class DragonParticleController : MonoBehaviour
 			m_landingInstance = go.GetComponent<ParticleSystem>();
 			m_landingInstance.gameObject.SetActive(false);
 		}
+
+
+		if (!string.IsNullOrEmpty(m_megaFireRush)){
+			m_megaFireRushInstance = InitLeveledParticle( m_megaFireRush, m_megaFireRushAnchor );
+		}
 	}
 
 	void OnEnable() {
@@ -181,6 +190,7 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLost);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardFireRush);
 	}
 
 	void OnDisable()
@@ -191,6 +201,7 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLost);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardFireRush);
 	}
 
 	void OnGameAreaEnter()
@@ -455,6 +466,16 @@ public class DragonParticleController : MonoBehaviour
 		}
 		m_alive = true;
 		CheckBodyParts();
+	}
+
+	void OnPrewardFireRush( DragonBreathBehaviour.Type _type, float duration )
+	{
+		if ( _type == DragonBreathBehaviour.Type.Mega && m_megaFireRushInstance != null)
+		{
+			m_megaFireRushInstance.gameObject.SetActive(true);
+			m_megaFireRushInstance.Play();
+			m_toDeactivate.Add( m_megaFireRushInstance );
+		}
 	}
 
 	public void OnShieldLost( DamageType _damageType, Transform _tr)
