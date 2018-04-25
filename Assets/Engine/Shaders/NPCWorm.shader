@@ -38,7 +38,7 @@ Shader "Hungry Dragon/NPC/NPC worm"
 			#include "HungryDragon.cginc"
 
 			#define FRESNEL
-			#define DYNAMIC_LIGHT
+//			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"

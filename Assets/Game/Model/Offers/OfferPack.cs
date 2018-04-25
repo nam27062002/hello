@@ -397,7 +397,7 @@ public class OfferPack {
 
 		// Skins
 		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
-			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) == Wardrobe.SkinState.LOCKED) return false;
+			if(profile.wardrobe.GetSkinState(m_skinsUnlocked[i]) == Wardrobe.SkinState.LOCKED) return false;
 		}
 		for(int i = 0; i < m_skinsOwned.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) != Wardrobe.SkinState.OWNED) return false;
