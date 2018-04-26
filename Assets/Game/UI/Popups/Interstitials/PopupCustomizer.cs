@@ -70,7 +70,7 @@ public class PopupCustomizer : MonoBehaviour {
 	/// </summary>
 	public void Awake() {
 		// Connect the buttons
-		for(int i = 0; i < m_buttons; ++i) {
+		for(int i = 0; i < m_buttons.Count; ++i) {
 			int btnIdx = i;	// Delta expressions and iterators -_-
 			m_buttons[i].onClick.AddListener(() => { OnButton(btnIdx); });
 		}
