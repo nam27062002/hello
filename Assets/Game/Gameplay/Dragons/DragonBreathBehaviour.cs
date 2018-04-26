@@ -214,6 +214,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			if (Input.GetKeyDown(KeyCode.F)) {
 				AddFury(m_furyMax);
 			}
+			else if (Input.GetKeyDown(KeyCode.G)) {
+				UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
+			}
 			#endif
 
 		// Cheat for infinite fire

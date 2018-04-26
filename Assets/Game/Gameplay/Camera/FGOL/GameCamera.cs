@@ -451,7 +451,7 @@ public class GameCamera : MonoBehaviour
 
 	private void OnFuryPrewarm(DragonBreathBehaviour.Type _type, float _duration)
 	{
-		m_megaFirePrewarmTimer = m_megaFirePrewarmDuration = _duration;
+		m_megaFirePrewarmTimer = m_megaFirePrewarmDuration = _duration * 2;
 	}
 
     private void CountDownEnded()
