@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_balrog_2_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FXLAYER_NONE NORMALMAP OPAQUEALPHA OPAQUESPECULAR SELFILLUMINATE_BLINKLIGHTS
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA OPAQUESPECULAR SELFILLUMINATE_BLINKLIGHTS
     SPECULAR _ZWRITE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
@@ -82,7 +82,7 @@ Material:
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
     - _EnableDoublesided: 0
-    - _EnableFresnel: 0
+    - _EnableFresnel: 1
     - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 1
@@ -91,7 +91,7 @@ Material:
     - _EnableVertexOffset: 0
     - _FireAmount: 1
     - _FireSpeed: 0.5
-    - _Fresnel: 0.77
+    - _Fresnel: 3.93
     - _Glossiness: 0.5
     - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
@@ -102,7 +102,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
-    - _SpecExponent: 20
+    - _SpecExponent: 16.5
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
@@ -114,8 +114,8 @@ Material:
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 0.5191933, g: 0.58476615, b: 0.71323526, a: 1}
     - _InnerLightColor: {r: 0.26894763, g: 0.5294118, b: 0.14403117, a: 1}
     - _SecondLightColor: {r: 0.2867647, g: 0.30720082, b: 0.38235295, a: 0}
-    - _SecondLightDir: {r: 0.53888404, g: 0.5083812, b: -0.67167896, a: 0}
-    - _Tint: {r: 0.7520545, g: 0.78676474, b: 0.78389215, a: 1}
+    - _SecondLightDir: {r: -0.008431983, g: 0.5227834, b: -0.85242385, a: 0}
+    - _Tint: {r: 0.6494378, g: 0.6691177, b: 0.667489, a: 1}
