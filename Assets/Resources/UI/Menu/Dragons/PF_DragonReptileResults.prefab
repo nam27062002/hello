@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 189862}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -336.5681, y: 59.622375, z: 6.722495}
+  m_LocalPosition: {x: -200.27171, y: -535.46484, z: -60.586334}
   m_LocalScale: {x: 0.85, y: 0.85, z: 0.85}
   m_Children:
   - {fileID: 4146558563236182}
@@ -61,6 +61,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_reptile
+  m_altAnimConfigs: []
+  m_hasFire: 0
+  m_dragonFlameStandard: {fileID: 0}
+  m_bloodParticle: {fileID: 0}
 --- !u!114 &11458582
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -594,7 +598,7 @@ GameObject:
   - component: {fileID: 137008733369567274}
   m_Layer: 0
   m_Name: Dragon_Reptilius_HI
-  m_TagString: Untagged
+  m_TagString: DragonBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1541,6 +1545,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 445638}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114067764206414166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1591,6 +1596,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 445638}
   m_worldPositionStays: 0
+  m_resetScale: 0
 --- !u!114 &114505851803689070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1629,6 +1635,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 445638}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114601820443221808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1667,6 +1674,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail3
   m_parentRoot: {fileID: 445638}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114724625102186780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1693,6 +1701,7 @@ MonoBehaviour:
   m_parentName: Dragon_Spine_3
   m_parentRoot: {fileID: 445638}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114906968710705972
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1707,6 +1716,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail2
   m_parentRoot: {fileID: 445638}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114963034706219714
 MonoBehaviour:
   m_ObjectHideFlags: 1
