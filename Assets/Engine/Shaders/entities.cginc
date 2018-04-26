@@ -1,6 +1,6 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-#undef DYNAMIC_LIGHT
+//#undef DYNAMIC_LIGHT
 
 struct appdata_t
 {
@@ -213,10 +213,11 @@ fixed4 frag(v2f i) : SV_Target
 	float3 normalDirection = i.normalWorld;
 #endif
 
-
-#if defined(DYNAMIC_LIGHT)
 	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
+#if defined(DYNAMIC_LIGHT)
 	col.xyz *= diffuse + i.vLight;
+#else
+	col.xyz *= diffuse + UNITY_LIGHTMODEL_AMBIENT.xyz;
 #endif
 
 #if defined(SPECULAR)

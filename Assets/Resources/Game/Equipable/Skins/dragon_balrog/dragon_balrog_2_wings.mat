@@ -8,20 +8,20 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_balrog_2_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3020
   stringTagMap:
-    QUEUE: AlphaTest
-    RenderType: TransparentCutout
+    QUEUE: Transparent
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 62425a255ff01f843bff4565624d2dd9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 073e6a77c951044268881ae1c83229fd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: ac1a579a7ede4884eb34e815cf825371, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6ec66d9f68253564393eaf762163f7fd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FireMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: cd8c237a73ef23d47b836347ce770fb1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -79,13 +79,18 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _EmissionScaleUI: 0
+    - _EnableBlendFresnel: 0
     - _EnableCutoff: 1
     - _EnableDoublesided: 1
     - _EnableFresnel: 1
     - _EnableNormalMap: 0
+    - _EnableOpaqueFresnel: 0
+    - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
-    - _FireAmount: 0
+    - _EnableVertexOffset: 0
+    - _FireAmount: 1
+    - _FireSpeed: 0.5
     - _Fresnel: 4.6
     - _Glossiness: 0.5
     - _InnerLightAdd: 0
@@ -98,7 +103,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
-    - _SpecExponent: 6.68
+    - _SpecExponent: 7.44
     - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
@@ -113,6 +118,6 @@ Material:
     - _FresnelColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerLightColor: {r: 0, g: 1, b: 0.08965516, a: 0.872}
     - _NoiseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SecondLightColor: {r: 0.08088237, g: 0.070772074, b: 0.070772074, a: 0}
     - _SecondLightDir: {r: 0.82, g: -0.55, b: 2.67, a: 0.45}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}

@@ -30,7 +30,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel + Transparent (Spawners)"
 //			#define FRESNEL
 //			#define MATCAP
 			#define TINT
-			#define DYNAMIC_LIGHT
+//			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"
