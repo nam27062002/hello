@@ -22,6 +22,14 @@ public class OfferPackItem {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public static readonly string[] ITEM_TYPE_ORDER = {
+		Metagame.RewardSoftCurrency.TYPE_CODE,
+		Metagame.RewardHardCurrency.TYPE_CODE,
+		Metagame.RewardGoldenFragments.TYPE_CODE,
+		Metagame.RewardEgg.TYPE_CODE,
+		Metagame.RewardPet.TYPE_CODE,
+		Metagame.RewardSkin.TYPE_CODE
+	};
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -140,6 +148,17 @@ public class OfferPackItem {
 	/// <param name="_itemIdx">Index of the item within the pack (0..N-1)</param>
 	public static string GetPrefix(int _itemIdx) {
 		return "item" + _itemIdx;
+	}
+
+	/// <summary>
+	/// Function used to sort offer packs items.
+	/// </summary>
+	/// <returns>The result of the comparison (-1, 0, 1).</returns>
+	/// <param name="_item1">First item to compare.</param>
+	/// <param name="_item2">Second item to compare.</param>
+	public static int Compare(OfferPackItem _item1, OfferPackItem _item2) {
+		// Depends on type
+		return ITEM_TYPE_ORDER.IndexOf(_item1.type).CompareTo(ITEM_TYPE_ORDER.IndexOf(_item2.type));
 	}
 
 	//------------------------------------------------------------------------//

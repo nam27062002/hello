@@ -423,14 +423,8 @@ public class OfferPack {
 
 		// We want the rewards to be given in a specific order: do so
 		List<OfferPackItem> sortedItems = new List<OfferPackItem>(m_items);
-		sortedItems.Sort(
-			(OfferPackItem _item1, OfferPackItem _item2) => {
-				// Depends on type
-				return ITEM_TYPE_ORDER.IndexOf(_item1.type).CompareTo(ITEM_TYPE_ORDER.IndexOf(_item2.type));
-			}
-		);
-
-
+		sortedItems.Sort(OfferPackItem.Compare);
+			
 		// Push all the rewards to the pending rewards stack
 		// Reverse order so last rewards pushed are collected first!
 		for(int i = sortedItems.Count - 1; i >= 0; --i) {
