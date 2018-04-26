@@ -144,9 +144,9 @@ public class FireBreathDynamic : MonoBehaviour
 
     }
 
-    // Use this for initialization
-    void Start () 
-	{
+
+    void Awake()
+    {
 		// Instantiate all particles
 		int max;
 		max = m_fireParticles.Count;
@@ -163,8 +163,10 @@ public class FireBreathDynamic : MonoBehaviour
 			if ( ps != null )
 				m_underWaterParticlesInstances.Add( ps );
 		}
-
-
+    }
+    // Use this for initialization
+    void Start () 
+	{
 		m_WaterLayerMask = 1 << LayerMask.NameToLayer("Water");
         m_AllLayerMask = 0;
         for (int i = 0; i < m_collisionPrefabs.Length; i++)
@@ -376,16 +378,16 @@ public class FireBreathDynamic : MonoBehaviour
     		// Check if inside water!
 			for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
 			{
+				m_fireParticlesInstances[i].gameObject.SetActive(true);
 				if (!insideWater)
 					m_fireParticlesInstances[i].Play();
-				m_fireParticlesInstances[i].gameObject.SetActive(true);
 			}
 
 			for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
 			{
+				m_underWaterParticlesInstances[i].gameObject.SetActive(true);
 				if (insideWater)
 					m_underWaterParticlesInstances[i].Play();
-				m_underWaterParticlesInstances[i].gameObject.SetActive(true);
 			}
     	}
     	else
