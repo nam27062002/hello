@@ -316,6 +316,11 @@ public class UserProfile : UserPersistenceSystem
 	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
+	// Offer Packs
+	private Dictionary<string, int> m_offerPacksPurchaseCount = new Dictionary<string, int>();
+
+	//--------------------------------------------------------------------------
+
     public enum ESocialState
     {
         NeverLoggedIn,
@@ -447,7 +452,9 @@ public class UserProfile : UserPersistenceSystem
         
         m_globalEvents = new Dictionary<int, GlobalEventUserData>();    
     
-        m_rewards = new Stack<Metagame.Reward>();                            
+        m_rewards = new Stack<Metagame.Reward>();
+
+		m_offerPacksPurchaseCount = new Dictionary<string, int>();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
@@ -982,6 +989,17 @@ public class UserProfile : UserPersistenceSystem
 				m_rewards.Push(r);
 			}
 		}
+
+		// Offer Packs
+		key = "offerPacks";
+		m_offerPacksPurchaseCount.Clear();
+		if(_data.ContainsKey(key)) {
+			// Parse json object into the dictionary
+			SimpleJSON.JSONClass offersJson = _data[key] as JSONClass;
+			foreach(KeyValuePair<string, JSONNode> kvp in offersJson.m_Dict) {
+				m_offerPacksPurchaseCount.Add(kvp.Key, kvp.Value.AsInt);
+			}
+		}
 	}
 
 	/// <summary>
@@ -1150,6 +1168,13 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 		data.Add("rewards", rewardsData);
+
+		// Offer packs
+		SimpleJSON.JSONClass offersData = new SimpleJSON.JSONClass();
+		foreach(KeyValuePair<string, int> kvp in m_offerPacksPurchaseCount) {
+			offersData.Add(kvp.Key, kvp.Value.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		}
+		data.Add("offerPacks", offersData);
 
 		// Return it
 		return data;
@@ -1559,6 +1584,37 @@ public class UserProfile : UserPersistenceSystem
 		Metagame.Reward r = rewardStack.Pop();
 		Debug.Log("<color=red>POP " + r.GetType().Name + "</color>");
 		return r;
+	}
+
+	//------------------------------------------------------------------------//
+	// OFFERS MANAGEMENT													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Register a pack purchase.
+	/// </summary>
+	/// <param name="_offerPack">Purchased pack.</param>
+	public void RegisterOfferPackPurchase(OfferPack _pack) {
+		m_offerPacksPurchaseCount[GenerateOfferPackUniqueID(_pack)] = _pack.purchaseCount;
+	}
+
+	/// <summary>
+	/// Given a specific pack, find out how many times has been purchased.
+	/// </summary>
+	/// <returns>The pack to be checked.</returns>
+	public int GetOfferPackPurchaseCount(OfferPack _pack) {
+		int purchaseCount = 0;
+		m_offerPacksPurchaseCount.TryGetValue(GenerateOfferPackUniqueID(_pack), out purchaseCount);
+		return purchaseCount;
+	}
+
+	/// <summary>
+	/// Generates a unique ID for an offer pack, which will be used when saving
+	/// pack data to the persistence json.
+	/// </summary>
+	/// <returns>The offer pack unique ID, composed by its sku and customization ID.</returns>
+	/// <param name="_pack">The pack whose ID we want to generate.</param>
+	private string GenerateOfferPackUniqueID(OfferPack _pack) {
+		return _pack.def.sku + _pack.def.customizationCode.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
 	}
 }
 
