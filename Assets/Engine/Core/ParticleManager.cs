@@ -298,9 +298,9 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		{
 			string path = "";
 			switch(level) {
-				case FeatureSettings.ELevel5Values.very_low:	
-						path = "Particles/VeryLow/";
-					break;
+					//	path = "Particles/VeryLow/";
+					// break;
+				case FeatureSettings.ELevel5Values.very_low:
 				case FeatureSettings.ELevel5Values.low:
 						path = "Particles/Low/";
 					break;
