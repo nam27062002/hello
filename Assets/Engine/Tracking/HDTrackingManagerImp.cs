@@ -1860,7 +1860,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_OfferShown action = " + action + " itemID = " + itemID);
         }
 
-        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.specialoffer");
+        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.specialoffer");
         if (e != null)
         {            
             Track_AddParamString(e, TRACK_PARAM_SPECIAL_OFFER_ACTION, action);
