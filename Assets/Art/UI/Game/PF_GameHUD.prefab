@@ -158,12 +158,12 @@ GameObject:
   - component: {fileID: 11445304}
   - component: {fileID: 11455850}
   m_Layer: 5
-  m_Name: MapGodRays
+  m_Name: effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &114744
 GameObject:
   m_ObjectHideFlags: 1
@@ -3798,7 +3798,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_speedGameObject: {fileID: 115730}
-  m_mapButtonGodRays: {fileID: 112784}
+  m_mapButtonGodRays: {fileID: 1665457183192610}
   m_pauseButton: {fileID: 114802019821072936}
 --- !u!114 &11484720
 MonoBehaviour:
@@ -11315,15 +11315,15 @@ RectTransform:
   m_GameObject: {fileID: 112784}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9984, y: 0.9984, z: 0.9984}
   m_Children: []
-  m_Father: {fileID: 22454964}
-  m_RootOrder: 4
+  m_Father: {fileID: 224014696882419368}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1356.6, y: -74.3}
-  m_SizeDelta: {x: 200, y: 200}
+  m_AnchoredPosition: {x: 62, y: -49}
+  m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22452736
 RectTransform:
@@ -11375,7 +11375,7 @@ RectTransform:
   - {fileID: 22404872}
   - {fileID: 22410842}
   - {fileID: 224711503020530384}
-  - {fileID: 22451736}
+  - {fileID: 224014696882419368}
   - {fileID: 224050822900834562}
   m_Father: {fileID: 22445102}
   m_RootOrder: 0
@@ -14574,6 +14574,22 @@ GameObject:
   - component: {fileID: 224663326478879768}
   m_Layer: 5
   m_Name: Container_0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1665457183192610
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 224014696882419368}
+  - component: {fileID: 222392539808706488}
+  m_Layer: 5
+  m_Name: MapGodRays
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28914,7 +28930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mapButton: {fileID: 1178053128254578}
-  m_mapButtonGodRays: {fileID: 112784}
+  m_mapButtonGodRays: {fileID: 1665457183192610}
   m_targetTransform: {fileID: 224709719861110536}
   m_godRays: {fileID: 114134754926060536}
   m_delay: 20
@@ -99007,6 +99023,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1039275493668246}
+--- !u!222 &222392539808706488
+CanvasRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1665457183192610}
 --- !u!222 &222407752840056402
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -99934,6 +99956,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!224 &224014696882419368
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1665457183192610}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 22451736}
+  m_Father: {fileID: 22454964}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 250, y: 250}
+  m_Pivot: {x: 1, y: 0}
 --- !u!224 &224019663844822630
 RectTransform:
   m_ObjectHideFlags: 1
@@ -100670,8 +100711,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -437}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -1.5, y: 210}
+  m_SizeDelta: {x: -3, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224288555522866224
 RectTransform:

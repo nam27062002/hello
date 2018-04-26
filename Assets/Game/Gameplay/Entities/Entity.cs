@@ -298,7 +298,7 @@ public class Entity : IEntity {
                 m_checkOnScreenTimer = 0.5f;
             }
 
-			m_isEdibleByZ = m_machine.position.z < 14f;
+			m_isEdibleByZ = m_machine.position.z <= 15f;
         }
 	}
 
