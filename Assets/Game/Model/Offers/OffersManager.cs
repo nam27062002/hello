@@ -188,7 +188,16 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 
 		// Sort by order afterwards
-		return _p1.order.CompareTo(_p2.order);
+		int order = _p1.order.CompareTo(_p2.order);
+		if(order != 0) return order;
+
+		// Then by discount
+		int discount = _p1.def.GetAsFloat("discount").CompareTo(_p2.def.GetAsFloat("discount"));
+		if(discount != 0) return -discount;	// Reverse: item with greater discount goes first!
+
+		// Finally by reference price
+		int price = _p1.def.GetAsFloat("refPrice").CompareTo(_p2.def.GetAsFloat("refPrice"));
+		return -price;	// Reverse: item with greater price goes first! (usually a better pack)
 	}
 
 	//------------------------------------------------------------------------//
@@ -212,15 +221,6 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		defaultPack.Reset();
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			defaultPack.ValidateDefinition(offerDefs[i]);
-		}
-
-
-		// Offer items
-		// Create a dummy item with default values and use it to validate the definitions
-		OfferPackItem defaultItem = new OfferPackItem();
-		List<DefinitionNode> itemDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_ITEMS);
-		for(int i = 0; i < itemDefs.Count; ++i) {
-			defaultItem.ValidateDefinition(itemDefs[i]);
 		}
 	}
 

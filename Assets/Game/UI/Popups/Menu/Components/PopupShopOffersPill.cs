@@ -41,6 +41,10 @@ public class PopupShopOffersPill : IPopupShopPill {
 	[SerializeField] private Text m_priceText = null;
 	[SerializeField] private TextMeshProUGUI m_previousPriceText = null;
 	[SerializeField] private GameObject m_featuredHighlight = null;
+	[Separator("Optional Decorations")]
+	[SerializeField] private UIGradient m_backgroundGradient = null;
+	[SerializeField] private UIGradient m_frameGradientLeft = null;
+	[SerializeField] private UIGradient m_frameGradientRight = null;
 
 	// Public
 	private OfferPack m_pack = null;
@@ -139,6 +143,19 @@ public class PopupShopOffersPill : IPopupShopPill {
 				m_itemSlots[i].InitFromItem(m_pack.items[i]);
 			}
 		}
+
+		// Optional decorations
+		if(m_backgroundGradient != null) {
+			m_backgroundGradient.gradient.Set(gradientSetup.pillBackgroundGradient);
+		}
+
+		if(m_frameGradientLeft != null) {
+			m_frameGradientLeft.gradient.Set(gradientSetup.pillFrameGradient);
+		}
+
+		if(m_frameGradientRight != null) {
+			m_frameGradientRight.gradient.Set(gradientSetup.pillFrameGradient);
+		}
 	}
 
 	/// <summary>
@@ -156,7 +173,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 			m_remainingTimeText.tid, 
 			TimeUtils.FormatTime(
 				System.Math.Max(0, (m_pack.endDate - serverTime).TotalSeconds), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			)
 		);
@@ -174,7 +191,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Obtain the IAP sku as defined in the App Stores.
 	/// </summary>
 	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-	override protected string GetIAPSku() {
+	override public string GetIAPSku() {
 		// Only for REAL money packs
 		if(m_currency != UserProfile.Currency.REAL) return string.Empty;
 		return m_def.GetAsString("iapSku");
@@ -200,7 +217,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 		PersistenceFacade.instance.Save_Request(true);
 
 		// Close all open popups
-		PopupManager.Clear();
+		PopupManager.Clear(true);
 
 		// Move to the rewards screen
 		PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
