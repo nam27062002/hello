@@ -239,8 +239,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public bool m_startingParabolic = false;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
-    public float m_spinSpeed = 90;
     private bool m_spinning = true;
+    private bool m_animSpin = false;
     private bool m_rotateOnIdle = false;
 
 	//------------------------------------------------------------------//
@@ -664,15 +664,28 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_state = _nextState;
 		}
 	}
-
+#if UNITY_EDITOR
+	float spinTest = 0;
+#endif
 	/// <summary>
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
 
 #if UNITY_EDITOR	
+	
 	if ( Input.GetKeyDown(KeyCode.B) )
 		Bounce( GameConstants.Vector3.up );
+
+
+	if ( Input.GetKeyDown(KeyCode.S) )
+		spinTest = 1;
+	if ( spinTest > 0 )
+	{
+		spinTest -= Time.deltaTime;
+	}
+
+
 #endif
 		switch (m_state) {
 			case State.Idle:
@@ -769,7 +782,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		// Update hitColliders Bounding box
 		UpdateHitCollidersBoundingBox();
-
 
 		if (!m_outterSpace && m_transform.position.y > SpaceStart){
 			OnEnterSpaceEvent();
@@ -895,9 +907,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
 			backMultiplier = m_backBlendMultiplier;
 		}
-
-		if (m_spinning)
-			dir = m_transform.forward;
 
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
 
@@ -1102,6 +1111,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 
 		m_rbody.angularVelocity = m_angularVelocity;
+		if ( m_spinning )
+		{	
+			float d = Vector3.Dot(m_direction, m_transform.forward);
+			if (d > 0)
+			{
+				m_rbody.AddRelativeTorque( Vector3.forward * 20 * d, ForceMode.VelocityChange);
+			}
+		}
 		// if ( FeatureSettingsManager.IsDebugEnabled )
 		{
 			m_lastSpeed = (m_transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
@@ -1586,6 +1603,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	protected virtual void RotateToDirection(Vector3 dir, bool slowly = false, bool spin = false)
 	{
+#if UNITY_EDITOR
+		spin = spin || spinTest > 0;
+#endif
 		float blendRate = m_rotBlendRate;
 		if ( GetTargetForceMultiplier() > 1 )
 			blendRate *= 2;
@@ -1606,7 +1626,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			Quaternion qPitch = Quaternion.Euler(pitch, 0.0f, 0.0f);
 			m_desiredRotation = qYaw * qRoll * qPitch;
 			Vector3 eulerRot = m_desiredRotation.eulerAngles;
-			if (m_capVerticalRotation)
+			if (m_capVerticalRotation) 
 			{
 				// top cap
 				if (eulerRot.z > m_capUpRotationAngle && eulerRot.z < 180 - m_capUpRotationAngle)
@@ -1623,18 +1643,17 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_desiredRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
 			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(m_transform.rotation, m_desiredRotation, blendRate);
 
-			if ( spin )
-			{
-				m_angularVelocity += m_transform.forward * m_spinSpeed;
-			}
+
 		}
 		else
 		{
 			m_angularVelocity = GameConstants.Vector3.zero;
 		}
 
-		m_spinning = spin;
+		if ( m_spinning != spin )
+			m_animator.SetBool(GameConstants.Animator.SPIN, spin);
 
+		m_spinning = spin;
 
 	}
 
