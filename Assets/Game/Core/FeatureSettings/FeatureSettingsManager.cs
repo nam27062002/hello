@@ -1406,6 +1406,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public static bool IsBackButtonEnabled()
+    {
+        // Back button is disabled in TEST mode to prevent the test from being paused because the back button is pressed
+        return ApplicationManager.instance.appMode == ApplicationManager.Mode.PLAY;
+    }
+
     public bool IsIncentivisedLoginEnabled()
     {
 #if UNITY_EDITOR

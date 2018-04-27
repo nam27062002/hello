@@ -38,15 +38,6 @@ public class OfferPack {
 		NON_PAYER
 	}
 
-	public static readonly string[] ITEM_TYPE_ORDER = {
-		Metagame.RewardSoftCurrency.TYPE_CODE,
-		Metagame.RewardHardCurrency.TYPE_CODE,
-		Metagame.RewardGoldenFragments.TYPE_CODE,
-		Metagame.RewardEgg.TYPE_CODE,
-		Metagame.RewardPet.TYPE_CODE,
-		Metagame.RewardSkin.TYPE_CODE
-	};
-
 	public const int MAX_ITEMS = 3;	// For now
 	
 	//------------------------------------------------------------------------//
@@ -124,6 +115,13 @@ public class OfferPack {
 	private string[] m_skinsUnlocked = new string[0];
 	private string[] m_skinsOwned = new string[0];
 	private string[] m_skinsNotOwned = new string[0];
+
+	// Purchase limit
+	private int m_purchaseLimit = 1;
+	private int m_purchaseCount = 0;
+	public int purchaseCount {
+		get { return m_purchaseCount; }
+	}
 
 	// Internal vars
 	private int m_viewsCount = 0;	// Only auto-triggered views
@@ -224,6 +222,10 @@ public class OfferPack {
 
 		// Featured offers are always timed
 		if(m_featured) m_isTimed = true;
+
+		// Purchase limit and count
+		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
+		m_purchaseCount = UsersManager.currentUser.GetOfferPackPurchaseCount(this);
 	}
 
 	/// <summary>
@@ -271,6 +273,10 @@ public class OfferPack {
 		m_skinsUnlocked = new string[0];
 		m_skinsOwned = new string[0];
 		m_skinsNotOwned = new string[0];
+
+		// Purchase limit
+		m_purchaseLimit = 1;
+		m_purchaseCount = 0;
 
 		// Internal vars
 		m_viewsCount = 0;
@@ -356,6 +362,9 @@ public class OfferPack {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 
+		// Purchase limit (ignore if 0 or negative, unlimited pack)
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return false;
+
 		// Main conditions
 		if(m_minAppVersion > GameSettings.internalVersion) return false;
 
@@ -419,23 +428,29 @@ public class OfferPack {
 	/// Apply this pack to current user.
 	/// </summary>
 	public void Apply() {
-		// [AOC] TODO!! Validate that the pack is only applied once?
+		// Validate purchase limit
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return;
 
 		// We want the rewards to be given in a specific order: do so
 		List<OfferPackItem> sortedItems = new List<OfferPackItem>(m_items);
-		sortedItems.Sort(
-			(OfferPackItem _item1, OfferPackItem _item2) => {
-				// Depends on type
-				return ITEM_TYPE_ORDER.IndexOf(_item1.type).CompareTo(ITEM_TYPE_ORDER.IndexOf(_item2.type));
-			}
-		);
-
-
+		sortedItems.Sort(OfferPackItem.Compare);
+			
 		// Push all the rewards to the pending rewards stack
 		// Reverse order so last rewards pushed are collected first!
 		for(int i = sortedItems.Count - 1; i >= 0; --i) {
 			UsersManager.currentUser.PushReward(sortedItems[i].reward);
 		}
+
+		// Update purchase tracking
+		// [AOC] BEFORE Saving persistence!
+		m_purchaseCount++;
+
+		// Save persistence
+		UsersManager.currentUser.RegisterOfferPackPurchase(this);
+		PersistenceFacade.instance.Save_Request();
+
+		// Notify game
+		Messenger.Broadcast<OfferPack>(MessengerEvents.OFFER_APPLIED, this);
 	}
 
 	//------------------------------------------------------------------------//
@@ -502,6 +517,9 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "skinsUnlocked", string.Join(";", m_skinsUnlocked));
 		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
 		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
+
+		// Purchase limit
+		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
 	}
 
 	//------------------------------------------------------------------------//
