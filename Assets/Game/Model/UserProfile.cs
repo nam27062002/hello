@@ -323,7 +323,7 @@ public class UserProfile : UserPersistenceSystem
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
 	// Offer Packs
-	private Dictionary<string, int> m_offerPacksPurchaseCount = new Dictionary<string, int>();
+	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 
 	//--------------------------------------------------------------------------
 
@@ -461,7 +461,7 @@ public class UserProfile : UserPersistenceSystem
     
         m_rewards = new Stack<Metagame.Reward>();
 
-		m_offerPacksPurchaseCount = new Dictionary<string, int>();
+		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
@@ -999,12 +999,12 @@ public class UserProfile : UserPersistenceSystem
 
 		// Offer Packs
 		key = "offerPacks";
-		m_offerPacksPurchaseCount.Clear();
+		m_offerPacksPersistenceData.Clear();
 		if(_data.ContainsKey(key)) {
 			// Parse json object into the dictionary
-			SimpleJSON.JSONClass offersJson = _data[key] as JSONClass;
+			JSONClass offersJson = _data[key] as JSONClass;
 			foreach(KeyValuePair<string, JSONNode> kvp in offersJson.m_Dict) {
-				m_offerPacksPurchaseCount.Add(kvp.Key, kvp.Value.AsInt);
+				m_offerPacksPersistenceData.Add(kvp.Key, kvp.Value as JSONClass);
 			}
 		}
 	}
@@ -1180,9 +1180,9 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("rewards", rewardsData);
 
 		// Offer packs
-		SimpleJSON.JSONClass offersData = new SimpleJSON.JSONClass();
-		foreach(KeyValuePair<string, int> kvp in m_offerPacksPurchaseCount) {
-			offersData.Add(kvp.Key, kvp.Value.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		JSONClass offersData = new SimpleJSON.JSONClass();
+		foreach(KeyValuePair<string, JSONClass> kvp in m_offerPacksPersistenceData) {
+			offersData.Add(kvp.Key, kvp.Value);
 		}
 		data.Add("offerPacks", offersData);
 
@@ -1603,31 +1603,37 @@ public class UserProfile : UserPersistenceSystem
 	// OFFERS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Register a pack purchase.
+	/// Register an offer pack for persistence save.
 	/// </summary>
-	/// <param name="_offerPack">Purchased pack.</param>
-	public void RegisterOfferPackPurchase(OfferPack _pack) {
-		m_offerPacksPurchaseCount[GenerateOfferPackUniqueID(_pack)] = _pack.purchaseCount;
+	/// <param name="_offerPack">Pack to be saved.</param>
+	public void SaveOfferPack(OfferPack _pack) {
+		// Don't do it if pack shouldn't be saved
+		if(_pack == null || !_pack.ShouldBePersisted()) return;
+
+		// Save persistence data with unique ID for that pack
+		m_offerPacksPersistenceData[_pack.GetPersistenceUniqueID()] = _pack.Save();
 	}
 
 	/// <summary>
-	/// Given a specific pack, find out how many times has been purchased.
+	/// Load persistence data corresponding to a specific pack into it, if there is any.
 	/// </summary>
-	/// <returns>The pack to be checked.</returns>
-	public int GetOfferPackPurchaseCount(OfferPack _pack) {
-		int purchaseCount = 0;
-		m_offerPacksPurchaseCount.TryGetValue(GenerateOfferPackUniqueID(_pack), out purchaseCount);
-		return purchaseCount;
+	public void LoadOfferPack(OfferPack _pack) {
+		// Parameter check
+		if(_pack == null) return;
+
+		// Do we have persistence data for this pack?
+		JSONClass packData = null;
+		if(m_offerPacksPersistenceData.TryGetValue(_pack.GetPersistenceUniqueID(), out packData)) {
+			// Yes! Load it into the pack
+			_pack.Load(packData);
+		}
 	}
 
 	/// <summary>
-	/// Generates a unique ID for an offer pack, which will be used when saving
-	/// pack data to the persistence json.
+	/// Cleanup persistence packs that shouldn't be persisted anymore.
 	/// </summary>
-	/// <returns>The offer pack unique ID, composed by its sku and customization ID.</returns>
-	/// <param name="_pack">The pack whose ID we want to generate.</param>
-	private string GenerateOfferPackUniqueID(OfferPack _pack) {
-		return _pack.def.sku + _pack.def.customizationCode.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
+	public void PurgeOfferPacksPersistence() {
+		// [AOC] TODO!! Meant for packs with end timestamp
 	}
 }
 
