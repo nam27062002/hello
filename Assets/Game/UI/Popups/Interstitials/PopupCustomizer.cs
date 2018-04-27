@@ -189,9 +189,19 @@ public class PopupCustomizer : MonoBehaviour {
 			} break;
 
 			case CustomizerManager.ePopupButtonAction.GAME_LINK: {
+				// Since we need extra parameters not available in Calety's customizer popup implementation, we'll concatenate them to the target screen
+				string[] tokens = button.m_strParam.Split(':');
+				if(tokens.Length == 0) break;
+
 				// Parse known links
-				switch(button.m_strParam) {
+				switch(tokens[0]) {
 					case "DRAGON_SELECTION": {
+						// Navigate to a specific dragon?
+						if(tokens.Length > 1) {
+							InstanceManager.menuSceneController.SetSelectedDragon(tokens[1]);
+						}
+
+						// Go to dragon selection screen and close the popup!
 						InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 						ClosePopup();
 					} break;
