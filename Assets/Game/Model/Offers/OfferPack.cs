@@ -38,15 +38,6 @@ public class OfferPack {
 		NON_PAYER
 	}
 
-	public static readonly string[] ITEM_TYPE_ORDER = {
-		Metagame.RewardSoftCurrency.TYPE_CODE,
-		Metagame.RewardHardCurrency.TYPE_CODE,
-		Metagame.RewardGoldenFragments.TYPE_CODE,
-		Metagame.RewardEgg.TYPE_CODE,
-		Metagame.RewardPet.TYPE_CODE,
-		Metagame.RewardSkin.TYPE_CODE
-	};
-
 	public const int MAX_ITEMS = 3;	// For now
 	
 	//------------------------------------------------------------------------//
@@ -124,6 +115,13 @@ public class OfferPack {
 	private string[] m_skinsUnlocked = new string[0];
 	private string[] m_skinsOwned = new string[0];
 	private string[] m_skinsNotOwned = new string[0];
+
+	// Purchase limit
+	private int m_purchaseLimit = 1;
+	private int m_purchaseCount = 0;
+	public int purchaseCount {
+		get { return m_purchaseCount; }
+	}
 
 	// Internal vars
 	private int m_viewsCount = 0;	// Only auto-triggered views
@@ -224,6 +222,12 @@ public class OfferPack {
 
 		// Featured offers are always timed
 		if(m_featured) m_isTimed = true;
+
+		// Purchase limit
+		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
+
+		// Persisted data
+		UsersManager.currentUser.LoadOfferPack(this);
 	}
 
 	/// <summary>
@@ -271,6 +275,10 @@ public class OfferPack {
 		m_skinsUnlocked = new string[0];
 		m_skinsOwned = new string[0];
 		m_skinsNotOwned = new string[0];
+
+		// Purchase limit
+		m_purchaseLimit = 1;
+		m_purchaseCount = 0;
 
 		// Internal vars
 		m_viewsCount = 0;
@@ -356,6 +364,9 @@ public class OfferPack {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 
+		// Purchase limit (ignore if 0 or negative, unlimited pack)
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return false;
+
 		// Main conditions
 		if(m_minAppVersion > GameSettings.internalVersion) return false;
 
@@ -419,23 +430,29 @@ public class OfferPack {
 	/// Apply this pack to current user.
 	/// </summary>
 	public void Apply() {
-		// [AOC] TODO!! Validate that the pack is only applied once?
+		// Validate purchase limit
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return;
 
 		// We want the rewards to be given in a specific order: do so
 		List<OfferPackItem> sortedItems = new List<OfferPackItem>(m_items);
-		sortedItems.Sort(
-			(OfferPackItem _item1, OfferPackItem _item2) => {
-				// Depends on type
-				return ITEM_TYPE_ORDER.IndexOf(_item1.type).CompareTo(ITEM_TYPE_ORDER.IndexOf(_item2.type));
-			}
-		);
-
-
+		sortedItems.Sort(OfferPackItem.Compare);
+			
 		// Push all the rewards to the pending rewards stack
 		// Reverse order so last rewards pushed are collected first!
 		for(int i = sortedItems.Count - 1; i >= 0; --i) {
 			UsersManager.currentUser.PushReward(sortedItems[i].reward);
 		}
+
+		// Update purchase tracking
+		// [AOC] BEFORE Saving persistence!
+		m_purchaseCount++;
+
+		// Save persistence
+		UsersManager.currentUser.SaveOfferPack(this);
+		PersistenceFacade.instance.Save_Request();
+
+		// Notify game
+		Messenger.Broadcast<OfferPack>(MessengerEvents.OFFER_APPLIED, this);
 	}
 
 	//------------------------------------------------------------------------//
@@ -502,6 +519,9 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "skinsUnlocked", string.Join(";", m_skinsUnlocked));
 		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
 		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
+
+		// Purchase limit
+		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
 	}
 
 	//------------------------------------------------------------------------//
@@ -584,6 +604,63 @@ public class OfferPack {
 	}
 
 	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
+	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// In the particular case of the offers, we only need to persist them in specific cases.
+	/// </summary>
+	/// <returns>Whether the offer should be persisted or not.</returns>
+	public bool ShouldBePersisted() {
+		// Yes if it has been purchased at least once
+		if(m_purchaseCount > 0) return true;
+
+		// [AOC] TODO!! Yes if it has a limited duration and still active (we need to persist the activation date)
+
+		// No for the rest of cases
+		return false;
+	}
+
+	/// <summary>
+	/// Load state from a persistence object.
+	/// </summary>
+	/// <param name="_data">The data object loaded from persistence.</param>
+	/// <returns>Whether the mission was successfully loaded</returns>
+	public void Load(SimpleJSON.JSONClass _data) {
+		// Purchase count
+		string key = "purchaseCount";
+		if(_data.ContainsKey(key)) {
+			m_purchaseCount = _data[key].AsInt;
+		}
+
+		// [AOC] TODO!! End timestamp
+	}
+
+	/// <summary>
+	/// Create and return a persistence save data json initialized with the data.
+	/// </summary>
+	/// <returns>A new data json to be stored to persistence by the PersistenceManager.</returns>
+	public SimpleJSON.JSONClass Save() {
+		// Create new object
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Purchase count
+		if(m_purchaseCount > 0) {
+			data.Add("purchaseCount", m_purchaseCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		}
+
+		// [AOC] TODO!! End timestamp
+
+		// Done!
+		return data;
+	}
+
+	/// <summary>
+	/// Generates a unique ID for this offer pack, which will be used when saving
+	/// pack data to the persistence json.
+	/// </summary>
+	/// <returns>The offer pack unique ID, composed by its sku and customization ID.</returns>
+	public string GetPersistenceUniqueID() {
+		if(m_def == null) return string.Empty;
+		return m_def.sku + m_def.customizationCode.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
+	}
 }

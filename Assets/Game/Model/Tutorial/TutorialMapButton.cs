@@ -40,9 +40,11 @@ public class TutorialMapButton : MonoBehaviour {
 		m_rTransform = transform as RectTransform;
 
 		if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
+			m_mapButtonGodRays.SetActive(false);
 			GameObject.Destroy(m_rTransform.parent.gameObject);
 		} else {
 			m_mapButton.SetActive(false);
+			m_mapButtonGodRays.SetActive(false);
 
 			if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
 				m_timer = new DeltaTimer();
