@@ -664,28 +664,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_state = _nextState;
 		}
 	}
-#if UNITY_EDITOR
-	float spinTest = 0;
-#endif
 	/// <summary>
 	/// Called once per frame.
 	/// </summary>
 	void Update() {
 
 #if UNITY_EDITOR	
-	
 	if ( Input.GetKeyDown(KeyCode.B) )
 		Bounce( GameConstants.Vector3.up );
-
-
-	if ( Input.GetKeyDown(KeyCode.S) )
-		spinTest = 1;
-	if ( spinTest > 0 )
-	{
-		spinTest -= Time.deltaTime;
-	}
-
-
 #endif
 		switch (m_state) {
 			case State.Idle:
@@ -1603,9 +1589,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	protected virtual void RotateToDirection(Vector3 dir, bool slowly = false, bool spin = false)
 	{
-#if UNITY_EDITOR
-		spin = spin || spinTest > 0;
-#endif
 		float blendRate = m_rotBlendRate;
 		if ( GetTargetForceMultiplier() > 1 )
 			blendRate *= 2;
