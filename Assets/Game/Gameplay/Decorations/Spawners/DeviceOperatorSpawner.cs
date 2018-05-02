@@ -41,7 +41,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		m_operatorParent = null;
     }
 
-	void OnDestroy() {
+	protected override void OnDestroy() {
+		base.OnDestroy();
 		if (ApplicationManager.IsAlive) {
 			ForceRemoveEntities();
 		}
