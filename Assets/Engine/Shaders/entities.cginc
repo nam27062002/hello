@@ -31,7 +31,7 @@ struct v2f
 #endif
 
 	float3 normalWorld : NORMAL;
-#ifdef NORMALMAP
+#if defined(NORMALMAP)
 	float3 tangentWorld : TANGENT;
 	float3 binormalWorld : TEXCOORD5;
 #endif
@@ -51,13 +51,13 @@ uniform sampler2D _MatCap;
 uniform float4 _GoldColor;
 #endif
 
-#ifdef NORMALMAP
+#if defined(NORMALMAP)
 uniform sampler2D _NormalTex;
 uniform float4 _NormalTex_ST;
 uniform float _NormalStrength;
 #endif
 
-#ifdef SPECULAR
+#if defined(SPECULAR)
 uniform float _SpecularPower;
 uniform float4 _SpecularColor;
 #endif
@@ -66,7 +66,7 @@ uniform float4 _SpecularColor;
 uniform float _FresnelPower;
 uniform float4 _FresnelColor;
 
-#ifdef FREEZE
+#if defined(FREEZE)
 uniform float4 _FresnelColor2;
 #endif
 
@@ -139,7 +139,7 @@ v2f vert(appdata_t v)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
 #endif
 	// To calculate tangent world
-#ifdef NORMALMAP
+#if defined(NORMALMAP)
 	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
 //	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
 	o.normalWorld = normal;
@@ -189,9 +189,9 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined(SPECMASK)
 	fixed4 colspec = tex2D(_SpecMask, i.uv);
-	fixed specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
+	half specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
 #else
-	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+	half specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 #endif
 
 #if defined(EMISSIVE)
@@ -199,11 +199,11 @@ fixed4 frag(v2f i) : SV_Target
 	col.xyz *= 1.0 + anim;
 #endif
 
-#if defined (TINT)
+#if defined(TINT)
 	col.xyz *= _Tint.xyz;
 #endif
 
-#ifdef NORMALMAP
+#if defined(NORMALMAP)
 	// Calc normal from detail texture normal and tangent world
 	float4 encodedNormal = tex2D(_NormalTex, i.uv);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
@@ -235,17 +235,17 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)
-	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
+	half fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
 //	col.xyz *= lerp(_FresnelColor2.xyz, _FresnelColor.xyz, fresnel);
 
-#ifdef FREEZE
+#if defined(FREEZE)
 	col.xyz *= _FresnelColor2.xyz;
 #endif
 
 	col.xyz += _FresnelColor.xyz * fresnel;
 #endif
 
-#if defined(MATCAP) || defined (FREEZE)
+#if defined(MATCAP) || defined(FREEZE)
 	fixed4 mc = tex2D(_MatCap, i.cap) * _GoldColor; // _FresnelColor;
 
 //	col = (col + ((mc*2.0) - 0.5));
@@ -253,17 +253,19 @@ fixed4 frag(v2f i) : SV_Target
 	//	res.a = 0.5;
 #endif
 
-#if defined (OPAQUEALPHA)
+#if defined(OPAQUEALPHA)
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-#endif
 
-#if defined(GHOST)
+#elif defined(FRESNEL) && defined(GHOST)
+//	col.a = fresnel + specMask;
 	col.a = clamp(fresnel + specMask, 0.0, 1.0);
+//	col.a = clamp(col.a, (fixed)0.0, (fixed)1.0);
+//	col.a = clamp(fresnel + specMask, 0.0, 1.0);
+
 #endif
 
-#if defined (TINT)
+#if defined(TINT)
 	col.a *= _Tint.a;
 #endif
 	return col;
 }
-
