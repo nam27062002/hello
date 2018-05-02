@@ -223,9 +223,11 @@ public class OfferPack {
 		// Featured offers are always timed
 		if(m_featured) m_isTimed = true;
 
-		// Purchase limit and count
+		// Purchase limit
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
-		m_purchaseCount = UsersManager.currentUser.GetOfferPackPurchaseCount(this);
+
+		// Persisted data
+		UsersManager.currentUser.LoadOfferPack(this);
 	}
 
 	/// <summary>
@@ -446,7 +448,7 @@ public class OfferPack {
 		m_purchaseCount++;
 
 		// Save persistence
-		UsersManager.currentUser.RegisterOfferPackPurchase(this);
+		UsersManager.currentUser.SaveOfferPack(this);
 		PersistenceFacade.instance.Save_Request();
 
 		// Notify game
@@ -602,6 +604,63 @@ public class OfferPack {
 	}
 
 	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
+	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// In the particular case of the offers, we only need to persist them in specific cases.
+	/// </summary>
+	/// <returns>Whether the offer should be persisted or not.</returns>
+	public bool ShouldBePersisted() {
+		// Yes if it has been purchased at least once
+		if(m_purchaseCount > 0) return true;
+
+		// [AOC] TODO!! Yes if it has a limited duration and still active (we need to persist the activation date)
+
+		// No for the rest of cases
+		return false;
+	}
+
+	/// <summary>
+	/// Load state from a persistence object.
+	/// </summary>
+	/// <param name="_data">The data object loaded from persistence.</param>
+	/// <returns>Whether the mission was successfully loaded</returns>
+	public void Load(SimpleJSON.JSONClass _data) {
+		// Purchase count
+		string key = "purchaseCount";
+		if(_data.ContainsKey(key)) {
+			m_purchaseCount = _data[key].AsInt;
+		}
+
+		// [AOC] TODO!! End timestamp
+	}
+
+	/// <summary>
+	/// Create and return a persistence save data json initialized with the data.
+	/// </summary>
+	/// <returns>A new data json to be stored to persistence by the PersistenceManager.</returns>
+	public SimpleJSON.JSONClass Save() {
+		// Create new object
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Purchase count
+		if(m_purchaseCount > 0) {
+			data.Add("purchaseCount", m_purchaseCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		}
+
+		// [AOC] TODO!! End timestamp
+
+		// Done!
+		return data;
+	}
+
+	/// <summary>
+	/// Generates a unique ID for this offer pack, which will be used when saving
+	/// pack data to the persistence json.
+	/// </summary>
+	/// <returns>The offer pack unique ID, composed by its sku and customization ID.</returns>
+	public string GetPersistenceUniqueID() {
+		if(m_def == null) return string.Empty;
+		return m_def.sku + m_def.customizationCode.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
+	}
 }
