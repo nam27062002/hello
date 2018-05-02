@@ -192,9 +192,8 @@ public class CPServerTab : MonoBehaviour {
         DragonData data = null;
         data.ToString();
 
-		// Do stuff!
-		Debug.Log("Button 2 pressed with params " + paramString + " - Forces a crash!!");
-		Output("Button 2 pressed with params " + paramString);
+		// Do stuff!		
+		Output("Button 2 pressed with params " + paramString + " TO FORCE A CRASH");
 	}
 
 	/// <summary>
@@ -204,9 +203,16 @@ public class CPServerTab : MonoBehaviour {
 		// Get optional parameters
 		string paramString = GetInputText(_input);
 
-		// Do stuff!
-		Debug.Log("Button 3 pressed with params " + paramString + " - TODO!!");
-		Output("Button 3 pressed with params " + paramString);
+        // Do stuff!		
+        bool changesApplied = ApplicationManager.instance.Game_ApplyCustomizer();
+        string msg = "Button 3 pressed with params " + paramString;
+        if (changesApplied) {
+            msg += " CUSTOMIZER APPLIED";
+        } else {
+            msg += " NO CUSTOMIZER TO APPLY";
+        }       
+
+        Output(msg);        
 	}
 
 	/// <summary>

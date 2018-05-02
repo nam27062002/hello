@@ -31,6 +31,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	[SerializeField] private TextMeshProUGUI m_text;
 	[SerializeField] private GlobalEventsRewardInfo m_rewardInfo;
 
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//

@@ -42,73 +42,101 @@ public class Gradient4Editor : ExtendedPropertyDrawer {
 	/// <param name="_property">The property we're drawing.</param>
 	/// <param name="_label">The label of the property.</param>
 	override protected void OnGUIImpl(SerializedProperty _property, GUIContent _label) {
+		// Don't support multi-editing (all values would be overwritten!)
+		if(_property.hasMultipleDifferentValues || _property.serializedObject.isEditingMultipleObjects) {
+			GUIContent message = new GUIContent("Doesn't support multi-editing");
+			m_pos.height = CustomEditorStyles.commentLabelLeft.CalcSize(message).y;
+			EditorGUI.LabelField(m_pos, _label, message, CustomEditorStyles.commentLabelLeft);
+			AdvancePos();
+			return;
+		}
+
 		// Get important properties
 		m_topLeftProp = m_rootProperty.FindPropertyRelative("topLeft");
 		m_topRightProp = m_rootProperty.FindPropertyRelative("topRight");
 		m_bottomLeftProp = m_rootProperty.FindPropertyRelative("bottomLeft");
 		m_bottomRightProp = m_rootProperty.FindPropertyRelative("bottomRight");
 
-		// 4 color fields in a 2 by 2 grid layout
+		// Generate preview texture
+		Texture2D tex = CreatePreviewTexture();
+		//EditorGUI.DrawTextureTransparent(r, tex);	// [AOC] This is bugged! Doing a workaround https://answers.unity.com/questions/377207/drawing-a-texture-in-a-custom-propertydrawer.html
+		GUIStyle previewStyle = new GUIStyle();
+		previewStyle.normal.background = tex;
+
 		// Prefix label
 		Rect contentRect = EditorGUI.PrefixLabel(m_pos, _label);	// This gives us the size of the content rect
-
-		float colorFieldHeight = EditorStyles.colorField.lineHeight;
-		float colorFieldWidth = Mathf.Max(contentRect.width/3f, 50f);	// Each side of the preview (1/3th of total width, with a min size)
-		float previewSize = Mathf.Min(contentRect.width - 2 * colorFieldWidth, 50f);	// Squared, available space, max size
-		colorFieldWidth = Mathf.Max(colorFieldWidth, (contentRect.width - previewSize)/2f);	// If we have some room left, maximize color fields
-
-		m_pos.height = colorFieldHeight * 2 + previewSize;
-		contentRect.height = m_pos.height;
+		m_pos.height = EditorStyles.largeLabel.lineHeight;
 
 		// Reset indentation
 		int indentLevelBckp = EditorGUI.indentLevel;
 		EditorGUI.indentLevel = 0;
 
-		// Top-Left
+		// Mini-preview
 		Rect r = new Rect(contentRect);
-		r.x = contentRect.x;
-		r.y = contentRect.y;
-		r.width = colorFieldWidth;
-		r.height = colorFieldHeight;
-		m_topLeftProp.colorValue = EditorGUI.ColorField(r, m_topLeftProp.colorValue);
+		r.height = EditorStyles.largeLabel.lineHeight;
+		r.width = r.height;	// Squared
+		EditorGUI.LabelField(r, GUIContent.none, previewStyle);
 
-		// Preview
-		r.x = contentRect.x + colorFieldWidth;
-		r.y = contentRect.y;
-		r.width = previewSize;
-		r.height = previewSize;
+		// Compute foldable content rect
+		float foldoutWidth = 5f;
+		float foldoutMargin = 12f;
+		Rect foldableContentRect = new Rect(contentRect);
+		foldableContentRect.x += r.width + foldoutMargin + foldoutWidth;
+		foldableContentRect.width -= r.width + foldoutMargin + foldoutWidth;
 
-		Texture2D tex = CreatePreviewTexture();
-		//EditorGUI.DrawTextureTransparent(r, tex);	// [AOC] This is bugged! Doing a workaround https://answers.unity.com/questions/377207/drawing-a-texture-in-a-custom-propertydrawer.html
-		GUIStyle style = new GUIStyle();
-		style.normal.background = tex;
-		EditorGUI.LabelField(r, GUIContent.none, style);
+		// Foldable
+		r.x += r.width + foldoutMargin;
+		r.width = foldoutWidth;
+		_property.isExpanded = EditorGUI.Foldout(r, _property.isExpanded, GUIContent.none);
+		if(_property.isExpanded) {
+			// 4 color fields in a 2 by 2 grid layout with a preview in between
+			float colorFieldHeight = EditorStyles.colorField.lineHeight;
+			float colorFieldWidth = Mathf.Max(foldableContentRect.width/3f, 50f);	// Each side of the preview (1/3th of total width, with a min size)
+			float previewSize = Mathf.Min(foldableContentRect.width - 2 * colorFieldWidth, 50f);	// Squared, available space, max size
+			colorFieldWidth = Mathf.Max(colorFieldWidth, (foldableContentRect.width - previewSize)/2f);	// If we have some room left, maximize color fields
 
-		// Top-Right
-		r.x = contentRect.x + colorFieldWidth + previewSize;
-		r.y = contentRect.y;
-		r.width = colorFieldWidth;
-		r.height = colorFieldHeight;
-		m_topRightProp.colorValue = EditorGUI.ColorField(r, m_topRightProp.colorValue);
-		
-		// Bottom-Left
-		r.x = contentRect.x;
-		r.y = contentRect.y + previewSize - colorFieldHeight;
-		r.width = colorFieldWidth;
-		r.height = colorFieldHeight;
-		m_bottomLeftProp.colorValue = EditorGUI.ColorField(r, m_bottomLeftProp.colorValue);
+			m_pos.height = previewSize;
+			foldableContentRect.height = m_pos.height;
 
-		// Bottom-Right
-		r.x = contentRect.x + colorFieldWidth + previewSize;
-		r.y = contentRect.y + previewSize - colorFieldHeight;
-		r.width = colorFieldWidth;
-		r.height = colorFieldHeight;
-		m_bottomRightProp.colorValue = EditorGUI.ColorField(r, m_bottomRightProp.colorValue);
+			// Top-Left
+			r.x = foldableContentRect.x;
+			r.y = foldableContentRect.y;
+			r.width = colorFieldWidth;
+			r.height = colorFieldHeight;
+			m_topLeftProp.colorValue = EditorGUI.ColorField(r, m_topLeftProp.colorValue);
+
+			// Preview
+			r.x = foldableContentRect.x + colorFieldWidth;
+			r.y = foldableContentRect.y;
+			r.width = previewSize;
+			r.height = previewSize;
+			EditorGUI.LabelField(r, GUIContent.none, previewStyle);
+
+			// Top-Right
+			r.x = foldableContentRect.x + colorFieldWidth + previewSize;
+			r.y = foldableContentRect.y;
+			r.width = colorFieldWidth;
+			r.height = colorFieldHeight;
+			m_topRightProp.colorValue = EditorGUI.ColorField(r, m_topRightProp.colorValue);
+			
+			// Bottom-Left
+			r.x = foldableContentRect.x;
+			r.y = foldableContentRect.y + previewSize - colorFieldHeight;
+			r.width = colorFieldWidth;
+			r.height = colorFieldHeight;
+			m_bottomLeftProp.colorValue = EditorGUI.ColorField(r, m_bottomLeftProp.colorValue);
+
+			// Bottom-Right
+			r.x = foldableContentRect.x + colorFieldWidth + previewSize;
+			r.y = foldableContentRect.y + previewSize - colorFieldHeight;
+			r.width = colorFieldWidth;
+			r.height = colorFieldHeight;
+			m_bottomRightProp.colorValue = EditorGUI.ColorField(r, m_bottomRightProp.colorValue);
+		}
 
 		// Restore indentation and advance line
 		EditorGUI.indentLevel = indentLevelBckp;
 		AdvancePos();
-
 	}
 
 	/// <summary>

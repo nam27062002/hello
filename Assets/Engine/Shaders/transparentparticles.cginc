@@ -12,52 +12,59 @@ struct v2f {
 	float4 vertex : SV_POSITION;
 	fixed4 color : COLOR;
 	float2 texcoord : TEXCOORD0;
-#ifdef EXTENDED_PARTICLES
+#if defined(EXTENDED_PARTICLES)
 	float2 particledata : TEXCOORD1;
-#endif
+#endif	//EXTENDED_PARTICLES
 };
 
 sampler2D _MainTex;
 float4 _MainTex_ST;
 
-#ifdef EXTENDED_PARTICLES
-float4 _BasicColor;
-float4 _SaturatedColor;
+#if defined(EXTENDED_PARTICLES)
 float _EmissionSaturation;
 float _OpacitySaturation;
 float _ColorMultiplier;
 
-#ifdef COLOR_RAMP
+#if defined(COLOR_RAMP)
 sampler2D _ColorRamp;
 float4 _ColorRamp_ST;
-#endif
 
-#if defined(DISSOLVE_ENABLED) || defined(DISSOLVE_EXTENDED)
-float4 _DissolveStep;
-#endif
-
-#if defined(DISSOLVE_EXTENDED)
-sampler2D _DissolveTex;
-float4 _DissolveTex_ST;
-#endif
+#elif defined(COLOR_TINT)
+float4 _BasicColor;
 
 #else
+float4 _BasicColor;
+float4 _SaturatedColor;
+#endif	//COLOR_RAMP
 
+#if defined(DISSOLVE_ENABLED)
+float4 _DissolveStep;
+#endif //DISSOLVE_ENABLED
+
+#if defined(NOISE_TEXTURE)
+sampler2D _NoiseTex;
+float4 _NoiseTex_ST;
+
+float4 _NoisePanning;
+#endif	//NOISE_TEXTURE
+
+#else	//EXTENDED_PARTICLES
 float4 _TintColor;
 
-#ifdef EMISSIVEPOWER
+#if defined(EMISSIVEPOWER)
 float _EmissivePower;
-#endif
+#endif	//EMISSIVEPOWER
 
-#endif
+#endif	//EXTENDED_PARTICLES
 
-#ifdef AUTOMATICPANNING
+#if defined(AUTOMATICPANNING)
 float2 _Panning;
-#endif
+#endif	//AUTOMATICPANNING
 
-#ifdef BLENDMODE_ADDITIVEALPHABLEND
+#if defined(BLENDMODE_ADDITIVEALPHABLEND)
 float _ABOffset;
-#endif
+#endif	//BLENDMODE_ADDITIVEALPHABLEND
+
 
 v2f vert(appdata_t v)
 {
@@ -66,13 +73,13 @@ v2f vert(appdata_t v)
 	o.color = v.color;
 #ifdef AUTOMATICPANNING
 	v.texcoord.xy += _Panning.xy * _Time.yy;
-#endif
+#endif	//AUTOMATICPANNING
 
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
 #ifdef EXTENDED_PARTICLES
 	o.particledata = v.texcoord.zw;
-#endif
+#endif	//EXTENDED_PARTICLES
 	return o;
 }
 
@@ -84,49 +91,74 @@ fixed4 frag(v2f i) : COLOR
 
 #ifdef EXTENDED_PARTICLES
 
-#ifdef APPLY_RGB_COLOR_VERTEX
+#if defined(APPLY_RGB_COLOR_VERTEX)
 	float4 vcolor = i.color;
-#else
+#else	//APPLY_RGB_COLOR_VERTEX
 	float4 vcolor = float4(1.0, 1.0, 1.0, i.color.w);
 #endif	//APPLY_RGB_COLOR_VERTEX
 
-#if defined(DISSOLVE_ENABLED) || defined(DISSOLVE_EXTENDED)
-	float ramp = -1.0 + (i.particledata.x * 2.0);
+#if defined(NOISE_TEXTURE)
+	float3 noise = tex2D(_NoiseTex, i.texcoord + float2(_Time.y * _NoisePanning.x, _Time.y * _NoisePanning.y));
 
-#if defined(DISSOLVE_EXTENDED)
-	float4 t2 = tex2D(_DissolveTex, i.texcoord);
-	col.a = clamp(tex.w * smoothstep(_DissolveStep.x, _DissolveStep.y, t2.x + ramp) * _OpacitySaturation * vcolor.w, 0.0, 1.0);
-#else
-	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, tex.b + ramp) * _OpacitySaturation * vcolor.w, 0.0, 1.0);
+#if defined(NOISE_TEXTURE_EMISSION)
+//	return fixed4(1.0, 1.0, 0.0, 1.0);
+	float nEmission = noise.x;
+#else	//NOISE_TEXTURE_EMISSION
+	float nEmission = 1.0;
+#endif	//NOISE_TEXTURE_EMISSION
+
+#if defined(NOISE_TEXTURE_ALPHA)
+	float nAlpha = noise.y;
+#else	//NOISE_TEXTURE_ALPHA
+	float nAlpha = 1.0;
+#endif	//NOISE_TEXTURE_ALPHA
+
+#if defined(NOISE_TEXTURE_DISSOLVE)
+	float nDissolve = noise.z;
+#else	//NOISE_TEXTURE_DISSOLVE
+	float nDissolve = 1.0;
+#endif	//NOISE_TEXTURE_DISSOLVE
+
+#else	//NOISE_TEXTURE
+	float nEmission = 1.0;
+	float nAlpha = 1.0;
+	float nDissolve = 1.0;
+
+#endif	//NOISE_TEXTURE
+
+#if defined(DISSOLVE_ENABLED)
+	float ramp = -1.0 + (i.particledata.x * 2.0);
+	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, (tex.b + ramp) * nDissolve) * _OpacitySaturation * vcolor.w * nAlpha, 0.0, 1.0);
+
+#else	//DISSOLVE_ENABLED
+	col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0) * nAlpha;
+#endif	//DISSOLVE_ENABLED
+
+#if !defined(COLOR_TINT)
+	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier * nEmission, 0.0, 1.0);
 #endif
 
-#else
-	col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0);
-#endif	//DISSOLVE_ENABLED || DISSOLVE_EXTENDED
-
-
-#if defined(DISSOLVE_EXTENDED)
-	col.xyz = tex.xyz * vcolor.xyz * _EmissionSaturation;
-#else
-
-	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier, 0.0, 1.0);
 #ifdef BLENDMODE_ALPHABLEND
-#if COLOR_RAMP
+
+#if defined(COLOR_RAMP)
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * _EmissionSaturation;
-#else
+#elif !defined(COLOR_TINT)
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
-#else
-#if COLOR_RAMP
+#else	//BLENDMODE_ALPHABLEND
+
+#if defined(COLOR_RAMP)
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * col.a * _EmissionSaturation;
-#else
+#elif !defined(COLOR_TINT)
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
 #endif	//BLENDMODE_ALPHABLEND
 
-#endif	// DISSOLVE_EXTENDED
+#ifdef COLOR_TINT
+	col.xyz = tex.x * _BasicColor.xyz * vcolor.xyz * nEmission * _EmissionSaturation * col.a;
+#endif
 
 #else	//EXTENDED_PARTICLES
 
@@ -139,13 +171,11 @@ fixed4 frag(v2f i) : COLOR
 #else	//BLENDMODE_ADDITIVEALPHABLEND
 
 	col = i.color * tex;
-
 	col *= _TintColor;
 
 #ifdef EMISSIVEPOWER
 	col *= _EmissivePower;
 #endif	//EMISSIVEPOWER
-
 
 #if defined(BLENDMODE_SOFTADDITIVE)
 	col.rgb *= col.a;

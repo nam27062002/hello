@@ -52,7 +52,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	// Internal logic
 	private bool m_snapCamera = false;
 	private string m_focusingDragon = "";
-
+	private bool m_focusOnStart = true;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -94,8 +94,11 @@ public class MenuDragonScroller : MonoBehaviour {
 		m_cameraTransform = m_menuTransitionManager.camera.transform;
 		m_cameraAnchor = cameraAnimator.cameraPath.target;
 
-		// Find game object linked to currently selected dragon
-		FocusDragon(InstanceManager.menuSceneController.selectedDragon, false);
+		if (m_focusOnStart)
+		{
+			// Find game object linked to currently selected dragon
+			FocusDragon(InstanceManager.menuSceneController.selectedDragon, false);
+		}
 	}
 
 	/// <summary>
@@ -182,6 +185,7 @@ public class MenuDragonScroller : MonoBehaviour {
 	{
 		if (!FeatureSettingsManager.MenuDragonsAsyncLoading)
 			return;
+		m_focusOnStart = false;
 		for( int i = 0; i<m_dragonSlots.Count; ++i )
 		{
 			if ( i <= dragonToView)

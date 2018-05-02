@@ -22,6 +22,7 @@ public class GameHUD : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	public GameObject m_speedGameObject;
+	public GameObject m_mapButtonGodRays;
 	public Button m_pauseButton;
 
 	private bool m_paused = false;
@@ -101,6 +102,8 @@ public class GameHUD : MonoBehaviour {
 		// Skip if already paused (don't stack popups pausing the game)
 		// https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-619
 		if(m_paused) return;
+
+		m_mapButtonGodRays.SetActive(false);
 
 		// Open the popup
 		m_paused = true;
