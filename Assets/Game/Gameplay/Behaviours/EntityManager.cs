@@ -211,7 +211,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             if (e != null)
             {
 				float sqrMagnitude = (position - e.behaviour.centerTarget.position).sqrMagnitude;
-				if ( sqrMagnitude <= distance * distance );	
+				if ( sqrMagnitude <= distance * distance )	
                 {
                     results[numResult] = e;
                     numResult++;
