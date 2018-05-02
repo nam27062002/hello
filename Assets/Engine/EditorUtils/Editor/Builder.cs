@@ -528,12 +528,13 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		}
     }
 
-    [MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
+    /*[MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
     public static void GenerateAdaptiveApkFromMenu()
     {
         string path = ValidatePath(Application.dataPath + "/../HD.apk");
         GenerateAdaptiveAPK(path);
     }
+    */
 
     public static void GenerateAdaptiveAPK(string path)
     {
