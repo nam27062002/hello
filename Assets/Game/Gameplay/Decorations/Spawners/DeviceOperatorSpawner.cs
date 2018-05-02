@@ -43,7 +43,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 	protected override void OnDestroy() {
 		base.OnDestroy();
-		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
+		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
 			ForceRemoveEntities();
 		}
 	}

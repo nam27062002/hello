@@ -35,7 +35,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
 
 	override protected void OnDestroy() {
 		base.OnDestroy();
-		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
+		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
 			ForceRemoveEntities();
 		}
 	}
