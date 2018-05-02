@@ -27,7 +27,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 	public int callbackOrder { get { return 0; } }
 	public void OnPreprocessBuild(BuildTarget target, string path) {
 		Debug.Log("MyCustomBuildProcessor.OnPreprocessBuild for target " + target + " at path " + path);
-		if (target == BuildTarget.iOS {
+		if (target == BuildTarget.iOS) {
 			// We make sure bundleVersiont is set to game settings version so xcode files generated manually have the right version number
 			PlayerSettings.bundleVersion = GameSettings.internalVersion.ToString();
 		}
