@@ -23,6 +23,8 @@ public class OfferPack {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string EMPTY_VALUE = "-";
+
 	public enum WhereToShow {
 		SHOP_ONLY,
 		DRAGON_SELECTION,
@@ -35,15 +37,6 @@ public class OfferPack {
 		PAYER,
 		NON_PAYER
 	}
-
-	public static readonly string[] ITEM_TYPE_ORDER = {
-		Metagame.RewardSoftCurrency.TYPE_CODE,
-		Metagame.RewardHardCurrency.TYPE_CODE,
-		Metagame.RewardGoldenFragments.TYPE_CODE,
-		Metagame.RewardEgg.TYPE_CODE,
-		Metagame.RewardPet.TYPE_CODE,
-		Metagame.RewardSkin.TYPE_CODE
-	};
 
 	public const int MAX_ITEMS = 3;	// For now
 	
@@ -123,6 +116,13 @@ public class OfferPack {
 	private string[] m_skinsOwned = new string[0];
 	private string[] m_skinsNotOwned = new string[0];
 
+	// Purchase limit
+	private int m_purchaseLimit = 1;
+	private int m_purchaseCount = 0;
+	public int purchaseCount {
+		get { return m_purchaseCount; }
+	}
+
 	// Internal vars
 	private int m_viewsCount = 0;	// Only auto-triggered views
 	private DateTime m_lastViewTimestamp = new DateTime();
@@ -160,16 +160,12 @@ public class OfferPack {
 
 		// Items - limited to 3 for now
 		for(int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
-			// Find out item definition
-			DefinitionNode itemDef = DefinitionsManager.SharedInstance.GetDefinition(
-				DefinitionsCategory.OFFER_ITEMS,
-				_def.GetAsString("item" + i, "")
-			);
-			if(itemDef == null) continue;
-
-			// Create and store new item
+			// Create and initialize new item
 			OfferPackItem item = new OfferPackItem();
-			item.InitFromDefinition(itemDef);
+			item.InitFromDefinition(_def, i);
+
+			// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it
+			if(item.reward == null) continue;
 			m_items.Add(item);
 		}
 
@@ -226,6 +222,12 @@ public class OfferPack {
 
 		// Featured offers are always timed
 		if(m_featured) m_isTimed = true;
+
+		// Purchase limit
+		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
+
+		// Persisted data
+		UsersManager.currentUser.LoadOfferPack(this);
 	}
 
 	/// <summary>
@@ -274,6 +276,10 @@ public class OfferPack {
 		m_skinsOwned = new string[0];
 		m_skinsNotOwned = new string[0];
 
+		// Purchase limit
+		m_purchaseLimit = 1;
+		m_purchaseCount = 0;
+
 		// Internal vars
 		m_viewsCount = 0;
 		m_lastViewTimestamp = new DateTime();
@@ -309,6 +315,9 @@ public class OfferPack {
 	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
 	/// <param name="_areaToCheck">Area to check.</param>
 	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
+		// Just in case
+		if(m_def == null) return false;
+
 		// Not if not featured
 		if(!m_featured) return false;
 
@@ -316,7 +325,7 @@ public class OfferPack {
 		if(!CanBeDisplayed()) return false;
 
 		// Check max views
-		if(m_viewsCount >= m_maxViews) return false;
+		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return false;
 
 		// Check area
 		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
@@ -338,6 +347,9 @@ public class OfferPack {
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
 		popup.Open();
 
+		// Tracking
+		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"));
+
 		// Update control vars and return
 		m_viewsCount++;
 		m_lastViewTimestamp = serverTime;
@@ -351,6 +363,9 @@ public class OfferPack {
 	public bool CanBeApplied() {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
+
+		// Purchase limit (ignore if 0 or negative, unlimited pack)
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return false;
 
 		// Main conditions
 		if(m_minAppVersion > GameSettings.internalVersion) return false;
@@ -393,7 +408,7 @@ public class OfferPack {
 
 		// Skins
 		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
-			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) == Wardrobe.SkinState.LOCKED) return false;
+			if(profile.wardrobe.GetSkinState(m_skinsUnlocked[i]) == Wardrobe.SkinState.LOCKED) return false;
 		}
 		for(int i = 0; i < m_skinsOwned.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) != Wardrobe.SkinState.OWNED) return false;
@@ -415,23 +430,29 @@ public class OfferPack {
 	/// Apply this pack to current user.
 	/// </summary>
 	public void Apply() {
-		// [AOC] TODO!! Validate that the pack is only applied once?
+		// Validate purchase limit
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return;
 
 		// We want the rewards to be given in a specific order: do so
 		List<OfferPackItem> sortedItems = new List<OfferPackItem>(m_items);
-		sortedItems.Sort(
-			(OfferPackItem _item1, OfferPackItem _item2) => {
-				// Depends on type
-				return ITEM_TYPE_ORDER.IndexOf(_item1.type).CompareTo(ITEM_TYPE_ORDER.IndexOf(_item2.type));
-			}
-		);
-
-
+		sortedItems.Sort(OfferPackItem.Compare);
+			
 		// Push all the rewards to the pending rewards stack
 		// Reverse order so last rewards pushed are collected first!
 		for(int i = sortedItems.Count - 1; i >= 0; --i) {
 			UsersManager.currentUser.PushReward(sortedItems[i].reward);
 		}
+
+		// Update purchase tracking
+		// [AOC] BEFORE Saving persistence!
+		m_purchaseCount++;
+
+		// Save persistence
+		UsersManager.currentUser.SaveOfferPack(this);
+		PersistenceFacade.instance.Save_Request();
+
+		// Notify game
+		Messenger.Broadcast<OfferPack>(MessengerEvents.OFFER_APPLIED, this);
 	}
 
 	//------------------------------------------------------------------------//
@@ -447,8 +468,10 @@ public class OfferPack {
 	/// <param name="_def">Definition to be filled.</param>
 	public void ValidateDefinition(DefinitionNode _def) {
 		// Items
+		// Create a dummy item with default values and use it to validate the definitions
+		OfferPackItem item = new OfferPackItem();
 		for(int i = 1; i <= MAX_ITEMS; ++i) {
-			SetValueIfMissing(ref _def, "item" + i, "");
+			item.ValidateDefinition(_def, i);
 		}
 
 		// General
@@ -496,17 +519,20 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "skinsUnlocked", string.Join(";", m_skinsUnlocked));
 		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
 		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
+
+		// Purchase limit
+		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
 	}
 
 	//------------------------------------------------------------------------//
-	// INTERNAL UTILS														  //
+	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Custom range parser. Do it here to avoid changing Calety -_-
 	/// </summary>
 	/// <returns>New range initialized with data parsed from the input string.</returns>
 	/// <param name="_str">String to be parsed. Must be in the format "min:max".</param>
-	private Range ParseRange(string _str) {
+	public static Range ParseRange(string _str) {
 		string[] tokens = _str.Split(':');
 		Range r = new Range(0, float.MaxValue);
 
@@ -530,7 +556,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>New range initialized with data parsed from the input string.</returns>
 	/// <param name="_str">String to be parsed. Must be in the format "min:max".</param>
-	private RangeInt ParseRangeInt(string _str) {
+	public static RangeInt ParseRangeInt(string _str) {
 		string[] tokens = _str.Split(':');
 		RangeInt r = new RangeInt(0, int.MaxValue);
 
@@ -556,7 +582,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>The given string as a array of values splited with the ";" character.</returns>
 	/// <param name="_str">String to be parsed. Must use ";" as separator.</param>
-	private string[] ParseArray(string _str) {
+	public static string[] ParseArray(string _str) {
 		// Empty array if string is empty
 		if(string.IsNullOrEmpty(_str)) return new string[0];
 
@@ -569,15 +595,72 @@ public class OfferPack {
 	/// <param name="_def">Definition to be modified.</param>
 	/// <param name="_key">Key of the property to be checked.</param>
 	/// <param name="_value">Value to be set if the property is missing from the definition node.</param>
-	private void SetValueIfMissing(ref DefinitionNode _def, string _key, string _value) {
+	public static void SetValueIfMissing(ref DefinitionNode _def, string _key, string _value) {
 		// [AOC] This is disgusting because the SetValue() method also performs the Has() operation,
 		//		 but proper solution requires changing Calety and all the bureaucracy around it -_-
-		if(!_def.Has(_key)) {
+		if(!_def.Has(_key) || _def.GetAsString(_key) == EMPTY_VALUE) {
 			_def.SetValue(_key, _value);
 		}
 	}
 
 	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
+	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// In the particular case of the offers, we only need to persist them in specific cases.
+	/// </summary>
+	/// <returns>Whether the offer should be persisted or not.</returns>
+	public bool ShouldBePersisted() {
+		// Yes if it has been purchased at least once
+		if(m_purchaseCount > 0) return true;
+
+		// [AOC] TODO!! Yes if it has a limited duration and still active (we need to persist the activation date)
+
+		// No for the rest of cases
+		return false;
+	}
+
+	/// <summary>
+	/// Load state from a persistence object.
+	/// </summary>
+	/// <param name="_data">The data object loaded from persistence.</param>
+	/// <returns>Whether the mission was successfully loaded</returns>
+	public void Load(SimpleJSON.JSONClass _data) {
+		// Purchase count
+		string key = "purchaseCount";
+		if(_data.ContainsKey(key)) {
+			m_purchaseCount = _data[key].AsInt;
+		}
+
+		// [AOC] TODO!! End timestamp
+	}
+
+	/// <summary>
+	/// Create and return a persistence save data json initialized with the data.
+	/// </summary>
+	/// <returns>A new data json to be stored to persistence by the PersistenceManager.</returns>
+	public SimpleJSON.JSONClass Save() {
+		// Create new object
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Purchase count
+		if(m_purchaseCount > 0) {
+			data.Add("purchaseCount", m_purchaseCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		}
+
+		// [AOC] TODO!! End timestamp
+
+		// Done!
+		return data;
+	}
+
+	/// <summary>
+	/// Generates a unique ID for this offer pack, which will be used when saving
+	/// pack data to the persistence json.
+	/// </summary>
+	/// <returns>The offer pack unique ID, composed by its sku and customization ID.</returns>
+	public string GetPersistenceUniqueID() {
+		if(m_def == null) return string.Empty;
+		return m_def.sku + m_def.customizationCode.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
+	}
 }

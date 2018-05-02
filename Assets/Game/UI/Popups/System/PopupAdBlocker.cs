@@ -41,7 +41,9 @@ public class PopupAdBlocker : MonoBehaviour {
 	private bool m_adPending = false;
 
 	public static bool m_sBlocking = false;
+	private bool m_forcedCancel = false;
 
+	public GameObject m_cancelButton;
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -93,6 +95,8 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// <param name="_adPurpose">Purpose of the ad.</param>
 	/// <param name="_onAdFinishedCallback">Callback to be invoked when Ad has finished.</param>
 	private void Init(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
+		m_cancelButton.SetActive(false);
+
 		// Mark as pending
 		m_adPending = true;
 
@@ -148,13 +152,15 @@ public class PopupAdBlocker : MonoBehaviour {
 		controller.Close(true);
 
 		// If the ad couldn't be displayed, show message
-		if(!_success) {
+		if(!_success && !m_forcedCancel) {
 			UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"),
 				Vector2.one * 0.5f,
 				PopupManager.canvas.transform as RectTransform
 			);
 		}
+
+		m_forcedCancel = false;
 
 		// Broadcast result
 		OnAdFinished.Invoke(_success);
@@ -170,6 +176,14 @@ public class PopupAdBlocker : MonoBehaviour {
 		}
 	}
 
+	public void OnOpenPostAnimation(){
+		m_cancelButton.SetActive( true );
+	}
+
+	public void OnClosePreAnimation(){
+		m_cancelButton.SetActive( false );
+	}
+
 	/// <summary>
 	/// Popup has just been closed.
 	/// </summary>
@@ -177,5 +191,19 @@ public class PopupAdBlocker : MonoBehaviour {
 		// Remove all listeners
 		OnAdFinished.RemoveAllListeners();
 		m_sBlocking = false;
+	}
+
+
+	public void OnForceCancel()
+	{
+		m_forcedCancel = true;
+		if (GameAds.instance.IsWaitingToPlayAnAd())
+		{
+			GameAds.instance.StopWaitingToPlayAnAd();
+		}
+		else
+		{
+			OnAdResult(false);
+		}
 	}
 }

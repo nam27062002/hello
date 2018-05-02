@@ -932,6 +932,7 @@ MonoBehaviour:
   m_parentName: Gibs_04
   m_parentRoot: {fileID: 4571219109259096}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114079608969473150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -946,6 +947,7 @@ MonoBehaviour:
   m_parentName: Gibs_07
   m_parentRoot: {fileID: 4571219109259096}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114239290178774846
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -960,6 +962,7 @@ MonoBehaviour:
   m_parentName: Gibs_05
   m_parentRoot: {fileID: 4571219109259096}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114446760126818334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -971,6 +974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c77288d1e69b42e3a73ce8456d67b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_isDecoration: 0
   m_fadeDelay: 0.75
   m_fadeTime: 1.5
   m_forceExplosion: 250
@@ -978,9 +982,9 @@ MonoBehaviour:
   m_blood:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1011,6 +1015,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_bloodPoints:
   - {fileID: 4265285590817566}
@@ -1034,6 +1039,7 @@ MonoBehaviour:
   m_parentName: Gibs_02
   m_parentRoot: {fileID: 4571219109259096}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114797027747299842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1048,6 +1054,7 @@ MonoBehaviour:
   m_parentName: Gibs_03
   m_parentRoot: {fileID: 4571219109259096}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114797309043237006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1077,6 +1084,7 @@ MonoBehaviour:
   m_parentName: Gibs_06
   m_parentRoot: {fileID: 4571219109259096}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114982384055060250
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1091,6 +1099,7 @@ MonoBehaviour:
   m_parentName: Gibs_01
   m_parentRoot: {fileID: 4571219109259096}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!135 &135040879573324932
 SphereCollider:
   m_ObjectHideFlags: 1

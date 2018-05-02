@@ -185,6 +185,8 @@ public class DragonPlayer : MonoBehaviour {
 		set{ m_superSizeInvulnerable = value; }
 	}
 
+	public DragonCommonSettings m_dragonCommonSettings;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -280,15 +282,16 @@ public class DragonPlayer : MonoBehaviour {
 
 	IEnumerator ReviveScaleCoroutine()
 	{
-		float duration = 1;
+		float duration = 1.3f;
 		float timer = 0;
 
 		while( timer < duration )
 		{
 			timer += Time.deltaTime;
-			gameObject.transform.localScale = Vector3.one * data.scale * Mathf.Clamp01( timer / duration);
+			gameObject.transform.localScale = Vector3.one * data.scale * m_dragonCommonSettings.m_reviveScaleCurve.Evaluate( timer );
 			yield return null;
 		}
+		gameObject.transform.localScale = Vector3.one * data.scale;
 		playable = true;
 	}
 
@@ -360,7 +363,6 @@ public class DragonPlayer : MonoBehaviour {
 		{
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
 			m_dragonMotion.Revive();
-			ReviveScale();
 
 			// If health modifier changed, notify game
 			if(m_currentHealthModifier != oldHealthModifier) {
@@ -369,6 +371,8 @@ public class DragonPlayer : MonoBehaviour {
 
 			// Notify revive to game
 			Messenger.Broadcast<ReviveReason>(MessengerEvents.PLAYER_REVIVE, reason);
+
+			ReviveScale();
 		}
 		else
 		{

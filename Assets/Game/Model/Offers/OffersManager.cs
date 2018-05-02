@@ -53,6 +53,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
+		Messenger.AddListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
 	}
 
 	/// <summary>
@@ -66,6 +67,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
+		Messenger.RemoveListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
 	}
 
 	/// <summary>
@@ -188,7 +190,16 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 
 		// Sort by order afterwards
-		return _p1.order.CompareTo(_p2.order);
+		int order = _p1.order.CompareTo(_p2.order);
+		if(order != 0) return order;
+
+		// Then by discount
+		int discount = _p1.def.GetAsFloat("discount").CompareTo(_p2.def.GetAsFloat("discount"));
+		if(discount != 0) return -discount;	// Reverse: item with greater discount goes first!
+
+		// Finally by reference price
+		int price = _p1.def.GetAsFloat("refPrice").CompareTo(_p2.def.GetAsFloat("refPrice"));
+		return -price;	// Reverse: item with greater price goes first! (usually a better pack)
 	}
 
 	//------------------------------------------------------------------------//
@@ -213,15 +224,6 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			defaultPack.ValidateDefinition(offerDefs[i]);
 		}
-
-
-		// Offer items
-		// Create a dummy item with default values and use it to validate the definitions
-		OfferPackItem defaultItem = new OfferPackItem();
-		List<DefinitionNode> itemDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_ITEMS);
-		for(int i = 0; i < itemDefs.Count; ++i) {
-			defaultItem.ValidateDefinition(itemDefs[i]);
-		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -232,6 +234,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// to be checked.
 	/// Different overloads to support different event parameters, but we don't actually care about them.
 	/// </summary>
+	private void OnGameStateChanged() {
+		Refresh();
+	}
 	private void OnGameStateChanged1(UserProfile.Currency _p1, long _p2, long _p3) {
 		OnGameStateChanged(); 
 	}
@@ -244,7 +249,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	private void OnGameStateChanged4(Egg _p1) { 
 		OnGameStateChanged(); 
 	}
-	private void OnGameStateChanged() {
-		Refresh();
+	private void OnGameStateChanged5(OfferPack _p1) { 
+		OnGameStateChanged(); 
 	}
 }

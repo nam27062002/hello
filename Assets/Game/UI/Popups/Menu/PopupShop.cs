@@ -55,6 +55,10 @@ public class PopupShop : MonoBehaviour {
 	[SerializeField] private float[] m_pillRotationSequence = new float[0];
 	[SerializeField] private GameObject m_tabButtonsContainer = null;
 
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_offersCount;
+
+
 	// Other setup parameters
 	private bool m_closeAfterPurchase = false;
 	public bool closeAfterPurchase {
@@ -146,6 +150,7 @@ public class PopupShop : MonoBehaviour {
 		}
 
 		// Go to initial tab
+		m_tabs.GoToScreen(-1, NavigationScreen.AnimType.NONE);	// [AOC] The shop popup is keep cached, so if the last open tab matches the initial tab, animation wont be triggered. Force it by doing this.
 		m_tabs.GoToScreen(initialTab);
 	}
 
@@ -169,6 +174,8 @@ public class PopupShop : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
 		HDTrackingManager.Instance.Notify_StoreVisited();
+
+		m_offersCount.text = OffersManager.activeOffers.Count.ToString();
 
         // Reset packs purchased list
         m_packsPurchased.Clear();
