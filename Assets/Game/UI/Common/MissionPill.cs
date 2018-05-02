@@ -172,7 +172,7 @@ public class MissionPill : MonoBehaviour {
 		bool show = !m_mission.objective.singleRun || m_showProgressForSingleRunMissions;
 		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
 		if(show) {
-			m_activeObj.FindComponentRecursive<Localizer>("ProgressText").text.text = m_mission.objective.GetProgressString();
+			m_activeObj.FindComponentRecursive<TextMeshProUGUI>("ProgressText").text = m_mission.objective.GetProgressString();
 			m_activeObj.FindComponentRecursive<Slider>("ProgressBar").value = m_mission.objective.progress;
 		}
 

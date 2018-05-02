@@ -81,6 +81,19 @@ public class TrackerSurviveTime : TrackerBase {
 		return base.RoundTargetValue(_targetValue);	// Apply default rounding as well
 	}
 
+	/// <summary>
+	/// Gets the progress string, custom formatted based on tracker type.
+	/// </summary>
+	/// <returns>The progress string properly formatted.</returns>
+	/// <param name="_currentValue">Current value to be evaluated.</param>
+	/// <param name="_targetValue">Target value to be evaulated.</param>
+	/// <param name="_showTarget">Show target value? (i.e. "25/40"). Some types might override this setting if not appliable.</param>
+	public override string GetProgressString(float _currentValue, float _targetValue, bool _showTarget = true) {
+		//Time trackers will show a percentage as a progress string
+		float p = (_currentValue * 100) / _targetValue;
+		return StringUtils.FormatNumber(p, 2, 0, false) + "%";
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
