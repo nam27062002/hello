@@ -151,6 +151,15 @@ public abstract class TrackingObjectiveBase {
 		return m_tracker.FormatValue(targetValue);
 	}
 
+	/// <summary>
+	/// Gets the progress string, custom formatted based on objective type.
+	/// </summary>
+	/// <returns>The progress string properly formatted.</returns>
+	/// <param name="_showTarget">Show target value? (i.e. "25/40"). Some types might override this setting if not appliable.</param>
+	public virtual string GetProgressString(bool _showTarget = true) {
+		return m_tracker.GetProgressString(m_tracker.currentValue, targetValue, _showTarget);
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//

@@ -132,6 +132,21 @@ public class TrackerBase {
 	}
 
 	/// <summary>
+	/// Gets the progress string, custom formatted based on tracker type.
+	/// </summary>
+	/// <returns>The progress string properly formatted.</returns>
+	/// <param name="_currentValue">Current value to be evaluated.</param>
+	/// <param name="_targetValue">Target value to be evaulated.</param>
+	/// <param name="_showTarget">Show target value? (i.e. "25/40"). Some types might override this setting if not appliable.</param>
+	public virtual string GetProgressString(float _currentValue, float _targetValue, bool _showTarget = true) {
+		if(_showTarget) {
+			return LocalizationManager.SharedInstance.Localize("TID_FRACTION", FormatValue(_currentValue), FormatValue(_targetValue));
+		} else {
+			return FormatValue(_currentValue);
+		}
+	}
+
+	/// <summary>
 	/// Sets a new value and optionally triggers OnValueChanged event.
 	/// </summary>
 	/// <param name="_newValue">The new value to be set.</param>
