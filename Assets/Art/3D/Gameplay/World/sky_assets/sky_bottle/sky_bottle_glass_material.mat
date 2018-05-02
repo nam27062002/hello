@@ -7,14 +7,13 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: sky_bottle_glass_material
-  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
+  m_Shader: {fileID: 4800000, guid: 1b62d0b1d1626d34ea157e7f2e06d54f, type: 3}
   m_ShaderKeywords: EMISSIVE_NONE MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: 3090
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -60,7 +59,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: 14ca732449041b64aa36929057e32ebc, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecondTexture:
@@ -93,6 +92,8 @@ Material:
     - _EnableSpecular: 0
     - _EnableTint: 0
     - _EnableWaveEmission: 0
+    - _FillAmount: -0.2
+    - _FresnelPower: 1.27
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -104,17 +105,27 @@ Material:
     - _NormalStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 1
+    - _ReflectionAmount: 0.4
+    - _Rim: 0.088
+    - _RimPower: 6.6
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularPower: 3
+    - _SpecularPower: 25.2
     - _SrcBlend: 1
+    - _StencilMask: 10
     - _UVSec: 0
     - _WaveEmission: 0.1
+    - _WobbleX: 0
+    - _WobbleZ: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FoamColor: {r: 1, g: 0.122, b: 1, a: 1}
+    - _FresnelColor: {r: 0.16176468, g: 0.1348914, b: 0.02259948, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _RimColor: {r: 1, g: 1, b: 0.091, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 0}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _TopColor: {r: 0, g: 1, b: 1, a: 1}
