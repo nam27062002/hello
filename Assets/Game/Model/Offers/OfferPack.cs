@@ -632,6 +632,18 @@ public class OfferPack {
 			m_purchaseCount = _data[key].AsInt;
 		}
 
+		// View count
+		key = "viewCount";
+		if(_data.ContainsKey(key)) {
+			m_viewsCount = _data[key].AsInt;
+		}
+
+		// Last view timestamp
+		key = "lastViewTimestamp";
+		if(_data.ContainsKey(key)) {
+			m_lastViewTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		}
+
 		// [AOC] TODO!! End timestamp
 	}
 
@@ -646,6 +658,13 @@ public class OfferPack {
 		// Purchase count
 		if(m_purchaseCount > 0) {
 			data.Add("purchaseCount", m_purchaseCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		}
+
+		// View count
+		// Last view timestamp
+		if(m_viewsCount > 0) {
+			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
 
 		// [AOC] TODO!! End timestamp
