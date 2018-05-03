@@ -43,6 +43,7 @@ public class OfferPack {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Pack setup
 	private DefinitionNode m_def = null;
 	public DefinitionNode def {
 		get { return m_def; }
@@ -53,9 +54,23 @@ public class OfferPack {
 		get { return m_items; }
 	}
 
-	// Pack setup
+	private string m_uniqueId = "";
+	public string uniqueId {
+		get {
+			if(!string.IsNullOrEmpty(m_uniqueId)) {
+				return m_uniqueId;
+			} else if(m_def != null) {
+				return m_def.sku;
+			} else {
+				return string.Empty;
+			}
+		}
+	}
+
+	// Segmentation parameters
 	// See https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Offers+1.0#id-[HD]Offers1.0-Segmentationdetails
-	// Mandatory params
+
+	// Mandatory segmentation params
 	private Version m_minAppVersion = new Version();
 	public Version minAppVersion {
 		get { return m_minAppVersion; }
@@ -169,6 +184,9 @@ public class OfferPack {
 			m_items.Add(item);
 		}
 
+		// Unique ID
+		m_uniqueId = m_def.GetAsString("uniqueId");
+
 		// Params
 		// We have just done a Reset(), so variables have the desired default values
 
@@ -237,6 +255,7 @@ public class OfferPack {
 		// Items and def
 		m_items.Clear();
 		m_def = null;
+		m_uniqueId = string.Empty;
 
 		// Mandatory params
 		m_minAppVersion.Set(0, 0, 0);
@@ -475,6 +494,7 @@ public class OfferPack {
 		}
 
 		// General
+		SetValueIfMissing(ref _def, "uniqueId", m_uniqueId.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
@@ -611,8 +631,14 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>Whether the offer should be persisted or not.</returns>
 	public bool ShouldBePersisted() {
+		// Never if definition is not valid
+		if(m_def == null) return false;
+
 		// Yes if it has been purchased at least once
 		if(m_purchaseCount > 0) return true;
+
+		// Yes if we are tracking views
+		if(m_viewsCount > 0) return true;
 
 		// [AOC] TODO!! Yes if it has a limited duration and still active (we need to persist the activation date)
 
@@ -671,15 +697,5 @@ public class OfferPack {
 
 		// Done!
 		return data;
-	}
-
-	/// <summary>
-	/// Generates a unique ID for this offer pack, which will be used when saving
-	/// pack data to the persistence json.
-	/// </summary>
-	/// <returns>The offer pack unique ID, composed by its sku and customization ID.</returns>
-	public string GetPersistenceUniqueID() {
-		if(m_def == null) return string.Empty;
-		return m_def.sku + m_def.customizationCode.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
 	}
 }

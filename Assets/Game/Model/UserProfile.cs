@@ -1611,7 +1611,7 @@ public class UserProfile : UserPersistenceSystem
 		if(_pack == null || !_pack.ShouldBePersisted()) return;
 
 		// Save persistence data with unique ID for that pack
-		m_offerPacksPersistenceData[_pack.GetPersistenceUniqueID()] = _pack.Save();
+		m_offerPacksPersistenceData[_pack.uniqueId] = _pack.Save();
 	}
 
 	/// <summary>
@@ -1623,7 +1623,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Do we have persistence data for this pack?
 		JSONClass packData = null;
-		if(m_offerPacksPersistenceData.TryGetValue(_pack.GetPersistenceUniqueID(), out packData)) {
+		if(m_offerPacksPersistenceData.TryGetValue(_pack.uniqueId, out packData)) {
 			// Yes! Load it into the pack
 			_pack.Load(packData);
 		}
