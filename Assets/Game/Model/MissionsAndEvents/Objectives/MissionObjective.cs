@@ -50,7 +50,7 @@ public class MissionObjective : TrackingObjectiveBase {
 	/// <param name="_typeDef">The mission type definition.</param>
 	/// <param name="_targetValue">Target value.</param>
 	/// <param name="_singleRun">Is it a single run mission?</param>
-	public MissionObjective(Mission _parentMission, DefinitionNode _missionDef, DefinitionNode _typeDef, float _targetValue, bool _singleRun) {
+	public MissionObjective(Mission _parentMission, DefinitionNode _missionDef, DefinitionNode _typeDef, long _targetValue, bool _singleRun) {
 		#if LOG
 		DebugUtils.Log("<color=green>Creating MissionObjective:</color> " + _parentMission + ", " + _missionDef + ", " + _typeDef + ", " + _targetValue + ", " + _singleRun);
 		#endif
@@ -168,7 +168,7 @@ public class MissionObjective : TrackingObjectiveBase {
 	public virtual void OnGameStarted() {
 		// If we're a single-run objective, reset counter
 		if(m_singleRun) {
-			m_tracker.SetValue(0f, false);
+			m_tracker.SetValue(0, false);
 
 			#if LOG
 			DebugUtils.Log("<color=red>Resetting mission! </color>" + ToString());
@@ -189,7 +189,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		// If we're a single-run objective, reset counter
 		// Unless objective was completed
 		if(m_singleRun && !isCompleted) {
-			m_tracker.SetValue(0f, false);
+			m_tracker.SetValue(0, false);
 
 			#if LOG
 			DebugUtils.Log("<color=red>Resetting mission! </color> " + ToString());
@@ -216,7 +216,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		// Check completion
 		if(isCompleted) {
 			// Cap value to target value
-			m_tracker.SetValue(Mathf.Min(currentValue, (float)targetValue), false);
+			m_tracker.SetValue(Math.Min(currentValue, targetValue), false);
 
 			// Stop tracking
 			m_tracker.enabled = false;

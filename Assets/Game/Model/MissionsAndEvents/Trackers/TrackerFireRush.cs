@@ -58,7 +58,7 @@ public class TrackerFireRush : TrackerBase {
 	/// <param name="_tid">Description TID to be formatted.</param>
 	/// <param name="_targetValue">Target value. Will be placed at the %U0 replacement slot.</param>
 	/// <param name="_replacements">Other optional replacements, starting at %U1.</param>
-	override public string FormatDescription(string _tid, float _targetValue, params string[] _replacements) {
+	override public string FormatDescription(string _tid, long _targetValue, params string[] _replacements) {
 		// Singular/Plural issue (https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-1202)
 		// Figure out which tid to use
 		string timeTid = "TID_GEN_TIME";

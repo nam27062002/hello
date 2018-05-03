@@ -108,7 +108,7 @@ public class AchievementObjective : TrackingObjectiveBase {
 	public virtual void OnGameStarted() {
 		// If we're a single-run objective, reset counter
 		if(m_singleRun) {
-			m_tracker.SetValue(0f, false);
+			m_tracker.SetValue(0, false);
 		}
 	}
 
@@ -119,7 +119,7 @@ public class AchievementObjective : TrackingObjectiveBase {
 		// If we're a single-run objective, reset counter
 		// Unless objective was completed
 		if(m_singleRun && !isCompleted) {
-			m_tracker.SetValue(0f, false);
+			m_tracker.SetValue(0, false);
 		}
 	}
 
@@ -130,7 +130,7 @@ public class AchievementObjective : TrackingObjectiveBase {
 		// Check completion
 		if(isCompleted) {
 			// Cap value to target value
-			m_tracker.SetValue(Mathf.Min(currentValue, (float)targetValue), false);
+			m_tracker.SetValue(Math.Min(currentValue, targetValue), false);
 
 			if ( GameCenterManager.SharedInstance.CheckIfAuthenticated() )
 			{
