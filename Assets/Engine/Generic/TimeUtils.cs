@@ -81,23 +81,31 @@ public class TimeUtils {
 	// CONVERSION METHODS												//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Retrieve the unix timestamp (milliseconds elapsed since 00:00:00 1 January 1970) given a DateTime object.
+	/// Retrieve the unix timestamp (milliseconds/seconds elapsed since 00:00:00 1 January 1970) given a DateTime object.
 	/// Use DateTime.UtcNow to get current unix timestamp.
 	/// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
 	/// </summary>
 	/// <returns>The unix timestamp corresponding to the given date.</returns>
-	public static long DateToTimestamp(DateTime _date) {
-		return (long)(_date.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+	/// <param name="_date">The date to be converted.</param>
+	/// <param name="_millis">Timestamp represented in millis or seconds?</param>
+	public static long DateToTimestamp(DateTime _date, bool _millis = true) {
+		TimeSpan ts = _date.Subtract(new DateTime(1970, 1, 1));
+		if(_millis) {
+			return (long)ts.TotalMilliseconds;
+		} else {
+			return (long)ts.TotalSeconds;
+		}
 	}
 
 	/// <summary>
-	/// Parse the given unix timestamp (milliseconds elapsed since 00:00:00 1 January 1970) into a DateTime object.
+	/// Parse the given unix timestamp (milliseconds/seconds elapsed since 00:00:00 1 January 1970) into a DateTime object.
 	/// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
 	/// </summary>
 	/// <returns>The date corresponding to the given unix timestamp.</returns>
 	/// <param name="_timestamp">The unix timestamp to be parsed.</param>
-	public static DateTime TimestampToDate(long _timestamp) {
-		double d = _timestamp / 1000.0;
+	/// <param name="_millis">Timestamp represented in millis or seconds?</param>
+	public static DateTime TimestampToDate(long _timestamp, bool _millis = true) {
+		double d = _millis ? _timestamp / 1000.0 : (double)_timestamp;
 		return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(d);
 	}
 
