@@ -3063,7 +3063,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224175061723598696}
   - component: {fileID: 222427851316235290}
-  - component: {fileID: 114269991829716378}
   - component: {fileID: 114909925887003646}
   m_Layer: 5
   m_Name: ProgressText
@@ -3204,7 +3203,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224961911087820402}
   - component: {fileID: 222589583722781440}
-  - component: {fileID: 114629898806686068}
   - component: {fileID: 114194075243182250}
   m_Layer: 5
   m_Name: ProgressText
@@ -3518,7 +3516,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224109160081498864}
   - component: {fileID: 222328149049438180}
-  - component: {fileID: 114150620240994326}
   - component: {fileID: 114296514988968756}
   m_Layer: 5
   m_Name: ProgressText
@@ -6428,22 +6425,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
---- !u!114 &114150620240994326
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1951485227866968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: TID_FRACTION
-  m_caseType: 0
-  m_replacements:
-  - 0s
-  - 1m 40s
 --- !u!114 &114151136224379764
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7981,20 +7962,6 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
---- !u!114 &114269991829716378
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1847957082753640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114281368283201804
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12562,22 +12529,6 @@ MonoBehaviour:
   m_tid: TID_MISSIONS_NEXT_MISSION_IN
   m_caseType: 0
   m_replacements: []
---- !u!114 &114629898806686068
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1891616175262294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: TID_FRACTION
-  m_caseType: 0
-  m_replacements:
-  - 0
-  - 56
 --- !u!114 &114635183180797756
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -29198,7 +29149,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224010815385928362
@@ -30941,7 +30892,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0, y: 1.9}
+  m_AnchoredPosition: {x: 0, y: 1.8999939}
   m_SizeDelta: {x: 172.1, y: 153.2}
   m_Pivot: {x: 1, y: 1}
 --- !u!224 &224387133575144370
@@ -31035,7 +30986,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224414545197954632
@@ -32113,7 +32064,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0, y: 1.9}
+  m_AnchoredPosition: {x: 0, y: 1.8999939}
   m_SizeDelta: {x: 172.1, y: 153.2}
   m_Pivot: {x: 1, y: 1}
 --- !u!224 &224705410328075806
@@ -32419,7 +32370,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224797948233601898
@@ -32810,7 +32761,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224882995178330840
