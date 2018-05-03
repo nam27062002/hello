@@ -1770,6 +1770,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_COORDINATESBL, posblasstring);
             Track_AddParamString(e, TRACK_PARAM_COORDINATESTR, postrasstring);
             Track_AddParamBool(e, TRACK_PARAM_FIRE_RUSH, fireRush);
+            Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
             Track_SendEvent(e);
         }
