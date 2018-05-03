@@ -46,22 +46,10 @@ public class TutorialMapButton : MonoBehaviour {
 			m_mapButton.SetActive(false);
 			m_mapButtonGodRays.SetActive(false);
 
-			if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
-				m_timer = new DeltaTimer();
-				m_timer.Stop();
+			if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {				
+				m_state = State.Idle;
 
-				m_rTransform.localScale = GameConstants.Vector3.zero;
-
-				m_posO = m_rTransform.position;
-
-				m_color = m_godRays.color;
-				m_color.a = 0f;
-				m_godRays.color = m_color;
-
-				m_rotation = 0f;
-
-				m_timer.Start(m_delay * 1000f);
-				m_state = State.Delay;
+				Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 			} else {
 				GameObject.Destroy(m_rTransform.parent.gameObject);
 			}
@@ -70,6 +58,25 @@ public class TutorialMapButton : MonoBehaviour {
 
 	private void OnDestroy() {
 		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+	}
+
+	private void OnGameStarted() {
+		m_timer = new DeltaTimer();
+		m_timer.Stop();
+
+		m_rTransform.localScale = GameConstants.Vector3.zero;
+
+		m_posO = m_rTransform.position;
+
+		m_color = m_godRays.color;
+		m_color.a = 0f;
+		m_godRays.color = m_color;
+
+		m_rotation = 0f;
+
+		m_timer.Start(m_delay * 1000f);
+		m_state = State.Delay;
 	}
 
 	private void StartAnim(Transform _t, Reward _reward) {
@@ -79,7 +86,7 @@ public class TutorialMapButton : MonoBehaviour {
 		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
 	}
 
-	void Update() {
+	private void Update() {
 		float dt = 0; 
 
 		switch (m_state) {
