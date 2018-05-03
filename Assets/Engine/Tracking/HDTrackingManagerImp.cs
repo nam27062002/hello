@@ -1757,7 +1757,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string postrasstring = Track_CoordinatesToString(positionTR);
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
+            Log("custom.gameplay.fps: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
         }
 
         TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.fps");
@@ -2432,8 +2432,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             m_Performance_FireRushStartTime = currentTime;
         }
 
+
         if (elapsedTime > Performance_TrackingDelay)
         {
+            Debug.Log("Performance tracking enabled: " + Performance_IsTrackingEnabled + " Delay: " + Performance_TrackingDelay);
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
             //int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
             Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
