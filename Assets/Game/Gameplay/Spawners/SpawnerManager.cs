@@ -570,6 +570,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 
 	private void OnAreaExit() {
 		m_selectedSpawners.Clear();
+
 		for( int i = m_spawners.Count-1; i>=0; i-- )
 		{
 			ISpawner _sp = m_spawners[i];
@@ -592,7 +593,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// The game has ended.
 	/// </summary>
 	private void OnGameEnded() {
-		OnAreaExit();
+		m_enabled = false;
 
 		// Clear QuadTree
 		m_spawnersTreeNear = null;
@@ -606,6 +607,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
         if (m_spawners != null) {
             m_spawners.Clear();
         }
+
+		if (m_selectedSpawners != null){
+			m_selectedSpawners.Clear();
+		}
 
 		if (m_spawning != null) {
 			m_spawning.Clear();
