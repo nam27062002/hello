@@ -59,6 +59,11 @@ public class MathUtils {
 		return Mathf.Round(_value/_factor) * _factor;
 	}
 
+	public static long Snap(long _value, long _factor) {
+		if(_factor == 0) return _value;
+		return (_value/_factor) * _factor;
+	}
+
 	/// <summary>
 	/// Find out the order of magnitude of the given value.
 	/// </summary>
