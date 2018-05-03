@@ -16,7 +16,7 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 	{
 		Pass
 		{
-			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase"}
+			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase" "LightMode" = "ForwardBase" }
 			Cull Back
 			ZWrite on
 
@@ -37,7 +37,7 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 			#include "HungryDragon.cginc"
 
 			#define EMISSIVE
-			#define DYNAMIC_LIGHT
+//			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"

@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_jawfrey_3_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: NORMALMAP SPECULAR
+  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -50,28 +50,30 @@ Material:
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
     - _EnableDoublesided: 0
-    - _EnableFresnel: 0
+    - _EnableFresnel: 1
     - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
+    - _EnableVertexOffset: 0
     - _FireAmount: 0
-    - _Fresnel: 10
+    - _FireSpeed: 1
+    - _Fresnel: 7.33
     - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 1
     - _NormalStrenght: 1
     - _ReflectionAmount: 0
-    - _SpecExponent: 27
+    - _SpecExponent: 28.3
     - _SrcBlend: 1
     - _StencilMask: 10
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
-    - _FresnelColor: {r: 0.15181662, g: 0.3057273, b: 0.39705884, a: 1}
+    - _FresnelColor: {r: 0.3440744, g: 0.63235295, b: 0.5965667, a: 1}
     - _InnerLightColor: {r: 0.4044118, g: 0.4044118, b: 0.4044118, a: 1}
-    - _SecondLightColor: {r: 0.14705884, g: 0.11681185, b: 0.06271627, a: 0}
-    - _SecondLightDir: {r: -0.17217411, g: -0.10595333, b: -0.9793518, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.43382353, g: 0.36518613, b: 0.24243079, a: 0}
+    - _SecondLightDir: {r: -0.17304978, g: 0.34609953, b: -0.9221003, a: 0}
+    - _Tint: {r: 0.8455882, g: 0.8455882, b: 0.8455882, a: 1}

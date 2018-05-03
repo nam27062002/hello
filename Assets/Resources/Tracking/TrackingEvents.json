@@ -212,7 +212,8 @@
                 {"moneyIAP": {"Status": "OK"}},
 				{"moneyUSD": {"Status": "OK"}},
                 {"totalPurchases": {"Status": "OK"}},
-                {"totalStoreVisits": {"Status": "OK"}}				
+                {"totalStoreVisits": {"Status": "OK"}},
+				{"triggered": {"Status": "OK"}}				
             ],
             "APIs": [
                 "dna",
@@ -404,9 +405,10 @@
 				{"gameRunNb": {"Status": "OK"}},
 				{"deltaXp": {"Status": "OK"}},
 				{"avgFPS": {"Status": "OK"}},
-        {"coordinatesBL": { "Status": "OK" }},
-        {"coordinatesTR": { "Status": "OK" }},
-        {"fireRush": { "Status": "OK" }}
+				{"coordinatesBL": { "Status": "OK" }},
+				{"coordinatesTR": { "Status": "OK" }},
+				{"fireRush": { "Status": "OK" }},
+				{"deviceProfile": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -460,6 +462,16 @@
 				{"isFatal": {"Status": "OK"}},
 				{"errorType": {"Status": "OK"}},
 				{"errorMessage": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.player.specialoffer": {
+            "Parameters": [
+				{"specialOfferAction": {"Status": "OK"}},
+				{"itemID": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -777,6 +789,10 @@
             "Type": "INT:4",
             "Values": []
         },
+		"triggered": {
+            "Type": "BOOL",
+            "Values": []
+        },
         "eggFound": {
             "Type": "INT:4",
             "Values": []
@@ -828,7 +844,7 @@
         "itemID": {
             "Type": "STRING:70",
             "Values": []
-        },
+        },		
         "maxXp": {
             "Type": "INT:4",
             "Values": []
@@ -1025,63 +1041,63 @@
 		    "Type": "STRING:45",
 		    "Values": []
 		},
-		    "missionType": {
+		"missionType": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "missionTarget": {
+		"missionTarget": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "missionDifficulty": {
+		"missionDifficulty": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "missionValue": {
+		"missionValue": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "glbEventID": {
+		"glbEventID": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "glbEventType": {
+		"glbEventType": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "scoreRun": {
+		"scoreRun": {
             "Type": "INT:4",
             "Values": []
         },
-		    "scoreTotal": {
+		"scoreTotal": {
             "Type": "INT:4",
             "Values": []
         },
-		    "multiplier": {
+		"multiplier": {
             "Type": "STRING:5",
             "Values": []
         },
-		    "rewardTier": {
+		"rewardTier": {
             "Type": "STRING:5",
             "Values": []
         },
-		    "topContributor": {
+		"topContributor": {
             "Type": "INT:4",
             "Values": []
         },
-		    "playingMode": {
+		"playingMode": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "rank": {
+		"rank": {
             "Type": "STRING:45",
             "Values": []
         },
-		    "isSuccess": {
+		"isSuccess": {
             "Type": "INT:4",
             "Values": []
         },
-    		"storeInstalled": {
+		"storeInstalled": {
             "Type": "INT:4",
             "Values": []
         },    
@@ -1101,7 +1117,7 @@
             "Type": "INT:4",
             "Values": []
         },
-		    "isHacker": {
+		"isHacker": {
             "Type": "INT:4",
             "Values": []
         },
@@ -1109,11 +1125,11 @@
 			      "Type": "STRING:15",
 			      "Values": []
         },
-    		"versionRevision": {
+    	"versionRevision": {
 			      "Type": "STRING:15",
 			      "Values": []
         },
-		    "hungryLettersNb": {
+		"hungryLettersNb": {
             "Type": "INT:4",
             "Values": []
         },
@@ -1129,13 +1145,17 @@
             "Type": "INT:4",
             "Values": []
         },
-    		"initialQuality": {
+    	"initialQuality": {
 			      "Type": "STRING:15",
 			      "Values": []
         },
-    		"versionQualityFormula": {
+    	"versionQualityFormula": {
 			      "Type": "STRING:15",
 			      "Values": []
+        },
+		"specialOfferAction": {
+            "Type": "STRING:15",
+            "Values": []
         }
     }
 }

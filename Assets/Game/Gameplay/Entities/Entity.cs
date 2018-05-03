@@ -98,10 +98,12 @@ public class Entity : IEntity {
 	}
 
 	void OnDestroy() {
-		if (EntityManager.instance != null) {
-			EntityManager.instance.UnregisterEntity(this);
+		if (ApplicationManager.IsAlive) {
+			if (EntityManager.instance != null) {
+				EntityManager.instance.UnregisterEntity (this);
+			}
+			Messenger.RemoveListener (MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 		}
-		Messenger.RemoveListener(MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
 	}
 
 	private void InitFromDef() {
@@ -296,7 +298,7 @@ public class Entity : IEntity {
                 m_checkOnScreenTimer = 0.5f;
             }
 
-			m_isEdibleByZ = m_machine.position.z < 14f;
+			m_isEdibleByZ = m_machine.position.z <= 15f;
         }
 	}
 

@@ -22,6 +22,8 @@ public class GameCamera : MonoBehaviour
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
     private const float         m_frameWidthBoost = 30.0f;
 	private const float         m_frameWidthFury = 30.0f;
+	private const float         m_frameWidthSpace = 40.0f;
+
 
     // camera zoom blending values for bosses
     private float               m_zBlendRateBoss = 20.0f;
@@ -637,7 +639,7 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-		
+
 		PlayUpdate();
 
         if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.instance.IsReady())
@@ -803,6 +805,7 @@ public class GameCamera : MonoBehaviour
 		{
             bool hasBoss = HasBoss();
 
+
             if ( m_megaFirePrewarmTimer > 0 )
             {
             	float delta = 1.0f - m_megaFirePrewarmTimer / m_megaFirePrewarmDuration;
@@ -818,17 +821,21 @@ public class GameCamera : MonoBehaviour
             {
 				if (m_targetMachine != null)
 		        {
-		            if(!hasBoss)
-		            {
-						if ( m_fury || targetPosition.y > DragonMotion.SpaceStart)
-		            	{
-		            		frameWidth = m_frameWidthFury;
-		            	}
-		            	else
-		            	{
-							frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-						}
-		            }
+							if(!hasBoss)
+						 {
+				 if (targetPosition.y > DragonMotion.SpaceStart)
+				 {
+					 frameWidth = m_frameWidthSpace;
+				 }
+				 else if ( m_fury )
+							 {
+								 frameWidth = m_frameWidthFury;
+							 }
+							 else
+							 {
+					 frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+				 }
+						 }
 		        }
 				frameWidth += m_frameWidthIncrement;
 				if(m_hasSlowmo)
@@ -840,6 +847,7 @@ public class GameCamera : MonoBehaviour
 					frameWidth += m_largestBossFrameIncrement;
 				}
             }
+
 
 			UpdateZooming(frameWidth, hasBoss);
 		}
@@ -1426,7 +1434,7 @@ public class GameCamera : MonoBehaviour
 			if (m_frustumPlanes[i].GetSide(_p)) return false;
 		}
 		return true;*/
-	} 
+	}
 
 	public bool IsInsideCameraFrustrum(Bounds _bounds) {
 		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, _bounds);

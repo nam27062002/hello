@@ -266,18 +266,14 @@ public class DragonCorpse : MonoBehaviour {
 			m_fadeMaterials.Add( wingsMaterial );
 		m_fadeMaterials.Add( bodyMaterial );
 		for (int i = 0; i < m_renderers.Length; i++) {
-			string shaderName = m_originalMaterials[i].shader.name;
-            if (shaderName.Contains("Dragon standard"))
+			bool isWings = m_renderers[i].tag == "DragonWings";
+            if (isWings)
             {
-                string tag = m_originalMaterials[i].GetTag("RenderType", false);
-                if (tag.Contains("TransparentCutout"))
-                {
-                    m_renderers[i].material = wingsMaterial;
-                }
-                else if (tag.Contains("Opaque"))
-                {
-                    m_renderers[i].material = bodyMaterial;
-                }
+                m_renderers[i].material = wingsMaterial;
+            }
+            else
+            {
+                m_renderers[i].material = bodyMaterial;
             }
 		}
 	}
@@ -328,19 +324,16 @@ public class DragonCorpse : MonoBehaviour {
 
 		Material wingsMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_wings");
 		Material bodyMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_body");
+
 		for (int i = 0; i < m_renderers.Length; i++) {
-			string shaderName = m_originalMaterials[i].shader.name;
-            if (shaderName.Contains("Dragon standard"))
+			bool isWings = m_renderers[i].tag == "DragonWings";
+            if (isWings)
             {
-                string tag = m_originalMaterials[i].GetTag("RenderType", false);
-                if (tag.Contains("TransparentCutout"))
-                {
-                    m_renderers[i].material = wingsMaterial;
-                }
-                else if (shaderName.Contains("Opaque"))
-                {
-                    m_renderers[i].material = bodyMaterial;
-                }
+                m_renderers[i].material = wingsMaterial;
+            }
+            else
+            {
+                m_renderers[i].material = bodyMaterial;
             }
 		}
 	}

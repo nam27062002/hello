@@ -51,6 +51,7 @@ public class DisableOnPopup : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -60,6 +61,7 @@ public class DisableOnPopup : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupClosed);
 	}
 
 	//------------------------------------------------------------------------//

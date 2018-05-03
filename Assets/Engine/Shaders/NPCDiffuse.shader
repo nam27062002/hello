@@ -43,7 +43,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
-			#define DYNAMIC_LIGHT
+//			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"
