@@ -62,7 +62,9 @@ public class OfferItemPrefabs : SingletonScriptableObject<OfferItemPrefabs> {
 
 	public enum PrefabType {
 		PREVIEW_2D,
-		PREVIEW_3D
+		PREVIEW_3D,
+
+		COUNT
 	}
 
 	//------------------------------------------------------------------------//

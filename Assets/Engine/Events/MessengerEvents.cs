@@ -79,6 +79,7 @@ public enum MessengerEvents {
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
 	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _newMultiplier, int goldScoreMultiplier
 	SCORE_MULTIPLIER_LOST,		// no params
+	PREWARM_FURY_RUSH,			// params: DragonBreathBehaviour.Type _type, float duration
 	FURY_RUSH_TOGGLED,			// params: bool _activated, DragonBreathBehaviour.Type _type
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
