@@ -309,7 +309,11 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef SPECULAR
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
-	col = col + (specular * diffuseAlpha * i.color * _LightColor0);
+#if defined(NORMALWASSPECULAR)
+	col = col + (specular * encodedNormal.w * _LightColor0);
+#else
+	col = col + (specular * diffuseAlpha * _LightColor0);
+#endif
 #endif	
 
 #if defined(EMISSIVE_CUSTOM)

@@ -43,6 +43,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(ADDITIVE_BLEND)] _EnableAdditiveBlend("Enable Additive Blend", Float) = 0
 		[Toggle(CUSTOM_VERTEXCOLOR)] _EnableAutomaticBlend("Automatic Y blend", Float) = 0
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
+		[Toggle(NORMALWASSPECULAR)] _EnableNormalwAsSpecular("Enable Normal.w as specular mask", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
 		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
@@ -98,6 +99,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma shader_feature __ ADDITIVE_BLEND
 				#pragma shader_feature __ CUSTOM_VERTEXCOLOR
 				#pragma shader_feature __ SPECULAR
+				#pragma shader_feature __ NORMALWASSPECULAR
 				#pragma shader_feature __ NORMALMAP
 				#pragma shader_feature __ FOG
 				#pragma shader_feature __ CUTOFF
