@@ -36,6 +36,7 @@ namespace GameConstants
 		public static readonly int IMPACT = UnityEngine.Animator.StringToHash("impact");
 		public static readonly int HOLDED = UnityEngine.Animator.StringToHash("holded");
 		public static readonly int BEND = UnityEngine.Animator.StringToHash("Bend");
+		public static readonly int SONIC_FORM = UnityEngine.Animator.StringToHash("SonicForm");
 
 		public static readonly int ROTATE_LEFT = UnityEngine.Animator.StringToHash("rotate left");
 		public static readonly int ROTATE_RIGHT = UnityEngine.Animator.StringToHash("rotate right");
