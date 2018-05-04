@@ -2165,6 +2165,15 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		return ret;
 	}
 
+	/// <summary>
+	/// Determines whether this instance is breaking movement. To be overrided by special dragons movement, ex: Sonic
+	/// </summary>
+	/// <returns><c>true</c> if this instance is breaking movement; otherwise, <c>false</c>.</returns>
+	public virtual bool IsBreakingMovement()
+	{
+		return false;
+	}
+
 	protected virtual void OnDrawGizmos() {
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireCube( m_hitBounds.center, m_hitBounds.bounds.size);

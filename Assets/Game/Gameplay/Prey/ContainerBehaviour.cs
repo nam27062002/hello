@@ -81,8 +81,8 @@ public class ContainerBehaviour : MonoBehaviour
 			else if (m_waitTimer <= 0)
 			{
 				GameObject go = collision.transform.gameObject;
-				DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
-				if ( boost.IsBoostActive() )
+				DragonPlayer player = go.GetComponent<DragonPlayer>();
+				if ( player.IsBreakingMovement() )
 				{
 					DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
 					if (dragonMotion.howFast >= 0.85f )

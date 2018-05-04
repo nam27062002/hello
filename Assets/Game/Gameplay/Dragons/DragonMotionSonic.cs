@@ -9,6 +9,7 @@ public class DragonMotionSonic : DragonMotion {
 	protected DragonBoostBehaviour m_boost;
 	protected Vector3 m_ricochetDir = Vector3.zero;
 	public float m_sonicSpeed = 5;
+	bool m_cheskStateForResume = true;
 
 	override protected void Start() {
 		base.Start();
@@ -124,7 +125,9 @@ public class DragonMotionSonic : DragonMotion {
 			}break;
 			case State.Extra_2:
 			{
+				m_cheskStateForResume = false;
 				m_dragon.TryResumeEating();
+				m_cheskStateForResume = true;
 			}break;
 		}
 		base.ChangeState( _nextState );
@@ -155,8 +158,16 @@ public class DragonMotionSonic : DragonMotion {
 	override public bool CanIResumeEating()
 	{
 		bool ret = base.CanIResumeEating();
-		if ( m_state == State.Extra_1 || m_state == State.Extra_2 )
+		if ( m_cheskStateForResume && (m_state == State.Extra_1 || m_state == State.Extra_2) )
 			ret = false;
+		return ret;
+	}
+
+	override public bool IsBreakingMovement()
+	{
+		bool ret = base.IsBreakingMovement();
+		if ( m_state == State.Extra_2 ) 
+			ret = true;
 		return ret;
 	}
 

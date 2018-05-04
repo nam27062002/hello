@@ -805,5 +805,14 @@ public class DragonPlayer : MonoBehaviour {
 			m_dragonEatBehaviour.ResumeEating();
 	}
 
+	public bool IsBreakingMovement()
+	{
+		bool ret = false;
+		if ( m_dragonBoostBehaviour.IsBoostActive() || m_dragonMotion.IsBreakingMovement() )
+		{
+			ret = true;
+		}
+		return ret;
+	}
 
 }

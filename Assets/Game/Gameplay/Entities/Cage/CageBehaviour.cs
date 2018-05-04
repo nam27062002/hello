@@ -103,9 +103,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 					if (m_currentHits.needBoost) {
 						if (m_waitTimer <= 0) {						
 							GameObject go = collision.transform.gameObject;
-							DragonBoostBehaviour boost = go.GetComponent<DragonBoostBehaviour>();	
+							DragonPlayer player = go.GetComponent<DragonPlayer>();	
 							bool playCollideSound = true;
-							if (boost.IsBoostActive()) 	{
+							if (player.IsBreakingMovement()) 	{
 								DragonMotion dragonMotion = go.GetComponent<DragonMotion>();	// Check speed is enough
 								if (dragonMotion.howFast >= 0.85f) {
 									m_waitTimer = 0.5f;
