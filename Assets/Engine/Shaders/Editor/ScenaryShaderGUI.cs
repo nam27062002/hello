@@ -51,6 +51,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string enableNormalMapText = "Enable Normal map";
         readonly public static string normalTextureText = "Normal Texture";
         readonly public static string normalStrengthText = "Normal Texture strength";
+        readonly public static string normalwAsSpecularText = "Use Normal.w as specular mask";
 
         readonly public static string enableCutoffText = "Enable Alpha cutoff";
         readonly public static string CutoffText = "Alpha cutoff threshold";
@@ -149,6 +150,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EnableWaveEmission;
     MaterialProperty mp_WaveEmission;
 
+    MaterialProperty mp_EnableNormalwAsSpecular;
+
     //    MaterialProperty mp_EnableEmissiveBlink;
     //    MaterialProperty mp_EnableLightmapContrast;
 
@@ -232,6 +235,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_EnableFog = FindProperty("_EnableFog", props);
 
         mp_EnableWaveEmission = FindProperty("_EnableWaveEmission", props);
+
+        mp_EnableNormalwAsSpecular = FindProperty("_EnableNormalwAsSpecular", props);
 
         //        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
         //        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
@@ -344,32 +349,32 @@ internal class ScenaryShaderGUI : ShaderGUI {
         if (mp_MainColor.floatValue == 0.0f)
         {
             materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
-            materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
-
             p1 = EditorGUILayout.Vector2Field("Panning:", p1);
             tem.x = p1.x;
             tem.y = p1.y;
-
-
-            bool normalMap = mp_normalTexture.textureValue != null as Texture;
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                SetKeyword(material, kw_normalmap, normalMap);
-                EditorUtility.SetDirty(material);
-                Debug.Log("EnableNormalMap " + (normalMap));
-                //            DebugKeywords(material);
-            }
-
-
-            if (normalMap)
-            {
-                materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
-            }
         }
         else
         {
             materialEditor.ShaderProperty(mp_Color, Styles.colorText);
+        }
+
+
+        EditorGUI.BeginChangeCheck();
+        materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
+
+        bool normalMap = mp_normalTexture.textureValue != null as Texture;
+        if (normalMap)
+        {
+            materialEditor.ShaderProperty(mp_normalStrength, Styles.normalStrengthText);
+            materialEditor.ShaderProperty(mp_EnableNormalwAsSpecular, Styles.normalwAsSpecularText);
+            
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            SetKeyword(material, kw_normalmap, normalMap);
+            EditorUtility.SetDirty(material);
+            Debug.Log("EnableNormalMap " + (normalMap));
+            //            DebugKeywords(material);
         }
 
         EditorGUI.BeginChangeCheck();
