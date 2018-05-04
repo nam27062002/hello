@@ -20,8 +20,7 @@ Set objOutputFile 		= objFSO.CreateTextFile("spawnersData.txt", 2, true)
 
 For Each CurrentSpawner In SpawnersFolder.Files
 	blackList1 = "SP_Seasonal.prefab"
-	blackList2 = "SP_ButterflyEgg_Root.prefab"
-	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false  And foundStrMatch(CurrentSpawner.Path, blackList2) = false Then
+	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false Then
 		Set objInputFile = objFSO.OpenTextFile(CurrentSpawner)
 		Dim substrToFind
 		Do until objInputFile.AtEndOfStream
@@ -45,25 +44,31 @@ Function spawnerInfo()
 	tmpStr = objInputFile.ReadLine
 	substrToFind = "m_entityPrefabList:"
 	substrToFind2 = "m_entityPrefab:"
-	If foundStrMatch(tmpStr,substrToFind) = true Or foundStrMatch(tmpStr,substrToFind2) = true Then
+	substrToFind3 = "m_entityPrefabStr:"
+	If foundStrMatch(tmpStr,substrToFind) = true Or foundStrMatch(tmpStr,substrToFind2) = true Or foundStrMatch(tmpStr,substrToFind3) = true Then
 		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\client\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
-		REM spawner = Replace(CurrentSpawner.Path,"HungryDragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")
 		spawner = Replace(spawner,".prefab","")
 		If foundStrMatch(tmpStr,substrToFind) = true Then
 			prefabFolder = Replace(objInputFile.ReadLine,"- name: ","")
-		Else
+		Else If foundStrMatch(tmpStr,substrToFind2) = true Then
 			prefabFolder = Replace(tmpStr,"m_entityPrefab: ","")
+			Else
+				prefabFolder = Replace(tmpStr,"m_entityPrefabStr: ","")
+			End If
 		End If
 		aux = Replace(Replace(prefabFolder,"/","\")," ","")
-		REM prefabFile = "D:\Projects\HungryDragon\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
 		prefabFile = "..\..\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
 		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/",""),"Vehicles/",""),"Magic/",""),"Dragon/",""),"Seasonal/","")
 	End If			
-	substrToFind = "m_spawnTime:"
-	If foundStrMatch(tmpStr,substrToFind) = true Then
+	substrToFind4 = "m_spawnTime:"
+	If foundStrMatch(tmpStr,substrToFind4) = true Then
 		minTime = Replace(objInputFile.ReadLine,"min:","")
 		maxTime = Replace(objInputFile.ReadLine,"max:","")
-		spawnerInfo = spawner + ";contentSku;" + prefab + ";" + minTime + ";" + maxTime
+		If foundStrMatch(minTime,"m_maxSpawns:") = true Then
+			spawnerInfo = ""
+		Else
+			spawnerInfo = spawner + ";contentSku;" + prefab + ";" + minTime + ";" + maxTime
+		End If
 	Else
 		spawnerInfo = ""
 	End If
