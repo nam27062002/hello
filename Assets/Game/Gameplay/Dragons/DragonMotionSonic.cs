@@ -92,38 +92,63 @@ public class DragonMotionSonic : DragonMotion {
 
 
 	override protected void ChangeState(State _nextState) {
-		base.ChangeState( _nextState );
-		switch( _nextState )
-		{
-			case State.Extra_1:
-			{
-				m_animator.SetBool( GameConstants.Animator.SONIC_FORM , false);
-			}break;
-			case State.Extra_2:
-			{
-				
-			}break;
-		}
+		if (m_state == _nextState)
+			return;
+
 		switch( m_state )
 		{
 			case State.Extra_1:
 			{
+				m_dragon.TryResumeEating();
+				m_animator.SetBool( GameConstants.Animator.SONIC_FORM , false);
+			}break;
+			case State.Extra_2:
+			{
+				m_dragon.TryResumeEating();
+			}break;
+		}
+		base.ChangeState( _nextState );
+		switch( m_state )
+		{
+			case State.Extra_1:
+			{
+				m_dragon.PauseEating();
 				m_animator.SetBool( GameConstants.Animator.SONIC_FORM , true);
 			}break;
 			case State.Extra_2:
 			{
-				
+				m_dragon.PauseEating();
 			}break;
 		}
 	}
 
 
-	protected virtual void OnCollisionEnter(Collision collision)
+	override protected void OnCollisionEnter(Collision collision)
 	{
 		base.OnCollisionEnter(collision);
 		if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
 		{
 			m_direction = Vector3.Reflect( m_direction,  collision.contacts[0].normal);
+		}
+	}
+
+	public virtual bool CanIResumeEating()
+	{
+		bool ret = true;
+		if ( m_state == State.Extra_1 || m_state == State.Extra_2 )
+			ret = false;
+		return ret;
+	}
+
+	override protected void CheckOutterSpace()
+	{
+		if ( m_state != State.Extra_1 && m_state != State.Extra_2 )
+		{
+			if (!m_outterSpace && m_transform.position.y > SpaceStart){
+				OnEnterSpaceEvent();
+			}else if ( m_outterSpace && m_transform.position.y < SpaceStart ){
+				OnExitSpaceEvent();
+			}
 		}
 	}
 

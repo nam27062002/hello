@@ -477,13 +477,19 @@ public class DragonPlayer : MonoBehaviour {
 
 
 	public void OnLeavingArea(float estimatedLeavingTime){
-		m_dragonEatBehaviour.PauseEating();
+		PauseEating();
 	}
 
 	public void OnEnteringArea(){
-		if ( !m_breathBehaviour.IsFuryOn() ){
-			m_dragonEatBehaviour.ResumeEating();	
-		}
+		TryResumeEating();
+	}
+
+	protected bool CanIResumeEating()
+	{
+		bool ret = true;
+		if ( m_breathBehaviour.IsFuryOn() || BeingLatchedOn() || !m_dragonMotion.CanIResumeEating())
+			ret = false;
+		return ret;
 	}
 
 
@@ -620,20 +626,18 @@ public class DragonPlayer : MonoBehaviour {
 
 	void OnPrewardmFuryRush(DragonBreathBehaviour.Type type, float duration)
 	{
-		m_dragonEatBehaviour.PauseEating();
+		PauseEating();
 	}
 
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
 	{
 		if (toogle)
 		{
-			m_dragonEatBehaviour.PauseEating();
+			PauseEating();
 		}
 		else
 		{
-			if (!BeingLatchedOn())
-				m_dragonEatBehaviour.ResumeEating();
-			
+			TryResumeEating();
 		}
 	}
 
@@ -757,7 +761,7 @@ public class DragonPlayer : MonoBehaviour {
 		if ( m_numLatching == 1 )
 		{
 			m_dragonMotion.StartLatchedOnMovement();
-			m_dragonEatBehaviour.PauseEating();
+			PauseEating();
 		}
 	}
 
@@ -767,8 +771,7 @@ public class DragonPlayer : MonoBehaviour {
 		if ( m_numLatching == 0)
 		{
 			m_dragonMotion.EndLatchedOnMovement();
-			if ( !m_breathBehaviour.IsFuryOn() )
-				m_dragonEatBehaviour.ResumeEating();
+			TryResumeEating();
 		}
 	}
 
@@ -789,6 +792,17 @@ public class DragonPlayer : MonoBehaviour {
 		m_superSizeTarget = size;
 		m_superSizeStart = m_superSizeSize;
 		m_superSizeDuration = m_superSizeTimer = 0.5f;
+	}
+
+	public void PauseEating()
+	{
+		m_dragonEatBehaviour.PauseEating();
+	}
+
+	public void TryResumeEating()
+	{
+		if (CanIResumeEating())
+			m_dragonEatBehaviour.ResumeEating();
 	}
 
 

@@ -185,7 +185,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private Transform m_head;
 	private Transform m_suction;
 	private Transform m_cameraLookAt;
-	private Transform m_transform;
+	protected Transform m_transform;
 
 	[CommentAttribute("Back navigation bend multiplier when boost or attack target")]
 	[Range(0, 1f)]
@@ -207,7 +207,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		get{ return m_insideWater; }
 	}
-	private bool m_outterSpace = false;
+	protected bool m_outterSpace = false;
 	private string m_destinationArea = "";
 	private Assets.Code.Game.Spline.BezierSpline m_followingSpline;
 	private float m_followingClosestT;
@@ -751,11 +751,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// Update hitColliders Bounding box
 		UpdateHitCollidersBoundingBox();
 
-		if (!m_outterSpace && m_transform.position.y > SpaceStart){
-			OnEnterSpaceEvent();
-		}else if ( m_outterSpace && m_transform.position.y < SpaceStart ){
-			OnExitSpaceEvent();
-		}
+		CheckOutterSpace();
 
 	}
 
@@ -841,6 +837,15 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
         }
 
+	}
+
+	protected virtual void CheckOutterSpace()
+	{
+		if (!m_outterSpace && m_transform.position.y > SpaceStart){
+			OnEnterSpaceEvent();
+		}else if ( m_outterSpace && m_transform.position.y < SpaceStart ){
+			OnExitSpaceEvent();
+		}
 	}
 
 
@@ -2154,6 +2159,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if (m_state == State.Dead || m_state == State.Reviving )
 			return false;
 		return true;
+	}
+
+	public virtual bool CanIResumeEating()
+	{
+		bool ret = true;
+		return ret;
 	}
 
 	protected virtual void OnDrawGizmos() {
