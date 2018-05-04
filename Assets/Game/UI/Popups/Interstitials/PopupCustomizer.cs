@@ -23,26 +23,74 @@ public class PopupCustomizer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	#region UNUSED FOR NOW
-	[System.Serializable]
-	public class Field {
-		public enum Type {
-			TEXT,
-			IMAGE,
-			BUTTON
-		};
+	public static class FieldType {
+		public static readonly string TEXT 		= "text";
+		public static readonly string TEXTAREA 	= "textarea";
+		public static readonly string IMAGE 	= "image";
+		public static readonly string BUTTON 	= "button";
+	}
 
-		public Type type = Type.TEXT;
-		public UnityEngine.Object target = null;
+	public static class CaletyKey {
+		public static readonly string TITLE 	= "title";
+		public static readonly string TEXT 		= "text";
+		public static readonly string PICTURES	= "pictures";
+		public static readonly string BUTTONS	= "buttons";
+	}
+
+
+	//------------------------------------------------------------------------//
+	// NESTED CLASSES														  //
+	//------------------------------------------------------------------------//
+	[System.Serializable]
+	public abstract class Field<T> {
+		private string m_fieldType;
+		public string fieldType { get { return m_fieldType; } }
+
+		private string m_caletyKey;
+		public string caletyKey { get { return m_caletyKey; } }
+
+		public T element;
+
+		//------------------------------------------------------//
+		public Field() {}
+		public Field(string _type, string _key) {
+			m_fieldType = _type;
+			m_caletyKey = _key;
+		}
 	}
 
 	[System.Serializable]
-	public class FieldsDictionary : SerializableDictionary<string, Field> { }
-	#endregion
+	public class TitleField : Field<TextMeshProUGUI> {
+		public TitleField() : base(FieldType.TEXT, CaletyKey.TITLE) {}
+	}
 
 	[System.Serializable]
-	public class TextfieldsDictionary : SerializableDictionary<string, TextMeshProUGUI> { }
-	
+	public class MessageField : Field<TextMeshProUGUI> {
+		public MessageField() : base(FieldType.TEXTAREA, CaletyKey.TEXT) {}
+	}
+
+	[System.Serializable]
+	public class TextField : Field<TextMeshProUGUI> {
+		public TextField() : base(FieldType.TEXT, CaletyKey.TEXT) {}
+	}
+
+	[System.Serializable]
+	public class ImageField : Field<RawImage> {
+		public ImageField() : base(FieldType.IMAGE, CaletyKey.PICTURES) {}
+	}
+
+	[System.Serializable]
+	public class ButtonField : Field<Button> {
+		public bool optional = false;
+		//------------------------------------------------------//
+		public ButtonField() : base(FieldType.BUTTON, CaletyKey.BUTTONS) {}
+	}
+
+	[System.Serializable]
+	public class CloseButtonField : Field<GameObject> {
+		public bool optional = false;
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -51,11 +99,14 @@ public class PopupCustomizer : MonoBehaviour {
 
 	// Exposed
 	[InfoBox("All fields optional")]
-	[SerializeField] private GameObject m_closeButtonRoot = null;
-	[SerializeField] private TextMeshProUGUI m_titleText = null;
-	[SerializeField] private TextMeshProUGUI m_messageText = null;
-	[SerializeField] private TextfieldsDictionary m_otherTexts = new TextfieldsDictionary();
-	[SerializeField] private RawImage m_image = null;
+	[SerializeField] private TitleField m_titleField = null;
+	[SeparatorAttribute]
+	[SerializeField] private MessageField m_messageField = null;
+	[SerializeField] private List<TextField> m_textFields = new List<TextField>();
+	[SeparatorAttribute]
+	[SerializeField] private ImageField m_imageField = null;
+	[SeparatorAttribute]
+	[SerializeField] private CloseButtonField m_closeButtonField = null;
 	[SerializeField] private List<Button> m_buttons = new List<Button>();
 
 	// Internal
@@ -110,6 +161,9 @@ public class PopupCustomizer : MonoBehaviour {
 		try {
 			textsJson = JSON.Parse(m_localizedConfig.m_strMessage);
 		} catch {}
+
+		//TODO: Parse again the full list of texts from Calety
+		/*
 		if(textsJson == null) {
 			// If json couldn't be parsed from the given string, assume it's a simple message and put it in the main textfield
 			if(m_messageText != null) {
@@ -131,6 +185,7 @@ public class PopupCustomizer : MonoBehaviour {
 				}
 			}
 		}
+		*/
 
 		// Image
 		if(m_image != null) {
