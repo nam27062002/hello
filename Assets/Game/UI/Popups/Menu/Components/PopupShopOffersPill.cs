@@ -168,11 +168,10 @@ public class PopupShopOffersPill : IPopupShopPill {
 		if(!m_pack.isTimed) return;
 
 		// Update text
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 		m_remainingTimeText.Localize(
 			m_remainingTimeText.tid, 
 			TimeUtils.FormatTime(
-				System.Math.Max(0, (m_pack.endDate - serverTime).TotalSeconds), // Just in case, never go negative
+				System.Math.Max(0, m_pack.remainingTime.TotalSeconds), // Just in case, never go negative
 				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			)

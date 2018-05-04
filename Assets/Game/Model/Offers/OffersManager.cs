@@ -96,11 +96,6 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 			OfferPack newPack = new OfferPack();
 			newPack.InitFromDefinition(offerDefs[i]);
 
-			// [AOC] Small optimization: remove featured offers that end in the past
-			if(newPack.featured && newPack.endDate < serverTime) {
-				continue;
-			}
-
 			// Store new pack
 			instance.m_allOffers.Add(newPack);
 		}
@@ -150,13 +145,10 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// </summary>
 	/// <returns>The new featured offer, if any (or the current one if it haasn't changed).</returns>
 	public OfferPack RefreshFeaturedOffer() {
-		// Aux vars
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-
 		// If a fetured offer exists, check its expiration date
 		if(m_featuredOffer != null) {
 			// Has it expired?
-			if(serverTime > m_featuredOffer.endDate) {
+			if(m_featuredOffer.remainingTime.TotalSeconds <= 0f) {
 				// Offer has expired, remove it from active offers and clear reference
 				m_activeOffers.Remove(m_featuredOffer);
 				m_featuredOffer = null;

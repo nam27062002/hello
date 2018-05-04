@@ -69,7 +69,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		if(!isActiveAndEnabled) return;
 
 		// Refresh the timer!
-		RefreshTimer();
+		RefreshTimer(true);
 	}
 
 	/// <summary>
@@ -99,7 +99,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		m_targetOffer = OffersManager.featuredOffer;
 
 		// Update the timer
-		RefreshTimer();
+		RefreshTimer(_refreshManager);
 
 		// Update visibility
 		RefreshVisibility();
@@ -108,17 +108,20 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Refresh the timer. To be called periodically.
 	/// </summary>
-	private void RefreshTimer() {
+	/// <param name="_refreshManager">Force a refresh on the manager?</param>
+	private void RefreshTimer(bool _refreshManager) {
 		// Skip if no target offer
 		if(m_targetOffer == null) return;
 
 		// Is featured offer still valid?
-		m_targetOffer = OffersManager.instance.RefreshFeaturedOffer();
+		if(_refreshManager) {
+			m_targetOffer = OffersManager.instance.RefreshFeaturedOffer();
+		}
+			
+		// Yes!! Update text
 		if(m_targetOffer != null) {
-			// Yes!! Update text
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			m_timerText.text = TimeUtils.FormatTime(
-				System.Math.Max(0, (m_targetOffer.endDate - serverTime).TotalSeconds), // Just in case, never go negative
+				System.Math.Max(0, m_targetOffer.remainingTime.TotalSeconds), // Just in case, never go negative
 				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			);

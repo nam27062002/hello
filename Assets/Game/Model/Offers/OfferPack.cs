@@ -91,15 +91,10 @@ public class OfferPack {
 	private int m_maxViews = 0;
 	private WhereToShow m_whereToShow = WhereToShow.SHOP_ONLY;
 
-	private DateTime m_startDate = new DateTime();
-	public DateTime startDate {
-		get { return m_startDate; }
-	}
-
-	private DateTime m_endDate = new DateTime();
-	public DateTime endDate {
-		get { return m_endDate; }
-	}
+	// Timing
+	private float m_duration = 0f;
+	private DateTime m_startDate = DateTime.MinValue;
+	private DateTime m_endDate = DateTime.MinValue;
 
 	private bool m_isTimed = false;
 	public bool isTimed {
@@ -141,6 +136,26 @@ public class OfferPack {
 	// Internal vars
 	private int m_viewsCount = 0;	// Only auto-triggered views
 	private DateTime m_lastViewTimestamp = new DateTime();
+
+	// Activation control
+	private bool m_isActive = false;
+	public bool isActive {
+		get { return m_isActive; }
+	}
+
+	private DateTime m_activationTimestamp = DateTime.MinValue;
+	public DateTime activationTimestmap {
+		get { return m_activationTimestamp; }
+	}
+
+	private DateTime m_endTimestamp = DateTime.MaxValue;
+	public DateTime endTimestamp {
+		get { return m_endTimestamp; }
+	}
+
+	public TimeSpan remainingTime {
+		get { return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -204,9 +219,11 @@ public class OfferPack {
 			default:						break;	// Already has the default value
 		}
 
-		m_startDate = TimeUtils.TimestampToDate(_def.GetAsLong("startDate", 0) * 1000);
-		m_endDate = TimeUtils.TimestampToDate(_def.GetAsLong("endDate", 0) * 1000);
-		m_isTimed = !m_startDate.Equals(m_endDate);
+		// Timing
+		m_duration = _def.GetAsFloat("durationMinutes", 0f);
+		m_startDate = TimeUtils.TimestampToDate(_def.GetAsLong("startDate", 0), false);
+		m_endDate = TimeUtils.TimestampToDate(_def.GetAsLong("endDate", 0), false);
+		m_isTimed = (m_endDate > m_startDate) || (m_duration > 0f);
 
 		// Segmentation
 		m_minAppVersion = Version.Parse(_def.GetAsString("minAppVersion", "1.0.0"));
@@ -263,12 +280,15 @@ public class OfferPack {
 
 		// Mandatory for featured packs
 		m_featured = false;
-		m_isTimed = false;
 		m_frequency = 0;
 		m_maxViews = 0;
 		m_whereToShow = WhereToShow.SHOP_ONLY;
+
+		// Timing
+		m_duration = 0f;
 		m_startDate = DateTime.MinValue;
 		m_endDate = DateTime.MinValue;
+		m_isTimed = false;
 
 		// Optional params
 		m_countriesAllowed = new string[0];
@@ -302,6 +322,11 @@ public class OfferPack {
 		// Internal vars
 		m_viewsCount = 0;
 		m_lastViewTimestamp = new DateTime();
+
+		// Activation control
+		m_isActive = false;
+		m_activationTimestamp = DateTime.MinValue;
+		m_endTimestamp = DateTime.MaxValue;
 	}
 
 	/// <summary>
@@ -315,17 +340,63 @@ public class OfferPack {
 		// Check both start and end dates
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 		if(serverTime < m_startDate) return false;
-		if(serverTime > m_endDate) return false;
+		if(m_endDate > DateTime.MinValue && serverTime > m_endDate) return false;
+
+		// If active, check end timestamp (duration)
+		if(m_isActive) {
+			if(serverTime > m_endTimestamp) return false;
+		}
 
 		return true;
 	}
 
 	/// <summary>
 	/// Validate all segmentation parameters to see if the offer can be displayed to the current player.
+	/// Will change the activation state of the pack if required.
 	/// </summary>
 	/// <returns><c>true</c> if this offer can be displayed to the current player, <c>false</c> otherwise.</returns>
 	public bool CanBeDisplayed() {
-		return CanBeApplied();
+		// Check triggers
+		bool canBeDisplayed = CheckTriggers();
+
+		// If state has changed, do some stuff
+		if(canBeDisplayed != m_isActive) {
+			// If it wasn't active, activate it now!
+			if(!m_isActive) {
+				// Set activation timestamp to now
+				m_activationTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+				// Compute end timestamp
+				// Combine duration and end date, both of which are optional
+				bool hasEndDate = (m_endDate != DateTime.MaxValue);
+				bool hasDuration = m_duration > 0f;
+				if(hasEndDate && hasDuration) {
+					// Use the lowest between activation+duration and endDate
+					DateTime durationTimestamp = m_activationTimestamp.AddMinutes(m_duration);
+					if(durationTimestamp < m_endDate) {
+						m_endTimestamp = durationTimestamp;
+					} else {
+						m_endTimestamp = m_endDate;
+					}
+				} else if(hasEndDate) {
+					m_endTimestamp = m_endDate;
+				} else if(hasDuration) {
+					m_endTimestamp = m_activationTimestamp.AddMinutes(m_duration);
+				} else {
+					m_endTimestamp = DateTime.MaxValue;		// Infinite offer
+				}
+			}
+
+			// Update state
+			m_isActive = canBeDisplayed;
+
+			// Save persistence
+			UsersManager.currentUser.SaveOfferPack(this);
+			PersistenceFacade.instance.Save_Request();
+		}
+
+		// Done!
+		return canBeDisplayed;
 	}
 
 	/// <summary>
@@ -376,10 +447,10 @@ public class OfferPack {
 	}
 
 	/// <summary>
-	/// Validate that the pack can still be applied!
+	/// Check all triggers and conditions to validate whether this pack is active or not.
 	/// </summary>
 	/// <returns><c>true</c> if this pack can be applied; otherwise, <c>false</c>.</returns>
-	public bool CanBeApplied() {
+	private bool CheckTriggers() {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 
@@ -399,7 +470,7 @@ public class OfferPack {
 		int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
 		if(m_payerType == PayerType.PAYER && totalPurchases == 0) return false;
 		if(m_payerType == PayerType.NON_PAYER && totalPurchases > 0) return false;
-		//if(m_minSpent > TODO!!) return false;	// [AOC] TODO!! We don't store total spent in the client. Wait for CRM segmentation
+		//if(m_minSpent > TODO!!) return false;	// [AOC] TODO!! We don't store total spent in the client. Will be segmented via CRM.
 		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
 		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
 		if(m_openedEggs > profile.eggsCollected) return false;
@@ -502,8 +573,11 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "frequency", m_frequency.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "maxViews", m_maxViews.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "zone", "");
-		SetValueIfMissing(ref _def, "startDate", (TimeUtils.DateToTimestamp(m_startDate) / 1000).ToString(CultureInfo.InvariantCulture));
-		SetValueIfMissing(ref _def, "endDate", (TimeUtils.DateToTimestamp(m_endDate) / 1000).ToString(CultureInfo.InvariantCulture));
+
+		// Timing
+		SetValueIfMissing(ref _def, "durationMinutes", m_duration.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "startDate", (TimeUtils.DateToTimestamp(m_startDate, false)).ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "endDate", (TimeUtils.DateToTimestamp(m_endDate, false)).ToString(CultureInfo.InvariantCulture));
 
 		// Segmentation
 		SetValueIfMissing(ref _def, "minAppVersion", m_minAppVersion.ToString(Version.Format.FULL));
@@ -640,7 +714,8 @@ public class OfferPack {
 		// Yes if we are tracking views
 		if(m_viewsCount > 0) return true;
 
-		// [AOC] TODO!! Yes if it has a limited duration and still active (we need to persist the activation date)
+		// Yes if it has a limited duration and still active
+		if(m_isTimed && m_isActive) return true;
 
 		// No for the rest of cases
 		return false;
@@ -652,8 +727,10 @@ public class OfferPack {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	/// <returns>Whether the mission was successfully loaded</returns>
 	public void Load(SimpleJSON.JSONClass _data) {
+		string key = "";
+
 		// Purchase count
-		string key = "purchaseCount";
+		key = "purchaseCount";
 		if(_data.ContainsKey(key)) {
 			m_purchaseCount = _data[key].AsInt;
 		}
@@ -670,7 +747,19 @@ public class OfferPack {
 			m_lastViewTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
 		}
 
-		// [AOC] TODO!! End timestamp
+		// Activation and timestamps
+		key = "active";
+		if(_data.ContainsKey(key)) {
+			m_isActive = _data[key].AsBool;
+		}
+		key = "activationTimestamp";
+		if(_data.ContainsKey(key)) {
+			m_activationTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		}
+		key = "endTimestamp";
+		if(_data.ContainsKey(key)) {
+			m_endTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		}
 	}
 
 	/// <summary>
@@ -678,8 +767,20 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>A new data json to be stored to persistence by the PersistenceManager.</returns>
 	public SimpleJSON.JSONClass Save() {
+		// We can potentially have a lot of offer packs, so try to minimize stored data
+		// To do so, we will only store relevant data whose value is different than the default one
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Activation and timestamps
+		// Only store for timed offers, the rest will be activated upon loading depending on activation triggers
+		if(m_isTimed && m_isActive) {
+			data.Add("active", m_isActive.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+
+			// Store timestamps
+			data.Add("activationTimestamp", m_activationTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("endTimestamp", m_endTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		}
 
 		// Purchase count
 		if(m_purchaseCount > 0) {
@@ -692,8 +793,6 @@ public class OfferPack {
 			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
-
-		// [AOC] TODO!! End timestamp
 
 		// Done!
 		return data;
