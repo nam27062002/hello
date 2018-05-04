@@ -342,10 +342,16 @@ internal class ScenaryShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
         }
 
+        Vector4 tem = mp_Panning.vectorValue;
+        Vector2 p1 = new Vector2(tem.x, tem.y);
+
         featureSet(mp_MainColor, Styles.mainColorText);
         if (mp_MainColor.floatValue == 0.0f)
         {
             materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
+            p1 = EditorGUILayout.Vector2Field("Panning:", p1);
+            tem.x = p1.x;
+            tem.y = p1.y;
         }
         else
         {
@@ -370,15 +376,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
             Debug.Log("EnableNormalMap " + (normalMap));
             //            DebugKeywords(material);
         }
-
-        Vector4 tem = mp_Panning.vectorValue;
-        Vector2 p1 = new Vector2(tem.x, tem.y);
-
-        p1 = EditorGUILayout.Vector2Field("Panning:", p1);
-        tem.x = p1.x;
-        tem.y = p1.y;
-
-
 
         EditorGUI.BeginChangeCheck();
 
