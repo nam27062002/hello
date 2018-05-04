@@ -154,6 +154,9 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// Button has been pressed!
 	/// </summary>
 	public void OnTap() {
+		// Just in case, ignore if target offer is not valid!!
+		if(m_targetOffer == null) return;
+
 		// Show popup!
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
