@@ -94,13 +94,18 @@ uniform float _CutOff;
 HG_FOG_VARIABLES
 #endif
 
-#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)
 uniform float _EmissivePower;
 uniform float _BlinkTimeMultiplier;
 
 #if defined(WAVE_EMISSION)
 uniform float _WaveEmission;
 #endif
+
+#if defined(EMISSIVE_COLOR)
+uniform float4 _EmissiveColor;
+#endif
+
 
 #elif defined(EMISSIVE_REFLECTIVE)
 uniform sampler2D _ReflectionMap;
@@ -278,7 +283,7 @@ fixed4 frag (v2f i) : SV_Target
 #elif defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)// && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 
-#if defined(EMISSIVE_BLINK)// || defined(EMISSIVE_REFLECTIVE)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_COLOR)// || defined(EMISSIVE_REFLECTIVE)
 	col.xyz = lerp(col.xyz * lm * 1.3, col.xyz, diffuseAlpha);
 #else
 	col.rgb *= lm * 1.3;
@@ -308,7 +313,7 @@ fixed4 frag (v2f i) : SV_Target
 	diffuseAlpha = frac(diffuseAlpha + (1.0 / 255.0));
 #endif
 
-#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)
 
 #if defined(WAVE_EMISSION)
 	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
@@ -316,7 +321,13 @@ fixed4 frag (v2f i) : SV_Target
 	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
 
 #endif
+
+#if defined(EMISSIVE_COLOR)
+	col += (intensity - 1.0) * _EmissiveColor;
+#else
 	col *= intensity;
+#endif
+
 #endif
 
 /*
