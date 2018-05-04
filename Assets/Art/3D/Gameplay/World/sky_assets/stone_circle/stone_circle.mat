@@ -8,8 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: stone_circle
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: EMISSIVE_NONE FOG MAINCOLOR_TEXTURE NORMALMAP OPAQUEALPHA SPECULAR
-    VERTEXCOLOR_NONE
+  m_ShaderKeywords: EMISSIVE_CUSTOM FOG MAINCOLOR_TEXTURE NORMALMAP NORMALWASSPECULAR
+    OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -68,7 +68,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Emissive: 0
+    - Emissive: 3
     - MainColor: 0
     - VertexColor: 0
     - _BlendMode: 0
@@ -82,13 +82,14 @@ Material:
     - _DetailNormalMapScale: 1
     - _DoubleSided: 0
     - _DstBlend: 0
-    - _EmissivePower: 1
+    - _EmissivePower: 0
     - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 0
     - _EnableCutoff: 0
     - _EnableFog: 1
     - _EnableNormalMap: 0
+    - _EnableNormalwAsSpecular: 1
     - _EnableOpaqueAlpha: 1
     - _EnableSpecular: 1
     - _EnableTint: 0
