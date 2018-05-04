@@ -28,6 +28,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		_EmissivePower("Emissive Power", Float) = 1.0
 		_BlinkTimeMultiplier("Blink time multiplier", Float) = 0.0
 		_WaveEmission("Emission phase", Range(0.0, 0.1)) = 0.1
+		_EmissiveColor("Emissive color", Color) = (1.0, 1.0, 1.0, 1.0)
 
 //		_ReflectionColor("Reflection color", Color) = (1.0, 1.0, 0.0, 1.0)
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 1.0
@@ -56,7 +57,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //		[Toggle(LIGHTMAPCONTRAST)] _EnableLightmapContrast("Enable lightmap contrast", Float) = 0
 		[KeywordEnum(None, Overlay, Additive, Modulate)] VertexColor("Vertex color mode", Float) = 0
 //		[KeywordEnum(None, Blink, Reflective, LightmapContrast)] Emissive("Emission type", Float) = 0
-		[KeywordEnum(None, Blink, Reflective, Custom)] Emissive("Emission type", Float) = 0
+		[KeywordEnum(None, Blink, Reflective, Custom, Color)] Emissive("Emission type", Float) = 0
 		[KeywordEnum(Texture, Color)] MainColor("Main color", Float) = 0.0
 /*
 		0.	Zero				Blend factor is(0, 0, 0, 0).
@@ -110,7 +111,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 //				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
-				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_CUSTOM
+				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_CUSTOM EMISSIVE_COLOR
 				#pragma shader_feature MAINCOLOR_TEXTURE MAINCOLOR_COLOR
 
 				#pragma multi_compile __ LIGHTMAP_ON
