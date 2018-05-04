@@ -1867,6 +1867,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			ChangeState(State.OuterSpace);
 		}
 
+		// If we didn't show the boost on space message, do it here
+		if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
+			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST_SPACE)) {
+				Messenger.Broadcast(MessengerEvents.BOOST_SPACE);
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.BOOST_SPACE, true);
+			}
+		}
+
         // Notify game
         Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, true);
     }
