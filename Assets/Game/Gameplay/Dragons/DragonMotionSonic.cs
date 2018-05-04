@@ -10,7 +10,8 @@ public class DragonMotionSonic : DragonMotion {
 	protected Vector3 m_ricochetDir = Vector3.zero;
 	public float m_sonicSpeed = 5;
 
-	protected virtual void Start() {
+	override protected void Start() {
+		base.Start();
 		m_boost = GetComponent<DragonBoostBehaviour>();
 	}
 
@@ -94,6 +95,13 @@ public class DragonMotionSonic : DragonMotion {
 	override protected void ChangeState(State _nextState) {
 		if (m_state == _nextState)
 			return;
+
+		// No stun if in extra mode
+		if ( m_state == State.Extra_1 || m_state == State.Extra_2 )
+		{
+			if ( _nextState == State.Stunned )
+				return;
+		}
 
 		switch( m_state )
 		{
