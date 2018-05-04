@@ -11,22 +11,20 @@ using TMPro;
 //----------------------------------------------------------------------------//
 [CustomEditor(typeof(PopupCustomizer))]
 public class PopupCustomizerEditor : Editor {
-	
+
+	private PopupCustomizer m_target;
+
+	void OnEnable() {
+		m_target = target as PopupCustomizer;
+	}
+
 	public override void OnInspectorGUI() {
 		// draw inspector
 		DrawDefaultInspector();
 
 		// draw export button
-		if (GUILayout.Button("Export JSON")) {
-			ExportJSON();
+		if (GUILayout.Button("Save JSON")) {
+			m_target.SaveJSON();
 		}
-	}
-
-	private void ExportJSON() {
-		SerializedProperty p = serializedObject.GetIterator();
-		/*do {
-			//if (p.type
-		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
-		*/
 	}
 }

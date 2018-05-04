@@ -194,7 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224445980660113892}
   - component: {fileID: 222215529797081264}
-  - component: {fileID: 114017178014464228}
+  - component: {fileID: 114299458280206532}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -466,33 +466,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114017178014464228
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1506534612040314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 24b2b060a4776304cb31a2e9816e92b2, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 1
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
 --- !u!114 &114017549308617518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -504,14 +477,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e97db3116f5b469a885d67987e6cdc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_closeButtonRoot: {fileID: 0}
-  m_titleText: {fileID: 0}
-  m_messageText: {fileID: 0}
-  m_otherTexts:
-    m_valueList: []
-    m_keyList: []
-  m_image: {fileID: 0}
-  m_buttons: []
+  m_titleField:
+    element: {fileID: 114111792616384966}
+  m_messageField:
+    element: {fileID: 114725290914212568}
+  m_textFields:
+  - element: {fileID: 114974040918757058}
+  - element: {fileID: 114000011504845374}
+  m_imageField:
+    element: {fileID: 114299458280206532}
+  m_buttonFields:
+  - element: {fileID: 114618639608405080}
+    optional: 1
+  m_closeButtonField:
+    element: {fileID: 0}
+    optional: 0
 --- !u!114 &114111792616384966
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -808,6 +788,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
+--- !u!114 &114299458280206532
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1506534612040314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!114 &114354389129966906
 MonoBehaviour:
   m_ObjectHideFlags: 1

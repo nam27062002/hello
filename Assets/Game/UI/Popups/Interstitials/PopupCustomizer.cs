@@ -42,7 +42,7 @@ public class PopupCustomizer : MonoBehaviour {
 	// NESTED CLASSES														  //
 	//------------------------------------------------------------------------//
 	[System.Serializable]
-	public abstract class Field<T> {
+	public abstract class Field<T> where T : Component {
 		private string m_fieldType;
 		public string fieldType { get { return m_fieldType; } }
 
@@ -57,6 +57,33 @@ public class PopupCustomizer : MonoBehaviour {
 			m_fieldType = _type;
 			m_caletyKey = _key;
 		}
+
+		public void SaveJSON(SimpleJSON.JSONNode _root) {
+			SaveJSON(_root, -1);
+		}
+
+		public void SaveJSON(SimpleJSON.JSONNode _root, int _index) {
+			if (element != null) {
+				SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+				{
+					data.Add("key", element.name);
+					data.Add("type", m_fieldType);
+					data.Add("caletyKey", m_caletyKey);
+
+					SimpleJSON.JSONClass param = new SimpleJSON.JSONClass();
+					{
+						if (_index >= 0) param.Add("index", _index);
+						AddJSONParams(param);
+					}
+					if (param.Count > 0) {
+						data.Add("params", param);
+					}
+				}
+				_root.Add(data);
+			}
+		}
+
+		protected virtual void AddJSONParams(SimpleJSON.JSONClass _param) {}
 	}
 
 	[System.Serializable]
@@ -80,16 +107,18 @@ public class PopupCustomizer : MonoBehaviour {
 	}
 
 	[System.Serializable]
-	public class ButtonField : Field<Button> {
+	public class ButtonField : Field<Button> {		
 		public bool optional = false;
+
 		//------------------------------------------------------//
 		public ButtonField() : base(FieldType.BUTTON, CaletyKey.BUTTONS) {}
+
+		protected override void AddJSONParams(SimpleJSON.JSONClass _param) {
+			if (optional) _param.Add("optional", true);
+		}
 	}
 
-	[System.Serializable]
-	public class CloseButtonField : Field<GameObject> {
-		public bool optional = false;
-	}
+
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -99,19 +128,22 @@ public class PopupCustomizer : MonoBehaviour {
 
 	// Exposed
 	[InfoBox("All fields optional")]
-	[SerializeField] private TitleField m_titleField = null;
+	[SerializeField] private TitleField m_titleField;
 	[SeparatorAttribute]
-	[SerializeField] private MessageField m_messageField = null;
+	[SerializeField] private MessageField m_messageField;
 	[SerializeField] private List<TextField> m_textFields = new List<TextField>();
 	[SeparatorAttribute]
-	[SerializeField] private ImageField m_imageField = null;
+	[SerializeField] private ImageField m_imageField;
 	[SeparatorAttribute]
-	[SerializeField] private CloseButtonField m_closeButtonField = null;
-	[SerializeField] private List<Button> m_buttons = new List<Button>();
+	[SerializeField] private List<ButtonField> m_buttonFields = new List<ButtonField>();
+	[SerializeField] private ButtonField m_closeButtonField;
+
 
 	// Internal
 	private CustomizerManager.CustomiserPopupConfig m_config = null;
 	private CaletyConstants.PopupConfig m_localizedConfig = null;
+
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -121,9 +153,9 @@ public class PopupCustomizer : MonoBehaviour {
 	/// </summary>
 	public void Awake() {
 		// Connect the buttons
-		for(int i = 0; i < m_buttons.Count; ++i) {
+		for(int i = 0; i < m_buttonFields.Count; ++i) {
 			int btnIdx = i;	// Delta expressions and iterators -_-
-			m_buttons[i].onClick.AddListener(() => { OnButton(btnIdx); });
+			m_buttonFields[i].element.onClick.AddListener(() => { OnButton(btnIdx); });
 		}
 	}
 
@@ -146,13 +178,13 @@ public class PopupCustomizer : MonoBehaviour {
 		m_localizedConfig = m_config.m_kPopupConfigByLanguage[m_config.m_kPrepareState.m_strPreparedLanguage];
 
 		// Close button
-		if(m_closeButtonRoot != null) {
-			m_closeButtonRoot.SetActive(m_config.m_bHasCloseButton);
+		if(m_closeButtonField.element != null) {
+			m_closeButtonField.element.gameObject.SetActive(m_config.m_bHasCloseButton);
 		}
 
 		// Title
-		if(m_titleText != null) {
-			m_titleText.text = m_localizedConfig.m_strTitle;
+		if(m_titleField.element != null) {
+			m_titleField.element.text = m_localizedConfig.m_strTitle;
 		}
 
 		// Texts
@@ -188,31 +220,32 @@ public class PopupCustomizer : MonoBehaviour {
 		*/
 
 		// Image
-		if(m_image != null) {
+		if(m_imageField.element != null) {
 			if(m_config.m_kUnityImageTexture != null) {
-				m_image.gameObject.SetActive(true);
-				m_image.texture = m_config.m_kUnityImageTexture;
+				m_imageField.element.gameObject.SetActive(true);
+				m_imageField.element.texture = m_config.m_kUnityImageTexture;
 			} else {
-				m_image.gameObject.SetActive(false);
+				m_imageField.element.gameObject.SetActive(false);
 			}
 		}
 
 		// Buttons
-		for(int i = 0; i < m_buttons.Count; ++i) {
+		for(int i = 0; i < m_buttonFields.Count; ++i) {
 			// Button defined?
 			if(i >= m_localizedConfig.m_kPopupButtons.Count) {
-				m_buttons[i].gameObject.SetActive(false);
+				m_buttonFields[i].element.gameObject.SetActive(false);
 			} else {
-				m_buttons[i].gameObject.SetActive(true);
+				m_buttonFields[i].element.gameObject.SetActive(true);
 
 				// Set text
-				TextMeshProUGUI txt = m_buttons[i].GetComponentInChildren<TextMeshProUGUI>();
+				TextMeshProUGUI txt = m_buttonFields[i].element.GetComponentInChildren<TextMeshProUGUI>();
 				if(txt != null) {
 					txt.text = m_localizedConfig.m_kPopupButtons[i].m_strText;
 				}
 			}
 		}
 	}
+
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -223,6 +256,7 @@ public class PopupCustomizer : MonoBehaviour {
 	public void ClosePopup() {
 		this.GetComponent<PopupController>().Close(true);
 	}
+
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -286,5 +320,41 @@ public class PopupCustomizer : MonoBehaviour {
 				return;
 			} break;
 		}
+	}
+
+
+	//------------------------------------------------------------------------//
+	// UTILS																  //
+	//------------------------------------------------------------------------//
+	public void SaveJSON() {
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+		{
+			SimpleJSON.JSONArray components = new SimpleJSON.JSONArray();
+			{
+				m_titleField.SaveJSON(components);
+				m_messageField.SaveJSON(components);
+				for (int i = 0; i < m_textFields.Count; ++i) {
+					m_textFields[i].SaveJSON(components);
+				}
+				m_imageField.SaveJSON(components);
+				for (int i = 0; i < m_buttonFields.Count; ++i) {
+					m_buttonFields[i].SaveJSON(components, i);
+				}
+			}
+			data.Add("components", components);
+
+			SimpleJSON.JSONClass settings = new SimpleJSON.JSONClass();
+			{
+				settings.Add("hasCloseButton", m_closeButtonField.element != null);
+				if (m_closeButtonField.element != null) {
+					settings.Add("closeButtonIsOptional", m_closeButtonField.optional);
+				}
+			}
+			data.Add("settings", settings);
+		}
+
+		//TODO: save to file: game object name is the file name
+
+		Debug.Log(data.ToString());
 	}
 }
