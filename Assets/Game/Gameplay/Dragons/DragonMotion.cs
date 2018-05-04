@@ -1837,11 +1837,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// Trigger animation
 		m_animationEventController.OnEnterOuterSpace();
 
-        // Trigger particles (min. speed required)
-        if (m_particleController != null) {
-			m_particleController.OnEnterOuterSpace( Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
-		}
-
 		if ( m_state != State.Latching )
 		{
 			// Change state
@@ -1855,8 +1850,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			ChangeState(State.OuterSpace);
 		}
 
-        // Notify game
-        Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, true);
+       
     }
 
 	public void EndSpaceMovement()
@@ -1864,18 +1858,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// Trigger animation
 		m_animationEventController.OnExitOuterSpace();
 
-		// Trigger particles (min. speed required)
-		if(m_particleController != null ) {
-			m_particleController.OnExitOuterSpace(  Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
-		}
-
 		if ( m_state != State.Latching )
 		{
 			ChangeState( State.ExitingSpace );
 		}
-
-        // Notify game
-        Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, false);
     }
 
 	public void StartGrabPreyMovement(AI.IMachine prey, Transform _holdPreyTransform)
@@ -2031,6 +2017,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			{
 				StartSpaceMovement();
 				m_previousState = State.OuterSpace;
+				// Trigger particles (min. speed required)
+		        if (m_particleController != null) {
+					m_particleController.OnEnterOuterSpace( Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
+				}
+				// Notify game
+        		Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, true);
 			}
 		}
 	}
@@ -2094,6 +2086,12 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			{
 				EndSpaceMovement();
 				m_previousState = State.Idle;
+				// Trigger particles (min. speed required)
+				if(m_particleController != null ) {
+					m_particleController.OnExitOuterSpace(  Mathf.Abs(m_impulse.y) >= m_cloudTrailMinSpeed );
+				}
+				// Notify game
+        		Messenger.Broadcast<bool>(MessengerEvents.INTOSPACE_TOGGLED, false);
 			}
 		}
 	}

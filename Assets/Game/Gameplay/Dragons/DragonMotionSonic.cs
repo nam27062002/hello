@@ -13,6 +13,15 @@ public class DragonMotionSonic : DragonMotion {
 	override protected void Start() {
 		base.Start();
 		m_boost = GetComponent<DragonBoostBehaviour>();
+			// Wait for boost config to end
+		StartCoroutine( DelayedBoostSet());
+
+	}
+
+	IEnumerator DelayedBoostSet()
+	{
+		yield return new WaitForSeconds(1.0f);
+		m_boost.energyRequiredToBoost = m_dragon.energyMax;
 	}
 
 	override protected void Update()
@@ -41,6 +50,9 @@ public class DragonMotionSonic : DragonMotion {
 					if ( m_insideWater )
 					{
 						ChangeState(State.InsideWater);
+					}
+					else if ( m_outterSpace ){
+						StartSpaceMovement();
 					}
 					else
 					{
@@ -140,9 +152,9 @@ public class DragonMotionSonic : DragonMotion {
 		}
 	}
 
-	public virtual bool CanIResumeEating()
+	override public bool CanIResumeEating()
 	{
-		bool ret = true;
+		bool ret = base.CanIResumeEating();
 		if ( m_state == State.Extra_1 || m_state == State.Extra_2 )
 			ret = false;
 		return ret;
@@ -152,11 +164,7 @@ public class DragonMotionSonic : DragonMotion {
 	{
 		if ( m_state != State.Extra_1 && m_state != State.Extra_2 )
 		{
-			if (!m_outterSpace && m_transform.position.y > SpaceStart){
-				OnEnterSpaceEvent();
-			}else if ( m_outterSpace && m_transform.position.y < SpaceStart ){
-				OnExitSpaceEvent();
-			}
+			base.CheckOutterSpace();
 		}
 	}
 

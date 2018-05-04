@@ -27,6 +27,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private float m_energyRefillBase = 1f;	// energy per second
 	private float m_energyRefillBonus = 0;	// energy per second
 	private float m_energyRequiredToBoost = 0.2f;	// Percent of total energy
+	public float energyRequiredToBoost
+	{
+		get { return m_energyRequiredToBoost; }
+		set { m_energyRequiredToBoost = value; }
+	}
 	private float m_boostMultiplier;
 	public float boostMultiplier
 	{
