@@ -11,9 +11,8 @@ using System.Xml;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-public class Builder : MonoBehaviour 
-{	
-	
+public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
+{		
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
 	const string m_iOSSymbols = "";
 
@@ -24,6 +23,15 @@ public class Builder : MonoBehaviour
     /// When <c>true</c> the symbols defined by player settings are overriden by the ones that defined in <c>m_iOSSymbols</c> for iOs and <c>m_AndroidSymbols</c> for Android
     /// </summary>
     const bool OVERRIDE_SYMBOLS = false;
+
+	public int callbackOrder { get { return 0; } }
+	public void OnPreprocessBuild(BuildTarget target, string path) {
+		Debug.Log("MyCustomBuildProcessor.OnPreprocessBuild for target " + target + " at path " + path);
+		if (target == BuildTarget.iOS) {
+			// We make sure bundleVersiont is set to game settings version so xcode files generated manually have the right version number
+			PlayerSettings.bundleVersion = GameSettings.internalVersion.ToString();
+		}
+	}
 
 	//[MenuItem ("Build/IOs")]
 	static void GenerateXcode()
@@ -520,12 +528,13 @@ public class Builder : MonoBehaviour
 		}
     }
 
-    [MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
+    /*[MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
     public static void GenerateAdaptiveApkFromMenu()
     {
         string path = ValidatePath(Application.dataPath + "/../HD.apk");
         GenerateAdaptiveAPK(path);
     }
+    */
 
     public static void GenerateAdaptiveAPK(string path)
     {

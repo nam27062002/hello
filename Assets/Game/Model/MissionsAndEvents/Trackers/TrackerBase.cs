@@ -36,8 +36,8 @@ public class TrackerBase {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Variables
-	[SerializeField] private float m_currentValue = 0f;
-	public float currentValue { 
+	[SerializeField] private long m_currentValue = 0;
+	public long currentValue { 
 		get { return m_currentValue; }
 		set { SetValue(value, true); }
 	}
@@ -82,7 +82,7 @@ public class TrackerBase {
 	/// </summary>
 	public virtual void Clear() {
 		// Reset current value
-		m_currentValue = 0f;
+		m_currentValue = 0;
 
 		// Remove any listener
 		OnValueChanged.RemoveAllListeners();
@@ -97,7 +97,7 @@ public class TrackerBase {
 	/// <param name="_tid">Description TID to be formatted.</param>
 	/// <param name="_targetValue">Target value. Will be placed at the %U0 replacement slot.</param>
 	/// <param name="_replacements">Other optional replacements, starting at %U1.</param>
-	public virtual string FormatDescription(string _tid, float _targetValue, params string[] _replacements) {
+	public virtual string FormatDescription(string _tid, long _targetValue, params string[] _replacements) {
 		// Default: Add the formatted value to the replacements array and localize
 		// No need if there are no replacements
 		if(_replacements == null || _replacements.Length == 0) {
@@ -115,7 +115,7 @@ public class TrackerBase {
 	/// </summary>
 	/// <returns>The localized and formatted value for this tracker's type.</returns>
 	/// <param name="_value">Value to be formatted.</param>
-	public virtual string FormatValue(float _value) {
+	public virtual string FormatValue(long _value) {
 		// Default: the number as is
 		return StringUtils.FormatNumber(_value, 2);
 	}
@@ -126,9 +126,25 @@ public class TrackerBase {
 	/// </summary>
 	/// <returns>The rounded value.</returns>
 	/// <param name="_targetValue">The original value to be rounded.</param>
-	public virtual float RoundTargetValue(float _targetValue) {
+	public virtual long RoundTargetValue(long _targetValue) {
 		// Default: At least 1, no decimals
-		return Mathf.Max(1f, Mathf.Round(_targetValue));
+		//return Mathf.Max(1f, Mathf.Round(_targetValue));
+		return _targetValue;
+	}
+
+	/// <summary>
+	/// Gets the progress string, custom formatted based on tracker type.
+	/// </summary>
+	/// <returns>The progress string properly formatted.</returns>
+	/// <param name="_currentValue">Current value to be evaluated.</param>
+	/// <param name="_targetValue">Target value to be evaulated.</param>
+	/// <param name="_showTarget">Show target value? (i.e. "25/40"). Some types might override this setting if not appliable.</param>
+	public virtual string GetProgressString(long _currentValue, long _targetValue, bool _showTarget = true) {
+		if(_showTarget) {
+			return LocalizationManager.SharedInstance.Localize("TID_FRACTION", FormatValue(_currentValue), FormatValue(_targetValue));
+		} else {
+			return FormatValue(_currentValue);
+		}
 	}
 
 	/// <summary>
@@ -136,7 +152,7 @@ public class TrackerBase {
 	/// </summary>
 	/// <param name="_newValue">The new value to be set.</param>
 	/// <param name="_triggerEvent">Whether to trigger the OnValueChanged event or not.</param>
-	public virtual void SetValue(float _newValue, bool _triggerEvent) {
+	public virtual void SetValue(long _newValue, bool _triggerEvent) {
 		// Skip if not enabled
 		if(!m_enabled) return;
 

@@ -69,10 +69,10 @@ public class TrackerKillChain : TrackerBase {
 	/// </summary>
 	/// <returns>The rounded value.</returns>
 	/// <param name="_targetValue">The original value to be rounded.</param>
-	override public float RoundTargetValue(float _targetValue) {
+	override public long RoundTargetValue(long _targetValue) {
 		// Round to multiples of 10, except values smaller than 100
-		if(_targetValue > 100f) {
-			_targetValue = MathUtils.Snap(_targetValue, 10f);
+		if(_targetValue > 100) {
+			_targetValue = MathUtils.Snap(_targetValue, 10);
 		}
 
 		// Apply default filter

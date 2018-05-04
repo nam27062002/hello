@@ -38,17 +38,6 @@ public class FireBreathDynamic : MonoBehaviour
 	public static readonly float CURRENT_DRAGONBABY_REFERENCEVALUE = 2.68f; //2.1985f;
     public static readonly float CURRENT_DRAGONCLASSIC_REFERENCEVALUE = 5.535f;
 
-    // Mesh cache
-    private int[] m_triangles = null;
-	private Vector3[] m_pos = null;
-	private Vector2[] m_UV = null;
-    private Color[] m_color = null;
-
-    // Meshes
-//    private Mesh m_mesh = null;
-
-	// Cached components
-//	private MeshFilter m_meshFilter = null;
 
     public float m_distance = 1;
     public float m_aplitude = 6;
@@ -57,10 +46,6 @@ public class FireBreathDynamic : MonoBehaviour
     private int m_numPos = 0;
 
     public float m_fireFlexFactor = 1.0f;
-
-    private Vector3[] m_whip;
-    private Vector3[] m_realWhip;
-    private Vector3[] m_whipTangent;
 
     private int m_collisionSplit = 0;
 
@@ -93,18 +78,24 @@ public class FireBreathDynamic : MonoBehaviour
 	private float m_showFlameTimer = 0.0f;
     private bool m_showFlame = false;
 
-    public List<ParticleSystem> m_fireParticles;
-	public List<int> m_fireParticlesMaxParticles;
+    [System.Serializable]
+    public struct ParticleSetup
+    {
+    	public string name;
+    	public Transform anchor;
+    	public bool deactivate;
+    }
 
-	public List<ParticleSystem> m_underWaterParticles;
-	public List<int> m_underWaterParticlesMaxParticles;
+	public List<ParticleSetup> m_fireParticles;
+	protected List<ParticleSystem> m_fireParticlesInstances = new List<ParticleSystem>();
+
+	public List<ParticleSetup> m_underWaterParticles;
+	protected List<ParticleSystem> m_underWaterParticlesInstances = new List<ParticleSystem>();
 
 	private bool m_insideWater = false;
 	private float m_waterHeigth = 0;
 
     private ParticleSystem[] m_particleList;
-
-    private bool m_isTitan = false;
 
     public float m_reflectionScale = 5.0f;
 
@@ -145,14 +136,34 @@ public class FireBreathDynamic : MonoBehaviour
 
         m_collisionMaxDistance *= 2.0f;
 
-        for (int i = 0; i < m_fireParticles.Count; i++)
-            m_fireParticles[i].transform.SetLocalScale(m_effectScale);
+        for (int i = 0; i < m_fireParticlesInstances.Count; i++)
+            m_fireParticlesInstances[i].transform.SetLocalScale(m_effectScale);
 
-        for (int i = 0; i < m_underWaterParticles.Count; i++)
-            m_underWaterParticles[i].transform.SetLocalScale(m_effectScale);
+        for (int i = 0; i < m_underWaterParticlesInstances.Count; i++)
+            m_underWaterParticlesInstances[i].transform.SetLocalScale(m_effectScale);
 
     }
 
+
+    void Awake()
+    {
+		// Instantiate all particles
+		int max;
+		max = m_fireParticles.Count;
+		for (int i = 0; i < max; i++) {
+			ParticleSystem ps = ParticleManager.InitLeveledParticle( m_fireParticles[i].name, m_fireParticles[i].anchor);
+			if ( ps != null ){
+				m_fireParticlesInstances.Add( ps );
+			}
+		}
+
+		max = m_underWaterParticles.Count;
+		for (int i = 0; i < max; i++) {
+			ParticleSystem ps = ParticleManager.InitLeveledParticle( m_underWaterParticles[i].name, m_underWaterParticles[i].anchor);
+			if ( ps != null )
+				m_underWaterParticlesInstances.Add( ps );
+		}
+    }
     // Use this for initialization
     void Start () 
 	{
@@ -185,195 +196,19 @@ public class FireBreathDynamic : MonoBehaviour
         }
 
         // Cache
-//        m_meshFilter = GetComponent<MeshFilter>();
         m_numPos = (int)(4 + m_splits * 2);
 
         m_whipEnd = transform.Find("WhipEnd").gameObject;
         m_collisionPlane = transform.Find("WhipEnd/collisionPlane").gameObject;
-
-
-/*
-        for( int i = 0; i<m_fireParticles.Count; i++ )
-			m_fireParticles[i].transform.SetLocalScale(m_effectScale);
-
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			m_underWaterParticles[i].transform.SetLocalScale(m_effectScale);
-*/
-        InitWhip();
-		InitArrays();
-//		InitUVs();
-		InitTriangles();
-
-//		ReshapeFromWhip();
-//      CreateMesh();
-
-
         m_particleList = GetComponentsInChildren<ParticleSystem>();
-
-		if ( InstanceManager.player )
-        	m_isTitan = (InstanceManager.player.sku == "dragon_titan");
-
     }
 
-    void InitWhip()
-	{
-		m_whip = new Vector3[(int)m_splits + 1];
-        m_realWhip = new Vector3[(int)m_splits + 1];
-        m_whipTangent = new Vector3[(int)m_splits + 1];
 
-        float xStep = (m_distance * m_effectScale) / (m_splits + 1);
-		Vector3 move = transform.right;
-		Vector3 pos = transform.position;
-		for( int i = 0; i < (m_splits + 1); i++ )
-		{
-			m_realWhip[i] = m_whip[i] = pos + (move * xStep * i);
-            m_whipTangent[i] = transform.up;
-
-        }
-	}
-
-	void InitArrays()
-	{	
-		m_pos = new Vector3[m_numPos];
-		m_UV = new Vector2[m_numPos];
-        m_color = new Color[m_numPos];
-        for ( int i = 0; i < m_numPos; i++ )
-		{
-			m_pos[i] = Vector3.zero;
-			m_UV[i] = Vector2.zero;
-            m_color[i] = (i < 6) ? m_initialColor : m_flameColor;
-		}
-	}
-
-    void InitTriangles()
-	{
-		int numTrianglesIndex = (m_numPos-2) * 3;
-		m_triangles = new int[ numTrianglesIndex ];
-
-		int pos = 0;
-		for( int i = 0; i<numTrianglesIndex; i += 3 )
-		{
-			m_triangles[i] = pos;
-			if ( pos % 2 == 0 )
-			{
-				m_triangles[i+1] = pos+2;
-				m_triangles[i+2] = pos+1;
-
-			}
-			else
-			{
-				m_triangles[i+1] = pos+1;
-				m_triangles[i+2] = pos+2;
-			}
-			pos++;
-		}
-	}
-/*
-    void ReshapeFromWhip()
-	{
-		m_pos[0] = m_pos[1] = Vector3.zero;
-
-        m_UV[0] = Vector2.right * 0.5f;
-        m_UV[1] = Vector2.right * 0.5f;
-
-
-        float vStep = 1.0f / (m_splits + 1.0f);
-
-        int step = 1;
-		int whipIndex = 0;
-        Vector3 newPos1, newPos2;
-
-        float efs = Mathf.Clamp(m_effectScale, 0.0f, 3.75f);
-        for ( int i = 2; i < m_numPos; i += 2 )
-		{
-			float yDisplacement = m_shapeCurve.Evaluate(step / (float)(m_splits+2)) * m_aplitude * efs *0.25f;
-
-            Vector3 whipTangent = transform.InverseTransformDirection(m_whipTangent[whipIndex]);
-
-            newPos1 = newPos2 = transform.InverseTransformPoint(m_realWhip[whipIndex]);
-
-            if (transform.right.x < 0.0f)
-            {
-                newPos1 += whipTangent * yDisplacement;
-                newPos2 -= whipTangent * yDisplacement;
-            }
-            else
-            {
-                newPos1 += whipTangent * yDisplacement;
-                newPos2 -= whipTangent * yDisplacement;
-            }
-
-            m_pos[i] = newPos1;
-            m_pos[i + 1] = newPos2;
-
-            yDisplacement *= 0.5f;
-
-            m_UV[i].Set(0.5f + yDisplacement, vStep * step);
-            m_UV[i + 1].Set(0.5f - yDisplacement, vStep * step);
-
-            if (i > 4)
-            {
-                m_color[i] = m_color[i + 1] = (whipIndex > m_collisionSplit) ? m_collisionColor : m_flameColor;
-            }
-            step++;
-			whipIndex++;
-		}
-
-    }
-*/
-    void InitUVs()
-    {
-        //		m_UV[0] = Vector2.right * 0.5f;
-        //		m_UV[1] = Vector2.right * 0.5f;
-        float vStep = 1.0f / (m_splits + 1);
-        // float hStep = 1.0f / (m_splits + 1);
-
-        int step = 0;
-        for (int i = 0; i < m_numPos; i += 2)
-        {
-            float xDisplacement = m_shapeCurve.Evaluate(step / (float)(m_splits)) * 0.5f;
-
-            //            m_UV[i].x = 0.75f;// - ((hStep/2.0f) * step);
-            //			m_UV[i].x = 0.5f + xDisplacement;
-            //float xDisplacement = 0.0f;// (((i >> 1) & 0) != 0) ? -0.1f : 0.1f;
-            m_UV[i].x = 0.5f + xDisplacement;
-            m_UV[i].y = vStep * step;
-
-            //            m_UV[i + 1].x = 0.25f;// + ((hStep/2.0f) * step);
-            //			m_UV[i+1].x = 0.5f - xDisplacement;
-            m_UV[i + 1].x = 0.5f - xDisplacement;
-            m_UV[i + 1].y = vStep * step;
-
-            step++;
-        }
-    }
-/*
-    // Recreates the mesh
-    void CreateMesh()
-	{
-		m_mesh = new Mesh();
-		m_mesh.MarkDynamic();
-
-		m_mesh.vertices = m_pos;
-        m_mesh.uv = m_UV;
-        m_mesh.colors = m_color;    
-
-        m_mesh.SetTriangles( m_triangles, 0);
-		// m_mesh.SetIndices(m_triangles, MeshTopology.Triangles, 0);
-        m_meshFilter.sharedMesh = m_mesh;
-
-	}
-*/
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
         UpdateWhip();
-//		ReshapeFromWhip();
-
-//		m_mesh.uv = m_UV;
-//		m_mesh.vertices = m_pos;
-//        m_mesh.colors = m_color;
 
         Vector3 particlePos = m_whipEnd.transform.localPosition;
         float particleDistance = m_distance * (m_effectScale*0.38f);       
@@ -448,22 +283,6 @@ public class FireBreathDynamic : MonoBehaviour
                         if (colFire != null)
                         {
                             colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
-/*
-							if (m_isTitan)
-	                        {
-	                            FireReflection fr = colFire.GetComponent<FireReflection>();
-	                            if (fr != null)
-	                            {
-	                                Vector3 right = transform.right;
-	                                right.z = 0.0f;
-	                                right.Normalize();
-	                                float dot = Vector3.Dot(right, hit.normal);
-	                                float rndRange = Random.RandomRange(-m_reflectionScale * 0.5f, m_reflectionScale * 0.5f);
-	                                Vector3 direction = right - (hit.normal * dot);
-	                                fr.addVelocity(direction * m_reflectionScale + direction.normalized * rndRange);
-	                            }
-	                        }
-*/
                         }
 
                         m_lastTime = Time.time;
@@ -520,84 +339,32 @@ public class FireBreathDynamic : MonoBehaviour
         if ( hitsSomething )
         {
 			SetParticleCollisionsPlane(collisionPlaneTransform);
-			for (int i = 0; i < m_splits + 1; i++)
-            {
-                float currentDist = (xStep * (i + 1));
-
-				if (currentDist < m_collisionDistance)
-                {
-                    m_whip[i] = whipOrigin + (whipDirection * currentDist);
-                }
-				else if (currentDist < (m_collisionDistance + xStep))
-                {
-                    m_whip[i] = hitPoint;
-                    m_collisionSplit = i;
-                }
-                else
-                {
-                    m_whip[i] = hitPoint;
-                }
-            }
         }
         else
         {
 			SetParticleCollisionsPlane(null);
-
-            for (int i = 0; i < m_splits + 1; i++)
-            {
-                float currentDist = (xStep * (i + 1));
-                m_whip[i] = whipOrigin + (whipDirection * currentDist);
-            }
         }
 
-
-/*
-        for (int i = 0; i < m_splits + 1; i++)
-        {
-            // Vector3 distance = m_whip[i] - m_realWhip[i];
-            float fq = Mathf.Pow(1.0f - (i / (m_splits + 1)), m_fireFlexFactor);
-            float rq = Mathf.Clamp(fq + ((1.0f / m_fireFlexFactor) * Time.fixedDeltaTime), 0.0f, 1.0f);
-
-            m_realWhip[i] = Vector3.Lerp(m_realWhip[i], m_whip[i], rq);
-
-            if (i < 1)
-            {
-                if (transform.right.x < 0.0f)
-                {
-                    m_whipTangent[i] = transform.up;
-                }
-                else
-                {
-                    m_whipTangent[i] = -transform.up;
-                }
-            }
-            else
-            {
-                whipDirection = m_realWhip[i] - m_realWhip[i - 1];
-                m_whipTangent[i] = Vector3.Normalize(Vector3.Cross(Vector3.forward, whipDirection));//transform.up;
-            }
-        }
-*/
     }
 
 
     void SetParticleCollisionsPlane( Transform _tr )
     {
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			m_fireParticles[i].collision.SetPlane(0, _tr);
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			m_fireParticlesInstances[i].collision.SetPlane(0, _tr);
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			m_underWaterParticles[i].collision.SetPlane(0, _tr);
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			m_underWaterParticlesInstances[i].collision.SetPlane(0, _tr);
     }
 
     bool HasParticleAlive()
     {
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			if (m_fireParticles[i].IsAlive())
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			if (m_fireParticlesInstances[i].IsAlive())
 				return true;
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			if (m_underWaterParticles[i].IsAlive())
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			if (m_underWaterParticlesInstances[i].IsAlive())
 				return true;
 		return false;
     }
@@ -609,23 +376,37 @@ public class FireBreathDynamic : MonoBehaviour
 			gameObject.active = true;
 			m_showFlame = !insideWater;
     		// Check if inside water!
-			for( int i = 0; i<m_fireParticles.Count; i++ )
+			for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
 			{
+				m_fireParticlesInstances[i].gameObject.SetActive(true);
 				if (!insideWater)
-					m_fireParticles[i].Play();
+					m_fireParticlesInstances[i].Play();
 			}
 
-			for( int i = 0; i<m_underWaterParticles.Count; i++ )
+			for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			{
+				m_underWaterParticlesInstances[i].gameObject.SetActive(true);
 				if (insideWater)
-					m_underWaterParticles[i].Play();
+					m_underWaterParticlesInstances[i].Play();
+			}
     	}
     	else
     	{
-			for( int i = 0; i<m_fireParticles.Count; i++ )
-				m_fireParticles[i].Stop();
+			for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			{
+				m_fireParticlesInstances[i].Stop();
+				if ( m_fireParticles[i].deactivate ){
+					m_fireParticlesInstances[i].gameObject.SetActive(false);	
+				}
+			}
 
-			for( int i = 0; i<m_underWaterParticles.Count; i++ )
-				m_underWaterParticles[i].Stop();
+			for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			{
+				m_underWaterParticlesInstances[i].Stop();
+				if ( m_underWaterParticles[i].deactivate ){
+					m_underWaterParticlesInstances[i].gameObject.SetActive(false);	
+				}
+			}
 
 			m_showFlame = false;
     	}
@@ -638,21 +419,21 @@ public class FireBreathDynamic : MonoBehaviour
 		m_insideWater = true;
 		m_showFlame = false;
 		m_waterHeigth = transform.position.y;
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			m_fireParticles[i].Stop();
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			m_fireParticlesInstances[i].Stop();
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			m_underWaterParticles[i].Play();
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			m_underWaterParticlesInstances[i].Play();
     }
 
     public void SwitchToNormalMode()
     {
 		m_insideWater = false;
 		m_showFlame = true;
-		for( int i = 0; i<m_fireParticles.Count; i++ )
-			m_fireParticles[i].Play();
+		for( int i = 0; i<m_fireParticlesInstances.Count; i++ )
+			m_fireParticlesInstances[i].Play();
 
-		for( int i = 0; i<m_underWaterParticles.Count; i++ )
-			m_underWaterParticles[i].Stop();
+		for( int i = 0; i<m_underWaterParticlesInstances.Count; i++ )
+			m_underWaterParticlesInstances[i].Stop();
     }
 }
