@@ -248,6 +248,8 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
@@ -263,6 +265,7 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
 	}
 
 	/// <summary>
@@ -492,6 +495,14 @@ public class DragonPlayer : MonoBehaviour {
 		return ret;
 	}
 
+
+	private void OnEntityDestroyed(Transform _entity, Reward _reward) {
+		if (_reward.health >= 0) {
+			AddLife(_reward.health, DamageType.NONE, _entity);
+		}
+		AddEnergy(_reward.energy);
+		m_breathBehaviour.AddFury(_reward.fury);
+	}
 
 	/// <summary>
 	/// Determines whether this instance is super fury on.

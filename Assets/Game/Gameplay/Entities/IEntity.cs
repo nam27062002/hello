@@ -10,6 +10,13 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		OTHER
 	}
 
+	public enum DyingReason{
+		EATEN,
+		BURNED,
+		DESTROYED,
+		OTHER
+	}
+
 	public const string ENTITY_PREFABS_PATH = "Game/Entities/NewEntites/";
 	public const string ENTITY_PREFABS_LOW_PATH = "Game/Entities/NewEntitesLow/";
     
@@ -122,7 +129,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		gameObject.SetActive(false);
 	}
 
-	public virtual Reward GetOnKillReward(bool _burnt) {
+	public virtual Reward GetOnKillReward( DyingReason reason ) {
 		return new Reward();
 	}
 
@@ -136,7 +143,6 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		if (m_machine != null) m_machine.CustomFixedUpdate();
 	}
 
-	public virtual bool CanBeSmashed()			{ return false; }
     public virtual bool CanDieOutsideFrustrum() { return true; }
 	public virtual CircleArea2D circleArea 		{ get { return null; } }
 }

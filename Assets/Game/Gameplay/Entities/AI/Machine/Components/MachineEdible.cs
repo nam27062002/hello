@@ -97,7 +97,7 @@ namespace AI {
 		public void BeingSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {			
 			if (_rewardsPlayer) {
 				// Get the reward to be given from the entity
-				Reward reward = m_entity.GetOnKillReward(false);
+				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.EATEN);
 				if (_source != IEntity.Type.PLAYER) {
 					reward.alcohol = 0;
 					// Pets never harm player if they eat bad junk
@@ -108,6 +108,7 @@ namespace AI {
 
 				// Update some die status data
 				m_entity.onDieStatus.source = _source;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.EATEN;
 
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_machine.transform, reward);

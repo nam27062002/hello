@@ -152,6 +152,19 @@ namespace AI {
 			return false;
 		}
 
+		public bool Smash( IEntity.Type _source ) {
+			if ( !IsDead() && !IsDying() )
+			{
+				SetSignal(Signals.Type.Destroyed, true);
+				m_entity.onDieStatus.source = _source;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
+				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+				return true;
+			}
+			return false;
+		}
+
 		public bool IsDead() {
 			return m_entity.health <= 0 || m_signals.GetValue(Signals.Type.Destroyed);
 		}
