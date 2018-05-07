@@ -51,5 +51,7 @@ public enum TutorialStep {
 
 	FIRST_EGG_COLLECTED			= 1 << 17,
 
+	BOOST_SPACE					= 1 << 18,
+
 	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }
