@@ -42,7 +42,7 @@ public class DragonSonicDestroyArea : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if ( m_motion.state == DragonMotion.State.Extra_2 )
+		if ( m_motion.state == DragonMotion.State.Extra_2 || (m_fire && m_motion.state == DragonMotion.State.Extra_1))
 		{
 			if (!m_active)
 			{

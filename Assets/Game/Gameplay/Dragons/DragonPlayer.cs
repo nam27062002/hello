@@ -470,14 +470,31 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Determines whether any type of fury is on.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is fury on; otherwise, <c>false</c>.</returns>
+	public bool IsFuryOn()
+	{
+		return m_breathBehaviour.IsFuryOn();
+	}
+
+	/// <summary>
 	/// Determines whether this instance is fury on.
 	/// </summary>
 	/// <returns><c>true</c> if this instance is fury on; otherwise, <c>false</c>.</returns>
-	public bool IsFuryOn() {
+	public bool IsStandardFuryOn() {
 		
 		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Standard;
 	}
 
+	/// <summary>
+	/// Determines whether this instance is super fury on.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
+	public bool IsMegaFuryOn() {
+		
+		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Mega;
+	}
 
 	public void OnLeavingArea(float estimatedLeavingTime){
 		PauseEating();
@@ -504,14 +521,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_breathBehaviour.AddFury(_reward.fury);
 	}
 
-	/// <summary>
-	/// Determines whether this instance is super fury on.
-	/// </summary>
-	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
-	public bool IsMegaFuryOn() {
-		
-		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Mega;
-	}
+
 
 	/// <summary>
 	/// Compute the health modifier to be applied based on current health percentage.
