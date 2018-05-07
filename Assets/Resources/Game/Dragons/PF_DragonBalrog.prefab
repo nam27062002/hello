@@ -288,7 +288,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 60.26758, y: 43.91515, z: -98.71934}
+  m_LocalPosition: {x: 69.021484, y: 43.535053, z: -105.56689}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -2034,6 +2034,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4813378870559400}
+  - component: {fileID: 114084210745669232}
   m_Layer: 0
   m_Name: TrailsAnchor
   m_TagString: Untagged
@@ -2587,7 +2588,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.005457145, y: 0.6925339, z: 0.005239177, w: 0.7213457}
+  m_LocalRotation: {x: -0.0035338164, y: 0.69764435, z: 0.0034411687, w: 0.71642727}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3440,8 +3441,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1684452314554430}
-  m_LocalRotation: {x: 1, y: -0, z: -0, w: -0.00000004371139}
-  m_LocalPosition: {x: 0, y: 0.12999725, z: -1.4400024}
+  m_LocalRotation: {x: 1, y: -0.000000043711385, z: -0.000000043711385, w: 0.00000008294846}
+  m_LocalPosition: {x: 0, y: -0.032539368, z: -3.862358}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 490078}
@@ -5770,6 +5771,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 21
+--- !u!114 &114084210745669232
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1684452314554430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Chest
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114146913645883264
 MonoBehaviour:
   m_ObjectHideFlags: 1
