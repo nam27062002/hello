@@ -394,6 +394,19 @@ public class HDCustomizerManager
 #endif
     }
 
+    public CustomizerManager.CustomiserPopupConfig GetCustomiserPopup()
+    {
+        CustomizerManager.CustomiserPopupConfig returnValue = null;
+
+        // Makes sure that there's a customizer and that is has already been applied
+        if (m_state == EState.Done && GetHasBeenApplied())
+        {
+            returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType();
+        }
+
+        return returnValue;
+    }
+
     private void NotifyFilesChanged(List<string> files)
     {
         if (files != null && files.Count > 0 && m_isNotifyFilesChangedEnabled)
