@@ -202,7 +202,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
 	float anim = 1.0 + sin(_Time.y * _InnerLightWaveSpeed); // _SinTime.w * 0.5f;
-	fixed3 selfIlluminate = col.xyz * _InnerLightAdd * anim * detail.r * _InnerLightColor.xyz;
+	fixed3 selfIlluminate = col.xyz * anim * detail.r * _InnerLightColor.xyz * _InnerLightAdd;
 
 #else
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination
@@ -212,7 +212,7 @@ fixed4 frag(v2f i) : SV_Target
 //#if defined (FXLAYER_REFLECTION)
 //	col.xyz = lerp((diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate, col.xyz * _Tint.xyz + _ColorAdd.xyz, ref); //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 //#else
-	col.xyz = (diffuse.xyz + UNITY_LIGHTMODEL_AMBIENT.xyz/* + i.vLight*/) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+	col.xyz = ((diffuse.xyz + UNITY_LIGHTMODEL_AMBIENT.xyz/* + i.vLight*/) * col.xyz * _Tint.xyz) + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
 //#endif
 
 // Fresnel

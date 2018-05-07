@@ -341,6 +341,7 @@ internal class DragonShaderGUI : ShaderGUI
             case 2:     //SELFILLUMINATE_BLINKLIGHTS
                 EditorGUILayout.HelpBox(Styles.blinkLightsSelfIluminationText, MessageType.Info);
                 materialEditor.ShaderProperty(mp_innerLightWaveSpeed, Styles.innerLightWaveSpeedText);
+                materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
                 materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
                 break;
         }
