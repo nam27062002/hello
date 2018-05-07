@@ -291,7 +291,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #endif
 
-#if defined(NORMALMAP) && defined(MAINCOLOR_TEXTURE)
+#if defined(NORMALMAP)// && defined(MAINCOLOR_TEXTURE)
 	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
@@ -302,7 +302,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef SPECULAR
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
-#if defined(NORMALWASSPECULAR)
+#if defined(NORMALMAP) && defined(NORMALWASSPECULAR)
 	col = col + (specular * encodedNormal.w * _LightColor0);
 #else
 	col = col + (specular * diffuseAlpha * _LightColor0);

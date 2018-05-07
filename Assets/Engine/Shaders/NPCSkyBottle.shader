@@ -9,6 +9,10 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_Tint("Tint color (RGB)", Color) = (1, 1, 1, 0)
+
+		_NormalTex("Normal", 2D) = "white" {}
+		_NormalStrength("Normal Strength", float) = 3
+
 		_SpecularPower("Specular power", float) = 1
 		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
 
@@ -49,7 +53,7 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
-//			#define NORMALMAP
+			#define NORMALMAP
 			#define SPECULAR
 			#define OPAQUESPECULAR
 			#define REFLECTIONMAP
