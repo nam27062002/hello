@@ -746,11 +746,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				kAchievementsData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
 				if (kEntry.Value.Has ("amount"))
 				{
-#if UNITY_IOS
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);
-#elif UNITY_ANDROID
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount");
-#endif				
+					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);			
 				}
 				else
 				{
