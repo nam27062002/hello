@@ -61,6 +61,16 @@ public class DragonMotionSonic : DragonMotion {
 						ChangeState(State.Idle);
 					}
 				}
+				else if ( m_outterSpace )
+				{
+					if (m_transform.position.y > FlightCeiling)
+					{
+						if ( m_impulse.y > 0 )
+						{
+							m_direction = Vector3.Reflect( m_direction,  GameConstants.Vector3.down);
+						}
+					}
+				}
 			}break;
 		}
 
