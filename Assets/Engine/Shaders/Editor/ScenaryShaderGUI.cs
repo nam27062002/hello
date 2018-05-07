@@ -377,7 +377,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
             SetKeyword(material, kw_normalmap, normalMap);
             EditorUtility.SetDirty(material);
             Debug.Log("EnableNormalMap " + (normalMap));
-            //            DebugKeywords(material);
         }
 
         EditorGUI.BeginChangeCheck();
@@ -453,12 +452,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 break;
 */
         }
-        /*
-                if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
-                {
-                    material.shaderKeywords = null;
-                }
-        */
         if (mp_BlendMode.floatValue == 0.0f)
         {
 
@@ -487,6 +480,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
+        if (GUILayout.Button("Debug keywords", editorSkin.customStyles[0]))
+        {
+            DebugKeywords(material);
+        }
     }
 
     static void DebugKeywords(Material mat)
