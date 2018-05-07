@@ -14,6 +14,7 @@ public class DragonMotionSonic : DragonMotion {
 	override protected void Start() {
 		base.Start();
 		m_boost = GetComponent<DragonBoostBehaviour>();
+		m_boost.alwaysDrain = true;
 			// Wait for boost config to end
 		StartCoroutine( DelayedBoostSet());
 
