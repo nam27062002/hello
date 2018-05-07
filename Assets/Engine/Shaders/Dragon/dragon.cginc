@@ -64,6 +64,8 @@ uniform float _FireSpeed;
 
 #ifdef SELFILLUMINATE_AUTOINNERLIGHT
 uniform float _InnerLightWavePhase;
+#endif
+#if defined(SELFILLUMINATE_AUTOINNERLIGHT) || defined(SELFILLUMINATE_BLINKLIGHTS)
 uniform float _InnerLightWaveSpeed;
 #endif
 
@@ -199,8 +201,8 @@ fixed4 frag(v2f i) : SV_Target
 	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
 #elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
-	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
-	fixed3 selfIlluminate = col.xyz * 1.0 * anim * detail.r;
+	float anim = 1.0 + sin(_Time.y * _InnerLightWaveSpeed); // _SinTime.w * 0.5f;
+	fixed3 selfIlluminate = col.xyz * _InnerLightAdd * anim * detail.r * _InnerLightColor.xyz;
 
 #else
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination
