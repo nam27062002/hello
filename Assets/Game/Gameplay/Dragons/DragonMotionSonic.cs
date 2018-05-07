@@ -91,14 +91,16 @@ public class DragonMotionSonic : DragonMotion {
 				ComputeImpulseToZero(_deltaTime);
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
-				m_rbody.angularVelocity = GameConstants.Vector3.zero;
+				m_angularVelocity = GameConstants.Vector3.zero;
+				m_rbody.angularVelocity = m_angularVelocity;
 			}break;
 			case State.Extra_2:
 			{
 				m_impulse = m_direction * m_sonicSpeed;
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
-				m_rbody.angularVelocity = GameConstants.Vector3.zero;
+				m_angularVelocity = GameConstants.Vector3.zero;
+				m_rbody.angularVelocity = m_angularVelocity;
 			}break;
 		}
 		base.FixedUpdate();

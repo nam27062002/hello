@@ -107,7 +107,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
     private Vector3 m_directionWhenBoostPressed;
     private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
 	private Quaternion m_desiredRotation;
-	private Vector3 m_angularVelocity = Vector3.zero;
+	protected Vector3 m_angularVelocity = Vector3.zero;
 	private float m_boostSpeedMultiplier;
 	public float boostSpeedMultiplier
 	{
