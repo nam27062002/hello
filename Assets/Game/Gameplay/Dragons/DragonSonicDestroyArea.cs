@@ -83,9 +83,6 @@ public class DragonSonicDestroyArea : MonoBehaviour {
 				m_active = false;
 			}
 		}
-
-		m_extraRadius = Mathf.Clamp(m_extraRadius, 1, m_fireBoostMultiplier);
-		m_circle.radius = m_originalRadius * m_extraRadius;
 	}
 
 	void OnFuryRushToggled( bool fire, DragonBreathBehaviour.Type fireType)
