@@ -13,6 +13,10 @@ using System.Collections.Generic;
 using TMPro;
 using SimpleJSON;
 
+using System;
+using System.IO;
+
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -23,6 +27,8 @@ public class PopupCustomizer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string PATH = "UI/Popups/Interstitial/";
+
 	public static class FieldType {
 		public static readonly string TEXT 		= "text";
 		public static readonly string TEXTAREA 	= "textarea";
@@ -353,8 +359,10 @@ public class PopupCustomizer : MonoBehaviour {
 			data.Add("settings", settings);
 		}
 
-		//TODO: save to file: game object name is the file name
-
-		Debug.Log(data.ToString());
+		string filePath = "Assets/Game/UI/Popups/Interstitials/" + name + ".json";
+		using (StreamWriter sw = new StreamWriter(filePath, false)) {
+			sw.WriteLine(data.ToString());
+			sw.Close();
+		}
 	}
 }

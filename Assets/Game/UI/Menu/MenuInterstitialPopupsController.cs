@@ -66,6 +66,22 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
+	private void CheckCusotmizerPopup() {
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed) return;
+
+		CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetCustomiserPopup();
+		if(popupConfig != null) {
+			string popupPath = PopupCustomizer.PATH + "PF_PopupLayout" + popupConfig.m_iLayout;
+
+			PopupController pController = PopupManager.OpenPopupInstant(popupPath);
+			PopupCustomizer pCustomizer = pController.GetComponent<PopupCustomizer>();
+			pCustomizer.InitFromConfig(popupConfig);
+
+			m_popupDisplayed = true;
+		}
+	}
+
 	/// <summary>
 	/// Checks whether the Rating popup must be opened or not and does it.
 	/// </summary>
@@ -143,9 +159,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			case MenuScreen.PLAY: {
 				// 1. Terms and Conditions
 				CheckTermsAndConditions();
+
+				CheckCusotmizerPopup();
 			} break;
 
-			case MenuScreen.DRAGON_SELECTION: {
+		case MenuScreen.DRAGON_SELECTION: {
+				CheckCusotmizerPopup();
+
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
