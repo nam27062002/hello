@@ -47,7 +47,7 @@ public class UIShineFX : MonoBehaviour {
 
 
 	//-------------------------------------------------------------//
-	private Transform[] m_spawnPoints;
+	private List<Transform> m_spawnPoints;
 	private bool[] m_freeSpawnPoints;
 
 	private ShineElement[] m_elements;
@@ -64,10 +64,11 @@ public class UIShineFX : MonoBehaviour {
 	//-------------------------------------------------------------//
 	// Use this for initialization
 	void Start () {		
-		m_spawnPoints = m_spawnPointsRoot.GetComponentsInChildren<Transform>();
-		m_freeSpawnPoints = new bool[m_spawnPoints.Length];
+		m_spawnPoints = new List<Transform>(m_spawnPointsRoot.GetComponentsInChildren<Transform>());
+		m_spawnPoints.Remove(this.transform);	// Remove ourselves!
+		m_freeSpawnPoints = new bool[m_spawnPoints.Count];
 
-		m_spawnMax = Mathf.Min(m_maxAlive, m_spawnPoints.Length);
+		m_spawnMax = Mathf.Min(m_maxAlive, m_spawnPoints.Count);
 
 		m_elements = new ShineElement[m_spawnMax];
 		m_transforms = new Transform[m_spawnMax];
