@@ -142,7 +142,9 @@ fixed4 frag(v2f i) : COLOR
 
 #if defined(COLOR_RAMP)
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * _EmissionSaturation;
-#elif !defined(COLOR_TINT)
+#elif defined(COLOR_TINT)
+	col.xyz = tex.x * _BasicColor.xyz * vcolor.xyz * nEmission * _EmissionSaturation;
+#else
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
@@ -150,16 +152,19 @@ fixed4 frag(v2f i) : COLOR
 
 #if defined(COLOR_RAMP)
 	col.xyz = tex2D(_ColorRamp, float2((1.0 - lerpValue), 0.0)) * vcolor.xyz * col.a * _EmissionSaturation;
-#elif !defined(COLOR_TINT)
+#elif defined(COLOR_TINT)
+	col.xyz = tex.x * _BasicColor.xyz * vcolor.xyz * nEmission * _EmissionSaturation * col.a;
+#else
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
 #endif	//BLENDMODE_ALPHABLEND
 
+/*
 #ifdef COLOR_TINT
 	col.xyz = tex.x * _BasicColor.xyz * vcolor.xyz * nEmission * _EmissionSaturation * col.a;
 #endif
-
+*/
 #else	//EXTENDED_PARTICLES
 
 #ifdef BLENDMODE_ADDITIVEALPHABLEND

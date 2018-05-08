@@ -103,27 +103,31 @@ public class DragonParticleController : MonoBehaviour
 	public ParticleData m_landingParticle;
 	ParticleSystem m_landingInstance;
 
-	private List<ParticleSystem> m_toDeactivate = new List<ParticleSystem>();
+	[Space]
+	public string m_megaFireRush = "Dragon/PS_Revive";
+	public Transform m_megaFireRushAnchor;
+	private ParticleSystem m_megaFireRushInstance;
 
+	private List<ParticleSystem> m_toDeactivate = new List<ParticleSystem>();
 
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
 		
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
-		m_levelUpInstance = InitParticles(m_levelUp, m_levelUpAnchor);
+		m_levelUpInstance = ParticleManager.InitParticle(m_levelUp, m_levelUpAnchor);
 		// m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
 		if (!string.IsNullOrEmpty(m_reviveParticle)){
-			m_reviveInstance = InitLeveledParticle( m_reviveParticle, null );
+			m_reviveInstance = ParticleManager.InitLeveledParticle( m_reviveParticle, null );
 		}
-		m_bubblesInstance = InitParticles(m_bubbles, m_bubblesAnchor);
+		m_bubblesInstance = ParticleManager.InitParticle(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
 		{
 			m_defaultRate = m_bubblesInstance.emission.rateOverTimeMultiplier;
 			m_rateMultiplier = m_defaultRate * m_bubblesDrowningMultiplier;
 		}
 
-		m_cloudTrailInstance = InitParticles(m_cloudTrail, m_cloudTrailAnchor);
+		m_cloudTrailInstance = ParticleManager.InitParticle(m_cloudTrail, m_cloudTrailAnchor);
 		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
 		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
 		m_dragonEquip = transform.parent.GetComponent<DragonEquip>();
@@ -136,7 +140,7 @@ public class DragonParticleController : MonoBehaviour
 			m_waterExitSplashHandler = ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
 
 
-		m_skimmingInstance = InitParticles(m_skimmingParticle, m_skimmingAnchor);
+		m_skimmingInstance = ParticleManager.InitParticle(m_skimmingParticle, m_skimmingAnchor);
 
 		m_skimmingRay = new Ray();
 		m_skimmingRay.direction = Vector3.down;
@@ -144,12 +148,12 @@ public class DragonParticleController : MonoBehaviour
 		m_waterLayer = 1<<LayerMask.NameToLayer("Water");
 
 		if (m_waterAirLimitParticle != null)
-			m_waterAirLimitInstance = InitParticles( m_waterAirLimitParticle, m_dragonEat.mouth);
+			m_waterAirLimitInstance = ParticleManager.InitParticle( m_waterAirLimitParticle, m_dragonEat.mouth);
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
-		m_hiccupInstance = InitParticles( m_hiccupParticle, m_hiccupAnchor);
+		m_hiccupInstance = ParticleManager.InitLeveledParticle( m_hiccupParticle, m_hiccupAnchor);
 
 		if (dragonAnimEvents != null)
 			dragonAnimEvents.onHiccupEvent += OnHiccup;
@@ -171,6 +175,11 @@ public class DragonParticleController : MonoBehaviour
 			m_landingInstance = go.GetComponent<ParticleSystem>();
 			m_landingInstance.gameObject.SetActive(false);
 		}
+
+
+		if (!string.IsNullOrEmpty(m_megaFireRush)){
+			m_megaFireRushInstance = ParticleManager.InitLeveledParticle( m_megaFireRush, m_megaFireRushAnchor );
+		}
 	}
 
 	void OnEnable() {
@@ -181,6 +190,7 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLost);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardFireRush);
 	}
 
 	void OnDisable()
@@ -191,6 +201,7 @@ public class DragonParticleController : MonoBehaviour
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_LOST_SHIELD, OnShieldLost);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardFireRush);
 	}
 
 	void OnGameAreaEnter()
@@ -322,69 +333,6 @@ public class DragonParticleController : MonoBehaviour
 
 	}
 
-	private ParticleSystem InitLeveledParticle( string particle, Transform _anchor)
-	{
-		ParticleSystem ret = null;
-		for(  	FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
-				level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
-				level = level - 1
-				)
-		{
-			string path = "";
-			switch(level) {
-				case FeatureSettings.ELevel5Values.very_low:	
-						path = "Particles/VeryLow/";
-					break;
-				case FeatureSettings.ELevel5Values.low:
-						path = "Particles/Low/";
-					break;
-				case FeatureSettings.ELevel5Values.mid:
-						path = "Particles/Master/";
-					break;
-				case FeatureSettings.ELevel5Values.high:
-						path = "Particles/High/";
-					break;
-				case FeatureSettings.ELevel5Values.very_high:
-						path = "Particles/VeryHigh/";
-					break;
-			}
-			if ( !string.IsNullOrEmpty(path) )
-			{
-				GameObject go = Resources.Load<GameObject>( path + particle );
-				if ( go != null )
-				{
-					 ret = InitParticles( go,  _anchor);
-				}
-			}
-		}
-		return ret;
-	}
-
-	private ParticleSystem InitParticles(string particle, Transform _anchor)
-	{
-		ParticleSystem ret = null;
-		GameObject go = Resources.Load<GameObject>( "Particles/Master/" + particle );
-		if ( go != null )
-		{
-			 ret = InitParticles( go,  _anchor);
-		}
-		return ret;
-	}
-
-	private ParticleSystem InitParticles(GameObject _prefab, Transform _anchor)
-	{
-		if(_prefab == null) return null;
-
-		GameObject go = Instantiate(_prefab);
-		ParticleSystem psInstance = go.GetComponent<ParticleSystem>();
-		if(psInstance != null) {
-			psInstance.transform.SetParentAndReset(_anchor);
-			psInstance.Stop();
-			go.SetActive(false);
-		}
-		return psInstance;
-	}
-
 	void OnLevelUp( DragonData data )
 	{
 		m_levelUpInstance.gameObject.SetActive(true);
@@ -455,6 +403,16 @@ public class DragonParticleController : MonoBehaviour
 		}
 		m_alive = true;
 		CheckBodyParts();
+	}
+
+	void OnPrewardFireRush( DragonBreathBehaviour.Type _type, float duration )
+	{
+		if ( _type == DragonBreathBehaviour.Type.Mega && m_megaFireRushInstance != null)
+		{
+			m_megaFireRushInstance.gameObject.SetActive(true);
+			m_megaFireRushInstance.Play();
+			m_toDeactivate.Add( m_megaFireRushInstance );
+		}
 	}
 
 	public void OnShieldLost( DamageType _damageType, Transform _tr)

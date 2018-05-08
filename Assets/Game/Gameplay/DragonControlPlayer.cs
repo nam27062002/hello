@@ -62,7 +62,7 @@ public class DragonControlPlayer : MonoBehaviour {
 		}
 
 		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST) {           
-            m_followingSpline = GameObjectExt.FindComponent<Assets.Code.Game.Spline.BezierSpline>(true, "TestPath");            
+            m_followingSpline = GameObjectExt.FindComponent<Assets.Code.Game.Spline.BezierSpline>(true, "TestPath");            	
 		}
 		m_useTiltControl = GameSettings.Get(GameSettings.TILT_CONTROL_ENABLED);
 		SetupInputs();

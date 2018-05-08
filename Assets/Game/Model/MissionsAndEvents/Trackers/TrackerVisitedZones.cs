@@ -52,30 +52,14 @@ public class TrackerVisitedZones : TrackerBase {
 	}
 
 	/// <summary>
-	/// Localizes and formats a value according to this tracker's type
-	/// (i.e. "52", "500 meters", "10 minutes").
-	/// </summary>
-	/// <returns>The localized and formatted value for this tracker's type.</returns>
-	/// <param name="_value">Value to be formatted.</param>
-	override public string FormatValue(float _value) {
-		// Format value as time
-		// [AOC] Different formats for global events!
-		TimeUtils.EFormat format = TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES;
-		if(m_mode == Mode.GLOBAL_EVENT) {
-			format = TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES;
-		}
-		return TimeUtils.FormatTime(_value, format, 3, TimeUtils.EPrecision.DAYS);
-	}
-
-	/// <summary>
 	/// Round a value according to specific rules defined for every tracker type.
 	/// Typically used for target values.
 	/// </summary>
 	/// <returns>The rounded value.</returns>
 	/// <param name="_targetValue">The original value to be rounded.</param>
-	override public float RoundTargetValue(float _targetValue) {
+	override public long RoundTargetValue(long _targetValue) {
 		// Time value, round it to 10s multiple
-		_targetValue = MathUtils.Snap(_targetValue, 10f);
+		_targetValue = MathUtils.Snap(_targetValue, 10);
 		return base.RoundTargetValue(_targetValue);	// Apply default rounding as well
 	}
 

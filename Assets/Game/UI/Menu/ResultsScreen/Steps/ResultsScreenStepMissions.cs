@@ -79,7 +79,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 					targetMission.InitWithParams(
 						missionDef,
 						DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
-						Random.Range(missionDef.GetAsFloat("objectiveBaseQuantityMin"), missionDef.GetAsFloat("objectiveBaseQuantityMax")),
+						RandomExt.Range(missionDef.GetAsLong("objectiveBaseQuantityMin"), missionDef.GetAsLong("objectiveBaseQuantityMax")),
 						Random.value < 0.5f	// 50% chace
 					);
 					targetMission.difficulty = Mission.Difficulty.MEDIUM;

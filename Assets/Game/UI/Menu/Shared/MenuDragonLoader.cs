@@ -317,7 +317,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON: {
 				if(Application.isPlaying) {
-					LoadDragon(UsersManager.currentUser.currentDragon);
+					LoadDragon(UsersManager.currentUser.currentDragon, DragonManager.currentDragon.diguise);
 				} else {
 					LoadDragon(m_placeholderDragonSku);
 				}
