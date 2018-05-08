@@ -53,6 +53,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
+		Messenger.AddListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
 	}
 
 	/// <summary>
@@ -66,6 +67,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
+		Messenger.RemoveListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
 	}
 
 	/// <summary>
@@ -232,6 +234,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// to be checked.
 	/// Different overloads to support different event parameters, but we don't actually care about them.
 	/// </summary>
+	private void OnGameStateChanged() {
+		Refresh();
+	}
 	private void OnGameStateChanged1(UserProfile.Currency _p1, long _p2, long _p3) {
 		OnGameStateChanged(); 
 	}
@@ -244,7 +249,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	private void OnGameStateChanged4(Egg _p1) { 
 		OnGameStateChanged(); 
 	}
-	private void OnGameStateChanged() {
-		Refresh();
+	private void OnGameStateChanged5(OfferPack _p1) { 
+		OnGameStateChanged(); 
 	}
 }

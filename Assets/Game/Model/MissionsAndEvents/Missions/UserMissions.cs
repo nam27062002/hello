@@ -282,10 +282,11 @@ public class UserMissions {
 	/// <param name="_singleRun">Single run mission?</param>
 	private Mission GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, string _dragonModifierSku, bool _singleRun) {
 		// 1. Compute target value based on mission min/max range
-		float targetValue = 0f;
-		targetValue = UnityEngine.Random.Range(
-			_missionDef.GetAsFloat("objectiveBaseQuantityMin"),
-			_missionDef.GetAsFloat("objectiveBaseQuantityMax")
+		long targetValue = 0;
+
+		targetValue = RandomExt.Range(
+			_missionDef.GetAsLong("objectiveBaseQuantityMin"),
+			_missionDef.GetAsLong("objectiveBaseQuantityMax")
 		);
 		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + _missionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + _missionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
@@ -317,7 +318,7 @@ public class UserMissions {
 		}
 
 		// 2.4. Apply modifier and round final value
-		targetValue = Mathf.Round(targetValue * totalModifier);
+		targetValue = Mathf.RoundToInt(targetValue * totalModifier);
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 
 		// 3. We got everything we need! Create the new mission

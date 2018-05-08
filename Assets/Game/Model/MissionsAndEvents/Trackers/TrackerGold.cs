@@ -55,9 +55,9 @@ public class TrackerGold : TrackerBase {
 	/// </summary>
 	/// <returns>The rounded value.</returns>
 	/// <param name="_targetValue">The original value to be rounded.</param>
-	override public float RoundTargetValue(float _targetValue) {
+	override public long RoundTargetValue(long _targetValue) {
 		// Round it to 10 multiple
-		_targetValue = MathUtils.Snap(_targetValue, 10f);
+		_targetValue = MathUtils.Snap(_targetValue, 10);
 		return base.RoundTargetValue(_targetValue);	// Apply default rounding as well
 	}
 

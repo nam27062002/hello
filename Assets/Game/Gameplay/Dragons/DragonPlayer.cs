@@ -243,6 +243,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
@@ -259,6 +260,7 @@ public class DragonPlayer : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 	}
@@ -614,6 +616,11 @@ public class DragonPlayer : MonoBehaviour {
 
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
+	}
+
+	void OnPrewardmFuryRush(DragonBreathBehaviour.Type type, float duration)
+	{
+		m_dragonEatBehaviour.PauseEating();
 	}
 
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)

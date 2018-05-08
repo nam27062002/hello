@@ -239,8 +239,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public bool m_startingParabolic = false;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
-    public float m_spinSpeed = 90;
     private bool m_spinning = true;
+    private bool m_animSpin = false;
     private bool m_rotateOnIdle = false;
 
 	//------------------------------------------------------------------//
@@ -664,7 +664,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_state = _nextState;
 		}
 	}
-
 	/// <summary>
 	/// Called once per frame.
 	/// </summary>
@@ -769,7 +768,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		// Update hitColliders Bounding box
 		UpdateHitCollidersBoundingBox();
-
 
 		if (!m_outterSpace && m_transform.position.y > SpaceStart){
 			OnEnterSpaceEvent();
@@ -895,9 +893,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			dir = m_eatBehaviour.GetAttackTarget().position - m_eatBehaviour.mouth.position;
 			backMultiplier = m_backBlendMultiplier;
 		}
-
-		if (m_spinning)
-			dir = m_transform.forward;
 
 		Vector3 localDir = m_transform.InverseTransformDirection(dir.normalized);	// todo: replace with direction to target if trying to bite, or during bite?
 
@@ -1102,6 +1097,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		}
 
 		m_rbody.angularVelocity = m_angularVelocity;
+		if ( m_spinning )
+		{	
+			float d = Vector3.Dot(m_direction, m_transform.forward);
+			if (d > 0)
+			{
+				m_rbody.AddRelativeTorque( Vector3.forward * 20 * d, ForceMode.VelocityChange);
+			}
+		}
 		// if ( FeatureSettingsManager.IsDebugEnabled )
 		{
 			m_lastSpeed = (m_transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
@@ -1191,7 +1194,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 
 			m_direction = m_impulse.normalized;
-			RotateToDirection( m_direction );
+			RotateToDirection( impulse );
 		}
 		else
 		{
@@ -1275,7 +1278,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		float impulseMag = m_impulse.magnitude;
 		m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
-		RotateToDirection(m_direction);
+		RotateToDirection(impulse);
 
         if ( !m_canMoveInsideWater )
         {
@@ -1606,7 +1609,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			Quaternion qPitch = Quaternion.Euler(pitch, 0.0f, 0.0f);
 			m_desiredRotation = qYaw * qRoll * qPitch;
 			Vector3 eulerRot = m_desiredRotation.eulerAngles;
-			if (m_capVerticalRotation)
+			if (m_capVerticalRotation) 
 			{
 				// top cap
 				if (eulerRot.z > m_capUpRotationAngle && eulerRot.z < 180 - m_capUpRotationAngle)
@@ -1623,18 +1626,17 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_desiredRotation = Quaternion.Euler(eulerRot) * Quaternion.Euler(0,90.0f,0);
 			m_angularVelocity = Util.GetAngularVelocityForRotationBlend(m_transform.rotation, m_desiredRotation, blendRate);
 
-			if ( spin )
-			{
-				m_angularVelocity += m_transform.forward * m_spinSpeed;
-			}
+
 		}
 		else
 		{
 			m_angularVelocity = GameConstants.Vector3.zero;
 		}
 
-		m_spinning = spin;
+		if ( m_spinning != spin )
+			m_animator.SetBool(GameConstants.Animator.SPIN, spin);
 
+		m_spinning = spin;
 
 	}
 
@@ -1863,6 +1865,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 
 			ChangeState(State.OuterSpace);
+		}
+
+		// If we didn't show the boost on space message, do it here
+		if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
+			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST_SPACE)) {
+				Messenger.Broadcast(MessengerEvents.BOOST_SPACE);
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.BOOST_SPACE, true);
+			}
 		}
 
         // Notify game

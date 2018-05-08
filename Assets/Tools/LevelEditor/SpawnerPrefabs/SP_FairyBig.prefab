@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - component: {fileID: 465822}
   - component: {fileID: 114000013829439274}
-  - component: {fileID: 114000011446190228}
+  - component: {fileID: 114356436890743396}
   m_Layer: 0
   m_Name: SP_FairyBig
   m_TagString: Untagged
@@ -24,7 +24,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184836}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 127.12, y: 51.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -41,28 +41,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 184836}
   m_IsPrefabParent: 1
---- !u!114 &114000011446190228
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 184836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969a0cff43be647918983250868c06eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_circular: 1
-  m_smoothRadius: 0.5
-  m_points:
-  - {x: -6.4115753, y: -0.05837536, z: 0}
-  - {x: -4.79126, y: -0.019508362, z: 3.0664172}
-  - {x: -1.1622009, y: -0.0922699, z: 4.043887}
-  - {x: 10.461563, y: -0.352705, z: 3.6323004}
-  - {x: 12.316132, y: -0.108068466, z: 1.9858869}
-  - {x: 8.941193, y: -0.13608742, z: -1.4480808}
-  - {x: 4.2253113, y: -0.086833954, z: -2.6566894}
-  - {x: -2.6109772, y: 0.0033931732, z: -2.265592}
 --- !u!114 &114000013829439274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -112,5 +90,29 @@ MonoBehaviour:
   m_homePosDistance:
     min: 1
     max: 2
+  m_homePosLineRotation: 0
   m_maxSpawns: 0
   m_checkCurrents: 0
+--- !u!114 &114356436890743396
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 184836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d5781d1a22446fd9a69b5e10d73406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_guideFunction: 0
+  m_innerRadius: 8
+  m_outterRadius: -0.3
+  m_targetDistance: 4.43
+  m_depthAmplitude: 0
+  m_depthFrequency: 0
+  m_scale: {x: 1, y: 1, z: 1}
+  m_rotation: {x: 0, y: 0, z: 0}
+  m_boundsScale: {x: 0, y: 0, z: 0}
+  m_drawPreview: 1
+  m_previewStep: 0.1
+  m_previewMaxTime: 60

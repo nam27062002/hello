@@ -77,6 +77,9 @@ public class PopupFeaturedOffer : MonoBehaviour {
 		m_basicLayoutPill.InitFromOfferPack(null);
 		m_featuredLayoutPill.InitFromOfferPack(null);
 
+		// Don't do anything else if pack is null (shouldn't happen though :s)
+		if(m_pack == null) return;
+
 		// Select target layout, based on whether the pack has a featured item or not
 		m_activePill = m_basicLayoutPill;
 		for(int i = 0; i < m_pack.items.Count; ++i) {

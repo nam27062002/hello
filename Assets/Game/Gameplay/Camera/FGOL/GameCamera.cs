@@ -22,6 +22,8 @@ public class GameCamera : MonoBehaviour
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
     private const float         m_frameWidthBoost = 30.0f;
 	private const float         m_frameWidthFury = 30.0f;
+	private const float         m_frameWidthSpace = 40.0f;
+
 
     // camera zoom blending values for bosses
     private float               m_zBlendRateBoss = 20.0f;
@@ -207,6 +209,7 @@ public class GameCamera : MonoBehaviour
 	}
 
 	private bool m_fury = false;
+	public float m_megaFireStartDecrement = 10;
 
 
 	enum BossCamMode
@@ -238,6 +241,11 @@ public class GameCamera : MonoBehaviour
 	bool m_targetIsDead = false;
 	Vector3 m_targetDeadPosition;
 
+	private float m_megaFirePrewarmTimer = 0;
+	private float m_megaFirePrewarmDuration = 0;
+	public AnimationCurve m_megaFireZoomMultiplier;
+	public AnimationCurve m_megaFireTimescaleMultiplier;
+
 	//----------------------------------------------------------------------------
 
 	void Awake() {
@@ -256,6 +264,7 @@ public class GameCamera : MonoBehaviour
 		InstanceManager.gameCamera = this;
 
 		// Subscribe to external events
+		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnFuryPrewarm);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
@@ -400,6 +409,7 @@ public class GameCamera : MonoBehaviour
 	}
 
 	void OnDestroy() {
+		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnFuryPrewarm);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
@@ -439,6 +449,11 @@ public class GameCamera : MonoBehaviour
 	private void OnFury(bool _active, DragonBreathBehaviour.Type _type)
 	{
 		m_fury = _active;
+	}
+
+	private void OnFuryPrewarm(DragonBreathBehaviour.Type _type, float _duration)
+	{
+		m_megaFirePrewarmTimer = m_megaFirePrewarmDuration = _duration * 2;
 	}
 
     private void CountDownEnded()
@@ -624,7 +639,7 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-		
+
 		PlayUpdate();
 
         if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.instance.IsReady())
@@ -789,29 +804,50 @@ public class GameCamera : MonoBehaviour
 		else
 		{
             bool hasBoss = HasBoss();
-            if (m_targetMachine != null)
-	        {
-	            if(!hasBoss)
-	            {
-					if ( m_fury || targetPosition.y > DragonMotion.SpaceStart)
-	            	{
-	            		frameWidth = m_frameWidthFury;
-	            	}
-	            	else
-	            	{
-						frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-					}
-	            }
-	        }
-			frameWidth += m_frameWidthIncrement;
-			if(m_hasSlowmo)
-			{
-				frameWidth -= m_frameWidthDecrement;
-			}
-			else if(hasBoss)
-			{
-				frameWidth += m_largestBossFrameIncrement;
-			}
+
+
+            if ( m_megaFirePrewarmTimer > 0 )
+            {
+            	float delta = 1.0f - m_megaFirePrewarmTimer / m_megaFirePrewarmDuration;
+				frameWidth = m_megaFireZoomMultiplier.Evaluate( delta ) * m_frameWidthFury;
+				Time.timeScale = m_megaFireTimescaleMultiplier.Evaluate( delta );
+            	m_megaFirePrewarmTimer -= Time.unscaledDeltaTime;
+				if (m_megaFirePrewarmTimer <= 0 )
+				{
+					Time.timeScale = 1;
+				}
+            }
+            else
+            {
+				if (m_targetMachine != null)
+		        {
+							if(!hasBoss)
+						 {
+				 if (targetPosition.y > DragonMotion.SpaceStart)
+				 {
+					 frameWidth = m_frameWidthSpace;
+				 }
+				 else if ( m_fury )
+							 {
+								 frameWidth = m_frameWidthFury;
+							 }
+							 else
+							 {
+					 frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+				 }
+						 }
+		        }
+				frameWidth += m_frameWidthIncrement;
+				if(m_hasSlowmo)
+				{
+					frameWidth -= m_frameWidthDecrement;
+				}
+				else if(hasBoss)
+				{
+					frameWidth += m_largestBossFrameIncrement;
+				}
+            }
+
 
 			UpdateZooming(frameWidth, hasBoss);
 		}
@@ -1398,7 +1434,7 @@ public class GameCamera : MonoBehaviour
 			if (m_frustumPlanes[i].GetSide(_p)) return false;
 		}
 		return true;*/
-	} 
+	}
 
 	public bool IsInsideCameraFrustrum(Bounds _bounds) {
 		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, _bounds);

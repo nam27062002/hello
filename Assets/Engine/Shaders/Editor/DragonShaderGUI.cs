@@ -81,6 +81,7 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix and water dragon. Applied as (Fire Amount) * (Detail Texture.b)";
 
         readonly public static string selfIluminationText = "Self ilumination";
+        readonly public static string enableVertexOffsetText = "Enable vertex offset";
 
         readonly public static string normalSelfIluminationText = "Default Self ilumination. Based on (Main Texture.rgb) * (Detail Texture.r) * _InnerLightAdd * (_InnerLightColor.rgb)";
         readonly public static string autoInnerLightSelfIluminationText = "Devil dragon self ilumination.";
@@ -139,6 +140,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_EnableSilhouette;
     MaterialProperty mp_EnableOpaqueFresnel;
     MaterialProperty mp_EnableOpaqueSpecular;
+    MaterialProperty mp_EnableVertexOffset;
 
     /// <summary>
     /// Enum Material PProperties
@@ -220,13 +222,16 @@ internal class DragonShaderGUI : ShaderGUI
         mp_EnableOpaqueFresnel = FindProperty("_EnableOpaqueFresnel", props);
         mp_EnableBlendFresnel = FindProperty("_EnableBlendFresnel", props);
         mp_EnableOpaqueSpecular = FindProperty("_EnableOpaqueSpecular", props);
+
+        mp_EnableVertexOffset = FindProperty("_EnableVertexOffset", props);
+
         mp_zWrite = FindProperty("_ZWrite", props);
-        mp_cullMode = FindProperty("_Cull", props);
 
         /// Enum Material Properties
 
         mp_FxLayer = FindProperty("FXLayer", props);
         mp_SelfIlluminate = FindProperty("SelfIlluminate", props);
+        mp_cullMode = FindProperty("_Cull", props);
     }
 
     /// <summary>
@@ -333,8 +338,11 @@ internal class DragonShaderGUI : ShaderGUI
                 materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
                 break;
 
-            case 3:     //SELFILLUMINATE_BLINKLIGHTS
+            case 2:     //SELFILLUMINATE_BLINKLIGHTS
                 EditorGUILayout.HelpBox(Styles.blinkLightsSelfIluminationText, MessageType.Info);
+                materialEditor.ShaderProperty(mp_innerLightWaveSpeed, Styles.innerLightWaveSpeedText);
+                materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
                 break;
         }
 
@@ -343,6 +351,9 @@ internal class DragonShaderGUI : ShaderGUI
         EditorGUILayout.EndVertical();
         materialEditor.ShaderProperty(mp_colorMultiply, Styles.colorMultiplyText);
         materialEditor.ShaderProperty(mp_colorAdd, Styles.colorAddText);
+
+
+        featureSet(mp_EnableVertexOffset, Styles.enableVertexOffsetText);
 
         EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
 

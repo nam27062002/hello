@@ -138,6 +138,13 @@ public class PopupShopOffersTab : IPopupShopTab {
 	public void OnTabShow() {
 		// Refresh pills list
 		RefreshOfferPills(true);
+
+		// Tracking
+		for(int i = 0; i < m_pills.Count; ++i) {
+			// Skip unused pills (expired packs)
+			if(m_pills[i].def == null) continue;
+			HDTrackingManager.Instance.Notify_OfferShown(true, m_pills[i].GetIAPSku());
+		}
 	}
 
 	/// <summary>

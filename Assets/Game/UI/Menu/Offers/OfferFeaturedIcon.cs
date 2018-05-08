@@ -50,6 +50,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	private void Start() {
 		// Get latest data from the manager
 		RefreshData(true);
+		RefreshVisibility(false, true);		// [AOC] Attempting to fix https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-1862
 
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
@@ -130,12 +131,14 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Check whether the icon can be displayed or not.
 	/// </summary>
-	private void RefreshVisibility() {
+	private void RefreshVisibility(bool _animate = true, bool _force = false) {
 		// Consider conditional shower
-		m_showConditioner.targetAnimator.Set(
-			m_targetOffer != null
-			&& m_showConditioner.Check()
-		);
+		bool show = m_targetOffer != null && m_showConditioner.Check();
+		if(_force) {
+			m_showConditioner.targetAnimator.ForceSet(show, _animate);
+		} else {
+			m_showConditioner.targetAnimator.Set(show, _animate);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -154,10 +157,16 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// Button has been pressed!
 	/// </summary>
 	public void OnTap() {
+		// Just in case, ignore if target offer is not valid!!
+		if(m_targetOffer == null) return;
+
 		// Show popup!
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
 		popup.Open();
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_OfferShown(true, m_targetOffer.def.GetAsString("iapSku"));
 	}
 
 	/// <summary>
