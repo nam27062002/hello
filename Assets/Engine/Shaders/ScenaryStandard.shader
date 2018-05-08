@@ -138,6 +138,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#if HI_DETAIL_ON
 				#endif
 
+				//#define TINT
+
 				#include "scenary.cginc"
 			ENDCG
 		}

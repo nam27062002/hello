@@ -373,7 +373,7 @@ fixed4 frag (v2f i) : SV_Target
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
 
-#if !defined(MAINCOLOR_TEXTURE) && defined(TINT)
+#if defined(MAINCOLOR_TEXTURE) && defined(TINT)
 	col *= _Tint;
 #endif
 
