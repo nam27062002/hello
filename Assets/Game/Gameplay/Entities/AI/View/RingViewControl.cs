@@ -10,6 +10,8 @@ public class RingViewControl : CollectibleViewControl {
 		End
 	};
 
+	[SerializeField] private ParticleData m_onFadeOutParticle;
+
 	private float m_timer;
 	private State m_state;
 
@@ -17,6 +19,9 @@ public class RingViewControl : CollectibleViewControl {
 
 	protected override void Awake() {
 		m_instantiateMaterials = true;
+
+		m_onFadeOutParticle.CreatePool();
+
 		base.Awake();
 	}
 
@@ -25,7 +30,6 @@ public class RingViewControl : CollectibleViewControl {
 
 		//restore emissive value
 		for (int i = 0; i < m_materialList.Count; ++i) {
-			m_materialList[i].SetFloat(GameConstants.Material.BLEND_MODE, 0f);
 			m_materialList[i].SetFloat(GameConstants.Material.EMISSIVE_POWER, 0f);
 			m_materialList[i].DisableKeyword("TINT");
 			m_materialList[i].renderQueue = 2000;
@@ -57,10 +61,11 @@ public class RingViewControl : CollectibleViewControl {
 					}
 				} else {
 					for (int i = 0; i < m_materialList.Count; ++i) {
-						m_materialList[i].SetFloat(GameConstants.Material.BLEND_MODE, 1f);
 						m_materialList[i].EnableKeyword("TINT");
 						m_materialList[i].renderQueue = 3000;
 					}
+
+					m_onFadeOutParticle.Spawn(transform.position);
 
 					m_timer = 0f;
 					m_state = State.FadeOut;
