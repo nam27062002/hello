@@ -45,22 +45,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1133784055363178
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4467163935219020}
-  - component: {fileID: 95526540793552818}
-  m_Layer: 0
-  m_Name: stone_circle (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1621338694365138
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,8 +70,8 @@ GameObject:
   - component: {fileID: 4214230890921948}
   - component: {fileID: 114611857509325750}
   - component: {fileID: 114958497897486096}
-  - component: {fileID: 114706235356344518}
   - component: {fileID: 65062982370598378}
+  - component: {fileID: 114743561116840736}
   - component: {fileID: 114142258675082044}
   - component: {fileID: 65281181545932330}
   - component: {fileID: 65655042094805866}
@@ -100,7 +84,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1750405016535876
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -156,11 +140,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1042827066395226}
-  m_LocalRotation: {x: -0.7071068, y: 0.000000036976324, z: 0.000000029802317, w: 0.7071068}
+  m_LocalRotation: {x: -0.7071068, y: -0.70710677, z: -0, w: 0.000000014348006}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4467163935219020}
+  m_Father: {fileID: 4612216585477850}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4107549980050578
@@ -169,11 +153,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1125377764783498}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.7071068, y: -0.70710677, z: -0, w: 0.000000014348006}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4467163935219020}
+  m_Father: {fileID: 4612216585477850}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4214230890921948
@@ -186,24 +170,10 @@ Transform:
   m_LocalPosition: {x: -118, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4963243455081434}
   - {fileID: 4612216585477850}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4467163935219020
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1133784055363178}
-  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4107549980050578}
-  - {fileID: 4021743807886600}
-  m_Father: {fileID: 4612216585477850}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4612216585477850
 Transform:
@@ -215,10 +185,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.65, y: 1.5, z: 1.65}
   m_Children:
-  - {fileID: 4963243455081434}
-  - {fileID: 4467163935219020}
+  - {fileID: 4107549980050578}
+  - {fileID: 4021743807886600}
   m_Father: {fileID: 4214230890921948}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -21.080002, y: 15.206, z: -7.945}
 --- !u!4 &4654993372010672
 Transform:
@@ -252,13 +222,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1750405016535876}
-  m_LocalRotation: {x: 0.6824029, y: 0.08375255, z: 0.06580986, w: -0.7231742}
+  m_LocalRotation: {x: -0.45213935, y: -0.5290663, z: 0.57058334, w: -0.43599713}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.6499462, y: 1.6494616, z: 1.5005957}
   m_Children:
   - {fileID: 4654993372010672}
   - {fileID: 4960646030711104}
-  m_Father: {fileID: 4612216585477850}
+  m_Father: {fileID: 4214230890921948}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -65.186005, y: 0, z: 0}
 --- !u!23 &23158909623131432
@@ -414,23 +384,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3, y: 6, z: 16}
   m_Center: {x: -6.8, y: 0.4, z: 0}
---- !u!95 &95526540793552818
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1133784055363178}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: e7eecc6b53dd23d4e976d04d0ded5272, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114142258675082044
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -458,7 +411,7 @@ MonoBehaviour:
   m_sku: Ring
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
---- !u!114 &114706235356344518
+--- !u!114 &114743561116840736
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -466,7 +419,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1740750289603120}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81b1962f8e6914ae28c086d109b5c8f6, type: 3}
+  m_Script: {fileID: 11500000, guid: fc2aa3966610d4330bfe9441b3ce5463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_onCollectParticle:
@@ -506,7 +459,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
-    scale: 4
+    scale: 1
   m_onCollectAudio: hd_goodjunk_bottle
 --- !u!114 &114854032901067744
 MonoBehaviour:
@@ -588,7 +541,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 102048773
+  randomSeed: -1318516500
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3600,7 +3553,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -950641276
+  randomSeed: -700502965
   InitialModule:
     serializedVersion: 3
     enabled: 1
