@@ -94,13 +94,18 @@ uniform float _CutOff;
 HG_FOG_VARIABLES
 #endif
 
-#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)
 uniform float _EmissivePower;
 uniform float _BlinkTimeMultiplier;
 
 #if defined(WAVE_EMISSION)
 uniform float _WaveEmission;
 #endif
+
+#if defined(EMISSIVE_COLOR)
+uniform float4 _EmissiveColor;
+#endif
+
 
 #elif defined(EMISSIVE_REFLECTIVE)
 uniform sampler2D _ReflectionMap;
@@ -278,7 +283,7 @@ fixed4 frag (v2f i) : SV_Target
 #elif defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)// && !defined(EMISSIVE_BLINK)
 	fixed3 lm = DecodeLightmap(UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap));	// Lightmap
 
-#if defined(EMISSIVE_BLINK)// || defined(EMISSIVE_REFLECTIVE)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_COLOR)// || defined(EMISSIVE_REFLECTIVE)
 	col.xyz = lerp(col.xyz * lm * 1.3, col.xyz, diffuseAlpha);
 #else
 	col.rgb *= lm * 1.3;
@@ -286,7 +291,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #endif
 
-#if defined(NORMALMAP) && defined(MAINCOLOR_TEXTURE)
+#if defined(NORMALMAP)// && defined(MAINCOLOR_TEXTURE)
 	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
@@ -297,26 +302,37 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef SPECULAR
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
-#if defined(NORMALWASSPECULAR)
+
+//#if defined(NORMALMAP) && defined(NORMALWASSPECULAR)
+#if defined(NORMALMAP) && defined(NORMALWASSPECULAR)
 	col = col + (specular * encodedNormal.w * _LightColor0);
+//	col = fixed4(1.0, 0.0, 0.0, 1.0);
 #else
 	col = col + (specular * diffuseAlpha * _LightColor0);
+//	col = fixed4(0.0, 1.0, 0.0, 1.0);
 #endif
+
 #endif	
 
 #if defined(EMISSIVE_CUSTOM)
 	diffuseAlpha = frac(diffuseAlpha + (1.0 / 255.0));
 #endif
 
-#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)
 
 #if defined(WAVE_EMISSION)
-	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
+	float intensity = (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
 #else 
-	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
+	float intensity = (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
 
 #endif
-	col *= intensity;
+
+#if defined(EMISSIVE_COLOR)
+	col += intensity * _EmissiveColor;
+#else
+	col *= 1.0 + intensity;
+#endif
+
 #endif
 
 /*
@@ -344,10 +360,10 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(FOG)// && !defined(EMISSIVE_BLINK)
 
-#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)// || defined(EMISSIVE_REFLECTIVE)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)// || defined(EMISSIVE_REFLECTIVE)
 	fixed4 colc = col;
 	HG_APPLY_FOG(i, col);	// Fog
-	col = lerp(col, colc, diffuseAlpha);
+	col = lerp(col, colc, intensity);
 #else
 	HG_APPLY_FOG(i, col);	// Fog
 #endif
