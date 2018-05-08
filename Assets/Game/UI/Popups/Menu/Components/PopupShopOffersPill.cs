@@ -77,8 +77,8 @@ public class PopupShopOffersPill : IPopupShopPill {
 		m_pack = _pack;
 		m_def = null;
 
-		// If null, or pack can't be displayed, hide this pill and return
-		if(m_pack == null || !m_pack.CanBeDisplayed()) {
+		// If null, or pack is not a ctive, hide this pill and return
+		if(m_pack == null || !m_pack.isActive) {
 			this.gameObject.SetActive(false);
 			return;
 		}
@@ -136,6 +136,9 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 		// Items
 		for(int i = 0; i < m_itemSlots.Length; ++i) {
+			// Skip if no slot (i.e. single item layouts)
+			if(m_itemSlots[i] == null) continue;
+
 			// If there are not enough item, hide the slot!
 			if(i >= m_pack.items.Count) {
 				m_itemSlots[i].InitFromItem(null);
@@ -167,18 +170,19 @@ public class PopupShopOffersPill : IPopupShopPill {
 		if(m_pack == null) return;
 		if(!m_pack.isTimed) return;
 
-		// Update text
-		m_remainingTimeText.Localize(
-			m_remainingTimeText.tid, 
-			TimeUtils.FormatTime(
-				System.Math.Max(0, m_pack.remainingTime.TotalSeconds), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS,
-				4
-			)
-		);
-
+		// If pack is active, update text
+		if(m_pack.isActive) {
+			m_remainingTimeText.Localize(
+				m_remainingTimeText.tid, 
+				TimeUtils.FormatTime(
+					System.Math.Max(0, m_pack.remainingTime.TotalSeconds), // Just in case, never go negative
+					TimeUtils.EFormat.ABBREVIATIONS,
+					4
+				)
+			);
+		
 		// If pack has expired, hide this pill
-		if(!m_pack.CheckTimers()) {
+		} else {
 			InitFromOfferPack(null);	// This will do it
 		}
 	}
@@ -210,10 +214,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// </summary>
 	override protected void ApplyShopPack() {
 		// The pack will push all rewards to the reward stack
-		m_pack.Apply();
-
-		// Save persistence
-		PersistenceFacade.instance.Save_Request(true);
+		m_pack.Apply();	// This already saves persistence
 
 		// Close all open popups
 		PopupManager.Clear(true);

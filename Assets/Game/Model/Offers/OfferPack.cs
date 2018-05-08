@@ -23,6 +23,7 @@ public class OfferPack {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	#region CONSTANTS
 	public const string EMPTY_VALUE = "-";
 
 	public enum WhereToShow {
@@ -38,11 +39,19 @@ public class OfferPack {
 		NON_PAYER
 	}
 
+	public enum State {
+		PENDING_ACTIVATION,
+		ACTIVE,
+		EXPIRED
+	}
+
 	public const int MAX_ITEMS = 3;	// For now
+	#endregion
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	#region MEMBERS AND PROPERTIES
 	// Pack setup
 	private DefinitionNode m_def = null;
 	public DefinitionNode def {
@@ -65,6 +74,15 @@ public class OfferPack {
 				return string.Empty;
 			}
 		}
+	}
+
+	private State m_state = State.PENDING_ACTIVATION;
+	public State state {
+		get { return m_state; }
+	}
+
+	public bool isActive {
+		get { return m_state == State.ACTIVE; }
 	}
 
 	// Segmentation parameters
@@ -138,11 +156,6 @@ public class OfferPack {
 	private DateTime m_lastViewTimestamp = new DateTime();
 
 	// Activation control
-	private bool m_isActive = false;
-	public bool isActive {
-		get { return m_isActive; }
-	}
-
 	private DateTime m_activationTimestamp = DateTime.MinValue;
 	public DateTime activationTimestmap {
 		get { return m_activationTimestamp; }
@@ -154,12 +167,20 @@ public class OfferPack {
 	}
 
 	public TimeSpan remainingTime {
-		get { return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { 
+			if(isTimed && isActive) {
+				return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); 
+			} else {
+				return DateTime.MaxValue - GameServerManager.SharedInstance.GetEstimatedServerTime();
+			}
+		}
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	#region GENERIC METHODS
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
@@ -174,9 +195,122 @@ public class OfferPack {
 
 	}
 
+	/// <summary>
+	/// Update loop. Should be called periodically from the manager.
+	/// Will look for pack's state changes.
+	/// </summary>
+	/// <returns>Whether the pack has change its state.</returns>
+	public bool UpdateState() {
+		// Based on pack's state
+		State oldState = m_state;
+		switch(m_state) {
+			case State.PENDING_ACTIVATION: {
+				// Check for activation
+				if(CheckActivation() && CheckSegmentation()) {
+					ChangeState(State.ACTIVE);
+
+					// Just in case, check for expiration immediately after
+					if(CheckExpiration()) {
+						ChangeState(State.EXPIRED);
+					}
+				}
+
+				// Packs expiring before ever being activated (i.e. dragon not owned, excluded countries, etc.)
+				else if(CheckExpiration()) {
+					ChangeState(State.EXPIRED);
+				}
+			} break;
+
+			case State.ACTIVE: {
+				// Check for expiration
+				if(CheckExpiration()) {
+					ChangeState(State.EXPIRED);
+				}
+
+				// The pack might have gone out of segmentation range (i.e. currency balance). Check it!
+				else if(!CheckSegmentation()) {
+					ChangeState(State.PENDING_ACTIVATION);
+				}
+			} break;
+
+			case State.EXPIRED: {
+				// Nothing to do (expired packs can't be reactivated)
+			} break;
+		}
+
+		// Has state changed?
+		return (oldState != m_state);
+	}
+	#endregion
+
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// INITIALIZATION METHODS												  //
 	//------------------------------------------------------------------------//
+	#region INITIALIZATION METHODS
+	/// <summary>
+	/// Reset to default values.
+	/// </summary>
+	public void Reset() {
+		// Items and def
+		m_items.Clear();
+		m_def = null;
+		m_uniqueId = string.Empty;
+		m_state = State.PENDING_ACTIVATION;
+
+		// Mandatory params
+		m_minAppVersion.Set(0, 0, 0);
+		m_order = 0;
+
+		// Mandatory for featured packs
+		m_featured = false;
+		m_frequency = 0;
+		m_maxViews = 0;
+		m_whereToShow = WhereToShow.SHOP_ONLY;
+
+		// Timing
+		m_duration = 0f;
+		m_startDate = DateTime.MinValue;
+		m_endDate = DateTime.MinValue;
+		m_isTimed = false;
+
+		// Optional params
+		m_countriesAllowed = new string[0];
+		m_countriesExcluded = new string[0];
+		m_gamesPlayed = 0;
+		m_payerType = PayerType.ANYONE;
+		m_minSpent = 0f;
+
+		m_dragonUnlocked = new string[0];
+		m_dragonOwned = new string[0];
+		m_dragonNotOwned = new string[0];
+
+		m_scBalanceRange = new Range(0, float.MaxValue);
+		m_hcBalanceRange = new Range(0, float.MaxValue);
+		m_openedEggs = 0;
+
+		m_petsOwnedCount = 0;
+		m_petsOwned = new string[0];
+		m_petsNotOwned = new string[0];
+
+		m_progressionRange = new RangeInt(0, int.MaxValue);
+
+		m_skinsUnlocked = new string[0];
+		m_skinsOwned = new string[0];
+		m_skinsNotOwned = new string[0];
+
+		// Purchase limit
+		m_purchaseLimit = 1;
+		m_purchaseCount = 0;
+
+		// Internal vars
+		m_viewsCount = 0;
+		m_lastViewTimestamp = new DateTime();
+
+		// Activation control
+		m_activationTimestamp = DateTime.MinValue;
+		m_endTimestamp = DateTime.MaxValue;
+	}
+
 	/// <summary>
 	/// Initialize this offer pack with the given definition.
 	/// </summary>
@@ -255,9 +389,6 @@ public class OfferPack {
 		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
 		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
-		// Featured offers are always timed
-		if(m_featured) m_isTimed = true;
-
 		// Purchase limit
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
 
@@ -265,289 +396,6 @@ public class OfferPack {
 		UsersManager.currentUser.LoadOfferPack(this);
 	}
 
-	/// <summary>
-	/// Reset to default values.
-	/// </summary>
-	public void Reset() {
-		// Items and def
-		m_items.Clear();
-		m_def = null;
-		m_uniqueId = string.Empty;
-
-		// Mandatory params
-		m_minAppVersion.Set(0, 0, 0);
-		m_order = 0;
-
-		// Mandatory for featured packs
-		m_featured = false;
-		m_frequency = 0;
-		m_maxViews = 0;
-		m_whereToShow = WhereToShow.SHOP_ONLY;
-
-		// Timing
-		m_duration = 0f;
-		m_startDate = DateTime.MinValue;
-		m_endDate = DateTime.MinValue;
-		m_isTimed = false;
-
-		// Optional params
-		m_countriesAllowed = new string[0];
-		m_countriesExcluded = new string[0];
-		m_gamesPlayed = 0;
-		m_payerType = PayerType.ANYONE;
-		m_minSpent = 0f;
-
-		m_dragonUnlocked = new string[0];
-		m_dragonOwned = new string[0];
-		m_dragonNotOwned = new string[0];
-
-		m_scBalanceRange = new Range(0, float.MaxValue);
-		m_hcBalanceRange = new Range(0, float.MaxValue);
-		m_openedEggs = 0;
-
-		m_petsOwnedCount = 0;
-		m_petsOwned = new string[0];
-		m_petsNotOwned = new string[0];
-
-		m_progressionRange = new RangeInt(0, int.MaxValue);
-
-		m_skinsUnlocked = new string[0];
-		m_skinsOwned = new string[0];
-		m_skinsNotOwned = new string[0];
-
-		// Purchase limit
-		m_purchaseLimit = 1;
-		m_purchaseCount = 0;
-
-		// Internal vars
-		m_viewsCount = 0;
-		m_lastViewTimestamp = new DateTime();
-
-		// Activation control
-		m_isActive = false;
-		m_activationTimestamp = DateTime.MinValue;
-		m_endTimestamp = DateTime.MaxValue;
-	}
-
-	/// <summary>
-	/// Check timers for this pack.
-	/// Only applies for timed offers, the rest will always return true.
-	/// </summary>
-	/// <returns>Whether this offer has started and not yet expired or not.</returns>
-	public bool CheckTimers() {
-		if(!m_isTimed) return true;
-
-		// Check both start and end dates
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-		if(serverTime < m_startDate) return false;
-		if(m_endDate > DateTime.MinValue && serverTime > m_endDate) return false;
-
-		// If active, check end timestamp (duration)
-		if(m_isActive) {
-			if(serverTime > m_endTimestamp) return false;
-		}
-
-		return true;
-	}
-
-	/// <summary>
-	/// Validate all segmentation parameters to see if the offer can be displayed to the current player.
-	/// Will change the activation state of the pack if required.
-	/// </summary>
-	/// <returns><c>true</c> if this offer can be displayed to the current player, <c>false</c> otherwise.</returns>
-	public bool CanBeDisplayed() {
-		// Check triggers
-		bool canBeDisplayed = CheckTriggers();
-
-		// If state has changed, do some stuff
-		if(canBeDisplayed != m_isActive) {
-			// If it wasn't active, activate it now!
-			if(!m_isActive) {
-				// Set activation timestamp to now
-				m_activationTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
-
-				// Compute end timestamp
-				// Combine duration and end date, both of which are optional
-				bool hasEndDate = (m_endDate != DateTime.MaxValue);
-				bool hasDuration = m_duration > 0f;
-				if(hasEndDate && hasDuration) {
-					// Use the lowest between activation+duration and endDate
-					DateTime durationTimestamp = m_activationTimestamp.AddMinutes(m_duration);
-					if(durationTimestamp < m_endDate) {
-						m_endTimestamp = durationTimestamp;
-					} else {
-						m_endTimestamp = m_endDate;
-					}
-				} else if(hasEndDate) {
-					m_endTimestamp = m_endDate;
-				} else if(hasDuration) {
-					m_endTimestamp = m_activationTimestamp.AddMinutes(m_duration);
-				} else {
-					m_endTimestamp = DateTime.MaxValue;		// Infinite offer
-				}
-			}
-
-			// Update state
-			m_isActive = canBeDisplayed;
-
-			// Save persistence
-			UsersManager.currentUser.SaveOfferPack(this);
-			PersistenceFacade.instance.Save_Request();
-		}
-
-		// Done!
-		return canBeDisplayed;
-	}
-
-	/// <summary>
-	/// Check whether the featured popup should be displayed or not, and do it.
-	/// </summary>
-	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
-	/// <param name="_areaToCheck">Area to check.</param>
-	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
-		// Just in case
-		if(m_def == null) return false;
-
-		// Not if not featured
-		if(!m_featured) return false;
-
-		// Not if segmentation fails
-		if(!CanBeDisplayed()) return false;
-
-		// Check max views
-		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return false;
-
-		// Check area
-		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
-			// Special case for dragon selection screen: count both initial time and after run
-			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return false;
-		} else {
-			// Standard case: just make sure we're in the right place
-			if(_areaToCheck != m_whereToShow) return false;
-		}
-
-		// Check frequency
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
-		if(timeSinceLastView.TotalMinutes < m_frequency) return false;
-
-		// All checks passed!
-		// Show popup
-		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
-		popup.Open();
-
-		// Tracking
-		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"));
-
-		// Update control vars and return
-		m_viewsCount++;
-		m_lastViewTimestamp = serverTime;
-		return true;
-	}
-
-	/// <summary>
-	/// Check all triggers and conditions to validate whether this pack is active or not.
-	/// </summary>
-	/// <returns><c>true</c> if this pack can be applied; otherwise, <c>false</c>.</returns>
-	private bool CheckTriggers() {
-		// Aux vars
-		UserProfile profile = UsersManager.currentUser;
-
-		// Purchase limit (ignore if 0 or negative, unlimited pack)
-		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return false;
-
-		// Main conditions
-		if(m_minAppVersion > GameSettings.internalVersion) return false;
-
-		// If featured, check extra conditions
-		if(m_featured || m_isTimed) {
-			if(!CheckTimers()) return false;
-		}
-
-		// Payer profile
-		if(m_gamesPlayed > profile.gamesPlayed) return false;
-		int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
-		if(m_payerType == PayerType.PAYER && totalPurchases == 0) return false;
-		if(m_payerType == PayerType.NON_PAYER && totalPurchases > 0) return false;
-		//if(m_minSpent > TODO!!) return false;	// [AOC] TODO!! We don't store total spent in the client. Will be segmented via CRM.
-		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
-		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
-		if(m_openedEggs > profile.eggsCollected) return false;
-		if(!m_progressionRange.Contains(profile.GetPlayerProgress())) return false;
-
-		// Dragons
-		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
-			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= DragonData.LockState.LOCKED) return false;
-		}
-		for(int i = 0; i < m_dragonOwned.Length; ++i) {
-			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) return false;
-		}
-		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
-			if(DragonManager.IsDragonOwned(m_dragonNotOwned[i])) return false;
-		}
-
-		// Pets
-		if(m_petsOwnedCount > profile.petCollection.unlockedPetsCount) return false;
-		for(int i = 0; i < m_petsOwned.Length; ++i) {
-			if(!profile.petCollection.IsPetUnlocked(m_petsOwned[i])) return false;
-		}
-		for(int i = 0; i < m_petsNotOwned.Length; ++i) {
-			if(profile.petCollection.IsPetUnlocked(m_petsNotOwned[i])) return false;
-		}
-
-		// Skins
-		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
-			if(profile.wardrobe.GetSkinState(m_skinsUnlocked[i]) == Wardrobe.SkinState.LOCKED) return false;
-		}
-		for(int i = 0; i < m_skinsOwned.Length; ++i) {
-			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) != Wardrobe.SkinState.OWNED) return false;
-		}
-		for(int i = 0; i < m_skinsNotOwned.Length; ++i) {
-			if(profile.wardrobe.GetSkinState(m_skinsNotOwned[i]) == Wardrobe.SkinState.OWNED) return false;
-		}
-
-		// Countries
-		string countryCode = DeviceUtilsManager.SharedInstance.GetDeviceCountryCode();
-		if(m_countriesAllowed.Length > 0 && m_countriesAllowed.IndexOf(countryCode) < 0) return false;
-		if(m_countriesExcluded.IndexOf(countryCode) >= 0) return false;
-
-		// All checks passed!
-		return true;
-	}
-
-	/// <summary>
-	/// Apply this pack to current user.
-	/// </summary>
-	public void Apply() {
-		// Validate purchase limit
-		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return;
-
-		// We want the rewards to be given in a specific order: do so
-		List<OfferPackItem> sortedItems = new List<OfferPackItem>(m_items);
-		sortedItems.Sort(OfferPackItem.Compare);
-			
-		// Push all the rewards to the pending rewards stack
-		// Reverse order so last rewards pushed are collected first!
-		for(int i = sortedItems.Count - 1; i >= 0; --i) {
-			UsersManager.currentUser.PushReward(sortedItems[i].reward);
-		}
-
-		// Update purchase tracking
-		// [AOC] BEFORE Saving persistence!
-		m_purchaseCount++;
-
-		// Save persistence
-		UsersManager.currentUser.SaveOfferPack(this);
-		PersistenceFacade.instance.Save_Request();
-
-		// Notify game
-		Messenger.Broadcast<OfferPack>(MessengerEvents.OFFER_APPLIED, this);
-	}
-
-	//------------------------------------------------------------------------//
-	// EXTERNAL UTILS														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Very custom method to make sure a definition corresponding to an offer pack 
 	/// contains all required default values.
@@ -617,10 +465,286 @@ public class OfferPack {
 		// Purchase limit
 		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
 	}
+	#endregion
+
+	//------------------------------------------------------------------------//
+	// STATE CONTROL METHODS												  //
+	//------------------------------------------------------------------------//
+	#region STATE CONTROL METHODS
+	/// <summary>
+	/// Checks parameters that could cause an activation.
+	/// These are parameters that can only be triggered once:
+	/// Start date, unlocked content, progression, etc.
+	/// </summary>
+	/// <returns>Whether this pack should be activated or not.</returns>
+	private bool CheckActivation() {
+		// Aux vars
+		UserProfile profile = UsersManager.currentUser;
+
+		// Start date
+		if(GameServerManager.SharedInstance.GetEstimatedServerTime() < m_startDate) return false;
+
+		// Progression
+		if(profile.gamesPlayed < m_gamesPlayed) return false;
+		if(profile.GetPlayerProgress() < m_progressionRange.min) return false;
+		if(profile.eggsCollected < m_openedEggs) return false;
+
+		// Payer profile
+		int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
+		switch(m_payerType) {
+			case PayerType.PAYER: {
+				if(totalPurchases == 0) return false;
+			} break;
+		}
+		//if(m_minSpent > TODO!!) return false;	// [AOC] TODO!! We don't store total spent in the client. Will be segmented via CRM.
+
+		// Dragons
+		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
+			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= DragonData.LockState.LOCKED) return false;
+		}
+		for(int i = 0; i < m_dragonOwned.Length; ++i) {
+			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) return false;
+		}
+
+		// Pets
+		if(profile.petCollection.unlockedPetsCount < m_petsOwnedCount) return false;
+		for(int i = 0; i < m_petsOwned.Length; ++i) {
+			if(!profile.petCollection.IsPetUnlocked(m_petsOwned[i])) return false;
+		}
+
+		// Skins
+		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
+			if(profile.wardrobe.GetSkinState(m_skinsUnlocked[i]) == Wardrobe.SkinState.LOCKED) return false;
+		}
+		for(int i = 0; i < m_skinsOwned.Length; ++i) {
+			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) != Wardrobe.SkinState.OWNED) return false;
+		}
+
+		// All checks passed!
+		return true;
+	}
+
+	/// <summary>
+	/// Checks parameters that could cause an expiration.
+	/// These are parameters that can only be triggered once:
+	/// End date / duration, locked content, progression, purchase limit, etc.
+	/// </summary>
+	/// <returns>Whether this pack has expired.</returns>
+	private bool CheckExpiration() {
+		// Aux vars
+		UserProfile profile = UsersManager.currentUser;
+
+		// Timers
+		if(m_isTimed) {
+			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+			// End date
+			if(m_endDate > DateTime.MinValue && serverTime > m_endDate) return true;
+
+			// If active, check end timestamp (duration)
+			if(isActive && serverTime > m_endTimestamp) return true;
+		}
+
+		// Purchase limit (ignore if 0 or negative, unlimited pack)
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return true;
+
+		// Main conditions
+		if(m_minAppVersion > GameSettings.internalVersion) return true;
+
+		// Payer profile
+		int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
+		switch(m_payerType) {
+			case PayerType.NON_PAYER: {
+				if(totalPurchases > 0) return true;
+			} break;
+		}
+
+		// Progression
+		if(profile.GetPlayerProgress() > m_progressionRange.max) return true;
+
+		// Dragons
+		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
+			if(DragonManager.IsDragonOwned(m_dragonNotOwned[i])) return true;
+		}
+
+		// Pets
+		for(int i = 0; i < m_petsNotOwned.Length; ++i) {
+			if(profile.petCollection.IsPetUnlocked(m_petsNotOwned[i])) return true;
+		}
+
+		// Skins
+		for(int i = 0; i < m_skinsNotOwned.Length; ++i) {
+			if(profile.wardrobe.GetSkinState(m_skinsNotOwned[i]) == Wardrobe.SkinState.OWNED) return true;
+		}
+
+		// Countries
+		string countryCode = DeviceUtilsManager.SharedInstance.GetDeviceCountryCode();
+		if(m_countriesAllowed.Length > 0 && m_countriesAllowed.IndexOf(countryCode) < 0) return true;
+		if(m_countriesExcluded.IndexOf(countryCode) >= 0) return true;
+
+		// All checks passed!
+		return false;
+	}
+
+	/// <summary>
+	/// Checks parameters that could cause a state change multiple times.
+	/// These are parameters that can be triggered multiple times and activate/deactivate the pack:
+	/// Currency range, etc.
+	/// </summary>
+	/// <returns>Whether this pack passes defined segmentation with current user progression.</returns>
+	private bool CheckSegmentation() {
+		// Progression
+		UserProfile profile = UsersManager.currentUser;
+		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
+		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
+
+		// All checks passed!
+		return true;
+	}
+
+	/// <summary>
+	/// Change the logic state of the pack.
+	/// No validation is done.
+	/// </summary>
+	/// <param name="_newState">New state for the pack.</param>
+	private void ChangeState(State _newState) {
+		// Actions to be performed when leaving a state
+		switch(m_state) {
+			case State.PENDING_ACTIVATION: break;
+			case State.ACTIVE: break;
+			case State.EXPIRED: break;
+		}
+
+		// Store new state
+		State oldState = m_state;
+		m_state = _newState;
+
+		// Actions to be performed when entering a new state
+		switch(m_state) {
+			case State.PENDING_ACTIVATION: {
+				// Nothing to do
+			} break;
+
+			case State.ACTIVE: {
+				// Make sure we come from pending activation state
+				if(oldState == State.PENDING_ACTIVATION) {
+					// Set activation timestamp to now
+					m_activationTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+					// Compute end timestamp
+					// Combine duration and end date, both of which are optional
+					bool hasEndDate = (m_endDate != DateTime.MinValue);
+					bool hasDuration = m_duration > 0f;
+					if(hasEndDate && hasDuration) {
+						// Use the lowest between activation+duration and endDate
+						DateTime durationTimestamp = m_activationTimestamp.AddMinutes(m_duration);
+						if(durationTimestamp < m_endDate) {
+							m_endTimestamp = durationTimestamp;
+						} else {
+							m_endTimestamp = m_endDate;
+						}
+					} else if(hasEndDate) {
+						m_endTimestamp = m_endDate;
+					} else if(hasDuration) {
+						m_endTimestamp = m_activationTimestamp.AddMinutes(m_duration);
+					} else {
+						m_endTimestamp = DateTime.MaxValue;		// Infinite offer
+					}
+				}
+			} break;
+
+			case State.EXPIRED: {
+				// Nothing to do
+			} break;
+		}
+	}
+	#endregion
+
+	//------------------------------------------------------------------------//
+	// PUBLIC METHODS														  //
+	//------------------------------------------------------------------------//
+	#region PUBLIC METHODS
+	/// <summary>
+	/// Check whether the featured popup should be displayed or not, and do it.
+	/// </summary>
+	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
+	/// <param name="_areaToCheck">Area to check.</param>
+	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
+		// Just in case
+		if(m_def == null) return false;
+
+		// Not if not featured
+		if(!m_featured) return false;
+
+		// Only active offers!
+		if(!isActive) return false;
+
+		// Check max views
+		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return false;
+
+		// Check area
+		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
+			// Special case for dragon selection screen: count both initial time and after run
+			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return false;
+		} else {
+			// Standard case: just make sure we're in the right place
+			if(_areaToCheck != m_whereToShow) return false;
+		}
+
+		// Check frequency
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
+		if(timeSinceLastView.TotalMinutes < m_frequency) return false;
+
+		// All checks passed!
+		// Show popup
+		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
+		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
+		popup.Open();
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"));
+
+		// Update control vars and return
+		m_viewsCount++;
+		m_lastViewTimestamp = serverTime;
+		return true;
+	}
+
+	/// <summary>
+	/// Apply this pack to current user.
+	/// </summary>
+	public void Apply() {
+		// Validate purchase limit
+		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return;
+
+		// We want the rewards to be given in a specific order: do so
+		List<OfferPackItem> sortedItems = new List<OfferPackItem>(m_items);
+		sortedItems.Sort(OfferPackItem.Compare);
+			
+		// Push all the rewards to the pending rewards stack
+		// Reverse order so last rewards pushed are collected first!
+		for(int i = sortedItems.Count - 1; i >= 0; --i) {
+			UsersManager.currentUser.PushReward(sortedItems[i].reward);
+		}
+
+		// Update purchase tracking
+		// [AOC] BEFORE Saving persistence!
+		m_purchaseCount++;
+
+		// Save persistence
+		UsersManager.currentUser.SaveOfferPack(this);
+		PersistenceFacade.instance.Save_Request();
+
+		// Notify game
+		Messenger.Broadcast<OfferPack>(MessengerEvents.OFFER_APPLIED, this);
+	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
+	#region STATIC UTILS
 	/// <summary>
 	/// Custom range parser. Do it here to avoid changing Calety -_-
 	/// </summary>
@@ -696,10 +820,12 @@ public class OfferPack {
 			_def.SetValue(_key, _value);
 		}
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
+	#region PERSISTENCE
 	/// <summary>
 	/// In the particular case of the offers, we only need to persist them in specific cases.
 	/// </summary>
@@ -711,11 +837,24 @@ public class OfferPack {
 		// Yes if it has been purchased at least once
 		if(m_purchaseCount > 0) return true;
 
-		// Yes if we are tracking views
-		if(m_viewsCount > 0) return true;
+		// State-dependant
+		switch(m_state) {
+			case State.PENDING_ACTIVATION: {
+				// No need to persist
+			} break;
 
-		// Yes if it has a limited duration and still active
-		if(m_isTimed && m_isActive) return true;
+			case State.ACTIVE: {
+				// Yes if we are tracking views
+				if(m_viewsCount > 0) return true;
+
+				// Yes if it has a limited duration
+				if(m_isTimed) return true;
+			} break;
+
+			case State.EXPIRED: {
+				// No need to persist
+			} break;
+		}
 
 		// No for the rest of cases
 		return false;
@@ -728,6 +867,12 @@ public class OfferPack {
 	/// <returns>Whether the mission was successfully loaded</returns>
 	public void Load(SimpleJSON.JSONClass _data) {
 		string key = "";
+
+		// State
+		key = "state";
+		if(_data.ContainsKey(key)) {
+			m_state = (State)_data[key].AsInt;
+		}
 
 		// Purchase count
 		key = "purchaseCount";
@@ -747,11 +892,7 @@ public class OfferPack {
 			m_lastViewTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
 		}
 
-		// Activation and timestamps
-		key = "active";
-		if(_data.ContainsKey(key)) {
-			m_isActive = _data[key].AsBool;
-		}
+		// Timestamps
 		key = "activationTimestamp";
 		if(_data.ContainsKey(key)) {
 			m_activationTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
@@ -772,22 +913,22 @@ public class OfferPack {
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		// Activation and timestamps
-		// Only store for timed offers, the rest will be activated upon loading depending on activation triggers
-		if(m_isTimed && m_isActive) {
-			data.Add("active", m_isActive.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		// State
+		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));
 
-			// Store timestamps
+		// Timestamps
+		// Only store for timed offers, the rest will be activated upon loading depending on activation triggers
+		if(m_isTimed) {
 			data.Add("activationTimestamp", m_activationTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			data.Add("endTimestamp", m_endTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
 
-		// Purchase count
+		// Purchase count - only if needed
 		if(m_purchaseCount > 0) {
 			data.Add("purchaseCount", m_purchaseCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
 
-		// View count
+		// View count - only if needed
 		// Last view timestamp
 		if(m_viewsCount > 0) {
 			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
@@ -797,4 +938,5 @@ public class OfferPack {
 		// Done!
 		return data;
 	}
+	#endregion
 }

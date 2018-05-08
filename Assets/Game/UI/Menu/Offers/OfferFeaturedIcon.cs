@@ -22,7 +22,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float UPDATE_FREQUENCY = 1;	// Seconds
+	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -49,7 +49,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get latest data from the manager
-		RefreshData(true);
+		RefreshData();
 		RefreshVisibility(false, true);		// [AOC] Attempting to fix https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-1862
 
 		// Program a periodic update
@@ -69,7 +69,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		if(!isActiveAndEnabled) return;
 
 		// Refresh the timer!
-		RefreshTimer(true);
+		RefreshTimer();
 	}
 
 	/// <summary>
@@ -88,18 +88,12 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Force a refresh of the offers manager asking for new featured offers to be displayed
 	/// </summary>
-	/// <param name="_refreshManager">Force a refresh on the manager?</param>
-	public void RefreshData(bool _refreshManager) {
-		// Tell the manager to update packs
-		if(_refreshManager) {
-			OffersManager.instance.Refresh();
-		}
-
+	public void RefreshData() {
 		// Get featured offer
 		m_targetOffer = OffersManager.featuredOffer;
 
 		// Update the timer
-		RefreshTimer(_refreshManager);
+		RefreshTimer();
 
 		// Update visibility
 		RefreshVisibility();
@@ -108,18 +102,9 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Refresh the timer. To be called periodically.
 	/// </summary>
-	/// <param name="_refreshManager">Force a refresh on the manager?</param>
-	private void RefreshTimer(bool _refreshManager) {
-		// Skip if no target offer
-		if(m_targetOffer == null) return;
-
-		// Is featured offer still valid?
-		if(_refreshManager) {
-			m_targetOffer = OffersManager.instance.RefreshFeaturedOffer();
-		}
-			
-		// Yes!! Update text
-		if(m_targetOffer != null) {
+	private void RefreshTimer() {
+		// Is offer still valid?
+		if(ValidateOffer()) {
 			if(m_targetOffer.isTimed) {
 				m_timerText.text = TimeUtils.FormatTime(
 					System.Math.Max(0, m_targetOffer.remainingTime.TotalSeconds), // Just in case, never go negative
@@ -139,13 +124,24 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// Check whether the icon can be displayed or not.
 	/// </summary>
 	private void RefreshVisibility(bool _animate = true, bool _force = false) {
-		// Consider conditional shower
-		bool show = m_targetOffer != null && m_showConditioner.Check();
+		// Same conditions as the show conditioner
+		bool show = ValidateOffer() && m_showConditioner.Check();
 		if(_force) {
 			m_showConditioner.targetAnimator.ForceSet(show, _animate);
 		} else {
 			m_showConditioner.targetAnimator.Set(show, _animate);
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL UTILS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Is the target offer pack valid?
+	/// </summary>
+	/// <returns><c>true</c> if the target offer pack is valid and active, <c>false</c> otherwise.</returns>
+	private bool ValidateOffer() {
+		return m_targetOffer != null && m_targetOffer.isActive;
 	}
 
 	//------------------------------------------------------------------------//
@@ -157,7 +153,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <param name="_anim">Animation.</param>
 	private void OnShowCheck(ShowHideAnimator _anim) {
 		// Only show if we have a valid featured offer!
-		if(m_targetOffer == null) _anim.SetCheckFailed();
+		if(!ValidateOffer()) _anim.SetCheckFailed();
 	}
 
 	/// <summary>
@@ -165,7 +161,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	public void OnTap() {
 		// Just in case, ignore if target offer is not valid!!
-		if(m_targetOffer == null) return;
+		if(!ValidateOffer()) return;
 
 		// Show popup!
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
@@ -180,13 +176,13 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// The offers manager has been reloaded.
 	/// </summary>
 	private void OnOffersReloaded() {
-		RefreshData(false);
+		RefreshData();
 	}
 
 	/// <summary>
 	/// Offers list has changed.
 	/// </summary>
 	private void OnOffersChanged() {
-		RefreshData(false);
+		RefreshData();
 	}
 }

@@ -1633,7 +1633,7 @@ public class UserProfile : UserPersistenceSystem
 	/// Cleanup persistence packs that shouldn't be persisted anymore.
 	/// </summary>
 	public void PurgeOfferPacksPersistence() {
-		// [AOC] TODO!! Meant for packs with end timestamp
+		// [AOC] TODO!! Meant for packs with end timestamp that were never purchased and wont be available anymore (no need to persist them)
 	}
 }
 
