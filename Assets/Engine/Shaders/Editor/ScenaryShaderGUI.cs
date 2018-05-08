@@ -373,7 +373,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_Color, Styles.colorText);
         }
 
-
         EditorGUI.BeginChangeCheck();
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
 
