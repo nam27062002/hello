@@ -100,7 +100,12 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 		// Compute price before applying the discount
 		float discount = m_pack.def.GetAsFloat("discount");
+		discount = Mathf.Clamp(discount, 0.01f, 0.99f);	// [AOC] Just to be sure input discount is valid
 		m_previousPrice = m_price/(1f - discount);
+
+		// [AOC] Beautify original price so it's more credible
+		// 		 Put the same decimal part as the actual price
+		m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
 
 		// Init visuals
 		OfferColorGradient gradientSetup = OfferItemPrefabs.GetGradient(discount);
@@ -129,7 +134,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 		//		 localized price (given by the store), but replacing the actual amount.
 		// $150 150€ 150 €
 		// [AOC] TODO!! Let's just put the formatted number for now
-		m_previousPriceText.text = StringUtils.FormatNumber(m_previousPrice, 0);
+		m_previousPriceText.text = StringUtils.FormatNumber(m_previousPrice, 2);
 
 		// Featured highlight
 		m_featuredHighlight.SetActive(m_pack.featured);
