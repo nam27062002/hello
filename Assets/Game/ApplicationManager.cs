@@ -154,7 +154,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 Log("OnHandleLog logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());    
             }   
 
-            HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
+            // Commented out to prevent an exception thrown every frame to be notified. This should be implemented correctly by using the support implemented in Calety v1.4
+            // HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
         }
     }
 
