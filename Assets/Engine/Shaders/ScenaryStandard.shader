@@ -46,7 +46,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(NORMALWASSPECULAR)] _EnableNormalwAsSpecular("Enable Normal.w as specular mask", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
-		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
+		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 0
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
 		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
 		[Toggle(WAVE_EMISSION)] _EnableWaveEmission("Enable wave emission", Float) = 0
@@ -77,7 +77,9 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
 		[Enum(Opaque, 0, Transparent, 1, CutOff, 2)] _BlendMode("Blend mode", Float) = 0.0
 		[Enum(SingleSided, 0, DoubleSided, 1)] _DoubleSided("Double sided", Float) = 0.0
-		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+//		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+		[Toggle] _ZWrite("__zw", Float) = 1.0
+
 
 	}
 
@@ -135,6 +137,8 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 
 				#if HI_DETAIL_ON
 				#endif
+
+				//#define TINT
 
 				#include "scenary.cginc"
 			ENDCG
