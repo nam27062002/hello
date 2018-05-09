@@ -1490,7 +1490,18 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CONTENT_DELTAS_CACHED);
         }
-    }    
+    }
+
+    /// <summary>
+    /// When <c>true</c> the first loading screen has to wait for customizer to be applied before keeping on loading so we can be sure that the latest rules are loaded when the user starts playing
+    /// </summary>
+    public bool IsCustomizerBlocker
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CUSTOMIZER_BLOCKER);
+        }
+    }
 
     public bool IsGlowEffectEnabled
     {
