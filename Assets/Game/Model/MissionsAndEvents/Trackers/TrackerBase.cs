@@ -117,7 +117,7 @@ public class TrackerBase {
 	/// <param name="_value">Value to be formatted.</param>
 	public virtual string FormatValue(long _value) {
 		// Default: the number as is
-		return StringUtils.FormatNumber(_value, 2);
+		return StringUtils.FormatNumber(_value);
 	}
 
 	/// <summary>
