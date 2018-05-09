@@ -33,7 +33,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
 #if FREQFORMULA
-    private static string m_qualityFormulaVersion = "2.0";
+//    private static string m_qualityFormulaVersion = "2.0";
+//  After fix the mistake in freqformula the version changes to 2.5
+    private static string m_qualityFormulaVersion = "2.5";
 #else
     private static string m_qualityFormulaVersion = "1.0";
 #endif
