@@ -33,8 +33,9 @@ public class DevicePassengersSpawner : AbstractSpawner {
 		m_machines = new IMachine[m_quantity.max];
     }
 
-	void OnDestroy() {
-		if (ApplicationManager.IsAlive) {
+	override protected void OnDestroy() {
+		base.OnDestroy();
+		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
 			ForceRemoveEntities();
 		}
 	}

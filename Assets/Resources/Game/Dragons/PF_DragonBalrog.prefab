@@ -288,7 +288,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -254.01828, y: 129.09248, z: -37.087845}
+  m_LocalPosition: {x: 69.021484, y: 43.535053, z: -105.56689}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -433,6 +433,7 @@ Transform:
   - {fileID: 4000014055579526}
   - {fileID: 488014}
   - {fileID: 4009912072996094}
+  - {fileID: 4813378870559400}
   m_Father: {fileID: 414586}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -608,7 +609,7 @@ MonoBehaviour:
   m_shieldAnchor: {fileID: 490078}
   m_bodyParticles: []
   m_trailsParticle:
-    name: 
+    name: PS_Boost
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -645,7 +646,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
-  m_trailsAnchor: {fileID: 0}
+  m_trailsAnchor: {fileID: 4813378870559400}
   m_landingParticle:
     name: 
     path: 
@@ -684,6 +685,8 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+  m_megaFireRush: PS_MegaFireCharge
+  m_megaFireRushAnchor: {fileID: 4801434676125364}
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -718,7 +721,6 @@ MonoBehaviour:
   m_dragonAirEnterSpeedMultiplier: 1
   m_startingParabolic: 0
   m_dragonWaterGravityModifier: 0.3
-  m_spinSpeed: 90
   m_introDisplacementCurve:
     serializedVersion: 2
     m_Curve:
@@ -2024,6 +2026,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1684452314554430
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4813378870559400}
+  - component: {fileID: 114084210745669232}
+  m_Layer: 0
+  m_Name: TrailsAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1703092403027690
 GameObject:
   m_ObjectHideFlags: 1
@@ -2570,7 +2588,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.043075085, y: 0.94465864, z: 0.13822858, w: -0.29437655}
+  m_LocalRotation: {x: -0.0035338164, y: 0.69764435, z: 0.0034411687, w: 0.71642727}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3416,6 +3434,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 470162}
   m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4813378870559400
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1684452314554430}
+  m_LocalRotation: {x: 1, y: -0.000000043711385, z: -0.000000043711385, w: 0.00000008294846}
+  m_LocalPosition: {x: 0, y: -0.032539368, z: -3.862358}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 490078}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4821533627095426
 Transform:
@@ -5378,6 +5409,45 @@ MonoBehaviour:
         FadeOut: 5
         RandomStartPosition: 0
         individualSettings: []
+    - Name: hd_megafire_charge
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: a55d21f502ee1aa4b92a238fbaac3b2c, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
   musicPlaylists:
@@ -5393,7 +5463,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 15
+    currentItemIndex: 16
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -5537,6 +5607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_prewarmDuration: 1
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
   m_length: 6
@@ -5700,6 +5771,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 21
+--- !u!114 &114084210745669232
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1684452314554430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Chest
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114146913645883264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5850,6 +5936,7 @@ MonoBehaviour:
   m_onDeadSound: hd_dragon_dead
   m_onCorpseSound: hd_dragon_dead
   m_onReviveSound: hd_dragon_revive
+  m_onPreMegaFire: hd_megafire_charge
 --- !u!114 &114480955019122160
 MonoBehaviour:
   m_ObjectHideFlags: 1

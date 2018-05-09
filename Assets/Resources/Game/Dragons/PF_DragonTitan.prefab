@@ -522,7 +522,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelUp: {fileID: 1617233673352068, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 4000011218522520}
-  m_revive: {fileID: 1000013542236594, guid: 82956920db58f3446a7b0e159de4e931, type: 2}
+  m_reviveParticle: Dragon/PS_Revive
   m_reviveAnchor: {fileID: 4000013037928750}
   m_petRevive:
     name: PS_ReviveFromPet
@@ -700,6 +700,8 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+  m_megaFireRush: PS_MegaFireCharge
+  m_megaFireRushAnchor: {fileID: 4406089071944704}
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -734,7 +736,6 @@ MonoBehaviour:
   m_dragonAirEnterSpeedMultiplier: 1
   m_startingParabolic: 0
   m_dragonWaterGravityModifier: 0.3
-  m_spinSpeed: 90
   m_introDisplacementCurve:
     serializedVersion: 2
     m_Curve:
@@ -2456,7 +2457,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1180358620589254}
-  m_LocalRotation: {x: -0.40077037, y: -0.696742, z: -0.29765883, w: -0.5151047}
+  m_LocalRotation: {x: -0.4007704, y: -0.69674206, z: -0.29765886, w: -0.5151048}
   m_LocalPosition: {x: -1.1632597, y: 1.068634, z: 1.6490185}
   m_LocalScale: {x: 1.0000131, y: 1.0000048, z: 0.999989}
   m_Children: []
@@ -2599,7 +2600,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1217255816157984}
-  m_LocalRotation: {x: -0.4007704, y: -0.69674206, z: -0.29765886, w: -0.5151048}
+  m_LocalRotation: {x: -0.40077034, y: -0.696742, z: -0.29765883, w: -0.5151047}
   m_LocalPosition: {x: -1.1632538, y: -1.2113647, z: -1.5909815}
   m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
   m_Children: []
@@ -3177,7 +3178,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1871079864248564}
-  m_LocalRotation: {x: -0.5822035, y: -0.32969666, z: -0.4430454, w: -0.5966992}
+  m_LocalRotation: {x: -0.58220357, y: -0.32969669, z: -0.44304544, w: -0.59669924}
   m_LocalPosition: {x: -0.64543974, y: 2.041308, z: 0.026049197}
   m_LocalScale: {x: 0.99999905, y: 0.9999991, z: 1}
   m_Children: []
@@ -4994,6 +4995,45 @@ MonoBehaviour:
         FadeOut: 5
         RandomStartPosition: 0
         individualSettings: []
+    - Name: hd_megafire_charge
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: a55d21f502ee1aa4b92a238fbaac3b2c, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
   musicPlaylists:
@@ -5009,7 +5049,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 15
+    currentItemIndex: 16
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -5153,6 +5193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_prewarmDuration: 1
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
   m_length: 6
@@ -5817,6 +5858,7 @@ MonoBehaviour:
   m_onDeadSound: hd_dragon_dead
   m_onCorpseSound: hd_dragon_dead
   m_onReviveSound: hd_dragon_revive
+  m_onPreMegaFire: hd_megafire_charge
 --- !u!114 &114852605186037314
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -920,7 +920,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1568844286528346}
-  m_LocalRotation: {x: -0.7036313, y: 0.07002106, z: 0.7036315, w: -0.070020914}
+  m_LocalRotation: {x: -0.7036312, y: 0.070021056, z: 0.70363146, w: -0.07002091}
   m_LocalPosition: {x: -0.55, y: 1.994, z: 3.039}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1575,6 +1575,7 @@ MonoBehaviour:
   m_parentName: gibs_01
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114113131767227908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1601,6 +1602,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114247909716760044
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1615,6 +1617,7 @@ MonoBehaviour:
   m_parentName: gibs_08
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114273424989638970
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1629,6 +1632,7 @@ MonoBehaviour:
   m_parentName: gibs_05
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114279301521436982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1643,6 +1647,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114336922268075704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1657,6 +1662,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114352374920015908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1671,6 +1677,7 @@ MonoBehaviour:
   m_parentName: gibs_05
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114379712455671404
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1685,6 +1692,7 @@ MonoBehaviour:
   m_parentName: gibs_03
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114388784349403634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1735,6 +1743,7 @@ MonoBehaviour:
   m_parentName: gibs_02
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114404594208889744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1749,6 +1758,7 @@ MonoBehaviour:
   m_parentName: gibs_04
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114410788918578620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1778,6 +1788,7 @@ MonoBehaviour:
   m_parentName: gibs_08
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114474450770795056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1796,9 +1807,9 @@ MonoBehaviour:
   m_blood:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1829,6 +1840,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_bloodPoints:
   - {fileID: 4289839260087034}
@@ -1876,6 +1888,7 @@ MonoBehaviour:
   m_parentName: gibs_03
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114563991295796868
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1902,6 +1915,7 @@ MonoBehaviour:
   m_parentName: gibs_05
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114604337824592826
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1928,6 +1942,7 @@ MonoBehaviour:
   m_parentName: gibs_05
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114614999879134780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1954,6 +1969,7 @@ MonoBehaviour:
   m_parentName: gibs_04
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114661261950753802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1968,6 +1984,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114694451805127448
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1982,6 +1999,7 @@ MonoBehaviour:
   m_parentName: gibs_08
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114707018386119930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1996,6 +2014,7 @@ MonoBehaviour:
   m_parentName: gibs_08
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114757315212674968
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2034,6 +2053,7 @@ MonoBehaviour:
   m_parentName: gibs_04
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114960859261095656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2048,6 +2068,7 @@ MonoBehaviour:
   m_parentName: gibs_02
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114981056586064140
 MonoBehaviour:
   m_ObjectHideFlags: 1

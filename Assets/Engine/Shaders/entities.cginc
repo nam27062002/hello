@@ -14,9 +14,13 @@ struct appdata_t
 struct v2f
 {
 	float4 vertex : SV_POSITION;
-
-	float2 uv : TEXCOORD0;
 	float4 color : COLOR;
+
+	float3 normalWorld : NORMAL;
+#if defined(NORMALMAP)
+	float3 tangentWorld : TANGENT;
+	float3 binormalWorld : TEXCOORD5;
+#endif
 
 #if defined(DYNAMIC_LIGHT)
 	float3 vLight : TEXCOORD2;
@@ -26,15 +30,11 @@ struct v2f
 	float3 halfDir : TEXCOORD7;
 #endif
 
-#if defined(FRESNEL) || defined(FREEZE)
+#if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP)
 	float3 viewDir : VECTOR;
 #endif
 
-	float3 normalWorld : NORMAL;
-#ifdef NORMALMAP
-	float3 tangentWorld : TANGENT;
-	float3 binormalWorld : TEXCOORD5;
-#endif
+	float2 uv : TEXCOORD0;
 
 #if defined(MATCAP) || defined(FREEZE)
 	float2 cap : TEXCOORD1;
@@ -51,13 +51,13 @@ uniform sampler2D _MatCap;
 uniform float4 _GoldColor;
 #endif
 
-#ifdef NORMALMAP
+#if defined(NORMALMAP)
 uniform sampler2D _NormalTex;
 uniform float4 _NormalTex_ST;
 uniform float _NormalStrength;
 #endif
 
-#ifdef SPECULAR
+#if defined(SPECULAR)
 uniform float _SpecularPower;
 uniform float4 _SpecularColor;
 #endif
@@ -66,7 +66,7 @@ uniform float4 _SpecularColor;
 uniform float _FresnelPower;
 uniform float4 _FresnelColor;
 
-#ifdef FREEZE
+#if defined(FREEZE)
 uniform float4 _FresnelColor2;
 #endif
 
@@ -107,6 +107,11 @@ uniform float4 _SecondLightDir;
 uniform float4 _AmbientColor;
 #endif
 
+#if defined(REFLECTIONMAP)
+uniform samplerCUBE _ReflectionMap;
+uniform float _ReflectionAmount;
+#endif
+
 
 v2f vert(appdata_t v)
 {
@@ -139,7 +144,7 @@ v2f vert(appdata_t v)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
 #endif
 	// To calculate tangent world
-#ifdef NORMALMAP
+#if defined(NORMALMAP)
 	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
 //	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
 	o.normalWorld = normal;
@@ -167,7 +172,7 @@ v2f vert(appdata_t v)
 
 #endif
 
-#if defined(FRESNEL) || defined(FREEZE)
+#if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP)
 	o.viewDir = viewDirection;
 #endif
 
@@ -189,9 +194,11 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined(SPECMASK)
 	fixed4 colspec = tex2D(_SpecMask, i.uv);
-	fixed specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
+	half specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
+#elif defined(OPAQUESPECULAR)
+	half specMask = 1.0;
 #else
-	fixed specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+	half specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 #endif
 
 #if defined(EMISSIVE)
@@ -199,11 +206,11 @@ fixed4 frag(v2f i) : SV_Target
 	col.xyz *= 1.0 + anim;
 #endif
 
-#if defined (TINT)
+#if defined(TINT)
 	col.xyz *= _Tint.xyz;
 #endif
 
-#ifdef NORMALMAP
+#if defined(NORMALMAP)
 	// Calc normal from detail texture normal and tangent world
 	float4 encodedNormal = tex2D(_NormalTex, i.uv);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
@@ -213,16 +220,41 @@ fixed4 frag(v2f i) : SV_Target
 	float3 normalDirection = i.normalWorld;
 #endif
 
+#if defined (REFLECTIONMAP)
+	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
+
+	//	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
+	//	float ref = specMask * _ReflectionAmount * detail.b;
+
+	float ref = _ReflectionAmount;
+
+	col = (1.0 - ref) * col + ref * reflection;
+#endif
+
+
+
 	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 #if defined(DYNAMIC_LIGHT)
 	col.xyz *= diffuse + i.vLight;
 #else
+
+#if defined(NOAMBIENT)
+	col.xyz *= diffuse;// +UNITY_LIGHTMODEL_AMBIENT.xyz;
+#else
 	col.xyz *= diffuse + UNITY_LIGHTMODEL_AMBIENT.xyz;
 #endif
+
+#endif
+
 
 #if defined(SPECULAR)
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
+
+#if defined(OPAQUESPECULAR)
+	col.a = max(col.a, specular * 4.0);
+#endif
+
 
 #elif defined(SPECMASK)
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * specMask;
@@ -235,17 +267,17 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 #if defined(FRESNEL) || defined(FREEZE)
-	fixed fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
+	half fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _FresnelPower), 0.0, 1.0) * _FresnelColor.w;
 //	col.xyz *= lerp(_FresnelColor2.xyz, _FresnelColor.xyz, fresnel);
 
-#ifdef FREEZE
+#if defined(FREEZE)
 	col.xyz *= _FresnelColor2.xyz;
 #endif
 
 	col.xyz += _FresnelColor.xyz * fresnel;
 #endif
 
-#if defined(MATCAP) || defined (FREEZE)
+#if defined(MATCAP) || defined(FREEZE)
 	fixed4 mc = tex2D(_MatCap, i.cap) * _GoldColor; // _FresnelColor;
 
 //	col = (col + ((mc*2.0) - 0.5));
@@ -253,17 +285,17 @@ fixed4 frag(v2f i) : SV_Target
 	//	res.a = 0.5;
 #endif
 
-#if defined (OPAQUEALPHA)
+#if defined(OPAQUEALPHA)
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
-#endif
 
-#if defined(GHOST)
+#elif defined(FRESNEL) && defined(GHOST)
 	col.a = clamp(fresnel + specMask, 0.0, 1.0);
+#elif defined(FRESNEL) && defined(OPAQUESPECULAR)
+	col.a = max(fresnel, col.a);
 #endif
 
-#if defined (TINT)
+#if defined(TINT)
 	col.a *= _Tint.a;
 #endif
 	return col;
 }
-

@@ -269,6 +269,18 @@ public class DragonEquip : MonoBehaviour {
 			}
 		}
 
+		// Patch to allow balrog rainbow disguise to change the trails effect
+		if ( !m_menuMode )
+		{
+			// Try to modify particles
+			string trails = def.Get("trails");
+			if ( !string.IsNullOrEmpty(trails) )
+			{
+				DragonParticleController particleController = GetComponentInChildren<DragonParticleController>();
+				particleController.m_trailsParticle.name = trails;
+			}
+		}
+
 		/*
 		// THIS IS JUST A TEST! - DO NOT DELETE FOR THE MOMMENT
 		Transform view = transform.FindChild("view");

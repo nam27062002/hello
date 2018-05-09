@@ -299,8 +299,6 @@ public class LoadingSceneController : SceneController {
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
 
-		// TO REMOVE to enable multilanguage support. Quick implementation to make sure only english will be set
-		strLanguageSku = "lang_english";
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones

@@ -70,7 +70,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetCustomiserPopup();
+		CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetCustomiserPopup(LocalizationManager.SharedInstance.Culture.TwoLetterISOLanguageName);
 		if(popupConfig != null) {
 			string popupPath = PopupCustomizer.PATH + "PF_PopupLayout" + popupConfig.m_iLayout;
 
