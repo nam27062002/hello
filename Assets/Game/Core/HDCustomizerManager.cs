@@ -311,6 +311,15 @@ public class HDCustomizerManager
     }
 
     /// <summary>
+    /// Returns whether or not the customizer has been received
+    /// </summary>
+    /// <returns></returns>
+    public bool IsReady()
+    {
+        return m_state == EState.Done;
+    }
+
+    /// <summary>
     /// Applies changes to rules if current customizer requires so
     /// </summary>
     /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
