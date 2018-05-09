@@ -9,12 +9,13 @@ Material:
   m_Name: stone_circle
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
   m_ShaderKeywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE NORMALMAP NORMALWASSPECULAR
-    OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
+    OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -71,18 +72,18 @@ Material:
     - Emissive: 4
     - MainColor: 0
     - VertexColor: 0
-    - _BlendMode: 0
-    - _BlinkTimeMultiplier: 2
+    - _BlendMode: 1
+    - _BlinkTimeMultiplier: 0
     - _BumpScale: 1
-    - _Cull: 2
+    - _Cull: 0
     - _CutOff: 0.5
     - _Cutoff: 0.5
     - _DarkenDistance: 20
     - _DarkenPosition: 0
     - _DetailNormalMapScale: 1
-    - _DoubleSided: 0
-    - _DstBlend: 0
-    - _EmissivePower: 2
+    - _DoubleSided: 1
+    - _DstBlend: 10
+    - _EmissivePower: 0
     - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 0
@@ -109,7 +110,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpecularPower: 10.9
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _UVSec: 0
     - _WaveEmission: 0.1
     - _ZWrite: 1
@@ -118,5 +119,5 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissiveColor: {r: 0, g: 0.66896534, b: 1, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecularDir: {r: -0.058924306, g: 0.17022575, b: -0.98364174, a: 0}
+    - _SpecularDir: {r: 0.26745626, g: -0.3056643, b: -0.9138033, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
