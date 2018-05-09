@@ -43,7 +43,9 @@ public class HDCustomizerManager
             HDCustomizerManager.instance.NotifyFilesChanged(kChangedContentFiles);
         }
 
-        public override void onNewPopupReceived() { }
+        public override void onNewPopupReceived() { 
+			
+		}
 
 #if APPLY_ON_DEMAND
         public override void onPopupIsPrepared(CyCustomiser.CustomiserPopupConfig kPopupConfig) { }
@@ -394,18 +396,23 @@ public class HDCustomizerManager
 #endif
     }
 
-    public CustomizerManager.CustomiserPopupConfig GetCustomiserPopup()
+	public CustomizerManager.CustomiserPopupConfig GetCustomiserPopup(string _isoLanguageName)
     {
         CustomizerManager.CustomiserPopupConfig returnValue = null;
 
         // Makes sure that there's a customizer and that is has already been applied
-        if (m_state == EState.Done && GetHasBeenApplied())
+        if (m_state == EState.Done)
         {
-            returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType();
+			returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN, _isoLanguageName);
         }
 
         return returnValue;
     }
+
+	private void NotifyNewPopup() 
+	{
+
+	}
 
     private void NotifyFilesChanged(List<string> files)
     {

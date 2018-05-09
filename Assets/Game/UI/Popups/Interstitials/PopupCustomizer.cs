@@ -184,12 +184,12 @@ public class PopupCustomizer : MonoBehaviour {
 		m_localizedConfig = m_config.m_kPopupConfigByLanguage[m_config.m_kPrepareState.m_strPreparedLanguage];
 
 		// Close button
-		if(m_closeButtonField.element != null) {
+		if (m_closeButtonField.element != null) {
 			m_closeButtonField.element.gameObject.SetActive(m_config.m_bHasCloseButton);
 		}
 
 		// Title
-		if(m_titleField.element != null) {
+		if (m_titleField.element != null) {
 			m_titleField.element.text = m_localizedConfig.m_strTitle;
 		}
 
@@ -200,30 +200,32 @@ public class PopupCustomizer : MonoBehaviour {
 			textsJson = JSON.Parse(m_localizedConfig.m_strMessage);
 		} catch {}
 
-		//TODO: Parse again the full list of texts from Calety
-		/*
-		if(textsJson == null) {
+
+		if (textsJson == null) {
 			// If json couldn't be parsed from the given string, assume it's a simple message and put it in the main textfield
-			if(m_messageText != null) {
-				m_messageText.text = m_localizedConfig.m_strMessage;
-			}
-			if(m_otherTexts.dict.ContainsKey("message")) {
-				m_otherTexts.dict["message"].text = m_localizedConfig.m_strMessage;
+			if (m_messageField.element != null) {
+				m_messageField.element.text = m_localizedConfig.m_strMessage;
 			}
 		} else {
-			// Iterate through all textfields in the popup and try to find a text for them in the json
-			foreach(KeyValuePair<string, TextMeshProUGUI> kvp in m_otherTexts.dict) {
-				if(kvp.Value == null) continue;	// Just in case
+			// Find the main text
+			if (m_messageField.element != null) {
+				m_messageField.element.text = textsJson[m_messageField.element.name];
+			}
 
-				// Set the text from the json, or empty string if the json doesn't have a text for this textfield
-				if(textsJson.ContainsKey(kvp.Key)) {
-					kvp.Value.text = textsJson[kvp.Key];
-				} else {
-					kvp.Value.text = string.Empty;
+			// Iterate through all textfields in the popup and try to find a text for them in the json
+			for (int i = 0; i < m_textFields.Count; ++i) {
+				TextMeshProUGUI textField = m_textFields[i].element;
+
+				if (textField != null) {
+					// Set the text from the json, or empty string if the json doesn't have a text for this textfield
+					if(textsJson.ContainsKey(textField.name)) {
+						textField.text = textsJson[textField.name];
+					} else {
+						textField.text = string.Empty;
+					}
 				}
 			}
 		}
-		*/
 
 		// Image
 		if(m_imageField.element != null) {
@@ -236,16 +238,16 @@ public class PopupCustomizer : MonoBehaviour {
 		}
 
 		// Buttons
-		for(int i = 0; i < m_buttonFields.Count; ++i) {
+		for (int i = 0; i < m_buttonFields.Count; ++i) {
 			// Button defined?
-			if(i >= m_localizedConfig.m_kPopupButtons.Count) {
+			if (i >= m_localizedConfig.m_kPopupButtons.Count) {
 				m_buttonFields[i].element.gameObject.SetActive(false);
 			} else {
 				m_buttonFields[i].element.gameObject.SetActive(true);
 
 				// Set text
 				TextMeshProUGUI txt = m_buttonFields[i].element.GetComponentInChildren<TextMeshProUGUI>();
-				if(txt != null) {
+				if (txt != null) {
 					txt.text = m_localizedConfig.m_kPopupButtons[i].m_strText;
 				}
 			}
@@ -359,7 +361,7 @@ public class PopupCustomizer : MonoBehaviour {
 			data.Add("settings", settings);
 		}
 
-		string filePath = "Assets/Game/UI/Popups/Interstitials/" + name + ".json";
+		string filePath = "Assets/Art/UI/Popups/Interstitials/" + name + ".json";
 		using (StreamWriter sw = new StreamWriter(filePath, false)) {
 			sw.WriteLine(data.ToString());
 			sw.Close();
