@@ -123,33 +123,35 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		// Is dragon unlocked?
-		DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
-		if(data.GetLockState() > DragonData.LockState.LOCKED) {
-			// Don't show the popup the very first time to prevent conflict with the dragon unlock animation
-			bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
-			if(_checked) {
-				// Check if we need to make the player rate the game
-				if(Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true)) {
-					string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
-					System.DateTime futureDate = System.DateTime.Now;
-					if(!System.DateTime.TryParse(dateStr, out futureDate)) {
-						futureDate = System.DateTime.Now;
-					}
-					if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {
-						// Start Asking!
-						if(Application.platform == RuntimePlatform.Android) {
-							PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
-							m_popupDisplayed = true;
-						} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-							PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
-							m_popupDisplayed = true;
+		if (UsersManager.currentUser.gamesPlayed > 12) {
+			// Is dragon unlocked?
+			DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
+			if(data.GetLockState() > DragonData.LockState.LOCKED) {
+				// Don't show the popup the very first time to prevent conflict with the dragon unlock animation
+				bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
+				if(_checked) {
+					// Check if we need to make the player rate the game
+					if(Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true)) {
+						string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
+						System.DateTime futureDate = System.DateTime.Now;
+						if(!System.DateTime.TryParse(dateStr, out futureDate)) {
+							futureDate = System.DateTime.Now;
+						}
+						if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {
+							// Start Asking!
+							if(Application.platform == RuntimePlatform.Android) {
+								PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
+								m_popupDisplayed = true;
+							} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
+								PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
+								m_popupDisplayed = true;
+							}
 						}
 					}
+				} else {
+					// Next time we will show the popup
+					Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
 				}
-			} else {
-				// Next time we will show the popup
-				Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
 			}
 		}
 	}
@@ -160,7 +162,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void CheckSurvey() {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
-		m_popupDisplayed = PopupAskSurvey.Check();
+
+		if (UsersManager.currentUser.gamesPlayed > 12) {
+			m_popupDisplayed = PopupAskSurvey.Check();
+		}
 	}
 
 	/// <summary>
@@ -171,8 +176,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if(OffersManager.featuredOffer != null) {
-			m_popupDisplayed = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
+		if (UsersManager.currentUser.gamesPlayed > 12) {
+			if(OffersManager.featuredOffer != null) {
+				m_popupDisplayed = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
+			}
 		}
 	}
 
