@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class MachineCollectible : MonoBehaviour, IMachine {		
+	public class MachineCollectible : MonoBehaviour, IMachine, ISpawnable {		
 		UnityEngine.Events.UnityAction m_deactivateCallback;
-
 
 		private CollectibleViewControl m_viewControl = null;
 		private IEntity m_entity = null;
 		private Transform m_transform;
+
+		private bool m_isCollected;
 
 
 		public Vector3 eye						{ get { return Vector3.zero; } }
@@ -30,6 +31,7 @@ namespace AI {
 		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
 
 
+
 		protected virtual void Awake() {
 			m_transform = transform;
 			m_viewControl = GetComponent<CollectibleViewControl>();
@@ -37,21 +39,26 @@ namespace AI {
 		}
 
 		protected virtual void OnTriggerEnter(Collider _other) {
-			if (_other.CompareTag("Player")) {				
-				Reward reward = m_entity.GetOnKillReward(true);
+			if (_other.CompareTag("Player")) {
+				if (!m_isCollected) {	
+					Reward reward = m_entity.GetOnKillReward(true);
 
-				// Initialize some death info
-				m_entity.onDieStatus.source = IEntity.Type.PLAYER;
+					// Initialize some death info
+					m_entity.onDieStatus.source = IEntity.Type.PLAYER;
 
-				// Dispatch global event
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
+					// Dispatch global event
+					Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
 
-				m_viewControl.Collect();
-				m_entity.Disable(true);
+					m_viewControl.Collect();
+
+					m_isCollected = true;
+				}
 			}
 		}
 
-		public void Spawn(ISpawner _spawner) {}
+		public void Spawn(ISpawner _spawner) {
+			m_isCollected = false;
+		}
 
 		public void Activate() {
 			gameObject.SetActive(true);
@@ -65,6 +72,16 @@ namespace AI {
 			Invoke("Activate", duration);
 		}
 
+		public void CustomUpdate() {
+			if (m_isCollected) {
+				if (m_viewControl.HasCollectAnimationFinished()) {
+					m_entity.Disable(true);
+				}
+			}
+		}
+
+
+		//----------------------------------------------------------------------------------------------------------------------//
 		public void OnTrigger(string _trigger, object[] _param = null) {}
 		public void DisableSensor(float _seconds) {}
 		public virtual void CheckCollisions(bool _value) {}
@@ -105,5 +122,6 @@ namespace AI {
 		public void EnterDevice(bool _isCage) {}
 		public void LeaveDevice(bool _isCage) {}
 		public virtual bool CanBeBitten() {return false;}
+		//----------------------------------------------------------------------------------------------------------------------//
 	}
 }

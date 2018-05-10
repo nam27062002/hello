@@ -24,19 +24,27 @@ public class SkuListAttribute : ListAttribute {
 	//------------------------------------------------------------------//
 	public string m_category = DefinitionsCategory.UNKNOWN;
 	private bool m_allowNullValue = true;
+	private string[] m_extraOptions = new string[0];
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Parametrized constructor.
+	/// Parametrized constructors.
 	/// </summary>
 	/// <param name="_category">The type of definition to be parsed.</param>
 	/// <param name="_allowNullValue">If set to <c>true</c>, the "NONE" option will be available.</param>
+	/// <param name="_extraOptions">Optional additional options to be added to the sku list.</param>
 	public SkuListAttribute(string _category, bool _allowNullValue = true) {
 		m_category = _category;
 		m_allowNullValue = _allowNullValue;
 		ValidateOptions();
+	}
+
+	public SkuListAttribute(string _category, bool _allowNullValue, params string[] _extraOptions) {
+		m_category = _category;
+		m_allowNullValue = _allowNullValue;
+		m_extraOptions = _extraOptions;
 	}
 
 	/// <summary>
@@ -55,6 +63,11 @@ public class SkuListAttribute : ListAttribute {
 		// Add the empty option if required
 		if(m_allowNullValue) {
 			skus.Insert(0, "");
+		}
+
+		// Add extra options
+		for(int i = 0; i < m_extraOptions.Length; ++i) {
+			skus.Add(m_extraOptions[i]);
 		}
 
 		// Convert to object array

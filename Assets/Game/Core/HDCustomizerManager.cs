@@ -82,6 +82,8 @@ public class HDCustomizerManager
         }
     }
 
+    private const bool DEBUG_ENABLED = false;
+
     private static HDCustomizerManager sm_instance;
 
     public static HDCustomizerManager instance
@@ -100,8 +102,8 @@ public class HDCustomizerManager
 
             return sm_instance;
         }
-    }    
-
+    }
+    
     private enum EState
     {
         None, 
@@ -154,6 +156,10 @@ public class HDCustomizerManager
 
     public void Initialise()
     {
+        if (FeatureSettingsManager.IsDebugEnabled && DEBUG_ENABLED) {
+            ControlPanel.Log_SetupChannel(ControlPanel.ELogChannel.Customizer, Color.green);
+        }
+
         Reset();
     }
 
@@ -264,6 +270,11 @@ public class HDCustomizerManager
 
     private void RequestCustomizer()
     {        
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Requesting customizer...", true);
+        }
+
         SetState(EState.WaitingForResponse);        
         CustomizerManager.SharedInstance.GetCustomizationsFromServer();
     }
@@ -307,7 +318,7 @@ public class HDCustomizerManager
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Applying customizer needsToRevertAnyFiles = " + NeedsToRevertAnyFiles() + " needsToApplyCustomizerChanges = " + NeedsToApplyCustomizerChanges());
+            Log("Applying customizer needsToRevertAnyFiles = " + NeedsToRevertAnyFiles() + " needsToApplyCustomizerChanges = " + NeedsToApplyCustomizerChanges(), false);
         }
 
         bool returnValue = false;
@@ -359,7 +370,7 @@ public class HDCustomizerManager
     /// </summary>
     /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
     public bool Apply()
-    {
+    {        
 #if APPLY_ON_DEMAND
         return InternalApply();
 #else
@@ -372,6 +383,11 @@ public class HDCustomizerManager
         {
             returnValue = GetNeedsToNotifyRulesChanged();
             SetNeedsToNotifyRulesChanged(false);
+        }
+
+        if (FeatureSettingsManager.IsDebugEnabled && returnValue)
+        {
+            Log("Applying changes...", true);
         }
 
         return returnValue;
@@ -421,6 +437,19 @@ public class HDCustomizerManager
     private void NotifyCustomizationFinished()
     {        
         SetState(EState.Done);
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            bool needsToApply = m_filesChangedByCustomizer != null && m_filesChangedByCustomizer.Count > 0;
+            if (needsToApply)
+            {
+                Log("Customizer WITH changes received. These changes are PENDING to be applied", true);
+            }
+            else
+            {
+                Log("Customizer WITH NO changes received", true);
+            }
+        }
     }
 
     public void NotifyServerDown()
@@ -501,7 +530,7 @@ public class HDCustomizerManager
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Change state from " + m_state + " to " + value + " at " + Time.realtimeSinceStartup);
+            Log("Change state from " + m_state + " to " + value + " at " + Time.realtimeSinceStartup, false);
         }
 
         switch (m_state)
@@ -579,31 +608,20 @@ public class HDCustomizerManager
         }
     }
 
-#region log
-    private const bool DEBUG_ENABLED = false;
-    private const string LOG_CHANNEL = "[HDCustomizerManager] ";
-    public static void Log(string msg)
+#region log    
+    public static void Log(string msg, bool logToCPConsole=false)
     {
-        msg = LOG_CHANNEL + msg;
-
-        if (DEBUG_ENABLED)
-        {
-            msg = "<color=yellow>" + msg + "</color>";
-        }
-
-        Debug.Log(msg);
+        ControlPanel.Log(msg, ControlPanel.ELogChannel.Customizer, logToCPConsole);
     }
 
     public static void LogWarning(string msg)
     {
-        msg = LOG_CHANNEL + msg;
-        Debug.LogWarning(msg);
+        ControlPanel.LogWarning(msg, ControlPanel.ELogChannel.Customizer);
     }
 
     public static void LogError(string msg)
     {
-        msg = LOG_CHANNEL + msg;
-        Debug.LogError(msg);
+        ControlPanel.LogError(msg, ControlPanel.ELogChannel.Customizer);
     }
 #endregion
 }

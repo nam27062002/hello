@@ -12,7 +12,7 @@ using UnityEngine;
 using System.Collections;
 
 public class GameCamera : MonoBehaviour
-{	 
+{
 	private const float			m_maxTrackAheadScaleX = 0.15f;
     private const float         m_maxTrackAheadScaleY = 0.2f; //JO
 	private const float			m_trackBlendRate = 1.0f;
@@ -22,6 +22,8 @@ public class GameCamera : MonoBehaviour
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
     private const float         m_frameWidthBoost = 30.0f;
 	private const float         m_frameWidthFury = 30.0f;
+	private const float         m_frameWidthSpace = 40.0f;
+
 
     // camera zoom blending values for bosses
     private float               m_zBlendRateBoss = 20.0f;
@@ -89,12 +91,12 @@ public class GameCamera : MonoBehaviour
 	[SerializeField] private float m_deactivationDistance = 20f;
 
 
-    // Camera rotation look at shark 
+    // Camera rotation look at shark
 	private float               m_rotateLerpTimer = 0.0f;
     private Vector3             m_trackAheadPos = Vector3.zero;
     private float               m_camDelayLerpT = 0.0f;
     private const float         m_maxLerpDistance = 50.0f;
-	private const float 		m_maxRotationAngleX = 22.5f; //JO 
+	private const float 		m_maxRotationAngleX = 22.5f; //JO
     private const float         m_maxRotationAngleY = 20.0f;
 
 	private Transform			m_transform;
@@ -144,7 +146,7 @@ public class GameCamera : MonoBehaviour
 	private int					m_pixelHeight = 480;
 	private float				m_pixelAspectX = 1.333f;
 	private float				m_pixelAspectY = 0.75f;
-	
+
 	private GameObject			m_targetObject = null;			// this is the object we're currently tracking
 	private Transform			m_targetTransform = null;		// this is the target object's cached transform component
 	private Vector3 			m_extraTargetDisplacement = GameConstants.Vector3.zero;
@@ -162,12 +164,12 @@ public class GameCamera : MonoBehaviour
 	private float				m_positionLerp;
     private float               m_rotationLerp;
     private float               m_expOne;
-	
+
 	private Vector3				m_trackAheadVector = Vector3.zero;
 	private bool				m_snap;
 	private bool				m_hasInitialized = false;		// this is set once we've done our Awake()
 	private bool				m_firstTime = true;				// this is set for the whole of our first frame, and cleared at the end of LateUpdate()
-	
+
 	// properties
 	public Vector3				position {get{return m_position;}}
     public Vector3              rotation { get {return m_rotation; }  }
@@ -182,7 +184,7 @@ public class GameCamera : MonoBehaviour
 	private bool				m_averageBossPositions = false;
 	private int 				m_prevNumBosses = 0;
 	private float 				m_bossLerpRate = 0.5f;
-	
+
 	private List<BossCameraAffector> m_bossCamAffectors = new List<BossCameraAffector>();
 
 	private SlowmoBreachTrigger m_slowmoBreachTrigger = null;
@@ -203,10 +205,11 @@ public class GameCamera : MonoBehaviour
 	private float m_lastFrameWidthModifier = 0;
 	public float lastFrameWidthModifier
 	{
-		get{ return m_lastFrameWidthModifier; } 
+		get{ return m_lastFrameWidthModifier; }
 	}
 
 	private bool m_fury = false;
+	public float m_megaFireStartDecrement = 10;
 
 
 	enum BossCamMode
@@ -220,8 +223,6 @@ public class GameCamera : MonoBehaviour
 	private BossCamMode 		m_bossCamMode;
 
 	private TouchControlsDPad	m_touchControls = null;
-
-	public bool m_useDampCamera = false;
 
 	public float m_introDuration = 10.0f;
 	private float m_introTimer = 0;
@@ -237,9 +238,16 @@ public class GameCamera : MonoBehaviour
 		PLAY
 	};
 	State m_state = State.INTRO;
+	bool m_targetIsDead = false;
+	Vector3 m_targetDeadPosition;
+
+	private float m_megaFirePrewarmTimer = 0;
+	private float m_megaFirePrewarmDuration = 0;
+	public AnimationCurve m_megaFireZoomMultiplier;
+	public AnimationCurve m_megaFireTimescaleMultiplier;
 
 	//----------------------------------------------------------------------------
-	
+
 	void Awake() {
 		PublicAwake();
 
@@ -256,16 +264,19 @@ public class GameCamera : MonoBehaviour
 		InstanceManager.gameCamera = this;
 
 		// Subscribe to external events
+		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnFuryPrewarm);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.AddListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
-		Messenger.AddListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);       
+		Messenger.AddListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
+
+		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 
 
-		// Subscribe to external events
-		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
+
 		Messenger.AddListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 	}
 
@@ -273,7 +284,7 @@ public class GameCamera : MonoBehaviour
 	{
 		m_transform = transform;
 		m_unityCamera = GetComponent<Camera>();
-	
+
 		UpdateFrustumPlanes();
 
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
@@ -288,7 +299,7 @@ public class GameCamera : MonoBehaviour
 		// Assert.Fatal(m_postProcessEffectsManager != null);
 
 		m_snap = true;
-		
+
 		// get screen dimensions and aspect ratio
 		UpdatePixelData();
 
@@ -302,7 +313,7 @@ public class GameCamera : MonoBehaviour
 
 		UpdateValues(m_position);
 		m_hasInitialized = true;
-		
+
 		// If an attempt was made to assign the target object before this Awake()
 		// function was called, we queued it up and it is now safe to assign it.
 		if(m_queuedTargetObject != null)
@@ -318,12 +329,10 @@ public class GameCamera : MonoBehaviour
         // We can't setup post process effects here because FeatureSettings means to be ready first. Since Gamecamera and FeatureSettings are initialized at the same time when the game is
         // launched from the level editor, we need to synchronize this stuff
         NeedsToSetupPostProcessEffects = true;
-
-        UpdateUseDampCamera();        
     }
 
 	/*
-	IEnumerator Start() 
+	IEnumerator Start()
 	{
 		while( !InstanceManager.gameSceneControllerBase.IsLevelLoaded())
 		{
@@ -334,7 +343,7 @@ public class GameCamera : MonoBehaviour
 
 	public void Init() {
 		GameObject gameInputObj = GameObject.Find("PF_GameInput");
-		if(gameInputObj != null) 
+		if(gameInputObj != null)
 		{
 			m_touchControls = gameInputObj.GetComponent<TouchControlsDPad>();
 		}
@@ -400,15 +409,17 @@ public class GameCamera : MonoBehaviour
 	}
 
 	void OnDestroy() {
+		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnFuryPrewarm);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 		Messenger.RemoveListener(MessengerEvents.CAMERA_INTRO_DONE, IntroDone);
 		Messenger.RemoveListener<float, float>(MessengerEvents.CAMERA_SHAKE, OnCameraShake);
-       
+		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
+
         // Unsubscribe from external events.
-        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnDebugSettingChanged);
 		Messenger.RemoveListener<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, OnResolutionChanged);
 
 		InstanceManager.gameCamera = null;
@@ -416,14 +427,6 @@ public class GameCamera : MonoBehaviour
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
     }
-
-    private void OnDebugSettingChanged(string _id) {
-        switch (_id) {
-            case DebugSettings.NEW_CAMERA_SYSTEM:
-                UpdateUseDampCamera();		    			    
-                break;			           
-        }        
-	}    
 
 	public void UpdatePixelData()
 	{
@@ -443,13 +446,14 @@ public class GameCamera : MonoBehaviour
 		UpdatePixelData ();
 	}
 
-    private void UpdateUseDampCamera() {
-        m_useDampCamera = Prefs.GetBoolPlayer(DebugSettings.NEW_CAMERA_SYSTEM);
-    }		    
-
 	private void OnFury(bool _active, DragonBreathBehaviour.Type _type)
 	{
 		m_fury = _active;
+	}
+
+	private void OnFuryPrewarm(DragonBreathBehaviour.Type _type, float _duration)
+	{
+		m_megaFirePrewarmTimer = m_megaFirePrewarmDuration = _duration * 2;
 	}
 
     private void CountDownEnded()
@@ -513,13 +517,13 @@ public class GameCamera : MonoBehaviour
 			m_isLerpingBetweenTargets = true;
 			m_positionLerp = 0.0f;
 		}
-		
-		m_targetObject = obj;		
+
+		m_targetObject = obj;
 		m_targetTransform = obj.transform;
 		m_targetMachine = obj.GetComponent<DragonMotion>();
 
 		m_posTo = m_targetTransform.position;
-		
+
 		// When camera target is assigned on the first frame, get the camera into a good position
 		// ASAP so things like spawners don't mess up before we get to our first update.
 		// TODO: consider just doing this based on m_snap, and get rid of firstTime flag?
@@ -560,22 +564,22 @@ public class GameCamera : MonoBehaviour
 	{
 		return (m_targetObject == obj);
 	}
-	
+
 	public bool IsTarget(DragonMotion machine)
 	{
 		return (m_targetMachine == machine);
 	}
-	
+
 	public void Snap(bool _value = true)
 	{
 		m_snap = _value;
 	}
-	
+
 	public void NotifyBoss(BossCameraAffector bca)
 	{
 		// safety check to avoid duplicates (it should not happen anyway).
 		if(!m_bossCamAffectors.Contains(bca))
-		{			
+		{
 			if(bca.frameWidthIncrement > m_largestBossFrameIncrement || m_largestBoss == null)
 			{
 				m_largestBoss = bca;
@@ -635,14 +639,8 @@ public class GameCamera : MonoBehaviour
 
 	void LateUpdate()
 	{
-		if (m_useDampCamera)
-		{
-			PlayDampUpdate();	
-		}
-		else
-		{
-			PlayUpdate();
-		}
+
+		PlayUpdate();
 
         if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.instance.IsReady())
         {
@@ -657,7 +655,7 @@ public class GameCamera : MonoBehaviour
 			}break;
 			case State.PLAY:
 			{
-				
+
 			}break;
 		}
 		*/
@@ -667,7 +665,7 @@ public class GameCamera : MonoBehaviour
 
 	private void UpdateFrustumPlanes()
 	{
-		// m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
+		//m_frustumPlanes = GeometryUtility.CalculateFrustumPlanes(m_unityCamera);
 		CalculateFrustumPlanes( m_frustumPlanes, m_unityCamera.projectionMatrix * m_unityCamera.worldToCameraMatrix);
 	}
 
@@ -676,16 +674,16 @@ public class GameCamera : MonoBehaviour
     {
         if (planes == null) throw new System.ArgumentNullException("planes");
         if (planes.Length < 6) throw new System.ArgumentException("Output array must be at least 6 in length.", "planes");
- 
+
         if (_calculateFrustumPlanes_Imp == null)
         {
             var meth = typeof(GeometryUtility).GetMethod("Internal_ExtractPlanes", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new System.Type[] { typeof(Plane[]), typeof(Matrix4x4) }, null);
             if (meth == null) throw new System.Exception("Failed to reflect internal method. Your Unity version may not contain the presumed named method in GeometryUtility.");
- 
+
             _calculateFrustumPlanes_Imp = System.Delegate.CreateDelegate(typeof(System.Action<Plane[], Matrix4x4>), meth) as System.Action<Plane[], Matrix4x4>;
             if(_calculateFrustumPlanes_Imp == null) throw new System.Exception("Failed to reflect internal method. Your Unity version may not contain the presumed named method in GeometryUtility.");
         }
- 
+
         _calculateFrustumPlanes_Imp(planes, worldToProjectMatrix);
     }
 
@@ -702,24 +700,35 @@ public class GameCamera : MonoBehaviour
 		Vector3 targetPosition;
 
 		if ( m_introTimer <= 0 ){
-			targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
-			Vector3 vel = GameConstants.Vector3.zero;
-			if ( m_fury )
+			if ( m_targetObject == null )
 			{
-				if ( m_useSmoothDamp )
-					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, ref vel, m_smoothDampValue);
-				else
-					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, Time.deltaTime * 2);
+				targetPosition = m_position;
+			}
+			else if ( m_targetIsDead )
+			{
+				targetPosition = m_targetDeadPosition;
 			}
 			else
 			{
-				if ( m_useSmoothDamp )
-					m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, GameConstants.Vector3.zero, ref vel, m_smoothDampValue);
+				targetPosition = m_targetTransform.position;
+				Vector3 vel = GameConstants.Vector3.zero;
+				if ( m_fury )
+				{
+					if ( m_useSmoothDamp )
+						m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, ref vel, m_smoothDampValue);
+					else
+						m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, m_targetMachine.direction * InstanceManager.player.breathBehaviour.actualLength * 0.3f, Time.deltaTime * 2);
+				}
 				else
-					m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
+				{
+					if ( m_useSmoothDamp )
+						m_extraTargetDisplacement = Vector3.SmoothDamp( m_extraTargetDisplacement, GameConstants.Vector3.zero, ref vel, m_smoothDampValue);
+					else
+						m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
+				}
+				targetPosition += m_extraTargetDisplacement;
+				UpdateTrackAheadVector(m_targetMachine);
 			}
-			targetPosition += m_extraTargetDisplacement;
-			UpdateTrackAheadVector(m_targetMachine);
 		}else{
 			m_introTimer -= Time.deltaTime;
 			float delta = m_introTimer / m_introDuration;
@@ -739,6 +748,7 @@ public class GameCamera : MonoBehaviour
 		}
 
 		Vector3 desiredPos = targetPosition - m_trackAheadVector;
+
         // space-line camera position offsetiness
         if(m_targetObject != null)
         {
@@ -752,7 +762,7 @@ public class GameCamera : MonoBehaviour
         {
 			float lerpRate = 2.0f;
 
-            m_position 		= Vector3.Lerp(m_posFrom, desiredPos, m_positionLerp);            
+            m_position 		= Vector3.Lerp(m_posFrom, desiredPos, m_positionLerp);
             m_positionLerp += lerpRate * dt;
 
             if(m_positionLerp >= 1.0f)
@@ -770,7 +780,7 @@ public class GameCamera : MonoBehaviour
 
 			// SAFETY CATCH
 			//special case - if the camera is more than a certain distance from the shark, don't lerp. snap it instead
-			if((desiredPos - m_position).magnitude > m_maxLerpDistance)
+			if((desiredPos - m_position).sqrMagnitude > m_maxLerpDistance * m_maxLerpDistance)
 			{
 				m_position = desiredPos;
 			}
@@ -794,29 +804,50 @@ public class GameCamera : MonoBehaviour
 		else
 		{
             bool hasBoss = HasBoss();
-            if (m_targetMachine != null)
-	        {
-	            if(!hasBoss)
-	            {
-	            	if ( m_fury )	
-	            	{
-	            		frameWidth = m_frameWidthFury;
-	            	}
-	            	else
-	            	{
-						frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-					}
-	            }
-	        }
-			frameWidth += m_frameWidthIncrement;
-			if(m_hasSlowmo)
-			{
-				frameWidth -= m_frameWidthDecrement;
-			}
-			else if(hasBoss)
-			{
-				frameWidth += m_largestBossFrameIncrement;
-			}
+
+
+            if ( m_megaFirePrewarmTimer > 0 )
+            {
+            	float delta = 1.0f - m_megaFirePrewarmTimer / m_megaFirePrewarmDuration;
+				frameWidth = m_megaFireZoomMultiplier.Evaluate( delta ) * m_frameWidthFury;
+				Time.timeScale = m_megaFireTimescaleMultiplier.Evaluate( delta );
+            	m_megaFirePrewarmTimer -= Time.unscaledDeltaTime;
+				if (m_megaFirePrewarmTimer <= 0 )
+				{
+					Time.timeScale = 1;
+				}
+            }
+            else
+            {
+				if (m_targetMachine != null)
+		        {
+							if(!hasBoss)
+						 {
+				 if (targetPosition.y > DragonMotion.SpaceStart)
+				 {
+					 frameWidth = m_frameWidthSpace;
+				 }
+				 else if ( m_fury )
+							 {
+								 frameWidth = m_frameWidthFury;
+							 }
+							 else
+							 {
+					 frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+				 }
+						 }
+		        }
+				frameWidth += m_frameWidthIncrement;
+				if(m_hasSlowmo)
+				{
+					frameWidth -= m_frameWidthDecrement;
+				}
+				else if(hasBoss)
+				{
+					frameWidth += m_largestBossFrameIncrement;
+				}
+            }
+
 
 			UpdateZooming(frameWidth, hasBoss);
 		}
@@ -835,68 +866,6 @@ public class GameCamera : MonoBehaviour
 #endif
 	}
 
-	public static float m_moveDamp = 0.46f;
-	public static float m_lookDamp = 0.1f;
-
-	void PlayDampUpdate()
-	{
-		Vector3 targetPosition = (m_targetObject == null) ? m_position : m_targetTransform.position;
-		Vector3 desiredPos = targetPosition;
-		UpdateDampPos(desiredPos);
-		UpdateLookAt(desiredPos);
-
-        bool hasBoss = HasBoss();
-		float frameWidth = m_frameWidthDefault;
-		if(m_targetMachine != null)
-        {
-            // MachineFish machineFish = m_targetObject.GetComponent<MachineFish>();
-            if(/*(machineFish != null) &&*/ !hasBoss)
-            {
-                // frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, machineFish.howFast);
-				frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-            }
-        }
-		frameWidth += m_frameWidthIncrement;
-		if(m_hasSlowmo)
-		{
-			frameWidth -= m_frameWidthDecrement;
-		}
-		else if(hasBoss)
-		{
-			frameWidth += m_largestBossFrameIncrement;
-		}
-		UpdateZooming(frameWidth, hasBoss);	// Sets m_position.z
-
-		m_transform.position = m_position + Random.insideUnitSphere * m_cameraShake;
-		m_transform.LookAt( m_lookAt );
-		UpdateBounds();
-
-		m_snap = false;
-		m_firstTime = false;
-		m_prevNumBosses = m_bossCamAffectors.Count;
-
-	}
-
-
-	void UpdateDampPos(Vector3 desiredPos)
-	{
-		m_currentPos.x = Damping( m_currentPos.x, desiredPos.x, Time.deltaTime, m_moveDamp);
-		m_currentPos.y = Damping( m_currentPos.y, desiredPos.y, Time.deltaTime, m_moveDamp);
-
-		m_position.x = desiredPos.x + (desiredPos.x - m_currentPos.x);
-		m_position.y = desiredPos.y + (desiredPos.y - m_currentPos.y);
-	}
-
-	void UpdateLookAt(Vector3 desiredPos)
-	{
-		m_currentLookAt.x = Damping( m_currentLookAt.x, desiredPos.x, Time.deltaTime, m_lookDamp);
-		m_currentLookAt.y = Damping( m_currentLookAt.y, desiredPos.y, Time.deltaTime, m_lookDamp);
-
-		m_lookAt.x = desiredPos.x + (desiredPos.x - m_currentLookAt.x);
-		m_lookAt.y = desiredPos.y + (desiredPos.y - m_currentLookAt.y);
-		m_lookAt.z = 0;
-	}
-
 	// Also called DampIIR (wiki search ...)
 	float Damping(float src, float dst, float dt, float factor)
 	{
@@ -910,34 +879,34 @@ public class GameCamera : MonoBehaviour
 		float y = m_targetObject.transform.position.y - m_spaceHeight;
 		float halfHeight = (m_spaceHeightLookUpMax + m_spaceHeightLookDownMin) / 2.0f;
 
-		if (y < m_spaceHeightLookUpMin) 
+		if (y < m_spaceHeightLookUpMin)
 		{
 			// do nothing
 			m_spaceLineOffset.y = 0.0f;
 		}
-		else if ((y >= m_spaceHeightLookUpMin) && (y < m_spaceHeightLookUpMax)) 
+		else if ((y >= m_spaceHeightLookUpMin) && (y < m_spaceHeightLookUpMax))
 		{
 			float ratio = (y - m_spaceHeightLookUpMin) / (m_spaceHeightLookUpMax - m_spaceHeightLookUpMin);
 			m_spaceLineOffset.y = -(ratio * m_maxLookUpOffset);
 		}
-		else if ((y >= m_spaceHeightLookUpMax) && (y < halfHeight)) 
+		else if ((y >= m_spaceHeightLookUpMax) && (y < halfHeight))
 		{
 			// first half in between looking up and down
 			float ratio = 1.0f - (y - m_spaceHeightLookUpMax) / (halfHeight - m_spaceHeightLookUpMax);
 			m_spaceLineOffset.y = -(ratio * m_maxLookUpOffset);
 		}
-		else if ((y >= halfHeight) && (y < m_spaceHeightLookDownMin)) 
+		else if ((y >= halfHeight) && (y < m_spaceHeightLookDownMin))
 		{
 			// second half in between looking up and down
 			float ratio = (y - halfHeight) / (m_spaceHeightLookDownMin - halfHeight);
 			m_spaceLineOffset.y = ratio * m_maxLookDownOffset;
 		}
-		else if ((y >= m_spaceHeightLookDownMin) && (y < m_spaceHeightLookDownMax)) 
+		else if ((y >= m_spaceHeightLookDownMin) && (y < m_spaceHeightLookDownMax))
 		{
 			float ratio = 1.0f - (y - m_spaceHeightLookDownMin) / (m_spaceHeightLookDownMax - m_spaceHeightLookDownMin);
 			m_spaceLineOffset.y = (ratio * m_maxLookDownOffset);
 		}
-		else if (y > m_spaceHeightLookDownMax) 
+		else if (y > m_spaceHeightLookDownMax)
 		{
 			// do nothing
 			m_spaceLineOffset.y = 0.0f;
@@ -951,7 +920,7 @@ public class GameCamera : MonoBehaviour
 		m_camDelayLerpT = m_rotateLerpTimer / m_rotateLerpDuration; // 0 - 1
 		m_camDelayLerpT = Mathf.Clamp01 (m_camDelayLerpT);
 
-		if (m_trackAheadMode == TrackAheadMode.EaseIn) 
+		if (m_trackAheadMode == TrackAheadMode.EaseIn)
 		{
 			// modulate t on an exponential curve
 			m_camDelayLerpT = Mathf.Exp (m_camDelayLerpT); // 1 - 2.something
@@ -964,10 +933,10 @@ public class GameCamera : MonoBehaviour
 
 	void CheckForBossCamMode()
 	{
-		if(HasBoss()) 
+		if(HasBoss())
 		{
 			// we've got a boss, see if we just acquired a boss (or gained another)
-			if (m_bossCamAffectors.Count > m_prevNumBosses) 
+			if (m_bossCamAffectors.Count > m_prevNumBosses)
 			{
 				// does the largest boss need framing?
 				if ((!m_frameLargestBossWithPlayer) || (m_bossCamAffectors.Count > 1))	// if you've got multiple bosses, don't frame them with player, just center on player
@@ -976,7 +945,7 @@ public class GameCamera : MonoBehaviour
 					m_camDelayLerpT = 0.0f;
 					m_rotateLerpTimer = 0.0f;
 				}
-				else 
+				else
 				{
 					m_bossCamMode = BossCamMode.BossFramingIn;
 					m_isFramed = true;
@@ -984,13 +953,13 @@ public class GameCamera : MonoBehaviour
 				}
 			}
 		}
-		else 
+		else
 		{
 			// we don't have a boss, see if we just lost a boss
-			if (m_bossCamAffectors.Count < m_prevNumBosses) 
+			if (m_bossCamAffectors.Count < m_prevNumBosses)
 			{
 				// where we in framed boss mode?
-				if (m_bossCamMode == BossCamMode.BossFramingIn || m_isFramed) 
+				if (m_bossCamMode == BossCamMode.BossFramingIn || m_isFramed)
 				{
 					m_bossCamMode = BossCamMode.BossFramingOut;
 					m_bossInLerp = 1.0f;
@@ -1019,7 +988,7 @@ public class GameCamera : MonoBehaviour
 			case BossCamMode.BossNoFraming:
 			{
 				UpdateCameraDelayLerp ();
-				
+
 				// we're in regular mode (or the boss doesn't need framing)
 				m_position = Vector3.Lerp(m_position, desiredPos, m_camDelayLerpT);
 			}
@@ -1028,7 +997,7 @@ public class GameCamera : MonoBehaviour
 			{
 				// work out center between target and boss
 				Vector3 targetPos = m_targetObject.transform.position + (m_trackAheadVector * m_trackAheadScale);
-				
+
 				// get average position of all current bosses
 				Vector3 sumPos = Vector3.zero;
 				int numBossesActive = 0;
@@ -1042,27 +1011,27 @@ public class GameCamera : MonoBehaviour
 						numBossesActive++;
 					}
 				}
-				
+
 				// sometimes the boss gets destroyed halfway through this, so check and deal with it..
 				if(numBossesActive == 0)
 				{
 					m_haveBoss = false;
 					return;
 				}
-				
+
 				Vector3 bossPos = m_averageBossPositions ? sumPos / numBossesActive : m_largestBoss.transform.position;
 				Vector3 centeredPos = (targetPos + bossPos) * 0.5f;
-				
+
 				// lerp
 				m_posFrom = m_transform.position;
 				m_posTo = centeredPos;
-				
+
 				m_bossInLerp += m_bossLerpRate * Time.deltaTime;
 				m_bossInLerp = Mathf.Clamp01(m_bossInLerp);
-				
+
 				m_bossInAngleLerp += m_bossLerpRate * Time.deltaTime;
 				m_bossInAngleLerp = Mathf.Clamp01(m_bossInAngleLerp);
-				
+
 				m_position = Vector3.Lerp(m_posFrom, m_posTo , m_bossInLerp);
 			}
 			break;
@@ -1070,15 +1039,15 @@ public class GameCamera : MonoBehaviour
 			{
 				// lerp
 				m_posTo = m_targetObject.transform.position;
-				
+
 				m_posFrom = m_transform.position;
-				
+
 				m_bossInLerp -= m_bossLerpRate * Time.deltaTime;
 				m_bossInLerp = Mathf.Clamp01(m_bossInLerp);
-				
+
 				m_bossInAngleLerp -= m_bossLerpRate * Time.deltaTime;
 				m_bossInAngleLerp = Mathf.Clamp01(m_bossInAngleLerp);
-				
+
 				if(m_bossInLerp > 0.0f)
 				{
 					// we're coming out of boss mode
@@ -1095,7 +1064,7 @@ public class GameCamera : MonoBehaviour
 			break;
 		}
 	}
-	
+
 	private void UpdateTrackAheadVector(DragonMotion machine)
 	{
 		if(machine == null)
@@ -1103,7 +1072,7 @@ public class GameCamera : MonoBehaviour
 			m_trackAheadVector = Vector3.zero;
 			return;
 		}
-		
+
 		float dt = Time.deltaTime;
 		float trackAheadRangeX = m_screenWorldBounds.w * m_maxTrackAheadScaleX;	// todo: have maxTrackAheadScale account for size of target?
 		float trackAheadRangeY = m_screenWorldBounds.h * m_maxTrackAheadScaleY;
@@ -1119,14 +1088,14 @@ public class GameCamera : MonoBehaviour
 			Util.MoveTowardsVector3XYWithDamping(ref m_trackAheadVector, ref desiredTrackAhead, trackBlendRate*dt, 1.0f);
 		//UnityEngine.Debug.Log("Ahead Vector" + m_trackAheadVector);
 	}
-	
+
 	// Zooming in and out is done by specifying the desired width of the frame, i.e. how wide is the visible frame in metres at the z=0 plane?
 	// We zoom in and out by animating Z position, but at close range we zoom in by animating FOV instead.
 	public void UpdateZooming(float desiredFrameWidth, bool bossZoom)
-	{        		        
+	{
         // deal with frame height and vertical FOV, as unity camera uses vertical FOV.
         float desiredFrameHeight = desiredFrameWidth * m_pixelAspectY;
-		
+
 		// figure out what Z distance the camera would need to be at to get the desired
 		// frame width at the default FOV
 		float fov = m_defaultFOV;
@@ -1142,7 +1111,7 @@ public class GameCamera : MonoBehaviour
 			fov = Mathf.Atan(ratio) * Mathf.Rad2Deg * 2.0f;
 			z = m_minZ;
 		}
-		
+
 		// blend final Z and FOV values.
 		// Testing doing it this way instead of blending input value (desiredFrameWidth) and snapping these values, so we
 		// avoid Z pos appearing to accelerate/decelerate in an unnatural way
@@ -1175,7 +1144,7 @@ public class GameCamera : MonoBehaviour
 		if (m_cameraShake > 0.0f)
 		{
 			m_cameraShake -= Time.deltaTime;
-			
+
 			if (m_cameraShake < 0.0f)
 				m_cameraShake = 0.0f;
 		}
@@ -1185,6 +1154,21 @@ public class GameCamera : MonoBehaviour
 	// from m_position and m_fov.
 	private void UpdateValues( Vector3 targetPosition )
 	{
+		if ( m_position.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h )
+		{
+
+			// 1.-
+			// m_position.y = DragonMotion.FlightCeiling - m_screenWorldBounds.h / 2.0f;
+
+			// 2.-
+			// float delta = 1.0f - Mathf.Clamp01((DragonMotion.FlightCeiling - m_position.y) / m_screenWorldBounds.h);
+			// m_position.y = Mathf.Lerp( m_position.y, DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f), delta);
+
+			// 3.-
+			float delta = Mathf.Clamp01( (m_position.y - (DragonMotion.FlightCeiling - m_screenWorldBounds.h)) / (m_screenWorldBounds.h) );
+			m_position.y = Mathf.Lerp( DragonMotion.FlightCeiling - m_screenWorldBounds.h , DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f) , delta);
+		}
+
 		m_transform.position = m_position;
 		if ( Time.timeScale > 0 )
 			m_transform.position += Random.insideUnitSphere * m_cameraShake;
@@ -1194,6 +1178,16 @@ public class GameCamera : MonoBehaviour
 			Vector3 targetTrackAhead = m_trackAheadVector * m_trackAheadScale;
 			Vector3 targetTrackPos =  targetPosition + targetTrackAhead;
 			targetTrackPos.z = 0;
+			if ( targetTrackPos.y > DragonMotion.FlightCeiling - m_screenWorldBounds.h )
+			{
+				// 2.-
+				// float delta = 1.0f - Mathf.Clamp01((DragonMotion.FlightCeiling - targetTrackPos.y) / m_screenWorldBounds.h);
+				// targetTrackPos.y = Mathf.Lerp( targetTrackPos.y, DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f), delta);
+
+				// 3.-
+				float delta = Mathf.Clamp01( (targetTrackPos.y - (DragonMotion.FlightCeiling - m_screenWorldBounds.h)) / (m_screenWorldBounds.h) );
+				targetTrackPos.y = Mathf.Lerp( DragonMotion.FlightCeiling - m_screenWorldBounds.h , DragonMotion.FlightCeiling - (m_screenWorldBounds.h / 2.0f) , delta);
+			}
 
 			if(m_isLerpingBetweenTargets)
 			{
@@ -1202,7 +1196,7 @@ public class GameCamera : MonoBehaviour
 			else
 			{
 				// SAFETY CATCH
-				if((m_trackAheadPos - targetTrackPos).magnitude > m_maxLerpDistance)
+				if((m_trackAheadPos - targetTrackPos).sqrMagnitude > m_maxLerpDistance * m_maxLerpDistance)
 				{
 					m_trackAheadPos = targetTrackPos;
 				}
@@ -1211,7 +1205,7 @@ public class GameCamera : MonoBehaviour
 					m_trackAheadPos = Vector3.Lerp(m_trackAheadPos, targetTrackPos, m_camDelayLerpT);
 				}
 			}
-			
+
 			Vector3 currentPos = m_position;
 			currentPos.z = m_trackAheadPos.z;
 
@@ -1233,10 +1227,10 @@ public class GameCamera : MonoBehaviour
 
             m_transform.rotation = Quaternion.Euler(rot);
 		}
-		UpdateBounds();	
-	
+		UpdateBounds();
+
 	}
-    
+
     private Ray[] m_cameraRays = new Ray[4];
     private Vector3[] m_cameraPts = new Vector3[4];
     private FastBounds2D[] m_bounds = new FastBounds2D[2];
@@ -1246,12 +1240,12 @@ public class GameCamera : MonoBehaviour
 		m_unityCamera.fieldOfView = m_fov;
 	}
 
-	void UpdateBounds() {		
+	void UpdateBounds() {
 		float z = -m_position.z;
 
 		UpdateFOV();
 
-		// Now that we tilt the camera a bit, need to modify how it gets the world bounds 		
+		// Now that we tilt the camera a bit, need to modify how it gets the world bounds
         m_cameraRays[0] = m_unityCamera.ScreenPointToRay(new Vector3(0.0f, 0.0f, z));
         m_cameraRays[1] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, 0.0f, z));
         m_cameraRays[2] = m_unityCamera.ScreenPointToRay(new Vector3(m_unityCamera.pixelWidth, m_unityCamera.pixelHeight, z));
@@ -1263,9 +1257,9 @@ public class GameCamera : MonoBehaviour
         m_bounds[0] = m_screenWorldBounds;
         m_bounds[1] = m_backgroundWorldBounds;
 
-		for (int j = 0; j < m_depth.Length; j++) {			
-			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, m_depth[j]));			
-						
+		for (int j = 0; j < m_depth.Length; j++) {
+			Plane plane = new Plane(new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, m_depth[j]));
+
 			for (int i=0; i<4; i++) {
 				Vector3? intersect = Util.RayPlaneIntersect(m_cameraRays[i], plane);
 				if(intersect != null) {
@@ -1276,7 +1270,7 @@ public class GameCamera : MonoBehaviour
                         m_bounds[j].Encapsulate(ref m_cameraPts[i]);
 				}
 			}
-			
+
 			#if DEBUG_DRAW_BOUNDS
 			DebugDraw.DrawLine(pts[0], pts[1]);
 			DebugDraw.DrawLine(pts[1], pts[2]);
@@ -1316,16 +1310,16 @@ public class GameCamera : MonoBehaviour
 		expand = m_deactivationDistance;
 		m_deactivationNear.Set( m_screenWorldBounds );
 		m_deactivationNear.ExpandBy( expand, expand );
-		m_deactivationNear.ExpandBy( -expand, -expand );  	
+		m_deactivationNear.ExpandBy( -expand, -expand );
 
 		m_deactivationFar.Set(m_deactivationNear);
 		m_deactivationFar.ApplyScale(1.5f);
 
 		m_deactivationBG.Set(m_activationMaxBG);
 		m_deactivationBG.ExpandBy( 2f, 2f );
-		m_deactivationBG.ExpandBy( -2f, -2f );  	
+		m_deactivationBG.ExpandBy( -2f, -2f );
 	}
-	
+
 	// On-screen tests.  In Hungry Dragons, these were static for performance.
 	// Going to try these non-static for now in case somehow we end up needing multiple cameras.  And when we inevitably don't, and are
 	// trying desperately to improve framerate at the end of the project, they can be put back to static.
@@ -1334,7 +1328,7 @@ public class GameCamera : MonoBehaviour
 		return m_screenWorldBounds.Contains(ref pos);
 	}
 
-	public bool IsPointOnScreen2D(ref Vector3 pos) {		
+	public bool IsPointOnScreen2D(ref Vector3 pos) {
 		return m_screenWorldBounds.Contains(pos);
 	}
 
@@ -1390,7 +1384,7 @@ public class GameCamera : MonoBehaviour
 		}
 	}
 
-	public bool IsInsideDeactivationArea(Bounds _bounds) {		
+	public bool IsInsideDeactivationArea(Bounds _bounds) {
 		if (_bounds.center.z < SpawnerManager.FAR_LAYER_Z) {
 			return !m_deactivationNear.Intersects(_bounds);
 		} else {
@@ -1398,13 +1392,13 @@ public class GameCamera : MonoBehaviour
 		}
 	}
 
-	public bool IsInsideDeactivationArea(Rect _bounds) {		
+	public bool IsInsideDeactivationArea(Rect _bounds) {
 		return !m_deactivationNear.Intersects(_bounds);
 	}
 	//
 
 	//
-	public bool IsInsideDeactivationAreaFar(Rect _bounds) {		
+	public bool IsInsideDeactivationAreaFar(Rect _bounds) {
 		return !m_deactivationFar.Intersects(_bounds);
 	}
 	//
@@ -1418,7 +1412,7 @@ public class GameCamera : MonoBehaviour
 		return !m_deactivationBG.Intersects(_bounds);
 	}
 
-	public bool IsInsideBackgroundDeactivationArea(Rect _bounds) {		
+	public bool IsInsideBackgroundDeactivationArea(Rect _bounds) {
 		return !m_deactivationBG.Intersects(_bounds);
 	}
 	//
@@ -1433,11 +1427,13 @@ public class GameCamera : MonoBehaviour
 	}
 
 	public bool IsInsideCameraFrustrum(Vector3 _p) {
+		Bounds b = new Bounds(_p, Vector3.one);
+		return GeometryUtility.TestPlanesAABB(m_frustumPlanes, b);
+		/*
 		for (int i = 0; i < m_numFrustumPlanes; ++i) {
-			if (!m_frustumPlanes[i].GetSide(_p)) return true;
+			if (m_frustumPlanes[i].GetSide(_p)) return false;
 		}
-
-		return false;
+		return true;*/
 	}
 
 	public bool IsInsideCameraFrustrum(Bounds _bounds) {
@@ -1463,7 +1459,7 @@ public class GameCamera : MonoBehaviour
 		}
 		m_hasSlowmo = active;
 	}
-		    
+
     //------------------------------------------------------------------//
     // Debug															//
     //------------------------------------------------------------------//
@@ -1553,12 +1549,24 @@ public class GameCamera : MonoBehaviour
         }
     }
 
+	private void OnPlayerRevive(DragonPlayer.ReviveReason _reason)
+	{
+		m_targetIsDead = false;
+
+	}
+
+	private void OnPlayerKo( DamageType _type, Transform _tr)
+	{
+		m_targetIsDead = true;
+		m_targetDeadPosition = m_targetTransform.position;
+	}
+
     #region debug
-    // This region is responsible for enabling/disabling the glow effect for profiling purposes. This code is placed here because GlowEffect is a third-party code so 
+    // This region is responsible for enabling/disabling the glow effect for profiling purposes. This code is placed here because GlowEffect is a third-party code so
     // we don't want to change it if it's not really necessary in order to make future updates easier
     private void Debug_Awake()
     {
-        Messenger.AddListener(MessengerEvents.CP_QUALITY_CHANGED, Debug_OnChanged);        
+        Messenger.AddListener(MessengerEvents.CP_QUALITY_CHANGED, Debug_OnChanged);
     }
 
     private void Debug_OnDestroy()
@@ -1568,7 +1576,7 @@ public class GameCamera : MonoBehaviour
 
     private void Debug_OnChanged()
     {
-        NeedsToSetupPostProcessEffects = true;        
-    }    
+        NeedsToSetupPostProcessEffects = true;
+    }
     #endregion
 }

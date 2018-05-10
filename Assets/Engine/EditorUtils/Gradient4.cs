@@ -30,12 +30,65 @@ public class Gradient4 {
 	public Color topRight = Color.white;
 	public Color bottomLeft = Color.black;
 	public Color bottomRight = Color.black;
-	
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
+	public Gradient4() {
+		// Nothing to do
+	}
+
+	/// <summary>
+	/// Copy constructor.
+	/// </summary>
+	/// <param name="_g">Source gradient.</param>
+	public Gradient4(Gradient4 _g) {
+		if(_g == null) return;
+		Set(_g);
+	}
+
+	/// <summary>
+	/// Parametrized constructor.
+	/// </summary>
+	/// <param name="_topLeft">Top left color.</param>
+	/// <param name="_topRight">Top right color.</param>
+	/// <param name="_bottomLeft">Bottom left color.</param>
+	/// <param name="_bottomRight">Bottom right color.</param>
+	public Gradient4(Color _topLeft, Color _topRight, Color _bottomLeft, Color _bottomRight) {
+		Set(_topLeft, _topRight, _bottomLeft, _bottomRight);
+	}
+
+	/// <summary>
+	/// Setter.
+	/// </summary>
+	/// <param name="_g">Source gradeitn.</param>
+	public void Set(Gradient4 _g) {
+		if(_g == null) return;
+		Set(_g.topLeft, _g.topRight, _g.bottomLeft, _g.bottomRight);
+	}
+
+	/// <summary>
+	/// Setter.
+	/// </summary>
+	/// <param name="_topLeft">Top left color.</param>
+	/// <param name="_topRight">Top right color.</param>
+	/// <param name="_bottomLeft">Bottom left color.</param>
+	/// <param name="_bottomRight">Bottom right color.</param>
+	public void Set(Color _topLeft, Color _topRight, Color _bottomLeft, Color _bottomRight) {
+		topLeft = _topLeft;
+		topRight = _topRight;
+		bottomLeft = _bottomLeft;
+		bottomRight = _bottomRight;
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// EXPERIMENTAL: Evaluate the color at a given coordinate.
+	/// Evaluate the color at a given coordinate.
 	/// </summary>
 	/// <param name="_coord">Coordinate to be evaluated (0..1).</param>
 	public Color Evaluate(Vector2 _coord) {

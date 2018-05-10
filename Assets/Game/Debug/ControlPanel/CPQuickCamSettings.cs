@@ -23,9 +23,6 @@ public class CPQuickCamSettings : MonoBehaviour
 				m_dragonFrameModifierSlider.value = m_cam.lastFrameWidthModifier;
 			}
 		}		
-
-		m_moveDamp.value = GameCamera.m_moveDamp;
-		m_lookDamp.value = GameCamera.m_lookDamp;
 	}
 
 	public void SetDefaultSize(float _size) 
@@ -40,13 +37,4 @@ public class CPQuickCamSettings : MonoBehaviour
 			m_cam.SetFrameWidthIncrement( m_cam.lastSize, _size);
 	}
 
-	public void SetMoveDamp(float _size)
-	{
-		GameCamera.m_moveDamp = _size;
-	}
-
-	public void SetLookDamp(float _size)
-	{
-		GameCamera.m_lookDamp = _size;
-	}
 }

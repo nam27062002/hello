@@ -196,11 +196,11 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		List<DefinitionNode> tierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.CURRENCY_TIERS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref tierDefs, "minimumSC", DefinitionsManager.SortType.NUMERIC);
 		tierDefs.Reverse();	// High to low
-		int selectedTier = 1;	// [1..N]
+		double coefTier = 1f;	// [1..N]
 		for(int i = 0; i < tierDefs.Count; ++i) {
 			if(_coins > tierDefs[i].GetAsLong("minimumSC")) {
 				// This is our tier!
-				selectedTier = tierDefs[i].GetAsInt("tier");
+				coefTier = tierDefs[i].GetAsDouble("tier");
 				break;
 			}
 		}
@@ -212,7 +212,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		double baseValue = constantsDef.GetAsDouble("scHCBaseValue");
 
 		// Compute conversion factor
-		double scPerPc = (coefA * (double)selectedTier + coefB) * baseValue;
+		double scPerPc = (coefA * coefTier + coefB) * baseValue;
 
 		// Apply, round and return
 		double pc = Mathf.Abs(_coins)/scPerPc;

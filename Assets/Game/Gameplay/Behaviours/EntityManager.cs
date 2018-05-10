@@ -62,6 +62,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 		m_decorations = new List<Decoration>();
         m_searchList = new List<Entity>();
         m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");        
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
     }
 
     public void RegisterEntity(Entity _entity)
@@ -211,7 +212,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             if (e != null)
             {
 				float sqrMagnitude = (position - e.behaviour.centerTarget.position).sqrMagnitude;
-				if ( sqrMagnitude <= distance * distance );	
+				if ( sqrMagnitude <= distance * distance )	
                 {
                     results[numResult] = e;
                     numResult++;
@@ -373,6 +374,21 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 			}  
         }        
     }
+
+	void OnGameEnded(){
+		if (m_entities != null){
+               m_entities.Clear();
+        }
+		if (m_entitiesBg != null){
+			m_entitiesBg.Clear();
+		}
+		if ( m_cages != null ){
+			m_cages.Clear();
+		}
+		if (m_decorations != null){
+			m_decorations.Clear();
+		}
+	}
 
     #region debug
     private bool m_entitiesVisibility = true;

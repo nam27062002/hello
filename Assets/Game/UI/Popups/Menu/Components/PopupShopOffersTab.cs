@@ -79,7 +79,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 		Clear();
 
 		// Re-create pills
-		RefreshOfferPills(true);
+		RefreshOfferPills();
 	}
 
 	/// <summary>
@@ -87,13 +87,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// Reuses existing pills and creates new ones if needed.
 	/// </summary>
 	/// <param name="_refreshManager">Force a refresh on the manager?</param>
-	private void RefreshOfferPills(bool _refreshManager) {
-		// Make sure manager is updated
-		if(_refreshManager) {
-			OffersManager.instance.Refresh();
-		}
-
-
+	private void RefreshOfferPills() {
 		// Get list of active offer packs and create a pill for each one
 		// List should already be properly sorted
 		List<OfferPack> activeOffers = OffersManager.activeOffers;
@@ -124,7 +118,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 		// Reset scroll list position
 		m_scrollList.horizontalNormalizedPosition = 0f;
 
-		//update texts
+		// Update texts
 		m_textOffersEmpty.gameObject.SetActive(activeOffers.Count == 0);
 		m_offersCount.text = OffersManager.activeOffers.Count.ToString();
 	}
@@ -137,7 +131,14 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// </summary>
 	public void OnTabShow() {
 		// Refresh pills list
-		RefreshOfferPills(true);
+		RefreshOfferPills();
+
+		// Tracking
+		for(int i = 0; i < m_pills.Count; ++i) {
+			// Skip unused pills (expired packs)
+			if(m_pills[i].def == null) continue;
+			HDTrackingManager.Instance.Notify_OfferShown(true, m_pills[i].GetIAPSku());
+		}
 	}
 
 	/// <summary>
@@ -155,7 +156,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 		if(!this.isActiveAndEnabled) return;
 
 		// Refresh pills list
-		RefreshOfferPills(false);
+		RefreshOfferPills();
 	}
 
 	/// <summary>
@@ -166,6 +167,6 @@ public class PopupShopOffersTab : IPopupShopTab {
 		if(!this.isActiveAndEnabled) return;
 
 		// Refresh pills list
-		RefreshOfferPills(false);
+		RefreshOfferPills();
 	}
 }

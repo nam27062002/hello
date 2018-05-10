@@ -85,6 +85,8 @@ public class FogManager : MonoBehaviour
 	// Runtime variables
 	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
 	List<FogArea> m_activeFogAreaList = new List<FogArea>();
+		// While in fire Fogs
+	List<FogArea> m_activeFireFogAreaList = new List<FogArea>();
 
 	float m_start;
 	float m_end;
@@ -113,6 +115,8 @@ public class FogManager : MonoBehaviour
 	bool m_updateBlitOriginTexture = false;
 	FogAttributes m_forcedAttributes = null;
 	bool m_forceUpdate = false;
+	bool m_usingFire = false;
+	bool m_wasUsingFire = false;
 
 	void Awake()
 	{
@@ -158,6 +162,7 @@ public class FogManager : MonoBehaviour
 		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 	}
 
 	void OnDestroy()
@@ -168,6 +173,7 @@ public class FogManager : MonoBehaviour
 			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 			Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 			Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
 		}
 	}
 
@@ -224,11 +230,29 @@ public class FogManager : MonoBehaviour
 			if (m_forcedAttributes == null)
 			{
 				float transitionDuration = 0;
-				if ( m_activeFogAreaList.Count > 0)
+				if ( m_usingFire && m_activeFireFogAreaList.Count > 0 )
+				{
+					FogArea selectedFogArea = m_activeFireFogAreaList.Last<FogArea>();
+					m_selectedAttributes = selectedFogArea.m_attributes;
+					if ( m_wasUsingFire )
+					{
+						transitionDuration = selectedFogArea.m_enterTransitionDuration;	
+					}else{
+						transitionDuration = 0.1f;
+					}
+					m_wasUsingFire = true;
+					m_lastSelectedArea = selectedFogArea;
+				}
+				else if ( m_activeFogAreaList.Count > 0)
 				{
 					FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
+					if ( m_wasUsingFire ){
+						transitionDuration = 0.1f;
+					}else{
+						transitionDuration = selectedFogArea.m_enterTransitionDuration;	
+					}
 					m_selectedAttributes = selectedFogArea.m_attributes;
-					transitionDuration = selectedFogArea.m_enterTransitionDuration;
+					m_wasUsingFire = false;
 					m_lastSelectedArea = selectedFogArea;
 				}
 				else
@@ -396,7 +420,14 @@ public class FogManager : MonoBehaviour
 	public void ActivateArea( FogArea _area )
 	{
 		CheckTextureAvailability( _area.m_attributes );
-		m_activeFogAreaList.Add( _area );
+		if ( _area.m_isFireFog )
+		{
+			m_activeFireFogAreaList.Add( _area );
+		}
+		else
+		{
+			m_activeFogAreaList.Add( _area );
+		}
 	}
 
 	public void CheckTextureAvailability( FogManager.FogAttributes _attributes, bool forceNew = false)
@@ -465,7 +496,14 @@ public class FogManager : MonoBehaviour
 
 	public void DeactivateArea( FogArea _area )
 	{
-		m_activeFogAreaList.Remove( _area );
+		if ( _area.m_isFireFog )
+		{
+			m_activeFireFogAreaList.Remove( _area );
+		}
+		else
+		{
+			m_activeFogAreaList.Remove( _area );	
+		}
 	}
 
 
@@ -513,5 +551,10 @@ public class FogManager : MonoBehaviour
 			m_updateBlitOriginTexture = true;
 			SetAsSelectedAttributes();
 		}
+	}
+
+	private void OnFury(bool _active, DragonBreathBehaviour.Type _type)
+	{
+		m_usingFire = _active;
 	}
 }

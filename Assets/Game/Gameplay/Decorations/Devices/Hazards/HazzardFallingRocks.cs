@@ -37,13 +37,24 @@ public class HazzardFallingRocks : MonoBehaviour {
 
 	//-----------------------------------------------------------
 	// Use this for initialization
+	private void Awake() {
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+	}
+
 	private void Start() {
 		m_enabled = false;
 		m_spawnCount = 0;
 
-		m_poolHandler = PoolManager.RequestPool(m_projectileName, "Game/Projectiles/", m_spawnData.Length);
-
 		InitTimers();
+		CreatePool();
+	}
+
+	private void OnDestroy() {
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+	}
+
+	void CreatePool() {
+		m_poolHandler = PoolManager.RequestPool(m_projectileName, "Game/Projectiles/", m_spawnData.Length);
 	}
 
 	private void InitTimers() {

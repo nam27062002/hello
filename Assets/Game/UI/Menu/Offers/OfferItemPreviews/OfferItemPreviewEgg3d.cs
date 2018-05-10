@@ -28,7 +28,6 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private MenuEggLoader m_eggLoader = null;
-	[SerializeField] private UI3DScaler m_scaler = null;
 
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
@@ -41,7 +40,7 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 		Debug.Assert(m_item.type == Metagame.RewardEgg.TYPE_CODE, "ITEM OF THE WRONG TYPE!", this);
 
 		// Initialize loader with the target egg
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.def.GetAsString("itemSku"));
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.sku);
 		if(m_def == null) {
 			m_eggLoader.Load("");
 		} else {
@@ -65,20 +64,5 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 			);
 		}
 		return LocalizationManager.SharedInstance.Localize("TID_EGG_PLURAL");	// (shouldn't happen) use generic
-	}
-
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Set this preview's parent and adjust its size to fit it.
-	/// </summary>
-	/// <param name="_t">New parent!</param>
-	public override void SetParentAndFit(Transform _t) {
-		// Let parent do its thing
-		base.SetParentAndFit(_t);
-
-		// Refresh scaler
-		m_scaler.Refresh(true, true);
 	}
 }

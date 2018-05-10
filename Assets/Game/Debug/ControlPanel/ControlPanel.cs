@@ -372,4 +372,126 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Toggle();
 		Toggle();
 	}
+
+    #region log    
+    public enum ELogChannel
+    {        
+        General,
+        Customizer,
+        GameCenter
+    };
+    
+    private static Dictionary<ELogChannel, string> sm_logChannelColors;
+    private static Dictionary<ELogChannel, string> sm_logChannelPrefix;
+
+    private static string Log_GetChannelColor(ELogChannel channel)
+    {
+        string returnValue = null;
+        if (sm_logChannelColors != null && sm_logChannelColors.ContainsKey(channel))
+        {
+            returnValue = sm_logChannelColors[channel];            
+        }
+
+        return returnValue;
+    }
+
+    private static string Log_GetChannelPrefix(ELogChannel channel)
+    {
+        if (sm_logChannelPrefix == null)
+        {
+            sm_logChannelPrefix = new Dictionary<ELogChannel, string>();
+        }
+
+        if (!sm_logChannelPrefix.ContainsKey(channel))
+        {
+            if (channel == ELogChannel.General)
+            {
+                sm_logChannelPrefix[channel] = "";
+            }
+            else
+            {
+                sm_logChannelPrefix[channel] = "[" + channel.ToString() + "] ";
+            }
+        }
+
+        return sm_logChannelPrefix[channel];
+    }
+
+    public static void Log_SetupChannel(ELogChannel channel, Color color) {
+        if (sm_logChannelColors == null) {
+            sm_logChannelColors = new Dictionary<ELogChannel, string>();
+        }
+
+        string colorAsString = Colors.ToHexString(color, "#", false);
+        if (sm_logChannelColors.ContainsKey(channel)) {
+            sm_logChannelColors[channel] = colorAsString;
+        } else {
+            sm_logChannelColors.Add(channel, colorAsString);
+        }
+    }
+
+    public static string COLOR_ERROR = Colors.ToHexString(Color.red, "#", false);
+    public static string COLOR_WARNING = Colors.ToHexString(Color.yellow, "#", false);
+
+    public static void LogError(string text, ELogChannel channel=ELogChannel.General)
+    {
+        LogToCPConsole(text, channel, COLOR_ERROR);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            text = Log_GetChannelPrefix(channel) + text;
+            Debug.LogError(text);
+        }
+    }
+
+    public static void LogWarning(string text, ELogChannel channel = ELogChannel.General)
+    {
+        LogToCPConsole(text, channel, COLOR_WARNING);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            text = Log_GetChannelPrefix(channel) + text;
+            Debug.LogWarning(text);
+        }
+    }
+
+    public static void Log(string text, ELogChannel channel=ELogChannel.General, bool logToCPConsole=true, bool logToUnityConsole=true) {        
+        if (logToCPConsole) {
+            LogToCPConsole(text, channel);
+        }
+
+        if (logToUnityConsole) {
+            LogToUnityConsole(text, channel);
+        }
+    }   
+
+    private static void LogToCPConsole(string text, ELogChannel channel = ELogChannel.General, string color=null) {
+        // It's logged to control panel console
+        if (FeatureSettingsManager.IsControlPanelEnabled) {
+            if (color == null)
+            {
+                color = Log_GetChannelColor(channel);
+            }
+
+            text = Log_GetChannelPrefix(channel) + text;
+            CPConsoleTab.Log(text, color);
+        }
+    }
+
+    private static void LogToUnityConsole(string text, ELogChannel channel=ELogChannel.General)
+    {
+        // It's logged to Unity console too
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            text = Log_GetChannelPrefix(channel) + text;
+
+#if UNITY_EDITOR
+            string color = Log_GetChannelColor(channel);
+            if (!string.IsNullOrEmpty(color))
+            {                                
+                text = "<color=" + color + ">" + text + "</color>";
+            }            
+#endif
+
+            Debug.Log(text);
+        }
+    }
+    #endregion
 }

@@ -9,6 +9,8 @@ public class MeleeWeapon : IMeleeWeapon {
 	[SerializeField] private Xft.XWeaponTrail m_trail;
 	[SerializeField] private ParticleSystem[] m_trailParticles = new ParticleSystem[0];
 
+	[SerializeField] private ViewParticleSpawner m_weaponParticle = null;
+
 	protected override void OnEnabled() { 
 		if (m_trail) m_trail.Activate();
 		for (int i = 0; i < m_trailParticles.Length; i++) {
@@ -19,6 +21,7 @@ public class MeleeWeapon : IMeleeWeapon {
 				m_trailParticles[i].Play();
 			}
 		}
+		if (m_weaponParticle != null) m_weaponParticle.Spawn();
 	}
 
 	protected override void OnDisabled() { 
@@ -32,6 +35,7 @@ public class MeleeWeapon : IMeleeWeapon {
 				}
 			}
 		}
+		if (m_weaponParticle != null) m_weaponParticle.Stop();
 	}
 
 	protected override void OnDealDamage() {

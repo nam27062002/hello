@@ -103,10 +103,13 @@ public class MapScroller : MonoBehaviour {
 		AdjustCameraViewportToRectTransform adjuster = m_camera.ForceGetComponent<AdjustCameraViewportToRectTransform>();
 		adjuster.targetCamera = m_camera;
 		adjuster.targetRectTransform = m_scrollRect.viewport;
+		adjuster.Update();	// Force a first update!
 
 		// Set initial zoom or keep zoom level between openings?
 		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, false)) {
 			SetZoom(m_initialZoom); 
+		} else {
+			RefreshScrollSize();
 		}
 
 		// Move camera to current dragon's position or keep scroll position between openings?
@@ -119,20 +122,6 @@ public class MapScroller : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<float>(MessengerEvents.UI_MAP_CENTER_TO_DRAGON, OnCenterToDragon);
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		// Set initial zoom
-		SetZoom(m_initialZoom);
-
-		// Refresh sizes
-		RefreshScrollSize();
-
-		// Move camera to current dragon's position
-		ScrollToPlayer();
 	}
 
 	/// <summary>
@@ -161,6 +150,10 @@ public class MapScroller : MonoBehaviour {
 		bool zoomChanged = UpdateZoom();
 		if(!zoomChanged) {
 			UpdateCameraPosition();
+		}
+
+		if(Input.GetKeyDown(KeyCode.Z)) {
+			RefreshScrollSize();
 		}
 	}
 
@@ -516,6 +509,21 @@ public class MapScroller : MonoBehaviour {
 		m_popupAnimating = false;
 		m_popupCount = 0;
 		EnableCamera(this.isActiveAndEnabled);
+
+		// Make sure camera viewport is properly set
+		m_camera.GetComponentInChildren<AdjustCameraViewportToRectTransform>().Update();
+
+		// Set initial zoom or keep zoom level between openings?
+		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, false)) {
+			SetZoom(m_initialZoom); 
+		} else {
+			RefreshScrollSize();
+		}
+
+		// Move camera to current dragon's position or keep scroll position between openings?
+		if(Prefs.GetBoolPlayer(DebugSettings.MAP_POSITION_RESET, true)) {
+			ScrollToPlayer();
+		}
 
 		// Subscribe to other popups opening
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);

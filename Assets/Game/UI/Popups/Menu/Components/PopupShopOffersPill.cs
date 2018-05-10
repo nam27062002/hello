@@ -41,6 +41,10 @@ public class PopupShopOffersPill : IPopupShopPill {
 	[SerializeField] private Text m_priceText = null;
 	[SerializeField] private TextMeshProUGUI m_previousPriceText = null;
 	[SerializeField] private GameObject m_featuredHighlight = null;
+	[Separator("Optional Decorations")]
+	[SerializeField] private UIGradient m_backgroundGradient = null;
+	[SerializeField] private UIGradient m_frameGradientLeft = null;
+	[SerializeField] private UIGradient m_frameGradientRight = null;
 
 	// Public
 	private OfferPack m_pack = null;
@@ -73,8 +77,8 @@ public class PopupShopOffersPill : IPopupShopPill {
 		m_pack = _pack;
 		m_def = null;
 
-		// If null, or pack can't be displayed, hide this pill and return
-		if(m_pack == null || !m_pack.CanBeDisplayed()) {
+		// If null, or pack is not a ctive, hide this pill and return
+		if(m_pack == null || !m_pack.isActive) {
 			this.gameObject.SetActive(false);
 			return;
 		}
@@ -96,7 +100,12 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 		// Compute price before applying the discount
 		float discount = m_pack.def.GetAsFloat("discount");
+		discount = Mathf.Clamp(discount, 0.01f, 0.99f);	// [AOC] Just to be sure input discount is valid
 		m_previousPrice = m_price/(1f - discount);
+
+		// [AOC] Beautify original price so it's more credible
+		// 		 Put the same decimal part as the actual price
+		m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
 
 		// Init visuals
 		OfferColorGradient gradientSetup = OfferItemPrefabs.GetGradient(discount);
@@ -125,19 +134,35 @@ public class PopupShopOffersPill : IPopupShopPill {
 		//		 localized price (given by the store), but replacing the actual amount.
 		// $150 150€ 150 €
 		// [AOC] TODO!! Let's just put the formatted number for now
-		m_previousPriceText.text = StringUtils.FormatNumber(m_previousPrice, 0);
+		m_previousPriceText.text = StringUtils.FormatNumber(m_previousPrice, 2);
 
 		// Featured highlight
 		m_featuredHighlight.SetActive(m_pack.featured);
 
 		// Items
 		for(int i = 0; i < m_itemSlots.Length; ++i) {
+			// Skip if no slot (i.e. single item layouts)
+			if(m_itemSlots[i] == null) continue;
+
 			// If there are not enough item, hide the slot!
 			if(i >= m_pack.items.Count) {
 				m_itemSlots[i].InitFromItem(null);
 			} else {
 				m_itemSlots[i].InitFromItem(m_pack.items[i]);
 			}
+		}
+
+		// Optional decorations
+		if(m_backgroundGradient != null) {
+			m_backgroundGradient.gradient.Set(gradientSetup.pillBackgroundGradient);
+		}
+
+		if(m_frameGradientLeft != null) {
+			m_frameGradientLeft.gradient.Set(gradientSetup.pillFrameGradient);
+		}
+
+		if(m_frameGradientRight != null) {
+			m_frameGradientRight.gradient.Set(gradientSetup.pillFrameGradient);
 		}
 	}
 
@@ -150,19 +175,19 @@ public class PopupShopOffersPill : IPopupShopPill {
 		if(m_pack == null) return;
 		if(!m_pack.isTimed) return;
 
-		// Update text
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-		m_remainingTimeText.Localize(
-			m_remainingTimeText.tid, 
-			TimeUtils.FormatTime(
-				System.Math.Max(0, (m_pack.endDate - serverTime).TotalSeconds), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
-				4
-			)
-		);
-
+		// If pack is active, update text
+		if(m_pack.isActive) {
+			m_remainingTimeText.Localize(
+				m_remainingTimeText.tid, 
+				TimeUtils.FormatTime(
+					System.Math.Max(0, m_pack.remainingTime.TotalSeconds), // Just in case, never go negative
+					TimeUtils.EFormat.ABBREVIATIONS,
+					4
+				)
+			);
+		
 		// If pack has expired, hide this pill
-		if(!m_pack.CheckTimers()) {
+		} else {
 			InitFromOfferPack(null);	// This will do it
 		}
 	}
@@ -174,7 +199,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Obtain the IAP sku as defined in the App Stores.
 	/// </summary>
 	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-	override protected string GetIAPSku() {
+	override public string GetIAPSku() {
 		// Only for REAL money packs
 		if(m_currency != UserProfile.Currency.REAL) return string.Empty;
 		return m_def.GetAsString("iapSku");
@@ -194,13 +219,10 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// </summary>
 	override protected void ApplyShopPack() {
 		// The pack will push all rewards to the reward stack
-		m_pack.Apply();
-
-		// Save persistence
-		PersistenceFacade.instance.Save_Request(true);
+		m_pack.Apply();	// This already saves persistence
 
 		// Close all open popups
-		PopupManager.Clear();
+		PopupManager.Clear(true);
 
 		// Move to the rewards screen
 		PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();

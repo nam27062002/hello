@@ -12,12 +12,12 @@ public class ArmorVulnerableArea : MonoBehaviour {
 
 	void Start() {
 		m_machine = m_machineRoot.GetComponent<IArmored>();
-		m_hitParticle.CreatePool();
 	}
 
 	// Use this for initialization
 	void OnEnable () {
 		m_timer = 0f;
+		m_hitParticle.CreatePool();
 	}
 	
 	// Update is called once per frame

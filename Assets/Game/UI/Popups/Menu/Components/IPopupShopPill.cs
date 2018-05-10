@@ -54,7 +54,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// Obtain the IAP sku as defined in the App Stores.
 	/// </summary>
 	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-	protected abstract string GetIAPSku();
+	public abstract string GetIAPSku();
 	
 	/// <summary>
 	/// Get the tracking id for transactions performed by this shop pill

@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// This class is responsible for offering the interface for all stuff related to server. This interface satisfies the requirements of the code taken from HSX in order to make the integration
 /// easier. This class also hides its implementation, so we could have different implementations for this class and we could decide in the implementation of the method <c>SharedInstance</c> 
 /// which one to use. 
@@ -132,25 +132,36 @@ public class GameServerManager
     /// 
     /// </summary>
     public void CheckConnection(Action<Error> callback)
-	{        
-       if (Application.internetReachability == NetworkReachability.NotReachable)
+	{
+        InternalCheckConnection(callback, false);
+    }
+
+    protected void InternalCheckConnection(Action<Error> callback, bool highPriority = false)
+    {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             Debug.Log("GameServerManager (CheckConnection) :: InternetReachability NotReachable");
             callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
         }
         else
         {
-            Ping((Error _error, GameServerManager.ServerResponse _response) =>
+            InternalPing((Error _error, GameServerManager.ServerResponse _response) =>
             {
                 if (callback != null)
                 {
                     callback(_error);
                 }
-            });           
-        }        
-	}
+            }, highPriority);
+        }
+    }
 
-	public virtual void OnConnectionLost() {}
+	public void OnConnectionLost()
+    {
+        InternalOnConnectionLost();
+        HDCustomizerManager.instance.NotifyServerDown();
+    }
+
+    protected virtual void InternalOnConnectionLost() {}
 
     public virtual void Connection_SetIsCheckEnabled(bool value) {}
 
@@ -158,17 +169,18 @@ public class GameServerManager
     // GENERIC SERVER MANAGEMENT											  //
     //------------------------------------------------------------------------//
     protected virtual void ExtendedConfigure() {}    
-	public virtual void Ping(ServerCallback callback) {}
+	public void Ping(ServerCallback callback)
+    {
+        InternalPing(callback, false);
+    }
+
+    protected virtual void InternalPing(ServerCallback callback, bool highPriority=false) { }
+  
 	public virtual void SendLog(string message, string stackTrace, UnityEngine.LogType logType) {}
 
 	//------------------------------------------------------------------------//
 	// SERVER TIME															  //
 	//------------------------------------------------------------------------//
-	// Cache values and update at most once per tick
-	private long m_lastServerTimeCheckTick = -1;
-	private long m_lastKnownServerTimeAsLong = 0;
-	private DateTime m_lastKnownServerTime = new DateTime();
-
 	/// <summary>
 	/// Get the current timestamp directly from the server.
 	/// </summary>
@@ -181,8 +193,9 @@ public class GameServerManager
 	/// </summary>
 	/// <returns>The estimated server time.</returns>
 	public DateTime GetEstimatedServerTime() {
-		UpdateServerTime();
-		return m_lastKnownServerTime;
+        // Calety already manages this, just convert it to a nice DateTime object.		
+        long timestamp = GetEstimatedServerTimeAsLong();
+        return TimeUtils.TimestampToDate( timestamp );
 	}
 
     /// <summary>
@@ -190,25 +203,9 @@ public class GameServerManager
     /// </summary>
     /// <returns>The estimated server time in milliseconds</returns>
     public long GetEstimatedServerTimeAsLong() {
-		UpdateServerTime();
-		return m_lastKnownServerTimeAsLong;
+        double unixTimestamp = ServerManager.SharedInstance.GetServerTime();    // Seconds since 1970
+        return (long)unixTimestamp * 1000;
     }
-
-	private void UpdateServerTime() {
-		// Is an update required?
-		if(Time.frameCount > m_lastServerTimeCheckTick) {
-			// Yes! Do it
-			// Update long timestamp
-			double unixTimestamp = ServerManager.SharedInstance.GetServerTime();	// Seconds since 1970
-			m_lastKnownServerTimeAsLong = (long)unixTimestamp * 1000;	// Millis since 1970
-
-			// Update DateTime object
-			m_lastKnownServerTime = TimeUtils.TimestampToDate(m_lastKnownServerTimeAsLong);
-
-			// Reset flag
-			m_lastServerTimeCheckTick = Time.frameCount;
-		}
-	}
 
     public virtual void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response) {}
     public virtual void OnGameActionFailed(string cmd, int errorCode) {}
@@ -221,8 +218,13 @@ public class GameServerManager
     //------------------------------------------------------------------------//
     // LOGIN																  //
     //------------------------------------------------------------------------//
-    public virtual void Auth(ServerCallback callback) {}        
-	public virtual void LogOut() {}
+    public void Auth(ServerCallback callback)
+    {
+        InternalAuth(callback, false);
+    }
+
+    protected virtual void InternalAuth(ServerCallback callback, bool highPriority=false) { }
+    public virtual void LogOut() {}
     public virtual bool IsLoggedIn() { return false; }
     public virtual void OnLogOut() {}    
 

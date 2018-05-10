@@ -5,19 +5,18 @@ using UnityEngine;
 public class ParticleDataPlace : MonoBehaviour {
 
 	public ParticleData m_particle;
-	private ParticleHandler m_handler;
 	private GameObject m_particleInstance = null;
 
-	void Start()
+	public void Init()
 	{
-		m_handler = ParticleManager.CreatePool(m_particle);
+		m_particle.CreatePool();
 	}
 
 	public void ShowParticle()
 	{
 		if ( m_particleInstance == null )
 		{
-			m_particleInstance = m_handler.Spawn(m_particle);
+			m_particleInstance = m_particle.Spawn();
 			if (m_particleInstance != null) {
 				// As children of ourselves
 				// Particle system should already be created to match the zero position
@@ -33,7 +32,7 @@ public class ParticleDataPlace : MonoBehaviour {
 	{
 		if ( m_particleInstance != null )
 		{
-			m_handler.ReturnInstance(m_particleInstance.gameObject);
+			m_particle.ReturnInstance(m_particleInstance.gameObject);
 			m_particleInstance = null;
 		}
 	}

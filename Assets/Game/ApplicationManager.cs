@@ -151,10 +151,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Log("OnHandleLog logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());    
-            }   
+                Log("OnHandleLog logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());
+            }
 
-            HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
+            // Commented out to prevent an exception thrown every frame to be notified. This should be implemented correctly by using the support implemented in Calety v1.4
+            // HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
         }
     }
 
@@ -288,11 +289,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         PersistenceFacade.instance.Update();
         HDTrackingManager.Instance.Update();
-        HDCustomizerManager.instance.Update();  
-
-		#if UNITY_EDITOR
+        HDCustomizerManager.instance.Update();        
 		GameServerManager.SharedInstance.Update();
-		#endif
 
         if (NeedsToRestartFlow)
         {
@@ -446,7 +444,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
             */            
         }        
-    }    
+    }        
 
     #region game
     private bool Game_IsInGame { get; set; }
@@ -466,6 +464,32 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Game_OnPaused(bool value)
     {
         Game_IsPaused = value;
+    }
+
+    /// <summary>
+    /// Checks whether or not the customizer needs to reload rules and if so the cached data are reloaded.
+    /// </summary>
+    /// <returns><c>true</c> if the customizer had changes pending to be applied.</returns>
+    public bool Game_ApplyCustomizer()
+    {
+        bool rulesReloaded = HDCustomizerManager.instance.Apply();
+
+        // If rules have been reloaded then cached data have to be updated
+        if (rulesReloaded)
+        {
+            Game_OnRulesUpdated();
+        }
+
+        return rulesReloaded;
+    }
+
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    private void Game_OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions();
     }
     #endregion
 
@@ -614,7 +638,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         public override void onAuthenticationFinished()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationFinished");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onAuthenticationFinished", ControlPanel.ELogChannel.GameCenter);
+            }            
 
 #if UNITY_ANDROID
 			// On android if player login we make sure it will try at start again
@@ -628,13 +655,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         public override void onAuthenticationFailed()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationFailed");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onAuthenticationFailed", ControlPanel.ELogChannel.GameCenter);
+            }
+             
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED);
         }
 
         public override void onAuthenticationCancelled()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationCancelled");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onAuthenticationCancelled", ControlPanel.ELogChannel.GameCenter);
+            }
+
 #if UNITY_ANDROID
 			// On android if player cancells the authentication we will not ask again
 			CacheServerManager.SharedInstance.SetVariable(GC_ON_START_KEY, "false" , false);
@@ -644,36 +679,53 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         public override void onUnauthenticated()
         {
-            Debug.Log("GameCenterDelegate onUnauthenticated");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onUnauthenticated", ControlPanel.ELogChannel.GameCenter);
+            }
+
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onGetToken(JSONNode kTokenDataJSON)
         {
-            Debug.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() + 
-                " userID = " + GameCenterManager.SharedInstance.GetUserId() + 
-                " userName = " + GameCenterManager.SharedInstance.GetUserName());
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onGetToken: " + kTokenDataJSON.ToString() +
+                " userID = " + GameCenterManager.SharedInstance.GetUserId() +
+                " userName = " + GameCenterManager.SharedInstance.GetUserName(), 
+                ControlPanel.ELogChannel.GameCenter);
+            }
         }
 
         public override void onNotAuthenticatedException()
         {
-            Debug.Log("GameCenterDelegate onNotAuthenticatedException");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onNotAuthenticatedException", ControlPanel.ELogChannel.GameCenter);
+            }
         }
 
         public override void onGetAchievementsInfo(Dictionary<string, GameCenterManager.GameCenterAchievement> kAchievementsInfo)
         {
-            Debug.Log("GameCenterListener: onGetAchievementsInfo");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onGetAchievementsInfo", ControlPanel.ELogChannel.GameCenter);
+            }
 
             foreach (KeyValuePair<string, GameCenterManager.GameCenterAchievement> kEntry in kAchievementsInfo)
             {
                 GameCenterManager.GameCenterAchievement kAchievement = (GameCenterManager.GameCenterAchievement)kEntry.Value;
 
-                Debug.Log("-----------------------------------------\nachievement: " + kEntry.Key + "\ndesc: " + kAchievement.m_strDescription + "\npercent: " + kAchievement.m_fPercentComplete + "\nunlocked: " + kAchievement.m_iIsUnlocked + "\ncurrent: " + kAchievement.m_iCurrentAmount + "\namount: " + kAchievement.m_iTotalAmount);
+                ControlPanel.Log("-----------------------------------------\nachievement: " + kEntry.Key + "\ndesc: " + kAchievement.m_strDescription + "\npercent: " + kAchievement.m_fPercentComplete + "\nunlocked: " + kAchievement.m_iIsUnlocked + "\ncurrent: " + kAchievement.m_iCurrentAmount + "\namount: " + kAchievement.m_iTotalAmount, ControlPanel.ELogChannel.GameCenter);
             }
         }
         public override void onGetLeaderboardScore(string strLeaderboardSKU, int iScore, int iRank)
         {
-            Debug.Log("GameCenterListener: onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank);
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank, ControlPanel.ELogChannel.GameCenter);
+            }
         }
     }
     private GameCenterListener m_gameCenterListener = null;
@@ -695,11 +747,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				kAchievementsData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
 				if (kEntry.Value.Has ("amount"))
 				{
-#if UNITY_IOS
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);
-#elif UNITY_ANDROID
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount");
-#endif				
+					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);			
 				}
 				else
 				{

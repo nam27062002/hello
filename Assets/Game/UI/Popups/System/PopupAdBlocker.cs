@@ -41,7 +41,11 @@ public class PopupAdBlocker : MonoBehaviour {
 	private bool m_adPending = false;
 
 	public static bool m_sBlocking = false;
+	private bool m_forcedCancel = false;
 
+	public GameObject m_panel;
+	public GameObject m_cancelButton;
+	private bool m_adSuccess = false;
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -93,6 +97,9 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// <param name="_adPurpose">Purpose of the ad.</param>
 	/// <param name="_onAdFinishedCallback">Callback to be invoked when Ad has finished.</param>
 	private void Init(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
+		m_panel.SetActive(true);
+		m_cancelButton.SetActive(false);
+
 		// Mark as pending
 		m_adPending = true;
 
@@ -133,6 +140,7 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// </summary>
 	/// <param name="_success">Has the ad been played?</param>
 	private void OnAdResult(bool _success) {
+		m_adSuccess = _success;
 		StartCoroutine(RealOnAdResult(_success));
 	}
 
@@ -144,20 +152,23 @@ public class PopupAdBlocker : MonoBehaviour {
 			yield return null;
 		}
 
-		// Close popup
-		controller.Close(true);
+		float delayClose = 0;
 
 		// If the ad couldn't be displayed, show message
-		if(!_success) {
-			UIFeedbackText.CreateAndLaunch(
+		if(!_success && !m_forcedCancel) {
+			UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"),
 				Vector2.one * 0.5f,
 				PopupManager.canvas.transform as RectTransform
 			);
+			delayClose = feedbackText.duration;
 		}
+		m_panel.SetActive(false);
+		yield return new WaitForSecondsRealtime( delayClose );
 
-		// Broadcast result
-		OnAdFinished.Invoke(_success);
+		// Close popup
+		controller.Close(true);
+		m_forcedCancel = false;
 	}
 
 	/// <summary>
@@ -170,12 +181,37 @@ public class PopupAdBlocker : MonoBehaviour {
 		}
 	}
 
+	public void OnOpenPostAnimation(){
+		m_cancelButton.SetActive( true );
+	}
+
+	public void OnClosePreAnimation(){
+		m_cancelButton.SetActive( false );
+	}
+
 	/// <summary>
 	/// Popup has just been closed.
 	/// </summary>
 	public void OnClosePostAnimation() {
+		// Broadcast result
+		OnAdFinished.Invoke(m_adSuccess);
+
 		// Remove all listeners
 		OnAdFinished.RemoveAllListeners();
 		m_sBlocking = false;
+	}
+
+
+	public void OnForceCancel()
+	{
+		m_forcedCancel = true;
+		if (GameAds.instance.IsWaitingToPlayAnAd())
+		{
+			GameAds.instance.StopWaitingToPlayAnAd();
+		}
+		else
+		{
+			OnAdResult(false);
+		}
 	}
 }

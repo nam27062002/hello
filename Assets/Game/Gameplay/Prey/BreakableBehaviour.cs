@@ -37,14 +37,23 @@ public class BreakableBehaviour : MonoBehaviour
 	{
 		if (m_view == null)
 			m_view = transform.Find("view");
+
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
 	}
 
-	void Start() {		
+	void OnDestroy() {
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+	}
+
+	void CreatePool() {
 		m_onBreakParticle.CreatePool();
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
-			
+	}
+
+	void Start() {		
+		CreatePool();			
 		m_initialViewPos = m_view.localPosition;
 	}
 

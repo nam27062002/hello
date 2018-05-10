@@ -74,6 +74,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public string m_onDeadSound = "hd_dragon_dead";
 	public string m_onCorpseSound = "hd_dragon_dead";
 	public string m_onReviveSound = "hd_dragon_revive";
+	public string m_onPreMegaFire = "";
 
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
@@ -83,6 +84,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
@@ -114,6 +116,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 			Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
+			Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
 		}
 	}
 
@@ -168,6 +171,17 @@ public class DragonAnimationEvents : MonoBehaviour {
 	void OnRevive(DragonPlayer.ReviveReason reason)
 	{
 		PlaySound( m_onReviveSound );
+	}
+
+	void OnPrewarmFuryRush( DragonBreathBehaviour.Type _type, float duration )
+	{
+		switch( _type )
+		{
+			case DragonBreathBehaviour.Type.Mega:
+			{
+				PlaySound( m_onPreMegaFire );
+			}break;
+		}
 	}
 
 	public void OnAttackEvent() {

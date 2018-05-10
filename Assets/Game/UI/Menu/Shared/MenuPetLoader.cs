@@ -99,6 +99,8 @@ public class MenuPetLoader : MonoBehaviour {
 		}
 	}
 
+	private Camera m_uiCamera;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -106,6 +108,10 @@ public class MenuPetLoader : MonoBehaviour {
 	/// Initialiation.
 	/// </summary>
 	private void Awake() {
+		Canvas c = GetComponentInParent<Canvas>();
+		if (c)
+			m_uiCamera = c.worldCamera;
+
 		// Try to find out already instantiated previews of the pet
 		MenuPetPreview preview = this.GetComponentInChildren<MenuPetPreview>();
 		if(preview != null) {
@@ -182,6 +188,14 @@ public class MenuPetLoader : MonoBehaviour {
 				MenuPetPreview petPreview = m_petInstance.GetComponent<MenuPetPreview>();
 				petPreview.sku = _sku;
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
+
+				// Some pets need look at at the ui camera instead of main camera (3D)
+				if (m_uiCamera != null){
+					LookAtMainCamera[] lookAt = m_petInstance.GetComponentsInChildren<LookAtMainCamera>();
+					for (int x = 0; x < lookAt.Length ; x++) {
+						lookAt[x].overrideCamera = m_uiCamera;
+					}
+				}
 
 				// Show rarity glow if required
 				petPreview.ToggleRarityGlow(m_showRarityGlow);

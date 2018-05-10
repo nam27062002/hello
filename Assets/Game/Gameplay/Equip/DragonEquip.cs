@@ -90,18 +90,17 @@ public class DragonEquip : MonoBehaviour {
 			if (renderers != null) {
 				for (int i = 0; i < renderers.Length; i++) {
 					Renderer renderer = renderers[i];
-					Material material;
-					if ( Application.isPlaying )
+					if ( renderer.tag == "DragonBody" || renderer.tag == "DragonWings" )
 					{
-						material = renderer.material;
-					}else{
-						material = renderer.sharedMaterial;	
-					}
+						Material material;
+						if ( Application.isPlaying )
+						{
+							material = renderer.material;
+						}else{
+							material = renderer.sharedMaterial;	
+						}
 
-					if ( material != null )
-					{
-						string name = material.shader.name;
-						if ( name.Contains("Dragon standard") )
+						if ( material != null )
 						{
 							m_renderers.Add( renderer );
 							// Stores the materials of this renderer in a dictionary for direct access//
@@ -270,6 +269,18 @@ public class DragonEquip : MonoBehaviour {
 			}
 		}
 
+		// Patch to allow balrog rainbow disguise to change the trails effect
+		if ( !m_menuMode )
+		{
+			// Try to modify particles
+			string trails = def.Get("trails");
+			if ( !string.IsNullOrEmpty(trails) )
+			{
+				DragonParticleController particleController = GetComponentInChildren<DragonParticleController>();
+				particleController.m_trailsParticle.name = trails;
+			}
+		}
+
 		/*
 		// THIS IS JUST A TEST! - DO NOT DELETE FOR THE MOMMENT
 		Transform view = transform.FindChild("view");
@@ -428,30 +439,29 @@ public class DragonEquip : MonoBehaviour {
 		}
 
 		for (int i = 0; i < m_renderers.Count; i++) {
-			int id = m_renderers[i].GetInstanceID();
-			List<Material> materials = m_materials[id];
-			int count = materials.Count;
-			for (int m = 0; m < count; m++) {
-				string shaderName = materials[m].shader.name;
-                if (shaderName.Contains("Dragon standard"))
-                {
+			if ( m_renderers[i].tag == "DragonBody" || m_renderers[i].tag == "DragonWings" )
+			{
+				bool isWings = m_renderers[i].tag == "DragonWings";
+				int id = m_renderers[i].GetInstanceID();
+				List<Material> materials = m_materials[id];
+				int count = materials.Count;
+				for (int m = 0; m < count; m++) 
+				{
                     if (lockEffect)
                     {
                         materials[m].SetOverrideTag("Lock", "");
                     }
-
-                    string tag = materials[m].GetTag("RenderType", false);
-                    if (tag.Contains("TransparentCutout"))
+                    if (isWings)
                     {
                         materials[m] = m_wingsMaterial;
                     }
-                    else if (tag.Contains("Opaque"))
+                    else
                     {
                         materials[m] = m_bodyMaterial;
                     }
-                }
+				}
+				m_renderers[i].materials = materials.ToArray();
 			}
-			m_renderers[i].materials = materials.ToArray();
 		}
 	}
 
@@ -562,10 +572,6 @@ public class DragonEquip : MonoBehaviour {
 				MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();
 				petPreview.sku = _petSku;
 				petPreview.SetAnim(MenuPetPreview.Anim.IN);
-
-				// Show rarity glow only on Pets menu
-				if (InstanceManager.menuSceneController != null)
-					petPreview.ToggleRarityGlow((InstanceManager.menuSceneController.transitionManager.currentScreen == MenuScreen.PETS));
 			} else {
 				// In game mode, adjust to dragon's scale factor
 				DragonPlayer player = GetComponent<DragonPlayer>();

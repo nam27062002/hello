@@ -29,6 +29,7 @@ public class PopupFeaturedOffer : MonoBehaviour {
 	// Exposed
 	[SerializeField] private PopupShopOffersPill m_basicLayoutPill = null;
 	[SerializeField] private PopupShopOffersPill m_featuredLayoutPill = null;
+	[SerializeField] private PopupShopOffersPill m_singleItemLayoutPill = null;
 
 	// Internal
 	private OfferPack m_pack = null;
@@ -44,6 +45,7 @@ public class PopupFeaturedOffer : MonoBehaviour {
 		// Subscribe to external events
 		m_basicLayoutPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
 		m_featuredLayoutPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
+		m_singleItemLayoutPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
 	}
 
 	/// <summary>
@@ -58,8 +60,9 @@ public class PopupFeaturedOffer : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		m_basicLayoutPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
-		m_featuredLayoutPill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
+		m_basicLayoutPill.OnPurchaseSuccess.RemoveListener(OnPurchaseSuccessful);
+		m_featuredLayoutPill.OnPurchaseSuccess.RemoveListener(OnPurchaseSuccessful);
+		m_singleItemLayoutPill.OnPurchaseSuccess.RemoveListener(OnPurchaseSuccessful);
 	}
 
 	//------------------------------------------------------------------------//
@@ -76,13 +79,23 @@ public class PopupFeaturedOffer : MonoBehaviour {
 		// Clear both pills
 		m_basicLayoutPill.InitFromOfferPack(null);
 		m_featuredLayoutPill.InitFromOfferPack(null);
+		m_singleItemLayoutPill.InitFromOfferPack(null);
+
+		// Don't do anything else if pack is null (shouldn't happen though :s)
+		if(m_pack == null) return;
 
 		// Select target layout, based on whether the pack has a featured item or not
 		m_activePill = m_basicLayoutPill;
-		for(int i = 0; i < m_pack.items.Count; ++i) {
-			if(m_pack.items[i].def.GetAsBool("featured", false)) {
-				m_activePill = m_featuredLayoutPill;
-				break;
+		if(m_pack.items.Count == 1) {
+			// Single item layout
+			m_activePill = m_singleItemLayoutPill;
+		} else {
+			// Featured layout?
+			for(int i = 0; i < m_pack.items.Count; ++i) {
+				if(m_pack.items[i].featured) {
+					m_activePill = m_featuredLayoutPill;
+					break;
+				}
 			}
 		}
 
@@ -101,7 +114,7 @@ public class PopupFeaturedOffer : MonoBehaviour {
 		if(m_activePill != null) m_activePill.RefreshTimer();
 
 		// If invalid pack or pack has expired, close popup
-		if(m_pack == null || !m_pack.CheckTimers()) {
+		if(m_pack == null || !m_pack.isActive) {
 			GetComponent<PopupController>().Close(true);
 		}
 	}

@@ -277,6 +277,74 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				pc.handler.Invalidate();
 			}
 		}
+		m_pools.Clear();
 		m_iterator.Clear();
 	}
+
+	#region utils
+	/// <summary>
+	/// Inits the leveled particle. Search a particle with name "particle" from Particles levels to very low and, if found, instantiated it and sets _anchor as parent
+	/// </summary>
+	/// <returns>The leveled particle.</returns>
+	/// <param name="particle">Particle.</param>
+	/// <param name="_anchor">Anchor.</param>
+	public static ParticleSystem InitLeveledParticle( string particle, Transform _anchor)
+	{
+		ParticleSystem ret = null;
+		for(  	FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
+				level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
+				level = level - 1
+				)
+		{
+			string path = "";
+			switch(level) {
+					//	path = "Particles/VeryLow/";
+					// break;
+				case FeatureSettings.ELevel5Values.very_low:
+				case FeatureSettings.ELevel5Values.low:
+						path = "Particles/Low/";
+					break;
+				case FeatureSettings.ELevel5Values.mid:
+						path = "Particles/Master/";
+					break;
+				case FeatureSettings.ELevel5Values.high:
+						path = "Particles/High/";
+					break;
+				case FeatureSettings.ELevel5Values.very_high:
+						path = "Particles/VeryHigh/";
+					break;
+			}
+			if ( !string.IsNullOrEmpty(path) )
+			{
+				GameObject go = Resources.Load<GameObject>( path + particle );
+				if ( go != null )
+				{
+					 ret = InitParticle( go,  _anchor);
+				}
+			}
+		}
+		return ret;
+	}
+
+	/// <summary>
+	/// Inits the particle. Instantiates _prefa, stops particle and sets _anchor as parent
+	/// </summary>
+	/// <returns>The particle.</returns>
+	/// <param name="_prefab">Prefab.</param>
+	/// <param name="_anchor">Anchor.</param>
+	public static ParticleSystem InitParticle(GameObject _prefab, Transform _anchor)
+	{
+		if(_prefab == null) return null;
+
+		GameObject go = Instantiate(_prefab);
+		ParticleSystem psInstance = go.GetComponent<ParticleSystem>();
+		if(psInstance != null) {
+			psInstance.transform.SetParentAndReset(_anchor);
+			psInstance.Stop();
+			go.SetActive(false);
+		}
+		return psInstance;
+	}
+	#endregion
+
 }
