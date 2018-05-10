@@ -86,11 +86,13 @@ public class MissionPill : MonoBehaviour {
 	/// Default destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
-		Messenger.RemoveListener<Mission, Mission.State, Mission.State>(MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
-		if(FeatureSettingsManager.IsControlPanelEnabled) {
-			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+		if (ApplicationManager.IsAlive) {
+			// Unsubscribe from external events
+			Messenger.RemoveListener<Mission> (MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
+			Messenger.RemoveListener<Mission, Mission.State, Mission.State> (MessengerEvents.MISSION_STATE_CHANGED, OnMissionStateChanged);
+			if (FeatureSettingsManager.IsControlPanelEnabled) {
+				Messenger.RemoveListener (MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
+			}
 		}
 	}
 
@@ -170,7 +172,7 @@ public class MissionPill : MonoBehaviour {
 		bool show = !m_mission.objective.singleRun || m_showProgressForSingleRunMissions;
 		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
 		if(show) {
-			m_activeObj.FindComponentRecursive<Localizer>("ProgressText").Localize("TID_FRACTION", m_mission.objective.GetCurrentValueFormatted(), m_mission.objective.GetTargetValueFormatted());
+			m_activeObj.FindComponentRecursive<TextMeshProUGUI>("ProgressText").text = m_mission.objective.GetProgressString();
 			m_activeObj.FindComponentRecursive<Slider>("ProgressBar").value = m_mission.objective.progress;
 		}
 
@@ -309,7 +311,7 @@ public class MissionPill : MonoBehaviour {
 	private void RefreshCooldownTimers() {
 		// Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
 		// Cooldown remaining time
-		if(m_cooldownText != null) m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+		if(m_cooldownText != null) m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
 
 		// Cooldown bar
 		if(m_cooldownBar != null) m_cooldownBar.normalizedValue = m_mission.cooldownProgress;

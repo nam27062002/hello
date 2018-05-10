@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 144554}
   m_LocalRotation: {x: -0, y: -0.112267144, z: -0, w: 0.9936781}
-  m_LocalPosition: {x: 38.17018, y: -0.19188094, z: 22.031456}
+  m_LocalPosition: {x: -180.18044, y: 111.60042, z: -73.97918}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children:
   - {fileID: 4571158604524996}
@@ -82,14 +82,21 @@ MonoBehaviour:
     m_allowFaceDetails: 1
     m_loopsMin: 3
     m_loopsMax: 4
+    m_special: 0
     m_timeToNext: 0
+    m_isPreferedAnimation: 0
   - m_range:
       min: 10
       max: 20
     m_allowFaceDetails: 0
     m_loopsMin: 1
     m_loopsMax: 1
+    m_special: 0
     m_timeToNext: 1
+    m_isPreferedAnimation: 0
+  m_hasFire: 0
+  m_dragonFlameStandard: {fileID: 0}
+  m_bloodParticle: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -920,7 +927,7 @@ GameObject:
   - component: {fileID: 137777080827222606}
   m_Layer: 0
   m_Name: Dragon_Croc_HI
-  m_TagString: Untagged
+  m_TagString: DragonBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1299,7 +1306,7 @@ GameObject:
   - component: {fileID: 137692347841800530}
   m_Layer: 0
   m_Name: Wings_Croc_HI
-  m_TagString: Untagged
+  m_TagString: DragonWings
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2555,6 +2562,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 426264}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114481316538292390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2581,6 +2589,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 426264}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114561699318145082
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2595,6 +2604,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_2
   m_parentRoot: {fileID: 426264}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114562957259817650
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2609,6 +2619,7 @@ MonoBehaviour:
   m_parentName: Dragon_RLeg_2
   m_parentRoot: {fileID: 426264}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114742082237574500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2658,6 +2669,7 @@ MonoBehaviour:
   m_parentName: Dragon_Jaw
   m_parentRoot: {fileID: 426264}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114864480158546074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2672,6 +2684,7 @@ MonoBehaviour:
   m_parentName: Dragon_Hip
   m_parentRoot: {fileID: 426264}
   m_worldPositionStays: 0
+  m_resetScale: 0
 --- !u!114 &114951781967103232
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2697,7 +2710,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 4234d4500137e4a088220155f3f12f5e, type: 2}
+  - {fileID: 2100000, guid: 3e26e611a0b7b403b8586e4977d0c0ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2761,7 +2774,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 390a9c40574984f27ab51e66dfc0db62, type: 2}
+  - {fileID: 2100000, guid: 73f3a3de238d64e318d3bdb948cd1d99, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

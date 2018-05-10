@@ -68,7 +68,7 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
     /// </summary>
     private void Update() {
         // Back button pressed?
-        if (Input.GetKeyDown(KeyCode.Escape)) {	// On Android Escape es the same as Back Button
+        if (Input.GetKeyDown(KeyCode.Escape) && FeatureSettingsManager.IsBackButtonEnabled()) {	// On Android Escape is the same as Back Button
 			if (!InputLocker.locked) {
 				if (m_handlers.Count > 0) {
 					m_handlers.Last().Trigger();

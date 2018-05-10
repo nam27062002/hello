@@ -44,7 +44,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
-                Debug.Log("onPurchaseFailed");
+				Debug.Log("onPurchaseFailed sku = " + sku + " transactionID = " + strTransactionID);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, sku);
 		}

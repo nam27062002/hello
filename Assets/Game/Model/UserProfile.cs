@@ -322,6 +322,11 @@ public class UserProfile : UserPersistenceSystem
 	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
+	// Offer Packs
+	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
+
+	//--------------------------------------------------------------------------
+
     public enum ESocialState
     {
         NeverLoggedIn,
@@ -454,7 +459,9 @@ public class UserProfile : UserPersistenceSystem
         
         m_globalEvents = new Dictionary<int, GlobalEventUserData>();    
     
-        m_rewards = new Stack<Metagame.Reward>();                            
+        m_rewards = new Stack<Metagame.Reward>();
+
+		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
@@ -989,6 +996,17 @@ public class UserProfile : UserPersistenceSystem
 				m_rewards.Push(r);
 			}
 		}
+
+		// Offer Packs
+		key = "offerPacks";
+		m_offerPacksPersistenceData.Clear();
+		if(_data.ContainsKey(key)) {
+			// Parse json object into the dictionary
+			JSONClass offersJson = _data[key] as JSONClass;
+			foreach(KeyValuePair<string, JSONNode> kvp in offersJson.m_Dict) {
+				m_offerPacksPersistenceData.Add(kvp.Key, kvp.Value as JSONClass);
+			}
+		}
 	}
 
 	/// <summary>
@@ -1160,6 +1178,13 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 		data.Add("rewards", rewardsData);
+
+		// Offer packs
+		JSONClass offersData = new SimpleJSON.JSONClass();
+		foreach(KeyValuePair<string, JSONClass> kvp in m_offerPacksPersistenceData) {
+			offersData.Add(kvp.Key, kvp.Value);
+		}
+		data.Add("offerPacks", offersData);
 
 		// Return it
 		return data;
@@ -1572,6 +1597,43 @@ public class UserProfile : UserPersistenceSystem
 		Metagame.Reward r = rewardStack.Pop();
 		Debug.Log("<color=red>POP " + r.GetType().Name + "</color>");
 		return r;
+	}
+
+	//------------------------------------------------------------------------//
+	// OFFERS MANAGEMENT													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Register an offer pack for persistence save.
+	/// </summary>
+	/// <param name="_offerPack">Pack to be saved.</param>
+	public void SaveOfferPack(OfferPack _pack) {
+		// Don't do it if pack shouldn't be saved
+		if(_pack == null || !_pack.ShouldBePersisted()) return;
+
+		// Save persistence data with unique ID for that pack
+		m_offerPacksPersistenceData[_pack.uniqueId] = _pack.Save();
+	}
+
+	/// <summary>
+	/// Load persistence data corresponding to a specific pack into it, if there is any.
+	/// </summary>
+	public void LoadOfferPack(OfferPack _pack) {
+		// Parameter check
+		if(_pack == null) return;
+
+		// Do we have persistence data for this pack?
+		JSONClass packData = null;
+		if(m_offerPacksPersistenceData.TryGetValue(_pack.uniqueId, out packData)) {
+			// Yes! Load it into the pack
+			_pack.Load(packData);
+		}
+	}
+
+	/// <summary>
+	/// Cleanup persistence packs that shouldn't be persisted anymore.
+	/// </summary>
+	public void PurgeOfferPacksPersistence() {
+		// [AOC] TODO!! Meant for packs with end timestamp that were never purchased and wont be available anymore (no need to persist them)
 	}
 }
 

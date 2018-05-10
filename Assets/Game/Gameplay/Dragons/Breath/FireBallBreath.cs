@@ -55,7 +55,7 @@ public class FireBallBreath : DragonBreathBehaviour {
 	{
 		if ( _other.CompareTag("Water") )
 		{
-			if ( m_isFuryOn )
+			if ( IsFuryOn() )
 			{
 				m_isFuryPaused = true;
 				m_animator.SetBool( GameConstants.Animator.BREATH , false);

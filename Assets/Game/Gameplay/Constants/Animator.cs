@@ -19,6 +19,7 @@ namespace GameConstants
 		public static readonly int FLY_DOWN = UnityEngine.Animator.StringToHash("fly down");
 		public static readonly int SWIM = UnityEngine.Animator.StringToHash("swim");
 		public static readonly int BOOST = UnityEngine.Animator.StringToHash("boost");
+		public static readonly int SPIN = UnityEngine.Animator.StringToHash("spin");
 		public static readonly int MOVE = UnityEngine.Animator.StringToHash("move");
 		public static readonly int DEAD = UnityEngine.Animator.StringToHash("dead");
 		public static readonly int BASE_IDLE = UnityEngine.Animator.StringToHash("BaseLayer.Idle");

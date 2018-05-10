@@ -6,13 +6,14 @@ using UnityEngine.UI;
 public class TutorialMapButton : MonoBehaviour {
 
 	[SerializeField] private GameObject m_mapButton;
+	[SerializeField] private GameObject m_mapButtonGodRays;
 	[SerializeField] private RectTransform m_targetTransform;
-	[SerializeField] private Image m_godRays;
+	[SerializeField] private ParticleSystem m_godRays;
 	[SerializeField] private float m_delay = 5f;
 
-	private enum State {
-		Idle = 0,
-		Delay,
+	private enum State {		
+		Delay = 0,
+		Idle,
 		Intro,
 		GodRays,
 		Move,
@@ -25,6 +26,7 @@ public class TutorialMapButton : MonoBehaviour {
 
 	private State m_state;
 
+	private float m_rotation;
 	private Vector3 m_posO;
 	private Color m_color;
 
@@ -38,26 +40,16 @@ public class TutorialMapButton : MonoBehaviour {
 		m_rTransform = transform as RectTransform;
 
 		if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
+			m_mapButtonGodRays.SetActive(false);
 			GameObject.Destroy(m_rTransform.parent.gameObject);
 		} else {
 			m_mapButton.SetActive(false);
+			m_mapButtonGodRays.SetActive(false);
 
-			if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
-				m_timer = new DeltaTimer();
-				m_timer.Stop();
-
-				m_rTransform.localScale = GameConstants.Vector3.zero;
-
-				m_posO = m_rTransform.position;
-
-				m_color = m_godRays.color;
-				m_color.a = 0f;
-				m_godRays.color = m_color;
-
-				enabled = false;
+			if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {				
 				m_state = State.Idle;
 
-				Messenger.AddListener(MessengerEvents.GAME_STARTED, StartAnim);
+				Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 			} else {
 				GameObject.Destroy(m_rTransform.parent.gameObject);
 			}
@@ -65,71 +57,99 @@ public class TutorialMapButton : MonoBehaviour {
 	}
 
 	private void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, StartAnim);
+		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 	}
 
-	private void StartAnim() {
+	private void OnGameStarted() {
+		m_timer = new DeltaTimer();
+		m_timer.Stop();
+
+		m_rTransform.localScale = GameConstants.Vector3.zero;
+
+		m_posO = m_rTransform.position;
+
+		m_godRays.gameObject.SetActive(false);
+
+		m_rotation = 0f;
+
 		m_timer.Start(m_delay * 1000f);
 		m_state = State.Delay;
-		enabled = true;
 	}
 
-	void Update() {
-		if (m_state > State.Idle) {
-			float dt = 0; 
+	private void StartAnim(Transform _t, Reward _reward) {
+		m_timer.Start(500f);
+		m_state = State.Intro;
 
-			switch (m_state) {
-			case State.Delay:
-				dt = m_timer.GetDelta(CustomEase.EaseType.cubicIn_01);
+		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
+	}
 
-				if (m_timer.IsFinished()) {
-					m_timer.Start(500f);
-					m_state = State.Intro;
-				}
-				break;
+	private void Update() {
+		float dt = 0; 
 
-			case State.Intro:
-				dt = m_timer.GetDelta(CustomEase.EaseType.cubicInOut_01);
+		switch (m_state) {
+		case State.Delay:
+			dt = m_timer.GetDelta(CustomEase.EaseType.cubicIn_01);
 
-				m_rTransform.localScale = Vector3.Lerp(GameConstants.Vector3.zero, GameConstants.Vector3.one * 2f, dt);
-				if (m_timer.IsFinished()) {
-					m_timer.Start(1500f);
-					m_state = State.GodRays;
-				}
-				break;
-
-			case State.GodRays: 
-				dt = m_timer.GetDelta(CustomEase.EaseType.expoOut_01);
-
-				m_color.a = Mathf.Lerp(0f, 1f, dt);
-				m_godRays.color = m_color;
-				if (m_timer.IsFinished()) {
-					m_timer.Start(1250f);
-					m_state = State.Move;
-				}
-				break;
-
-			case State.Move: 
-				dt = m_timer.GetDelta(CustomEase.EaseType.cubicInOut_01);
-
-				m_color.a = Mathf.Lerp(1f, 0f, dt * 10f);
-				m_godRays.color = m_color;
-				m_rTransform.position = Vector3.Lerp(m_posO, m_targetTransform.position, dt);
-				m_rTransform.localScale = Vector3.Lerp(GameConstants.Vector3.one * 2f, GameConstants.Vector3.one, dt);
-				if (m_timer.IsFinished()) {
-					m_state = State.Disable;
-				}
-				break;
-
-			case State.Disable:
-				OnTweenEnd();
-				break;
+			if (m_timer.IsFinished()) {
+				m_state = State.Idle;
+				Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
 			}
+			break;
+
+		case State.Intro:
+			dt = m_timer.GetDelta(CustomEase.EaseType.cubicInOut_01);
+
+			m_rTransform.localScale = Vector3.Lerp(GameConstants.Vector3.zero, GameConstants.Vector3.one * 2f, dt);
+			if (m_timer.IsFinished()) {
+				m_timer.Start(1500f);
+
+				m_godRays.gameObject.SetActive(true);
+
+				m_state = State.GodRays;
+			}
+			break;
+
+		case State.GodRays: 
+			dt = m_timer.GetDelta(CustomEase.EaseType.expoOut_01);
+
+			m_rotation = 6f * Mathf.Sin((float)((Mathf.PI * m_timer.GetTime()) / 500f));
+			m_rTransform.localRotation = Quaternion.AngleAxis(m_rotation, GameConstants.Vector3.forward);
+
+			m_color.a = Mathf.Lerp(0f, 1f, dt);
+			if (m_timer.IsFinished()) {
+				m_timer.Start(800f);
+
+				ParticleSystem.EmissionModule em = m_godRays.emission;
+				em.enabled = false;
+
+				m_state = State.Move;
+			}
+			break;
+
+		case State.Move: 
+			dt = m_timer.GetDelta(CustomEase.EaseType.cubicInOut_01);
+
+			m_rotation = Mathf.Lerp(m_rotation, 0f, dt * 2f);
+			m_rTransform.localRotation = Quaternion.AngleAxis(m_rotation, GameConstants.Vector3.forward);
+
+			m_color.a = Mathf.Lerp(1f, 0f, dt * 10f);
+			m_rTransform.position = Vector3.Lerp(m_posO, m_targetTransform.position, dt);
+			m_rTransform.localScale = Vector3.Lerp(GameConstants.Vector3.one * 2f, GameConstants.Vector3.one, dt);
+			if (m_timer.IsFinished()) {
+				m_state = State.Disable;
+			}
+			break;
+
+		case State.Disable:
+			OnTweenEnd();
+			break;
 		}
 	}
 
 	public void OnTweenEnd() {
 		m_mapButton.SetActive(true);
+		m_mapButtonGodRays.SetActive(true);
 		GameObject.Destroy(m_rTransform.parent.gameObject);
 	}
 }
