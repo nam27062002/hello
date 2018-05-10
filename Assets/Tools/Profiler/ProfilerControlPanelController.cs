@@ -316,6 +316,10 @@ public class ProfilerControlPanelController : MonoBehaviour
         Village_Ruins2,
         Village_Witches_Woods,
         Village_Goblins_City,
+		Village_Village,
+		Village_BigTurret1,
+		Village_BigTurret2,
+		Village_BigTurret3,
         Village_TunnelToCastleThruWater,
         Village_TunnelToCastle,
 
@@ -350,6 +354,10 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(280, 190, 0f),
         new Vector3(-394, -54, 0f),
         new Vector3(-450, 1.78f, 0f),
+		new Vector3(-102, 47, 0f),
+		new Vector3(17, 168, 0f),
+		new Vector3(371, 250, 0f),
+		new Vector3(744, 182, 0f),
         new Vector3(-60, -129, 0f),
         new Vector3(360, 69, 0f),                         
 
