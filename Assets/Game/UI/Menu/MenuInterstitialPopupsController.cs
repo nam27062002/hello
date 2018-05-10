@@ -27,7 +27,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	private bool m_popupDisplayed = false;
-	
+	private bool m_waitForCustomPopup = false;
+	private float m_waitTimeOut;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -45,6 +47,23 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unregister from external events
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
+	}
+
+	private void Update() {
+		if (m_waitForCustomPopup) {
+			if (!m_popupDisplayed) {				
+				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
+				if (popupConfig != null) {
+					OpenCustomizerPopup(popupConfig);
+				} else {
+					m_waitTimeOut -= Time.deltaTime;
+					if (m_waitTimeOut <= 0f) {
+						BusyScreen.Hide(this, true);
+						m_waitForCustomPopup = false;
+					}
+				}
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -66,20 +85,35 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
-	private void CheckCusotmizerPopup() {
+	private void CheckCustomizerPopup() {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetCustomiserPopup(LocalizationManager.SharedInstance.Culture.TwoLetterISOLanguageName);
-		if(popupConfig != null) {
-			string popupPath = PopupCustomizer.PATH + "PF_PopupLayout" + popupConfig.m_iLayout;
+		if (UsersManager.currentUser.gamesPlayed > 12) {
+			m_waitForCustomPopup = HDCustomizerManager.instance.IsCustomiserPopupAvailable();
+			if (m_waitForCustomPopup) {
+				m_waitTimeOut = 5f;
+				BusyScreen.Show(this, false);
 
-			PopupController pController = PopupManager.OpenPopupInstant(popupPath);
-			PopupCustomizer pCustomizer = pController.GetComponent<PopupCustomizer>();
-			pCustomizer.InitFromConfig(popupConfig);
-
-			m_popupDisplayed = true;
+				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(LocalizationManager.SharedInstance.Culture.TwoLetterISOLanguageName);
+				if (popupConfig != null) {
+					OpenCustomizerPopup(popupConfig);
+				}
+			}
 		}
+	}
+
+	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
+		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout" + _config.m_iLayout;
+
+		PopupController pController = PopupManager.OpenPopupInstant(popupPath);
+		PopupCustomizer pCustomizer = pController.GetComponent<PopupCustomizer>();
+		pCustomizer.InitFromConfig(_config);
+
+		m_waitForCustomPopup = false;
+		m_popupDisplayed = true;
+
+		BusyScreen.Hide(this, true);
 	}
 
 	/// <summary>
@@ -160,12 +194,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				// 1. Terms and Conditions
 				CheckTermsAndConditions();
 
-				CheckCusotmizerPopup();
+				CheckCustomizerPopup();
 			} break;
 
 		case MenuScreen.DRAGON_SELECTION: {
-				CheckCusotmizerPopup();
-
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {

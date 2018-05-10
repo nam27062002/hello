@@ -43,14 +43,15 @@ public class HDCustomizerManager
             HDCustomizerManager.instance.NotifyFilesChanged(kChangedContentFiles);
         }
 
-        public override void onNewPopupReceived() { 
-			
-		}
+        public override void onNewPopupReceived() { }
 
 #if APPLY_ON_DEMAND
         public override void onPopupIsPrepared(CyCustomiser.CustomiserPopupConfig kPopupConfig) { }
 #else
-        public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig) { }
+        public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig)
+		{
+			HDCustomizerManager.instance.NotifyPopupIsPrepared(kPopupConfig);
+		}
 #endif
 
         public override void onCustomizationFinished()
@@ -126,6 +127,13 @@ public class HDCustomizerManager
     /// List containing the files to revert because they were changed by previous customizers that don't have to be applied anymore, typically because those customizers have expired
     /// </summary>
     private List<string> m_filesToRevert;
+
+
+	/// <summary>
+	/// At this point we only support one popup. This will have a reference after the callback from CustomizerMAnager is received.
+	/// </summary>
+	private CustomizerManager.CustomiserPopupConfig m_lastPreparedPopupConfig;
+
 
     /// <summary>
     /// Time in seconds left to make customizer expire
@@ -396,7 +404,17 @@ public class HDCustomizerManager
 #endif
     }
 
-	public CustomizerManager.CustomiserPopupConfig GetCustomiserPopup(string _isoLanguageName)
+	public bool IsCustomiserPopupAvailable()
+	{
+		if (m_state == EState.Done)
+		{
+			return CustomizerManager.SharedInstance.IsCustomiserPopupAvailable(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
+		}
+
+		return false;
+	}
+
+	public CustomizerManager.CustomiserPopupConfig GetOrRequestCustomiserPopup(string _isoLanguageName)
     {
         CustomizerManager.CustomiserPopupConfig returnValue = null;
 
@@ -409,9 +427,16 @@ public class HDCustomizerManager
         return returnValue;
     }
 
-	private void NotifyNewPopup() 
-	{
+	public CustomizerManager.CustomiserPopupConfig GetLastPreparedPopupConfig()
+	{		
+		CustomizerManager.CustomiserPopupConfig config = m_lastPreparedPopupConfig;
+		m_lastPreparedPopupConfig = null;
+		return config;
+	}
 
+	private void NotifyPopupIsPrepared(CustomizerManager.CustomiserPopupConfig _config) 
+	{
+		m_lastPreparedPopupConfig = _config;
 	}
 
     private void NotifyFilesChanged(List<string> files)
