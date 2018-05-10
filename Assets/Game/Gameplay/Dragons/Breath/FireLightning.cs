@@ -453,7 +453,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 
     void OnDrawGizmos() {
-		if (m_isFuryOn) 
+		if (IsFuryOn()) 
 		{
 			Gizmos.color = Color.magenta;
 			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_actualLength );
@@ -470,7 +470,7 @@ public class FireLightning : DragonBreathBehaviour {
 
 	override public bool IsInsideArea(Vector2 _point) { 
 	
-		if (m_isFuryOn) 
+		if (IsFuryOn()) 
 		{
 			float halfAmplitude = m_maxAmplitude/2.0f;
 			float angle = Mathf.Atan2( m_direction.y, m_direction.x);

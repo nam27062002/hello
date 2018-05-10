@@ -27,7 +27,6 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private MenuPetLoader m_petPreview = null;
-	[SerializeField] private UI3DScaler m_scaler = null;
 
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
@@ -64,12 +63,9 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	/// Set this preview's parent and adjust its size to fit it.
 	/// </summary>
 	/// <param name="_t">New parent!</param>
-	public override void SetParentAndFit(Transform _t) {
+	public override void SetParentAndFit(RectTransform _t) {
 		// Let parent do its thing
 		base.SetParentAndFit(_t);
-
-		// Refresh scaler
-		m_scaler.Refresh(true, true);
 
 		// Refresh particle scaler
 		m_petPreview.pscaler.DoScale();

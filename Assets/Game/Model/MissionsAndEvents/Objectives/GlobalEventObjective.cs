@@ -69,7 +69,7 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 		// Use parent's initializer
 		Init(
 			TrackerBase.CreateTracker(m_typeDef.sku, parameters),		// Create the tracker based on goal type
-			_data["amount"].AsFloat,
+			_data["amount"].AsLong,
 			m_typeDef,
 			_data["tidDesc"]
 		);
@@ -99,7 +99,7 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 	/// </summary>
 	public virtual void OnGameStarted() {
 		// Reset counter!
-		m_tracker.SetValue(0f, false);
+		m_tracker.SetValue(0, false);
 
 		// Disable during FTUX
 		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN);

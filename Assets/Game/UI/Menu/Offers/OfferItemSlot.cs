@@ -133,7 +133,20 @@ public class OfferItemSlot : MonoBehaviour {
 
 		// Load new preview (if required)
 		if(reloadPreview) {
-			GameObject previewPrefab = OfferItemPrefabs.GetPrefab(item.type, m_allow3dPreview ? OfferItemPrefabs.PrefabType.PREVIEW_3D : OfferItemPrefabs.PrefabType.PREVIEW_2D);
+			// Try loading the preferred preview type
+			// If there is no preview of the preferred type, try other types untill we have a valid preview
+			OfferItemPrefabs.PrefabType preferredPreviewType = m_allow3dPreview ? OfferItemPrefabs.PrefabType.PREVIEW_3D : OfferItemPrefabs.PrefabType.PREVIEW_2D;
+			GameObject previewPrefab = OfferItemPrefabs.GetPrefab(item.type, preferredPreviewType);
+			if(previewPrefab == null) {
+				// Loop will stop with a valid prefab
+				for(int i = 0; i < (int)OfferItemPrefabs.PrefabType.COUNT && previewPrefab == null; ++i) {
+					// Skip preferred type (already checked)
+					if(i == (int)preferredPreviewType) continue;
+					previewPrefab = OfferItemPrefabs.GetPrefab(item.type, (OfferItemPrefabs.PrefabType)i);
+				}
+			}
+
+			// Instantiate preview! :)
 			if(previewPrefab != null) {
 				GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab);
 				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
@@ -143,14 +156,15 @@ public class OfferItemSlot : MonoBehaviour {
 		// Initialize preview with item data
 		if(m_preview != null) {
 			m_preview.InitFromItem(m_item);
-			m_preview.SetParentAndFit(m_previewContainer);
+			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
 		}
 
 		// Set text - preview will given us the text already localized and all
 		if(m_preview != null) {
 			m_text.text = m_preview.GetLocalizedDescription();
 		} else {
-			m_text.text = "Unknown reward type";
+			// Something went very wrong :s
+			m_text.text = "Couldn't find a preview prefab for reward type " + item.type;
 		}
 
 		// Text color based on item rarity!
