@@ -460,7 +460,7 @@ public class PopupCustomizer : MonoBehaviour {
 			data.Add("settings", settings);
 		}
 
-		string filePath = "Assets/Art/UI/Popups/Interstitials/" + name + ".json";
+		string filePath = "Assets/Art/UI/Popups/Interstitial/" + name + ".json";
 		using (StreamWriter sw = new StreamWriter(filePath, false)) {
 			sw.WriteLine(data.ToString());
 			sw.Close();
