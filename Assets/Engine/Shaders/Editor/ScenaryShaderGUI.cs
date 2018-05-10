@@ -59,8 +59,9 @@ internal class ScenaryShaderGUI : ShaderGUI {
         readonly public static string enableSpecularText = "Enable Specular";
         readonly public static string specularPowerText = "Specular Power";
         readonly public static string specularDirText = "Specular direction";
+        readonly public static string enableOpaqueAlphaText = "Enable Opaque alpha";
 
-//        readonly public static string reflectionColorText = "Reflection color";
+        //        readonly public static string reflectionColorText = "Reflection color";
         readonly public static string reflectionAmountText = "Reflection amount";
         readonly public static string reflectionMapText = "Reflection map";
         readonly public static string reflectionAdviceText = "Reflection can be controled by painting object alfa vertex color: \n 0.0 = no reflect \n 1.0 = reflect";
@@ -94,6 +95,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
 
         readonly public static string cullModeText = "Cull mode";
         readonly public static string cullWarningText = "Warning! You have activated double sided in opaque object.";
+        readonly public static string zWriteText = "Z Write";
 
 
     }
@@ -153,6 +155,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
     MaterialProperty mp_EmissiveColor;
 
     MaterialProperty mp_EnableNormalwAsSpecular;
+
+    MaterialProperty mp_EnableOpaqueAlpha;
+    MaterialProperty mp_ZWrite;
+
 
     //    MaterialProperty mp_EnableEmissiveBlink;
     //    MaterialProperty mp_EnableLightmapContrast;
@@ -238,8 +244,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
         mp_EnableFog = FindProperty("_EnableFog", props);
 
         mp_EnableWaveEmission = FindProperty("_EnableWaveEmission", props);
-
         mp_EnableNormalwAsSpecular = FindProperty("_EnableNormalwAsSpecular", props);
+        mp_EnableOpaqueAlpha = FindProperty("_EnableOpaqueAlpha", props);
+
+        mp_ZWrite = FindProperty("_ZWrite", props);
 
         //        mp_EnableEmissiveBlink = FindProperty("_EnableEmissiveBlink", props);
         //        mp_EnableLightmapContrast = FindProperty("_EnableLightmapContrast", props);
@@ -280,6 +288,8 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 material.DisableKeyword("CUTOFF");
                 material.EnableKeyword("OPAQUEALPHA");
+                material.SetFloat("_EnableOpaqueAlpha", 1.0f);
+
                 Debug.Log("Blend mode opaque");
                 break;
 
@@ -292,6 +302,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.DisableKeyword("CUTOFF");
                 material.DisableKeyword("OPAQUEALPHA");
+                material.SetFloat("_EnableOpaqueAlpha", 0.0f);
                 Debug.Log("Blend mode transparent");
                 break;
 
@@ -304,6 +315,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 material.EnableKeyword("CUTOFF");
                 material.EnableKeyword("OPAQUEALPHA");
+                material.SetFloat("_EnableOpaqueAlpha", 1.0f);
 
                 Debug.Log("Blend mode cutout");
                 break;
@@ -361,7 +373,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_Color, Styles.colorText);
         }
 
-
         EditorGUI.BeginChangeCheck();
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
 
@@ -377,7 +388,6 @@ internal class ScenaryShaderGUI : ShaderGUI {
             SetKeyword(material, kw_normalmap, normalMap);
             EditorUtility.SetDirty(material);
             Debug.Log("EnableNormalMap " + (normalMap));
-            //            DebugKeywords(material);
         }
 
         EditorGUI.BeginChangeCheck();
@@ -453,12 +463,15 @@ internal class ScenaryShaderGUI : ShaderGUI {
                 break;
 */
         }
-        /*
-                if (GUILayout.Button("Reset keywords", editorSkin.customStyles[0]))
-                {
-                    material.shaderKeywords = null;
-                }
-        */
+
+
+        if (blendMode == 1)
+        {
+            featureSet(mp_EnableOpaqueAlpha, Styles.enableOpaqueAlphaText);
+            featureSet(mp_ZWrite, Styles.zWriteText);
+        }
+
+
         if (mp_BlendMode.floatValue == 0.0f)
         {
 
@@ -487,6 +500,10 @@ internal class ScenaryShaderGUI : ShaderGUI {
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
+        if (GUILayout.Button("Debug keywords", editorSkin.customStyles[0]))
+        {
+            DebugKeywords(material);
+        }
     }
 
     static void DebugKeywords(Material mat)
