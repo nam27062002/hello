@@ -1,7 +1,9 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
-public class CollectibleViewControl : MonoBehaviour, IViewControl {
+public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	
 	//-----------------------------------------------
 	[SeparatorAttribute("Collect")]
@@ -17,6 +19,14 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 	private int m_rendererCount;
 	public int rendererCount { get { return m_rendererCount; } }
 
+	private Transform m_view;
+
+	protected Renderer[] m_renderers;
+	protected List<Material> m_materialList;
+	private Dictionary<int, List<Material>> m_materials;
+
+	protected bool m_instantiateMaterials = false;
+
 	public PreyAnimationEvents animationEvents { get { return null; } }
 
     //-----------------------------------------------
@@ -31,11 +41,16 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 		m_vertexCount = 0;
 		m_rendererCount = 0;
 
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
-		if (renderers != null) {
-			m_rendererCount = renderers.Length;
+		m_view = transform.FindObjectRecursive("view").transform;
+
+		m_renderers = m_view.GetComponentsInChildren<Renderer>();
+		m_materials = new Dictionary<int, List<Material>>();
+		m_materialList = new List<Material>();
+
+		if (m_renderers != null) {
+			m_rendererCount = m_renderers.Length;
 			for (int i = 0; i < m_rendererCount; i++) {
-				Renderer renderer = renderers[i];
+				Renderer renderer = m_renderers[i];
 
 				// Keep the vertex count (for DEBUG)
 				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
@@ -46,12 +61,41 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 						m_vertexCount += filter.sharedMesh.vertexCount;
 					}
 				}
+
+				Material[] materials = renderer.sharedMaterials;
+
+				// Stores the materials of this renderer in a dictionary for direct access//
+				int renderID = renderer.GetInstanceID();
+				m_materials[renderID] = new List<Material>();
+
+				for (int m = 0; m < materials.Length; ++m) {
+					Material mat = materials[m];
+					if (m_instantiateMaterials) {
+						if (materials[m] != null) {
+							mat = new Material(materials[m]);
+						}
+					}
+
+					m_materialList.Add(mat);
+					m_materials[renderID].Add(mat);
+
+					materials[m] = null; // remove all materials to avoid instantiation.
+				}
+				renderer.sharedMaterials = materials;
 			}
 		}
     }
 
-	public void Spawn(ISpawner _spawner) {
-
+	public virtual void Spawn(ISpawner _spawner) {
+		// Restore materials
+		for (int i = 0; i < m_renderers.Length; i++) {
+			int id = m_renderers[i].GetInstanceID();
+			Material[] materials = m_renderers[i].sharedMaterials;
+			for (int m = 0; m < materials.Length; m++) {				
+				materials[m] = m_materials[id][m];
+			}
+			m_renderers[i].sharedMaterials = materials;
+		}
 	}
 
     void OnDestroy() {
@@ -74,7 +118,7 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 		}
 	}
 
-	public void Collect() {
+	public virtual void Collect() {
 		if (m_entity.isOnScreen && !string.IsNullOrEmpty(m_onCollectAudio)) {
 			m_onCollectAudioAO = AudioController.Play(m_onCollectAudio, transform);
 		}
@@ -88,5 +132,14 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl {
 		m_onCollectParticle.Spawn(transform.position + m_onCollectParticle.offset);
 	}
 
+	public virtual bool HasCollectAnimationFinished() {
+		return true;
+	}
+
 	public void ForceGolden(){}
+
+
+	public virtual void CustomUpdate() {
+
+	}
 }

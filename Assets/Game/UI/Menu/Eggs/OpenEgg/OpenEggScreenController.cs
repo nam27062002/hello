@@ -44,16 +44,12 @@ public class OpenEggScreenController : MonoBehaviour {
 	[SerializeField] private RewardInfoUI m_rewardInfo = null;
 	[SerializeField] private DragControlRotation m_rewardDragController = null;
 
-	[Separator("Animation Parameters")]
-	[SerializeField] private float m_finalPanelDelay = 0f;
-	[SerializeField] private float m_finalPanelDelayWhenFragmentsGiven = 2f;
-	[SerializeField] private float m_finalPanelDelayWhenCoinsGiven = 1f;
-
 	// Reference to 3D scene
 	private RewardSceneController m_scene = null;
 
 	// Internal
 	private State m_state = State.IDLE;
+	private bool m_goldenFragmentsTutorial = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -178,6 +174,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// An animation for a reward has started in the 3d scene!
 	/// </summary>
 	private void OnSceneAnimStarted() {
+		m_goldenFragmentsTutorial = false;
+
 		// What type of reward are we opening?
 		// Egg
 		if(m_scene.currentReward is Metagame.RewardEgg) {
@@ -199,7 +197,6 @@ public class OpenEggScreenController : MonoBehaviour {
 			bool goldenEggCompleted = EggManager.goldenEggCompleted;
 
 			// Special initializations when reward is duplicated
-			float finalPanelDelay = m_finalPanelDelay;
 			ShowHideAnimator photoAnimator = InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>();
 			if(finalReward.WillBeReplaced()) {
 				// Photo button only enabled if reward is not a duplicate!
@@ -210,28 +207,10 @@ public class OpenEggScreenController : MonoBehaviour {
 
 				// Which is the replacement currency?
 				if(finalReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-					// Give enough time for the duplicate animation!
-					finalPanelDelay = m_finalPanelDelayWhenFragmentsGiven;
-
 					// If it's the first time we're getting golden fragments, show info popup
 					if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
-						// Show popup after some extra delay
-						UbiBCN.CoroutineManager.DelayedCall(
-							() => {
-								// Tracking
-								string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
-								HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
-
-								PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
-								UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
-							},
-							finalPanelDelay + 1.5f, 
-							false
-						);
+						m_goldenFragmentsTutorial = true;	
 					}
-				} else if(finalReward.replacement.currency == UserProfile.Currency.SOFT) {
-					// Give enough time for the duplicate animation!
-					finalPanelDelay = m_finalPanelDelayWhenCoinsGiven;
 				}
 			} else {
 				// Photo button only enabled if reward is not a duplicate!
@@ -240,20 +219,6 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Don't show call to action button if the reward is a duplicate
 				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
 				m_callToActionButton.SetActive(true);
-			}
-
-			// Initialize and show final panel
-			UbiBCN.CoroutineManager.DelayedCall(
-				() => { m_finalPanel.Show(); }, 
-				finalPanelDelay - m_finalPanel.tweenDelay, false	// Compensate the delay of the ShowHideAnimator (the delay is meant to screen transitions only)
-			);
-
-			// Same with HUD - unless golden egg was completed
-			if(!goldenEggCompleted) {
-				UbiBCN.CoroutineManager.DelayedCall(
-					() => { InstanceManager.menuSceneController.hud.animator.Show(); },
-					finalPanelDelay, false
-				);
 			}
 
 			// Don't show back button if we've completed a golden egg!
@@ -276,6 +241,26 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnSceneAnimFinished() {
 		// Change logic state
 		m_state = State.IDLE;
+
+		// Show popup after some extra delay
+		if (m_goldenFragmentsTutorial){
+			// Tracking
+			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
+			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+
+			PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
+			m_goldenFragmentsTutorial = false;
+		}
+
+
+		// Show final panel
+		m_finalPanel.Show();
+
+		// Same with HUD - unless golden egg was completed
+		if(!EggManager.goldenEggCompleted) {
+			InstanceManager.menuSceneController.hud.animator.Show();
+		}
 
 		// Stop listeneing the 3D scene
 		m_scene.OnAnimStarted.RemoveListener(OnSceneAnimStarted);

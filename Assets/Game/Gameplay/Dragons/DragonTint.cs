@@ -16,8 +16,10 @@ public class DragonTint : MonoBehaviour
 	int m_materialsCount = 0;
 	List<Material> m_materials = new List<Material>();
 	List<Color> m_materialsMultiplyColors = new List<Color>();
+	List<Color> m_materialsAddColors = new List<Color>();
     List<Shader> m_originalShaders = new List<Shader>();
 	List<Color> m_fresnelColors = new List<Color>();
+	List<float> m_innerLightAddValue = new List<float>();
 	List<Color> m_innerLightColors = new List<Color>();
 	float m_innerLightColorValue = 1;
 
@@ -65,6 +67,9 @@ public class DragonTint : MonoBehaviour
 	{
 		m_materials.Clear();
 		m_materialsMultiplyColors.Clear();
+		m_materialsAddColors.Clear();
+		m_innerLightAddValue.Clear();
+		m_innerLightColors.Clear();
 		if ( m_renderers != null )
 		for( int i = 0; i<m_renderers.Length; i++ )
 		{
@@ -79,7 +84,9 @@ public class DragonTint : MonoBehaviour
                 	hasDragonPart = true;
                     m_materials.Add(mats[j]);
 					m_materialsMultiplyColors.Add( mats[j].GetColor( GameConstants.Material.TINT ));
+					m_materialsAddColors.Add( mats[j].GetColor( GameConstants.Material.COLOR_ADD ));
                     m_fresnelColors.Add(mats[j].GetColor( GameConstants.Material.FRESNEL_COLOR ));
+					m_innerLightAddValue.Add( mats[j].GetFloat( GameConstants.Material.INNER_LIGHT_ADD ));
 					m_innerLightColors.Add(mats[j].GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
                     m_originalShaders.Add(mats[j].shader);
 //					if (shaderName.Contains("Body"))
@@ -240,14 +247,19 @@ public class DragonTint : MonoBehaviour
 	void SetColorAdd( Color c)
 	{
 		c.a = 0;
-		for( int i = 0; i<m_materialsCount; ++i )	
-			m_materials[i].SetColor( GameConstants.Material.COLOR_ADD, c );
+		for( int i = 0; i<m_materialsCount; ++i )
+		{
+			Color res = m_materialsAddColors[i] + c;
+			m_materials[i].SetColor( GameConstants.Material.COLOR_ADD, res );
+		}
 	}
 
 	void SetInnerLightAdd( float innerValue )
 	{
 		for( int i = 0; i<m_materialsCount; ++i )	
-			m_materials[i].SetFloat( GameConstants.Material.INNER_LIGHT_ADD, innerValue );
+		{
+			m_materials[i].SetFloat( GameConstants.Material.INNER_LIGHT_ADD, m_innerLightAddValue[i] + innerValue );
+		}
 	}
 
 	void SetInnerLightColorValue( float value )
