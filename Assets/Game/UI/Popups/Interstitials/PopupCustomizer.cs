@@ -265,6 +265,30 @@ public class PopupCustomizer : MonoBehaviour {
 		this.GetComponent<PopupController>().Close(true);
 	}
 
+	/// <summary>
+	/// Opens the shop popup.
+	/// </summary>
+	/// <param name="_tabName">Initial tab name. "hc", "sc", "offers". Empty string for default behaviour.</param>
+	/// <param name="_itemSku">Item sku. Empty string for default behaviour.</param>
+	private void OpenShop(string _tabName, string _itemSku) {
+		// Load and initialize popup
+		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
+		PopupShop shopPopup = popup.GetComponent<PopupShop>();
+
+		// If targeting a specific item, close popup after purchase
+		shopPopup.closeAfterPurchase = !string.IsNullOrEmpty(_itemSku);
+
+		// Setup initial tab
+		shopPopup.initialTab = PopupShop.Tabs.COUNT;
+		switch(_tabName) {
+			case "sc": shopPopup.initialTab = PopupShop.Tabs.SC;	break;
+			case "hc": shopPopup.initialTab = PopupShop.Tabs.PC;	break;
+			case "offers": shopPopup.initialTab = PopupShop.Tabs.OFFERS;	break;
+		}
+
+		// Open popup!
+		popup.Open();
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -278,59 +302,134 @@ public class PopupCustomizer : MonoBehaviour {
 		if(m_localizedConfig == null) return;
 		if(_btnIdx >= m_localizedConfig.m_kPopupButtons.Count) return;
 
+		// Close popup afterwards unless some action explicitely asks not to
+		bool closePopup = true;
+
 		// Different stuff based on the action assigned to the pressed button
+		// Since we need extra parameters not available in Calety's customizer popup implementation, we'll concatenate them to the target screen
 		CustomizerManager.CustomiserPopupButton button = m_localizedConfig.m_kPopupButtons[_btnIdx] as CustomizerManager.CustomiserPopupButton;
+		string[] tokens = string.IsNullOrEmpty(button.m_strParam) ? new string[0] : button.m_strParam.Split(';');
 		switch(button.m_eButtonAction) {
 			case CustomizerManager.ePopupButtonAction.CLOSE: {
-				ClosePopup();
+				// Will be done at the end of the method
 			} break;
 
 			case CustomizerManager.ePopupButtonAction.GAME_LINK: {
-				// Since we need extra parameters not available in Calety's customizer popup implementation, we'll concatenate them to the target screen
-				string[] tokens = button.m_strParam.Split(':');
+				// At least one token! (screen id)
 				if(tokens.Length == 0) break;
 
 				// Parse known links
+				// As defined in the US https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+In-Game+News
 				switch(tokens[0]) {
-					case "DRAGON_SELECTION": {
+					case "dragon_selection": {
 						// Navigate to a specific dragon?
 						if(tokens.Length > 1) {
 							InstanceManager.menuSceneController.SetSelectedDragon(tokens[1]);
 						}
 
-						// Go to dragon selection screen and close the popup!
+						// Go to dragon selection screen
 						InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
-						ClosePopup();
 					} break;
 
-					// [AOC] TODO!! More cases, as defined in the US https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+In-Game+News
+					case "shop": {
+						OpenShop(
+							tokens.Length > 1 ? tokens[1] : string.Empty,	// Initial tab
+							tokens.Length > 2 ? tokens[2] : string.Empty	// Initial item (optional)
+						);
+					} break;
+
+					case "pets": {
+						// Make sure selected dragon is owned (requirement for opening the pets screen)
+						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+
+						// Initialize the pets screen
+						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
+						PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+
+						// Navigate to a specific pet?
+						if(tokens.Length > 1) {
+							petScreen.Initialize(tokens[1]);
+						}
+
+						// Go the screen
+						screensController.GoToScreen(MenuScreen.PETS, true);
+					} break;
+
+					case "global_event": {
+						// Just do it!
+						InstanceManager.menuSceneController.GoToScreen(MenuScreen.GLOBAL_EVENTS);
+					} break;
+
+					case "tournament": {
+						// [AOC] TODO!!
+						LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
+					} break;
+
+					case "skins": {
+						// Make sure selected dragon is owned (requirement for opening the skins screen)
+						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+
+						// Initialize the skins screen
+						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
+						DisguisesScreenController skinsScreen = screensController.GetScreenData(MenuScreen.SKINS).ui.GetComponent<DisguisesScreenController>();
+
+						// Navigate to a specific skin?
+						if(tokens.Length > 1) {
+							skinsScreen.initialSkin = tokens[1];
+						}
+
+						// Go the screen
+						screensController.GoToScreen(MenuScreen.SKINS, true);
+					} break;
 				}
 			} break;
 
 			case CustomizerManager.ePopupButtonAction.OPEN_URL: {
-				// [AOC] TODO!!
+				// Mandatory parameter, just close popup if not defined
+				if(tokens.Length > 0) {
+					// Add some delay to give enough time for SFX to be played and popup to be closed before losing focus
+					UbiBCN.CoroutineManager.DelayedCall(
+						() => {
+							Application.OpenURL(tokens[0]);
+						}, 0.25f
+					);
+				}
 			} break;
 
 			case CustomizerManager.ePopupButtonAction.BUY_PRODUCT: {
 				// [AOC] TODO!!
+				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 			} break;
 
 			case CustomizerManager.ePopupButtonAction.REWARD: {
 				// [AOC] TODO!!
+				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 			} break;
 
 			case CustomizerManager.ePopupButtonAction.SHOP: {
-				// [AOC] TODO!!
+				OpenShop(
+					tokens.Length > 0 ? tokens[0] : string.Empty,	// Initial tab
+					tokens.Length > 1 ? tokens[1] : string.Empty	// Initial item (optional)
+				);
 			} break;
 
-			default:
 			case CustomizerManager.ePopupButtonAction.NONE: {
+				// [AOC] Custom actions to be implemented if needed
+				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 				return;
 			} break;
+
+			default: {
+				// Unrecognized action
+				LogError("Customizer Popup: Unknown action! (" + button.m_eButtonAction.ToString() + ")", true);
+				return;
+			}
 		}
+
+		// Close popup unless some action explicitely asks not to
+		if(closePopup) ClosePopup();
 	}
-
-
+		
 	//------------------------------------------------------------------------//
 	// UTILS																  //
 	//------------------------------------------------------------------------//
@@ -365,6 +464,26 @@ public class PopupCustomizer : MonoBehaviour {
 		using (StreamWriter sw = new StreamWriter(filePath, false)) {
 			sw.WriteLine(data.ToString());
 			sw.Close();
+		}
+	}
+
+	/// <summary>
+	/// Internal error logger.
+	/// </summary>
+	/// <param name="_message">Message to be displayed.</param>
+	/// <param name="_onScreen">Show on-screen message?</param>
+	private void LogError(string _message, bool _onScreen) {
+		// Console message
+		ControlPanel.LogError(Colors.red.Tag(_message), ControlPanel.ELogChannel.Customizer);
+
+		// On-screen message
+		if(_onScreen) {
+			UIFeedbackText feedback = UIFeedbackText.CreateAndLaunch(
+				_message,
+				GameConstants.Vector2.one * 0.5f,
+				InstanceManager.menuSceneController.hud.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+			feedback.text.color = Color.red;
 		}
 	}
 }
