@@ -90,6 +90,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	[SerializeField] private ParticleData m_explosionParticles;
 	[SerializeField] private string m_onExplosionAudio;
 	[SerializeField] private bool m_explodeWhenBurned = true;
+	[SerializeField] private bool m_explodeOriented = false;
 
 	[SeparatorAttribute("More Audios")]
 	[SerializeField] protected string m_onAttackAudio;
@@ -1093,7 +1094,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void PlayExplosion()
 	{
 		if (m_camera.IsInsideCameraFrustrum(m_transform.position)) {
-			m_explosionParticles.Spawn(m_transform.position + m_explosionParticles.offset);
+			GameObject go = m_explosionParticles.Spawn(m_transform.position + m_explosionParticles.offset);
+			if (m_explodeOriented)
+				go.transform.rotation = m_transform.rotation;
 
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, m_transform.position);
