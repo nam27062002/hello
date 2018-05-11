@@ -436,8 +436,11 @@ public class UserProfile : UserPersistenceSystem
         // Disguises
         m_wardrobe = new Wardrobe();
         m_petCollection = new PetCollection();
+
+		// Missions and achievements
+		if(m_userMissions != null) m_userMissions.ClearAllMissions();
         m_userMissions = new UserMissions();
-        m_achievements = new AchievementsTracker();        
+        m_achievements = new AchievementsTracker();
 
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
