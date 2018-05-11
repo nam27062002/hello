@@ -497,16 +497,19 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			true, 
 			GameAds.EAdPurpose.RESULTS_GET_KEY,
 			(bool _success) => {
-				m_keyFromAds = true;
-				// Add keys and consume them instantly (for tracking purposes)
-				ulong keysAmount = 1;
-				UsersManager.currentUser.EarnCurrency(
-					UserProfile.Currency.KEYS, 
-					keysAmount, 
-					true, 
-					HDTrackingManager.EEconomyGroup.REWARD_AD
-				);
-				ConsumeKeys(keysAmount, true);
+                if ( _success )
+                {
+    				m_keyFromAds = true;
+    				// Add keys and consume them instantly (for tracking purposes)
+    				ulong keysAmount = 1;
+    				UsersManager.currentUser.EarnCurrency(
+    					UserProfile.Currency.KEYS, 
+    					keysAmount, 
+    					true, 
+    					HDTrackingManager.EEconomyGroup.REWARD_AD
+    				);
+    				ConsumeKeys(keysAmount, true);
+                }
 			}
 		);
 	}
