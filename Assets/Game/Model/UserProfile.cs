@@ -436,8 +436,11 @@ public class UserProfile : UserPersistenceSystem
         // Disguises
         m_wardrobe = new Wardrobe();
         m_petCollection = new PetCollection();
+
+		// Missions and achievements
+		if(m_userMissions != null) m_userMissions.ClearAllMissions();
         m_userMissions = new UserMissions();
-        m_achievements = new AchievementsTracker();        
+        m_achievements = new AchievementsTracker();
 
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
@@ -1611,7 +1614,7 @@ public class UserProfile : UserPersistenceSystem
 		if(_pack == null || !_pack.ShouldBePersisted()) return;
 
 		// Save persistence data with unique ID for that pack
-		m_offerPacksPersistenceData[_pack.GetPersistenceUniqueID()] = _pack.Save();
+		m_offerPacksPersistenceData[_pack.uniqueId] = _pack.Save();
 	}
 
 	/// <summary>
@@ -1623,7 +1626,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Do we have persistence data for this pack?
 		JSONClass packData = null;
-		if(m_offerPacksPersistenceData.TryGetValue(_pack.GetPersistenceUniqueID(), out packData)) {
+		if(m_offerPacksPersistenceData.TryGetValue(_pack.uniqueId, out packData)) {
 			// Yes! Load it into the pack
 			_pack.Load(packData);
 		}
@@ -1633,7 +1636,7 @@ public class UserProfile : UserPersistenceSystem
 	/// Cleanup persistence packs that shouldn't be persisted anymore.
 	/// </summary>
 	public void PurgeOfferPacksPersistence() {
-		// [AOC] TODO!! Meant for packs with end timestamp
+		// [AOC] TODO!! Meant for packs with end timestamp that were never purchased and wont be available anymore (no need to persist them)
 	}
 }
 
