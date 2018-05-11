@@ -486,6 +486,23 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		if(m_activePanel == Panel.ACTIVE) {
 			LaunchActivePanelAnimation();
 		}
+
+		// Otherwise fake we're doing something (checking connectivity is immediate, but the player should receive some feedback)
+		else {
+			BusyScreen.Show(this);
+
+			// Hide after some delay
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => { 
+					BusyScreen.Hide(this); 
+					UIFeedbackText.CreateAndLaunch(
+						LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), 
+						new Vector2(0.5f, 0.5f), 
+						this.GetComponentInParent<Canvas>().transform as RectTransform
+					);
+				}, 1f
+			);
+		}
 	}
 
 	/// <summary>
