@@ -184,8 +184,8 @@ public class DeviceQualityManager
                 for (i = 0; i < count && Profiles_Data[Profiles_Names[i]].Rating <= rating; i++)
                 {
                     // Makes sure that it has memory and rating enough to use this profile
-//                  Controlled mistake!!! it must be --> if (gfxMemorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
-                    if (memorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
+                    //                  Controlled mistake!!! it must be --> if (gfxMemorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
+                    if (gfxMemorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)if (gfxMemorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
                     {
                         returnValue = Profiles_Names[i];
                     }
