@@ -156,7 +156,7 @@ public class OfferItemSlot : MonoBehaviour {
 		// Initialize preview with item data
 		if(m_preview != null) {
 			m_preview.InitFromItem(m_item);
-			m_preview.SetParentAndFit(m_previewContainer);
+			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
 		}
 
 		// Set text - preview will given us the text already localized and all

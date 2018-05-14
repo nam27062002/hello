@@ -33,7 +33,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
 #if FREQFORMULA
-    private static string m_qualityFormulaVersion = "2.0";
+//    private static string m_qualityFormulaVersion = "2.0";
+//  After fix the mistake in freqformula the version changes to 2.5
+    private static string m_qualityFormulaVersion = "2.5";
 #else
     private static string m_qualityFormulaVersion = "1.0";
 #endif
@@ -497,13 +499,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             }
         }
 
-        Device_CPUFreqRating = 1.0f;
+        Device_CPUFreqRating = 0.0f;
         foreach (DeviceSettings ds in cpuFreqData)
         {
-            if (cpuFreq <= ds.Boundary)
+            if (cpuFreq >= ds.Boundary)
             {
                 Device_CPUFreqRating = ds.Rating;
-                break;
+//                break;
             }
         }
 
@@ -1490,7 +1492,18 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CONTENT_DELTAS_CACHED);
         }
-    }    
+    }
+
+    /// <summary>
+    /// When <c>true</c> the first loading screen has to wait for customizer to be applied before keeping on loading so we can be sure that the latest rules are loaded when the user starts playing
+    /// </summary>
+    public bool IsCustomizerBlocker
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CUSTOMIZER_BLOCKER);
+        }
+    }
 
     public bool IsGlowEffectEnabled
     {
@@ -1644,9 +1657,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         // 0.7: mid
         // 0.85: high
         // 1: very_high
-        float rating = 0f;
-        int memorySize = 512;
+        float rating = 0.75f;
+        int memorySize = 2767;
         int gfxMemorySize = 1024;
+
         string profile = m_deviceQualityManager.Profiles_RatingToProfileName(rating, memorySize, gfxMemorySize);
         Log("Rating: " + rating + " profile = " + profile + " memorySize = " + memorySize + " gfxMemorySize = " + gfxMemorySize);
 

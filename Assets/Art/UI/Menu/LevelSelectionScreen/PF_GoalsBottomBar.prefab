@@ -422,7 +422,6 @@ GameObject:
   - component: {fileID: 114085096765507822}
   - component: {fileID: 114631784347782308}
   - component: {fileID: 114511928660556864}
-  - component: {fileID: 114314911610180540}
   m_Layer: 0
   m_Name: BtnEvents
   m_TagString: Untagged
@@ -935,7 +934,6 @@ GameObject:
   - component: {fileID: 114454097182378562}
   - component: {fileID: 114478597126941130}
   - component: {fileID: 114836284544022476}
-  - component: {fileID: 114517133303058612}
   m_Layer: 0
   m_Name: BtnChests
   m_TagString: Untagged
@@ -1566,8 +1564,8 @@ MonoBehaviour:
           m_StringArgument: UI_Chests
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114517133303058612}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 114104705504500072}
+        m_MethodName: OnChestsButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1796,18 +1794,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114314911610180540
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1380856426723246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 4
 --- !u!114 &114340591799638428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1887,6 +1873,8 @@ MonoBehaviour:
     - obj: {fileID: 1616524502485424}
       action: 0
   - sku: halloween
+    targets: []
+  - sku: spring
     targets: []
 --- !u!114 &114375371216599942
 MonoBehaviour:
@@ -2184,8 +2172,8 @@ MonoBehaviour:
           m_StringArgument: hd_folder
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114314911610180540}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 114104705504500072}
+        m_MethodName: OnGlobalEventsButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2425,18 +2413,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114517133303058612
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1918335035533216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 3
 --- !u!114 &114522274373583224
 MonoBehaviour:
   m_ObjectHideFlags: 1

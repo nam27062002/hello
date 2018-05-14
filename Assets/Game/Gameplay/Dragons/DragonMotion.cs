@@ -1278,7 +1278,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		float impulseMag = m_impulse.magnitude;
 		m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 		m_direction = m_impulse.normalized;
-		RotateToDirection(impulse);
+		RotateToDirection(m_direction);
 
         if ( !m_canMoveInsideWater )
         {
@@ -1865,6 +1865,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 
 			ChangeState(State.OuterSpace);
+		}
+
+		// If we didn't show the boost on space message, do it here
+		if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
+			if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST_SPACE)) {
+				Messenger.Broadcast(MessengerEvents.BOOST_SPACE);
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.BOOST_SPACE, true);
+			}
 		}
 
         // Notify game
