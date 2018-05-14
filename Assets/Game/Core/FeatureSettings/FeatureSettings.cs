@@ -102,6 +102,11 @@ public class FeatureSettings
 
     public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
 
+    /// <summary>
+    /// Wether or not the customizer blocks the first loading screen
+    /// </summary>
+    public const string KEY_CUSTOMIZER_BLOCKER = "customizerBlocker";
+
     // Whether or not automatic relogin is enabled (this features tries to login to our server and to the cloud if network is up)
     public const string KEY_AUTOMATIC_RELOGIN = "automaticRelogin";
 
@@ -264,6 +269,11 @@ public class FeatureSettings
             // Content deltas need to be cached. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS_CACHED;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            // Customizer blocker. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
+            key = KEY_CUSTOMIZER_BLOCKER;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
             key = KEY_AUTOMATIC_RELOGIN;
