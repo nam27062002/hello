@@ -6,13 +6,14 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: brillo
+  m_Name: VFX_MagicSmoke_Addblend_01
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: BLENDMODE_ADDITIVE
-  m_LightmapFlags: 5
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED
+    EXTENDED_PARTICLES
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 3065
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -27,28 +28,39 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7c88c7733b4d6b6469dc67e9e721538a, type: 3}
+        m_Texture: {fileID: 2800000, guid: dd79af413d81e604e9f603e991cde12a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 3c85f097366147a4fb6f1dc99503f365, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BlendMode: 0
-    - Dissolve: 0
+    - BlendMode: 5
+    - Dissolve: 1
     - _ABOffset: 0
     - _ColorMultiplier: 1
-    - _DstBlend: 1
-    - _EmissionSaturation: 1
+    - _DstBlend: 10
+    - _EmissionSaturation: 3
     - _EmissivePower: 1
+    - _EnableAlphaDissolve: 1
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
-    - _EnableColorVertex: 0
+    - _EnableColorTint: 0
+    - _EnableColorVertex: 1
     - _EnableEmissivePower: 0
-    - _EnableExtendedParticles: 0
-    - _OpacitySaturation: 1
-    - _SrcBlend: 5
+    - _EnableExtendedParticles: 1
+    - _EnableNoiseTexture: 0
+    - _EnableNoiseTextureAlpha: 0
+    - _EnableNoiseTextureDissolve: 0
+    - _EnableNoiseTextureEmission: 0
+    - _OpacitySaturation: 0.7
+    - _SrcBlend: 1
     - _ZTest: 2
     m_Colors:
-    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _BasicColor: {r: 1, g: 1, b: 1, a: 0.5}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
+    - _NoisePanning: {r: 0.1, g: 0.2, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _SaturatedColor: {r: 0.76713985, g: 0.39705884, b: 1, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
