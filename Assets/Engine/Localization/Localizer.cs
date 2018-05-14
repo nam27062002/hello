@@ -134,7 +134,7 @@ public class Localizer : MonoBehaviour {
 			} else {
 				// Replace formatting tag with the same tag in lower case
 				string formattingTag = processedText.Substring(startIdx, endIdx - startIdx);
-				processedText = processedText.Replace(formattingTag, formattingTag.ToLowerInvariant());
+				processedText = processedText.Replace(formattingTag, formattingTag.ToLower(LocalizationManager.SharedInstance.Culture));
 
 				// Find next one
 				startIdx = processedText.IndexOf("<", endIdx);
