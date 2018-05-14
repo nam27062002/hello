@@ -66,6 +66,12 @@ public class PopupShop : MonoBehaviour {
 		set { m_closeAfterPurchase = value; }
 	}
 
+	private Tabs m_initialTab = Tabs.COUNT;
+	public Tabs initialTab {
+		get { return m_initialTab; }
+		set { m_initialTab = value; }
+	}
+
 	// Data
 	private List<DefinitionNode> m_packsPurchased = new List<DefinitionNode>();
 	public List<DefinitionNode> packsPurchased {
@@ -132,15 +138,23 @@ public class PopupShop : MonoBehaviour {
 		 || _mode == Mode.OFFERS_FIRST
 		);
 
-		// Select initial tab and scroll list
+		// Select initial tab
 		int initialTab = m_tabs.GetScreenIndex(m_tabs.initialScreen);
 		switch(_mode) {
+			case Mode.DEFAULT: {
+				// Is initial tab overriden?
+				if(m_initialTab != Tabs.COUNT) {
+					initialTab = (int)m_initialTab;
+				} else {
+					initialTab = (int)Tabs.PC;	// Default behaviour
+				}
+			} break;
+
 			case Mode.SC_ONLY: {
 				initialTab = (int)Tabs.SC; 
 			} break;
 
-			case Mode.PC_ONLY: 
-			case Mode.DEFAULT: {
+			case Mode.PC_ONLY: {
 				initialTab = (int)Tabs.PC;
 			} break;
 
