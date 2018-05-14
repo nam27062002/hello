@@ -103,7 +103,7 @@ public class DragonControlPlayer : MonoBehaviour {
 		action = false;
 
 		// [AOC] Nothing to do if paused
-		if(InstanceManager.gameSceneControllerBase.paused) return;
+		// if(InstanceManager.gameSceneControllerBase.paused) return;
 
 		if(!m_useTiltControl) {
 			if(touchControls != null) {
