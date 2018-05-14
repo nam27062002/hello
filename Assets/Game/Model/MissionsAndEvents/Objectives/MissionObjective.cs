@@ -52,7 +52,7 @@ public class MissionObjective : TrackingObjectiveBase {
 	/// <param name="_singleRun">Is it a single run mission?</param>
 	public MissionObjective(Mission _parentMission, DefinitionNode _missionDef, DefinitionNode _typeDef, long _targetValue, bool _singleRun) {
 		#if LOG
-		DebugUtils.Log("<color=green>Creating MissionObjective:</color> " + _parentMission + ", " + _missionDef + ", " + _typeDef + ", " + _targetValue + ", " + _singleRun);
+		DebugUtils.Log(Colors.darkGreen.Tag("Creating MissionObjective: ") + _parentMission + ", " + _missionDef + ", " + _typeDef + ", " + _targetValue + ", " + _singleRun);
 		#endif
 
 		// Check params
@@ -96,7 +96,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		m_tracker.mode = TrackerBase.Mode.MISSION;
 
 		#if LOG
-		DebugUtils.Log("<color=green>Done! </color>" + ToString());
+		DebugUtils.Log(Colors.darkGreen.Tag("Done! ") + ToString());
 		#endif
 
 		// Subscribe to external events
@@ -109,7 +109,7 @@ public class MissionObjective : TrackingObjectiveBase {
 	/// </summary>
 	~MissionObjective() {
 		#if LOG
-		Debug.Log("<color=red>Destroying MissionObjective</color> " + ToString());
+		Debug.Log(Color.red.Tag("Destroying MissionObjective") + ToString());
 		#endif
 	}
 
@@ -118,7 +118,7 @@ public class MissionObjective : TrackingObjectiveBase {
 	/// </summary>
 	override public void Clear() {
 		#if LOG
-		DebugUtils.Log("<color=orange>Clearing MissionObjective </color>" + ToString());
+		DebugUtils.Log(Color.red.Tag("Clearing MissionObjective ") + ToString());
 		#endif
 
 		// Unsubscribe from external events
@@ -139,10 +139,10 @@ public class MissionObjective : TrackingObjectiveBase {
 	public string ToString() {
 		string str = "";
 		if(m_parentMission == null) {
-			str += "<color=red>Mission NULL</color>";
+			str += Color.red.Tag("Mission NULL");
 		} else {
 			if(m_parentMission.def == null) {
-				str += "<color=red>Mission Def NULL</color>";
+				str += Color.red.Tag("Mission Def NULL");
 			} else {
 				str += m_parentMission.def.sku;
 			}
@@ -151,7 +151,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		str += " | ";
 
 		if(m_tracker == null) {
-			str += "<color=red>Tracker NULL</color>";
+			str += Color.red.Tag("Tracker NULL");
 		} else {
 			str += m_tracker.GetType().ToString();
 		}
@@ -171,7 +171,7 @@ public class MissionObjective : TrackingObjectiveBase {
 			m_tracker.SetValue(0, false);
 
 			#if LOG
-			DebugUtils.Log("<color=red>Resetting mission! </color>" + ToString());
+			DebugUtils.Log(Color.red.Tag("Resetting mission! ") + ToString());
 			#endif
 		}
 
@@ -180,6 +180,8 @@ public class MissionObjective : TrackingObjectiveBase {
 
 		// Disable too if mission is not active
 		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;
+
+		Debug.Log(Color.yellow.Tag("MISSION OBJECTIVE STARTED:\n" + this.parentMission.def.sku + " | " + this.parentMission.state + " | " + this.enabled));
 	}
 
 	/// <summary>
@@ -192,7 +194,7 @@ public class MissionObjective : TrackingObjectiveBase {
 			m_tracker.SetValue(0, false);
 
 			#if LOG
-			DebugUtils.Log("<color=red>Resetting mission! </color> " + ToString());
+			DebugUtils.Log(Colors.red.Tag("Resetting mission!  ") + ToString());
 			#endif
 		}
 	}
@@ -208,7 +210,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		#if LOG
 		int newIntValue = Mathf.FloorToInt(currentValue);
 		if(newIntValue != m_lastIntValue) {
-			DebugUtils.Log(ToString() + "<color=yellow>: " + currentValue + "/" + targetValue + "</color>");
+			DebugUtils.Log(ToString() + Colors.yellow.Tag(": " + currentValue + "/" + targetValue));
 			m_lastIntValue = newIntValue;
 		}
 		#endif

@@ -223,7 +223,7 @@ public class UserMissions {
 
 						// If the selected type has no valid missions, remove it from the candidates list and select a new type
 						if(missionDefs.Count == 0) {
-							Debug.Log("<color=red>No missions found for type " + selectedTypeDef.sku + ". Choosing a new type.</color>");
+							Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
 
 							selectedTypeDef = null;
 							typeDefs.RemoveAt(i);
@@ -319,6 +319,7 @@ public class UserMissions {
 
 		// 2.4. Apply modifier and round final value
 		targetValue = Mathf.RoundToInt(targetValue * totalModifier);
+		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 
 		// 3. We got everything we need! Create the new mission
