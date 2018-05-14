@@ -9,12 +9,14 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
+
 using TMPro;
 using SimpleJSON;
+using DG.Tweening;
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 
 //----------------------------------------------------------------------------//
@@ -150,7 +152,7 @@ public class PopupCustomizer : MonoBehaviour {
 	private CustomizerManager.CustomiserPopupConfig m_config = null;
 	private CaletyConstants.PopupConfig m_localizedConfig = null;
 
-
+	private CanvasGroup m_menuCanvasGroup = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -294,6 +296,37 @@ public class PopupCustomizer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The popup is about to open.
+	/// </summary>
+	public void OnOpenPreAnimation() {
+		// Hide menu UI!
+		// This popup doesn't have a dark curtain (art request), so we need to hide
+		// the rest of the UI to prevent players from thinking it's usable
+
+		// Make sure we're on the menu
+		if(InstanceManager.menuSceneController == null) return;
+
+		// Find out root canvas and add a canvas group to set global alpha
+		Canvas menuCanvas = InstanceManager.menuSceneController.hud.GetComponentInParent<Canvas>();
+		m_menuCanvasGroup = menuCanvas.ForceGetComponent<CanvasGroup>();
+
+		// Fade it out!
+		m_menuCanvasGroup.DOKill(true);
+		m_menuCanvasGroup.DOFade(0f, 0.25f);
+	}
+
+	/// <summary>
+	/// The popup is about to close.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// Fade canvas in!
+		if(m_menuCanvasGroup != null) {
+			m_menuCanvasGroup.DOKill(true);
+			m_menuCanvasGroup.DOFade(1f, 0.25f);
+		}
+	}
+
 	/// <summary>
 	/// A button has been hit.
 	/// </summary>
