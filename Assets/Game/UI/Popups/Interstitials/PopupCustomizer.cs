@@ -265,6 +265,7 @@ public class PopupCustomizer : MonoBehaviour {
 	/// Close this popup.
 	/// </summary>
 	public void ClosePopup() {
+		// Close the popup!
 		this.GetComponent<PopupController>().Close(true);
 	}
 
@@ -320,6 +321,9 @@ public class PopupCustomizer : MonoBehaviour {
 	/// The popup is about to close.
 	/// </summary>
 	public void OnClosePreAnimation() {
+		// Notify customizer manager
+		CustomizerManager.SharedInstance.DiscardPopupResourcesAndSayToServer(m_config, true);
+
 		// Fade canvas in!
 		if(m_menuCanvasGroup != null) {
 			m_menuCanvasGroup.DOKill(true);
