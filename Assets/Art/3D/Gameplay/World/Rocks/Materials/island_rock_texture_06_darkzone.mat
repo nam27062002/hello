@@ -8,7 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: island_rock_texture_06_darkzone
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: BLEND_TEXTURE CUSTOM_VERTEXCOLOR FOG OPAQUEALPHA VERTEXCOLOR_NONE
+  m_ShaderKeywords: BLEND_TEXTURE CUSTOM_VERTEXCOLOR FOG MAINCOLOR_TEXTURE OPAQUEALPHA
+    VERTEXCOLOR_NONE
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -40,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 9c3ad6b434ce44e49b4d167c1bc61a92, type: 3}
+        m_Texture: {fileID: 2800000, guid: 217a6cc8124b2bf4b957f3c3e800a3b3, type: 3}
         m_Scale: {x: 1.7, y: 1.7}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,11 +65,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecondTexture:
-        m_Texture: {fileID: 2800000, guid: 7edb01cc371f75f489ac646405e16a0a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 28c531dfa37dcb04c8f9f5ac80709e1a, type: 3}
         m_Scale: {x: 1.5, y: 1.5}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Emissive: 0
+    - MainColor: 0
     - VertexColor: 0
     - _BlendMode: 0
     - _BlinkTimeMultiplier: 2
@@ -82,6 +84,7 @@ Material:
     - _DoubleSided: 0
     - _DstBlend: 0
     - _EmissivePower: 1
+    - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 1
     - _EnableBlendTexture: 1
     - _EnableCutoff: 0
@@ -90,8 +93,11 @@ Material:
     - _EnableFog: 1
     - _EnableLightmapContrast: 0
     - _EnableNormalMap: 0
+    - _EnableNormalwAsSpecular: 0
     - _EnableOpaqueAlpha: 1
     - _EnableSpecular: 0
+    - _EnableTint: 0
+    - _EnableWaveEmission: 0
     - _FogEnd: 1500
     - _FogStart: -9.2
     - _Glossiness: 0.5
@@ -107,9 +113,13 @@ Material:
     - _SpecularPower: 3
     - _SrcBlend: 1
     - _UVSec: 0
+    - _WaveEmission: 0.1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
     - _FogColor: {r: 0.37889272, g: 0.46233138, b: 0.7058823, a: 0.781}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}

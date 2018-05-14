@@ -97,6 +97,11 @@ public class SelectableButtonGroup : MonoBehaviour {
 		// Skip if already selected
 		if(m_selectedIdx == _buttonIdx) return;
 
+		// Skip if button can't be selected
+		if(_buttonIdx != NO_SELECTION_IDX && !m_buttons[_buttonIdx].selectionAllowed) {
+			return;
+		}
+
 		// Unselect previous button
 		if(m_selectedIdx != NO_SELECTION_IDX) {
 			m_buttons[m_selectedIdx].SetSelected(false);
