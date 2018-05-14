@@ -3781,18 +3781,18 @@ MonoBehaviour:
         FadeOut: 5
         RandomStartPosition: 0
         individualSettings: []
-    - Name: hd_megafire_charge
-      Loop: 0
+    - Name: dragonfat_flap
+      Loop: 1
       loopSequenceCount: 0
       loopSequenceOverlap: 0
       loopSequenceRandomDelay: 0
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.8
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
+      MaxInstanceCount: 1
       Delay: 0
       RandomVolume: 0
       RandomPitch: 0
@@ -3806,9 +3806,48 @@ MonoBehaviour:
         Probability: 1
         DisableOtherSubitems: 0
         ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: a55d21f502ee1aa4b92a238fbaac3b2c, type: 3}
+        Clip: {fileID: 8300000, guid: 8949f0f56ccf0ad4e9514f7568bd5900, type: 3}
         Volume: 1
         PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: dragonfat_flap_idle
+      Loop: 1
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 0.75
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 1
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 2460cb651a998fe45bc58b737ebc0dd7, type: 3}
+        Volume: 1
+        PitchShift: -2
         Pan2D: 0
         Delay: 0
         RandomPitch: 0
@@ -3835,7 +3874,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 16
+    currentItemIndex: 17
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -4175,8 +4214,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Idle_Flaps
-  m_wingsFlyingSound: Dragon_Flaps
+  m_wingsIdleSound: dragonfat_flap_idle
+  m_wingsFlyingSound: dragonfat_flap
   m_eatSound: Dragon_Eat_2
   m_eatHoldSound: 
   m_wingsWindSound: Dragon_wind_boost
