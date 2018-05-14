@@ -28,6 +28,7 @@ public class PopupCustomizer : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Interstitial/";
+	private const string JSON_SAVE_PATH = "Assets/Art/UI/Popups/Interstitial/";
 
 	public static class FieldType {
 		public static readonly string TEXT 		= "text";
@@ -460,7 +461,7 @@ public class PopupCustomizer : MonoBehaviour {
 			data.Add("settings", settings);
 		}
 
-		string filePath = "Assets/Art/UI/Popups/Interstitial/" + name + ".json";
+		string filePath = JSON_SAVE_PATH + name + ".json";
 		using (StreamWriter sw = new StreamWriter(filePath, false)) {
 			sw.WriteLine(data.ToString());
 			sw.Close();

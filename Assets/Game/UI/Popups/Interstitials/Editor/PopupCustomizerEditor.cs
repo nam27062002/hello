@@ -23,8 +23,16 @@ public class PopupCustomizerEditor : Editor {
 		DrawDefaultInspector();
 
 		// draw export button
-		if (GUILayout.Button("Save JSON")) {
+		EditorGUILayoutExt.Separator();
+
+		GUI.color = Colors.paleGreen;
+		if (GUILayout.Button("Save JSON", GUILayout.Height(30f))) {
 			m_target.SaveJSON();
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
 		}
+
+		GUI.color = Color.white;
+		EditorGUILayout.Space();
 	}
 }
