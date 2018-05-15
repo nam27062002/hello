@@ -65,6 +65,7 @@ public class MenuScreensControllerToolbar {
 		MAIN_SCREENS,
 		GOALS_SCREENS,
 		REWARD_SCREENS,
+		TOURNAMENT_SCREENS,
 
 		COUNT
 	}
@@ -114,6 +115,7 @@ public class MenuScreensControllerToolbar {
 		s_screenGroups[(int)EScreensGroup.MAIN_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.MainScreensExpanded", "Main Screens");
 		s_screenGroups[(int)EScreensGroup.GOALS_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.GoalsScreensExpanded", "Goals Screens");
 		s_screenGroups[(int)EScreensGroup.REWARD_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.RewardScreensExpanded", "Reward Screens");
+		s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.TournamentScreensExpanded", "Tournament Screens");
 		for(MenuScreen scr = MenuScreen.PLAY; scr < MenuScreen.COUNT; ++scr) {
 			switch(scr) {
 				case MenuScreen.MISSIONS:
@@ -127,6 +129,11 @@ public class MenuScreensControllerToolbar {
 				case MenuScreen.PENDING_REWARD: {
 					s_screenGroups[(int)EScreensGroup.REWARD_SCREENS].screens.Add(scr);
 				} break;
+
+				case MenuScreen.TOURNAMENT_INFO:
+				case MenuScreen.TOURNAMENT_DRAGON_SELECTION:
+				case MenuScreen.TOURNAMENT_DRAGON_PRESET: {
+					s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS].screens.Add(scr);
 				} break;
 
 				default: {
