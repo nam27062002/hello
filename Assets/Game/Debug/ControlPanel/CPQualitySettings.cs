@@ -313,8 +313,9 @@ public class CPQualitySettings : MonoBehaviour
     public TextMeshProUGUI m_gfxMemory;
     public TextMeshProUGUI m_gfxMemoryRating;
     public TextMeshProUGUI m_calculatedRating;
+    public TextMeshProUGUI m_calculatedProfile;
+    public TextMeshProUGUI m_oldNewRating;
     public TextMeshProUGUI m_usingFormula;
-    public TextMeshProUGUI m_rating;
     public TextMeshProUGUI m_deviceFrequency;
     public TextMeshProUGUI m_shaderLevel;
 
@@ -352,19 +353,31 @@ public class CPQualitySettings : MonoBehaviour
 
         if (m_calculatedRating != null)
         {
-            m_calculatedRating.text = (FeatureSettingsManager.instance.Device_UsingRatingFormula) ?
-                "old:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3"):
-                "old:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3");
+            m_calculatedRating.text = "" + FeatureSettingsManager.instance.Device_CalculateRating();
         }
+
+        if (m_calculatedProfile != null)
+        {
+            float rating = FeatureSettingsManager.instance.Device_CalculateRating();
+            int processorFrequency = FeatureSettingsManager.instance.Device_GetProcessorFrequency();
+            int systemMemorySize = FeatureSettingsManager.instance.Device_GetSystemMemorySize();
+            int gfxMemorySize = FeatureSettingsManager.instance.Device_GetGraphicsMemorySize();
+            string profileName = FeatureSettingsManager.deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
+
+            m_calculatedProfile.text = profileName;
+        }
+
+        if (m_oldNewRating != null)
+        {
+            m_oldNewRating.text = (FeatureSettingsManager.instance.Device_UsingRatingFormula) ?
+                            "old:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3"):
+                            "old:" + FeatureSettingsManager.instance.Device_CalculatedRating.ToString("N3") + " new:" + FeatureSettingsManager.instance.Device_CalculatedRatingExt.ToString("N3");
+        }
+
 
         if (m_usingFormula != null)
         {
             m_usingFormula.text = (FeatureSettingsManager.instance.Device_UsingRatingFormula) ? "new" : "old";
-        }
-
-        if (m_rating != null)
-        {
-            m_rating.text = "" + FeatureSettingsManager.instance.Device_CurrentRating;
         }
 
         if (m_deviceFrequency != null)

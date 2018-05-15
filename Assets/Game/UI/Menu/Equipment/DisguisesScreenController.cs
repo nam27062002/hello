@@ -48,6 +48,13 @@ public class DisguisesScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private Localizer m_lockText = null;
 
+	// Setup
+	private string m_initialSkin = string.Empty;	// String to be selected upon entering the screen. Will be resetted every time the screen is reloaded.
+	public string initialSkin {
+		get { return m_initialSkin; }
+		set { m_initialSkin = value; }
+	}
+
 	// Preview
 	private Transform m_previewAnchor;
 	private Transform m_dragonRotationArrowsPos;
@@ -169,7 +176,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// <summary>
 	/// Setup the screen with the data of the currently selected dragon.
 	/// </summary>
-	public void Initialize() {
+	private void Initialize() {
 		// Aux vars
 		MenuSceneController menuController = InstanceManager.menuSceneController;
 
@@ -200,9 +207,10 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(m_equipButton != null) m_equipButton.animator.ForceHide(false);
 
 		// Initialize pills
+		// Find initial pill
 		m_equippedPill = null;
 		m_selectedPill = null;
-		DisguisePill initialPill = m_pills[0];	// There will always be at least the default pill
+		DisguisePill initialPill = null;
 		string disguisesIconPath = UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku + "/";
 		for (int i = 0; i < m_pills.Length; i++) {
 			if (i < defList.Count) {
@@ -214,10 +222,14 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku), spr);
 				m_pills[i].name = def.sku;	// [AOC] For debug purposes
 
+				// Is it the forced initial skin?
+				if(def.sku == m_initialSkin) {
+					initialPill = m_pills[i];
+				}
+
 				// Is it the currently equipped disguise?
 				if(def.sku == currentDisguise) {
 					// Mark it as the initial pill
-					initialPill = m_pills[i];
 					m_pills[i].Equip(true, false);
 					m_equippedPill = m_pills[i];
 				} else {
@@ -231,6 +243,16 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_pills[i].gameObject.SetActive(false);
 			}
 		}
+
+		// If no initial pill was forced, select current equipped skin
+		if(initialPill == null) {
+			if(m_equippedPill != null) {
+				initialPill = m_equippedPill;
+			} else {
+				initialPill = m_pills[0];	// There will always be at least the default pill
+			}
+		}
+		m_initialSkin = string.Empty;	// Reset for next time
 
 		// Force a first refresh
 		// This will initialize both the equipped and selected pills as well
