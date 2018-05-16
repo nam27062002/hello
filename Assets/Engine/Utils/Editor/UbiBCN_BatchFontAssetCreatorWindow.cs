@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Linq;
 
@@ -21,11 +22,10 @@ namespace BatchFontCreator
     {
 		[System.Serializable]
 		private class FontObjectAndSettings {
-			public Object fontTTF;
+			public Font fontTTF;
 			public FontCreationSetting settings;
 			public List<TextAsset> inputCharactersFiles;
 
-			public string characterSequence;
 			public string output_feedback;
 			public int character_Count;
 		}
@@ -35,8 +35,11 @@ namespace BatchFontCreator
         {
 			var window = GetWindow<UbiBCN_BatchFontAssetCreatorWindow>();
             window.titleContent = new GUIContent("Batch Font Asset Creator");
+
             window.Focus();
         }
+
+		private const string tool_folder_path = "/Tools/UITools/FontAssetCreator/";
 
         private string[] FontResolutionLabels = { "16","32", "64", "128", "256", "512", "1024", "2048", "4096", "8192" };
         private int[] FontAtlasResolutions = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192 };
@@ -60,7 +63,8 @@ namespace BatchFontCreator
 
 		private List<FontObjectAndSettings> m_toDeleteSettings = new List<FontObjectAndSettings>();
 		private List<FontObjectAndSettings> m_fontSettings = new List<FontObjectAndSettings>();
-		private int m_currentRenderingSettingIndex;
+
+		private int m_currentRenderingSettingIndex = -1;
         
         private TMP_FontAsset m_fontAssetSelection;
         private TextAsset characterList;
@@ -83,7 +87,11 @@ namespace BatchFontCreator
         private Rect m_UI_Panel_Size;
 
 
-        public void OnEnable() {           
+		private Queue<int> m_toGenerateQueue = new Queue<int>();
+		private int m_toGenerateCount = 0;
+
+
+        public void OnEnable() {			
             m_editorWindow = this;
             UpdateEditorWindowSize(768, 768);
 
@@ -95,12 +103,12 @@ namespace BatchFontCreator
 
             // Add Event Listener related to Distance Field Atlas Creation.
             TMPro_EventManager.COMPUTE_DT_EVENT.Add(ON_COMPUTE_DT_EVENT);
+
+			ReadFontSettings();
         }
 
 
         public void OnDisable() {
-            //Debug.Log("TextMeshPro Editor Window has been disabled.");
-
             TMPro_EventManager.COMPUTE_DT_EVENT.Remove(ON_COMPUTE_DT_EVENT);
 
             // Destroy Engine only if it has been initialized already
@@ -111,14 +119,6 @@ namespace BatchFontCreator
 			if (m_font_Atlas != null && EditorUtility.IsPersistent(m_font_Atlas) == false) {
                 //Debug.Log("Destroying font_Atlas!");
                 DestroyImmediate(m_font_Atlas);
-            }
-
-            string projectPath = Path.GetFullPath("Assets/..");
-            if (System.IO.File.Exists(projectPath + "/Assets/Glyph Report.txt")) {
-                System.IO.File.Delete(projectPath + "/Assets/Glyph Report.txt");
-                System.IO.File.Delete(projectPath + "/Assets/Glyph Report.txt.meta");
-
-                AssetDatabase.Refresh();
             }
 
             Resources.UnloadUnusedAssets();
@@ -147,23 +147,36 @@ namespace BatchFontCreator
                 Repaint();
             }
 
-            // Update Progress bar is we are Rendering a Font.
-            if (isProcessing) {
-                m_renderingProgress = TMPro_FontPlugin.Check_RenderProgress();
-                isRepaintNeeded = true;
-            }
+			// Update Progress bar is we are Rendering a Font.
+			if (isProcessing) {
+				m_renderingProgress = TMPro_FontPlugin.Check_RenderProgress();
+				isRepaintNeeded = true;
+			}
 
-            // Update Feedback Window & Create Font Texture once Rendering is done.
-            if (isRenderingDone) {
-                isProcessing = false;
-                isRenderingDone = false;
-				UpdateRenderFeedbackWindow(m_fontSettings[m_currentRenderingSettingIndex]);
-				CreateFontTexture(m_fontSettings[m_currentRenderingSettingIndex].settings);
+			if (m_toGenerateCount > 0) {
+				if (m_currentRenderingSettingIndex < 0) {
+					if (m_toGenerateQueue.Count == 0) {
+						m_toGenerateCount = 0;
+						m_currentRenderingSettingIndex = -1;
+					} else {
+						m_currentRenderingSettingIndex = m_toGenerateQueue.Dequeue();
+						GenerateFontAtlas(m_fontSettings[m_currentRenderingSettingIndex]);
+					}
+				} else {
+		            // Update Feedback Window & Create Font Texture once Rendering is done.
+		            if (isRenderingDone) {
+		                isProcessing = false;
+		                isRenderingDone = false;
+						UpdateRenderFeedbackWindow(m_fontSettings[m_currentRenderingSettingIndex]);
+						CreateFontTexture(m_fontSettings[m_currentRenderingSettingIndex].settings);
 
-				SaveFontAtlas(m_fontSettings[m_currentRenderingSettingIndex]);
+						SaveFontAtlas(m_fontSettings[m_currentRenderingSettingIndex]);
 
-				m_currentRenderingSettingIndex = -1;
-            }
+						m_renderingProgress = 0f;
+						m_currentRenderingSettingIndex = -1;
+		            }
+				}
+			}
         }
 
 
@@ -257,6 +270,8 @@ namespace BatchFontCreator
 			GUILayout.BeginVertical();
 			GUILayout.Label("<b>Font Asset Creator</b>", TMP_UIStyleManager.Section_Label, GUILayout.Width(300));
 
+			GUI.enabled = (m_toGenerateCount == 0)? true : false;
+
 			GUILayout.BeginHorizontal();
 			for (int s = 0; s < m_fontSettings.Count; ++s) {
 				FontObjectAndSettings container = m_fontSettings[s];
@@ -310,33 +325,8 @@ namespace BatchFontCreator
 					GUILayout.Label("Input Files:", TMP_UIStyleManager.Label);
 					GUILayout.Space(10f);
 
-					container.characterSequence = string.Empty;
-					for (int i = 0; i < container.inputCharactersFiles.Count; ++i) {
+					for (int i = 0; i < container.inputCharactersFiles.Count; ++i) {						
 						container.inputCharactersFiles[i] = EditorGUILayout.ObjectField(container.inputCharactersFiles[i], typeof(TextAsset), false, GUILayout.Width(PANEL_CONTENT_WIDTH-10)) as TextAsset;
-						if (container.inputCharactersFiles[i] != null) {
-							container.characterSequence += container.inputCharactersFiles[i].text;
-
-							// Add the capitals as well!
-							string isoCode = "";
-							switch (container.inputCharactersFiles[i].name) {
-								case "english": 			isoCode = "en-US"; break;
-								case "french": 				isoCode = "fr-FR"; break;
-								case "italian": 			isoCode = "it-IT"; break;
-								case "german": 				isoCode = "de-DE"; break;
-								case "spanish": 			isoCode = "es-ES"; break;
-								case "brazilian": 			isoCode = "pt-BR"; break;
-								case "russian": 			isoCode = "ru-RU"; break;
-								case "simplified_chinese": 	isoCode = "zh-CN"; break;
-								case "japanese": 			isoCode = "ja-JP"; break;
-								case "korean": 				isoCode = "ko-KR"; break;
-								case "traditional_chinese": isoCode = "zh-TW"; break;
-								case "turkish": 			isoCode = "tr-TR"; break;
-							}
-
-							if (!string.IsNullOrEmpty(isoCode)) {
-								container.characterSequence += container.inputCharactersFiles[i].text.ToUpper(CultureInfo.CreateSpecificCulture(isoCode));
-							}
-						}
 					}
 
 					GUILayout.BeginHorizontal();
@@ -358,11 +348,9 @@ namespace BatchFontCreator
 
 	            GUILayout.Space(20);
 
-				GUI.enabled = (container.fontTTF == null || isProcessing)? false : true;    // Enable Preview if we are not already rendering a font.
-				if (GUILayout.Button("Generate Font Atlas", GUILayout.Width(PANEL_CONTENT_WIDTH)) && container.characterSequence.Length != 0 && GUI.enabled)
-	            {
-					m_currentRenderingSettingIndex = s;
-					GenerateFontAtlas(container);
+				if (GUILayout.Button("Generate Font Atlas", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
+					m_toGenerateQueue.Enqueue(s);
+					m_toGenerateCount = 1;
 	            }
 
 	            // FONT RENDERING PROGRESS BAR
@@ -394,12 +382,9 @@ namespace BatchFontCreator
 	            GUILayout.Space(10);
 
 	            // SAVE TEXTURE & CREATE and SAVE FONT XML FILE
-				GUI.enabled = (m_font_Atlas != null)? true : false; // Enable Save Button if font_Atlas is not Null.
 				if (GUILayout.Button("Delete Font", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
 					m_toDeleteSettings.Add(container);
 	            }
-
-	            GUI.enabled = true; // Re-enable GUI
 
 	            GUILayout.Space(5);
 	            GUILayout.EndVertical();
@@ -421,17 +406,125 @@ namespace BatchFontCreator
 				m_fontSettings.Remove(m_toDeleteSettings[i]);
 			}
 
+			GUILayout.EndHorizontal();
+
 			if (GUILayout.Button("Add Font")) {
 				m_fontSettings.Add(CreateDefaultSettings());
 			}
 
-			GUILayout.EndHorizontal();
+			if (GUILayout.Button("Save Settings")) {
+				SaveFontSettings();
+			}
+
+			if (GUILayout.Button("Load Settings")) ReadFontSettings();
+
+			GUILayout.FlexibleSpace();
+
+			if (GUILayout.Button("Generate All Fonts")) BatchGenerate();
+
 			GUILayout.EndVertical();
         }
 
+		void SaveFontSettings() {
+			List<FontCreationSetting> settings = new List<FontCreationSetting>();
+			List<List<string>> files = new List<List<string>>();
+			for (int i = 0; i < m_fontSettings.Count; ++i) {
+				FontObjectAndSettings container = m_fontSettings[i];
+				settings.Add(container.settings);
+
+				List<string> fileNames = new List<string>();
+				for (int f = 0; f < container.inputCharactersFiles.Count; ++f) {
+					fileNames.Add(AssetDatabase.GetAssetPath(container.inputCharactersFiles[f]));
+				}
+				files.Add(fileNames);
+			}
+
+			string path = Application.dataPath + tool_folder_path + "data01.dat";
+			using (Stream file = File.Open(path, FileMode.Create)) {
+				BinaryFormatter bf = new BinaryFormatter();
+				bf.Serialize(file, settings);
+			}
+
+			path = Application.dataPath + tool_folder_path + "data02.dat";
+			using (Stream file = File.Open(path, FileMode.Create)) {
+				BinaryFormatter bf = new BinaryFormatter();
+				bf.Serialize(file, files);
+			}
+		}
+
+		void ReadFontSettings() {
+			List<FontCreationSetting> settings = null;
+			string path = Application.dataPath + tool_folder_path + "data01.dat";
+			using (Stream stream = File.Open(path, FileMode.Open)) {
+				var bf = new BinaryFormatter();
+				object o = bf.Deserialize(stream);
+				settings = (List<FontCreationSetting>)o;
+			}
+
+			List<List<string>> files = null;
+			path = Application.dataPath + tool_folder_path + "data02.dat";
+			using (Stream stream = File.Open(path, FileMode.Open)) {
+				var bf = new BinaryFormatter();
+				object o = bf.Deserialize(stream);
+				files = (List<List<string>>)o;
+			}
+
+			if (settings != null) {
+				m_fontSettings = new List<FontObjectAndSettings>();
+				for (int i = 0; i < settings.Count; ++i) {
+					FontObjectAndSettings container = new FontObjectAndSettings();
+					container.settings = settings[i];
+					container.fontTTF = AssetDatabase.LoadAssetAtPath(container.settings.fontSourcePath, typeof(Font)) as Font;
+					container.inputCharactersFiles = new List<TextAsset>();
+
+					container.inputCharactersFiles = new List<TextAsset>();
+					for (int f = 0; f < files[i].Count; ++f) {
+						container.inputCharactersFiles.Add(AssetDatabase.LoadAssetAtPath(files[i][f], typeof(TextAsset)) as TextAsset);
+					}
+
+					m_fontSettings.Add(container);
+				}
+			}
+		}
+
+		void BatchGenerate() {
+			m_toGenerateCount = m_fontSettings.Count;
+
+			for (int i = 0; i < m_toGenerateCount; ++i) {
+				m_toGenerateQueue.Enqueue(i);
+			}
+		}
 
 		void GenerateFontAtlas(FontObjectAndSettings _container) {
 			if (_container.fontTTF != null) {
+				string characterSequence = string.Empty;
+				for (int i = 0; i < _container.inputCharactersFiles.Count; ++i) {
+					if (_container.inputCharactersFiles[i] != null) {
+						characterSequence += _container.inputCharactersFiles[i].text;
+
+						// Add the capitals as well!
+						string isoCode = "";
+						switch (_container.inputCharactersFiles[i].name) {
+							case "english": 			isoCode = "en-US"; break;
+							case "french": 				isoCode = "fr-FR"; break;
+							case "italian": 			isoCode = "it-IT"; break;
+							case "german": 				isoCode = "de-DE"; break;
+							case "spanish": 			isoCode = "es-ES"; break;
+							case "brazilian": 			isoCode = "pt-BR"; break;
+							case "russian": 			isoCode = "ru-RU"; break;
+							case "simplified_chinese": 	isoCode = "zh-CN"; break;
+							case "japanese": 			isoCode = "ja-JP"; break;
+							case "korean": 				isoCode = "ko-KR"; break;
+							case "traditional_chinese": isoCode = "zh-TW"; break;
+							case "turkish": 			isoCode = "tr-TR"; break;
+						}
+
+						if (!string.IsNullOrEmpty(isoCode)) {
+							characterSequence += _container.inputCharactersFiles[i].text.ToUpper(CultureInfo.CreateSpecificCulture(isoCode));
+						}
+					}
+				}
+
 				int error_Code;
 
 				error_Code = TMPro_FontPlugin.Initialize_FontEngine(); //Initialize Font Engine
@@ -466,10 +559,10 @@ namespace BatchFontCreator
 					int[] character_Set = null;
 					List<int> char_List = new List<int>();
 
-					for (int i = 0; i < _container.characterSequence.Length; i++) {
+					for (int i = 0; i < characterSequence.Length; i++) {
 						// Check to make sure we don't include duplicates
-						if (char_List.FindIndex(item => item == _container.characterSequence[i]) == -1)
-							char_List.Add(_container.characterSequence[i]);                            
+						if (char_List.FindIndex(item => item == characterSequence[i]) == -1)
+							char_List.Add(characterSequence[i]);                            
 					}
 
 					character_Set = char_List.ToArray();
@@ -551,9 +644,9 @@ namespace BatchFontCreator
 				_container.output_feedback += "\n\n<color=#ffff00>Report truncated.</color>\n<color=#c0ffff>See</color> \"TextMesh Pro\\Glyph Report.txt\"";
 
             // Save Missing Glyph Report file
-            string projectPath = Path.GetFullPath("Assets/..");
+			string path = Application.dataPath + tool_folder_path + "GlyphReport" + _container.fontTTF.name + ".txt";
             missingGlyphReport = System.Text.RegularExpressions.Regex.Replace(missingGlyphReport, @"<[^>]*>", string.Empty);
-			System.IO.File.WriteAllText(projectPath + "/Assets/Glyph Report_" + m_currentRenderingSettingIndex +".txt", missingGlyphReport);
+			System.IO.File.WriteAllText(path, missingGlyphReport);
             AssetDatabase.Refresh();
         }
 
@@ -865,9 +958,12 @@ namespace BatchFontCreator
                 }
             }
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(font_asset));  // Re-import font asset to get the new updated version.
+			string assetPath = AssetDatabase.GetAssetPath(font_asset);
 
+            AssetDatabase.SaveAssets();
+			AssetDatabase.ImportAsset(assetPath);  // Re-import font asset to get the new updated version.
+
+			font_asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(TMP_FontAsset)) as TMP_FontAsset;
             font_asset.ReadFontDefinition();
 
             AssetDatabase.Refresh();
