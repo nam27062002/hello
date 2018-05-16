@@ -262,7 +262,7 @@ public class GameServerManagerCalety : GameServerManager {
 		kServerConfig.m_strClientPlatformBuild = "ios";
 #endif
 
-        kServerConfig.m_strServerApplicationSecretKey = "avefusilmagnifica";
+        kServerConfig.m_strApplicationParole = "avefusilmagnifica";
 
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
