@@ -443,14 +443,7 @@ public class PopupCustomizer : MonoBehaviour {
 				// [AOC] TODO!!
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 			} break;
-
-			case CustomizerManager.ePopupButtonAction.SHOP: {
-				OpenShop(
-					tokens.Length > 0 ? tokens[0] : string.Empty,	// Initial tab
-					tokens.Length > 1 ? tokens[1] : string.Empty	// Initial item (optional)
-				);
-			} break;
-
+			
 			case CustomizerManager.ePopupButtonAction.NONE: {
 				// [AOC] Custom actions to be implemented if needed
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
