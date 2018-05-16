@@ -33,7 +33,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 				m_defaultValues[MUSIC_ENABLED] = true;
 
 				m_defaultValues[TILT_CONTROL_ENABLED] = false;
-				m_defaultValues[TOUCH_3D_ENABLED] = false;
+				m_defaultValues[TOUCH_3D_ENABLED] = Input.touchPressureSupported;
 				m_defaultValues[BLOOD_ENABLED] = true;
 
 				m_defaultValues[SHOW_BIG_AMOUNT_CONFIRMATION_POPUP] = true;
