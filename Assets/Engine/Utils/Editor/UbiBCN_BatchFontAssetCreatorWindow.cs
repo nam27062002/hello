@@ -26,11 +26,12 @@ namespace BatchFontCreator
 			public FontCreationSetting settings;
 			public List<TextAsset> inputCharactersFiles;
 
+			public Vector2 output_ScrollPosition;
 			public string output_feedback;
 			public int character_Count;
 		}
 
-        [MenuItem("Window/TextMeshPro/Batch Font Asset Creator")]
+        [MenuItem("Hungry Dragon/Fonts/Batch Font Asset Creator")]
         public static void ShowFontAtlasCreatorWindow()
         {
 			var window = GetWindow<UbiBCN_BatchFontAssetCreatorWindow>();
@@ -48,8 +49,7 @@ namespace BatchFontCreator
         private const string output_name_label = "Font: ";
 		private const string output_size_label = "Pt. Size: ";
 		private const string output_count_label = "Characters packed: ";        
-        private Vector2 output_ScrollPosition;
-
+        
         
         //private Thread MainThread;
         private Color[] Output;        
@@ -126,8 +126,18 @@ namespace BatchFontCreator
 
 
         public void OnGUI() {
-            GUILayout.BeginHorizontal(GUILayout.Width(310));
-            DrawControls();
+			GUILayout.BeginHorizontal(GUILayout.Width(310));
+            
+			DrawControls();
+
+			if (Event.current.type == EventType.Repaint) {
+				Rect r = GUILayoutUtility.GetLastRect();
+				Vector2 windowSize = new Vector2();
+				windowSize.x = r.xMax;
+				windowSize.y = r.yMax;
+				this.minSize = windowSize;
+				this.maxSize = windowSize;
+			}
             GUILayout.EndHorizontal();
         }
 
@@ -372,7 +382,7 @@ namespace BatchFontCreator
 
 	            GUILayout.Space(5);
 	            GUILayout.BeginVertical(TMP_UIStyleManager.TextAreaBoxWindow);
-	            output_ScrollPosition = EditorGUILayout.BeginScrollView(output_ScrollPosition, GUILayout.Height(145));
+				container.output_ScrollPosition = EditorGUILayout.BeginScrollView(container.output_ScrollPosition, GUILayout.Height(145));
 				EditorGUILayout.LabelField(container.output_feedback, TMP_UIStyleManager.Label);
 	            EditorGUILayout.EndScrollView();
 	            GUILayout.EndVertical();
@@ -412,15 +422,17 @@ namespace BatchFontCreator
 				m_fontSettings.Add(CreateDefaultSettings());
 			}
 
+			if (GUILayout.Button("Generate All Fonts")) {
+				BatchGenerate();
+			}
+
 			if (GUILayout.Button("Save Settings")) {
 				SaveFontSettings();
 			}
 
-			if (GUILayout.Button("Load Settings")) ReadFontSettings();
-
-			GUILayout.FlexibleSpace();
-
-			if (GUILayout.Button("Generate All Fonts")) BatchGenerate();
+			if (GUILayout.Button("Load Settings")) {
+				ReadFontSettings();
+			}
 
 			GUILayout.EndVertical();
         }
@@ -827,6 +839,8 @@ namespace BatchFontCreator
             string tex_FileName = Path.GetFileNameWithoutExtension(relativeAssetPath);
             string tex_Path_NoExt = tex_DirName + "/" + tex_FileName;
 
+
+
             // Check if TextMeshPro font asset already exists. If not, create a new one. Otherwise update the existing one.
             TMP_FontAsset font_asset = AssetDatabase.LoadAssetAtPath(tex_Path_NoExt + ".asset", typeof(TMP_FontAsset)) as TMP_FontAsset;
             if (font_asset == null) {
@@ -902,6 +916,8 @@ namespace BatchFontCreator
 
                 AssetDatabase.AddObjectToAsset(tmp_material, font_asset);
             } else {
+				FaceInfo face = font_asset.fontInfo.Clone();
+
                 // Find all Materials referencing this font atlas.
                 Material[] material_references = TMP_EditorUtility.FindMaterialReferences(font_asset);
 
@@ -913,8 +929,12 @@ namespace BatchFontCreator
 
                 int scaleDownFactor = 1;
                 // Add FaceInfo to Font Asset  
-                FaceInfo face = GetFaceInfo(m_font_faceInfo, scaleDownFactor);
-                font_asset.AddFaceInfo(face);
+                //FaceInfo face = GetFaceInfo(m_font_faceInfo, scaleDownFactor);
+				//font_asset.AddFaceInfo(face);
+
+				//Restore original face info
+				font_asset.AddFaceInfo(face);
+
 
                 // Add GlyphInfo[] to Font Asset
                 TMP_Glyph[] glyphs = GetGlyphInfo(m_font_glyphInfo, scaleDownFactor);
