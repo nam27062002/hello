@@ -5,6 +5,9 @@ using UnityEngine;
 namespace GameConstants
 {
 	public class Material{
+		public static readonly int BLEND_MODE = Shader.PropertyToID("_BlendMode");
+
+
 		public static readonly int TINT = Shader.PropertyToID("_Tint");
 		public static readonly int TINT_COLOR = Shader.PropertyToID("_TintColor");
 		public static readonly int FRESNEL_COLOR = Shader.PropertyToID("_FresnelColor");
@@ -16,6 +19,7 @@ namespace GameConstants
 		public static readonly int COLOR = Shader.PropertyToID("_Color");
 		public static readonly int INTENSITY = Shader.PropertyToID("_Intensity");
 		public static readonly int ASH_LEVEL = Shader.PropertyToID("_AshLevel");
+		public static readonly int EMISSIVE_POWER = Shader.PropertyToID("_EmissivePower");
 
 
 		public static readonly int FOG_START = Shader.PropertyToID("_FogStart");

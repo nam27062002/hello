@@ -11,18 +11,19 @@ public class JoystickControls : MonoBehaviour
     public Vector2 SharkDesiredVel { get { return m_sharkDesiredVel; } }
     float vX;
     float vY;
+    bool moving = false;
 
     public void UpdateJoystickControls()
     {
         vX = Input.GetAxis("Horizontal");
         vY = Input.GetAxis("Vertical");
+		moving = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
     }
 
 
     public bool isMoving()
 	{
-        //TODO: Better with Epsilon but it works...
-        return vX != 0 || vY != 0;
+		return moving;
 	}
 
     public bool getAction()

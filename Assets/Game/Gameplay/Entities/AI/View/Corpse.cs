@@ -16,6 +16,8 @@ public class Corpse : MonoBehaviour {
 
 
 	//------------------------------------
+	[SerializeField] private bool m_isDecoration = false;
+	[SeparatorAttribute]
 	[SerializeField] private float m_fadeDelay = 0.5f;
 	[SerializeField] private float m_fadeTime = 1f;
 	[SerializeField] private float m_forceExplosion = 175f;
@@ -67,9 +69,14 @@ public class Corpse : MonoBehaviour {
 			Material[] materials = renderer.sharedMaterials;
 
 			m_materials[renderer.GetInstanceID()] = new List<Material>();
-
+			//m_isDecoration
 			for (int m = 0; m < materials.Length; ++m) {
-				m_materials[renderer.GetInstanceID()].Add(new Material(materials[m]));
+				Material mCopy = new Material(materials[m]);
+				if (m_isDecoration) {
+					mCopy.EnableKeyword("TINT");
+					mCopy.renderQueue = 3000;
+				}
+				m_materials[renderer.GetInstanceID()].Add(mCopy);
 				materials[m] = null;
 			}
 			renderer.sharedMaterials = materials;

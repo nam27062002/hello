@@ -7,9 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: VFX_MagneticTrail_AddBlend_01
-  m_Shader: {fileID: 4800000, guid: bf72659a8d2b2494ab4c73b54fd7287f, type: 3}
-  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
-    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -23,12 +22,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 11fa77dfe0d82e44ca8aa11f67b200af, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendMode: 5
+    - Dissolve: 0
+    - _ABOffset: 0
     - _ColorMultiplier: 1
+    - _DstBlend: 10
     - _EmissionSaturation: 1.5
     - _EmissivePower: 1
     - _EnableAutomaticPanning: 0
@@ -36,7 +43,9 @@ Material:
     - _EnableColorVertex: 0
     - _EnableDissolve: 0
     - _EnableEmissivePower: 0
+    - _EnableExtendedParticles: 1
     - _OpacitySaturation: 0.8
+    - _SrcBlend: 1
     - _ZTest: 2
     m_Colors:
     - _BasicColor: {r: 0.70583797, g: 0.21626295, b: 0.9191176, a: 0.5}

@@ -324,8 +324,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             int sessionNumber = TrackingPersistenceSystem.SessionCount;
             string trackingID = TrackingPersistenceSystem.UserID;
             string userID = PersistencePrefs.ServerUserId;
-            //TrackingManager.ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_ONLINE : TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
-            ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_ONLINE;
+            //ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? ETrackPlatform.E_TRACK_PLATFORM_ONLINE : ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
+			ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_ONLINE;
             //ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
 
             if (FeatureSettingsManager.IsDebugEnabled)
@@ -333,7 +333,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Log("SessionNumber = " + sessionNumber + " trackingID = " + trackingID + " userId = " + userID + " trackPlatform = " + trackPlatform);
             }
 
-            TrackingConfig kTrackingConfig = new TrackingConfig();
+			TrackingConfig kTrackingConfig = new TrackingConfig();
             kTrackingConfig.m_eTrackPlatform = trackPlatform;
             kTrackingConfig.m_strJSONConfigFilePath = "Tracking/TrackingEvents";
             kTrackingConfig.m_strStartSessionEventName = "custom.etl.session.start";
@@ -764,9 +764,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 	}  
     
     public override void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {
-        // Makes sure that the device is supported by the game. If we didn't do this then the last funnel step would never be sent because that step is sent when the main menu is loaded. This'd be misleading
+        // Makes sure that the device is fully supported by the game. If we didn't do this then the last funnel step would never be sent because that step is sent when the main menu is loaded. This'd be misleading
         // because it could make us think there's a crash when loading the game because we can't filter the unsupported devices out in Razolytics analytics
-        if (FeatureSettingsManager.instance.Device_IsSupported()) {
+        if (FeatureSettingsManager.instance.Device_IsSupported() && !FeatureSettingsManager.instance.Device_SupportedWarning())  {
             int _sessionsCount = (TrackingPersistenceSystem == null) ? 0 : TrackingPersistenceSystem.SessionCount;
             string _stepName = m_loadFunnelRazolytics.GetStepName(_step);
             int _stepDuration = m_loadFunnelRazolytics.GetStepDuration(_step);
@@ -1757,7 +1757,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string postrasstring = Track_CoordinatesToString(positionTR);
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Performance_Track_Event: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
+            Log("custom.gameplay.fps: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
         }
 
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.fps");
@@ -1770,6 +1770,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_AddParamString(e, TRACK_PARAM_COORDINATESBL, posblasstring);
             Track_AddParamString(e, TRACK_PARAM_COORDINATESTR, postrasstring);
             Track_AddParamBool(e, TRACK_PARAM_FIRE_RUSH, fireRush);
+            Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
             Track_SendEvent(e);
         }
@@ -1819,7 +1820,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_DeviceStats rating = " + rating + " processorFrequency = " + processorFrequency + " system memory = " + systemMemorySize + " gfx memory = " + gfxMemorySize + " quality profile = " + profileName + " quality formula version = " + formulaVersion);
         }
 
-        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.device.stats");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.device.stats");
         if (e != null)
         {
 //            Track_
@@ -1841,7 +1842,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_Crash isFatal = " + isFatal + " errorType = " + errorType + " errorMessage = " + errorMessage);
         }
 
-        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.crash");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.crash");
         if (e != null)
         {
             Track_AddParamPlayerProgress(e);
@@ -2431,8 +2432,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             m_Performance_FireRushStartTime = currentTime;
         }
 
+
         if (elapsedTime > Performance_TrackingDelay)
         {
+            Debug.Log("Performance tracking enabled: " + Performance_IsTrackingEnabled + " Delay: " + Performance_TrackingDelay);
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
             //int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
             Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);

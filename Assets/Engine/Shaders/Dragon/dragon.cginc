@@ -9,13 +9,16 @@ struct appdata_t {
 struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
-	float3 vLight : TEXCOORD1;
-	float3 normalWorld : TEXCOORD3;
+//	float3 vLight : COLOR;
+	float3 normalWorld : NORMAL;
 #ifdef NORMALMAP
 	float3 tangentWorld : TEXCOORD2;
 	float3 binormalWorld : TEXCOORD4;
 #endif
 	fixed3 viewDir : TEXCOORD5;
+#if defined(FXLAYER_FIRE)
+	fixed2 screenPos : TEXCOORD1;
+#endif
 };
 
 sampler2D _MainTex;
@@ -54,11 +57,15 @@ uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
 #elif defined (FXLAYER_FIRE)
 uniform sampler2D _FireMap;
+uniform float4 _FireMap_ST;
 uniform float _FireAmount;
+uniform float _FireSpeed;
 #endif
 
 #ifdef SELFILLUMINATE_AUTOINNERLIGHT
 uniform float _InnerLightWavePhase;
+#endif
+#if defined(SELFILLUMINATE_AUTOINNERLIGHT) || defined(SELFILLUMINATE_BLINKLIGHTS)
 uniform float _InnerLightWaveSpeed;
 #endif
 
@@ -69,15 +76,20 @@ uniform float _Cutoff;
 v2f vert(appdata_t v)
 {
 	v2f o;
+
+#if defined(VERTEXOFFSET)
+	float smooth = smoothstep(0.7, -0.0, v.vertex.x);
+	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 10.0) * 0.12 * smooth;
+#endif
+
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
 	// Normal
 	float3 normal = UnityObjectToWorldNormal(v.normal);
+
 	// Light Probes
 //	o.vLight = ShadeSH9(float4(normal, 1.0));
-	o.vLight = float3(0.7, 0.7, 0.7);// ShadeSH9(float4(normal, 1.0));
-
 
 	// Half View - See: Blinn-Phong
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
@@ -102,6 +114,11 @@ v2f vert(appdata_t v)
 //#endif
 
 #endif
+
+#if defined(FXLAYER_FIRE)
+	o.screenPos = (v.vertex.xy / v.vertex.w) * _FireMap_ST.xy * 0.1;
+#endif
+
 	return o;
 }
 
@@ -152,17 +169,19 @@ fixed4 frag(v2f i) : SV_Target
 #if defined (FXLAYER_REFLECTION)		//Used by chinese dragon
 	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
 
-	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
+//	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
+//	float ref = specMask * _ReflectionAmount * detail.b;
 
-	float ref = specMask * _ReflectionAmount * detail.b;
+	float ref = _ReflectionAmount * detail.b;
+
 	col = (1.0 - ref) * main + ref * reflection;
 
 #elif defined (FXLAYER_FIRE)	//Used by pet phoenix
-	i.texcoord.y = 1.0 - (i.texcoord.y * 0.75);
-	i.texcoord.y *= i.texcoord.y;
+//	i.texcoord.y = 1.0 - (i.texcoord.y * 0.75);
+//	i.texcoord.y *= i.texcoord.y;
 
-	fixed4 intensity = tex2D(_FireMap, (i.texcoord.xy + half2(0.25, _Time.y * 0.666)));
-	intensity *= tex2D(_FireMap, (i.texcoord.xy + float2(-0.25, _Time.y * 0.333)));// +pow(i.uv.y, 3.0);
+	fixed4 intensity = tex2D(_FireMap, (i.screenPos.xy + half2(_Time.y * _FireSpeed, 0.25)));
+	intensity *= tex2D(_FireMap, (i.screenPos.xy + float2(_Time.y * _FireSpeed * 0.5, -0.25)));// +pow(i.uv.y, 3.0);
 
 	float fireMask = _FireAmount * detail.b;
 	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
@@ -178,19 +197,23 @@ fixed4 frag(v2f i) : SV_Target
 	fixed satMask = (0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b) * detail.r;
 	satMask = lerp(satMask, 1.0, detail.b);
 	fixed blink = lerp((sin(_Time.y * _InnerLightWavePhase) + 1.0) * 0.5, (cos(wave) + 1.0) * 0.5, detail.b);
-	satMask *= blink * 10.0;
+	satMask *= blink;
 	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, satMask);
 
 #elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
-	float anim = sin(_Time.x * 40.0); // _SinTime.w * 0.5f;
-	fixed3 selfIlluminate = col.xyz * 1.0 * anim;
+	float anim = 1.0 + sin(_Time.y * _InnerLightWaveSpeed); // _SinTime.w * 0.5f;
+	fixed3 selfIlluminate = col.xyz * anim * detail.r * _InnerLightColor.xyz * _InnerLightAdd;
 
 #else
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination
 
 #endif
 
-	col.xyz = (diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+//#if defined (FXLAYER_REFLECTION)
+//	col.xyz = lerp((diffuse.xyz + i.vLight) * col.xyz * _Tint.xyz + _ColorAdd.xyz + specularLight + selfIlluminate, col.xyz * _Tint.xyz + _ColorAdd.xyz, ref); //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+//#else
+	col.xyz = ((diffuse.xyz + UNITY_LIGHTMODEL_AMBIENT.xyz/* + i.vLight*/) * col.xyz * _Tint.xyz) + _ColorAdd.xyz + specularLight + selfIlluminate; //+ _AmbientAdd.xyz; // To use ShaderSH9 better done in vertex shader
+//#endif
 
 // Fresnel
 #ifdef FRESNEL
@@ -211,9 +234,9 @@ fixed4 frag(v2f i) : SV_Target
 #ifdef OPAQUEALPHA
 	UNITY_OPAQUE_ALPHA(col.a);
 
-#else
+#else	// OPAQUEALPHA
 //	col.w = 0.0f;
-	float opaqueLight = 1.0;
+	float opaqueLight = 0.0;
 #if defined(FRESNEL) && defined(OPAQUEFRESNEL)
 	opaqueLight = fresnel;
 //	col.w += fresnel;
@@ -224,9 +247,9 @@ fixed4 frag(v2f i) : SV_Target
 //	col.w += specularLight;
 #endif
 
-	col.w = min(col.w, opaqueLight);
+	col.w = max(col.w, opaqueLight);
 	col.w *= _Tint.w;
-#endif
+#endif	// OPAQUEALPHA
 
 	return col;
 }

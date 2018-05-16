@@ -40,6 +40,9 @@ abstract public class TouchControls : MonoBehaviour {
 
 	private bool m_registerFirstTouch = true; //first touch
 
+	protected bool m_paused = false;
+	protected bool m_render = false;
+
 	// Use this for initialization
 	virtual public void Start () {
 	
@@ -119,6 +122,7 @@ abstract public class TouchControls : MonoBehaviour {
 	
 	virtual public void SetRender(bool enable)
 	{
+		m_render = enable;
 		// not marking this abstract as you could have both touch controls without any rendering...
 	}
 
@@ -279,7 +283,10 @@ abstract public class TouchControls : MonoBehaviour {
 			ResetTouchValues();
 			SetRender(false);
 			this.gameObject.SetActive(false);
+			m_paused = true;
 		} else {
+			m_paused = false;
+			SetRender(m_render);
 			this.gameObject.SetActive(true);
 		}
 	}

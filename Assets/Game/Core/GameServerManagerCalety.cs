@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
@@ -262,7 +262,7 @@ public class GameServerManagerCalety : GameServerManager {
 		kServerConfig.m_strClientPlatformBuild = "ios";
 #endif
 
-        kServerConfig.m_strServerApplicationSecretKey = "avefusilmagnifica";
+        kServerConfig.m_strApplicationParole = "avefusilmagnifica";
 
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
@@ -302,7 +302,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private bool m_isProcessingConnectionLost;
 
-	public override void OnConnectionLost() {
+	protected override void InternalOnConnectionLost() {
 		if (FeatureSettingsManager.IsDebugEnabled) {
 			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
 		}

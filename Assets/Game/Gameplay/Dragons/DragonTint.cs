@@ -15,8 +15,11 @@ public class DragonTint : MonoBehaviour
 
 	int m_materialsCount = 0;
 	List<Material> m_materials = new List<Material>();
+	List<Color> m_materialsMultiplyColors = new List<Color>();
+	List<Color> m_materialsAddColors = new List<Color>();
     List<Shader> m_originalShaders = new List<Shader>();
 	List<Color> m_fresnelColors = new List<Color>();
+	List<float> m_innerLightAddValue = new List<float>();
 	List<Color> m_innerLightColors = new List<Color>();
 	float m_innerLightColorValue = 1;
 
@@ -25,8 +28,6 @@ public class DragonTint : MonoBehaviour
 	// Cursed
 	public Color m_curseColor = Color.green;
 
-	// Cave
-	Color m_caveColor = Color.white;
 
 	// Damage
 	public Color m_damageColor = Color.red;
@@ -65,34 +66,91 @@ public class DragonTint : MonoBehaviour
 	void GetMaterials()
 	{
 		m_materials.Clear();
+		m_materialsMultiplyColors.Clear();
+		m_materialsAddColors.Clear();
+		m_innerLightAddValue.Clear();
+		m_innerLightColors.Clear();
+
+
+		Material bodyMaterial = null;
+		List<Renderer> bodyRenderers = new List<Renderer>();
+
+		Material wingsMaterial = null;
+		List<Renderer> wingsRenderers = new List<Renderer>();
+
+		Material diguiseMaterial = null;
+		List<Renderer> diguiseRenderers = new List<Renderer>();
+
+
 		if ( m_renderers != null )
 		for( int i = 0; i<m_renderers.Length; i++ )
 		{
-			Material[] mats = m_renderers[i].materials;
-			bool hasDragonPart = false;
-			for( int j = 0;j<mats.Length; j++ )
+			Renderer renderer = m_renderers[i];
+			Material mat = renderer.material;
+			string shaderName = mat.shader.name;
+			if ( shaderName.Contains("Dragon standard") )
 			{
-				
-				string shaderName = mats[j].shader.name;
-                if (shaderName.Contains("Dragon standard"))
-                {
-                	hasDragonPart = true;
-                    m_materials.Add(mats[j]);
-                    m_fresnelColors.Add(mats[j].GetColor( GameConstants.Material.FRESNEL_COLOR ));
-					m_innerLightColors.Add(mats[j].GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
-                    m_originalShaders.Add(mats[j].shader);
-//					if (shaderName.Contains("Body"))
-//						m_bodyMaterials.Add( mats[j] );
-//                  }
-                }
-			}
-			if ( hasDragonPart )
-			{
+				if ( renderer.tag.Equals("DragonBody") )
+				{
+					bodyMaterial = mat;
+					bodyRenderers.Add( renderer );
+				}
+				else if ( renderer.tag.Equals("DragonWings") )
+				{
+					wingsMaterial = mat;
+					wingsRenderers.Add( renderer );
+				}
+				else
+				{
+					diguiseMaterial = mat;
+					diguiseRenderers.Add( renderer );
+				}
+
 				m_dragonRenderers.Add( m_renderers[i] );
 			}
-				
 		}
+
+		int max = 0;
+
+		if ( bodyMaterial )
+		{
+			max = bodyRenderers.Count;
+			for (int i = 0; i < max; i++) {
+				bodyRenderers[i].material = bodyMaterial;
+			}
+			AddMaterialInfo( bodyMaterial );
+		}
+
+		if ( wingsMaterial )
+		{
+			max = wingsRenderers.Count;
+			for (int i = 0; i < max; i++) {
+				wingsRenderers[i].material = wingsMaterial;
+			}
+			AddMaterialInfo( wingsMaterial );
+		}
+
+		if ( diguiseMaterial )
+		{
+			max = diguiseRenderers.Count;
+			for (int i = 0; i < max; i++) {
+				diguiseRenderers[i].material = diguiseMaterial;
+			}
+			AddMaterialInfo( diguiseMaterial );
+		}
+
 		m_materialsCount = m_materials.Count;
+	}
+
+	void AddMaterialInfo( Material mat )
+	{
+		m_materials.Add(mat);
+		m_materialsMultiplyColors.Add( mat.GetColor( GameConstants.Material.TINT ));
+		m_materialsAddColors.Add( mat.GetColor( GameConstants.Material.COLOR_ADD ));
+        m_fresnelColors.Add(mat.GetColor( GameConstants.Material.FRESNEL_COLOR ));
+		m_innerLightAddValue.Add( mat.GetFloat( GameConstants.Material.INNER_LIGHT_ADD ));
+		m_innerLightColors.Add(mat.GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
+        m_originalShaders.Add(mat.shader);
 	}
 
 	void OnEnable() 
@@ -121,7 +179,6 @@ public class DragonTint : MonoBehaviour
 	// Update is called once per frame
 	void LateUpdate () 
 	{
-		Color multiplyColor = m_caveColor;
 		// Color multiply
 		if ( !m_health.IsAlive() )
 		{
@@ -134,8 +191,8 @@ public class DragonTint : MonoBehaviour
 			m_deathAlpha += Time.deltaTime;
 		}
 		m_deathAlpha = Mathf.Clamp01(m_deathAlpha);
-		multiplyColor.a = m_deathAlpha;
-		SetColorMultiply(multiplyColor);
+
+		SetColorMultiplyAlpha(m_deathAlpha);
 //		SetFresnelAlpha( m_deathAlpha );
 
 		// Color add
@@ -217,10 +274,13 @@ public class DragonTint : MonoBehaviour
 
 	}
 
-	void SetColorMultiply( Color c )
+	void SetColorMultiplyAlpha( float a )
 	{
-		for( int i = 0; i<m_materialsCount; ++i )	
+		for( int i = 0; i<m_materialsCount; ++i ){
+			Color c = m_materialsMultiplyColors[i];
+			c.a = a;
 			m_materials[i].SetColor( GameConstants.Material.TINT , c );
+		}
 	}
 
 	void SetFresnelAlpha( float alpha )
@@ -237,14 +297,19 @@ public class DragonTint : MonoBehaviour
 	void SetColorAdd( Color c)
 	{
 		c.a = 0;
-		for( int i = 0; i<m_materialsCount; ++i )	
-			m_materials[i].SetColor( GameConstants.Material.COLOR_ADD, c );
+		for( int i = 0; i<m_materialsCount; ++i )
+		{
+			Color res = m_materialsAddColors[i] + c;
+			m_materials[i].SetColor( GameConstants.Material.COLOR_ADD, res );
+		}
 	}
 
 	void SetInnerLightAdd( float innerValue )
 	{
 		for( int i = 0; i<m_materialsCount; ++i )	
-			m_materials[i].SetFloat( GameConstants.Material.INNER_LIGHT_ADD, innerValue );
+		{
+			m_materials[i].SetFloat( GameConstants.Material.INNER_LIGHT_ADD, m_innerLightAddValue[i] + innerValue );
+		}
 	}
 
 	void SetInnerLightColorValue( float value )
@@ -254,11 +319,6 @@ public class DragonTint : MonoBehaviour
 			Color c = m_innerLightColors[i] * value;
 			m_materials[i].SetColor( GameConstants.Material.INNER_LIGHT_COLOR, c );
 		}
-	}
-
-	public void SetCaveColor( Color c )
-	{
-		m_caveColor = c;
 	}
 
 	private void OnPlayerKo( DamageType _type, Transform _source )

@@ -155,7 +155,13 @@ public class GameServerManager
         }
     }
 
-	public virtual void OnConnectionLost() {}
+	public void OnConnectionLost()
+    {
+        InternalOnConnectionLost();
+        HDCustomizerManager.instance.NotifyServerDown();
+    }
+
+    protected virtual void InternalOnConnectionLost() {}
 
     public virtual void Connection_SetIsCheckEnabled(bool value) {}
 

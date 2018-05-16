@@ -90,7 +90,9 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 		m_waitTimer -= Time.deltaTime;
 
 		if (m_prisonerSpawner.AreAllDead()) {
-			m_entity.SetDestroyedByDragon();
+			if (m_prisonerSpawner.AreAllKilledByPlayer()) {
+				m_entity.SetDestroyedByDragon();
+			}
 		}
 	}
 

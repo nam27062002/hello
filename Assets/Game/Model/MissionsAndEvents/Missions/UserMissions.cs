@@ -223,7 +223,7 @@ public class UserMissions {
 
 						// If the selected type has no valid missions, remove it from the candidates list and select a new type
 						if(missionDefs.Count == 0) {
-							Debug.Log("<color=red>No missions found for type " + selectedTypeDef.sku + ". Choosing a new type.</color>");
+							Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
 
 							selectedTypeDef = null;
 							typeDefs.RemoveAt(i);
@@ -282,10 +282,11 @@ public class UserMissions {
 	/// <param name="_singleRun">Single run mission?</param>
 	private Mission GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, string _dragonModifierSku, bool _singleRun) {
 		// 1. Compute target value based on mission min/max range
-		float targetValue = 0f;
-		targetValue = UnityEngine.Random.Range(
-			_missionDef.GetAsFloat("objectiveBaseQuantityMin"),
-			_missionDef.GetAsFloat("objectiveBaseQuantityMax")
+		long targetValue = 0;
+
+		targetValue = RandomExt.Range(
+			_missionDef.GetAsLong("objectiveBaseQuantityMin"),
+			_missionDef.GetAsLong("objectiveBaseQuantityMax")
 		);
 		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + _missionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + _missionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
@@ -317,7 +318,8 @@ public class UserMissions {
 		}
 
 		// 2.4. Apply modifier and round final value
-		targetValue = Mathf.Round(targetValue * totalModifier);
+		targetValue = Mathf.RoundToInt(targetValue * totalModifier);
+		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 
 		// 3. We got everything we need! Create the new mission

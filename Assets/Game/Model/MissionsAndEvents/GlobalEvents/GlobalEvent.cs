@@ -124,6 +124,10 @@ public partial class GlobalEvent {
 		set { SetState(value); }
 	}
 
+	public bool isTeasing {
+		get { return m_state == State.TEASING; }
+	}
+
 	public bool isActive {
 		get { return m_state == State.ACTIVE; }
 	}
@@ -432,7 +436,7 @@ public partial class GlobalEvent {
 		if(_timestamp >= m_startTimestamp) return State.ACTIVE;
 
 		// Teasing?
-		if(_timestamp >= m_teasingStartTimestamp) return State.TEASING;
+		if(_timestamp < m_startTimestamp) return State.TEASING;
 
 		// Not even teasing
 		return State.INIT;

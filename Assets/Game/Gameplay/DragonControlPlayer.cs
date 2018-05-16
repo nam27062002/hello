@@ -61,13 +61,8 @@ public class DragonControlPlayer : MonoBehaviour {
 			joystickControls = gameInputObj.GetComponent<JoystickControls>();
 		}
 
-		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST) {
-			// Search path
-			// m_followingSpline = ;
-			GameObject go = GameObject.Find("TestPath");
-			if(go != null) {
-				m_followingSpline = go.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
-			}
+		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST) {           
+            m_followingSpline = GameObjectExt.FindComponent<Assets.Code.Game.Spline.BezierSpline>(true, "TestPath");            	
 		}
 		m_useTiltControl = GameSettings.Get(GameSettings.TILT_CONTROL_ENABLED);
 		SetupInputs();
@@ -108,7 +103,7 @@ public class DragonControlPlayer : MonoBehaviour {
 		action = false;
 
 		// [AOC] Nothing to do if paused
-		if(InstanceManager.gameSceneControllerBase.paused) return;
+		// if(InstanceManager.gameSceneControllerBase.paused) return;
 
 		if(!m_useTiltControl) {
 			if(touchControls != null) {

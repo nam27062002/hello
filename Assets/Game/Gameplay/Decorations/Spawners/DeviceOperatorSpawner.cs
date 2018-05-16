@@ -41,8 +41,9 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		m_operatorParent = null;
     }
 
-	void OnDestroy() {
-		if (ApplicationManager.IsAlive) {
+	protected override void OnDestroy() {
+		base.OnDestroy();
+		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
 			ForceRemoveEntities();
 		}
 	}
@@ -201,6 +202,9 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	// Debug
 	//-------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
+		Gizmos.color = Colors.WithAlpha(Colors.paleGreen, 0.5f);
+		Gizmos.DrawCube(transform.position, m_rect.size);
+
 		if (m_spawnAtTransform != null) {
 			Gizmos.color = Colors.lime;
 			Gizmos.DrawSphere(m_spawnAtTransform.position, 0.5f);

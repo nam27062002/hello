@@ -7,8 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: VFX_Hieroglyphs_Additive_01
-  m_Shader: {fileID: 4800000, guid: b6208e8b247e2a347b142062df6b6310, type: 3}
-  m_ShaderKeywords: EMISSIVE_BLINK OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_ADDITIVE EXTENDED_PARTICLES
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -35,6 +35,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -71,9 +75,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendMode: 0
+    - Dissolve: 0
     - Emissive: 1
     - VertexColor: 0
-    - _BlendMode: 1
+    - _ABOffset: 0
+    - _BlendMode: 0
     - _BlinkTimeMultiplier: 0
     - _BumpScale: 1
     - _ColorMultiplier: 0.67
@@ -84,8 +91,8 @@ Material:
     - _DarkenPosition: 0
     - _DetailNormalMapScale: 1
     - _DoubleSided: 1
-    - _DstBlend: 10
-    - _EmissionSaturation: 1.73
+    - _DstBlend: 1
+    - _EmissionSaturation: 1.5
     - _EmissivePower: 1
     - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
@@ -97,6 +104,8 @@ Material:
     - _EnableDarken: 0
     - _EnableDissolve: 0
     - _EnableEmissiveBlink: 0
+    - _EnableEmissivePower: 0
+    - _EnableExtendedParticles: 1
     - _EnableFog: 0
     - _EnableLightmapContrast: 0
     - _EnableNormalMap: 0
@@ -113,7 +122,7 @@ Material:
     - _Mode: 0
     - _NormalStrength: 1
     - _OcclusionStrength: 1
-    - _OpacitySaturation: 1
+    - _OpacitySaturation: 0.7
     - _Parallax: 0.02
     - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
@@ -130,5 +139,6 @@ Material:
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.6397059, g: 1, b: 0.7018255, a: 0.5}
+    - _SaturatedColor: {r: 0.39862674, g: 0.74264705, b: 0.45794052, a: 0.5}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
+    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

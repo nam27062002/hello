@@ -24,14 +24,22 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private enum State {
+		HIDDEN = 0,
+		FADE_IN,
+		VISIBLE,
+		FADE_OUT
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private ShowHideAnimator m_animator = null;
-	public ShowHideAnimator animator {
-		get { return m_animator; }
+	[SerializeField] private float m_fadeTime = 0.25f;
+
+	[SerializeField] private CanvasGroup m_canvasGroup = null;
+	public CanvasGroup canvasGroup {
+		get { return m_canvasGroup; }
 	}
 
 	[SerializeField] private TextMeshProUGUI m_text = null;
@@ -47,6 +55,12 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	// Internal
 	private HashSet<Object> m_owners = new HashSet<Object>();	// HashSet ~= List without duplicates
 
+	private float m_fromAlpha;
+	private float m_timer;
+	private State m_state;
+
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -54,12 +68,35 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Start hidden
-		m_animator.Hide(false);
-
 		// Default setup
 		SetupInternal(true, string.Empty);
+
+		// Start hidden
+		ChangeState(State.HIDDEN);
 	}
+
+	private void Update() {
+		switch (m_state) {
+		case State.FADE_IN: {
+				m_timer -= Time.deltaTime;
+				if (m_timer <= 0f) {
+					ChangeState(State.VISIBLE);
+				} else {
+					m_canvasGroup.alpha = Mathf.Lerp(m_fromAlpha, 1f, 1f - (m_timer / m_fadeTime));
+				}
+			} break;
+
+		case State.FADE_OUT: {
+				m_timer -= Time.deltaTime;
+				if (m_timer <= 0f) {
+					ChangeState(State.HIDDEN);
+				} else {
+					m_canvasGroup.alpha = Mathf.Lerp(m_fromAlpha, 0f, 1f - (m_timer / m_fadeTime));
+				}
+			} break;
+		}
+	}
+
 
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
@@ -81,16 +118,7 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 	/// <param name="_animate">Use fade animation?</param>
 	public static void Toggle(bool _show, Object _owner, bool _animate = true) {
 		#if !DISABLE_BUSY_SCREEN
-		// Only hide when there are no owners retaining the screen
-		if(_show) {
-			if(_owner != null) instance.m_owners.Add(_owner);
-			instance.m_animator.Show(_animate);
-		} else {
-			instance.m_owners.Remove(_owner);
-			if(instance.m_owners.Count == 0) {
-				instance.m_animator.Hide(_animate);
-			}
-		}
+		instance.__Toggle(_show, _owner, _animate);
 		#endif
 	}
 
@@ -139,5 +167,46 @@ public class BusyScreen : UbiBCN.SingletonMonoBehaviour<BusyScreen> {
 		// Text
 		m_text.gameObject.SetActive(!string.IsNullOrEmpty(_text));
 		m_text.text = _text;
+	}
+
+	private void __Toggle(bool _show, Object _owner, bool _animate) {
+		// Only hide when there are no owners retaining the screen
+		if(_show) {
+			if(_owner != null) instance.m_owners.Add(_owner);
+			ChangeState((_animate)? State.FADE_IN : State.VISIBLE);
+		} else {
+			instance.m_owners.Remove(_owner);
+			if(instance.m_owners.Count == 0) {
+				ChangeState((_animate)? State.FADE_OUT : State.HIDDEN);
+			}
+		}
+	}
+
+	private void ChangeState(State _state) {
+		switch (_state) {
+		case State.HIDDEN:
+			m_canvasGroup.alpha = 0f;
+			gameObject.SetActive(false);
+			break;
+
+		case State.FADE_IN:
+			m_fromAlpha = m_canvasGroup.alpha;
+			m_timer = m_fadeTime * (1f - m_fromAlpha);
+			gameObject.SetActive(true);
+			break;
+
+		case State.VISIBLE:
+			m_canvasGroup.alpha = 1f;
+			gameObject.SetActive(true);
+			break;
+
+		case State.FADE_OUT:
+			m_fromAlpha = m_canvasGroup.alpha;
+			m_timer = m_fadeTime * m_fromAlpha;
+			gameObject.SetActive(true);
+			break;
+		}
+
+		m_state = _state;
 	}
 }

@@ -186,6 +186,11 @@ public class SceneParticlePoolingGroup : MonoBehaviour
 
 			m_particles = GetParticleDataPlaces();	
         }
+
+		for( int i = 0; i<m_particles.Length; ++i )
+		{
+			m_particles[i].Init();
+		}
     }
 
     public ParticleDataPlace[] GetParticleDataPlaces()

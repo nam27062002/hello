@@ -28,6 +28,11 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	public static readonly int INVENTORY_SIZE = 3;
 
+	private static readonly string PET_COMMON 	= "pet_common";
+	private static readonly string PET_RARE 	= "pet_rare";
+	private static readonly string PET_EPIC 	= "pet_epic";
+	private static readonly string PET_SPECIAL 	= "pet_special";
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -96,6 +101,18 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	// Internal
 	UserProfile m_user;
 
+	// Dynamic Probability coeficients
+	private List<float> m_weights;
+
+	// Store default probabilities to display them to the user
+	private List<float> m_defaultProbabilities = null;
+
+	private bool  m_dynamicGatchaEnabled = true;
+	private float m_coeficientG = 4f;
+	private float m_coeficientX = 0.01f;
+	private float m_coeficientY = 1.4f;
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -111,21 +128,35 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
 	public static void InitFromDefinitions() {
+		instance.__InitFromDefinitions();
+	}
+
+	private void __InitFromDefinitions() {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method.");
 
-		// Initialize reward drop rate table based on definitions
-		// Perform a double loop since every time we add a new element the probabilities 
-		// are readjusted - therefore we need to first add all the elements and then 
-		// define the probabilities for each one
-		instance.m_rewardDropRate = new ProbabilitySet();
-		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.EGG_REWARDS);
-		for(int i = 0; i < rewardDefs.Count; i++) {
-			instance.m_rewardDropRate.AddElement(rewardDefs[i].sku);
-		}
-		for(int i = 0; i < rewardDefs.Count; i++) {
-			instance.m_rewardDropRate.SetProbability(i, rewardDefs[i].GetAsFloat("droprate"));
-		}
+		// Initialize reward drop rate table based on the dynamic gatcha formula
+		// We'll retrieve the coeficients of that formula from content and we will
+		// recalculate the probabilities on each draw based on the luck of the player.
+		m_rewardDropRate = new ProbabilitySet();	
+		m_weights = new List<float>();
+		m_defaultProbabilities = null;	// Force a recalculation of the default probabilities
+
+		DefinitionNode dynamicGatchaDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DYNAMIC_GATCHA, "dynamicGatcha");
+		m_dynamicGatchaEnabled = dynamicGatchaDef.GetAsBool("activated");
+		m_coeficientG = dynamicGatchaDef.GetAsFloat("coefficientG");
+		m_coeficientX = dynamicGatchaDef.GetAsFloat("coefficientX");
+		m_coeficientY = dynamicGatchaDef.GetAsFloat("coefficientY");
+
+		m_rewardDropRate.AddElement(PET_COMMON);
+		m_weights.Add(0);
+		m_rewardDropRate.AddElement(PET_RARE);
+		m_weights.Add(0);
+		m_rewardDropRate.AddElement(PET_EPIC);
+		m_weights.Add(0);
+
+		__BuildDynamicProbabilities();
+
 
 		// Restore saved random state from preferences so the distribution is respected
 		// Only if we have a state saved!
@@ -183,6 +214,92 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Gets the default probability of getting a specific reward rarity (ignoring
+	/// the dynamic algorithm).
+	/// </summary>
+	/// <returns>The probability. <c>0</c> if given rarity is not in the gacha system.</returns>
+	/// <param name="_rarity">Reward rarity.</param>
+	public static float GetDefaultProbability(Metagame.Reward.Rarity _rarity) {
+		// Make sure they're initialized
+		if(instance.m_defaultProbabilities == null) return 0f;
+
+		// Matching initialization order (see InitFromDefintions)
+		switch(_rarity) {
+			case Metagame.Reward.Rarity.COMMON:	return instance.m_defaultProbabilities[0];
+			case Metagame.Reward.Rarity.RARE:	return instance.m_defaultProbabilities[1];
+			case Metagame.Reward.Rarity.EPIC:	return instance.m_defaultProbabilities[2];
+		}
+		return 0f;	// Unsupported rarity, 0 chance of getting it
+	}
+
+	/// <summary>
+	/// Gets the probability of getting a specific reward rarity using the dynamic
+	/// algorithm.
+	/// </summary>
+	/// <returns>The probability. <c>0</c> if given rarity is not in the gacha system.</returns>
+	/// <param name="_rarity">Reward rarity.</param>
+	public static float GetDynamicProbability(Metagame.Reward.Rarity _rarity) {
+		string rewardId = "";
+		switch(_rarity) {
+			case Metagame.Reward.Rarity.COMMON:	rewardId = PET_COMMON;	break;
+			case Metagame.Reward.Rarity.RARE:	rewardId = PET_RARE;	break;
+			case Metagame.Reward.Rarity.EPIC:	rewardId = PET_EPIC;	break;
+			default: return 0f;	// Unsupported rarity, 0 chance of getting it
+		}
+
+		return instance.m_rewardDropRate.GetProbability(rewardId);
+	}
+
+	public static void BuildDynamicProbabilities() {
+		instance.__BuildDynamicProbabilities();
+	}
+
+	private void __BuildDynamicProbabilities() {
+		// If default probabilites are not initialized, do it now!
+		bool computeDefaultProbabilites = false;
+		float defaultProbabilitiesTotalWeight = 0f;
+		if(m_defaultProbabilities == null) {
+			computeDefaultProbabilites = true;
+			m_defaultProbabilities = new List<float>();
+		}
+
+		float weight = 0f;
+		float weightTotal = 0f;
+		for(int i = 0; i < m_weights.Count; i++) {
+			// Dynamic probability
+			int triesWithoutRares = 0;
+			if (m_dynamicGatchaEnabled && m_user != null) {
+				triesWithoutRares = m_user.openEggTriesWithoutRares;
+			}
+
+			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
+			weight = 1f / Mathf.Pow(i + 1, a); // i+1 is the weightID of the formula
+			m_weights[i] = weight;
+			weightTotal += weight;
+
+			// Need to compute default probabilities as well?
+			if(computeDefaultProbabilites) {
+				// Same formula with 0 tries without rares
+				weight = 1f / Mathf.Pow(i + 1, m_coeficientG);	// [AOC] Optimization: Since triesWithoutRares is 0, a == coeficientG.
+				m_defaultProbabilities.Add(weight);
+				defaultProbabilitiesTotalWeight += weight;
+			}
+		}
+
+		// Normalize dynamic probabilities
+		for(int i = 0; i < m_weights.Count; i++) {
+			m_rewardDropRate.SetProbability(i, m_weights[i] / weightTotal, false);
+		}
+
+		// Normalize default probabilities
+		if(computeDefaultProbabilites) {
+			for(int i = 0; i < m_defaultProbabilities.Count; ++i) {
+				m_defaultProbabilities[i] = m_defaultProbabilities[i] / defaultProbabilitiesTotalWeight;
+			}
+		}
+	}
+
 	/// <summary>
 	/// Add a new egg to the first empty slot in the inventory. 
 	/// If the inventory is full, egg won't be added.
@@ -262,8 +379,17 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			case CPGachaTest.RewardChanceMode.DEFAULT: {
 				// [AOC] Force common pet during tutorial
 				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+
+					instance.__BuildDynamicProbabilities();
+
 					// Get a weighted element
 					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
+
+					if (rewardSku.Equals(PET_COMMON)) {
+						instance.m_user.openEggTriesWithoutRares++;
+					} else {
+						instance.m_user.openEggTriesWithoutRares = 0;
+					}
 
 					// Save random state to preferences so the distribution is respected
 					// [AOC] GOING TO HELL!! Random.State is a private struct that can't be easily serialized, so use reflection to do so.
@@ -275,27 +401,19 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 						//Debug.Log("<color=magenta>Saving RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
 					}
 				} else {
-					rewardSku = "pet_common";
+					rewardSku = PET_COMMON;
 				}
 			} break;
 
-			case CPGachaTest.RewardChanceMode.COMMON_ONLY: {
-				rewardSku = "pet_common";
-			} break;
-
-			case CPGachaTest.RewardChanceMode.RARE_ONLY: {
-				rewardSku = "pet_rare";
-			} break;
-
-			case CPGachaTest.RewardChanceMode.EPIC_ONLY: {
-				rewardSku = "pet_epic";
-			} break;
+			case CPGachaTest.RewardChanceMode.COMMON_ONLY:	rewardSku = PET_COMMON; break;
+			case CPGachaTest.RewardChanceMode.RARE_ONLY:  	rewardSku = PET_RARE;   break;
+			case CPGachaTest.RewardChanceMode.EPIC_ONLY: 	rewardSku = PET_EPIC;   break;
 
 			case CPGachaTest.RewardChanceMode.SAME_PROBABILITY: {
 				// Exclude special pets!
 				do {
 					rewardSku = instance.m_rewardDropRate.GetLabel(UnityEngine.Random.Range(0, instance.m_rewardDropRate.numElements));		// Pick one random element without taking probabilities in account
-				} while(rewardSku == "pet_special");
+				} while(rewardSku == PET_SPECIAL);
 			} break;
 
 			case CPGachaTest.RewardChanceMode.FORCED_PET_SKU: {
@@ -307,6 +425,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, rewardSku);
 	}
 
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -314,14 +433,11 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
-	public static bool IsReady()
-	{
+	public static bool IsReady() {
 		return instance.m_user != null;
 	}
 
-	public static void SetupUser( UserProfile user)
-	{
+	public static void SetupUser(UserProfile user) {
 		instance.m_user = user;
-	} 
-
+	}
 }

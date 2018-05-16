@@ -74,7 +74,8 @@ public class HUDMessage : MonoBehaviour {
 		BREAK_OBJECT_SHALL_NOT_PASS,
 		DAMAGE_RECEIVED,
 		MISSION_ZONE,
-		BREAK_OBJECT_WITH_FIRE
+		BREAK_OBJECT_WITH_FIRE,
+		BOOST_SPACE
 	}
 
 	// How to react with consecutive triggers
@@ -224,6 +225,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
+			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 
 		}
 
@@ -263,6 +265,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
 			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
+			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 		}
 
 		switch(m_hideMode) {
@@ -488,27 +491,29 @@ public class HUDMessage : MonoBehaviour {
 	/// <param name="_requiredTier">The required tier. DragonTier.COUNT if not defined.</param>
 	/// <param name="_entitySku">The entity we're trying to eat.</param>
 	private void OnBiggerDragonNeeded(DragonTier _requiredTier, string _entitySku)  {
-		// Setup text
-		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, "order", ((int)_requiredTier).ToString());
-		TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-		if(tierDef == null) {
-			// We don't know the exact tier, use generic text
-			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_BIGGER_DRAGON");
-		} else {
-			// Use tier icon
-			text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", UIConstants.GetSpriteTag(tierDef.Get("icon")));
-		}
+		if (_requiredTier < DragonTier.COUNT) {
+			// Setup text
+			DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, "order", ((int)_requiredTier).ToString());
+			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			if(tierDef == null) {
+				// We don't know the exact tier, use generic text
+				text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_BIGGER_DRAGON");
+			} else {
+				// Use tier icon
+				text.text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_NEED_TIER_DRAGON", UIConstants.GetSpriteTag(tierDef.Get("icon")));
+			}
 
-		// If already visible and trying to eat the same entity, don't restart the animation
-		if(m_visible && m_needBiggerDragonEntitySku == _entitySku) {
-			m_repeatType = RepeatType.RESTART_TIMER;
-		} else {
-			m_repeatType = RepeatType.RESTART_ANIM;
-		}
-		m_needBiggerDragonEntitySku = _entitySku;
+			// If already visible and trying to eat the same entity, don't restart the animation
+			if(m_visible && m_needBiggerDragonEntitySku == _entitySku) {
+				m_repeatType = RepeatType.RESTART_TIMER;
+			} else {
+				m_repeatType = RepeatType.RESTART_ANIM;
+			}
+			m_needBiggerDragonEntitySku = _entitySku;
 
-		// Show!
-		Show();
+			// Show!
+			Show();
+		}
 	}
 
 	/// <summary>
@@ -540,6 +545,10 @@ public class HUDMessage : MonoBehaviour {
 
 		// Reset timer
 		m_boostingTimer = m_currentBoostSetup.requiredBoostDuration;
+	}
+
+	private void OnBoostSky() {
+		Show();
 	}
 
 	/// <summary>

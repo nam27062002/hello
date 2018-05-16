@@ -642,7 +642,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 3e26e611a0b7b403b8586e4977d0c0ac, type: 2}
+  - {fileID: 2100000, guid: 73f3a3de238d64e318d3bdb948cd1d99, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -802,7 +802,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 3e26e611a0b7b403b8586e4977d0c0ac, type: 2}
+  - {fileID: 2100000, guid: 73f3a3de238d64e318d3bdb948cd1d99, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1051,6 +1051,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114060669404571802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1065,6 +1066,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114073598984156280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1091,6 +1093,7 @@ MonoBehaviour:
   m_parentName: gibs_01
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114336922268075704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1105,6 +1108,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114404594208889744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1119,6 +1123,7 @@ MonoBehaviour:
   m_parentName: gibs_04
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114410788918578620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1152,9 +1157,9 @@ MonoBehaviour:
   m_blood:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1185,6 +1190,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
   m_bloodPoints:
   - {fileID: 4289839260087034}
@@ -1208,6 +1214,7 @@ MonoBehaviour:
   m_parentName: gibs_03
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114587683254414490
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1222,6 +1229,7 @@ MonoBehaviour:
   m_parentName: gibs_05
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114707018386119930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1236,6 +1244,7 @@ MonoBehaviour:
   m_parentName: gibs_06
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114708307551079108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1250,6 +1259,7 @@ MonoBehaviour:
   m_parentName: gibs_07
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114711933508847904
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1288,3 +1298,4 @@ MonoBehaviour:
   m_parentName: gibs_02
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
+  m_resetScale: 0

@@ -28,7 +28,6 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private MenuEggLoader m_eggLoader = null;
-	[SerializeField] private UI3DScaler m_scaler = null;
 
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
@@ -65,20 +64,5 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 			);
 		}
 		return LocalizationManager.SharedInstance.Localize("TID_EGG_PLURAL");	// (shouldn't happen) use generic
-	}
-
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Set this preview's parent and adjust its size to fit it.
-	/// </summary>
-	/// <param name="_t">New parent!</param>
-	public override void SetParentAndFit(Transform _t) {
-		// Let parent do its thing
-		base.SetParentAndFit(_t);
-
-		// Refresh scaler
-		m_scaler.Refresh(true, true);
 	}
 }

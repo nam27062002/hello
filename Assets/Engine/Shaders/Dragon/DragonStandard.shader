@@ -37,13 +37,15 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 		_FireMap("Fire Map", 2D) = "white" {}
 		_FireAmount("Fire amount", Range(0.0, 1.0)) = 0.0
+		_FireSpeed("Fire speed", float) = 1.0
 
 		// Blending state
 		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
 		[Enum(Opaque, 0, CutOff, 1, Transparent, 2)] _BlendMode("Blend mode", Float) = 0.0
-		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+//		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+		[Toggle] _ZWrite("__zw", Float) = 1.0
 
 		_StencilMask("Stencil Mask", int) = 10
 
@@ -58,6 +60,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(OPAQUEFRESNEL)] _EnableOpaqueFresnel("Enable opaque fresnel", Float) = 0
 		[Toggle(OPAQUESPECULAR)] _EnableOpaqueSpecular("Enable opaque specular", Float) = 0
 		[Toggle(BLENDFRESNEL)] _EnableBlendFresnel("Enable blend fresnel", Float) = 0.0
+		[Toggle(VERTEXOFFSET)] _EnableVertexOffset("Enable vertex offset", Float) = 0.0
 
 		/// Enum Material Properties
 		[KeywordEnum(None, Reflection, Fire)] FXLayer("Additional FX layer", Float) = 0
@@ -96,10 +99,11 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature  __ FRESNEL
 			#pragma shader_feature  __ CUTOFF
 			#pragma shader_feature  __ DOUBLESIDED
-			#pragma shader_feature  __ OPAQUEALPHA
+//			#pragma shader_feature  __ OPAQUEALPHA
 			#pragma shader_feature  __ OPAQUEFRESNEL
 			#pragma shader_feature  __ BLENDFRESNEL
 			#pragma shader_feature  __ OPAQUESPECULAR
+			#pragma shader_feature	__ VERTEXOFFSET
 
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
 			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE

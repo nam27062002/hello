@@ -13,6 +13,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -98,7 +99,13 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	// Internal
 	private DateTime m_stateCheckTimestamp = new DateTime();
 	private DateTime m_leaderboardCheckTimestamp = new DateTime();
-	
+
+
+	int m_lastContribution;
+	float m_lastKeysMultiplier;
+	bool m_lastContributionViewAd;
+	bool m_lastContributionSpentHC;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -258,12 +265,21 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		// Just do it
 		Debug.Log("<color=magenta>EVENT STATE</color>");
 		#if TEST_GLOBAL_EVENT
-			GameServerManager.ServerResponse response = CreateTestResponse( "eventState.json" );
-			instance.OnEventStateResponse(null, response);
+			ApplicationManager.instance.StartCoroutine( DelayedCall2() );
+
 		#else
 		GameServerManager.SharedInstance.GlobalEvent_GetState(instance.m_currentEvent.id, instance.OnEventStateResponse);
 		#endif
 	}
+
+	#if TEST_GLOBAL_EVENT
+	static IEnumerator DelayedCall2()
+	{
+		yield return new WaitForSeconds(1.0f);
+		GameServerManager.ServerResponse response = CreateTestResponse( "eventState.json" );
+		instance.OnEventStateResponse(null, response);
+	}
+	#endif
 
 	/// <summary>
 	/// Requests the current event leaderboard.
@@ -282,8 +298,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			// Do it
 			Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
 			#if TEST_GLOBAL_EVENT
-				GameServerManager.ServerResponse response = CreateTestResponse( "leaderboard.json" );
-				instance.OnEventLeaderboardResponse(null, response);
+				ApplicationManager.instance.StartCoroutine( DelayedCall() );
 			#else
 			GameServerManager.SharedInstance.GlobalEvent_GetLeaderboard(instance.m_currentEvent.id, instance.OnEventLeaderboardResponse);
 			#endif
@@ -293,6 +308,15 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 			Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_LEADERBOARD_UPDATED);
 		}
 	}
+	#if TEST_GLOBAL_EVENT
+	static IEnumerator DelayedCall()
+	{
+		yield return new WaitForSeconds(1.0f);
+		GameServerManager.ServerResponse response = CreateTestResponse( "leaderboard.json" );
+		instance.OnEventLeaderboardResponse(null, response);
+	}
+	#endif
+
 
 	/// <summary>
 	/// Requests the current event rewards.
@@ -324,50 +348,68 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		ErrorCode err = CanContribute();
 		if(err != ErrorCode.NONE) return err;
 
+
 		// Get contribution amount and apply multipliers
 		int contribution = (int)instance.m_currentEvent.objective.currentValue;
 		contribution = (int)(_bonusDragonMultiplier * contribution);
 		contribution = (int)(_keysMultiplier * contribution);
 		// contribution = (int)(100 * contribution);
 		// Requets to the server!
+
+		instance.m_lastContribution = contribution;
+		instance.m_lastKeysMultiplier = _keysMultiplier;
+		instance.m_lastContributionSpentHC = _spentHC;
+		instance.m_lastContributionViewAd = _viewAD;
+
 		Debug.Log("<color=magenta>REGISTER SCORE</color>");
-		GameServerManager.SharedInstance.GlobalEvent_RegisterScore(
-			instance.m_currentEvent.id, 
-			contribution,
-			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => {
-				// If there was no error, update local cache
-				if(_error == null && _response != null && _response.ContainsKey("response")) {
-					if ( _response["response"] == null || _response["response"].ToString().ToLower().CompareTo("failed") != 0 ){
-						// Add to event's total contribution!
-						instance.m_currentEvent.AddContribution(contribution);
-
-						// Add to current user individual contribution in this event
-						GlobalEventUserData playerData = user.GetGlobalEventData(instance.m_currentEvent.id);
-						playerData.score += contribution;
-
-						// Track here!
-						HDTrackingManager.EEventMultiplier mult = HDTrackingManager.EEventMultiplier.none;
-						if (_keysMultiplier > 1) {
-							if (_spentHC) 		mult = HDTrackingManager.EEventMultiplier.hc_payment;
-							else if (_viewAD)	mult = HDTrackingManager.EEventMultiplier.ad;
-							else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
-						}
-						HDTrackingManager.Instance.Notify_GlobalEventRunDone(instance.m_currentEvent.id, instance.m_currentEvent.objective.typeDef.sku, contribution, playerData.score, mult);
-						//
-
-						// Check if player can join the leaderboard! (or update its position)
-						instance.m_currentEvent.RefreshLeaderboardPosition(playerData);
-					}
-				}
-
-				// Notify game that server response was received
-				Debug.Log("<color=purple>REGISTER SCORE</color>");
-				Messenger.Broadcast<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
-			}
-		);
+		#if TEST_GLOBAL_EVENT
+			GameServerManager.ServerResponse response = CreateTestResponse( "eventContribute.json" );
+			instance.OnContributeResponse(null, response);
+		#else
+			GameServerManager.SharedInstance.GlobalEvent_RegisterScore(instance.m_currentEvent.id, contribution, instance.OnContributeResponse);
+		#endif
 
 		// Everything went well!
 		return ErrorCode.NONE;
+	}
+
+	private void OnContributeResponse( FGOL.Server.Error _error, GameServerManager.ServerResponse _response )
+	{
+		// If there was no error, update local cache
+		if(_error == null && _response != null && _response.ContainsKey("response")) {
+			if ( _response["response"] == null || _response["response"].ToString().ToLower().CompareTo("failed") != 0 ){
+				// Add to event's total contribution!
+
+				int contribution = instance.m_lastContribution;
+				float _keysMultiplier = instance.m_lastKeysMultiplier;
+				bool _spentHC = instance.m_lastContributionSpentHC;
+				bool _viewAD = instance.m_lastContributionViewAd;
+
+				instance.m_currentEvent.AddContribution(contribution);
+
+				// Add to current user individual contribution in this event
+				GlobalEventUserData playerData = user.GetGlobalEventData(instance.m_currentEvent.id);
+				playerData.score += contribution;
+
+				// Track here!
+				HDTrackingManager.EEventMultiplier mult = HDTrackingManager.EEventMultiplier.none;
+				if (_keysMultiplier > 1) {
+					if (_spentHC) 		mult = HDTrackingManager.EEventMultiplier.hc_payment;
+					else if (_viewAD)	mult = HDTrackingManager.EEventMultiplier.ad;
+					else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
+				}
+				HDTrackingManager.Instance.Notify_GlobalEventRunDone(instance.m_currentEvent.id, instance.m_currentEvent.objective.typeDef.sku, contribution, playerData.score, mult);
+				//
+
+				// Check if player can join the leaderboard! (or update its position)
+				instance.m_currentEvent.RefreshLeaderboardPosition(playerData);
+			}
+		}
+
+		// Notify game that server response was received
+		Debug.Log("<color=purple>REGISTER SCORE</color>");
+		Messenger.Broadcast<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, _error == null);
+		
 	}
 
 	/// <summary>

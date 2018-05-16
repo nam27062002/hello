@@ -78,7 +78,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
-        Application.logMessageReceived += OnHandleLog;
+        ExceptionManager.SharedInstance.AddCrashDelegate(new HDExceptionListener());
     }
 
     protected void Start()
@@ -143,20 +143,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // This needs to be called once all stuff is done, otherwise this singleton will be marked as destroyed and some other stuff won't
         // be able to access it
         base.OnApplicationQuit();
-    }
-
-    private void OnHandleLog(string logString, string stackTrace, LogType type)
-    {
-        if (type == LogType.Exception || type == LogType.Error)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("OnHandleLog logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());    
-            }   
-
-            HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
-        }
-    }
+    }    
 
     private void Reset()
     {
@@ -288,11 +275,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         PersistenceFacade.instance.Update();
         HDTrackingManager.Instance.Update();
-        HDCustomizerManager.instance.Update();  
-
-		#if UNITY_EDITOR
+        HDCustomizerManager.instance.Update();        
 		GameServerManager.SharedInstance.Update();
-		#endif
 
         if (NeedsToRestartFlow)
         {
@@ -749,11 +733,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				kAchievementsData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
 				if (kEntry.Value.Has ("amount"))
 				{
-#if UNITY_IOS
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);
-#elif UNITY_ANDROID
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount");
-#endif				
+					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);			
 				}
 				else
 				{
@@ -870,6 +850,40 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         return returnValue;
     }
+    #endregion
+
+    #region exception    
+    private class HDExceptionListener : CyExceptions.ExceptionListener
+    {
+        /// <summary>
+        /// Time in seconds that has to pass between two exceptions report
+        /// </summary>
+        private const float EXCEPTION_TIME_BETWEEN_REPORTS = 5 * 60f;
+
+        /// <summary>
+        /// Timestamp of the latest exception reported. It's stored to prevent tracking from getting spammed when an exception is reported every frame
+        /// </summary>
+        private float m_exceptionLatestTimestamp = 0f;
+
+        public override void OnUnhandledException(string logString, string stackTrace, LogType type)
+        {
+            if (type == LogType.Exception || type == LogType.Error)
+            {
+                float timeSinceLastException = Time.realtimeSinceStartup - m_exceptionLatestTimestamp;
+                if (timeSinceLastException >= EXCEPTION_TIME_BETWEEN_REPORTS)
+                {
+                    m_exceptionLatestTimestamp = Time.realtimeSinceStartup;
+
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                    {
+                        Log("OnUnhandledException logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());
+                    }
+                 
+                    HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
+                }
+            }
+        }
+    }    
     #endregion
 
     #region debug
