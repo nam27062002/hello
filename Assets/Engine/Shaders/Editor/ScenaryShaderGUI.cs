@@ -386,6 +386,7 @@ internal class ScenaryShaderGUI : ShaderGUI {
         if (EditorGUI.EndChangeCheck())
         {
             SetKeyword(material, kw_normalmap, normalMap);
+            mp_EnableNormalMap.floatValue = normalMap ? 1.0f: 0.0f;
             EditorUtility.SetDirty(material);
             Debug.Log("EnableNormalMap " + (normalMap));
         }
