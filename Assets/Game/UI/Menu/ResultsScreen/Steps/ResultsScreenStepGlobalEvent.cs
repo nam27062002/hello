@@ -512,7 +512,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		// Show a video ad!
 		PopupAdBlocker.Launch(
 			true, 
-			GameAds.EAdPurpose.RESULTS_GET_KEY,
+			GameAds.EAdPurpose.EVENT_SCORE_X2,
 			(bool _success) => {
                 if ( _success )
                 {
