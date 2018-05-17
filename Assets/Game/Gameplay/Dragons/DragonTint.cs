@@ -70,37 +70,87 @@ public class DragonTint : MonoBehaviour
 		m_materialsAddColors.Clear();
 		m_innerLightAddValue.Clear();
 		m_innerLightColors.Clear();
+
+
+		Material bodyMaterial = null;
+		List<Renderer> bodyRenderers = new List<Renderer>();
+
+		Material wingsMaterial = null;
+		List<Renderer> wingsRenderers = new List<Renderer>();
+
+		Material diguiseMaterial = null;
+		List<Renderer> diguiseRenderers = new List<Renderer>();
+
+
 		if ( m_renderers != null )
 		for( int i = 0; i<m_renderers.Length; i++ )
 		{
-			Material[] mats = m_renderers[i].materials;
-			bool hasDragonPart = false;
-			for( int j = 0;j<mats.Length; j++ )
+			Renderer renderer = m_renderers[i];
+			Material mat = renderer.material;
+			string shaderName = mat.shader.name;
+			if ( shaderName.Contains("Dragon standard") )
 			{
-				
-				string shaderName = mats[j].shader.name;
-                if (shaderName.Contains("Dragon standard"))
-                {
-                	hasDragonPart = true;
-                    m_materials.Add(mats[j]);
-					m_materialsMultiplyColors.Add( mats[j].GetColor( GameConstants.Material.TINT ));
-					m_materialsAddColors.Add( mats[j].GetColor( GameConstants.Material.COLOR_ADD ));
-                    m_fresnelColors.Add(mats[j].GetColor( GameConstants.Material.FRESNEL_COLOR ));
-					m_innerLightAddValue.Add( mats[j].GetFloat( GameConstants.Material.INNER_LIGHT_ADD ));
-					m_innerLightColors.Add(mats[j].GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
-                    m_originalShaders.Add(mats[j].shader);
-//					if (shaderName.Contains("Body"))
-//						m_bodyMaterials.Add( mats[j] );
-//                  }
-                }
-			}
-			if ( hasDragonPart )
-			{
+				if ( renderer.tag.Equals("DragonBody") )
+				{
+					bodyMaterial = mat;
+					bodyRenderers.Add( renderer );
+				}
+				else if ( renderer.tag.Equals("DragonWings") )
+				{
+					wingsMaterial = mat;
+					wingsRenderers.Add( renderer );
+				}
+				else
+				{
+					diguiseMaterial = mat;
+					diguiseRenderers.Add( renderer );
+				}
+
 				m_dragonRenderers.Add( m_renderers[i] );
 			}
-				
 		}
+
+		int max = 0;
+
+		if ( bodyMaterial )
+		{
+			max = bodyRenderers.Count;
+			for (int i = 0; i < max; i++) {
+				bodyRenderers[i].material = bodyMaterial;
+			}
+			AddMaterialInfo( bodyMaterial );
+		}
+
+		if ( wingsMaterial )
+		{
+			max = wingsRenderers.Count;
+			for (int i = 0; i < max; i++) {
+				wingsRenderers[i].material = wingsMaterial;
+			}
+			AddMaterialInfo( wingsMaterial );
+		}
+
+		if ( diguiseMaterial )
+		{
+			max = diguiseRenderers.Count;
+			for (int i = 0; i < max; i++) {
+				diguiseRenderers[i].material = diguiseMaterial;
+			}
+			AddMaterialInfo( diguiseMaterial );
+		}
+
 		m_materialsCount = m_materials.Count;
+	}
+
+	void AddMaterialInfo( Material mat )
+	{
+		m_materials.Add(mat);
+		m_materialsMultiplyColors.Add( mat.GetColor( GameConstants.Material.TINT ));
+		m_materialsAddColors.Add( mat.GetColor( GameConstants.Material.COLOR_ADD ));
+        m_fresnelColors.Add(mat.GetColor( GameConstants.Material.FRESNEL_COLOR ));
+		m_innerLightAddValue.Add( mat.GetFloat( GameConstants.Material.INNER_LIGHT_ADD ));
+		m_innerLightColors.Add(mat.GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
+        m_originalShaders.Add(mat.shader);
 	}
 
 	void OnEnable() 
