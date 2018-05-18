@@ -239,6 +239,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_useAnims">Whether to animate or not.</param>
 	/// <param name="_resetAnim">Optionally force the animation to be played, even if going to the same state.</param>
 	private void Apply(bool _show, bool _useAnims, bool _resetAnim) {
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("APPLY: " + _show + ", " + _useAnims + ", " + _resetAnim));
+
 		// Let animator do its magic
 		// If forcing animation and going from visible to visible, hide before showing again
 		if(_resetAnim 
@@ -246,6 +249,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		&& m_targetAnimator.visible 
 		&& isActiveAndEnabled 
 		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
+			// Debug
+			ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
+
 			// Go to opposite of the target state
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
 			m_targetAnimator.ForceHide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
@@ -260,6 +266,12 @@ public class MenuShowConditionally : MonoBehaviour {
 			if(m_coroutine != null) {
 				StopCoroutine(m_coroutine);
 				m_coroutine = null;
+			}
+			// Debug
+			if(_show) {
+				ShowHideAnimator.DebugLog(this, Colors.green.Tag("FORCE_SHOW"));
+			} else {
+				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
 			}
 			m_animatorCheckOverride = true;
 			m_targetAnimator.ForceSet(_show, _useAnims);
@@ -347,6 +359,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	private IEnumerator LaunchDelayedAnimation(bool _toShow, bool _useAnims) {
 		// Delay
 		yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
+
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("DELAYED APPLY: " + _toShow + ", " + _useAnims + "\nenabled? " + this.enabled));
 
 		// Do it! (If still enabled!)
 		if(this.enabled) {

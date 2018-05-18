@@ -28,6 +28,10 @@ public class ShowHideAnimator : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	// Use to debug specific objects
+	public const bool DEBUG_ENABLED = false;
+	public const string DEBUG_TARGET = "HUDCurrencyCounters";
+
 	public enum TweenType {
 		NONE,
 
@@ -536,6 +540,9 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_propagateToChildren">Whether to propagate to children ShowHideAnimators. Setup flags will be checked anyways.</param>
 	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
 	protected virtual void InternalShow(bool _animate, bool _propagateToChildren, bool _restartAnim) {
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.green.Tag("INTERNAL_SHOW"));
+
 		// First things first: execute any external checks that might interrupt the action
 		m_checkPassed = true;
 		OnShowCheck.Invoke(this);
@@ -547,7 +554,10 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 
 		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
-		if(visible && !m_isDirty) return;
+		if(visible && !m_isDirty) {
+			ShowHideAnimator.DebugLog(this, Colors.orange.Tag("Early Exit: visible " + visible + ", dirty + " + m_isDirty));
+			return;
+		}
 
 		// Update state
 		m_state = State.VISIBLE;
@@ -599,13 +609,19 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_propagateToChildren">Whether to propagate to children ShowHideAnimators. Setup flags will be checked anyways.</param>
 	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
 	protected virtual void InternalHide(bool _animate, bool _disableAfterAnimation, bool _propagateToChildren, bool _restartAnim) {
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.red.Tag("INTERNAL_HIDE"));
+
 		// If restarting the animation, instantly force hide state without animation
 		if(_restartAnim) {
 			ForceShow(false);
 		}
 
 		// If we're already in the target state, skip (unless dirty, in which case we want to place the animation sequence at the right place)
-		if(!visible && !m_isDirty) return;
+		if(!visible && !m_isDirty) {
+			ShowHideAnimator.DebugLog(this, Colors.orange.Tag("Early Exit: visible " + visible + ", dirty + " + m_isDirty));
+			return;
+		}
 
 		// Update state
 		m_state = State.HIDDEN;
@@ -800,6 +816,9 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Broadcast event
 		OnHidePostAnimation.Invoke(this);
 
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.red.Tag("DISABLE AFTER HIDE: " + m_disableAfterHide));
+
 		// Optionally disable object after the hide animation has finished
 		if(m_disableAfterHide) {
 			gameObject.SetActive(false);
@@ -839,6 +858,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnSequenceCompleted() {
 		// Which animation has finished?
+		DebugLog(this, visible ? Color.green.Tag("DO_SHOW_POSTPROCESSING") : Color.red.Tag("DO_HIDE_POSTPROCESSING"));
 		if(visible) {
 			DoShowPostProcessing();
 		} else {
@@ -890,6 +910,21 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	public void OnHideAnimationCompleted() {
 		DoHidePostProcessing();
+	}
+
+	//------------------------------------------------------------------//
+	// DEBUG															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Check the debug conditions and log given text if matching.
+	/// </summary>
+	/// <param name="_target">Target object.</param>
+	/// <param name="_text">Text.</param>
+	public static void DebugLog(Object _target, string _text) {
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		if(!DEBUG_ENABLED) return;
+		if(_target == null || _target.name != DEBUG_TARGET) return;
+		ControlPanel.Log(_text);
 	}
 }
 
