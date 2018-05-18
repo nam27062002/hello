@@ -108,6 +108,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		// The animator must ask for permission before showing itself!
 		m_targetAnimator.OnShowCheck.AddListener(OnAnimatorCheck);
 
+		// Start hidden (the Start call will properly initialize it based on current values)
+		Apply(false, false, false);
+
 		m_coroutine = null;
 	}
 
