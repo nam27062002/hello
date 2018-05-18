@@ -62,6 +62,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 		m_decorations = new List<Decoration>();
         m_searchList = new List<Entity>();
         m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");        
+
+		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
     }
 

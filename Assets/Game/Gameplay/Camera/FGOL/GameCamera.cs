@@ -1514,19 +1514,8 @@ public class GameCamera : MonoBehaviour
     {
         NeedsToSetupPostProcessEffects = false;
 
-        SetupGlowEffect();
         SetupDrunkEffect();
         SetupFrameColorEffect();
-    }
-
-    private void SetupGlowEffect()
-    {
-        // The effect is enabled if the feature is enabled for this device
-        GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
-        if (glow != null)
-        {
-            glow.enabled = FeatureSettingsManager.instance.IsGlowEffectEnabled;
-        }
     }
 
     private void SetupDrunkEffect()

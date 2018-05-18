@@ -62,21 +62,8 @@ public class PopupInfoDropChance : MonoBehaviour {
 				UIConstants.GetRarityColor(_infos[i].rarity).OpenTag()
 			);
 
-			// Get rarity drop chance from content
-			// Get all egg rewards of the target rarity and add up their probabilities
-			List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(
-				DefinitionsCategory.EGG_REWARDS,
-				"rarity",
-				Metagame.Reward.RarityToSku(_infos[i].rarity)
-			);
-
-			float totalProbability = 0f;
-			for(int j = 0; j < rewardDefs.Count; ++j) {
-				totalProbability += rewardDefs[j].GetAsFloat("droprate", 0f);
-			}
-
-			// Format and set text
-			_infos[i].chanceText.text = StringUtils.MultiplierToPercentage(totalProbability);
+			// Get rarity drop chance from EggManager
+			_infos[i].chanceText.text = StringUtils.MultiplierToPercentage(EggManager.GetDefaultProbability(_infos[i].rarity));
 		}
 	}
 }

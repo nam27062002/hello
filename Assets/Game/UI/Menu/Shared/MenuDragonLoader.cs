@@ -187,7 +187,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param>
 	public void LoadDragon(string _sku, string _disguiseSku, bool forceSync = false) {
 
-		Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
+		//Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
 		if (m_dragonInstance != null || m_asyncRequest != null){
 			if (_sku == m_dragonSku && _disguiseSku == m_disguiseSku )
 			{

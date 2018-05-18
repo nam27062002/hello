@@ -127,8 +127,12 @@ public class TouchControlsDPad : TouchControls {
 	
 	override public void SetRender(bool enable)
 	{
-		m_dpadObj.SetActive(enable);
-		m_dpadDotObj.SetActive(enable);
+		base.SetRender(enable);
+		if (!m_paused)
+		{
+			m_dpadObj.SetActive(enable);
+			m_dpadDotObj.SetActive(enable);
+		}
 
 		#if UNITY_EDITOR
 		if(m_debugText != null) m_debugText.gameObject.SetActive(enable);
