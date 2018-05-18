@@ -476,6 +476,12 @@ public class UserProfile : UserPersistenceSystem
             m_achievements.Dispose();
             m_achievements = null;
         }
+
+        if ( m_userMissions != null )
+        {
+        	m_userMissions.ClearAllMissions();
+        	m_userMissions = null;
+        }
     }
 
 	/// <summary>
