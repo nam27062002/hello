@@ -220,7 +220,7 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonMotion motion = GetComponent<DragonMotion>();
 					if ( motion != null )
 					{
-						motion.AddSpeedPowerup( def.GetAsFloat("param1", 0));
+						motion.AddSpeedModifier( def.GetAsFloat("param1", 0));
 					}
 				}break;
 				case "vacuum":

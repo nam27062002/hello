@@ -433,7 +433,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_dragonForce = m_dragonForce + m_dragonForce * m_dragonForcePowerupMultiplier / 100.0f;
 	}
 
-	public void AddSpeedPowerup( float value )
+	public void AddSpeedModifier( float value )
 	{
 		m_dragonForcePowerupMultiplier += value;
 		RecalculateDragonForce();
