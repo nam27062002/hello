@@ -100,6 +100,9 @@ public class DragonPlayer : MonoBehaviour {
 
 	private int m_numLatching = 0;
 
+	// default size
+	private float m_defaultSize = 1;
+
 	// Super size transformation
 	private float m_superSizeTarget = 1;
 	private float m_superSizeSize = 1;
@@ -202,6 +205,8 @@ public class DragonPlayer : MonoBehaviour {
 		m_data = DragonManager.GetDragonData(m_sku);
 		DebugUtils.Assert(m_data != null, "Attempting to instantiate a dragon player with an ID not defined in the manager.");
 
+		m_defaultSize = m_data.scale;
+
 		// Store reference into Instance Manager for immediate global access
 		InstanceManager.player = this;
 
@@ -271,7 +276,7 @@ public class DragonPlayer : MonoBehaviour {
 	private void OnEnable() 
 	{
 		// Make sure the dragon has the scale according to its level
-		gameObject.transform.localScale = Vector3.one * data.scale;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize;
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
 	}
@@ -290,10 +295,10 @@ public class DragonPlayer : MonoBehaviour {
 		while( timer < duration )
 		{
 			timer += Time.deltaTime;
-			gameObject.transform.localScale = Vector3.one * data.scale * m_dragonCommonSettings.m_reviveScaleCurve.Evaluate( timer );
+			gameObject.transform.localScale = Vector3.one * m_defaultSize * m_dragonCommonSettings.m_reviveScaleCurve.Evaluate( timer );
 			yield return null;
 		}
-		gameObject.transform.localScale = Vector3.one * data.scale;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize;
 		playable = true;
 	}
 
@@ -331,7 +336,7 @@ public class DragonPlayer : MonoBehaviour {
 			{
 				m_superSizeSize = m_superSizeTarget;
 			}
-			gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
+			gameObject.transform.localScale = Vector3.one * m_defaultSize * m_superSizeSize;
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
@@ -609,8 +614,8 @@ public class DragonPlayer : MonoBehaviour {
 	private void OnLevelUp(DragonData _data) {
 		// Assume it's this dragon
 		// Make sure the dragon has the scale according to its level
-		// gameObject.transform.localScale = Vector3.one * data.scale;
-		gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
+		// gameObject.transform.localScale = Vector3.one * m_defaultSize;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize * m_superSizeSize;
 		if (m_breathBehaviour.IsFuryOn())
 			m_breathBehaviour.RecalculateSize();
 
@@ -791,5 +796,8 @@ public class DragonPlayer : MonoBehaviour {
 		m_superSizeDuration = m_superSizeTimer = 0.5f;
 	}
 
-
+	public void OverrideSize( float size )
+	{
+		m_defaultSize = size;
+	}
 }

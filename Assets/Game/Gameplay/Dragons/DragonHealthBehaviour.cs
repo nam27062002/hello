@@ -40,9 +40,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 
 	// Power ups modifiers
-	private float m_drainReduceModifier = 0;
-	private Dictionary<DamageType, float> m_damageReductions;
-	private Dictionary<string, float> m_damageOriginReductions;
+	private float m_drainModifier = 0;
+	private float m_armorPercentageGlobal;
+	private Dictionary<DamageType, float> m_armorPercentageType;
+	private Dictionary<string, float> m_armorPercentageOrigin;
 
 	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
 	private float m_globalEatingHpBoost = 0;
@@ -56,9 +57,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	void Awake()
 	{
 		DamageTypeComparer comparer = new DamageTypeComparer();
-		m_damageReductions = new Dictionary<DamageType, float>(comparer);
+		m_armorPercentageType = new Dictionary<DamageType, float>(comparer);
 
-		m_damageOriginReductions = new Dictionary<string, float>();
+		m_armorPercentageOrigin = new Dictionary<string, float>();
 
 		m_dragon = GetComponent<DragonPlayer>();
 	}
@@ -90,7 +91,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		float drain = GetModifiedDamageForCurrentHealth( m_healthDrainPerSecond, true);
 
 		// Check power ups 
-		drain = drain - drain * m_drainReduceModifier / 100.0f;
+		drain = drain - drain * m_drainModifier / 100.0f;
 
 		m_dragon.AddLife(-drain * Time.deltaTime, DamageType.DRAIN, null);
 
@@ -117,9 +118,12 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		#endif
 	}
 
-	public void AddDrainReduceModifier( float value )
-	{
-		m_drainReduceModifier += value;
+	/// <summary>
+	/// Increase or decrease the amount of life lost per second.
+	/// </summary>
+	/// <param name="value">Value.</param>
+	public void AddDrainModifier( float value ) {
+		m_drainModifier += value;
 	}
 
 	public bool IsAlive() {
@@ -161,15 +165,21 @@ public class DragonHealthBehaviour : MonoBehaviour {
 				return;
 			}
 
-			// power ups
-			if ( m_damageReductions.ContainsKey( _type ) )
+			float armorPercentage = m_armorPercentageGlobal;
+			if (m_armorPercentageType.ContainsKey( _type )) 
 			{
-				_amount = _amount - _amount * m_damageReductions[ _type ] / 100.0f;
+				armorPercentage += m_armorPercentageType[ _type ];
 			}
 
-			if ( !string.IsNullOrEmpty(_damageOrigin) && m_damageOriginReductions.ContainsKey( _damageOrigin ) )
+			if ( !string.IsNullOrEmpty(_damageOrigin) && m_armorPercentageOrigin.ContainsKey( _damageOrigin ) )
 			{
-				_amount = _amount - _amount * m_damageOriginReductions[ _damageOrigin ] / 100.0f;
+				armorPercentage += m_armorPercentageOrigin[ _damageOrigin ];
+			}
+
+			if (armorPercentage >= 100f) {
+				_amount = 0f;
+			} else {
+				_amount = _amount - _amount * armorPercentage / 100.0f;
 			}
 
 			// Play animation?
@@ -217,16 +227,26 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			return;
 		}
 
+
+		float armorPercentage = m_armorPercentageGlobal;
+
 		// Check damage Reduction
-		if ( m_damageReductions.ContainsKey( _type ) )
+		if ( m_armorPercentageType.ContainsKey( _type ) )
 		{
-			_dps = _dps - _dps * m_damageReductions[ _type ] / 100.0f;
+			armorPercentage += m_armorPercentageType[ _type ];
 		}
 
-		if (  !string.IsNullOrEmpty( _damageOrigin ) && m_damageOriginReductions.ContainsKey( _damageOrigin ) )
+		if (  !string.IsNullOrEmpty( _damageOrigin ) && m_armorPercentageOrigin.ContainsKey( _damageOrigin ) )
 		{
-			_dps = _dps - _dps * m_damageOriginReductions[ _damageOrigin ] / 100.0f;
+			armorPercentage += m_armorPercentageOrigin[ _damageOrigin ];
 		}
+
+		if (armorPercentage >= 100f) {
+			_dps = 0f;
+		} else {
+			_dps = _dps - _dps * armorPercentage / 100.0f;
+		}
+
 
 		// Clear current dots?
 		if(_reset) {
@@ -304,27 +324,45 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		// PlayHitAnimation();
 	}
 
-	public void AddDamageReduction( DamageType type, float percentage )
+	/// <summary>
+	/// All the damage types from all sources will be affected.
+	/// </summary>
+	/// <param name="_percentage">Amount of armor in percentage.</param>
+	public void AddArmorModifier(float _percentage) {
+		m_armorPercentageGlobal += _percentage;
+	}
+
+	/// <summary>
+	/// Adds the armor modifier for a specific damage type. It can be negative to receive more damage.
+	/// </summary>
+	/// <param name="type">Type.</param>
+	/// <param name="_percentage">Amount of armor in percentage.</param>
+	public void AddArmorModifier( DamageType type, float percentage )
 	{
-		if (m_damageReductions.ContainsKey(type))
+		if (m_armorPercentageType.ContainsKey(type))
 		{
-			m_damageReductions[type] += percentage;
+			m_armorPercentageType[type] += percentage;
 		}
 		else
 		{
-			m_damageReductions.Add(type, percentage);
+			m_armorPercentageType.Add(type, percentage);
 		}
 	}
 
-	public void AddDamageReduction( string origin, float percentage)
+	/// <summary>
+	/// Adds the armor modifier for a specific damage source. It can be negative to receive more damage.
+	/// </summary>
+	/// <param name="type">Source.</param>
+	/// <param name="_percentage">Amount of armor in percentage.</param>
+	public void AddArmorModifier( string origin, float percentage)
 	{
-		if (m_damageOriginReductions.ContainsKey(origin))
+		if (m_armorPercentageOrigin.ContainsKey(origin))
 		{
-			m_damageOriginReductions[origin] += percentage;
+			m_armorPercentageOrigin[origin] += percentage;
 		}
 		else
 		{
-			m_damageOriginReductions.Add(origin, percentage);
+			m_armorPercentageOrigin.Add(origin, percentage);
 		}
 	}
 

@@ -105,13 +105,13 @@ public class DragonPowerUp : MonoBehaviour {
 				}break;
 				case "fury_duration":	// Adds fury duration
 				{
-					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
+					DragonBreathBehaviour breath = player.breathBehaviour;
 					if ( breath != null )
 						breath.AddDurationBonus( def.GetAsFloat("param1") );
 				}break;
 				case "dive":	// lets you move inside water
 				{
-					DragonMotion motion = GetComponent<DragonMotion>();
+					DragonMotion motion = player.dragonMotion;
 					motion.canDive = true;
 				}break;
 				case "avoid":	// avoids numHits
@@ -141,15 +141,15 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						case "mine":
 						{
-							healthBehaviour.AddDamageReduction( DamageType.MINE, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.MINE, percentage );
 						}break;
 						case "poison":
 						{
-							healthBehaviour.AddDamageReduction( DamageType.POISON, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.POISON, percentage );
 						}break;
 						case "arrows":
 						{
-							healthBehaviour.AddDamageReduction( DamageType.ARROW, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.ARROW, percentage );
 						}break;
 					}
 				}break;
@@ -187,7 +187,7 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-					healthBehaviour.AddDrainReduceModifier( percentage );
+					healthBehaviour.AddDrainModifier( percentage );
 				}break;
 				case "more_coin":	// Increase SC given for all preys by param1 %
 				{

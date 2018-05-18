@@ -26,6 +26,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected Animator m_animator;
 
 	// Cache content values
+	protected bool m_modInfiniteFury = false;
+	public bool modInfiniteFury
+	{
+		get { return m_modInfiniteFury; }
+		set { m_modInfiniteFury = value; }
+	}
 
 	protected float m_furyMax = 1f;
 	public float furyMax
@@ -220,7 +226,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			#endif
 
 		// Cheat for infinite fire
-		bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+		bool infiniteFury = ((m_modInfiniteFury || DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
 		if (m_dragon.changingArea) return;
 
@@ -228,7 +234,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		{
 			case State.NORMAL:
 			{
-				if (cheating)
+				if (infiniteFury)
 				{
 					if (DebugSettings.infiniteFire)
 						AddFury(m_furyMax - m_currentFury);	// Set to max fury
@@ -259,7 +265,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if ( !m_isFuryPaused )
 				{
 					// Don't decrease fury if cheating
-					if(!cheating && !m_dragon.changingArea)
+					if(!infiniteFury && !m_dragon.changingArea)
 					{
 						m_currentRemainingFuryDuration -= Time.deltaTime;
 					}
