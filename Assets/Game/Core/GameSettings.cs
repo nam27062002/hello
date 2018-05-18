@@ -95,6 +95,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private int m_enableGlobalEventsAtRun = 3;
 	public static int ENABLE_GLOBAL_EVENTS_AT_RUN { get { return instance.m_enableGlobalEventsAtRun; }}
 
+	[SerializeField] private int m_enableInterstitialPopupsAtRun = 12;
+	public static int ENABLE_INTERSTITIAL_POPUPS_AT_RUN { get { return instance.m_enableInterstitialPopupsAtRun; }}
+
 	// Internal references
 	private AudioMixer m_audioMixer = null;
 
