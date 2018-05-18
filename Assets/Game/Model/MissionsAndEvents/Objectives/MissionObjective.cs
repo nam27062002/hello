@@ -4,7 +4,6 @@
 // Created by Alger Ortín Castellví on 30/11/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
-//#define LOG
 
 //----------------------------------------------------------------------//
 // INCLUDES																//
@@ -51,9 +50,6 @@ public class MissionObjective : TrackingObjectiveBase {
 	/// <param name="_targetValue">Target value.</param>
 	/// <param name="_singleRun">Is it a single run mission?</param>
 	public MissionObjective(Mission _parentMission, DefinitionNode _missionDef, DefinitionNode _typeDef, long _targetValue, bool _singleRun) {
-		#if LOG
-		DebugUtils.Log(Colors.darkGreen.Tag("Creating MissionObjective: ") + _parentMission + ", " + _missionDef + ", " + _typeDef + ", " + _targetValue + ", " + _singleRun);
-		#endif
 
 		// Check params
 		DebugUtils.Assert(_missionDef != null, "Mission Def Null!");
@@ -95,9 +91,6 @@ public class MissionObjective : TrackingObjectiveBase {
 		// Tell tracker it's being used by a mission
 		m_tracker.mode = TrackerBase.Mode.MISSION;
 
-		#if LOG
-		DebugUtils.Log(Colors.darkGreen.Tag("Done! ") + ToString());
-		#endif
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
@@ -108,18 +101,12 @@ public class MissionObjective : TrackingObjectiveBase {
 	/// Destructor
 	/// </summary>
 	~MissionObjective() {
-		#if LOG
-		Debug.Log(Color.red.Tag("Destroying MissionObjective") + ToString());
-		#endif
 	}
 
 	/// <summary>
 	/// Leave the objective ready for garbage collection.
 	/// </summary>
 	override public void Clear() {
-		#if LOG
-		DebugUtils.Log(Color.red.Tag("Clearing MissionObjective ") + ToString());
-		#endif
 
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
@@ -170,9 +157,6 @@ public class MissionObjective : TrackingObjectiveBase {
 		if(m_singleRun) {
 			m_tracker.SetValue(0, false);
 
-			#if LOG
-			DebugUtils.Log(Color.red.Tag("Resetting mission! ") + ToString());
-			#endif
 		}
 
 		// Disable during FTUX
@@ -193,27 +177,14 @@ public class MissionObjective : TrackingObjectiveBase {
 		if(m_singleRun && !isCompleted) {
 			m_tracker.SetValue(0, false);
 
-			#if LOG
-			DebugUtils.Log(Colors.red.Tag("Resetting mission!  ") + ToString());
-			#endif
 		}
 	}
 
-	#if LOG
-	int m_lastIntValue = 0;
-	#endif
 
 	/// <summary>
 	/// The tracker's value has changed.
 	/// </summary>
 	override public void OnValueChanged() {
-		#if LOG
-		int newIntValue = Mathf.FloorToInt(currentValue);
-		if(newIntValue != m_lastIntValue) {
-			DebugUtils.Log(ToString() + Colors.yellow.Tag(": " + currentValue + "/" + targetValue));
-			m_lastIntValue = newIntValue;
-		}
-		#endif
 
 		// Check completion
 		if(isCompleted) {

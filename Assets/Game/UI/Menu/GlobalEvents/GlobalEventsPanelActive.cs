@@ -41,9 +41,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[Space]
 	[SerializeField] private GlobalEventsLeaderboardView m_leaderboard = null;
 
-	// Internal
-	private float m_eventCountdownUpdateTimer = 0f;
-	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -51,8 +48,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Make sure event timer will be updated
-		m_eventCountdownUpdateTimer = 0f;
+		// Program periodic update call
+		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
 
 		// Subscribe to external events
 		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
@@ -62,31 +59,29 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Clear periodic update call
+		CancelInvoke();
+
 		// Unsubscribe from external events
 		Messenger.RemoveListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
-	/// Called every frame.
+	/// Called periodically.
 	/// </summary>
-	private void Update() {
+	private void UpdatePeriodic() {
 		// Just in case
 		if(GlobalEventManager.currentEvent == null) return;
 
-		// Update countdown at intervals
-		m_eventCountdownUpdateTimer -= Time.deltaTime;
-		if(m_eventCountdownUpdateTimer <= 0f) {
-			// Reset timer
-			m_eventCountdownUpdateTimer = EVENT_COUNTDOWN_UPDATE_INTERVAL;
+		// Update countdown text
+		m_timerText.text = TimeUtils.FormatTime(
+			System.Math.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),	// Never show negative time!
+			TimeUtils.EFormat.ABBREVIATIONS,
+			4
+		);
 
-			// Parse remaining time
-			m_timerText.text = TimeUtils.FormatTime(
-				System.Math.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),	// Never show negative time!
-				TimeUtils.EFormat.ABBREVIATIONS,
-				4
-			);
-		}
-
+		// [AOC] Manage timer end when this panel is active
+		// The GoalsScreenController does it, since it has to always display the timer bar on the tab button, regardless of whether this screen is active or not
 	}
 
 	//------------------------------------------------------------------------//
@@ -165,6 +160,9 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 		// Leaderboard
 		// m_leaderboard.Refresh();
+
+		// Force a first update on the timer
+		UpdatePeriodic();
 	}
 
 	//------------------------------------------------------------------------//
