@@ -20,7 +20,7 @@ public class GameCamera : MonoBehaviour
 	private const float			m_minZ = 10.0f;
 	private const float			m_frameWidthDefault = 20.0f;
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
-    private const float         m_frameWidthBoost = 30.0f;
+    private const float         m_frameWidthBoost = 32.5f;
 	private const float         m_frameWidthFury = 30.0f;
 	private const float         m_frameWidthSpace = 40.0f;
 
@@ -833,7 +833,9 @@ public class GameCamera : MonoBehaviour
 							 }
 							 else
 							 {
-					 frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+					 //frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+							//TONI: Testing, instead of linear, cubic interpolation.
+							frameWidth = m_frameWidthDefault + ((m_frameWidthBoost - m_frameWidthDefault) * m_targetMachine.howFast * m_targetMachine.howFast * m_targetMachine.howFast);
 				 }
 						 }
 		        }
@@ -847,8 +849,7 @@ public class GameCamera : MonoBehaviour
 					frameWidth += m_largestBossFrameIncrement;
 				}
             }
-
-
+				
 			UpdateZooming(frameWidth, hasBoss);
 		}
 
