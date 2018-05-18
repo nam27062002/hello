@@ -152,7 +152,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			}
 		}
 		m_dragon.AddEnergy(reward.energy);
-		m_dragonBreath.AddFury(reward.fury);
+		m_dragonBreath.AddFuryPercentage(reward.fury);
 		if (reward.alcohol != 0)
 			m_dragon.AddAlcohol(reward.alcohol);
 	}
