@@ -7,5 +7,8 @@ public class ModDragonSpeedMax : ModifierDragon {
 	public ModDragonSpeedMax(DefinitionNode _def) : base(_def) {
 
 	}
+
+	public override void Apply() {
+	}
 }
 	
