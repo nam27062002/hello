@@ -67,6 +67,13 @@ public class HDLiveEventData {
 			def.Clean();
 	}
 
+	public virtual SimpleJSON.JSONClass ToJson ()
+	{
+		SimpleJSON.JSONClass ret = new SimpleJSON.JSONClass();
+		ret.Add("code", m_eventId);
+		return ret;
+	}
+
 	public virtual void ParseState( SimpleJSON.JSONNode _data )
 	{
 		m_eventId = _data["code"];

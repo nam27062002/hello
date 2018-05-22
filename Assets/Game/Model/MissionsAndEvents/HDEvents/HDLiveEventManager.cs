@@ -43,11 +43,34 @@ public class HDLiveEventManager {
 
 	}
 
+	public virtual bool IsActive()
+	{
+		bool ret = false;
+		HDLiveEventData data = GetEventData();
+		if (data != null && data.m_eventId > 0)
+		{
+			ret = true;
+		}
+		return true;
+	}
+
 	public virtual void CleanData()
 	{
 		HDLiveEventData data = GetEventData();
 		if (data != null)
 			data.Clean();
+	}
+
+	public virtual SimpleJSON.JSONClass ToJson ()
+	{
+		// Create new object, initialize and return it
+		SimpleJSON.JSONClass ret = null;
+		HDLiveEventData data = GetEventData();
+		if (data != null)
+		{
+			ret = data.ToJson();
+		}
+		return ret;
 	}
 
 	public virtual HDLiveEventData GetEventData()
@@ -92,7 +115,8 @@ public class HDLiveEventManager {
 	//------------------------------------------------------------------------//
 	public void RequestDefinition()
 	{
-		// GameServerManager.SharedInstance.HDEvents_GetEvent(instance.RequestEventDefinitionResponse);
+		HDLiveEventData data = GetEventData();
+		GameServerManager.SharedInstance.HDEvents_GetDefinition( data.m_eventId, RequestEventDefinitionResponse);
 	}
 
 	protected virtual void RequestEventDefinitionResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
@@ -117,7 +141,8 @@ public class HDLiveEventManager {
 
 	public void RequestProgress()
 	{
-		// GameServerManager.SharedInstance.HDEvents_GetEvent(instance.RequestEventDefinitionResponse);
+		HDLiveEventData data = GetEventData();
+		GameServerManager.SharedInstance.HDEvents_GetMyProgess(data.m_eventId, RequestProgressResponse);
 	}
 
 	protected virtual void RequestProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
@@ -138,6 +163,32 @@ public class HDLiveEventManager {
 			}
 		}
 	}
+
+	public void SendProgress( int _score )
+	{
+		HDLiveEventData data = GetEventData();
+		GameServerManager.SharedInstance.HDEvents_RegisterProgress(data.m_eventId, _score, RegisterProgressResponse);
+	}
+
+	protected virtual void RegisterProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
+	{
+		if ( _error != null ){
+			// Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
+			return;
+		}
+
+		if(_response != null && _response["response"] != null) 
+		{
+			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+			int eventId = responseJson["code"].AsInt;
+			HDLiveEventData data = GetEventData();
+			if ( data != null && data.m_eventId == eventId )
+			{
+				
+			}
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//

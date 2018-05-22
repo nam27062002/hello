@@ -36,10 +36,49 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
 	HDLiveEventManager m_quest = new HDLiveEventManager();
 	HDLiveEventManager m_passive = new HDLiveEventManager();
 
+	public bool m_cacheInfo = false;
+
+	public HDLiveEventsManager()
+	{
+		// Load Cache?
+		LoadEventsFromCache();
+	}
+
+	public void LoadEventsFromCache()
+	{
+		m_cacheInfo = true;
+		m_tournament.CleanData();
+		if ( CacheServerManager.SharedInstance.HasKey("tournament") )
+		{
+
+		}
+		// m_tournament.OnNewStateInfo(  );
+	}
+
+	public void SaveEventsToCache()
+	{
+		if ( m_tournament.IsActive()){
+			CacheServerManager.SharedInstance.SetVariable( "tournament", m_tournament.ToJson().ToString());
+		}else{
+			CacheServerManager.SharedInstance.DeleteKey("tournament");
+		}
+
+		if ( m_passive.IsActive()){
+			CacheServerManager.SharedInstance.SetVariable( "passive", m_passive.ToJson().ToString());
+		}else{
+			CacheServerManager.SharedInstance.DeleteKey("passive");
+		}
+
+		if ( m_quest.IsActive()){
+			CacheServerManager.SharedInstance.SetVariable( "quest", m_quest.ToJson().ToString());
+		}else{
+			CacheServerManager.SharedInstance.DeleteKey("quest");
+		}
+	}
 
 	public void RequestMyEvents() 
 	{
-		// GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);
+		GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);
 	}
 
 	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
@@ -52,6 +91,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
 		if(_response != null && _response["response"] != null) 
 		{
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+			m_cacheInfo = false;
 
 			m_tournament.CleanData();
 			if ( responseJson != null && responseJson.ContainsKey("tournament")){

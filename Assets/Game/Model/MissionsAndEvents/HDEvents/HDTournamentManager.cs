@@ -44,6 +44,11 @@ public class HDTournamentManager : HDLiveEventManager {
 	}
 
 
+	public override HDLiveEventData GetEventData()
+	{
+		return m_data;
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//

@@ -599,13 +599,13 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
 	}
 
-	public override void HDEvents_GetEventDefinition(int _eventID, ServerCallback _callback) {
+	public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetEventDefinition, parameters, _callback);
 	}
 
-	public override void HDEvents_GetMyEventProgess(int _eventID, ServerCallback _callback) {
+	public override void HDEvents_GetMyProgess(int _eventID, ServerCallback _callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyProgress, parameters, _callback);

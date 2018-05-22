@@ -378,14 +378,14 @@ public class GameServerManager
 	/// </summary>
 	/// <param name="_eventID">Event I.</param>
 	/// <param name="_callback">Callback.</param>
-	public virtual void HDEvents_GetEventDefinition(int _eventID, ServerCallback _callback) {}
+	public virtual void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {}
 
 	/// <summary>
 	/// HDs the events get my event progess. Gets the progress in the event for the player
 	/// </summary>
 	/// <param name="_eventID">Event I.</param>
 	/// <param name="_callback">Callback.</param>
-	public virtual void HDEvents_GetMyEventProgess(int _eventID, ServerCallback _callback) {}
+	public virtual void HDEvents_GetMyProgess(int _eventID, ServerCallback _callback) {}
 
 
 	public virtual void HDEvents_RegisterProgress(int _eventID, int _score, ServerCallback _callback) {}
