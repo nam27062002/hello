@@ -60,11 +60,13 @@ namespace AI {
 			m_rbody.velocity = m_velocity + m_externalVelocity;
 		}
 
+
 		protected override void UpdateOrientation() {
 			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
 
 			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
 				if (m_dragonStyleRotation) {
+					/*
 					float angle = m_direction.ToAngleDegrees();
 					float roll = angle;
 					float pitch = angle;
@@ -76,8 +78,12 @@ namespace AI {
 
 					// m_targetRotation = qYaw * qRoll * qPitch;
 					m_targetRotation = qRoll * qPitch;
-					Vector3 eulerRot = m_targetRotation.eulerAngles;
+					*/
 
+					float rads = m_direction.ToAngleRadiansXY();
+					m_targetRotation = MathUtils.DragonRotation( rads );
+
+					Vector3 eulerRot = m_targetRotation.eulerAngles;
 					if (m_limitVerticalRotation) {						
 						if (eulerRot.z > m_faceUpAngle && eulerRot.z < 180f - m_faceUpAngle) { // top cap
 							eulerRot.z = m_faceUpAngle;
