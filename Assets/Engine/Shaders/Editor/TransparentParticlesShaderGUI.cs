@@ -34,7 +34,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         OneColor
     }
 
-
     private static class Styles
     {
         readonly public static string basicColorText = "Basic color";
@@ -67,6 +66,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string dissolveTipText = "Alpha dissolve receives custom data from particle system in TEXCOORD0.zw and MainTex.gb.";
         readonly public static string enableNoiseTextureText = "Enable noise texture";
         readonly public static string noiseTextureText = "Noise texture";
+        readonly public static string enableNoiseUVchannelText = "Enable noise UV channel";
         readonly public static string noiseTextureEmissionText = "R: Emission";
         readonly public static string noiseTextureAlphaText = "G: Alpha";
         readonly public static string noiseTextureDissolveText = "B: Dissolve";
@@ -107,6 +107,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_enableExtendedParticles;
     MaterialProperty mp_enableRBGColorVertex;
     MaterialProperty mp_enableNoiseTexture;
+    MaterialProperty mp_enableNoiseUVChannel;
     MaterialProperty mp_enableNoiseTextureEmission;
     MaterialProperty mp_enableNoiseTextureAlpha;
     MaterialProperty mp_enableNoiseTextureDissolve;
@@ -174,6 +175,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_enableNoiseTextureEmission = FindProperty("_EnableNoiseTextureEmission", props);
         mp_enableNoiseTextureAlpha = FindProperty("_EnableNoiseTextureAlpha", props);
         mp_enableNoiseTextureDissolve = FindProperty("_EnableNoiseTextureDissolve", props);
+        mp_enableNoiseUVChannel = FindProperty("_EnableNoiseUV", props);
 
         /// Enum Material PProperties
 
@@ -433,7 +435,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 */
         if(featureSet(mp_enableExtendedParticles, Styles.enableExtendedParticlesText))
         {
-            materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
+            materialEditor.TextureProperty(mp_mainTex, Styles.mainTexText);
+
             if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
             {
                 Vector4 tem = mp_panning.vectorValue;
@@ -504,7 +507,16 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
             if (featureSet(mp_enableNoiseTexture, Styles.enableNoiseTextureText))
             {
-                materialEditor.ShaderProperty(mp_noiseTex, Styles.noiseTextureText);
+                //                if (featureSet(mp_enableNoiseUVChannel, Styles.enableNoiseUVchannelText))
+                materialEditor.ShaderProperty(mp_enableNoiseUVChannel, Styles.enableNoiseUVchannelText);
+                if (mp_enableNoiseUVChannel.floatValue > 0.0f)
+                {
+                    materialEditor.TextureProperty(mp_noiseTex, Styles.noiseTextureText, true);
+                }
+                else
+                {
+                    materialEditor.TextureProperty(mp_noiseTex, Styles.noiseTextureText, false);
+                }
 
                 Vector4 tem = mp_noisePanning.vectorValue;
                 Vector2 p1 = new Vector2(tem.x, tem.y);
