@@ -253,9 +253,9 @@ public class MathUtils {
 	    return Mathf.Abs(a - b) < Mathf.Epsilon;
 	}
 
-	public static Quaternion DragonRotation( float angle )
+	public static Quaternion DragonRotation( float angleInRadians )
 	{
-		float rad = angle * Mathf.Deg2Rad * 0.5f;
+		float rad = angleInRadians * 0.5f;
 		float sin = Mathf.Sin(rad);
 		float cos = Mathf.Cos(rad);
 

@@ -66,8 +66,8 @@ namespace AI {
 
 			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
 				if (m_dragonStyleRotation) {
-					float angle = m_direction.ToAngleDegrees();
 					/*
+					float angle = m_direction.ToAngleDegrees();
 					float roll = angle;
 					float pitch = angle;
 					// float yaw = 0;
@@ -79,7 +79,9 @@ namespace AI {
 					// m_targetRotation = qYaw * qRoll * qPitch;
 					m_targetRotation = qRoll * qPitch;
 					*/
-					m_targetRotation = MathUtils.DragonRotation( angle );
+
+					float rads = m_direction.ToAngleRadiansXY();
+					m_targetRotation = MathUtils.DragonRotation( rads );
 
 					Vector3 eulerRot = m_targetRotation.eulerAngles;
 					if (m_limitVerticalRotation) {						
