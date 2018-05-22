@@ -413,8 +413,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// SFX
 				AudioController.Play(UIConstants.GetDragonTierSFX(dragonData.tier));
 
+				// Equip default disguise to clear shadow effect
 				MenuDragonPreview preview = InstanceManager.menuSceneController.dragonScroller.GetDragonPreview(_revealDragonSku);
 				preview.equip.EquipDisguise("");
+
+				// Tell the loader to not use the shadow material again (dynamic loading fix HDK-1956)
+				InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku).dragonLoader.useShadowMaterial = false;
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {			

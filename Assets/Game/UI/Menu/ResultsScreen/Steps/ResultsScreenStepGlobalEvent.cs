@@ -202,6 +202,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_event.bonusDragonSku);
 					if ( bonusDragonDef != null ){
 						m_bonusDragonInfoText.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_INFO", bonusDragonDef.GetLocalized("tidName"));
+					} else {
+						m_bonusDragonInfoText.Localize("");
 					}
 
 					// Bonus dragon text
@@ -512,7 +514,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		// Show a video ad!
 		PopupAdBlocker.Launch(
 			true, 
-			GameAds.EAdPurpose.RESULTS_GET_KEY,
+			GameAds.EAdPurpose.EVENT_SCORE_X2,
 			(bool _success) => {
                 if ( _success )
                 {

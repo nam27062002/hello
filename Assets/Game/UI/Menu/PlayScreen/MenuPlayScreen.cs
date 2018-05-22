@@ -119,7 +119,12 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// The Privacy Policy button has been pressed.
 	/// </summary>
 	public void OnPrivacyPolicyButton() {
-		string privacyPolicyUrl = "https://legal.ubi.com/privacypolicy/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		Application.OpenURL(privacyPolicyUrl);
+		// Add some delay to give enough time for SFX to be played and popup to be closed before losing focus
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				string privacyPolicyUrl = "https://legal.ubi.com/privacypolicy/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
+				Application.OpenURL(privacyPolicyUrl);
+			}, 0.25f
+		);
 	}
 }

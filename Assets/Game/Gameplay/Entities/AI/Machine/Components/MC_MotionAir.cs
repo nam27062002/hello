@@ -68,13 +68,14 @@ namespace AI {
 					float angle = m_direction.ToAngleDegrees();
 					float roll = angle;
 					float pitch = angle;
-					float yaw = 0;
+					// float yaw = 0;
 
 					Quaternion qRoll = Quaternion.Euler(0f, 0f, roll);
-					Quaternion qYaw = Quaternion.Euler(0f, yaw, 0f);
+					// Quaternion qYaw = Quaternion.Euler(0f, yaw, 0f);
 					Quaternion qPitch = Quaternion.Euler(pitch, 0f, 0f);
 
-					m_targetRotation = qYaw * qRoll * qPitch;
+					// m_targetRotation = qYaw * qRoll * qPitch;
+					m_targetRotation = qRoll * qPitch;
 					Vector3 eulerRot = m_targetRotation.eulerAngles;
 
 					if (m_limitVerticalRotation) {						
