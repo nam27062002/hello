@@ -817,6 +817,9 @@ public class GameServerManagerCalety : GameServerManager {
         
         int index = (highPriority) ? 0 : 1;
         Commands_List[index].Add(cmd);
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Command requested " + command.ToString());
 	}		    
 
     private bool Commands_NeedsToBeLoggedIn(ECommand command)
@@ -1016,6 +1019,9 @@ public class GameServerManagerCalety : GameServerManager {
             }            
         }
 
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Command " + commandName + " sent");
+
         ServerManager.SharedInstance.SendCommand(commandName, urlParams, headerParams, body);
 
         // Connection checker timer is reseted because a request is already being sent
@@ -1055,6 +1061,15 @@ public class GameServerManagerCalety : GameServerManager {
 	private bool Commands_OnResponse(string responseData, int statusCode) {
 		Error error = null;
 		ServerResponse response = null;
+
+        // Makes sure there's a command waiting for the response
+        if (Commands_CurrentCommand == null) {
+            return false;
+        }
+
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Command " + Commands_CurrentCommand.Cmd.ToString() + " response received");
+        }
 
 		// 426 code means that there's a new version of the application available. We simulate that the response was 200 (SUCCESS) because we don't want to force the
 		// user to upgrade        
@@ -1600,13 +1615,14 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Log(string message) {
-		Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));        
-	}
+	    Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));
+        //Debug.Log("<color=cyan>" + LOG_CHANNEL + " " + message + " at " + Time.realtimeSinceStartup + " </color>");
+    }
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void LogWarning(string message) {
+    /// <summary>
+    /// 
+    /// </summary>
+    private void LogWarning(string message) {
 		Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));            
 	}
 
