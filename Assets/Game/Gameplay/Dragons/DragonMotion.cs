@@ -1599,14 +1599,16 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		if(blendRate > Mathf.Epsilon)
 		{
 			float angle = dir.ToAngleDegrees();
+			/*
 			float roll = angle;
 			float pitch = angle;
-
 			Quaternion qRoll = Quaternion.Euler(0.0f, 0.0f, roll);
 			Quaternion qPitch = Quaternion.Euler(pitch, 0.0f, 0.0f);
-
 			m_desiredRotation = qRoll * qPitch;
-			Vector3 eulerRot = m_desiredRotation.eulerAngles;
+			*/
+			m_desiredRotation = MathUtils.DragonRotation( angle );
+
+			Vector3 eulerRot 	= m_desiredRotation.eulerAngles;
 			if (m_capVerticalRotation) 
 			{
 				// top cap

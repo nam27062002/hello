@@ -252,4 +252,23 @@ public class MathUtils {
 	{
 	    return Mathf.Abs(a - b) < Mathf.Epsilon;
 	}
+
+	public static Quaternion DragonRotation( float angle )
+	{
+		float rad = angle * Mathf.Deg2Rad * 0.5f;
+		float sin = Mathf.Sin(rad);
+		float cos = Mathf.Cos(rad);
+
+		Quaternion q1 = GameConstants.Quaternion.identity;
+		q1.w = cos;
+		q1.z = sin;
+
+		Quaternion q2 = GameConstants.Quaternion.identity;
+		q2.w = cos;
+		q2.x = sin;
+
+		Quaternion ret = q1 * q2;
+
+		return ret;
+	}
 }
