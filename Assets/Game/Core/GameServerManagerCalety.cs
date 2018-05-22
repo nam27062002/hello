@@ -593,6 +593,45 @@ public class GameServerManagerCalety : GameServerManager {
 
 	#endregion
 
+#region HD_LiveEvents
+		
+	public override void HDEvents_GetMyEvents(ServerCallback _callback) {
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
+	}
+
+	public override void HDEvents_GetEventDefinition(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetEventDefinition, parameters, _callback);
+	}
+
+	public override void HDEvents_GetMyEventProgess(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyProgress, parameters, _callback);
+	}
+
+	public override void HDEvents_RegisterProgress(int _eventID, int _score, ServerCallback _callback) {
+		// Compose parameters and enqeue command
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		parameters.Add("progress", _score.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_RegisterProgress, parameters, _callback);
+	}
+
+	public override void HDEvents_GetMyReward(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyReward, parameters, _callback);
+	}
+
+	public override void HDEvents_FinishMyEvent(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_FinishMyEvent, parameters, _callback);
+	}
+#endregion
+
 	//------------------------------------------------------------------------//
 	// INTERNAL COMMANDS MANAGEMENT											  //
 	//------------------------------------------------------------------------//
@@ -626,7 +665,15 @@ public class GameServerManagerCalety : GameServerManager {
 		GlobalEvents_GetState,		// params: int _eventID. Returns the current total value of an event
 		GlobalEvents_RegisterScore,	// params: int _eventID, float _score
 		GlobalEvents_GetRewards,	// params: int _eventID
-		GlobalEvents_GetLeadeboard	// params: int _eventID
+		GlobalEvents_GetLeadeboard,	// params: int _eventID
+
+
+		HDLiveEvents_GetMyEvents,
+		HDLiveEvents_GetEventDefinition,// params: int _eventID. Returns an event description
+		HDLiveEvents_GetMyProgress,		// params: int _eventID. Returns the event progres for this player
+		HDLiveEvents_RegisterProgress,	// params: int _eventID, float _score in tournaments or _contribution on quests
+		HDLiveEvents_GetMyReward,		// params: int _eventID
+		HDLiveEvents_FinishMyEvent		// params: int _eventID
 	}    
 
 	/// <summary>
@@ -834,6 +881,13 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.GlobalEvents_RegisterScore:
             case ECommand.PendingTransactions_Get:
             case ECommand.PendingTransactions_Confirm:
+
+            case ECommand.HDLiveEvents_GetMyEvents:
+			case ECommand.HDLiveEvents_GetEventDefinition:
+			case ECommand.HDLiveEvents_GetMyProgress:
+			case ECommand.HDLiveEvents_RegisterProgress:
+			case ECommand.HDLiveEvents_GetMyReward:
+			case ECommand.HDLiveEvents_FinishMyEvent:
                 returnValue = true;
                 break;
         }
@@ -982,6 +1036,35 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
 					// progress					
 				}break;
+
+				case ECommand.HDLiveEvents_GetMyEvents:{
+                    Command_SendCommand( COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, null, null, "" );
+				}break;
+				case ECommand.HDLiveEvents_GetEventDefinition:
+				case ECommand.HDLiveEvents_GetMyProgress:
+				case ECommand.HDLiveEvents_GetMyReward:
+				case ECommand.HDLiveEvents_FinishMyEvent: {					
+					Dictionary<string, string> kParams = new Dictionary<string, string>();						
+					kParams["eventId"] = parameters["eventId"];
+					string global_event_command = "";
+					switch( command.Cmd )
+					{
+						case ECommand.HDLiveEvents_GetEventDefinition: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF;break;
+						case ECommand.HDLiveEvents_GetMyProgress: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS;break;
+						case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD;break;
+						case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT;break;
+					}
+
+                    Command_SendCommand( global_event_command, kParams );					
+				}break;
+				case ECommand.HDLiveEvents_RegisterProgress: {
+					Dictionary<string, string> kParams = new Dictionary<string, string>();							
+					kParams["eventId"] = parameters["eventId"];
+					kParams["progress"] = parameters["progress"];
+					Command_SendCommand( COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, kParams, parameters, "");
+					// progress					
+				}break;
+
                 default: {
                     if (FeatureSettingsManager.IsDebugEnabled)
                         LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
@@ -1355,7 +1438,15 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/gevent/addProgress";
 	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/gevent/reward";
 	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
-    
+
+	private const string COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS = "/api/lieve_events/customizer";
+	private const string COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF = "/api/gevent/get";
+	private const string COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS = "/api/gevent/progress";
+	private const string COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS = "/api/gevent/addProgress";
+	private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/gevent/reward";
+	private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/gevent/leaderboard";
+
+
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";
 
@@ -1391,6 +1482,13 @@ public class GameServerManagerCalety : GameServerManager {
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_REWARDS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);        
+
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
     }    
 
     /// <summary>
