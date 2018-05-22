@@ -483,6 +483,14 @@ public class PopupCustomizer : MonoBehaviour {
 
 			SimpleJSON.JSONClass settings = new SimpleJSON.JSONClass();
 			{
+				int layoutIndex = 0;
+				string layoutName = name;
+
+				int i = layoutName.LastIndexOf("_");
+				layoutName = layoutName.Substring(i + 1);
+				layoutIndex = int.Parse(layoutName);
+
+				settings.Add("layoutIndex", layoutIndex);
 				settings.Add("hasCloseButton", m_closeButtonField.element != null);
 				if (m_closeButtonField.element != null) {
 					settings.Add("closeButtonIsOptional", m_closeButtonField.optional);
