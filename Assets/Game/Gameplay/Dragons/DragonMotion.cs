@@ -229,7 +229,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
-    public float m_dragonAirGravityModifier = 0.3f;
+	[SerializeField] public float m_dragonAirGravityModifier = 0.3f;
 	public float m_dragonAirExpMultiplier = 0.1f;
 	public float m_dragonAirBoostForce = 4;
 	public float m_dragonAirFreeFallMultiplier = 1;
@@ -405,7 +405,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
 		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
-        m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
+		//TONI
+		//m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
+		m_dragonAirGravityModifier = m_dragon.data.maxAirGravityModifier;
         m_dragonWaterGravityModifier = m_dragon.data.def.GetAsFloat("waterGravityModifier");
 	}
 
