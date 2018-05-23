@@ -39,7 +39,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
     protected int PreyCount { get; set; }
     
 	protected DragonTier m_tier;
-	protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
+	[SerializeField] protected float m_eatSpeedFactor = 1f;	// eatTime (s) = eatSpeedFactor * preyResistance
 
 	// Hold stuff
 	private float m_holdPreyTimer = 0;

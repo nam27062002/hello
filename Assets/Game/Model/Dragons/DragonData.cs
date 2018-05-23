@@ -73,8 +73,8 @@ public class DragonData : IUISelectorItem {
 	private Range m_forceRange = new Range();
 	public float maxForce { get { return GetMaxForceAtLevel(progression.level); }}
 
-	private Range m_airGravityModifierRange = new Range();
-	public float maxAirGravityModifier { get { return GetMaxAirGravityModifierAtLevel(progression.level); }}
+	private Range m_eatSpeedFactorRange = new Range();
+	public float maxEatSpeedFactor { get { return GetMaxEatSpeedFactorAtLevel(progression.level); }}
 
 	//private float m_baseEnergy = 0f;
 	public float baseEnergy { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
@@ -149,9 +149,9 @@ public class DragonData : IUISelectorItem {
 		m_healthRange = m_def.GetAsRange("health");
 		//TONI
 		m_forceRange = m_def.GetAsRange("force");
+		m_eatSpeedFactorRange = m_def.GetAsRange ("eatSpeedFactor");
 		//m_baseEnergy = m_def.GetAsFloat("energyBase");
 		m_energyBaseRange = m_def.GetAsRange("energyBase");
-		m_airGravityModifierRange = m_def.GetAsRange("airGravityModifier");
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Items
@@ -188,15 +188,16 @@ public class DragonData : IUISelectorItem {
 		return m_forceRange.Lerp(levelDelta);
 	}
 
+	public float GetMaxEatSpeedFactorAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
+		return m_eatSpeedFactorRange.Lerp(levelDelta);
+	}
+
 	public float GetMaxEnergyBaseAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_energyBaseRange.Lerp(levelDelta);
 	}
 
-	public float GetMaxAirGravityModifierAtLevel(int _level) {
-		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
-		return m_airGravityModifierRange.Lerp(levelDelta);
-	}
 	/// <summary>
 	/// Compute the scale at a specific level.
 	/// </summary>
