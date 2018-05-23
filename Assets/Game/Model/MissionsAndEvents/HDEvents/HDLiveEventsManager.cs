@@ -4,6 +4,10 @@
 // Created by Miguel Ángel Linares on 15/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
+#if UNITY_EDITOR
+// #define TEST_HD_LIVE_EVENTS
+#endif
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -40,6 +44,11 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
 
 	public HDLiveEventsManager()
 	{
+        // For testing
+        m_tournament.m_type = "tournament";
+        m_quest.m_type = "quest";
+        m_passive.m_type = "passive";
+
 		// Load Cache?
 		LoadEventsFromCache();
 	}
@@ -88,10 +97,26 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
 		}
 	}
 
-	public void RequestMyEvents() 
-	{
-		GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);
-	}
+#if UNITY_EDITOR
+    public static GameServerManager.ServerResponse CreateTestResponse(string fileName)
+    {
+        string path = Directory.GetCurrentDirectory() + "/Assets/HDLiveEventsTests/" + fileName;
+        string json = File.ReadAllText(path);
+        GameServerManager.ServerResponse response = new GameServerManager.ServerResponse();
+        response.Add("response", json);
+        return response;
+    }
+#endif
+
+    public void RequestMyEvents()
+    {
+#if TEST_HD_LIVE_EVENTS
+        GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
+        MyEventsResponse( null, response );
+#else
+        GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);
+#endif
+    }
 
 	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
 	{
