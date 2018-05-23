@@ -73,6 +73,8 @@ public class HDLiveEventManager {
 		return ret;
 	}
 
+
+
 	public virtual HDLiveEventData GetEventData()
 	{
 		return null;

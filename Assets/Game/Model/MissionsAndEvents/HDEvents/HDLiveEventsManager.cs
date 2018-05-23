@@ -48,11 +48,23 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
 	{
 		m_cacheInfo = true;
 		m_tournament.CleanData();
-		if ( CacheServerManager.SharedInstance.HasKey("tournament") )
-		{
-
+        if ( CacheServerManager.SharedInstance.HasKey("tournament") )
+        {
+            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable("tournament"));
+            m_tournament.OnNewStateInfo( json );
 		}
-		// m_tournament.OnNewStateInfo(  );
+		
+        if (CacheServerManager.SharedInstance.HasKey("passive"))
+        {
+            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable("passive"));
+            m_tournament.OnNewStateInfo(json);
+        }
+
+        if (CacheServerManager.SharedInstance.HasKey("quest"))
+        {
+            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable("quest"));
+            m_tournament.OnNewStateInfo(json);
+        }
 	}
 
 	public void SaveEventsToCache()
