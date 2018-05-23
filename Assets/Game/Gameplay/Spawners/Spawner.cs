@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using AI;
 
 public class Spawner : AbstractSpawner {
@@ -59,6 +60,20 @@ public class Spawner : AbstractSpawner {
 		Gold,
 		ReRoll
 	}
+
+
+	//-----------------------------------------------
+	// Class members and methods
+	//-----------------------------------------------
+	private static Dictionary<string, float> sm_invasions; // entities that must be spawned more often
+	public static void AddInvasion(string _prefabName, float _percentage) {
+		sm_invasions[_prefabName] = _percentage;
+	}
+
+	public static void RemoveInvasion(string _prefabName) {
+		sm_invasions.Remove(_prefabName);
+	}
+
 
 	//-----------------------------------------------
 	// Properties
@@ -171,7 +186,9 @@ public class Spawner : AbstractSpawner {
 	}
 
 	protected override void OnStart() {
+		float invasionPercentage = 0f;
 		bool enabledByEvents = true;
+
 		if (m_eventOnly) {
 			enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
 		}
@@ -227,9 +244,14 @@ public class Spawner : AbstractSpawner {
 					}                			
 
 					// adjust probabilities
+					// and check if this spawner has an invasion enabled
 					float probFactor = 0;
 					for (int i = 0; i < m_entityPrefabList.Length; i++) {
 						probFactor += m_entityPrefabList[i].chance;
+
+						if (sm_invasions.ContainsKey(m_entityPrefabList[i].name)) {
+							invasionPercentage = sm_invasions[m_entityPrefabList[i].name];
+						}
 					}
 
 					if (probFactor > 0f) {
@@ -256,6 +278,22 @@ public class Spawner : AbstractSpawner {
 						if (m_scale.max > 1.05f) m_scale.max = 1.05f;
 						if (m_scale.max < 0.95f) m_scale.max = 0.95f;
 
+						if (invasionPercentage > 0f) {
+							m_respawnTime += m_respawnTime * invasionPercentage / 100f;
+
+							for (int i = 0; i < m_activationTriggers.Length; ++i) {
+								m_activationTriggers[i].value += m_activationTriggers[i].value * invasionPercentage / 100f;
+							}
+
+							for (int i = 0; i < m_activationKillTriggers.Length; ++i) {
+								float value = m_activationKillTriggers[i].value;
+								value += value * invasionPercentage / 100f;
+								if (value < 1) {
+									value = 1;
+								}
+								m_activationKillTriggers[i].value = value;
+							}
+						}
 
 						RegisterInSpawnerManager();
 						SpawnerAreaManager.instance.Register(this);
@@ -429,7 +467,7 @@ public class Spawner : AbstractSpawner {
 		spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
 	}
 
-	public virtual void ForceGolden( IEntity entity ){
+	public override void ForceGolden( IEntity entity ){
 		base.ForceGolden( entity );
 		int l = m_entities.Length;
 		for (int i = 0; i < l; ++i) {

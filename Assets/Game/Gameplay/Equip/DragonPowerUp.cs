@@ -6,6 +6,11 @@ public class DragonPowerUp : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private static float sm_petPowerUpPercentage = 0f;
+	public static void AddPetPowerUpPercentage(float _percentage) {
+		sm_petPowerUpPercentage += _percentage;
+	}
+
 
 	//------------------------------------------------------------------------//
 	// ATTRIBUTES															  //
@@ -46,7 +51,7 @@ public class DragonPowerUp : MonoBehaviour {
 		if (def != null) {
 			string powerUp = def.Get("powerup");
 			if(!string.IsNullOrEmpty(powerUp)){
-				SetPowerUp(powerUp);
+				SetPowerUp(powerUp, false);
 			}
 		}
 
@@ -63,7 +68,7 @@ public class DragonPowerUp : MonoBehaviour {
 					string powerUp = petDef.Get("powerup");
 					if ( !string.IsNullOrEmpty( powerUp ) )
 					{
-						SetPowerUp(powerUp);
+						SetPowerUp(powerUp, true);
 					}
 				}
 			}
@@ -76,7 +81,7 @@ public class DragonPowerUp : MonoBehaviour {
 		}
 	}
 
-	void SetPowerUp( string powerUpSku )
+	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
@@ -84,30 +89,38 @@ public class DragonPowerUp : MonoBehaviour {
 		if ( def != null )
 		{
 			string type = def.Get("type");
+			string category = def.Get("category");
+
+			float multiplier = 1f;
+			if (_fromPet) {
+				if (category.Equals("stats")) {
+					multiplier += sm_petPowerUpPercentage / 100f;
+				}
+			}
 
 			switch( type )
 			{
 				case "hp_increase":	// gives the player extra health
 				{
-					player.AddHealthBonus( def.GetAsFloat("param1"));
+					player.AddHealthBonus( def.GetAsFloat("param1") * multiplier );
 				}break;
 				case "boost_increase":	// increases boost bar
 				{
-					player.AddBoostBonus( def.GetAsFloat("param1"));
+					player.AddBoostBonus( def.GetAsFloat("param1") * multiplier);
 				}break;
 				case "faster_boost": // increases boost refill rate
 				{
 					DragonBoostBehaviour boost = player.dragonBoostBehaviour;
 					if ( boost )
 					{
-						boost.AddRefillBonus( def.GetAsFloat("param1") );
+						boost.AddRefillBonus( def.GetAsFloat("param1") * multiplier );
 					}
 				}break;
 				case "fury_duration":	// Adds fury duration
 				{
 					DragonBreathBehaviour breath = player.breathBehaviour;
 					if ( breath != null )
-						breath.AddDurationBonus( def.GetAsFloat("param1") );
+						breath.AddDurationBonus( def.GetAsFloat("param1") * multiplier );
 				}break;
 				case "dive":	// lets you move inside water
 				{
@@ -141,15 +154,15 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						case "mine":
 						{
-							healthBehaviour.AddArmorModifier( DamageType.MINE, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.MINE, percentage * multiplier );
 						}break;
 						case "poison":
 						{
-							healthBehaviour.AddArmorModifier( DamageType.POISON, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.POISON, percentage * multiplier );
 						}break;
 						case "arrows":
 						{
-							healthBehaviour.AddArmorModifier( DamageType.ARROW, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.ARROW, percentage * multiplier );
 						}break;
 					}
 				}break;
@@ -173,7 +186,7 @@ public class DragonPowerUp : MonoBehaviour {
 					for( int i = 0; i<from.Count; i++ )
 					{
 						if (!string.IsNullOrEmpty(from[i]))
-							healthBehaviour.AddEatingHpBoost( from[i], percentage);	
+							healthBehaviour.AddEatingHpBoost( from[i], percentage * multiplier);	
 					}
 
 				}break;
@@ -181,13 +194,13 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-					healthBehaviour.AddEatingHpBoost(percentage);
+					healthBehaviour.AddEatingHpBoost(percentage * multiplier);
 				}break; 
 				case "reduce_life_drain":	// reduces lifedrain by param1 %
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-					healthBehaviour.AddDrainModifier( percentage );
+					healthBehaviour.AddDrainModifier( percentage * multiplier );
 				}break;
 				case "more_coin":	// Increase SC given for all preys by param1 %
 				{
@@ -198,12 +211,12 @@ public class DragonPowerUp : MonoBehaviour {
 				case "score_increase":	// Increases score given for all preys by param1 %
 				{
 					// Increase score given by any prey by [param1]
-					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
+					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0) * multiplier);
 					m_warnEntities = true;
 				}break;
 				case "more_xp":
 				{
-					Entity.AddXpMultiplier( def.GetAsFloat("param1", 0));
+					Entity.AddXpMultiplier( def.GetAsFloat("param1", 0) * multiplier);
 					m_warnEntities = true;
 				}break;
 				case "fury_size_increase":	// Increases fire size by param1 %
@@ -212,7 +225,7 @@ public class DragonPowerUp : MonoBehaviour {
 					float percentage = def.GetAsFloat("param1", 0);
 					if (fireBreath != null )
 					{
-						fireBreath.AddPowerUpLengthMultiplier( percentage );
+						fireBreath.AddPowerUpLengthMultiplier( percentage * multiplier );
 					}
 				}break;
 				case "speed_increase":	// Increases max speed by param1 %
@@ -220,13 +233,13 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonMotion motion = GetComponent<DragonMotion>();
 					if ( motion != null )
 					{
-						motion.AddSpeedModifier( def.GetAsFloat("param1", 0));
+						motion.AddSpeedModifier( def.GetAsFloat("param1", 0) * multiplier);
 					}
 				}break;
 				case "vacuum":
 				{
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
-					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
+					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) * multiplier );
 				}break;
 				case "alcohol_resistance":
 				{
@@ -248,10 +261,10 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					string powerUp1 = def.Get("param1");
 					if ( !string.IsNullOrEmpty(powerUp1) )
-						SetPowerUp( powerUp1 );
+						SetPowerUp( powerUp1, _fromPet );
 					string powerUp2 = def.Get("param2");
 					if ( !string.IsNullOrEmpty(powerUp2) )
-						SetPowerUp( powerUp2 );
+						SetPowerUp( powerUp2, _fromPet );
 				}break;
 				default:
 				{

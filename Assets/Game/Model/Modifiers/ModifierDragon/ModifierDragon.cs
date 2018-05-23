@@ -15,11 +15,15 @@ public abstract class ModifierDragon : Modifier {
 		string target = _def.Get("target");
 
 		switch (target) {
+		case ModDragonAirCurrent.TARGET_CODE:		return new ModDragonAirCurrent(_def);
 		case ModDragonBoostRegen.TARGET_CODE: 		return new ModDragonBoostRegen(_def);
 		case ModDragonBoostUnlimited.TARGET_CODE: 	return new ModDragonBoostUnlimited(_def);
-		case ModDragonDamage.TARGET_CODE: 			return new ModDragonDamage(_def);
-		case ModDragonFuryAlways.TARGET_CODE: 		return new ModDragonFuryAlways(_def);
+		case ModDragonArmor.TARGET_CODE: 			return new ModDragonArmor(_def);
+		case ModDragonFuryDuration.TARGET_CODE:		return new ModDragonFuryDuration(_def);
+		case ModDragonFuryUnlimited.TARGET_CODE: 	return new ModDragonFuryUnlimited(_def);
 		case ModDragonLifeDrain.TARGET_CODE:		return new ModDragonLifeDrain(_def);
+		case ModDragonLifeGain.TARGET_CODE:			return new ModDragonLifeGain(_def);
+		case ModDragonPetPowerUp.TARGET_CODE:		return new ModDragonPetPowerUp(_def);
 		case ModDragonSize.TARGET_CODE: 			return new ModDragonSize(_def);
 		case ModDragonSpeedMax.TARGET_CODE:			return new ModDragonSpeedMax(_def);
 		}

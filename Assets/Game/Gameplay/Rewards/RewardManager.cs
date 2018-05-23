@@ -51,6 +51,16 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	private static float sm_killStreakPercentage = 0f;
+	public static void AddKillStreakPercentage(float _value) {
+		sm_killStreakPercentage += _value;
+	}
+
+	private static float sm_durationPercentage = 0f;
+	public static void AddDurationPercentage(float _value) {
+		sm_durationPercentage += _value;
+	}
+
 	// Score multiplier
 	[SerializeField] private ScoreMultiplier[] m_scoreMultipliers;
 	private int m_scoreMultiplierStreak = 0;	// Amount of consecutive eaten/burnt/destroyed entities without taking damage
@@ -106,8 +116,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			// Skip last multiplier!
 			if(instance.m_currentScoreMultiplierIndex < instance.m_scoreMultipliers.Length - 1) {
 				return Mathf.InverseLerp(
-					(float)currentScoreMultiplierData.requiredKillStreak, 
-					(float)instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex + 1].requiredKillStreak, 
+					(float)CalculateKillStreak(currentScoreMultiplierData.requiredKillStreak),
+					(float)CalculateKillStreak(instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex + 1].requiredKillStreak),
 					(float)instance.m_scoreMultiplierStreak);
 			}
 			return 0f;
@@ -349,8 +359,6 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			// Store new multiplier
 			m_scoreMultipliers[i] = newMult;
 		}
-
-
 	}
 
 	//------------------------------------------------------------------//
@@ -419,6 +427,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		// Coins, PC and XP are applied in real time during gameplay
 		// Apply the rest of rewards
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+	}
+
+	private static int CalculateKillStreak(int _killStreak) {		
+		float ks = (float)_killStreak;
+		ks += ks * sm_killStreakPercentage / 100f;
+		return Mathf.CeilToInt(ks);
 	}
 
 	//------------------------------------------------------------------//
@@ -501,10 +515,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		
 		// Reset timer
 		m_scoreMultiplierTimer = currentScoreMultiplierData.duration;
-		
+		m_scoreMultiplierTimer += m_scoreMultiplierTimer * sm_durationPercentage / 100f;
+
 		// Check if we've reached next threshold
 		if(m_currentScoreMultiplierIndex < m_scoreMultipliers.Length - 1 
-		&& m_scoreMultiplierStreak >= m_scoreMultipliers[m_currentScoreMultiplierIndex + 1].requiredKillStreak) {
+		&& m_scoreMultiplierStreak >= CalculateKillStreak(m_scoreMultipliers[m_currentScoreMultiplierIndex + 1].requiredKillStreak)) {
 			// Yes!! Change current multiplier
 			SetScoreMultiplier(m_currentScoreMultiplierIndex + 1);
 		}

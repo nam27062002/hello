@@ -15,7 +15,9 @@ public abstract class ModifierGamePlay : Modifier {
 		string target = _def.Get("target");
 
 		switch (target) {
-		case ModGamePlaySC.TARGET_CODE: return new ModGamePlaySC(_def);
+		case ModGamePlaySC.TARGET_CODE: 			return new ModGamePlaySC(_def);
+		case ModGamePlayKillChainFast.TARGET_CODE:	return new ModGamePlayKillChainFast(_def);
+		case ModGamePlayKillChainLonger.TARGET_CODE:return new ModGamePlayKillChainLonger(_def);
 		}
 
 		return null;
