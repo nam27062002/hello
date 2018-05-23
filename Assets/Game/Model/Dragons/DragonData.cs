@@ -73,8 +73,10 @@ public class DragonData : IUISelectorItem {
 	private Range m_forceRange = new Range();
 	public float maxForce { get { return GetMaxForceAtLevel(progression.level); }}
 
-	private float m_baseEnergy = 0f;
-	public float baseEnergy { get { return m_baseEnergy; }}
+	//private float m_baseEnergy = 0f;
+	public float baseEnergy { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
+	private Range m_energyBaseRange = new Range();
+	public float maxEnergyBase { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
 
 	private Range m_scaleRange = new Range(1f, 1f);
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
@@ -144,7 +146,8 @@ public class DragonData : IUISelectorItem {
 		m_healthRange = m_def.GetAsRange("health");
 		//TONI
 		m_forceRange = m_def.GetAsRange("force");
-		m_baseEnergy = m_def.GetAsFloat("energyBase");
+		//m_baseEnergy = m_def.GetAsFloat("energyBase");
+		m_energyBaseRange = m_def.GetAsRange("energyBase");
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Items
@@ -179,6 +182,11 @@ public class DragonData : IUISelectorItem {
 	public float GetMaxForceAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_forceRange.Lerp(levelDelta);
+	}
+
+	public float GetMaxEnergyBaseAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
+		return m_energyBaseRange.Lerp(levelDelta);
 	}
 
 	/// <summary>
