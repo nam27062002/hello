@@ -224,7 +224,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	// private float m_waterMovementModifier = 0;
 
-	public float m_dragonForce = 20;
+	[SerializeField] public float m_dragonForce = 20;
 	private float m_dragonForcePowerupMultiplier = 0;
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
@@ -429,7 +429,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	void RecalculateDragonForce()
 	{
-		m_dragonForce = m_dragon.data.def.GetAsFloat("force");
+		//m_dragonForce = m_dragon.data.def.GetAsFloat("force");
+		//TONI
+		m_dragonForce = m_dragon.data.maxForce;
 		m_dragonForce = m_dragonForce + m_dragonForce * m_dragonForcePowerupMultiplier / 100.0f;
 	}
 

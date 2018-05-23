@@ -69,6 +69,10 @@ public class DragonData : IUISelectorItem {
 	private Range m_healthRange = new Range();
 	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
 
+	//TONI
+	private Range m_forceRange = new Range();
+	public float maxForce { get { return GetMaxForceAtLevel(progression.level); }}
+
 	private float m_baseEnergy = 0f;
 	public float baseEnergy { get { return m_baseEnergy; }}
 
@@ -138,6 +142,8 @@ public class DragonData : IUISelectorItem {
 
 		// Stats
 		m_healthRange = m_def.GetAsRange("health");
+		//TONI
+		m_forceRange = m_def.GetAsRange("force");
 		m_baseEnergy = m_def.GetAsFloat("energyBase");
 		m_scaleRange = m_def.GetAsRange("scale");
 
@@ -167,6 +173,12 @@ public class DragonData : IUISelectorItem {
 	public float GetMaxHealthAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_healthRange.Lerp(levelDelta);
+	}
+
+	//TONI
+	public float GetMaxForceAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
+		return m_forceRange.Lerp(levelDelta);
 	}
 
 	/// <summary>
