@@ -1,5 +1,7 @@
 ﻿
 public class ModDragonSize : ModifierDragon {
+	public const string TARGET_CODE = "size";
+
 	//------------------------------------------------------------------------//
 	private float m_value; // scale 
 

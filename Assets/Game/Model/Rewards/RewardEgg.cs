@@ -23,6 +23,21 @@ namespace Metagame {
 		//------------------------------------------------------------------------//
 		public const string TYPE_CODE = "egg";
 
+
+		//------------------------------------------------------------------------//
+		// CLASS MEMBERS AND METHODS											  //
+		//------------------------------------------------------------------------//
+		private static List<float> sm_petWeights = new List<float>();
+		private static Dictionary<string, float> sm_petOverrideProbs = new Dictionary<string, float>();
+		public static void OverridePetProb(string _sku, float _weight) {			
+			sm_petOverrideProbs.Add(_sku, _weight);
+		}
+
+		public static void RemoveOverridePetProb(string _sku) {
+			sm_petOverrideProbs.Remove(_sku);
+		}
+
+
 		//------------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES												  //
 		//------------------------------------------------------------------------//
@@ -170,8 +185,32 @@ namespace Metagame {
 								petDef = petDefs.GetRandomValue();
 							} while(!petDef.GetAsBool("startingPool"));
 						} else {
+							float totalWeight = 0f;
+							if (sm_petWeights.Count < petDefs.Count) {
+								sm_petWeights.Resize(petDefs.Count);
+							}
+
+							ProbabilitySet petProb = new ProbabilitySet();
+							for (int i = 0; i < petDefs.Count; ++i) {
+								float value = 1f;
+								if (sm_petOverrideProbs.ContainsKey(petDefs[i].sku)) {
+									value = sm_petOverrideProbs[petDefs[i].sku];
+								}
+
+								sm_petWeights[i] = value;
+								totalWeight += value;
+
+								petProb.AddElement(petDefs[i].sku, 1);
+							}
+
+							for (int i = 0; i < petDefs.Count; ++i) {
+								petProb.SetProbability(i, sm_petWeights[i] / totalWeight);
+							}
+
+							int idx = petProb.GetWeightedRandomElementIdx();
+
 							// Default behaviour
-							petDef = petDefs.GetRandomValue();
+							petDef = petDefs[idx];
 						}
 					}
 

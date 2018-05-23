@@ -1,5 +1,7 @@
 ﻿
 public class ModDragonBoostRegen : ModifierDragon {
+	public const string TARGET_CODE = "boost_regen";
+
 	//------------------------------------------------------------------------//
 	private float m_value;
 

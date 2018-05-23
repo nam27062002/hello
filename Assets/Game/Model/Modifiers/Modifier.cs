@@ -10,7 +10,9 @@ public abstract class Modifier  {
 		string type = _def.Get("type");
 
 		switch (type) {
-		case ModifierDragon.TYPE_CODE: return ModifierDragon.CreateFromDefinition(_def); break;
+		case ModifierDragon.TYPE_CODE: 		return ModifierDragon.CreateFromDefinition(_def);
+		case ModifierEntity.TYPE_CODE: 		return ModifierEntity.CreateFromDefinition(_def);
+		case ModifierGamePlay.TYPE_CODE: 	return ModifierGamePlay.CreateFromDefinition(_def);
 		}
 
 		return null;

@@ -11,7 +11,14 @@ public abstract class ModifierEntity : Modifier {
 	//------------------------------------------------------------------------//
 	#region Factory
 
-	public static ModifierEntity CreateFromDefinition(DefinitionNode _def) {
+	public new static ModifierEntity CreateFromDefinition(DefinitionNode _def) {
+		string target = _def.Get("target");
+
+		switch (target) {
+		case ModEntityXP.TARGET_CODE:		return new ModEntityXP(_def);
+		case ModEntitySC.TARGET_CODE: 		return new ModEntitySC(_def);
+		case ModEntityGolden.TARGET_CODE:	return new ModEntityGolden(_def);
+		}
 
 		return null;
 	}
@@ -33,6 +40,4 @@ public abstract class ModifierEntity : Modifier {
 
 		m_def = _def;
 	}
-
-	public override void Remove() { }
 }

@@ -1,5 +1,7 @@
 ﻿
 public class ModDragonLifeDrain : ModifierDragon {
+	public const string TARGET_CODE = "life_drain";
+
 	//------------------------------------------------------------------------//
 	private float m_value; // percentage
 

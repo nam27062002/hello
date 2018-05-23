@@ -1,5 +1,7 @@
 ﻿
 public class ModDragonSpeedMax : ModifierDragon {
+	public const string TARGET_CODE = "speed";
+
 	//------------------------------------------------------------------------//
 	private float m_value;
 

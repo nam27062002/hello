@@ -37,6 +37,12 @@ public class Chest {
 		COUNT
 	}
 
+
+	private static float sm_powerUpSCMultiplier = 0; // Soft currency modifier multiplier
+	public static void AddSCMultiplier(float value) {
+		sm_powerUpSCMultiplier += value;
+	}
+
 	// Auxiliar struct to easily work with manage chest rewards
 	public class RewardData {
 		public DefinitionNode def;
@@ -56,6 +62,8 @@ public class Chest {
 						if(rewardScaleFactorDef != null) {
 							amount = Mathf.RoundToInt(((float)amount) * rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier"));
 						}
+
+						amount += Mathf.FloorToInt((amount * sm_powerUpSCMultiplier) / 100.0f);
 					} break;
 
 					case "pc": {
@@ -65,6 +73,7 @@ public class Chest {
 			}
 		}
 	}
+
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

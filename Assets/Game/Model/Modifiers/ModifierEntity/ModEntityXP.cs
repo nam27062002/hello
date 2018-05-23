@@ -1,16 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿
+public class ModEntityXP : ModifierEntity {
+	public const string TARGET_CODE = "xp";
 
-public class ModEntityXP : MonoBehaviour {
+	//------------------------------------------------------------------------//
+	private float m_value;
 
-	// Use this for initialization
-	void Start () {
-		
+	//------------------------------------------------------------------------//
+	public ModEntityXP(DefinitionNode _def) : base(_def) {
+		m_value = _def.GetAsFloat("param1");
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	public override void Apply() {
+		Entity.AddXpMultiplier(m_value);
+	}
+
+	public override void Remove() { 
+		Entity.AddXpMultiplier(-m_value);	
 	}
 }

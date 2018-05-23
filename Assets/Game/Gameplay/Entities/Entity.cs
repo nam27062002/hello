@@ -83,7 +83,7 @@ public class Entity : IEntity {
 	//-----------------------------------------------
 	// Power up static values
 	//-----------------------------------------------
-
+	private static bool sm_goldenModifier = false;
 	private static float m_powerUpSCMultiplier = 0;	// Soft currency power up multiplier
 	private static float m_powerUpScoreMultiplier = 0;	// Score power up multiplier
 	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
@@ -127,6 +127,9 @@ public class Entity : IEntity {
 
 		// Simple data
 		m_goldenChance = m_def.GetAsFloat("goldenChance");
+		if (sm_goldenModifier && m_goldenChance > 0)
+			m_goldenChance = 1f;
+
 		m_pcChance = m_def.GetAsFloat("pcChance");
 
 		m_isBurnable = m_def.GetAsBool("isBurnable");
@@ -400,5 +403,9 @@ public class Entity : IEntity {
 	public static void AddXpMultiplier( float value )
 	{
 		m_powerUpXpMultiplier += value;
+	}
+
+	public static void SetGoldenModifier(bool _value) {
+		sm_goldenModifier = _value;
 	}
 }

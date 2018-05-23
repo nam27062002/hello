@@ -1,5 +1,7 @@
 ﻿
 public class ModDragonDamage : ModifierDragon {
+	public const string TARGET_CODE = "boost_armor";
+
 	//------------------------------------------------------------------------//
 	private float m_value; // percentage
 
