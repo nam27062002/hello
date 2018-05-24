@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HorizontalMotion_v2 : Initializable {
+public class HorizontalMotion_v2 : MonoBehaviour, ISpawnable {
 
 	public static float DEFAULT_AMPLITUDE { get { return 2f; } }
 
@@ -20,20 +20,23 @@ public class HorizontalMotion_v2 : Initializable {
 	}
 
 
-	public override void Initialize() {		
+	public void Spawn(ISpawner _spawner) {
+		m_time = 0f;
 		m_originalPostion = transform.position;
 	}
+
+	public void CustomUpdate() {}
 
 
 	// Update is called once per frame
 	void FixedUpdate() {
 
 		if (m_frequency > 0) {
-			m_time += Time.fixedDeltaTime;
-
 			Vector3 position = transform.position;
 			position.x = m_originalPostion.x + (Mathf.Cos(m_time / m_frequency) * m_amplitude);
 			transform.position = position;
+
+			m_time += Time.fixedDeltaTime;
 		}
 	}
 }
