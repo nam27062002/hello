@@ -121,11 +121,11 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 
 	public static void APPLY_MODIFIERS() {
 		m_mods["double_mission"].Apply();
-		//m_mods["invasion_dragon"].Apply();
+		m_mods["invasion_dragon"].Apply();
 	}
 	public static void REMOVE_MODIFIERS() {
 		m_mods["double_mission"].Remove();
-		//m_mods["invasion_dragon"].Remove();
+		m_mods["invasion_dragon"].Remove();
 	}
 
 	public static void APPLY_DRAGON_MODIFIERS() {

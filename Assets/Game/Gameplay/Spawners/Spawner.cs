@@ -65,13 +65,13 @@ public class Spawner : AbstractSpawner {
 	//-----------------------------------------------
 	// Class members and methods
 	//-----------------------------------------------
-	private static Dictionary<string, float> sm_invasions = new Dictionary<string, float>(); // entities that must be spawned more often
-	public static void AddInvasion(string _prefabName, float _percentage) {
-		sm_invasions[_prefabName] = _percentage;
+	private static Dictionary<string, float> sm_overrideSpawnFrequency = new Dictionary<string, float>(); // entities that must be spawned more often
+	public static void AddSpawnFrequency(string _prefabName, float _percentage) {
+		sm_overrideSpawnFrequency[_prefabName] = _percentage;
 	}
 
-	public static void RemoveInvasion(string _prefabName) {
-		sm_invasions.Remove(_prefabName);
+	public static void RemoveSpawnFrequency(string _prefabName) {
+		sm_overrideSpawnFrequency.Remove(_prefabName);
 	}
 
 
@@ -185,8 +185,7 @@ public class Spawner : AbstractSpawner {
 		}
 	}
 
-	protected override void OnStart() {
-		float invasionPercentage = 0f;
+	protected override void OnStart() {		
 		bool enabledByEvents = true;
 
 		if (m_eventOnly) {
@@ -248,10 +247,6 @@ public class Spawner : AbstractSpawner {
 					float probFactor = 0;
 					for (int i = 0; i < m_entityPrefabList.Length; i++) {
 						probFactor += m_entityPrefabList[i].chance;
-
-						if (sm_invasions.ContainsKey(m_entityPrefabList[i].name)) {
-							invasionPercentage = sm_invasions[m_entityPrefabList[i].name];
-						}
 					}
 
 					if (probFactor > 0f) {
@@ -278,17 +273,31 @@ public class Spawner : AbstractSpawner {
 						if (m_scale.max > 1.05f) m_scale.max = 1.05f;
 						if (m_scale.max < 0.95f) m_scale.max = 0.95f;
 
-						if (invasionPercentage > 0f) {
-							m_spawnTime.min += m_spawnTime.min * invasionPercentage / 100f;
-							m_spawnTime.max += m_spawnTime.max * invasionPercentage / 100f;
+						bool hasOverrideSpawnFreq = false;
+						float spawnFreqPercentage = 0f;
+
+						Dictionary<string, float>.Enumerator it = sm_overrideSpawnFrequency.GetEnumerator();
+						while (it.MoveNext() && !hasOverrideSpawnFreq) {
+							for (int i = 0; i < m_entityPrefabList.Length; i++) {
+								if (m_entityPrefabList[i].name.Contains(it.Current.Key)) {
+									hasOverrideSpawnFreq = true;
+									spawnFreqPercentage = it.Current.Value;
+									break;
+								}
+							}
+						}
+
+						if (hasOverrideSpawnFreq) {
+							m_spawnTime.min += m_spawnTime.min * spawnFreqPercentage / 100f;
+							m_spawnTime.max += m_spawnTime.max * spawnFreqPercentage / 100f;
 
 							for (int i = 0; i < m_activationTriggers.Length; ++i) {
-								m_activationTriggers[i].value += m_activationTriggers[i].value * invasionPercentage / 100f;
+								m_activationTriggers[i].value += m_activationTriggers[i].value * spawnFreqPercentage / 100f;
 							}
 
 							for (int i = 0; i < m_activationKillTriggers.Length; ++i) {
 								float value = m_activationKillTriggers[i].value;
-								value += value * invasionPercentage / 100f;
+								value += value * spawnFreqPercentage / 100f;
 								if (value < 1) {
 									value = 1;
 								}
