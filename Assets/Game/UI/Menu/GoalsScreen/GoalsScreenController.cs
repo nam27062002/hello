@@ -53,6 +53,13 @@ public class GoalsScreenController : MonoBehaviour {
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
+		if (InstanceManager.menuSceneController != null && InstanceManager.menuSceneController.transitionManager != null)
+		{
+			MenuScreen prev = InstanceManager.menuSceneController.transitionManager.prevScreen;
+			MenuScreen current = InstanceManager.menuSceneController.transitionManager.currentScreen;
+			OnTransitionStarted( prev, current );
+		}
+
 		// Remove buttons from the selection group if they can't be selected
 		// Chests
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
