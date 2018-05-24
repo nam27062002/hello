@@ -179,6 +179,7 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
 
 		kDefinitionFiles.Add(DefinitionsCategory.DYNAMIC_GATCHA, new string[] {"Rules/dynamicGatchaDefinition"});
+		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modifierDefinitions"});
 
         // Disguises
         kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions" });

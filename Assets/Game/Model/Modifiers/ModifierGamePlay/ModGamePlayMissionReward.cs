@@ -14,7 +14,7 @@ public class ModGamePlayMissionReward : ModifierGamePlay {
 		Mission.AddSCMultiplier(m_percentage);
 	}
 
-	public override void Remove () {
+	public override void Remove() {
 		Mission.AddSCMultiplier(-m_percentage);
 	}
 }

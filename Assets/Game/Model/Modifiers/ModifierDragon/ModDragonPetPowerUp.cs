@@ -11,10 +11,10 @@ public class ModDragonPetPowerUp : ModifierDragon {
 	}
 
 	public override void Apply() {
-		DragonPowerUp.AddPetPowerUpPercentage(m_percentage);
+		InstanceManager.player.GetComponent<DragonPowerUp>().AddPetPowerUpPercentage(m_percentage);
 	}
 
 	public override void Remove() {
-		DragonPowerUp.AddPetPowerUpPercentage(-m_percentage);
+		InstanceManager.player.GetComponent<DragonPowerUp>().AddPetPowerUpPercentage(-m_percentage);
 	}
 }

@@ -45,6 +45,11 @@ public class MenuPlayScreen : MonoBehaviour {
 	{    
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
         Refresh();
+
+		InstanceManager.CREATE_MODIFIERS();
+		InstanceManager.APPLY_MODIFIERS();
+
+		//create modifiers HERE
     }
 
     /// <summary>
@@ -63,12 +68,10 @@ public class MenuPlayScreen : MonoBehaviour {
             Refresh();
         }
 
-        if (m_firstTimeMenu)
-        {
+        if (m_firstTimeMenu) {
             FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
             m_firstTimeMenu = false;
         }
-
     }
 
     /// <summary>
@@ -82,8 +85,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
 
-	public void OnConnectBtn()
-	{        
+	public void OnConnectBtn() {        
         PersistenceFacade.Popups_OpenLoadingPopup();
 
         PersistenceFacade.instance.Sync_FromSettings(delegate()

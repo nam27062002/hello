@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -100,5 +101,39 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	//------------------------------------------------------------------//
 	// PUBLIC STATIC METHODS											//
 	//------------------------------------------------------------------//
+
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//TO DELETE
+	static System.Collections.Generic.Dictionary<string, Modifier> m_mods  = new System.Collections.Generic.Dictionary<string, Modifier>();
+	static System.Collections.Generic.Dictionary<string, Modifier> m_dMods = new System.Collections.Generic.Dictionary<string, Modifier>();
+
+	public static void CREATE_MODIFIERS() {
+		System.Collections.Generic.List<DefinitionNode> mods = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LIVE_EVENTS_MODIFIERS);
+		for (int i = 0; i < mods.Count; ++i) {
+			Modifier m = Modifier.CreateFromDefinition(mods[i]);
+			if (m is ModifierDragon) {
+				m_dMods.Add(mods[i].sku, m);
+			} else {
+				m_mods.Add(mods[i].sku, m);
+			}
+		}
+	}
+
+	public static void APPLY_MODIFIERS() {
+		m_mods["double_mission"].Apply();
+		//m_mods["invasion_dragon"].Apply();
+	}
+	public static void REMOVE_MODIFIERS() {
+		m_mods["double_mission"].Remove();
+		//m_mods["invasion_dragon"].Remove();
+	}
+
+	public static void APPLY_DRAGON_MODIFIERS() {
+		m_dMods["bbq"].Apply();
+	}
+	public static void REMOVE_DRAGON_MODIFIERS() {
+		m_dMods["bbq"].Remove();
+	}
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
 

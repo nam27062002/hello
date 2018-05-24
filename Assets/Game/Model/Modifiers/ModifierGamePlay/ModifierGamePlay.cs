@@ -3,7 +3,7 @@ public abstract class ModifierGamePlay : Modifier {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string TYPE_CODE = "game_play";
+	public const string TYPE_CODE = "gameplay";
 
 
 	//------------------------------------------------------------------------//
@@ -15,9 +15,11 @@ public abstract class ModifierGamePlay : Modifier {
 		string target = _def.Get("target");
 
 		switch (target) {
-		case ModGamePlaySC.TARGET_CODE: 			return new ModGamePlaySC(_def);
+		case ModGamePlayInvasion.TARGET_CODE:		return new ModGamePlayInvasion(_def);
 		case ModGamePlayKillChainFast.TARGET_CODE:	return new ModGamePlayKillChainFast(_def);
 		case ModGamePlayKillChainLonger.TARGET_CODE:return new ModGamePlayKillChainLonger(_def);
+		case ModGamePlayMissionReward.TARGET_CODE:	return new ModGamePlayMissionReward(_def);
+		case ModGamePlaySC.TARGET_CODE: 			return new ModGamePlaySC(_def);
 		}
 
 		return null;

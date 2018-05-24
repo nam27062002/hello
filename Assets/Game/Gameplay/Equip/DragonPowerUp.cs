@@ -6,16 +6,18 @@ public class DragonPowerUp : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private static float sm_petPowerUpPercentage = 0f;
-	public static void AddPetPowerUpPercentage(float _percentage) {
-		sm_petPowerUpPercentage += _percentage;
-	}
 
 
 	//------------------------------------------------------------------------//
 	// ATTRIBUTES															  //
 	//------------------------------------------------------------------------//
 	private bool m_warnEntities = false;
+
+	private float m_petPowerUpPercentage = 0f;
+	public void AddPetPowerUpPercentage(float _percentage) {
+		m_petPowerUpPercentage += _percentage;
+	}
+
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -36,6 +38,8 @@ public class DragonPowerUp : MonoBehaviour {
 
 	void Start() 
 	{
+		InstanceManager.APPLY_DRAGON_MODIFIERS();
+				
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		string dragonSku = "";
 		if (player != null) {
@@ -94,7 +98,7 @@ public class DragonPowerUp : MonoBehaviour {
 			float multiplier = 1f;
 			if (_fromPet) {
 				if (category.Equals("stats")) {
-					multiplier += sm_petPowerUpPercentage / 100f;
+					multiplier += m_petPowerUpPercentage / 100f;
 				}
 			}
 

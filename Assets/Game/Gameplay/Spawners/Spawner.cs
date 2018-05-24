@@ -65,7 +65,7 @@ public class Spawner : AbstractSpawner {
 	//-----------------------------------------------
 	// Class members and methods
 	//-----------------------------------------------
-	private static Dictionary<string, float> sm_invasions; // entities that must be spawned more often
+	private static Dictionary<string, float> sm_invasions = new Dictionary<string, float>(); // entities that must be spawned more often
 	public static void AddInvasion(string _prefabName, float _percentage) {
 		sm_invasions[_prefabName] = _percentage;
 	}
@@ -279,7 +279,8 @@ public class Spawner : AbstractSpawner {
 						if (m_scale.max < 0.95f) m_scale.max = 0.95f;
 
 						if (invasionPercentage > 0f) {
-							m_respawnTime += m_respawnTime * invasionPercentage / 100f;
+							m_spawnTime.min += m_spawnTime.min * invasionPercentage / 100f;
+							m_spawnTime.max += m_spawnTime.max * invasionPercentage / 100f;
 
 							for (int i = 0; i < m_activationTriggers.Length; ++i) {
 								m_activationTriggers[i].value += m_activationTriggers[i].value * invasionPercentage / 100f;
