@@ -34,7 +34,8 @@ public class MenuPlayScreen : MonoBehaviour {
     private Localizer m_incentivizeLabelLocalizer = null; 
 
     private static bool m_firstTimeMenu = true;
-        
+
+    private Transform m_tournamentBtn;
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -43,7 +44,8 @@ public class MenuPlayScreen : MonoBehaviour {
     /// </summary>
     private void Awake() 
 	{    
-        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
+        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
+        m_tournamentBtn = transform.FindTransformRecursive("BtnTournament");
         Refresh();
     }
 
@@ -109,6 +111,12 @@ public class MenuPlayScreen : MonoBehaviour {
 
         m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndInventivised);
         m_badge.SetActive(!SocialIsLoggedIn);
+
+        if (m_tournamentBtn)
+        {
+            m_tournamentBtn.gameObject.SetActive( HDLiveEventsManager.instance.m_tournament.IsActive() );
+        }
+
     }    
     
    	
