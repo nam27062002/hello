@@ -32,11 +32,11 @@ public class HorizontalMotion_v2 : MonoBehaviour, ISpawnable {
 	void FixedUpdate() {
 
 		if (m_frequency > 0) {
-			m_time += Time.fixedDeltaTime;
-
 			Vector3 position = transform.position;
 			position.x = m_originalPostion.x + (Mathf.Cos(m_time / m_frequency) * m_amplitude);
 			transform.position = position;
+
+			m_time += Time.fixedDeltaTime;
 		}
 	}
 }
