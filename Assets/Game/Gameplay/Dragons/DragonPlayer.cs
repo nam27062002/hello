@@ -616,6 +616,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
+		//TONI
+		m_dragonMotion.m_dragonForce = data.maxForce;
 	}
 
 	void OnPrewardmFuryRush(DragonBreathBehaviour.Type type, float duration)
