@@ -28,6 +28,7 @@ public class HDLiveEventManager
     //------------------------------------------------------------------------//
 
     public string m_type = "";
+    public bool m_shouldRequestDefinition = false;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -55,6 +56,18 @@ public class HDLiveEventManager
         if (data != null && data.m_eventId > 0)
         {
             ret = true;
+        }
+        return ret;
+    }
+
+    public virtual bool HasValidDefinition()
+    {
+        bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0)
+        {
+            HDLiveEventDefinition definition = data.GetEventDefinition();
+            ret = definition.m_eventId == data.m_eventId;
         }
         return ret;
     }
@@ -96,6 +109,7 @@ public class HDLiveEventManager
         if (data != null)
         {
             data.ParseState(_data);
+            m_shouldRequestDefinition = true;
         }
     }
 
@@ -113,6 +127,7 @@ public class HDLiveEventManager
     //------------------------------------------------------------------------//
     public void RequestDefinition()
     {
+        m_shouldRequestDefinition = false;
         if ( HDLiveEventsManager.TEST_CALLS )
         {
             GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_definition.json");

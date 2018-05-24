@@ -77,7 +77,12 @@ public class HDLiveEventData {
 	public virtual void ParseState( SimpleJSON.JSONNode _data )
 	{
 		m_eventId = _data["code"];
-
+        HDLiveEventDefinition def = GetEventDefinition();
+        if (def != null)
+        {
+            if ( def.m_eventId != m_eventId )
+                def.Clean();
+        }
 	}
 
 	public virtual void ParseDefinition( SimpleJSON.JSONNode _data )
