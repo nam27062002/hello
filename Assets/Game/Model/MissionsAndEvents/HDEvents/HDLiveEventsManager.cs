@@ -4,9 +4,6 @@
 // Created by Miguel Ángel Linares on 15/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-#if UNITY_EDITOR
-// #define TEST_HD_LIVE_EVENTS
-#endif
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -23,28 +20,36 @@ using System.IO;
 /// <summary>
 /// Global singleton manager for global events.
 /// </summary>
-public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
+public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
+{
 
 
-	public enum ErrorCode {
-		NONE = 0,
+    public enum ErrorCode
+    {
+        NONE = 0,
 
-		OFFLINE,
-		NOT_INITIALIZED,
-		NOT_LOGGED_IN,
-		NO_VALID_EVENT,
-		EVENT_NOT_ACTIVE
-	}
+        OFFLINE,
+        NOT_INITIALIZED,
+        NOT_LOGGED_IN,
+        NO_VALID_EVENT,
+        EVENT_NOT_ACTIVE
+    }
 
-	HDTournamentManager m_tournament = new HDTournamentManager();
-	HDLiveEventManager m_quest = new HDLiveEventManager();
-	HDLiveEventManager m_passive = new HDLiveEventManager();
+    HDTournamentManager m_tournament = new HDTournamentManager();
+    HDQuestManager m_quest = new HDQuestManager();
+    HDLiveEventManager m_passive = new HDLiveEventManager();
 
-	public bool m_cacheInfo = false;
+    public bool m_cacheInfo = false;
+#if UNITY_EDITOR
+    public static readonly bool TEST_CALLS = false;
+#else
+    // Do not touch!
+    public static readonly bool TEST_CALLS = false;
+#endif
 
-	public HDLiveEventsManager()
+    public HDLiveEventsManager()
 	{
-        // For testing
+        // For testing purposes
         m_tournament.m_type = "tournament";
         m_quest.m_type = "quest";
         m_passive.m_type = "passive";
@@ -106,16 +111,24 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
         response.Add("response", json);
         return response;
     }
+#else
+    public static GameServerManager.ServerResponse CreateTestResponse(string fileName)
+    {
+        return null;
+    }
 #endif
 
     public void RequestMyEvents()
     {
-#if TEST_HD_LIVE_EVENTS
-        GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
-        MyEventsResponse( null, response );
-#else
-        GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);
-#endif
+        if ( TEST_CALLS )
+        {
+            GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
+            MyEventsResponse( null, response );
+        }
+        else
+        {
+            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);    
+        }
     }
 
 	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 

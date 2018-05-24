@@ -61,11 +61,6 @@ public class HDTournamentData : HDLiveEventData {
 		base.ParseState( _data );
 	}
 
-	public virtual void ParseProgress( SimpleJSON.JSONNode _data )
-	{
-		
-	}
-
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
