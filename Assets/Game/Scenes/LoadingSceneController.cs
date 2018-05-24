@@ -465,6 +465,7 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
+                HDLiveEventsManager.CreateInstance(true);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);

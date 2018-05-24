@@ -4,10 +4,6 @@
 // Created by Miguel Ángel Linares on 17/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-#if UNITY_EDITOR
-// #define TEST_HD_LIVE_EVENTS
-#endif
-
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -32,6 +28,7 @@ public class HDLiveEventManager
     //------------------------------------------------------------------------//
 
     public string m_type = "";
+    public bool m_shouldRequestDefinition = false;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -59,6 +56,18 @@ public class HDLiveEventManager
         if (data != null && data.m_eventId > 0)
         {
             ret = true;
+        }
+        return ret;
+    }
+
+    public virtual bool HasValidDefinition()
+    {
+        bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0)
+        {
+            HDLiveEventDefinition definition = data.GetEventDefinition();
+            ret = definition.m_eventId == data.m_eventId;
         }
         return ret;
     }
@@ -100,6 +109,7 @@ public class HDLiveEventManager
         if (data != null)
         {
             data.ParseState(_data);
+            m_shouldRequestDefinition = true;
         }
     }
 
@@ -112,27 +122,22 @@ public class HDLiveEventManager
         }
     }
 
-    public virtual void ParseProgress(SimpleJSON.JSONNode _data)
-    {
-        HDLiveEventData data = GetEventData();
-        if (data != null)
-        {
-            data.ParseProgress(_data);
-        }
-    }
-
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
     public void RequestDefinition()
     {
-#if TEST_HD_LIVE_EVENTS
-        GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_definition.json");
-        RequestEventDefinitionResponse(null, response);
-#else
-        HDLiveEventData data = GetEventData();
-        GameServerManager.SharedInstance.HDEvents_GetDefinition(data.m_eventId, RequestEventDefinitionResponse);
-#endif
+        m_shouldRequestDefinition = false;
+        if ( HDLiveEventsManager.TEST_CALLS )
+        {
+            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_definition.json");
+            RequestEventDefinitionResponse(null, response);    
+        }
+        else
+        {
+            HDLiveEventData data = GetEventData();
+            GameServerManager.SharedInstance.HDEvents_GetDefinition(data.m_eventId, RequestEventDefinitionResponse);    
+        }
     }
 
     protected virtual void RequestEventDefinitionResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
@@ -156,64 +161,4 @@ public class HDLiveEventManager
     }
 
 
-    public void RequestProgress()
-    {
-#if TEST_HD_LIVE_EVENTS
-        GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_progress.json");
-        RequestProgressResponse(null, response);
-#else
-		HDLiveEventData data = GetEventData();
-		GameServerManager.SharedInstance.HDEvents_GetMyProgess(data.m_eventId, RequestProgressResponse);
-#endif
-    }
-
-    protected virtual void RequestProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
-    {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
-
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
-            if (data != null && data.m_eventId == eventId)
-            {
-
-            }
-        }
-    }
-
-    public void SendProgress(int _score)
-    {
-#if TEST_HD_LIVE_EVENTS
-        GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_send_progress.json");
-        RegisterProgressResponse(null, response);
-#else
-		HDLiveEventData data = GetEventData();
-		GameServerManager.SharedInstance.HDEvents_RegisterProgress(data.m_eventId, _score, RegisterProgressResponse);
-#endif
-	}
-
-	protected virtual void RegisterProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
-	{
-		if ( _error != null ){
-			// Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-			return;
-		}
-
-		if(_response != null && _response["response"] != null) 
-		{
-			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			int eventId = responseJson["code"].AsInt;
-			HDLiveEventData data = GetEventData();
-			if ( data != null && data.m_eventId == eventId )
-			{
-				
-			}
-		}
-	}
 }

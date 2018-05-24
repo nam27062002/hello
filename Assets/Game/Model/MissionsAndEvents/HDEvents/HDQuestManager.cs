@@ -1,7 +1,7 @@
-// HDTournamentManager.cs
+// HDQuestManager.cs
 // Hungry Dragon
 // 
-// Created by Miguel Ángel Linares on 17/05/2018.
+// Created by Miguel Ángel Linares on 23/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
@@ -17,7 +17,7 @@ using System;
 /// 
 /// </summary>
 [Serializable]
-public class HDTournamentManager : HDLiveEventManager {
+public class HDQuestManager : HDLiveEventManager{
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -25,45 +25,46 @@ public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	public HDTournamentData m_data = new HDTournamentData();
+    public HDQuestData m_data = new HDQuestData();
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public HDTournamentManager() {
+	public HDQuestManager() {
 
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	~HDTournamentManager() {
+	~HDQuestManager() {
 
 	}
 
+    public override HDLiveEventData GetEventData()
+    {
+        return m_data;
+    }
 
-	public override HDLiveEventData GetEventData()
-	{
-		return m_data;
-	}
 
-    public void RequestLeaderboard()
+
+    public void RequestProgress()
     {
         if ( HDLiveEventsManager.TEST_CALLS )
         {
-            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("tournament_leaderbaord.json");
-            LeaderboardResponse(null, response);
+            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("quest_get_progress.json");
+            RequestProgressResponse(null, response);    
         }
         else
         {
             HDLiveEventData data = GetEventData();
-            GameServerManager.SharedInstance.HDEvents_GetLeaderboard(data.m_eventId, LeaderboardResponse);    
+            GameServerManager.SharedInstance.HDEvents_GetMyProgess(data.m_eventId, RequestProgressResponse);            
         }
     }
 
-    protected virtual void LeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    protected virtual void RequestProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
         if (_error != null)
         {
@@ -83,21 +84,21 @@ public class HDTournamentManager : HDLiveEventManager {
         }
     }
 
-    public void SendScore(int _score)
+    public void AddProgress(int _score)
     {
-        if (HDLiveEventsManager.TEST_CALLS)
+        if ( HDLiveEventsManager.TEST_CALLS )
         {
-            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("tournament_set_score.json");
-            SetScoreResponse(null, response);
+            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("quest_add_progress.json");
+            AddProgressResponse(null, response);
         }
         else
         {
             HDLiveEventData data = GetEventData();
-            GameServerManager.SharedInstance.HDEvents_SetScore(data.m_eventId, _score, SetScoreResponse);
+            GameServerManager.SharedInstance.HDEvents_AddProgress(data.m_eventId, _score, AddProgressResponse);    
         }
     }
 
-    protected virtual void SetScoreResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    protected virtual void AddProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
         if (_error != null)
         {
@@ -116,4 +117,5 @@ public class HDTournamentManager : HDLiveEventManager {
             }
         }
     }
+
 }

@@ -4,9 +4,6 @@
 // Created by Miguel Ángel Linares on 15/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-#if UNITY_EDITOR
-// #define TEST_HD_LIVE_EVENTS
-#endif
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -23,99 +20,137 @@ using System.IO;
 /// <summary>
 /// Global singleton manager for global events.
 /// </summary>
-public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
+public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
+{
 
 
-	public enum ErrorCode {
-		NONE = 0,
+    public enum ErrorCode
+    {
+        NONE = 0,
 
-		OFFLINE,
-		NOT_INITIALIZED,
-		NOT_LOGGED_IN,
-		NO_VALID_EVENT,
-		EVENT_NOT_ACTIVE
-	}
+        OFFLINE,
+        NOT_INITIALIZED,
+        NOT_LOGGED_IN,
+        NO_VALID_EVENT,
+        EVENT_NOT_ACTIVE
+    }
 
-	HDTournamentManager m_tournament = new HDTournamentManager();
-	HDLiveEventManager m_quest = new HDLiveEventManager();
-	HDLiveEventManager m_passive = new HDLiveEventManager();
+    public HDTournamentManager m_tournament = new HDTournamentManager();
+    public HDQuestManager m_quest = new HDQuestManager();
+    public HDLiveEventManager m_passive = new HDLiveEventManager();
 
-	public bool m_cacheInfo = false;
+        // Avoid using dictionaries when possible
+    private List<string> m_types;
+    private List<HDLiveEventManager> m_managers;
 
-	public HDLiveEventsManager()
+    public bool m_cacheInfo = false;
+#if UNITY_EDITOR
+    public static readonly bool TEST_CALLS = true;
+#else
+    // Do not touch!
+    public static readonly bool TEST_CALLS = false;
+#endif
+
+    public HDLiveEventsManager()
 	{
-        // For testing
+        // For testing purposes
         m_tournament.m_type = "tournament";
         m_quest.m_type = "quest";
         m_passive.m_type = "passive";
+        //
+
+        m_types = new List<string>(3);
+        m_managers = new List<HDLiveEventManager>(3);
+
+        m_types.Add( "tournament" );
+        m_managers.Add(m_tournament);
+
+        m_types.Add("quest");
+        m_managers.Add(m_quest);
+
+        m_types.Add("passive");
+        m_managers.Add(m_quest);
+
 
 		// Load Cache?
 		LoadEventsFromCache();
+
+        Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+
 	}
+
+    ~HDLiveEventsManager()
+    {
+        Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+    }
+
+    void OnLoggedIn(bool _isLogged)
+    {
+        if (_isLogged)
+        {
+            RequestMyEvents();
+        }
+    }
 
 	public void LoadEventsFromCache()
 	{
 		m_cacheInfo = true;
-		m_tournament.CleanData();
-        if ( CacheServerManager.SharedInstance.HasKey("tournament") )
-        {
-            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable("tournament"));
-            m_tournament.OnNewStateInfo( json );
-		}
-		
-        if (CacheServerManager.SharedInstance.HasKey("passive"))
-        {
-            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable("passive"));
-            m_tournament.OnNewStateInfo(json);
-        }
 
-        if (CacheServerManager.SharedInstance.HasKey("quest"))
+        int max = m_types.Count;
+        for (int i = 0; i < max; ++i)
         {
-            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable("quest"));
-            m_tournament.OnNewStateInfo(json);
+            m_managers[i].CleanData();
+            if (CacheServerManager.SharedInstance.HasKey( m_types[i] ))
+            {
+                SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable( m_types[i] ));
+                m_managers[i].OnNewStateInfo(json);
+            }
         }
 	}
 
 	public void SaveEventsToCache()
 	{
-		if ( m_tournament.IsActive()){
-			CacheServerManager.SharedInstance.SetVariable( "tournament", m_tournament.ToJson().ToString());
-		}else{
-			CacheServerManager.SharedInstance.DeleteKey("tournament");
-		}
-
-		if ( m_passive.IsActive()){
-			CacheServerManager.SharedInstance.SetVariable( "passive", m_passive.ToJson().ToString());
-		}else{
-			CacheServerManager.SharedInstance.DeleteKey("passive");
-		}
-
-		if ( m_quest.IsActive()){
-			CacheServerManager.SharedInstance.SetVariable( "quest", m_quest.ToJson().ToString());
-		}else{
-			CacheServerManager.SharedInstance.DeleteKey("quest");
-		}
+        int max = m_types.Count;
+        for (int i = 0; i < max; i++)
+        {
+            if (m_managers[i].IsActive())
+            {
+                CacheServerManager.SharedInstance.SetVariable( m_types[i] , m_managers[i].ToJson().ToString());
+            }
+            else
+            {
+                CacheServerManager.SharedInstance.DeleteKey( m_types[i] );
+            }
+        }
 	}
 
 #if UNITY_EDITOR
     public static GameServerManager.ServerResponse CreateTestResponse(string fileName)
     {
-        string path = Directory.GetCurrentDirectory() + "/Assets/HDLiveEventsTests/" + fileName;
+        string path = Directory.GetCurrentDirectory() + "/Assets/HDLiveEventsTest/" + fileName;
         string json = File.ReadAllText(path);
         GameServerManager.ServerResponse response = new GameServerManager.ServerResponse();
         response.Add("response", json);
         return response;
     }
+#else
+    public static GameServerManager.ServerResponse CreateTestResponse(string fileName)
+    {
+        return null;
+    }
 #endif
 
     public void RequestMyEvents()
     {
-#if TEST_HD_LIVE_EVENTS
-        GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
-        MyEventsResponse( null, response );
-#else
-        GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);
-#endif
+        if ( TEST_CALLS )
+        {
+            GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
+            MyEventsResponse( null, response );
+        }
+        else
+        {
+            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);    
+        }
     }
 
 	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
@@ -130,20 +165,22 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager> {
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
 			m_cacheInfo = false;
 
-			m_tournament.CleanData();
-			if ( responseJson != null && responseJson.ContainsKey("tournament")){
-				m_tournament.OnNewStateInfo(responseJson["tournament"]);	
-			}
-
-			m_quest.CleanData();
-			if ( responseJson != null && responseJson.ContainsKey("quest")){
-				m_quest.OnNewStateInfo(responseJson["tournament"]);	
-			}
-
-			m_passive.CleanData();
-			if ( responseJson != null && responseJson.ContainsKey("passive")){
-				m_quest.OnNewStateInfo(responseJson["passive"]);	
-			}
+            if ( responseJson != null )
+            {
+                int max = m_types.Count;
+                for (int i = 0; i < max; i++)
+                {
+                    m_managers[i].CleanData();
+                    if (responseJson.ContainsKey( m_types[i] ))
+                    {
+                        m_managers[i].OnNewStateInfo(responseJson[ m_types[i] ]);
+                        if (!m_managers[i].HasValidDefinition())
+                        {
+                            m_managers[i].RequestDefinition();
+                        }
+                    }
+                }
+            }
 		}
 	}
 
