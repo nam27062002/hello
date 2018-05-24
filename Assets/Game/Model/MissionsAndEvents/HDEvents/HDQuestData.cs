@@ -25,7 +25,9 @@ public class HDQuestData : HDLiveEventData {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	
+
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -36,6 +38,12 @@ public class HDQuestData : HDLiveEventData {
 
 	}
 
+	protected override void BuildDefinition()
+	{
+		m_definition = new HDLiveEventDefinition();
+	}
+
+
 	/// <summary>
 	/// Destructor
 	/// </summary>
@@ -43,9 +51,15 @@ public class HDQuestData : HDLiveEventData {
 
 	}
 
+	public override void ParseState( SimpleJSON.JSONNode _data )
+	{
+		base.ParseState( _data );
+	}
+
     public virtual void ParseProgress(SimpleJSON.JSONNode _data)
     {
 
     }
+
 
 }

@@ -36,7 +36,12 @@ public class HDLiveEventData {
 		FINALIZED
 	};
 	public State m_state = State.NONE;
-	
+
+	protected HDLiveEventDefinition m_definition;
+	public HDLiveEventDefinition definition
+	{	
+		get { return m_definition; }
+	}
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -44,8 +49,14 @@ public class HDLiveEventData {
 	/// Default constructor.
 	/// </summary>
 	public HDLiveEventData() {
-
+		BuildDefinition();
 	}
+
+	protected virtual void BuildDefinition()
+	{
+		m_definition = new HDLiveEventDefinition();
+	}
+
 
 	/// <summary>
 	/// Destructor
@@ -62,9 +73,7 @@ public class HDLiveEventData {
 		m_eventId = -1;
 		m_name = "";
 		m_state = State.NONE;
-		HDLiveEventDefinition def = GetEventDefinition();
-		if (def != null)
-			def.Clean();
+		m_definition.Clean();
 	}
 
 	public virtual SimpleJSON.JSONClass ToJson ()
@@ -77,27 +86,14 @@ public class HDLiveEventData {
 	public virtual void ParseState( SimpleJSON.JSONNode _data )
 	{
 		m_eventId = _data["code"];
-        HDLiveEventDefinition def = GetEventDefinition();
-        if (def != null)
-        {
-            if ( def.m_eventId != m_eventId )
-                def.Clean();
-        }
+        if ( m_definition.m_eventId != m_eventId )
+			m_definition.Clean();
+        
 	}
 
 	public virtual void ParseDefinition( SimpleJSON.JSONNode _data )
 	{
-		HDLiveEventDefinition def = GetEventDefinition();
-		if (def != null)
-		{
-			def.ParseInfo( _data );
-		}
-
-	}
-
-	public virtual HDLiveEventDefinition GetEventDefinition()
-	{
-		return null;
+		m_definition.ParseInfo( _data );
 	}
 
 }

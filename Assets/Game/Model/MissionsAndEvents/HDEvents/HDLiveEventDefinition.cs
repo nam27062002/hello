@@ -10,7 +10,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-
+using SimpleJSON;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -75,9 +75,32 @@ public class HDLiveEventDefinition {
 		m_endTimestamp = -1;
 	}
 
-	public void ParseInfo( SimpleJSON.JSONNode _data )
+	public virtual void ParseInfo( SimpleJSON.JSONNode _data )
 	{
+		if ( _data.ContainsKey("code") )
+		{
+			m_eventId = _data["code"].AsInt;
+		}
 
+		if ( _data.ContainsKey("name") )
+		{
+			m_name = _data["name"];
+		}
+		// type?
+
+		// Mods
+		m_mods.Clear();
+		if (_data.ContainsKey("mods"))
+		{
+			JSONArray _mods = _data["mods"].AsArray;
+
+			for (int i = 0; i < _mods.Count; ++i)
+			{
+				m_mods.Add(_mods[i]);
+			}
+		}
+
+		// timestamps
 	}
 
 	//------------------------------------------------------------------------//

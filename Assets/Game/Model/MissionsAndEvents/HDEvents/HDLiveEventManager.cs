@@ -46,7 +46,7 @@ public class HDLiveEventManager
     /// </summary>
     ~HDLiveEventManager()
     {
-
+    	
     }
 
     public virtual bool IsActive()
@@ -66,8 +66,8 @@ public class HDLiveEventManager
         HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
-            HDLiveEventDefinition definition = data.GetEventDefinition();
-            ret = definition.m_eventId == data.m_eventId;
+            
+            ret = data.definition.m_eventId == data.m_eventId;
         }
         return ret;
     }
