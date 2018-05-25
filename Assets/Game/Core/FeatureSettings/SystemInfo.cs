@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿/*
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -137,26 +138,6 @@ public static class SystemInfo {
         get;
         private set;
     }
-
-
-    /*
-        private string Device_GetInfo()
-        {
-            System.Text.StringBuilder strBuilder = new System.Text.StringBuilder();
-            strBuilder.AppendLine("");
-            strBuilder.AppendLine("MODEL : " + FeatureSettingsManager.instance.Device_Model);
-            strBuilder.AppendLine("GPU ID : " + SystemInfo.graphicsDeviceID.ToString());
-            strBuilder.AppendLine("GPU VENDOR : " + SystemInfo.graphicsDeviceVendor);
-            strBuilder.AppendLine("GPU VENDOR ID : " + SystemInfo.graphicsDeviceVendorID.ToString());
-            strBuilder.AppendLine("GPU VERSION : " + SystemInfo.graphicsDeviceVersion);
-            strBuilder.AppendLine("GPU MEMORY : " + Device_GetGraphicsMemorySize().ToString());
-            strBuilder.AppendLine("GPU SHADER LEVEL : " + SystemInfo.graphicsShaderLevel.ToString());
-            strBuilder.AppendLine("MAX TEX SIZE : " + SystemInfo.maxTextureSize.ToString());
-            strBuilder.AppendLine("OS : " + SystemInfo.operatingSystem);
-            strBuilder.AppendLine("CPU COUNT : " + SystemInfo.processorCount.ToString());
-            strBuilder.AppendLine("CPU TYPE : " + SystemInfo.processorType);
-            strBuilder.AppendLine("SYSTEM MEMORY : " + Device_GetSystemMemorySize().ToString());
-            return strBuilder.ToString();
-        }
-    */
 }
+
+*/
