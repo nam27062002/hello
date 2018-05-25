@@ -38,9 +38,9 @@ public class HDLiveEventDefinition {
 	public List<Modifier> m_dragonMods = new List<Modifier>();
 	public List<Modifier> m_otherMods = new List<Modifier>();
 
-	public long m_teasingTimestamp = 0;
-	public long m_startTimestamp = 0;
-	public long m_endTimestamp = 0;
+	public DateTime m_teasingTimestamp = new DateTime();
+	public DateTime m_startTimestamp = new DateTime();
+	public DateTime m_endTimestamp = new DateTime();
 
 	// Goal?
 	public class GoalCommon
@@ -155,9 +155,9 @@ public class HDLiveEventDefinition {
 		m_dragonMods.Clear();
 		m_otherMods.Clear();
 
-		m_teasingTimestamp = -1;
-		m_startTimestamp = -1;
-		m_endTimestamp = -1;
+		m_teasingTimestamp = new DateTime(1970, 1, 1);
+		m_startTimestamp = new DateTime(1970, 1, 1);
+		m_endTimestamp = new DateTime(1970, 1, 1);
 	}
 
 	public virtual void ParseInfo( SimpleJSON.JSONNode _data )
