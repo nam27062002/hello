@@ -80,6 +80,12 @@ public class HDLiveEventData {
 	{
 		SimpleJSON.JSONClass ret = new SimpleJSON.JSONClass();
 		ret.Add("code", m_eventId);
+
+		if ( m_definition.m_eventId == m_eventId )
+		{
+			ret.Add("definition", m_definition.ToJson());
+		}
+
 		return ret;
 	}
 
@@ -88,6 +94,11 @@ public class HDLiveEventData {
 		m_eventId = _data["code"];
         if ( m_definition.m_eventId != m_eventId )
 			m_definition.Clean();
+
+		if ( _data.ContainsKey("definition") )
+		{
+			m_definition.ParseInfo( _data["definition"] );
+		}
         
 	}
 

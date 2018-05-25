@@ -59,6 +59,28 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public TournamentBuild m_build;
 
+	public class TournamentGoal : GoalCommon
+	{
+		public string m_area = "";
+		public override void Clear ()
+		{
+			base.Clear ();
+			m_area = "";
+		}
+
+		public override void ParseGoal (JSONNode _data)
+		{
+			base.ParseGoal (_data);
+			if ( _data.ContainsKey("area") ){
+				m_area = _data["area"];
+			}
+		}
+	}
+
+	public TournamentGoal m_goal;
+
+	public List<GlobalEvent.RewardSlot> m_rewards = new List<GlobalEvent.RewardSlot>();	// <- te remove from GlobalEvents
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -76,12 +98,23 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	}
 
+	public override void Clean()
+	{
+		base.Clean();
+		m_entrance.Clean();
+		m_build.Clean();
+		m_rewards.Clear();
+	}
+
 	public override void ParseInfo( SimpleJSON.JSONNode _data )
 	{
 		base.ParseInfo(_data);
 
+		if ( _data.ContainsKey("goal") ){
+			m_goal.ParseGoal( _data["goal"] );
+		}
+
 			// Entrance
-		m_entrance.Clean();
 		if ( _data.ContainsKey("entrance") )
 		{
 			JSONClass _entrance = _data["entrance"].AsObject;
@@ -104,7 +137,6 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		}
 
 		// Build
-		m_build.Clean();
 		if ( _data.ContainsKey("build") )
 		{
 			JSONClass _build = _data["build"].AsObject;
@@ -123,13 +155,42 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				}
 			}
 		}
+
+
+		if ( _data.ContainsKey("rewards") )
+		{
+			JSONArray arr = _data["rewards"].AsArray;
+			for (int i = 0; i < arr.Count; i++) {
+				m_rewards.Add( new GlobalEvent.RewardSlot( arr[i]) );
+			}
+		}
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+	public override SimpleJSON.JSONClass ToJson ()
+	{
+		SimpleJSON.JSONClass ret = base.ToJson();
+
+		// Entrance
+		SimpleJSON.JSONClass _entrance = new JSONClass();
+		_entrance.Add("type", m_entrance.m_type);
+		_entrance.Add("amount", m_entrance.m_amount);
+		_entrance.Add("daily_free", m_entrance.m_dailyFree);
+		ret.Add("entrance", _entrance);
+
+		// Build
+		SimpleJSON.JSONClass _build = new JSONClass();
+		_build.Add("dragon", m_build.m_dragon);
+		_build.Add("skin", m_build.m_skin);
+		JSONArray arr = new JSONArray();
+		for (int i = 0; i < m_build.m_pets.Count; i++) {
+				arr.Add(m_build.m_pets[i]);
+		}
+		_build.Add("pets", arr);
+		ret.Add("build", _build);
+
+
+		return ret;
+	}
+
 }
