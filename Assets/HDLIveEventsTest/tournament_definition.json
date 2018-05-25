@@ -1,45 +1,55 @@
-{
-  "name": "Test JOSU",
-  "id": 1,
-  "type": "tournament",
-  "teasingTimestamp": 1618789600000,
-  "endTimestamp": 1618789600000,
-  "startTimestamp": 1518782400000,
-  "goal": {
-    "tidDesc": "TID_EVENT_FIRERUSH",
-    "icon": "icon_fireRush",
-    "type": "time_attack",
-    "params": "kill birds 100",
-    "area": "dark_zone"
-  },
-  "entrance": {
-    "type": "sc",
-    "amount": 100,
-    "daily_free": "100"
-  },
-  "mods": [ "big_dragons" ],
-  "build": {
-    "dragon": "dragon_fat",
-    "skin": "skin_sku",
-    "pets": [ "pet_30", "pet_31" ]
-  },
-  "leaderboard_size": "30",
-  "rewards": [
-    {
-      "range": [ 0, 1 ],
-      "amount": 1,
-      "type": "EGG",
-      "sku": "egg_event"
-    },
-    {
-      "range": [ 2, 7 ],
-      "type": "PC",
-      "amount": 10
-    },
-    {
-      "range": [ 8, 15 ],
-      "type": "SC",
-      "amount": 1000
-    }
-  ]
+{  
+   "liveEventType":2,
+   "mods":[  
+      "sku1",
+      "sku2",
+      "sku3"
+   ],
+   "code":67,
+   "goal":{  
+      "area":"dark_zone",
+      "tidDesc":"TID_EVENT_FIRERUSH",
+      "icon":"icon_fireRush",
+      "type":"fire_rush",
+      "params":""
+   },
+   "build":{  
+      "pets":[  
+         "pet_01",
+         "pet_02",
+         "pet_03",
+         "pet_04",
+         "pet_05"
+      ],
+      "skin":"skin_sku",
+      "dragon":"dragon_fat"
+   },
+   "name":"test",
+   "entrance":{  
+      "amount":100,
+      "dailyFreeTimer":100,
+      "type":"sc"
+   },
+   "rewards":[  
+      {  
+         "amount":500,
+         "targetPercentage":0.25,
+         "type":"sc"
+      },
+      {  
+         "amount":1000,
+         "targetPercentage":0.5,
+         "type":"sc"
+      },
+      {  
+         "amount":10,
+         "targetPercentage":0.75,
+         "type":"hc"
+      },
+      {  
+         "amount":1,
+         "targetPercentage":1,
+         "type":"egg"
+      }
+   ]
 }

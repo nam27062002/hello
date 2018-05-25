@@ -194,6 +194,14 @@ public class HDLiveEventDefinition {
 		}
 
 		// timestamps
+		if ( _data.ContainsKey("teaserTimestamp") )
+			m_teasingTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
+
+		if ( _data.ContainsKey("startTimestamp") )
+			m_startTimestamp = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
+
+		if ( _data.ContainsKey("endTimestamp") )
+			m_endTimestamp = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 	}
 
 
@@ -215,8 +223,10 @@ public class HDLiveEventDefinition {
 		}
 		ret.Add("mods", arr);
 
-		// timestamps?
-
+		// timestamps
+		ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
+		ret.Add("startTimestamp", TimeUtils.DateToTimestamp( m_startTimestamp ));
+		ret.Add("endTimestamp", TimeUtils.DateToTimestamp( m_endTimestamp ));
 
 		return ret;
 	}
