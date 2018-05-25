@@ -124,19 +124,23 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		m_mods["invasion_dragon"].Apply();
 		m_mods["gatcha_rarity"].Apply();
 		m_mods["midas"].Apply();
+
 	}
 	public static void REMOVE_MODIFIERS() {
 		m_mods["double_coins"].Remove();
 		m_mods["invasion_dragon"].Remove();
 		m_mods["gatcha_rarity"].Remove();
 		m_mods["midas"].Remove();
+
 	}
 
 	public static void APPLY_DRAGON_MODIFIERS() {
 		//m_dMods["bbq"].Apply();
+		m_dMods["double_pet_effect"].Apply();
 	}
 	public static void REMOVE_DRAGON_MODIFIERS() {
 		//m_dMods["bbq"].Remove();
+		m_dMods["double_pet_effect"].Remove();
 	}
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }

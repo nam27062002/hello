@@ -211,7 +211,7 @@ public class DragonPowerUp : MonoBehaviour {
 				}break;
 				case "more_coin":	// Increase SC given for all preys by param1 %
 				{
-					float coins = def.GetAsFloat("param1", 0);
+					float coins = def.GetAsFloat("param1", 0) * multiplier;
 					m_entitySCMultiplier += coins;
 					Entity.AddSCMultiplier(coins);
 					m_warnEntities = true;
