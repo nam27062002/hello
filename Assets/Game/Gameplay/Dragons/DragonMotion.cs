@@ -1585,7 +1585,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private void ComputeImpulseToZero(float _deltaTime)
 	{
 		float impulseMag = m_impulse.magnitude;
-		m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime);
+		//m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime);
+		//TONI: Testing that the dragon keeps a bit more time the impulse
+		m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime * 0.15f);
 		// m_direction = m_impulse.normalized;
 	}
 
