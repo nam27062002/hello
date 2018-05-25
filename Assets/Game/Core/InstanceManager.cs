@@ -1,6 +1,6 @@
 // InstanceManager.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 25/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
@@ -136,4 +136,3 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	}
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
-

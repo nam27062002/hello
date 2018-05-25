@@ -115,7 +115,7 @@ public class Entity : IEntity {
 		// m_reward.score = m_def.GetAsInt("rewardScore");
 		// m_reward.coins = m_def.GetAsInt("rewardCoins");
 		// m_reward.xp = m_def.GetAsFloat("rewardXp");
-		ApplyPowerUpMultipliers();
+
 		m_reward.pc = m_def.GetAsInt("rewardPC");
 		m_reward.health = m_def.GetAsFloat("rewardHealth");
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
@@ -151,6 +151,8 @@ public class Entity : IEntity {
 
 		// Feedback data
 		m_feedbackData.InitFromDef(m_def);
+
+		ApplyPowerUpMultipliers();
 	}
 
 	override public void Spawn(ISpawner _spawner) {        
@@ -375,29 +377,14 @@ public class Entity : IEntity {
 	}
 
 
-	public static void ResetSCMuliplier()
-	{
-		m_powerUpSCMultiplier = 0;
-	}
-
 	public static void AddSCMultiplier( float value )
 	{
 		m_powerUpSCMultiplier += value;
 	}
 
-	public static void ResetScoreMultiplier()
-	{
-		m_powerUpScoreMultiplier = 0;
-	}
-
 	public static void AddScoreMultiplier( float value )
 	{
 		m_powerUpScoreMultiplier += value;
-	}
-
-	public static void ResetXpMultiplier()
-	{
-		m_powerUpXpMultiplier = 0;
 	}
 
 	public static void AddXpMultiplier( float value )

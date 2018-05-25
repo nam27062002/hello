@@ -18,22 +18,25 @@ public class DragonPowerUp : MonoBehaviour {
 		m_petPowerUpPercentage += _percentage;
 	}
 
+	private float m_entitySCMultiplier;
+	private float m_entityXPMultiplier;
+	private float m_entityScoreMultiplier;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
 	void Awake()
 	{
-		Entity.ResetSCMuliplier();
-		Entity.ResetScoreMultiplier();
-		Entity.ResetXpMultiplier();
+		m_entitySCMultiplier = 0f;
+		m_entityXPMultiplier = 0f;
+		m_entityScoreMultiplier = 0f;
 	}
 
 	void OnDestroy()
 	{
-		Entity.ResetSCMuliplier();
-		Entity.ResetScoreMultiplier();
-		Entity.ResetXpMultiplier();
+		Entity.AddSCMultiplier(-m_entitySCMultiplier);
+		Entity.AddXpMultiplier(-m_entityXPMultiplier);
+		Entity.AddScoreMultiplier(-m_entityScoreMultiplier);
 	}
 
 	void Start() 
@@ -210,19 +213,26 @@ public class DragonPowerUp : MonoBehaviour {
 				}break;
 				case "more_coin":	// Increase SC given for all preys by param1 %
 				{
-					
-					Entity.AddSCMultiplier( def.GetAsFloat("param1", 0));
+					float coins = def.GetAsFloat("param1", 0) * multiplier;
+					m_entitySCMultiplier += coins;
+					Entity.AddSCMultiplier(coins);
 					m_warnEntities = true;
 				}break;
 				case "score_increase":	// Increases score given for all preys by param1 %
 				{
+					float score = def.GetAsFloat("param1", 0) * multiplier;
+					m_entityScoreMultiplier += score;
+
 					// Increase score given by any prey by [param1]
-					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0) * multiplier);
+					Entity.AddScoreMultiplier(score);
 					m_warnEntities = true;
 				}break;
 				case "more_xp":
 				{
-					Entity.AddXpMultiplier( def.GetAsFloat("param1", 0) * multiplier);
+					float xp = def.GetAsFloat("param1", 0) * multiplier;
+					m_entityXPMultiplier += xp;
+
+					Entity.AddXpMultiplier(m_entityXPMultiplier);
 					m_warnEntities = true;
 				}break;
 				case "fury_size_increase":	// Increases fire size by param1 %

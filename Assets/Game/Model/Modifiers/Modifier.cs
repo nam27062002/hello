@@ -13,6 +13,7 @@ public abstract class Modifier  {
 		case ModifierDragon.TYPE_CODE: 		return ModifierDragon.CreateFromDefinition(_def);
 		case ModifierEntity.TYPE_CODE: 		return ModifierEntity.CreateFromDefinition(_def);
 		case ModifierGamePlay.TYPE_CODE: 	return ModifierGamePlay.CreateFromDefinition(_def);
+		case ModifierGatcha.TYPE_CODE:		return ModifierGatcha.CreateFromDefinition(_def);
 		}
 
 		return null;
