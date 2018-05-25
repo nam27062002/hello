@@ -46,8 +46,7 @@ namespace Metagame {
 				case "common":	return Rarity.COMMON; 
 				case "rare":	return Rarity.RARE;	
 				case "epic":	return Rarity.EPIC;	
-				case "special":	return Rarity.SPECIAL;
-				default:		return Rarity.UNKNOWN;
+				case "special":	return Rarity.SPECIAL;				
 			}
 			return Rarity.UNKNOWN;
 		}

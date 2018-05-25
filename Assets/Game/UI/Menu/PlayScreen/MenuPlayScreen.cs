@@ -36,6 +36,13 @@ public class MenuPlayScreen : MonoBehaviour {
     private static bool m_firstTimeMenu = true;
 
     private Transform m_tournamentBtn;
+
+
+
+	private static bool create_mods = true;
+
+
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -48,8 +55,11 @@ public class MenuPlayScreen : MonoBehaviour {
         m_tournamentBtn = transform.FindTransformRecursive("BtnTournament");
         Refresh();
 
-		InstanceManager.CREATE_MODIFIERS();
-		InstanceManager.APPLY_MODIFIERS();
+		if (create_mods) {
+			InstanceManager.CREATE_MODIFIERS();
+			InstanceManager.APPLY_MODIFIERS();
+			create_mods=false;
+		}
 
 		//create modifiers HERE
     }
