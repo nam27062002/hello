@@ -53,11 +53,12 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		{
 			m_dragon = "";
 			m_skin = "";
-			m_pets.Clear();
+			if ( m_pets != null )
+				m_pets.Clear();
 		}
 	}
 
-	public TournamentBuild m_build;
+	public TournamentBuild m_build = new TournamentBuild();
 
 	public class TournamentGoal : GoalCommon
 	{
@@ -77,7 +78,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		}
 	}
 
-	public TournamentGoal m_goal;
+	public TournamentGoal m_goal = new TournamentGoal();
 
 	public List<GlobalEvent.RewardSlot> m_rewards = new List<GlobalEvent.RewardSlot>();	// <- te remove from GlobalEvents
 
@@ -88,7 +89,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentDefinition() {
-
+		m_build.m_pets = new List<string>();
 	}
 
 	/// <summary>

@@ -57,7 +57,7 @@ public class HDTournamentData : HDLiveEventData {
 
 	protected override void BuildDefinition()
 	{
-		m_definition = new HDLiveEventDefinition();
+		m_definition = new HDTournamentDefinition();
 	}
 
 	public override void ParseState( SimpleJSON.JSONNode _data )

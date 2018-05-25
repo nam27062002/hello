@@ -39,7 +39,9 @@ public class DragonPowerUp : MonoBehaviour {
 	void Start() 
 	{
 		InstanceManager.APPLY_DRAGON_MODIFIERS();
-				
+
+		HDLiveEventsManager.instance.ApplyDragonMods();
+								
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		string dragonSku = "";
 		if (player != null) {

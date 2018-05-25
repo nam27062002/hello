@@ -35,7 +35,8 @@ public class HDLiveEventDefinition {
 	public int m_eventId;
 	public string m_name;
 	public EventType m_type;
-	public List<string> m_mods = new List<string>();
+	public List<Modifier> m_dragonMods = new List<Modifier>();
+	public List<Modifier> m_otherMods = new List<Modifier>();
 
 	public long m_teasingTimestamp = 0;
 	public long m_startTimestamp = 0;
@@ -110,7 +111,8 @@ public class HDLiveEventDefinition {
 		m_eventId = -1;
 		m_name = "";
 		m_type = EventType.NONE;
-		m_mods.Clear();
+		m_dragonMods.Clear();
+		m_otherMods.Clear();
 
 		m_teasingTimestamp = -1;
 		m_startTimestamp = -1;
@@ -132,14 +134,18 @@ public class HDLiveEventDefinition {
 		// type?
 
 		// Mods
-		m_mods.Clear();
 		if (_data.ContainsKey("mods"))
 		{
 			JSONArray _mods = _data["mods"].AsArray;
-
 			for (int i = 0; i < _mods.Count; ++i)
 			{
-				m_mods.Add(_mods[i]);
+				DefinitionNode modDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, _mods[i]);
+				Modifier m = Modifier.CreateFromDefinition(modDef);
+				if (m is ModifierDragon) {
+					m_dragonMods.Add(m);
+				} else {
+					m_otherMods.Add(m);
+				}
 			}
 		}
 
@@ -157,8 +163,11 @@ public class HDLiveEventDefinition {
 		// Type?
 
 		SimpleJSON.JSONArray arr = new JSONArray();
-		for (int i = 0; i < m_mods.Count; i++) {
-			arr.Add( m_mods[i] );
+		for (int i = 0; i < m_dragonMods.Count; i++) {
+			arr.Add( m_dragonMods[i].def.sku );
+		}
+		for (int i = 0; i < m_otherMods.Count; i++) {
+			arr.Add( m_otherMods[i].def.sku );
 		}
 		ret.Add("mods", arr);
 
