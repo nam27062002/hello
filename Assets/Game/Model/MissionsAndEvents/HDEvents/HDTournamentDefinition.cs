@@ -80,7 +80,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public TournamentGoal m_goal = new TournamentGoal();
 
-	public List<GlobalEvent.RewardSlot> m_rewards = new List<GlobalEvent.RewardSlot>();	// <- te remove from GlobalEvents
+	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -127,8 +127,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				m_entrance.m_amount = _entrance["amount"].AsInt;
 			}
 
-			if ( _entrance.ContainsKey("daily_free") ){
-				m_entrance.m_dailyFree = _entrance["daily_free"].AsInt;
+			if ( _entrance.ContainsKey("dailyFreeTimer") ){
+				m_entrance.m_dailyFree = _entrance["dailyFreeTimer"].AsInt;
 			}
 		}
 
@@ -162,7 +162,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				m_rewards.Add( new GlobalEvent.RewardSlot( arr[i]) );
+				m_rewards.Add( new HDLiveEventReward( arr[i], m_name) );
 			}
 		}
 	}
@@ -176,7 +176,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		SimpleJSON.JSONClass _entrance = new JSONClass();
 		_entrance.Add("type", m_entrance.m_type);
 		_entrance.Add("amount", m_entrance.m_amount);
-		_entrance.Add("daily_free", m_entrance.m_dailyFree);
+		_entrance.Add("dailyFreeTimer", m_entrance.m_dailyFree);
 		ret.Add("entrance", _entrance);
 
 		// Build

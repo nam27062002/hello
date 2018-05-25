@@ -75,7 +75,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		// Load Cache?
 		LoadEventsFromCache();
 
-		m_passive.Activate();
+		// m_passive.Activate();
 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 

@@ -77,8 +77,12 @@ public class HDLiveEventDefinition {
 
 			if ( _data.ContainsKey("params") ){
 				JSONArray arr = _data["params"].AsArray;
-				for (int i = 0; i < arr.Count; i++) {
-					m_params.Add( arr[i] );
+				if ( arr ){
+					for (int i = 0; i < arr.Count; i++) {
+						m_params.Add( arr[i] );
+					}
+				}else{
+					Debug.Log("No Params");
 				}
 			}
 
@@ -86,6 +90,43 @@ public class HDLiveEventDefinition {
 	}
 	// Build?
 	// Rewards?
+
+	[Serializable]
+	public class HDLiveEventReward {		
+		//------------------------------------------------------------------------//
+		// MEMBERS																  //
+		//------------------------------------------------------------------------//
+		public Metagame.Reward reward;
+		public float targetPercentage = 0f;
+
+		//------------------------------------------------------------------------//
+		// METHODS																  //
+		//------------------------------------------------------------------------//
+		/// <summary>
+		/// Constructor from json data.
+		/// </summary>
+		/// <param name="_data">Data to be parsed.</param>
+		public HDLiveEventReward(SimpleJSON.JSONNode _data, string _source) {
+			// Reward data
+			reward = Metagame.Reward.CreateFromJson(_data, HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, _source);
+
+			// [AOC] Going to hell!
+			// 		 Mini-hack: if reward is gold fragments, tweak its rarity so displayed reward looks cooler
+			if(reward.type == Metagame.RewardGoldenFragments.TYPE_CODE) {
+				if(reward.amount >= 5) {
+					reward.rarity = Metagame.Reward.Rarity.EPIC;
+				} else if(reward.amount >= 3) {
+					reward.rarity = Metagame.Reward.Rarity.SPECIAL;
+				} else {
+					reward.rarity = Metagame.Reward.Rarity.COMMON;
+				}
+			}
+
+			// Init target percentage
+			// Target amount should be initialized from outside, knowing the global target
+			targetPercentage = _data["targetPercentage"].AsFloat;
+		}
+	};
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -140,11 +181,14 @@ public class HDLiveEventDefinition {
 			for (int i = 0; i < _mods.Count; ++i)
 			{
 				DefinitionNode modDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, _mods[i]);
-				Modifier m = Modifier.CreateFromDefinition(modDef);
-				if (m is ModifierDragon) {
-					m_dragonMods.Add(m);
-				} else {
-					m_otherMods.Add(m);
+				if ( modDef != null )
+				{
+					Modifier m = Modifier.CreateFromDefinition(modDef);
+					if (m is ModifierDragon) {
+						m_dragonMods.Add(m);
+					} else {
+						m_otherMods.Add(m);
+					}
 				}
 			}
 		}
