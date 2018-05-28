@@ -252,6 +252,11 @@ public class PetPill : MonoBehaviour {
 		// Rarity gradient
 		if(m_rarityFrameGradient != null) {
 			m_rarityFrameGradient.gradient = m_rarityFrameColors[rarityInt];
+
+			// UIGradient inherits from Unity's BaseMeshEffect, who doesn't refresh the visuals when the object is off-viewport
+			// Force a refresh by doing this
+			m_rarityFrameGradient.enabled = false;
+			m_rarityFrameGradient.enabled = true;
 		}
 
 		// Seasonal icon
