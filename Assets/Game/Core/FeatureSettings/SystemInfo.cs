@@ -32,7 +32,7 @@ public static class SystemInfo {
 		AndroidJavaObject jc = new AndroidJavaClass("java.lang.Runtime");
         if (jc != null)
         {
-            AndroidJavaObject jo = jc.CallStatic<AndroidJavaObject>("getRunTime");
+            AndroidJavaObject jo = jc.CallStatic<AndroidJavaObject>("getRuntime");
             Debug.Log("java.lang.Runtime ---> availableProcessors: " + jo.Call<int>("availableProcessors"));
             Debug.Log("java.lang.Runtime ---> freememory: " + jo.Call<long>("freeMemory"));
             Debug.Log("java.lang.Runtime ---> maxmemory: " + jo.Call<long>("maxMemory"));
