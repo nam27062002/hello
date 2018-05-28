@@ -29,13 +29,14 @@ public static class SystemInfo {
         supportsImageEffects = UnityEngine.SystemInfo.supportsImageEffects;
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass jv = new AndroidJavaClass("android.app.ActivityManager.MemoryInfo");
+
+		AndroidJavaClass jv = new AndroidJavaClass("android.app.ActivityManager.MemoryInfo");
         if (jv != null)
         {
             systemMemorySize = jv.GetStatic<int>("totalMem");
-        }
-        else
-        {
+
+		} else {	
+			systemMemorySize = 0;
             Debug.Log("Unable to open: android.app.ActivityManager.MemoryInfo");
         }
 
