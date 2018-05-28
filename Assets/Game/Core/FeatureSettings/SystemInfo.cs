@@ -27,7 +27,7 @@ public static class SystemInfo {
         processorType = UnityEngine.SystemInfo.processorType;
         deviceName = UnityEngine.SystemInfo.deviceName;
         supportsImageEffects = UnityEngine.SystemInfo.supportsImageEffects;
-
+/*
 #if UNITY_ANDROID && !UNITY_EDITOR
 
 		AndroidJavaClass jv = new AndroidJavaClass("android.app.ActivityManager.MemoryInfo");
@@ -41,6 +41,7 @@ public static class SystemInfo {
         }
 
 #endif
+*/
     }
 
 
