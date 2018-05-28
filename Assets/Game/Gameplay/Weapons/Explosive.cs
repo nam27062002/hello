@@ -70,7 +70,7 @@ public class Explosive {
 		if (m_particleData != null) {
 			Vector3 point = _at.position + m_particleData.offset;
 			if (m_camera.IsInsideCameraFrustrum(point)) {
-				m_particleData.Spawn(point);
+				m_particleData.Spawn(point, _at.rotation);
 			}
 		}
 	}
