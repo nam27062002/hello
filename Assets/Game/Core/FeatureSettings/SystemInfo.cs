@@ -36,13 +36,26 @@ public static class SystemInfo {
             Debug.Log("java.lang.Runtime ---> availableProcessors: " + jo.Call<int>("availableProcessors"));
             Debug.Log("java.lang.Runtime ---> freememory: " + jo.Call<long>("freeMemory"));
             Debug.Log("java.lang.Runtime ---> maxmemory: " + jo.Call<long>("maxMemory"));
-//            Debug.Log("java.lang.Runtime ---> totalMem: " + jc.GetStatic<int>("totalMem"));
-//            Debug.Log("java.lang.Runtime ---> availMem: " + jc.GetStatic<int>("availMem"));
-//            systemMemorySize = jc.GetStatic<int>("totalMem");
+            Debug.Log("java.lang.Runtime ---> totalmemory: " + jo.Call<long>("maxMemory"));
+
+            systemMemorySize = jo.Call<long>("totalMemory");
+
+            jo = new AndroidJavaObject("java.io.RandomAccessFile", "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq");
+            if (jo != null)
+            {
+                string freq = jo.Call<string>("readLine");
+                Debug.Log("java.io.RandomAccesFile ---> cpu0 freq: " + freq);
+            
+            }
+            else
+            {
+                Debug.Log("Unable to open: java.io.RandowAccesFile");                
+            }
+
 
 		} else {	
 			systemMemorySize = 0;
-            Debug.Log("Unable to open: android.app.ActivityManager.MemoryInfo");
+            Debug.Log("Unable to open: java.lang.Runtime");
         }
 
 #endif
