@@ -76,6 +76,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	}
 
 	[SerializeField] private ObscuredLong m_coins = 0;
+	private ObscuredFloat m_coinsPrecision = 0f;
 	public static long coins {
 		get { return instance.m_coins; }
 	}
@@ -371,6 +372,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		// Score
 		instance.m_score = 0;
 		instance.m_coins = 0;
+		instance.m_coinsPrecision = 0;
 		instance.m_pc = 0;
 		instance.m_xp = 0;
 
@@ -453,6 +455,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	/// <param name="_reward">The rewards to be applied.</param>
 	/// <param name="_entity">The entity that has triggered the reward. Can be null.</param>
+	float bonusCoins = 0f;
 	private void ApplyReward(Reward _reward, Transform _entity) {
 		// Score
 		// Apply multiplier
@@ -460,8 +463,14 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_score += _reward.score;
 
 		// Coins
-		instance.m_coins += _reward.coins;
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)_reward.coins, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+		long deltaCoins = instance.m_coins;
+
+		instance.m_coinsPrecision += _reward.coins;
+		instance.m_coins = (long)instance.m_coinsPrecision;
+
+		deltaCoins = instance.m_coins - deltaCoins;
+
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)deltaCoins, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
 		// PC
 		instance.m_pc += _reward.pc;

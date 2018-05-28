@@ -229,7 +229,7 @@ public class PetPill : MonoBehaviour {
 
 			// Power short description
 			if(m_shortDescriptionText != null) {
-				m_shortDescriptionText.text = DragonPowerUp.GetDescription(powerDef, true);	// Custom formatting depending on powerup type, already localized
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(powerDef, true, true);	// Custom formatting depending on powerup type, already localized
 			}
 		} else {
 			if(m_powerIcon != null) {

@@ -109,7 +109,11 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 
 			// Everything ok! Initialize
 			powerIcon.gameObject.SetActive(true);
-			powerIcon.InitFromDefinition(powerDefs[i], false, false);
+
+			PowerIcon.Mode mode = PowerIcon.Mode.SKIN;
+			if (i > 0) mode = PowerIcon.Mode.PET;
+
+			powerIcon.InitFromDefinition(powerDefs[i], false, false, mode);
 		}
 	}
 }

@@ -13,9 +13,9 @@ public class DragonPowerUp : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private bool m_warnEntities = false;
 
-	private float m_petPowerUpPercentage = 0f;
-	public void AddPetPowerUpPercentage(float _percentage) {
-		m_petPowerUpPercentage += _percentage;
+	private static float sm_petPowerUpPercentage = 0f;
+	public static void AddPetPowerUpPercentage(float _percentage) {
+		sm_petPowerUpPercentage += _percentage;
 	}
 
 	private float m_entitySCMultiplier;
@@ -101,7 +101,7 @@ public class DragonPowerUp : MonoBehaviour {
 			float multiplier = 1f;
 			if (_fromPet) {
 				if (category.Equals("stats")) {
-					multiplier += m_petPowerUpPercentage / 100f;
+					multiplier += sm_petPowerUpPercentage / 100f;
 				}
 			}
 
@@ -294,10 +294,10 @@ public class DragonPowerUp : MonoBehaviour {
 	/// <param name="_powerSku">Sku of the power whose description we want.</param>
 	/// <param name="_short">Whether to return the short or the long description.</param>
 	/// <returns>The description for the given power. Empty string if power not known or no description available.</returns>
-	public static string GetDescription(string _powerSku, bool _short) {
+	public static string GetDescription(string _powerSku, bool _short, bool _fromPet) {
 		// Get definition
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
-		return GetDescription(def, _short);
+		return GetDescription(def, _short, _fromPet);
 	}
 
 	/// <summary>
@@ -307,9 +307,18 @@ public class DragonPowerUp : MonoBehaviour {
 	/// <param name="_powerSku">Sku of the power whose description we want.</param>
 	/// <param name="_short">Whether to return the short or the long description.</param>
 	/// <returns>The description for the given power. Empty string if power not known or no description available.</returns>
-	public static string GetDescription(DefinitionNode _powerDef, bool _short) {
+	public static string GetDescription(DefinitionNode _powerDef, bool _short, bool _fromPet) {
 		// Check definition
 		if(_powerDef == null) return "";
+
+		string category = _powerDef.Get("category");
+
+		float multiplier = 1f;
+		if (_fromPet) {
+			if (category.Equals("stats")) {
+				multiplier += sm_petPowerUpPercentage / 100f;
+			}
+		}
 
 		// Short or long description?
 		string fieldId = _short ? "tidDescShort" : "tidDesc";
@@ -321,14 +330,14 @@ public class DragonPowerUp : MonoBehaviour {
 			// Powers with custom formats
 			case "lower_damage":
 			case "lower_damage_origin": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param2")), color.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param2") * multiplier)), color.ToHexString("#"));
 			} break;
 
 			case "dragonram": {
 				if(_short) {
 					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
 				} else {
-					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), color.ToHexString("#"));
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param1") * multiplier)), color.ToHexString("#"));
 				}
 			} break;
 
@@ -344,7 +353,7 @@ public class DragonPowerUp : MonoBehaviour {
 				if(_short) {
 					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
 				} else {
-					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), color.ToHexString("#"));
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2") * multiplier, 0), color.ToHexString("#"));
 				}
 			} break;
 
@@ -363,7 +372,7 @@ public class DragonPowerUp : MonoBehaviour {
 			case "vacuum":
 			case "faster_boost":
 			{
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), color.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param1") * multiplier)), color.ToHexString("#"));
 			} break;
 
 			// Rest of powers (no params)

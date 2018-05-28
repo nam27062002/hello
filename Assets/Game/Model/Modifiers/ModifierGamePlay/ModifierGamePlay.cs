@@ -15,11 +15,12 @@ public abstract class ModifierGamePlay : Modifier {
 		string target = _def.Get("target");
 
 		switch (target) {
-		case ModGamePlaySpawnFrequency.TARGET_CODE:		return new ModGamePlaySpawnFrequency(_def);
+		case ModGamePlaySpawnFrequency.TARGET_CODE:	return new ModGamePlaySpawnFrequency(_def);
 		case ModGamePlayKillChainFast.TARGET_CODE:	return new ModGamePlayKillChainFast(_def);
 		case ModGamePlayKillChainLonger.TARGET_CODE:return new ModGamePlayKillChainLonger(_def);
 		case ModGamePlayMissionReward.TARGET_CODE:	return new ModGamePlayMissionReward(_def);
 		case ModGamePlaySC.TARGET_CODE: 			return new ModGamePlaySC(_def);
+		case ModGamePlayPetPowerUp.TARGET_CODE:		return new ModGamePlayPetPowerUp(_def);
 		}
 
 		return null;

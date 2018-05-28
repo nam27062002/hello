@@ -370,7 +370,7 @@ public class Entity : IEntity {
 		m_reward.score += Mathf.FloorToInt((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
 
 		m_reward.coins = m_def.GetAsInt("rewardCoins");
-		m_reward.coins += Mathf.FloorToInt((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
+		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
 
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;

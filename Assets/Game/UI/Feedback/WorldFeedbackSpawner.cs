@@ -287,7 +287,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 	            CacheItemData itemData = m_cacheDatas[ECacheTypes.Coins].GetCacheItemDataAvailable();
 	            if (itemData != null)
 	            {
-	                itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.coins);                
+					itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, Mathf.FloorToInt(_reward.coins));
 	            }
 			}
 		}
