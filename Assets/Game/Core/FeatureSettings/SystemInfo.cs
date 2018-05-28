@@ -36,7 +36,7 @@ public static class SystemInfo {
             Debug.Log("java.lang.Runtime ---> availableProcessors: " + jo.Call<int>("availableProcessors"));
             Debug.Log("java.lang.Runtime ---> freememory: " + jo.Call<long>("freeMemory"));
             Debug.Log("java.lang.Runtime ---> maxmemory: " + jo.Call<long>("maxMemory"));
-            Debug.Log("java.lang.Runtime ---> totalmemory: " + jo.Call<long>("maxMemory"));
+            Debug.Log("java.lang.Runtime ---> totalmemory: " + jo.Call<long>("totalMemory"));
 
             systemMemorySize = jo.Call<long>("totalMemory");
 
