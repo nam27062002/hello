@@ -29,12 +29,16 @@ public static class SystemInfo {
         supportsImageEffects = UnityEngine.SystemInfo.supportsImageEffects;
 #if UNITY_ANDROID && !UNITY_EDITOR
 
-		AndroidJavaObject jv = new AndroidJavaObject("android.app.ActivityManager.MemoryInfo");
-        if (jv != null)
+		AndroidJavaObject jc = new AndroidJavaClass("java.lang.Runtime");
+        if (jc != null)
         {
-            Debug.Log("android.app.ActivityManager.MemoryInfo ---> totalMem: " + jv.GetStatic<int>("totalMem"));
-            Debug.Log("android.app.ActivityManager.MemoryInfo ---> availMem: " + jv.GetStatic<int>("availMem"));
-            systemMemorySize = jv.GetStatic<int>("totalMem");
+            AndroidJavaObject jo = jc.CallStatic<AndroidJavaObject>("getRunTime");
+            Debug.Log("java.lang.Runtime ---> availableProcessors: " + jo.Call<int>("availableProcessors"));
+            Debug.Log("java.lang.Runtime ---> freememory: " + jo.Call<long>("freeMemory"));
+            Debug.Log("java.lang.Runtime ---> maxmemory: " + jo.Call<long>("maxMemory"));
+//            Debug.Log("java.lang.Runtime ---> totalMem: " + jc.GetStatic<int>("totalMem"));
+//            Debug.Log("java.lang.Runtime ---> availMem: " + jc.GetStatic<int>("availMem"));
+//            systemMemorySize = jc.GetStatic<int>("totalMem");
 
 		} else {	
 			systemMemorySize = 0;
