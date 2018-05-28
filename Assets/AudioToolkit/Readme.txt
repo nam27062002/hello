@@ -1,5 +1,5 @@
 ==============================================================
-  Audio Toolkit v8.0 - (c) 2015 by ClockStone Software GmbH
+  Audio Toolkit v8.5 - (c) 2015 by ClockStone Software GmbH
 ==============================================================
 
 Summary:
@@ -35,7 +35,6 @@ Features include:
  - delegate event call if audio was completely played
  - audio event log
  - audio overview window
-
 
 Package Folders:
 ----------------
@@ -78,22 +77,6 @@ Usage:
 For an up-to-date, detailed documentation please visit: http://unity.clockstone.com
 
 
-Usage with Java Script:
------------------------
-If you want to access the AudioToolkit from Java Scripts please move alle none-editor AudioToolkit script files
-to a subfolder of either the Assets/Plugins or the Assets/Standard Assets directory. The "AudioController/Editor" 
-subdirectory must not be moved to Plugins/Standard Assets directory. 
-See http://docs.unity3d.com/Documentation/ScriptReference/index.Script_compilation_28Advanced29.html for
-more infos about script compilation order.
-
-Please note that Java script does not support default parameter values like C# (since Unity 3.1). There are 
-overloads for the most common methods, but for all other cases you have to specify all parameters in Java Script.
-
-e.g.: 
-AudioController.Play( "MySFX", 0.5 ); // Play with volume=0.5, delay=0, startTime =0, possible only in C#
-AudioController.Play( "MySFX", 0.5, 0, 0 ); // in Java Script you have to specify all default paramters
-
-
 Poolable Audio Objects: 
 -----------------------
 
@@ -120,20 +103,48 @@ When audio object pooling is enabled you must be aware of the following:
   }
 
 
-Gapless Audio Chaining (Seqences):
-----------------------------------
+Memory / Audio Loading Management
+---------------------------------
 
-Please note that gapless audio seuqences require Unity v4.1 or newer. 
+Any audio clip referenced in an Audio Controller will be loaded into memory (according to Unity's asset import options) 
+the moment the Audio Controller is loaded into the scene. If you have a lot of audio files this can therefore have a 
+significant impact on the loading times and the memory consumption. You can optimize in several ways:
+
+1) Optimize your audio clip import settings. Here is a good guide I can recommend:
+http://blog.theknightsofunity.com/wrong-import-settings-killing-unity-game-part-2/
+You may also think about disabling the 'Preload Audio' import settings for some of your audio clips. However, be aware that 
+loading an audio just before playing may result in performance hick-ups.
+
+2) Split your audio into several Audio Controllers:
+
+In the main Audio Controller specify all audio that is used throughout your entire application, such as a "mouse click", 
+"error sound", etc. Keep it as small as possible and load it right in your app loading scene. Enable the "persist scene loading"
+option so the Audio Controller remains in all your scenes.
+
+If you have audio that is specific to certain levels/scenes of your game then create an Audio Controllers with the
+level specific stuff for each of your levels. Mark this Audio Controller as "additional" in the Unity inspector and 
+do NOT set the "persist scene loading" so all audio gets unloaded. You can use "Unload audio" to force Unity to unload 
+all audios when the respective controller gets destroyed.
+
+3) If you require even more control create asset bundles for each of your Audio Controllers and load / unload them dynamically 
+by script.
 
 
-Building for Flash:
--------------------
-Unfortunately Unity has stopped supporting Flash, ultimately we can not support Flash builds 
-anymore for Unity v4. So exporting to Flash only works in Unity v3.5.7. 
-Also the following features are not available when building for Flash:
 
-- (random) pitch changes
+Usage with Java Script:
+-----------------------
+If you want to access the AudioToolkit from Java Scripts please move alle none-editor AudioToolkit script files
+to a subfolder of either the Assets/Plugins or the Assets/Standard Assets directory. The "AudioController/Editor" 
+subdirectory must not be moved to Plugins/Standard Assets directory. 
+See http://docs.unity3d.com/Documentation/ScriptReference/index.Script_compilation_28Advanced29.html for
+more infos about script compilation order.
 
+Please note that Java script does not support default parameter values like C# (since Unity 3.1). There are 
+overloads for the most common methods, but for all other cases you have to specify all parameters in Java Script.
+
+e.g.: 
+AudioController.Play( "MySFX", 0.5 ); // Play with volume=0.5, delay=0, startTime =0, possible only in C#
+AudioController.Play( "MySFX", 0.5, 0, 0 ); // in Java Script you have to specify all default paramters
 
 
 Changelog:
@@ -322,3 +333,29 @@ v8.0
 - drag-drag audio clips to create audio subitems
 - Audio item copy/paste
 - ambience sound methods
+
+v8.1
+- workaround for Unity5 Unload Audio 
+- bugfix: additional AudioController can now persist scene loading
+- bugfix: playing audio with fade-in does not produce clicks anymore 
+
+v8.2
+- new feature: Audio Category fade in/out
+- bugfix: correct audio system time delta even if Time.maxDeltaTime was exceeded
+- bugfix: music playlist not working when playing ambience sound
+
+v8.3
+- inspector: check for duplicate audio itemID
+- "Unload Audio On Destroy" working again even if 'Preload Audio Data' is enabled in 
+  the import settings
+- fixed serialisation / undo issues
+- introduced AudioChannelType (for music, ambience)
+- new AudioController property: musicParent / ambienceParent
+
+v8.4
+- fixed Unity 2017 compatibility issues
+
+v8.5
+- fixed initialisation order issue when the main AudioController gets instantiated after 
+  additional controllers 
+- improved pooling system (performance, etc.)
