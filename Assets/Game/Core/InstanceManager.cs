@@ -1,6 +1,6 @@
 // InstanceManager.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 25/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
@@ -120,28 +120,19 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	}
 
 	public static void APPLY_MODIFIERS() {
-		m_mods["double_coins"].Apply();
-		m_mods["invasion_dragon"].Apply();
-		m_mods["gatcha_rarity"].Apply();
-		m_mods["midas"].Apply();
-		m_mods["double_pet_effect"].Apply();
-
+		// m_mods["double_mission"].Apply();
+		// m_mods["invasion_dragon"].Apply();
 	}
 	public static void REMOVE_MODIFIERS() {
-		m_mods["double_coins"].Remove();
-		m_mods["invasion_dragon"].Remove();
-		m_mods["gatcha_rarity"].Remove();
-		m_mods["midas"].Remove();
-		m_mods["double_pet_effect"].Remove();
-
+		// m_mods["double_mission"].Remove();
+		// m_mods["invasion_dragon"].Remove();
 	}
 
 	public static void APPLY_DRAGON_MODIFIERS() {
-		//m_dMods["bbq"].Apply();
+		// m_dMods["bbq"].Apply();
 	}
 	public static void REMOVE_DRAGON_MODIFIERS() {
-		//m_dMods["bbq"].Remove();
+		// m_dMods["bbq"].Remove();
 	}
 	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
-

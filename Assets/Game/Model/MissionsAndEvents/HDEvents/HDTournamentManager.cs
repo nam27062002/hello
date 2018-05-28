@@ -25,7 +25,6 @@ public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	public HDTournamentData m_data = new HDTournamentData();
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -43,11 +42,10 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	}
 
-
-	public override HDLiveEventData GetEventData()
-	{
-		return m_data;
-	}
+	public override void BuildData()
+    {
+		m_data = new HDTournamentData();
+    }
 
     public void RequestLeaderboard()
     {
@@ -116,4 +114,5 @@ public class HDTournamentManager : HDLiveEventManager {
             }
         }
     }
+ 
 }

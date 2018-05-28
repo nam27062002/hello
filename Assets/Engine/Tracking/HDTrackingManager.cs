@@ -59,6 +59,7 @@ public class HDTrackingManager
         CHEAT,                          // Use this if the currency comes from a cheat so it won't be tracked
         REWARD_CHEST,
         REWARD_GLOBAL_EVENT,
+		REWARD_LIVE_EVENT,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad

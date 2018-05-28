@@ -34,6 +34,7 @@ public abstract class Modifier  {
 
 
 	protected DefinitionNode m_def;
+	public DefinitionNode def { get { return m_def; } }
 
 
 	//------------------------------------------------------------------------//

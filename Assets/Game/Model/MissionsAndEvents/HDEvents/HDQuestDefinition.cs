@@ -43,8 +43,8 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 		public override void ParseGoal (JSONNode _data)
 		{
 			base.ParseGoal (_data);
-			if ( _data.ContainsKey("area") ){
-				m_bonusDragon = _data["area"];
+			if ( _data.ContainsKey("bonusDragon") ){
+				m_bonusDragon = _data["bonusDragon"];
 			}
 
 			if ( _data.ContainsKey("amount") ){
@@ -55,7 +55,7 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 
 	public QuestGoal m_goal;
 
-	public List<GlobalEvent.RewardSlot> m_rewards = new List<GlobalEvent.RewardSlot>();	// <- te remove from GlobalEvents
+	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();	// <- te remove from GlobalEvents
 		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -82,7 +82,7 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				m_rewards.Add( new GlobalEvent.RewardSlot( arr[i]) );
+				m_rewards.Add( new HDLiveEventReward( arr[i], m_name) );
 			}
 		}
 	}

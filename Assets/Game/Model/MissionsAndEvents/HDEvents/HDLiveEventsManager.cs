@@ -69,11 +69,13 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         m_managers.Add(m_quest);
 
         m_types.Add("passive");
-        m_managers.Add(m_quest);
+        m_managers.Add(m_passive);
 
 
 		// Load Cache?
 		LoadEventsFromCache();
+
+		// m_passive.Activate();
 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 
@@ -113,7 +115,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         int max = m_types.Count;
         for (int i = 0; i < max; i++)
         {
-            if (m_managers[i].IsActive())
+            if (m_managers[i].IsAvailable())
             {
                 CacheServerManager.SharedInstance.SetVariable( m_types[i] , m_managers[i].ToJson().ToString());
             }
@@ -191,5 +193,16 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 			ret = true;
 		}
 		return ret;
+	}
+
+
+	public void ApplyDragonMods()
+	{
+		for (int i = 0; i < m_managers.Count; i++) {
+			if ( m_managers[i].m_isActive )
+			{
+				m_managers[i].ApplyDragonMods();
+			}
+		}
 	}
 }

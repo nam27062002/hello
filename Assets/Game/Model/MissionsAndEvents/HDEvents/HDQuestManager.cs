@@ -19,13 +19,24 @@ using System;
 [Serializable]
 public class HDQuestManager : HDLiveEventManager{
 	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
+	// CASSES															  //
 	//------------------------------------------------------------------------//
-	
+
+	public class QuestObjective : TrackingObjectiveBase
+	{
+		public QuestObjective(){
+		}
+
+		
+		~QuestObjective() {
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-    public HDQuestData m_data = new HDQuestData();
+	QuestObjective m_objective = new QuestObjective();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -33,22 +44,51 @@ public class HDQuestManager : HDLiveEventManager{
 	/// Default constructor.
 	/// </summary>
 	public HDQuestManager() {
-
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~HDQuestManager() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
-    public override HDLiveEventData GetEventData()
+	public override void BuildData()
     {
-        return m_data;
+		m_data = new HDQuestData();
     }
 
+	public override void ParseDefinition(SimpleJSON.JSONNode _data)
+    {
+    	base.ParseDefinition( _data );
+    	m_objective.Clear();
+    	HDQuestDefinition def = m_data.definition as HDQuestDefinition;
+		m_objective.Init(
+			TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params),		// Create the tracker based on goal type
+			def.m_goal.m_amount,
+			def.m_goal.m_typeDef,
+			def.m_goal.m_desc
+		);
+    }
 
+    public void OnGameStarted(){
+    	if ( m_objective != null && m_objective.tracker != null)
+    	{
+    		m_objective.tracker.SetValue(0, false);
+
+	    	// Check if using bonus dragon?
+
+	    	// Check if we are in quest mode
+    	}
+    }
+    public void OnGameEnded(){
+    	// Save tracker value?
+    }
 
     public void RequestProgress()
     {
@@ -118,4 +158,6 @@ public class HDQuestManager : HDLiveEventManager{
         }
     }
 
+
+	
 }

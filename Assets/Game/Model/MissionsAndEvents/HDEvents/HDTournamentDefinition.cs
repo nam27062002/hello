@@ -53,33 +53,117 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		{
 			m_dragon = "";
 			m_skin = "";
-			m_pets.Clear();
+			if ( m_pets != null )
+				m_pets.Clear();
 		}
 	}
 
-	public TournamentBuild m_build;
+	public TournamentBuild m_build = new TournamentBuild();
 
 	public class TournamentGoal : GoalCommon
 	{
+		public enum TournamentMode{
+			NORMAL,
+			TIME_ATTACK,
+			TIME_LIMIT,
+			RACE,
+			BOSS
+		}
+		public TournamentMode m_mode;
+		public long m_seconds;
+		public long m_targetAmount;
+		public int m_loops;
 		public string m_area = "";
+
 		public override void Clear ()
 		{
 			base.Clear ();
+			m_mode = TournamentMode.NORMAL;
+			m_seconds = -1;
+			m_targetAmount = -1;
+			m_loops = -1;
 			m_area = "";
 		}
 
 		public override void ParseGoal (JSONNode _data)
 		{
 			base.ParseGoal (_data);
+
+			if ( _data.ContainsKey("mode") )
+			{
+				string modeStr = _data["mode"];
+				switch( modeStr )
+				{
+					case "time_attack":{
+						m_mode = TournamentMode.TIME_ATTACK;
+						if ( _data.ContainsKey("target_amount") )
+							m_targetAmount = _data["target_amount"].AsLong;
+					}break;
+					case "time_limit":{
+						m_mode = TournamentMode.TIME_LIMIT;
+						if ( _data.ContainsKey("seconds") )
+							m_seconds = _data["seconds"].AsLong;
+					}break;
+					case "race":{
+						m_mode = TournamentMode.RACE;
+						if ( _data.ContainsKey("loops") )
+							m_loops = _data["loops"].AsInt;
+					}break;
+					case "boss":{
+						m_mode = TournamentMode.BOSS;
+						// boss config?
+					}break;
+					case "normal":
+					default:
+					{
+						m_mode = TournamentMode.NORMAL;
+					}break;
+				}
+			}
+
 			if ( _data.ContainsKey("area") ){
 				m_area = _data["area"];
 			}
 		}
+
+		public override SimpleJSON.JSONClass ToJson ()
+		{
+			SimpleJSON.JSONClass ret = base.ToJson();
+			switch(m_mode)
+			{
+				case TournamentMode.TIME_ATTACK:
+				{
+					ret.Add("mode", "time_attack");
+					ret.Add("target_amount", m_targetAmount);
+
+				}break;
+				case TournamentMode.TIME_LIMIT:
+				{
+					ret.Add("mode", "time_limit");
+					ret.Add("seconds", m_seconds);
+				}break;
+				case TournamentMode.RACE:
+				{
+					ret.Add("mode", "race");
+					ret.Add("loops", m_loops);
+				}break;
+				case TournamentMode.BOSS:
+				{
+					ret.Add("mode", "boss");
+				}break;
+				default:
+				{
+					ret.Add("mode", "normal");
+				}break;
+			}
+			ret.Add("area", m_area);
+			return ret;
+		}
 	}
 
-	public TournamentGoal m_goal;
+	public TournamentGoal m_goal = new TournamentGoal();
 
-	public List<GlobalEvent.RewardSlot> m_rewards = new List<GlobalEvent.RewardSlot>();	// <- te remove from GlobalEvents
+	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -88,7 +172,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentDefinition() {
-
+		m_build.m_pets = new List<string>();
 	}
 
 	/// <summary>
@@ -126,8 +210,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				m_entrance.m_amount = _entrance["amount"].AsInt;
 			}
 
-			if ( _entrance.ContainsKey("daily_free") ){
-				m_entrance.m_dailyFree = _entrance["daily_free"].AsInt;
+			if ( _entrance.ContainsKey("dailyFreeTimer") ){
+				m_entrance.m_dailyFree = _entrance["dailyFreeTimer"].AsInt;
 			}
 		}
 
@@ -161,7 +245,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				m_rewards.Add( new GlobalEvent.RewardSlot( arr[i]) );
+				m_rewards.Add( new HDLiveEventReward( arr[i], m_name) );
 			}
 		}
 	}
@@ -175,7 +259,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		SimpleJSON.JSONClass _entrance = new JSONClass();
 		_entrance.Add("type", m_entrance.m_type);
 		_entrance.Add("amount", m_entrance.m_amount);
-		_entrance.Add("daily_free", m_entrance.m_dailyFree);
+		_entrance.Add("dailyFreeTimer", m_entrance.m_dailyFree);
 		ret.Add("entrance", _entrance);
 
 		// Build

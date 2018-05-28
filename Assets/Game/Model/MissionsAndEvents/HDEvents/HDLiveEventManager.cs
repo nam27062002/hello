@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -29,6 +30,13 @@ public class HDLiveEventManager
 
     public string m_type = "";
     public bool m_shouldRequestDefinition = false;
+    public bool m_isActive = false;
+
+	protected HDLiveEventData m_data;
+	public HDLiveEventData data
+	{	
+		get { return m_data; }
+	}
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -38,7 +46,7 @@ public class HDLiveEventManager
     /// </summary>
     public HDLiveEventManager()
     {
-
+    	BuildData();
     }
 
     /// <summary>
@@ -49,7 +57,12 @@ public class HDLiveEventManager
     	
     }
 
-    public virtual bool IsActive()
+    public virtual void BuildData()
+    {
+    	m_data = new HDLiveEventData();
+    }
+
+    public virtual bool IsAvailable()
     {
         bool ret = false;
         HDLiveEventData data = GetEventData();
@@ -66,7 +79,6 @@ public class HDLiveEventManager
         HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
-            
             ret = data.definition.m_eventId == data.m_eventId;
         }
         return ret;
@@ -95,7 +107,7 @@ public class HDLiveEventManager
 
     public virtual HDLiveEventData GetEventData()
     {
-        return null;
+        return m_data;
     }
 
     public virtual void OnNewStateInfo(SimpleJSON.JSONNode _data)
@@ -155,10 +167,55 @@ public class HDLiveEventManager
             HDLiveEventData data = GetEventData();
             if (data != null && data.m_eventId == eventId)
             {
+            	bool wasActive = m_isActive;
+            	if ( m_isActive ){
+            		Deactivate();
+            	}
                 ParseDefinition(responseJson);
+                if (wasActive){
+                	Activate();
+                }
             }
         }
     }
 
+
+    public void Activate()
+    {
+    	if (!m_isActive)
+    	{
+    		m_isActive = true;
+    		HDLiveEventData data = GetEventData();
+    		if ( data != null && data.definition != null )
+    		{
+	    		List<Modifier> mods = data.definition.m_otherMods;
+				for (int i = 0; i < mods.Count; i++) {
+	    			mods[i].Apply();
+				}
+			}
+    	}
+    }
+
+    public void Deactivate()
+    {
+		if (m_isActive)
+    	{
+    		m_isActive = false;
+    		HDLiveEventData data = GetEventData();
+    		List<Modifier> mods = data.definition.m_otherMods;
+			for (int i = 0; i < mods.Count; i++) {
+    			mods[i].Remove();
+			}
+    	}
+    }
+
+    public void ApplyDragonMods()
+    {
+		HDLiveEventData data = GetEventData();
+		List<Modifier> mods = data.definition.m_dragonMods;
+		for (int i = 0; i < mods.Count; i++) {
+    		mods[ i ].Apply();
+		}
+    }
 
 }
