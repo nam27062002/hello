@@ -37,6 +37,10 @@ public class HDLiveEventData {
 	};
 	public State m_state = State.NONE;
 
+	public DateTime m_teasingTimestamp = new DateTime();
+	public DateTime m_startTimestamp = new DateTime();
+	public DateTime m_endTimestamp = new DateTime();
+
 	protected HDLiveEventDefinition m_definition;
 	public HDLiveEventDefinition definition
 	{	
@@ -73,6 +77,9 @@ public class HDLiveEventData {
 		m_eventId = -1;
 		m_name = "";
 		m_state = State.NONE;
+		m_teasingTimestamp = new DateTime(1970, 1, 1);
+		m_startTimestamp = new DateTime(1970, 1, 1);
+		m_endTimestamp = new DateTime(1970, 1, 1);
 		m_definition.Clean();
 	}
 
@@ -80,6 +87,32 @@ public class HDLiveEventData {
 	{
 		SimpleJSON.JSONClass ret = new SimpleJSON.JSONClass();
 		ret.Add("code", m_eventId);
+
+		string stateStr = "none";
+		switch( m_state )
+		{
+			case State.AVAILABLE:
+			{
+				stateStr = "not_joined";
+			}break;
+			case State.FINALIZED:
+			{
+				stateStr = "finalized";
+			}break;
+			case State.REWARD_AVAILABLE:
+			{
+				stateStr = "penging_rewards";
+			}break;
+			case State.RUNNING:
+			{
+				stateStr = "joined";
+			}break;
+		}
+		ret.Add("state", stateStr);
+
+		ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
+		ret.Add("startTimestamp", TimeUtils.DateToTimestamp( m_startTimestamp ));
+		ret.Add("endTimestamp", TimeUtils.DateToTimestamp( m_endTimestamp ));
 
 		if ( m_definition.m_eventId == m_eventId )
 		{
@@ -91,9 +124,45 @@ public class HDLiveEventData {
 
 	public virtual void ParseState( SimpleJSON.JSONNode _data )
 	{
+		Clean();
+
 		m_eventId = _data["code"];
         if ( m_definition.m_eventId != m_eventId )
 			m_definition.Clean();
+
+		m_state = State.NONE;
+		if ( _data.ContainsKey("state") )
+		{
+			string stateStr = _data["state"];
+			switch( stateStr )
+			{
+				case "not_joined":
+				{
+					m_state = State.AVAILABLE;
+				}break;
+				case "finalized":
+				{
+					m_state = State.FINALIZED;
+				}break;
+				case "penging_rewards":
+				{
+					m_state = State.REWARD_AVAILABLE;
+				}break;
+				case "joined":
+				{
+					m_state = State.RUNNING;
+				}break;
+			}
+		}
+
+		if ( _data.ContainsKey("teaserTimestamp") )
+			m_teasingTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
+
+		if ( _data.ContainsKey("startTimestamp") )
+			m_startTimestamp = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
+
+		if ( _data.ContainsKey("endTimestamp") )
+			m_endTimestamp = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 
 		if ( _data.ContainsKey("definition") )
 		{
