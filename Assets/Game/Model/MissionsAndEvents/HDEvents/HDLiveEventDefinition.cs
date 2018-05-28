@@ -85,7 +85,21 @@ public class HDLiveEventDefinition {
 					Debug.Log("No Params");
 				}
 			}
+		}
 
+		public virtual SimpleJSON.JSONClass ToJson ()
+		{
+			SimpleJSON.JSONClass ret = new SimpleJSON.JSONClass();
+			ret.Add("tidDesc", m_desc );
+			ret.Add("icon", m_icon );
+			ret.Add("type", m_type );
+			JSONArray arr =  new JSONArray();
+			for (int i = 0; i < m_params.Count; i++) {
+				arr.Add( m_params[i] );
+			}
+			ret.Add("params", arr);
+
+			return ret;
 		}
 	}
 	// Build?

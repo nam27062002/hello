@@ -62,19 +62,102 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public class TournamentGoal : GoalCommon
 	{
+		public enum TournamentMode{
+			NORMAL,
+			TIME_ATTACK,
+			TIME_LIMIT,
+			RACE,
+			BOSS
+		}
+		public TournamentMode m_mode;
+		public long m_seconds;
+		public long m_targetAmount;
+		public int m_loops;
 		public string m_area = "";
+
 		public override void Clear ()
 		{
 			base.Clear ();
+			m_mode = TournamentMode.NORMAL;
+			m_seconds = -1;
+			m_targetAmount = -1;
+			m_loops = -1;
 			m_area = "";
 		}
 
 		public override void ParseGoal (JSONNode _data)
 		{
 			base.ParseGoal (_data);
+
+			if ( _data.ContainsKey("mode") )
+			{
+				string modeStr = _data["mode"];
+				switch( modeStr )
+				{
+					case "time_attack":{
+						m_mode = TournamentMode.TIME_ATTACK;
+						if ( _data.ContainsKey("target_amount") )
+							m_targetAmount = _data["target_amount"].AsLong;
+					}break;
+					case "time_limit":{
+						m_mode = TournamentMode.TIME_LIMIT;
+						if ( _data.ContainsKey("seconds") )
+							m_seconds = _data["seconds"].AsLong;
+					}break;
+					case "race":{
+						m_mode = TournamentMode.RACE;
+						if ( _data.ContainsKey("loops") )
+							m_loops = _data["loops"].AsInt;
+					}break;
+					case "boss":{
+						m_mode = TournamentMode.BOSS;
+						// boss config?
+					}break;
+					case "normal":
+					default:
+					{
+						m_mode = TournamentMode.NORMAL;
+					}break;
+				}
+			}
+
 			if ( _data.ContainsKey("area") ){
 				m_area = _data["area"];
 			}
+		}
+
+		public override SimpleJSON.JSONClass ToJson ()
+		{
+			SimpleJSON.JSONClass ret = base.ToJson();
+			switch(m_mode)
+			{
+				case TournamentMode.TIME_ATTACK:
+				{
+					ret.Add("mode", "time_attack");
+					ret.Add("target_amount", m_targetAmount);
+
+				}break;
+				case TournamentMode.TIME_LIMIT:
+				{
+					ret.Add("mode", "time_limit");
+					ret.Add("seconds", m_seconds);
+				}break;
+				case TournamentMode.RACE:
+				{
+					ret.Add("mode", "race");
+					ret.Add("loops", m_loops);
+				}break;
+				case TournamentMode.BOSS:
+				{
+					ret.Add("mode", "boss");
+				}break;
+				default:
+				{
+					ret.Add("mode", "normal");
+				}break;
+			}
+			ret.Add("area", m_area);
+			return ret;
 		}
 	}
 
