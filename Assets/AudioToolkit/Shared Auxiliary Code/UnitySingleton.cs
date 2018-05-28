@@ -24,51 +24,33 @@ using UnityEngine;
 #pragma warning disable 1591 // undocumented XML code warning
 
 public class UnitySingleton<T>
-    //where T : SingletonMonoBehaviour<T>
     where T : MonoBehaviour
 {
-
-#if UNITY_FLASH
-    static UnityEngine.Object _instance;
-#else
     static T _instance;
-    
-#endif
-
-    static internal Type _myType = typeof( T ); // not working for Flash builds. Requires SetSingletonType() for correct Flash support
 
     static internal GameObject _autoCreatePrefab;
     static private  int _GlobalInstanceCount = 0;
     static private bool _awakeSingletonCalled = false;
 
 
-    static public T GetSingleton( bool throwErrorIfNotFound, bool autoCreate )
+    static public T GetSingleton( bool throwErrorIfNotFound, bool autoCreate, bool searchInObjectHierarchy = true )
     {
         if ( !_instance ) // Unity operator to check if object was destroyed, 
         {
-
-            UnityEngine.Object component = null;
-
-#if UNITY_FLASH
-            if( _myType == null )
+            T component = null;
+            if ( searchInObjectHierarchy )
             {
-                Debug.LogError( "Flash builds require SetSingletonType() to be called!" );
-                return null;
-            }
-#endif 
-            var components = GameObject.FindObjectsOfType( _myType );
-
-            foreach ( var c in components )
-            {
-                //var cpt = ( (Component)c ).GetComponent( _myType );
-                var singletonCpt = (ISingletonMonoBehaviour)( c );
-                if ( singletonCpt.isSingletonObject )
+                var components = GameObject.FindObjectsOfType<T>();
+                for ( int i = 0; i < components.Length; i++ )
                 {
-                    component = (UnityEngine.Object)singletonCpt;
-                    break;
+                    var sb = components[ i ] as ISingletonMonoBehaviour;
+                    if ( sb != null && sb.isSingletonObject )
+                    {
+                        component = components[ i ];
+                        break;
+                    }
                 }
             }
-
             if ( !component )
             {
                 if ( autoCreate && _autoCreatePrefab != null )
@@ -76,11 +58,11 @@ public class UnitySingleton<T>
                     GameObject go = (GameObject)GameObject.Instantiate( _autoCreatePrefab );
                     go.name = _autoCreatePrefab.name; // removes "(clone)"
 
-                    var newComponent = GameObject.FindObjectOfType( _myType );
+                    var newComponent = GameObject.FindObjectOfType<T>();
 
                     if ( !newComponent )
                     {
-                        Debug.LogError( "Auto created object does not have component " + _myType.Name );
+                        Debug.LogError( "Auto created object does not have component " + typeof( T ).Name );
                         return null;
                     }
                 }
@@ -88,7 +70,7 @@ public class UnitySingleton<T>
                 {
                     if ( throwErrorIfNotFound )
                     {
-                        Debug.LogError( "No singleton component " + _myType.Name + " found in the scene." );
+                        Debug.LogError( "No singleton component " + typeof( T ).Name + " found in the scene." );
                     }
                     return null;
                 }
@@ -98,33 +80,27 @@ public class UnitySingleton<T>
                 _AwakeSingleton( component as T );
             }
 
-#if UNITY_FLASH
             _instance = component;
-#else
-            _instance = (T) component;
-#endif
         }
 
-        return (T)_instance;
+        return _instance;
     }
 
-    private UnitySingleton( )
-    { }
+    private UnitySingleton()
+    {
+    }
 
-#if UNITY_FLASH
-    static internal void _Awake( UnityEngine.Object instance )
-#else
     static internal void _Awake( T instance )
-#endif
     {
         _GlobalInstanceCount++;
         if ( _GlobalInstanceCount > 1 )
         {
             Debug.LogError( "More than one instance of SingletonMonoBehaviour " + typeof( T ).Name );
-        } else 
+        }
+        else
             _instance = instance;
 
-        _AwakeSingleton( instance as T);
+        _AwakeSingleton( instance as T );
     }
 
     static internal void _Destroy()
@@ -220,7 +196,7 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour, ISingletonMonoB
     /// <returns>
     /// A reference to the instance if it exists, otherwise <c>null</c>
     /// </returns>
-    static public T DoesInstanceExist( )
+    static public T DoesInstanceExist()
     {
         return UnitySingleton<T>.GetSingleton( false, false );
     }
@@ -249,25 +225,11 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour, ISingletonMonoB
         UnitySingleton<T>._autoCreatePrefab = autoCreatePrefab;
     }
 
-    /// <summary>
-    /// Only required for Flash builds. If this function is not called by the class deriving from 
-    /// SingletonMonoBehaviour in the constructor the singleton can not be found by GetSingleton(...)
-    /// </summary>
-    /// <param name="type"></param>
-    static public void SetSingletonType( Type type )
-    {
-        UnitySingleton<T>._myType = type;
-    }
-
     protected virtual void Awake() // should be called in derived class
     {
         if ( isSingletonObject )
         {
-#if UNITY_FLASH
-            UnitySingleton<T>._Awake( this );
-#else
             UnitySingleton<T>._Awake( this as T );
-#endif
             //Debug.Log( "Awake: " + this.GetType().Name );
         }
     }
