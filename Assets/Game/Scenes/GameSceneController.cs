@@ -174,7 +174,16 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 
 		// Load the dragon
-		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+		{
+			string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
+			DragonManager.LoadDragon(dragon);
+		}
+		else
+		{
+			DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		}
+
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;

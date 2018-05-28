@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -113,6 +114,46 @@ public class HDTournamentManager : HDLiveEventManager {
 
             }
         }
+    }
+
+    public string GetToUseDragon()
+    {
+		string ret;
+    	HDTournamentData data = m_data as HDTournamentData;
+    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+    	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) )
+			ret = def.m_build.m_dragon;
+		else
+			ret = UsersManager.currentUser.currentDragon;
+		return ret;
+    }
+
+    public string GetToUseSkin()
+    {
+		string ret;
+    	HDTournamentData data = m_data as HDTournamentData;
+    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+    	if ( !string.IsNullOrEmpty( def.m_build.m_skin) )
+			ret = def.m_build.m_skin;
+		else
+			ret = UsersManager.currentUser.GetEquipedDisguise(GetToUseDragon());
+		return ret;
+    }
+
+    public List<string> GetToUsePets()
+    {
+    	List<string> ret;
+		HDTournamentData data = m_data as HDTournamentData;
+    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+    	if ( def.m_build.m_pets.Count > 0 )
+    	{
+			ret = def.m_build.m_pets;
+		}
+		else
+		{
+			ret = UsersManager.currentUser.GetEquipedPets(GetToUseDragon());
+		}
+		return ret;
     }
  
 }

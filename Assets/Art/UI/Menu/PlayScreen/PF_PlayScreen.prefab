@@ -1326,11 +1326,11 @@ GameObject:
   - component: {fileID: 224675842484445774}
   - component: {fileID: 222215746087809138}
   - component: {fileID: 114511696195595812}
-  - component: {fileID: 114625860298678714}
   - component: {fileID: 114582327782401958}
   - component: {fileID: 95509072414182788}
   - component: {fileID: 114484210000826768}
   - component: {fileID: 114801932526777906}
+  - component: {fileID: 114356822117183512}
   m_Layer: 5
   m_Name: BtnTournament
   m_TagString: Untagged
@@ -2059,6 +2059,18 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+--- !u!114 &114356822117183512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1797096673376098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 167ce1fcc0888475d93cece2ff73046c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetScreen: 12
 --- !u!114 &114364450240761134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2739,8 +2751,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114625860298678714}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 114356822117183512}
+        m_MethodName: OnTournamentButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2763,18 +2775,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114625860298678714
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1797096673376098}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 12
 --- !u!114 &114629580221896786
 MonoBehaviour:
   m_ObjectHideFlags: 1
