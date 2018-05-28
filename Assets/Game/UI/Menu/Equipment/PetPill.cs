@@ -55,6 +55,8 @@ public class PetPill : MonoBehaviour {
 	[SerializeField] private GameObject m_seasonalIconRoot = null;
 	[Space]
 	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)Metagame.Reward.Rarity.COUNT];
+	[SerializeField] private Gradient4[] m_rarityFrameColors = new Gradient4[(int)Metagame.Reward.Rarity.COUNT];
+	[SerializeField] private UIGradient m_rarityFrameGradient = null;
 	[Space]
 	[SerializeField] private UIColorFX m_frameColorFX = null;
 	public UIColorFX frameColorFX {
@@ -63,7 +65,6 @@ public class PetPill : MonoBehaviour {
 
 	[SerializeField] private PetShadowEffect m_shadowEffect;
 	[SerializeField] private UIColorFX m_colorFX;
-
 
 	// Internal
 	private DefinitionNode m_def = null;
@@ -238,12 +239,19 @@ public class PetPill : MonoBehaviour {
 			}
 		}
 
-		// Rarity icon
+		// Rarity effects
 		int rarityInt = (int)rarity;
+
+		// Rarity icon
 		for(int i = 0; i < m_rarityDecorations.Length; i++) {
 			if(m_rarityDecorations[i] != null) {
 				m_rarityDecorations[i].SetActive(i == rarityInt);
 			}
+		}
+
+		// Rarity gradient
+		if(m_rarityFrameGradient != null) {
+			m_rarityFrameGradient.gradient = m_rarityFrameColors[rarityInt];
 		}
 
 		// Seasonal icon
@@ -259,6 +267,7 @@ public class PetPill : MonoBehaviour {
 			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
 		}
 		m_isNotInGatcha = _petDef.GetAsBool("notInGatcha", false);
+
 		// Refresh contextual elements
 		Refresh();
 	}
