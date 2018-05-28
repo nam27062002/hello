@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,7 +28,7 @@ public static class SystemInfo {
         deviceName = UnityEngine.SystemInfo.deviceName;
         supportsImageEffects = UnityEngine.SystemInfo.supportsImageEffects;
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass jv = new AndroidJavaClass("android.app.ActivityManager.MemoryInfo");
         if (jv != null)
         {
@@ -139,5 +139,3 @@ public static class SystemInfo {
         private set;
     }
 }
-
-*/
