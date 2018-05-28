@@ -27,12 +27,13 @@ public static class SystemInfo {
         processorType = UnityEngine.SystemInfo.processorType;
         deviceName = UnityEngine.SystemInfo.deviceName;
         supportsImageEffects = UnityEngine.SystemInfo.supportsImageEffects;
-/*
 #if UNITY_ANDROID && !UNITY_EDITOR
 
-		AndroidJavaClass jv = new AndroidJavaClass("android.app.ActivityManager.MemoryInfo");
+		AndroidJavaObject jv = new AndroidJavaObject("android.app.ActivityManager.MemoryInfo");
         if (jv != null)
         {
+            Debug.Log("android.app.ActivityManager.MemoryInfo ---> totalMem: " + jv.GetStatic<int>("totalMem"));
+            Debug.Log("android.app.ActivityManager.MemoryInfo ---> availMem: " + jv.GetStatic<int>("availMem"));
             systemMemorySize = jv.GetStatic<int>("totalMem");
 
 		} else {	
@@ -41,7 +42,6 @@ public static class SystemInfo {
         }
 
 #endif
-*/
     }
 
 
