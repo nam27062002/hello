@@ -25,6 +25,9 @@ public class HUDTime : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private TextMeshProUGUI m_valueTxt;
 	private long m_lastSecondsPrinted;
+
+	private bool m_countdown = false;
+	private long m_timelimit = 0;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -37,6 +40,17 @@ public class HUDTime : MonoBehaviour {
 		m_valueTxt = GetComponent<TextMeshProUGUI>();
 		m_valueTxt.text = "00:00";
 		m_lastSecondsPrinted = -1;
+		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		{
+			HDTournamentData data = HDLiveEventsManager.instance.m_tournament.GetEventData() as HDTournamentData;
+			HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+			if ( def.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT )
+			{
+				m_countdown = true;
+				m_timelimit = def.m_goal.m_seconds;
+			}
+		}
+
 	}
 
 	/// <summary>
@@ -62,6 +76,11 @@ public class HUDTime : MonoBehaviour {
 	private void UpdateTime() {
 
 		long elapsedSeconds = (long)InstanceManager.gameSceneControllerBase.elapsedSeconds;
+		if ( m_countdown )
+		{
+			elapsedSeconds = m_timelimit - elapsedSeconds;
+		}
+
 		if(elapsedSeconds != m_lastSecondsPrinted) {		
 			// Do it!
 			// Both for game and level editor

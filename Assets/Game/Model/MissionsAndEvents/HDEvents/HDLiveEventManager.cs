@@ -68,6 +68,7 @@ public class HDLiveEventManager
         HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
+        	// if ( GameServerManager.SharedInstance.GetEstimatedServerTime() >  )
             ret = true;
         }
         return ret;

@@ -20,12 +20,13 @@ using System.Collections.Generic;
 [Serializable]
 public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
+	// CLASSES   															  //
 	//------------------------------------------------------------------------//
-	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	public TrackerBase m_tracker = new TrackerBase();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -33,20 +34,33 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentManager() {
-
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~HDTournamentManager() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	public override void BuildData()
     {
 		m_data = new HDTournamentData();
     }
+
+	public override void ParseDefinition(SimpleJSON.JSONNode _data)
+    {
+    	base.ParseDefinition( _data );
+		m_tracker.Clear();
+		HDTournamentDefinition def = m_data.definition as HDTournamentDefinition;
+		m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
+    }
+
 
     public void RequestLeaderboard()
     {
@@ -114,6 +128,18 @@ public class HDTournamentManager : HDLiveEventManager {
 
             }
         }
+    }
+
+	public void OnGameStarted(){
+		if ( m_tracker != null)
+    	{
+			m_tracker.SetValue(0, false);
+			// Check if we are in tournament mode
+			m_tracker.enabled = m_isActive;
+    	}
+    }
+    public void OnGameEnded(){
+    	// Save tracker value?
     }
 
     public string GetToUseDragon()

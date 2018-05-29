@@ -477,9 +477,15 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
         // XP
-        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
-		instance.m_xp += _reward.xp;
-
+        if ( SceneController.s_mode != SceneController.Mode.TOURNAMENT )
+        {
+	        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
+			instance.m_xp += _reward.xp;
+		}
+		else
+		{
+			_reward.xp = 0;
+		}
 		// Global notification (i.e. to show feedback)
 		Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, _reward, _entity);
 	}
@@ -755,4 +761,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
             m_enterSpaceAmount++;
         }
     }    
+
+    public static int GetReviveCost()
+    {
+    	return freeReviveCount + paidReviveCount + 1;
+    }
 }
