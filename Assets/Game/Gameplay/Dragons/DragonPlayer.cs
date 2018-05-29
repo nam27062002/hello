@@ -207,9 +207,7 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
-		//TONI
 		m_energyMax = m_data.baseEnergy;
-		//m_energyMax = m_data.maxEnergyBase;
 
 		m_alcoholMax = m_data.def.GetAsFloat("maxAlcohol");
 		m_alcoholDrain = m_data.def.GetAsFloat("alcoholDrain", 1f);
@@ -724,9 +722,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void SetBoostBonus( float value )
 	{
-		//TONI
 		m_energyBase = m_data.baseEnergy;
-		//m_energyBase = m_data.maxEnergyBase;
 		m_energyBonus = value;
 		m_energyMax = m_energyBase + ( m_energyBonus / 100.0f * m_energyBase );
 		m_energy = m_energyMax;

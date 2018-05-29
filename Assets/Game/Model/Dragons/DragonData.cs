@@ -79,7 +79,7 @@ public class DragonData : IUISelectorItem {
 	private Range m_energyBaseRange = new Range();
 	public float baseEnergy { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
 	//private float m_baseEnergy = 0f;
-	//public float maxEnergyBase { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
+	//public float baseEnergy { get { return m_baseEnergy; }}
 
 	private Range m_scaleRange = new Range(1f, 1f);
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
@@ -150,8 +150,9 @@ public class DragonData : IUISelectorItem {
 		//TONI
 		m_forceRange = m_def.GetAsRange("force");
 		m_eatSpeedFactorRange = m_def.GetAsRange ("eatSpeedFactor");
-		//m_baseEnergy = m_def.GetAsFloat("energyBase");
 		m_energyBaseRange = m_def.GetAsRange("energyBase");
+		//m_baseEnergy = m_def.GetAsFloat("energyBase");
+
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Items
