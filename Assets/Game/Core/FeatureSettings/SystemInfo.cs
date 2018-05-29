@@ -14,7 +14,7 @@ public static class SystemInfo {
         operatingSystem = UnityEngine.SystemInfo.operatingSystem;
         deviceModel = UnityEngine.SystemInfo.deviceModel;
         deviceUniqueIdentifier = UnityEngine.SystemInfo.deviceUniqueIdentifier;
-        systemMemorySize = UnityEngine.SystemInfo.systemMemorySize;
+        freeMemorySize = maxMemorySize = totalMemorySize = systemMemorySize = UnityEngine.SystemInfo.systemMemorySize;
         graphicsMemorySize = UnityEngine.SystemInfo.graphicsMemorySize;
         processorFrequency = UnityEngine.SystemInfo.processorFrequency;
         processorCount = UnityEngine.SystemInfo.processorCount;
@@ -38,8 +38,10 @@ public static class SystemInfo {
             Debug.Log("java.lang.Runtime ---> maxmemory: " + jo.Call<long>("maxMemory"));
             Debug.Log("java.lang.Runtime ---> totalmemory: " + jo.Call<long>("totalMemory"));
 
-            systemMemorySize = jo.Call<long>("totalMemory");
-
+            freeMemorySize = (int)jo.Call<long>("freeMemory") / 1024;
+            maxMemorySize = (int)jo.Call<long>("maxMemory") / 1024;
+            totalMemorySize = (int)jo.Call<long>("totalMemory") / 1024;
+/*
             jo = new AndroidJavaObject("java.io.RandomAccessFile", "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "r");
             if (jo != null)
             {
@@ -51,7 +53,7 @@ public static class SystemInfo {
             {
                 Debug.Log("Unable to open: java.io.RandowAccesFile");                
             }
-
+*/
 
 		} else {	
 			systemMemorySize = 0;
@@ -85,6 +87,24 @@ public static class SystemInfo {
         get;
         private set;
     }
+    static public int freeMemorySize
+    {
+        get;
+        private set;
+    }
+
+    static public int maxMemorySize
+    {
+        get;
+        private set;
+    }
+
+    static public int totalMemorySize
+    {
+        get;
+        private set;
+    }
+
 
     static public int graphicsMemorySize
     {
