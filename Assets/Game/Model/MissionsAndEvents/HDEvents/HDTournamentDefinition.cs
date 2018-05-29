@@ -89,15 +89,15 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		{
 			base.ParseGoal (_data);
 
-			if ( _data.ContainsKey("mode") )
+			if ( _data.ContainsKey("gameMode") )
 			{
-				string modeStr = _data["mode"];
+				string modeStr = _data["gameMode"];
 				switch( modeStr )
 				{
 					case "time_attack":{
 						m_mode = TournamentMode.TIME_ATTACK;
-						if ( _data.ContainsKey("target_amount") )
-							m_targetAmount = _data["target_amount"].AsLong;
+						if ( _data.ContainsKey("amount") )
+							m_targetAmount = _data["amount"].AsLong;
 					}break;
 					case "time_limit":{
 						m_mode = TournamentMode.TIME_LIMIT;
@@ -133,27 +133,27 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			{
 				case TournamentMode.TIME_ATTACK:
 				{
-					ret.Add("mode", "time_attack");
-					ret.Add("target_amount", m_targetAmount);
+					ret.Add("gameMode", "time_attack");
+					ret.Add("amount", m_targetAmount);
 
 				}break;
 				case TournamentMode.TIME_LIMIT:
 				{
-					ret.Add("mode", "time_limit");
+					ret.Add("gameMode", "time_limit");
 					ret.Add("seconds", m_seconds);
 				}break;
 				case TournamentMode.RACE:
 				{
-					ret.Add("mode", "race");
+					ret.Add("gameMode", "race");
 					ret.Add("loops", m_loops);
 				}break;
 				case TournamentMode.BOSS:
 				{
-					ret.Add("mode", "boss");
+					ret.Add("gameMode", "boss");
 				}break;
 				default:
 				{
-					ret.Add("mode", "normal");
+					ret.Add("gameMode", "normal");
 				}break;
 			}
 			ret.Add("area", m_area);
