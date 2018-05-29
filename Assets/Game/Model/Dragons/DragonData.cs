@@ -76,10 +76,10 @@ public class DragonData : IUISelectorItem {
 	private Range m_eatSpeedFactorRange = new Range();
 	public float maxEatSpeedFactor { get { return GetMaxEatSpeedFactorAtLevel(progression.level); }}
 
-	//private float m_baseEnergy = 0f;
-	public float baseEnergy { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
 	private Range m_energyBaseRange = new Range();
-	public float maxEnergyBase { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
+	public float baseEnergy { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
+	//private float m_baseEnergy = 0f;
+	//public float maxEnergyBase { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
 
 	private Range m_scaleRange = new Range(1f, 1f);
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
