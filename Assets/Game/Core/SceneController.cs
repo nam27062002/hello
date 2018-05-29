@@ -26,6 +26,13 @@ public class SceneController : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 
+	public enum Mode
+	{
+		DEFAULT,
+		TOURNAMENT,
+	};
+	public static Mode s_mode = Mode.DEFAULT;
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//

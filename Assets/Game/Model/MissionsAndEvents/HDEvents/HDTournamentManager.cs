@@ -20,12 +20,21 @@ using System.Collections.Generic;
 [Serializable]
 public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
+	// CLASSES   															  //
 	//------------------------------------------------------------------------//
-	
+	public class TournamentObjective : TrackingObjectiveBase
+	{
+		public TournamentObjective(){
+		}
+		
+		~TournamentObjective() {
+		}
+	}
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	TournamentObjective m_objective = new TournamentObjective();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -33,20 +42,38 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentManager() {
-
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~HDTournamentManager() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	public override void BuildData()
     {
 		m_data = new HDTournamentData();
     }
+
+	public override void ParseDefinition(SimpleJSON.JSONNode _data)
+    {
+    	base.ParseDefinition( _data );
+    	m_objective.Clear();
+		HDTournamentDefinition def = m_data.definition as HDTournamentDefinition;
+		m_objective.Init(
+			TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params),		// Create the tracker based on goal type
+			0,
+			def.m_goal.m_typeDef,
+			def.m_goal.m_desc
+		);
+    }
+
 
     public void RequestLeaderboard()
     {
@@ -114,6 +141,18 @@ public class HDTournamentManager : HDLiveEventManager {
 
             }
         }
+    }
+
+	public void OnGameStarted(){
+    	if ( m_objective != null && m_objective.tracker != null)
+    	{
+    		m_objective.tracker.SetValue(0, false);
+			// Check if we are in tournament mode
+    		m_objective.enabled = m_isActive;
+    	}
+    }
+    public void OnGameEnded(){
+    	// Save tracker value?
     }
 
     public string GetToUseDragon()

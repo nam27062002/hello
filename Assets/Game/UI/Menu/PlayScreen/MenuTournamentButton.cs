@@ -35,6 +35,7 @@ public class MenuTournamentButton : MenuNavigationButton {
 	/// Play button has been pressed.
 	/// </summary>
 	public void OnTournamentButton() {
+		SceneController.s_mode = SceneController.Mode.TOURNAMENT;
 		HDLiveEventsManager.instance.SwitchToTournament();
 		OnNavigationButton();
 	}

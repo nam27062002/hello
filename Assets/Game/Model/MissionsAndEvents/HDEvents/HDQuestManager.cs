@@ -84,6 +84,7 @@ public class HDQuestManager : HDLiveEventManager{
 	    	// Check if using bonus dragon?
 
 	    	// Check if we are in quest mode
+			m_objective.enabled = m_isActive;
     	}
     }
     public void OnGameEnded(){
