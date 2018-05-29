@@ -104,7 +104,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
-		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout" + _config.m_iLayout;
+		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
 		PopupController pController = PopupManager.OpenPopupInstant(popupPath);
 		PopupCustomizer pCustomizer = pController.GetComponent<PopupCustomizer>();

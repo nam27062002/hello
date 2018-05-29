@@ -37,6 +37,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Toggle(NOISE_TEXTURE_EMISSION)] _EnableNoiseTextureEmission("Enable noise texture emission", int) = 0.0
 		[Toggle(NOISE_TEXTURE_ALPHA)] _EnableNoiseTextureAlpha("Enable noise texture alpha", int) = 0.0
 		[Toggle(NOISE_TEXTURE_DISSOLVE)] _EnableNoiseTextureDissolve("Enable noise texture dissolve", int) = 0.0
+		[Toggle(NOISEUV)] _EnableNoiseUV("Enable noise uv channel", int) = 0.0
 
 		[Enum(Additive, 0, SoftAdditive, 1, AdditiveDouble, 2, AlphaBlend, 3, AdditiveAlphaBlend, 4, Premultiply, 5)] BlendMode("Blend mode", Float) = 0.0
 
@@ -73,6 +74,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma shader_feature _ NOISE_TEXTURE_EMISSION
 				#pragma shader_feature _ NOISE_TEXTURE_ALPHA
 				#pragma shader_feature _ NOISE_TEXTURE_DISSOLVE
+				#pragma shader_feature _ NOISEUV
 
 				#pragma shader_feature BLENDMODE_ADDITIVE BLENDMODE_SOFTADDITIVE BLENDMODE_ADDITIVEDOUBLE BLENDMODE_ALPHABLEND BLENDMODE_ADDITIVEALPHABLEND BLENDMODE_PREMULTIPLY
 //				#pragma shader_feature DISSOLVE_NONE DISSOLVE_ENABLED DISSOLVE_EXTENDED

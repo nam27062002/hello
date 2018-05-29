@@ -638,7 +638,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":25,"cannonRotationSpeed":120,"consecutiveAttacks":3,"attackDelay":2,"retreatTime":5,"projectileName":"PF_GoblinWarBoatBomb","projectileSpawnTransformName":"ProjectileSpawn","dataType":"AI.Behaviour.GoblinWarBoatAttackData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":25,"cannonRotationSpeed":150,"consecutiveAttacks":3,"attackDelay":0.5,"retreatTime":2.5,"projectileName":"PF_GoblinWarBoatBomb","projectileSpawnTransformName":"ProjectileSpawn","dataType":"AI.Behaviour.GoblinWarBoatAttackData","editorFolded":false}]'
   m_databaseKey: PF_GoblinWarMachineSpace
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
@@ -709,15 +709,15 @@ MonoBehaviour:
   m_cannonEye: {fileID: 4149165339786680}
   m_armorDurabilityPerTier:
     m_valueList:
-    - count: 1
+    - count: 2
       needBoost: 0
-    - count: 1
+    - count: 2
       needBoost: 0
-    - count: 1
+    - count: 2
       needBoost: 0
-    - count: 1
+    - count: 2
       needBoost: 0
-    - count: 1
+    - count: 2
       needBoost: 0
     m_keyList: 0000000001000000020000000300000004000000
   m_ground: []
@@ -958,6 +958,7 @@ MonoBehaviour:
     scale: 1
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
+  m_explodeOriented: 0
   m_onAttackAudio: hd_warmachine_attack
   m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
