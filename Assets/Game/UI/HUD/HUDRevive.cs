@@ -137,7 +137,7 @@ public class HUDRevive : MonoBehaviour {
 
 		// Pause timer and begin flow!
 		m_timer.Stop();
-		long costPC = RewardManager.paidReviveCount + 1;	// [AOC] TODO!! Actual revive cost formula
+		long costPC =  RewardManager.GetReviveCost();
 		purchaseFlow.Begin((long)costPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REVIVE, null);
 
 		// Without resources flow:
@@ -196,7 +196,7 @@ public class HUDRevive : MonoBehaviour {
 
 			// Initialize PC cost
 			if(m_pcText != null) {
-				m_pcText.text = UIConstants.GetIconString((RewardManager.freeReviveCount + RewardManager.paidReviveCount) + 1, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);	// [AOC] TODO!! Actual revive cost formula
+				m_pcText.text = UIConstants.GetIconString( RewardManager.GetReviveCost(), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 			}
 
 			// Free revive available?

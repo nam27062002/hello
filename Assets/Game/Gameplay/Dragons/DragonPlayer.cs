@@ -50,7 +50,7 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_health;
 	public float health { get { return m_health; } }
 	
-	private float m_energy;
+	[SerializeField] private float m_energy;
 	public float energy { get { return m_energy; } }
 
 	private float m_alcohol = 0;
@@ -621,6 +621,8 @@ public class DragonPlayer : MonoBehaviour {
 
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
+		//TONI
+		m_dragonMotion.RecalculateDragonForce();
 	}
 
 	void OnPrewardmFuryRush(DragonBreathBehaviour.Type type, float duration)

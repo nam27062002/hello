@@ -755,4 +755,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
             m_enterSpaceAmount++;
         }
     }    
+
+    public static int GetReviveCost()
+    {
+    	return freeReviveCount + paidReviveCount + 1;
+    }
 }
