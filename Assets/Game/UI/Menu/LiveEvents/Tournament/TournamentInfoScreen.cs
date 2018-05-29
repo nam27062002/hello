@@ -26,6 +26,8 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 	private HDTournamentDefinition m_definition;
 
+	private float m_elapsedTime;
+
 	//----------------------------------------------------------------//
 
 
@@ -69,14 +71,23 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 		//MAP
 		m_areaText.text = m_definition.m_goal.m_area;
+
+		//
+		m_elapsedTime = 0f;
 	}
 
 	// Update timers!
 	void Update() {
-		System.DateTime end = m_definition.m_endTimestamp;
-		System.DateTime now = System.DateTime.Now;
-		System.TimeSpan delta = end - now;
+		m_elapsedTime += Time.deltaTime;
 
-		m_timerText.text = "w.i.p: " + TimeUtils.FormatTime(delta.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);
+		if (m_elapsedTime >= 1f) {
+			System.DateTime end = m_definition.m_endTimestamp;
+			System.DateTime now = System.DateTime.Now;
+			System.TimeSpan delta = end - now;
+
+			m_timerText.text = "End in: " + TimeUtils.FormatTime(delta.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);
+
+			m_elapsedTime -= 1f;
+		}
 	}
 }
