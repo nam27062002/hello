@@ -22,20 +22,10 @@ public class HDQuestManager : HDLiveEventManager{
 	// CASSES															  //
 	//------------------------------------------------------------------------//
 
-	public class QuestObjective : TrackingObjectiveBase
-	{
-		public QuestObjective(){
-		}
-
-		
-		~QuestObjective() {
-		}
-	}
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	QuestObjective m_objective = new QuestObjective();
+	TrackerBase m_tracker = new TrackerBase();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,25 +56,16 @@ public class HDQuestManager : HDLiveEventManager{
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
     {
     	base.ParseDefinition( _data );
-    	m_objective.Clear();
+		m_tracker.Clear();
     	HDQuestDefinition def = m_data.definition as HDQuestDefinition;
-		m_objective.Init(
-			TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params),		// Create the tracker based on goal type
-			def.m_goal.m_amount,
-			def.m_goal.m_typeDef,
-			def.m_goal.m_desc
-		);
+		m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
     }
 
     public void OnGameStarted(){
-    	if ( m_objective != null && m_objective.tracker != null)
+    	if ( m_tracker != null)
     	{
-    		m_objective.tracker.SetValue(0, false);
-
-	    	// Check if using bonus dragon?
-
-	    	// Check if we are in quest mode
-			m_objective.enabled = m_isActive;
+    		m_tracker.SetValue(0, false);
+			m_tracker.enabled = m_isActive;
     	}
     }
     public void OnGameEnded(){

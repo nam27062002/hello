@@ -209,7 +209,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 	public void SwitchToTournament()
 	{
 		// if hd live events enabled
-		if (GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN >= UsersManager.currentUser.gamesPlayed)
+		// if (GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN >= UsersManager.currentUser.gamesPlayed)
 		{
 			m_tournament.Activate();
 		}
@@ -221,7 +221,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 	{
 		// if hd live events enabled
 		m_tournament.Deactivate();
-		if (GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN >= UsersManager.currentUser.gamesPlayed)
+		// if (GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN >= UsersManager.currentUser.gamesPlayed)
 		{
 			m_passive.Activate();
 			m_quest.Activate();	

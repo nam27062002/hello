@@ -19,16 +19,14 @@ using TMPro;
 /// Simple controller for a time counter in the hud.
 /// </summary>
 [RequireComponent(typeof(TextMeshProUGUI))]
-public class HUDTime : MonoBehaviour {
+public class HUDTournamentScore : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	private TextMeshProUGUI m_valueTxt;
-	private long m_lastSecondsPrinted;
+	private long m_lastScorePrinted;
+	private TrackerBase m_tracker;
 
-	private bool m_countdown = false;
-	private long m_timelimit = 0;
-	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -36,35 +34,42 @@ public class HUDTime : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Get external references
-		m_valueTxt = GetComponent<TextMeshProUGUI>();
-		m_valueTxt.text = "00:00";
-		m_lastSecondsPrinted = -1;
 		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
 		{
-			HDTournamentData data = HDLiveEventsManager.instance.m_tournament.GetEventData() as HDTournamentData;
-			HDTournamentDefinition def = data.definition as HDTournamentDefinition;
-			if ( def.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT )
+			HDTournamentData _data = HDLiveEventsManager.instance.m_tournament.GetEventData() as HDTournamentData;
+			HDTournamentDefinition _def = _data.definition as HDTournamentDefinition;
+
+			if ( ( _def.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL && _def.m_goal.m_type == "survive_time" ) || _def.m_goal.m_type == "score")
 			{
-				m_countdown = true;
-				m_timelimit = def.m_goal.m_seconds;
+				gameObject.SetActive(false);
+			}
+			else
+			{
+				// Get external references
+				m_valueTxt = GetComponent<TextMeshProUGUI>();
+				m_valueTxt.text = "0";
+				m_lastScorePrinted = -1;	
+				m_tracker = HDLiveEventsManager.instance.m_tournament.m_tracker;
 			}
 		}
-
+		else
+		{
+			gameObject.SetActive(false);
+		}
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		UpdateTime();
+		UpdateScore();
 	}
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-		UpdateTime();
+		UpdateScore();
 	}
 
 	//------------------------------------------------------------------//
@@ -73,19 +78,12 @@ public class HUDTime : MonoBehaviour {
 	/// <summary>
 	/// Updates the displayed score.
 	/// </summary>
-	private void UpdateTime() {
+	private void UpdateScore() {
 
-		long elapsedSeconds = (long)InstanceManager.gameSceneControllerBase.elapsedSeconds;
-		if ( m_countdown )
-		{
-			elapsedSeconds = m_timelimit - elapsedSeconds;
-		}
-
-		if(elapsedSeconds != m_lastSecondsPrinted) {		
-			// Do it!
-			// Both for game and level editor
-			m_valueTxt.text = TimeUtils.FormatTime(elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
-			m_lastSecondsPrinted = elapsedSeconds;
+		long _score = m_tracker.currentValue;
+		if(_score != m_lastScorePrinted) {
+			m_valueTxt.text = _score.ToString();
+			m_lastScorePrinted = _score;
 		}
 	}
 }
