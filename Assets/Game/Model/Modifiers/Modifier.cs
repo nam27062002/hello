@@ -1,6 +1,6 @@
 ﻿
 
-public abstract class Modifier  {
+public abstract class Modifier : IModifierDefinition {
 	//------------------------------------------------------------------------//
 	// FACTORY METHODS														  //
 	//------------------------------------------------------------------------//
@@ -46,8 +46,20 @@ public abstract class Modifier  {
 
 
 	//------------------------------------------------------------------------//
-	// PUBLIC METHODS														  //
+	// ABSTRACT METHODS														  //
 	//------------------------------------------------------------------------//
 	public abstract void Apply();
 	public abstract void Remove();
+
+
+	//------------------------------------------------------------------------//
+	// INTERFACE METHODS: Definition										  //
+	//------------------------------------------------------------------------//
+	public string GetIconRelativePath() {
+		return m_def.GetAsString("icon");
+	}
+
+	public string GetDescription() {
+		return m_def.sku;//GetAsString("desc");
+	}
 }

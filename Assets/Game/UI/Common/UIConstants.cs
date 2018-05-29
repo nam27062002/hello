@@ -144,6 +144,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string SEASON_ICONS_PATH {
 		get { return instance.m_seasonIconsPath; }
 	}
+
+	[SerializeField] private string m_modifierIconsPath = "UI/Metagame/Powers/";
+	public static string MODIFIER_ICONS_PATH {
+		get { return instance.m_modifierIconsPath; }
+	}
+
+	[SerializeField] private string m_liveEventsIconsPath = "UI/Metagame/Powers/";
+	public static string LIVE_EVENTS_ICONS_PATH {
+		get { return instance.m_liveEventsIconsPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------
