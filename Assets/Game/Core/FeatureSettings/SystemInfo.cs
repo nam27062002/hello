@@ -40,7 +40,7 @@ public static class SystemInfo {
 
             systemMemorySize = jo.Call<long>("totalMemory");
 
-            jo = new AndroidJavaObject("java.io.RandomAccessFile", "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq");
+            jo = new AndroidJavaObject("java.io.RandomAccessFile", "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "r");
             if (jo != null)
             {
                 string freq = jo.Call<string>("readLine");
