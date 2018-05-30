@@ -241,6 +241,14 @@ public class OfferPack {
 		// Has state changed?
 		return (oldState != m_state);
 	}
+
+	/// <summary>
+	/// Immediately mark this pack as expired!
+	/// No checks will be performed.
+	/// </summary>
+	public void ForceExpiration() {
+		ChangeState(State.EXPIRED);
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -531,8 +539,24 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>Whether this pack has expired.</returns>
 	private bool CheckExpiration() {
+		// Order is relevant!
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
+
+		// Multiple packs may have the same unique ID, with the intention to make 
+		// them mutually exclusive.
+		// If another pack with the same unique ID is active, mark this one as expired!
+		// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
+		for(int i = 0; i < OffersManager.activeOffers.Count; ++i) {
+			// Skip if it's ourselves
+			if(OffersManager.activeOffers[i] == this) continue;
+
+			// Is there a pack with the same unique ID already active?
+			if(OffersManager.activeOffers[i].uniqueId == this.uniqueId) {
+				// Yes! Mark offer as expired ^^
+				return true;
+			}
+		}
 
 		// Timers
 		if(m_isTimed) {
@@ -912,6 +936,13 @@ public class OfferPack {
 		// To do so, we will only store relevant data whose value is different than the default one
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Sku
+		// Multiple packs may have the same unique ID, with the intention to make 
+		// them mutually exclusive. In order to know which pack with that ID is actually triggered,
+		// store the sku of the pack as well.
+		// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
+		data.Add("sku", m_def.sku);
 
 		// State
 		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));
