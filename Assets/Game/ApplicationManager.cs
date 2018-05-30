@@ -132,6 +132,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Tracking session has to be finished when the application is closed
         HDTrackingManager.Instance.Notify_ApplicationEnd();
 
+        // Last chance to cache pending events to be sent are stored
+        // Not lazy approach is used to guarantee events are stored
+        DNAManager.SharedInstance.SaveOfflineUnsentEvents(false);
+
         //PersistenceManager.Save();
 
         PersistenceFacade.instance.Destroy();
