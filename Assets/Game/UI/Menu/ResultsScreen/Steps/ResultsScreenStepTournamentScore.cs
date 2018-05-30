@@ -41,7 +41,7 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Only if run was valid
-		return HDLiveEventsManager.instance.m_tournament.IsValidRun();
+		return HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
 	}
 
 	/// <summary>

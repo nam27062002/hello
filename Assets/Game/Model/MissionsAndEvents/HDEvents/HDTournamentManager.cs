@@ -26,7 +26,12 @@ public class HDTournamentManager : HDLiveEventManager {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	public TrackerBase m_tracker = new TrackerBase();
+	private bool m_runWasValid = false;
 
+
+		// Control vars
+	protected HDTournamentDefinition.TournamentGoal m_runningGoal;
+	protected float m_timePlayed = -1;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -139,15 +144,83 @@ public class HDTournamentManager : HDLiveEventManager {
     }
 
 	public void OnGameStarted(){
+
 		if ( m_tracker != null)
     	{
 			m_tracker.SetValue(0, false);
 			// Check if we are in tournament mode
 			m_tracker.enabled = m_isActive;
     	}
+
+		if ( m_isActive )
+		{
+			m_runWasValid = false;
+			Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
+			HDTournamentData data = HDLiveEventsManager.instance.m_tournament.GetEventData() as HDTournamentData;
+			HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+			m_runningGoal = def.m_goal;
+
+			switch( def.m_goal.m_mode )
+			{
+				case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
+				{
+					m_runWasValid = true;	// Any run was valid
+				}break;
+				case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
+				{
+					m_runWasValid = true;	// Any run is valis
+				}break;
+				case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
+				{
+					m_runWasValid = false;// for a run to be valid it has to meet the target
+				}break;
+			}
+			
+		}
+
     }
+
+
+	public void OnGameUpdate(){
+		// Check time limit?
+		switch( m_runningGoal.m_mode )
+		{
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
+			{
+			}break;
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
+			{
+				if ( m_runningGoal.m_seconds <= InstanceManager.gameSceneController.elapsedSeconds )
+				{
+					// End game!
+					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
+					{
+						InstanceManager.gameSceneController.EndGame(false);
+					}
+					
+				}
+			}break;
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
+			{
+				if ( m_tracker.currentValue >= m_runningGoal.m_targetAmount )
+				{
+					m_runWasValid = true;
+					// End Game!
+					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
+					{
+						InstanceManager.gameSceneController.EndGame(true);
+					}
+					
+				}
+			}break;
+		}
+
+	}
+
     public void OnGameEnded(){
     	// Save tracker value?
+		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
+		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
     }
 
     public string GetToUseDragon()
@@ -189,37 +262,59 @@ public class HDTournamentManager : HDLiveEventManager {
 		}
 		return ret;
     }
- 
+
+    /// <summary>
+    /// Tells if the last played run was valid
+    /// </summary>
+    /// <returns><c>true</c>, if last run valid was wased, <c>false</c> otherwise.</returns>
+    public bool WasLastRunValid()
+    {
+    	return m_runWasValid;
+    }
+
 	// The score obtained in the last run (tracker)
 	public long GetRunScore() {
-		// TODO!!
-		return 654;
+		
+		HDTournamentData data = m_data as HDTournamentData;
+		HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+		long ret = -1;
+		switch ( def.m_goal.m_mode )
+		{
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
+			{
+				ret = m_tracker.currentValue;
+			}break;
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
+			{
+				// Game duration!
+				ret = (long)m_timePlayed;
+			}break;
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
+			{
+				ret = m_tracker.currentValue;
+			}break;
+		}
+
+		return ret;
 	}
 
 	// The overall best score (the one registered in the leaderboard)
 	public long GetBestScore() {
-		// TODO!!
-		return 0;
+		HDTournamentData data = m_data as HDTournamentData;
+		return data.m_score;
 	}
 
 	// Given a score, format it based on tournament type
 	public string FormatScore(long _score) {
 		// TODO!!
 		// Depends on tournament type, not all scores are numbers! (time)
-		return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
-		//return StringUtils.FormatNumber(_score);
+		//return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
+		return StringUtils.FormatNumber(_score);
 	}
 
 	// Has the last run been a high score?
 	public bool IsNewBestScore() {
 		// TODO!!
 		return false;
-	}
-
-	// Has the player reached the minimum requirement to register a valid score?
-	// i.e. "Eat 100 birds as fast as possible" but you died before reaching 100 birds)
-	public bool IsValidRun() {
-		// TODO!!
-		return true;
 	}
 }
