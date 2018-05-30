@@ -223,6 +223,18 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
     }
 
+    public bool UsingProgressionDragon()
+    {
+		HDTournamentData data = m_data as HDTournamentData;
+    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+    	bool ret = false;
+    	if (string.IsNullOrEmpty( def.m_build.m_dragon))
+    	{
+    		ret = true;
+    	}
+    	return ret;
+    }
+
     public string GetToUseDragon()
     {
 		string ret;

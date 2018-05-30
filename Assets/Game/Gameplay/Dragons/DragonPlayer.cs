@@ -202,7 +202,26 @@ public class DragonPlayer : MonoBehaviour {
 		m_shieldTimers = new Dictionary<DamageType, float>(comparer);
 
 		// Get data from dragon manager
-		m_data = DragonManager.GetDragonData(m_sku);
+		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		{
+			if ( HDLiveEventsManager.instance.m_tournament.UsingProgressionDragon() )
+			{
+				m_data = DragonManager.GetDragonData(m_sku);	
+			}
+			else
+			{
+				// Use tmp data
+				m_data = new DragonData();
+				m_data.Init( DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DRAGONS , m_sku)  );
+				m_data.progression.SetToMaxLevel();
+			}
+		}
+		else
+		{
+			m_data = DragonManager.GetDragonData(m_sku);
+		}
+
+
 		DebugUtils.Assert(m_data != null, "Attempting to instantiate a dragon player with an ID not defined in the manager.");
 
 		m_defaultSize = m_data.scale;
