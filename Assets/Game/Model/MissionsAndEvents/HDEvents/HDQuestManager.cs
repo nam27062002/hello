@@ -135,10 +135,7 @@ public class HDQuestManager : HDLiveEventManager{
             HDQuestData data = m_data as HDQuestData;
             if (data != null /*&& data.m_eventId == eventId*/)
             {
-            	if ( responseJson.ContainsKey(""))
-            	{
-            		//?
-            	}
+				data.ParseProgress( responseJson );
             }
         }
     }
