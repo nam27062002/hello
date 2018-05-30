@@ -76,6 +76,10 @@ public class HDTournamentManager : HDLiveEventManager {
         }
     }
 
+	public bool IsLeaderboardReady() {
+		return false;
+	}
+
     protected virtual void LeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
         if (_error != null)

@@ -22,9 +22,14 @@ public class TournamentInfoScreen : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_areaText;
 	[SerializeField] private Image m_areaIcon;
 
-	//----------------------------------------------------------------//
+	[SeparatorAttribute("Leaderboard")]
+	[SerializeField] private TournamentLeaderboardView m_leaderboard;
 
+
+	//----------------------------------------------------------------//
+	private HDTournamentManager m_tournament;
 	private HDTournamentDefinition m_definition;
+
 
 	private float m_elapsedTime;
 
@@ -37,8 +42,8 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 	//TEMP
 	void Refresh() {
-		HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
-		m_definition = tournament.data.definition as HDTournamentDefinition;
+		m_tournament = HDLiveEventsManager.instance.m_tournament;
+		m_definition = m_tournament.data.definition as HDTournamentDefinition;
 
 		if (m_definition != null) {
 			//TITLE
@@ -68,6 +73,15 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 			//MAP
 			m_areaText.text = m_definition.m_goal.m_area;
+
+
+			//LEADERBOARD
+			if (m_tournament.data.m_state <= HDLiveEventData.State.AVAILABLE) {
+				m_leaderboard.gameObject.SetActive(false);
+			} else {
+				m_leaderboard.gameObject.SetActive(true);
+			}
+
 
 			//
 			m_elapsedTime = 0f;
