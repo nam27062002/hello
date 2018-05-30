@@ -190,4 +190,29 @@ public class HDTournamentManager : HDLiveEventManager {
 		return ret;
     }
  
+	// The score obtained in the last run (tracker)
+	public long GetRunScore() {
+		// TODO!!
+		return 0;
+	}
+
+	// The overall best score (the one registered in the leaderboard)
+	public long GetBestScore() {
+		// TODO!!
+		return 0;
+	}
+
+	// Given a score, format it based on tournament type
+	public string FormatScore(long _score) {
+		// TODO!!
+		// Depends on tournament type, not all scores are numbers! (time)
+		//return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
+		return StringUtils.FormatNumber(_score);
+	}
+
+	// Has the last run been a high score?
+	public bool IsNewBestScore() {
+		// TODO!!
+		return false;
+	}
 }
