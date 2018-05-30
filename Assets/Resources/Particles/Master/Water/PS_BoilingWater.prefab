@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 199000014206603972}
   - component: {fileID: 114000010694233964}
   - component: {fileID: 114320897556048614}
+  - component: {fileID: 114081837128396568}
   m_Layer: 0
   m_Name: PS_BoilingWater
   m_TagString: Untagged
@@ -89,6 +90,24 @@ MonoBehaviour:
   m_returnTo: 1
   m_disableOnInvisible: 1
   m_alwaysActive: 1
+--- !u!114 &114081837128396568
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011168935206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_resetFirst: 0
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
 --- !u!114 &114320897556048614
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -109,7 +128,7 @@ ParticleSystem:
   serializedVersion: 5
   lengthInSec: 1
   simulationSpeed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
@@ -157,7 +176,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1651113638
+  randomSeed: -199164621
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3120,7 +3139,7 @@ ParticleSystem:
   serializedVersion: 5
   lengthInSec: 1
   simulationSpeed: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   autoRandomSeed: 1
@@ -3168,7 +3187,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 2133330772
+  randomSeed: 1358336832
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6198,7 +6217,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
