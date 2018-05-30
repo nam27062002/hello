@@ -40,8 +40,18 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		return true;
+		// Only if run was valid
+		return HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
 	}
+
+	/// <summary>
+	/// Initialize this step.
+	/// </summary>
+	override protected void DoInit() {
+		// Make sure the number animator respect the tournament's formatting
+		m_scoreText.CustomTextSetter = OnSetScoreText;
+	}
+
 
 	/// <summary>
 	/// Initialize and launch this step.

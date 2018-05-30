@@ -1,4 +1,4 @@
-// ResultsScreenStepTournamentLeaderboard.cs
+// ResultsScreenStepTournamentInvalidRun.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 30/05/2018.
@@ -17,7 +17,7 @@ using DG.Tweening;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep {
+public class ResultsScreenStepTournamentInvalidRun : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -36,8 +36,8 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Only if run was valid
-		return HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
+		// Only if run was not valid
+		return !HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
 	}
 
 	/// <summary>
