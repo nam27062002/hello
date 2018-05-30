@@ -66,7 +66,7 @@ public class HDTournamentManager : HDLiveEventManager {
     {
         if ( HDLiveEventsManager.TEST_CALLS )
         {
-            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("tournament_leaderbaord.json");
+			GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("tournament_leaderboard.json");
             LeaderboardResponse(null, response);
         }
         else
@@ -88,10 +88,14 @@ public class HDTournamentManager : HDLiveEventManager {
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
             int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
-            if (data != null && data.m_eventId == eventId)
+			HDTournamentData data = m_data as HDTournamentData;
+            if (data != null /*&& data.m_eventId == eventId*/ )
             {
-
+            	if ( responseJson.ContainsKey("c") )// Is cheater
+            	{
+            		AntiCheatsManager.MarkUserAsCheater();
+            	}
+            	data.ParseLeaderboard( responseJson );
             }
         }
     }
