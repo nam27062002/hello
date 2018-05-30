@@ -28,6 +28,7 @@ public class HDTournamentData : HDLiveEventData {
 		public string m_name;
 		public string m_pic;
 		public int m_score;
+		public int m_rank;
 	}
 
 	//------------------------------------------------------------------------//
@@ -109,6 +110,7 @@ public class HDTournamentData : HDLiveEventData {
 				l.m_name = arr[i]["name"];
 				l.m_pic = arr[i]["pic"];
 				l.m_score = arr[i]["score"];
+				l.m_rank = i;
 			}
 		}
 

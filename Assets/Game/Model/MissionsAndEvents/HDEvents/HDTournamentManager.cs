@@ -27,6 +27,9 @@ public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
 	public TrackerBase m_tracker = new TrackerBase();
 
+	private bool m_isLeaderboardReady;
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -37,6 +40,8 @@ public class HDTournamentManager : HDLiveEventManager {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+
+		m_isLeaderboardReady = false;
 	}
 
 	/// <summary>
@@ -64,6 +69,8 @@ public class HDTournamentManager : HDLiveEventManager {
 
     public void RequestLeaderboard()
     {
+		m_isLeaderboardReady = false;
+
         if ( HDLiveEventsManager.TEST_CALLS )
         {
 			GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("tournament_leaderboard.json");
@@ -77,7 +84,7 @@ public class HDTournamentManager : HDLiveEventManager {
     }
 
 	public bool IsLeaderboardReady() {
-		return false;
+		return m_isLeaderboardReady;
 	}
 
     protected virtual void LeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
@@ -100,6 +107,8 @@ public class HDTournamentManager : HDLiveEventManager {
             		AntiCheatsManager.MarkUserAsCheater();
             	}
             	data.ParseLeaderboard( responseJson );
+
+				m_isLeaderboardReady = true;
             }
         }
     }

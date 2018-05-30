@@ -46,8 +46,8 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	private HDTournamentManager m_tournament;
 	private bool m_waitingTournament;
 
-	private List<GlobalEventsLeaderboardPill> m_pills = null;
-	private GlobalEventsLeaderboardPill m_playerPill = null;
+	private List<TournamentLeaderboardPill> m_pills = null;
+	private TournamentLeaderboardPill m_playerPill = null;
 
 	// Snap player pill to scrollList viewport
 	private RectTransform m_playerPillSlot = null;
@@ -117,27 +117,27 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Get current event
-		GlobalEvent evt = GlobalEventManager.currentEvent;
-		if(evt == null) return;
+		HDTournamentData data = (HDTournamentData)m_tournament.data;
+		List<HDTournamentData.LeaderboardLine> leaderboard = data.m_leaderboard;
 
 		// If pills list not yet initialized, do it now!
-		if(m_pills == null) {
-			m_pills = new List<GlobalEventsLeaderboardPill>(m_maxPills);
+		if (m_pills == null) {
+			m_pills = new List<TournamentLeaderboardPill>(m_maxPills);
 		}
 
 		// Aux vars
-		GlobalEventsLeaderboardPill pill;
+		TournamentLeaderboardPill pill;
 		GameObject pillInstance;
 		RectTransform pillTransform;
 		Vector2 pillSize = (m_pillPrefab.transform as RectTransform).sizeDelta;	// Assuming normal and player pills have the same size!
 		bool playerFound = false;
-		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(evt.id);
+
 
 		// Same with the player pill, which we'll have for sure
-		if(m_playerPill == null) {
+		if (m_playerPill == null) {
 			// Player pill will be placed in the viewport, so it renders in top of everything else
 			pillInstance = GameObject.Instantiate<GameObject>(m_playerPillPrefab, m_scrollList.viewport, false);
-			m_playerPill = pillInstance.GetComponent<GlobalEventsLeaderboardPill>();
+			m_playerPill = pillInstance.GetComponent<TournamentLeaderboardPill>();
 			pillTransform = m_playerPill.transform as RectTransform;
 			InitPillAnchors(ref pillTransform);
 			m_pills.Add(m_playerPill);
@@ -155,20 +155,19 @@ public class TournamentLeaderboardView : MonoBehaviour {
 			m_playerPill.GetComponent<Button>().onClick.AddListener(OnPlayerPillClick);
 		}
 
-		// Initialize player pill data before the rest
-		m_playerPill.InitWithData(playerData);
-
 		// Remove player pill from the list, we will insert it at the proper position when it matters
 		m_pills.Remove(m_playerPill);
 
 		// Iterate event leaderboard
-		int numPills = Mathf.Min(evt.leaderboard.Count, m_maxPills);
-		Debug.Log("<color=orange>We have " + evt.leaderboard.Count + " entries on the leaderboard, creating " + numPills + " pills!</color>");
-		for(int i = 0; i < numPills; ++i) {
-			//Debug.Log("<color=green>Leaderboard " + i + " (" + evt.leaderboard[i].position + "): </color><color=white>" + evt.leaderboard[i].userID + "</color>");
+		int numPills = Mathf.Min(leaderboard.Count, m_maxPills);
+		Debug.Log("<color=orange>We have " + leaderboard.Count + " entries on the leaderboard, creating " + numPills + " pills!</color>");
+
+		for (int i = 0; i < numPills; ++i) {
 			// Super-special case: Is it the current player?
-			//if(!playerFound && evt.leaderboard[i].userID == playerData.userID) {	// [AOC] No longer using user IDs
-			if(i == playerData.position) {
+			if (i == data.m_rank) {//data has the rank of the player
+				// Initialize player pill data before the rest
+				m_playerPill.InitWithData(leaderboard[i]);
+
 				Debug.Log("<color=orange>Inserting player pill at " + i + "!</color>");
 				// Use special pill
 				pill = m_playerPill;
@@ -181,13 +180,13 @@ public class TournamentLeaderboardView : MonoBehaviour {
 				playerFound = true;
 			} else {
 				// Normal player
-				if(i < m_pills.Count) {
+				if (i < m_pills.Count) {
 					// Reuse existing pills
 					pill = m_pills[i];
 				} else {
 					// Create a new pill!
 					pillInstance = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
-					pill = pillInstance.GetComponent<GlobalEventsLeaderboardPill>();
+					pill = pillInstance.GetComponent<TournamentLeaderboardPill>();
 					m_pills.Add(pill);
 
 					// Make sure anchor is properly set!
@@ -197,30 +196,30 @@ public class TournamentLeaderboardView : MonoBehaviour {
 
 				//Debug.Log("<color=red>Pill created at " + i + "!</color>");
 				// We got a pill! Initialize it
-				pill.InitWithData(evt.leaderboard[i]);
+				pill.InitWithData(leaderboard[i]);
 			}
 		}
 
 		// If player pill wasn't added, do it now!
-		if(!playerFound) {
+		if (!playerFound) {
 			// Insert at the right position
 			//Debug.Log("<color=orange>Player wasnt found! Inserting player pill at " + numPills + "!</color>");
-			m_pills.Insert(numPills, m_playerPill);
+			m_pills.Insert(numPills, m_playerPill);	
 			numPills++;
 		}
 
 		// Loop all the pills to put them into position and hide those not used
 		float deltaY = m_listPadding + pillSize.y/2f;	// Pill's anchor is at the middle!
-		for(int i = 0; i < m_pills.Count; ++i) {
+		for (int i = 0; i < m_pills.Count; ++i) {
 			// Active pill?
 			pill = m_pills[i];
-			if(i < numPills) {
+			if (i < numPills) {
 				//Debug.Log("<color=blue>Pill " + i + "</color> <color=green>ON</color>");
 				// Show pill
 				pill.gameObject.SetActive(true);
 
 				// If target pill is the player pill, use its placeholder slot instead
-				if(pill == m_playerPill) {
+				if (pill == m_playerPill) {
 					pill.name = "Pill_" + i + "_PLAYER";
 					pillTransform = m_playerPillSlot;
 				} else {
@@ -230,18 +229,18 @@ public class TournamentLeaderboardView : MonoBehaviour {
 
 				// Put into position
 				pillTransform.SetLocalPosY(-deltaY);	// Going down!
-				if(i < numPills - 1) {
+				if (i < numPills - 1) {
 					deltaY += pillTransform.sizeDelta.y + m_pillSpacing;
 				}
 
 				// Show intro anim
 				Transform animAnchor = pillTransform.Find("Margins");	// [AOC] TODO!! Do this better :P
-				if(animAnchor != null) {
+				if (animAnchor != null) {
 					// Stop any previous animation
 					animAnchor.DOKill(true);
 
 					// Only first X pills
-					if(i < 10) {
+					if (i < 10) {
 						animAnchor.DOScale(0f, 0.25f)
 							.From()
 							.SetDelay(i * 0.1f)
