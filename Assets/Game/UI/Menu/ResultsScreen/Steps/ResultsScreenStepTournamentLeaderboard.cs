@@ -36,7 +36,8 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		return true;
+		// Only if run was valid
+		return HDLiveEventsManager.instance.m_tournament.IsValidRun();
 	}
 
 	/// <summary>

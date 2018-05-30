@@ -33,6 +33,7 @@ public class ResultsScreenController : MonoBehaviour {
 
 		TOURNAMENT_SCORE,		// Tournament, show run score
 		TOURNAMENT_LEADERBOARD,	// Tournament, show leaderboard changes
+		TOURNAMENT_INVALID_RUN,	// Tournament, run didn't count for the tournament (i.e. "Eat 100 birds as fast as possible" but you died before reaching 100 birds)
 		TOURNAMENT_SYNC,		// Tournament, sync with server, apply rewards and do tracking
 
 		COUNT

@@ -1,7 +1,7 @@
-// ResultsScreenStepTournamentScore.cs
+// ResultsScreenStepTournamentInvalidRun.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 29/05/2018.
+// Created by Alger Ortín Castellví on 30/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
@@ -17,7 +17,7 @@ using DG.Tweening;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
+public class ResultsScreenStepTournamentInvalidRun : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,11 +26,7 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[Space]
-	[SerializeField] private NumberTextAnimator m_scoreText = null;
-	[SerializeField] private Localizer m_highScoreText = null;
-	[Space]
-	[SerializeField] private TweenSequence m_newHighScoreAnim = null;
+	// [AOC] TODO!!
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -40,36 +36,22 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Only if run was valid
-		return HDLiveEventsManager.instance.m_tournament.IsValidRun();
+		// Only if run was not valid
+		return !HDLiveEventsManager.instance.m_tournament.IsValidRun();
 	}
 
 	/// <summary>
 	/// Initialize this step.
 	/// </summary>
 	override protected void DoInit() {
-		// Make sure the number animator respect the tournament's formatting
-		m_scoreText.CustomTextSetter = OnSetScoreText;
+		// [AOC] TODO!!
 	}
-
 
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
-		// Start score number animation
-		m_scoreText.SetValue(0, HDLiveEventsManager.instance.m_tournament.GetRunScore());
-
-		// Set high score text
-		m_highScoreText.Localize(
-			m_highScoreText.tid, 
-			HDLiveEventsManager.instance.m_tournament.FormatScore(
-				HDLiveEventsManager.instance.m_tournament.GetBestScore()
-			)
-		);
-
-		// Hide new high score widget
-		m_newHighScoreAnim.gameObject.SetActive(false);
+		// [AOC] TODO!!
 	}
 
 	/// <summary>
@@ -82,24 +64,5 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Time to show the new high score feedback (if required).
-	/// </summary>
-	public void OnShowNewHighScore() {
-		// Check whether we did a new high score and show the corresponding feedback
-		if(HDLiveEventsManager.instance.m_tournament.IsNewBestScore()) {
-			// Show widget and launch animation!
-			m_newHighScoreAnim.gameObject.SetActive(true);
-			m_newHighScoreAnim.Launch();
-		}
-	}
 
-	/// <summary>
-	/// The score number animator needs to format a new value.
-	/// </summary>
-	/// <param name="_animator">The number animator requesting the formatting.</param>
-	public void OnSetScoreText(NumberTextAnimator _animator) {
-		// Depends on tournament type
-		_animator.text.text = HDLiveEventsManager.instance.m_tournament.FormatScore(_animator.currentValue);
-	}
 }

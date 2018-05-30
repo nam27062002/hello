@@ -193,7 +193,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	// The score obtained in the last run (tracker)
 	public long GetRunScore() {
 		// TODO!!
-		return 0;
+		return 654;
 	}
 
 	// The overall best score (the one registered in the leaderboard)
@@ -206,13 +206,20 @@ public class HDTournamentManager : HDLiveEventManager {
 	public string FormatScore(long _score) {
 		// TODO!!
 		// Depends on tournament type, not all scores are numbers! (time)
-		//return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
-		return StringUtils.FormatNumber(_score);
+		return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
+		//return StringUtils.FormatNumber(_score);
 	}
 
 	// Has the last run been a high score?
 	public bool IsNewBestScore() {
 		// TODO!!
 		return false;
+	}
+
+	// Has the player reached the minimum requirement to register a valid score?
+	// i.e. "Eat 100 birds as fast as possible" but you died before reaching 100 birds)
+	public bool IsValidRun() {
+		// TODO!!
+		return true;
 	}
 }
