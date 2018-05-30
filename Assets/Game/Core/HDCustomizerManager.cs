@@ -166,10 +166,6 @@ public class HDCustomizerManager
 
     public void Initialise()
     {
-        if (FeatureSettingsManager.IsDebugEnabled && DEBUG_ENABLED) {
-            ControlPanel.Log_SetupChannel(ControlPanel.ELogChannel.Customizer, Color.green);
-        }
-
         Reset();
     }
 

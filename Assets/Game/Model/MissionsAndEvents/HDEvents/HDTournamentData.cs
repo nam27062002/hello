@@ -41,6 +41,8 @@ public class HDTournamentData : HDLiveEventData {
 	public long m_score = -1;
 	public long m_tournamentSize = -1;
 
+	private DateTime m_lastFreeEntranceTimestamp = new DateTime();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -70,17 +72,65 @@ public class HDTournamentData : HDLiveEventData {
 		m_rank = -1;
 		m_score = -1;
 		m_tournamentSize = -1;
+		m_lastFreeEntranceTimestamp = new DateTime(1970, 1, 1);
 	}
 
+	public override SimpleJSON.JSONClass ToJson ()
+	{
+		JSONClass ret = base.ToJson();
+
+		ret.Add("Timestamp", TimeUtils.DateToTimestamp( m_lastFreeEntranceTimestamp ));
+
+		// Leadeboard
+		JSONClass leaderboard = new JSONClass();
+		leaderboard.Add("n", m_tournamentSize);
+
+		JSONArray arr = new JSONArray();
+		int max = m_leaderboard.Count;
+		for (int i = 0; i < max; i++) {
+			JSONClass line = new JSONClass();
+			line.Add("name");
+			line.Add("pic");
+			line.Add("score");
+			arr.Add(line);
+		}
+		leaderboard.Add("l", arr);
+
+		JSONClass u = new JSONClass();
+		u.Add("rank", m_rank);
+		u.Add("score", m_score);
+		leaderboard.Add("u", u);
+
+		ret.Add("leaderboard", leaderboard);
+		ret.Add("leaderboardTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
+
+		return ret;
+	}
 
 	public override void ParseState( SimpleJSON.JSONNode _data )
 	{
 		base.ParseState( _data );
+
+		if ( _data.ContainsKey("Timestamp") )
+		{
+			m_lastFreeEntranceTimestamp = TimeUtils.TimestampToDate( _data["Timestamp"].AsLong );
+		}
+
+		if ( _data.ContainsKey("leaderboard") )	// This comes from a saves data
+		{
+			ParseLeaderboard( _data["leaderboard"] );
+			if ( _data.ContainsKey("leaderboardTimestamp") )
+			{
+				m_leaderboardCheckTimestamp = TimeUtils.TimestampToDate( _data["leaderboardTimestamp"].AsLong );
+			}
+		}
 	}
 
 
 	public void ParseLeaderboard( SimpleJSON.JSONNode _data )
 	{
+		m_leaderboardCheckTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
 		if ( _data.ContainsKey("u") )
 		{
 			// user info

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using SimpleJSON;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -25,7 +26,7 @@ public class HDQuestData : HDLiveEventData {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-
+	public long m_globalScore;
 
 
 	//------------------------------------------------------------------------//
@@ -51,14 +52,34 @@ public class HDQuestData : HDLiveEventData {
 
 	}
 
+	public override void Clean()
+	{
+		m_globalScore = -1;
+	}
+
+	public override SimpleJSON.JSONClass ToJson ()
+	{
+		JSONClass ret = base.ToJson();
+		ret.Add("globalScore", m_globalScore);
+		return ret;
+	}
+
 	public override void ParseState( SimpleJSON.JSONNode _data )
 	{
 		base.ParseState( _data );
+
+		if ( _data.ContainsKey("globalScore") )
+		{
+			m_globalScore = _data["globalScore"];
+		}
 	}
 
     public virtual void ParseProgress(SimpleJSON.JSONNode _data)
     {
-
+		if ( _data.ContainsKey("globalScore") )
+		{
+			m_globalScore = _data["globalScore"].AsLong;
+		}
     }
 
 

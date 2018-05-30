@@ -160,7 +160,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		}
 
 		// Disable during FTUX
-		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN);
+		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN && SceneController.s_mode != SceneController.Mode.TOURNAMENT);
 
 		// Disable too if mission is not active
 		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;

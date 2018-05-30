@@ -97,11 +97,11 @@ public class HDQuestManager : HDLiveEventManager{
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
-            if (data != null && data.m_eventId == eventId)
+            // int eventId = responseJson["code"].AsInt;
+            HDQuestData data = GetEventData() as HDQuestData;
+            if (data != null /*&& data.m_eventId == eventId*/ )
             {
-
+				data.ParseProgress( responseJson );
             }
         }
     }
@@ -131,11 +131,11 @@ public class HDQuestManager : HDLiveEventManager{
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
-            if (data != null && data.m_eventId == eventId)
+            // int eventId = responseJson["code"].AsInt;
+            HDQuestData data = m_data as HDQuestData;
+            if (data != null /*&& data.m_eventId == eventId*/)
             {
-
+				data.ParseProgress( responseJson );
             }
         }
     }

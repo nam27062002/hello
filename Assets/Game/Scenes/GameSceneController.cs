@@ -714,7 +714,7 @@ public class GameSceneController : GameSceneControllerBase {
 		yield return null;
 		InstanceManager.fogManager.firstTime = true;
 		// Hide loading screen
-		LoadingScreen.Toggle(false);
+		LoadingScreen.Toggle(false, false);	// [AOC] Occasionally the screen is not disabled after the fade out animation, locking the rest of the UI interaction. Remove fade animation until a fix is found.
 	}
 
 	private void OnScenesUnloaded()

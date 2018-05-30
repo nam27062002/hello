@@ -36,6 +36,7 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 
 	// Internal
 	protected ResultsScreenController m_controller = null;
+	protected ResultsScreenController.Step m_stepID = ResultsScreenController.Step.INIT;
 
 	//------------------------------------------------------------------------//
 	// PUBLIC METHODS														  //
@@ -44,9 +45,16 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 	/// Initialize this step with the given results screen controller.
 	/// </summary>
 	/// <param name="_controller">The results screen controller that will be triggering this step.</param>
-	public virtual void Init(ResultsScreenController _controller) {
+	/// <param name="_stepID">Self-awareness of which step we are.</param>
+	public virtual void Init(ResultsScreenController _controller, ResultsScreenController.Step _stepID) {
 		// Store reference
 		m_controller = _controller;
+
+		// Self-awareness of which step we are.
+		m_stepID = _stepID;
+
+		// Debug
+		ControlPanel.Log("Init Step " + m_stepID, ControlPanel.ELogChannel.ResultsScreen);
 
 		// Custom init implementation
 		DoInit();
@@ -65,6 +73,9 @@ public abstract class ResultsScreenStep : MonoBehaviour {
 		} else {
 			ResultsDarkScreen.Hide();
 		}
+
+		// Debug
+		ControlPanel.Log("Launching Step " + m_stepID, ControlPanel.ELogChannel.ResultsScreen);
 
 		// Custom launch implementation
 		DoLaunch();
