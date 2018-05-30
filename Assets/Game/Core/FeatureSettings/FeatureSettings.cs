@@ -258,7 +258,7 @@ public class FeatureSettings
 
             // tracking offline cached
             key = KEY_TRACKING_OFFLINE_CACHED;
-            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
 
             // Content deltas. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
