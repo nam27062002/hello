@@ -64,28 +64,6 @@ public class ResultsSceneSetup : MonoBehaviour {
 	// Test To recolocate the dragons view!
 	[Comment("Only to test the editor")]
 	public bool recolocate = false; //"run" or "generate" for example
-	void Update()
-	{
-		if ( !Application.isPlaying )
-		{
-			if (recolocate)
-			{
-				m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
-				m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
-				m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-			}
-
-			if ( m_fog.texture == null )
-			{
-				m_fog.CreateTexture();
-				Shader.SetGlobalTexture(GameConstants.Material.FOG_TEXTURE, m_fog.texture);
-			}
-			m_fog.RefreshTexture();
-			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_fog.m_fogStart);
-			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_fog.m_fogEnd);
-		}
-	}
-
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -117,6 +95,31 @@ public class ResultsSceneSetup : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// 
+	/// </summary>
+	private void Update()
+	{
+		if ( !Application.isPlaying )
+		{
+			if (recolocate)
+			{
+				m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
+				m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
+				m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+			}
+
+			if ( m_fog.texture == null )
+			{
+				m_fog.CreateTexture();
+				Shader.SetGlobalTexture(GameConstants.Material.FOG_TEXTURE, m_fog.texture);
+			}
+			m_fog.RefreshTexture();
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_fog.m_fogStart);
+			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_fog.m_fogEnd);
+		}
+	}
+
+	/// <summary>
 	/// A change has occurred on the inspector. Validate its values.
 	/// </summary>
 	private void OnValidate() {
@@ -134,6 +137,19 @@ public class ResultsSceneSetup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Prepare the scene for a results sequence.
+	/// </summary>
+	public void Init() {
+		// Toggle chests based on game mode
+		for(int i = 0; i < m_chestSlots.Length; ++i) {
+			m_chestSlots[i].gameObject.SetActive(SceneController.s_mode == SceneController.Mode.DEFAULT);
+		}
+
+		// Toggle egg based on game mode
+		m_eggSlot.gameObject.SetActive(SceneController.s_mode == SceneController.Mode.DEFAULT);
+	}
+
 	/// <summary>
 	/// Launches the dragon intro animation.
 	/// </summary>
