@@ -42,9 +42,9 @@ public abstract class ResultsScreenSequenceStep : ResultsScreenStep {
 	/// Initialize this step with the given results screen controller.
 	/// </summary>
 	/// <param name="_controller">The results screen controller that will be triggering this step.</param>
-	override public void Init(ResultsScreenController _controller) {
+	override public void Init(ResultsScreenController _controller, ResultsScreenController.Step _stepID) {
 		// Call parent
-		base.Init(_controller);
+		base.Init(_controller, _stepID);
 
 		// Listen when the sequence is finished
 		m_sequence.OnFinished.AddListener(OnSequenceFinished);

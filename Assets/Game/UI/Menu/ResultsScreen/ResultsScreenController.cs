@@ -9,7 +9,7 @@ public class ResultsScreenController : MonoBehaviour {
     //------------------------------------------------------------------//
     public const string NAME = "SC_ResultsScreen";
 
-	// Execution order!
+	// [AOC] ADD THEM TO THE EDITOR AS WELL!
 	public enum Step {
 		INIT = 0,
 
@@ -31,7 +31,9 @@ public class ResultsScreenController : MonoBehaviour {
 		GLOBAL_EVENT_CONTRIBUTION,		// Optional, if there is an active event and the player has a score to add to it
 		GLOBAL_EVENT_NO_CONTRIBUTION,	// Optional, if there is an active event but the player didn't score
 
-		FINISHED,
+		TOURNAMENT_SCORE,		// Tournament, show run score
+		TOURNAMENT_LEADERBOARD,	// Tournament, show leaderboard changes
+		TOURNAMENT_SYNC,		// Tournament, sync with server, apply rewards and do tracking
 
 		COUNT
 	}
@@ -40,12 +42,20 @@ public class ResultsScreenController : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private ResultsScreenStep[] m_steps = new ResultsScreenStep[(int)Step.COUNT];
-
 	[SerializeField] private ResultsScreenSummary m_summary = null;
 	public ResultsScreenSummary summary {
 		get { return m_summary; }
 	}
+
+	[SerializeField] private ResultsScreenStep[] m_steps = new ResultsScreenStep[(int)Step.COUNT];
+
+	[Reorderable]
+	[HideEnumValues(true, true)]
+	[SerializeField] private Step[] m_tournamentStepsSequence = new Step[0];
+
+	[Reorderable]
+	[HideEnumValues(true, true)]
+	[SerializeField] private Step[] m_defaultStepsSequence = new Step[0];
 
 	// Other references
 	private ResultsSceneSetup m_scene = null;
@@ -54,13 +64,13 @@ public class ResultsScreenController : MonoBehaviour {
 	}
 
 	// Internal
-	private Step m_step = Step.INIT;
+	private int m_stepIdx = -1;
+	private Step[] m_activeSequence = null;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Make use of properties to easily add test code without getting it all dirty
-	// They can be static since they're getting the data from static singletons as well
 	public long score {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
@@ -203,22 +213,38 @@ public class ResultsScreenController : MonoBehaviour {
 			} break;
 		}
 
-		// Initialize all steps
+		// Initialize 3D scene
+		m_scene.Init();
+
+		// Initialize summary as well
+		m_summary.InitSummary();
+
+		// Disable all steps
 		for(int i = 0; i < m_steps.Length; ++i) {
 			if(m_steps[i] != null) {
-				// Tell them we're their parent
-				m_steps[i].Init(this);
-
 				// Start hidden!
 				m_steps[i].gameObject.SetActive(false);
 			}
 		}
 
-		// Initialize summary as well
-		m_summary.InitSummary();
+		// Choose steps sequence based on current game mode
+		switch(GameSceneController.s_mode) {
+			case GameSceneController.Mode.TOURNAMENT: {
+				m_activeSequence = m_tournamentStepsSequence;
+			} break;
+
+			default: {
+				m_activeSequence = m_defaultStepsSequence;
+			} break;
+		}
+
+		// Init those steps that are gonna be used
+		for(int i = 0; i < m_activeSequence.Length; ++i) {
+			GetStep(m_activeSequence[i]).Init(this, m_activeSequence[i]);
+		}
 
 		// Launch first step!
-		m_step = Step.INIT;
+		m_stepIdx = -1;
 		LaunchNextStep();
 	}
 
@@ -239,16 +265,16 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void LaunchNextStep() {
 		// Find out next step
-		m_step = CheckNextStep();
+		m_stepIdx = CheckNextStep();
 
 		// If we're at the last step, go back to menu!
-		if(m_step == Step.FINISHED) {
+		if(m_stepIdx >= m_activeSequence.Length) {
 			GoToMenu();
 			return;
 		}
 
 		// Launch the target step! We'll receive the OnStepFinished callback when step has finished
-		ResultsScreenStep targetStep = m_steps[(int)m_step];
+		ResultsScreenStep targetStep = GetStep(m_activeSequence[m_stepIdx]);
 		targetStep.gameObject.SetActive(true);
 		targetStep.Launch();
 	}
@@ -257,39 +283,41 @@ public class ResultsScreenController : MonoBehaviour {
 	/// Check which step to display next.
 	/// </summary>
 	/// <returns>The next step to be displayed. Step.FINISHED if none.</returns>
-	public Step CheckNextStep() {
+	public int CheckNextStep() {
 		// Just use recursive call
-		return CheckNextStep(m_step);
+		return CheckNextStep(m_stepIdx);
 	}
 
 	/// <summary>
 	/// Given a step, check which step to display next.
 	/// </summary>
 	/// <returns>The next step to be displayed. Step.FINISHED if none.</returns>
-	/// <param name="_step">Step to be checked.</param>
-	public Step CheckNextStep(Step _step) {
+	/// <param name="_stepIdx">Index of the step to be checked.</param>
+	public int CheckNextStep(int _stepIdx) {
 		// Increase step index
-		_step++;
-		ResultsScreenStep targetStep = m_steps[(int)_step];
+		_stepIdx++;
 
 		// If we're at the last step, we're done!
-		if(_step == Step.FINISHED) {
-			return Step.FINISHED;	// End of recursivity
+		if(_stepIdx >= m_activeSequence.Length) {
+			return _stepIdx;	// End of recursivity
 		}
 
+		// Get target step from current sequence
+		ResultsScreenStep targetStep = GetStep(m_activeSequence[_stepIdx]);
+
 		// If the step has no logic assigned, skip it
-		else if(targetStep == null) {
-			return CheckNextStep(_step);	// Recursive call
+		if(targetStep == null) {
+			return CheckNextStep(_stepIdx);	// Recursive call
 		}
 
 		// If step mustn't be displayed, skip it
 		else if(!targetStep.MustBeDisplayed()) {
-			return CheckNextStep(_step);	// Recursive call
+			return CheckNextStep(_stepIdx);	// Recursive call
 		}
 
 		// This is the next step! Return it
 		else {
-			return _step;
+			return _stepIdx;
 		}
 	}
 
@@ -311,6 +339,17 @@ public class ResultsScreenController : MonoBehaviour {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._05_continue_clicked);
 		}
 
+		// Tell the menu where to go based on current game mode (or other modifiers)
+		switch(GameSceneController.s_mode) {
+			case GameSceneController.Mode.TOURNAMENT: {
+				GameVars.menuInitialScreen = MenuScreen.TOURNAMENT_INFO;
+			} break;
+
+			default: {
+				GameVars.menuInitialScreen = MenuScreen.NONE;	// By setting NONE, default behaviour will apply (dragon selection) (MenuTransitionManager::Start)
+			} break;
+		}
+
 		// Go back to main menu
 		FlowManager.GoToMenu();
 	}
@@ -323,7 +362,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnStepFinished() {
 		// Hide current step
-		ResultsScreenStep currentStep = m_steps[(int)m_step];
+		ResultsScreenStep currentStep = GetStep(m_activeSequence[m_stepIdx]);
 		if(currentStep != null) currentStep.gameObject.SetActive(false);
 
 		// Just check next step
