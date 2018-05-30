@@ -44,6 +44,15 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	}
 
 	/// <summary>
+	/// Initialize this step.
+	/// </summary>
+	override protected void DoInit() {
+		// Make sure the number animator respect the tournament's formatting
+		m_scoreText.CustomTextSetter = OnSetScoreText;
+	}
+
+
+	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
