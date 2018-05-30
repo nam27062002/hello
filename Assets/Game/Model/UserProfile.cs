@@ -1633,8 +1633,19 @@ public class UserProfile : UserPersistenceSystem
 		// Do we have persistence data for this pack?
 		JSONClass packData = null;
 		if(m_offerPacksPersistenceData.TryGetValue(_pack.uniqueId, out packData)) {
-			// Yes! Load it into the pack
-			_pack.Load(packData);
+			// Yes!
+			// Multiple packs may have the same unique ID, with the intention to make 
+			// them mutually exclusive. In order to know which pack with that ID is actually triggered,
+			// check the sku of the pack as well.
+			// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
+			if(packData.ContainsKey("sku") && packData["sku"] == _pack.def.sku) {
+				// Match! Load it into the pack
+				_pack.Load(packData);
+			} else {
+				// Sku doesn't match! Immediately mark pack as expired
+				// (Since it means there is or has been another pack with the same uniqueID which was triggered first)
+				_pack.ForceExpiration();
+			}
 		}
 	}
 

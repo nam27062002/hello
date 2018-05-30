@@ -98,8 +98,13 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		instance.m_activeOffers.Clear();
 		instance.m_featuredOffer = null;
 
-		// Create data for each known offer pack definition
+		// Get all known offer packs
+		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
+		// are triggered at the same time, we can control which one shows
 		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
+		DefinitionsManager.SharedInstance.SortByProperty(ref offerDefs, "order", DefinitionsManager.SortType.NUMERIC);
+
+		// Create data for each known offer pack definition
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Skip if offer is not enabled
 			if(!offerDefs[i].GetAsBool("enabled", false)) continue;
