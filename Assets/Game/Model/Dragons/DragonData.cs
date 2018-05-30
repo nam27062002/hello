@@ -69,8 +69,17 @@ public class DragonData : IUISelectorItem {
 	private Range m_healthRange = new Range();
 	public float maxHealth { get { return GetMaxHealthAtLevel(progression.level); }}
 
-	private float m_baseEnergy = 0f;
-	public float baseEnergy { get { return m_baseEnergy; }}
+	//TONI
+	private Range m_forceRange = new Range();
+	public float maxForce { get { return GetMaxForceAtLevel(progression.level); }}
+
+	private Range m_eatSpeedFactorRange = new Range();
+	public float maxEatSpeedFactor { get { return GetMaxEatSpeedFactorAtLevel(progression.level); }}
+
+	private Range m_energyBaseRange = new Range();
+	public float baseEnergy { get { return GetMaxEnergyBaseAtLevel(progression.level); }}
+	//private float m_baseEnergy = 0f;
+	//public float baseEnergy { get { return m_baseEnergy; }}
 
 	private Range m_scaleRange = new Range(1f, 1f);
 	public float scale { get { return GetScaleAtLevel(progression.level); }}
@@ -138,7 +147,12 @@ public class DragonData : IUISelectorItem {
 
 		// Stats
 		m_healthRange = m_def.GetAsRange("health");
-		m_baseEnergy = m_def.GetAsFloat("energyBase");
+		//TONI
+		m_forceRange = m_def.GetAsRange("force");
+		m_eatSpeedFactorRange = m_def.GetAsRange ("eatSpeedFactor");
+		m_energyBaseRange = m_def.GetAsRange("energyBase");
+		//m_baseEnergy = m_def.GetAsFloat("energyBase");
+
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Items
@@ -167,6 +181,22 @@ public class DragonData : IUISelectorItem {
 	public float GetMaxHealthAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_healthRange.Lerp(levelDelta);
+	}
+
+	//TONI
+	public float GetMaxForceAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
+		return m_forceRange.Lerp(levelDelta);
+	}
+
+	public float GetMaxEatSpeedFactorAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
+		return m_eatSpeedFactorRange.Lerp(levelDelta);
+	}
+
+	public float GetMaxEnergyBaseAtLevel(int _level) {
+		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
+		return m_energyBaseRange.Lerp(levelDelta);
 	}
 
 	/// <summary>
