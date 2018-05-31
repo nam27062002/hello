@@ -28,10 +28,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	public TrackerBase m_tracker = new TrackerBase();
 
 	private bool m_isLeaderboardReady;
-
-
 	private bool m_runWasValid = false;
-
 
 		// Control vars
 	protected HDTournamentDefinition.TournamentGoal m_runningGoal;

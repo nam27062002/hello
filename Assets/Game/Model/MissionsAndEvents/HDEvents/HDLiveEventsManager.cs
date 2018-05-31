@@ -166,8 +166,6 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		if(_response != null && _response["response"] != null) 
 		{
 			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-			m_cacheInfo = false;
-
             if ( responseJson != null )
             {
                 int max = m_types.Count;
@@ -177,14 +175,16 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
                     if (responseJson.ContainsKey( m_types[i] ))
                     {
                         m_managers[i].OnNewStateInfo(responseJson[ m_types[i] ]);
-                        // if (!m_managers[i].HasValidDefinition())
+                        if (!m_managers[i].HasValidDefinition() || m_cacheInfo)
                         {
                             m_managers[i].RequestDefinition();
                         }
                     }
                 }
             }
+			m_cacheInfo = false;
 		}
+
 	}
 
 	public bool Connected() {

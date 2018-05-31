@@ -102,7 +102,7 @@ public class HDTournamentData : HDLiveEventData {
 		leaderboard.Add("u", u);
 
 		ret.Add("leaderboard", leaderboard);
-		ret.Add("leaderboardTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
+		ret.Add("leaderboardTimestamp", TimeUtils.DateToTimestamp( m_leaderboardCheckTimestamp ));
 
 		return ret;
 	}
