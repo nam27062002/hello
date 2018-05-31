@@ -76,7 +76,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 
 			//LEADERBOARD
-			if (m_tournament.data.m_state <= HDLiveEventData.State.AVAILABLE) {
+			if (m_tournament.data.m_state <= HDLiveEventData.State.NOT_JOINED) {
 				m_leaderboard.gameObject.SetActive(false);
 			} else {
 				m_leaderboard.gameObject.SetActive(true);

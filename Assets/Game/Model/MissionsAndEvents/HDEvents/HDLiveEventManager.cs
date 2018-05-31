@@ -78,6 +78,21 @@ public class HDLiveEventManager
     	m_data.UpdateStateFromTimers();
     }
 
+    /// <summary>
+    /// Determines whether this instance is available or running.
+    /// </summary>
+    /// <returns><c>true</c> if this instance is available or running; otherwise, <c>false</c>.</returns>
+    public virtual bool IsRunning()
+    {
+		bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.NOT_JOINED || data.m_state == HDLiveEventData.State.JOINED;
+        }
+        return ret;
+	}
+
     public virtual bool HasValidDefinition()
     {
         bool ret = false;
@@ -182,6 +197,28 @@ public class HDLiveEventManager
                 }
             }
         }
+    }
+
+	public void RequestRewards()
+    {
+    	
+    }
+
+	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    {
+    		
+    }
+
+	public void FinishEvent()
+	{
+		// ?
+		CleanData();
+		// Tell server
+	}
+
+	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    {
+    	
     }
 
 

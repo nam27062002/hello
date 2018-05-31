@@ -30,8 +30,9 @@ public class HDLiveEventData {
 	public enum State
 	{
 		NONE,
-		AVAILABLE,
-		RUNNING,
+		TEASING,
+		NOT_JOINED,
+		JOINED,
 		REWARD_AVAILABLE,
 		FINALIZED
 	};
@@ -46,6 +47,19 @@ public class HDLiveEventData {
 	{	
 		get { return m_definition; }
 	}
+
+	public TimeSpan remainingTime {	// Dynamic, depending on current state
+		get { 
+			DateTime now = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			switch(m_state) {
+				case State.TEASING:	return m_startTimestamp - now;		break;
+				case State.NOT_JOINED:
+				case State.JOINED:	return m_endTimestamp - now;		break;
+				default:			return new TimeSpan();				break;
+			}
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -88,12 +102,16 @@ public class HDLiveEventData {
 		if ( m_eventId > 0 )
 		{
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-			if ( m_state < State.REWARD_AVAILABLE )
+			if ( serverTime < m_teasingTimestamp )
+			{
+				m_state = State.TEASING;
+			}
+			else if ( m_state < State.REWARD_AVAILABLE )
 			{
 				if ( serverTime > m_endTimestamp )
 				{
 					// if I was playing this event I need to check the reward, otherwise I can finalize it direclty
-					if ( m_state == State.RUNNING )	
+					if ( m_state == State.JOINED )	
 					{
 						m_state = State.REWARD_AVAILABLE;
 					}
@@ -102,6 +120,10 @@ public class HDLiveEventData {
 						m_state = State.FINALIZED;
 					}
 				}
+			}
+			else if ( m_state == State.NONE )
+			{
+				m_state = State.NOT_JOINED;
 			}
 		}
 	}
@@ -114,7 +136,7 @@ public class HDLiveEventData {
 		string stateStr = "none";
 		switch( m_state )
 		{
-			case State.AVAILABLE:
+			case State.NOT_JOINED:
 			{
 				stateStr = "not_joined";
 			}break;
@@ -126,7 +148,7 @@ public class HDLiveEventData {
 			{
 				stateStr = "penging_rewards";
 			}break;
-			case State.RUNNING:
+			case State.JOINED:
 			{
 				stateStr = "joined";
 			}break;
@@ -161,7 +183,7 @@ public class HDLiveEventData {
 			{
 				case "not_joined":
 				{
-					m_state = State.AVAILABLE;
+					m_state = State.NOT_JOINED;
 				}break;
 				case "finalized":
 				{
@@ -173,7 +195,7 @@ public class HDLiveEventData {
 				}break;
 				case "joined":
 				{
-					m_state = State.RUNNING;
+					m_state = State.JOINED;
 				}break;
 			}
 		}

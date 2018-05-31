@@ -38,6 +38,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
+	private HDQuestManager m_questManager;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -49,6 +50,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Make sure we have all the required panels
 		// Shouldn't happen, the custom editor makes sure everyhting is ok
 		Debug.Assert(m_panels.Length == (int)Panel.COUNT, "Unexpected amount of defined panels");
+
+		m_questManager = HDLiveEventsManager.instance.m_quest;
 
 		// Init panels
 		for(int i = 0; i < m_panels.Length; i++) {
@@ -86,9 +89,11 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Do we need to go to the rewards screen?
-		if ( GlobalEventManager.currentEvent != null ){
+		if ( m_questManager.EventExists() )
+		{
+			m_questManager.UpdateStateFromTimers();
 			// If the current global event has a reward pending, go to the event reward screen
-			if(GlobalEventManager.currentEvent.isRewardAvailable) {
+			if(m_questManager.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE ) {
 				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 				scr.StartFlow();
 				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);	
@@ -111,44 +116,28 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Based on current event state, select which panel should be active.
 	/// </summary>
 	private void SelectPanel() {
-		// Check events manager to see which panel to show
-		GlobalEventManager.ErrorCode error = GlobalEventManager.CanContribute();
+
 		Panel targetPanel = Panel.NO_EVENT;
-		switch(error) {
-			case GlobalEventManager.ErrorCode.NOT_INITIALIZED:
-			case GlobalEventManager.ErrorCode.OFFLINE: {
+		HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+		if ( quest.EventExists() )
+		{
+			if (Application.internetReachability == NetworkReachability.NotReachable)
+			{
 				targetPanel = Panel.OFFLINE;
-			} break;
-
-			case GlobalEventManager.ErrorCode.NOT_LOGGED_IN: {
+			}
+			/*
+			else if ( GameSessionManager.SharedInstance.IsLogged () )
+			{
 				targetPanel = Panel.LOG_IN;
-			} break;
-
-			case GlobalEventManager.ErrorCode.NO_VALID_EVENT: {
-				targetPanel = Panel.NO_EVENT;
-			} break;
-
-			case GlobalEventManager.ErrorCode.NONE:
-			case GlobalEventManager.ErrorCode.EVENT_NOT_ACTIVE: {
-				// We have a valid event, select panel based on its state
-				switch(GlobalEventManager.currentEvent.state) {
-					case GlobalEvent.State.ACTIVE: {
-						targetPanel = Panel.EVENT_ACTIVE;
-					} break;
-
-					case GlobalEvent.State.TEASING: {
-						targetPanel = Panel.EVENT_TEASER;
-					} break;
-
-					default: {
-						targetPanel = Panel.NO_EVENT;
-					} break;
+			}
+			*/
+			else
+			{
+				if ( quest.IsRunning())
+				{
+					targetPanel = Panel.EVENT_ACTIVE;
 				}
-			} break;
-
-			default: {
-				targetPanel = Panel.NO_EVENT;
-			} break;
+			}
 		}
 
 		// Toggle active panel
@@ -182,7 +171,15 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 		// Get latest event data
 		// [AOC] TODO!! Figure out the best place to do so to avoid spamming
-		GlobalEventManager.RequestCurrentEventData();
+		// GlobalEventManager.RequestCurrentEventData();
+			// TODO: request??
+		m_questManager.UpdateStateFromTimers();
+		OnQuestDataUpdated();
+	}
+
+	private void OnQuestDataUpdated()
+	{
+		Refresh();
 	}
 
 	/// <summary>
@@ -216,35 +213,40 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnOfflineRetryButton() {
 
-		if(GlobalEventManager.user != null){
+		if (Application.internetReachability != NetworkReachability.NotReachable)
+		{
+			// TODO: Check if log in!
 
-			if (Application.internetReachability != NetworkReachability.NotReachable)
+			// Show loading panel
+			SetActivePanel(Panel.LOADING);
+
+			if ( !m_questManager.EventExists() )
 			{
-				// Show loading panel
-				SetActivePanel(Panel.LOADING);
-
-				// Do we have an event?
-				if(GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0) {
-					// No! Ask for live events again
-					GlobalEventManager.TMP_RequestCustomizer();
-					// Wait for events GLOBAL_EVENT_UPDATED GLOBAL_EVENT_CUSTOMIZER_ERROR or GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS
-				} else {
-					// Yes! Refresh data
-					GlobalEventManager.RequestCurrentEventData();
-					// Wait for events GLOBAL_EVENT_UPDATED
-				}
+				// Request the event
 			}
 			else
 			{
-				// Message no connection
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+				// Request the current quest state?
 			}
+			/*
+			// Do we have an event?
+			if(GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0) {
+				// No! Ask for live events again
+				GlobalEventManager.TMP_RequestCustomizer();
+				// Wait for events GLOBAL_EVENT_UPDATED GLOBAL_EVENT_CUSTOMIZER_ERROR or GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS
+			} else {
+				// Yes! Refresh data
+				GlobalEventManager.RequestCurrentEventData();
+				// Wait for events GLOBAL_EVENT_UPDATED
+			}
+			*/
 		}
 		else
 		{
-			// Message no user
+			// Message no connection
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
+	
 	}
 
 	/// <summary>

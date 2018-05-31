@@ -26,6 +26,8 @@ public class HDQuestManager : HDLiveEventManager{
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	TrackerBase m_tracker = new TrackerBase();
+	public HDQuestData m_questData;
+	public HDQuestDefinition m_questDefinition;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -51,6 +53,8 @@ public class HDQuestManager : HDLiveEventManager{
 	public override void BuildData()
     {
 		m_data = new HDQuestData();
+		m_questData = m_data as HDQuestData;
+		m_questDefinition = m_questData.definition as HDQuestDefinition;
     }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
@@ -71,6 +75,18 @@ public class HDQuestManager : HDLiveEventManager{
     public void OnGameEnded(){
     	// Save tracker value?
     }
+
+
+	public virtual string GetGoalDescription() {
+		// Use replacements?
+		return m_tracker.FormatDescription(m_questDefinition.m_goal.m_desc, m_questDefinition.m_goal.m_amount);
+	}
+
+
+	public float progress {
+		get { return Mathf.Clamp01(m_questData.m_globalScore/(float)m_questDefinition.m_goal.m_amount); }
+	}
+
 
     public void RequestProgress()
     {
