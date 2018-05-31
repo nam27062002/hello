@@ -69,11 +69,11 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if(GlobalEventManager.currentEvent == null) return;
+		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
 
 		// Update countdown text
 		m_timerText.text = TimeUtils.FormatTime(
-			System.Math.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),	// Never show negative time!
+			System.Math.Max(0, HDLiveEventsManager.instance.m_quest.m_questData.remainingTime.TotalSeconds),	// Never show negative time!
 			TimeUtils.EFormat.ABBREVIATIONS,
 			4
 		);

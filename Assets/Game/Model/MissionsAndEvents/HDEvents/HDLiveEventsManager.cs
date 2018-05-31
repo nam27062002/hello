@@ -43,6 +43,8 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     private List<string> m_types;
     private List<HDLiveEventManager> m_managers;
 
+    public const long CACHE_TIMEOUT_MS = 1000 * 60 * 60 * 24 * 7;	// 7 days timeout
+
     public bool m_cacheInfo = false;
 #if UNITY_EDITOR
     public static readonly bool TEST_CALLS = true;
@@ -96,18 +98,40 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
 	public void LoadEventsFromCache()
 	{
-		m_cacheInfo = true;
+		long cacheTimestamp = 0;
+		if ( CacheServerManager.SharedInstance.HasKey("hdliveeventstimestamp") )
+		{
+			cacheTimestamp = long.Parse(CacheServerManager.SharedInstance.GetVariable("hdliveeventstimestamp"));
+		}
 
-        int max = m_types.Count;
-        for (int i = 0; i < max; ++i)
+		if ( GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - cacheTimestamp < CACHE_TIMEOUT_MS)
+		{
+			m_cacheInfo = true;
+	        int max = m_types.Count;
+	        for (int i = 0; i < max; ++i)
+	        {
+	            m_managers[i].CleanData();
+	            if (CacheServerManager.SharedInstance.HasKey( m_types[i] ))
+	            {
+	                SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable( m_types[i] ));
+	                m_managers[i].OnNewStateInfo(json);
+	                m_managers[i].UpdateStateFromTimers();
+	            }
+	        }
+        }
+        else
         {
-            m_managers[i].CleanData();
-            if (CacheServerManager.SharedInstance.HasKey( m_types[i] ))
-            {
-                SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable( m_types[i] ));
-                m_managers[i].OnNewStateInfo(json);
-                m_managers[i].UpdateStateFromTimers();
-            }
+        	// Delete cache!
+			m_cacheInfo = false;
+	        int max = m_types.Count;
+	        for (int i = 0; i < max; ++i)
+	        {
+	            m_managers[i].CleanData();
+	            if (CacheServerManager.SharedInstance.HasKey( m_types[i] ))
+	            {
+					CacheServerManager.SharedInstance.DeleteKey( m_types[i] );
+	            }
+	        }
         }
 	}
 
@@ -125,6 +149,8 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
                 CacheServerManager.SharedInstance.DeleteKey( m_types[i] );
             }
         }
+
+		CacheServerManager.SharedInstance.SetVariable("hdliveeventstimestamp", GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong().ToString());
 	}
 
 #if UNITY_EDITOR
@@ -183,6 +209,11 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
                 }
             }
 			m_cacheInfo = false;
+
+			if ( m_quest.EventExists() && m_quest.ShouldRequestProgress() )
+				m_quest.RequestProgress();
+			if ( m_tournament.EventExists() && m_tournament.ShouldRequestLeaderboard() )
+				m_tournament.RequestLeaderboard();
 		}
 
 	}

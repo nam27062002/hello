@@ -29,6 +29,7 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	private bool m_isLeaderboardReady;
 	private bool m_runWasValid = false;
+	private long m_lastLeaderboardTimestamp = 0;
 
 		// Control vars
 	protected HDTournamentDefinition.TournamentGoal m_runningGoal;
@@ -73,6 +74,7 @@ public class HDTournamentManager : HDLiveEventManager {
     public void RequestLeaderboard()
     {
 		m_isLeaderboardReady = false;
+		m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
         if ( HDLiveEventsManager.TEST_CALLS )
         {
@@ -85,6 +87,12 @@ public class HDTournamentManager : HDLiveEventManager {
             GameServerManager.SharedInstance.HDEvents_GetLeaderboard(data.m_eventId, LeaderboardResponse);    
         }
     }
+
+	public bool ShouldRequestLeaderboard()
+	{
+		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastLeaderboardTimestamp;
+		return diff > 1000 * 60 * 5;	// 5 min timeout
+	}
 
 	public bool IsLeaderboardReady() {
 		return m_isLeaderboardReady;

@@ -35,7 +35,6 @@ public class HDQuestManager : HDLiveEventManager{
 	bool m_lastContributionViewAd;
 	bool m_lastContributionSpentHC;
 
-	bool m_shouldUpdateGlobalScore = false;
 	long m_lastProgressTimestamp = 0;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -103,11 +102,12 @@ public class HDQuestManager : HDLiveEventManager{
 	public bool ShouldRequestProgress()
 	{
 		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastProgressTimestamp;
-		return m_shouldUpdateGlobalScore || diff > 300;
+		return diff > 1000 * 60 * 5;	// 5 min timeout
 	}
 
     public void RequestProgress()
     {
+		m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
         if ( HDLiveEventsManager.TEST_CALLS )
         {
             GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("quest_get_progress.json");
@@ -137,12 +137,13 @@ public class HDQuestManager : HDLiveEventManager{
             {
 				data.ParseProgress( responseJson );
             }
-			m_shouldUpdateGlobalScore = false;
         }
     }
 
 	public void Contribute(float _runScore, float _bonusDragonMultiplier, float _keysMultiplier, bool _spentHC, bool _viewAD)
 	{
+		m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+
 		// Get contribution amount and apply multipliers
 		int contribution = (int)_runScore;
 		contribution = (int)(_bonusDragonMultiplier * contribution);
@@ -200,7 +201,6 @@ public class HDQuestManager : HDLiveEventManager{
 
 				HDTrackingManager.Instance.Notify_GlobalEventRunDone(data.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
             }
-			m_shouldUpdateGlobalScore = true;
         }
     }
 
