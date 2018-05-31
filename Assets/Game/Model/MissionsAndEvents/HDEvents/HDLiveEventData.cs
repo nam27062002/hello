@@ -83,6 +83,29 @@ public class HDLiveEventData {
 		m_definition.Clean();
 	}
 
+	public virtual void UpdateStateFromTimers()
+	{
+		if ( m_eventId > 0 )
+		{
+			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			if ( m_state < State.REWARD_AVAILABLE )
+			{
+				if ( serverTime > m_endTimestamp )
+				{
+					// if I was playing this event I need to check the reward, otherwise I can finalize it direclty
+					if ( m_state == State.RUNNING )	
+					{
+						m_state = State.REWARD_AVAILABLE;
+					}
+					else
+					{
+						m_state = State.FINALIZED;
+					}
+				}
+			}
+		}
+	}
+
 	public virtual SimpleJSON.JSONClass ToJson ()
 	{
 		SimpleJSON.JSONClass ret = new SimpleJSON.JSONClass();

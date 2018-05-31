@@ -62,16 +62,20 @@ public class HDLiveEventManager
     	m_data = new HDLiveEventData();
     }
 
-    public virtual bool IsAvailable()
+    public virtual bool EventExists()
     {
         bool ret = false;
         HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
-        	// if ( GameServerManager.SharedInstance.GetEstimatedServerTime() >  )
             ret = true;
         }
         return ret;
+    }
+
+    public virtual void UpdateStateFromTimers()
+    {
+    	m_data.UpdateStateFromTimers();
     }
 
     public virtual bool HasValidDefinition()

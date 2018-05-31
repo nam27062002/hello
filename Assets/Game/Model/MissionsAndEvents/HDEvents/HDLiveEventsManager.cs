@@ -106,6 +106,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
             {
                 SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable( m_types[i] ));
                 m_managers[i].OnNewStateInfo(json);
+                m_managers[i].UpdateStateFromTimers();
             }
         }
 	}
@@ -115,7 +116,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         int max = m_types.Count;
         for (int i = 0; i < max; i++)
         {
-            if (m_managers[i].IsAvailable())
+            if (m_managers[i].EventExists() && m_managers[i].data.m_state != HDLiveEventData.State.FINALIZED )
             {
                 CacheServerManager.SharedInstance.SetVariable( m_types[i] , m_managers[i].ToJson().ToString());
             }
@@ -176,7 +177,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
                     if (responseJson.ContainsKey( m_types[i] ))
                     {
                         m_managers[i].OnNewStateInfo(responseJson[ m_types[i] ]);
-                        if (!m_managers[i].HasValidDefinition())
+                        // if (!m_managers[i].HasValidDefinition())
                         {
                             m_managers[i].RequestDefinition();
                         }
