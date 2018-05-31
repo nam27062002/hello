@@ -28,7 +28,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -475.6935, y: -88.27932, z: 0}
+  m_LocalPosition: {x: -556.92975, y: 94.82744, z: 1.4966214}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4384552596593966}
@@ -113,6 +113,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -155,6 +156,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -193,6 +195,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0.5
+    orientate: 0
   m_onEatenAudio: hd_rat_dead
   m_firePoints: []
   m_burnParticle:
@@ -233,6 +236,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0.6, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -272,9 +276,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
-  m_explodeOriented: 0
   m_onAttackAudio: 
   m_onAttackDealDamageAudio: 
   m_onScaredAudio: hd_rat_idle
@@ -823,7 +827,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1151010953755474}
-  m_LocalRotation: {x: 0.70123273, y: 0.09095457, z: -0.7012326, w: -0.09095457}
+  m_LocalRotation: {x: 0.7012328, y: 0.09095458, z: -0.7012327, w: -0.09095458}
   m_LocalPosition: {x: -0.0014953613, y: 0.37177277, z: 0.07051167}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1345,7 +1349,7 @@ MonoBehaviour:
     max: 1.5
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":5.5,"isWallWalking":true,"timeToIdle":{"min":2,"max":8},"timeToChangeDirection":{"min":2,"max":7},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":5},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
-  m_databaseKey: PF_RatGrey
+  m_databaseKey: PF_RatGrey (1)
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2
   m_avoidCollisions: 0
@@ -1376,7 +1380,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 1f318e911310a4cb28f7bdb76d5a0cee, type: 2}
+  - {fileID: 2100000, guid: 745489c81d83bc94c840a710aab685a5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
