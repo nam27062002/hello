@@ -93,6 +93,28 @@ public class HDLiveEventManager
         return ret;
 	}
 
+	public virtual bool IsTeasing()
+	{
+		bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.TEASING;
+        }
+        return ret;
+	}
+
+	public virtual bool IsRewardPenging()
+	{
+		bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
+        }
+        return ret;
+	}
+
     public virtual bool HasValidDefinition()
     {
         bool ret = false;
