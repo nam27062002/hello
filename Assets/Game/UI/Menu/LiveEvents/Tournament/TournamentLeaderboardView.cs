@@ -29,7 +29,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private Localizer m_titleText = null;
-	[SerializeField] private ScrollRect m_scrollList = null;
+	[SerializeField] private TournamentScrollRect m_scrollList = null;
 	[SerializeField] private GameObject m_loadingIcon = null;
 	[SerializeField] private GameObject m_scrollGroup = null;
 	[Space]
@@ -117,8 +117,27 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Get current event
+		m_tournament = HDLiveEventsManager.instance.m_tournament;
 		HDTournamentData data = (HDTournamentData)m_tournament.data;
 		List<HDTournamentData.LeaderboardLine> leaderboard = data.m_leaderboard;
+
+
+		leaderboard = new List<HDTournamentData.LeaderboardLine>();
+		for (int i = 0; i < 200; ++i) {
+			HDTournamentData.LeaderboardLine line = new HDTournamentData.LeaderboardLine();
+			line.m_name = "Player " + i;
+			line.m_rank = i;
+			line.m_score = 200 - i;
+			leaderboard.Add(line);
+		}
+
+		m_scrollList.SetupPlayerPill(m_playerPillPrefab, leaderboard[15]);
+		m_scrollList.Setup(m_pillPrefab, leaderboard);
+
+		ToggleLoading(false);
+
+		return;
+
 
 		// If pills list not yet initialized, do it now!
 		if (m_pills == null) {

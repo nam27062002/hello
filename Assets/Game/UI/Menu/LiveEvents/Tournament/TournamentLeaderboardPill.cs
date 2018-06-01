@@ -17,7 +17,7 @@ using TMPro;
 /// <summary>
 /// 
 /// </summary>
-public class TournamentLeaderboardPill : MonoBehaviour {
+public class TournamentLeaderboardPill : ScrollRectItem<HDTournamentData.LeaderboardLine> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -41,7 +41,7 @@ public class TournamentLeaderboardPill : MonoBehaviour {
 	/// Initialize the pill with the given user data.
 	/// </summary>
 	/// <param name="_data">The user to be displayed in the pill.</param>
-	public void InitWithData(HDTournamentData.LeaderboardLine _data) {
+	public override void InitWithData(HDTournamentData.LeaderboardLine _data) {
 		// Set position
 		// We might not get a valid position if the player hasn't yet participated in the event
 		if(_data.m_rank >= 0) {

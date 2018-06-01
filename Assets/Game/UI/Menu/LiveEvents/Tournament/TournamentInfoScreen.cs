@@ -75,12 +75,14 @@ public class TournamentInfoScreen : MonoBehaviour {
 			m_areaText.text = m_definition.m_goal.m_area;
 
 
+			m_leaderboard.Refresh();
+			/*
 			//LEADERBOARD
 			if (m_tournament.data.m_state <= HDLiveEventData.State.AVAILABLE) {
 				m_leaderboard.gameObject.SetActive(false);
 			} else {
 				m_leaderboard.gameObject.SetActive(true);
-			}
+			}*/
 
 
 			//
