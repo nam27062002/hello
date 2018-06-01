@@ -9,9 +9,10 @@ Shader "Hungry Dragon/Dragon/Eggs"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
+		_ColorRamp("Color Ramp (RGB)", 2D) = "white" {}
 		[Toggle(EMISSIVE)]_EnableEmissive("Enable emissive", Float) = 0.0
 		_GlowTex("Emissive (RGBA)", 2D) = "white" {}
-		_EmissiveColor("Emissive color (RGB)", Color) = (0, 0, 0, 0)
+		_EmissiveColor("Emissive color (Color)", Color) = (0, 0, 0, 0)
 
 
 		[Toggle(REFLECTION)]_EnableReflection("Enable reflection", Float) = 0.0
@@ -28,7 +29,6 @@ Shader "Hungry Dragon/Dragon/Eggs"
 		_RimFactor("Rim factor", Range(0.0, 8.0)) = 0.27
 		_RimColor("Rim Color (RGB)", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
-
 
 	SubShader
 	{
@@ -99,6 +99,7 @@ Shader "Hungry Dragon/Dragon/Eggs"
 			uniform float4 _MainTex_TexelSize;
 			uniform sampler2D _NormalTex;
 			uniform float4 _NormalTex_ST;
+			uniform sampler2D _ColorRamp;
 
 			uniform sampler2D _GlowTex;
 			#ifdef EMISSIVE
@@ -129,13 +130,7 @@ Shader "Hungry Dragon/Dragon/Eggs"
 				o.uv2 = TRANSFORM_TEX(v.uv, _NormalTex);
 				fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 
-//				float3 normal = UnityObjectToWorldNormal(v.normal);
-//				o.vLight = ShadeSH9(float4(normal, 1.0));
-
-				// Half View - See: Blinn-Phong
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
-				// float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-				// o.halfDir = normalize(lightDirection + viewDirection);
 				o.viewDir = viewDirection;
 				float3 lightDirection = normalize(_SpecularDir.xyz);
 				o.halfDir = normalize(lightDirection + viewDirection);
@@ -161,6 +156,8 @@ Shader "Hungry Dragon/Dragon/Eggs"
 				float specMask = col.w;
 
 				float3 maskTex = tex2D(_GlowTex, i.uv);
+
+				col = lerp(col, tex2D(_ColorRamp, float2(col.x, 0.0)), maskTex.g);
 
 
 				// Aux vars
