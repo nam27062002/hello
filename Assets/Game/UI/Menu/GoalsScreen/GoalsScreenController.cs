@@ -138,7 +138,7 @@ public class GoalsScreenController : MonoBehaviour {
 			);
 
 			// Timer bar
-			TimeSpan totalSpan = evt.m_endTimestamp - evt.m_startTimestamp;
+			TimeSpan totalSpan = evt.definition.m_endTimestamp - evt.definition.m_startTimestamp;
 			m_eventCountdownSlider.value = 1f - (float)(remainingSeconds/totalSpan.TotalSeconds);
 
 			// If time has finished, request new data

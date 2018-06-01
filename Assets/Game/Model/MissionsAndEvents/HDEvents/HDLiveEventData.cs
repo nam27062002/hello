@@ -26,7 +26,6 @@ public class HDLiveEventData {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	public int m_eventId;
-	public string m_name;
 	public enum State
 	{
 		NONE,
@@ -38,10 +37,6 @@ public class HDLiveEventData {
 	};
 	public State m_state = State.NONE;
 
-	public DateTime m_teasingTimestamp = new DateTime();
-	public DateTime m_startTimestamp = new DateTime();
-	public DateTime m_endTimestamp = new DateTime();
-
 	protected HDLiveEventDefinition m_definition;
 	public HDLiveEventDefinition definition
 	{	
@@ -52,9 +47,9 @@ public class HDLiveEventData {
 		get { 
 			DateTime now = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			switch(m_state) {
-				case State.TEASING:	return m_startTimestamp - now;		break;
+				case State.TEASING:	return m_definition.m_startTimestamp - now;		break;
 				case State.NOT_JOINED:
-				case State.JOINED:	return m_endTimestamp - now;		break;
+				case State.JOINED:	return m_definition.m_endTimestamp - now;		break;
 				default:			return new TimeSpan();				break;
 			}
 		}
@@ -89,11 +84,7 @@ public class HDLiveEventData {
 	public virtual void Clean()
 	{
 		m_eventId = -1;
-		m_name = "";
 		m_state = State.NONE;
-		m_teasingTimestamp = new DateTime(1970, 1, 1);
-		m_startTimestamp = new DateTime(1970, 1, 1);
-		m_endTimestamp = new DateTime(1970, 1, 1);
 		m_definition.Clean();
 	}
 
@@ -102,13 +93,13 @@ public class HDLiveEventData {
 		if ( m_eventId > 0 )
 		{
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-			if ( serverTime < m_teasingTimestamp )
+			if ( serverTime < m_definition.m_teasingTimestamp )
 			{
 				m_state = State.TEASING;
 			}
 			else if ( m_state < State.REWARD_AVAILABLE )
 			{
-				if ( serverTime > m_endTimestamp )
+				if ( serverTime > m_definition.m_endTimestamp )
 				{
 					// if I was playing this event I need to check the reward, otherwise I can finalize it direclty
 					if ( m_state == State.JOINED )	
@@ -155,10 +146,6 @@ public class HDLiveEventData {
 		}
 		ret.Add("state", stateStr);
 
-		ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
-		ret.Add("startTimestamp", TimeUtils.DateToTimestamp( m_startTimestamp ));
-		ret.Add("endTimestamp", TimeUtils.DateToTimestamp( m_endTimestamp ));
-
 		if ( m_definition.m_eventId == m_eventId )
 		{
 			ret.Add("definition", m_definition.ToJson());
@@ -199,15 +186,6 @@ public class HDLiveEventData {
 				}break;
 			}
 		}
-
-		if ( _data.ContainsKey("teaserTimestamp") )
-			m_teasingTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
-
-		if ( _data.ContainsKey("startTimestamp") )
-			m_startTimestamp = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
-
-		if ( _data.ContainsKey("endTimestamp") )
-			m_endTimestamp = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 
 		if ( _data.ContainsKey("definition") )
 		{
