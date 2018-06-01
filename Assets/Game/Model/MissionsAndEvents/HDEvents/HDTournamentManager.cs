@@ -28,14 +28,13 @@ public class HDTournamentManager : HDLiveEventManager {
 	public TrackerBase m_tracker = new TrackerBase();
 
 	private bool m_isLeaderboardReady;
-
-
 	private bool m_runWasValid = false;
-
+	private long m_lastLeaderboardTimestamp = 0;
 
 		// Control vars
 	protected HDTournamentDefinition.TournamentGoal m_runningGoal;
 	protected float m_timePlayed = -1;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -76,6 +75,7 @@ public class HDTournamentManager : HDLiveEventManager {
     public void RequestLeaderboard()
     {
 		m_isLeaderboardReady = false;
+		m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
         if ( HDLiveEventsManager.TEST_CALLS )
         {
@@ -88,6 +88,12 @@ public class HDTournamentManager : HDLiveEventManager {
             GameServerManager.SharedInstance.HDEvents_GetLeaderboard(data.m_eventId, LeaderboardResponse);    
         }
     }
+
+	public bool ShouldRequestLeaderboard()
+	{
+		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastLeaderboardTimestamp;
+		return diff > 1000 * 60 * 5;	// 5 min timeout
+	}
 
 	public bool IsLeaderboardReady() {
 		return m_isLeaderboardReady;
@@ -233,6 +239,9 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
     }
 
+	//------------------------------------------------------------------------//
+	// BUILD METHODS														  //
+	//------------------------------------------------------------------------//
     public bool UsingProgressionDragon()
     {
 		HDTournamentData data = m_data as HDTournamentData;
@@ -285,6 +294,9 @@ public class HDTournamentManager : HDLiveEventManager {
 		return ret;
     }
 
+	//------------------------------------------------------------------------//
+	// SCORE METHODS														  //
+	//------------------------------------------------------------------------//
     /// <summary>
     /// Tells if the last played run was valid
     /// </summary>
@@ -294,7 +306,9 @@ public class HDTournamentManager : HDLiveEventManager {
     	return m_runWasValid;
     }
 
-	// The score obtained in the last run (tracker)
+	/// <summary>
+	/// The score obtained in the last run (tracker)
+	/// </summary>
 	public long GetRunScore() {
 		
 		HDTournamentData data = m_data as HDTournamentData;
@@ -320,23 +334,32 @@ public class HDTournamentManager : HDLiveEventManager {
 		return ret;
 	}
 
-	// The overall best score (the one registered in the leaderboard)
+	/// <summary>
+	/// The overall best score (the one registered in the leaderboard)
+	/// </summary>
 	public long GetBestScore() {
 		HDTournamentData data = m_data as HDTournamentData;
 		return data.m_score;
 	}
 
-	// Given a score, format it based on tournament type
+	/// <summary>
+	/// Has the last run been a high score?
+	/// </summary>
+	public bool IsNewBestScore() {
+		// TODO!!
+		return false;
+	}
+
+	//------------------------------------------------------------------------//
+	// UI HELPER METHODS													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Given a score, format it based on tournament type
+	/// </summary>
 	public string FormatScore(long _score) {
 		// TODO!!
 		// Depends on tournament type, not all scores are numbers! (time)
 		//return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
 		return StringUtils.FormatNumber(_score);
-	}
-
-	// Has the last run been a high score?
-	public bool IsNewBestScore() {
-		// TODO!!
-		return false;
 	}
 }

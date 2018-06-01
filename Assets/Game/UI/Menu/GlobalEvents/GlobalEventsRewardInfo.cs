@@ -40,8 +40,8 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	}
 
 	// Internal
-	private GlobalEvent.RewardSlot m_rewardSlot = null;
-	public GlobalEvent.RewardSlot rewardSlot {
+	private HDQuestDefinition.HDLiveEventReward m_rewardSlot = null;
+	public HDQuestDefinition.HDLiveEventReward rewardSlot {
 		get { return m_rewardSlot; }
 		set { InitFromReward(value); }
 	}
@@ -99,7 +99,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	/// <summary>
 	/// Refresh the widget with the data of a specific reward.
 	/// </summary>
-	public void InitFromReward(GlobalEvent.RewardSlot _rewardSlot) {
+	public void InitFromReward(HDQuestDefinition.HDLiveEventReward _rewardSlot) {
 		// Store new reward
 		m_rewardSlot = _rewardSlot;
 
@@ -163,7 +163,7 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 		// Set target text
 		if(m_targetText != null) {
 			// Abbreviated for big amounts
-			m_targetText.text = StringUtils.FormatBigNumber(m_rewardSlot.targetAmount);
+			// m_targetText.text = StringUtils.FormatBigNumber(m_rewardSlot.targetAmount);
 		}
 	}
 

@@ -57,10 +57,12 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if(GlobalEventManager.currentEvent == null) return;
+		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
+
+		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
 
 		// Update timer
-		double remainingSeconds = GlobalEventManager.currentEvent.remainingTime.TotalSeconds;
+		double remainingSeconds = questManager.data.remainingTime.TotalSeconds;
 		m_timerText.text = TimeUtils.FormatTime(
 			System.Math.Max(0, remainingSeconds),	// Never show negative time!
 			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
@@ -69,7 +71,9 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 
 		// [AOC] Manage timer end when this panel is active
 		if(remainingSeconds <= 0) {
-			GlobalEventManager.RequestCurrentEventState();	// This should change the active panel
+			// TODO
+			// GlobalEventManager.RequestCurrentEventState();	// This should change the active panel
+			questManager.UpdateStateFromTimers();
 		}
 	}
 
@@ -77,13 +81,15 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	override public void Refresh() {
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
+
+		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		string bonusDragon = questManager.m_questDefinition.m_goal.m_bonusDragon;
+
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, bonusDragon);
 		m_text.text = def.GetLocalized("tidName");
+		m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + bonusDragon + "/icon_disguise_0");	// Default skin
 
-		GlobalEvent evt = GlobalEventManager.currentEvent;
-		m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
-
-		m_rewardInfo.rewardSlot = evt.topContributorsRewardSlot;
+		// m_rewardInfo.rewardSlot = evt.topContributorsRewardSlot;
 
 		// Force a first update on the timer
 		UpdatePeriodic();

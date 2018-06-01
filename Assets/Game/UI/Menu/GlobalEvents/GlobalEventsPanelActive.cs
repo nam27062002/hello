@@ -38,8 +38,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
-	[Space]
-	[SerializeField] private GlobalEventsLeaderboardView m_leaderboard = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -71,11 +69,11 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if(GlobalEventManager.currentEvent == null) return;
+		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
 
 		// Update countdown text
 		m_timerText.text = TimeUtils.FormatTime(
-			System.Math.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),	// Never show negative time!
+			System.Math.Max(0, HDLiveEventsManager.instance.m_quest.m_questData.remainingTime.TotalSeconds),	// Never show negative time!
 			TimeUtils.EFormat.ABBREVIATIONS,
 			4
 		);
@@ -92,19 +90,23 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	override public void Refresh() {
 		// Get current event
-		GlobalEvent evt = GlobalEventManager.currentEvent;
-		if(evt == null) return;
+		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		if(!questManager.EventExists()) return;
+
+		HDQuestData data = questManager.data as HDQuestData;
+		HDQuestDefinition def = data.definition as HDQuestDefinition;
 
 		// Initialize visuals
 		// Event description
-		m_objectiveText.text = evt.objective.GetDescription();
+		m_objectiveText.text = questManager.GetGoalDescription();
 
 		// Target icon
-		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + evt.objective.icon);
+		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
 
 		// Bonus dragon icon
-		m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
+		m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + def.m_goal.m_bonusDragon + "/icon_disguise_0");	// Default skin
 
+		/*
 		// Top reward info
 		m_topRewardInfo.InitFromReward(evt.topContributorsRewardSlot);
 
@@ -114,6 +116,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			m_topRewardPercentileText.tid, 
 			StringUtils.FormatNumber(topPercentile, 2)
 		);
+
 
 		// Player percentile text
 		if(m_playerPercentileText != null) {
@@ -151,15 +154,13 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				);
 			}
 		}
+		*/
 
 		// Progress
 		if (m_progressBar != null) {
-			m_progressBar.RefreshRewards(evt);
-			m_progressBar.RefreshProgress(evt.progress);
+			m_progressBar.RefreshRewards( def, questManager.m_questData.m_globalScore );
+			m_progressBar.RefreshProgress( questManager.progress );
 		}
-
-		// Leaderboard
-		// m_leaderboard.Refresh();
 
 		// Force a first update on the timer
 		UpdatePeriodic();
@@ -200,7 +201,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	public void OnBonusDragonInfoButton() {
 		// Get bonus dragon definition
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
+
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, HDLiveEventsManager.instance.m_quest.m_questDefinition.m_goal.m_bonusDragon);
 		if(def == null) return;	// Shouldn't happen
 
 		// Tracking

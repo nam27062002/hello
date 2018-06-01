@@ -53,9 +53,9 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 		}
 	}
 
-	public QuestGoal m_goal;
+	public QuestGoal m_goal = new QuestGoal();
 
-	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();	// <- te remove from GlobalEvents
+	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();
 		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -77,6 +77,10 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 	public override void ParseInfo( SimpleJSON.JSONNode _data )
 	{
 		base.ParseInfo(_data);
+
+		if ( _data.ContainsKey("goal") ){
+			m_goal.ParseGoal( _data["goal"] );
+		}
 
 		if ( _data.ContainsKey("rewards") )
 		{

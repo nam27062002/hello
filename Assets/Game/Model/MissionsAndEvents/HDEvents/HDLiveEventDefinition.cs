@@ -42,6 +42,14 @@ public class HDLiveEventDefinition {
 	public DateTime m_startTimestamp = new DateTime();
 	public DateTime m_endTimestamp = new DateTime();
 
+	public TimeSpan timeToEnd {
+		get { return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+	}
+
+	public TimeSpan timeToStart {
+		get { return m_startTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+	}
+
 	// Goal?
 	public class GoalCommon
 	{

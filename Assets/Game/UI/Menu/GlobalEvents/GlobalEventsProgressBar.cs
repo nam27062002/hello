@@ -25,36 +25,33 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	[SerializeField] private Slider m_progressBar = null;
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
 
-	/// <summary>
-	/// Refresh displayed data.
-	/// </summary>
-	public void RefreshRewards(GlobalEvent _evt) {
+	public void RefreshRewards(HDQuestDefinition _evt, long currentValue) {
 		// Initialize visuals
 		// Event description
 
 		// Rewards
-		for(int i = 0; i < _evt.rewardSlots.Count; ++i) {
+		for(int i = 0; i < _evt.m_rewards.Count; ++i) {
 			// Break the loop if we don't have more reward info slots
 			if(i >= m_rewardInfos.Length) break;
 
 			// Initialize the reward info corresponding to this reward
-			m_rewardInfos[i].InitFromReward(_evt.rewardSlots[i]);
+			m_rewardInfos[i].InitFromReward(_evt.m_rewards[i]);
 
 			// Put into position (except last reward, which has a fixed position)
-			if(i < _evt.rewardSlots.Count - 1) {
+			if(i < _evt.m_rewards.Count - 1) {
 				// Set min and max anchor in Y to match the target percentage
 				Vector2 anchor = m_rewardInfos[i].rectTransform.anchorMin;
-				anchor.y = _evt.rewardSlots[i].targetPercentage;
+				anchor.y = _evt.m_rewards[i].targetPercentage;
 				m_rewardInfos[i].rectTransform.anchorMin = anchor;
 
 				anchor = m_rewardInfos[i].rectTransform.anchorMax;
-				anchor.y = _evt.rewardSlots[i].targetPercentage;
+				anchor.y = _evt.m_rewards[i].targetPercentage;
 				m_rewardInfos[i].rectTransform.anchorMax = anchor;
 			}
 		}
 
 		if (m_currentValueText_DEBUG != null) {
-			m_currentValueText_DEBUG.text = StringUtils.FormatBigNumber(_evt.currentValue);
+			m_currentValueText_DEBUG.text = StringUtils.FormatBigNumber(currentValue);
 		}
 	}
 

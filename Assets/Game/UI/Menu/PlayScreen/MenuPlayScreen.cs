@@ -126,7 +126,7 @@ public class MenuPlayScreen : MonoBehaviour {
 
         if (m_tournamentBtn)
         {
-            m_tournamentBtn.gameObject.SetActive( HDLiveEventsManager.instance.m_tournament.IsAvailable() );
+            m_tournamentBtn.gameObject.SetActive( HDLiveEventsManager.instance.m_tournament.EventExists() );
         }
 
     }    

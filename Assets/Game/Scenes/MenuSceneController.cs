@@ -145,7 +145,7 @@ public class MenuSceneController : SceneController {
 		// StartCoroutine(petsScreen.InstantiatePillsAsync());
 
 		// Request latest global event data
-		GlobalEventManager.RequestCurrentEventData();
+		// GlobalEventManager.RequestCurrentEventData();
 
 		// wait one tick
 		yield return null;

@@ -132,7 +132,8 @@ public class MenuScreensControllerToolbar {
 
 				case MenuScreen.TOURNAMENT_INFO:
 				case MenuScreen.TOURNAMENT_DRAGON_SELECTION:
-				case MenuScreen.TOURNAMENT_DRAGON_SETUP: {
+				case MenuScreen.TOURNAMENT_DRAGON_SETUP:
+				case MenuScreen.TOURNAMENT_REWARD: {
 					s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS].screens.Add(scr);
 				} break;
 

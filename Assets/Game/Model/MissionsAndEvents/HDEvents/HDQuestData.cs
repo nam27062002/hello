@@ -27,6 +27,7 @@ public class HDQuestData : HDLiveEventData {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	public long m_globalScore;
+	public int m_rewardLevel = -1;
 
 
 	//------------------------------------------------------------------------//
@@ -41,7 +42,7 @@ public class HDQuestData : HDLiveEventData {
 
 	protected override void BuildDefinition()
 	{
-		m_definition = new HDLiveEventDefinition();
+		m_definition = new HDQuestDefinition();
 	}
 
 
@@ -55,6 +56,7 @@ public class HDQuestData : HDLiveEventData {
 	public override void Clean()
 	{
 		m_globalScore = -1;
+		m_rewardLevel = -1;
 	}
 
 	public override SimpleJSON.JSONClass ToJson ()

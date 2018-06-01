@@ -72,6 +72,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 
 	// Internal logic
 	private GlobalEvent m_event = null;
+	private HDQuestManager m_questManager = null;
 	private Panel m_activePanel = Panel.OFFLINE;
 	private Sequence m_activePanelSequence = null;
 
@@ -98,21 +99,18 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		// Never during FTUX
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) return false;
 
-		// Is there a valid current event to display? Check error codes to know so.
-		GlobalEventManager.ErrorCode canContribute = GlobalEventManager.CanContribute();
-		if((canContribute == GlobalEventManager.ErrorCode.NONE
-			|| canContribute == GlobalEventManager.ErrorCode.OFFLINE
-			|| canContribute == GlobalEventManager.ErrorCode.NOT_LOGGED_IN)
-			&& GlobalEventManager.currentEvent != null
-			&& GlobalEventManager.currentEvent.objective.enabled
-			&& GlobalEventManager.currentEvent.remainingTime.TotalSeconds > 0	// We check event hasn't finished while playing
-		) {	// [AOC] This will cover cases where the event is active but not enabled for this player (i.e. during the tutorial).
-			// In addition to all that, check that we actually have a score to register
-			if(GlobalEventManager.currentEvent.objective.currentValue > 0) {
-				return true;
-			}
-		}
+		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
 
+		if (	questManager.EventExists() &&
+				questManager.IsRunning() && 
+				questManager.m_isActive &&
+				questManager.m_questData.remainingTime.TotalSeconds > 0 &&
+				Application.internetReachability != NetworkReachability.NotReachable
+		)
+		{
+			if ( questManager.GetRunScore() > 0 )
+				return true;
+		}
 		return false;
 	}
 
@@ -121,7 +119,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Get event data!
-		m_event = GlobalEventManager.currentEvent;
+		m_questManager = HDLiveEventsManager.instance.m_quest;
+		// m_event = GlobalEventManager.currentEvent;
 
 		// Initialize some vars
 		m_keyShopPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, "shop_pack_keys_0");
@@ -135,7 +134,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Make sure we have the latest event data
-		m_event = GlobalEventManager.currentEvent;
+		m_questManager = HDLiveEventsManager.instance.m_quest;
+		// m_event = GlobalEventManager.currentEvent;
 
 		// Subscribe to external events
 		Messenger.AddListener<bool>(MessengerEvents.GLOBAL_EVENT_SCORE_REGISTERED, OnContributionConfirmed);
@@ -152,19 +152,16 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		}
 
 		// Bonus dragon?
-		if(m_event != null) {
-			m_bonusDragon = DragonManager.currentDragon.def.sku == m_event.bonusDragonSku;
-		} else {
-			m_bonusDragon = false;
-		}
+		m_bonusDragon = DragonManager.currentDragon.def.sku == m_questManager.m_questDefinition.m_goal.m_bonusDragon;
 
 		// Initialize static stuff
-		if(m_event != null && m_event.objective != null) {
+		// if(m_event != null && m_event.objective != null) 
+		{
 			// Objective image
-			m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_event.objective.icon);
+			m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_questManager.m_questDefinition.m_goal.m_icon);
 
 			// Event description
-			m_descriptionText.text = m_event.objective.GetDescription();
+			m_descriptionText.text = m_questManager.GetGoalDescription();
 		}
 
 		// Do a first refresh
@@ -185,17 +182,21 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	/// <param name="_animate">Whether to animate or do an instant refresh.</param>
 	private void InitPanel(bool _animate, bool _resetValues) {
-		// Select visible panel based on event state
-		GlobalEventManager.ErrorCode error = GlobalEventManager.CanContribute();
-		switch(error) {
-			case GlobalEventManager.ErrorCode.NONE:				m_activePanel = Panel.ACTIVE;	break;
-			case GlobalEventManager.ErrorCode.OFFLINE:			m_activePanel = Panel.OFFLINE;	break;
+
+		m_activePanel = Panel.ACTIVE;
+		if ( Application.internetReachability == NetworkReachability.NotReachable )
+		{
+			m_activePanel = Panel.OFFLINE;
 		}
+
 
 		// Initialize active panel
 		switch(m_activePanel) {
 			case Panel.ACTIVE: {
+				
 				if(_resetValues) {
+					string bonudDragon = m_questManager.m_questDefinition.m_goal.m_bonusDragon;
+
                     m_panelActiveInitialized = true;
 
                     m_scoreText.SetValue(0, false);
@@ -203,7 +204,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					RefreshKeysField(_animate);
 
 					// Bonus dragon info
-					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_event.bonusDragonSku);
+					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, bonudDragon);
 					if ( bonusDragonDef != null ){
 						m_bonusDragonInfoText.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_INFO", bonusDragonDef.GetLocalized("tidName"));
 					} else {
@@ -211,7 +212,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					}
 
 					// Bonus dragon text
-					if(m_event.bonusDragonSku == DragonManager.currentDragon.def.sku) {
+					if(bonudDragon == DragonManager.currentDragon.def.sku) {
 						m_bonusDragonText.text = "x2";
 					} else {
 						m_bonusDragonText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_NOT_APPLIED");
@@ -297,7 +298,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			})
 			.AppendInterval(m_scoreGroupAnim.tweenDelay + m_scoreGroupAnim.tweenDuration)
 			.AppendCallback(() => {
-				m_finalScore = (long)m_event.objective.currentValue;
+				m_finalScore = (long)m_questManager.GetRunScore();
 				m_scoreText.SetValue(m_finalScore, true);
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
@@ -405,20 +406,24 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					// Success! Wait for the confirmation from the server
 					BusyScreen.Show(this);
 
-					// Attempt to do the contribution (we may have lost connectivity)
-					GlobalEventManager.ErrorCode res = GlobalEventManager.Contribute(
-						m_bonusDragon ? 2f : 1f,
-						m_keyBonus ? 2f : 1f,
-						m_keyPurchased,
-						m_keyFromAds
-					);
-					if(res != GlobalEventManager.ErrorCode.NONE) {
+					if ( Application.internetReachability != NetworkReachability.NotReachable )
+						// Check fi logged in?
+					{
+						m_questManager.Contribute( 	0,
+													m_bonusDragon ? 2f : 1f,
+													m_keyBonus ? 2f : 1f,
+													m_keyPurchased,
+													m_keyFromAds );
+
+					}
+					else
+					{
 						BusyScreen.Hide(this);
 						// We can't contribute! Refresh panel
 						InitPanel(true, false);
 
 						// Reset submission attempts
-						m_submitAttempts = 0;						
+						m_submitAttempts = 0;	
 					}
 				}
 			} break;

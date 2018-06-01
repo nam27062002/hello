@@ -35,7 +35,6 @@ public class HDTournamentData : HDLiveEventData {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	public List<LeaderboardLine> m_leaderboard = new List<LeaderboardLine>();
-	private DateTime m_leaderboardCheckTimestamp = new DateTime();
 
 	public long m_rank = -1;
 	public long m_score = -1;
@@ -102,7 +101,6 @@ public class HDTournamentData : HDLiveEventData {
 		leaderboard.Add("u", u);
 
 		ret.Add("leaderboard", leaderboard);
-		ret.Add("leaderboardTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
 
 		return ret;
 	}
@@ -119,17 +117,12 @@ public class HDTournamentData : HDLiveEventData {
 		if ( _data.ContainsKey("leaderboard") )	// This comes from a saves data
 		{
 			ParseLeaderboard( _data["leaderboard"] );
-			if ( _data.ContainsKey("leaderboardTimestamp") )
-			{
-				m_leaderboardCheckTimestamp = TimeUtils.TimestampToDate( _data["leaderboardTimestamp"].AsLong );
-			}
 		}
 	}
 
 
 	public void ParseLeaderboard( SimpleJSON.JSONNode _data )
 	{
-		m_leaderboardCheckTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
 
 		if ( _data.ContainsKey("u") )
 		{

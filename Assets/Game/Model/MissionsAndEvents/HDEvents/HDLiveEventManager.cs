@@ -62,17 +62,58 @@ public class HDLiveEventManager
     	m_data = new HDLiveEventData();
     }
 
-    public virtual bool IsAvailable()
+    public virtual bool EventExists()
     {
         bool ret = false;
         HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
-        	// if ( GameServerManager.SharedInstance.GetEstimatedServerTime() >  )
             ret = true;
         }
         return ret;
     }
+
+    public virtual void UpdateStateFromTimers()
+    {
+    	m_data.UpdateStateFromTimers();
+    }
+
+    /// <summary>
+    /// Is this event active?
+    /// </summary>
+	/// <returns><c>true</c> if this event is active (not teasing, nor reward pending).</returns>
+    public virtual bool IsRunning()
+    {
+		bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.NOT_JOINED || data.m_state == HDLiveEventData.State.JOINED;
+        }
+        return ret;
+	}
+
+	public virtual bool IsTeasing()
+	{
+		bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.TEASING;
+        }
+        return ret;
+	}
+
+	public virtual bool IsRewardPenging()
+	{
+		bool ret = false;
+        HDLiveEventData data = GetEventData();
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
+        }
+        return ret;
+	}
 
     public virtual bool HasValidDefinition()
     {
@@ -178,6 +219,28 @@ public class HDLiveEventManager
                 }
             }
         }
+    }
+
+	public void RequestRewards()
+    {
+    	
+    }
+
+	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    {
+    		
+    }
+
+	public void FinishEvent()
+	{
+		// ?
+		CleanData();
+		// Tell server
+	}
+
+	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    {
+    	
     }
 
 

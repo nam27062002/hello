@@ -26,7 +26,16 @@ public class HDQuestManager : HDLiveEventManager{
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	TrackerBase m_tracker = new TrackerBase();
+	public HDQuestData m_questData;
+	public HDQuestDefinition m_questDefinition;
 
+
+	int m_lastContribution;
+	float m_lastKeysMultiplier;
+	bool m_lastContributionViewAd;
+	bool m_lastContributionSpentHC;
+
+	long m_lastProgressTimestamp = 0;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -51,6 +60,8 @@ public class HDQuestManager : HDLiveEventManager{
 	public override void BuildData()
     {
 		m_data = new HDQuestData();
+		m_questData = m_data as HDQuestData;
+		m_questDefinition = m_questData.definition as HDQuestDefinition;
     }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
@@ -72,8 +83,31 @@ public class HDQuestManager : HDLiveEventManager{
     	// Save tracker value?
     }
 
+	public long GetRunScore() 
+	{
+		return m_tracker.currentValue;
+	}
+
+
+	public virtual string GetGoalDescription() {
+		// Use replacements?
+		return m_tracker.FormatDescription(m_questDefinition.m_goal.m_desc, m_questDefinition.m_goal.m_amount);
+	}
+
+
+	public float progress {
+		get { return Mathf.Clamp01(m_questData.m_globalScore/(float)m_questDefinition.m_goal.m_amount); }
+	}
+
+	public bool ShouldRequestProgress()
+	{
+		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastProgressTimestamp;
+		return diff > 1000 * 60 * 5;	// 5 min timeout
+	}
+
     public void RequestProgress()
     {
+		m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
         if ( HDLiveEventsManager.TEST_CALLS )
         {
             GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("quest_get_progress.json");
@@ -106,21 +140,35 @@ public class HDQuestManager : HDLiveEventManager{
         }
     }
 
-    public void AddProgress(int _score)
-    {
-        if ( HDLiveEventsManager.TEST_CALLS )
-        {
-            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("quest_add_progress.json");
-            AddProgressResponse(null, response);
-        }
-        else
-        {
-            HDLiveEventData data = GetEventData();
-            GameServerManager.SharedInstance.HDEvents_AddProgress(data.m_eventId, _score, AddProgressResponse);    
-        }
-    }
+	public void Contribute(float _runScore, float _bonusDragonMultiplier, float _keysMultiplier, bool _spentHC, bool _viewAD)
+	{
+		m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
-    protected virtual void AddProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+		// Get contribution amount and apply multipliers
+		int contribution = (int)_runScore;
+		contribution = (int)(_bonusDragonMultiplier * contribution);
+		contribution = (int)(_keysMultiplier * contribution);
+		// Requets to the server!
+
+		m_lastContribution = contribution;
+		m_lastKeysMultiplier = _keysMultiplier;
+		m_lastContributionSpentHC = _spentHC;
+		m_lastContributionViewAd = _viewAD;
+
+		Debug.Log("<color=magenta>REGISTER SCORE</color>");
+		if ( HDLiveEventsManager.TEST_CALLS )
+        {
+			GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( "quest_add_progress.json" );
+			OnContributeResponse(null, response);
+		}
+		else
+		{
+			HDLiveEventData data = GetEventData();
+			GameServerManager.SharedInstance.HDEvents_AddProgress(data.m_eventId, contribution, OnContributeResponse);    
+		}
+	}
+
+	protected virtual void OnContributeResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
         if (_error != null)
         {
@@ -130,12 +178,28 @@ public class HDQuestManager : HDLiveEventManager{
 
         if (_response != null && _response["response"] != null)
         {
+			m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
             // int eventId = responseJson["code"].AsInt;
             HDQuestData data = m_data as HDQuestData;
             if (data != null /*&& data.m_eventId == eventId*/)
             {
 				data.ParseProgress( responseJson );
+
+				int contribution = m_lastContribution;
+				float _keysMultiplier = m_lastKeysMultiplier;
+				bool _spentHC = m_lastContributionSpentHC;
+				bool _viewAD = m_lastContributionViewAd;
+
+				// Track here!
+				HDTrackingManager.EEventMultiplier mult = HDTrackingManager.EEventMultiplier.none;
+				if (_keysMultiplier > 1) {
+					if (_spentHC) 		mult = HDTrackingManager.EEventMultiplier.hc_payment;
+					else if (_viewAD)	mult = HDTrackingManager.EEventMultiplier.ad;
+					else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
+				}
+
+				HDTrackingManager.Instance.Notify_GlobalEventRunDone(data.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
             }
         }
     }
