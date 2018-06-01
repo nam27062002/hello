@@ -42,8 +42,11 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         // Avoid using dictionaries when possible
     private List<string> m_types;
     private List<HDLiveEventManager> m_managers;
+	protected long m_lastMyEventsRequestTimestamp = 0;
 
     public const long CACHE_TIMEOUT_MS = 1000 * 60 * 60 * 24 * 7;	// 7 days timeout
+
+	private long m_myEventsRequestMinTim = 1000 * 60 * 60 * 5;
 
     public bool m_cacheInfo = false;
 #if UNITY_EDITOR
@@ -169,8 +172,15 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     }
 #endif
 
+	public bool ShouldRequestMyEvents()
+	{
+		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastMyEventsRequestTimestamp;
+		return diff > m_myEventsRequestMinTim;
+	}
+
     public void RequestMyEvents()
     {
+		m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
         if ( TEST_CALLS )
         {
             GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
@@ -207,6 +217,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
                         }
                     }
                 }
+
             }
 			m_cacheInfo = false;
 
