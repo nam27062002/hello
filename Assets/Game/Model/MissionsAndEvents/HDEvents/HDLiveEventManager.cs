@@ -79,9 +79,9 @@ public class HDLiveEventManager
     }
 
     /// <summary>
-    /// Determines whether this instance is available or running.
+    /// Is this event active?
     /// </summary>
-    /// <returns><c>true</c> if this instance is available or running; otherwise, <c>false</c>.</returns>
+	/// <returns><c>true</c> if this event is active (not teasing, nor reward pending).</returns>
     public virtual bool IsRunning()
     {
 		bool ret = false;
