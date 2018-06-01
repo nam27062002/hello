@@ -6,6 +6,9 @@ using TMPro;
 
 public class TournamentInfoScreen : MonoBehaviour {
 	//----------------------------------------------------------------//
+	private const float UPDATE_FREQUENCY = 1f;	// Seconds
+
+	//----------------------------------------------------------------//
 
 	[SerializeField] private Localizer m_titleText;
 	[SerializeField] private TextMeshProUGUI m_timerText;
@@ -30,14 +33,14 @@ public class TournamentInfoScreen : MonoBehaviour {
 	private HDTournamentManager m_tournament;
 	private HDTournamentDefinition m_definition;
 
-
-	private float m_elapsedTime;
-
 	//----------------------------------------------------------------//
 
 
 	void OnEnable() {
 		Refresh();
+
+		// Program a periodic update
+		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}
 
 	//TEMP
@@ -83,25 +86,15 @@ public class TournamentInfoScreen : MonoBehaviour {
 			}
 
 
-			//
-			m_elapsedTime = 0f;
+			//TIMER
+			UpdatePeriodic();
 		}
 	}
 
-	// Update timers!
-	void Update() {
+	// Update timers periodically
+	void UpdatePeriodic() {
 		if (m_definition != null) {
-			m_elapsedTime += Time.deltaTime;
-
-			if (m_elapsedTime >= 1f) {
-				System.DateTime end = m_definition.m_endTimestamp;
-				System.DateTime now = System.DateTime.Now;
-				System.TimeSpan delta = end - now;
-
-				m_timerText.text = "End in: " + TimeUtils.FormatTime(delta.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);
-
-				m_elapsedTime -= 1f;
-			}
+			m_timerText.text = "Ends in: " + TimeUtils.FormatTime(m_definition.timeToEnd.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
 		}
 	}
 }
