@@ -11,6 +11,7 @@ Shader "Hungry Dragon/Dragon/Eggs"
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_ColorRamp("Color Ramp (RGB)", 2D) = "white" {}
 		[Toggle(EMISSIVE)]_EnableEmissive("Enable emissive", Float) = 0.0
+		[Toggle(COLORRAMP)]_EnableColorRamp("Enable color ramp", Float) = 0.0
 		_GlowTex("Emissive (RGBA)", 2D) = "white" {}
 		_EmissiveColor("Emissive color (Color)", Color) = (0, 0, 0, 0)
 
@@ -52,6 +53,7 @@ Shader "Hungry Dragon/Dragon/Eggs"
 			#pragma shader_feature REFLECTION
 			#pragma shader_feature EMISSIVE
 			#pragma shader_feature NORMALMAP
+			#pragma shader_feature COLORRAMP
 
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
@@ -99,7 +101,10 @@ Shader "Hungry Dragon/Dragon/Eggs"
 			uniform float4 _MainTex_TexelSize;
 			uniform sampler2D _NormalTex;
 			uniform float4 _NormalTex_ST;
-			uniform sampler2D _ColorRamp;
+
+			#ifdef COLORRAMP
+			uniform sampler2D _ColorRamp;			 
+			#endif
 
 			uniform sampler2D _GlowTex;
 			#ifdef EMISSIVE
@@ -157,7 +162,9 @@ Shader "Hungry Dragon/Dragon/Eggs"
 
 				float3 maskTex = tex2D(_GlowTex, i.uv);
 
+				#ifdef COLORRAMP
 				col = lerp(col, tex2D(_ColorRamp, float2(col.x, 0.0)), maskTex.g);
+				#endif
 
 
 				// Aux vars
