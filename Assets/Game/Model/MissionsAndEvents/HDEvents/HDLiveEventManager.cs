@@ -131,8 +131,9 @@ public class HDLiveEventManager
     public virtual void CleanData()
     {
         HDLiveEventData data = GetEventData();
-        if (data != null)
+        if (data != null){
             data.Clean();
+      	}
     }
 
     public virtual SimpleJSON.JSONClass ToJson()
@@ -262,24 +263,67 @@ public class HDLiveEventManager
 
 	public void RequestRewards()
     {
-    	
+		if ( HDLiveEventsManager.TEST_CALLS )
+        {
+			ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
+        }
+        else
+        {
+            HDLiveEventData data = GetEventData();
+			GameServerManager.SharedInstance.HDEvents_GetMyReward(data.m_eventId, RequestRewardsResponse);    
+        }
     }
 
 	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-    	
+		if (_error != null)
+        {
+            return;
+        }
+
+        if (_response != null && _response["response"] != null)
+        {
+            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+            if (data != null)
+            {
+            	
+            }
+			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_REWARDS_REVIEVED);
+        }
     }
 
 
 	public void FinishEvent()
 	{
 		// Tell server
+		if ( HDLiveEventsManager.TEST_CALLS )
+        {
+			ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_finish.json", FinishEventResponse));
+        }
+        else
+        {
+            HDLiveEventData data = GetEventData();
+			GameServerManager.SharedInstance.HDEvents_FinishMyEvent(data.m_eventId, FinishEventResponse);    
+        }
 
 	}
 
 	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-    	
+		if (_error != null)
+        {
+            return;
+        }
+
+        if (_response != null && _response["response"] != null)
+        {
+            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+            if (data != null)
+            {
+            	
+            }
+			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_FINISHED);
+        }
     }
 
     public void ClearEvent()

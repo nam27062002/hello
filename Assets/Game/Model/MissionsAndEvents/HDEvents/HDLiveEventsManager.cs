@@ -83,12 +83,16 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		// m_passive.Activate();
 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
+		Messenger.AddListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, SaveEventsToCache);
 
 	}
 
     ~HDLiveEventsManager()
     {
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
+		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, SaveEventsToCache);
     }
 
     void OnLoggedIn(bool _isLogged)

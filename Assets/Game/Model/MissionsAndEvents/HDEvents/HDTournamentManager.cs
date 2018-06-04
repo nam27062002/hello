@@ -78,6 +78,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	{
 		base.OnEventIdChanged();
 		m_lastLeaderboardTimestamp = 0;
+		m_isLeaderboardReady = false;
 	}
 
 
