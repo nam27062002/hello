@@ -9,7 +9,9 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -157,15 +159,32 @@ public class HDLiveEventManager
         ParseData(_data);
     }
 
+    /// <summary>
+    /// Parses the data. Parses the state of the event.
+    /// </summary>
+    /// <param name="_data">Data.</param>
     public virtual void ParseData(SimpleJSON.JSONNode _data)
     {
         HDLiveEventData data = GetEventData();
         if (data != null)
         {
+        	int oldId = data.m_eventId;
             data.ParseState(_data);
-            m_shouldRequestDefinition = true;
+            if ( data.m_eventId != oldId )
+            {
+            	OnEventIdChanged();
+            }
         }
     }
+
+    /// <summary>
+    /// Raises the event identifier changed event. 
+    // Function called when we parse an state and it has a different event id
+    /// </summary>
+	protected virtual void OnEventIdChanged()
+	{
+		m_shouldRequestDefinition = true;
+	}
 
     public virtual void ParseDefinition(SimpleJSON.JSONNode _data)
     {
@@ -184,23 +203,33 @@ public class HDLiveEventManager
 	{
 		return m_shouldRequestDefinition;
 	}
-    public void RequestDefinition(bool _force = false)
+    public bool RequestDefinition(bool _force = false)
     {
+    	bool ret = false;
     	if ( _force || ShouldRequestDefinition() )
     	{
 	        m_shouldRequestDefinition = false;
 	        if ( HDLiveEventsManager.TEST_CALLS )
 	        {
-	            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_definition.json");
-	            RequestEventDefinitionResponse(null, response);    
+				ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_definition.json", RequestEventDefinitionResponse));
 	        }
 	        else
 	        {
 	            HDLiveEventData data = GetEventData();
 	            GameServerManager.SharedInstance.HDEvents_GetDefinition(data.m_eventId, RequestEventDefinitionResponse);    
 	        }
+	        ret = true;
         }
+        return ret;
     }
+
+	protected delegate void TestResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response);
+	protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse )
+	{
+		yield return new WaitForSeconds(1.0f);
+		GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( _fileName );
+		_testResponse(null, response);
+	}
 
     protected virtual void RequestEventDefinitionResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
@@ -238,8 +267,9 @@ public class HDLiveEventManager
 
 	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-    		
+    	
     }
+
 
 	public void FinishEvent()
 	{

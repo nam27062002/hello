@@ -154,6 +154,10 @@ public class HDLiveEventData {
 		return ret;
 	}
 
+	/// <summary>
+	/// Parses the state of this event. If it comes from cache it contains the definition.
+	/// </summary>
+	/// <param name="_data">Data.</param>
 	public virtual void ParseState( SimpleJSON.JSONNode _data )
 	{
 		Clean();

@@ -165,12 +165,22 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         response.Add("response", json);
         return response;
     }
+
 #else
     public static GameServerManager.ServerResponse CreateTestResponse(string fileName)
     {
         return null;
     }
 #endif
+
+	protected delegate void TestResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response);
+	protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse )
+	{
+		yield return new WaitForSeconds(1.0f);
+		GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( _fileName );
+		_testResponse(null, response);
+	}
+
 
 	public bool ShouldRequestMyEvents()
 	{
@@ -186,8 +196,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 			m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 	        if ( TEST_CALLS )
 	        {
-	            GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
-	            MyEventsResponse( null, response );
+				ApplicationManager.instance.StartCoroutine( DelayedCall("hd_live_events.json", MyEventsResponse));
 	        }
 	        else
 	        {

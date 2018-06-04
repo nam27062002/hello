@@ -30,6 +30,8 @@ public class HDTournamentManager : HDLiveEventManager {
 	private bool m_isLeaderboardReady;
 	private bool m_runWasValid = false;
 	private long m_lastLeaderboardTimestamp = 0;
+	private long m_laderboardRequestMinTim = 1000 * 60 * 5;
+
 
 		// Control vars
 	protected HDTournamentDefinition.TournamentGoal m_runningGoal;
@@ -71,28 +73,39 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
     }
 
+	override protected void OnEventIdChanged()
+	{
+		base.OnEventIdChanged();
+		m_lastLeaderboardTimestamp = 0;
+	}
 
-    public void RequestLeaderboard()
+
+    public bool RequestLeaderboard( bool _force = false )
     {
-		m_isLeaderboardReady = false;
-		m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+    	bool ret = false;
+    	if ( _force || ShouldRequestLeaderboard() )
+    	{
+			m_isLeaderboardReady = false;
+			m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
-        if ( HDLiveEventsManager.TEST_CALLS )
-        {
-			GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("tournament_leaderboard.json");
-            LeaderboardResponse(null, response);
+	        if ( HDLiveEventsManager.TEST_CALLS )
+	        {
+				ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_leaderboard.json", LeaderboardResponse));
+	        }
+	        else
+	        {
+	            HDLiveEventData data = GetEventData();
+	            GameServerManager.SharedInstance.HDEvents_GetLeaderboard(data.m_eventId, LeaderboardResponse);    
+	        }
+			ret = true;
         }
-        else
-        {
-            HDLiveEventData data = GetEventData();
-            GameServerManager.SharedInstance.HDEvents_GetLeaderboard(data.m_eventId, LeaderboardResponse);    
-        }
+        return ret;
     }
 
 	public bool ShouldRequestLeaderboard()
 	{
 		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastLeaderboardTimestamp;
-		return diff > 1000 * 60 * 5;	// 5 min timeout
+		return diff > m_laderboardRequestMinTim;	// 5 min timeout
 	}
 
 	public bool IsLeaderboardReady() {
@@ -122,6 +135,7 @@ public class HDTournamentManager : HDLiveEventManager {
 
 				m_isLeaderboardReady = true;
             }
+			Messenger.Broadcast(MessengerEvents.TOURNAMENT_LEADERBOARD);
         }
     }
 
@@ -129,8 +143,7 @@ public class HDTournamentManager : HDLiveEventManager {
     {
         if (HDLiveEventsManager.TEST_CALLS)
         {
-            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse("tournament_set_score.json");
-            SetScoreResponse(null, response);
+			ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_set_score.json", SetScoreResponse));
         }
         else
         {
@@ -152,10 +165,12 @@ public class HDTournamentManager : HDLiveEventManager {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
             int eventId = responseJson["code"].AsInt;
             HDLiveEventData data = GetEventData();
-            if (data != null && data.m_eventId == eventId)
+            if (data != null/* && data.m_eventId == eventId*/)
             {
-
+            	
             }
+
+			Messenger.Broadcast(MessengerEvents.TOURNAMENT_SCORE_SENT);
         }
     }
 
