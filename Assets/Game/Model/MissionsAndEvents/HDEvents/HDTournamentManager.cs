@@ -180,9 +180,9 @@ public class HDTournamentManager : HDLiveEventManager {
 
 		if ( m_tracker != null)
     	{
-			m_tracker.SetValue(0, false);
 			// Check if we are in tournament mode
 			m_tracker.enabled = m_isActive;
+			m_tracker.SetValue(0, false);
     	}
 
 		if ( m_isActive )
@@ -258,6 +258,7 @@ public class HDTournamentManager : HDLiveEventManager {
 		InstanceManager.gameSceneController.PauseGame(true, true);
 		if ( m_tracker != null)
 			m_tracker.enabled = false;
+		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
 		yield return new WaitForSecondsRealtime(2.5f);
 		InstanceManager.gameSceneController.EndGame(false);
 	}
@@ -265,7 +266,8 @@ public class HDTournamentManager : HDLiveEventManager {
     public void OnGameEnded(){
     	// Save tracker value?
 		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
-		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
+		if ( !m_runWasValid )	// For time attack. We set this on normal ending, but if the player dies we save this value here
+			m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
     }
 
 	//------------------------------------------------------------------------//

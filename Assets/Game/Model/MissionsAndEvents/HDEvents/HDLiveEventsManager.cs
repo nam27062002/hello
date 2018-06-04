@@ -35,6 +35,16 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         EVENT_NOT_ACTIVE
     }
 
+    public enum ComunicationErrorCodes
+    {
+    	NET_ERROR,
+    	JSON_NOT_VALID,
+    	OTHER_ERROR,
+    	NO_RESPONSE,
+    	NO_ERROR
+
+    };
+
     public HDTournamentManager m_tournament = new HDTournamentManager();
     public HDQuestManager m_quest = new HDQuestManager();
     public HDLiveEventManager m_passive = new HDLiveEventManager();

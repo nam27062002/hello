@@ -243,10 +243,11 @@ public class HDLiveEventManager
     {
         if (_error != null)
         {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
+			Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR);
             return;
         }
 
+		HDLiveEventsManager.ComunicationErrorCodes retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
@@ -265,13 +266,19 @@ public class HDLiveEventManager
 	                	Activate();
 	                }
 	            }
-				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_NEW_DEFINITION);
 			}
 			else
 			{
+				retCode = HDLiveEventsManager.ComunicationErrorCodes.JSON_NOT_VALID;
 				TreatJsonParseError();
 			}
         }
+        else
+        {
+			retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
+        }
+
+		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, retCode);
     }
 
 	public void RequestRewards()
@@ -291,9 +298,11 @@ public class HDLiveEventManager
     {
 		if (_error != null)
         {
+			Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId ,HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR);
             return;
         }
 
+		HDLiveEventsManager.ComunicationErrorCodes retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
@@ -303,13 +312,18 @@ public class HDLiveEventManager
 	            {
 	            	
 	            }
-				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_REWARDS_REVIEVED);
 			}
 			else
 			{
+				retCode = HDLiveEventsManager.ComunicationErrorCodes.JSON_NOT_VALID;
 				TreatJsonParseError();
 			}
         }
+        else
+        {
+        	retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
+        }
+		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId, retCode);
     }
 
 
@@ -332,9 +346,11 @@ public class HDLiveEventManager
     {
 		if (_error != null)
         {
+			Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR);
             return;
         }
 
+		HDLiveEventsManager.ComunicationErrorCodes retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
@@ -348,9 +364,15 @@ public class HDLiveEventManager
 			}
 			else
 			{
+				retCode = HDLiveEventsManager.ComunicationErrorCodes.JSON_NOT_VALID;
 				TreatJsonParseError();
 			}
         }
+        else
+        {
+        	retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
+        }
+		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, retCode);
     }
 
     /// <summary>
