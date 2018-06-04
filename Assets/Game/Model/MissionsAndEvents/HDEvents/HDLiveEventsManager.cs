@@ -176,7 +176,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 	protected delegate void TestResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response);
 	protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse )
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(0.1f);
 		GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( _fileName );
 		_testResponse(null, response);
 	}
