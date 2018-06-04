@@ -358,11 +358,27 @@ public class HDTournamentManager : HDLiveEventManager {
 	}
 
 	/// <summary>
-	/// Has the last run been a high score?
+	/// Has the last run been a high score? This functions is useful before sending the new score
 	/// </summary>
 	public bool IsNewBestScore() {
-		// TODO!!
-		return false;
+		long runScore = GetRunScore();
+		long bestScore = GetBestScore();
+		bool ret = false;
+		HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+		switch ( def.m_goal.m_mode )
+		{
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
+			{
+				ret = runScore > bestScore;
+			}break;
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
+			{
+				ret = runScore < bestScore;
+			}break;
+		}
+
+		return ret;
 	}
 
 	//------------------------------------------------------------------------//
