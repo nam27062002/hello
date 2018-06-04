@@ -178,18 +178,24 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		return diff > m_myEventsRequestMinTim;
 	}
 
-    public void RequestMyEvents()
+    public bool RequestMyEvents( bool _force = false )
     {
-		m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
-        if ( TEST_CALLS )
-        {
-            GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
-            MyEventsResponse( null, response );
+    	bool ret = false;
+    	if ( _force || ShouldRequestMyEvents() )
+    	{
+			m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+	        if ( TEST_CALLS )
+	        {
+	            GameServerManager.ServerResponse response = CreateTestResponse( "hd_live_events.json" );
+	            MyEventsResponse( null, response );
+	        }
+	        else
+	        {
+	            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);    
+	        }
+	        ret = true;
         }
-        else
-        {
-            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);    
-        }
+        return ret;
     }
 
 	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
@@ -225,6 +231,8 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 				m_quest.RequestProgress();
 			if ( m_tournament.EventExists() && m_tournament.ShouldRequestLeaderboard() )
 				m_tournament.RequestLeaderboard();
+
+			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 		}
 
 	}

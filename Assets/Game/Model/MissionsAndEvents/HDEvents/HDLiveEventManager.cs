@@ -68,7 +68,7 @@ public class HDLiveEventManager
         HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
-            ret = true;
+			ret = data.definition.m_eventId == data.m_eventId;
         }
         return ret;
     }
@@ -179,18 +179,26 @@ public class HDLiveEventManager
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
-    public void RequestDefinition()
+
+	public bool ShouldRequestDefinition()
+	{
+		return m_shouldRequestDefinition;
+	}
+    public void RequestDefinition(bool _force = false)
     {
-        m_shouldRequestDefinition = false;
-        if ( HDLiveEventsManager.TEST_CALLS )
-        {
-            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_definition.json");
-            RequestEventDefinitionResponse(null, response);    
-        }
-        else
-        {
-            HDLiveEventData data = GetEventData();
-            GameServerManager.SharedInstance.HDEvents_GetDefinition(data.m_eventId, RequestEventDefinitionResponse);    
+    	if ( _force || ShouldRequestDefinition() )
+    	{
+	        m_shouldRequestDefinition = false;
+	        if ( HDLiveEventsManager.TEST_CALLS )
+	        {
+	            GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse(m_type + "_definition.json");
+	            RequestEventDefinitionResponse(null, response);    
+	        }
+	        else
+	        {
+	            HDLiveEventData data = GetEventData();
+	            GameServerManager.SharedInstance.HDEvents_GetDefinition(data.m_eventId, RequestEventDefinitionResponse);    
+	        }
         }
     }
 
@@ -218,6 +226,8 @@ public class HDLiveEventManager
                 	Activate();
                 }
             }
+
+			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_NEW_DEFINITION);
         }
     }
 
@@ -233,14 +243,18 @@ public class HDLiveEventManager
 
 	public void FinishEvent()
 	{
-		// ?
-		CleanData();
 		// Tell server
+
 	}
 
 	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
     	
+    }
+
+    public void ClearEvent()
+    {
+    	CleanData();
     }
 
 

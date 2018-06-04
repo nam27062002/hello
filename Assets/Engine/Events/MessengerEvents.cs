@@ -224,6 +224,11 @@ public enum MessengerEvents {
 	OFFERS_CHANGED,		// no params
 	OFFER_APPLIED,		// OfferPack _pack
 
+
+	LIVE_EVENT_STATES_UPDATED,
+	LIVE_EVENT_NEW_DEFINITION,
+
+
 	COUNT
 }
 
