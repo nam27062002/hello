@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -226,7 +227,9 @@ public class HDTournamentManager : HDLiveEventManager {
 					// End game!
 					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
 					{
-						InstanceManager.gameSceneController.EndGame(false);
+						// Tell hud to show "Time is Up!"
+						Messenger.Broadcast(MessengerEvents.TIMES_UP);
+						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
 					
 				}
@@ -239,13 +242,23 @@ public class HDTournamentManager : HDLiveEventManager {
 					// End Game!
 					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
 					{
-						InstanceManager.gameSceneController.EndGame(true);
+						// Tell hud to show "Target accomplished"
+						Messenger.Broadcast(MessengerEvents.TARGET_REACHED);
+						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
-					
 				}
 			}break;
 		}
 
+	}
+
+	IEnumerator DelayedEnd()
+	{
+		InstanceManager.gameSceneController.PauseGame(true, true);
+		if ( m_tracker != null)
+			m_tracker.enabled = false;
+		yield return new WaitForSecondsRealtime(2.5f);
+		InstanceManager.gameSceneController.EndGame(false);
 	}
 
     public void OnGameEnded(){
