@@ -148,8 +148,6 @@ public class HDLiveEventManager
         return ret;
     }
 
-
-
     public virtual HDLiveEventData GetEventData()
     {
         return m_data;
@@ -179,6 +177,14 @@ public class HDLiveEventManager
     }
 
     /// <summary>
+    /// Clears the event. Removes the data and definition
+    /// </summary>
+	public void ClearEvent()
+    {
+    	CleanData();
+    }
+
+    /// <summary>
     /// Raises the event identifier changed event. 
     // Function called when we parse an state and it has a different event id
     /// </summary>
@@ -197,9 +203,10 @@ public class HDLiveEventManager
     }
 
     //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
+    // SERVER CALLS  														  //
     //------------------------------------------------------------------------//
 
+#region server_comunication
 	public bool ShouldRequestDefinition()
 	{
 		return m_shouldRequestDefinition;
@@ -243,21 +250,27 @@ public class HDLiveEventManager
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
-            if (data != null && data.m_eventId == eventId)
+            if ( responseJson != null )
             {
-            	bool wasActive = m_isActive;
-            	if ( m_isActive ){
-            		Deactivate();
-            	}
-                ParseDefinition(responseJson);
-                if (wasActive){
-                	Activate();
-                }
-            }
-
-			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_NEW_DEFINITION);
+	            int eventId = responseJson["code"].AsInt;
+	            HDLiveEventData data = GetEventData();
+	            if (data != null && data.m_eventId == eventId)
+	            {
+	            	bool wasActive = m_isActive;
+	            	if ( m_isActive ){
+	            		Deactivate();
+	            	}
+	                ParseDefinition(responseJson);
+	                if (wasActive){
+	                	Activate();
+	                }
+	            }
+				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_NEW_DEFINITION);
+			}
+			else
+			{
+				TreatJsonParseError();
+			}
         }
     }
 
@@ -284,11 +297,18 @@ public class HDLiveEventManager
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            if (data != null)
+            if ( responseJson != null )
             {
-            	
-            }
-			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_REWARDS_REVIEVED);
+	            if (data != null)
+	            {
+	            	
+	            }
+				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_REWARDS_REVIEVED);
+			}
+			else
+			{
+				TreatJsonParseError();
+			}
         }
     }
 
@@ -318,19 +338,39 @@ public class HDLiveEventManager
         if (_response != null && _response["response"] != null)
         {
             SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            if (data != null)
+            if ( responseJson != null )
             {
-            	
-            }
-			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_FINISHED);
+	            if (data != null)
+	            {
+	            	
+	            }
+				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_FINISHED);
+			}
+			else
+			{
+				TreatJsonParseError();
+			}
         }
     }
 
-    public void ClearEvent()
-    {
-    	CleanData();
-    }
+    /// <summary>
+    /// Treats the errors. Returns true if the error validates the event
+    /// </summary>
+    /// <returns><c>true</c>, if errors was treated, <c>false</c> otherwise.</returns>
+	protected virtual bool TreatErrors()
+	{
+		bool ret = false;
 
+		return ret;
+	}
+
+	protected virtual void TreatJsonParseError()
+	{
+			
+	}
+#endregion
+
+#region mods_activation
 
     public void Activate()
     {
@@ -369,5 +409,6 @@ public class HDLiveEventManager
     		mods[ i ].Apply();
 		}
     }
+#endregion
 
 }

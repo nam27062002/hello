@@ -250,6 +250,17 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
 	}
 
+	/// <summary>
+	/// Treats the errors. Returns true if the error invalidates the event
+	/// </summary>
+	/// <returns><c>true</c>, if errors was treated, <c>false</c> otherwise.</returns>
+	protected bool TreatErrors()
+	{
+		bool ret = false;
+
+		return ret;
+	}
+
 	public bool Connected() {
 		bool ret = false;	
 		if ((CPGlobalEventsTest.networkCheck && Application.internetReachability != NetworkReachability.NotReachable) &&
