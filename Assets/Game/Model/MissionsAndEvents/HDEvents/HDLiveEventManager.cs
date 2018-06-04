@@ -106,7 +106,7 @@ public class HDLiveEventManager
         return ret;
 	}
 
-	public virtual bool IsRewardPenging()
+	public virtual bool IsRewardPending()
 	{
 		bool ret = false;
         HDLiveEventData data = GetEventData();
