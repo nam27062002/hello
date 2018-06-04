@@ -63,6 +63,18 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	private void Start() {
 		// Get latest data from the manager
 		RefreshData();
+
+		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
+		Messenger.AddListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdated);
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	void OnDestroy()
+	{
+		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
+		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdated);
 	}
 
 	/// <summary>
@@ -73,6 +85,11 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 
 		// Get latest data from the manager
+		RefreshData();
+	}
+
+	void OnStateUpdated()
+	{
 		RefreshData();
 	}
 
@@ -93,13 +110,6 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	private void OnDisable() {
 		// Cancel periodic update
 		CancelInvoke();
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		
 	}
 
 	//------------------------------------------------------------------------//

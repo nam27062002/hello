@@ -90,7 +90,7 @@ public class HDLiveEventData {
 
 	public virtual void UpdateStateFromTimers()
 	{
-		if ( m_eventId > 0 )
+		if ( m_eventId > 0 && definition.m_eventId == m_eventId)
 		{
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			if ( serverTime < m_definition.m_teasingTimestamp )
