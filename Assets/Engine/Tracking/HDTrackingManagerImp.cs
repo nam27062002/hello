@@ -456,6 +456,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         Notify_SessionEnd(ESeassionEndReason.app_closed);
         Track_EtlEndEvent();
 
+        // Last chance to cache pending events to be sent are stored
+        // Not lazy approach is used to guarantee events are stored
+        DNAManager.SharedInstance.SaveOfflineUnsentEvents(false);
+
+
         IsStartSessionNotified = false;
         State = EState.WaitingForSessionStart;        
     }

@@ -1469,6 +1469,15 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool IsSafeTrackingOfflineCachedEnabled
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings != null && Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_SAFE_TRACKING_OFFLINE_CACHED);
+        }
+    }
+
+
     public bool IsMiniTrackingEnabled
     {
         get

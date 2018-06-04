@@ -311,7 +311,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 
 	public const float FlightCeiling = 370f;
-	public const float SpaceStart = 165f;
+	public const float SpaceStart = 171f;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -1370,7 +1370,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		m_direction = m_impulse.normalized;
 
-		if ((boostSpeedMultiplier > 1) && (m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 18 && (m_impulse.y > 0)) {
+		//if ((boostSpeedMultiplier > 1) && (m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 25 && (m_impulse.y > 0)) {
+		if ((m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 425 && (m_impulse.y < -10)) {
 			RotateToDirection (m_direction, false, true);
 		} else 
 		{
