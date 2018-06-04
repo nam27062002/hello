@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -221,6 +222,23 @@ public class HDQuestManager : HDLiveEventManager{
         }
     }
 
+	public override List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+		// Create new list
+		List<HDLiveEventDefinition.HDLiveEventReward> rewards = new List<HDLiveEventDefinition.HDLiveEventReward>();
 
+		// We must have a valid data and definition
+		if(data != null && data.definition != null) {
+			// Check reward level
+			// In a quest, the reward level tells us in which reward tier have been reached
+			// All rewards below it are also given
+			HDQuestDefinition def = data.definition as HDQuestDefinition;
+			for(int i = 0; i < m_rewardLevel; ++i) {
+				rewards.Add(def.m_rewards[m_rewardLevel - 1]);	// Assuming rewards are properly sorted :)
+			}
+		}
+
+		// Done!
+		return rewards;
+	}
 	
 }
