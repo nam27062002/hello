@@ -30,22 +30,22 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 
 	public class QuestGoal : GoalCommon
 	{
-		public string m_bonusDragon = "";
+		// public string m_bonusDragon = "";
 		public long m_amount = 0;
 
 		public override void Clear ()
 		{
 			base.Clear ();
-			m_bonusDragon = "";
+			// m_bonusDragon = "";
 			m_amount = 0;
 		}
 
 		public override void ParseGoal (JSONNode _data)
 		{
 			base.ParseGoal (_data);
-			if ( _data.ContainsKey("bonusDragon") ){
-				m_bonusDragon = _data["bonusDragon"];
-			}
+			//if ( _data.ContainsKey("bonusDragon") ){
+			//	m_bonusDragon = _data["bonusDragon"];
+			// }
 
 			if ( _data.ContainsKey("amount") ){
 				m_amount = _data["amount"].AsLong;

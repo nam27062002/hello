@@ -80,7 +80,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	private int m_submitAttempts = 0;
 	private bool m_continueEnabled = false;
 
-	private bool m_bonusDragon = false;
+	// private bool m_bonusDragon = false;
 	private bool m_keyBonus = false;
 	private bool m_keyPurchased = false;
 	private bool m_keyFromAds = false;
@@ -152,7 +152,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		}
 
 		// Bonus dragon?
-		m_bonusDragon = DragonManager.currentDragon.def.sku == m_questManager.m_questDefinition.m_goal.m_bonusDragon;
+		// m_bonusDragon = DragonManager.currentDragon.def.sku == m_questManager.m_questDefinition.m_goal.m_bonusDragon;
 
 		// Initialize static stuff
 		// if(m_event != null && m_event.objective != null) 
@@ -195,7 +195,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			case Panel.ACTIVE: {
 				
 				if(_resetValues) {
-					string bonudDragon = m_questManager.m_questDefinition.m_goal.m_bonusDragon;
+					// string bonudDragon = m_questManager.m_questDefinition.m_goal.m_bonusDragon;
 
                     m_panelActiveInitialized = true;
 
@@ -203,6 +203,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					m_finalScoreText.SetValue(0, false);
 					RefreshKeysField(_animate);
 
+					/*
 					// Bonus dragon info
 					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, bonudDragon);
 					if ( bonusDragonDef != null ){
@@ -217,6 +218,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					} else {
 						m_bonusDragonText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_NOT_APPLIED");
 					}
+					*/
 
 					// Hide everything (prepare for anim)
 					m_scoreOrnamentAnim.Hide(false);
@@ -311,7 +313,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			})
 			.AppendInterval(m_bonusDragonGroupAnim.tweenDelay + m_bonusDragonGroupAnim.tweenDuration)
 			.AppendCallback(() => {
-				if(m_bonusDragon) m_finalScore *= 2;
+				// if(m_bonusDragon) m_finalScore *= 2;
 				m_finalScoreText.SetValue(m_finalScore, true);
 			})
 			.AppendInterval(m_rowDelay)
@@ -410,7 +412,6 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 						// Check fi logged in?
 					{
 						m_questManager.Contribute( 	0,
-													m_bonusDragon ? 2f : 1f,
 													m_keyBonus ? 2f : 1f,
 													m_keyPurchased,
 													m_keyFromAds );

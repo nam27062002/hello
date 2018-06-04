@@ -104,7 +104,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
 
 		// Bonus dragon icon
-		m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + def.m_goal.m_bonusDragon + "/icon_disguise_0");	// Default skin
+		// m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + def.m_goal.m_bonusDragon + "/icon_disguise_0");	// Default skin
 
 		/*
 		// Top reward info
@@ -199,6 +199,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// <summary>
 	/// The bonus dragon info button has been pressed.
 	/// </summary>
+	/*
 	public void OnBonusDragonInfoButton() {
 		// Get bonus dragon definition
 
@@ -211,4 +212,5 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 		PopupManager.OpenPopupInstant(PopupInfoDragonBonus.PATH);
 	}
+	*/
 }

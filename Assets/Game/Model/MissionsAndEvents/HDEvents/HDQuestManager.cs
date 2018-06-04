@@ -140,13 +140,12 @@ public class HDQuestManager : HDLiveEventManager{
         }
     }
 
-	public void Contribute(float _runScore, float _bonusDragonMultiplier, float _keysMultiplier, bool _spentHC, bool _viewAD)
+	public void Contribute(float _runScore,float _keysMultiplier, bool _spentHC, bool _viewAD)
 	{
 		m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
 		// Get contribution amount and apply multipliers
 		int contribution = (int)_runScore;
-		contribution = (int)(_bonusDragonMultiplier * contribution);
 		contribution = (int)(_keysMultiplier * contribution);
 		// Requets to the server!
 

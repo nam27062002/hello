@@ -81,13 +81,12 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	override public void Refresh() {
+		// HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		// string bonusDragon = questManager.m_questDefinition.m_goal.m_bonusDragon;
 
-		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
-		string bonusDragon = questManager.m_questDefinition.m_goal.m_bonusDragon;
-
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, bonusDragon);
-		m_text.text = def.GetLocalized("tidName");
-		m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + bonusDragon + "/icon_disguise_0");	// Default skin
+		// DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, bonusDragon);
+		// m_text.text = def.GetLocalized("tidName");
+		// m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + bonusDragon + "/icon_disguise_0");	// Default skin
 
 		// m_rewardInfo.rewardSlot = evt.topContributorsRewardSlot;
 
