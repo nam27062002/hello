@@ -98,6 +98,9 @@ public class FeatureSettings
     // Whether or not the events that couldn't be sent over the network should be cached
     public const string KEY_TRACKING_OFFLINE_CACHED = "trackingOfflineCached";
 
+    // When <true> a safe check if checked to prevent too big tracking data cached from making the app to get stuck
+    public const string KEY_SAFE_TRACKING_OFFLINE_CACHED = "trackingSafeOfflineCached";    
+
     public const string KEY_CONTENT_DELTAS = "contentDeltas";
 
     public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
@@ -261,6 +264,10 @@ public class FeatureSettings
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
 
+            key = KEY_SAFE_TRACKING_OFFLINE_CACHED;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+       
             // Content deltas. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);

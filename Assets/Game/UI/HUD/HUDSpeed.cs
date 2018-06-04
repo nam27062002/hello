@@ -64,8 +64,8 @@ public class HUDSpeed : MonoBehaviour {
 		// Do it!
 		if ( m_dragonMotion != null )
 		{
-			if ((m_dragonMotion.position.y - 165f) > maxHigh)
-				maxHigh = (m_dragonMotion.position.y - 165f);
+			if ((m_dragonMotion.position.y - 171f) > maxHigh)
+				maxHigh = (m_dragonMotion.position.y - 171f);
 			if ((m_dragonMotion.position.y + 157f) < maxDeep)
 				maxDeep = (m_dragonMotion.position.y + 157f);			
 			m_valueTxt.text = "SPEED: " + m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX HIGH: " + maxHigh.ToString(".#") + "\nMAX DEEP: " + maxDeep.ToString(".#");
