@@ -51,8 +51,7 @@ namespace BatchFontCreator
 		private const string output_count_label = "Characters packed: ";        
         
         
-        //private Thread MainThread;
-        private Color[] Output;        
+        //private Thread MainThread;              
         private bool isRepaintNeeded = false;
 
         private Rect progressRect;
@@ -101,16 +100,11 @@ namespace BatchFontCreator
             // Initialize & Get shader property IDs.
             ShaderUtilities.GetShaderPropertyIDs();
 
-            // Add Event Listener related to Distance Field Atlas Creation.
-            TMPro_EventManager.COMPUTE_DT_EVENT.Add(ON_COMPUTE_DT_EVENT);
-
 			ReadFontSettings();
         }
 
 
         public void OnDisable() {
-            TMPro_EventManager.COMPUTE_DT_EVENT.Remove(ON_COMPUTE_DT_EVENT);
-
             // Destroy Engine only if it has been initialized already
             if (TMPro_FontPlugin.Initialize_FontEngine() == 99) {
                 TMPro_FontPlugin.Destroy_FontEngine();
@@ -141,15 +135,6 @@ namespace BatchFontCreator
             GUILayout.EndHorizontal();
         }
 
-        public void ON_COMPUTE_DT_EVENT(object Sender, Compute_DT_EventArgs e) {
-            if (e.EventType == Compute_DistanceTransform_EventTypes.Completed) {
-                Output = e.Colors;
-                isProcessing = false;                
-            } else if (e.EventType == Compute_DistanceTransform_EventTypes.Processing) {
-                ProgressPercentage = e.ProgressPercentage;
-                isRepaintNeeded = true;
-            }
-        }
 
         public void Update() {            
             if (isRepaintNeeded) {
@@ -168,6 +153,8 @@ namespace BatchFontCreator
 					if (m_toGenerateQueue.Count == 0) {
 						m_toGenerateCount = 0;
 						m_currentRenderingSettingIndex = -1;
+
+						Resources.UnloadUnusedAssets();
 					} else {
 						m_currentRenderingSettingIndex = m_toGenerateQueue.Dequeue();
 						GenerateFontAtlas(m_fontSettings[m_currentRenderingSettingIndex]);
@@ -188,64 +175,7 @@ namespace BatchFontCreator
 				}
 			}
         }
-
-
-        /// <summary>
-        /// Method which returns the character corresponding to a decimal value.
-        /// </summary>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
-        int[] ParseNumberSequence(string sequence) {
-            List<int> unicode_list = new List<int>();
-            string[] sequences = sequence.Split(',');
-
-            foreach (string seq in sequences) {
-                string[] s1 = seq.Split('-');
-
-				if (s1.Length == 1) {
-                    try  {
-                        unicode_list.Add(int.Parse(s1[0]));
-					} catch {
-                        Debug.Log("No characters selected or invalid format.");
-                    }
-				} else {
-                    for (int j = int.Parse(s1[0]); j < int.Parse(s1[1]) + 1; j++) {
-                        unicode_list.Add(j);
-                    }
-                }
-            }
-
-            return unicode_list.ToArray();
-        }
-
-
-        /// <summary>
-        /// Method which returns the character (decimal value) from a hex sequence.
-        /// </summary>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
-        int[] ParseHexNumberSequence(string sequence) {
-            List<int> unicode_list = new List<int>();
-            string[] sequences = sequence.Split(',');
-
-            foreach (string seq in sequences) {
-                string[] s1 = seq.Split('-');
-
-				if (s1.Length == 1) {
-                    try {
-                        unicode_list.Add(int.Parse(s1[0], NumberStyles.AllowHexSpecifier));
-                    } catch {
-                        Debug.Log("No characters selected or invalid format.");
-                    }
-				} else {
-                    for (int j = int.Parse(s1[0], NumberStyles.AllowHexSpecifier); j < int.Parse(s1[1], NumberStyles.AllowHexSpecifier) + 1; j++) {
-                        unicode_list.Add(j);
-                    }
-                }
-            }
-
-            return unicode_list.ToArray();
-        }
+			
 
 		private FontObjectAndSettings CreateDefaultSettings() {
 			FontCreationSetting settings = new FontCreationSetting();
@@ -335,7 +265,7 @@ namespace BatchFontCreator
 					GUILayout.Label("Input Files:", TMP_UIStyleManager.Label);
 					GUILayout.Space(10f);
 
-					for (int i = 0; i < container.inputCharactersFiles.Count; ++i) {						
+					for (int i = 0; i < container.inputCharactersFiles.Count; ++i) {
 						container.inputCharactersFiles[i] = EditorGUILayout.ObjectField(container.inputCharactersFiles[i], typeof(TextAsset), false, GUILayout.Width(PANEL_CONTENT_WIDTH-10)) as TextAsset;
 					}
 
@@ -680,147 +610,6 @@ namespace BatchFontCreator
         }
 
 
-		void Save_Normal_FontAsset(string filePath, FontObjectAndSettings _container) {
-            filePath = filePath.Substring(0, filePath.Length - 6); // Trim file extension from filePath.
-
-            string dataPath = Application.dataPath;
-
-            if (filePath.IndexOf(dataPath, System.StringComparison.InvariantCultureIgnoreCase) == -1) {
-                Debug.LogError("You're saving the font asset in a directory outside of this project folder. This is not supported. Please select a directory under \"" + dataPath + "\"");
-                return;
-            }
-
-            string relativeAssetPath = filePath.Substring(dataPath.Length - 6);
-            string tex_DirName = Path.GetDirectoryName(relativeAssetPath);
-            string tex_FileName = Path.GetFileNameWithoutExtension(relativeAssetPath);
-            string tex_Path_NoExt = tex_DirName + "/" + tex_FileName;
-
-            // Check if TextMeshPro font asset already exists. If not, create a new one. Otherwise update the existing one.
-            TMP_FontAsset font_asset = AssetDatabase.LoadAssetAtPath(tex_Path_NoExt + ".asset", typeof(TMP_FontAsset)) as TMP_FontAsset;
-            if (font_asset == null)
-            {
-                //Debug.Log("Creating TextMeshPro font asset!");
-                font_asset = ScriptableObject.CreateInstance<TMP_FontAsset>(); // Create new TextMeshPro Font Asset.
-                AssetDatabase.CreateAsset(font_asset, tex_Path_NoExt + ".asset");
-
-                //Set Font Asset Type
-                font_asset.fontAssetType = TMP_FontAsset.FontAssetTypes.Bitmap;
-
-                // Reference to the source font file
-                //font_asset.sourceFontFile = font_TTF as Font;
-
-                // Add FaceInfo to Font Asset
-                FaceInfo face = GetFaceInfo(m_font_faceInfo, 1);
-                font_asset.AddFaceInfo(face);
-
-                // Add GlyphInfo[] to Font Asset
-                TMP_Glyph[] glyphs = GetGlyphInfo(m_font_glyphInfo, 1);
-                font_asset.AddGlyphInfo(glyphs);
-
-                // Get and Add Kerning Pairs to Font Asset
-                if (includeKerningPairs)
-                {
-					string fontFilePath = AssetDatabase.GetAssetPath(_container.fontTTF);
-                    KerningTable kerningTable = GetKerningTable(fontFilePath, (int)face.PointSize);
-                    font_asset.AddKerningInfo(kerningTable);
-                }
-
-
-                // Add Font Atlas as Sub-Asset
-                font_asset.atlas = m_font_Atlas;
-                m_font_Atlas.name = tex_FileName + " Atlas";
-
-                // Special handling due to a bug in earlier versions of Unity.
-                #if UNITY_5_3_OR_NEWER
-                    // Nothing
-                #else
-                    m_font_Atlas.hideFlags = HideFlags.HideInHierarchy;
-                #endif
-
-                AssetDatabase.AddObjectToAsset(m_font_Atlas, font_asset);
-
-                // Create new Material and Add it as Sub-Asset
-                Shader default_Shader = Shader.Find("TextMeshPro/Bitmap"); // m_shaderSelection;
-                Material tmp_material = new Material(default_Shader);
-                tmp_material.name = tex_FileName + " Material";
-                tmp_material.SetTexture(ShaderUtilities.ID_MainTex, m_font_Atlas);
-                font_asset.material = tmp_material;
-
-                // Special handling due to a bug in earlier versions of Unity.
-                #if UNITY_5_3_OR_NEWER
-                    // Nothing
-                #else
-                    tmp_material.hideFlags = HideFlags.HideInHierarchy;
-                #endif
-
-                AssetDatabase.AddObjectToAsset(tmp_material, font_asset);
-
-            }
-            else
-            {
-                // Find all Materials referencing this font atlas.
-                Material[] material_references = TMP_EditorUtility.FindMaterialReferences(font_asset);
-
-                // Destroy Assets that will be replaced.
-                DestroyImmediate(font_asset.atlas, true);
-
-                //Set Font Asset Type
-                font_asset.fontAssetType = TMP_FontAsset.FontAssetTypes.Bitmap;
-
-                // Add FaceInfo to Font Asset
-                FaceInfo face = GetFaceInfo(m_font_faceInfo, 1);
-                font_asset.AddFaceInfo(face);
-
-                // Add GlyphInfo[] to Font Asset
-                TMP_Glyph[] glyphs = GetGlyphInfo(m_font_glyphInfo, 1);
-                font_asset.AddGlyphInfo(glyphs);
-
-                // Get and Add Kerning Pairs to Font Asset
-                if (includeKerningPairs)
-                {
-					string fontFilePath = AssetDatabase.GetAssetPath(_container.fontTTF);
-                    KerningTable kerningTable = GetKerningTable(fontFilePath, (int)face.PointSize);
-                    font_asset.AddKerningInfo(kerningTable);
-                }
-
-                // Add Font Atlas as Sub-Asset
-                font_asset.atlas = m_font_Atlas;
-                m_font_Atlas.name = tex_FileName + " Atlas";
-
-                // Special handling due to a bug in earlier versions of Unity.
-                #if UNITY_5_3_OR_NEWER
-                    m_font_Atlas.hideFlags = HideFlags.None;
-                    font_asset.material.hideFlags = HideFlags.None;
-                #else
-                    m_font_Atlas.hideFlags = HideFlags.HideInHierarchy;
-                #endif
-
-                AssetDatabase.AddObjectToAsset(m_font_Atlas, font_asset);
-
-                // Assign new font atlas texture to the existing material.
-                font_asset.material.SetTexture(ShaderUtilities.ID_MainTex, font_asset.atlas);
-
-                // Update the Texture reference on the Material
-                for (int i = 0; i < material_references.Length; i++)
-                {
-                    material_references[i].SetTexture(ShaderUtilities.ID_MainTex, m_font_Atlas);
-                }
-            }
-
-            AssetDatabase.SaveAssets();
-
-            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(font_asset));  // Re-import font asset to get the new updated version.
-
-            //EditorUtility.SetDirty(font_asset);
-            font_asset.ReadFontDefinition();
-
-            AssetDatabase.Refresh();
-
-            m_font_Atlas = null;
-
-            // NEED TO GENERATE AN EVENT TO FORCE A REDRAW OF ANY TEXTMESHPRO INSTANCES THAT MIGHT BE USING THIS FONT ASSET
-            TMPro_EventManager.ON_FONT_PROPERTY_CHANGED(true, font_asset);
-        }
 
 
 		void Save_SDF_FontAsset(string filePath, FontObjectAndSettings _container)

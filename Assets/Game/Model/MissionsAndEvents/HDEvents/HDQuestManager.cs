@@ -109,6 +109,8 @@ public class HDQuestManager : HDLiveEventManager{
 		get { return Mathf.Clamp01(m_questData.m_globalScore/(float)m_questDefinition.m_goal.m_amount); }
 	}
 
+#region server_comunication
+
 	public bool ShouldRequestProgress()
 	{
 		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastProgressTimestamp;
@@ -153,7 +155,6 @@ public class HDQuestManager : HDLiveEventManager{
 
 	public void Contribute(float _runScore,float _keysMultiplier, bool _spentHC, bool _viewAD)
 	{
-		m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
 		// Get contribution amount and apply multipliers
 		int contribution = (int)_runScore;
@@ -183,8 +184,6 @@ public class HDQuestManager : HDLiveEventManager{
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
-
 			HDQuestData data = GetEventData() as HDQuestData;
             if (data != null )
             {
@@ -204,11 +203,15 @@ public class HDQuestManager : HDLiveEventManager{
 				}
 
 				HDTrackingManager.Instance.Notify_GlobalEventRunDone(data.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
-            }
-			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_SENT);
-			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
+            }	
 		}
+
+		Messenger.Broadcast<bool>(MessengerEvents.QUEST_SCORE_SENT, outErr != HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR);
+		Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
+
     }
+
+#endregion
 
 	public override List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
 		// Create new list

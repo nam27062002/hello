@@ -98,25 +98,33 @@ public class PetSlotInfo : MonoBehaviour {
 		bool show = m_slotIdx < _dragonData.pets.Count;	// Depends on the amount of slots for this dragon
 		this.gameObject.SetActive(show);
 
+		if (show) {
+			Refresh(m_dragonData.pets[m_slotIdx], _animate);
+		}
+	}
+
+	public void Refresh(string _sku, bool _animate) {
+		DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
+		Refresh(petDef, _animate);
+	}
+
+	public void Refresh(DefinitionNode _def, bool _animate) {
 		// Refresh info
-		if(show) {
-			// Equipped or empty?
-			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[m_slotIdx]);
-			bool equipped = (petDef != null);
-			m_equippedSlotAnim.ForceSet(equipped, _animate);
-			m_emptySlotAnim.ForceSet(!equipped, _animate);
+		// Equipped or empty?
+		bool equipped = (_def != null);
+		m_equippedSlotAnim.ForceSet(equipped, _animate);
+		if (m_emptySlotAnim != null) m_emptySlotAnim.ForceSet(!equipped, _animate);
 
-			// Pet info
-			if(equipped) {
-				// Name
-				m_nameText.Localize(petDef.Get("tidName"));
+		// Pet info
+		if(equipped) {
+			// Name
+			m_nameText.Localize(_def.Get("tidName"));
 
-				// Rarity icon
-				string raritySku = petDef.Get("rarity");
-				Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
-				m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
-				m_rarityIcon.gameObject.SetActive(m_rarityIcon.sprite != null);	// Hide if no icon
-			}
+			// Rarity icon
+			string raritySku = _def.Get("rarity");
+			Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
+			m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
+			m_rarityIcon.gameObject.SetActive(m_rarityIcon.sprite != null);	// Hide if no icon
 		}
 	}
 

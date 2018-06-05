@@ -40,11 +40,15 @@ public class HDTournamentData : HDLiveEventData {
 	public long m_score = -1;
 	public long m_tournamentSize = -1;
 
-	private DateTime m_lastFreeEntranceTimestamp = new DateTime();
+	private long m_lastFreeEntranceTimestamp = 0;
+	public long lastFreeEntranceTimestamp
+	{	
+		get{ return m_lastFreeEntranceTimestamp; }
+	}
 		// Default tournament config
-	public string m_lastSelectedDragon = "";
-	public string m_lastSelectedDisguise = "";
-	public List<string> m_lastSelectedPets = new List<string>();
+	protected string m_lastSelectedDragon = "";
+	protected string m_lastSelectedDisguise = "";
+	protected List<string> m_lastSelectedPets = new List<string>();
 
 
 	//------------------------------------------------------------------------//
@@ -76,7 +80,7 @@ public class HDTournamentData : HDLiveEventData {
 		m_rank = -1;
 		m_score = -1;
 		m_tournamentSize = -1;
-		m_lastFreeEntranceTimestamp = new DateTime(1970, 1, 1);
+		m_lastFreeEntranceTimestamp = 0;
 
 		m_lastSelectedDragon = "";
 		m_lastSelectedDisguise = "";
@@ -88,7 +92,7 @@ public class HDTournamentData : HDLiveEventData {
 	{
 		JSONClass ret = base.ToJson();
 
-		ret.Add("lastFreeTournamentRun", TimeUtils.DateToTimestamp( m_lastFreeEntranceTimestamp ));
+		ret.Add("lastFreeTournamentRun", m_lastFreeEntranceTimestamp);
 
 		// Leadeboard
 		JSONClass leaderboard = new JSONClass();
@@ -121,7 +125,7 @@ public class HDTournamentData : HDLiveEventData {
 
 		if ( _data.ContainsKey("lastFreeTournamentRun") )
 		{
-			m_lastFreeEntranceTimestamp = TimeUtils.TimestampToDate( _data["lastFreeTournamentRun"].AsLong );
+			m_lastFreeEntranceTimestamp = _data["lastFreeTournamentRun"].AsLong;
 		}
 
 		if ( _data.ContainsKey("leaderboard") )	// This comes from a saves data

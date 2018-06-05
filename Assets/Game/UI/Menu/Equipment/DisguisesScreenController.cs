@@ -25,14 +25,11 @@ public class DisguisesScreenController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const int MAX_PILLS = 9;
+	private const string PILL_PATH = "UI/Metagame/Disguises/PF_DisguisesPill";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Pill prefab
-	[Separator("Project References")]
-	[SerializeField] private GameObject m_pillPrefab = null;
-
 	// References
 	[Separator("Scene References")]
 	[SerializeField] private DisguisesScreenTitle m_title = null;
@@ -104,12 +101,14 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Instantiate pills - as many as needed!
 		m_pills = new DisguisePill[MAX_PILLS];
+		GameObject prefab = Resources.Load<GameObject>(PILL_PATH);
 		for (int i = 0; i < MAX_PILLS; i++) {
-			GameObject pill = (GameObject)GameObject.Instantiate(m_pillPrefab, m_scrollList.content.transform, false);
+			GameObject pill = (GameObject)GameObject.Instantiate(prefab, m_scrollList.content.transform, false);
 			pill.transform.localScale = Vector3.one;
 			m_pills[i] = pill.GetComponent<DisguisePill>();
 			//m_pills[i].OnPillClicked.AddListener(OnPillClicked);		// [AOC] Will be handled by the snap scroll list
 		}
+		prefab = null;
 
 		// Store some references
 		m_dragonData = null;

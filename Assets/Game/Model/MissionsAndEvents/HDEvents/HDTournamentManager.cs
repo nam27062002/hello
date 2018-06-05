@@ -38,6 +38,11 @@ public class HDTournamentManager : HDLiveEventManager {
 	protected HDTournamentDefinition.TournamentGoal m_runningGoal;
 	protected float m_timePlayed = -1;
 
+	protected string m_entranceSent = "";
+	protected int m_entranceAmountSent = 0;
+	protected bool m_doneChecking = false;
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -81,6 +86,7 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_isLeaderboardReady = false;
 	}
 
+#region server_comunication
 
     public bool RequestLeaderboard( bool _force = false )
     {
@@ -120,7 +126,6 @@ public class HDTournamentManager : HDLiveEventManager {
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			int eventId = responseJson["code"].AsInt;
 			HDTournamentData data = m_data as HDTournamentData;
             if (data != null )
             {
@@ -134,6 +139,36 @@ public class HDTournamentManager : HDLiveEventManager {
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_LEADERBOARD);
 		}
     }
+
+
+    public void SendEntrance( string _type, int _amount )
+    {
+		m_entranceSent = _type;
+		m_entranceAmountSent = _amount;
+		if ( HDLiveEventsManager.TEST_CALLS )
+        {
+			ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_entrance.json", LeaderboardResponse));
+        }
+        else
+        {
+            HDLiveEventData data = GetEventData();
+
+			int playerProgress = UsersManager.currentUser.GetPlayerProgress();
+			GameServerManager.SharedInstance.HDEvents_EnterEvent(data.m_eventId, _type, _amount, playerProgress, EntranceResponse);    
+        }
+    }
+
+	protected virtual void EntranceResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    {
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			// Do something?
+		}
+		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, int> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
+    }
+
 
     public void SendScore(int _score)
     {
@@ -152,14 +187,31 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+
+		if ( outErr != HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			Messenger.Broadcast(MessengerEvents.TOURNAMENT_SCORE_SENT);
+			// Get Leaderboard?
 		}
+
+		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);
     }
 
-	public void OnGameStarted(){
+#endregion
 
+	public bool CanIUseFree()
+	{
+		HDTournamentData tData = data as HDTournamentData;
+		HDTournamentDefinition tDef = data.definition as HDTournamentDefinition;
+		bool ret = false;
+		if (tDef.m_entrance.m_type == "free" || (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 )
+		{
+			ret = true;
+		}
+		return ret;
+	}
+
+	public void OnGameStarted(){
+		m_doneChecking = false;
 		if ( m_tracker != null)
     	{
 			// Check if we are in tournament mode
@@ -179,11 +231,11 @@ public class HDTournamentManager : HDLiveEventManager {
 			{
 				case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
 				{
-					m_runWasValid = true;	// Any run was valid
+					m_runWasValid = true;	// Any run is valid
 				}break;
 				case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
 				{
-					m_runWasValid = true;	// Any run is valis
+					m_runWasValid = true;	// Any run is valid
 				}break;
 				case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
 				{
@@ -198,6 +250,7 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	public void OnGameUpdate(){
 		// Check time limit?
+		if ( !m_doneChecking )
 		switch( m_runningGoal.m_mode )
 		{
 			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
@@ -212,6 +265,7 @@ public class HDTournamentManager : HDLiveEventManager {
 					{
 						// Tell hud to show "Time is Up!"
 						Messenger.Broadcast(MessengerEvents.TIMES_UP);
+						m_doneChecking = true;
 						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
 					
@@ -227,6 +281,7 @@ public class HDTournamentManager : HDLiveEventManager {
 					{
 						// Tell hud to show "Target accomplished"
 						Messenger.Broadcast(MessengerEvents.TARGET_REACHED);
+						m_doneChecking = true;
 						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
 				}
@@ -237,12 +292,21 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	IEnumerator DelayedEnd()
 	{
-		InstanceManager.gameSceneController.PauseGame(true, true);
+		// InstanceManager.gameSceneController.PauseGame(true, true);
+		InstanceManager.gameSceneController.freezeElapsedSeconds = true;
 		if ( m_tracker != null)
 			m_tracker.enabled = false;
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
 		yield return new WaitForSecondsRealtime(2.5f);
-		InstanceManager.gameSceneController.EndGame(false);
+
+		while( InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state < GameSceneController.EStates.FINISHED)
+		{
+			if ( !InstanceManager.gameSceneController.isSwitchingArea )
+			{
+				InstanceManager.gameSceneController.EndGame(false);
+			}	
+			yield return null;
+		} 
 	}
 
     public void OnGameEnded(){
