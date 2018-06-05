@@ -114,73 +114,77 @@ public class PetSlot : MonoBehaviour {
 		bool show = m_slotIdx < _dragonData.pets.Count;	// Depends on the amount of slots for this dragon
 		this.gameObject.SetActive(show);
 
-		// Get pet info
-		DefinitionNode petDef = null;
-		if(show) petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_dragonData.pets[m_slotIdx]);
-		bool equipped = (petDef != null);
-
-		// Refresh slot info
-		m_slotInfo.Refresh(_dragonData, _animate);
-
-		// Refresh power info
-		if(show) {
-			// Show
-			m_powerIcon.gameObject.SetActive(true);
-			m_powerIcon.anim.ForceShow(false);
-
-			// Equipped?
-			if(equipped) {
-				// Get power definition
-				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-				m_powerIcon.InitFromDefinition(powerDef, false, _animate);
-			} else {
-				m_powerIcon.InitFromDefinition(null, false, _animate);
-			}
+		if (show) {
+			// Refresh slot info
+			m_slotInfo.Refresh(_dragonData, _animate);
+			Refresh(m_dragonData.pets[m_slotIdx], _animate);
 		} else {
 			// Instant hide
 			m_powerIcon.anim.ForceHide(false);
 		}
+	}
 
-		// Toggle equipped/empty animators
-		if(show) {
-			// Equipped or empty?
-			if(m_equippedAnim != null) m_equippedAnim.ForceSet(equipped, _animate);
-			if(m_emptyAnim != null) m_emptyAnim.ForceSet(!equipped, _animate);
+	public void Refresh(string _sku, bool _animate) {
+		DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
+		Refresh(petDef, _animate);
+	}
+
+	public void Refresh(DefinitionNode _def, bool _animate) {		
+		// Get pet info
+		bool equipped = (_def != null);
+
+		// Refresh power info
+		// Show
+		m_powerIcon.gameObject.SetActive(true);
+		m_powerIcon.anim.ForceShow(false);
+
+		// Equipped?
+		if(equipped) {
+			// Get power definition
+			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _def.Get("powerup"));
+			m_powerIcon.InitFromDefinition(powerDef, false, _animate);
+		} else {
+			m_powerIcon.InitFromDefinition(null, false, _animate);
 		}
 
+		// Toggle equipped/empty animators
+		// Equipped or empty?
+		if(m_equippedAnim != null) m_equippedAnim.ForceSet(equipped, _animate);
+		if(m_emptyAnim != null) m_emptyAnim.ForceSet(!equipped, _animate);
+
 		// Pet preview
-		if(show) {
-			// Equip or unequip?
-			if(equipped) {
-				// Don't reload if pet is already loaded
-				if(petLoader.petSku != petDef.sku || petLoader.petInstance == null) {
-					// The loader will do everything!
-					petLoader.Load(petDef.sku);
+		// Equip or unequip?
+		if(equipped) {
+			// Don't reload if pet is already loaded
+			if(petLoader.petSku != _def.sku || petLoader.petInstance == null) {
+				// The loader will do everything!
+				petLoader.Load(_def.sku);
 
-					// Change render queue so the pet is renderd behind the UI!
-					Renderer[] targetRenderers = petLoader.GetComponentsInChildren<Renderer>();
-					for(int i = 0; i < targetRenderers.Length; ++i) {
-						for(int j = 0; j < targetRenderers[i].materials.Length; ++j) {
-							targetRenderers[i].materials[j].renderQueue = 3000;
-						}
-					}
-				}
-			} else {
-				if(petLoader.petInstance != null) {
-					// Animate?
-					if(_animate) {
-						// Toggle the OUT anim
-						MenuPetPreview pet = petLoader.petInstance.GetComponent<MenuPetPreview>();
-						pet.SetAnim(MenuPetPreview.Anim.OUT);
-
-						// Program a delayed destruction of the pet preview (to give some time to see the anim)
-						UbiBCN.CoroutineManager.DelayedCall(() => petLoader.Unload(), 0.3f, true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
-					} else {
-						petLoader.Unload();
+				// Change render queue so the pet is renderd behind the UI!
+				Renderer[] targetRenderers = petLoader.GetComponentsInChildren<Renderer>();
+				for(int i = 0; i < targetRenderers.Length; ++i) {
+					for(int j = 0; j < targetRenderers[i].materials.Length; ++j) {
+						targetRenderers[i].materials[j].renderQueue = 3000;
 					}
 				}
 			}
+		} else {
+			if(petLoader.petInstance != null) {
+				// Animate?
+				if(_animate) {
+					// Toggle the OUT anim
+					MenuPetPreview pet = petLoader.petInstance.GetComponent<MenuPetPreview>();
+					pet.SetAnim(MenuPetPreview.Anim.OUT);
+					// Program a delayed destruction of the pet preview (to give some time to see the anim)
+					UbiBCN.CoroutineManager.DelayedCall(() => petLoader.Unload(), 0.3f, true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
+				} else {
+					petLoader.Unload();
+				}			
+			}
 		}
+
+
+		m_slotInfo.Refresh(_def, _animate);
 	}
 
 	//------------------------------------------------------------------------//
