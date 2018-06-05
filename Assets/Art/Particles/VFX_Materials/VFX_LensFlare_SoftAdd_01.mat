@@ -6,13 +6,14 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: VFX_GemsSparks_AddBlend_01
+  m_Name: VFX_LensFlares 1
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_SOFTADDITIVE COLOR_TINT DISSOLVE_NONE
+    EXTENDED_PARTICLES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3065
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -22,12 +23,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DissolveTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 375ceee8432df914799786bcc0cec847, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5ba47584c9c27984fb36dfcc782d1b4f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
@@ -35,19 +32,17 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BlendMode: 5
-    - Dissolve: 0
+    - BlendMode: 1
     - _ABOffset: 0
-    - _ColorMultiplier: 0.63
-    - _DstBlend: 10
-    - _EmissionSaturation: 8
+    - _ColorMultiplier: 1
+    - _DstBlend: 6
+    - _EmissionSaturation: 3.7
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 0
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
     - _EnableColorTint: 0
     - _EnableColorVertex: 1
-    - _EnableDissolve: 0
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
     - _EnableNoiseTexture: 0
@@ -55,7 +50,8 @@ Material:
     - _EnableNoiseTextureDissolve: 0
     - _EnableNoiseTextureEmission: 0
     - _EnableNoiseUV: 0
-    - _OpacitySaturation: 0.2
+    - _InvFade: 1
+    - _OpacitySaturation: 1
     - _SrcBlend: 1
     - _ZTest: 2
     m_Colors:

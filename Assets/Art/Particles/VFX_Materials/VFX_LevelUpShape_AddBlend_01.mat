@@ -6,25 +6,25 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pet_monkey_imp_12_fire
-  m_Shader: {fileID: 4800000, guid: b5d133454c866364f90d201e1c7baed2, type: 3}
-  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
-    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR
-  m_LightmapFlags: 1
+  m_Name: levelupmagic
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY COLOR_TINT DISSOLVE_NONE
+    EXTENDED_PARTICLES NOISEUV NOISE_TEXTURE_ALPHA NOISE_TEXTURE_EMISSION
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3030
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 4257de601a87f4deeaf87cae224c54f8, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorRamp:
-        m_Texture: {fileID: 2800000, guid: 2acb0786084c1004dbdc9c7c434ae8ea, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -39,8 +39,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 69d6c812456514b35946c6135aa2c4f0, type: 3}
+    - _DissolveTex:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -48,16 +48,16 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 115f60a186684423a99ac32847db8c81, type: 3}
+        m_Texture: {fileID: 2800000, guid: 748194e35f9513644a76554d496e3982, type: 3}
         m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Offset: {x: -0.1, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: b883c2cb833d7a443998ec04d8fa7faa, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 463f3e17448c6f147a7b7811acdfb56f, type: 3}
+        m_Scale: {x: 2, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -67,51 +67,50 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ReflectionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Alpha: 0.892
-    - _AlphaThreshold: 0.7
-    - _Alpha_as_depth: 0
+    - BlendMode: 5
+    - Dissolve: 0
+    - _ABOffset: 0
     - _BumpScale: 1
-    - _ColorSteps: 32
+    - _ColorMultiplier: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _Fresnel: 4.38
+    - _DstBlend: 10
+    - _EmissionSaturation: 2
+    - _EmissivePower: 1
+    - _EnableAlphaDissolve: 0
+    - _EnableAutomaticPanning: 0
+    - _EnableColorRamp: 0
+    - _EnableColorTint: 0
+    - _EnableColorVertex: 1
+    - _EnableDissolve: 1
+    - _EnableEmissivePower: 0
+    - _EnableExtendedParticles: 1
+    - _EnableNoiseTexture: 0
+    - _EnableNoiseTextureAlpha: 1
+    - _EnableNoiseTextureDissolve: 0
+    - _EnableNoiseTextureEmission: 1
+    - _EnableNoiseUV: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 0
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseScale: 1
-    - _NormalStrenght: 1
     - _OcclusionStrength: 1
+    - _OpacitySaturation: 1
     - _Parallax: 0.02
-    - _Power: 4.4
-    - _RampOffset: 1
-    - _ReflectionAmount: 0
-    - _Seed: 1
-    - _ShaderTime: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 6.68
     - _SpecularHighlights: 1
-    - _Speed: 2
     - _SrcBlend: 1
-    - _StencilMask: 10
     - _UVSec: 0
+    - _ZTest: 6
     - _ZWrite: 1
     m_Colors:
-    - _AmbientAdd: {r: 0.021969333, g: 0.04411763, b: 0.01492214, a: 0}
+    - _BasicColor: {r: 1, g: 1, b: 1, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorAdd: {r: 0.01145449, g: 0.029411793, b: 0.010813159, a: 0}
-    - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.7205882, g: 0.7205882, b: 0.7205882, a: 1}
-    - _InnerLightColor: {r: 0.15084344, g: 0.33088237, b: 0.18933451, a: 1}
-    - _SecondLightColor: {r: 0.74156576, g: 0.7906246, b: 0.9338235, a: 0}
-    - _SecondLightDir: {r: 0.82, g: -2.75, b: 2.64, a: 0.41}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _NoisePanning: {r: 0.3, g: 0, b: 0, a: 0}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _SaturatedColor: {r: 1, g: 1, b: 1, a: 0.5}
+    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
