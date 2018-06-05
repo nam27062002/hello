@@ -86,6 +86,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 	}
 
+	// Internal logic
+	private bool m_waitingForDragonPreviewToLoad = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -142,6 +145,21 @@ public class DisguisesScreenController : MonoBehaviour {
 		viewportPos.z = m_depth;
 		m_previewAnchor.position = camera.ViewportToWorldPoint(viewportPos);
 		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;*/
+
+		// Are we waiting for the dragon preview to be ready?
+		if(m_waitingForDragonPreviewToLoad) {
+			// Is it ready?
+			if(InstanceManager.menuSceneController.selectedDragonPreview != null) {
+				// Hide pets
+				DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+				if(equip != null) {
+					equip.TogglePets(false, true);
+				}
+
+				// Toggle flag
+				m_waitingForDragonPreviewToLoad = false;
+			}
+		}
 	}
 
 	/// <summary>
@@ -317,11 +335,8 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Refresh with initial data!
 		Initialize();
 
-		// Hide pets on the current dragon preview
-		DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
-		if(equip != null) {
-			equip.TogglePets(false, true);
-		}
+		// Hide dragon's pets whenever preview is ready
+		m_waitingForDragonPreviewToLoad = true;
 	}
 
 	/// <summary>
