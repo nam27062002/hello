@@ -40,6 +40,9 @@ public class HDLiveEventManager
 		get { return m_data; }
 	}
 
+	// Internal
+	protected int m_rewardLevel = -1;	// Response to the get_my_rewards request
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -106,7 +109,7 @@ public class HDLiveEventManager
         return ret;
 	}
 
-	public virtual bool IsRewardPenging()
+	public virtual bool IsRewardPending()
 	{
 		bool ret = false;
         HDLiveEventData data = GetEventData();
@@ -281,6 +284,11 @@ public class HDLiveEventManager
 		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, retCode);
     }
 
+	public virtual List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+		// To be implemented by heirs!
+		return new List<HDLiveEventDefinition.HDLiveEventReward>();
+	}
+
 	public void RequestRewards()
     {
 		if ( HDLiveEventsManager.TEST_CALLS )
@@ -310,7 +318,7 @@ public class HDLiveEventManager
             {
 	            if (data != null)
 	            {
-	            	
+	            	m_rewardLevel = responseJson["rewardLevel"].AsInt;
 	            }
 			}
 			else

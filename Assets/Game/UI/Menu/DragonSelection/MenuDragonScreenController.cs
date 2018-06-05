@@ -554,7 +554,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
 			if ( quest.EventExists() )	
 			{
-				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPenging())
+				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
 				{
 					nextScreen = MenuScreen.GLOBAL_EVENTS;	
 				}

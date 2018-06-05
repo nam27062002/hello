@@ -45,6 +45,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 	// Internal
 	private HDTournamentManager m_tournamentManager;
+	private bool m_waitingRewardsData = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,6 +67,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdated);
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -75,6 +77,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	{
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdated);
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -85,11 +88,6 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 
 		// Get latest data from the manager
-		RefreshData();
-	}
-
-	void OnStateUpdated()
-	{
 		RefreshData();
 	}
 
@@ -224,7 +222,52 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Collect Rewards button has been pressed.
 	/// </summary>
 	public void OnCollectButton() {
-		// Go to tournament rewards screen
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+		// Prevent spamming
+		if(m_waitingRewardsData) return;
+
+		// Request rewards data and wait for it to be loaded
+		m_tournamentManager.RequestRewards();
+
+		// Show busy screen
+		BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
+		BusyScreen.Show(this);
+
+		// Toggle flag
+		m_waitingRewardsData = true;
+	}
+
+	/// <summary>
+	/// We got a response on the rewards request.
+	/// </summary>
+	private void OnRewardsResponse(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+		// Ignore if we weren't waiting for rewards!
+		if(!m_waitingRewardsData) return;
+		m_waitingRewardsData = false;
+
+		// Hide busy screen
+		BusyScreen.Hide(this);
+
+		// Success?
+		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+			// Go to tournament rewards screen!
+			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
+			scr.StartFlow();
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+		} else {
+			// Show error message
+			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_ERROR"),
+				new Vector2(0.5f, 0.33f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+		}
+	}
+
+	/// <summary>
+	/// We got an update on the tournament state.
+	/// </summary>
+	private void OnStateUpdated() {
+		RefreshData();
 	}
 }

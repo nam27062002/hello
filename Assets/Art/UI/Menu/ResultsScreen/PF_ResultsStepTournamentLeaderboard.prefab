@@ -203,8 +203,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224839007848622622}
-  - component: {fileID: 114376992251840558}
-  - component: {fileID: 222669913532683814}
+  - component: {fileID: 114779688251292194}
   - component: {fileID: 114375513078965684}
   - component: {fileID: 225535260665205890}
   m_Layer: 5
@@ -345,7 +344,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224193312508987456}
-  - component: {fileID: 114379027308327800}
+  - component: {fileID: 114071493741446182}
   - component: {fileID: 95965701527369112}
   m_Layer: 5
   m_Name: LeaderboardGroup
@@ -717,6 +716,29 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114071493741446182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1744208888632630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 203e82bd7c2364bc2b907fe72ecb0bad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_titleText: {fileID: 114585134183872862}
+  m_scrollList: {fileID: 114779688251292194}
+  m_loadingIcon: {fileID: 1128548898857838}
+  m_scrollGroup: {fileID: 1280756769686060}
+  m_pillPrefab: {fileID: 1897286652463016, guid: 62729c3f10f244ab3b9abee55d045d4d,
+    type: 2}
+  m_playerPillPrefab: {fileID: 1897286652463016, guid: b08afa8c70c084c77af121afd124da3e,
+    type: 2}
+  m_maxPills: 100
+  m_listPadding: 0
+  m_pillSpacing: 5
+  m_playerPillMarginOffset: -15
 --- !u!114 &114085141974306852
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1037,60 +1059,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114376992251840558
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1280756769686060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Content: {fileID: 224459080323185584}
-  m_Horizontal: 0
-  m_Vertical: 1
-  m_MovementType: 1
-  m_Elasticity: 0.1
-  m_Inertia: 1
-  m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 224683464322735058}
-  m_HorizontalScrollbar: {fileID: 0}
-  m_VerticalScrollbar: {fileID: 114837317229138906}
-  m_HorizontalScrollbarVisibility: 2
-  m_VerticalScrollbarVisibility: 1
-  m_HorizontalScrollbarSpacing: -3
-  m_VerticalScrollbarSpacing: -3
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!114 &114379027308327800
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1744208888632630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3a1ae0b051e74e6fb8b7e416eab34fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_titleText: {fileID: 114585134183872862}
-  m_scrollList: {fileID: 114376992251840558}
-  m_loadingIcon: {fileID: 1128548898857838}
-  m_scrollGroup: {fileID: 1280756769686060}
-  m_pillPrefab: {fileID: 1897286652463016, guid: 62729c3f10f244ab3b9abee55d045d4d,
-    type: 2}
-  m_playerPillPrefab: {fileID: 1897286652463016, guid: b08afa8c70c084c77af121afd124da3e,
-    type: 2}
-  m_maxPills: 100
-  m_listPadding: 0
-  m_pillSpacing: 5
-  m_playerPillMarginOffset: -10
 --- !u!114 &114419960597458494
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1697,6 +1665,44 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
+--- !u!114 &114779688251292194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1280756769686060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cebdcb6e74664d0689fabf30a3f5df0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Content: {fileID: 224459080323185584}
+  m_Horizontal: 0
+  m_Vertical: 1
+  m_MovementType: 1
+  m_Elasticity: 0.1
+  m_Inertia: 1
+  m_DecelerationRate: 0.135
+  m_ScrollSensitivity: 1
+  m_Viewport: {fileID: 224683464322735058}
+  m_HorizontalScrollbar: {fileID: 0}
+  m_VerticalScrollbar: {fileID: 114837317229138906}
+  m_HorizontalScrollbarVisibility: 0
+  m_VerticalScrollbarVisibility: 0
+  m_HorizontalScrollbarSpacing: 0
+  m_VerticalScrollbarSpacing: 0
+  m_OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  m_mask: {fileID: 224537340012066054}
+  m_padding:
+    left: 0
+    right: 0
+    top: 0
+    bottom: 0
+    spacing: 10
 --- !u!114 &114782763975767234
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1841,7 +1847,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114329885466750656}
   m_HandleRect: {fileID: 224566078889652910}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8214,12 +8220,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1046790637824806}
---- !u!222 &222669913532683814
-CanvasRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1280756769686060}
 --- !u!222 &222671845598908890
 CanvasRenderer:
   m_ObjectHideFlags: 1

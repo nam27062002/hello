@@ -398,6 +398,35 @@ public class HDTournamentManager : HDLiveEventManager {
 	}
 
 	//------------------------------------------------------------------------//
+	// REWARDS METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// List of rewards for this player based on its final position in the leaderboard.
+	/// Should've been previously requested to the server and waited for the response 
+	/// to arrive (RequestMyRewards() and AreRewardsReady() methods).
+	/// Doesn't actually check tournament state.
+	/// </summary>
+	/// <returns>The rewards to be given.</returns>
+	public override List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+		// Create new list
+		List<HDLiveEventDefinition.HDLiveEventReward> rewards = new List<HDLiveEventDefinition.HDLiveEventReward>();
+
+		// We must have a valid data and definition
+		if(data != null && data.definition != null) {
+			// Check reward level
+			if(m_rewardLevel > 0) {
+				// In a tournament, the reward level tells us in which reward tier we have ended within the leaderboard
+				// Only one reward is given
+				HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+				rewards.Add(def.m_rewards[m_rewardLevel - 1]);	// Assuming rewards are properly sorted :)
+			}
+		}
+
+		// Done!
+		return rewards;
+	}
+
+	//------------------------------------------------------------------------//
 	// UI HELPER METHODS													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
