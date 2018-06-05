@@ -33,21 +33,11 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	[SerializeField] private GameObject m_loadingIcon = null;
 	[SerializeField] private GameObject m_scrollGroup = null;
 	[Space]
-	[SerializeField] private GameObject m_pillPrefab = null;
-	[SerializeField] private GameObject m_playerPillPrefab = null;
-	[Space]
-	[SerializeField] private int m_maxPills = 100;
-	[Space]
-	[SerializeField] private float m_listPadding = 0f;
-	[SerializeField] private float m_pillSpacing = 5f;
-	[SerializeField] private float m_playerPillMarginOffset = -15f;	// [AOC] Some extra margin to make up for the pill's transparency
+	[SerializeField] private List<GameObject> m_pillPrefabs;
 
 	// Internal
 	private HDTournamentManager m_tournament;
 	private bool m_waitingTournament;
-
-	private List<TournamentLeaderboardPill> m_pills = null;
-	private TournamentLeaderboardPill m_playerPill = null;
 
 	// Snap player pill to scrollList viewport
 	private RectTransform m_playerPillSlot = null;
@@ -68,7 +58,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Init title
-		if(m_titleText != null) m_titleText.Localize(m_titleText.tid, StringUtils.FormatNumber(m_maxPills));
+		if(m_titleText != null) m_titleText.Localize(m_titleText.tid);
 	}
 
 	/// <summary>
@@ -119,26 +109,34 @@ public class TournamentLeaderboardView : MonoBehaviour {
 		// Get current event
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
 		HDTournamentData data = (HDTournamentData)m_tournament.data;
-		List<HDTournamentData.LeaderboardLine> leaderboard = data.m_leaderboard;
 
 
-		leaderboard = new List<HDTournamentData.LeaderboardLine>();
+		//List<HDTournamentData.LeaderboardLine> leaderboard = data.m_leaderboard;
+
+
+		List<ScrollRectItemData<HDTournamentData.LeaderboardLine>> leaderboard = new List<ScrollRectItemData<HDTournamentData.LeaderboardLine>>();
 		for (int i = 0; i < 200; ++i) {
 			HDTournamentData.LeaderboardLine line = new HDTournamentData.LeaderboardLine();
 			line.m_name = "Player " + i;
 			line.m_rank = i;
 			line.m_score = 200 - i;
-			leaderboard.Add(line);
+
+			ScrollRectItemData<HDTournamentData.LeaderboardLine> itemData = new ScrollRectItemData<HDTournamentData.LeaderboardLine>();
+			itemData.data = line;
+
+			itemData.pillType = (i == 15)? 1 : Random.Range(0, 3);
+
+			leaderboard.Add(itemData);
 		}
 
-		m_scrollList.SetupPlayerPill(m_playerPillPrefab, leaderboard[15]);
-		m_scrollList.Setup(m_pillPrefab, leaderboard);
+		m_scrollList.SetupPlayerPill(m_pillPrefabs[1], 15, leaderboard[15].data);
+		m_scrollList.Setup(m_pillPrefabs, leaderboard);
 
 		ToggleLoading(false);
 
 		return;
 
-
+		/*
 		// If pills list not yet initialized, do it now!
 		if (m_pills == null) {
 			m_pills = new List<TournamentLeaderboardPill>(m_maxPills);
@@ -283,6 +281,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 		// Launch animation
 		m_scrollList.verticalNormalizedPosition = 1f;
 		m_scrollList.GetComponent<ShowHideAnimator>().RestartShow();
+		*/
 	}
 
 	/// <summary>
@@ -290,7 +289,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// to its actual position.
 	/// </summary>
 	private void RefreshPlayerPillPosition() {
-		// Must be initialized!
+	/*	// Must be initialized!
 		if(m_playerPill == null || m_playerPillSlot == null) return;
 
 		// Black magic math to snap the pill in the viewport
@@ -301,7 +300,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 			viewportRect.y + viewportRect.height - (slotBounds.extents.y + m_listPadding) - m_playerPillMarginOffset
 		);
 		float newY = yRange.Clamp(slotBounds.center.y);
-		m_playerPill.transform.SetLocalPosY(newY);
+		m_playerPill.transform.SetLocalPosY(newY);*/
 	}
 
 	/// <summary>
