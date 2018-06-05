@@ -27,12 +27,12 @@ public class PetsScreenController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const int INSTANT_INITIAL_PILLS = 0;
+	private const string PILL_PATH = "UI/Metagame/Pets/PF_PetPill";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private GameObject m_pillPrefab = null;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
 	public SnappingScrollRect scrollList {
 		get { return m_scrollList; }
@@ -404,15 +404,17 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	private void InitPills() {
 		if ( m_pills.Count == 0 ){
+			GameObject prefab = Resources.Load<GameObject>(PILL_PATH);
 			for(int i = 0; i < 8; i++) {
 				// Instantiate pill
-				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
+				GameObject newPillObj = GameObject.Instantiate<GameObject>(prefab, scrollList.content, false);
 				m_pills.Add(newPillObj.GetComponent<PetPill>());
 				m_pills[i].animator.ForceHide(false);	// Start hidden
 
 				// React if the pill is tapped!
 				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
 			}
+			prefab = null;
 		}
 	}
 
