@@ -116,29 +116,23 @@ public class HDTournamentManager : HDLiveEventManager {
 
     protected virtual void LeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
-
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			int eventId = responseJson["code"].AsInt;
 			HDTournamentData data = m_data as HDTournamentData;
-            if (data != null /*&& data.m_eventId == eventId*/ )
+            if (data != null )
             {
             	if ( responseJson.ContainsKey("c") )// Is cheater
             	{
             		AntiCheatsManager.MarkUserAsCheater();
             	}
             	data.ParseLeaderboard( responseJson );
-
 				m_isLeaderboardReady = true;
             }
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_LEADERBOARD);
-        }
+		}
     }
 
     public void SendScore(int _score)
@@ -156,24 +150,12 @@ public class HDTournamentManager : HDLiveEventManager {
 
     protected virtual void SetScoreResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
-
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
-            if (data != null/* && data.m_eventId == eventId*/)
-            {
-            	
-            }
-
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_SCORE_SENT);
-        }
+		}
     }
 
 	public void OnGameStarted(){
@@ -288,14 +270,19 @@ public class HDTournamentManager : HDLiveEventManager {
     public string GetToUseDragon()
     {
 		string ret;
+		// NOTE: Here we should check datas last dragon used to return as it will be the prefered dragon
     	HDTournamentData data = m_data as HDTournamentData;
     	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
-    	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) )
+    	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) ){
 			ret = def.m_build.m_dragon;
-		else
+		}else{
 			ret = UsersManager.currentUser.currentDragon;
+		}
 		return ret;
     }
+
+    // TODO:
+    // public string SetToUseDragon( string dragonSku )
 
     public string GetToUseSkin()
     {

@@ -38,7 +38,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     public enum ComunicationErrorCodes
     {
     	NET_ERROR,
-    	JSON_NOT_VALID,
+    	RESPONSE_NOT_VALID,
     	OTHER_ERROR,
     	NO_RESPONSE,
     	NO_ERROR
@@ -196,6 +196,43 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 	}
 
 
+	public static SimpleJSON.JSONNode ResponseErrorCheck(FGOL.Server.Error _error, GameServerManager.ServerResponse _response, out HDLiveEventsManager.ComunicationErrorCodes outErr)
+	{
+		SimpleJSON.JSONNode ret = null;
+
+		if (_error == null)
+        {
+			outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+			if (_response != null && _response["response"] != null)
+        	{
+				ret = SimpleJSON.JSONNode.Parse(_response["response"] as string);
+				if ( ret != null )
+            	{
+					if ( ret.ContainsKey("errorCode") )
+            		{
+            			// Translate error code
+            			outErr = HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR;
+            		}
+            	}
+            	else
+            	{
+					outErr = HDLiveEventsManager.ComunicationErrorCodes.RESPONSE_NOT_VALID;
+            	}
+        	}
+        	else
+        	{
+				outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
+        	}
+        }
+        else
+        {
+			outErr = HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR;
+        }
+        return ret;
+	}
+
+
+
 	public bool ShouldRequestMyEvents()
 	{
 		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastMyEventsRequestTimestamp;
@@ -223,40 +260,41 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
 	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
 	{
-		if ( _error != null ){
-			// Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-			return;
-		}
-
-		if(_response != null && _response["response"] != null) 
+		ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == ComunicationErrorCodes.NO_ERROR )
 		{
-			SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            if ( responseJson != null )
+			int max = m_types.Count;
+            for (int i = 0; i < max; i++)
             {
-                int max = m_types.Count;
-                for (int i = 0; i < max; i++)
+                m_managers[i].CleanData();
+                if (responseJson.ContainsKey( m_types[i] ))
                 {
-                    m_managers[i].CleanData();
-                    if (responseJson.ContainsKey( m_types[i] ))
+                    m_managers[i].OnNewStateInfo(responseJson[ m_types[i] ]);
+                    if (!m_managers[i].HasValidDefinition() || m_cacheInfo)
                     {
-                        m_managers[i].OnNewStateInfo(responseJson[ m_types[i] ]);
-                        if (!m_managers[i].HasValidDefinition() || m_cacheInfo)
-                        {
-                            m_managers[i].RequestDefinition();
-                        }
+                        m_managers[i].RequestDefinition();
                     }
                 }
-
             }
-			m_cacheInfo = false;
-
 			if ( m_quest.EventExists() && m_quest.ShouldRequestProgress() )
 				m_quest.RequestProgress();
 			if ( m_tournament.EventExists() && m_tournament.ShouldRequestLeaderboard() )
 				m_tournament.RequestLeaderboard();
 
-			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 		}
+		else
+		{
+			int max = m_types.Count;
+			for (int i = 0; i < max; i++)
+            {
+                m_managers[i].CleanData();
+            }
+		}
+
+		m_cacheInfo = false;
+
+		Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 
 	}
 

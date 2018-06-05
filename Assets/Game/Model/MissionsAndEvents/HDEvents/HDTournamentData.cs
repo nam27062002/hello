@@ -41,6 +41,11 @@ public class HDTournamentData : HDLiveEventData {
 	public long m_tournamentSize = -1;
 
 	private DateTime m_lastFreeEntranceTimestamp = new DateTime();
+		// Default tournament config
+	public string m_lastSelectedDragon = "";
+	public string m_lastSelectedDisguise = "";
+	public List<string> m_lastSelectedPets = new List<string>();
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -72,13 +77,18 @@ public class HDTournamentData : HDLiveEventData {
 		m_score = -1;
 		m_tournamentSize = -1;
 		m_lastFreeEntranceTimestamp = new DateTime(1970, 1, 1);
+
+		m_lastSelectedDragon = "";
+		m_lastSelectedDisguise = "";
+		m_lastSelectedPets.Clear();
+
 	}
 
 	public override SimpleJSON.JSONClass ToJson ()
 	{
 		JSONClass ret = base.ToJson();
 
-		ret.Add("Timestamp", TimeUtils.DateToTimestamp( m_lastFreeEntranceTimestamp ));
+		ret.Add("lastFreeTournamentRun", TimeUtils.DateToTimestamp( m_lastFreeEntranceTimestamp ));
 
 		// Leadeboard
 		JSONClass leaderboard = new JSONClass();
@@ -109,9 +119,9 @@ public class HDTournamentData : HDLiveEventData {
 	{
 		base.ParseState( _data );
 
-		if ( _data.ContainsKey("Timestamp") )
+		if ( _data.ContainsKey("lastFreeTournamentRun") )
 		{
-			m_lastFreeEntranceTimestamp = TimeUtils.TimestampToDate( _data["Timestamp"].AsLong );
+			m_lastFreeEntranceTimestamp = TimeUtils.TimestampToDate( _data["lastFreeTournamentRun"].AsLong );
 		}
 
 		if ( _data.ContainsKey("leaderboard") )	// This comes from a saves data

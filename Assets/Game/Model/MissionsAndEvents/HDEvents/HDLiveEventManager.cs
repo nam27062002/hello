@@ -210,6 +210,8 @@ public class HDLiveEventManager
     //------------------------------------------------------------------------//
 
 #region server_comunication
+
+
 	public bool ShouldRequestDefinition()
 	{
 		return m_shouldRequestDefinition;
@@ -244,44 +246,26 @@ public class HDLiveEventManager
 
     protected virtual void RequestEventDefinitionResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-			Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR);
-            return;
-        }
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 
-		HDLiveEventsManager.ComunicationErrorCodes retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            if ( responseJson != null )
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			int eventId = responseJson["code"].AsInt;
+            HDLiveEventData data = GetEventData();
+            if (data != null && data.m_eventId == eventId)
             {
-	            int eventId = responseJson["code"].AsInt;
-	            HDLiveEventData data = GetEventData();
-	            if (data != null && data.m_eventId == eventId)
-	            {
-	            	bool wasActive = m_isActive;
-	            	if ( m_isActive ){
-	            		Deactivate();
-	            	}
-	                ParseDefinition(responseJson);
-	                if (wasActive){
-	                	Activate();
-	                }
-	            }
-			}
-			else
-			{
-				retCode = HDLiveEventsManager.ComunicationErrorCodes.JSON_NOT_VALID;
-				TreatJsonParseError();
-			}
-        }
-        else
-        {
-			retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
-        }
-
-		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, retCode);
+            	bool wasActive = m_isActive;
+            	if ( m_isActive ){
+            		Deactivate();
+            	}
+                ParseDefinition(responseJson);
+                if (wasActive){
+                	Activate();
+                }
+            }
+		}
+		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
     }
 
 	public virtual List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
@@ -304,34 +288,21 @@ public class HDLiveEventManager
 
 	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		if (_error != null)
-        {
-			Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId ,HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR);
-            return;
-        }
-
-		HDLiveEventsManager.ComunicationErrorCodes retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            if ( responseJson != null )
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			if (data != null)
             {
-	            if (data != null)
-	            {
-	            	m_rewardLevel = responseJson["rewardLevel"].AsInt;
-	            }
-			}
-			else
-			{
-				retCode = HDLiveEventsManager.ComunicationErrorCodes.JSON_NOT_VALID;
-				TreatJsonParseError();
-			}
-        }
-        else
-        {
-        	retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
-        }
-		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId, retCode);
+				if ( responseJson.ContainsKey("rewardLevel") ){
+            		m_rewardLevel = responseJson["rewardLevel"].AsInt;
+            	} else {
+					m_rewardLevel = 0;
+            	}
+            }
+		}
+
+		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId, outErr);
     }
 
 
@@ -352,52 +323,19 @@ public class HDLiveEventManager
 
 	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		if (_error != null)
-        {
-			Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR);
-            return;
-        }
 
-		HDLiveEventsManager.ComunicationErrorCodes retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            if ( responseJson != null )
-            {
-	            if (data != null)
-	            {
-	            	
-	            }
-				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_FINISHED);
-			}
-			else
-			{
-				retCode = HDLiveEventsManager.ComunicationErrorCodes.JSON_NOT_VALID;
-				TreatJsonParseError();
-			}
-        }
-        else
-        {
-        	retCode = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
-        }
-		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, retCode);
+
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			
+		}
+
+		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
     }
 
-    /// <summary>
-    /// Treats the errors. Returns true if the error validates the event
-    /// </summary>
-    /// <returns><c>true</c>, if errors was treated, <c>false</c> otherwise.</returns>
-	protected virtual bool TreatErrors()
-	{
-		bool ret = false;
 
-		return ret;
-	}
-
-	protected virtual void TreatJsonParseError()
-	{
-			
-	}
 #endregion
 
 #region mods_activation
