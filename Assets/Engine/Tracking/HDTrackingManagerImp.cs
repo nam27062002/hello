@@ -2,6 +2,11 @@
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
+#if UNITY_EDITOR
+    //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
+    #define EDITOR_MODE
+#endif
+
 using UnityEngine;
 using System;
 using System.Collections;
@@ -95,7 +100,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override string GetDNAProfileID()
     {
-#if !UNITY_EDITOR
+#if !EDITOR_MODE
         return DNAManager.SharedInstance.GetProfileID();
 #else
         return null;
@@ -122,7 +127,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private void SetRetrySessionCreationIsEnabled(bool value)
 	{		
 		// UbiservicesManager is not called from the editor because it doesn’t work on Mac
-#if !UNITY_EDITOR
+#if !EDITOR_MODE
 		UbiservicesManager.SharedInstance.SetStartSessionRetryBehaviour(value);
 #endif
 	}
@@ -131,7 +136,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         get
         {            
-#if UNITY_EDITOR
+#if EDITOR_MODE
             // Disabled in Editor because it causes a crash on Mac
             return false;
 #else
@@ -273,7 +278,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private void InitDNA(CaletySettings settingsInstance)
 	{
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-#if !UNITY_EDITOR
+#if !EDITOR_MODE
         string clientVersion = GameSettings.internalVersion.ToString();
 
 		if (settingsInstance != null)
@@ -374,7 +379,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Session_PlayTime += Time.deltaTime;
         }
 
-#if UNITY_EDITOR
+#if EDITOR_MODE
         Debug_Update();
 #endif
 
@@ -455,6 +460,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         
         Notify_SessionEnd(ESeassionEndReason.app_closed);
         Track_EtlEndEvent();
+
+        // Last chance to cache pending events to be sent are stored
+        // Not lazy approach is used to guarantee events are stored
+        DNAManager.SharedInstance.SaveOfflineUnsentEvents(false);
+
 
         IsStartSessionNotified = false;
         State = EState.WaitingForSessionStart;        
@@ -2004,8 +2014,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_SendEvent(TrackingEvent e)
 	{
-		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-#if !UNITY_EDITOR  //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
+		// Events are not sent in EDITOR_MODE because DNA crashes on Mac
+#if !EDITOR_MODE  
 		TrackingManager.SharedInstance.SendEvent(e);
 #endif
 	}

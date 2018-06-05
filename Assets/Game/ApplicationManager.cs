@@ -131,7 +131,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         // Tracking session has to be finished when the application is closed
         HDTrackingManager.Instance.Notify_ApplicationEnd();
-
+        
         //PersistenceManager.Save();
 
         PersistenceFacade.instance.Destroy();
