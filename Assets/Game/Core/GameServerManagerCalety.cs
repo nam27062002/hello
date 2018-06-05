@@ -635,8 +635,15 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLiveEvents_SetScore, parameters, _callback);
     }
 
-    public override void HDEvents_EnterEvent(int _eventID, ServerCallback _callback) {
-    }
+	public virtual void HDEvents_EnterEvent(int _eventID, string _type, int _amount, int _matchmakingValue, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        parameters.Add("type", _type);
+		parameters.Add("amount", _amount.ToString(JSON_FORMAT));
+		parameters.Add("matchmaking", _matchmakingValue.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_Enter, parameters, _callback);
+	}
+    
 
 	public override void HDEvents_GetMyReward(int _eventID, ServerCallback _callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
@@ -693,7 +700,7 @@ public class GameServerManagerCalety : GameServerManager {
         HDLiveEvents_AddProgress,	// params: int _eventID, _contribution on quests
         HDLiveEvents_GetLeaderboard,   // params: int _eventID
         HDLiveEvents_SetScore,     // params: int _eventID. _score on tournaments
-        HDLiveEvents_Enter,       // params: int _eventID. Register to an event
+        HDLiveEvents_Enter,       // params: int _eventID. entrance type, amount, matchmaking value
 		HDLiveEvents_GetMyReward,		// params: int _eventID
 		HDLiveEvents_FinishMyEvent		// params: int _eventID
 	}    
@@ -1071,7 +1078,6 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.HDLiveEvents_GetEventDefinition:
 				case ECommand.HDLiveEvents_GetMyProgress:
                 case ECommand.HDLiveEvents_GetLeaderboard:
-                case ECommand.HDLiveEvents_Enter:
 				case ECommand.HDLiveEvents_GetMyReward:
 				case ECommand.HDLiveEvents_FinishMyEvent: {					
 					Dictionary<string, string> kParams = new Dictionary<string, string>();						
@@ -1082,12 +1088,17 @@ public class GameServerManagerCalety : GameServerManager {
 						case ECommand.HDLiveEvents_GetEventDefinition: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF;break;
 						case ECommand.HDLiveEvents_GetMyProgress: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS;break;
                         case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;
-                        case ECommand.HDLiveEvents_Enter: global_event_command = COMMAND_HD_LIVE_EVENTS_ENTER; break;   
 						case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD;break;
 						case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT;break;
 					}
 
                     Command_SendCommand( global_event_command, kParams );					
+				}break;
+				case ECommand.HDLiveEvents_Enter:
+				{
+					Dictionary<string, string> kParams = new Dictionary<string, string>();							
+					kParams["eventId"] = parameters["eventId"];
+					Command_SendCommand( COMMAND_HD_LIVE_EVENTS_ENTER, kParams, parameters, "");
 				}break;
 				case ECommand.HDLiveEvents_AddProgress: {
 					Dictionary<string, string> kParams = new Dictionary<string, string>();							

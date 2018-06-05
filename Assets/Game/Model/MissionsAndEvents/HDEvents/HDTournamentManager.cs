@@ -38,6 +38,10 @@ public class HDTournamentManager : HDLiveEventManager {
 	protected HDTournamentDefinition.TournamentGoal m_runningGoal;
 	protected float m_timePlayed = -1;
 
+	protected string m_entranceSent = "";
+	protected int m_entranceAmountSent = 0;
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -81,6 +85,7 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_isLeaderboardReady = false;
 	}
 
+#region server_comunication
 
     public bool RequestLeaderboard( bool _force = false )
     {
@@ -135,6 +140,36 @@ public class HDTournamentManager : HDLiveEventManager {
 		}
     }
 
+
+    public void SendEntrance( string _type, int _amount )
+    {
+		m_entranceSent = _type;
+		m_entranceAmountSent = _amount;
+		if ( HDLiveEventsManager.TEST_CALLS )
+        {
+			ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_entrance.json", LeaderboardResponse));
+        }
+        else
+        {
+            HDLiveEventData data = GetEventData();
+
+			int playerProgress = UsersManager.currentUser.GetPlayerProgress();
+			GameServerManager.SharedInstance.HDEvents_EnterEvent(data.m_eventId, _type, _amount, playerProgress, EntranceResponse);    
+        }
+    }
+
+	protected virtual void EntranceResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+    {
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			// Do something?
+		}
+		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, int> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
+    }
+
+
     public void SendScore(int _score)
     {
         if (HDLiveEventsManager.TEST_CALLS)
@@ -157,6 +192,20 @@ public class HDTournamentManager : HDLiveEventManager {
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_SCORE_SENT);
 		}
     }
+
+#endregion
+
+	public bool CanIUseFree()
+	{
+		HDTournamentData tData = data as HDTournamentData;
+		HDTournamentDefinition tDef = data.definition as HDTournamentDefinition;
+		bool ret = false;
+		if (tDef.m_entrance.m_type == "free" || (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 )
+		{
+			ret = true;
+		}
+		return ret;
+	}
 
 	public void OnGameStarted(){
 

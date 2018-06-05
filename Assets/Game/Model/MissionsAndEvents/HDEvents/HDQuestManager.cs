@@ -109,6 +109,8 @@ public class HDQuestManager : HDLiveEventManager{
 		get { return Mathf.Clamp01(m_questData.m_globalScore/(float)m_questDefinition.m_goal.m_amount); }
 	}
 
+#region server_comunication
+
 	public bool ShouldRequestProgress()
 	{
 		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastProgressTimestamp;
@@ -209,6 +211,8 @@ public class HDQuestManager : HDLiveEventManager{
 			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 		}
     }
+
+#endregion
 
 	public override List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
 		// Create new list
