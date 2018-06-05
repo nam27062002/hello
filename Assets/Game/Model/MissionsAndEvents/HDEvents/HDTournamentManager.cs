@@ -286,12 +286,21 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	IEnumerator DelayedEnd()
 	{
-		InstanceManager.gameSceneController.PauseGame(true, true);
+		// InstanceManager.gameSceneController.PauseGame(true, true);
+		InstanceManager.gameSceneController.freezeElapsedSeconds = true;
 		if ( m_tracker != null)
 			m_tracker.enabled = false;
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
 		yield return new WaitForSecondsRealtime(2.5f);
-		InstanceManager.gameSceneController.EndGame(false);
+
+		while( InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state < GameSceneController.EStates.FINISHED)
+		{
+			if ( !InstanceManager.gameSceneController.isSwitchingArea )
+			{
+				InstanceManager.gameSceneController.EndGame(false);
+			}	
+			yield return null;
+		} 
 	}
 
     public void OnGameEnded(){
