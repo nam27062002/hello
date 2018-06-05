@@ -40,6 +40,7 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	protected string m_entranceSent = "";
 	protected int m_entranceAmountSent = 0;
+	protected bool m_doneChecking = false;
 
 
 	//------------------------------------------------------------------------//
@@ -125,7 +126,6 @@ public class HDTournamentManager : HDLiveEventManager {
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			int eventId = responseJson["code"].AsInt;
 			HDTournamentData data = m_data as HDTournamentData;
             if (data != null )
             {
@@ -187,10 +187,13 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+
+		if ( outErr != HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			Messenger.Broadcast(MessengerEvents.TOURNAMENT_SCORE_SENT);
+			// Get Leaderboard?
 		}
+
+		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);
     }
 
 #endregion
@@ -208,7 +211,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	}
 
 	public void OnGameStarted(){
-
+		m_doneChecking = false;
 		if ( m_tracker != null)
     	{
 			// Check if we are in tournament mode
@@ -228,11 +231,11 @@ public class HDTournamentManager : HDLiveEventManager {
 			{
 				case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
 				{
-					m_runWasValid = true;	// Any run was valid
+					m_runWasValid = true;	// Any run is valid
 				}break;
 				case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
 				{
-					m_runWasValid = true;	// Any run is valis
+					m_runWasValid = true;	// Any run is valid
 				}break;
 				case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
 				{
@@ -247,6 +250,7 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	public void OnGameUpdate(){
 		// Check time limit?
+		if ( !m_doneChecking )
 		switch( m_runningGoal.m_mode )
 		{
 			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
@@ -261,6 +265,7 @@ public class HDTournamentManager : HDLiveEventManager {
 					{
 						// Tell hud to show "Time is Up!"
 						Messenger.Broadcast(MessengerEvents.TIMES_UP);
+						m_doneChecking = true;
 						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
 					
@@ -276,6 +281,7 @@ public class HDTournamentManager : HDLiveEventManager {
 					{
 						// Tell hud to show "Target accomplished"
 						Messenger.Broadcast(MessengerEvents.TARGET_REACHED);
+						m_doneChecking = true;
 						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
 				}
