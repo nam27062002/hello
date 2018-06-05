@@ -624,7 +624,7 @@ public class GameServerManagerCalety : GameServerManager {
         // Compose parameters and enqeue command
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
-        Commands_EnqueueCommand(ECommand.HDLiveEvents_AddProgress, parameters, _callback);
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyProgress, parameters, _callback);
     }
 
     public override void HDEvents_SetScore(int _eventID, int _score,ServerCallback _callback) {

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -84,8 +85,8 @@ public class HDQuestManager : HDLiveEventManager{
     public void OnGameStarted(){
     	if ( m_tracker != null)
     	{
-    		m_tracker.SetValue(0, false);
 			m_tracker.enabled = m_isActive;
+			m_tracker.SetValue(0, false);
     	}
     }
     public void OnGameEnded(){
@@ -136,23 +137,18 @@ public class HDQuestManager : HDLiveEventManager{
 
     protected virtual void RequestProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
 
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            // int eventId = responseJson["code"].AsInt;
-            HDQuestData data = GetEventData() as HDQuestData;
-            if (data != null /*&& data.m_eventId == eventId*/ )
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			HDQuestData data = GetEventData() as HDQuestData;
+            if (data != null )
             {
 				data.ParseProgress( responseJson );
             }
 			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
-        }
+		}
     }
 
 	public void Contribute(float _runScore,float _keysMultiplier, bool _spentHC, bool _viewAD)
@@ -183,19 +179,14 @@ public class HDQuestManager : HDLiveEventManager{
 
 	protected virtual void OnContributeResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
-
-        if (_response != null && _response["response"] != null)
-        {
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
 			m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            // int eventId = responseJson["code"].AsInt;
-            HDQuestData data = m_data as HDQuestData;
-            if (data != null /*&& data.m_eventId == eventId*/)
+
+			HDQuestData data = GetEventData() as HDQuestData;
+            if (data != null )
             {
 				data.ParseProgress( responseJson );
 
@@ -214,13 +205,28 @@ public class HDQuestManager : HDLiveEventManager{
 
 				HDTrackingManager.Instance.Notify_GlobalEventRunDone(data.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
             }
-
 			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_SENT);
 			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
-
-        }
+		}
     }
 
+	public override List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+		// Create new list
+		List<HDLiveEventDefinition.HDLiveEventReward> rewards = new List<HDLiveEventDefinition.HDLiveEventReward>();
 
+		// We must have a valid data and definition
+		if(data != null && data.definition != null) {
+			// Check reward level
+			// In a quest, the reward level tells us in which reward tier have been reached
+			// All rewards below it are also given
+			HDQuestDefinition def = data.definition as HDQuestDefinition;
+			for(int i = 0; i < m_rewardLevel; ++i) {
+				rewards.Add(def.m_rewards[m_rewardLevel - 1]);	// Assuming rewards are properly sorted :)
+			}
+		}
+
+		// Done!
+		return rewards;
+	}
 	
 }

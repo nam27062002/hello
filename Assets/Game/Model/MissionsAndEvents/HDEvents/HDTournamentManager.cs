@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -77,6 +78,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	{
 		base.OnEventIdChanged();
 		m_lastLeaderboardTimestamp = 0;
+		m_isLeaderboardReady = false;
 	}
 
 
@@ -114,29 +116,23 @@ public class HDTournamentManager : HDLiveEventManager {
 
     protected virtual void LeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
-
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			int eventId = responseJson["code"].AsInt;
 			HDTournamentData data = m_data as HDTournamentData;
-            if (data != null /*&& data.m_eventId == eventId*/ )
+            if (data != null )
             {
             	if ( responseJson.ContainsKey("c") )// Is cheater
             	{
             		AntiCheatsManager.MarkUserAsCheater();
             	}
             	data.ParseLeaderboard( responseJson );
-
 				m_isLeaderboardReady = true;
             }
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_LEADERBOARD);
-        }
+		}
     }
 
     public void SendScore(int _score)
@@ -154,33 +150,21 @@ public class HDTournamentManager : HDLiveEventManager {
 
     protected virtual void SetScoreResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
-
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
-            if (data != null/* && data.m_eventId == eventId*/)
-            {
-            	
-            }
-
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_SCORE_SENT);
-        }
+		}
     }
 
 	public void OnGameStarted(){
 
 		if ( m_tracker != null)
     	{
-			m_tracker.SetValue(0, false);
 			// Check if we are in tournament mode
 			m_tracker.enabled = m_isActive;
+			m_tracker.SetValue(0, false);
     	}
 
 		if ( m_isActive )
@@ -226,7 +210,9 @@ public class HDTournamentManager : HDLiveEventManager {
 					// End game!
 					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
 					{
-						InstanceManager.gameSceneController.EndGame(false);
+						// Tell hud to show "Time is Up!"
+						Messenger.Broadcast(MessengerEvents.TIMES_UP);
+						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
 					
 				}
@@ -239,19 +225,31 @@ public class HDTournamentManager : HDLiveEventManager {
 					// End Game!
 					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
 					{
-						InstanceManager.gameSceneController.EndGame(true);
+						// Tell hud to show "Target accomplished"
+						Messenger.Broadcast(MessengerEvents.TARGET_REACHED);
+						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
 					}
-					
 				}
 			}break;
 		}
 
 	}
 
+	IEnumerator DelayedEnd()
+	{
+		InstanceManager.gameSceneController.PauseGame(true, true);
+		if ( m_tracker != null)
+			m_tracker.enabled = false;
+		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
+		yield return new WaitForSecondsRealtime(2.5f);
+		InstanceManager.gameSceneController.EndGame(false);
+	}
+
     public void OnGameEnded(){
     	// Save tracker value?
 		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
-		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
+		if ( !m_runWasValid )	// For time attack. We set this on normal ending, but if the player dies we save this value here
+			m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
     }
 
 	//------------------------------------------------------------------------//
@@ -272,14 +270,19 @@ public class HDTournamentManager : HDLiveEventManager {
     public string GetToUseDragon()
     {
 		string ret;
+		// NOTE: Here we should check datas last dragon used to return as it will be the prefered dragon
     	HDTournamentData data = m_data as HDTournamentData;
     	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
-    	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) )
+    	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) ){
 			ret = def.m_build.m_dragon;
-		else
+		}else{
 			ret = UsersManager.currentUser.currentDragon;
+		}
 		return ret;
     }
+
+    // TODO:
+    // public string SetToUseDragon( string dragonSku )
 
     public string GetToUseSkin()
     {
@@ -358,11 +361,56 @@ public class HDTournamentManager : HDLiveEventManager {
 	}
 
 	/// <summary>
-	/// Has the last run been a high score?
+	/// Has the last run been a high score? This functions is useful before sending the new score
 	/// </summary>
 	public bool IsNewBestScore() {
-		// TODO!!
-		return false;
+		long runScore = GetRunScore();
+		long bestScore = GetBestScore();
+		bool ret = false;
+		HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+		switch ( def.m_goal.m_mode )
+		{
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
+			{
+				ret = runScore > bestScore;
+			}break;
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
+			{
+				ret = runScore < bestScore;
+			}break;
+		}
+
+		return ret;
+	}
+
+	//------------------------------------------------------------------------//
+	// REWARDS METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// List of rewards for this player based on its final position in the leaderboard.
+	/// Should've been previously requested to the server and waited for the response 
+	/// to arrive (RequestMyRewards() and AreRewardsReady() methods).
+	/// Doesn't actually check tournament state.
+	/// </summary>
+	/// <returns>The rewards to be given.</returns>
+	public override List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+		// Create new list
+		List<HDLiveEventDefinition.HDLiveEventReward> rewards = new List<HDLiveEventDefinition.HDLiveEventReward>();
+
+		// We must have a valid data and definition
+		if(data != null && data.definition != null) {
+			// Check reward level
+			if(m_rewardLevel > 0) {
+				// In a tournament, the reward level tells us in which reward tier we have ended within the leaderboard
+				// Only one reward is given
+				HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+				rewards.Add(def.m_rewards[m_rewardLevel - 1]);	// Assuming rewards are properly sorted :)
+			}
+		}
+
+		// Done!
+		return rewards;
 	}
 
 	//------------------------------------------------------------------------//

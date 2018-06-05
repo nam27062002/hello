@@ -193,7 +193,7 @@ public class HDLiveEventData {
 
 		if ( _data.ContainsKey("definition") )
 		{
-			m_definition.ParseInfo( _data["definition"] );
+			ParseDefinition( _data["definition"] );
 		}
         
 	}
@@ -201,6 +201,7 @@ public class HDLiveEventData {
 	public virtual void ParseDefinition( SimpleJSON.JSONNode _data )
 	{
 		m_definition.ParseInfo( _data );
+		UpdateStateFromTimers();
 	}
 
 }

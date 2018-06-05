@@ -85,7 +85,7 @@ public class HDLiveEventDefinition {
 
 			if ( _data.ContainsKey("params") ){
 				JSONArray arr = _data["params"].AsArray;
-				if ( arr ){
+				if ( arr != null ){
 					for (int i = 0; i < arr.Count; i++) {
 						m_params.Add( arr[i] );
 					}

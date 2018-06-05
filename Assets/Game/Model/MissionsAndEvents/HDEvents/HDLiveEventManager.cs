@@ -40,6 +40,9 @@ public class HDLiveEventManager
 		get { return m_data; }
 	}
 
+	// Internal
+	protected int m_rewardLevel = -1;	// Response to the get_my_rewards request
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -106,7 +109,7 @@ public class HDLiveEventManager
         return ret;
 	}
 
-	public virtual bool IsRewardPenging()
+	public virtual bool IsRewardPending()
 	{
 		bool ret = false;
         HDLiveEventData data = GetEventData();
@@ -131,8 +134,9 @@ public class HDLiveEventManager
     public virtual void CleanData()
     {
         HDLiveEventData data = GetEventData();
-        if (data != null)
+        if (data != null){
             data.Clean();
+      	}
     }
 
     public virtual SimpleJSON.JSONClass ToJson()
@@ -146,8 +150,6 @@ public class HDLiveEventManager
         }
         return ret;
     }
-
-
 
     public virtual HDLiveEventData GetEventData()
     {
@@ -178,6 +180,14 @@ public class HDLiveEventManager
     }
 
     /// <summary>
+    /// Clears the event. Removes the data and definition
+    /// </summary>
+	public void ClearEvent()
+    {
+    	CleanData();
+    }
+
+    /// <summary>
     /// Raises the event identifier changed event. 
     // Function called when we parse an state and it has a different event id
     /// </summary>
@@ -196,8 +206,11 @@ public class HDLiveEventManager
     }
 
     //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
+    // SERVER CALLS  														  //
     //------------------------------------------------------------------------//
+
+#region server_comunication
+
 
 	public bool ShouldRequestDefinition()
 	{
@@ -226,23 +239,19 @@ public class HDLiveEventManager
 	protected delegate void TestResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response);
 	protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse )
 	{
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(0.1f);
 		GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( _fileName );
 		_testResponse(null, response);
 	}
 
     protected virtual void RequestEventDefinitionResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-        if (_error != null)
-        {
-            // Messenger.Broadcast(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR);
-            return;
-        }
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 
-        if (_response != null && _response["response"] != null)
-        {
-            SimpleJSON.JSONNode responseJson = SimpleJSON.JSONNode.Parse(_response["response"] as string);
-            int eventId = responseJson["code"].AsInt;
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			int eventId = responseJson["code"].AsInt;
             HDLiveEventData data = GetEventData();
             if (data != null && data.m_eventId == eventId)
             {
@@ -255,38 +264,81 @@ public class HDLiveEventManager
                 	Activate();
                 }
             }
-
-			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_NEW_DEFINITION);
-        }
+		}
+		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
     }
+
+	public virtual List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+		// To be implemented by heirs!
+		return new List<HDLiveEventDefinition.HDLiveEventReward>();
+	}
 
 	public void RequestRewards()
     {
-    	
+		if ( HDLiveEventsManager.TEST_CALLS )
+        {
+			ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
+        }
+        else
+        {
+            HDLiveEventData data = GetEventData();
+			GameServerManager.SharedInstance.HDEvents_GetMyReward(data.m_eventId, RequestRewardsResponse);    
+        }
     }
 
 	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-    	
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			if (data != null)
+            {
+				if ( responseJson.ContainsKey("rewardLevel") ){
+            		m_rewardLevel = responseJson["rewardLevel"].AsInt;
+            	} else {
+					m_rewardLevel = 0;
+            	}
+            }
+		}
+
+		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId, outErr);
     }
 
 
 	public void FinishEvent()
 	{
 		// Tell server
+		if ( HDLiveEventsManager.TEST_CALLS )
+        {
+			ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_finish.json", FinishEventResponse));
+        }
+        else
+        {
+            HDLiveEventData data = GetEventData();
+			GameServerManager.SharedInstance.HDEvents_FinishMyEvent(data.m_eventId, FinishEventResponse);    
+        }
 
 	}
 
 	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-    	
+
+
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			
+		}
+
+		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
     }
 
-    public void ClearEvent()
-    {
-    	CleanData();
-    }
 
+#endregion
+
+#region mods_activation
 
     public void Activate()
     {
@@ -325,5 +377,6 @@ public class HDLiveEventManager
     		mods[ i ].Apply();
 		}
     }
+#endregion
 
 }

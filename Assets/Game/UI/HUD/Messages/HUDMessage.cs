@@ -75,7 +75,9 @@ public class HUDMessage : MonoBehaviour {
 		DAMAGE_RECEIVED,
 		MISSION_ZONE,
 		BREAK_OBJECT_WITH_FIRE,
-		BOOST_SPACE
+		BOOST_SPACE,
+		TIMES_UP,
+		TARGET_REACHED
 	}
 
 	// How to react with consecutive triggers
@@ -226,6 +228,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
+			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowCallback); break;
 
 		}
 
@@ -266,6 +270,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
+			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowCallback); break;
 		}
 
 		switch(m_hideMode) {
@@ -548,6 +554,11 @@ public class HUDMessage : MonoBehaviour {
 	}
 
 	private void OnBoostSky() {
+		Show();
+	}
+
+	private void ShowCallback()
+	{
 		Show();
 	}
 
