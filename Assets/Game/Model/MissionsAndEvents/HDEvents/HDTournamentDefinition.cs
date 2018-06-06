@@ -31,7 +31,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	public struct TournamentEntrance
 	{
 		public string m_type;
-		public int m_amount;
+		public long m_amount;
 		public int m_dailyFree;
 
 		public void Clean()
@@ -42,6 +42,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		}
 	}
 	public TournamentEntrance m_entrance;
+
+	public long m_leaderboardSegmentation = -1;
 
 	public struct TournamentBuild
 	{
@@ -188,6 +190,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	{
 		base.Clean();
 		m_entrance.Clean();
+		m_leaderboardSegmentation = -1;
 		m_build.Clean();
 		m_rewards.Clear();
 	}
@@ -209,7 +212,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			}
 
 			if ( _entrance.ContainsKey("amount") ){
-				m_entrance.m_amount = _entrance["amount"].AsInt;
+				m_entrance.m_amount = _entrance["amount"].AsLong;
 			}
 
 			if ( _entrance.ContainsKey("dailyFreeTimer") ){
@@ -217,9 +220,9 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			}
 		}
 
-		if ( _data.ContainsKey("leaderboard_size") )
+		if ( _data.ContainsKey("leaderboardSegmentation") )
 		{
-			
+			m_leaderboardSegmentation = _data["leaderboardSegmentation"].AsLong;
 		}
 
 		// Build
@@ -263,6 +266,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		_entrance.Add("amount", m_entrance.m_amount);
 		_entrance.Add("dailyFreeTimer", m_entrance.m_dailyFree);
 		ret.Add("entrance", _entrance);
+
+		ret.Add("leaderboardSegmentation", m_leaderboardSegmentation);
 
 		// Build
 		SimpleJSON.JSONClass _build = new JSONClass();

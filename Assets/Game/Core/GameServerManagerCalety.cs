@@ -635,12 +635,12 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLiveEvents_SetScore, parameters, _callback);
     }
 
-	public virtual void HDEvents_EnterEvent(int _eventID, string _type, int _amount, int _matchmakingValue, ServerCallback _callback) {
+	public virtual void HDEvents_EnterEvent(int _eventID, string _type, long _amount, int _matchmakingValue, ServerCallback _callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
         parameters.Add("type", _type);
 		parameters.Add("amount", _amount.ToString(JSON_FORMAT));
-		parameters.Add("matchmaking", _matchmakingValue.ToString(JSON_FORMAT));
+		parameters.Add("elo", _matchmakingValue.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_Enter, parameters, _callback);
 	}
     

@@ -131,26 +131,38 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	public void OnStartPaying()
 	{
-		// Check paying
-		if (m_tournament.CanIUseFree())
+
+		if ( Application.internetReachability == NetworkReachability.NotReachable )
 		{
-			// Move to Loading Screen
-			BusyScreen.Show(this);
-
-			// Prepare to wait for the callback
-			Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, int>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
-
-			// Send Entrance
-			m_tournament.SendEntrance("free", 0);
+			SendFeedback("TID_NEED_CONNECTION");
+		}
+		else if ( !GameServerManager.SharedInstance.IsLoggedIn() )	// Check log in!
+		{
+			SendFeedback("TID_NEED_TO_LOG_IN");
 		}
 		else
 		{
-			// Check if I have enough currency
-			m_purchaseFlow = new ResourcesFlow("TOURNAMENT_ENTRANCE");
-			m_purchaseFlow.OnSuccess.AddListener( OnEntrancePayAccepted );
-			long amount = m_definition.m_entrance.m_amount;
-			UserProfile.Currency currency = UserProfile.SkuToCurrency(m_definition.m_entrance.m_type);
-			m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRANCE, null, false);
+			// Check paying
+			if (m_tournament.CanIUseFree())
+			{
+				// Move to Loading Screen
+				BusyScreen.Show(this);
+
+				// Prepare to wait for the callback
+				Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+
+				// Send Entrance
+				m_tournament.SendEntrance("free", 0);
+			}
+			else
+			{
+				// Check if I have enough currency
+				m_purchaseFlow = new ResourcesFlow("TOURNAMENT_ENTRANCE");
+				m_purchaseFlow.OnSuccess.AddListener( OnEntrancePayAccepted );
+				long amount = m_definition.m_entrance.m_amount;
+				UserProfile.Currency currency = UserProfile.SkuToCurrency(m_definition.m_entrance.m_type);
+				m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRANCE, null, false);
+			}
 		}
 	}
 
@@ -160,13 +172,13 @@ public class TournamentBuildScreen : MonoBehaviour {
 		BusyScreen.Show(this);
 
 		// Prepare to wait for the callback
-		Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, int>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+		Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 
 		// Send Entrance
 		m_tournament.SendEntrance( m_definition.m_entrance.m_type, m_definition.m_entrance.m_amount );
 	}
 
-	void OnTournamentEntrance(HDLiveEventsManager.ComunicationErrorCodes err, string type, int amount)
+	void OnTournamentEntrance(HDLiveEventsManager.ComunicationErrorCodes err, string type, long amount)
 	{
 		BusyScreen.Hide(this);
 
@@ -186,9 +198,33 @@ public class TournamentBuildScreen : MonoBehaviour {
 					InstanceManager.menuSceneController.OnPlayButton();
 				}
 			}break;
+			case HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR:
+			{
+				SendFeedback("TID_NET_ERROR");
+			}break;
+			case HDLiveEventsManager.ComunicationErrorCodes.RESPONSE_NOT_VALID:
+			case HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE:
+			{
+				SendFeedback("TID_NO_RESPONSE");
+			}break;
+			case HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR:
+			{
+				// How to know if free was not valid??
+				// SendFeedback("TID_NO_RESPONSE");
+			}break;
 		}
 
-		Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes, string, int>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+		Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+	}
+
+	private void SendFeedback(string tid)
+	{
+		UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+			LocalizationManager.SharedInstance.Localize(tid),
+			new Vector2(0.5f, 0.25f),
+			(RectTransform)this.GetComponentInParent<Canvas>().transform
+		);
+		text.text.color = Color.red;
 	}
 
 	void OnPayAndPlay(ResourcesFlow _flow)

@@ -39,7 +39,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	protected float m_timePlayed = -1;
 
 	protected string m_entranceSent = "";
-	protected int m_entranceAmountSent = 0;
+	protected long m_entranceAmountSent = 0;
 	protected bool m_doneChecking = false;
 
 
@@ -141,7 +141,7 @@ public class HDTournamentManager : HDLiveEventManager {
     }
 
 
-    public void SendEntrance( string _type, int _amount )
+    public void SendEntrance( string _type, long _amount )
     {
 		m_entranceSent = _type;
 		m_entranceAmountSent = _amount;
@@ -164,9 +164,14 @@ public class HDTournamentManager : HDLiveEventManager {
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			// Do something?
+			if ( responseJson.ContainsKey("lastFreeTournamentRun") )
+			{
+				HDTournamentData tData = data as HDTournamentData;
+				tData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
+				// Save cache?
+			}
 		}
-		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, int> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
+		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, long> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
     }
 
 

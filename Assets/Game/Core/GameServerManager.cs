@@ -391,7 +391,7 @@ public class GameServerManager
 
     public virtual void HDEvents_GetLeaderboard(int _eventID, ServerCallback _callback) { }
     public virtual void HDEvents_SetScore(int _eventID, int _score, ServerCallback _callback) { }
-	public virtual void HDEvents_EnterEvent(int _eventID, string _type, int _amount, int _matchmakingValue, ServerCallback _callback) {}
+	public virtual void HDEvents_EnterEvent(int _eventID, string _type, long _amount, int _matchmakingValue, ServerCallback _callback) {}
 
 
 	public virtual void HDEvents_GetMyReward(int _eventID, ServerCallback _callback) {}
