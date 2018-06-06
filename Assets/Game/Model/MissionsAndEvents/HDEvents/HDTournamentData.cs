@@ -44,6 +44,7 @@ public class HDTournamentData : HDLiveEventData {
 	public long lastFreeEntranceTimestamp
 	{	
 		get{ return m_lastFreeEntranceTimestamp; }
+		set{ m_lastFreeEntranceTimestamp = value; }
 	}
 		// Default tournament config
 	protected string m_lastSelectedDragon = "";

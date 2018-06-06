@@ -39,8 +39,11 @@ public class HDTournamentManager : HDLiveEventManager {
 	protected float m_timePlayed = -1;
 
 	protected string m_entranceSent = "";
-	protected int m_entranceAmountSent = 0;
+	protected long m_entranceAmountSent = 0;
 	protected bool m_doneChecking = false;
+
+	protected HDTournamentData m_tournamentData;
+	protected HDTournamentDefinition m_tournamentDefinition;
 
 
 	//------------------------------------------------------------------------//
@@ -69,6 +72,8 @@ public class HDTournamentManager : HDLiveEventManager {
 	public override void BuildData()
     {
 		m_data = new HDTournamentData();
+		m_tournamentData = m_data as HDTournamentData;
+		m_tournamentDefinition = m_tournamentData.definition as HDTournamentDefinition;
     }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
@@ -141,7 +146,7 @@ public class HDTournamentManager : HDLiveEventManager {
     }
 
 
-    public void SendEntrance( string _type, int _amount )
+    public void SendEntrance( string _type, long _amount )
     {
 		m_entranceSent = _type;
 		m_entranceAmountSent = _amount;
@@ -164,9 +169,14 @@ public class HDTournamentManager : HDLiveEventManager {
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			// Do something?
+			if ( responseJson.ContainsKey("lastFreeTournamentRun") )
+			{
+				HDTournamentData tData = data as HDTournamentData;
+				tData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
+				// Save cache?
+			}
 		}
-		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, int> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
+		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, long> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
     }
 
 
@@ -198,12 +208,29 @@ public class HDTournamentManager : HDLiveEventManager {
 
 #endregion
 
+	/// <summary>
+	/// Times to next free in seconds.
+	/// </summary>
+	/// <returns>The to next free.</returns>
+	public double TimeToNextFree()
+	{
+		long millis = 0;
+
+		if ( m_tournamentDefinition.m_entrance.m_type != "free" )
+			millis = (m_tournamentDefinition.m_entrance.m_dailyFree * 1000) - (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_tournamentData.lastFreeEntranceTimestamp);
+
+		if ( millis < 0  )
+			millis = 0;
+
+		return millis / 1000.0;
+	}
+
 	public bool CanIUseFree()
 	{
 		HDTournamentData tData = data as HDTournamentData;
 		HDTournamentDefinition tDef = data.definition as HDTournamentDefinition;
 		bool ret = false;
-		if (tDef.m_entrance.m_type == "free" || (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 )
+		if ( (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 || tDef.m_entrance.m_type == "free" )
 		{
 			ret = true;
 		}
