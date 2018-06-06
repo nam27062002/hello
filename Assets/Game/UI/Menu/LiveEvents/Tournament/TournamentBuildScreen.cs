@@ -6,6 +6,9 @@ using TMPro;
 
 public class TournamentBuildScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
+	private const float UPDATE_FREQUENCY = 1f;	// Seconds
+
+	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SeparatorAttribute("Dragon")]
@@ -25,12 +28,19 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI	m_bestScore;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
+	[SeparatorAttribute("Enter button")]
+	[SerializeField] private Localizer 			m_enterBtn;
+	[SerializeField] private GameObject			m_nextFreeTimerGroup;
+	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer;
 
-	//----------------------------------------------------------------//
+
+	//------------------------------------------------------------------------//
 	private HDTournamentManager 	m_tournament;
 	private HDTournamentDefinition 	m_definition;
 	private HDTournamentData 		m_data;
 	private ResourcesFlow 			m_purchaseFlow;
+
+	private bool m_hasFreeEntrance;
 
 
 	//------------------------------------------------------------------------//
@@ -113,9 +123,30 @@ public class TournamentBuildScreen : MonoBehaviour {
 		}
 
 		m_bestScore.text = StringUtils.FormatNumber(m_data.m_score);
+
+
+
+		//-- Entrance Button ------------------------------------------//
+		if (m_tournament.CanIUseFree()) {
+			m_enterBtn.Localize("Free");
+			m_nextFreeTimerGroup.SetActive(false);
+		} else {
+			m_enterBtn.Localize("Enter<br>" + m_definition.m_entrance.m_amount);
+			m_nextFreeTimerGroup.SetActive(true);
+		}
+
+		m_hasFreeEntrance = m_tournament.CanIUseFree();
+
+		//TIMER
+		UpdatePeriodic();
 	}
 
-
+	// Update timers periodically
+	void UpdatePeriodic() {
+		if (!m_hasFreeEntrance) {	
+			m_nextFreeTimer.text = TimeUtils.FormatTime(m_definition.timeToEnd.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -124,16 +155,12 @@ public class TournamentBuildScreen : MonoBehaviour {
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {
-
 		Refresh();
-
 	}
 
-	public void OnStartPaying()
-	{
+	public void OnStartPaying() {
 		// Check paying
-		if (m_tournament.CanIUseFree())
-		{
+		if (m_hasFreeEntrance) {
 			// Move to Loading Screen
 			BusyScreen.Show(this);
 
@@ -142,9 +169,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 			// Send Entrance
 			m_tournament.SendEntrance("free", 0);
-		}
-		else
-		{
+		} else {
 			// Check if I have enough currency
 			m_purchaseFlow = new ResourcesFlow("TOURNAMENT_ENTRANCE");
 			m_purchaseFlow.OnSuccess.AddListener( OnEntrancePayAccepted );

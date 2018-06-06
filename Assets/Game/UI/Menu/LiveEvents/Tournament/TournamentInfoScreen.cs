@@ -36,13 +36,6 @@ public class TournamentInfoScreen : MonoBehaviour {
 	//----------------------------------------------------------------//
 
 
-	void OnEnable() {
-		Refresh();
-
-		// Program a periodic update
-		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
-	}
-
 	//TEMP
 	void Refresh() {
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
@@ -98,5 +91,18 @@ public class TournamentInfoScreen : MonoBehaviour {
 		if (m_definition != null) {
 			m_timerText.text = "Ends in: " + TimeUtils.FormatTime(m_definition.timeToEnd.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Force a refresh every time we enter the tab!
+	/// </summary>
+	public void OnShowPreAnimation() {
+		Refresh();
+
+		// Program a periodic update
+		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}
 }
