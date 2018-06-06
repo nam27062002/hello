@@ -337,6 +337,8 @@ namespace SoftMasking {
             base.OnDestroy();
             _destroyed = true;
             NotifyChildrenThatMaskMightChanged();
+            _s_masks.Clear();
+            _s_maskables.Clear();
         }
 
         protected virtual void LateUpdate() {
