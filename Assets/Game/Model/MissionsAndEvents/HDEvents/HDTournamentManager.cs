@@ -42,6 +42,9 @@ public class HDTournamentManager : HDLiveEventManager {
 	protected long m_entranceAmountSent = 0;
 	protected bool m_doneChecking = false;
 
+	protected HDTournamentData m_tournamentData;
+	protected HDTournamentDefinition m_tournamentDefinition;
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -69,6 +72,8 @@ public class HDTournamentManager : HDLiveEventManager {
 	public override void BuildData()
     {
 		m_data = new HDTournamentData();
+		m_tournamentData = m_data as HDTournamentData;
+		m_tournamentDefinition = m_tournamentData.definition as HDTournamentDefinition;
     }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
@@ -151,9 +156,7 @@ public class HDTournamentManager : HDLiveEventManager {
         }
         else
         {
-            HDLiveEventData data = GetEventData();
-
-			int playerProgress = UsersManager.currentUser.GetPlayerProgress();
+			int playerProgress = GetCurrentMatchmakingValue();
 			GameServerManager.SharedInstance.HDEvents_EnterEvent(data.m_eventId, _type, _amount, playerProgress, EntranceResponse);    
         }
     }
@@ -166,10 +169,18 @@ public class HDTournamentManager : HDLiveEventManager {
 		{
 			if ( responseJson.ContainsKey("lastFreeTournamentRun") )
 			{
-				HDTournamentData tData = data as HDTournamentData;
-				tData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
+				m_tournamentData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
 				// Save cache?
 			}
+
+			if (m_tournamentData.m_state == HDLiveEventData.State.NOT_JOINED)
+			{
+				m_tournamentData.m_matchmakingValue = GetCurrentMatchmakingValue();
+				m_tournamentData.m_state = HDLiveEventData.State.JOINED;
+			}
+
+
+
 		}
 		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, long> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
     }
@@ -203,12 +214,29 @@ public class HDTournamentManager : HDLiveEventManager {
 
 #endregion
 
+	/// <summary>
+	/// Times to next free in seconds.
+	/// </summary>
+	/// <returns>The to next free.</returns>
+	public double TimeToNextFree()
+	{
+		long millis = 0;
+
+		if ( m_tournamentDefinition.m_entrance.m_type != "free" )
+			millis = (m_tournamentDefinition.m_entrance.m_dailyFree * 1000) - (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_tournamentData.lastFreeEntranceTimestamp);
+
+		if ( millis < 0  )
+			millis = 0;
+
+		return millis / 1000.0;
+	}
+
 	public bool CanIUseFree()
 	{
 		HDTournamentData tData = data as HDTournamentData;
 		HDTournamentDefinition tDef = data.definition as HDTournamentDefinition;
 		bool ret = false;
-		if (tDef.m_entrance.m_type == "free" || (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 )
+		if ( (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 || tDef.m_entrance.m_type == "free" )
 		{
 			ret = true;
 		}
@@ -481,6 +509,22 @@ public class HDTournamentManager : HDLiveEventManager {
 		// Done!
 		return rewards;
 	}
+
+
+	public int GetCurrentMatchmakingValue()
+	{
+		int ret = 0;
+		if ( m_data.m_state >= HDLiveEventData.State.JOINED && m_tournamentData.m_matchmakingValue >= 0)
+		{
+			ret = m_tournamentData.m_matchmakingValue;
+		}
+		else
+		{
+			ret = (int) UsersManager.currentUser.GetHighestDragon().tier;
+		}
+		return ret;
+	}
+
 
 	//------------------------------------------------------------------------//
 	// UI HELPER METHODS													  //

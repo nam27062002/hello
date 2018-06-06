@@ -363,7 +363,18 @@ MonoBehaviour:
   m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114898088368417566}
+        m_MethodName: OnShowPreAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPreAnimationAfterDelay:
@@ -929,7 +940,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224990164923485694}
-  - component: {fileID: 114006314366315724}
   - component: {fileID: 114333654841891518}
   m_Layer: 5
   m_Name: InfoGroup
@@ -2592,29 +2602,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114006314366315724
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1139677933996584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3a1ae0b051e74e6fb8b7e416eab34fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_titleText: {fileID: 114093688098056772}
-  m_scrollList: {fileID: 0}
-  m_loadingIcon: {fileID: 1646836633603968}
-  m_scrollGroup: {fileID: 1756934150789234}
-  m_pillPrefab: {fileID: 1897286652463016, guid: 62729c3f10f244ab3b9abee55d045d4d,
-    type: 2}
-  m_playerPillPrefab: {fileID: 1897286652463016, guid: b08afa8c70c084c77af121afd124da3e,
-    type: 2}
-  m_maxPills: 100
-  m_listPadding: 0
-  m_pillSpacing: 5
-  m_playerPillMarginOffset: -10
 --- !u!114 &114013520198849522
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5198,7 +5185,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  m_mask: {fileID: 224498344219206940}
+  m_autoScrollTime: 0.75
   m_padding:
     left: 0
     right: 0
