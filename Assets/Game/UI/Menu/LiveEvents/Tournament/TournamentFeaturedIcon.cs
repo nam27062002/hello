@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -29,19 +30,22 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private GameObject m_root = null;
-	[SerializeField] private Localizer m_headerText = null;
 
 	[Separator("Shared")]
-	[SerializeField] private Localizer m_tournamentTitleText = null;
 	[SerializeField] private Localizer m_timerText = null;
-	[SerializeField] private Localizer m_goalText = null;
-	[SerializeField] private Image m_goalIcon = null;
+	
+	[Separator("Teasing")]
+	[SerializeField] private GameObject m_teasingGroup = null;
 
 	[Separator("Active")]
-	[SerializeField] private GameObject m_playButton = null;
+	[SerializeField] private GameObject m_activeGroup = null;
+	[SerializeField] private GameObject m_newBanner = null;
 
 	[Separator("Rewards")]
-	[SerializeField] private GameObject m_collectButton = null;
+	[SerializeField] private GameObject m_rewardsGroup = null;
+
+	[Separator("Others")]
+	[SerializeField] private DOTweenAnimation m_playButtonAnimation = null;
 
 	// Internal
 	private HDTournamentManager m_tournamentManager;
@@ -99,7 +103,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		if(!isActiveAndEnabled) return;
 
 		// Refresh the timer!
-		RefreshTimer();
+		RefreshTimer(true);
 	}
 
 	/// <summary>
@@ -121,63 +125,61 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		m_tournamentManager.UpdateStateFromTimers();
 
 		// Update visibility
-		RefreshVisibility();
+		bool show = RefreshVisibility();
 
-		// Nothing else to do if there is no active tournament
-		if(!m_tournamentManager.EventExists()) return;
-
-		// Aux vars
-		HDTournamentDefinition def = m_tournamentManager.data.definition as HDTournamentDefinition;
-
-		// Fill event data
-		m_tournamentTitleText.Localize(def.m_name);
-		m_goalText.Localize(def.m_goal.m_desc);
-		m_goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
-
-		// Toggle visibility of specific items based on tournament state
-		HDLiveEventData.State state = m_tournamentManager.data.m_state;
-		m_playButton.SetActive(m_tournamentManager.IsRunning());
-		m_collectButton.SetActive(state == HDLiveEventData.State.REWARD_AVAILABLE);
-
-		// Adapt title to tournament state
-		switch(state) {
-			case HDLiveEventData.State.TEASING: {
-				m_headerText.Localize("TID_TOURNAMENT_ICON_TITLE_TEASING");
-			} break;
-
-			case HDLiveEventData.State.REWARD_AVAILABLE: {
-				m_headerText.Localize("TID_TOURNAMENT_ICON_TITLE_PENDING_REWARD");
-			} break;
-
-			default: {
-				m_headerText.Localize("TID_TOURNAMENT_ICON_TITLE_ACTIVE");
-			} break;
+		// Don't play play button animation if tournaments button is visible
+		if(m_playButtonAnimation != null) {
+			if(show) {
+				m_playButtonAnimation.DOPause();
+				m_playButtonAnimation.DORewind();
+			} else {
+				m_playButtonAnimation.DOPlay();
+			}
 		}
 
-		// Update the timer
-		//RefreshTimer();
+		// Nothing else to do if there is no active tournament
+		if(!show) return;
+
+		// Toggle visibility of target object based on tournament state
+		HDLiveEventData.State state = m_tournamentManager.data.m_state;
+		
+		// Teasing
+		if(m_teasingGroup != null) m_teasingGroup.SetActive(state == HDLiveEventData.State.TEASING);
+
+		// Active
+		if(m_activeGroup != null) m_activeGroup.SetActive(m_tournamentManager.IsRunning());
+		if(m_newBanner != null) m_newBanner.gameObject.SetActive(state == HDLiveEventData.State.NOT_JOINED);
+
+		// Rewards
+		if(m_rewardsGroup != null) m_rewardsGroup.SetActive(state == HDLiveEventData.State.REWARD_AVAILABLE);
+
+		// Update the timer for the first time
+		RefreshTimer(false);
 	}
 
 	/// <summary>
 	/// Refresh the timer. To be called periodically.
 	/// </summary>
-	private void RefreshTimer() {
+	/// <param name="_checkExpiration">Refresh data if timer reaches 0?</param>
+	private void RefreshTimer(bool _checkExpiration) {
 		// Is tournament still valid?
 		if(!m_tournamentManager.EventExists()) return;
 		if(m_tournamentManager.data.m_state == HDLiveEventData.State.FINALIZED) return;
 
 		// Update text
 		double remainingSeconds = m_tournamentManager.data.remainingTime.TotalSeconds;
-		m_timerText.Localize(m_timerText.tid,
-			TimeUtils.FormatTime(
-				System.Math.Max(0, remainingSeconds), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS,
-				4
-			)
-		);
+		if(m_timerText != null) {
+			m_timerText.Localize(m_timerText.tid,
+				TimeUtils.FormatTime(
+					System.Math.Max(0, remainingSeconds), // Just in case, never go negative
+					TimeUtils.EFormat.ABBREVIATIONS,
+					4
+				)
+			);
+		}
 
 		// Manage timer expiration when the icon is visible
-		if(remainingSeconds <= 0) {
+		if(_checkExpiration && remainingSeconds <= 0) {
 			RefreshData();
 		}
 	}
@@ -185,7 +187,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Check whether the icon can be displayed or not.
 	/// </summary>
-	private void RefreshVisibility() {
+	private bool RefreshVisibility() {
 		// Do we have a valid tournament?
 		bool show = false;
 		if(m_tournamentManager.EventExists()) {
@@ -200,7 +202,8 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 			}
 		}
 
-		m_root.SetActive(show);
+		if(m_root != null) m_root.SetActive(show);
+		return show;
 	}
 
 	//------------------------------------------------------------------------//
