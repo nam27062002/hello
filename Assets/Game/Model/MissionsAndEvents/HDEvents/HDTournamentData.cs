@@ -39,6 +39,7 @@ public class HDTournamentData : HDLiveEventData {
 	public long m_rank = -1;
 	public long m_score = -1;
 	public long m_tournamentSize = -1;
+	public int m_matchmakingValue = -1;	// Value used to know in what league you are and to scale rewards and entrance
 
 	private long m_lastFreeEntranceTimestamp = 0;
 	public long lastFreeEntranceTimestamp
@@ -50,6 +51,8 @@ public class HDTournamentData : HDLiveEventData {
 	protected string m_lastSelectedDragon = "";
 	protected string m_lastSelectedDisguise = "";
 	protected List<string> m_lastSelectedPets = new List<string>();
+
+
 
 
 	//------------------------------------------------------------------------//
@@ -81,6 +84,7 @@ public class HDTournamentData : HDLiveEventData {
 		m_rank = -1;
 		m_score = -1;
 		m_tournamentSize = -1;
+		m_matchmakingValue = -1;
 		m_lastFreeEntranceTimestamp = 0;
 
 		m_lastSelectedDragon = "";
@@ -94,6 +98,7 @@ public class HDTournamentData : HDLiveEventData {
 		JSONClass ret = base.ToJson();
 
 		ret.Add("lastFreeTournamentRun", m_lastFreeEntranceTimestamp);
+		ret.Add("elo", m_matchmakingValue);
 
 		// Leadeboard
 		JSONClass leaderboard = new JSONClass();
@@ -129,6 +134,11 @@ public class HDTournamentData : HDLiveEventData {
 			m_lastFreeEntranceTimestamp = _data["lastFreeTournamentRun"].AsLong;
 		}
 
+		if ( _data.ContainsKey("elo") )
+		{
+			m_matchmakingValue = _data["elo"].AsInt;
+		}
+
 		if ( _data.ContainsKey("leaderboard") )	// This comes from a saves data
 		{
 			ParseLeaderboard( _data["leaderboard"] );
@@ -138,7 +148,6 @@ public class HDTournamentData : HDLiveEventData {
 
 	public void ParseLeaderboard( SimpleJSON.JSONNode _data )
 	{
-
 		if ( _data.ContainsKey("u") )
 		{
 			// user info
