@@ -137,7 +137,7 @@ public class HDLiveEventData {
 			}break;
 			case State.REWARD_AVAILABLE:
 			{
-				stateStr = "penging_rewards";
+				stateStr = "pending_rewards";
 			}break;
 			case State.JOINED:
 			{
@@ -183,7 +183,7 @@ public class HDLiveEventData {
 					m_state = State.JOINED;
 				}break;
 				case "2":
-				case "penging_rewards":
+				case "pending_rewards":
 				{
 					m_state = State.REWARD_AVAILABLE;
 				}break;
