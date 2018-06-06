@@ -231,12 +231,25 @@ public class TournamentBuildScreen : MonoBehaviour {
 				SendFeedback("TID_NET_ERROR");
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.RESPONSE_NOT_VALID:
-			case HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE: {
+			case HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE: 
+			{
 				SendFeedback("TID_NO_RESPONSE");
 			}break;
-			case HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR: {
+			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID: 
+			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID: 
+			{
+				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
+				// Ask for the definition?
+			}break;
+			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID:
+			{
+				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
+			}break;
+			case HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR: 
+			default:
+			{
 				// How to know if free was not valid??
-				// SendFeedback("TID_NO_RESPONSE");
+				SendFeedback("TID_GEN_ERROR");
 			}break;
 		}
 

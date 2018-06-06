@@ -41,8 +41,21 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     	RESPONSE_NOT_VALID,
     	OTHER_ERROR,
     	NO_RESPONSE,
-    	NO_ERROR
 
+		LDATA_NOT_FOUND, //(601,200),
+    	ENTRANCE_FREE_INVALID, //(602,200),
+    	ENTRANCE_AMOUNT_NOT_VALID, // (603,200),
+    	ENTRANCE_TYPE_NOT_VALID, // (604,200),
+		IS_NOT_A_VALID_TOURNAMENT,// 605,200)
+    	IS_NOT_A_TOURNAMENT, //(606,200),
+    	EVENT_NOT_FOUND, //(607,200),
+    	EVENT_IS_NOT_VALID, // (608,200),
+    	EVENT_IS_DISABLED, //(609,200),
+    	UNEXPECTED_ERROR, //(610,200),
+    	INCONSISTENT_TOURNAMENT_DATA, //(611,200);
+
+
+    	NO_ERROR
     };
 
     public HDTournamentManager m_tournament = new HDTournamentManager();
@@ -211,7 +224,22 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 					if ( ret.ContainsKey("errorCode") )
             		{
             			// Translate error code
-            			outErr = HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR;
+						outErr = HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR;
+						int errorInt = ret["errorCode"];
+						switch( errorInt )
+						{
+							case 601: outErr = HDLiveEventsManager.ComunicationErrorCodes.LDATA_NOT_FOUND;break;
+							case 602: outErr = HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID;break;
+							case 603: outErr = HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID;break;
+							case 604: outErr = HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID;break;
+							case 605: outErr = HDLiveEventsManager.ComunicationErrorCodes.IS_NOT_A_VALID_TOURNAMENT;break;
+							case 606: outErr = HDLiveEventsManager.ComunicationErrorCodes.IS_NOT_A_TOURNAMENT;break;
+							case 607: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND;break;
+							case 608: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID;break;
+							case 609: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_DISABLED;break;
+							case 610: outErr = HDLiveEventsManager.ComunicationErrorCodes.UNEXPECTED_ERROR;break;
+							case 611: outErr = HDLiveEventsManager.ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA;break;
+						}
             		}
             	}
             	else

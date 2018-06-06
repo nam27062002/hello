@@ -85,7 +85,7 @@ public class HDLiveEventData {
 	{
 		m_eventId = -1;
 		m_state = State.NONE;
-		m_definition.Clean();
+		// m_definition.Clean();
 	}
 
 	public virtual void UpdateStateFromTimers()
@@ -137,7 +137,7 @@ public class HDLiveEventData {
 			}break;
 			case State.REWARD_AVAILABLE:
 			{
-				stateStr = "penging_rewards";
+				stateStr = "pending_rewards";
 			}break;
 			case State.JOINED:
 			{
@@ -172,22 +172,27 @@ public class HDLiveEventData {
 			string stateStr = _data["state"];
 			switch( stateStr )
 			{
+				case "0":
 				case "not_joined":
 				{
 					m_state = State.NOT_JOINED;
+				}break;
+				case "1":
+				case "joined":
+				{
+					m_state = State.JOINED;
+				}break;
+				case "2":
+				case "pending_rewards":
+				{
+					m_state = State.REWARD_AVAILABLE;
 				}break;
 				case "finalized":
 				{
 					m_state = State.FINALIZED;
 				}break;
-				case "penging_rewards":
-				{
-					m_state = State.REWARD_AVAILABLE;
-				}break;
-				case "joined":
-				{
-					m_state = State.JOINED;
-				}break;
+
+
 			}
 		}
 
