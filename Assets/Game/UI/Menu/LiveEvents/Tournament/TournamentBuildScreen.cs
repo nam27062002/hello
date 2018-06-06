@@ -144,7 +144,16 @@ public class TournamentBuildScreen : MonoBehaviour {
 	// Update timers periodically
 	void UpdatePeriodic() {
 		if (!m_hasFreeEntrance) {	
-			m_nextFreeTimer.text = TimeUtils.FormatTime(m_tournament.TimeToNextFree(), TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
+			double seconds = m_tournament.TimeToNextFree();
+			m_nextFreeTimer.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
+			if (seconds <= 0) {
+				m_hasFreeEntrance = true;
+				m_nextFreeTimerGroup.SetActive(true);
+				m_enterBtn.Localize("Free");
+				m_nextFreeTimerGroup.SetActive(false);
+
+				CancelInvoke();
+			}
 		}
 	}
 
