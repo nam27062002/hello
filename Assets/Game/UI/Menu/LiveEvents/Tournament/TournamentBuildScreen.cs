@@ -183,7 +183,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 				}
 				else
 				{
-					Debug.Log("Start Playing!!!!!");
+					InstanceManager.menuSceneController.OnPlayButton();
 				}
 			}break;
 		}
@@ -194,7 +194,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	void OnPayAndPlay(ResourcesFlow _flow)
 	{
 		// Go to play!
-		Debug.Log("Start Playing!!!!!");
+		InstanceManager.menuSceneController.OnPlayButton();
 	}
 
 
