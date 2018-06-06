@@ -30,7 +30,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	private HDTournamentManager 	m_tournament;
 	private HDTournamentDefinition 	m_definition;
 	private HDTournamentData 		m_data;
-
+	private ResourcesFlow 			m_purchaseFlow;
 
 
 	//------------------------------------------------------------------------//
@@ -128,4 +128,74 @@ public class TournamentBuildScreen : MonoBehaviour {
 		Refresh();
 
 	}
+
+	public void OnStartPaying()
+	{
+		// Check paying
+		if (m_tournament.CanIUseFree())
+		{
+			// Move to Loading Screen
+			BusyScreen.Show(this);
+
+			// Prepare to wait for the callback
+			Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, int>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+
+			// Send Entrance
+			m_tournament.SendEntrance("free", 0);
+		}
+		else
+		{
+			// Check if I have enough currency
+			m_purchaseFlow = new ResourcesFlow("TOURNAMENT_ENTRANCE");
+			m_purchaseFlow.OnSuccess.AddListener( OnEntrancePayAccepted );
+			long amount = m_definition.m_entrance.m_amount;
+			UserProfile.Currency currency = UserProfile.SkuToCurrency(m_definition.m_entrance.m_type);
+			m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRANCE, null, false);
+		}
+	}
+
+	void OnEntrancePayAccepted(ResourcesFlow _flow)
+	{
+		// Move to Loading Screen
+		BusyScreen.Show(this);
+
+		// Prepare to wait for the callback
+		Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, int>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+
+		// Send Entrance
+		m_tournament.SendEntrance( m_definition.m_entrance.m_type, m_definition.m_entrance.m_amount );
+	}
+
+	void OnTournamentEntrance(HDLiveEventsManager.ComunicationErrorCodes err, string type, int amount)
+	{
+		BusyScreen.Hide(this);
+
+		switch( err ) 
+		{
+			case HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR:
+			{
+				// Pay and go to play
+				if ( type != "free" )
+				{
+					m_purchaseFlow.OnSuccess.RemoveListener( OnEntrancePayAccepted );
+					m_purchaseFlow.OnSuccess.AddListener( OnPayAndPlay );
+					m_purchaseFlow.DoTransaction(false);
+				}
+				else
+				{
+					Debug.Log("Start Playing!!!!!");
+				}
+			}break;
+		}
+
+		Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes, string, int>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+	}
+
+	void OnPayAndPlay(ResourcesFlow _flow)
+	{
+		// Go to play!
+		Debug.Log("Start Playing!!!!!");
+	}
+
+
 }

@@ -66,6 +66,8 @@ public class ResourcesFlow {
     
     // Id of the economy group this purchase belongs to. It's used for tracking purposes
     public HDTrackingManager.EEconomyGroup economyGroup { get; set; }
+
+	private bool m_finishTransaction = false;
     
     // Base prices
     private UserProfile.Currency m_currency = 0;
@@ -160,7 +162,8 @@ public class ResourcesFlow {
     /// <param name="_currency">Which currency are we trying to spend?</param>
     /// <param name="_economyGroup">Id used to identify this purchase economy group. It's used for tracking purposes</param>
     /// <param name="_itemDef">Optional, which item are we trying to buy? (Only for visual purposes)</param>
-    public void Begin(long _targetAmount, UserProfile.Currency _currency, HDTrackingManager.EEconomyGroup _economyGroup, DefinitionNode _itemDef) {
+	/// <param name="_finishTransaction">If everything ok do final transaction</param>
+    public void Begin(long _targetAmount, UserProfile.Currency _currency, HDTrackingManager.EEconomyGroup _economyGroup, DefinitionNode _itemDef, bool _finishTransaction = true) {
 		// Only from Init state!
 		if(m_state != State.INIT) return;
 
@@ -169,6 +172,7 @@ public class ResourcesFlow {
 		m_currency = _currency;
 		m_itemDef = _itemDef;
         economyGroup = _economyGroup;
+		m_finishTransaction = _finishTransaction;
 
         // Try it now!
         TryTransaction(true);
@@ -270,7 +274,18 @@ public class ResourcesFlow {
 		// Everything ok! Do the transaction
 		else {
 			// Everything ok!
-			DoTransaction(_askConfirmationForBigPCAmounts);
+			if ( m_finishTransaction ){
+				DoTransaction(_askConfirmationForBigPCAmounts);
+			}else{
+				// Change state
+		        ChangeState(State.FINISHED_SUCCESS);
+
+				// Notify!
+				OnSuccess.Invoke(this);
+
+				// Close any open popups
+				Close();
+			}
 		}
 	}
 
@@ -282,7 +297,7 @@ public class ResourcesFlow {
 	/// other than purchasing more PC for the extra cost.
 	/// </summary>
 	/// <param name="_askConfirmationForBigPCAmounts">If set to true, a confirmation popup will be triggered for big PC amounts and the transaction wont happen until the popup is confirmed.</param>
-	private void DoTransaction(bool _askConfirmationForBigPCAmounts) {
+	public void DoTransaction(bool _askConfirmationForBigPCAmounts) {
 		// Confirmation required?
 		// Only if confirmation popup is enabled
 		if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {

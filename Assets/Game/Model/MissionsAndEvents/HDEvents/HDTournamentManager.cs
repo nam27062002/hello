@@ -147,7 +147,7 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_entranceAmountSent = _amount;
 		if ( HDLiveEventsManager.TEST_CALLS )
         {
-			ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_entrance.json", LeaderboardResponse));
+			ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_entrance.json", EntranceResponse));
         }
         else
         {
