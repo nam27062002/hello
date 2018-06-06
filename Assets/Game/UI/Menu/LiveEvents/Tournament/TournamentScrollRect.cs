@@ -22,6 +22,10 @@ public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPil
 		m_playerPillSize = rt.sizeDelta;
 	}
 
+	public void FocusPlayerPill() {
+		FocusOn(m_index);
+	}
+
 	protected override void LateUpdate() {
 		base.LateUpdate();
 		OnScrollMoved();
@@ -47,6 +51,6 @@ public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPil
 	}
 
 	private void OnPlayerPillClick() {
-		FocusOn(m_index);
+		FocusPlayerPill();
 	}
 }

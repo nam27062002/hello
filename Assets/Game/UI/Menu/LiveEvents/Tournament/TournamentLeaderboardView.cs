@@ -28,6 +28,10 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private TournamentScrollRect m_scrollList = null;
+	public TournamentScrollRect scrollList {
+		get { return m_scrollList; }
+	}
+
 	[SerializeField] private GameObject m_loadingIcon = null;
 	[SerializeField] private GameObject m_scrollGroup = null;
 	[Space]
@@ -93,6 +97,8 @@ public class TournamentLeaderboardView : MonoBehaviour {
 
 		m_scrollList.SetupPlayerPill(m_pillPrefabs[1], (int)data.m_rank, leaderboard[(int)data.m_rank].data);
 		m_scrollList.Setup(m_pillPrefabs, leaderboard);
+
+		m_scrollList.FocusPlayerPill();
 
 		ToggleLoading(false);
 	}
