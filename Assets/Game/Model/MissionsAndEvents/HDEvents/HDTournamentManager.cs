@@ -42,6 +42,9 @@ public class HDTournamentManager : HDLiveEventManager {
 	protected long m_entranceAmountSent = 0;
 	protected bool m_doneChecking = false;
 
+	protected HDTournamentData m_tournamentData;
+	protected HDTournamentDefinition m_tournamentDefinition;
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -69,6 +72,8 @@ public class HDTournamentManager : HDLiveEventManager {
 	public override void BuildData()
     {
 		m_data = new HDTournamentData();
+		m_tournamentData = m_data as HDTournamentData;
+		m_tournamentDefinition = m_tournamentData.definition as HDTournamentDefinition;
     }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
@@ -203,12 +208,29 @@ public class HDTournamentManager : HDLiveEventManager {
 
 #endregion
 
+	/// <summary>
+	/// Times to next free in seconds.
+	/// </summary>
+	/// <returns>The to next free.</returns>
+	public double TimeToNextFree()
+	{
+		long millis = 0;
+
+		if ( m_tournamentDefinition.m_entrance.m_type != "free" )
+			millis = (m_tournamentDefinition.m_entrance.m_dailyFree * 1000) - (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_tournamentData.lastFreeEntranceTimestamp);
+
+		if ( millis < 0  )
+			millis = 0;
+
+		return millis / 1000.0;
+	}
+
 	public bool CanIUseFree()
 	{
 		HDTournamentData tData = data as HDTournamentData;
 		HDTournamentDefinition tDef = data.definition as HDTournamentDefinition;
 		bool ret = false;
-		if (tDef.m_entrance.m_type == "free" || (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 )
+		if ( (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 || tDef.m_entrance.m_type == "free" )
 		{
 			ret = true;
 		}
