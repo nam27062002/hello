@@ -45,22 +45,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public long m_leaderboardSegmentation = -1;
 
-	public struct TournamentBuild
-	{
-		public string m_dragon;
-		public string m_skin;
-		public List<string> m_pets;
-
-		public void Clean()
-		{
-			m_dragon = "";
-			m_skin = "";
-			if ( m_pets != null )
-				m_pets.Clear();
-		}
-	}
-
-	public TournamentBuild m_build = new TournamentBuild();
+	public HDTournamentBuild m_build = new HDTournamentBuild();
 
 	public class TournamentGoal : GoalCommon
 	{
@@ -176,7 +161,6 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentDefinition() {
-		m_build.m_pets = new List<string>();
 	}
 
 	/// <summary>
@@ -228,23 +212,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		// Build
 		if ( _data.ContainsKey("build") )
 		{
-			JSONClass _build = _data["build"].AsObject;
-			if ( _build.ContainsKey("dragon") ){
-				m_build.m_dragon = _build["dragon"];
-			}
-
-			if ( _build.ContainsKey("skin") ){
-				m_build.m_skin = _build["skin"];
-			}
-
-			if ( _build.ContainsKey("pets") ){
-				JSONArray _pets = _build["pets"].AsArray;
-				for (int i = 0; i < _pets.Count; i++) {
-					m_build.m_pets.Add( _pets[i] );
-				}
-			}
+			m_build.ParseBuild( _data["build"] );
 		}
-
 
 		if ( _data.ContainsKey("rewards") )
 		{
@@ -270,16 +239,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		ret.Add("leaderboardSegmentation", m_leaderboardSegmentation);
 
 		// Build
-		SimpleJSON.JSONClass _build = new JSONClass();
-		_build.Add("dragon", m_build.m_dragon);
-		_build.Add("skin", m_build.m_skin);
-		JSONArray arr = new JSONArray();
-		for (int i = 0; i < m_build.m_pets.Count; i++) {
-				arr.Add(m_build.m_pets[i]);
-		}
-		_build.Add("pets", arr);
+		SimpleJSON.JSONClass _build = m_build.ToJson();
 		ret.Add("build", _build);
-
 
 		return ret;
 	}

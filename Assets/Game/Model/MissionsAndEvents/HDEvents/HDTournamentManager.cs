@@ -195,7 +195,20 @@ public class HDTournamentManager : HDLiveEventManager {
         else
         {
             HDLiveEventData data = GetEventData();
-            GameServerManager.SharedInstance.HDEvents_SetScore(data.m_eventId, _score, SetScoreResponse);
+
+            	// Build
+            SimpleJSON.JSONClass _build = new SimpleJSON.JSONClass();
+            _build.Add("dragon", GetToUseDragon());
+			_build.Add("skin", GetToUseSkin());
+			SimpleJSON.JSONArray arr = new SimpleJSON.JSONArray();
+			List<string> pets = GetToUsePets();
+			int max = pets.Count;
+			for (int i = 0; i < max; i++) {
+				arr.Add( pets[i] );
+			}
+			_build.Add("pets", arr);
+
+            GameServerManager.SharedInstance.HDEvents_SetScore(data.m_eventId, _score, _build, SetScoreResponse);
         }
     }
 
@@ -203,10 +216,9 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-
 		if ( outErr != HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			// Get Leaderboard?
+			m_tournamentData.ParseLeaderboard(responseJson);
 		}
 
 		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);

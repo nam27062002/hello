@@ -326,12 +326,10 @@ public class EventRewardScreen : MonoBehaviour {
 				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
 				// Purge event list
-				GlobalEventManager.ClearRewardedEvents();
-				GlobalEventManager.ResetHasChecked();
-				GlobalEventManager.ClearCurrentEvent();
+				m_questManager.ClearEvent();
 
 				// Request new event data
-				GlobalEventManager.TMP_RequestCustomizer();
+				HDLiveEventsManager.instance.RequestMyEvents(true);
 
 				// Save!
 				PersistenceFacade.instance.Save_Request();

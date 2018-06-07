@@ -25,7 +25,7 @@ public class OptimizedScrollRectEditor : ScrollRectEditor {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Cache serialized properties
-	private SerializedProperty m_mask;
+	private SerializedProperty m_autoScrollTime;
 	private SerializedProperty m_padding;
 
 	//------------------------------------------------------------------//
@@ -39,7 +39,7 @@ public class OptimizedScrollRectEditor : ScrollRectEditor {
 		base.OnEnable();
 
 		// Acquire properties
-		m_mask = serializedObject.FindProperty("m_mask");
+		m_autoScrollTime = serializedObject.FindProperty("m_autoScrollTime");
 		m_padding = serializedObject.FindProperty("m_padding");
 	}
 
@@ -63,7 +63,7 @@ public class OptimizedScrollRectEditor : ScrollRectEditor {
 
 		// Just draw our custom properties one by one
 		// This keeps all custom attributes defined in each property such as Separators and Comments
-		EditorGUILayout.PropertyField(m_mask);
+		EditorGUILayout.PropertyField(m_autoScrollTime);
 		EditorGUILayout.PropertyField(m_padding, true);
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.

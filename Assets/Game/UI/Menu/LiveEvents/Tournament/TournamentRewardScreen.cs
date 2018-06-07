@@ -112,9 +112,10 @@ public class TournamentRewardScreen : MonoBehaviour {
 		m_tournamentDef = m_tournamentData.definition as HDTournamentDefinition;
 
 		// Initialize Leaderboard - before we mark the event as finished
-		if(m_leaderboard != null) {
+		/*if(m_leaderboard != null) {
 			m_leaderboard.Refresh();
-		}
+		}*/
+		// [AOC] No need! Leaderboard is self managed!
 
 		// Initialize visual info
 		if(m_tournamentIcon != null) {
@@ -283,18 +284,16 @@ public class TournamentRewardScreen : MonoBehaviour {
 				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
 				// Purge event list
-				GlobalEventManager.ClearRewardedEvents();
-				GlobalEventManager.ResetHasChecked();
-				GlobalEventManager.ClearCurrentEvent();
+				m_tournamentManager.ClearEvent();
 
 				// Request new event data
-				GlobalEventManager.TMP_RequestCustomizer();
+				HDLiveEventsManager.instance.RequestMyEvents(true);
 
 				// Save!
 				PersistenceFacade.instance.Save_Request();
 
 				// Go back to main screen
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
 			} break;
 		}
 
