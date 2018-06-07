@@ -428,7 +428,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static void ApplyEndOfGameRewards() {
 		// Coins, PC and XP are applied in real time during gameplay
 		// Apply the rest of rewards
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+
+		// Survival bonus
+		// [AOC] No survival bonus in tournament mode!
+		if(GameSceneController.s_mode != SceneController.Mode.TOURNAMENT) {
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+		}
 	}
 
 	private static int CalculateKillStreak(int _killStreak) {		
@@ -547,6 +552,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// Checks the survival bonus.
 	/// </summary>
 	private void CheckSurvivalBonus() {
+		// [AOC] No survival bonus in tournament mode!
+		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return;
+
 		// Show feedback to the user every minute
 		int elapsedMinutes = (int)Math.Floor(GameTime() / 60f);
 		if(elapsedMinutes > m_lastAwardedSurvivalBonusMinute) {
@@ -586,6 +594,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
 	public int CalculateSurvivalBonus() {
+		// [AOC] No survival bonus in tournament mode!
+		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return 0;
+
 		// Find out the bonus percentage of coins earned per minute
 		float elapsedTime = GameTime();
 		int elapsedMinutes = (int)Math.Floor(elapsedTime / 60);
