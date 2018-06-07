@@ -25,7 +25,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private Localizer 			m_titleText;
 	[SerializeField] private Localizer			m_goalText;
 	[SerializeField] private Image 				m_goalIcon;
-	[SerializeField] private TextMeshProUGUI	m_bestScore;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
 	[SeparatorAttribute("Enter button")]
@@ -121,8 +120,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 				m_modifier[i].gameObject.SetActive(false);
 			}
 		}
-
-		m_bestScore.text = StringUtils.FormatNumber(m_data.m_score);
 
 
 
