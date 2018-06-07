@@ -77,6 +77,8 @@ public class HDTournamentData : HDLiveEventData {
 
 	public override void Clean()
 	{
+		base.Clean();
+
 		m_leaderboard.Clear();
 		m_rank = -1;
 		m_score = -1;

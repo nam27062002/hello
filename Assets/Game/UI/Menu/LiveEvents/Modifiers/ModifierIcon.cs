@@ -10,7 +10,12 @@ public class ModifierIcon : MonoBehaviour {
 
 	public void InitFromDefinition(IModifierDefinition _def) {
 		// Load from resources
-		m_icon.sprite = Resources.Load<Sprite>(UIConstants.MODIFIER_ICONS_PATH + _def.GetIconRelativePath());
-		m_text.text = _def.GetDescription();
+		if (m_icon != null) {
+			m_icon.sprite = Resources.Load<Sprite>(UIConstants.MODIFIER_ICONS_PATH + _def.GetIconRelativePath());
+		}
+
+		if (m_text != null) {
+			m_text.text = _def.GetDescription();
+		}
 	}
 }

@@ -14,10 +14,13 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 	private enum Step {
 		INIT = 0,
+		INITIAL_DELAY,
 		INTRO,
 		REWARD,		// As many times as needed
 		FINISH
 	}
+
+	private const float INITIAL_DELAY = 0.6f;
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -225,6 +228,14 @@ public class TournamentRewardScreen : MonoBehaviour {
 		Step oldStep = m_step;
 		Step nextStep = Step.INTRO;
 		switch(m_step) {
+			case Step.INIT: {
+				nextStep = Step.INITIAL_DELAY;
+			} break;
+
+			case Step.INITIAL_DELAY: {
+				nextStep = Step.INTRO;
+			} break;
+
 			case Step.INTRO: {
 				nextStep = Step.REWARD;
 			} break;
@@ -254,17 +265,22 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 		// Perform different stuff depending on new step
 		switch(nextStep) {
-			case Step.INTRO: {
+			case Step.INITIAL_DELAY: {
 				// Clear 3D scene
 				m_sceneController.Clear();
 
-				// Change state after some delay
+				// Change state advance step after some delay
 				UbiBCN.CoroutineManager.DelayedCall(
 					() => { 
 						m_state = State.IDLE;
+						AdvanceStep();
 					}, 
-					0.5f
+					INITIAL_DELAY
 				);
+			} break;
+
+			case Step.INTRO: {
+				// Nothing to do, animator will set the IDLE state
 			} break;
 
 			case Step.REWARD: {
@@ -287,7 +303,9 @@ public class TournamentRewardScreen : MonoBehaviour {
 				m_tournamentManager.ClearEvent();
 
 				// Request new event data
-				HDLiveEventsManager.instance.RequestMyEvents(true);
+				if(!HDLiveEventsManager.TEST_CALLS) {		// Would read the event again from the json xD
+					HDLiveEventsManager.instance.RequestMyEvents(true);
+				}
 
 				// Save!
 				PersistenceFacade.instance.Save_Request();
@@ -315,6 +333,17 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 		// Next step!
 		AdvanceStep();
+	}
+
+	/// <summary>
+	/// Intro anim finished.
+	/// </summary>
+	public void OnIntroAnimFinished() {
+		// Change logic state
+		m_state = State.IDLE;
+
+		// Show tap to continue text
+		m_tapToContinue.ForceShow();
 	}
 
 	/// <summary>

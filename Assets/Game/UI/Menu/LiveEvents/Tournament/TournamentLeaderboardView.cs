@@ -95,10 +95,14 @@ public class TournamentLeaderboardView : MonoBehaviour {
 			leaderboard.Add(itemData);
 		}
 
-		m_scrollList.SetupPlayerPill(m_pillPrefabs[1], (int)data.m_rank, leaderboard[(int)data.m_rank].data);
 		m_scrollList.Setup(m_pillPrefabs, leaderboard);
 
-		m_scrollList.FocusPlayerPill();
+		if(data.m_rank < 0) {
+			m_scrollList.SetupPlayerPill(null, -1, null);
+		} else {
+			m_scrollList.SetupPlayerPill(m_pillPrefabs[1], (int)data.m_rank, leaderboard[(int)data.m_rank].data);
+			m_scrollList.FocusPlayerPill();
+		}
 
 		ToggleLoading(false);
 	}

@@ -55,6 +55,7 @@ public class HDQuestData : HDLiveEventData {
 
 	public override void Clean()
 	{
+		base.Clean();
 		m_globalScore = -1;
 		m_rewardLevel = -1;
 	}
