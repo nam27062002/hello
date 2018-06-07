@@ -25,10 +25,11 @@ public class HDTournamentData : HDLiveEventData {
 
 	public class LeaderboardLine
 	{
-		public string m_name;
-		public string m_pic;
-		public int m_score;
-		public int m_rank;
+		public string m_name = "";
+		public string m_pic = "";
+		public int m_score = -1;
+		public int m_rank = -1;
+		public HDTournamentBuild m_build = new HDTournamentBuild();
 	}
 
 	//------------------------------------------------------------------------//
@@ -48,11 +49,7 @@ public class HDTournamentData : HDLiveEventData {
 		set{ m_lastFreeEntranceTimestamp = value; }
 	}
 		// Default tournament config
-	protected string m_lastSelectedDragon = "";
-	protected string m_lastSelectedDisguise = "";
-	protected List<string> m_lastSelectedPets = new List<string>();
-
-
+	protected HDTournamentBuild m_defaultBuild = new HDTournamentBuild();
 
 
 	//------------------------------------------------------------------------//
@@ -87,9 +84,7 @@ public class HDTournamentData : HDLiveEventData {
 		m_matchmakingValue = -1;
 		m_lastFreeEntranceTimestamp = 0;
 
-		m_lastSelectedDragon = "";
-		m_lastSelectedDisguise = "";
-		m_lastSelectedPets.Clear();
+		m_defaultBuild.Clean();
 
 	}
 
@@ -153,6 +148,7 @@ public class HDTournamentData : HDLiveEventData {
 			// user info
 			m_rank = _data["u"]["rank"].AsLong;
 			m_score = _data["u"]["score"].AsLong;
+			m_defaultBuild.ParseBuild(_data["u"]["build"]);
 		}
 
 		if ( _data.ContainsKey("l") )
@@ -177,6 +173,10 @@ public class HDTournamentData : HDLiveEventData {
 				l.m_name = arr[i]["name"];
 				l.m_pic = arr[i]["pic"];
 				l.m_score = arr[i]["score"];
+				if (arr[i].ContainsKey("build"))
+					l.m_build.ParseBuild(arr[i]["build"]);
+				else
+					l.m_build.Clean();
 				l.m_rank = i;
 			}
 		}

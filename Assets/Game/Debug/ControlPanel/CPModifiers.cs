@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CPModifiers : MonoBehaviour {
 	//------------------------------------------------------------------------//
-	private static List<ModifierDragon> sm_dragonMods;
+	private static List<ModifierDragon> sm_dragonMods = new List<ModifierDragon>();
 
 	public static void CreateDragonMod(ModifierDragon _mod) { sm_dragonMods.Add(_mod); }
 	public static void DestroyDragonMod(ModifierDragon _mod) { sm_dragonMods.Remove(_mod); }
