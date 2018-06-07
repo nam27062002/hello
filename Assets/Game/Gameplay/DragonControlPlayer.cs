@@ -142,6 +142,8 @@ public class DragonControlPlayer : MonoBehaviour {
 
 		impulse = Vector3.zero;
 
+		if (!enabled) return;
+
 		// if app mode is test -> input something else?
 		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_followingSpline != null) {
 			float m_followingClosestT;
