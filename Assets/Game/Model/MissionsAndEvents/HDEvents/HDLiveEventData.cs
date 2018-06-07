@@ -144,7 +144,7 @@ public class HDLiveEventData {
 				stateStr = "joined";
 			}break;
 		}
-		ret.Add("state", stateStr);
+		ret.Add("status", stateStr);
 
 		if ( m_definition.m_eventId == m_eventId )
 		{
@@ -162,14 +162,15 @@ public class HDLiveEventData {
 	{
 		Clean();
 
-		m_eventId = _data["code"];
+		if (_data.ContainsKey("code"))
+			m_eventId = _data["code"];
         if ( m_definition.m_eventId != m_eventId )
 			m_definition.Clean();
 
 		m_state = State.NONE;
-		if ( _data.ContainsKey("state") )
+		if ( _data.ContainsKey("status") )
 		{
-			string stateStr = _data["state"];
+			string stateStr = _data["status"];
 			switch( stateStr )
 			{
 				case "0":

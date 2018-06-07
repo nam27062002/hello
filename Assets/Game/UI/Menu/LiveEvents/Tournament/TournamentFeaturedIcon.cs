@@ -70,7 +70,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		RefreshData();
 
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.AddListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdated);
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
 		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
@@ -80,7 +80,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdated);
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
 		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
@@ -270,6 +270,10 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// We got an update on the tournament state.
 	/// </summary>
+	private void OnStateUpdatedWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+		RefreshData();
+	}
+
 	private void OnStateUpdated() {
 		RefreshData();
 	}
