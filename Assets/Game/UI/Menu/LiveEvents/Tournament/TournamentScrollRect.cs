@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPill, HDTournamentData.LeaderboardLine> {
 
-	private int m_index;
+	private int m_playerIndex;
 	private TournamentLeaderboardPill m_playerPill;
 	private Vector2 m_playerPillSize;
 
@@ -12,18 +12,22 @@ public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPil
 			GameObject.Destroy(m_playerPill.gameObject);
 		}
 
+		if(_index < 0) return;
+		if(_data == null) return;
+		if(_pillPrefab == null) return;
+
 		m_playerPill = GameObject.Instantiate<GameObject>(_pillPrefab, content, false).GetComponent<TournamentLeaderboardPill>();
 		m_playerPill.InitWithData(_data);
 		m_playerPill.GetComponent<Button>().onClick.AddListener(OnPlayerPillClick);
 
-		m_index = _index;
+		m_playerIndex = _index;
 
 		RectTransform rt = m_playerPill.gameObject.GetComponent<RectTransform>();
 		m_playerPillSize = rt.sizeDelta;
 	}
 
 	public void FocusPlayerPill() {
-		FocusOn(m_index);
+		FocusOn(m_playerIndex);
 	}
 
 	protected override void LateUpdate() {
@@ -33,7 +37,7 @@ public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPil
 
 	protected override void OnScrollMoved() {
 		if (m_playerPill != null) {
-			Vector2 pos = GetPillPosition(m_index);
+			Vector2 pos = GetPillPosition(m_playerIndex);
 			Vector2 relativePos = (m_containerSize * 0.5f) - pos - content.anchoredPosition;
 
 			if (relativePos.y < m_playerPillSize.y * 0.5f) {
@@ -47,7 +51,7 @@ public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPil
 
 	protected override void OnPillCreated() {
 		// Player pill should be the last one in the hierarchy (so it is drawed on top)
-		m_playerPill.transform.SetAsLastSibling();
+		if(m_playerPill != null) m_playerPill.transform.SetAsLastSibling();
 	}
 
 	private void OnPlayerPillClick() {
