@@ -628,12 +628,13 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyProgress, parameters, _callback);
     }
 
-    public override void HDEvents_SetScore(int _eventID, int _score,ServerCallback _callback) {
+    public override void HDEvents_SetScore(int _eventID, int _score, SimpleJSON.JSONNode _build, ServerCallback _callback) {
         // Compose parameters and enqeue command
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
         parameters.Add("score", _score.ToString(JSON_FORMAT));
 		parameters.Add("returnData", "true");
+		parameters.Add("build", _build.ToString());
         Commands_EnqueueCommand(ECommand.HDLiveEvents_SetScore, parameters, _callback);
     }
 
@@ -1113,7 +1114,13 @@ public class GameServerManagerCalety : GameServerManager {
                     Dictionary<string, string> kParams = new Dictionary<string, string>();
                     kParams["eventId"] = parameters["eventId"];
                     kParams["score"] = parameters["score"];
-                    Command_SendCommand(COMMAND_HD_LIVE_EVENTS_SET_SCORE, kParams, parameters, "");
+                    string body = "";
+                    if ( parameters.ContainsKey("build") )
+                    {
+                    	body = parameters["build"];
+                    	parameters.Remove("build");
+                    }
+                    Command_SendCommand(COMMAND_HD_LIVE_EVENTS_SET_SCORE, kParams, parameters, body);
                     // progress                 
                 }
                 break;

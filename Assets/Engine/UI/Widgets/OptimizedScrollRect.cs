@@ -201,7 +201,12 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	/// Draw all visible items.
 	/// </summary>
 	/// <param name="_index">First visible item index.</param>
-	private void ShowPillsFrom(int _index) {		
+	private void ShowPillsFrom(int _index) {	
+		// Ignore if there is no data
+		if(m_itemData == null) return;
+		if(m_itemData.Count == 0) return;
+		_index = Mathf.Clamp(_index, 0, m_itemData.Count - 1);
+
 		float screenPos = 0;
 		float screenLimit = 0;
 		float pillSize = 0;
