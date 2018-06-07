@@ -1519,7 +1519,7 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_SET_SCORE = "/api/levent/setScore";
     private const string COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD = "/api/levent/getLeaderboard";
     private const string COMMAND_HD_LIVE_EVENTS_ENTER = "/api/levent/register";
-    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getReward";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getRewards";
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
