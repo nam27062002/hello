@@ -89,7 +89,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	// Update timers periodically
 	void UpdatePeriodic() {
 		if (m_definition != null) {
-			m_timerText.text = "Ends in: " + TimeUtils.FormatTime(m_definition.timeToEnd.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
+			m_timerText.text = LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_ICON_ENDS_IN", TimeUtils.FormatTime(m_definition.timeToEnd.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true));
 		}
 	}
 

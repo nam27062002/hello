@@ -1338,6 +1338,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224238420782728104}
   - component: {fileID: 222921930000787350}
+  - component: {fileID: 114048843368987240}
   - component: {fileID: 114888339990774338}
   - component: {fileID: 114050510759446346}
   m_Layer: 5
@@ -2108,6 +2109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224108827291496508}
   - component: {fileID: 222014711854620020}
+  - component: {fileID: 114897545804965332}
   - component: {fileID: 114456233139962722}
   m_Layer: 5
   m_Name: Where
@@ -2705,6 +2707,20 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114048843368987240
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1366091196745848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_TOURNAMENT_INFO_HOW
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114050510759446346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3045,7 +3061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: 
+  m_tid: TID_TOURNAMENT_LEADERBOARD_TITLE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114098159537998082
@@ -5008,7 +5024,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 203e82bd7c2364bc2b907fe72ecb0bad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_titleText: {fileID: 0}
   m_scrollList: {fileID: 114682692747505370}
   m_loadingIcon: {fileID: 1646836633603968}
   m_scrollGroup: {fileID: 1756934150789234}
@@ -6240,6 +6255,20 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114897545804965332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1920743148553274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_TOURNAMENT_INFO_WHERE
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114898088368417566
 MonoBehaviour:
   m_ObjectHideFlags: 1

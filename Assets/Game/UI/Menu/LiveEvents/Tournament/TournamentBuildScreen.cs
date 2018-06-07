@@ -25,7 +25,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private Localizer 			m_titleText;
 	[SerializeField] private Localizer			m_goalText;
 	[SerializeField] private Image 				m_goalIcon;
-	[SerializeField] private TextMeshProUGUI	m_bestScore;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
 	[SeparatorAttribute("Enter button")]
@@ -122,8 +121,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 			}
 		}
 
-		m_bestScore.text = StringUtils.FormatNumber(m_data.m_score);
-
 
 
 		//-- Entrance Button ------------------------------------------//
@@ -131,7 +128,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 			m_enterBtn.Localize("Free");
 			m_nextFreeTimerGroup.SetActive(false);
 		} else {
-			m_enterBtn.Localize("Enter<br>" + m_definition.m_entrance.m_amount);
+			if (m_definition.m_entrance.m_type == "hc") {
+				m_enterBtn.Localize("TID_TOURNAMENT_PLAY_PC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
+			} else{ 
+				m_enterBtn.Localize("TID_TOURNAMENT_PLAY_SC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
+			}
 			m_nextFreeTimerGroup.SetActive(true);
 		}
 
@@ -149,7 +150,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			if (seconds <= 0) {
 				m_hasFreeEntrance = true;
 				m_nextFreeTimerGroup.SetActive(true);
-				m_enterBtn.Localize("Free");
+				m_enterBtn.Localize("TID_GEN_FREE");
 				m_nextFreeTimerGroup.SetActive(false);
 
 				CancelInvoke();
