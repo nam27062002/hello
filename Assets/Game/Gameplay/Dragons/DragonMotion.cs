@@ -80,6 +80,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	DragonPlayer			m_dragon;
 	// DragonHealthBehaviour	m_health;
 	DragonControlPlayer			m_controls;
+	public DragonControlPlayer control
+	{
+		get{ return m_controls; }
+	}
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_mainGroundCollider;

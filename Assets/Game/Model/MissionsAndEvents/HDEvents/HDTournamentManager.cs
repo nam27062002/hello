@@ -342,6 +342,8 @@ public class HDTournamentManager : HDLiveEventManager {
 		if ( m_tracker != null)
 			m_tracker.enabled = false;
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
+		InstanceManager.player.playable = false;
+		InstanceManager.player.dragonMotion.control.enabled = false;
 		yield return new WaitForSecondsRealtime(2.5f);
 
 		while( InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state < GameSceneController.EStates.FINISHED)
