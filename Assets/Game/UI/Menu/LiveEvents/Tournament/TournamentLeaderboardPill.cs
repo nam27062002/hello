@@ -29,7 +29,6 @@ public class TournamentLeaderboardPill : ScrollRectItem<HDTournamentData.Leaderb
 	[SerializeField] private TextMeshProUGUI m_positionText = null;
 	[Tooltip("Special colors for top positions!")]
 	[SerializeField] private Color[] m_positionTextColors = new Color[4];
-	[SerializeField] private RemoteImageLoader m_picture = null;
 	[SerializeField] private Text m_nameText = null;
 	[SerializeField] private TextMeshProUGUI m_scoreText = null;
 
@@ -61,10 +60,6 @@ public class TournamentLeaderboardPill : ScrollRectItem<HDTournamentData.Leaderb
 		}
 
 		// Get social info
-		// [AOC] TODO!! Do it properly!
-		// Load picture
-		m_picture.Load(_data.m_pic);
-
 		// Set name
 		if(m_nameText != null) m_nameText.text = _data.m_name;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 
