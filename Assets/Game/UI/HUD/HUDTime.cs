@@ -28,7 +28,9 @@ public class HUDTime : MonoBehaviour {
 
 	private bool m_countdown = false;
 	private long m_timelimit = 0;
-	
+
+	protected Animator m_anim;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -40,6 +42,8 @@ public class HUDTime : MonoBehaviour {
 		m_valueTxt = GetComponent<TextMeshProUGUI>();
 		m_valueTxt.text = "00:00";
 		m_lastSecondsPrinted = -1;
+		m_anim = GetComponent<Animator>();
+
 		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
 		{
 			HDTournamentData data = HDLiveEventsManager.instance.m_tournament.GetEventData() as HDTournamentData;
@@ -82,6 +86,19 @@ public class HUDTime : MonoBehaviour {
 		}
 
 		if(elapsedSeconds != m_lastSecondsPrinted) {		
+			if ( m_countdown )
+			{
+				if ( elapsedSeconds == 60 || elapsedSeconds == 30 )
+				{
+					m_anim.SetTrigger(GameConstants.Animator.BEEP);
+					// Play beep sound!!
+				}
+				else if ( elapsedSeconds < 10 )
+				{
+					m_anim.SetBool(GameConstants.Animator.COUNTDOWN, true);
+					// Play beep sound!!
+				}
+			}
 			// Do it!
 			// Both for game and level editor
 			m_valueTxt.text = TimeUtils.FormatTime(elapsedSeconds, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES);
