@@ -31,6 +31,7 @@ public class ResultsScreenController : MonoBehaviour {
 		GLOBAL_EVENT_CONTRIBUTION,		// Optional, if there is an active event and the player has a score to add to it
 		GLOBAL_EVENT_NO_CONTRIBUTION,	// Optional, if there is an active event but the player didn't score
 
+		TOURNAMENT_COINS,		// Tournament, gold obtained during the run
 		TOURNAMENT_SCORE,		// Tournament, show run score
 		TOURNAMENT_LEADERBOARD,	// Tournament, show leaderboard changes
 		TOURNAMENT_INVALID_RUN,	// Tournament, run didn't count for the tournament (i.e. "Eat 100 birds as fast as possible" but you died before reaching 100 birds)

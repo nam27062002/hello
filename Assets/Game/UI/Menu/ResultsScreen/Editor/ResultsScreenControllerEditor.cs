@@ -64,7 +64,8 @@ public class ResultsScreenControllerEditor : ReorderableArrayInspector {
 					new StepSetup(ResultsScreenController.Step.GLOBAL_EVENT_CONTRIBUTION, true, true, "Optional, if there is an active event and the player has a score to add to it"),
 					new StepSetup(ResultsScreenController.Step.GLOBAL_EVENT_NO_CONTRIBUTION, true, false, "Optional, if there is an active event but the player didn't score"),
 
-					new StepSetup(ResultsScreenController.Step.TOURNAMENT_SCORE, true, true, "Tournament, show run score"),
+					new StepSetup(ResultsScreenController.Step.TOURNAMENT_COINS, true, true, "Tournament, gold obtained during the run"),
+					new StepSetup(ResultsScreenController.Step.TOURNAMENT_SCORE, true, false, "Tournament, show run score"),
 					new StepSetup(ResultsScreenController.Step.TOURNAMENT_LEADERBOARD, true, false, "Tournament, show leaderboard changes"),
 					new StepSetup(ResultsScreenController.Step.TOURNAMENT_INVALID_RUN, true, false, "Tournament, run didn't count for the tournament (i.e. \"Eat 100 birds as fast as possible\" but you died before reaching 100 birds)"),
 					new StepSetup(ResultsScreenController.Step.TOURNAMENT_SYNC, true, false, "Tournament, sync with server, apply rewards and do tracking"),

@@ -346,6 +346,7 @@ GameObject:
   - component: {fileID: 224193312508987456}
   - component: {fileID: 114071493741446182}
   - component: {fileID: 95965701527369112}
+  - component: {fileID: 225277192660556258}
   m_Layer: 5
   m_Name: LeaderboardGroup
   m_TagString: Untagged
@@ -727,18 +728,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 203e82bd7c2364bc2b907fe72ecb0bad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_titleText: {fileID: 114585134183872862}
   m_scrollList: {fileID: 114779688251292194}
   m_loadingIcon: {fileID: 1128548898857838}
   m_scrollGroup: {fileID: 1280756769686060}
-  m_pillPrefab: {fileID: 1897286652463016, guid: 62729c3f10f244ab3b9abee55d045d4d,
-    type: 2}
-  m_playerPillPrefab: {fileID: 1897286652463016, guid: b08afa8c70c084c77af121afd124da3e,
-    type: 2}
-  m_maxPills: 100
-  m_listPadding: 0
-  m_pillSpacing: 5
-  m_playerPillMarginOffset: -15
+  m_pillPrefabs:
+  - {fileID: 1897286652463016, guid: 62729c3f10f244ab3b9abee55d045d4d, type: 2}
+  - {fileID: 1897286652463016, guid: b08afa8c70c084c77af121afd124da3e, type: 2}
 --- !u!114 &114085141974306852
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1696,7 +1691,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  m_mask: {fileID: 224537340012066054}
+  m_autoScrollTime: 0.75
   m_padding:
     left: 0
     right: 0
@@ -8775,6 +8770,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225277192660556258
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1744208888632630}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!225 &225319927042757034
 CanvasGroup:
   m_ObjectHideFlags: 1
