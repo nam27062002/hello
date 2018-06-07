@@ -193,7 +193,7 @@ public class ResultsScreenController : MonoBehaviour {
 		ResultsDarkScreen.Hide(false);
 
 		// Initialize some internal vars
-		m_totalCoins = UsersManager.currentUser.coins;
+		m_totalCoins = UsersManager.currentUser.coins - this.coins;		// Coins have been added in real-time, so start the results screen counter with the amount of coins we had before the run
 		m_totalPc = UsersManager.currentUser.pc;
 		m_eggFound = false;
 		switch(CPResultsScreenTest.eggMode) {
