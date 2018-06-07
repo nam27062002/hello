@@ -210,8 +210,8 @@ public class DragonControlPlayer : MonoBehaviour {
 	void OnDisable() {
 		if(touchControls != null) {
 			touchControls.SetTouchObjRendering(false);
+			touchControls.SetTouch2ObjRendering(false, false);
 			touchControls.enabled = false;
-		
 		}
 
 		if(tiltControls != null)
