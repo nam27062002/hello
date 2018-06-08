@@ -1,28 +1,18 @@
 fileFormatVersion: 2
-guid: 0ff4754e025e94d9ca4341e109d600b9
-timeCreated: 1464689403
+guid: 9473cdb86bede5a48946de0e68204fb6
+timeCreated: 1528100880
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: CATRigBase
-    100002: CATRigFlag1
-    100004: CATRigFlag2
-    100006: CATRigFlag3
-    100008: CATRigFlag4
-    100010: default
-    100012: //RootNode
-    400000: CATRigBase
-    400002: CATRigFlag1
-    400004: CATRigFlag2
-    400006: CATRigFlag3
-    400008: CATRigFlag4
-    400010: default
-    400012: //RootNode
-    4300000: default
-    7400000: Take 001
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Plane
+    4300002: ShotFX
+    7400000: Default Take
     9500000: //RootNode
-    13700000: default
   materials:
     importMaterials: 0
     materialName: 0
@@ -33,6 +23,8 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -43,49 +35,7 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: Take 001
-      takeName: Take 001
-      firstFrame: 24
-      lastFrame: 48
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: CATRigBase
-        weight: 1
-      - path: CATRigBase/CATRigFlag1
-        weight: 1
-      - path: CATRigBase/CATRigFlag1/CATRigFlag2
-        weight: 1
-      - path: CATRigBase/CATRigFlag1/CATRigFlag2/CATRigFlag3
-        weight: 1
-      - path: CATRigBase/CATRigFlag1/CATRigFlag2/CATRigFlag3/CATRigFlag4
-        weight: 1
-      - path: default
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 24
+    clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -103,7 +53,7 @@ ModelImporter:
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 1
+    useFileScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -125,7 +75,7 @@ ModelImporter:
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
-    skeletonHasParents: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1
