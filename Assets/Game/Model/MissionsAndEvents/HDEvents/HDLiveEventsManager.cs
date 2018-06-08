@@ -46,13 +46,14 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     	ENTRANCE_FREE_INVALID, //(602,200),
     	ENTRANCE_AMOUNT_NOT_VALID, // (603,200),
     	ENTRANCE_TYPE_NOT_VALID, // (604,200),
-		IS_NOT_A_VALID_TOURNAMENT,// 605,200)
+		IS_NOT_A_VALID_TOURNAMENT,// 605,200) -> haces register en un tournament que no es tu tournament
     	IS_NOT_A_TOURNAMENT, //(606,200),
     	EVENT_NOT_FOUND, //(607,200),
     	EVENT_IS_NOT_VALID, // (608,200),
     	EVENT_IS_DISABLED, //(609,200),
     	UNEXPECTED_ERROR, //(610,200),
     	INCONSISTENT_TOURNAMENT_DATA, //(611,200);
+		ELO_NOT_FOUND, // (612,200);
 
 
     	NO_ERROR
@@ -107,7 +108,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
-		Messenger.AddListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, SaveEventsToCache);
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
 
 	}
 
@@ -115,7 +116,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     {
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
-		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, SaveEventsToCache);
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
     }
 
     void OnLoggedIn(bool _isLogged)
@@ -163,6 +164,11 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 	            }
 	        }
         }
+	}
+
+	public void SaveEventsToCacheWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err )
+	{
+		SaveEventsToCache();
 	}
 
 	public void SaveEventsToCache()
@@ -239,6 +245,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 							case 609: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_DISABLED;break;
 							case 610: outErr = HDLiveEventsManager.ComunicationErrorCodes.UNEXPECTED_ERROR;break;
 							case 611: outErr = HDLiveEventsManager.ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA;break;
+							case 612: outErr = HDLiveEventsManager.ComunicationErrorCodes.ELO_NOT_FOUND;break;
 						}
             		}
             	}
@@ -299,7 +306,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
                 if (responseJson.ContainsKey( m_types[i] ))
                 {
                     m_managers[i].OnNewStateInfo(responseJson[ m_types[i] ]);
-                    if (!m_managers[i].HasValidDefinition() || m_cacheInfo)
+					if (m_managers[i].data.m_eventId > 0 && (!m_managers[i].HasValidDefinition() || m_cacheInfo))
                     {
                         m_managers[i].RequestDefinition();
                     }

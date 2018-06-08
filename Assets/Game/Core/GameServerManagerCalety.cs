@@ -624,7 +624,7 @@ public class GameServerManagerCalety : GameServerManager {
         // Compose parameters and enqeue command
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
-        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyProgress, parameters, _callback);
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetLeaderboard, parameters, _callback);
     }
 
     public override void HDEvents_SetScore(int _eventID, int _score, SimpleJSON.JSONNode _build, ServerCallback _callback) {
@@ -637,7 +637,7 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLiveEvents_SetScore, parameters, _callback);
     }
 
-	public virtual void HDEvents_EnterEvent(int _eventID, string _type, long _amount, int _matchmakingValue, ServerCallback _callback) {
+	public override void HDEvents_EnterEvent(int _eventID, string _type, long _amount, int _matchmakingValue, ServerCallback _callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
         parameters.Add("type", _type);
@@ -1100,6 +1100,9 @@ public class GameServerManagerCalety : GameServerManager {
 				{
 					Dictionary<string, string> kParams = new Dictionary<string, string>();							
 					kParams["eventId"] = parameters["eventId"];
+					kParams["type"] = parameters["type"];
+					kParams["amount"] = parameters["amount"];
+					kParams["elo"] = parameters["elo"];
 					Command_SendCommand( COMMAND_HD_LIVE_EVENTS_ENTER, kParams, parameters, "");
 				}break;
 				case ECommand.HDLiveEvents_AddProgress: {
@@ -1516,7 +1519,7 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_SET_SCORE = "/api/levent/setScore";
     private const string COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD = "/api/levent/getLeaderboard";
     private const string COMMAND_HD_LIVE_EVENTS_ENTER = "/api/levent/register";
-    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getReward";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getRewards";
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
