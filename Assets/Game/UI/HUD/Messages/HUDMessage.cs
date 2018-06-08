@@ -116,6 +116,9 @@ public class HUDMessage : MonoBehaviour {
 	[SerializeField] private HideMode m_hideMode = HideMode.TIMER;
 	[SerializeField] private float m_idleDuration = 1f;	// Only applies for TIMER hide mode
 
+	[SerializeField] private bool m_onlyFirstTime = false;	// Check if only one time!
+	private bool m_firstTime = true;
+
 	// Custom exposed setup for specific types - editor will decide when to show them
 	[Separator]
 	[SerializeField] private BoostMessageSetup m_boostMessageSetup = new BoostMessageSetup();
@@ -619,11 +622,31 @@ public class HUDMessage : MonoBehaviour {
 
 	private void OnMissionZone(bool toggle, ZoneTrigger zone){
 		if ( toggle ){
-			// Get text to show
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-	        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
-	        text.text = localized;
-	        Show();
+			if ( m_onlyFirstTime )
+			{
+				if ( m_firstTime )
+				{
+					// Get text to show
+					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+					string localized = LocalizationManager.SharedInstance.Localize("TID_LEVEL_AREA_WELCOME", zone.m_zoneTid);
+			        text.text = localized;
+			        Show();		
+				}
+			}
+			else
+			{
+				if(!m_firstTime)
+				{
+					// Get text to show
+					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+			        text.text = localized;
+			        Show();		
+				}
+			}
+			m_firstTime = false;
+
+
 		}
 	}
 
