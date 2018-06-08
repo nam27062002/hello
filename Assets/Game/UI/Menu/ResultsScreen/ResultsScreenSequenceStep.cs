@@ -33,7 +33,7 @@ public abstract class ResultsScreenSequenceStep : ResultsScreenStep {
 	[SerializeField] protected TweenSequence m_sequence;
 
 	// Internal
-	private bool m_skipped = false;
+	protected bool m_skipped = false;
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
