@@ -229,7 +229,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
-			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
 
 		}
 
@@ -271,7 +271,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
-			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
 		}
 
 		switch(m_hideMode) {
@@ -559,6 +559,21 @@ public class HUDMessage : MonoBehaviour {
 
 	private void ShowCallback()
 	{
+		Show();
+	}
+
+	private void ShowObjCompleted()
+	{
+		Transform tr = transform.Find("Icon");
+		if ( tr != null )
+		{
+			Image goalIcon = tr.GetComponent<Image>();
+			if ( goalIcon != null )
+			{
+				HDTournamentDefinition def = HDLiveEventsManager.instance.m_tournament.data.definition as HDTournamentDefinition;
+				goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
+			}
+		}
 		Show();
 	}
 
