@@ -15,7 +15,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private MenuDragonLoader 	m_dragonLoader;
 	[SerializeField] private Localizer 			m_dragonName;
 	[SerializeField] private Localizer 			m_dragonSkin;
-	[SerializeField] private Image 				m_dragonTierIcon;
 	[SerializeField] private PowerIcon 			m_dragonPower;
 
 	[SeparatorAttribute("Pets")]
@@ -24,11 +23,12 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SeparatorAttribute("Tournament Info")]
 	[SerializeField] private Localizer 			m_titleText;
 	[SerializeField] private Localizer			m_goalText;
-	[SerializeField] private Image 				m_goalIcon;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
 	[SeparatorAttribute("Enter button")]
-	[SerializeField] private Localizer 			m_enterBtn;
+	[SerializeField] private Button 			m_enterCurrencyBtn;
+	[SerializeField] private Button 			m_enterFreeBtn;
+	[SerializeField] private Button 			m_enterAdBtn;
 	[SerializeField] private GameObject			m_nextFreeTimerGroup;
 	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer;
 
@@ -72,7 +72,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		m_dragonLoader.LoadDragon(sku);
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
-		m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
 
 		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.diguise);
 		m_dragonSkin.Localize(disguise.Get("tidName"));
@@ -80,17 +79,24 @@ public class TournamentBuildScreen : MonoBehaviour {
 		string powerupSku = disguise.Get("powerup");
 		DefinitionNode powerup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerupSku);
 
-		m_dragonPower.InitFromDefinition(powerup, true);
+		m_dragonPower.InitFromDefinition(powerup, false);
 
 
 		//-- Pets -----------------------------------------------------//
+		DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
+
 		List<string> pets = m_tournament.GetToUsePets();
 		for (int i = 0; i < m_petSlots.Length; ++i) {
-			if (i < pets.Count) {
+			if (i < pets.Count) {				
+				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
+
 				m_petSlots[i].Refresh(pets[i], true);
 				m_petSlots[i].gameObject.SetActive(true);
+
+				m_petSlots[i].petLoader.transform.position = ap.transform.position;
+				
 			} else {
-				m_petSlots[i].gameObject.SetActive(false);
+				m_petSlots[i].Refresh("", true);
 			}
 		}
 
@@ -101,7 +107,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		//GOALS
 		m_goalText.Localize(m_definition.m_goal.m_desc);
-		m_goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_definition.m_goal.m_icon);
 
 		//MODIFIERS
 		List<IModifierDefinition> mods = new List<IModifierDefinition>();
@@ -125,14 +130,10 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		//-- Entrance Button ------------------------------------------//
 		if (m_tournament.CanIUseFree()) {
-			m_enterBtn.Localize("Free");
+			ShowEntranceButton(m_enterFreeBtn);
 			m_nextFreeTimerGroup.SetActive(false);
 		} else {
-			if (m_definition.m_entrance.m_type == "hc") {
-				m_enterBtn.Localize("TID_TOURNAMENT_PLAY_PC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
-			} else{ 
-				m_enterBtn.Localize("TID_TOURNAMENT_PLAY_SC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
-			}
+			ShowEntranceButton(m_enterCurrencyBtn);
 			m_nextFreeTimerGroup.SetActive(true);
 		}
 
@@ -149,11 +150,29 @@ public class TournamentBuildScreen : MonoBehaviour {
 			m_nextFreeTimer.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
 			if (seconds <= 0) {
 				m_hasFreeEntrance = true;
-				m_nextFreeTimerGroup.SetActive(true);
-				m_enterBtn.Localize("TID_GEN_FREE");
+				ShowEntranceButton(m_enterFreeBtn);
 				m_nextFreeTimerGroup.SetActive(false);
 
 				CancelInvoke();
+			}
+		}
+	}
+
+	private void ShowEntranceButton(Button _activeButton) {
+		m_enterAdBtn.gameObject.SetActive(m_enterAdBtn == _activeButton);
+		m_enterFreeBtn.gameObject.SetActive(m_enterFreeBtn == _activeButton);
+		m_enterCurrencyBtn.gameObject.SetActive(m_enterCurrencyBtn == _activeButton);
+
+		Localizer loc = _activeButton.FindComponentRecursive<Localizer>();
+		if (m_enterAdBtn == _activeButton) {
+			loc.Localize("TID_TOURNAMENT_PLAY_AD");
+		} else if (m_enterFreeBtn == _activeButton) {
+			loc.Localize("TID_GEN_FREE");
+		} else if (m_enterCurrencyBtn == _activeButton) {
+			if (m_definition.m_entrance.m_type == "hc") {
+				loc.Localize("TID_TOURNAMENT_PLAY_PC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
+			} else{ 
+				loc.Localize("TID_TOURNAMENT_PLAY_SC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
 			}
 		}
 	}
