@@ -458,7 +458,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 			{
 				HDNotificationsManager.instance.ScheduleNotification("sku.not.02", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_MISSIONS"), "Action", (int)seconds);
 			}
-
+			/*
+			// Chests notification
 			int max = UsersManager.currentUser.dailyChests.Length;
 			bool missingChests = false;
 			for (int i = 0; i < max && !missingChests; i++) 
@@ -470,13 +471,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 			{
 				HDNotificationsManager.instance.ScheduleNotification("sku.not.03", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_CHESTS"), "Action", (int) ChestManager.timeToReset.TotalSeconds );
 			}
+			*/
         }
     }
 
     private void CancelLocalNotifications()
     {
 		HDNotificationsManager.instance.CancelNotification("sku.not.02");
-		HDNotificationsManager.instance.CancelNotification("sku.not.03");
+		// HDNotificationsManager.instance.CancelNotification("sku.not.03");
     }
 
     #region game
