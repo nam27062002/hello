@@ -133,9 +133,19 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			*/
 			else
 			{
-				if ( quest.IsRunning())
-				{
-					targetPanel = Panel.EVENT_ACTIVE;
+				switch(quest.data.m_state) {
+					case HDLiveEventData.State.TEASING: {
+						targetPanel = Panel.EVENT_TEASER;
+					} break;
+
+					case HDLiveEventData.State.NOT_JOINED:
+					case HDLiveEventData.State.JOINED: {
+						targetPanel = Panel.EVENT_ACTIVE;
+					} break;
+
+					default: {
+						targetPanel = Panel.NO_EVENT;
+					} break;
 				}
 			}
 		}

@@ -109,7 +109,7 @@ public class GoalsScreenController : MonoBehaviour {
 		// Refresh visible event button based on event state
 		// GlobalEvent evt = GlobalEventManager.currentEvent;
 		// bool eventAvailable = evt != null && evt.isActive;
-		bool eventAvailable = m_quest.EventExists();
+		bool eventAvailable = m_quest.EventExists() && m_quest.IsRunning();
 
 		// Consider tutorial as well!
 		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN;
