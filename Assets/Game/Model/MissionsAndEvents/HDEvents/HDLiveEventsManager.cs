@@ -109,6 +109,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
 		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
+		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED,  SaveEventsToCache);
 
 	}
 
@@ -117,6 +118,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
 		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
+		Messenger.RemoveListener(MessengerEvents.QUEST_SCORE_UPDATED,  SaveEventsToCache);
     }
 
     void OnLoggedIn(bool _isLogged)
