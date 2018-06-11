@@ -91,7 +91,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		float drain = GetModifiedDamageForCurrentHealth( m_healthDrainPerSecond, true);
 
 		// Check power ups 
-		drain = drain - drain * m_drainModifier / 100.0f;
+		//drain = drain - drain * m_drainModifier / 100.0f;
 
 		m_dragon.AddLife(-drain * Time.deltaTime, DamageType.DRAIN, null);
 
@@ -295,7 +295,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		//Health Drain Amplitude over time
 		if (includeHealthDrainAmp)
 		{
-			damage = damage + (damage * (m_gameController.elapsedSeconds * m_healthDrainAmpPerSecond));
+			float amp = m_healthDrainAmpPerSecond + m_healthDrainAmpPerSecond * m_drainModifier / 100f;
+			damage = damage + (damage * (m_gameController.elapsedSeconds * amp));
 
             //Add Space Drain 
             if (m_dragon.dragonMotion.IsInSpace())

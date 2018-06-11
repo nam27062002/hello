@@ -113,7 +113,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 				m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;				
 			} else {
 				m_petEquipSlots[i] = null;
-				m_petSlots[i].Refresh("", true);
+				m_petSlots[i].gameObject.SetActive(false);
+				m_petSlots[i].powerIcon.gameObject.SetActive(false);
 			}
 		}
 
