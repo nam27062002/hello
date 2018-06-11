@@ -133,19 +133,7 @@ namespace Metagame {
 				// Egg reward: if amount is > 1, create a multi reward instead
 				case RewardEgg.TYPE_CODE: {
 					if(_data.amount > 1) {
-						List<Data> multiRewardData = new List<Data>();
-						for(int i = 0; i < _data.amount; ++i) {
-							Data newData = new Data();
-							newData.typeCode = _data.typeCode;
-							newData.sku = _data.sku;
-							newData.amount = 1;
-							multiRewardData.Add(newData);
-						}
-						RewardMulti newReward = CreateTypeMulti(multiRewardData, _source, _economyGroup);
-
-						// Override type since we know that it's a multiple reward composed exclusively by eggs
-						newReward.type = _data.typeCode;
-						return newReward;
+						return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
 					} else {
 						return CreateTypeEgg(_data.sku, _source);
 					}
@@ -174,6 +162,7 @@ namespace Metagame {
 		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 	{ return new RewardGoldenFragments(_amount, _rarity, _economyGroup, _source); }
 
 		public static RewardEgg CreateTypeEgg(string _sku, string _source) 				{ return new RewardEgg(_sku, _source); }
+		public static RewardMultiEgg CreateTypeMultiEgg(long _amount, string _sku, string _source) { return new RewardMultiEgg(_amount, _sku, _source); }
 
 		public static RewardPet CreateTypePet(string _sku, string _source)				{ return new RewardPet(_sku, _source); }
 		public static RewardPet CreateTypePet(DefinitionNode _def, string _source)		{ return new RewardPet(_def, _source); }
@@ -195,10 +184,7 @@ namespace Metagame {
 		}
 
 		protected string m_type = "";
-		public string type { 
-			get { return m_type; } 
-			set { m_type = value; }	// [AOC] Use carefully!
-		}
+		public string type { get { return m_type; }}
 
 		// Optional:
 		// To be used by each reward type if needed

@@ -108,13 +108,14 @@ public class MetagameRewardView : MonoBehaviour {
 				if(!m_showNameForEggsAndPets) rewardText = string.Empty;
 			} break;
 
-			case Metagame.RewardEgg.TYPE_CODE: {
+			case Metagame.RewardEgg.TYPE_CODE:
+			case Metagame.RewardMultiEgg.TYPE_CODE: {
 				// Get the egg definition
-				string tid = "TID_EGG";
+				string tidName = "TID_EGG";
 				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_reward.sku);
 				if(eggDef != null) {
 					iconSprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
-					tid = eggDef.Get("tidName");
+					tidName = eggDef.Get("tidName");
 				} else {
 					// (shouldn't happen) Use generic
 					iconSprite = null;
@@ -122,9 +123,15 @@ public class MetagameRewardView : MonoBehaviour {
 
 				// Use plural tid instead if needed
 				if(m_reward.amount > 1) {
-					tid = tid + "_PLURAL";
+					tidName = tidName + "_PLURAL";
 				}
-				rewardText = LocalizationManager.SharedInstance.Localize(tid);
+
+				// Join with the amount given
+				rewardText = LocalizationManager.SharedInstance.Localize(
+					"TID_REWARD_AMOUNT",
+					StringUtils.FormatNumber(m_reward.amount),
+					LocalizationManager.SharedInstance.Localize(tidName)
+				);
 
 				// [AOC] Don't show name for some specific cases
 				if(!m_showNameForEggsAndPets) rewardText = string.Empty;
