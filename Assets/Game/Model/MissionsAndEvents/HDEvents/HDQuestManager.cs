@@ -206,7 +206,7 @@ public class HDQuestManager : HDLiveEventManager{
             }	
 		}
 
-		Messenger.Broadcast<bool>(MessengerEvents.QUEST_SCORE_SENT, outErr != HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR);
+		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, outErr);
 		Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 
     }

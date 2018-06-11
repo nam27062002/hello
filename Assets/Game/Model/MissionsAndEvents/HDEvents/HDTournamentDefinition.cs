@@ -150,9 +150,13 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		}
 	}
 
+	public class TournamentReward : HDLiveEventReward {
+		public RangeInt ranks = new RangeInt(0, 100);
+	}
+
 	public TournamentGoal m_goal = new TournamentGoal();
 
-	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();
+	public List<TournamentReward> m_rewards = new List<TournamentReward>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -219,7 +223,27 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				m_rewards.Add( new HDLiveEventReward( arr[i], m_name) );
+				TournamentReward r = new TournamentReward();
+				r.ParseJson(arr[i], m_name);
+
+				// Compute ranks. Min can only be computed based on previous reward.
+				// Since we can't assume rewards are received sorted, we'll do it afterwards in a separate loop.
+				r.ranks.min = 0;
+				r.ranks.max = Mathf.Max(0, Mathf.FloorToInt(r.targetPercentage * (float)m_leaderboardSegmentation) - 1);	// 0-99
+
+				m_rewards.Add(r);
+			}
+
+			// Sort by target percentage
+			m_rewards.Sort(
+				(TournamentReward _reward1, TournamentReward _reward2) => {
+					return _reward1.targetPercentage.CompareTo(_reward2.targetPercentage);
+				}
+			);
+
+			// Compute min rank based on previous reward
+			for(int i = 1; i < m_rewards.Count; ++i) {	// Skip first reward (min is always 0)
+				m_rewards[i].ranks.min = Mathf.Min(m_rewards[i - 1].ranks.max + 1, m_rewards[i].ranks.max);	// Starts where previous rank ends, but never bigger than our rank end
 			}
 		}
 	}

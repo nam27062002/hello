@@ -164,7 +164,8 @@ public class MenuSceneController : SceneController {
 
 	protected override void OnDestroy() {
 		// Restore stats on the control panel
-		ControlPanel.instance.IsStatsEnabled = m_wereStatsEnabled;
+		if ( ControlPanel.instance != null )
+			ControlPanel.instance.IsStatsEnabled = m_wereStatsEnabled;
 
 		Application.lowMemory -= OnLowMemory;
 		base.OnDestroy();

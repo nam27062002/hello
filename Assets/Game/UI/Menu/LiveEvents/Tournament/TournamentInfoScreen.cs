@@ -28,6 +28,10 @@ public class TournamentInfoScreen : MonoBehaviour {
 	[SeparatorAttribute("Leaderboard")]
 	[SerializeField] private TournamentLeaderboardView m_leaderboard;
 
+	[SeparatorAttribute("Rewards")]
+	[SerializeField] private GameObject m_rewardsRoot = null;
+	[SerializeField] private Transform m_rewardsContainer = null;
+	[SerializeField] private GameObject m_rewardPrefab = null;
 
 	//----------------------------------------------------------------//
 	private HDTournamentManager m_tournament;
@@ -70,16 +74,29 @@ public class TournamentInfoScreen : MonoBehaviour {
 			//MAP
 			m_areaText.text = m_definition.m_goal.m_area;
 
-
-			m_leaderboard.Refresh();
-			/*
 			//LEADERBOARD
 			if (m_tournament.data.m_state <= HDLiveEventData.State.NOT_JOINED) {
 				m_leaderboard.gameObject.SetActive(false);
 			} else {
 				m_leaderboard.gameObject.SetActive(true);
-			}*/
+			}
 
+			//REWARDS
+			if(m_tournament.data.m_state == HDLiveEventData.State.NOT_JOINED) {
+				m_rewardsRoot.SetActive(true);
+
+				// Clear any existing reward view
+				m_rewardsContainer.DestroyAllChildren(false);
+
+				// Instantiate and initialize rewards views
+				for(int i = 0; i < m_definition.m_rewards.Count; ++i) {
+					GameObject newInstance = Instantiate<GameObject>(m_rewardPrefab, m_rewardsContainer, false);
+					TournamentRewardView view = newInstance.GetComponent<TournamentRewardView>();
+					view.InitFromReward(m_definition.m_rewards[i]);
+				}
+			} else {
+				m_rewardsRoot.SetActive(false);
+			}
 
 			//TIMER
 			UpdatePeriodic();
