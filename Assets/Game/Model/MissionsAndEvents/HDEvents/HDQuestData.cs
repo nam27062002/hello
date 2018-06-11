@@ -73,7 +73,7 @@ public class HDQuestData : HDLiveEventData {
 
 		if ( _data.ContainsKey("globalScore") )
 		{
-			m_globalScore = _data["globalScore"];
+			m_globalScore = _data["globalScore"].AsLong;
 		}
 	}
 

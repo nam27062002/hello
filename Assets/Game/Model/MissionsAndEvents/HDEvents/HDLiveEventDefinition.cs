@@ -118,17 +118,24 @@ public class HDLiveEventDefinition {
 		//------------------------------------------------------------------------//
 		// MEMBERS																  //
 		//------------------------------------------------------------------------//
-		public Metagame.Reward reward;
+		public Metagame.Reward reward = null;
 		public float targetPercentage = 0f;
 
 		//------------------------------------------------------------------------//
 		// METHODS																  //
 		//------------------------------------------------------------------------//
 		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public HDLiveEventReward() {
+
+		}
+
+		/// <summary>
 		/// Constructor from json data.
 		/// </summary>
 		/// <param name="_data">Data to be parsed.</param>
-		public HDLiveEventReward(SimpleJSON.JSONNode _data, string _source) {
+		public virtual void ParseJson(SimpleJSON.JSONNode _data, string _source) {
 			// Reward data
 			reward = Metagame.Reward.CreateFromJson(_data, HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, _source);
 

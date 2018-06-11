@@ -29,11 +29,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	// Exposed References
 	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
 	[SerializeField] private Image m_objectiveIcon = null;
-	[SerializeField] private Image m_bonusDragonIcon = null;
-	[Space]
-	[SerializeField] private GlobalEventsRewardInfo m_topRewardInfo = null;
-	[SerializeField] private Localizer m_topRewardPercentileText = null;
-	[SerializeField] private Localizer m_playerPercentileText = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
@@ -49,8 +44,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Program periodic update call
 		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
 
+		Refresh();
+
 		// Subscribe to external events
-		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -61,7 +58,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		CancelInvoke();
 
 		// Unsubscribe from external events
-		Messenger.RemoveListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
+		Messenger.RemoveListener(MessengerEvents.QUEST_SCORE_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -103,59 +100,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Target icon
 		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
 
-		// Bonus dragon icon
-		// m_bonusDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + def.m_goal.m_bonusDragon + "/icon_disguise_0");	// Default skin
-
-		/*
-		// Top reward info
-		m_topRewardInfo.InitFromReward(evt.topContributorsRewardSlot);
-
-		// Top reward info text
-		float topPercentile = evt.topContributorsRewardSlot.targetPercentage * 100f;
-		m_topRewardPercentileText.Localize(
-			m_topRewardPercentileText.tid, 
-			StringUtils.FormatNumber(topPercentile, 2)
-		);
-
-
-		// Player percentile text
-		if(m_playerPercentileText != null) {
-			// Don't show if player is not yet classified
-			GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(evt.id);
-			if(playerData.position < 0) {
-				m_playerPercentileText.gameObject.SetActive(false);
-			} else {
-				m_playerPercentileText.gameObject.SetActive(false);
-
-				// Compute using player current position and total amount of players
-				float playerPercentile = (float)playerData.position / (float)evt.totalPlayers * 100f;
-				
-				// Snap to a nice value
-				float snapValue = 100f;
-				float snappedValue = snapValue;
-				while(playerPercentile < snapValue && snapValue > topPercentile) {	// At least the top percentile!
-					// Store last valid value
-					snappedValue = snapValue;
-					
-					// More precision for the smallest percentiles
-					if(snapValue <= 5f) {
-						snapValue -= 1f;
-					} else if(snapValue <= 20f) {
-						snapValue -= 5f;
-					} else {
-						snapValue -= 10f;
-					}
-				}
-				
-				// Localize
-				m_playerPercentileText.Localize(
-					m_playerPercentileText.tid, 
-					StringUtils.FormatNumber(snapValue, 2)
-				);
-			}
-		}
-		*/
-
 		// Progress
 		if (m_progressBar != null) {
 			m_progressBar.RefreshRewards( def, questManager.m_questData.m_globalScore );
@@ -177,40 +121,12 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// We have new data concerning the event.
 	/// </summary>
 	/// <param name="_requestType">Request type.</param>
-	private void OnEventDataUpdated(GlobalEventManager.RequestType _requestType) {
+	private void OnEventDataUpdated() {
 		// Nothing to do if disabled
 		if(!isActiveAndEnabled) return;
 
-		// Different stuff depending on request type
-		switch(_requestType) {
-			case GlobalEventManager.RequestType.EVENT_STATE: {
-				// Chain with leaderboard request
-				//GlobalEventManager.RequestCurrentEventLeaderboard(false);
-				// BusyScreen.Show(this);
-			} break;
+		Refresh();
 
-			case GlobalEventManager.RequestType.EVENT_LEADERBOARD: {
-				// Toggle busy screen off
-				// BusyScreen.Hide(this);
-			} break;
-		}
 	}
 
-	/// <summary>
-	/// The bonus dragon info button has been pressed.
-	/// </summary>
-	/*
-	public void OnBonusDragonInfoButton() {
-		// Get bonus dragon definition
-
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, HDLiveEventsManager.instance.m_quest.m_questDefinition.m_goal.m_bonusDragon);
-		if(def == null) return;	// Shouldn't happen
-
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoDragonBonus.PATH);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
-
-		PopupManager.OpenPopupInstant(PopupInfoDragonBonus.PATH);
-	}
-	*/
 }

@@ -52,7 +52,6 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 	private Step m_step = Step.INIT;
 	private State m_state = State.IDLE;
-	private int m_rewardsToGive = 0;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -137,9 +136,6 @@ public class TournamentRewardScreen : MonoBehaviour {
 			for(int i = 0; i < rewards.Count; ++i) {
 				UsersManager.currentUser.PushReward(rewards[i].reward);
 			}
-
-			// Init internal vars
-			m_rewardsToGive = rewards.Count;
 
 			// Mark tournament as collected
 			m_tournamentManager.FinishEvent();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
@@ -242,7 +238,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 			case Step.REWARD: {
 				// There are still rewards to collect?
-				if(m_rewardsToGive > 0) {
+				if(UsersManager.currentUser.rewardStack.Count > 0) {
 					nextStep = Step.REWARD;
 				} else {
 					nextStep = Step.FINISH;
@@ -289,9 +285,6 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 				// Tell the scene to open the next reward (should be already stacked)
 				m_sceneController.OpenReward();
-
-				// Update rewards counter
-				m_rewardsToGive--;
 			} break;
 
 			case Step.FINISH: {
