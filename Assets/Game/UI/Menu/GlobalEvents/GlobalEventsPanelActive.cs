@@ -44,6 +44,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Program periodic update call
 		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
 
+		Refresh();
+
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED, OnEventDataUpdated);
 	}

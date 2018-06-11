@@ -205,7 +205,7 @@ public class HDQuestManager : HDLiveEventManager{
 				HDTrackingManager.Instance.Notify_GlobalEventRunDone(data.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
             }	
 		}
-		outErr = HDLiveEventsManager.ComunicationErrorCodes.ELO_NOT_FOUND;
+
 		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, outErr);
 		Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 
