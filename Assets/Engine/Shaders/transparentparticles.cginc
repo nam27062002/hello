@@ -69,6 +69,9 @@ float2 _Panning;
 float _ABOffset;
 #endif	//BLENDMODE_ADDITIVEALPHABLEND
 
+float _GlobalAlpha;
+
+
 
 v2f vert(appdata_t v)
 {
@@ -161,6 +164,8 @@ fixed4 frag(v2f i) : COLOR
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
+	col.a *= _GlobalAlpha;
+
 #else	//BLENDMODE_ALPHABLEND
 
 #if defined(COLOR_RAMP)
@@ -170,6 +175,8 @@ fixed4 frag(v2f i) : COLOR
 #else
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif	//COLOR_RAMP
+
+	col *= _GlobalAlpha;
 
 #endif	//BLENDMODE_ALPHABLEND
 
@@ -205,6 +212,7 @@ fixed4 frag(v2f i) : COLOR
 
 #endif	//BLENDMODE_ADDITIVEALPHABLEND
 
+	col *= _GlobalAlpha;
 #endif	//EXTENDED_PARTICLES
 
 	return col;

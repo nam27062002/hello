@@ -114,6 +114,9 @@ public class HUDMessage : MonoBehaviour {
 	[SerializeField] private HideMode m_hideMode = HideMode.TIMER;
 	[SerializeField] private float m_idleDuration = 1f;	// Only applies for TIMER hide mode
 
+	[SerializeField] private bool m_onlyFirstTime = false;	// Check if only one time!
+	private bool m_firstTime = true;
+
 	// Custom exposed setup for specific types - editor will decide when to show them
 	[Separator]
 	[SerializeField] private BoostMessageSetup m_boostMessageSetup = new BoostMessageSetup();
@@ -223,7 +226,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
-			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 
@@ -263,7 +266,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
-			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 		}
@@ -591,13 +594,31 @@ public class HUDMessage : MonoBehaviour {
 	}
 
 
-	private void OnMissionZone(bool toggle, ZoneTrigger zone){
+	private void OnMissionZone(bool toggle, ZoneTrigger zone, bool _fistTime){
 		if ( toggle ){
-			// Get text to show
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-	        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
-	        text.text = localized;
-	        Show();
+			if ( m_onlyFirstTime )
+			{
+				if ( _fistTime )
+				{
+					// Get text to show
+					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+					string localized = LocalizationManager.SharedInstance.Localize("TID_LEVEL_AREA_WELCOME", zone.m_zoneTid);
+			        text.text = localized;
+			        Show();		
+				}
+			}
+			else
+			{
+				if(!_fistTime)
+				{
+					// Get text to show
+					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+			        text.text = localized;
+			        Show();		
+				}
+			}
+			m_firstTime = false;
 		}
 	}
 
