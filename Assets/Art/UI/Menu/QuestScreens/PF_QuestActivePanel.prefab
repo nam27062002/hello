@@ -357,6 +357,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224044638452900850}
+  - component: {fileID: 114083724070390800}
   m_Layer: 5
   m_Name: ProgressBar
   m_TagString: Untagged
@@ -983,7 +984,6 @@ GameObject:
   - component: {fileID: 224177386192318766}
   - component: {fileID: 222323783652852836}
   - component: {fileID: 114272787683139544}
-  - component: {fileID: 114937582209089312}
   - component: {fileID: 114568026787077272}
   m_Layer: 5
   m_Name: FillArea
@@ -1443,9 +1443,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114627338937833902}
   m_rewardText: {fileID: 114995379508080492}
-  m_targetText: {fileID: 114208064813473260}
   m_showNameForEggsAndPets: 1
   m_nameContainer: {fileID: 0}
+  m_targetText: {fileID: 114208064813473260}
 --- !u!114 &114076507603287200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1473,6 +1473,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114083724070390800
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1340081048799072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3346efa07eb2d4e5f8f8257eff420f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_currentValueText_DEBUG: {fileID: 0}
+  m_progressBar: {fileID: 114568026787077272}
+  m_rewardInfos:
+  - {fileID: 114809855130159948}
+  - {fileID: 114175705028116038}
+  - {fileID: 114096755614768206}
+  - {fileID: 114074663399829414}
 --- !u!114 &114096755614768206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1486,9 +1504,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114328050939418454}
   m_rewardText: {fileID: 114763721108520446}
-  m_targetText: {fileID: 114579685552778042}
   m_showNameForEggsAndPets: 1
   m_nameContainer: {fileID: 0}
+  m_targetText: {fileID: 114579685552778042}
 --- !u!114 &114107150151066010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1502,7 +1520,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.51020414, b: 0, a: 0.416}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1913,9 +1931,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114496640011774602}
   m_rewardText: {fileID: 114114327760498862}
-  m_targetText: {fileID: 114197820497132306}
   m_showNameForEggsAndPets: 1
   m_nameContainer: {fileID: 0}
+  m_targetText: {fileID: 114197820497132306}
 --- !u!114 &114178400423388384
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1956,7 +1974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.51020414, b: 0, a: 0.416}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2304,7 +2322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.5294118, g: 0.40237188, b: 0.26081315, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2411,7 +2429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2438,12 +2456,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_objectiveText: {fileID: 114842071614256412}
   m_objectiveIcon: {fileID: 114577455547420676}
-  m_bonusDragonIcon: {fileID: 0}
-  m_topRewardInfo: {fileID: 0}
-  m_topRewardPercentileText: {fileID: 0}
-  m_playerPercentileText: {fileID: 0}
   m_timerText: {fileID: 114168768438291296}
-  m_progressBar: {fileID: 0}
+  m_progressBar: {fileID: 114083724070390800}
 --- !u!114 &114410065396050200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2829,7 +2843,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.519
+  m_Value: 0.477
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3486,7 +3500,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.51020414, b: 0, a: 0.416}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3526,7 +3540,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.51020414, b: 0, a: 0.416}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3553,9 +3567,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114732256184951464}
   m_rewardText: {fileID: 114146986155539776}
-  m_targetText: {fileID: 114423828483254392}
   m_showNameForEggsAndPets: 1
   m_nameContainer: {fileID: 1658039171931750}
+  m_targetText: {fileID: 114423828483254392}
 --- !u!114 &114816512927031526
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4113,24 +4127,6 @@ MonoBehaviour:
   m_canvasRenderer: {fileID: 222548067797959880}
   m_TextComponent: {fileID: 114168768438291296}
   m_materialReferenceIndex: 1
---- !u!114 &114937582209089312
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1832599505812856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3346efa07eb2d4e5f8f8257eff420f6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_currentValueText_DEBUG: {fileID: 0}
-  m_progressBar: {fileID: 114568026787077272}
-  m_rewardInfos:
-  - {fileID: 114809855130159948}
-  - {fileID: 114175705028116038}
-  - {fileID: 114096755614768206}
-  - {fileID: 114074663399829414}
 --- !u!114 &114941275536020952
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10655,7 +10651,7 @@ RectTransform:
   m_GameObject: {fileID: 1138514031571654}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984, y: 0.9984, z: 0.9984}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224315529291412514}
   - {fileID: 224587476284860290}
@@ -10905,7 +10901,7 @@ RectTransform:
   m_GameObject: {fileID: 1878860818929328}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984, y: 0.9984, z: 0.9984}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224240724918308264}
   - {fileID: 224629784489986656}
@@ -10961,7 +10957,7 @@ RectTransform:
   m_GameObject: {fileID: 1283529196020518}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0016028, y: 1.0016028, z: 1.0016028}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224006436991863726}
   m_Father: {fileID: 224640303102561814}
@@ -10998,7 +10994,7 @@ RectTransform:
   m_GameObject: {fileID: 1658039171931750}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984002, y: 0.9984002, z: 0.9984002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224738900902007548}
   m_Father: {fileID: 224640303102561814}
@@ -11072,7 +11068,7 @@ RectTransform:
   m_GameObject: {fileID: 1917083630494126}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984, y: 0.9984, z: 0.9984}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224241353923600760}
   - {fileID: 224108275444424914}
@@ -11128,7 +11124,7 @@ RectTransform:
   m_GameObject: {fileID: 1351591529422698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984002, y: 0.9984002, z: 0.9984002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224927992082729420}
   m_Father: {fileID: 224618701947980360}
@@ -11292,7 +11288,7 @@ RectTransform:
   m_GameObject: {fileID: 1719907169224416}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984, y: 0.9984, z: 0.9984}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224701499170185248}
   - {fileID: 224467577011073524}
@@ -11312,7 +11308,7 @@ RectTransform:
   m_GameObject: {fileID: 1134555052305892}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984002, y: 0.9984002, z: 0.9984002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224996509468839420}
   m_Father: {fileID: 224583359078582816}
@@ -11601,7 +11597,7 @@ RectTransform:
   m_GameObject: {fileID: 1860482163607976}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0016028, y: 1.0016028, z: 1.0016028}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224618701947980360}
   m_RootOrder: 0
@@ -11619,7 +11615,7 @@ RectTransform:
   m_GameObject: {fileID: 1699973048443772}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0016028, y: 1.0016028, z: 1.0016028}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224329926921139698}
   m_Father: {fileID: 224583359078582816}
@@ -11813,7 +11809,7 @@ RectTransform:
   m_GameObject: {fileID: 1215009885988652}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9984002, y: 0.9984002, z: 0.9984002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224790270485157546}
   m_Father: {fileID: 224159238591534982}
