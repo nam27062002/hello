@@ -399,7 +399,7 @@ GameObject:
   - component: {fileID: 224728641805114326}
   - component: {fileID: 222207051429613816}
   - component: {fileID: 114214579589101658}
-  - component: {fileID: 114426205446029504}
+  - component: {fileID: 114830238847355862}
   m_Layer: 5
   m_Name: RopeLeft
   m_TagString: Untagged
@@ -1977,7 +1977,7 @@ GameObject:
   - component: {fileID: 224895225699865124}
   - component: {fileID: 222559429655454900}
   - component: {fileID: 114726710474508348}
-  - component: {fileID: 114211680501761972}
+  - component: {fileID: 114151314798940034}
   m_Layer: 5
   m_Name: RopeRight
   m_TagString: Untagged
@@ -5397,6 +5397,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
+--- !u!114 &114151314798940034
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1710634096124624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5788eaa6d5dc042a1beeb27bba305a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 0}
+    topRight: {r: 1, g: 1, b: 1, a: 0}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114152030090528916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5954,20 +5970,6 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
---- !u!114 &114211680501761972
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1710634096124624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_color1: {r: 1, g: 1, b: 1, a: 0}
-  m_color2: {r: 1, g: 1, b: 1, a: 1}
-  m_direction: 1
 --- !u!114 &114214579589101658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7379,20 +7381,6 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
---- !u!114 &114426205446029504
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1133870715171142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_color1: {r: 1, g: 1, b: 1, a: 0}
-  m_color2: {r: 1, g: 1, b: 1, a: 1}
-  m_direction: 1
 --- !u!114 &114437580195716156
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10381,6 +10369,22 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114830238847355862
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1133870715171142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5788eaa6d5dc042a1beeb27bba305a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 0}
+    topRight: {r: 1, g: 1, b: 1, a: 0}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114834390398885322
 MonoBehaviour:
   m_ObjectHideFlags: 1
