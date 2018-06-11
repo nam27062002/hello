@@ -29,14 +29,16 @@ public class ZoneTrigger : MonoBehaviour
         {
         	if ( m_inside == 0 )
         	{
+        		bool firstTime = false;
         		if ( s_enters.ContainsKey(m_zoneId) ){
 					s_enters[ m_zoneId ] = s_enters[ m_zoneId ] + 1;
         		}else{
 					s_enters.Add( m_zoneId, 1 );
+					firstTime = true;
         		}
 				// if first then trigger zone
         		if ( s_enters[ m_zoneId ] == 1 )
-					Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, true, this);
+					Messenger.Broadcast<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, true, this, firstTime);
 			}
 			m_inside++;
         }
@@ -52,7 +54,7 @@ public class ZoneTrigger : MonoBehaviour
 				s_enters[m_zoneId] = s_enters[m_zoneId] - 1;
 				// If no one left we are leaving a zone
 				if ( s_enters[ m_zoneId ] == 0 )
-					Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, false, this);
+					Messenger.Broadcast<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, false, this, false);
 			}
         }
     }
