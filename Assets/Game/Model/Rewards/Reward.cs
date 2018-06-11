@@ -141,7 +141,11 @@ namespace Metagame {
 							newData.amount = 1;
 							multiRewardData.Add(newData);
 						}
-						return CreateTypeMulti(multiRewardData, _source, _economyGroup);
+						RewardMulti newReward = CreateTypeMulti(multiRewardData, _source, _economyGroup);
+
+						// Override type since we know that it's a multiple reward composed exclusively by eggs
+						newReward.type = _data.typeCode;
+						return newReward;
 					} else {
 						return CreateTypeEgg(_data.sku, _source);
 					}
@@ -191,7 +195,10 @@ namespace Metagame {
 		}
 
 		protected string m_type = "";
-		public string type { get { return m_type; } }
+		public string type { 
+			get { return m_type; } 
+			set { m_type = value; }	// [AOC] Use carefully!
+		}
 
 		// Optional:
 		// To be used by each reward type if needed
