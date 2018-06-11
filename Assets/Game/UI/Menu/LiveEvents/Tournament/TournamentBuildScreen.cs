@@ -8,6 +8,12 @@ public class TournamentBuildScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 
+	private enum Mode {
+		Build = 0,
+		EditDragon,
+		EditPets
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -19,6 +25,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	[SeparatorAttribute("Pets")]
 	[SerializeField] private PetSlot[] 			m_petSlots;
+	[SerializeField] private GameObject			m_petEditRoot;
+	[SerializeField] private Transform[]		m_petEditSlots;
 
 	[SeparatorAttribute("Tournament Info")]
 	[SerializeField] private Localizer 			m_titleText;
@@ -40,7 +48,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 	private HDTournamentData 		m_data;
 	private ResourcesFlow 			m_purchaseFlow;
 
+	private Transform[] 			m_petEquipSlots;
+
 	private bool m_hasFreeEntrance;
+
+	private Mode m_mode;
 
 
 	//------------------------------------------------------------------------//
@@ -62,6 +74,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 	/// 
 	/// </summary>
 	public void Refresh() {
+		m_mode = Mode.Build;
+
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
 		m_data = m_tournament.data as HDTournamentData;
 		m_definition = m_data.definition as HDTournamentDefinition;
@@ -85,19 +99,22 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		//-- Pets -----------------------------------------------------//
 		DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
+		m_petEquipSlots = new Transform[m_petSlots.Length];
 
 		List<string> pets = m_tournament.GetToUsePets();
 		for (int i = 0; i < m_petSlots.Length; ++i) {
 			if (i < pets.Count) {				
 				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
+				m_petEquipSlots[i] = ap.transform;
 
 				m_petSlots[i].Refresh(pets[i], true);
 				m_petSlots[i].gameObject.SetActive(true);
 
-				m_petSlots[i].petLoader.transform.position = ap.transform.position;
-				
+				m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;				
 			} else {
-				m_petSlots[i].Refresh("", true);
+				m_petEquipSlots[i] = null;
+				m_petSlots[i].gameObject.SetActive(false);
+				m_petSlots[i].powerIcon.gameObject.SetActive(false);
 			}
 		}
 
@@ -141,14 +158,25 @@ public class TournamentBuildScreen : MonoBehaviour {
 		m_hasFreeEntrance = m_tournament.CanIUseFree();
 
 		//TIMER
+		m_nextFreeSlider.minValue = 0f;
+		m_nextFreeSlider.maxValue = m_definition.m_entrance.m_dailyFree;
 		UpdatePeriodic();
+	}
+
+	void Update() {
+		if (!m_hasFreeEntrance) {
+			//smooth slider animation
+			m_nextFreeSlider.value += Time.deltaTime; 
+		}
 	}
 
 	// Update timers periodically
 	void UpdatePeriodic() {
 		if (!m_hasFreeEntrance) {	
 			double seconds = m_tournament.TimeToNextFree();
-			m_nextFreeTimer.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true);	// [AOC] HARDCODED!!
+			m_nextFreeSlider.value = m_definition.m_entrance.m_dailyFree - (float)seconds;
+
+			m_nextFreeTimer.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);	// [AOC] HARDCODED!!
 			if (seconds <= 0) {
 				m_hasFreeEntrance = true;
 				ShowEntranceButton(m_enterFreeBtn);
@@ -190,6 +218,30 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
+	}
+
+	public void OnEditPetsToogle() {
+		if (m_mode != Mode.EditPets) {
+			m_petEditRoot.SetActive(true);
+
+			for (int i = 0; i < m_petEquipSlots.Length; ++i) {
+				if (m_petEquipSlots[i] != null) {
+					m_petSlots[i].petLoader.transform.position = m_petEditSlots[i].position;
+				}
+			}
+
+			m_mode = Mode.EditPets;
+		} else {
+			m_petEditRoot.SetActive(false);
+
+			for (int i = 0; i < m_petEquipSlots.Length; ++i) {
+				if (m_petEquipSlots[i] != null) {
+					m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;
+				}
+			}
+
+			m_mode = Mode.Build;
+		}
 	}
 
 	public void OnStartPaying() {

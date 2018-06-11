@@ -37,6 +37,8 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 			// Initialize the reward info corresponding to this reward
 			m_rewardInfos[i].InitFromReward(_evt.m_rewards[i]);
 
+			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount );
+
 			// Put into position (except last reward, which has a fixed position)
 			if(i < _evt.m_rewards.Count - 1) {
 				// Set min and max anchor in Y to match the target percentage
