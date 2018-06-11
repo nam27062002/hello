@@ -28,6 +28,7 @@ public class GlobalEventsRewardInfo : MetagameRewardView {
 	//------------------------------------------------------------------------//
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_targetText = null;
+	[SerializeField] protected Image m_tick = null;
 
 	// Internal
 	private HDQuestDefinition.QuestReward m_questReward = null;
@@ -74,6 +75,12 @@ public class GlobalEventsRewardInfo : MetagameRewardView {
 
 		// Parent will do the rest
 		base.Refresh();
+	}
+
+	public void ShowAchieved(bool _achieved)
+	{
+		if (m_tick != null)
+			m_tick.gameObject.SetActive( _achieved );
 	}
 
 	//------------------------------------------------------------------------//
