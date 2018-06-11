@@ -12,11 +12,11 @@
       "icon":"icon_firerush",
 		"gameMode" : {
 	        "type" : "time_attack",
-	        "amount" : "1",
-			"seconds" : 10
+	        "amount" : "20",
+			"seconds" : 60
 	    },
       "type":"kill",
-      "params":["EnemyTier0","EnemyTier1","EnemyTier2","EnemyTier3","EnemyTier4"]
+      "params":["Canary01_Flock","Canary02_Flock","Canary03_Flock","Canary04_Flock"]
    },
    "build":{  
       "pets":[  
@@ -30,27 +30,29 @@
       "dailyFreeTimer":100,
       "type":"hc"
    },
+   "leaderboardSegmentation" : "100",
    "rewards":[  
       {  
-         "amount":500,
-         "targetPercentage":0.25,
-         "type":"sc"
+         "amount":1,
+         "targetPercentage":0.1,
+         "type":"pet",
+		 "sku":"pet_57"
       },
       {  
-         "amount":1000,
-         "targetPercentage":0.5,
-         "type":"sc"
+         "amount":3,
+         "targetPercentage":0.25,
+         "type":"egg",
+		 "sku":"egg_event"
       },
       {  
          "amount":10,
-         "targetPercentage":0.75,
+         "targetPercentage":0.5,
          "type":"hc"
       },
       {  
-         "amount":1,
+         "amount":50000,
          "targetPercentage":1,
-         "type":"egg",
-		"sku":"egg_premium"
+         "type":"sc"
       }
    ]
 }
