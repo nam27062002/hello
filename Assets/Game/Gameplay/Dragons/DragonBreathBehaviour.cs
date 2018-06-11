@@ -383,6 +383,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 
+	public void AddFuryPercentage(float _value) {
+		AddFury(m_furyMax * _value);
+	}
 
 	public float GetFuryProgression()
 	{

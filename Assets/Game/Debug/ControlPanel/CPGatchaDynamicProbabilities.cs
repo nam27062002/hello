@@ -50,9 +50,9 @@ public class CPGatchaDynamicProbabilities : MonoBehaviour {
 	private void UpdateProbs() {
 		EggManager.BuildDynamicProbabilities();
 
-		float probCommon = EggManager.getProbabilityCommon();
-		float probRare = EggManager.getProbabilityRare();
-		float probEpic = EggManager.getProbabilityEpic();
+		float probCommon = EggManager.GetDynamicProbability(Metagame.Reward.Rarity.COMMON);
+		float probRare = EggManager.GetDynamicProbability(Metagame.Reward.Rarity.RARE);
+		float probEpic = EggManager.GetDynamicProbability(Metagame.Reward.Rarity.EPIC);
 
 		m_circleCommon.fillAmount 	= probCommon;
 		m_circleRare.fillAmount 	= probCommon + probRare;

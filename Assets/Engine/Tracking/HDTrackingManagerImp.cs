@@ -2,6 +2,11 @@
 /// This class is responsible to handle any Hungry Dragon related stuff needed for tracking. It uses Calety Tracking support to send tracking events
 /// </summary>
 
+#if UNITY_EDITOR
+    //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
+    #define EDITOR_MODE
+#endif
+
 using UnityEngine;
 using System;
 using System.Collections;
@@ -95,7 +100,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override string GetDNAProfileID()
     {
-#if !UNITY_EDITOR
+#if !EDITOR_MODE
         return DNAManager.SharedInstance.GetProfileID();
 #else
         return null;
@@ -122,7 +127,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private void SetRetrySessionCreationIsEnabled(bool value)
 	{		
 		// UbiservicesManager is not called from the editor because it doesn’t work on Mac
-#if !UNITY_EDITOR
+#if !EDITOR_MODE
 		UbiservicesManager.SharedInstance.SetStartSessionRetryBehaviour(value);
 #endif
 	}
@@ -131,7 +136,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         get
         {            
-#if UNITY_EDITOR
+#if EDITOR_MODE
             // Disabled in Editor because it causes a crash on Mac
             return false;
 #else
@@ -273,7 +278,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private void InitDNA(CaletySettings settingsInstance)
 	{
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
-#if !UNITY_EDITOR
+#if !EDITOR_MODE
         string clientVersion = GameSettings.internalVersion.ToString();
 
 		if (settingsInstance != null)
@@ -288,7 +293,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 		List<string> kEventNameFilters = new List<string> ();
 		kEventNameFilters.Add ("custom");
 
-		List<string> kDNACachedEventIDs = TrackingManager.SharedInstance.GetEventIDsByAPI (TrackingManager.ETrackAPIs.E_TRACK_API_DNA, kEventNameFilters);
+		List<string> kDNACachedEventIDs = TrackingManager.SharedInstance.GetEventIDsByAPI (ETrackAPIs.E_TRACK_API_DNA, kEventNameFilters);
 
 #if UNITY_ANDROID
 		DNAManager.SharedInstance.Initialise("12e4048c-5698-4e1e-a1d1-c8c2411b2515", clientVersion, strDNAGameVersion, kDNACachedEventIDs);
@@ -324,8 +329,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             int sessionNumber = TrackingPersistenceSystem.SessionCount;
             string trackingID = TrackingPersistenceSystem.UserID;
             string userID = PersistencePrefs.ServerUserId;
-            //TrackingManager.ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_ONLINE : TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
-			TrackingManager.ETrackPlatform trackPlatform = TrackingManager.ETrackPlatform.E_TRACK_PLATFORM_ONLINE;
+            //ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? ETrackPlatform.E_TRACK_PLATFORM_ONLINE : ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
+			ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_ONLINE;
             //ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
 
             if (FeatureSettingsManager.IsDebugEnabled)
@@ -333,7 +338,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Log("SessionNumber = " + sessionNumber + " trackingID = " + trackingID + " userId = " + userID + " trackPlatform = " + trackPlatform);
             }
 
-			TrackingManager.TrackingConfig kTrackingConfig = new TrackingManager.TrackingConfig();
+			TrackingConfig kTrackingConfig = new TrackingConfig();
             kTrackingConfig.m_eTrackPlatform = trackPlatform;
             kTrackingConfig.m_strJSONConfigFilePath = "Tracking/TrackingEvents";
             kTrackingConfig.m_strStartSessionEventName = "custom.etl.session.start";
@@ -345,7 +350,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             kTrackingConfig.m_iSessionNumber = sessionNumber;
             kTrackingConfig.m_iMaxCachedLoggedDays = 3;
 
-            TrackingManager.SharedInstance.Initialise(ref kTrackingConfig);            
+            TrackingManager.SharedInstance.Initialise(kTrackingConfig);            
         }
     }        
 
@@ -374,7 +379,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Session_PlayTime += Time.deltaTime;
         }
 
-#if UNITY_EDITOR
+#if EDITOR_MODE
         Debug_Update();
 #endif
 
@@ -455,6 +460,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         
         Notify_SessionEnd(ESeassionEndReason.app_closed);
         Track_EtlEndEvent();
+
+        // Last chance to cache pending events to be sent are stored
+        // Not lazy approach is used to guarantee events are stored
+        DNAManager.SharedInstance.SaveOfflineUnsentEvents(false);
+
 
         IsStartSessionNotified = false;
         State = EState.WaitingForSessionStart;        
@@ -832,7 +842,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Log("Notify_Pet " + _sku + " from " + _source);
 		}
 
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.pet");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.pet");
 		if (e != null)
 		{
 			string trackingName = Translate_PetSkuToTrackingName( _sku );
@@ -858,7 +868,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	public override void Notify_LoadingGameplayEnd(  float loading_duration )
 	{
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadGameplay");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadGameplay");
 		if(e != null) {
 			e.SetParameterValue(TRACK_PARAM_LOADING_TIME, (int)(loading_duration * 1000.0f));
 			Track_SendEvent(e);
@@ -867,7 +877,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     public override void Notify_LoadingAreaStart( string original_area, string destination_area )
     {
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadArea");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadArea");
 		if(e != null) {
 			Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
 			Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
@@ -879,7 +889,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
 	public override void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration )
 	{
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadArea");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.loadArea");
 		if(e != null) {
 			Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
 			Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
@@ -899,7 +909,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Log("Info Popup - popup: " + _popupName + ", action: " + _action);
 		}
 
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.infopopup");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.infopopup");
 		if(e != null) {
 			Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName);
 			Track_AddParamString(e, TRACK_PARAM_ACTION, _action);
@@ -914,7 +924,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Log("Notify_Missions " + _action.ToString());
 		}        
 
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.missions");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.missions");
 		if (e != null)
 		{
 			Track_AddParamString(e, TRACK_PARAM_MISSION_TYPE, _mission.def.Get("type"));
@@ -949,7 +959,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Log("Notify_GlobalEventRunDone");
 		}   
 	
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.rundone");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.rundone");
 		if (e != null)
 		{
 			Track_AddParamString(e, TRACK_PARAM_GLOBAL_EVENT_ID, _eventId.ToString());
@@ -974,7 +984,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Log("Notify_GlobalEventReward eventId: " + _eventId + " eventType: " + _eventType + " rewardTier: " + _rewardTier + " score: " + _score );
 		}   
 	
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.reward");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.global.event.reward");
 		if (e != null)
 		{
 			Track_AddParamString(e, TRACK_PARAM_GLOBAL_EVENT_ID, _eventId.ToString());
@@ -1000,7 +1010,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Log("Notify_Hacker");
 		}
 	
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.hacker");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.hacker");
 		if (e != null)
 		{
 			Track_SendEvent(e);
@@ -1070,7 +1080,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         Track_EtlStartEvent();
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
         if (e != null)
         {
             Track_AddParamSubVersion(e);
@@ -1106,7 +1116,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_ApplicationEndEvent " + stopCause);
         }        
         
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.mobile.stop");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.mobile.stop");
         if (e != null)
         {
             Track_AddParamBool(e, TRACK_PARAM_IS_PAYING_SESSION, Session_IsPayingSession);
@@ -1125,7 +1135,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_MobileStartEvent");
         }
         
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.mobile.start");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.mobile.start");
         if (e != null)
         {
             Track_AddParamAbTesting(e);
@@ -1141,7 +1151,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_EtlStartEvent");
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.etl.session.start");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.etl.session.start");
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1155,7 +1165,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_EtlEndEvent");
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.etl.session.end");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.etl.session.end");
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1172,7 +1182,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }        
                 
         // iap event
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap");
         if (e != null)
         {            
             Track_AddParamString(e, TRACK_PARAM_STORE_TRANSACTION_ID, storeTransactionID);
@@ -1230,7 +1240,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
         
         // HQ event
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap.secondaryStore");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.iap.secondaryStore");
         if (e != null)
         {
             Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);
@@ -1272,7 +1282,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
         
         // Game event
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.eco.source");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.eco.source");
         if (e != null)
         {
             Track_AddParamSessionsCount(e);
@@ -1295,7 +1305,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_CustomerSupportRequested");
         }
         
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.cs");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.cs");
         if (e != null)
         {                                    
             Track_AddParamTotalPurchases(e);
@@ -1315,7 +1325,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_AdStarted adType = " + adType + " rewardType = " + rewardType + " adIsAvailable = " + adIsAvailable + " provider = " + provider);
         }
         
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.start");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.start");
         if (e != null)
         {
             if (TrackingPersistenceSystem != null)
@@ -1342,7 +1352,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 " adViewingDuration = " + adViewingDuration + " provider = " + provider);
         }		
         
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.ad.finished");
         if (e != null)
         {            
             Track_AddParamBool(e, TRACK_PARAM_IS_LOADED, adIsLoaded);
@@ -1386,7 +1396,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log(str);
         }
         
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.start");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.start");
         if (e != null)
         {            
             Track_AddParamSessionsCount(e);
@@ -1418,7 +1428,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 );
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.end");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.end");
         if (e != null)
         {
             Track_AddParamSessionsCount(e);
@@ -1461,7 +1471,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates);
         }
         
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.dead");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.dead");
         if (e != null)
         {
             Track_AddParamSessionsCount(e);
@@ -1485,7 +1495,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);
 		}
 
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(_event);
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(_event);
 		if (e != null)
 		{
 			e.SetParameterValue(TRACK_PARAM_STEP_NAME, _step);
@@ -1504,7 +1514,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_SocialAuthentication provider = " + provider + " yearOfBirth = " + yearOfBirth + " gender = " + gender);
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.authentication");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.authentication");
         if (e != null)
         {
             e.SetParameterValue(TRACK_PARAM_PROVIDER, provider);
@@ -1522,7 +1532,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_LegalPopupClosed nbViews = " + nbViews + " duration = " + duration + " hasBeenAccepted = " + hasBeenAccepted);
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.legalpopup");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.legalpopup");
         if (e != null)
         {
             e.SetParameterValue(TRACK_PARAM_NB_VIEWS, nbViews);
@@ -1542,7 +1552,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // af_tutorial_completion
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_tutorial_completion");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_tutorial_completion");
         if (e != null)
         {            
             Track_SendEvent(e);
@@ -1564,7 +1574,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // af_first_10_runs_completed
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_10_runs_completed");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_10_runs_completed");
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1586,7 +1596,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // af_first_purchase
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_purchase");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_purchase");
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1608,7 +1618,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // af_first_ad_shown
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_ad_shown");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_first_ad_shown");
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1630,7 +1640,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // af_1_egg_bought
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_1_egg_bought");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_1_egg_bought");
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1652,7 +1662,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // af_5_egg_bought
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_5_egg_bought");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af_5_egg_bought");
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1676,7 +1686,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         string eventName = "_" + order + "_dragon_unlocked";
 
         // af_X_dragon_unlocked
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af" + eventName);
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("af" + eventName);
         if (e != null)
         {
             Track_SendEvent(e);
@@ -1734,7 +1744,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 				Log("Track_EndPlayingMode playingMode = " + m_playingMode + " rank = " + rank + " isSuccess = " + isSuccess + " duration = " + duration);
 	        }
 
-			TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.mode");
+			TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.mode");
 	        if (e != null)
 	        {			
 				e.SetParameterValue( TRACK_PARAM_PLAYING_MODE, playingModeStr);
@@ -1760,7 +1770,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("custom.gameplay.fps: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.fps");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.gameplay.fps");
         if (e != null)
         {
             Track_AddParamSessionsCount(e);
@@ -1781,7 +1791,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Track_PopupSurveyShown action = " + action);
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.survey.popup");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.survey.popup");
         if (e != null)
         {
             Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, "HD_SURVEY_1");
@@ -1795,7 +1805,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Track_PopupUnsupportedDevice action = " + action);
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.leave.popup");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.leave.popup");
         if (e != null)
         {            
             Track_AddParamString(e, TRACK_PARAM_POPUP_ACTION, action.ToString());
@@ -1820,7 +1830,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_DeviceStats rating = " + rating + " processorFrequency = " + processorFrequency + " system memory = " + systemMemorySize + " gfx memory = " + gfxMemorySize + " quality profile = " + profileName + " quality formula version = " + formulaVersion);
         }
 
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.device.stats");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.device.stats");
         if (e != null)
         {
 //            Track_
@@ -1842,7 +1852,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_Crash isFatal = " + isFatal + " errorType = " + errorType + " errorMessage = " + errorMessage);
         }
 
-		TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.crash");
+		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.crash");
         if (e != null)
         {
             Track_AddParamPlayerProgress(e);
@@ -1861,7 +1871,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_OfferShown action = " + action + " itemID = " + itemID);
         }
 
-        TrackingManager.TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.specialoffer");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.specialoffer");
         if (e != null)
         {            
             Track_AddParamString(e, TRACK_PARAM_SPECIAL_OFFER_ACTION, action);
@@ -2002,21 +2012,21 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_XP                         = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";
 
-    private void Track_SendEvent(TrackingManager.TrackingEvent e)
+    private void Track_SendEvent(TrackingEvent e)
 	{
-		// Events are not sent in UNITY_EDITOR because DNA crashes on Mac
-#if !UNITY_EDITOR  //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
+		// Events are not sent in EDITOR_MODE because DNA crashes on Mac
+#if !EDITOR_MODE  
 		TrackingManager.SharedInstance.SendEvent(e);
 #endif
 	}
 
-    private void Track_AddParamSubVersion(TrackingManager.TrackingEvent e)
+    private void Track_AddParamSubVersion(TrackingEvent e)
     {
         // "SoftLaunch" is sent so far. It will be changed wto "HardLaunch" after WWL
         Track_AddParamString(e, TRACK_PARAM_SUBVERSION, "SoftLaunch");
     }
 
-    private void Track_AddParamProviderAuth(TrackingManager.TrackingEvent e)
+    private void Track_AddParamProviderAuth(TrackingEvent e)
     {
         string value = null;
         if (TrackingPersistenceSystem != null && !string.IsNullOrEmpty(TrackingPersistenceSystem.SocialPlatform))
@@ -2032,7 +2042,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_AddParamString(e, TRACK_PARAM_PROVIDER_AUTH, value);
     }
 
-    private void Track_AddParamPlayerID(TrackingManager.TrackingEvent e)
+    private void Track_AddParamPlayerID(TrackingEvent e)
     {
         string value = null;
         if (TrackingPersistenceSystem != null && !string.IsNullOrEmpty(TrackingPersistenceSystem.SocialID))
@@ -2048,18 +2058,18 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_AddParamString(e, TRACK_PARAM_PLAYER_ID, value);
     }
 
-    private void Track_AddParamServerAccID(TrackingManager.TrackingEvent e)
+    private void Track_AddParamServerAccID(TrackingEvent e)
     {
         int value = PersistencePrefs.ServerUserIdAsInt;        
         e.SetParameterValue(TRACK_PARAM_IN_GAME_ID, value);
     }    
 
-    private void Track_AddParamAbTesting(TrackingManager.TrackingEvent e)
+    private void Track_AddParamAbTesting(TrackingEvent e)
     {        
         e.SetParameterValue(TRACK_PARAM_AB_TESTING, "");
     }
 
-    private void Track_AddParamHighestDragonXp(TrackingManager.TrackingEvent e)
+    private void Track_AddParamHighestDragonXp(TrackingEvent e)
     {
         int value = 0;
         if (UsersManager.currentUser != null)
@@ -2074,31 +2084,31 @@ public class HDTrackingManagerImp : HDTrackingManager
         e.SetParameterValue(TRACK_PARAM_MAX_XP, value);
     }
 
-    private void Track_AddParamPlayerProgress(TrackingManager.TrackingEvent e)
+    private void Track_AddParamPlayerProgress(TrackingEvent e)
     {
         int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
         e.SetParameterValue(TRACK_PARAM_PLAYER_PROGRESS, value);
     }    
 
-    private void Track_AddParamSessionsCount(TrackingManager.TrackingEvent e)
+    private void Track_AddParamSessionsCount(TrackingEvent e)
     {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.SessionCount : 0;
         e.SetParameterValue(TRACK_PARAM_SESSIONS_COUNT, value);
     }
 
-    private void Track_AddParamGameRoundCount(TrackingManager.TrackingEvent e)
+    private void Track_AddParamGameRoundCount(TrackingEvent e)
     {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.GameRoundCount : 0;
         e.SetParameterValue(TRACK_PARAM_GAME_RUN_NB, value);
     }
 
-    private void Track_AddParamTotalPlaytime(TrackingManager.TrackingEvent e)
+    private void Track_AddParamTotalPlaytime(TrackingEvent e)
     {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.TotalPlaytime : 0;
         e.SetParameterValue(TRACK_PARAM_TOTAL_PLAYTIME, value);
     }
 
-    private void Track_AddParamPets(TrackingManager.TrackingEvent e, List<string> pets)
+    private void Track_AddParamPets(TrackingEvent e, List<string> pets)
     {
         // 4 pets are currently supported
         string pet1 = null;
@@ -2145,7 +2155,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_AddParamString(e, TRACK_PARAM_PET4, pet4);
     }
 
-    private void Track_AddParamTotalPurchases(TrackingManager.TrackingEvent e)
+    private void Track_AddParamTotalPurchases(TrackingEvent e)
     {
         if (TrackingPersistenceSystem != null)
         {
@@ -2153,7 +2163,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }        
     }   
 
-    private void Track_AddParamRunsAmount(TrackingManager.TrackingEvent e)
+    private void Track_AddParamRunsAmount(TrackingEvent e)
     {
         if (TrackingPersistenceSystem != null)
         {
@@ -2161,7 +2171,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_AddParamString(TrackingManager.TrackingEvent e, string paramName, string value)
+    private void Track_AddParamString(TrackingEvent e, string paramName, string value)
     {
         // null is not a valid value for Calety
         if (value == null)
@@ -2172,13 +2182,13 @@ public class HDTrackingManagerImp : HDTrackingManager
         e.SetParameterValue(paramName, value);
     }
 
-    private void Track_AddParamBool(TrackingManager.TrackingEvent e, string paramName, bool value)
+    private void Track_AddParamBool(TrackingEvent e, string paramName, bool value)
     {
         int valueToSend = (value) ? 1 : 0;
         e.SetParameterValue(paramName, valueToSend);
     }
 
-    private void Track_AddParamFloat(TrackingManager.TrackingEvent e, string paramName, float value)
+    private void Track_AddParamFloat(TrackingEvent e, string paramName, float value)
     {
         // MAX value accepted by ETL
         const float MAX = 999999999.99f;
@@ -2225,7 +2235,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         return "x=" + coord.x.ToString("0.0") + ", y=" + coord.y.ToString("0.0");
     }
 
-    private void Track_AddParamLanguage(TrackingManager.TrackingEvent e)
+    private void Track_AddParamLanguage(TrackingEvent e)
     {        
         string language = DeviceUtilsManager.SharedInstance.GetDeviceLanguage();        
         if (string.IsNullOrEmpty(language))
@@ -2245,7 +2255,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Track_AddParamString(e, TRACK_PARAM_LANGUAGE, language);
     }
 
-    private void Track_AddParamUserTimezone(TrackingManager.TrackingEvent e)
+    private void Track_AddParamUserTimezone(TrackingEvent e)
     {
         string value = "ERROR";
                   

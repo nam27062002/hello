@@ -11,23 +11,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1618991526583932}
   m_IsPrefabParent: 1
---- !u!1 &1343373467727584
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4686415938992508}
-  - component: {fileID: 114958715065246790}
-  - component: {fileID: 114674520013066450}
-  m_Layer: 22
-  m_Name: PCTrailEffect
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1538838611027966
 GameObject:
   m_ObjectHideFlags: 1
@@ -109,19 +92,6 @@ Transform:
   m_Father: {fileID: 4861198911436830}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4686415938992508
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1343373467727584}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.182, z: -0.214}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4861198911436830}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4861198911436830
 Transform:
   m_ObjectHideFlags: 1
@@ -133,7 +103,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4545190579502262}
-  - {fileID: 4686415938992508}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -502,73 +471,6 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 360
     m_faceDownAngle: 45
---- !u!114 &114674520013066450
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1343373467727584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_parentName: Rabbit
-  m_parentRoot: {fileID: 4545190579502262}
-  m_worldPositionStays: 1
-  m_resetScale: 0
---- !u!114 &114958715065246790
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1343373467727584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activationMode: 0
-  m_parent: {fileID: 0}
-  m_view: {fileID: 137888311362855024}
-  m_particleDatas:
-  - name: PS_BunnyFluff
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 0}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 0}
-      key1: {r: 1, g: 1, b: 1, a: 0.5019608}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 16384
-      atime2: 65535
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 3
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
 --- !u!135 &135214472767696070
 SphereCollider:
   m_ObjectHideFlags: 1

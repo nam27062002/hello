@@ -151,8 +151,10 @@ public class LoadingSceneController : SceneController {
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
-        WAITING_FOR_RULES,
+        WAITING_FOR_RULES,        
         LOADING_RULES,
+        CREATING_SINGLETONS,
+        WAITING_FOR_CUSTOMIZER,
         SHOWING_UPGRADE_POPUP,        
         COUNT
     }
@@ -297,8 +299,8 @@ public class LoadingSceneController : SceneController {
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
 
-		// TO REMOVE to enable multilanguage support. Quick implementation to make sure only english will be set
-		strLanguageSku = "lang_english";
+        // TO REMOVE to enable multilanguage support. Quick implementation to make sure only english will be set
+        strLanguageSku = "lang_english";
         LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
@@ -337,18 +339,41 @@ public class LoadingSceneController : SceneController {
             case State.WAITING_FOR_RULES:
             {
                 if (ContentManager.ready)
-                {
-                    // The state is not changed to WAITING_SAVE_FACADE yet because we want to be sure that other scripts checking for ContentManager.ready
+                {                    
+                    // The state is not changed to CREATING_SINGLETONS yet because we want to be sure that other scripts checking for ContentManager.ready
                     // in their Update() (for example FeatureSettingsManager, which has to load game settings according to rules and server) have time to do 
                     // their stuff before the flow goes on
-                    SetState(State.LOADING_RULES);                        
+                    SetState(State.LOADING_RULES);                    
                 }
-            }break;
+            }break;            
             case State.LOADING_RULES:
             {
                 // A tick is enought to do this state stuff as we just want to wait a tick so all scripts have the chance to realize content is ready
-                SetState(State.WAITING_SAVE_FACADE);                    
+                SetState(State.CREATING_SINGLETONS);                    
             }break;
+
+            case State.CREATING_SINGLETONS:
+            {
+                if (FeatureSettingsManager.instance.IsCustomizerBlocker)
+                {
+                    SetState(State.WAITING_FOR_CUSTOMIZER);
+                }
+                else
+                {                        
+                    SetState(State.WAITING_SAVE_FACADE);
+                }                    
+            }
+            break;
+            case State.WAITING_FOR_CUSTOMIZER:
+            {
+                if (HDCustomizerManager.instance.IsReady())
+                {
+                    // Applies the customizer
+                    ApplicationManager.instance.Game_ApplyCustomizer();
+                    SetState(State.WAITING_SAVE_FACADE);
+                }
+            }
+            break;
             default:
     		{
 				// Update load progress
@@ -399,74 +424,75 @@ public class LoadingSceneController : SceneController {
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
         	}break;
-            case State.WAITING_SAVE_FACADE:
+            case State.CREATING_SINGLETONS:
             {
-				// [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
-        		// No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
-        		ApplicationManager.CreateInstance();
+                // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
+                // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
+                ApplicationManager.CreateInstance();
 
-        		AntiCheatsManager.CreateInstance();
+                AntiCheatsManager.CreateInstance();
 
-				// The stuff that this manager handles has to be done only once, regardless the game reboots
-				FeatureSettingsManager.CreateInstance(false);
+                // The stuff that this manager handles has to be done only once, regardless the game reboots
+                FeatureSettingsManager.CreateInstance(false);
 
-				if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
-		            // Initialize local mini-tracking session!
-		            // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
-		            MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
-		        }
+                if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
+                {
+                    // Initialize local mini-tracking session!
+                    // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
+                    MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
+                }
 
-				HDTrackingManager.Instance.Init();
+                HDTrackingManager.Instance.Init();
                 HDCustomizerManager.instance.Initialise();
 
-				UsersManager.CreateInstance();
+                UsersManager.CreateInstance();
 
-		        // Game		        
+                // Game		        
                 PersistenceFacade.instance.Reset();
 
-				// Meta
-				SeasonManager.CreateInstance(true);
-		        DragonManager.CreateInstance(true);
-				LevelManager.CreateInstance(true);
-				MissionManager.CreateInstance(true);
-				ChestManager.CreateInstance(true);
-				RewardManager.CreateInstance(true);
-				EggManager.CreateInstance(true);
-				EggManager.InitFromDefinitions();
-				OffersManager.CreateInstance(true);	// Don't initialize yet, we'll wait for persistence to be loaded and customizer to received
-				OffersManager.ValidateContent();	// Do this before customizer is applied (here is ok!)
+                // Meta
+                SeasonManager.CreateInstance(true);
+                DragonManager.CreateInstance(true);
+                LevelManager.CreateInstance(true);
+                MissionManager.CreateInstance(true);
+                ChestManager.CreateInstance(true);
+                RewardManager.CreateInstance(true);
+                EggManager.CreateInstance(true);
+                EggManager.InitFromDefinitions();
+                OffersManager.CreateInstance(true); // Don't initialize yet, we'll wait for persistence to be loaded and customizer to received
+                OffersManager.ValidateContent();    // Do this before customizer is applied (here is ok!)
 
-				// Settings and setup
-				GameSettings.CreateInstance(false);
+                // Settings and setup
+                GameSettings.CreateInstance(false);
 
-				// Tech
-				GameSceneManager.CreateInstance(true);
-				FlowManager.CreateInstance(true);
-				PoolManager.CreateInstance(true);
-				ActionPointManager.CreateInstance(true);
-				ParticleManager.CreateInstance(true);
-				FirePropagationManager.CreateInstance(true);
-				SpawnerManager.CreateInstance(true);
-				SpawnerAreaManager.CreateInstance(true);
-				EntityManager.CreateInstance(true);
-				ViewManager.CreateInstance(true);
-				InstanceManager.CreateInstance(true);
-				FontManager.instance.Init();
+                // Tech
+                GameSceneManager.CreateInstance(true);
+                FlowManager.CreateInstance(true);
+                PoolManager.CreateInstance(true);
+                ActionPointManager.CreateInstance(true);
+                ParticleManager.CreateInstance(true);
+                FirePropagationManager.CreateInstance(true);
+                SpawnerManager.CreateInstance(true);
+                SpawnerAreaManager.CreateInstance(true);
+                EntityManager.CreateInstance(true);
+                ViewManager.CreateInstance(true);
+                InstanceManager.CreateInstance(true);
+                FontManager.instance.Init();
 
-		        GameAds.CreateInstance(false);
-		        GameAds.instance.Init();
-                 
-            	ControlPanel.CreateInstance();
+                GameAds.CreateInstance(false);
+                GameAds.instance.Init();
+
+                ControlPanel.CreateInstance();
                 DragonManager.SetupUser(UsersManager.currentUser);
                 MissionManager.SetupUser(UsersManager.currentUser);
                 EggManager.SetupUser(UsersManager.currentUser);
                 ChestManager.SetupUser(UsersManager.currentUser);
                 GameStoreManager.SharedInstance.Initialize();
 
-				if ( ApplicationManager.instance.GameCenter_LoginOnStart() )
-				{
-					ApplicationManager.instance.GameCenter_Login();
-				}
+                if (ApplicationManager.instance.GameCenter_LoginOnStart())
+                {
+                    ApplicationManager.instance.GameCenter_Login();
+                }
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
@@ -475,9 +501,12 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.instance.Initialise();
 
                 HDCustomizerManager.instance.Initialise();
+            } break;
 
+           case State.WAITING_SAVE_FACADE:
+           {
                 StartLoadFlow();	            	                                
-          	}break;
+           }break;
         }
     }
 

@@ -84,6 +84,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	private bool m_keyPurchased = false;
 	private bool m_keyFromAds = false;
 	private DefinitionNode m_keyShopPackDef = null;
+
+    private bool m_panelActiveInitialized = false;
 	
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -194,7 +196,9 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		switch(m_activePanel) {
 			case Panel.ACTIVE: {
 				if(_resetValues) {
-					m_scoreText.SetValue(0, false);
+                    m_panelActiveInitialized = true;
+
+                    m_scoreText.SetValue(0, false);
 					m_finalScoreText.SetValue(0, false);
 					RefreshKeysField(_animate);
 
@@ -202,6 +206,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_event.bonusDragonSku);
 					if ( bonusDragonDef != null ){
 						m_bonusDragonInfoText.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_INFO", bonusDragonDef.GetLocalized("tidName"));
+					} else {
+						m_bonusDragonInfoText.Localize("");
 					}
 
 					// Bonus dragon text
@@ -479,12 +485,29 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// Retry connection button has been pressed.
 	/// </summary>
 	public void OnRetryConnectionButton() {
-		// Just refreshing is enough
-		InitPanel(true, false);
+        // If the active panel hasn't been initialized yet then we need to refresh values in case the popup was launched with no connection so it didn't get to be setup with the values of the event (HDK-1962)
+        InitPanel(true, !m_panelActiveInitialized);
 
 		// If suceeded, launch intro anim
 		if(m_activePanel == Panel.ACTIVE) {
 			LaunchActivePanelAnimation();
+		}
+
+		// Otherwise fake we're doing something (checking connectivity is immediate, but the player should receive some feedback)
+		else {
+			BusyScreen.Show(this);
+
+			// Hide after some delay
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => { 
+					BusyScreen.Hide(this); 
+					UIFeedbackText.CreateAndLaunch(
+						LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), 
+						new Vector2(0.5f, 0.5f), 
+						this.GetComponentInParent<Canvas>().transform as RectTransform
+					);
+				}, 1f
+			);
 		}
 	}
 
@@ -495,18 +518,21 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		// Show a video ad!
 		PopupAdBlocker.Launch(
 			true, 
-			GameAds.EAdPurpose.RESULTS_GET_KEY,
+			GameAds.EAdPurpose.EVENT_SCORE_X2,
 			(bool _success) => {
-				m_keyFromAds = true;
-				// Add keys and consume them instantly (for tracking purposes)
-				ulong keysAmount = 1;
-				UsersManager.currentUser.EarnCurrency(
-					UserProfile.Currency.KEYS, 
-					keysAmount, 
-					true, 
-					HDTrackingManager.EEconomyGroup.REWARD_AD
-				);
-				ConsumeKeys(keysAmount, true);
+                if ( _success )
+                {
+    				m_keyFromAds = true;
+    				// Add keys and consume them instantly (for tracking purposes)
+    				ulong keysAmount = 1;
+    				UsersManager.currentUser.EarnCurrency(
+    					UserProfile.Currency.KEYS, 
+    					keysAmount, 
+    					true, 
+    					HDTrackingManager.EEconomyGroup.REWARD_AD
+    				);
+    				ConsumeKeys(keysAmount, true);
+                }
 			}
 		);
 	}

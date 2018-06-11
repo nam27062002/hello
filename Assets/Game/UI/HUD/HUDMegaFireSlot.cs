@@ -34,7 +34,10 @@ public class HUDMegaFireSlot : MonoBehaviour {
 	}
 
 	public void Empty() {
-		m_icon.alpha = 0f;
+		if (m_icon != null) {
+			m_icon.alpha = 0f;
+		}
+
 		m_state = State.Empty;
 	}
 

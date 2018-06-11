@@ -44,7 +44,7 @@ public abstract class TrackingObjectiveBase {
 	}
 
 	public float progress { 
-		get { return m_targetValue > 0f ? m_tracker.currentValue/targetValue : 1f; }	// Protect for infinite values!
+		get { return m_targetValue > 0f ? (float)((double)m_tracker.currentValue/(double)targetValue) : 1f; }	// Protect for infinite values!
 	}
 
 	// State

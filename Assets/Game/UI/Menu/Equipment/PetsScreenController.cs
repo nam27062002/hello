@@ -27,12 +27,12 @@ public class PetsScreenController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const int INSTANT_INITIAL_PILLS = 0;
+	private const string PILL_PATH = "UI/Metagame/Pets/PF_PetPill";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private GameObject m_pillPrefab = null;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
 	public SnappingScrollRect scrollList {
 		get { return m_scrollList; }
@@ -89,6 +89,9 @@ public class PetsScreenController : MonoBehaviour {
 	private DragonData m_dragonData = null;
 	private string m_initialPetSku = "";
 
+	// Internal logic
+	private bool m_waitingForDragonPreviewToLoad = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -140,7 +143,20 @@ public class PetsScreenController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		// Are we waiting for the dragon preview to be ready?
+		if(m_waitingForDragonPreviewToLoad) {
+			// Is it ready?
+			if(InstanceManager.menuSceneController.selectedDragonPreview != null) {
+				// Hide pets
+				DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+				if(equip != null) {
+					equip.TogglePets(false, true);
+				}
 
+				// Toggle flag
+				m_waitingForDragonPreviewToLoad = false;
+			}
+		}
 	}
 
 	/// <summary>
@@ -404,15 +420,17 @@ public class PetsScreenController : MonoBehaviour {
 	/// </summary>
 	private void InitPills() {
 		if ( m_pills.Count == 0 ){
+			GameObject prefab = Resources.Load<GameObject>(PILL_PATH);
 			for(int i = 0; i < 8; i++) {
 				// Instantiate pill
-				GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
+				GameObject newPillObj = GameObject.Instantiate<GameObject>(prefab, scrollList.content, false);
 				m_pills.Add(newPillObj.GetComponent<PetPill>());
 				m_pills[i].animator.ForceHide(false);	// Start hidden
 
 				// React if the pill is tapped!
 				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
 			}
+			prefab = null;
 		}
 	}
 
@@ -427,8 +445,8 @@ public class PetsScreenController : MonoBehaviour {
 		// Refresh with initial data!
 		Initialize();
 
-		// Hide dragon's pets
-		InstanceManager.menuSceneController.selectedDragonPreview.equip.TogglePets(false, true);
+		// Hide dragon's pets whenever preview is ready
+		m_waitingForDragonPreviewToLoad = true;
 
 		// Reset scroll list postiion
 		scrollList.horizontalNormalizedPosition = 0f;

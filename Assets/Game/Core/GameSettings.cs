@@ -33,7 +33,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 				m_defaultValues[MUSIC_ENABLED] = true;
 
 				m_defaultValues[TILT_CONTROL_ENABLED] = false;
-				m_defaultValues[TOUCH_3D_ENABLED] = false;
+				m_defaultValues[TOUCH_3D_ENABLED] = PlatformUtils.Instance.InputPressureSupprted();
 				m_defaultValues[BLOOD_ENABLED] = true;
 
 				m_defaultValues[SHOW_BIG_AMOUNT_CONFIRMATION_POPUP] = true;
@@ -94,6 +94,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	[SerializeField] private int m_enableGlobalEventsAtRun = 3;
 	public static int ENABLE_GLOBAL_EVENTS_AT_RUN { get { return instance.m_enableGlobalEventsAtRun; }}
+
+	[SerializeField] private int m_enableInterstitialPopupsAtRun = 12;
+	public static int ENABLE_INTERSTITIAL_POPUPS_AT_RUN { get { return instance.m_enableInterstitialPopupsAtRun; }}
 
 	// Internal references
 	private AudioMixer m_audioMixer = null;

@@ -43,9 +43,6 @@ public class GoalsScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
-	// Internal
-	private float m_countdownUpdateTimer = 0f;
-	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -53,26 +50,34 @@ public class GoalsScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Disable some tabs during FTUX
+		// Subscribe to external events.
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+
+		if (InstanceManager.menuSceneController != null && InstanceManager.menuSceneController.transitionManager != null)
+		{
+			MenuScreen prev = InstanceManager.menuSceneController.transitionManager.prevScreen;
+			MenuScreen current = InstanceManager.menuSceneController.transitionManager.currentScreen;
+			OnTransitionStarted( prev, current );
+		}
+
+		// Remove buttons from the selection group if they can't be selected
 		// Chests
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
-			m_buttons.GetButton((int)Buttons.CHESTS).button.interactable = false;
+			ExcludeButton(Buttons.CHESTS);
 		}
 
 		// Global Events
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
-			m_buttons.GetButton((int)Buttons.GLOBAL_EVENTS).button.interactable = false;
+			ExcludeButton(Buttons.GLOBAL_EVENTS);
 		}
-
-		// Subscribe to external events.
-		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 	}
 
 	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-		
+		// Program a periodic update
+		InvokeRepeating("UpdatePeriodic", 0f, COUNTDOWN_UPDATE_INTERVAL);
 	}
 
 	/// <summary>
@@ -80,7 +85,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Make sure timers will be updated
-		m_countdownUpdateTimer = 0f;
+		UpdatePeriodic();
 	}
 
 	/// <summary>
@@ -92,45 +97,46 @@ public class GoalsScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Called every frame.
+	/// Called periodically - to avoid doing stuff every frame.
 	/// </summary>
-	private void Update() {
-		// Update countdowns at intervals
-		m_countdownUpdateTimer -= Time.deltaTime;
-		if(m_countdownUpdateTimer <= 0f) {
-			// Reset timer
-			m_countdownUpdateTimer = COUNTDOWN_UPDATE_INTERVAL;
+	private void UpdatePeriodic() {
+		// Skip if we're not active - probably in a screen we don't belong to
+		if(!isActiveAndEnabled) return;
 
-			// Refresh visible event button based on event state
-			GlobalEvent evt = GlobalEventManager.currentEvent;
-			bool validEvent = evt != null && evt.isActive;
-			m_eventActiveGroup.SetActive(validEvent);
-			m_eventInactiveGroup.SetActive(!validEvent);
+		// Refresh visible event button based on event state
+		GlobalEvent evt = GlobalEventManager.currentEvent;
+		bool eventAvailable = evt != null && evt.isActive;
 
-			// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
-			//		 Luckily for us Unity provides us with the right tools to rebuild it
-			//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
-			HorizontalOrVerticalLayoutGroup layout = m_eventActiveGroup.transform.GetComponentInParent<HorizontalOrVerticalLayoutGroup>();
-			if(layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
+		// Consider tutorial as well!
+		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN;
 
-			// Event Timer - only if active
-			if(validEvent) {
-				// Timer text
-				double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);	// Never go negative!
-				m_eventCountdownText.text = TimeUtils.FormatTime(
-					remainingSeconds,
-					TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
-					2
-				);
+		// Apply
+		m_eventActiveGroup.SetActive(eventAvailable);
+		m_eventInactiveGroup.SetActive(!eventAvailable);
 
-				// Timer bar
-				TimeSpan totalSpan = evt.endTimestamp - evt.startTimestamp;
-				m_eventCountdownSlider.value = 1f - (float)(remainingSeconds/totalSpan.TotalSeconds);
+		// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+		//		 Luckily for us Unity provides us with the right tools to rebuild it
+		//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+		HorizontalOrVerticalLayoutGroup layout = m_eventActiveGroup.transform.GetComponentInParent<HorizontalOrVerticalLayoutGroup>();
+		if(layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
 
-				// If time has finished, request new data
-				if(remainingSeconds <= 0) {
-					GlobalEventManager.RequestCurrentEventState();
-				}
+		// Event Timer - only if active
+		if(m_eventActiveGroup.activeSelf) {
+			// Timer text
+			double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);	// Never go negative!
+			m_eventCountdownText.text = TimeUtils.FormatTime(
+				remainingSeconds,
+				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				2
+			);
+
+			// Timer bar
+			TimeSpan totalSpan = evt.endTimestamp - evt.startTimestamp;
+			m_eventCountdownSlider.value = 1f - (float)(remainingSeconds/totalSpan.TotalSeconds);
+
+			// If time has finished, request new data
+			if(remainingSeconds <= 0) {
+				GlobalEventManager.RequestCurrentEventState();
 			}
 		}
 	}
@@ -138,6 +144,34 @@ public class GoalsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Excludes a tab button from the group.
+	/// It won't be disabled so it can be tapped, but it will be grayed out and won't be selectable.
+	/// To be used when disabling features and wanting to give feedback.
+	/// </summary>
+	/// <param name="_btn">Button to be excluded.</param>
+	private void ExcludeButton(Buttons _btn) {
+		// Get target button
+		SelectableButton btn = m_buttons.GetButton((int)_btn);
+		if(btn == null) return;
+
+		// Mark it as non-selectable
+		btn.selectionAllowed = false;
+
+		// Apply visual effect
+		// [AOC] Going to hell for this! Simulate game's standard disable FX by tinting the button and the icon.
+		//		 We can't use a normal UIColorFX because it would conflict with the button's animator
+		Image[] childImages = btn.GetComponentsInChildren<Image>(true);
+		for(int i = 0; i < childImages.Length; ++i) {
+			// Special color for root image
+			if(childImages[i].transform == btn.transform) {
+				childImages[i].color = Colors.ParseHexString("#3C3B3B53");	// Semi-transparent gray-ish
+			} else {
+				childImages[i].name = "RenamedImage";	// Rename it so the animator doesn't override the color!
+				childImages[i].color = Colors.ParseHexString("#6F6F6F64");	// Lighter semi-transparent gray-ish
+			}
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -148,6 +182,46 @@ public class GoalsScreenController : MonoBehaviour {
 	public void OnPlayButton() {
 		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._10_continue_clicked);
+		}
+	}
+
+	/// <summary>
+	/// Global Events button has been pressed.
+	/// </summary>
+	public void OnGlobalEventsButton() {
+		// Check tutorial!
+		int remainingRuns = GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
+		if(remainingRuns > 0) {
+			// Show error message
+			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
+			UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize(tid, remainingRuns.ToString()),
+				new Vector2(0.5f, 0.25f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+		} else {
+			// Go to chests screen
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.GLOBAL_EVENTS);
+		}
+	}
+
+	/// <summary>
+	/// Chests button has been pressed.
+	/// </summary>
+	public void OnChestsButton() {
+		// Check tutorial!
+		int remainingRuns = GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
+			// Show error message
+			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
+			UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize(tid, remainingRuns.ToString()),
+				new Vector2(0.5f, 0.25f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+		} else {
+			// Go to chests screen
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.CHESTS);
 		}
 	}
 

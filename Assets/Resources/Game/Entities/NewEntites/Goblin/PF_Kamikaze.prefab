@@ -305,7 +305,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"lightUpTime":1,"speed":10,"acceleration":30,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":40,"radius":8,"cameraShakeDuration":0.7,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"lightUpTime":1,"speed":10,"acceleration":30,"dataType":"AI.Behaviour.RocketDashData","editorFolded":false},{"isMine":false,"damage":40,"radius":6,"cameraShakeDuration":0.7,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
   m_databaseKey: PF_Kamikaze
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
@@ -481,6 +481,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -523,6 +524,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -561,6 +563,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: hd_goblin_dead
   m_firePoints: []
   m_burnParticle:
@@ -601,9 +604,10 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
-    name: PF_Mine_Explosion
+    name: PS_DirectionalExplosion
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -640,6 +644,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 1
   m_onExplosionAudio: Explosion_Big
   m_explodeWhenBurned: 1
   m_onAttackAudio: hd_goblin_kamikaze_attack
@@ -686,6 +691,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_jetParticleTransform: {fileID: 4561654831339580}
   m_dashAudio: hd_goblin_kamikaze_attack
 --- !u!135 &135483071828693612

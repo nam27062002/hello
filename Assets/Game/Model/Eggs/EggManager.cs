@@ -98,16 +98,14 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		get { return instance.m_user.goldenEggsCollected >= instance.m_goldenEggRequiredFragments.Count; }
 	}
 
-	public static float getProbabilityCommon() 	{ return instance.m_rewardDropRate.GetProbability(PET_COMMON);}
-	public static float getProbabilityRare() 	{ return instance.m_rewardDropRate.GetProbability(PET_RARE);	}
-	public static float getProbabilityEpic() 	{ return instance.m_rewardDropRate.GetProbability(PET_EPIC);	}
-
-
 	// Internal
 	UserProfile m_user;
 
 	// Dynamic Probability coeficients
 	private List<float> m_weights;
+
+	// Store default probabilities to display them to the user
+	private List<float> m_defaultProbabilities = null;
 
 	private bool  m_dynamicGatchaEnabled = true;
 	private float m_coeficientG = 4f;
@@ -142,6 +140,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// recalculate the probabilities on each draw based on the luck of the player.
 		m_rewardDropRate = new ProbabilitySet();	
 		m_weights = new List<float>();
+		m_defaultProbabilities = null;	// Force a recalculation of the default probabilities
 
 		DefinitionNode dynamicGatchaDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DYNAMIC_GATCHA, "dynamicGatcha");
 		m_dynamicGatchaEnabled = dynamicGatchaDef.GetAsBool("activated");
@@ -215,28 +214,89 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Gets the default probability of getting a specific reward rarity (ignoring
+	/// the dynamic algorithm).
+	/// </summary>
+	/// <returns>The probability. <c>0</c> if given rarity is not in the gacha system.</returns>
+	/// <param name="_rarity">Reward rarity.</param>
+	public static float GetDefaultProbability(Metagame.Reward.Rarity _rarity) {
+		// Make sure they're initialized
+		if(instance.m_defaultProbabilities == null) return 0f;
+
+		// Matching initialization order (see InitFromDefintions)
+		switch(_rarity) {
+			case Metagame.Reward.Rarity.COMMON:	return instance.m_defaultProbabilities[0];
+			case Metagame.Reward.Rarity.RARE:	return instance.m_defaultProbabilities[1];
+			case Metagame.Reward.Rarity.EPIC:	return instance.m_defaultProbabilities[2];
+		}
+		return 0f;	// Unsupported rarity, 0 chance of getting it
+	}
+
+	/// <summary>
+	/// Gets the probability of getting a specific reward rarity using the dynamic
+	/// algorithm.
+	/// </summary>
+	/// <returns>The probability. <c>0</c> if given rarity is not in the gacha system.</returns>
+	/// <param name="_rarity">Reward rarity.</param>
+	public static float GetDynamicProbability(Metagame.Reward.Rarity _rarity) {
+		string rewardId = "";
+		switch(_rarity) {
+			case Metagame.Reward.Rarity.COMMON:	rewardId = PET_COMMON;	break;
+			case Metagame.Reward.Rarity.RARE:	rewardId = PET_RARE;	break;
+			case Metagame.Reward.Rarity.EPIC:	rewardId = PET_EPIC;	break;
+			default: return 0f;	// Unsupported rarity, 0 chance of getting it
+		}
+
+		return instance.m_rewardDropRate.GetProbability(rewardId);
+	}
 
 	public static void BuildDynamicProbabilities() {
 		instance.__BuildDynamicProbabilities();
 	}
 
 	private void __BuildDynamicProbabilities() {
-		float weightTotal = 0f;
+		// If default probabilites are not initialized, do it now!
+		bool computeDefaultProbabilites = false;
+		float defaultProbabilitiesTotalWeight = 0f;
+		if(m_defaultProbabilities == null) {
+			computeDefaultProbabilites = true;
+			m_defaultProbabilities = new List<float>();
+		}
 
+		float weight = 0f;
+		float weightTotal = 0f;
 		for(int i = 0; i < m_weights.Count; i++) {
 			// Dynamic probability
 			int triesWithoutRares = 0;
 			if (m_dynamicGatchaEnabled && m_user != null) {
 				triesWithoutRares = m_user.openEggTriesWithoutRares;
 			}
-			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
-			m_weights[i] = 1f / Mathf.Pow(i + 1, a); // i+1 is the weightID of the formula
 
-			weightTotal += m_weights[i];
+			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
+			weight = 1f / Mathf.Pow(i + 1, a); // i+1 is the weightID of the formula
+			m_weights[i] = weight;
+			weightTotal += weight;
+
+			// Need to compute default probabilities as well?
+			if(computeDefaultProbabilites) {
+				// Same formula with 0 tries without rares
+				weight = 1f / Mathf.Pow(i + 1, m_coeficientG);	// [AOC] Optimization: Since triesWithoutRares is 0, a == coeficientG.
+				m_defaultProbabilities.Add(weight);
+				defaultProbabilitiesTotalWeight += weight;
+			}
 		}
 
+		// Normalize dynamic probabilities
 		for(int i = 0; i < m_weights.Count; i++) {
 			m_rewardDropRate.SetProbability(i, m_weights[i] / weightTotal, false);
+		}
+
+		// Normalize default probabilities
+		if(computeDefaultProbabilites) {
+			for(int i = 0; i < m_defaultProbabilities.Count; ++i) {
+				m_defaultProbabilities[i] = m_defaultProbabilities[i] / defaultProbabilitiesTotalWeight;
+			}
 		}
 	}
 

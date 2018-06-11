@@ -413,8 +413,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// SFX
 				AudioController.Play(UIConstants.GetDragonTierSFX(dragonData.tier));
 
+				// Equip default disguise to clear shadow effect
 				MenuDragonPreview preview = InstanceManager.menuSceneController.dragonScroller.GetDragonPreview(_revealDragonSku);
 				preview.equip.EquipDisguise("");
+
+				// Tell the loader to not use the shadow material again (dynamic loading fix HDK-1956)
+				InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku).dragonLoader.useShadowMaterial = false;
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {			
@@ -501,7 +505,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		foreach (DragonData data in DragonManager.dragonsByOrder) {
 			if (data.lockState == DragonData.LockState.HIDDEN || data.lockState == DragonData.LockState.TEASE) {
 				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
-				slot.animator.Hide(true);
+				slot.animator.Hide(true, false);	// Do not desactivate to allow async loading
 			}
 		}
 

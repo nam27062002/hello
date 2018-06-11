@@ -107,6 +107,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_allowAltAnimations = value; }
 	}
 
+	[SerializeField] private int m_altAnimationsMaxLevel = 10;
+	public int altAnimationsMaxLevel {
+		get { return m_altAnimationsMaxLevel; }
+		set { m_altAnimationsMaxLevel = value; }
+	}
+
 	public bool m_loadAsync = false;
 	private ResourceRequest m_asyncRequest = null;
 
@@ -187,7 +193,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param>
 	public void LoadDragon(string _sku, string _disguiseSku, bool forceSync = false) {
 
-		Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
+		//Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
 		if (m_dragonInstance != null || m_asyncRequest != null){
 			if (_sku == m_dragonSku && _disguiseSku == m_disguiseSku )
 			{
@@ -300,6 +306,7 @@ public class MenuDragonLoader : MonoBehaviour {
 
 		// Allow alt animations?
 		m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
+		m_dragonInstance.altAnimationsMaxLevel = m_altAnimationsMaxLevel;
 
 		// Make sure particles are properly scaled as well
 		RescaleParticles();

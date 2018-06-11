@@ -165,10 +165,25 @@ namespace Metagame {
 					// c) Normal case: random pet of the target rarity
 					else {
 						// If tutorial is not completed, choose from a limited pool
-						if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
-							do {
-								petDef = petDefs.GetRandomValue();
-							} while(!petDef.GetAsBool("startingPool"));
+						if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) 
+						{
+							List<DefinitionNode> newPetDefs = new List<DefinitionNode>();
+							for (int i = 0; i < petDefs.Count; i++) {
+								DefinitionNode newPetDef = petDefs[i];
+								if (newPetDef.GetAsBool("startingPool"))
+								{
+									newPetDefs.Add( newPetDef );
+								}
+							}
+
+							if ( newPetDefs.Count > 0 )
+							{
+								petDef = newPetDefs.GetRandomValue();
+							}
+							else
+							{
+								petDef = petDefs.GetRandomValue();	
+							}
 						} else {
 							// Default behaviour
 							petDef = petDefs.GetRandomValue();
@@ -185,7 +200,7 @@ namespace Metagame {
 							"<color=#ffaa00>",
 							"<color=#ff7f00>"
 						};
-						Debug.Log("EGG REWARD GENERATED: " + colorTags[(int)m_reward.rarity] + m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "") + "</color>");
+						//Debug.Log("EGG REWARD GENERATED: " + colorTags[(int)m_reward.rarity] + m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "") + "</color>");
 						//Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
 						#endif
 					} else {

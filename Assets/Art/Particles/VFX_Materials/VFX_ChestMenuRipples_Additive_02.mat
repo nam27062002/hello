@@ -47,10 +47,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 0c29fa198338bcb439c15a0ff051e18d, type: 3}
+        m_Texture: {fileID: 2800000, guid: a349a46600f962b479c66d05fb259c54, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -73,12 +77,18 @@ Material:
     - _DstBlend: 10
     - _EmissionSaturation: 7.21
     - _EmissivePower: 1
+    - _EnableAlphaDissolve: 0
     - _EnableAutomaticPanning: 1
     - _EnableColorRamp: 0
+    - _EnableColorTint: 0
     - _EnableColorVertex: 0
     - _EnableDissolve: 0
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
+    - _EnableNoiseTexture: 0
+    - _EnableNoiseTextureAlpha: 0
+    - _EnableNoiseTextureDissolve: 0
+    - _EnableNoiseTextureEmission: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -98,6 +108,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: -0.13, g: 0, b: 0, a: 0}
     - _SaturatedColor: {r: 1, g: 0.94868153, b: 0.66176474, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

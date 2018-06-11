@@ -126,16 +126,16 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 
 				#include "HungryDragon.cginc"
 
-				#if LOW_DETAIL_ON
+				#ifdef LOW_DETAIL_ON
 				#undef NORMALMAP
 				#undef SPECULAR
 				#endif
 
-				#if MEDIUM_DETAIL_ON
+				#ifdef MEDIUM_DETAIL_ON
 				#undef SPECULAR
 				#endif
 
-				#if HI_DETAIL_ON
+				#ifdef HI_DETAIL_ON
 				#endif
 
 				//#define TINT

@@ -782,6 +782,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 90
+  m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!114 &114276021414009764
 MonoBehaviour:
@@ -821,6 +823,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 0
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 0
   m_feedbackParticle:
     name: PS_C_Splinters
@@ -900,6 +903,7 @@ MonoBehaviour:
     scale: 2.25
   m_onDestroyAudio: 
   m_onFeedbackAudio: 
+  m_cameraShake: 0
 --- !u!114 &114393810622150912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1093,6 +1097,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 6, z: 0}
     scale: 1
+  m_useAnimator: 0
   m_boxelSize: 8
   m_hitRadius: 1.5
 --- !u!114 &114898097314251340

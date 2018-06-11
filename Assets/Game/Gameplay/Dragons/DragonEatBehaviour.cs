@@ -49,7 +49,9 @@ public class DragonEatBehaviour : EatBehaviour {
 		m_origin = "player";
 
 		m_tier = m_dragon.data.tier;
-		m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");
+		//TONI
+		//m_eatSpeedFactor = m_dragon.data.def.GetAsFloat("eatSpeedFactor");
+		m_eatSpeedFactor = m_dragon.data.maxEatSpeedFactor;
 
 		SetupHoldParametersForTier( m_dragon.data.tierDef.sku );
 		m_holdStunTime = 0;
@@ -152,7 +154,7 @@ public class DragonEatBehaviour : EatBehaviour {
 			}
 		}
 		m_dragon.AddEnergy(reward.energy);
-		m_dragonBreath.AddFury(reward.fury);
+		m_dragonBreath.AddFuryPercentage(reward.fury);
 		if (reward.alcohol != 0)
 			m_dragon.AddAlcohol(reward.alcohol);
 	}

@@ -191,6 +191,10 @@ public class DragonEquip : MonoBehaviour {
 				}
 			}
 			m_renderers[i].materials = materials;
+			if (m_renderers[i].tag == "DragonWings")
+			{
+				m_renderers[i].material.renderQueue += 10;	
+			}
 		}
 
 		// Remove old body parts
