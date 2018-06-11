@@ -88,7 +88,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		m_dragonLoader.LoadDragon(sku);
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
-		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.diguise);
+		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_tournament.GetToUseSkin());
 		m_dragonSkin.Localize(disguise.Get("tidName"));
 
 		string powerupSku = disguise.Get("powerup");
