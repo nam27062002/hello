@@ -505,7 +505,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		foreach (DragonData data in DragonManager.dragonsByOrder) {
 			if (data.lockState == DragonData.LockState.HIDDEN || data.lockState == DragonData.LockState.TEASE) {
 				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
-				slot.animator.Hide(true);
+				slot.animator.Hide(true, false);	// Do not desactivate to allow async loading
 			}
 		}
 

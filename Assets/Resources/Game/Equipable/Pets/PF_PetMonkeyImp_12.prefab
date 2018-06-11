@@ -771,7 +771,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1716325865154868}
   m_LocalRotation: {x: -0.23760787, y: 0.63894004, z: -0.3029118, w: 0.66599}
-  m_LocalPosition: {x: 0.5, y: 1.926, z: -0.199}
+  m_LocalPosition: {x: 0.49999478, y: 1.6130077, z: -0.5120001}
   m_LocalScale: {x: 1.5, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 4101179181534426}
@@ -831,7 +831,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1551553271568830}
   m_LocalRotation: {x: -0.31065744, y: 0.6688293, z: -0.22949347, w: 0.6352102}
-  m_LocalPosition: {x: -0.5049948, y: 1.9259924, z: -0.1989999}
+  m_LocalPosition: {x: -0.505, y: 1.613, z: -0.512}
   m_LocalScale: {x: 1.5000038, y: 2.000005, z: 2.000005}
   m_Children: []
   m_Father: {fileID: 4101179181534426}
@@ -1019,7 +1019,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1512322640379414}
-  m_LocalRotation: {x: -0.6838953, y: 0.17968687, z: 0.6957584, w: 0.126175}
+  m_LocalRotation: {x: -0.68389535, y: 0.17968689, z: 0.69575846, w: 0.12617502}
   m_LocalPosition: {x: -0.49961922, y: 0.45823368, z: -0.51378953}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1187,7 +1187,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1851522402474214}
-  m_LocalRotation: {x: 0.6189848, y: -0.34184486, z: -0.6189848, w: 0.34184474}
+  m_LocalRotation: {x: 0.61898476, y: -0.34184483, z: -0.61898476, w: 0.3418447}
   m_LocalPosition: {x: -0.000000022647328, y: 1.1936677, z: 0.1528919}
   m_LocalScale: {x: 0.010781912, y: 0.010781912, z: 0.010781912}
   m_Children: []
@@ -1271,7 +1271,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: b692e6b82ff8a9a469b5e18b01b4a3f3, type: 2}
+  - {fileID: 2100000, guid: 4814e9693cc2a8945a917a3d1bf5566c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1303,7 +1303,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: b692e6b82ff8a9a469b5e18b01b4a3f3, type: 2}
+  - {fileID: 2100000, guid: 4814e9693cc2a8945a917a3d1bf5566c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1409,9 +1409,9 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1442,7 +1442,9 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -1450,9 +1452,9 @@ MonoBehaviour:
   m_onEatenParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1483,13 +1485,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1520,15 +1524,17 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: 
   m_firePoints: []
   m_burnParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1559,14 +1565,16 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1597,7 +1605,9 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -1625,12 +1635,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetMonkeyImp_12
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114000012669857030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1663,9 +1675,9 @@ MonoBehaviour:
   m_holdingBloodParticle:
     name: PS_Blood_Explosion_Medium
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1696,13 +1708,15 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -1733,7 +1747,9 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_burpSound: 
   m_canEatEntities: 1
   m_eaterTier: 0
@@ -1786,6 +1802,7 @@ MonoBehaviour:
   m_parentName: Pet_Head
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114417545418860400
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1806,6 +1823,7 @@ MonoBehaviour:
   m_levelUpSound: 
   m_starvingSound: 
   m_hitSound: 
+  m_poisonHitSound: 
   m_enterWaterSound: 
   m_enterWaterWithSplashSound: 
   m_exitWaterSound: 
@@ -1816,6 +1834,10 @@ MonoBehaviour:
   m_hiccupSound: 
   m_gruntSound: 
   m_gruntToEatProbability: 5
+  m_onDeadSound: hd_dragon_dead
+  m_onCorpseSound: hd_dragon_dead
+  m_onReviveSound: hd_dragon_revive
+  m_onPreMegaFire: 
 --- !u!114 &114630669737764882
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1879,6 +1901,7 @@ MonoBehaviour:
   m_parentName: Pet_Head
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!135 &135000013338795870
 SphereCollider:
   m_ObjectHideFlags: 1

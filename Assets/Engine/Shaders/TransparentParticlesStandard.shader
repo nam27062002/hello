@@ -26,7 +26,8 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
 		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
 
-		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
+		_TintColor("Tint Color", Color) = (0.5, 0.5, 0.5, 0.5)
+		_GlobalAlpha("Global alpha", float) = 1.0
 
 		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
 		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0

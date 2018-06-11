@@ -1133,6 +1133,20 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             JSONClass jsonClass = json as JSONClass;
 
             returnValue = new JSONClass();
+
+            // Server might sent the "overriderProfile" parameter to force a profile so in that case we need to override "profile" parameter with this value
+            string overrideProfileKey = "overriderProfile";            
+            if (json.ContainsKey(overrideProfileKey))
+            {
+                string overrideProfileValue = json[overrideProfileKey];
+                if (!string.IsNullOrEmpty(overrideProfileValue))
+                {
+                    json[FeatureSettings.KEY_PROFILE] = overrideProfileValue;                    
+                }
+
+                json[overrideProfileKey] = "";
+            }           
+
             foreach (KeyValuePair<string, JSONNode> pair in jsonClass.m_Dict)
             {
                 if (
