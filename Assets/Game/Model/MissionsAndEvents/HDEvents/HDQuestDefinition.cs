@@ -53,9 +53,13 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 		}
 	}
 
+	public class QuestReward : HDLiveEventReward {
+		public float targetAmount = 0f;
+	}
+
 	public QuestGoal m_goal = new QuestGoal();
 
-	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();
+	public List<QuestReward> m_rewards = new List<QuestReward>();
 		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -86,7 +90,14 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				m_rewards.Add( new HDLiveEventReward( arr[i], m_name) );
+				QuestReward reward = new QuestReward();
+				reward.ParseJson(arr[i], m_name);
+
+				if(m_goal != null) {
+					reward.targetAmount = reward.targetPercentage * m_goal.m_amount;
+				}
+
+				m_rewards.Add( reward );
 			}
 		}
 	}

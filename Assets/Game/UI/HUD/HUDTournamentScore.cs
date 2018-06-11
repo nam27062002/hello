@@ -22,7 +22,6 @@ public class HUDTournamentScore : HudWidget {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
-	private TextMeshProUGUI m_valueTxt;
 	private long m_lastScorePrinted;
 	private TrackerBase m_tracker;
 	private long m_targetScore = 0;
@@ -34,7 +33,7 @@ public class HUDTournamentScore : HudWidget {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	override protected void Awake() {
 		base.Awake();
 		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
 		{
@@ -51,11 +50,27 @@ public class HUDTournamentScore : HudWidget {
 				m_lastScorePrinted = 0;	
 				m_targetScore = _def.m_goal.m_targetAmount;
 				m_tracker = HDLiveEventsManager.instance.m_tournament.m_tracker;
+				UpdateIcon();
 			}
 		}
 		else
 		{
 			gameObject.SetActive(false);
+		}
+	}
+
+	private void UpdateIcon()
+	{
+		Transform tr = transform.Find("Icon_score");
+		if ( tr != null )
+		{
+			Image img = tr.GetComponent<Image>();
+			if ( img != null )
+			{
+				HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+				HDTournamentDefinition def = tournament.data.definition as HDTournamentDefinition;
+				img.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
+			}
 		}
 	}
 
