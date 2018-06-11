@@ -25,7 +25,8 @@ public class PowerIcon : MonoBehaviour {
 
 	public enum Mode {
 		SKIN = 0,
-		PET
+		PET,
+		MODFIER
 	}
 
 	//------------------------------------------------------------------------//

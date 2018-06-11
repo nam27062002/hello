@@ -31,6 +31,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private Button 			m_enterAdBtn;
 	[SerializeField] private GameObject			m_nextFreeTimerGroup;
 	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer;
+	[SerializeField] private Slider				m_nextFreeSlider;
 
 
 	//------------------------------------------------------------------------//
