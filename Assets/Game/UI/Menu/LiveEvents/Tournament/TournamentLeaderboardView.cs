@@ -136,7 +136,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 			items.Insert(rewards[i].ranks.min, itemData);
 
 			// Keep track of player pill index
-			if(rewards[i].ranks.min < playerRank) {	// Reward pill comes before player pill?
+			if(rewards[i].ranks.min <= playerRank) {	// Reward pill comes before player pill?
 				playerPillIdx++;
 			}
 		}

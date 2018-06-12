@@ -323,15 +323,16 @@ public class HDLiveEventManager
 
 	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-
-
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			
+			if ( responseJson.ContainsKey("code") )
+			{
+				if (responseJson["code"].AsInt == m_data.m_eventId )
+					data.m_state = HDLiveEventData.State.FINALIZED;		
+			}
 		}
-
 		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
     }
 
