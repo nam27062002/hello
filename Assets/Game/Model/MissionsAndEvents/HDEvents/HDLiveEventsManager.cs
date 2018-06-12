@@ -70,7 +70,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
     public const long CACHE_TIMEOUT_MS = 1000 * 60 * 60 * 24 * 7;	// 7 days timeout
 
-	private long m_myEventsRequestMinTim = 1000 * 60 * 60 * 5;
+	private long m_myEventsRequestMinTim = 1000 * 60 * 5;	// 5 min
 
     public bool m_cacheInfo = false;
 #if UNITY_EDITOR
