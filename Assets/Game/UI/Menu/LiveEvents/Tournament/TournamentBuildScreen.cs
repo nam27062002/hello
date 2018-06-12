@@ -145,7 +145,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 		}
 
 
-
 		//-- Entrance Button ------------------------------------------//
 		if (m_tournament.CanIUseFree()) {
 			ShowEntranceButton(m_enterFreeBtn);

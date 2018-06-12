@@ -116,7 +116,11 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 
 			// Hide if there is no power associated
 			if(powerDefs[i] == null) {
-				powerIcon.gameObject.SetActive(false);
+				if (i > 0) {
+					powerIcon.gameObject.SetActive(false);
+				} else {
+					powerIcon.InitFromDefinition(null, false, false);
+				}
 				continue;
 			}
 
