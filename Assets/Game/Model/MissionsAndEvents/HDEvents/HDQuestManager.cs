@@ -203,6 +203,9 @@ public class HDQuestManager : HDLiveEventManager{
 				}
 
 				HDTrackingManager.Instance.Notify_GlobalEventRunDone(data.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
+
+				if ( data.m_state == HDLiveEventData.State.NOT_JOINED )
+					data.m_state = HDLiveEventData.State.JOINED;
             }	
 		}
 
