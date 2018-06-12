@@ -329,7 +329,9 @@ public class EventRewardScreen : MonoBehaviour {
 				m_questManager.ClearEvent();
 
 				// Request new event data
-				HDLiveEventsManager.instance.RequestMyEvents(true);
+				if(!HDLiveEventsManager.TEST_CALLS) {		// Would read the event again from the json xD
+					HDLiveEventsManager.instance.RequestMyEvents(true);
+				}
 
 				// Save!
 				PersistenceFacade.instance.Save_Request();

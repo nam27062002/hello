@@ -55,7 +55,8 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     	INCONSISTENT_TOURNAMENT_DATA, //(611,200);
 		ELO_NOT_FOUND, // (612,200);
 		TOURNAMENT_IS_OVER, //(613,200);
-
+		GAMEMODE_NOT_EXISTS, //(614,200)
+		EMPTY_REQUIRED_PARAMETERS, //(615,200)
 
     	NO_ERROR
     };
@@ -75,7 +76,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
     public bool m_cacheInfo = false;
 #if UNITY_EDITOR
-    public static readonly bool TEST_CALLS = true;
+    public static readonly bool TEST_CALLS = false;
 #else
     // Do not touch!
     public static readonly bool TEST_CALLS = false;
@@ -250,6 +251,8 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 							case 611: outErr = HDLiveEventsManager.ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA;break;
 							case 612: outErr = HDLiveEventsManager.ComunicationErrorCodes.ELO_NOT_FOUND;break;
 							case 613: outErr = HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER;break;
+							case 614: outErr = HDLiveEventsManager.ComunicationErrorCodes.GAMEMODE_NOT_EXISTS;break;
+							case 615: outErr = HDLiveEventsManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
 						}
             		}
             	}
