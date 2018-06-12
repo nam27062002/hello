@@ -58,8 +58,11 @@ public class TournamentLeaderboardView : MonoBehaviour {
 
 		// Request leaderboard!
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
-		m_tournament.RequestLeaderboard();
-		m_waitingTournament = true;
+		if ( m_tournament.EventExists() )
+		{
+			m_tournament.RequestLeaderboard();
+			m_waitingTournament = true;
+		}
 	}
 
 

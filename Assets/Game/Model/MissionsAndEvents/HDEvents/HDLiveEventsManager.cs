@@ -54,6 +54,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     	UNEXPECTED_ERROR, //(610,200),
     	INCONSISTENT_TOURNAMENT_DATA, //(611,200);
 		ELO_NOT_FOUND, // (612,200);
+		TOURNAMENT_IS_OVER, //(613,200);
 
 
     	NO_ERROR
@@ -248,6 +249,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 							case 610: outErr = HDLiveEventsManager.ComunicationErrorCodes.UNEXPECTED_ERROR;break;
 							case 611: outErr = HDLiveEventsManager.ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA;break;
 							case 612: outErr = HDLiveEventsManager.ComunicationErrorCodes.ELO_NOT_FOUND;break;
+							case 613: outErr = HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER;break;
 						}
             		}
             	}

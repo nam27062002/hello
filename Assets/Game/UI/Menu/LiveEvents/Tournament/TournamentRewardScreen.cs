@@ -347,7 +347,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 		// If it's the first time we're getting golden fragments, show info popup
 		Metagame.Reward currentReward = m_sceneController.currentReward;
-		if(currentReward.WillBeReplaced()) {
+		if( currentReward != null && currentReward.WillBeReplaced()) {
 			if(currentReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
 				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
 					// Show popup after some extra delay
