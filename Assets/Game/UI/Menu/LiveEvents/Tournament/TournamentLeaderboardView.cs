@@ -35,6 +35,11 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	[SerializeField] private GameObject m_loadingIcon = null;
 	[SerializeField] private GameObject m_scrollGroup = null;
 	[Space]
+	[Comment(
+		"0: Normal Player Pill\n" +
+		"1: Current Player Pill\n" +
+		"2: Reward Pill"
+	)]
 	[SerializeField] private List<GameObject> m_pillPrefabs;
 
 	// Internal
@@ -80,30 +85,71 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// Refresh leaderboard with current data.
 	/// </summary>
 	public void Refresh() {
-		// Get current event
+		// Get current tournament and init some aux vars
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
-		HDTournamentData data = (HDTournamentData)m_tournament.data;
+		HDTournamentData tournamentData = (HDTournamentData)m_tournament.data;
+		HDTournamentDefinition tournamentDef = tournamentData.definition as HDTournamentDefinition;
+		int playerRank = (int)tournamentData.m_rank;
 
-		List<HDTournamentData.LeaderboardLine> lbData = data.m_leaderboard;
-
-
-		List<ScrollRectItemData<HDTournamentData.LeaderboardLine>> leaderboard = new List<ScrollRectItemData<HDTournamentData.LeaderboardLine>>();
+		// Setup player pills
+		TournamentLeaderboardPlayerPillData currentPlayerData = null;
+		List<HDTournamentData.LeaderboardLine> lbData = tournamentData.m_leaderboard;
+		List<ScrollRectItemData<TournamentLeaderboardPillBaseData>> items = new List<ScrollRectItemData<TournamentLeaderboardPillBaseData>>();
 		for (int i = 0; i < lbData.Count; ++i) {
-			ScrollRectItemData<HDTournamentData.LeaderboardLine> itemData = new ScrollRectItemData<HDTournamentData.LeaderboardLine>();
-			itemData.data = lbData[i];
-			itemData.pillType = (i == data.m_rank)? 1 : 0;
-			leaderboard.Add(itemData);
+			TournamentLeaderboardPlayerPillData playerPillData = new TournamentLeaderboardPlayerPillData();
+			playerPillData.leaderboardLine = lbData[i];
+
+			ScrollRectItemData<TournamentLeaderboardPillBaseData> itemData = new ScrollRectItemData<TournamentLeaderboardPillBaseData>();
+			itemData.data = playerPillData;
+
+			// Is it current player? use different pill type and store data for further use
+			if(i == playerRank) {
+				itemData.pillType = 1;
+				currentPlayerData = playerPillData;
+			} else {
+				itemData.pillType = 0;
+			}
+
+			items.Add(itemData);
 		}
 
-		m_scrollList.Setup(m_pillPrefabs, leaderboard);
+		// Keep track of player pill index
+		int playerPillIdx = playerRank;
 
-		if(data.m_rank < 0) {
+		// Insert reward pills
+		// Reverse-iterate since we don't want to change the inserting indexes
+		List<HDTournamentDefinition.TournamentReward> rewards = tournamentDef.m_rewards;	// They're already sorted by rank, lower to higher
+		for(int i = rewards.Count - 1; i >= 0; --i) {
+			// Exclude rewards without anyone yet in the ranks
+			if(rewards[i].ranks.min >= lbData.Count) continue;
+				
+			TournamentLeaderboardRewardPillData rewardPillData = new TournamentLeaderboardRewardPillData();
+			rewardPillData.reward = rewards[i];
+
+			ScrollRectItemData<TournamentLeaderboardPillBaseData> itemData = new ScrollRectItemData<TournamentLeaderboardPillBaseData>();
+			itemData.data = rewardPillData;
+			itemData.pillType = 2;
+
+			items.Insert(rewards[i].ranks.min, itemData);
+
+			// Keep track of player pill index
+			if(rewards[i].ranks.min < playerRank) {	// Reward pill comes before player pill?
+				playerPillIdx++;
+			}
+		}
+
+		// Initialize the scroll list
+		m_scrollList.Setup(m_pillPrefabs, items);
+
+		// Initialize current player pill
+		if(tournamentData.m_rank < 0) {
 			m_scrollList.SetupPlayerPill(null, -1, null);
 		} else {
-			m_scrollList.SetupPlayerPill(m_pillPrefabs[1], (int)data.m_rank, leaderboard[(int)data.m_rank].data);
+			m_scrollList.SetupPlayerPill(m_pillPrefabs[1], playerPillIdx, currentPlayerData);
 			m_scrollList.FocusPlayerPill();
 		}
 
+		// Done!
 		ToggleLoading(false);
 	}
 

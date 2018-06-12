@@ -1,26 +1,26 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPill, HDTournamentData.LeaderboardLine> {
+public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPillBase, TournamentLeaderboardPillBaseData> {
 
 	private int m_playerIndex;
-	private TournamentLeaderboardPill m_playerPill;
+	private TournamentLeaderboardPlayerPill m_playerPill;
 	private Vector2 m_playerPillSize;
 
-	public void SetupPlayerPill(GameObject _pillPrefab, int _index, HDTournamentData.LeaderboardLine _data) {
+	public void SetupPlayerPill(GameObject _pillPrefab, int _pillIndex, TournamentLeaderboardPlayerPillData _data) {
 		if (m_playerPill != null) {
 			GameObject.Destroy(m_playerPill.gameObject);
 		}
 
-		if(_index < 0) return;
+		if(_pillIndex < 0) return;
 		if(_data == null) return;
 		if(_pillPrefab == null) return;
 
-		m_playerPill = GameObject.Instantiate<GameObject>(_pillPrefab, content, false).GetComponent<TournamentLeaderboardPill>();
+		m_playerPill = GameObject.Instantiate<GameObject>(_pillPrefab, content, false).GetComponent<TournamentLeaderboardPlayerPill>();
 		m_playerPill.InitWithData(_data);
 		m_playerPill.GetComponent<Button>().onClick.AddListener(OnPlayerPillClick);
 
-		m_playerIndex = _index;
+		m_playerIndex = _pillIndex;
 
 		RectTransform rt = m_playerPill.gameObject.GetComponent<RectTransform>();
 		m_playerPillSize = rt.sizeDelta;

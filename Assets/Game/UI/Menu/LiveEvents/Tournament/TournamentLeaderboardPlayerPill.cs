@@ -15,9 +15,16 @@ using TMPro;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Data class.
 /// </summary>
-public class TournamentLeaderboardPill : ScrollRectItem<HDTournamentData.LeaderboardLine> {
+public class TournamentLeaderboardPlayerPillData : TournamentLeaderboardPillBaseData {
+	public HDTournamentData.LeaderboardLine leaderboardLine = null;
+}
+
+/// <summary>
+/// Item class.
+/// </summary>
+public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -40,19 +47,23 @@ public class TournamentLeaderboardPill : ScrollRectItem<HDTournamentData.Leaderb
 	/// Initialize the pill with the given user data.
 	/// </summary>
 	/// <param name="_data">The user to be displayed in the pill.</param>
-	public override void InitWithData(HDTournamentData.LeaderboardLine _data) {
+	public override void InitWithData(TournamentLeaderboardPillBaseData _data) {
+		// Cast data
+		TournamentLeaderboardPlayerPillData data = _data as TournamentLeaderboardPlayerPillData;
+		Debug.Assert(data != null, Color.red.Tag("UNKNOWN PILL DATA FORMAT!"));
+
 		// Set position
 		// We might not get a valid position if the player hasn't yet participated in the event
-		if(_data.m_rank >= 0) {
-			m_positionText.text = StringUtils.FormatNumber(_data.m_rank + 1);
+		if(data.leaderboardLine.m_rank >= 0) {
+			m_positionText.text = StringUtils.FormatNumber(data.leaderboardLine.m_rank + 1);
 		} else {
 			m_positionText.text = "?";
 		}
 
 		// Apply special colors
-		if(_data.m_rank >= 0 && m_positionTextColors.Length > 0) {
-			if(_data.m_rank < m_positionTextColors.Length) {
-				m_positionText.color = m_positionTextColors[_data.m_rank];
+		if(data.leaderboardLine.m_rank >= 0 && m_positionTextColors.Length > 0) {
+			if(data.leaderboardLine.m_rank < m_positionTextColors.Length) {
+				m_positionText.color = m_positionTextColors[data.leaderboardLine.m_rank];
 			} else {
 				m_positionText.color = m_positionTextColors.Last();
 			}
@@ -61,10 +72,10 @@ public class TournamentLeaderboardPill : ScrollRectItem<HDTournamentData.Leaderb
 
 		// Get social info
 		// Set name
-		if(m_nameText != null) m_nameText.text = _data.m_name;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
+		if(m_nameText != null) m_nameText.text = data.leaderboardLine.m_name;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 
 		// Set score
-		m_scoreText.text = StringUtils.FormatBigNumber(_data.m_score);
+		m_scoreText.text = StringUtils.FormatBigNumber(data.leaderboardLine.m_score);
 	}
 
 	//------------------------------------------------------------------------//
