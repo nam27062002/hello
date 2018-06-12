@@ -3563,6 +3563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e815eddc6b39d407181267779a4aa7d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_mode: 0
   m_powerIcon: {fileID: 114000012938969140}
   m_lockIcon: {fileID: 0}
   m_nameText: {fileID: 114002622485560956}
@@ -4157,7 +4158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.99264705, b: 0.75735295, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -5744,9 +5745,6 @@ MonoBehaviour:
   m_finalPanel: {fileID: 114000011555794320}
   m_rewardInfo: {fileID: 114651686107442888}
   m_rewardDragController: {fileID: 114447986738049312}
-  m_finalPanelDelay: 1
-  m_finalPanelDelayWhenFragmentsGiven: 3
-  m_finalPanelDelayWhenCoinsGiven: 2
 --- !u!114 &114404760902037898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6171,6 +6169,7 @@ MonoBehaviour:
   m_forceInitialValue: 0
   m_initialValue: {x: 45, y: 0}
   m_restoreOnDisable: 0
+  m_restoreOnRelease: 0
   m_restoreDuration: 0.25
   OnValueChanged:
     m_PersistentCalls:
