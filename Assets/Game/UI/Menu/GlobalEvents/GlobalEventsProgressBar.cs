@@ -57,6 +57,14 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 		}
 	}
 
+	public void RefreshAchieved(HDQuestDefinition _evt, long currentValue) {
+		for(int i = 0; i < _evt.m_rewards.Count; ++i) {
+			// Break the loop if we don't have more reward info slots
+			if(i >= m_rewardInfos.Length) break;
+			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount );
+		}
+	}
+
 	public void RefreshProgress(float _value, float _animDuration = -1f) {
 		if (m_progressBar != null) {
 			if(_animDuration < 0f) {

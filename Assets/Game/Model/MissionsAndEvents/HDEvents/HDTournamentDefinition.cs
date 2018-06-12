@@ -83,29 +83,35 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 				switch( modeStr )
 				{
+					case "0":
+					case "normal":
+					default:
+					{
+						m_mode = TournamentMode.NORMAL;
+					}break;
+
+					case "1":
 					case "time_attack":{
 						m_mode = TournamentMode.TIME_ATTACK;
 						if ( gameMode.ContainsKey("amount") )
 							m_targetAmount = gameMode["amount"].AsLong;
 					}break;
+					case "2":
 					case "time_limit":{
 						m_mode = TournamentMode.TIME_LIMIT;
 						if ( gameMode.ContainsKey("seconds") )
 							m_seconds = gameMode["seconds"].AsLong;
 					}break;
+					case "3":
 					case "race":{
 						m_mode = TournamentMode.RACE;
 						if ( gameMode.ContainsKey("loops") )
 							m_loops = gameMode["loops"].AsInt;
 					}break;
+					case "4":
 					case "boss":{
 						m_mode = TournamentMode.BOSS;
 						// boss config?
-					}break;
-					case "normal":
-					default:
-					{
-						m_mode = TournamentMode.NORMAL;
 					}break;
 				}
 			}
