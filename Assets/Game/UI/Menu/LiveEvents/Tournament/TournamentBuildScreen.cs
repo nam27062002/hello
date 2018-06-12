@@ -245,7 +245,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	public void OnStartPaying() {
 		if (Application.internetReachability == NetworkReachability.NotReachable) {
-			SendFeedback("TID_NEED_CONNECTION");
+			SendFeedback("TID_GEN_NO_CONNECTION");
 		} else if (!GameServerManager.SharedInstance.IsLoggedIn()) {
 			// Check log in!
 			SendFeedback("TID_NEED_TO_LOG_IN");
@@ -316,6 +316,10 @@ public class TournamentBuildScreen : MonoBehaviour {
 			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID:
 			{
 				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
+			}break;
+			case HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER:
+			{
+				SendFeedback("TID_TOURNAMENT_OVER");
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR: 
 			default:
