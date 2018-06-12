@@ -190,7 +190,8 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	}
 
 	private void CreatePillOfType(int _type) {
-		T pill = GameObject.Instantiate<GameObject>(m_pillPrefabs[_type], content, false).GetComponent<T>();
+		GameObject instance = GameObject.Instantiate<GameObject>(m_pillPrefabs[_type], content, false);
+		T pill = instance.GetComponent<T>();
 		pill.ComputeSize();
 		m_pills[_type].Add(pill);
 
@@ -276,6 +277,11 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 		base.LateUpdate();
 		if (m_isAutoScrolling) {			
 			content.anchoredPosition = Vector2.SmoothDamp(content.anchoredPosition, m_targetPosition, ref m_autoScrollVelocity, m_autoScrollTime, 10000f, Time.deltaTime);
+
+			// Stop moving at some point!
+			if(m_autoScrollVelocity.sqrMagnitude < 0.01f) {
+				m_isAutoScrolling = false;
+			}
 		}
 	}
 
