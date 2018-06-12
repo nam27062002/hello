@@ -91,12 +91,12 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	//------------------------------------------------------------------------//
 	protected override void OnEnable() {
 		base.OnEnable();
-		onValueChanged.AddListener(OnScrollMoved);
+		onValueChanged.AddListener(OnValueChanged);
 	}
 
 	protected override void OnDisable() {
 		base.OnDisable();
-		onValueChanged.RemoveListener(OnScrollMoved);
+		onValueChanged.RemoveListener(OnValueChanged);
 	}
 
 	/// <summary>
@@ -291,7 +291,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	/// The scroll position has changed, lets see which is the first item visible.
 	/// </summary>
 	/// <param name="_position">Scroll position.</param>
-	private void OnScrollMoved(Vector2 _position) {
+	private void OnValueChanged(Vector2 _position) {
 		m_lastPosition = _position;
 
 		Vector2 deltaMove = _position - m_lastPosition;
