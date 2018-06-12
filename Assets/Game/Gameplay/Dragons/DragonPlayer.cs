@@ -820,5 +820,6 @@ public class DragonPlayer : MonoBehaviour {
 	public void OverrideSize( float size )
 	{
 		m_defaultSize = size;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize;
 	}
 }
