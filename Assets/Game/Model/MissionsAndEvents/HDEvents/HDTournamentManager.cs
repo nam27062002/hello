@@ -165,22 +165,19 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( responseJson.ContainsKey("lastFreeTournamentRun") )
+		{
+			m_tournamentData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
+			// Save cache?
+		}
+
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			if ( responseJson.ContainsKey("lastFreeTournamentRun") )
-			{
-				m_tournamentData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
-				// Save cache?
-			}
-
 			if (m_tournamentData.m_state == HDLiveEventData.State.NOT_JOINED)
 			{
 				m_tournamentData.m_matchmakingValue = GetCurrentMatchmakingValue();
 				m_tournamentData.m_state = HDLiveEventData.State.JOINED;
 			}
-
-
-
 		}
 		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, long> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
     }
