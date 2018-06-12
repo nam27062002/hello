@@ -335,7 +335,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 		T pill = m_pills[m_itemData[_index].pillType][0];
 
 		m_targetPosition = content.anchoredPosition;
-		m_targetPosition.y = m_pillPosition[_index].y - (m_padding.top + pill.size.y * 0.5f) - m_visibleAreaSize.y/2f;
+		m_targetPosition.y = m_pillPosition[_index].y - m_padding.top - m_visibleAreaSize.y/2f;
 
 		m_isAutoScrolling = true;
 	}
