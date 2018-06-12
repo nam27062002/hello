@@ -188,6 +188,12 @@ public class DragonPlayer : MonoBehaviour {
 		set{ m_superSizeInvulnerable = value; }
 	}
 
+	private bool m_modInvulnerable = false;
+	public bool modInvulnerable {
+		get { return m_modInvulnerable; }
+		set { m_modInvulnerable = value; }
+	}
+
 	public DragonCommonSettings m_dragonCommonSettings;
 
 	//------------------------------------------------------------------//
@@ -609,6 +615,8 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon currently is invulnerable; otherwise, <c>false</c>.</returns>
 	public bool IsInvulnerable() {
+		if (m_modInvulnerable) return true;
+
 		// After revive, we're invulnerable
 		if(m_invulnerableAfterReviveTimer > 0) return true;
 
@@ -820,5 +828,6 @@ public class DragonPlayer : MonoBehaviour {
 	public void OverrideSize( float size )
 	{
 		m_defaultSize = size;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize;
 	}
 }

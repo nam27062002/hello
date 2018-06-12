@@ -61,9 +61,15 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 
 	// private bool m_bonusDragon = false;
 	private DefinitionNode m_keyShopPackDef = null;
-
     private bool m_panelActiveInitialized = false;
-	
+
+
+	private GlobalEventsPanelActive m_eventPanelActive = null;
+    void Awake()
+    {
+		m_eventPanelActive = gameObject.GetComponentInChildren<GlobalEventsPanelActive>();
+    }
+
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -195,6 +201,10 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 				m_finalScore = (long)m_questManager.GetRunScore();
 			})
 			.AppendInterval(m_rowDelay)
+			.AppendCallback( () => { 
+				if (m_eventPanelActive != null)
+					m_eventPanelActive.MoveScoreTo(  m_questManager.m_questData.m_globalScore, m_questManager.m_questData.m_globalScore + m_questManager.GetRunScore() );
+			 } )
 			.AppendInterval(m_rowDelay)
 			// Tap to continue
 			.AppendCallback(() => {

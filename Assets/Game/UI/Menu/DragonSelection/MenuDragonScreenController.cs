@@ -57,15 +57,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 		{
 			HDLiveEventsManager.instance.RequestMyEvents();
 		}
-		/*
-		if (GlobalEventManager.user != null && GlobalEventManager.Connected() )
-		{
-			if (GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0){
-				// ask for live events again
-				GlobalEventManager.TMP_RequestCustomizer();
-			}
-		}
-		*/
 	}
 
 	/// <summary>

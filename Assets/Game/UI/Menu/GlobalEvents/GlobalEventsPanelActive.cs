@@ -10,7 +10,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Collections;
+using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -127,6 +128,49 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 		Refresh();
 
+	}
+
+
+	public void MoveScoreTo( long _from, long _to )
+	{
+		StartCoroutine( GoingUp( _from, _to ) );
+	}
+
+	IEnumerator GoingUp( long _from, long _to )
+	{
+		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		if(questManager.EventExists())
+		{
+			HDQuestData data = questManager.data as HDQuestData;
+			HDQuestDefinition def = data.definition as HDQuestDefinition;
+
+			// Starting setup
+			if (m_progressBar != null) 
+			{
+				m_progressBar.RefreshRewards( def, _from );
+				m_progressBar.RefreshProgress( _from / (float) def.m_goal.m_amount );
+			}
+			yield return null;
+			float duration = 0.2f;
+			float t = 0;
+			while( t < duration)
+			{
+				t += Time.deltaTime;
+				long v = _from + (long)((_to - _from) * (t / duration));
+				if (m_progressBar != null) 
+				{
+					m_progressBar.RefreshAchieved( def, v );
+					m_progressBar.RefreshProgress( v / (float) def.m_goal.m_amount );
+				}
+				yield return null;
+			}
+
+			if (m_progressBar != null) 
+			{
+				m_progressBar.RefreshAchieved( def, _to );
+				m_progressBar.RefreshProgress( _to / (float) def.m_goal.m_amount );
+			}
+		}
 	}
 
 }

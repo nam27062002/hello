@@ -1116,6 +1116,7 @@ public class GameServerManagerCalety : GameServerManager {
                     Dictionary<string, string> kParams = new Dictionary<string, string>();
                     kParams["eventId"] = parameters["eventId"];
                     kParams["score"] = parameters["score"];
+					kParams["returnData"] = parameters["returnData"];
                     string body = "";
                     if ( parameters.ContainsKey("build") )
                     {

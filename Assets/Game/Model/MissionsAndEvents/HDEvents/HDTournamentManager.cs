@@ -165,22 +165,19 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( responseJson != null && responseJson.ContainsKey("lastFreeTournamentRun") )
+		{
+			m_tournamentData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
+			// Save cache?
+		}
+
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			if ( responseJson.ContainsKey("lastFreeTournamentRun") )
-			{
-				m_tournamentData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
-				// Save cache?
-			}
-
 			if (m_tournamentData.m_state == HDLiveEventData.State.NOT_JOINED)
 			{
 				m_tournamentData.m_matchmakingValue = GetCurrentMatchmakingValue();
 				m_tournamentData.m_state = HDLiveEventData.State.JOINED;
 			}
-
-
-
 		}
 		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, long> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
     }
@@ -216,7 +213,7 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr != HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			m_tournamentData.ParseLeaderboard(responseJson);
 		}
@@ -248,7 +245,10 @@ public class HDTournamentManager : HDLiveEventManager {
 		HDTournamentData tData = data as HDTournamentData;
 		HDTournamentDefinition tDef = data.definition as HDTournamentDefinition;
 		bool ret = false;
-		if ( (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp) > tDef.m_entrance.m_dailyFree * 1000 || tDef.m_entrance.m_type == "free" )
+
+		long t1 = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp;
+		long t2 = tDef.m_entrance.m_dailyFree * 1000;
+		if ( tDef.m_entrance.m_type == "free" || t1 > t2 )
 		{
 			ret = true;
 		}
