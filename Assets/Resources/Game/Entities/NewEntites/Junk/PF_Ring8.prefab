@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4694368260951876}
-  - component: {fileID: 114165132942383434}
+  - component: {fileID: 114628391320967836}
   - component: {fileID: 114433858376983428}
   - component: {fileID: 65511695671339586}
   - component: {fileID: 114767505736472508}
@@ -340,20 +340,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_amplitude: 5
   m_frequency: 0.5
---- !u!114 &114165132942383434
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1417403654272050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: Ring
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 1
 --- !u!114 &114433858376983428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -365,6 +351,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 848af6132b2d3441a82709bdf4800127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114628391320967836
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1417403654272050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6adfd6ff910bd40f19ec654b81a3983f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: Ring
+  m_hideNeedTierMessage: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &114740743979058616
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -417,6 +417,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0
+    orientate: 0
 --- !u!114 &114767505736472508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -466,6 +467,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onCollectAudio: hd_goodjunk_bottle
   m_onFadeOutParticle:
     name: PS_RingPassFX
@@ -505,6 +507,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
 --- !u!136 &136038253517065024
 CapsuleCollider:
   m_ObjectHideFlags: 1
