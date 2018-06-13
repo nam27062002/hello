@@ -137,6 +137,14 @@ public class GlobalEventsScreenController : MonoBehaviour {
 				// Show error message and retry button
 				switch( _err )
 				{
+					case HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR:
+					{
+						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_NET_ERROR");
+					}break;
+					case HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE:
+					{
+						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_NO_RESPONSE");
+					}break;
 					default:
 					{
 						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");
