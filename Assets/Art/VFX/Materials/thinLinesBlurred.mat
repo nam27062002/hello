@@ -12,7 +12,7 @@ Material:
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 3070
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -30,6 +30,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 21559863ebfdc2a4883acc6701634c58, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - BlendMode: 3
     - Dissolve: 0
@@ -38,17 +42,26 @@ Material:
     - _DstBlend: 10
     - _EmissionSaturation: 1
     - _EmissivePower: 1
+    - _EnableAlphaDissolve: 0
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
+    - _EnableColorTint: 0
     - _EnableColorVertex: 0
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 0
+    - _EnableNoiseTexture: 0
+    - _EnableNoiseTextureAlpha: 0
+    - _EnableNoiseTextureDissolve: 0
+    - _EnableNoiseTextureEmission: 0
+    - _EnableNoiseUV: 0
+    - _GlobalAlpha: 1
     - _OpacitySaturation: 1
     - _SrcBlend: 5
-    - _ZTest: 2
+    - _ZTest: 6
     m_Colors:
     - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
+    - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.922}
