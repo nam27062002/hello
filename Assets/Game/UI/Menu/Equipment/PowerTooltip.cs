@@ -80,6 +80,24 @@ public class PowerTooltip : MonoBehaviour {
 		m_descriptionText.text = DragonPowerUp.GetDescription(_powerDef, false, _mode == PowerIcon.Mode.PET);	// Custom formatting depending on powerup type, already localized
 	}
 
+	public void InitFromDefinition(IModifierDefinition _modDef) {
+		if (_modDef == null) return;
+
+		// Power icon
+		if(m_powerIcon != null) {
+			// Load from resources
+			m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _modDef.GetIconRelativePath());
+			m_powerIcon.color = Color.white;
+		}
+
+		// Name and description
+		// Name
+		m_nameText.Localize(_modDef.def.Get("tidName"));
+
+		// Desc
+		m_descriptionText.text = _modDef.GetDescription();
+	}
+
 	/// <summary>
 	/// Sets the lock state of the power.
 	/// </summary>

@@ -32,9 +32,12 @@ public class TournamentInfoScreen : MonoBehaviour {
 	[SerializeField] private Transform m_rewardsContainer = null;
 	[SerializeField] private GameObject m_rewardPrefab = null;
 
+
 	//----------------------------------------------------------------//
 	private HDTournamentManager m_tournament;
 	private HDTournamentDefinition m_definition;
+	private bool m_waitingRewardsData = false;
+
 
 	//----------------------------------------------------------------//
 
@@ -102,7 +105,26 @@ public class TournamentInfoScreen : MonoBehaviour {
 	// Update timers periodically
 	void UpdatePeriodic() {
 		if (m_definition != null) {
-			m_timerText.text = LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_ICON_ENDS_IN", TimeUtils.FormatTime(m_definition.timeToEnd.TotalSeconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true));
+			double seconds = m_definition.timeToEnd.TotalSeconds;
+			if (seconds <= 0f) {
+				seconds = 0f;
+
+				if (!m_waitingRewardsData) {
+					Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+
+					// Request rewards data and wait for it to be loaded
+					m_tournament.RequestRewards();
+
+					// Show busy screen
+					BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
+					BusyScreen.Show(this);
+
+					m_waitingRewardsData = true;
+					CancelInvoke();
+				}
+			}
+
+			m_timerText.text = LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_ICON_ENDS_IN", TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true));
 		}
 	}
 
@@ -115,7 +137,42 @@ public class TournamentInfoScreen : MonoBehaviour {
 	public void OnShowPreAnimation() {
 		Refresh();
 
+		m_waitingRewardsData = false;
+
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
+	}
+
+	public void OnHidePreAnimation() {
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+	}
+
+	/// <summary>
+	/// We got a response on the rewards request.
+	/// </summary>
+	private void OnRewardsResponse(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+		// Ignore if we weren't waiting for rewards!
+		if(!m_waitingRewardsData) return;
+		m_waitingRewardsData = false;
+
+		// Hide busy screen
+		BusyScreen.Hide(this);
+
+		// Success?
+		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+			// Go to tournament rewards screen!
+			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
+			scr.StartFlow();
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+		} else {
+			// Show error message
+			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_ERROR"),
+				new Vector2(0.5f, 0.33f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+		}
 	}
 }

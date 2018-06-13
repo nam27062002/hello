@@ -9,7 +9,8 @@ public class TournamentRewardScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private enum State {
 		ANIMATING,
-		IDLE
+		IDLE,
+		FLOW_NOT_STARTED
 	}
 
 	private enum Step {
@@ -51,7 +52,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 	private HDTournamentDefinition m_tournamentDef = null;
 
 	private Step m_step = Step.INIT;
-	private State m_state = State.IDLE;
+	private State m_state = State.FLOW_NOT_STARTED;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -95,74 +96,76 @@ public class TournamentRewardScreen : MonoBehaviour {
 	/// Start the reward flow with current event in the manager.
 	/// </summary>
 	public void StartFlow() {
-		// Make sure all required references are set
-		ValidateReferences();
+		if (m_state == State.FLOW_NOT_STARTED) {
+			// Make sure all required references are set
+			ValidateReferences();
 
-		// Listen to 3D scene events - remove first to avoid receiving the event twice! (shouldn't happen, just in case)
-		m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
-		m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+			// Listen to 3D scene events - remove first to avoid receiving the event twice! (shouldn't happen, just in case)
+			m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+			m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
-		m_sceneController.OnAnimStarted.AddListener(OnSceneAnimStarted);
-		m_sceneController.OnAnimFinished.AddListener(OnSceneAnimFinished);
+			m_sceneController.OnAnimStarted.AddListener(OnSceneAnimStarted);
+			m_sceneController.OnAnimFinished.AddListener(OnSceneAnimFinished);
 
-		// Clear 3D scene
-		m_sceneController.Clear();
+			// Clear 3D scene
+			m_sceneController.Clear();
 
-		// Store current event for faster access
-		m_tournamentManager = HDLiveEventsManager.instance.m_tournament;
-		m_tournamentData = m_tournamentManager.data as HDTournamentData;
-		m_tournamentDef = m_tournamentData.definition as HDTournamentDefinition;
+			// Store current event for faster access
+			m_tournamentManager = HDLiveEventsManager.instance.m_tournament;
+			m_tournamentData = m_tournamentManager.data as HDTournamentData;
+			m_tournamentDef = m_tournamentData.definition as HDTournamentDefinition;
 
-		// Initialize Leaderboard - before we mark the event as finished
-		/*if(m_leaderboard != null) {
-			m_leaderboard.Refresh();
-		}*/
-		// [AOC] No need! Leaderboard is self managed!
+			// Initialize Leaderboard - before we mark the event as finished
+			/*if(m_leaderboard != null) {
+				m_leaderboard.Refresh();
+			}*/
+			// [AOC] No need! Leaderboard is self managed!
 
-		// Initialize visual info
-		if(m_tournamentIcon != null) {
-			m_tournamentIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_tournamentDef.m_goal.m_icon);
-		}
-		if(m_goalText != null) {
-			m_goalText.Localize(m_tournamentDef.m_goal.m_desc);
-		}
-
-		// Stack all rewards into the pending rewards stack
-		// Add reward to the stack - In the right order!
-		// From now on, if the flow is interrupted, the tournament will not appear anymore and rewards will appear as pending rewards
-		if(m_tournamentManager != null) {
-			// Tournament Rewards
-			List<HDLiveEventDefinition.HDLiveEventReward> rewards = m_tournamentManager.GetMyRewards();
-			for(int i = 0; i < rewards.Count; ++i) {
-				UsersManager.currentUser.PushReward(rewards[i].reward);
+			// Initialize visual info
+			if(m_tournamentIcon != null) {
+				m_tournamentIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_tournamentDef.m_goal.m_icon);
+			}
+			if(m_goalText != null) {
+				m_goalText.Localize(m_tournamentDef.m_goal.m_desc);
 			}
 
-			// Mark tournament as collected
-			m_tournamentManager.FinishEvent();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
+			// Stack all rewards into the pending rewards stack
+			// Add reward to the stack - In the right order!
+			// From now on, if the flow is interrupted, the tournament will not appear anymore and rewards will appear as pending rewards
+			if(m_tournamentManager != null) {
+				// Tournament Rewards
+				List<HDLiveEventDefinition.HDLiveEventReward> rewards = m_tournamentManager.GetMyRewards();
+				for(int i = 0; i < rewards.Count; ++i) {
+					UsersManager.currentUser.PushReward(rewards[i].reward);
+				}
 
-			// Immediately save persistence in case the rewards opening gets interrupted
-			PersistenceFacade.instance.Save_Request(true);
-		}
+				// Mark tournament as collected
+				m_tournamentManager.FinishEvent();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
 
-		// Set initial state
-		m_step = Step.INIT;
-		m_state = State.IDLE;
-
-		// Hide all screens
-		for(int i = 0; i < (int)Step.FINISH; ++i) {
-			ShowHideAnimator screen = GetScreen((Step)i);
-			if(screen != null) {
-				screen.ForceHide(false);
+				// Immediately save persistence in case the rewards opening gets interrupted
+				PersistenceFacade.instance.Save_Request(true);
 			}
-		}
 
-		// Hide other UI elements
-		m_tapToContinue.ForceHide(false);
-		m_rewardDragController.gameObject.SetActive(false);
+			// Set initial state
+			m_step = Step.INIT;
+			m_state = State.IDLE;
 
-		// If already in the screen, start the flow immediately
-		if(this.isActiveAndEnabled) {
-			AdvanceStep();
+			// Hide all screens
+			for(int i = 0; i < (int)Step.FINISH; ++i) {
+				ShowHideAnimator screen = GetScreen((Step)i);
+				if(screen != null) {
+					screen.ForceHide(false);
+				}
+			}
+
+			// Hide other UI elements
+			m_tapToContinue.ForceHide(false);
+			m_rewardDragController.gameObject.SetActive(false);
+
+			// If already in the screen, start the flow immediately
+			if(this.isActiveAndEnabled) {
+				AdvanceStep();
+			}
 		}
 	}
 
@@ -197,8 +200,8 @@ public class TournamentRewardScreen : MonoBehaviour {
 	/// <param name="_step">Step whose screen we want.</param>
 	private ShowHideAnimator GetScreen(Step _step) {
 		switch(_step) {
-			case Step.INTRO:			return m_introScreen;		break;
-			case Step.REWARD: 			return m_rewardScreen;		break;
+			case Step.INTRO:			return m_introScreen;
+			case Step.REWARD: 			return m_rewardScreen;
 		}
 		return null;
 	}
@@ -302,6 +305,8 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 				// Save!
 				PersistenceFacade.instance.Save_Request();
+
+				m_state = State.FLOW_NOT_STARTED;
 
 				// Go back to main screen
 				InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
