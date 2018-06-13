@@ -321,7 +321,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			default:
 			{
 				// How to know if free was not valid??
-				SendFeedback("TID_GEN_ERROR");
+				SendFeedback("TID_EVENT_RESULTS_UNKNOWN_ERROR");
 			}break;
 		}
 

@@ -33,6 +33,7 @@ public class HDLiveEventManager
     public string m_type = "";
     public bool m_shouldRequestDefinition = false;
     public bool m_isActive = false;
+    private bool m_requestingRewards = false;
 
 	protected HDLiveEventData m_data;
 	public HDLiveEventData data
@@ -275,14 +276,18 @@ public class HDLiveEventManager
 
 	public void RequestRewards()
     {
-		if ( HDLiveEventsManager.TEST_CALLS )
-        {
-			ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
-        }
-        else
-        {
-            HDLiveEventData data = GetEventData();
-			GameServerManager.SharedInstance.HDEvents_GetMyReward(data.m_eventId, RequestRewardsResponse);    
+		if (!m_requestingRewards)
+		{
+			m_requestingRewards = true;
+			if ( HDLiveEventsManager.TEST_CALLS )
+	        {
+				ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
+	        }
+	        else
+	        {
+	            HDLiveEventData data = GetEventData();
+				GameServerManager.SharedInstance.HDEvents_GetMyReward(data.m_eventId, RequestRewardsResponse);    
+	        }
         }
     }
 
@@ -301,6 +306,7 @@ public class HDLiveEventManager
             	}
             }
 		}
+		m_requestingRewards = false;
 
 		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId, outErr);
     }
