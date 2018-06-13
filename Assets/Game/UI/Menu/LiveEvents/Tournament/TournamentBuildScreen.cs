@@ -29,7 +29,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private Transform[]		m_petEditSlots;
 
 	[SeparatorAttribute("Tournament Info")]
-	[SerializeField] private Localizer 			m_titleText;
 	[SerializeField] private Localizer			m_goalText;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
@@ -120,9 +119,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 
 		//-- Tournament Info ------------------------------------------//
-		//TITLE
-		m_titleText.Localize(m_definition.m_name);
-
 		//GOALS
 		m_goalText.Localize(m_definition.m_goal.m_desc);
 
