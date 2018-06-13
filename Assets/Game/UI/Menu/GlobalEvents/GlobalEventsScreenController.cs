@@ -151,13 +151,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	public void OnRetryRewardsButton()
 	{
 		// Show requesting!
-		if (Application.internetReachability == NetworkReachability.NotReachable)
+		if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
 		{
 			SetActivePanel(Panel.OFFLINE);	
-		}
-		else if ( GameSessionManager.SharedInstance.IsLogged () )
-		{
-			SetActivePanel(Panel.LOG_IN);	
 		}
 		else
 		{
@@ -178,13 +174,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
 		if ( quest.EventExists() )
 		{
-			if (Application.internetReachability == NetworkReachability.NotReachable)
+			if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
 			{
 				targetPanel = Panel.OFFLINE;
-			}
-			else if ( GameSessionManager.SharedInstance.IsLogged () )
-			{
-				targetPanel = Panel.LOG_IN;
 			}
 			else
 			{
@@ -273,20 +265,13 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnOfflineRetryButton() {
 
-		if (Application.internetReachability != NetworkReachability.NotReachable)
+		if (Application.internetReachability != NetworkReachability.NotReachable && GameSessionManager.SharedInstance.IsLogged ())
 		{
-			if ( GameSessionManager.SharedInstance.IsLogged () )
+			// Show loading and ask for my evetns
+			SetActivePanel(Panel.LOADING);
+			if (!HDLiveEventsManager.instance.RequestMyEvents())
 			{
-				SetActivePanel(Panel.LOG_IN);	
-			}
-			else
-			{
-				// Show loading and ask for my evetns
-				SetActivePanel(Panel.LOADING);
-				if (!HDLiveEventsManager.instance.RequestMyEvents())
-				{
-					StartCoroutine( RemoveLoading());
-				}
+				StartCoroutine( RemoveLoading());
 			}
 		}
 		else
