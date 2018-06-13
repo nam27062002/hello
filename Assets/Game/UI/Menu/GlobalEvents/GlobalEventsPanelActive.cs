@@ -140,12 +140,12 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	}
 
 
-	public void MoveScoreTo( long _from, long _to )
+	public void MoveScoreTo( long _from, long _to, float _duration )
 	{
-		StartCoroutine( GoingUp( _from, _to ) );
+		StartCoroutine( GoingUp( _from, _to, _duration ) );
 	}
 
-	IEnumerator GoingUp( long _from, long _to )
+	IEnumerator GoingUp( long _from, long _to, float _duration )
 	{
 		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
 		if(questManager.EventExists())
@@ -160,12 +160,11 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				m_progressBar.RefreshProgress( _from / (float) def.m_goal.m_amount );
 			}
 			yield return null;
-			float duration = 0.2f;
 			float t = 0;
-			while( t < duration)
+			while( t < _duration)
 			{
 				t += Time.deltaTime;
-				long v = _from + (long)((_to - _from) * (t / duration));
+				long v = _from + (long)((_to - _from) * (t / _duration));
 				if (m_progressBar != null) 
 				{
 					m_progressBar.RefreshAchieved( def, v );

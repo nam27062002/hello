@@ -38,16 +38,6 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	[Space]
 	[SerializeField] private Localizer m_tapToContinueText = null;
 	[SerializeField] private ShowHideAnimator m_tapToContinueAnim = null;
-
-	[Separator("Title Panel")]
-	[SerializeField] private TextMeshProUGUI m_descriptionText = null;
-	[SerializeField] private Image m_eventIcon = null;
-
-	[Separator("Active Panel")]
-
-	[Space]
-	[SerializeField] private float m_rowDelay = 1f;
-
 	[Space]
 	[SerializeField] private TweenSequence m_sequence = null;
 
@@ -56,15 +46,13 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	private Panel m_activePanel = Panel.OFFLINE;
 	private Sequence m_activePanelSequence = null;
 
-	private long m_finalScore = 0;
 	private bool m_continueEnabled = false;
-
-	// private bool m_bonusDragon = false;
-	private DefinitionNode m_keyShopPackDef = null;
-    private bool m_panelActiveInitialized = false;
-
-
+	private bool m_panelActiveInitialized = false;
 	private GlobalEventsPanelActive m_eventPanelActive = null;
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
     void Awake()
     {
 		m_eventPanelActive = gameObject.GetComponentInChildren<GlobalEventsPanelActive>();
@@ -103,9 +91,6 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		// Get event data!
 		m_questManager = HDLiveEventsManager.instance.m_quest;
 
-		// Initialize some vars
-		m_keyShopPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, "shop_pack_keys_0");
-
 		// Listen to sequence ending
 		m_sequence.OnFinished.AddListener(OnHidePostAnimation);
 	}
@@ -119,16 +104,6 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 
 		// Subscribe to external events
 		// Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
-
-
-		// Initialize static stuff
-		{
-			// Objective image
-			m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_questManager.m_questDefinition.m_goal.m_icon);
-
-			// Event description
-			m_descriptionText.text = m_questManager.GetGoalDescription();
-		}
 
 		// Do a first refresh
 		InitPanel(false, true);
@@ -182,30 +157,29 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	private void LaunchActivePanelAnimation() {
 		// Kill any existing tween
-		string tweenId = "PopupGlobalEventContribution.ActivePanel";
+		string tweenId = "ResultsScreenStepGlobalEvent.ActivePanel";
 		DOTween.Kill(tweenId);
 
 		// Init some stuff
-		m_finalScore = 0;
-
 		m_continueEnabled = false;
 		m_tapToContinueAnim.Hide();
-
 
 		// Sequentially update values
 		m_activePanelSequence = DOTween.Sequence()
 			.SetId(tweenId)
+			.AppendInterval(1f)
 
 			// Base score
-			.AppendCallback(() => {
-				m_finalScore = (long)m_questManager.GetRunScore();
-			})
-			.AppendInterval(m_rowDelay)
 			.AppendCallback( () => { 
 				if (m_eventPanelActive != null)
-					m_eventPanelActive.MoveScoreTo(  m_questManager.m_questData.m_globalScore, m_questManager.m_questData.m_globalScore + m_questManager.GetRunScore() );
+					m_eventPanelActive.MoveScoreTo(
+						m_questManager.m_questData.m_globalScore, 
+						m_questManager.m_questData.m_globalScore + m_questManager.GetRunScore(),
+						1f	// duration
+					);
 			 } )
-			.AppendInterval(m_rowDelay)
+			.AppendInterval(1f)
+
 			// Tap to continue
 			.AppendCallback(() => {
 				// Allow continue
