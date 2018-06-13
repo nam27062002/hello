@@ -69,15 +69,24 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Just in case
 		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
 
+		double remainingTime = System.Math.Max(0, HDLiveEventsManager.instance.m_quest.m_questData.remainingTime.TotalSeconds);
+
 		// Update countdown text
 		m_timerText.text = TimeUtils.FormatTime(
-			System.Math.Max(0, HDLiveEventsManager.instance.m_quest.m_questData.remainingTime.TotalSeconds),	// Never show negative time!
+			remainingTime,	// Never show negative time!
 			TimeUtils.EFormat.ABBREVIATIONS,
 			4
 		);
 
-		// [AOC] Manage timer end when this panel is active
-		// The GoalsScreenController does it, since it has to always display the timer bar on the tab button, regardless of whether this screen is active or not
+		if ( remainingTime <= 0 )
+		{
+			HDLiveEventsManager.instance.m_quest.UpdateStateFromTimers();
+		}
+
+		if ( !HDLiveEventsManager.instance.m_quest.IsRunning() )
+		{
+			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
+		}
 	}
 
 	//------------------------------------------------------------------------//

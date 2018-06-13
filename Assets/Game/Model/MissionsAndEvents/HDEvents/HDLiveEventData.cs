@@ -111,6 +111,10 @@ public class HDLiveEventData {
 						m_state = State.FINALIZED;
 					}
 				}
+				else if ( m_state == State.TEASING )
+				{
+					m_state = State.NOT_JOINED;
+				}
 			}
 			else if ( m_state == State.NONE )
 			{

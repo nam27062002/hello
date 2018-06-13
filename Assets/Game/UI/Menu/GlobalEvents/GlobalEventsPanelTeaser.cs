@@ -28,9 +28,6 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
-	[SerializeField] private Image m_icon;
-	[SerializeField] private TextMeshProUGUI m_text;
-	[SerializeField] private GlobalEventsRewardInfo m_rewardInfo;
 
 
 	//------------------------------------------------------------------------//
@@ -74,6 +71,13 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 			// TODO
 			// GlobalEventManager.RequestCurrentEventState();	// This should change the active panel
 			questManager.UpdateStateFromTimers();
+			// Send Event to update this!
+		}
+
+		if ( questManager.data.m_state != HDLiveEventData.State.TEASING )
+		{
+			// Exit from here!!
+			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 		}
 	}
 
@@ -81,25 +85,8 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	override public void Refresh() {
-		// HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
-		// string bonusDragon = questManager.m_questDefinition.m_goal.m_bonusDragon;
-
-		// DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, bonusDragon);
-		// m_text.text = def.GetLocalized("tidName");
-		// m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + bonusDragon + "/icon_disguise_0");	// Default skin
-
-		// m_rewardInfo.rewardSlot = evt.topContributorsRewardSlot;
-
 		// Force a first update on the timer
 		UpdatePeriodic();
 	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 
 }
