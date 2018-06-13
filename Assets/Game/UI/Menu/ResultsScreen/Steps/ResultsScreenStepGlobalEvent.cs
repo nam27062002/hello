@@ -118,7 +118,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		m_questManager = HDLiveEventsManager.instance.m_quest;
 
 		// Subscribe to external events
-		Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
+		// Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
 
 
 		// Initialize static stuff
@@ -245,26 +245,6 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 				// Sequence has finished
 				else if(m_continueEnabled) {
 					CloseAndDiscard();
-					/*
-					// Success! Wait for the confirmation from the server
-					BusyScreen.Show(this);
-
-					if ( Application.internetReachability != NetworkReachability.NotReachable )
-						// Check fi logged in?
-					{
-						m_questManager.Contribute( 	0,
-													1f,
-													false,
-													false );
-
-					}
-					else
-					{
-						BusyScreen.Hide(this);
-						// We can't contribute! Refresh panel
-						InitPanel(true, false);
-					}
-					*/
 				}
 			} break;
 
@@ -314,7 +294,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	private void OnHidePostAnimation() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
+		// Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
 
 		// Clear sequence
 		if(m_activePanelSequence != null) {
@@ -360,6 +340,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// We've received a response from the server.
 	/// </summary>
 	/// <param name="_success">Was the contribute operation successful?</param>
+	/*
 	private void OnContributionConfirmed(HDLiveEventsManager.ComunicationErrorCodes _error) {
 		// Hide busy screen
 		BusyScreen.Hide(this);
@@ -375,4 +356,5 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			// CloseAndDiscard();
 		}
 	}
+	*/
 }

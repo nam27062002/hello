@@ -114,12 +114,6 @@ public class EventRewardScreen : MonoBehaviour {
 		// Stack all rewards into the pending rewards stack
 		// Add reward to the stack - In the right order!
 		if(m_questManager != null) {
-			/*
-			// Top contribution reward
-			if(m_questManager.topContributor) {
-				UsersManager.currentUser.PushReward(m_questManager.topContributorsRewardSlot.reward);
-			}
-			*/
 
 			// Global rewards
 			for(int i = m_questManager.m_questData.m_rewardLevel - 1; i >= 0; --i) {

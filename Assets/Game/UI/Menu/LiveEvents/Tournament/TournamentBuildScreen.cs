@@ -29,7 +29,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private Transform[]		m_petEditSlots;
 
 	[SeparatorAttribute("Tournament Info")]
-	[SerializeField] private Localizer 			m_titleText;
 	[SerializeField] private Localizer			m_goalText;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
@@ -120,9 +119,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 
 		//-- Tournament Info ------------------------------------------//
-		//TITLE
-		m_titleText.Localize(m_definition.m_name);
-
 		//GOALS
 		m_goalText.Localize(m_definition.m_goal.m_desc);
 
@@ -244,12 +240,18 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	public void OnStartPaying() {
-		if (Application.internetReachability == NetworkReachability.NotReachable) {
+		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
-		} else if (!GameServerManager.SharedInstance.IsLoggedIn()) {
+		} 
+		/*
+		else if (!GameServerManager.SharedInstance.IsLoggedIn()) 
+		{
 			// Check log in!
 			SendFeedback("TID_NEED_TO_LOG_IN");
-		} else {
+		} 
+		*/
+		else 
+		{
 			// Check paying
 			if (m_hasFreeEntrance) {
 				// Move to Loading Screen
@@ -308,14 +310,14 @@ public class TournamentBuildScreen : MonoBehaviour {
 				SendFeedback("TID_NO_RESPONSE");
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID: 
-			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID: 
+			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID:
 			{
 				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
 				// Ask for the definition?
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID:
 			{
-				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
+				SendFeedback("TID_TOURNAMENT_FAIL_TO_PAY_ENTRANCE");
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER:
 			{
@@ -325,7 +327,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			default:
 			{
 				// How to know if free was not valid??
-				SendFeedback("TID_GEN_ERROR");
+				SendFeedback("TID_EVENT_RESULTS_UNKNOWN_ERROR");
 			}break;
 		}
 

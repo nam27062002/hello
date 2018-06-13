@@ -8,7 +8,9 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-
+using TMPro;
+using System.Collections;
+using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -26,6 +28,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		EVENT_TEASER,
 		EVENT_ACTIVE,
 		LOADING,
+		RETRY_REWARDS,
 
 		COUNT
 	};
@@ -35,6 +38,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private GlobalEventsPanel[] m_panels = new GlobalEventsPanel[(int)Panel.COUNT];
+	[SerializeField] private TextMeshProUGUI m_rewardsErrorMessage;
+
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
@@ -68,6 +73,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
 		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
+
+		Messenger.AddListener<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
 	}
 
 	/// <summary>
@@ -78,6 +87,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		Messenger.RemoveListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
 		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
+
+		Messenger.RemoveListener<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
 	}
 
 
@@ -94,9 +107,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			m_questManager.UpdateStateFromTimers();
 			// If the current global event has a reward pending, go to the event reward screen
 			if(m_questManager.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE ) {
-				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
-				scr.StartFlow();
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);	
+				// Show requesting!
+				OnRetryRewardsButton();
 				return;
 				
 			}
@@ -107,6 +119,55 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 		// Refresh its content
 		m_panels[(int)m_activePanel].Refresh();
+	}
+
+	protected void OnRewards(int _eventId ,HDLiveEventsManager.ComunicationErrorCodes _err)
+	{
+		if ( _eventId == m_questManager.data.m_eventId )	
+		{
+			if ( _err == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+			{
+				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
+				scr.StartFlow();
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);	
+			}
+			else
+			{
+
+				// Show error message and retry button
+				switch( _err )
+				{
+					case HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR:
+					{
+						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_NET_ERROR");
+					}break;
+					case HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE:
+					{
+						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_NO_RESPONSE");
+					}break;
+					default:
+					{
+						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");
+					}break;
+				}
+
+				SetActivePanel(Panel.RETRY_REWARDS);
+			}
+		}
+	}
+
+	public void OnRetryRewardsButton()
+	{
+		// Show requesting!
+		if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
+		{
+			SetActivePanel(Panel.OFFLINE);	
+		}
+		else
+		{
+			m_questManager.RequestRewards();
+			SetActivePanel(Panel.LOADING);	
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -121,16 +182,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
 		if ( quest.EventExists() )
 		{
-			if (Application.internetReachability == NetworkReachability.NotReachable)
+			if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
 			{
 				targetPanel = Panel.OFFLINE;
 			}
-			/*
-			else if ( GameSessionManager.SharedInstance.IsLogged () )
-			{
-				targetPanel = Panel.LOG_IN;
-			}
-			*/
 			else
 			{
 				switch(quest.data.m_state) {
@@ -178,11 +233,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	public void OnShowPreAnimation() {
 		// Show loading panel
 		SetActivePanel(Panel.LOADING);
-
-		// Get latest event data
-		// [AOC] TODO!! Figure out the best place to do so to avoid spamming
-		// GlobalEventManager.RequestCurrentEventData();
-			// TODO: request??
 		m_questManager.UpdateStateFromTimers();
 		OnQuestDataUpdated();
 	}
@@ -223,41 +273,41 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnOfflineRetryButton() {
 
-		if (Application.internetReachability != NetworkReachability.NotReachable)
+		if (Application.internetReachability != NetworkReachability.NotReachable && GameSessionManager.SharedInstance.IsLogged ())
 		{
-			// TODO: Check if log in!
-
-			// Show loading panel
+			// Show loading and ask for my evetns
 			SetActivePanel(Panel.LOADING);
-
-			if ( !m_questManager.EventExists() )
+			if (!HDLiveEventsManager.instance.RequestMyEvents())
 			{
-				// Request the event
+				StartCoroutine( RemoveLoading());
 			}
-			else
-			{
-				// Request the current quest state?
-			}
-			/*
-			// Do we have an event?
-			if(GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0) {
-				// No! Ask for live events again
-				GlobalEventManager.TMP_RequestCustomizer();
-				// Wait for events GLOBAL_EVENT_UPDATED GLOBAL_EVENT_CUSTOMIZER_ERROR or GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS
-			} else {
-				// Yes! Refresh data
-				GlobalEventManager.RequestCurrentEventData();
-				// Wait for events GLOBAL_EVENT_UPDATED
-			}
-			*/
 		}
 		else
 		{
 			// Message no connection
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
-	
 	}
+
+	void OnNewDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err)
+	{
+		if ( _err == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
+		{
+			Refresh();
+		}
+	}
+
+	void OnEventsUpdated()
+	{
+		Refresh();
+	}
+
+	IEnumerator RemoveLoading()
+	{
+		yield return new WaitForSeconds(0.5f);
+		Refresh();
+	}
+	
 
 	/// <summary>
 	/// The Facebook button has been pressed.

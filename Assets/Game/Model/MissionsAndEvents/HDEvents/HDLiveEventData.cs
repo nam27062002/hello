@@ -93,7 +93,7 @@ public class HDLiveEventData {
 		if ( m_eventId > 0 && definition.m_eventId == m_eventId)
 		{
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-			if ( serverTime < m_definition.m_teasingTimestamp )
+			if ( serverTime < m_definition.m_startTimestamp )
 			{
 				m_state = State.TEASING;
 			}
@@ -110,6 +110,10 @@ public class HDLiveEventData {
 					{
 						m_state = State.FINALIZED;
 					}
+				}
+				else if ( m_state == State.TEASING )
+				{
+					m_state = State.NOT_JOINED;
 				}
 			}
 			else if ( m_state == State.NONE )

@@ -181,7 +181,7 @@ public class MenuDragonLoaderEditor : Editor {
 		if(GUILayout.Button("Load Dragon", GUILayout.Height(50))) {
 			for(int i = 0; i < targets.Length; i++) {
 				// If the game is not running, we don't have any data on current dragon/skin, so load a placeholder one manually instead
-				((MenuDragonLoader)targets[i]).RefreshDragon();
+				((MenuDragonLoader)targets[i]).RefreshDragon(true);
 			}
 		}
 	}

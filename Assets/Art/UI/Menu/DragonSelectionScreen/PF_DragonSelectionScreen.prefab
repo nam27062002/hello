@@ -3724,7 +3724,7 @@ GameObject:
   - component: {fileID: 224109813738446656}
   - component: {fileID: 222341256442794742}
   - component: {fileID: 114159482437835822}
-  - component: {fileID: 114376011970349114}
+  - component: {fileID: 114585282031953248}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -9538,20 +9538,6 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0, b: 0, a: 0.503}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 1
---- !u!114 &114376011970349114
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800109172961200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e4f698f201ec4d498313a9d0e6074f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_color1: {r: 0.32352942, g: 1, b: 0.893887, a: 1}
-  m_color2: {r: 0, g: 0.4093707, b: 0.41911763, a: 1}
-  m_direction: 1
 --- !u!114 &114378383320261928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10458,6 +10444,22 @@ MonoBehaviour:
   m_barSeparatorsParent: {fileID: 224595465313617816}
   m_disguiseMarkerPrefab: {fileID: 1000011742153742, guid: 7c428a4ae34dd4de38595d34fbd030ef,
     type: 2}
+--- !u!114 &114585282031953248
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1800109172961200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5788eaa6d5dc042a1beeb27bba305a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gradient:
+    topLeft: {r: 0.32352942, g: 1, b: 0.893887, a: 1}
+    topRight: {r: 0.32352942, g: 1, b: 0.893887, a: 1}
+    bottomLeft: {r: 0, g: 0.4093707, b: 0.41911763, a: 1}
+    bottomRight: {r: 0, g: 0.4093707, b: 0.41911763, a: 1}
 --- !u!114 &114592159044345518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17614,8 +17616,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 10}
-  m_SizeDelta: {x: 0, y: 20}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224595927044381944
 RectTransform:

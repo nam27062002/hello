@@ -10,7 +10,6 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 	//----------------------------------------------------------------//
 
-	[SerializeField] private Localizer m_titleText;
 	[SerializeField] private TextMeshProUGUI m_timerText;
 
 	[SeparatorAttribute("Goal")]
@@ -49,9 +48,6 @@ public class TournamentInfoScreen : MonoBehaviour {
 		m_definition = m_tournament.data.definition as HDTournamentDefinition;
 
 		if (m_definition != null) {
-			//TITLE
-			m_titleText.Localize(m_definition.m_name);
-
 			//GOALS
 			m_goalText.Localize(m_definition.m_goal.m_desc);
 			m_goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_definition.m_goal.m_icon);
