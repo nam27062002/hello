@@ -180,7 +180,14 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
-		} else {
+		} 
+		else if ( _errorCode == HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER )
+		{
+			// No! :) Go to next step
+			OnFinished.Invoke();
+		}
+		else
+		{
 			// Yes :( Show error screen
 			m_errorPanel.Show();
 		}
@@ -196,6 +203,11 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 
 		// Error?
 		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+			// No! :) Go to next step
+			OnFinished.Invoke();
+		}
+		else if ( _errorCode == HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER )
+		{
 			// No! :) Go to next step
 			OnFinished.Invoke();
 		} else {
