@@ -240,7 +240,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	public void OnStartPaying() {
-		if (Application.internetReachability == NetworkReachability.NotReachable || !!GameServerManager.SharedInstance.IsLoggedIn()) {
+		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
 		} 
 		/*
@@ -310,14 +310,14 @@ public class TournamentBuildScreen : MonoBehaviour {
 				SendFeedback("TID_NO_RESPONSE");
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID: 
-			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID: 
+			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID:
 			{
 				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
 				// Ask for the definition?
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID:
 			{
-				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
+				SendFeedback("TID_TOURNAMENT_FAIL_TO_PAY_ENTRANCE");
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER:
 			{
