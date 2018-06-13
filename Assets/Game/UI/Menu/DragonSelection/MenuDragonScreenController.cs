@@ -78,7 +78,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
-
+		/*
 		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN ) 
 		{
 			// Check quest rewards
@@ -92,8 +92,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 					return;
 				}
 			}
-
 		}
+		*/
 
         // Lowest priority: show pending transactions. They're showing here because we know that the currencies are visible for the user on this screen
         m_showPendingTransactions = TransactionManager.instance.Flow_NeedsToShowPendingTransactions();        

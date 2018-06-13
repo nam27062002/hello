@@ -240,12 +240,18 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	public void OnStartPaying() {
-		if (Application.internetReachability == NetworkReachability.NotReachable) {
+		if (Application.internetReachability == NetworkReachability.NotReachable || !!GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
-		} else if (!GameServerManager.SharedInstance.IsLoggedIn()) {
+		} 
+		/*
+		else if (!GameServerManager.SharedInstance.IsLoggedIn()) 
+		{
 			// Check log in!
 			SendFeedback("TID_NEED_TO_LOG_IN");
-		} else {
+		} 
+		*/
+		else 
+		{
 			// Check paying
 			if (m_hasFreeEntrance) {
 				// Move to Loading Screen
@@ -321,7 +327,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			default:
 			{
 				// How to know if free was not valid??
-				SendFeedback("TID_GEN_ERROR");
+				SendFeedback("TID_EVENT_RESULTS_UNKNOWN_ERROR");
 			}break;
 		}
 
