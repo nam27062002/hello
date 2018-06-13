@@ -19,19 +19,19 @@ public class ModifierIcon : MonoBehaviour {
 		}
 	}
 
-	private DefinitionNode m_def;
+	private IModifierDefinition m_def;
 
 
 	public void InitFromDefinition(IModifierDefinition _def) {
-		m_def = _def.def;
+		m_def = _def;
 
 		// Load from resources
 		if (m_icon != null) {
-			m_icon.sprite = Resources.Load<Sprite>(UIConstants.MODIFIER_ICONS_PATH + _def.GetIconRelativePath());
+			m_icon.sprite = Resources.Load<Sprite>(UIConstants.MODIFIER_ICONS_PATH + m_def.GetIconRelativePath());
 		}
 
 		if (m_text != null) {
-			m_text.text = _def.GetDescription();
+			m_text.text = m_def.GetDescriptionShort();
 		}
 	}
 
@@ -54,7 +54,7 @@ public class ModifierIcon : MonoBehaviour {
 		PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
 		if(powerTooltip != null) {
 			// Initialize
-			powerTooltip.InitFromDefinition(m_def, PowerIcon.Mode.MODFIER);
+			powerTooltip.InitFromDefinition(m_def);
 
 			// Set lock state
 			powerTooltip.SetLocked(false);	// Use lock icon visibility to determine whether power is locked or not

@@ -49,6 +49,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	private Transform[] 			m_petEquipSlots;
 
+	private bool m_waitingRewardsData = false;
 	private bool m_hasFreeEntrance;
 
 	private Mode m_mode;
@@ -88,7 +89,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
 		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_tournament.GetToUseSkin());
-		m_dragonSkin.Localize(disguise.Get("tidName"));
+		if (disguise.GetAsInt("shopOrder") > 0) { // skins
+			m_dragonSkin.Localize(disguise.Get("tidName"));
+		} else { // default skin
+			m_dragonSkin.gameObject.SetActive(false);
+		}
 
 		string powerupSku = disguise.Get("powerup");
 		DefinitionNode powerup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerupSku);
@@ -176,7 +181,21 @@ public class TournamentBuildScreen : MonoBehaviour {
 				m_hasFreeEntrance = true;
 				ShowEntranceButton(m_enterFreeBtn);
 				m_nextFreeTimerGroup.SetActive(false);
+			}
+		}
 
+		if (m_definition.timeToEnd.TotalSeconds <= 0f) {
+			if (!m_waitingRewardsData) {
+				Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+
+				// Request rewards data and wait for it to be loaded
+				m_tournament.RequestRewards();
+
+				// Show busy screen
+				BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
+				BusyScreen.Show(this);
+
+				m_waitingRewardsData = true;
 				CancelInvoke();
 			}
 		}
@@ -211,8 +230,14 @@ public class TournamentBuildScreen : MonoBehaviour {
 	public void OnShowPreAnimation() {
 		Refresh();
 
+		m_waitingRewardsData = false;
+
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
+	}
+
+	public void OnHidePreAnimation() {
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	public void OnEditPetsToogle() {
@@ -349,4 +374,32 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 
+	/// <summary>
+	/// We got a response on the rewards request.
+	/// </summary>
+	private void OnRewardsResponse(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+		// Ignore if we weren't waiting for rewards!
+		if(!m_waitingRewardsData) return;
+		m_waitingRewardsData = false;
+
+		// Hide busy screen
+		BusyScreen.Hide(this);
+
+		// Success?
+		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+			// Go to tournament rewards screen!
+			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
+			scr.StartFlow();
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+		} else {
+			// Show error message
+			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_ERROR"),
+				new Vector2(0.5f, 0.33f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+		}
+	}
 }
