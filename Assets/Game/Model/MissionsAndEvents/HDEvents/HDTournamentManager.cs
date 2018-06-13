@@ -544,9 +544,14 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// Given a score, format it based on tournament type
 	/// </summary>
 	public string FormatScore(long _score) {
-		// TODO!!
-		// Depends on tournament type, not all scores are numbers! (time)
-		//return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
+		// Seconds
+		if ( m_tournamentDefinition.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK 
+			|| m_tournamentDefinition.m_goal.m_type.Contains("time")
+		)
+		{
+			return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
+		}
+
 		return StringUtils.FormatNumber(_score);
 	}
 }
