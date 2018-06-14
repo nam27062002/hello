@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000010793146780}
-  - component: {fileID: 114000012930624712}
+  - component: {fileID: 114373553710678382}
   - component: {fileID: 114048192097422648}
   - component: {fileID: 114340166751440294}
   - component: {fileID: 54725992806307976}
@@ -191,20 +191,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &114000012930624712
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012775619424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: GoodJunkScore
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 0
 --- !u!114 &114038361679046744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -483,7 +469,22 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onCollectAudio: hd_goodjunk_score
+--- !u!114 &114373553710678382
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012775619424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6adfd6ff910bd40f19ec654b81a3983f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: GoodJunkScore
+  m_hideNeedTierMessage: 0
+  m_dieOutsideFrustum: 0
 --- !u!135 &135212834357585694
 SphereCollider:
   m_ObjectHideFlags: 1

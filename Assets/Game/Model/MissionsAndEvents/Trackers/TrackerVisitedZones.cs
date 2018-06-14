@@ -28,7 +28,7 @@ public class TrackerVisitedZones : TrackerBase {
 	/// Default constructor.
 	/// </summary>
 	public TrackerVisitedZones() {
-		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
+		Messenger.AddListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnZone);
 	}
 
 	/// <summary>
@@ -46,7 +46,7 @@ public class TrackerVisitedZones : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
+		Messenger.RemoveListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnZone);
 		// Call parent
 		base.Clear();
 	}
@@ -66,7 +66,7 @@ public class TrackerVisitedZones : TrackerBase {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	private void OnZone(bool toggle, ZoneTrigger zone){
+	private void OnZone(bool toggle, ZoneTrigger zone, bool _firstTime){
 		if ( !m_visitedZones.Contains( zone.m_zoneId ) ){
 			m_visitedZones.Add( zone.m_zoneId );
 			currentValue = m_visitedZones.Count;
