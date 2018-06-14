@@ -69,6 +69,6 @@ public abstract class Modifier : IModifierDefinition {
 	}
 
 	public string GetDescriptionShort() {
-		return m_def.sku;
+		return LocalizationManager.SharedInstance.Localize(m_def.GetAsString("tidDescShort"), m_textParam, m_textColor.ToHexString("#"));
 	}
 }
