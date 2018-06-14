@@ -211,7 +211,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		} else if (m_enterFreeBtn == _activeButton) {
 			loc.Localize("TID_GEN_FREE");
 		} else if (m_enterCurrencyBtn == _activeButton) {
-			if (m_definition.m_entrance.m_type == "hc") {
+			if (m_definition.m_entrance.m_type == "hc" || m_definition.m_entrance.m_type == "pc") {
 				loc.Localize("TID_TOURNAMENT_PLAY_PC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
 			} else{ 
 				loc.Localize("TID_TOURNAMENT_PLAY_SC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
