@@ -89,7 +89,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > 12) {
+		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			m_waitForCustomPopup = HDCustomizerManager.instance.IsCustomiserPopupAvailable();
 			if (m_waitForCustomPopup) {
 				m_waitTimeOut = 5f;
@@ -104,7 +104,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
-		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout" + _config.m_iLayout;
+		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
 		PopupController pController = PopupManager.OpenPopupInstant(popupPath);
 		PopupCustomizer pCustomizer = pController.GetComponent<PopupCustomizer>();
@@ -123,7 +123,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > 12) {
+		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			// Is dragon unlocked?
 			DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
 			if(data.GetLockState() > DragonData.LockState.LOCKED) {
@@ -163,7 +163,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > 12) {
+		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			m_popupDisplayed = PopupAskSurvey.Check();
 		}
 	}
@@ -176,7 +176,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > 12) {
+		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			if(OffersManager.featuredOffer != null) {
 				m_popupDisplayed = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
 			}

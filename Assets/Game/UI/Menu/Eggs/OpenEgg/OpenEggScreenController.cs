@@ -287,9 +287,12 @@ public class OpenEggScreenController : MonoBehaviour {
 				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 				// Go to the pets screen
-				PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
-				petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
-				screensController.GoToScreen(MenuScreen.PETS, true);
+				// Add a frame of delay to make sure everyone has been notified that the selected dragon has changed
+				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+					PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+					petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
+					screensController.GoToScreen(MenuScreen.PETS, true);
+				}, 1);
 			} break;
 		}
 	}

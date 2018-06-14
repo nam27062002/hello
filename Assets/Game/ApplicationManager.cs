@@ -98,6 +98,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
         Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
 
+		CancelLocalNotifications();
+
         StartCoroutine(Device_Update());
     }
 
@@ -131,7 +133,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         // Tracking session has to be finished when the application is closed
         HDTrackingManager.Instance.Notify_ApplicationEnd();
-
+        
         //PersistenceManager.Save();
 
         PersistenceFacade.instance.Destroy();
@@ -330,11 +332,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         	if ( GameAds.isInstanceCreated && GameAds.instance.IsWaitingToPlayAnAd())
         		GameAds.instance.StopWaitingToPlayAnAd();
 
-            HDTrackingManager.Instance.Notify_ApplicationPaused();
+           HDTrackingManager.Instance.Notify_ApplicationPaused();
+           ScheduleLocalNotifications();
         }
         else
         {
             HDTrackingManager.Instance.Notify_ApplicationResumed();
+            CancelLocalNotifications();
         }
 
         // If the persistences are not being synced then we need to make sure the local progress will be stored when going to pause
@@ -431,6 +435,51 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             */            
         }        
     }        
+
+    private void ScheduleLocalNotifications()
+    {
+		if ( UsersManager.currentUser != null )
+        {
+        	// Mission notifications
+			bool waiting = false;
+			double seconds = 0;
+			for (Mission.Difficulty i = Mission.Difficulty.EASY; i < Mission.Difficulty.COUNT; i++) 
+			{
+				Mission m = UsersManager.currentUser.userMissions.GetMission(i);
+				if (m.state == Mission.State.COOLDOWN)
+				{
+					waiting = true;
+					if ( m.cooldownRemaining.TotalSeconds > seconds)
+						seconds = m.cooldownRemaining.TotalSeconds;
+				}
+			}
+
+			if ( waiting )
+			{
+				HDNotificationsManager.instance.ScheduleNotification("sku.not.02", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_MISSIONS"), "Action", (int)seconds);
+			}
+			/*
+			// Chests notification
+			int max = UsersManager.currentUser.dailyChests.Length;
+			bool missingChests = false;
+			for (int i = 0; i < max && !missingChests; i++) 
+			{
+				if ( UsersManager.currentUser.dailyChests[i].state == Chest.State.COLLECTED )
+					missingChests = true;
+			}
+			if ( missingChests )
+			{
+				HDNotificationsManager.instance.ScheduleNotification("sku.not.03", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_CHESTS"), "Action", (int) ChestManager.timeToReset.TotalSeconds );
+			}
+			*/
+        }
+    }
+
+    private void CancelLocalNotifications()
+    {
+		HDNotificationsManager.instance.CancelNotification("sku.not.02");
+		// HDNotificationsManager.instance.CancelNotification("sku.not.03");
+    }
 
     #region game
     private bool Game_IsInGame { get; set; }

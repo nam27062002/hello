@@ -21,6 +21,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const float EVENT_COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -36,21 +37,40 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Called every frame.
+	/// Component has been enabled.
 	/// </summary>
-	private void Update() {
+	public void OnEnable() {
+		// Program periodic update call
+		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	public void OnDisable() {
+		// Cancel periodic call
+		CancelInvoke();
+	}
+
+	/// <summary>
+	/// Called periodically.
+	/// </summary>
+	private void UpdatePeriodic() {
 		// Just in case
 		if(GlobalEventManager.currentEvent == null) return;
 
 		// Update timer
-		// [AOC] Could be done with less frequency
+		double remainingSeconds = GlobalEventManager.currentEvent.remainingTime.TotalSeconds;
 		m_timerText.text = TimeUtils.FormatTime(
-			System.Math.Max(0, GlobalEventManager.currentEvent.remainingTime.TotalSeconds),
+			System.Math.Max(0, remainingSeconds),	// Never show negative time!
 			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
 			4
 		);
 
-		// [AOC] TODO!! Manage event end when this panel is active
+		// [AOC] Manage timer end when this panel is active
+		if(remainingSeconds <= 0) {
+			GlobalEventManager.RequestCurrentEventState();	// This should change the active panel
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -64,6 +84,9 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 		m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
 
 		m_rewardInfo.rewardSlot = evt.topContributorsRewardSlot;
+
+		// Force a first update on the timer
+		UpdatePeriodic();
 	}
 
 	//------------------------------------------------------------------------//

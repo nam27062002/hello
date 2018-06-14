@@ -84,6 +84,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	private bool m_keyPurchased = false;
 	private bool m_keyFromAds = false;
 	private DefinitionNode m_keyShopPackDef = null;
+
+    private bool m_panelActiveInitialized = false;
 	
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -194,7 +196,9 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		switch(m_activePanel) {
 			case Panel.ACTIVE: {
 				if(_resetValues) {
-					m_scoreText.SetValue(0, false);
+                    m_panelActiveInitialized = true;
+
+                    m_scoreText.SetValue(0, false);
 					m_finalScoreText.SetValue(0, false);
 					RefreshKeysField(_animate);
 
@@ -202,6 +206,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 					DefinitionNode bonusDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_event.bonusDragonSku);
 					if ( bonusDragonDef != null ){
 						m_bonusDragonInfoText.Localize("TID_EVENT_RESULTS_BONUS_DRAGON_INFO", bonusDragonDef.GetLocalized("tidName"));
+					} else {
+						m_bonusDragonInfoText.Localize("");
 					}
 
 					// Bonus dragon text
@@ -479,8 +485,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// Retry connection button has been pressed.
 	/// </summary>
 	public void OnRetryConnectionButton() {
-		// Just refreshing is enough
-		InitPanel(true, false);
+        // If the active panel hasn't been initialized yet then we need to refresh values in case the popup was launched with no connection so it didn't get to be setup with the values of the event (HDK-1962)
+        InitPanel(true, !m_panelActiveInitialized);
 
 		// If suceeded, launch intro anim
 		if(m_activePanel == Panel.ACTIVE) {

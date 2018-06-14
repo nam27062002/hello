@@ -111,6 +111,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	/// Component disabled.
 	/// </summary>
 	private void OnDisable() {
+		for (int i = 0; i < m_fireNodes.Length; i++) {
+			m_fireNodes[i].Explode();
+		}
+
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
@@ -197,6 +201,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				break;
 
 			case State.Explode:
+				if (m_collider) m_collider.isTrigger = true;
+				if (m_destructibleBehaviour != null) {
+					m_destructibleBehaviour.enabled = false;
+				}
+
 				BurnOperators();
 
 				for (int i = 0; i < m_fireNodes.Length; ++i) {

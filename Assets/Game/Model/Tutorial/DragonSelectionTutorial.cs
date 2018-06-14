@@ -196,9 +196,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 			ParticleSystem[] particles = m_uiCanvasGroup.GetComponentsInChildren<ParticleSystem>();
 			m_pausedParticles.Clear();
 			for(int i = 0; i < particles.Length; ++i) {
-				if(particles[i].isPlaying) {
-					particles[i].Stop();
-					particles[i].Clear();
+				if(particles[i].gameObject.activeSelf) {
+					particles[i].gameObject.SetActive(false);
 					m_pausedParticles.Add(particles[i]);
 				}
 			}
@@ -256,7 +255,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 			// Restore paused particle systems
 			for(int i = 0; i < m_pausedParticles.Count; ++i) {
-				m_pausedParticles[i].Play();
+				m_pausedParticles[i].gameObject.SetActive(true);
 			}
 			m_pausedParticles.Clear();
 		}

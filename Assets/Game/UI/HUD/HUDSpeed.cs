@@ -26,6 +26,8 @@ public class HUDSpeed : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private TextMeshProUGUI m_valueTxt;
 	private DragonMotion m_dragonMotion;
+	private float maxHigh;
+	private float maxDeep;
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -38,6 +40,8 @@ public class HUDSpeed : MonoBehaviour {
 		// Get external references
 		m_valueTxt = GetComponent<TextMeshProUGUI>();
 		m_valueTxt.text = "0";
+		maxHigh = 0;
+		maxDeep = 0;
 	}
 
 	IEnumerator Start() 
@@ -60,8 +64,12 @@ public class HUDSpeed : MonoBehaviour {
 		// Do it!
 		if ( m_dragonMotion != null )
 		{
-			m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##") + "\nHIGH: " + (m_dragonMotion.position.y - 165f).ToString(".#");
-			//m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##") + "\nDEEP: " + (m_dragonMotion.position.y + 157f).ToString(".#");
+			if ((m_dragonMotion.position.y - 171f) > maxHigh)
+				maxHigh = (m_dragonMotion.position.y - 171f);
+			if ((m_dragonMotion.position.y + 157f) < maxDeep)
+				maxDeep = (m_dragonMotion.position.y + 157f);			
+			m_valueTxt.text = "SPEED: " + m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX HIGH: " + maxHigh.ToString(".#") + "\nMAX DEEP: " + maxDeep.ToString(".#");
+			//m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX DEEP: " + (m_dragonMotion.position.y + 157f).ToString(".#");
 		}
 	}
 }

@@ -15,6 +15,10 @@ struct v2f {
 #if defined(EXTENDED_PARTICLES)
 	float2 particledata : TEXCOORD1;
 #endif	//EXTENDED_PARTICLES
+
+#if defined(NOISEUV)
+	float2 noiseuv : TEXCOORD2;
+#endif
 };
 
 sampler2D _MainTex;
@@ -65,6 +69,9 @@ float2 _Panning;
 float _ABOffset;
 #endif	//BLENDMODE_ADDITIVEALPHABLEND
 
+float _GlobalAlpha;
+
+
 
 v2f vert(appdata_t v)
 {
@@ -76,6 +83,10 @@ v2f vert(appdata_t v)
 #endif	//AUTOMATICPANNING
 
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+
+#if defined(NOISEUV)
+	o.noiseuv = TRANSFORM_TEX(v.texcoord, _NoiseTex);
+#endif
 
 #ifdef EXTENDED_PARTICLES
 	o.particledata = v.texcoord.zw;
@@ -98,7 +109,12 @@ fixed4 frag(v2f i) : COLOR
 #endif	//APPLY_RGB_COLOR_VERTEX
 
 #if defined(NOISE_TEXTURE)
+
+#if defined(NOISEUV)
+	float3 noise = tex2D(_NoiseTex, i.noiseuv + float2(_Time.y * _NoisePanning.x, _Time.y * _NoisePanning.y));
+#else
 	float3 noise = tex2D(_NoiseTex, i.texcoord + float2(_Time.y * _NoisePanning.x, _Time.y * _NoisePanning.y));
+#endif
 
 #if defined(NOISE_TEXTURE_EMISSION)
 //	return fixed4(1.0, 1.0, 0.0, 1.0);
@@ -148,6 +164,8 @@ fixed4 frag(v2f i) : COLOR
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * _EmissionSaturation;
 #endif	//COLOR_RAMP
 
+	col.a *= _GlobalAlpha;
+
 #else	//BLENDMODE_ALPHABLEND
 
 #if defined(COLOR_RAMP)
@@ -157,6 +175,8 @@ fixed4 frag(v2f i) : COLOR
 #else
 	col.xyz = lerp(_BasicColor.xyz * vcolor.xyz, _SaturatedColor, lerpValue) * col.a * _EmissionSaturation;
 #endif	//COLOR_RAMP
+
+	col *= _GlobalAlpha;
 
 #endif	//BLENDMODE_ALPHABLEND
 
@@ -192,6 +212,7 @@ fixed4 frag(v2f i) : COLOR
 
 #endif	//BLENDMODE_ADDITIVEALPHABLEND
 
+	col *= _GlobalAlpha;
 #endif	//EXTENDED_PARTICLES
 
 	return col;
