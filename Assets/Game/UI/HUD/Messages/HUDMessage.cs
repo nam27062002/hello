@@ -602,7 +602,8 @@ public class HUDMessage : MonoBehaviour {
 				{
 					// Get text to show
 					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-					string localized = LocalizationManager.SharedInstance.Localize("TID_LEVEL_AREA_WELCOME", zone.m_zoneTid);
+					string localizedZone = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+					string localized = LocalizationManager.SharedInstance.Localize("TID_LEVEL_AREA_WELCOME", localizedZone);
 			        text.text = localized;
 			        Show();		
 				}
