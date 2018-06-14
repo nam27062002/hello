@@ -57,9 +57,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			SpawnerManager.instance.Register(this, true);
 
 			m_decoration = GetComponent<Decoration>();
-			if (m_decoration != null) {
-				EntityManager.instance.RegisterDecoration(m_decoration);
-			}
 
 			m_newCamera = Camera.main.GetComponent<GameCamera>();
 			m_gameSceneController = InstanceManager.gameSceneControllerBase;
@@ -94,6 +91,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
 	/// <summary>
@@ -102,6 +100,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
     void OnDestroy() {
@@ -125,6 +124,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 			m_state = State.Respawning;
 			gameObject.SetActive(false);
 		} else {
+			if (m_decoration != null) {
+				EntityManager.instance.RegisterDecoration(m_decoration);
+			}
+
 			m_respawnCount = 1;
 			m_state = State.Idle;
 		}

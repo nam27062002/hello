@@ -6,13 +6,14 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: VFX_Hieroglyphs_Additive_01
+  m_Name: VFX_PhoenixShape_AddBlend_02
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: BLENDMODE_ADDITIVE EXTENDED_PARTICLES
-  m_LightmapFlags: 1
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED
+    EXTENDED_PARTICLES NOISE_TEXTURE_DISSOLVE
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3110
+  m_CustomRenderQueue: 3069
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -47,15 +48,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 2305e4ddee83eaf47a6c5d967b8c1d5a, type: 3}
+        m_Texture: {fileID: 2800000, guid: dac68624f3366bf4281c10ab2e757424, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _NormalTex:
-        m_Texture: {fileID: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 5ac7a12a744273b41a29e2b733ef22d2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -66,79 +67,50 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ReflectionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SecondTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BlendMode: 0
-    - Dissolve: 0
-    - Emissive: 1
-    - VertexColor: 0
+    - BlendMode: 5
+    - Dissolve: 1
     - _ABOffset: 0
-    - _BlendMode: 0
-    - _BlinkTimeMultiplier: 0
     - _BumpScale: 1
-    - _ColorMultiplier: 0.67
-    - _Cull: 0
-    - _CutOff: 0.5
+    - _ColorMultiplier: 1
     - _Cutoff: 0.5
-    - _DarkenDistance: 20
-    - _DarkenPosition: 0
     - _DetailNormalMapScale: 1
-    - _DoubleSided: 1
-    - _DstBlend: 1
+    - _DstBlend: 10
     - _EmissionSaturation: 1.5
     - _EmissivePower: 1
-    - _EnableAdditiveBlend: 0
-    - _EnableAutomaticBlend: 0
+    - _EnableAlphaDissolve: 1
     - _EnableAutomaticPanning: 0
-    - _EnableBlendTexture: 0
     - _EnableColorRamp: 0
-    - _EnableColorVertex: 0
-    - _EnableCutoff: 0
-    - _EnableDarken: 0
-    - _EnableDissolve: 0
-    - _EnableEmissiveBlink: 0
+    - _EnableColorTint: 0
+    - _EnableColorVertex: 1
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
-    - _EnableFog: 0
-    - _EnableLightmapContrast: 0
-    - _EnableNormalMap: 0
-    - _EnableOpaqueAlpha: 1
-    - _EnableSpecular: 0
+    - _EnableNoiseTexture: 0
+    - _EnableNoiseTextureAlpha: 0
+    - _EnableNoiseTextureDissolve: 1
+    - _EnableNoiseTextureEmission: 0
+    - _EnableNoiseUV: 0
+    - _GlobalAlpha: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightmapContrastIntensity: 2.12
-    - _LightmapContrastMargin: 3.95
-    - _LightmapContrastPhase: 100
-    - _LightmapIntensity: 0.1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrength: 1
     - _OcclusionStrength: 1
-    - _OpacitySaturation: 0.7
+    - _OpacitySaturation: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularPower: 3
-    - _SrcBlend: 5
-    - _StencilMask: 10
+    - _SrcBlend: 1
     - _UVSec: 0
     - _ZTest: 2
-    - _ZWrite: 0
+    - _ZWrite: 1
     m_Colors:
-    - _BasicColor: {r: 0, g: 1, b: 0.8344829, a: 0.5}
+    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _NoisePanning: {r: 0, g: -0.35, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.39862674, g: 0.74264705, b: 0.45794052, a: 0.5}
-    - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
+    - _SaturatedColor: {r: 1, g: 0.99239343, b: 0.8897059, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
