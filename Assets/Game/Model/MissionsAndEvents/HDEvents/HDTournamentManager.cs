@@ -83,7 +83,13 @@ public class HDTournamentManager : HDLiveEventManager {
 			m_tracker.Clear();
 		HDTournamentDefinition def = m_data.definition as HDTournamentDefinition;
 		if ( def.m_goal.m_typeDef != null )
+		{
 			m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
+		}
+		else
+		{
+			Debug.LogError("TOURNAMENT: No Tracker!!");
+		}
     }
 
 	override protected void OnEventIdChanged()
