@@ -69,7 +69,9 @@ public class TournamentRewardView : MetagameRewardView {
 		// Set target text
 		if(m_rankText != null) {
 			// [AOC] Mini-hack: use different TID for the first reward
-			if(m_tournamentReward.ranks.min == 0) {
+			//		 Use it also when min and max range are the same
+			if(m_tournamentReward.ranks.min == 0
+			|| m_tournamentReward.ranks.min == m_tournamentReward.ranks.max) {
 				m_rankText.Localize(
 					"TID_TOURNAMENT_REWARDS_RANK_TOP",
 					StringUtils.FormatNumber(m_tournamentReward.ranks.max + 1)
