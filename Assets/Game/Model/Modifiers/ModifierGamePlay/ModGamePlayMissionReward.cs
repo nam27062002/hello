@@ -8,6 +8,7 @@ public class ModGamePlayMissionReward : ModifierGamePlay {
 	//------------------------------------------------------------------------//
 	public ModGamePlayMissionReward(DefinitionNode _def) : base(_def) {
 		m_percentage = _def.GetAsFloat("param1");
+		m_textParam = m_percentage + "%";
 	}
 
 	public override void Apply() {

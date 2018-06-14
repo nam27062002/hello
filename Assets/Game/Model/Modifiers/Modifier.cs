@@ -26,6 +26,7 @@ public abstract class Modifier : IModifierDefinition {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	protected UnityEngine.Color m_textColor;
+	protected string m_textParam;
 
 
 	protected string m_type = "";
@@ -45,6 +46,7 @@ public abstract class Modifier : IModifierDefinition {
 	protected void Init(string _type) {
 		m_type = _type;
 		m_textColor = UIConstants.PET_CATEGORY_DEFAULT;
+		m_textParam = "";
 	}
 
 
@@ -63,14 +65,10 @@ public abstract class Modifier : IModifierDefinition {
 	}
 
 	public string GetDescription() {
-		return LocalizationManager.SharedInstance.Localize(m_def.GetAsString("tidDesc"), GetDescritiponParam(), m_textColor.ToHexString("#"));
+		return LocalizationManager.SharedInstance.Localize(m_def.GetAsString("tidDesc"), m_textParam, m_textColor.ToHexString("#"));
 	}
 
 	public string GetDescriptionShort() {
 		return m_def.sku;
-	}
-
-	protected virtual string GetDescritiponParam() {
-		return "";
 	}
 }
