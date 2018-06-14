@@ -24,7 +24,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -505.30383, y: 1.4959567, z: 12.908203}
+  m_LocalPosition: {x: -62.896553, y: -186.21541, z: 21.760725}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4267297486330884}
@@ -140,6 +140,7 @@ GameObject:
   - component: {fileID: 4705717747748336}
   - component: {fileID: 33387351751117548}
   - component: {fileID: 23165837278879504}
+  - component: {fileID: 114883827864835554}
   m_Layer: 0
   m_Name: PetPoirot_Chees_HI
   m_TagString: Untagged
@@ -387,6 +388,7 @@ GameObject:
   - component: {fileID: 4395377570424544}
   - component: {fileID: 33559322101679410}
   - component: {fileID: 23299840926393804}
+  - component: {fileID: 114856205274948852}
   m_Layer: 0
   m_Name: PetPoirot_Hat_Hi
   m_TagString: Untagged
@@ -419,6 +421,7 @@ GameObject:
   - component: {fileID: 4441522402968172}
   - component: {fileID: 33838386504920618}
   - component: {fileID: 23817176868804830}
+  - component: {fileID: 114395587429838326}
   m_Layer: 0
   m_Name: PetPoirot_Moustache_Hi
   m_TagString: Untagged
@@ -898,6 +901,21 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114395587429838326
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1829551529276242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Head
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114711808252611858
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -937,6 +955,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8e40bc0f188741ec85c749c34469a45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114856205274948852
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1709505921964578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Hat
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+--- !u!114 &114883827864835554
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1045829571027076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Handle
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114914241137125846
 MonoBehaviour:
   m_ObjectHideFlags: 1

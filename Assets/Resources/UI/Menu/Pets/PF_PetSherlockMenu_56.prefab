@@ -24,7 +24,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -502.01498, y: 0.83818907, z: 12.908203}
+  m_LocalPosition: {x: -63.49854, y: -185.71361, z: 28.49527}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4267297486330884}
@@ -263,6 +263,7 @@ GameObject:
   - component: {fileID: 4287880610652482}
   - component: {fileID: 33072482284546784}
   - component: {fileID: 23691640907938180}
+  - component: {fileID: 114055550416529538}
   m_Layer: 0
   m_Name: PetSherlock_Hat_HI
   m_TagString: Untagged
@@ -432,6 +433,7 @@ GameObject:
   - component: {fileID: 4439193371832892}
   - component: {fileID: 33934524843161604}
   - component: {fileID: 23270267677889796}
+  - component: {fileID: 114632996541672936}
   m_Layer: 0
   m_Name: PetSherlock_Lens_HI
   m_TagString: Untagged
@@ -828,6 +830,21 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114055550416529538
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1417127767460886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Hat
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114383613191747392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -839,6 +856,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8e40bc0f188741ec85c749c34469a45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114632996541672936
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1969364178956052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Handle
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114711808252611858
 MonoBehaviour:
   m_ObjectHideFlags: 1

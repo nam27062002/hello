@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 54000013371132386}
   - component: {fileID: 135000013338795870}
   - component: {fileID: 114000013147041998}
+  - component: {fileID: 114097941788185724}
   m_Layer: 0
   m_Name: PF_PetPoirot_55
   m_TagString: Pet
@@ -31,7 +32,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -500.7542, y: 0.93425095, z: 11.359564}
+  m_LocalPosition: {x: -64.96387, y: -184.4712, z: 29.463076}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4201172635384548}
@@ -1198,7 +1199,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"dragonSizeRangeMultiplier":55,"type":2,"dataType":"AI.Behaviour.PetSearchCollectibleTargetData","editorFolded":false},{"speedMultiplier":2.2,"playerDistance":12,"closeRangeMultiplier":10,"farRangeMultiplier":60,"dataType":"AI.Behaviour.PetPointingCollectibleTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"dragonSizeRangeMultiplier":55,"type":2,"dataType":"AI.Behaviour.PetSearchCollectibleTargetData","editorFolded":false},{"speedMultiplier":2.2,"playerDistance":12,"closeRangeMultiplier":10,"farRangeMultiplier":30,"dataType":"AI.Behaviour.PetPointingCollectibleTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetPoirot_55
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1332,6 +1333,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: pet_55
+--- !u!114 &114097941788185724
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c779a9f1f2b6a4323a6151370ee51e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_renderer: {fileID: 137452103014893428}
+  m_meshes:
+  - {fileID: 33127482057800296}
+  - {fileID: 33371565731371192}
+  - {fileID: 33576380920789702}
+  m_bonesToAttach:
+  - Pet_Handle
+  - Pet_Hat
+  - Pet_Head
 --- !u!114 &114153330555586644
 MonoBehaviour:
   m_ObjectHideFlags: 1
