@@ -649,6 +649,7 @@ public class UserProfile : UserPersistenceSystem
 		switch(_sku) {
 			case "sc": return Currency.SOFT;
 			case "hc": return Currency.HARD;
+			case "pc": return Currency.HARD;
 			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
 			case "keys": return Currency.KEYS;
 			case "money": return Currency.REAL;
