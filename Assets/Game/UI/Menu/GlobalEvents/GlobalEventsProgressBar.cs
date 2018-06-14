@@ -24,6 +24,8 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	[Space]
 	[SerializeField] private Slider m_progressBar = null;
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
+	[Space]
+	[SerializeField] [Range(0f, 1f)] private float m_minBarThreshold = 0.05f;
 
 	public void RefreshRewards(HDQuestDefinition _evt, long currentValue) {
 		// Initialize visuals
@@ -66,6 +68,9 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	}
 
 	public void RefreshProgress(float _value, float _animDuration = -1f) {
+		// [AOC] For visual purposes, always show a minimum amount of bar
+		_value = Mathf.Max(_value, m_minBarThreshold);
+
 		if (m_progressBar != null) {
 			if(_animDuration < 0f) {
 				m_progressBar.value = _value;

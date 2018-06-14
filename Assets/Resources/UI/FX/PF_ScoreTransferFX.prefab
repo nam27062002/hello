@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 224570945895351492}
   - component: {fileID: 114807831836166762}
   m_Layer: 5
-  m_Name: PF_CoinsTransferFX
+  m_Name: PF_ScoreTransferFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,24 +38,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d186b85e8df464c598e379d23d7c71e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_prefab: {fileID: 117136, guid: 47f844dadae364524b1d304f9725e618, type: 2}
-  m_from: {x: 0, y: 0, z: 0}
-  m_to: {x: 1, y: 1, z: 1}
-  m_autoKill: 1
-  m_totalDuration: 1
-  m_rate: 50
-  m_inRelativeDuration: 0.15
-  m_outRelativeDuration: 0.25
+  m_prefab: {fileID: 1238586700345052, guid: 85bd9d3a69f914e00a9faa5454cba0c2, type: 2}
+  m_from: {x: 0.1640625, y: 0.20182292, z: -0.5}
+  m_to: {x: -0.061197918, y: -0.00390625, z: -0.5}
+  m_autoKill: 0
+  m_totalDuration: 5
+  m_rate: 30
+  m_inRelativeDuration: 0.25
+  m_outRelativeDuration: 0.100000024
   m_ease: 7
   m_speed:
-    min: 1
-    max: 3
+    min: 0.5
+    max: 1
   m_rotationSpeed:
     min: 360
     max: 540
   m_amplitude:
-    min: -0.1
-    max: 0.1
+    min: -0.25
+    max: 0.25
   m_amplitudeEase: 7
   OnStart:
     m_PersistentCalls:

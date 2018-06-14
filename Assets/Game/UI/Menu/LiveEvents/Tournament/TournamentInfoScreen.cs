@@ -71,6 +71,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 			}
 
 			//MAP
+			m_mapContainer.SetActive(!string.IsNullOrEmpty(m_definition.m_goal.m_area));
 			m_areaText.text = m_definition.m_goal.m_area;
 
 			//LEADERBOARD

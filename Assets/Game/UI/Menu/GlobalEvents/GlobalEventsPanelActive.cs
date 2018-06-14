@@ -34,6 +34,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
+	[SerializeField] private ParticleSystem m_receiveContributionFX = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -153,13 +154,19 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			HDQuestData data = questManager.data as HDQuestData;
 			HDQuestDefinition def = data.definition as HDQuestDefinition;
 
-			// Starting setup
+			// Start
 			if (m_progressBar != null) 
 			{
 				m_progressBar.RefreshRewards( def, _from );
 				m_progressBar.RefreshProgress( _from / (float) def.m_goal.m_amount );
 			}
+
+			if(m_receiveContributionFX != null) {
+				m_receiveContributionFX.Play(true);
+			}
 			yield return null;
+
+			// Running
 			float t = 0;
 			while( t < _duration)
 			{
@@ -167,18 +174,22 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				long v = _from + (long)((_to - _from) * (t / _duration));
 				if (m_progressBar != null) 
 				{
-					m_progressBar.RefreshAchieved( def, v );
+					//m_progressBar.RefreshAchieved( def, v );
 					m_progressBar.RefreshProgress( v / (float) def.m_goal.m_amount );
 				}
 				yield return null;
 			}
 
+			// Finished!
 			if (m_progressBar != null) 
 			{
-				m_progressBar.RefreshAchieved( def, _to );
+				//m_progressBar.RefreshAchieved( def, _to );
 				m_progressBar.RefreshProgress( _to / (float) def.m_goal.m_amount );
+			}
+
+			if(m_receiveContributionFX != null) {
+				m_receiveContributionFX.Stop();
 			}
 		}
 	}
-
 }
