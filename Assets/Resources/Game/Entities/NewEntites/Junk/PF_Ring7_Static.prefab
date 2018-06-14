@@ -84,7 +84,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4119631235795362}
-  - component: {fileID: 114738067964000936}
+  - component: {fileID: 114309431479599710}
   - component: {fileID: 114521727264061046}
   - component: {fileID: 114471741618407594}
   - component: {fileID: 65239225031083356}
@@ -326,6 +326,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.29, y: 11, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114309431479599710
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1615252450391774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6adfd6ff910bd40f19ec654b81a3983f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: Ring
+  m_hideNeedTierMessage: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &114471741618407594
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -375,6 +389,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onCollectAudio: hd_goodjunk_bottle
   m_onFadeOutParticle:
     name: PS_RingPassFX
@@ -414,6 +429,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
 --- !u!114 &114521727264061046
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -477,20 +493,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0
---- !u!114 &114738067964000936
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1615252450391774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: Ring
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 1
+    orientate: 0
 --- !u!136 &136627533471413116
 CapsuleCollider:
   m_ObjectHideFlags: 1
