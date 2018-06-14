@@ -101,7 +101,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4771277955938298}
-  - component: {fileID: 114998341996126978}
+  - component: {fileID: 114506222990355322}
   - component: {fileID: 114137682919666254}
   - component: {fileID: 65843469245987582}
   - component: {fileID: 114442445684415042}
@@ -428,6 +428,20 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
+--- !u!114 &114506222990355322
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1700251011105394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6adfd6ff910bd40f19ec654b81a3983f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: Ring
+  m_hideNeedTierMessage: 0
+  m_dieOutsideFrustum: 1
 --- !u!114 &114579811716124584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -494,20 +508,6 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 0
     orientate: 0
---- !u!114 &114998341996126978
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1700251011105394}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: Ring
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 1
 --- !u!136 &136001657614476804
 CapsuleCollider:
   m_ObjectHideFlags: 1

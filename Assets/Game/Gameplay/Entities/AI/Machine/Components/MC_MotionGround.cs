@@ -298,12 +298,14 @@ namespace AI {
 		}
 
 		public override void OnCollisionGroundStay(Collision _collision) {
-			for (int i = 0; i < _collision.contacts.Length; i++) {
-				Vector3 hitPoint = _collision.contacts[i].point;
+            ContactPoint[] _contacts = _collision.contacts;
+            int _count = _contacts.Length;
+            for (int i = 0; i < _count; i++) {
+				Vector3 hitPoint = _contacts[i].point;
 				float error = (hitPoint - position).sqrMagnitude;
 
 				if (error <= 0.3f) {					
-					m_groundNormal = _collision.contacts[i].normal;
+					m_groundNormal = _contacts[i].normal;
 					m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_groundNormal);
 
 					m_gravity = GameConstants.Vector3.zero;
