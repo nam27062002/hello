@@ -169,10 +169,10 @@ public class AssetFinder : EditorWindow {
         FindAssetInContent<AudioClip>(Directory.GetCurrentDirectory() + "\\Assets", out audioList);
         foreach(AudioClip clip in audioList)
         {
-//            if (clip.preloadAudioData)
-//            {
+            if (clip.preloadAudioData)
+            {
                 fList.Add(clip);
-//            }
+            }
         }
 
         Selection.objects = fList.ToArray();
