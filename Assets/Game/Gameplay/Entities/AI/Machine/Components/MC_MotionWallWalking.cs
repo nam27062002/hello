@@ -245,8 +245,10 @@ namespace AI {
 
 		public override void OnCollisionGroundStay(Collision _collision) {
 			Vector3 groundNormal = GameConstants.Vector3.zero;
-			for (int i = 0; i < _collision.contacts.Length; i++) {
-				groundNormal += _collision.contacts[i].normal;
+            ContactPoint[] _contacts = _collision.contacts;
+            int _count = _contacts.Length;
+			for (int i = 0; i < _count; i++) {
+				groundNormal += _contacts[i].normal;
 			}
 			groundNormal.Normalize();
 			m_groundNormal = m_groundNormal * 0.25f + groundNormal * 0.75f;

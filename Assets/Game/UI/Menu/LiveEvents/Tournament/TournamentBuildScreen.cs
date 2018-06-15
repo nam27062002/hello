@@ -84,11 +84,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 		//-- Dragon ---------------------------------------------------//
 		string sku = m_tournament.GetToUseDragon();
 		DragonData dragonData = DragonManager.GetDragonData(sku);
-
-		m_dragonLoader.LoadDragon(sku);
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
-		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_tournament.GetToUseSkin());
+		string disguiseSku = m_tournament.GetToUseSkin();
+		m_dragonLoader.LoadDragon(sku, disguiseSku);
+		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguiseSku);
 		if (disguise.GetAsInt("shopOrder") > 0) { // skins
 			m_dragonSkin.Localize(disguise.Get("tidName"));
 		} else { // default skin
@@ -99,7 +99,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 		DefinitionNode powerup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerupSku);
 
 		m_dragonPower.InitFromDefinition(powerup, false);
-
 
 		//-- Pets -----------------------------------------------------//
 		DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
@@ -212,7 +211,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		} else if (m_enterFreeBtn == _activeButton) {
 			loc.Localize("TID_GEN_FREE");
 		} else if (m_enterCurrencyBtn == _activeButton) {
-			if (m_definition.m_entrance.m_type == "hc") {
+			if (m_definition.m_entrance.m_type == "hc" || m_definition.m_entrance.m_type == "pc") {
 				loc.Localize("TID_TOURNAMENT_PLAY_PC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
 			} else{ 
 				loc.Localize("TID_TOURNAMENT_PLAY_SC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));

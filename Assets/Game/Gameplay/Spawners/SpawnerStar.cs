@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(SpawnerConditions))]
 public class SpawnerStar : AbstractSpawner {
+	[SerializeField] private float m_rectExtraSize = 5f;
 	[Separator("Entity")]
 	[EntityJunkPrefabListAttribute]
 	[SerializeField] private string m_entityPrefab = "";
@@ -198,8 +199,10 @@ public class SpawnerStar : AbstractSpawner {
 			m_rect.min = Vector3.Min(m_rect.min, m_points[i]);
 			m_rect.max = Vector3.Max(m_rect.max, m_points[i]);
 		}
-		m_rect.center = m_rect.center + (Vector2)transform.position - m_rect.size * 0.125f;
-		m_rect.size = m_rect.size * 1.25f;
+
+		m_rect.size += Vector2.one * m_rectExtraSize;
+		m_rect.center = m_rect.center + (Vector2)transform.position - Vector2.one * m_rectExtraSize * 0.5f;
+
 	}
 
 	//-----------------------------------------------

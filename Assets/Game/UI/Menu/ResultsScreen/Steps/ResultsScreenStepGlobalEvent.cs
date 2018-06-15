@@ -40,6 +40,11 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	[SerializeField] private ShowHideAnimator m_tapToContinueAnim = null;
 	[Space]
 	[SerializeField] private TweenSequence m_sequence = null;
+	[Space]
+	[SerializeField] private NumberTextAnimator m_runScoreText = null;
+	[SerializeField] private Transform m_scoreTransferFXFrom = null;
+	[SerializeField] private Transform m_scoreTransferFXTo = null;
+	[SerializeField] private string m_transferSFX = "";
 
 	// Internal logic
 	private HDQuestManager m_questManager = null;
@@ -91,6 +96,9 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		// Get event data!
 		m_questManager = HDLiveEventsManager.instance.m_quest;
 
+		// Make sure the number animator respect the event's formatting
+		m_runScoreText.CustomTextSetter = OnSetScoreText;
+
 		// Listen to sequence ending
 		m_sequence.OnFinished.AddListener(OnHidePostAnimation);
 	}
@@ -134,10 +142,12 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		// Initialize active panel
 		switch(m_activePanel) {
 			case Panel.ACTIVE: {
-				
 				if(_resetValues) {
                     m_panelActiveInitialized = true;
 				}
+
+				m_runScoreText.SetValue(m_questManager.GetRunScore(), false);
+
 				m_tapToContinueText.Localize("TID_RESULTS_TAP_TO_CONTINUE");
 			} break;
 
@@ -165,20 +175,46 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		m_tapToContinueAnim.Hide();
 
 		// Sequentially update values
+		float scoreAnimDuration = 1.5f;
 		m_activePanelSequence = DOTween.Sequence()
 			.SetId(tweenId)
 			.AppendInterval(1f)
 
-			// Base score
+			// Trigger Score Anim
 			.AppendCallback( () => { 
-				if (m_eventPanelActive != null)
+				// Bar anim
+				if (m_eventPanelActive != null) {
 					m_eventPanelActive.MoveScoreTo(
 						m_questManager.m_questData.m_globalScore, 
 						m_questManager.m_questData.m_globalScore + m_questManager.GetRunScore(),
-						1f	// duration
+						scoreAnimDuration
 					);
-			 } )
-			.AppendInterval(1f)
+				}
+
+				// Text anim
+				// [AOC] Don't do it, looks weird ending with 0 score
+				/*if(m_runScoreText != null) {
+					m_runScoreText.duration = scoreAnimDuration;
+					m_runScoreText.SetValue(0, true);
+				}*/
+
+				// FX anim
+				if(m_scoreTransferFXFrom != null && m_scoreTransferFXTo != null) {
+					CurrencyTransferFX scoreTransferFX = CurrencyTransferFX.LoadAndLaunch(
+						"UI/FX/PF_ScoreTransferFX",
+						this.GetComponentInParent<Canvas>().transform,
+						m_scoreTransferFXFrom.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
+						m_scoreTransferFXTo.position + new Vector3(0f, 0f, -0.5f)
+					);
+					scoreTransferFX.totalDuration = scoreAnimDuration;
+				}
+
+				// SFX
+				if(!string.IsNullOrEmpty(m_transferSFX)) {
+					AudioController.Play(m_transferSFX);
+				}
+			} )
+			.AppendInterval(scoreAnimDuration)
 
 			// Tap to continue
 			.AppendCallback(() => {
@@ -193,12 +229,9 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// Discard event contribution and close the popup.
 	/// </summary>
 	private void CloseAndDiscard() {
-
 		// Continue sequence
 		m_sequence.Play();
 	}
-
-
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -331,4 +364,13 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		}
 	}
 	*/
+
+	/// <summary>
+	/// The score number animator needs to format a new value.
+	/// </summary>
+	/// <param name="_animator">The number animator requesting the formatting.</param>
+	public void OnSetScoreText(NumberTextAnimator _animator) {
+		// Depends on tournament type
+		_animator.text.text = m_questManager.FormatScore(_animator.currentValue);
+	}
 }

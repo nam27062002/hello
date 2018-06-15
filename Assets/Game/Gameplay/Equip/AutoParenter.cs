@@ -30,8 +30,10 @@ public class AutoParenter : MonoBehaviour {
 			Transform t = transform;
 			Transform p = GetNewParent();
 			if (p == null) {
-                string parentObjName = t.name;
-				Debug.LogWarning(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
+                if (FeatureSettingsManager.IsDebugEnabled) {
+                    string parentObjName = t.name;
+                    Debug.LogWarning(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
+                }
 			} else {
 				t.SetParent(p, m_worldPositionStays);
 				if (m_resetScale) {

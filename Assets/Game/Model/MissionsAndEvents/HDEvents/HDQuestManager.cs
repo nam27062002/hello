@@ -234,5 +234,19 @@ public class HDQuestManager : HDLiveEventManager{
 		// Done!
 		return rewards;
 	}
+
+	//------------------------------------------------------------------------//
+	// UI HELPER METHODS													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Given a score, format it based on quest type
+	/// </summary>
+	public string FormatScore(long _score) {
+		// Tracker will do it for us
+		if(m_tracker != null) {
+			return m_tracker.FormatValue(_score);
+		}
+		return StringUtils.FormatNumber(_score);
+	}
 	
 }
