@@ -61,12 +61,18 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 		m_scoreText.SetValue(0, HDLiveEventsManager.instance.m_tournament.GetRunScore());
 
 		// Set high score text
-		m_highScoreText.Localize(
-			m_highScoreText.tid, 
-			HDLiveEventsManager.instance.m_tournament.FormatScore(
-				HDLiveEventsManager.instance.m_tournament.GetBestScore()
-			)
-		);
+		// Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
+		if(HDLiveEventsManager.instance.m_tournament.IsNewBestScore()) {
+			m_highScoreText.gameObject.SetActive(false);
+		} else {
+			m_highScoreText.gameObject.SetActive(true);
+			m_highScoreText.Localize(
+				m_highScoreText.tid, 
+				HDLiveEventsManager.instance.m_tournament.FormatScore(
+					HDLiveEventsManager.instance.m_tournament.GetBestScore()
+				)
+			);
+		}
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);

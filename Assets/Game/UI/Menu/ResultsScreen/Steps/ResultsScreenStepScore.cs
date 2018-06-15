@@ -52,7 +52,13 @@ public class ResultsScreenStepScore : ResultsScreenSequenceStep {
 		m_scoreText.SetValue(0, m_controller.score);
 
 		// Set high score text
-		m_highScoreText.Localize(m_highScoreText.tid, StringUtils.FormatNumber(m_controller.highScore));
+		// Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
+		if(m_controller.isHighScore) {
+			m_highScoreText.gameObject.SetActive(false);
+		} else {
+			m_highScoreText.gameObject.SetActive(true);
+			m_highScoreText.Localize(m_highScoreText.tid, StringUtils.FormatNumber(m_controller.highScore));
+		}
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);
