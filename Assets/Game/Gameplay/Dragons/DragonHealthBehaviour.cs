@@ -137,9 +137,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	//TONI START
 	public void SetReviveBonusTime()
 	{
-		// Revive bonus last longer as times goes on (but from 2 min, is fixed to 60)
-		if (m_gameController.elapsedSeconds > 120)	m_reviveBonusTime = 60;
-		else m_reviveBonusTime = m_gameController.elapsedSeconds / 2;
+		// Revive bonus last longer as times goes on (but from 3 min, is fixed to 60)
+		if (m_gameController.elapsedSeconds > 180)	m_reviveBonusTime = 60;
+		else m_reviveBonusTime = m_gameController.elapsedSeconds / 3;
 		m_reviveBonusDurationMax = m_reviveBonusTime;
 		// For each revive, bonus min. is 10% better to a max. of 60%
 		m_revivesCounter++;
