@@ -141,7 +141,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if (m_gameController.elapsedSeconds > 120)	m_reviveBonusTime = 60;
 		else m_reviveBonusTime = m_gameController.elapsedSeconds / 2;
 		m_reviveBonusDurationMax = m_reviveBonusTime;
-		// For each revive, bonus is 10% better to a max. of 60%
+		// For each revive, bonus min. is 10% better to a max. of 60%
 		m_revivesCounter++;
 		if (m_reviveBonusValueFin > 0.6f)
 			m_reviveBonusValueFin -= 0.1f;
