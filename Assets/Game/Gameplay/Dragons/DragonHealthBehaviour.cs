@@ -23,10 +23,15 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	// health drain
 	//TONI START
-	private float m_reviveBonusDuration = 30f;
-	private float m_reviveBonusValueIni = 0.2f;
-	private float m_reviveBonusValueFin = 0.8f;
+	private float m_revivesCounter;
+	private float m_reviveBonusDurationMax;
+	private float m_reviveBonusValueIni = 0.05f;
+	private float m_reviveBonusValueFin;
 	private float m_reviveBonusTime;
+	public float reviveBonusTime
+	{
+		get{ return m_reviveBonusTime; }
+	}
 	public float damageHUD;
 	//TONI END
 	private float m_healthDrainPerSecond;
@@ -90,6 +95,8 @@ public class DragonHealthBehaviour : MonoBehaviour {
         m_damageMultiplier = 0;
 		//TONI START
 		m_reviveBonusTime = 0;
+		m_revivesCounter = 0;
+		m_reviveBonusValueFin = 1.1f;
 		//TONI END
 	}
 		
@@ -130,7 +137,14 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	//TONI START
 	public void SetReviveBonusTime()
 	{
-		m_reviveBonusTime = m_reviveBonusDuration;
+		// Revive bonus last longer as times goes on (but from 2 min, is fixed to 60)
+		if (m_gameController.elapsedSeconds > 120)	m_reviveBonusTime = 60;
+		else m_reviveBonusTime = m_gameController.elapsedSeconds / 2;
+		m_reviveBonusDurationMax = m_reviveBonusTime;
+		// For each revive, bonus is 10% better to a max. of 60%
+		m_revivesCounter++;
+		if (m_reviveBonusValueFin > 0.6f)
+			m_reviveBonusValueFin -= 0.1f;
 	}
 	//TONI END
 
@@ -283,7 +297,6 @@ public class DragonHealthBehaviour : MonoBehaviour {
         {
             m_sessionStartHealthDrainTime -= Time.deltaTime;
             damage *= m_sessionStartHealthDrainModifier;
-            //Debug.Log("Reducing health drain! (" + (int)m_sessionStartHealthDrainTime + ")");
         }
 
 		// apply the buffs multiplier.
@@ -310,10 +323,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if (m_reviveBonusTime > 0.0f) 
 		{
 			m_reviveBonusTime -= Time.deltaTime;
-			damage *= m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDuration) * (m_reviveBonusValueFin - m_reviveBonusValueIni));
-			damageHUD = m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDuration) * (m_reviveBonusValueFin - m_reviveBonusValueIni)); //REMOVE THIS, JUST TO CHECK FORMULA WORKS
+			damage *= m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDurationMax) * (m_reviveBonusValueFin - m_reviveBonusValueIni));
+			damageHUD = 100 - (100 * (m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDurationMax) * (m_reviveBonusValueFin - m_reviveBonusValueIni)))); //REMOVE THIS, JUST TO CHECK FORMULA WORKS
 		}
-		//damageHUD = damage; //REMOVE THIS, JUST TO CHECK FORMULA WORKS
 		//TONI END
 		return damage;
 	}

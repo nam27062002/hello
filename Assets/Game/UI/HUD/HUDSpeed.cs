@@ -72,7 +72,7 @@ public class HUDSpeed : MonoBehaviour {
 				maxDeep = (m_dragonMotion.position.y + 157f);			
 			//m_valueTxt.text = "SPEED: " + m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX HIGH: " + maxHigh.ToString(".#") + "\nMAX DEEP: " + maxDeep.ToString(".#");
 			//m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX DEEP: " + (m_dragonMotion.position.y + 157f).ToString(".#");
-			m_valueTxt.text = "DAMAGE: " + m_dragonHealthBehaviour.damageHUD.ToString(".##");
+			m_valueTxt.text = "DAMAGE RED.: " + m_dragonHealthBehaviour.damageHUD.ToString(".##")+ "%" + "\nDURATION: " + m_dragonHealthBehaviour.reviveBonusTime.ToString(".##");
 		}
 	}
 }
