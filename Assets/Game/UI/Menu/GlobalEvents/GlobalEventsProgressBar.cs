@@ -23,6 +23,9 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_currentValueText_DEBUG = null;
 	[Space]
 	[SerializeField] private Slider m_progressBar = null;
+	public Slider progressBar {
+		get { return m_progressBar; }
+	}
 	[SerializeField] [Range(0f, 1f)] private float m_minBarThreshold = 0.05f;
 	[Space]
 	[SerializeField] private bool m_repositionRewards = true;
@@ -40,7 +43,7 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 			// Initialize the reward info corresponding to this reward
 			m_rewardInfos[i].InitFromReward(_evt.m_rewards[i]);
 
-			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount );
+			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount, false );
 
 			// Put into position (except last reward, which has a fixed position)
 			if(m_repositionRewards && i < _evt.m_rewards.Count - 1) {
@@ -60,23 +63,36 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 		}
 	}
 
-	public void RefreshAchieved(HDQuestDefinition _evt, long currentValue) {
+	/*public void RefreshAchieved(HDQuestDefinition _evt, long currentValue) {
 		for(int i = 0; i < _evt.m_rewards.Count; ++i) {
 			// Break the loop if we don't have more reward info slots
 			if(i >= m_rewardInfos.Length) break;
-			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount );
+			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount, false );
+		}
+	}*/
+
+	public void RefreshAchieved(bool _animate) {
+		// Use current bar value
+		for(int i = 0; i < m_rewardInfos.Length; ++i) {
+			m_rewardInfos[i].ShowAchieved(m_progressBar.normalizedValue >= m_rewardInfos[i].questReward.targetPercentage, _animate);
 		}
 	}
 
-	public void RefreshProgress(float _value, float _animDuration = -1f) {
+	public void RefreshProgress(float _value, float _animDuration = -1f, bool _checkAchieved = true) {
 		// [AOC] For visual purposes, always show a minimum amount of bar
 		_value = Mathf.Max(_value, m_minBarThreshold);
 
 		if (m_progressBar != null) {
 			if(_animDuration < 0f) {
 				m_progressBar.value = _value;
+				if(_checkAchieved) RefreshAchieved(false);
 			} else {
-				m_progressBar.DOValue(_value, _animDuration).SetEase(Ease.OutQuad);
+				m_progressBar.DOKill();
+				Tweener tween = m_progressBar.DOValue(_value, _animDuration).SetEase(Ease.OutQuad);
+
+				if(_checkAchieved) {
+					tween.OnUpdate(() => { RefreshAchieved(true); });
+				}
 			}
 		}
 

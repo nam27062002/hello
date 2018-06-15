@@ -239,8 +239,8 @@ namespace Metagame {
 							"<color=#ffaa00>",
 							"<color=#ff7f00>"
 						};
-						//Debug.Log("EGG REWARD GENERATED: " + colorTags[(int)m_reward.rarity] + m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "") + "</color>");
-						//Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
+						Debug.Log("EGG REWARD GENERATED: " + colorTags[(int)m_reward.rarity] + m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "") + "</color>");
+						Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
 						#endif
 					} else {
 						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + " and rarity " + m_rarity + "!" + "</color>");

@@ -3306,14 +3306,9 @@ MonoBehaviour:
   m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: Play
+      - m_Target: {fileID: 114461773869861224}
+        m_MethodName: Refresh
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3323,6 +3318,11 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnShowPostAnimation:
@@ -7078,6 +7078,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d87ed976429514b0c823b1780fb95ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_updateEventState: 1
   m_objectiveText: {fileID: 114975675313333934}
   m_objectiveIcon: {fileID: 114557947574480312}
   m_timerText: {fileID: 114412364616178506}

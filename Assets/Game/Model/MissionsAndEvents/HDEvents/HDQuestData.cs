@@ -27,7 +27,6 @@ public class HDQuestData : HDLiveEventData {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	public long m_globalScore;
-	public int m_rewardLevel = -1;
 
 
 	//------------------------------------------------------------------------//
@@ -57,7 +56,6 @@ public class HDQuestData : HDLiveEventData {
 	{
 		base.Clean();
 		m_globalScore = -1;
-		m_rewardLevel = -1;
 	}
 
 	public override SimpleJSON.JSONClass ToJson ()

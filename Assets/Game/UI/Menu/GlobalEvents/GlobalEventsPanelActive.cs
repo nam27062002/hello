@@ -28,6 +28,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
+	[SerializeField] private bool m_updateEventState = false;
+	[Space]
 	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
 	[SerializeField] private Image m_objectiveIcon = null;
 	[Space]
@@ -46,7 +48,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Program periodic update call
 		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
 
-		Refresh();
+		//Refresh();
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED, OnEventDataUpdated);
@@ -73,20 +75,25 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		double remainingTime = System.Math.Max(0, HDLiveEventsManager.instance.m_quest.m_questData.remainingTime.TotalSeconds);
 
 		// Update countdown text
-		m_timerText.text = TimeUtils.FormatTime(
-			remainingTime,	// Never show negative time!
-			TimeUtils.EFormat.ABBREVIATIONS,
-			4
-		);
-
-		if ( remainingTime <= 0 )
-		{
-			HDLiveEventsManager.instance.m_quest.UpdateStateFromTimers();
+		if(m_timerText != null) {
+			m_timerText.text = TimeUtils.FormatTime(
+				remainingTime,	// Never show negative time!
+				TimeUtils.EFormat.ABBREVIATIONS,
+				4
+			);
 		}
 
-		if ( !HDLiveEventsManager.instance.m_quest.IsRunning() )
-		{
-			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
+		// If enabled, update quest state
+		if(m_updateEventState) {
+			if ( remainingTime <= 0 )
+			{
+				HDLiveEventsManager.instance.m_quest.UpdateStateFromTimers();
+			}
+
+			if ( !HDLiveEventsManager.instance.m_quest.IsRunning() )
+			{
+				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
+			}
 		}
 	}
 
@@ -106,10 +113,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 		// Initialize visuals
 		// Event description
-		m_objectiveText.text = questManager.GetGoalDescription();
+		if(m_objectiveText != null) m_objectiveText.text = questManager.GetGoalDescription();
 
 		// Target icon
-		m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
+		if(m_objectiveIcon != null) m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
 
 		// Progress
 		if (m_progressBar != null) {
@@ -140,10 +147,37 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 	}
 
+	public void MoveScoreTo(long _to, float _duration) {
+		long currentValue = 0;
+		if(m_progressBar != null) {
+			HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+			if(questManager.EventExists()) {
+				HDQuestData data = questManager.data as HDQuestData;
+				HDQuestDefinition def = data.definition as HDQuestDefinition;
+				currentValue = (long)(m_progressBar.progressBar.normalizedValue * (float)def.m_goal.m_amount);
+			}
+		}
+
+		MoveScoreTo(currentValue, _to, _duration);
+	}
 
 	public void MoveScoreTo( long _from, long _to, float _duration )
 	{
-		StartCoroutine( GoingUp( _from, _to, _duration ) );
+		// If not animating, just set the final value directly
+		if(_duration <= 0f) {
+			// Set initial value
+			HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+			if(questManager.EventExists()) {
+				HDQuestData data = questManager.data as HDQuestData;
+				HDQuestDefinition def = data.definition as HDQuestDefinition;
+				if(m_progressBar != null) {
+					m_progressBar.RefreshRewards( def, _to );
+					m_progressBar.RefreshProgress( _to / (float) def.m_goal.m_amount );
+				}
+			}
+		} else {
+			StartCoroutine( GoingUp( _from, _to, _duration ) );
+		}
 	}
 
 	IEnumerator GoingUp( long _from, long _to, float _duration )
@@ -174,8 +208,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				long v = _from + (long)((_to - _from) * (t / _duration));
 				if (m_progressBar != null) 
 				{
-					//m_progressBar.RefreshAchieved( def, v );
-					m_progressBar.RefreshProgress( v / (float) def.m_goal.m_amount );
+					m_progressBar.RefreshProgress( v / (float) def.m_goal.m_amount, -1f, false );
+					m_progressBar.RefreshAchieved( true );
 				}
 				yield return null;
 			}

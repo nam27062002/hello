@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using TMPro;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -77,10 +78,23 @@ public class GlobalEventsRewardInfo : MetagameRewardView {
 		base.Refresh();
 	}
 
-	public void ShowAchieved(bool _achieved)
+	public void ShowAchieved(bool _achieved, bool _animate)
 	{
-		if (m_tick != null)
-			m_tick.gameObject.SetActive( _achieved );
+		if(m_tick == null) return;
+
+		bool wasAchieved = m_tick.gameObject.activeSelf;
+		m_tick.gameObject.SetActive( _achieved );
+
+		// Animate? Only when going from not visible to visible
+		if(_animate) {
+			if(!wasAchieved && _achieved) {
+				m_tick.transform.DOKill();
+				m_tick.transform.DOScale(15f, 1f).From().SetEase(Ease.InExpo);
+				m_tick.DOFade(0f, 1f).From().SetEase(Ease.InExpo);
+
+				AudioController.Play("hd_pet_add", 1f, 0.25f);	// Delay to sync with anim
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//

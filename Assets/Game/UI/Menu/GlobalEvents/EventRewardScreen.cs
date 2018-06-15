@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class EventRewardScreen : MonoBehaviour {	
 	//------------------------------------------------------------------//
@@ -38,10 +39,9 @@ public class EventRewardScreen : MonoBehaviour {
 
 	// Individual elements references
 	[Space]
-	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
+	[SerializeField] private GlobalEventsPanelActive m_questPanel = null;
 	[SerializeField] private Image m_eventIcon = null;
-	[Space]
-	[SerializeField] private Localizer m_topRewardText = null;
+	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
 
 	// Internal references
 	private RewardSceneController m_sceneController = null;
@@ -50,7 +50,9 @@ public class EventRewardScreen : MonoBehaviour {
 	private HDQuestManager m_questManager;
 	private Step m_step;
 	private State m_state;
-	private int m_givenGlobalRewards;
+
+	private int m_questRewardIdx = -1;
+	private List<int> m_pushedRewardsAmount = new List<int>();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -108,20 +110,39 @@ public class EventRewardScreen : MonoBehaviour {
 		m_sceneController.Clear();
 
 		// Store current event for faster access
-		// m_questManager = GlobalEventManager.currentEvent;
 		m_questManager = HDLiveEventsManager.instance.m_quest;
+
+		// Set initial state
+		m_step = Step.INIT;
+		m_state = State.IDLE;
 
 		// Stack all rewards into the pending rewards stack
 		// Add reward to the stack - In the right order!
 		if(m_questManager != null) {
-
 			// Global rewards
-			for(int i = m_questManager.m_questData.m_rewardLevel - 1; i >= 0; --i) {
-				UsersManager.currentUser.PushReward(m_questManager.m_questDefinition.m_rewards[i].reward);
+			// Rewards are sorted from smaller to bigger, push them in reverse order to collect smaller ones first
+			List<HDLiveEventDefinition.HDLiveEventReward> rewards = m_questManager.GetMyRewards();
+			int[] pushedRewardsAmount = new int[rewards.Count];
+			int totalPushedRewards = UsersManager.currentUser.rewardStack.Count;
+			for(int i = rewards.Count - 1; i >= 0; --i) {
+				UsersManager.currentUser.PushReward(rewards[i].reward);
+
+				// [AOC] Tricky stuff: a reward can immediately push other rewards (i.e. 4 eggs), making it difficult to sync with the actual quest reward level
+				//		 Use a list to work around it
+				pushedRewardsAmount[i] = UsersManager.currentUser.rewardStack.Count - totalPushedRewards;
+				totalPushedRewards = UsersManager.currentUser.rewardStack.Count;
 			}
+			m_pushedRewardsAmount.Clear();
+			m_pushedRewardsAmount.AddRange(pushedRewardsAmount);
+			m_questRewardIdx = -1;
+
+			// Be aware when more rewards are pushed during the flow
+			Messenger.RemoveListener<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, OnRewardPushed);
+			Messenger.RemoveListener<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_POPPED, OnRewardPopped);
+			Messenger.AddListener<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, OnRewardPushed);
+			Messenger.AddListener<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_POPPED, OnRewardPopped);
 
 			// Mark event as collected
-			// m_questManager.FinishRewardCollection();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
 			m_questManager.FinishEvent();
 
 			// Immediately save persistence in case the rewards opening gets interrupted
@@ -129,15 +150,8 @@ public class EventRewardScreen : MonoBehaviour {
 		}
 
 		// Initialize progress bar
-		m_givenGlobalRewards = 0;
-		if(m_questManager != null) {
-			m_progressBar.RefreshRewards(m_questManager.m_questDefinition, m_questManager.m_questData.m_globalScore);
-		}
-		m_progressBar.RefreshProgress(0);
-
-		// Set initial state
-		m_step = Step.INIT;
-		m_state = State.IDLE;
+		m_questPanel.Refresh();
+		m_questPanel.MoveScoreTo(0, 0, 0f);
 
 		// Hide all screens
 		for(int i = 0; i < (int)Step.FINISH; ++i) {
@@ -220,7 +234,9 @@ public class EventRewardScreen : MonoBehaviour {
 		switch(m_step) {
 			case Step.INTRO: {
 				// Do we have global rewards?
-				if(m_questManager.m_questData.m_rewardLevel > 0) {
+				//if(m_questManager.m_questData.m_rewardLevel > 0) {
+				//if(UsersManager.currentUser.rewardStack.Count > 0) {
+				if(m_pushedRewardsAmount.Count > 0) {
 					nextStep = Step.GLOBAL_REWARD;
 				} else {
 					nextStep = Step.NO_GLOBAL_REWARD;
@@ -230,8 +246,8 @@ public class EventRewardScreen : MonoBehaviour {
 				nextStep = Step.FINISH;
 			}break;
 			case Step.GLOBAL_REWARD: {
-				// There are still rewards to collect?
-				if(m_givenGlobalRewards < m_questManager.m_questData.m_rewardLevel) {
+				// Are there still rewards to collect?
+				if(UsersManager.currentUser.rewardStack.Count > 0) {
 					nextStep = Step.GLOBAL_REWARD;
 				} else {
 					nextStep = Step.FINISH;
@@ -262,6 +278,9 @@ public class EventRewardScreen : MonoBehaviour {
 				// Set event icon
 				m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_questManager.m_questDefinition.m_goal.m_icon);
 
+				// Event description
+				if(m_objectiveText != null) m_objectiveText.text = m_questManager.GetGoalDescription();
+
 				// Clear 3D scene
 				m_sceneController.Clear();
 
@@ -275,17 +294,21 @@ public class EventRewardScreen : MonoBehaviour {
 			} break;
 
 			case Step.GLOBAL_REWARD: {
+				// Keep track of given rewards
+				Debug.Log(Colors.paleYellow.Tag("checking index... (" + m_questRewardIdx + ":" + (m_questRewardIdx < 0 ? "-" : m_pushedRewardsAmount[m_questRewardIdx].ToString()) + ")"));
+				if(m_questRewardIdx < 0 || m_pushedRewardsAmount[m_questRewardIdx] <= 0) {
+					m_questRewardIdx++;
+					Debug.Log(Colors.paleYellow.Tag("INDEX INCREASED " + m_questRewardIdx));
+				}
+
 				// SFX
 				AudioController.Play("UI_Light FX");
 
 				// Animate progress bar
-				m_progressBar.RefreshProgress(m_questManager.m_questDefinition.m_rewards[m_givenGlobalRewards].targetPercentage, 0.5f);
+				m_questPanel.MoveScoreTo((long)m_questManager.m_questDefinition.m_rewards[m_questRewardIdx].targetAmount, 0.5f);
 
 				// Tell the scene to open the next reward (should be already stacked)
 				m_sceneController.OpenReward();
-
-				// Increase global reward level
-				m_givenGlobalRewards++;
 			} break;
 
 			case Step.NO_GLOBAL_REWARD: {
@@ -319,6 +342,10 @@ public class EventRewardScreen : MonoBehaviour {
 				// Stop listeneing the 3D scene
 				m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
 				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+
+				// Stop listening to external events too
+				Messenger.RemoveListener<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, OnRewardPushed);
+				Messenger.RemoveListener<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_POPPED, OnRewardPopped);
 
 				// Purge event list
 				m_questManager.ClearEvent();
@@ -457,5 +484,25 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_step == Step.INIT) {
 			AdvanceStep();
 		}
+	}
+
+	/// <summary>
+	/// A reward has been pushed to the stack.
+	/// </summary>
+	/// <param name="_reward">Reward.</param>
+	private void OnRewardPushed(Metagame.Reward _reward) {
+		// Increase counter
+		m_pushedRewardsAmount[m_questRewardIdx]++;
+		Debug.Log(Colors.paleGreen.Tag(m_questRewardIdx + ": " + m_pushedRewardsAmount[m_questRewardIdx]));
+	}
+
+	/// <summary>
+	/// A reward has been popped to the stack.
+	/// </summary>
+	/// <param name="_reward">Reward.</param>
+	private void OnRewardPopped(Metagame.Reward _reward) {
+		// Decrease counter
+		m_pushedRewardsAmount[m_questRewardIdx]--;
+		Debug.Log(Colors.coral.Tag(m_questRewardIdx + ": " + m_pushedRewardsAmount[m_questRewardIdx]));
 	}
 }

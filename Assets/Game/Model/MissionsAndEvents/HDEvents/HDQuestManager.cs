@@ -226,8 +226,8 @@ public class HDQuestManager : HDLiveEventManager{
 			// In a quest, the reward level tells us in which reward tier have been reached
 			// All rewards below it are also given
 			HDQuestDefinition def = data.definition as HDQuestDefinition;
-			for(int i = 0; i < m_rewardLevel; ++i) {
-				rewards.Add(def.m_rewards[m_rewardLevel - 1]);	// Assuming rewards are properly sorted :)
+			for(int i = 0; i < m_rewardLevel; ++i) {	// Reward level is 1-N
+				rewards.Add(def.m_rewards[i]);	// Assuming rewards are properly sorted :)
 			}
 		}
 
