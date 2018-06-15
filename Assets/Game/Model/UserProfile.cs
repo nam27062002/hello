@@ -1597,6 +1597,7 @@ public class UserProfile : UserPersistenceSystem
 	public void PushReward(Metagame.Reward _reward) {
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
+		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);
 	}
 
 	/// <summary>
@@ -1606,6 +1607,7 @@ public class UserProfile : UserPersistenceSystem
 	public Metagame.Reward PopReward() {
 		Metagame.Reward r = rewardStack.Pop();
 		Debug.Log("<color=red>POP " + r.GetType().Name + "</color>");
+		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_POPPED, r);
 		return r;
 	}
 
