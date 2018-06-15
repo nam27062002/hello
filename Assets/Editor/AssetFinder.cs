@@ -159,6 +159,27 @@ public class AssetFinder : EditorWindow {
 
 
     /// <summary>
+    /// Select preloaded audioclips
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Select preloaded audioclips")]
+    public static void SelectPreloadedAudioClips()
+    {
+        List<AudioClip> fList = new List<AudioClip>();
+        AudioClip[] audioList;
+        FindAssetInContent<AudioClip>(Directory.GetCurrentDirectory() + "\\Assets", out audioList);
+        foreach(AudioClip clip in audioList)
+        {
+            if (clip.preloadAudioData)
+            {
+                fList.Add(clip);
+            }
+        }
+
+        Selection.objects = fList.ToArray();
+    }
+
+
+    /// <summary>
     /// Resets all shader keywords stored in materials or material selection
     /// </summary>
     [MenuItem("Hungry Dragon/Tools/Material keyword reset")]
