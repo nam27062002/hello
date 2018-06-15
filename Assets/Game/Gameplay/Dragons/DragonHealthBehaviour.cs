@@ -139,6 +139,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	{
 		// Revive bonus last longer as times goes on (but from 3 min, is fixed to 60)
 		if (m_gameController.elapsedSeconds > 180)	m_reviveBonusTime = 60;
+		else if (m_gameController.elapsedSeconds < 15)	m_reviveBonusTime = 10; //If player dies in first 15 run' seconds, he has 10 second bonus
 		else m_reviveBonusTime = m_gameController.elapsedSeconds / 3;
 		m_reviveBonusDurationMax = m_reviveBonusTime;
 		// For each revive, bonus min. is 10% better to a max. of 60%
