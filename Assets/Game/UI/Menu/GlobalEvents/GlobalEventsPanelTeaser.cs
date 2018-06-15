@@ -28,9 +28,6 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
-	[SerializeField] private Image m_icon;
-	[SerializeField] private TextMeshProUGUI m_text;
-	[SerializeField] private GlobalEventsRewardInfo m_rewardInfo;
 
 
 	//------------------------------------------------------------------------//
@@ -57,10 +54,12 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if(GlobalEventManager.currentEvent == null) return;
+		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
+
+		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
 
 		// Update timer
-		double remainingSeconds = GlobalEventManager.currentEvent.remainingTime.TotalSeconds;
+		double remainingSeconds = questManager.data.remainingTime.TotalSeconds;
 		m_timerText.text = TimeUtils.FormatTime(
 			System.Math.Max(0, remainingSeconds),	// Never show negative time!
 			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
@@ -69,7 +68,16 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 
 		// [AOC] Manage timer end when this panel is active
 		if(remainingSeconds <= 0) {
-			GlobalEventManager.RequestCurrentEventState();	// This should change the active panel
+			// TODO
+			// GlobalEventManager.RequestCurrentEventState();	// This should change the active panel
+			questManager.UpdateStateFromTimers();
+			// Send Event to update this!
+		}
+
+		if ( questManager.data.m_state != HDLiveEventData.State.TEASING )
+		{
+			// Exit from here!!
+			Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 		}
 	}
 
@@ -77,24 +85,8 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	override public void Refresh() {
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, GlobalEventManager.currentEvent.bonusDragonSku);
-		m_text.text = def.GetLocalized("tidName");
-
-		GlobalEvent evt = GlobalEventManager.currentEvent;
-		m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + evt.bonusDragonSku + "/icon_disguise_0");	// Default skin
-
-		m_rewardInfo.rewardSlot = evt.topContributorsRewardSlot;
-
 		// Force a first update on the timer
 		UpdatePeriodic();
 	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 
 }

@@ -56,7 +56,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     private bool m_isStatsEnabled;
     public bool IsStatsEnabled {
         get {
-			return m_isStatsEnabled && InstanceManager.menuSceneController == null;	// [AOC] Disable stats at the menu (so annoying for developing UI!)
+			return m_isStatsEnabled;
         }
 
         set {
@@ -202,6 +202,9 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				PlayerPrefs.SetInt(LAST_TAB_IDX_PREF_KEY, _newTabIdx);
 			}
 		);
+
+		// Setup console channels
+		Log_InitChannels();
 
         m_activateTimer = 0;
 		CheckCanvasActivation();
@@ -378,11 +381,18 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     {        
         General,
         Customizer,
-        GameCenter
+        GameCenter,
+		ResultsScreen
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
     private static Dictionary<ELogChannel, string> sm_logChannelPrefix;
+
+	private static void Log_InitChannels() {
+		Log_SetupChannel(ELogChannel.General, "", Color.white);
+		Log_SetupChannel(ELogChannel.Customizer, "Customizer", Color.green);
+		Log_SetupChannel(ELogChannel.ResultsScreen, "RESULTS", Colors.paleYellow);
+	}
 
     private static string Log_GetChannelColor(ELogChannel channel)
     {
@@ -404,30 +414,33 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
         if (!sm_logChannelPrefix.ContainsKey(channel))
         {
-            if (channel == ELogChannel.General)
-            {
-                sm_logChannelPrefix[channel] = "";
-            }
-            else
-            {
-                sm_logChannelPrefix[channel] = "[" + channel.ToString() + "] ";
-            }
+            sm_logChannelPrefix[channel] = "[" + channel.ToString() + "] ";
         }
 
         return sm_logChannelPrefix[channel];
     }
 
-    public static void Log_SetupChannel(ELogChannel channel, Color color) {
-        if (sm_logChannelColors == null) {
+	public static void Log_SetupChannel(ELogChannel channel, string _prefix, Color color) {
+		// Prefix
+		if(sm_logChannelPrefix == null) {
+			sm_logChannelPrefix = new Dictionary<ELogChannel, string>();
+		}
+		
+		if(!string.IsNullOrEmpty(_prefix)) {
+			_prefix = "[" + _prefix + "] ";
+		}
+		sm_logChannelPrefix[channel] = _prefix;
+
+		// Color
+        if(sm_logChannelColors == null) {
             sm_logChannelColors = new Dictionary<ELogChannel, string>();
         }
-
-        string colorAsString = Colors.ToHexString(color, "#", false);
-        if (sm_logChannelColors.ContainsKey(channel)) {
-            sm_logChannelColors[channel] = colorAsString;
-        } else {
-            sm_logChannelColors.Add(channel, colorAsString);
-        }
+		
+		if(color == Color.white) {
+			sm_logChannelColors[channel] = null;	// Use default color instead of white
+		} else {
+			sm_logChannelColors[channel] = Colors.ToHexString(color, "#", false);
+		}
     }
 
     public static string COLOR_ERROR = Colors.ToHexString(Color.red, "#", false);

@@ -35,6 +35,7 @@ public class ScrollbarAutoHide : MonoBehaviour {
 
 	// Internal logic
 	private float m_timer = 0f;
+	private float m_lastPos = -1f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -106,6 +107,10 @@ public class ScrollbarAutoHide : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newPos">New position.</param>
 	private void OnScrollbarChanged(float _newPos) {
+		// Check pos as well, in case we're forcing a position
+		if(Mathf.Abs(_newPos - m_lastPos) <= Mathf.Epsilon) return;
+		m_lastPos = _newPos;
+
 		// Make sure bar is visible
 		m_anim.Show();
 

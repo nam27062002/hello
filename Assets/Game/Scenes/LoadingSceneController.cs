@@ -467,6 +467,7 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
+                HDLiveEventsManager.CreateInstance(true);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);
@@ -529,7 +530,7 @@ public class LoadingSceneController : SceneController {
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
 
                 // Initialize managers needing data from the loaded profile
-                GlobalEventManager.SetupUser(UsersManager.currentUser);
+                // GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
                 // Automatic connection check is enabled once the loading is over

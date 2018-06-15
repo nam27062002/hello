@@ -91,5 +91,9 @@ namespace GameConstants
 		public static readonly int INSTANT_SHOW = UnityEngine.Animator.StringToHash("instantShow");
 		public static readonly int HIDE = UnityEngine.Animator.StringToHash("hide");
 		public static readonly int INSTANT_HIDE = UnityEngine.Animator.StringToHash("instantHide");
+
+		public static readonly int COUNTDOWN = UnityEngine.Animator.StringToHash("countdown");
+		public static readonly int BEEP = UnityEngine.Animator.StringToHash("beep");
+
 	}
 }

@@ -394,17 +394,14 @@ public class DisguisesScreenController : MonoBehaviour {
 		string powerSku = _pill.def.GetAsString("powerup");
 		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerSku);
 
-		// If no power, hide the power icon
-		if(powerDef == null) {
-			m_powerSlotAnim.Hide();
-		} else {
-			// Refresh data
-			m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
 
-			// Show
-			// Force the animation to be launched
-			m_powerSlotAnim.RestartShow();
-		}
+		// If no power, hide the power icon
+		// Refresh data
+		m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
+		// Show
+		// Force the animation to be launched
+		m_powerSlotAnim.RestartShow();
+
 
 		// Refresh the lock info
 		if(m_lockText != null) {

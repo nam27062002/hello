@@ -10,8 +10,10 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using DG.Tweening;
+using SimpleJSON;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -69,6 +71,58 @@ public class AOCQuickTestEditor : Editor {
 				UnityEditor.SceneManagement.EditorSceneManager.CloseScene(UnityEditor.SceneManagement.EditorSceneManager.GetSceneByPath(scene.path), true);
 			}
 			EditorUtility.ClearProgressBar();
+		}
+
+		EditorGUILayout.Space();
+		EditorGUILayoutExt.Separator("Tournament Leaderboard Generator");
+
+		int leaderboardSize = EditorPrefs.GetInt("AOCQickTest.TournamentLeaderboardSize", 100);
+		leaderboardSize = EditorGUILayout.IntField("Leaderboard Size", leaderboardSize);
+		EditorPrefs.SetInt("AOCQickTest.TournamentLeaderboardSize", leaderboardSize);
+
+		int maxScore = EditorPrefs.GetInt("AOCQickTest.TournamentLeaderboardMaxScore", 5000);
+		maxScore = EditorGUILayout.IntField("Max Score", maxScore);
+		EditorPrefs.SetInt("AOCQickTest.TournamentLeaderboardMaxScore", maxScore);
+
+		if(GUILayout.Button("GENERATE TOURNAMENT LEADERBOARD JSON", GUILayout.Height(50))) {
+			string[] firstNames = File.ReadAllLines(StringUtils.SafePath(Application.dataPath + "/HDLiveEventsTest/first_names.txt"));
+			string[] lastNames = File.ReadAllLines(StringUtils.SafePath(Application.dataPath + "/HDLiveEventsTest/last_names.txt"));
+			int picRandomSeed = UnityEngine.Random.Range(1, 500);
+			int score = maxScore;
+			JSONClass playerData = null;
+
+			JSONClass data = new JSONClass();
+			JSONArray array = new JSONArray();
+			for(int i = 0; i < leaderboardSize; ++i) {
+				string name = firstNames.GetRandomValue() + " " + lastNames.GetRandomValue();
+
+				score = UnityEngine.Random.Range((int)(score * 0.9f), score);
+
+				playerData = new JSONClass();
+				playerData.Add("name", name);
+				playerData.Add("pic", "https://picsum.photos/200/200/?image=" + (picRandomSeed + i).ToString());
+				playerData.Add("score", score);
+				array.Add(playerData);
+			}
+
+			data.Add("l", array);
+			data.Add("n", leaderboardSize);
+
+			int rank = UnityEngine.Random.Range(0, array.Count);
+			JSONNode randomPlayerData = array[rank];
+			JSONClass currentPlayerData = new JSONClass();
+			currentPlayerData.Add("userId", UnityEngine.Random.Range(0, 5000000));
+			currentPlayerData.Add("score", randomPlayerData["score"]);
+			currentPlayerData.Add("rank", rank);
+			data.Add("u", currentPlayerData);
+
+			JsonFormatter fmt = new JsonFormatter();
+			Debug.Log(fmt.PrettyPrint(data.ToString()));
+
+			File.WriteAllText(
+				StringUtils.SafePath(Application.dataPath + "/HDLiveEventsTest/tournament_leaderboard.json"), 
+				fmt.PrettyPrint(data.ToString())
+			);
 		}
 	}
 
