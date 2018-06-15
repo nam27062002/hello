@@ -366,6 +366,9 @@ public class DragonPlayer : MonoBehaviour {
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
 			m_dragonMotion.Revive();
 
+			//TONI START
+			m_dragonHeatlhBehaviour.SetReviveBonusTime();
+			//TONI END
 			// If health modifier changed, notify game
 			if(m_currentHealthModifier != oldHealthModifier) {
 				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);

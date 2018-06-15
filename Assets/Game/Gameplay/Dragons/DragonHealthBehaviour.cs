@@ -22,6 +22,13 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private GameSceneControllerBase m_gameController;
 
 	// health drain
+	//TONI START
+	private float m_reviveBonusDuration = 30f;
+	private float m_reviveBonusValueIni = 0.2f;
+	private float m_reviveBonusValueFin = 0.8f;
+	private float m_reviveBonusTime;
+	public float damageHUD;
+	//TONI END
 	private float m_healthDrainPerSecond;
 	private float m_healthDrainAmpPerSecond;
     // health drain in space
@@ -81,6 +88,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_dotAnimationThreshold = m_dragon.data.def.GetAsFloat("dotAnimationThreshold", 0);
 
         m_damageMultiplier = 0;
+		//TONI START
+		m_reviveBonusTime = 0;
+		//TONI END
 	}
 		
 	// Update is called once per frame
@@ -116,6 +126,13 @@ public class DragonHealthBehaviour : MonoBehaviour {
 				m_dragon.AddLife( -m_dragon.health, DamageType.NONE, null );
 		#endif
 	}
+
+	//TONI START
+	public void SetReviveBonusTime()
+	{
+		m_reviveBonusTime = m_reviveBonusDuration;
+	}
+	//TONI END
 
 	public void AddDrainReduceModifier( float value )
 	{
@@ -289,7 +306,15 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if(m_dragon.currentHealthModifier != null) {
 			damage *= m_dragon.currentHealthModifier.modifier;
 		}
-
+		//TONI START
+		if (m_reviveBonusTime > 0.0f) 
+		{
+			m_reviveBonusTime -= Time.deltaTime;
+			damage *= m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDuration) * (m_reviveBonusValueFin - m_reviveBonusValueIni));
+			damageHUD = m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDuration) * (m_reviveBonusValueFin - m_reviveBonusValueIni)); //REMOVE THIS, JUST TO CHECK FORMULA WORKS
+		}
+		//damageHUD = damage; //REMOVE THIS, JUST TO CHECK FORMULA WORKS
+		//TONI END
 		return damage;
 	}
 

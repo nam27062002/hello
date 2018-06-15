@@ -26,6 +26,7 @@ public class HUDSpeed : MonoBehaviour {
 	//------------------------------------------------------------------//
 	private TextMeshProUGUI m_valueTxt;
 	private DragonMotion m_dragonMotion;
+	private DragonHealthBehaviour m_dragonHealthBehaviour;
 	private float maxHigh;
 	private float maxDeep;
 	
@@ -52,6 +53,7 @@ public class HUDSpeed : MonoBehaviour {
 		}
 
 		m_dragonMotion = InstanceManager.player.GetComponent<DragonMotion>();
+		m_dragonHealthBehaviour = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
 	}
 
 	void Update()
@@ -68,8 +70,9 @@ public class HUDSpeed : MonoBehaviour {
 				maxHigh = (m_dragonMotion.position.y - 171f);
 			if ((m_dragonMotion.position.y + 157f) < maxDeep)
 				maxDeep = (m_dragonMotion.position.y + 157f);			
-			m_valueTxt.text = "SPEED: " + m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX HIGH: " + maxHigh.ToString(".#") + "\nMAX DEEP: " + maxDeep.ToString(".#");
+			//m_valueTxt.text = "SPEED: " + m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX HIGH: " + maxHigh.ToString(".#") + "\nMAX DEEP: " + maxDeep.ToString(".#");
 			//m_valueTxt.text = m_dragonMotion.lastSpeed.ToString(".##") + "\nMAX DEEP: " + (m_dragonMotion.position.y + 157f).ToString(".#");
+			m_valueTxt.text = "DAMAGE: " + m_dragonHealthBehaviour.damageHUD.ToString(".##");
 		}
 	}
 }
