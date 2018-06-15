@@ -8,8 +8,7 @@ public class ModGamePlaySC : ModifierGamePlay {
 	//------------------------------------------------------------------------//
 	public ModGamePlaySC(DefinitionNode _def) : base(_def) {
 		m_percentage = _def.GetAsFloat("param1");
-		m_textColor = UIConstants.PET_CATEGORY_SCORE;
-		m_textParam = m_percentage + "%";
+		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_SCORE.ToHexString("#"));
 	}
 
 	public override void Apply() {

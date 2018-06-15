@@ -11,7 +11,7 @@ public class ModGamePlaySpawnFrequency : ModifierGamePlay {
 	public ModGamePlaySpawnFrequency(DefinitionNode _def) : base(_def) {
 		m_prefabNames = _def.GetAsArray<string>("param1", ";");
 		m_percentage = _def.GetAsFloat("param2");
-		m_textParam = m_percentage + "%";
+		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
 	public override void Apply() {

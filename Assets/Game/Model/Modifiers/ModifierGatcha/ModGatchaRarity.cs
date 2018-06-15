@@ -8,6 +8,7 @@ public class ModGatchaRarity : ModifierGatcha {
 	//------------------------------------------------------------------------//
 	public ModGatchaRarity(DefinitionNode _def) : base(_def) {
 		m_values = _def.GetAsArray<float>("param1", ";");
+		BuildTextParams(UIConstants.PET_CATEGORY_SPECIAL.ToHexString("#"));
 	}
 
 	public override void Apply() {

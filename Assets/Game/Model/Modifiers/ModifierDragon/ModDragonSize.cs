@@ -8,6 +8,7 @@ public class ModDragonSize : ModifierDragon {
 	//------------------------------------------------------------------------//
 	public ModDragonSize(DefinitionNode _def) : base(_def) {
 		m_scale = _def.GetAsFloat("param1");
+		BuildTextParams(UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
 	public override void Apply() {
