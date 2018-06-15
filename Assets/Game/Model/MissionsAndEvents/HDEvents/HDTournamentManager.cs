@@ -79,9 +79,17 @@ public class HDTournamentManager : HDLiveEventManager {
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
     {
     	base.ParseDefinition( _data );
-		m_tracker.Clear();
+    	if ( m_tracker != null )
+			m_tracker.Clear();
 		HDTournamentDefinition def = m_data.definition as HDTournamentDefinition;
-		m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
+		if ( def.m_goal.m_typeDef != null )
+		{
+			m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
+		}
+		else
+		{
+			Debug.LogError("TOURNAMENT: No Tracker!!");
+		}
     }
 
 	override protected void OnEventIdChanged()
@@ -249,6 +257,7 @@ public class HDTournamentManager : HDLiveEventManager {
 		{
 			ret = true;
 		}
+		ret = false;
 		return ret;
 	}
 
@@ -315,7 +324,7 @@ public class HDTournamentManager : HDLiveEventManager {
 			}break;
 			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
 			{
-				if ( m_tracker.currentValue >= m_runningGoal.m_targetAmount )
+				if ( m_tracker != null && m_tracker.currentValue >= m_runningGoal.m_targetAmount )
 				{
 					m_runWasValid = true;
 					// End Game!
@@ -444,7 +453,8 @@ public class HDTournamentManager : HDLiveEventManager {
 		{
 			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
 			{
-				ret = m_tracker.currentValue;
+				if ( m_tracker != null )
+					ret = m_tracker.currentValue;
 			}break;
 			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK:
 			{
@@ -453,7 +463,8 @@ public class HDTournamentManager : HDLiveEventManager {
 			}break;
 			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT:
 			{
-				ret = m_tracker.currentValue;
+				if ( m_tracker != null )
+					ret = m_tracker.currentValue;
 			}break;
 		}
 
