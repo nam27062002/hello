@@ -149,7 +149,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 			m_scrollList.SetupPlayerPill(null, -1, null);
 		} else {
 			m_scrollList.SetupPlayerPill(m_pillPrefabs[1], playerPillIdx, currentPlayerData);
-			m_scrollList.FocusPlayerPill();
+			m_scrollList.FocusPlayerPill(false);
 		}
 
 		// Done!
