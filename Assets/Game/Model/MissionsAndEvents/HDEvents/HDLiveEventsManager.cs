@@ -58,6 +58,10 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		GAMEMODE_NOT_EXISTS, //(614,200)
 		EMPTY_REQUIRED_PARAMETERS, //(615,200)
 
+		MATCHMAKING_ERROR, //(617,200),
+		QUEST_IS_OVER, //(618,200),
+    	IS_NOT_A_QUEST, //(619,200);
+
     	NO_ERROR
     };
 
@@ -253,6 +257,10 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 							case 613: outErr = HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER;break;
 							case 614: outErr = HDLiveEventsManager.ComunicationErrorCodes.GAMEMODE_NOT_EXISTS;break;
 							case 615: outErr = HDLiveEventsManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
+							// case 616: outErr = HDLiveEventsManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
+							case 617: outErr = HDLiveEventsManager.ComunicationErrorCodes.MATCHMAKING_ERROR;break;
+							case 618: outErr = HDLiveEventsManager.ComunicationErrorCodes.QUEST_IS_OVER;break;
+							case 619: outErr = HDLiveEventsManager.ComunicationErrorCodes.IS_NOT_A_QUEST;break;
 						}
             		}
             	}

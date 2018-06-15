@@ -8,7 +8,7 @@ public class ModDragonFuryDuration : ModifierDragon {
 	//------------------------------------------------------------------------//
 	public ModDragonFuryDuration(DefinitionNode _def) : base(_def) {
 		m_percentage = _def.GetAsFloat("param1");
-		m_textParam = m_percentage + "%";
+		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
 	public override void Apply() {

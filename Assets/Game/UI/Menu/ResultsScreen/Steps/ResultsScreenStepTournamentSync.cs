@@ -206,7 +206,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 			// No! :) Go to next step
 			OnFinished.Invoke();
 		}
-		else if ( _errorCode == HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER )
+		else if ( _errorCode == HDLiveEventsManager.ComunicationErrorCodes.QUEST_IS_OVER )
 		{
 			// No! :) Go to next step
 			OnFinished.Invoke();
