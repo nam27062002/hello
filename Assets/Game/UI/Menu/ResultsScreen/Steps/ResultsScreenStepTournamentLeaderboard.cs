@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -26,7 +27,8 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	// [AOC] TODO!!
+	[SerializeField] private Image m_runScoreIcon = null;
+	[SerializeField] private TextMeshProUGUI m_runScoreText = null;
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -44,14 +46,20 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	/// Initialize this step.
 	/// </summary>
 	override protected void DoInit() {
-		// [AOC] TODO!!
+		// Run score text
+		HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+		m_runScoreText.text = tournament.FormatScore(tournament.GetRunScore());
+
+		// Each tournament has a different score item
+		HDTournamentDefinition def = tournament.data.definition as HDTournamentDefinition;
+		m_runScoreIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
 	}
 
 	/// <summary>
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
-		// [AOC] TODO!!
+		// Nothing to do for now
 	}
 
 	/// <summary>
