@@ -112,7 +112,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	/// </summary>
 	private void OnDisable() {
 		for (int i = 0; i < m_fireNodes.Length; i++) {
-			m_fireNodes[i].Explode();
+			m_fireNodes[i].Disable();
 		}
 
 		// Unsubscribe from external events
