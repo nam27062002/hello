@@ -29,6 +29,7 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private NumberTextAnimator m_scoreText = null;
 	[SerializeField] private Localizer m_highScoreText = null;
+	[SerializeField] private Image m_scoreIcon = null;
 	[Space]
 	[SerializeField] private TweenSequence m_newHighScoreAnim = null;
 
@@ -57,16 +58,27 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
+		// Aux vars
+		HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+
 		// Start score number animation
-		m_scoreText.SetValue(0, HDLiveEventsManager.instance.m_tournament.GetRunScore());
+		m_scoreText.SetValue(0, tournament.GetRunScore());
 
 		// Set high score text
-		m_highScoreText.Localize(
-			m_highScoreText.tid, 
-			HDLiveEventsManager.instance.m_tournament.FormatScore(
-				HDLiveEventsManager.instance.m_tournament.GetBestScore()
-			)
-		);
+		// Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
+		if(tournament.IsNewBestScore()) {
+			m_highScoreText.gameObject.SetActive(false);
+		} else {
+			m_highScoreText.gameObject.SetActive(true);
+			m_highScoreText.Localize(
+				m_highScoreText.tid, 
+				tournament.FormatScore(tournament.GetBestScore())
+			);
+		}
+
+		// Each tournament has a different score item
+		HDTournamentDefinition def = tournament.data.definition as HDTournamentDefinition;
+		m_scoreIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);

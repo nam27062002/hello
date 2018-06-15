@@ -346,6 +346,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			case HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER:
 			{
 				SendFeedback("TID_TOURNAMENT_OVER");
+				m_tournament.RequestDefinition(true);
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR: 
 			default:

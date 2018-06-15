@@ -331,13 +331,18 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	/// Auto scroll to selected item. This item will be placed at the top of the viewport.
 	/// </summary>
 	/// <param name="_index">Item index.</param>
-	public void FocusOn(int _index) {
+	public void FocusOn(int _index, bool _animate) {
 		T pill = m_pills[m_itemData[_index].pillType][0];
 
 		m_targetPosition = content.anchoredPosition;
 		m_targetPosition.y = m_pillPosition[_index].y - m_padding.top - m_visibleAreaSize.y/2f;
 
-		m_isAutoScrolling = true;
+		if (_animate) {
+			m_isAutoScrolling = true;
+		} else {
+			content.anchoredPosition = m_targetPosition;
+			m_isAutoScrolling = false;
+		}
 	}
 
 
