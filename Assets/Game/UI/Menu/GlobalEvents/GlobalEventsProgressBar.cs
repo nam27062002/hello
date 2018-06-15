@@ -23,9 +23,10 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_currentValueText_DEBUG = null;
 	[Space]
 	[SerializeField] private Slider m_progressBar = null;
-	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
-	[Space]
 	[SerializeField] [Range(0f, 1f)] private float m_minBarThreshold = 0.05f;
+	[Space]
+	[SerializeField] private bool m_repositionRewards = true;
+	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
 
 	public void RefreshRewards(HDQuestDefinition _evt, long currentValue) {
 		// Initialize visuals
@@ -42,7 +43,7 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount );
 
 			// Put into position (except last reward, which has a fixed position)
-			if(i < _evt.m_rewards.Count - 1) {
+			if(m_repositionRewards && i < _evt.m_rewards.Count - 1) {
 				// Set min and max anchor in Y to match the target percentage
 				Vector2 anchor = m_rewardInfos[i].rectTransform.anchorMin;
 				anchor.y = _evt.m_rewards[i].targetPercentage;
