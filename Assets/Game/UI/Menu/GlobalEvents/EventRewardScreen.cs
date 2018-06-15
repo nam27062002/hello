@@ -149,6 +149,7 @@ public class EventRewardScreen : MonoBehaviour {
 
 		// Hide other UI elements
 		m_tapToContinue.ForceHide(false);
+		m_tapToContinue.gameObject.SetActive(false);	// [AOC] Just in case, make sure it's not visible (it would prevent tapping the egg!)
 		m_rewardDragController.gameObject.SetActive(false);
 
 		// If already in the screen, start the flow immediately
