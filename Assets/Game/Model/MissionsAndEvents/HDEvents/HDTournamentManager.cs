@@ -136,6 +136,7 @@ public class HDTournamentManager : HDLiveEventManager {
     protected virtual void LeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveEventsManager.ResponseLog("Leaderboard", _error, _response);
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
@@ -172,6 +173,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	protected virtual void EntranceResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveEventsManager.ResponseLog("Entrance", _error, _response);
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( responseJson != null && responseJson.ContainsKey("lastFreeTournamentRun") )
 		{
@@ -211,8 +213,8 @@ public class HDTournamentManager : HDLiveEventManager {
     protected virtual void SetScoreResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveEventsManager.ResponseLog("SetScore", _error, _response);
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			if (m_tournamentData.m_state == HDLiveEventData.State.NOT_JOINED)

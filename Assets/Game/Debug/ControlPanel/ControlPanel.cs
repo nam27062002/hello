@@ -382,7 +382,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         General,
         Customizer,
         GameCenter,
-		ResultsScreen
+		ResultsScreen,
+		LiveEvents
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
@@ -392,6 +393,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Log_SetupChannel(ELogChannel.General, "", Color.white);
 		Log_SetupChannel(ELogChannel.Customizer, "Customizer", Color.green);
 		Log_SetupChannel(ELogChannel.ResultsScreen, "RESULTS", Colors.paleYellow);
+		Log_SetupChannel(ELogChannel.LiveEvents, "LiveEvents", Colors.aqua);
 	}
 
     private static string Log_GetChannelColor(ELogChannel channel)
