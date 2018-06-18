@@ -77,7 +77,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Update countdown text
 		if(m_timerText != null) {
 			m_timerText.text = TimeUtils.FormatTime(
-				remainingTime,	// Never show negative time!
+				System.Math.Max(0, remainingTime), // Just in case, never go negative
 				TimeUtils.EFormat.ABBREVIATIONS,
 				4
 			);

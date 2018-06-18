@@ -125,7 +125,14 @@ public class TournamentInfoScreen : MonoBehaviour {
 				}
 			}
 
-			m_timerText.text = LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_ICON_ENDS_IN", TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 4, TimeUtils.EPrecision.DAYS, true));
+			m_timerText.text = LocalizationManager.SharedInstance.Localize(
+				"TID_TOURNAMENT_ICON_ENDS_IN", 
+				TimeUtils.FormatTime(
+					System.Math.Max(0, seconds), // Just in case, never go negative
+					TimeUtils.EFormat.ABBREVIATIONS,
+					4
+				)
+			);
 		}
 	}
 
