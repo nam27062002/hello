@@ -70,6 +70,7 @@ public class DefinitionsCategory
 	public const string RARITIES = "RARITIES";
 	public const string HUNGRY_LETTERS = "HUNGRY_LETTERS";
 	public const string DYNAMIC_GATCHA = "DYNAMIC_GATCHA";
+	public const string LIVE_EVENTS_MODIFIERS = "LIVE_EVENTS_MODIFIERS";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";

@@ -1,0 +1,40 @@
+{
+  "name": "Test JOSU",
+  "code": 2,
+  "type": "quest",
+  "teasingTimestamp": 1618789600000,
+  "endTimestamp": 1618789600000,
+  "startTimestamp": 1518782400000,
+  "goal": {
+    "tidDesc": "TID_GLOBAL_EVENT_EAT_BIRDS",
+    "icon": "icon_canary",
+    "type":"kill",
+    "params":["Canary01_Flock","Canary02_Flock","Canary03_Flock","Canary04_Flock"],
+    "amount": 2500000,
+    "bonusDragon" :  "dragon_fat"
+  },
+  "mods": [ "sku1" ],
+  "rewards": [
+    {
+      "amount": 500,
+      "targetPercentage": 0.25,
+      "type": "SC"
+    },
+    {
+      "amount": 1000,
+      "targetPercentage": 0.5,
+      "type": "SC"
+    },
+    {
+      "amount": 10,
+      "targetPercentage": 0.75,
+      "type": "PC"
+    },
+    {
+      "amount": 1,
+      "targetPercentage": 1,
+      "type": "EGG",
+      "sku": "egg_event"
+    }
+  ],
+}

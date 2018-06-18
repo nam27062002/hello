@@ -230,6 +230,11 @@ public class DragonProgression : SerializableClass {
 		return levelUpCount;
 	}
 
+	public void SetToMaxLevel()
+	{
+		m_level = maxLevel;
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//

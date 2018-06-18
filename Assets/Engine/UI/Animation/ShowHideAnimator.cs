@@ -116,7 +116,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	[SerializeField] protected DOTweenAnimation[] m_hideTweens = new DOTweenAnimation[0];
 
 	// Animator param
-	[Comment("Must have triggers \"show\", \"hide\", \"instantShow\" and \"instantHide\"")]
+	[Comment("Must have triggers \"show\", \"hide\", \"instantShow\" and \"instantHide\" and events \"OnShowAnimationCompleted\" and \"OnHideAnimationCompleted\"")]
 	[SerializeField] protected Animator m_animator = null;
 
 	// Other setup

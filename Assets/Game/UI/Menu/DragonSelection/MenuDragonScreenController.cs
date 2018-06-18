@@ -51,19 +51,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		
-	}
 
 	void Start(){
-		if (GlobalEventManager.user != null && GlobalEventManager.Connected() ){
-			if (GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0){
-				// ask for live events again
-				GlobalEventManager.TMP_RequestCustomizer();
-			}
+		if ( HDLiveEventsManager.instance.ShouldRequestMyEvents() )
+		{
+			HDLiveEventsManager.instance.RequestMyEvents();
 		}
 	}
 
@@ -86,19 +78,22 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
-
+		/*
 		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN ) 
 		{
-			// Check global events rewards
-			GlobalEvent ge = GlobalEventManager.currentEvent;
-			if (ge != null) {
-				ge.UpdateState();
-				if (ge.isRewardAvailable) {
+			// Check quest rewards
+			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+			if (quest.EventExists())
+			{
+				quest.UpdateStateFromTimers();
+				if ( quest.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE )	
+				{
 					m_goToScreen = MenuScreen.EVENT_REWARD;
 					return;
 				}
 			}
 		}
+		*/
 
         // Lowest priority: show pending transactions. They're showing here because we know that the currencies are visible for the user on this screen
         m_showPendingTransactions = TransactionManager.instance.Flow_NeedsToShowPendingTransactions();        
@@ -543,12 +538,18 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Select target screen
 		MenuScreen nextScreen = MenuScreen.MISSIONS;
 
-		// If there is an active global event, go to the events screen
+		// If there is an active quest, go to the quest screen
 		// Do it as well if the event is pending reward collection
-		if(GlobalEventManager.currentEvent != null
-			&& (GlobalEventManager.currentEvent.isTeasing || GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
-			&& UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
-			nextScreen = MenuScreen.GLOBAL_EVENTS;
+		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN )
+		{
+			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+			if ( quest.EventExists() )	
+			{
+				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
+				{
+					nextScreen = MenuScreen.GLOBAL_EVENTS;	
+				}
+			}
 		}
 
 		// Go to target screen

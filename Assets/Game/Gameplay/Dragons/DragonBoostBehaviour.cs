@@ -47,6 +47,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		set { m_petInfiniteBoost = value; }
 	}
 
+	protected bool m_modInfiniteBoost = false;
+	public bool modInfiniteBoost
+	{
+		get { return m_modInfiniteBoost; }
+		set { m_modInfiniteBoost = value; }
+	}
+
 	// Control Panel settings
 	private bool m_CPAutoRestart = true;
 
@@ -170,7 +177,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	public bool IsDraining() {
 		// Don't drain energy if cheat is enabled or dragon fury is on, or super size, or pet infinite boost
-		return !(DebugSettings.infiniteBoost || m_dragon.IsFuryOn() || m_superSizeInfiniteBoost || m_petInfiniteBoost || m_dragon.changingArea);
+		return !(DebugSettings.infiniteBoost || m_dragon.IsFuryOn() || m_superSizeInfiniteBoost || m_petInfiniteBoost || m_modInfiniteBoost || m_dragon.changingArea);
 	}
 
 	public bool IsBoostActive()
