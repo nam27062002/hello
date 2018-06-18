@@ -28,7 +28,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
-
+	[SerializeField] private Slider m_timerProgressBar = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -37,6 +37,12 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// Component has been enabled.
 	/// </summary>
 	public void OnEnable() {
+		// Initialize progress bar
+		if(m_timerProgressBar != null) {
+			m_timerProgressBar.minValue = 0;
+			m_timerProgressBar.maxValue = 1;
+		}
+
 		// Program periodic update call
 		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
 	}
@@ -57,6 +63,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
 
 		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		HDQuestDefinition questDef = questManager.m_questDefinition;
 
 		// Update timer
 		double remainingSeconds = questManager.data.remainingTime.TotalSeconds;
@@ -65,6 +72,12 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
 			4
 		);
+
+		// Update progress bar
+		if(m_timerProgressBar != null) {
+			double progress = remainingSeconds / (questDef.m_startTimestamp - questDef.m_teasingTimestamp).TotalSeconds;
+			m_timerProgressBar.value = 1f - (float)progress;
+		}
 
 		// [AOC] Manage timer end when this panel is active
 		if(remainingSeconds <= 0) {
