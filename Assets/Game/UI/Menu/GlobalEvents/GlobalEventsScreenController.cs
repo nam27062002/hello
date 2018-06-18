@@ -222,6 +222,19 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		for(int i = 0; i < m_panels.Length; ++i) {
 			m_panels[i].gameObject.SetActive(i == (int)m_activePanel);
 		}
+
+		// If showing the ACTIVE panel for the first time, trigger the tutorial
+		if(m_activePanel == Panel.EVENT_ACTIVE && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.QUEST_INFO)) {
+			// Open popup!
+			string popupName = "PF_PopupInfoGlobalEvents";
+			PopupManager.OpenPopupInstant("UI/Popups/Tutorial/" + popupName);
+
+			// Mark tutorial step as completed
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.QUEST_INFO, true);
+
+			// Tracking!
+			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+		}
 	}
 
 	//------------------------------------------------------------------------//
