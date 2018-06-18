@@ -143,6 +143,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		switch(m_activePanel) {
 			case Panel.ACTIVE: {
 				if(_resetValues) {
+					m_eventPanelActive.Refresh();
                     m_panelActiveInitialized = true;
 				}
 
