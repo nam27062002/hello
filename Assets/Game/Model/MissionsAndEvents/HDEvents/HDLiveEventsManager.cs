@@ -281,6 +281,22 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         return ret;
 	}
 
+	public static void ResponseLog( string call, FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+	{
+		if (FeatureSettingsManager.IsDebugEnabled)
+		{
+			if ( _error != null )
+			{
+				ControlPanel.LogError( "[" + call + "]" + _error.message , ControlPanel.ELogChannel.LiveEvents);
+			}
+
+			if ( _response != null )
+			{
+				ControlPanel.Log( "[" + call + "]" + _response.ToString() , ControlPanel.ELogChannel.LiveEvents);
+			}
+		}
+	}
+
 
 
 	public bool ShouldRequestMyEvents()
@@ -310,7 +326,9 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
 	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
 	{
+		
 		ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;
+		ResponseLog("GetMyEvents", _error, _response);
 		SimpleJSON.JSONNode responseJson = ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == ComunicationErrorCodes.NO_ERROR )
 		{

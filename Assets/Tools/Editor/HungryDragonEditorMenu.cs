@@ -287,6 +287,14 @@ public class HungryDragonEditorMenu
         SpawnerIconGeneratorEditor.GenerateSpawnerIconsInResources(Colors.transparentWhite);
     }
 
+	/// <summary>
+	/// Live Events Tools
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Tournament Leaderboard Generation", false, 251)]
+	public static void TournamentLeaderboardGeneration() {
+		TournamentLeaderboardGeneratorEditor.ShowWindow();
+	}
+
     //--------------------------------------------------- OTHERS -----------------------------------------------------//
     /// <summary>
     /// Add menu item to be able to open the level editor.
