@@ -98,6 +98,15 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		get { return instance.m_user.goldenEggsCollected >= instance.m_goldenEggRequiredFragments.Count; }
 	}
 
+	private static float[] sm_weightIDs = {1f, 2f, 3f};
+	public static void SetWeightIDs(float[] _weightIDs) {
+		sm_weightIDs = _weightIDs;
+	}
+
+	public static void RestoreWeightIDs() {
+		sm_weightIDs = new float[] {1f, 2f, 3f};
+	}
+
 	// Internal
 	UserProfile m_user;
 
@@ -274,7 +283,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			}
 
 			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
-			weight = 1f / Mathf.Pow(i + 1, a); // i+1 is the weightID of the formula
+			weight = 1f / Mathf.Pow(sm_weightIDs[i], a); // i+1 is the weightID of the formula
 			m_weights[i] = weight;
 			weightTotal += weight;
 

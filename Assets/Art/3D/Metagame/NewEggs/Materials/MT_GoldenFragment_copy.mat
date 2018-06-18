@@ -7,9 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_GoldenFragment_copy
-  m_Shader: {fileID: 4800000, guid: 6a206d3664d59fc4e912085ba47c4b98, type: 3}
-  m_ShaderKeywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
-    GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF REFLECTION
+  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
+  m_ShaderKeywords: EMISSIVE_NONE FOG GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
+    GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+    MAINCOLOR_TEXTURE NORMALMAP OPAQUEALPHA REFLECTION SPECULAR VERTEXCOLOR_NONE _ZWRITE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -85,6 +86,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Emissive: 0
+    - MainColor: 0
     - VertexColor: 0
     - _BlendMode: 0
     - _BlinkTimeMultiplier: 0
@@ -98,15 +100,19 @@ Material:
     - _DoubleSided: 0
     - _DstBlend: 0
     - _EmissivePower: 1
+    - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 0
     - _EnableCutoff: 0
     - _EnableEmissive: 0
     - _EnableFog: 1
-    - _EnableNormalMap: 0
+    - _EnableNormalMap: 1
+    - _EnableNormalwAsSpecular: 0
     - _EnableOpaqueAlpha: 1
     - _EnableReflection: 1
     - _EnableSpecular: 1
+    - _EnableTint: 0
+    - _EnableWaveEmission: 0
     - _FresnelFactor: 3.78
     - _FresnelPower: 0.37
     - _GlossMapScale: 1
@@ -117,17 +123,18 @@ Material:
     - _LightmapContrastPhase: 2
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrength: 0.37
+    - _NormalStrength: 1.28
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0.84
     - _RimFactor: 1.91
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 0
-    - _SpecularPower: 21.48
+    - _SpecularPower: 11.73
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _WaveEmission: 0.1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.30311444, g: 0.30311444, b: 0.30311444, a: 1}
@@ -139,6 +146,7 @@ Material:
     - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
     - _GlowColorMult: {r: 0, g: 0, b: 0, a: 0}
     - _LightColor: {r: 0.125, g: 0.115517244, b: 0.0625, a: 1}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _RimColor: {r: 0.6764706, g: 0.6596617, b: 0.4327422, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _SpecularDir: {r: -0.18604767, g: 0.19293836, b: -0.96341115, a: 0}

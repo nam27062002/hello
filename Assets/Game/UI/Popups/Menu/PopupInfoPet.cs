@@ -158,7 +158,7 @@ public class PopupInfoPet : MonoBehaviour {
 		// Initialize power info
 		if(m_powerInfo != null) {
 			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-			m_powerInfo.InitFromDefinition(powerDef);
+			m_powerInfo.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
 		}
 
 		// Initialize lock state

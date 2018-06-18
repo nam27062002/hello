@@ -1,0 +1,58 @@
+{  
+   "liveEventType":2,
+   "endTimestamp":2527773133000,
+   "mods":[  
+      "midas",
+      "double_coins"
+   ],
+   "code":67,
+   "goal":{  
+      "area":"dark_zone2",
+      "tidDesc":"TID_EVENT_FIRERUSH",
+      "icon":"icon_firerush",
+		"gameMode" : {
+	        "type" : "time_attack",
+	        "amount" : "20",
+			"seconds" : 60
+	    },
+      "type":"kill",
+      "params":["Canary01_Flock","Canary02_Flock","Canary03_Flock","Canary04_Flock"]
+   },
+   "build":{  
+      "pets":[  
+         "pet_38"
+      ],
+      "dragon":"dragon_fat"
+   },
+   "name":"test",
+   "entrance":{  
+      "amount":18000,
+      "dailyFreeTimer":100,
+      "type":"hc"
+   },
+   "leaderboardSegmentation" : "100",
+   "rewards":[  
+      {  
+         "amount":1,
+         "targetPercentage":0.1,
+         "type":"pet",
+		 "sku":"pet_57"
+      },
+      {  
+         "amount":3,
+         "targetPercentage":0.25,
+         "type":"egg",
+		 "sku":"egg_event"
+      },
+      {  
+         "amount":10,
+         "targetPercentage":0.5,
+         "type":"hc"
+      },
+      {  
+         "amount":50000,
+         "targetPercentage":1,
+         "type":"sc"
+      }
+   ]
+}

@@ -649,6 +649,7 @@ public class UserProfile : UserPersistenceSystem
 		switch(_sku) {
 			case "sc": return Currency.SOFT;
 			case "hc": return Currency.HARD;
+			case "pc": return Currency.HARD;
 			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
 			case "keys": return Currency.KEYS;
 			case "money": return Currency.REAL;
@@ -1596,6 +1597,7 @@ public class UserProfile : UserPersistenceSystem
 	public void PushReward(Metagame.Reward _reward) {
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
+		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);
 	}
 
 	/// <summary>
@@ -1605,6 +1607,7 @@ public class UserProfile : UserPersistenceSystem
 	public Metagame.Reward PopReward() {
 		Metagame.Reward r = rewardStack.Pop();
 		Debug.Log("<color=red>POP " + r.GetType().Name + "</color>");
+		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_POPPED, r);
 		return r;
 	}
 

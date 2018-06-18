@@ -7,12 +7,12 @@ namespace Assets.Code.Game.Currents
 {
     public class RegionManager : ScopedSingleton<RegionManager>
     {
-        public Current CheckIfObjIsInCurrent(GameObject obj)
+		public Current CheckIfObjIsInCurrent(GameObject obj, float _multiplier)
         {
             Current curr = null;
             if(IsObjInsideCurrent(obj, out curr))
             {
-                curr.splineForce.AddObject(obj);
+				curr.splineForce.AddObject(obj, _multiplier);
             }
             return curr;
         }
