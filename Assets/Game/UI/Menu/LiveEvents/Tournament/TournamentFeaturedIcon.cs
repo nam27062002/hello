@@ -188,6 +188,12 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Check whether the icon can be displayed or not.
 	/// </summary>
 	private bool RefreshVisibility() {
+		// Never during tutorial
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_TOURNAMENTS_AT_RUN) {
+			m_root.SetActive(false);
+			return false;
+		}
+
 		// Do we have a valid tournament?
 		bool show = false;
 		if(m_tournamentManager.EventExists()) {
