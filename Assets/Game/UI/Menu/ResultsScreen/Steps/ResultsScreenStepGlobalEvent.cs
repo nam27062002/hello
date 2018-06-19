@@ -72,7 +72,10 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Never during FTUX
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) return false;
+		// By this point the gamesPlayed var has already been increased, so we must actually count one less game
+		if(UsersManager.currentUser.gamesPlayed - 1 < GameSettings.ENABLE_QUESTS_AT_RUN) {
+			return false;
+		}
 
 		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
 

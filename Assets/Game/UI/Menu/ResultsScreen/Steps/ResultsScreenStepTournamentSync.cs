@@ -78,18 +78,22 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Never during FTUX
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) return false;
-
 		// Check game mode
 		switch(GameSceneController.s_mode) {
 			// Tournament mode: check tournament
 			case GameSceneController.Mode.TOURNAMENT: {
-				return true;	// Always
+				// Never during FTUX
+				return UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_TOURNAMENTS_AT_RUN;
 			} break;
 
 			// Default mode: check quest
 			case GameSceneController.Mode.DEFAULT: {
+				// Never during FTUX
+				// By this point the gamesPlayed var has already been increased, so we must actually count one less game
+				if(UsersManager.currentUser.gamesPlayed - 1 < GameSettings.ENABLE_QUESTS_AT_RUN) {
+					return false;
+				}
+
 				HDQuestManager questManager = m_event as HDQuestManager;
 				if(questManager.EventExists()
 					&& questManager.IsRunning()
