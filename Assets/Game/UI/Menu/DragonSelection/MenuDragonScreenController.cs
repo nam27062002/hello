@@ -540,7 +540,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 		// If there is an active quest, go to the quest screen
 		// Do it as well if the event is pending reward collection
-		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN )
+		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
 		{
 			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
 			if ( quest.EventExists() )	

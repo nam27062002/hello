@@ -79,7 +79,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Never during FTUX
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) return false;
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) return false;
 
 		// Check game mode
 		switch(GameSceneController.s_mode) {
