@@ -500,8 +500,20 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 #if UNITY_EDITOR
             string color = Log_GetChannelColor(channel);
             if (!string.IsNullOrEmpty(color))
-            {                                
-                text = "<color=" + color + ">" + text + "</color>";
+            {   
+				// [AOC] Unfortunately, color is not properly displayed in the Unity Console if the text has more than one line break
+				//		 Workaround it by just coloring the first line
+
+				// Insert opening tag
+				text = text.Insert(0, "<color=" + color + ">");
+
+				// Insert closing tag right before the first line break, or at the end if no line breaks are found
+				int idx = text.IndexOf('\n');
+				if(idx > 0) {
+					text = text.Insert(idx, "</color>");
+				} else {
+					text = text + "</color>";
+				}
             }            
 #endif
 
