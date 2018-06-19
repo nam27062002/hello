@@ -162,20 +162,39 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_checkExpiration">Refresh data if timer reaches 0?</param>
 	private void RefreshTimer(bool _checkExpiration) {
+		// Aux vars
+		HDLiveEventData.State state = m_tournamentManager.data.m_state;
+
 		// Is tournament still valid?
 		if(!m_tournamentManager.EventExists()) return;
-		if(m_tournamentManager.data.m_state == HDLiveEventData.State.FINALIZED) return;
+		if(state == HDLiveEventData.State.FINALIZED) return;
 
 		// Update text
 		double remainingSeconds = m_tournamentManager.data.remainingTime.TotalSeconds;
 		if(m_timerText != null) {
-			m_timerText.Localize(m_timerText.tid,
-				TimeUtils.FormatTime(
-					System.Math.Max(0, remainingSeconds), // Just in case, never go negative
-					TimeUtils.EFormat.ABBREVIATIONS,
-					4
-				)
+			// Show only in specific states
+			m_timerText.gameObject.SetActive(
+				state == HDLiveEventData.State.TEASING
+				|| state == HDLiveEventData.State.NOT_JOINED
+				|| state == HDLiveEventData.State.JOINED
 			);
+
+			// Set text
+			if(m_timerText.gameObject.activeSelf) {
+				// Different TID based on tournament state
+				string tid = "TID_TOURNAMENT_ICON_ENDS_IN";
+				if(state == HDLiveEventData.State.TEASING) {
+					tid = "TID_TOURNAMENT_ICON_STARTS_IN";
+				}
+
+				m_timerText.Localize(m_timerText.tid,
+					TimeUtils.FormatTime(
+						System.Math.Max(0, remainingSeconds), // Just in case, never go negative
+						TimeUtils.EFormat.ABBREVIATIONS,
+						4
+					)
+				);
+			}
 		}
 
 		// Manage timer expiration when the icon is visible
