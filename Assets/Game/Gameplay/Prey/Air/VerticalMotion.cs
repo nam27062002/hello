@@ -38,7 +38,7 @@ public class VerticalMotion : Initializable, ISpawnable {
 	
 		if (m_frequency > 0) {
 			Vector3 position = transform.position;
-			position.y = m_originalPostion.y + (Mathf.Cos(m_time / m_frequency) * m_amplitude);
+			position.y = m_originalPostion.y + (Mathf.Sin(m_time / m_frequency) * m_amplitude);
 			transform.position = position;
 			m_time += Time.deltaTime;
 		}

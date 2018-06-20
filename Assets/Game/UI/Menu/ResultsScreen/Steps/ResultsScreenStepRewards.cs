@@ -59,7 +59,7 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 		m_controller.totalCoins += m_controller.coins + m_controller.survivalBonus;
 
 		// Instantly set total amount of rewarded coins
-		m_coinsText.SetValue(m_controller.coins + m_controller.survivalBonus, false);
+		m_coinsText.SetValue(m_controller.coins + m_controller.survivalBonus, true);
 		m_survivalBonusText.Localize(
 			m_survivalBonusText.tid,
 			StringUtils.FormatNumber(m_controller.survivalBonus)
@@ -90,15 +90,17 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 		// Update counter
 		m_coinsCounter.SetValue(m_controller.totalCoins, true);
 
-		// Show nice FX!
-		m_coinsFX = CurrencyTransferFX.LoadAndLaunch(
-			CurrencyTransferFX.COINS,
-			this.GetComponentInParent<Canvas>().transform,
-			m_coinsSpawnPoint.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
-			m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
-		);
-		m_coinsFX.totalDuration = m_coinsCounter.duration * 0.5f;	// Match the text animator duration (more or less)
-		m_coinsFX.OnFinish.AddListener(() => { m_coinsFX = null; });
+		// Show nice FX! (unless skipped)
+		if(!m_skipped) {
+			m_coinsFX = CurrencyTransferFX.LoadAndLaunch(
+				CurrencyTransferFX.COINS,
+				this.GetComponentInParent<Canvas>().transform,
+				m_coinsSpawnPoint.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
+				m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
+			);
+			m_coinsFX.totalDuration = m_coinsCounter.duration * 0.5f;	// Match the text animator duration (more or less)
+			m_coinsFX.OnFinish.AddListener(() => { m_coinsFX = null; });
+		}
 	}
 
 	/// <summary>

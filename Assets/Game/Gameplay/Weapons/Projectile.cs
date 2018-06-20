@@ -449,7 +449,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			}
 
 			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
-				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset);
+				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, m_trasnform.rotation);
 			}
 		}
 

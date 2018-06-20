@@ -390,7 +390,7 @@ namespace AI {
 					// ... and it's visible...
 					if (m_entity.isOnScreen) {
 						// we're not inside a current, check for entry
-						current = m_regionManager.CheckIfObjIsInCurrent(gameObject);
+						current = m_regionManager.CheckIfObjIsInCurrent(gameObject, 1f);
 						if (current != null) {
 							// notify the machine that it's now in a current.
 							// m_machine.EnteredInCurrent(current);

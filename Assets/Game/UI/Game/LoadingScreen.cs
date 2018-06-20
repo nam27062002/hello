@@ -64,8 +64,21 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// </summary>
 	public static void InitWithCurrentData() {
 		// Aux vars
-		DragonData currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
-		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
+		DragonData currentDragon = null;
+		DefinitionNode skinDef = null;
+		List<string> pets = null;
+
+		if (SceneController.s_mode == SceneController.Mode.TOURNAMENT) {
+			HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+			currentDragon = DragonManager.GetDragonData(tournament.GetToUseDragon());
+			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tournament.GetToUseSkin());
+			pets = tournament.GetToUsePets();
+		} else {
+			currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
+			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
+			pets = currentDragon.pets;
+		}
+
 
 		// Dragon image
 		instance.m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
@@ -81,8 +94,8 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 		}
 
 		// Pets
-		for(int i = 0; i < currentDragon.pets.Count; i++) {
-			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, currentDragon.pets[i]);
+		for(int i = 0; i < pets.Count; i++) {
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pets[i]);
 			if(petDef == null) {
 				powerDefs.Add(null);
 			} else {
@@ -103,13 +116,21 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 
 			// Hide if there is no power associated
 			if(powerDefs[i] == null) {
-				powerIcon.gameObject.SetActive(false);
+				if (i > 0) {
+					powerIcon.gameObject.SetActive(false);
+				} else {
+					powerIcon.InitFromDefinition(null, false, false);
+				}
 				continue;
 			}
 
 			// Everything ok! Initialize
 			powerIcon.gameObject.SetActive(true);
-			powerIcon.InitFromDefinition(powerDefs[i], false, false);
+
+			PowerIcon.Mode mode = PowerIcon.Mode.SKIN;
+			if (i > 0) mode = PowerIcon.Mode.PET;
+
+			powerIcon.InitFromDefinition(powerDefs[i], false, false, mode);
 		}
 	}
 }

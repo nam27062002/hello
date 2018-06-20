@@ -47,6 +47,11 @@ public class Mission {
 		COUNT
 	}
 
+	private static float sm_powerUpSCMultiplier = 0; // Soft currency modifier multiplier
+	public static void AddSCMultiplier(float value) {
+		sm_powerUpSCMultiplier += value;
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -232,7 +237,11 @@ public class Mission {
 		// Scale the reward based on max owned dragon
 		DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
 		float rewardScaleFactor = rewardScaleFactorDef != null ? rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier") : 1f;
-		return (int)(MissionManager.maxRewardPerDifficulty[(int)difficulty] * rewardScaleFactor);
+
+		int coins = (int)(MissionManager.maxRewardPerDifficulty[(int)difficulty] * rewardScaleFactor);
+		coins += Mathf.FloorToInt((coins * sm_powerUpSCMultiplier) / 100.0f);
+
+		return coins;
 	}
 
 	/// <summary>

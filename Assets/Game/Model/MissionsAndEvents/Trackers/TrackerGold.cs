@@ -17,6 +17,8 @@ using System.Collections.Generic;
 /// Tracker for score.
 /// </summary>
 public class TrackerGold : TrackerBase {
+	private float m_gold;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -45,6 +47,8 @@ public class TrackerGold : TrackerBase {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 
+		m_gold = 0f;
+
 		// Call parent
 		base.Clear();
 	}
@@ -72,7 +76,8 @@ public class TrackerGold : TrackerBase {
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// We only care about gold rewards
 		if(_reward.coins > 0) {
-			currentValue += _reward.coins;
+			m_gold += _reward.coins;
+			currentValue = Mathf.FloorToInt(m_gold);
 		}
 	}
 }

@@ -59,6 +59,7 @@ public class HDTrackingManager
         CHEAT,                          // Use this if the currency comes from a cheat so it won't be tracked
         REWARD_CHEST,
         REWARD_GLOBAL_EVENT,
+		REWARD_LIVE_EVENT,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
@@ -68,6 +69,9 @@ public class HDTrackingManager
 		GLOBAL_EVENT_KEYS_RESET,		// At the end of the event keys are reset back to 0
 		GLOBAL_EVENT_REFUND,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
 		GLOBAL_EVENT_BONUS,				// Spend a key to duplicate score registered to a global event at the end of the run
+
+		TOURNAMENT_ENTRANCE,			// Tournament Support
+
         CUSTOMER_SUPPORT                // Reward received via customer support tool
     };
 

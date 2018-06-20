@@ -174,7 +174,16 @@ public class GameSceneController : GameSceneControllerBase {
 		}
 
 		// Load the dragon
-		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+		{
+			string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
+			DragonManager.LoadDragon(dragon);
+		}
+		else
+		{
+			DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		}
+
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
@@ -264,7 +273,8 @@ public class GameSceneController : GameSceneControllerBase {
 				
 			case EStates.RUNNING: {
 				// Update running time
-				m_elapsedSeconds += Time.deltaTime;
+				if (!m_freezeElapsedSeconds)
+					m_elapsedSeconds += Time.deltaTime;
 
 				// Dynamic loading
 				if ( m_switchingArea )
@@ -705,7 +715,7 @@ public class GameSceneController : GameSceneControllerBase {
 		yield return null;
 		InstanceManager.fogManager.firstTime = true;
 		// Hide loading screen
-		LoadingScreen.Toggle(false);
+		LoadingScreen.Toggle(false, false);	// [AOC] Occasionally the screen is not disabled after the fade out animation, locking the rest of the UI interaction. Remove fade animation until a fix is found.
 	}
 
 	private void OnScenesUnloaded()

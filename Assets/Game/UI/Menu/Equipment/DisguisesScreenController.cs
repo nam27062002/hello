@@ -25,14 +25,11 @@ public class DisguisesScreenController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const int MAX_PILLS = 9;
+	private const string PILL_PATH = "UI/Metagame/Disguises/PF_DisguisesPill";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Pill prefab
-	[Separator("Project References")]
-	[SerializeField] private GameObject m_pillPrefab = null;
-
 	// References
 	[Separator("Scene References")]
 	[SerializeField] private DisguisesScreenTitle m_title = null;
@@ -89,6 +86,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 	}
 
+	// Internal logic
+	private bool m_waitingForDragonPreviewToLoad = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -104,12 +104,14 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Instantiate pills - as many as needed!
 		m_pills = new DisguisePill[MAX_PILLS];
+		GameObject prefab = Resources.Load<GameObject>(PILL_PATH);
 		for (int i = 0; i < MAX_PILLS; i++) {
-			GameObject pill = (GameObject)GameObject.Instantiate(m_pillPrefab, m_scrollList.content.transform, false);
+			GameObject pill = (GameObject)GameObject.Instantiate(prefab, m_scrollList.content.transform, false);
 			pill.transform.localScale = Vector3.one;
 			m_pills[i] = pill.GetComponent<DisguisePill>();
 			//m_pills[i].OnPillClicked.AddListener(OnPillClicked);		// [AOC] Will be handled by the snap scroll list
 		}
+		prefab = null;
 
 		// Store some references
 		m_dragonData = null;
@@ -143,6 +145,21 @@ public class DisguisesScreenController : MonoBehaviour {
 		viewportPos.z = m_depth;
 		m_previewAnchor.position = camera.ViewportToWorldPoint(viewportPos);
 		m_dragonRotationArrowsPos.position = camera.ViewportToWorldPoint(viewportPos) + Vector3.down;*/
+
+		// Are we waiting for the dragon preview to be ready?
+		if(m_waitingForDragonPreviewToLoad) {
+			// Is it ready?
+			if(InstanceManager.menuSceneController.selectedDragonPreview != null) {
+				// Hide pets
+				DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
+				if(equip != null) {
+					equip.TogglePets(false, true);
+				}
+
+				// Toggle flag
+				m_waitingForDragonPreviewToLoad = false;
+			}
+		}
 	}
 
 	/// <summary>
@@ -318,11 +335,8 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Refresh with initial data!
 		Initialize();
 
-		// Hide pets on the current dragon preview
-		DragonEquip equip = InstanceManager.menuSceneController.selectedDragonPreview.GetComponent<DragonEquip>();
-		if(equip != null) {
-			equip.TogglePets(false, true);
-		}
+		// Hide dragon's pets whenever preview is ready
+		m_waitingForDragonPreviewToLoad = true;
 	}
 
 	/// <summary>
@@ -380,17 +394,14 @@ public class DisguisesScreenController : MonoBehaviour {
 		string powerSku = _pill.def.GetAsString("powerup");
 		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerSku);
 
-		// If no power, hide the power icon
-		if(powerDef == null) {
-			m_powerSlotAnim.Hide();
-		} else {
-			// Refresh data
-			m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
 
-			// Show
-			// Force the animation to be launched
-			m_powerSlotAnim.RestartShow();
-		}
+		// If no power, hide the power icon
+		// Refresh data
+		m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
+		// Show
+		// Force the animation to be launched
+		m_powerSlotAnim.RestartShow();
+
 
 		// Refresh the lock info
 		if(m_lockText != null) {
