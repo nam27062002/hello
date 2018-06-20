@@ -30,6 +30,13 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	[SerializeField] private Image m_runScoreIcon = null;
 	[SerializeField] private TextMeshProUGUI m_runScoreText = null;
 
+	// Allow other steps to prevent this one from showing (i.e. if score was dismissed).
+	private bool m_dontShow = false;
+	public bool dontShow {
+		get { return m_dontShow; }
+		set { m_dontShow = value; }
+	}
+
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -39,7 +46,8 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Only if run was valid
-		return HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
+		// Not if another step is telling us to not show
+		return !m_dontShow && HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
 	}
 
 	/// <summary>

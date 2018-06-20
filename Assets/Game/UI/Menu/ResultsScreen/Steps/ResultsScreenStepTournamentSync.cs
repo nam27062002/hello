@@ -168,6 +168,10 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// The dismiss score button has been pressed.
 	/// </summary>
 	public void OnDismissButton() {
+		// Tell leaderboard step to not show
+		ResultsScreenStepTournamentLeaderboard leaderboardStep = m_controller.GetStep(ResultsScreenController.Step.TOURNAMENT_LEADERBOARD) as ResultsScreenStepTournamentLeaderboard;
+		if(leaderboardStep != null) leaderboardStep.dontShow = true;
+
 		// Skip contribution and move to the next step
 		OnFinished.Invoke();
 	}
