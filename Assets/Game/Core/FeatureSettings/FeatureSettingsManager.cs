@@ -22,6 +22,7 @@ using UnityEngine;
 /// </summary>
 public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSettingsManager>
 {
+
     private DeviceQualityManager m_deviceQualityManager;
 
     public static DeviceQualityManager deviceQualityManager
