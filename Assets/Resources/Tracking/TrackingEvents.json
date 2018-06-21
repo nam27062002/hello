@@ -325,7 +325,8 @@
 			"Parameters": [
 				{"petName": {"Status": "OK"}},
 				{"sourceOfPet": {"Status": "OK"}},
-				{"hungryLettersNb": {"Status": "OK"}},
+				{"rarity": {"Status": "OK"}},
+				{"category": {"Status": "OK"}},				
 				{"totalEggBought": {"Status": "OK"}},
 				{"totalEggFound": {"Status": "OK"}},
 				{"totalEggOpened": {"Status": "OK"}}
@@ -1174,6 +1175,14 @@
         },
 		"totalEggOpened": {
             "Type": "INT:4",
+            "Values": []
+        },
+		"rarity": {
+           "Type": "STRING:15",
+            "Values": []
+        },
+		"category": {
+            "Type": "STRING:30",
             "Values": []
         }
     }
