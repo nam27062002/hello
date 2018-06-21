@@ -54,9 +54,9 @@ public class CPStats : MonoBehaviour {
         m_FpsLabel.text = "FPS: ";
 		m_LevelName.text = "Scene Name: "+ SceneManager.GetActiveScene().name;
 
-        m_freeMemory.text = "Free memory: " + SystemInfo.freeMemorySize;
-        m_maxMemory.text = "Max memory: " + SystemInfo.maxMemorySize;
-        m_totalMemory.text = "Total memory: " + SystemInfo.totalMemorySize;
+        m_freeMemory.text = "Heap memory: " + SystemInfo.heapMemorySize;
+        m_maxMemory.text = "Total memory: " + SystemInfo.deviceMemorySize;
+        m_totalMemory.text = "Available memory: " + SystemInfo.availableMemorySize;
 
         m_ControlPanel = GetComponentInParent<ControlPanel>();
 
