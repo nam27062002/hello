@@ -19,7 +19,7 @@ MonoBehaviour:
   m_kLocalisedAppNamesIOS: []
   m_strBuildFilename: 
   m_strPVPProtoFile: 
-  m_iBuildEnvironmentSelected: 5
+  m_iBuildEnvironmentSelected: 3
   m_iSocialPlatformSelected: 1
   m_strBundleDEV: com.ubisoft.hungrydragon.dev
   m_strBundleSTAGEPROD: com.ubisoft.hungrydragon
@@ -94,11 +94,11 @@ MonoBehaviour:
   - 
   - 
   m_strVersionIOS: 1.8
-  m_strVersionIOSCode: 167
+  m_strVersionIOSCode: 168
   m_strVersionAndroidGplay: 1.8
-  m_strVersionAndroidGplayCode: 167
+  m_strVersionAndroidGplayCode: 168
   m_strVersionAndroidAmazon: 1.8
-  m_strVersionAndroidAmazonCode: 167
+  m_strVersionAndroidAmazonCode: 168
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 0
   m_biOSPushNotifications: 1
@@ -140,11 +140,11 @@ MonoBehaviour:
   m_kAndroidDangerousPermissions:
   - android.permission.WRITE_EXTERNAL_STORAGE
   - android.permission.READ_EXTERNAL_STORAGE
-  m_strAndroidManifestExtraData: "<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
+  m_strAndroidManifestExtraData: "<meta-data android:name=\"android.max_aspect\" android:value=\"2.1\"
+    />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
-    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n
-    \             </provider>"
+    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0

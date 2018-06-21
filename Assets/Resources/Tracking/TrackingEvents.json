@@ -156,7 +156,10 @@
 				{"boostTime": {"Status": "OK"}},
 				{"mapUsedNB": {"Status": "OK"}},
 				{"isHacker": {"Status": "OK"}},
-				{"hungryLettersNb": {"Status": "OK"}}				
+				{"hungryLettersNb": {"Status": "OK"}},
+				{"totalEggBought": {"Status": "OK"}},
+				{"totalEggFound": {"Status": "OK"}},
+				{"totalEggOpened": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -321,7 +324,11 @@
 		"custom.player.pet" : {
 			"Parameters": [
 				{"petName": {"Status": "OK"}},
-				{"sourceOfPet": {"Status": "OK"}}
+				{"sourceOfPet": {"Status": "OK"}},
+				{"hungryLettersNb": {"Status": "OK"}},
+				{"totalEggBought": {"Status": "OK"}},
+				{"totalEggFound": {"Status": "OK"}},
+				{"totalEggOpened": {"Status": "OK"}}
 			],
 			"APIs": [
 				"dna",
@@ -788,7 +795,7 @@
         "totalPurchases": {
             "Type": "INT:4",
             "Values": []
-        },
+        },		
 		"triggered": {
             "Type": "BOOL",
             "Values": []
@@ -1155,6 +1162,18 @@
         },
 		"specialOfferAction": {
             "Type": "STRING:15",
+            "Values": []
+        },
+		"totalEggBought": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"totalEggFound": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"totalEggOpened": {
+            "Type": "INT:4",
             "Values": []
         }
     }

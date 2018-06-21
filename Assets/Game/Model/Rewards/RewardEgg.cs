@@ -253,8 +253,10 @@ namespace Metagame {
 		/// Implementation of the abstract Collect() method.
 		/// </summary>
 		override protected void DoCollect() {
-			// Push the egg's reward to the stack
-			if (m_reward != null) {
+            HDTrackingManager.Instance.Notify_EggOpened();
+
+            // Push the egg's reward to the stack
+            if (m_reward != null) {
 				UsersManager.currentUser.PushReward(m_reward);
 			}
 		}
