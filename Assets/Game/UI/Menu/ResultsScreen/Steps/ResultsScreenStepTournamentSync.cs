@@ -28,6 +28,12 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	[SerializeField] private ShowHideAnimator m_busyPanel = null;
 	[SerializeField] private ShowHideAnimator m_errorPanel = null;
 
+	// Public
+	private bool m_hasBeenDismissed = false;
+	public bool hasBeenDismissed {
+		get { return m_hasBeenDismissed; }
+	}
+
 	// Internal refs
 	private HDLiveEventManager m_event = null;
 
@@ -71,6 +77,9 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		// Hide both panels
 		m_busyPanel.Hide(false);
 		m_errorPanel.Hide(false);
+
+		// Reset flags
+		m_hasBeenDismissed = false;
 	}
 
 	/// <summary>
@@ -168,6 +177,9 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// The dismiss score button has been pressed.
 	/// </summary>
 	public void OnDismissButton() {
+		// Set flag
+		m_hasBeenDismissed = true;
+
 		// Skip contribution and move to the next step
 		OnFinished.Invoke();
 	}

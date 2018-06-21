@@ -140,11 +140,11 @@ MonoBehaviour:
   m_kAndroidDangerousPermissions:
   - android.permission.WRITE_EXTERNAL_STORAGE
   - android.permission.READ_EXTERNAL_STORAGE
-  m_strAndroidManifestExtraData: "<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
+  m_strAndroidManifestExtraData: "<meta-data android:name=\"android.max_aspect\" android:value=\"2.1\"
+    />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
-    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n
-    \             </provider>"
+    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0

@@ -38,6 +38,10 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
+		// Don't if score has been dismissed
+		ResultsScreenStepTournamentSync syncStep = m_controller.GetStep(ResultsScreenController.Step.TOURNAMENT_SYNC) as ResultsScreenStepTournamentSync;
+		if(syncStep != null && syncStep.hasBeenDismissed) return false;
+
 		// Only if run was valid
 		return HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
 	}
