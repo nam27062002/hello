@@ -27,12 +27,12 @@ public static class SystemInfo {
         processorType = UnityEngine.SystemInfo.processorType;
         deviceName = UnityEngine.SystemInfo.deviceName;
         supportsImageEffects = UnityEngine.SystemInfo.supportsImageEffects;
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID// && !UNITY_EDITOR
 
 
-        heapMemorySize = (int)FGOL.Plugins.Native.NativeBinding.Instance.GetMaxHeapMemory() / (1024 * 1024);
-        deviceMemorySize = (int)FGOL.Plugins.Native.NativeBinding.Instance.GetMaxDeviceMemory() / (1024 * 1024);
-        availableMemorySize = (int)FGOL.Plugins.Native.NativeBinding.Instance.GetAvailableDeviceMemory() / (1024 * 1024);
+        heapMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetMaxHeapMemory() / (1024L * 1024L));
+        deviceMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetMaxDeviceMemory() / (1024L * 1024L));
+        availableMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetAvailableDeviceMemory() / (1024L * 1024L));
 
 
 
