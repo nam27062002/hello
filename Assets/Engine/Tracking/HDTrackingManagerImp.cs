@@ -584,6 +584,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         	Track_EndPlayingMode(true);
         }
 
+        if (TrackingPersistenceSystem != null)
+        {
+            TrackingPersistenceSystem.EggsFound += eggFound;
+        }
+
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);
@@ -667,6 +672,12 @@ public class HDTrackingManagerImp : HDTrackingManager
 			if (TrackingPersistenceSystem != null)
 	        {
 	            TrackingPersistenceSystem.EggPurchases++;
+
+                if (moneyCurrency == UserProfile.Currency.HARD)
+                {
+                    TrackingPersistenceSystem.EggSPurchasedWithHC++;
+                }
+
 				if ( TrackingPersistenceSystem.EggPurchases == 1 )
 				{
                     // 1 egg bought
@@ -845,10 +856,27 @@ public class HDTrackingManagerImp : HDTrackingManager
 		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.pet");
 		if (e != null)
 		{
-			string trackingName = Translate_PetSkuToTrackingName( _sku );
+            string rarity = null;
+            string category = null;
+            if (!string.IsNullOrEmpty(_sku))
+            {
+                DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
+                if (petDef != null)
+                {
+                    rarity = petDef.Get("rarity");
+                    category = petDef.Get("category");
+                }
+            }
+
+            string trackingName = Translate_PetSkuToTrackingName( _sku );
 			Track_AddParamString(e, TRACK_PARAM_PETNAME, trackingName);
-			Track_AddParamString(e, TRACK_PARAM_SOURCE_OF_PET, _source);
-			Track_SendEvent(e);
+            Track_AddParamString(e, TRACK_PARAM_SOURCE_OF_PET, _source);
+            Track_AddParamString(e, TRACK_PARAM_RARITY, rarity);
+            Track_AddParamString(e, TRACK_PARAM_CATEGORY, category);
+            Track_AddParamEggsPurchasedWithHC(e);
+            Track_AddParamEggsFound(e);
+            Track_AddParamEggsOpened(e);
+            Track_SendEvent(e);
 		}
 	}
 
@@ -1059,6 +1087,14 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         string action = (onDemand) ? "Opened" : "Shown";
         Track_OfferShown(action, itemID);
+    }
+
+    public override void Notify_EggOpened()
+    {
+        if (TrackingPersistenceSystem != null)
+        {
+            TrackingPersistenceSystem.EggsOpened++;
+        }
     }
     #endregion
 
@@ -1458,6 +1494,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_MAP_USAGE, mapUsage);
             e.SetParameterValue(TRACK_PARAM_HUNGRY_LETTERS_NB, Session_HungryLettersCount);
             Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
+            Track_AddParamEggsPurchasedWithHC(e);
+            Track_AddParamEggsFound(e);
+            Track_AddParamEggsOpened(e);
+
 
             Track_SendEvent(e);
         }
@@ -1899,7 +1939,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";
     private const string TRACK_PARAM_AVERAGE_FPS                = "avgFPS";
-	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";          
+	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";
+    private const string TRACK_PARAM_CATEGORY                   = "category";
     private const string TRACK_PARAM_CURRENCY                   = "currency";
     private const string TRACK_PARAM_CHESTS_FOUND               = "chestsFound";
     private const string TRACK_PARAM_COORDINATESBL              = "coordinatesBL";
@@ -1981,7 +2022,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED         = "pvpMatchesPlayed";
     private const string TRACK_PARAM_RADIUS                     = "radius";
     private const string TRACK_PARAM_RANK						= "rank";
-	private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
+    private const string TRACK_PARAM_RARITY                     = "rarity";
+    private const string TRACK_PARAM_REWARD_TIER                = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE                = "rewardType";
     private const string TRACK_PARAM_SC_EARNED                  = "scEarned";
     private const string TRACK_PARAM_SCORE                      = "score";
@@ -1999,7 +2041,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SUBVERSION                 = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB         = "superFireRushNb";    
     private const string TRACK_PARAM_TIME_PLAYED                = "timePlayed";    
-	private const string TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR		= "topContributor";	
+	private const string TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR		= "topContributor";
+    private const string TRACK_PARAM_TOTAL_EGG_BOUGHT_HC        = "totalEggBought";
+    private const string TRACK_PARAM_TOTAL_EGG_FOUND            = "totalEggFound";
+    private const string TRACK_PARAM_TOTAL_EGG_OPENED           = "totalEggOpened";
     private const string TRACK_PARAM_TOTAL_DURATION             = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
@@ -2168,6 +2213,30 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (TrackingPersistenceSystem != null)
         {
             e.SetParameterValue(TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB, Session_RunsAmountInCurrentRound);
+        }
+    }
+   
+    private void Track_AddParamEggsPurchasedWithHC(TrackingEvent e)
+    {
+        if (TrackingPersistenceSystem != null)
+        {
+            e.SetParameterValue(TRACK_PARAM_TOTAL_EGG_BOUGHT_HC, TrackingPersistenceSystem.EggSPurchasedWithHC);
+        }
+    }
+
+    private void Track_AddParamEggsFound(TrackingEvent e)
+    {
+        if (TrackingPersistenceSystem != null)
+        {
+            e.SetParameterValue(TRACK_PARAM_TOTAL_EGG_FOUND, TrackingPersistenceSystem.EggsFound);
+        }
+    }
+
+    private void Track_AddParamEggsOpened(TrackingEvent e)
+    {
+        if (TrackingPersistenceSystem != null)
+        {
+            e.SetParameterValue(TRACK_PARAM_TOTAL_EGG_OPENED, TrackingPersistenceSystem.EggsOpened);
         }
     }
 
