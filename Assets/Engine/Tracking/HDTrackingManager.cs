@@ -398,6 +398,8 @@ public class HDTrackingManager
     /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
     /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
     public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
+
+    public virtual void Notify_EggOpened() {}
     #endregion
 
     #region log

@@ -12,7 +12,7 @@ Shader "Hungry Dragon/DarkEyesEffect"
 	{
 		Pass
 		{
-			Tags{ "Queue" = "Geometry + 1110" "RenderType" = "Opaque" }
+			Tags{ "Queue" = "Geometry + 1110" "RenderType" = "Opaque" "DisableBatching" = "True" }
 
 			cull off
 			
