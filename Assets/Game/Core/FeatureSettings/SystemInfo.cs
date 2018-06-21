@@ -32,6 +32,10 @@ public static class SystemInfo {
 
         heapMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetMaxHeapMemory() / (1024L * 1024L));
         deviceMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetMaxDeviceMemory() / (1024L * 1024L));
+        if (deviceMemorySize > systemMemorySize)
+        {
+            systemMemorySize = deviceMemorySize;
+        }
         availableMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetAvailableDeviceMemory() / (1024L * 1024L));
 
 
