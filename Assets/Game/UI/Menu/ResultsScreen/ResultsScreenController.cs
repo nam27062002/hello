@@ -344,7 +344,13 @@ public class ResultsScreenController : MonoBehaviour {
 		// Tell the menu where to go based on current game mode (or other modifiers)
 		switch(GameSceneController.s_mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
-				GameVars.menuInitialScreen = MenuScreen.TOURNAMENT_INFO;
+				// Unless score was dismissed due to some error, in which case we'll return to the PLAY screen
+				ResultsScreenStepTournamentSync syncStep = GetStep(Step.TOURNAMENT_SYNC) as ResultsScreenStepTournamentSync;
+				if(syncStep != null && syncStep.hasBeenDismissed) {
+					GameVars.menuInitialScreen = MenuScreen.PLAY;
+				} else {
+					GameVars.menuInitialScreen = MenuScreen.TOURNAMENT_INFO;
+				}
 			} break;
 
 			default: {
