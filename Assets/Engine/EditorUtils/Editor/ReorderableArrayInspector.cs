@@ -151,7 +151,7 @@ public class ReorderableArrayInspector : Editor {
 			if(evt == null)
 				return true;
 
-			if(evt.type == EventType.dragUpdated || evt.type == EventType.dragPerform) {
+			if(evt.type == EventType.DragUpdated || evt.type == EventType.DragPerform) {
 				if(dropRect.Contains(evt.mousePosition) == false)
 					return true;
 
