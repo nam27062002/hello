@@ -33,8 +33,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	private long m_lastLeaderboardTimestamp = 0;
 	private long m_laderboardRequestMinTim = 1000 * 60 * 5;
 
-
-		// Control vars
+	// Control vars
 	protected HDTournamentDefinition.TournamentGoal m_runningGoal;
 	protected float m_timePlayed = -1;
 
@@ -107,7 +106,7 @@ public class HDTournamentManager : HDLiveEventManager {
     	if ( _force || ShouldRequestLeaderboard() )
     	{
 			m_isLeaderboardReady = false;
-			m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+			//m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();	// [AOC] If the leaderboard fails, we won't be requesting it again until the caching period has expired!
 
 	        if ( HDLiveEventsManager.TEST_CALLS )
 	        {
@@ -149,6 +148,9 @@ public class HDTournamentManager : HDLiveEventManager {
             	}
             	data.ParseLeaderboard( responseJson );
 				m_isLeaderboardReady = true;
+
+				// We have new leaderobard data! Reset cache timer
+				m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
             }
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_LEADERBOARD);
 		}
@@ -223,6 +225,9 @@ public class HDTournamentManager : HDLiveEventManager {
 				m_tournamentData.m_state = HDLiveEventData.State.JOINED;
 			}
 			m_tournamentData.ParseLeaderboard(responseJson);
+
+			// We have new leaderobard data! Reset cache timer
+			m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 		}
 
 		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);
