@@ -140,6 +140,17 @@ public class TournamentInfoScreen : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// The next screen button has been pressed.
+	/// </summary>
+	public void OnNextButton() {
+		// Send Tracking event
+		HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
+
+		// [AOC] TODO!! Select fixed or flexible build screen!
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP);
+	}
+
+	/// <summary>
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {

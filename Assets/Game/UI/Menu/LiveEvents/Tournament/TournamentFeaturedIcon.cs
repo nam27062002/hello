@@ -245,6 +245,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		SceneController.s_mode = SceneController.Mode.TOURNAMENT;
 		HDLiveEventsManager.instance.SwitchToTournament();
 
+		// Send Tracking event
+		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+
 		// Go to tournament info screen
 		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
 	}

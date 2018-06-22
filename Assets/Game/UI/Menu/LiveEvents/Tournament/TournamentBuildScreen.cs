@@ -322,6 +322,10 @@ public class TournamentBuildScreen : MonoBehaviour {
 				}
 				else
 				{
+					// Tracking
+					HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, UserProfile.Currency.NONE);
+
+					// Go to play!
 					InstanceManager.menuSceneController.OnPlayButton();
 				}
 			}break;
@@ -369,6 +373,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	void OnPayAndPlay(ResourcesFlow _flow) {
+		// Tracking
+		HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, _flow.currency);
+
 		// Go to play!
 		InstanceManager.menuSceneController.OnPlayButton();
 	}
