@@ -1719,8 +1719,6 @@ GameObject:
   - component: {fileID: 224723321954139522}
   - component: {fileID: 222943122897974472}
   - component: {fileID: 114677587943002884}
-  - component: {fileID: 114926451582589552}
-  - component: {fileID: 114315151584914668}
   - component: {fileID: 225023575126772028}
   - component: {fileID: 114765560028994160}
   m_Layer: 5
@@ -3517,19 +3515,6 @@ MonoBehaviour:
   m_emptyAnim: {fileID: 0}
   m_equippedAnim: {fileID: 0}
   m_tooltipArrowOffset: 0.5
---- !u!114 &114315151584914668
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1948294795309790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 0
 --- !u!114 &114316427814413436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5637,7 +5622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.49803922}
+  m_Color: {r: 0, g: 0.107353, b: 0.21323532, a: 0.466}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -8133,28 +8118,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
---- !u!114 &114926451582589552
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1948294795309790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 100
-    m_Right: 100
-    m_Top: 80
-    m_Bottom: 0
-  m_ChildAlignment: 4
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
 --- !u!114 &114936891044980760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8738,7 +8701,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1829035440
+  randomSeed: 1847485930
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -14905,7 +14868,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1500824642
+  randomSeed: -16063611
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -20977,7 +20940,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1015925655
+  randomSeed: -1555903128
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -28982,11 +28945,11 @@ RectTransform:
   m_Father: {fileID: 224723321954139522}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0.0078125, y: 90}
+  m_SizeDelta: {x: 339.68994, y: 120}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224586989126349810
 RectTransform:
   m_ObjectHideFlags: 1
@@ -29227,10 +29190,10 @@ RectTransform:
   m_Father: {fileID: 224333881560190036}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 200}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -20.000006, y: -90}
+  m_SizeDelta: {x: 120.00001, y: 300}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224724774210112570
 RectTransform:
