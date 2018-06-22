@@ -70,7 +70,7 @@ public class HDTrackingManager
 		GLOBAL_EVENT_REFUND,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
 		GLOBAL_EVENT_BONUS,				// Spend a key to duplicate score registered to a global event at the end of the run
 
-		TOURNAMENT_ENTRANCE,			// Tournament Support
+		TOURNAMENT_ENTRY,			    // Tournament Support
 
         CUSTOMER_SUPPORT                // Reward received via customer support tool
     };
