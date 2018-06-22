@@ -44,7 +44,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private EPlayingMode m_playingMode = EPlayingMode.NONE;
     private float m_playingModeStartTime;
 
-    private const bool SESSION_RETRIES_ENABLED = false;
+    private const bool SESSION_RETRIES_ENABLED = true;
 
     public HDTrackingManagerImp()
     {
