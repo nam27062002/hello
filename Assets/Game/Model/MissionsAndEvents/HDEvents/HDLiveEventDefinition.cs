@@ -32,6 +32,11 @@ public class HDLiveEventDefinition {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	private bool m_initialized = false;
+	public bool initialized {
+		get { return m_initialized; }
+	}
+
 	public int m_eventId;
 	public string m_name;
 	public EventType m_type;
@@ -164,13 +169,14 @@ public class HDLiveEventDefinition {
 	/// Default constructor.
 	/// </summary>
 	public HDLiveEventDefinition() {
-
+		m_initialized = false;
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~HDLiveEventDefinition() {
+		
 	}
 
 	/// <summary>
@@ -178,6 +184,8 @@ public class HDLiveEventDefinition {
 	/// </summary>
 	public virtual void Clean()
 	{
+		m_initialized = false;
+
 		m_eventId = -1;
 		m_name = "";
 		m_type = EventType.NONE;
@@ -192,6 +200,9 @@ public class HDLiveEventDefinition {
 	public virtual void ParseInfo( SimpleJSON.JSONNode _data )
 	{
 		Clean();
+
+		m_initialized = true;
+
 		if ( _data.ContainsKey("code") )
 		{
 			m_eventId = _data["code"].AsInt;
