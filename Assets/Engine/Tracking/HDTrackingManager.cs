@@ -400,6 +400,25 @@ public class HDTrackingManager
     public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
 
     public virtual void Notify_EggOpened() {}
+
+    /// <summary>
+    /// Called when the user clicks on tournament button on main screen
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// </summary>
+    public virtual void Notify_TournamentClickOnMainScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clicks on next button on tournament description screen
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    public virtual void Notify_TournamentClickOnNextOnDetailsScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clickes on enter tournament button
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// <param name="currency"><c>null</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
+    public virtual void Notify_TournamentClickOnEnter(string tournamentSku, string currency) {}
     #endregion
 
     #region log
