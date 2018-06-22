@@ -1961,7 +1961,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Track_AddParamString(e, TRACK_PARAM_TOURNAMENT_SKU, tournamentSku);
             Track_AddParamString(e, TRACK_PARAM_STEP_NAME, stepName);
-            Track_AddParamBool(e, TRACK_PARAM_PAID, !string.IsNullOrEmpty(currency));
+            e.SetParameterValue(TRACK_PARAM_PAID, !string.IsNullOrEmpty(currency));
             Track_AddParamString(e, TRACK_PARAM_CURRENCY, currency);
 
             Track_SendEvent(e);
