@@ -292,7 +292,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 				m_purchaseFlow.OnSuccess.AddListener( OnEntrancePayAccepted );
 				long amount = m_definition.m_entrance.m_amount;
 				UserProfile.Currency currency = UserProfile.SkuToCurrency(m_definition.m_entrance.m_type);
-				m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRANCE, null, false);
+				m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRY, null, false);
 			}
 		}
 	}
