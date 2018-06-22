@@ -486,6 +486,18 @@
                 "etl"
             ]
         },
+		"custom.game.tournament": {
+            "Parameters": [
+				{"stepName": {"Status": "OK"}},
+				{"paid": {"Status": "OK"}},
+				{"currency": {"Status": "OK"}},
+				{"tournamentSku": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1183,6 +1195,14 @@
         },
 		"category": {
             "Type": "STRING:30",
+            "Values": []
+        },
+		"tournamentSku": {
+            "Type": "STRING:30",
+            "Values": []
+        },
+		"paid": {
+            "Type": "BOOL",
             "Values": []
         }
     }

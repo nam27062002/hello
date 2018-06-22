@@ -417,8 +417,8 @@ public class HDTrackingManager
     /// Called when the user clickes on enter tournament button
     /// </summary>
     /// <param name="tournamentSku">Sku of the currently available tournament</param>
-    /// <param name="currency"><c>null</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
-    public virtual void Notify_TournamentClickOnEnter(string tournamentSku, string currency) {}
+    /// <param name="currency"><c>NONE</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
+    public virtual void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency) {}
     #endregion
 
     #region log

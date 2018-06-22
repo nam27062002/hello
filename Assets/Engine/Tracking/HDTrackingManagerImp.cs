@@ -1095,6 +1095,34 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             TrackingPersistenceSystem.EggsOpened++;
         }
+    }   
+
+    /// <summary>
+    /// Called when the user clicks on tournament button on main screen
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// </summary>
+    public override void Notify_TournamentClickOnMainScreen(string tournamentSku)
+    {
+        Track_TournamentStep(tournamentSku, "MainScreen", null);
+    }
+
+    /// <summary>
+    /// Called when the user clicks on next button on tournament description screen
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    public override void Notify_TournamentClickOnNextOnDetailsScreen(string tournamentSku)
+    {
+        Track_TournamentStep(tournamentSku, "Next", null);
+    }
+
+    /// <summary>
+    /// Called when the user clickes on enter tournament button
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// <param name="currency"><c>NONE</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
+    public override void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency)
+    {
+        Track_TournamentStep(tournamentSku, "Enter", Track_UserCurrencyToString(currency));
     }
     #endregion
 
@@ -1921,6 +1949,25 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
+    private void Track_TournamentStep(string tournamentSku, string stepName, string currency)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_TournamentStep tournamentSku = " + tournamentSku + " stepName = " + stepName + " currency = " + currency);
+        }
+
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.tournament");
+        if (e != null)
+        {
+            Track_AddParamString(e, TRACK_PARAM_TOURNAMENT_SKU, tournamentSku);
+            Track_AddParamString(e, TRACK_PARAM_STEP_NAME, stepName);
+            Track_AddParamBool(e, TRACK_PARAM_PAID, !string.IsNullOrEmpty(currency));
+            Track_AddParamString(e, TRACK_PARAM_CURRENCY, currency);
+
+            Track_SendEvent(e);
+        }
+    }
+
     // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
@@ -2006,6 +2053,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_NB_VIEWS                   = "nbViews";
 	private const string TRACK_PARAM_NEW_AREA                   = "newArea";
 	private const string TRACK_PARAM_ORIGINAL_AREA              = "originalArea";
+    private const string TRACK_PARAM_PAID                       = "paid";
     private const string TRACK_PARAM_PET1                       = "pet1";
     private const string TRACK_PARAM_PET2                       = "pet2";
     private const string TRACK_PARAM_PET3                       = "pet3";
@@ -2049,6 +2097,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_TOTAL_PLAYTIME             = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES            = "totalPurchases";
     private const string TRACK_PARAM_TOTAL_STORE_VISITS         = "totalStoreVisits";
+    private const string TRACK_PARAM_TOURNAMENT_SKU             = "tournamentSku";
     private const string TRACK_PARAM_TRIGGERED                  = "triggered";
     private const string TRACK_PARAM_TYPE_NOTIF                 = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE              = "userTime<one";
