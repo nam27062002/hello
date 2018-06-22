@@ -222,7 +222,10 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				case HDLiveEventData.State.NOT_JOINED:
 				case HDLiveEventData.State.JOINED:
 				case HDLiveEventData.State.REWARD_AVAILABLE: {
-					show = true;
+					// Must have a valid definition first
+					if(m_tournamentManager.data.definition != null && m_tournamentManager.data.definition.initialized) {
+						show = true;
+					}
 				} break;
 			}
 		}
