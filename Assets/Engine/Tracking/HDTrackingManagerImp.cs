@@ -44,6 +44,8 @@ public class HDTrackingManagerImp : HDTrackingManager
     private EPlayingMode m_playingMode = EPlayingMode.NONE;
     private float m_playingModeStartTime;
 
+    private const bool SESSION_RETRIES_ENABLED = false;
+
     public HDTrackingManagerImp()
     {
 		m_loadFunnelCalety = new FunnelData_Load();
@@ -112,8 +114,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Unsent events are stored during the loading because it can be a heavy stuff
         SaveOfflineUnsentEvents();
 
-        // Session is not allowed to be recreated during game because it could slow it down
-        SetRetrySessionCreationIsEnabled(false);
+        if (SESSION_RETRIES_ENABLED)
+        {
+            // Session is not allowed to be recreated during game because it could slow it down
+            SetRetrySessionCreationIsEnabled(false);
+        }
     }
 
     public override void GoToMenu()
@@ -121,7 +126,10 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Unsent events are stored during the loading because it can be a heavy stuff
         SaveOfflineUnsentEvents();
 
-        SetRetrySessionCreationIsEnabled(true);
+        if (SESSION_RETRIES_ENABLED)
+        {
+            SetRetrySessionCreationIsEnabled(true);
+        }
     }
 
 	private void SetRetrySessionCreationIsEnabled(bool value)
@@ -280,6 +288,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         // DNA is not initialized in editor because it doesn't work on Windows and it crashes on Mac
 #if !EDITOR_MODE
         string clientVersion = GameSettings.internalVersion.ToString();
+
+        if (!SESSION_RETRIES_ENABLED)
+        {
+            SetRetrySessionCreationIsEnabled(false);       
+        }
 
 		if (settingsInstance != null)
 		{
