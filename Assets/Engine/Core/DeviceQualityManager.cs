@@ -186,7 +186,8 @@ public class DeviceQualityManager
                     // Makes sure that it has memory and rating enough to use this profile
                     // gfxMemorySize is used only for Android in order to have an idea about how old the device is. This is not used for iOS because profiles is set manually in this platform
 #if UNITY_ANDROID
-                    if (gfxMemorySize >= Profiles_Data[Profiles_Names[i]].GfxMemory && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
+                    int gfxMemoryLimit = (memorySize > (1024 * 3)) ? 0 : Profiles_Data[Profiles_Names[i]].GfxMemory;
+                    if (gfxMemorySize >= gfxMemoryLimit && memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
 #else
                     if (memorySize >= Profiles_Data[Profiles_Names[i]].MinMemory && Profiles_Data[Profiles_Names[i]].Rating <= rating)
 #endif
