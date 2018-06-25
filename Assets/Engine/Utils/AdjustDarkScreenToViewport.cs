@@ -30,9 +30,10 @@ public class AdjustDarkScreenToViewport : MonoBehaviour {
 	public bool m_darkUpdate = true;
 
 	private Camera m_camera = null;
+
 	public Camera targetCamera {
 		get { return m_camera; }
-		set { m_camera = value; }
+        set { m_camera = value; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -83,16 +84,20 @@ public class AdjustDarkScreenToViewport : MonoBehaviour {
         // Skip if component not enabled
         if (!this.isActiveAndEnabled) return;
 
-		// If camera is not manuall defined, try to automatically get one
-		Camera cam = m_camera;
-		if(m_camera == null) {
-	        // Main camera must be valid
-	        if (Application.isPlaying && InstanceManager.sceneController != null) {
-	            cam = InstanceManager.sceneController.mainCamera;
-	        } else if (m_executeInEditMode) {
-	            cam = Camera.main;
-	        }
-		}
+        if (m_camera == null)
+        {
+            // Main camera must be valid
+            if (Application.isPlaying && InstanceManager.sceneController != null)
+            {
+                m_camera = InstanceManager.sceneController.mainCamera;
+            }
+            else if (m_executeInEditMode)
+            {
+                m_camera = Camera.main;
+            }
+        }
+        // If camera is not manuall defined, try to automatically get one
+        Camera cam = m_camera;
 
         if (cam == null) return;
 
