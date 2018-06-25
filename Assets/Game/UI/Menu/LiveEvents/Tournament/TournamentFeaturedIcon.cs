@@ -222,7 +222,10 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				case HDLiveEventData.State.NOT_JOINED:
 				case HDLiveEventData.State.JOINED:
 				case HDLiveEventData.State.REWARD_AVAILABLE: {
-					show = true;
+					// Must have a valid definition first
+					if(m_tournamentManager.data.definition != null && m_tournamentManager.data.definition.initialized) {
+						show = true;
+					}
 				} break;
 			}
 		}
@@ -241,6 +244,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		// Change game mode
 		SceneController.s_mode = SceneController.Mode.TOURNAMENT;
 		HDLiveEventsManager.instance.SwitchToTournament();
+
+		// Send Tracking event
+		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
 
 		// Go to tournament info screen
 		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);

@@ -171,6 +171,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentDefinition() {
+		
 	}
 
 	/// <summary>
