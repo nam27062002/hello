@@ -65,6 +65,21 @@ public class TrackerGold : TrackerBase {
 		return base.RoundTargetValue(_targetValue);	// Apply default rounding as well
 	}
 
+	/// <summary>
+	/// Sets the initial value for the tracker.
+	/// Doesn't perform any check or trigger any event.
+	/// Use for initialization/reset/restore persistence.
+	/// Use also by heirs to reset any custom vars that needed to be reset.
+	/// </summary>
+	/// <param name="_initialValue">Initial value.</param>
+	override public void InitValue(long _initialValue) {
+		// Call parent
+		base.InitValue(_initialValue);
+
+		// Reset local vars
+		m_gold = (float)_initialValue;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//

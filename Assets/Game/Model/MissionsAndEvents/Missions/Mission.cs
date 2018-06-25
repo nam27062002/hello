@@ -318,7 +318,7 @@ public class Mission {
 
 		// Restore objective
 		if(m_objective != null) {
-			m_objective.tracker.SetValue(_data["currentValue"].AsLong, false);
+			m_objective.tracker.InitValue(_data["currentValue"].AsLong);
 			m_objective.enabled = (m_state == State.ACTIVE);
 		}
 

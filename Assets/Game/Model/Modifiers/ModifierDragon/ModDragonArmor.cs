@@ -8,7 +8,10 @@ public class ModDragonArmor : ModifierDragon {
 	//------------------------------------------------------------------------//
 	public ModDragonArmor(DefinitionNode _def) : base(_def) {
 		m_percentage = _def.GetAsFloat("param1");
-		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
+		BuildTextParams(
+			StringUtils.MultiplierToPercentage(UnityEngine.Mathf.Abs(m_percentage/100f)),
+			UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#")
+		);
 	}
 
 	public override void Apply() {
