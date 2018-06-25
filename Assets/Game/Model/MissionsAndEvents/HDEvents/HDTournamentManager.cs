@@ -274,7 +274,8 @@ public class HDTournamentManager : HDLiveEventManager {
     	{
 			// Check if we are in tournament mode
 			m_tracker.enabled = m_isActive;
-			m_tracker.SetValue(0, false);
+			m_tracker.InitValue(0);
+			Debug.Log(Color.green.Tag("RESET TRACKER (ON GAME STARTED"));
     	}
 
 		if ( m_isActive )
