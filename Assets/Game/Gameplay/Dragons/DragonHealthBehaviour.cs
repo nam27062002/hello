@@ -32,7 +32,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	{
 		get{ return m_reviveBonusTime; }
 	}
-	public float damageHUD;
+	//public float damageHUD;
 	//TONI END
 	private float m_healthDrainPerSecond;
 	private float m_healthDrainAmpPerSecond;
@@ -347,7 +347,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		{
 			m_reviveBonusTime -= Time.deltaTime;
 			damage *= m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDurationMax) * (m_reviveBonusValueFin - m_reviveBonusValueIni));
-			damageHUD = 100 - (100 * (m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDurationMax) * (m_reviveBonusValueFin - m_reviveBonusValueIni)))); //REMOVE THIS, JUST TO CHECK FORMULA WORKS
+			//damageHUD = 100 - (100 * (m_reviveBonusValueFin - ((m_reviveBonusTime / m_reviveBonusDurationMax) * (m_reviveBonusValueFin - m_reviveBonusValueIni)))); //REMOVE THIS, JUST TO CHECK FORMULA WORKS
 		}
 		//TONI END
 		return damage;
