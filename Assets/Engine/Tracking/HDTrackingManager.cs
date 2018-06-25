@@ -70,7 +70,7 @@ public class HDTrackingManager
 		GLOBAL_EVENT_REFUND,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
 		GLOBAL_EVENT_BONUS,				// Spend a key to duplicate score registered to a global event at the end of the run
 
-		TOURNAMENT_ENTRANCE,			// Tournament Support
+		TOURNAMENT_ENTRY,			    // Tournament Support
 
         CUSTOMER_SUPPORT                // Reward received via customer support tool
     };
@@ -398,6 +398,27 @@ public class HDTrackingManager
     /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
     /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
     public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
+
+    public virtual void Notify_EggOpened() {}
+
+    /// <summary>
+    /// Called when the user clicks on tournament button on main screen
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// </summary>
+    public virtual void Notify_TournamentClickOnMainScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clicks on next button on tournament description screen
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    public virtual void Notify_TournamentClickOnNextOnDetailsScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clickes on enter tournament button
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// <param name="currency"><c>NONE</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
+    public virtual void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency) {}
     #endregion
 
     #region log

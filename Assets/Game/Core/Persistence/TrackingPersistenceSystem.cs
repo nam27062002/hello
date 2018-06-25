@@ -10,6 +10,9 @@ public class TrackingPersistenceSystem : PersistenceSystem
     private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";
     private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
 	private const string PARAM_TOTAL_EGG_PURCHASES = "totalEggPurchases";
+    private const string PARAM_TOTAL_EGGS_PURCHASED_WITH_HC = "totalEggsPurchasedWithHC";
+    private const string PARAM_TOTAL_EGGS_FOUND = "totalEggsFound";
+    private const string PARAM_TOTAL_EGGS_OPENED = "totalEggsOpened";
     private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
     private const string PARAM_USER_ID = "userID";
     
@@ -143,6 +146,45 @@ public class TrackingPersistenceSystem : PersistenceSystem
         set
         {
             Cache_SetInt(PARAM_TOTAL_EGG_PURCHASES, value);
+        }
+    }
+
+    public int EggSPurchasedWithHC
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_EGGS_PURCHASED_WITH_HC);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_EGGS_PURCHASED_WITH_HC, value);
+        }
+    }
+
+    public int EggsFound
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_EGGS_FOUND);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_EGGS_FOUND, value);
+        }
+    }
+
+    public int EggsOpened
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_EGGS_OPENED);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_EGGS_OPENED, value);
         }
     }
 
@@ -316,6 +358,18 @@ public class TrackingPersistenceSystem : PersistenceSystem
         Cache_AddData(key, dataInt);
 
         key = PARAM_TOTAL_EGG_PURCHASES;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_EGGS_PURCHASED_WITH_HC;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_EGGS_FOUND;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_EGGS_OPENED;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 

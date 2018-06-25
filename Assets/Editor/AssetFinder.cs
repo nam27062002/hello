@@ -304,28 +304,55 @@ public class AssetFinder : EditorWindow {
     }
 
 
+	public static int checkTriggerArrayTime(Spawner.SpawnCondition[] triggerArray)
+	{
+		if (triggerArray.Length > 0)
+		{
+			for (int c = 0; c < triggerArray.Length; c++)
+			{
+				if (triggerArray[c].type == Spawner.SpawnCondition.Type.TIME)
+				{
+					return c;
+				}
+			}
+		}
+		return -1;
+	}
+
+
     [MenuItem("Hungry Dragon/Tools/Spawners rename")]
     public static void SceneSpawnersRename()
     {
         Spawner[] spawnerList;
-        FindAssetInScene<Spawner>(out spawnerList);
+        FindAssetInScene<Spawner>(out spawnerList,true);
         Undo.RecordObjects(spawnerList, "Disable static batching");
         foreach (Spawner obj in spawnerList)
         {
             int activationCheck = checkTriggerArray(obj.activationTriggers);
             int deactivationCheck = checkTriggerArray(obj.deactivationTriggers);
+			int activationCheckTime = checkTriggerArrayTime(obj.activationTriggers);
+			int deactivationCheckTime = checkTriggerArrayTime(obj.deactivationTriggers);
 
             Spawner.SpawnCondition activation = (activationCheck >= 0) ? obj.activationTriggers[activationCheck] : null;
             Spawner.SpawnCondition deactivation = (deactivationCheck >= 0) ? obj.deactivationTriggers[deactivationCheck] : null;
+			Spawner.SpawnCondition activationTime = (activationCheckTime >= 0) ? obj.activationTriggers[activationCheckTime] : null;
+			Spawner.SpawnCondition deactivationTime = (deactivationCheckTime >= 0) ? obj.deactivationTriggers[deactivationCheckTime] : null;
             Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
             if (prefab != null)
             {
                 string prefabName = prefab.name;
                 if (activation != null || deactivation != null)
                 {
-                    prefabName = prefabName + "_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
+                    prefabName = prefabName + "_XP_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
                 }
-                obj.gameObject.name = prefabName;
+				if (activationTime != null || deactivationTime != null)
+				{
+					prefabName = prefabName + "_TIME_" + ((activationTime != null) ? activationTime.value.ToString() : "0") + "_" + ((deactivationTime != null) ? deactivationTime.value.ToString() : "0");
+				}					
+				obj.gameObject.name = prefabName;
+				// Inactive spawners ends with "-IN"
+				if (!obj.gameObject.activeSelf)
+					obj.gameObject.name = prefabName + "-IN"; 
             }
         }
     }

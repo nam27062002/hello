@@ -70,7 +70,7 @@ public class GoalsScreenController : MonoBehaviour {
 		}
 
 		// Global Events
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) {
 			ExcludeButton(Buttons.GLOBAL_EVENTS);
 		}
 	}
@@ -112,7 +112,7 @@ public class GoalsScreenController : MonoBehaviour {
 		bool eventAvailable = m_quest.EventExists() && m_quest.IsRunning();
 
 		// Consider tutorial as well!
-		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN;
+		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
 
 		// Apply
 		m_eventActiveGroup.SetActive(eventAvailable);
@@ -198,7 +198,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnGlobalEventsButton() {
 		// Check tutorial!
-		int remainingRuns = GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
+		int remainingRuns = GameSettings.ENABLE_QUESTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
 		if(remainingRuns > 0) {
 			// Show error message
 			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
@@ -218,7 +218,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnChestsButton() {
 		// Check tutorial!
-		int remainingRuns = GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
+		int remainingRuns = GameSettings.ENABLE_QUESTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
 			// Show error message
 			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";

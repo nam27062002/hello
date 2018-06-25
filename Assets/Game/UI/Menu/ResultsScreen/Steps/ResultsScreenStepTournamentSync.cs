@@ -28,6 +28,12 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	[SerializeField] private ShowHideAnimator m_busyPanel = null;
 	[SerializeField] private ShowHideAnimator m_errorPanel = null;
 
+	// Public
+	private bool m_hasBeenDismissed = false;
+	public bool hasBeenDismissed {
+		get { return m_hasBeenDismissed; }
+	}
+
 	// Internal refs
 	private HDLiveEventManager m_event = null;
 
@@ -71,6 +77,9 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		// Hide both panels
 		m_busyPanel.Hide(false);
 		m_errorPanel.Hide(false);
+
+		// Reset flags
+		m_hasBeenDismissed = false;
 	}
 
 	/// <summary>
@@ -78,18 +87,22 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Never during FTUX
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) return false;
-
 		// Check game mode
 		switch(GameSceneController.s_mode) {
 			// Tournament mode: check tournament
 			case GameSceneController.Mode.TOURNAMENT: {
-				return true;	// Always
+				// Never during FTUX
+				return UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_TOURNAMENTS_AT_RUN;
 			} break;
 
 			// Default mode: check quest
 			case GameSceneController.Mode.DEFAULT: {
+				// Never during FTUX
+				// By this point the gamesPlayed var has already been increased, so we must actually count one less game
+				if(UsersManager.currentUser.gamesPlayed - 1 < GameSettings.ENABLE_QUESTS_AT_RUN) {
+					return false;
+				}
+
 				HDQuestManager questManager = m_event as HDQuestManager;
 				if(questManager.EventExists()
 					&& questManager.IsRunning()
@@ -164,6 +177,9 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// The dismiss score button has been pressed.
 	/// </summary>
 	public void OnDismissButton() {
+		// Set flag
+		m_hasBeenDismissed = true;
+
 		// Skip contribution and move to the next step
 		OnFinished.Invoke();
 	}
