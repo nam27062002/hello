@@ -185,6 +185,7 @@ public class HDLiveEventManager
     /// </summary>
 	public void ClearEvent()
     {
+		Deactivate();
     	CleanData();
     }
 
