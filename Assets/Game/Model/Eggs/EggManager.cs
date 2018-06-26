@@ -283,7 +283,11 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			}
 
 			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
-			weight = 1f / Mathf.Pow(sm_weightIDs[i], a); // i+1 is the weightID of the formula
+			if (sm_weightIDs[i] > 0) {
+				weight = 1f / Mathf.Pow(sm_weightIDs[i], a); // i+1 is the weightID of the formula
+			} else {
+				weight = 0f;
+			}
 			m_weights[i] = weight;
 			weightTotal += weight;
 
