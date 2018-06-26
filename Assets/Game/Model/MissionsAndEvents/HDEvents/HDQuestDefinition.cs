@@ -54,7 +54,7 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 	}
 
 	public class QuestReward : HDLiveEventReward {
-		public float targetAmount = 0f;
+		public long targetAmount = 0;
 	}
 
 	public QuestGoal m_goal = new QuestGoal();
@@ -94,7 +94,7 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 				reward.ParseJson(arr[i], m_name);
 
 				if(m_goal != null) {
-					reward.targetAmount = reward.targetPercentage * m_goal.m_amount;
+					reward.targetAmount = (long)(reward.targetPercentage * m_goal.m_amount);
 				}
 
 				m_rewards.Add( reward );

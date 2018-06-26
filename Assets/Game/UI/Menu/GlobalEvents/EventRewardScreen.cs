@@ -305,7 +305,7 @@ public class EventRewardScreen : MonoBehaviour {
 				AudioController.Play("UI_Light FX");
 
 				// Animate progress bar
-				m_questPanel.MoveScoreTo((long)m_questManager.m_questDefinition.m_rewards[m_questRewardIdx].targetAmount, 0.5f);
+				m_questPanel.MoveScoreTo(m_questManager.m_questDefinition.m_rewards[m_questRewardIdx].targetAmount, 0.5f);
 
 				// Tell the scene to open the next reward (should be already stacked)
 				m_sceneController.OpenReward();

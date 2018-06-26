@@ -28,12 +28,14 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	}
 	[SerializeField] [Range(0f, 1f)] private float m_minBarThreshold = 0.05f;
 	[Space]
-	[SerializeField] private bool m_repositionRewards = true;
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
 
 	public void RefreshRewards(HDQuestDefinition _evt, long currentValue) {
-		// Initialize visuals
-		// Event description
+		// Initialize bar limits
+		if(m_progressBar != null) {
+			m_progressBar.minValue = 0f;
+			m_progressBar.maxValue = (float)_evt.m_goal.m_amount;
+		}
 
 		// Rewards
 		for(int i = 0; i < _evt.m_rewards.Count; ++i) {
@@ -42,19 +44,24 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 
 			// Initialize the reward info corresponding to this reward
 			m_rewardInfos[i].InitFromReward(_evt.m_rewards[i]);
-
 			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount, false );
 
 			// Put into position (except last reward, which has a fixed position)
-			if(m_repositionRewards && i < _evt.m_rewards.Count - 1) {
-				// Set min and max anchor in Y to match the target percentage
+			if(i < _evt.m_rewards.Count - 1) {
+				// Set min and max anchor in X to match the target percentage
+				float targetPercentage = (float)_evt.m_rewards[i].targetAmount / (float)_evt.m_goal.m_amount;
+
 				Vector2 anchor = m_rewardInfos[i].rectTransform.anchorMin;
-				anchor.y = _evt.m_rewards[i].targetPercentage;
+				anchor.x = targetPercentage;
 				m_rewardInfos[i].rectTransform.anchorMin = anchor;
 
 				anchor = m_rewardInfos[i].rectTransform.anchorMax;
-				anchor.y = _evt.m_rewards[i].targetPercentage;
+				anchor.x = targetPercentage;
 				m_rewardInfos[i].rectTransform.anchorMax = anchor;
+
+				anchor = m_rewardInfos[i].rectTransform.anchoredPosition;
+				anchor.x = 0f;
+				m_rewardInfos[i].rectTransform.anchoredPosition = anchor;
 			}
 		}
 
@@ -74,15 +81,15 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	public void RefreshAchieved(bool _animate) {
 		// Use current bar value
 		for(int i = 0; i < m_rewardInfos.Length; ++i) {
-			m_rewardInfos[i].ShowAchieved(m_progressBar.normalizedValue >= m_rewardInfos[i].questReward.targetPercentage, _animate);
+			m_rewardInfos[i].ShowAchieved(m_progressBar.value >= m_rewardInfos[i].questReward.targetAmount, _animate);
 		}
 	}
 
 	public void RefreshProgress(float _value, float _animDuration = -1f, bool _checkAchieved = true) {
-		// [AOC] For visual purposes, always show a minimum amount of bar
-		_value = Mathf.Max(_value, m_minBarThreshold);
-
 		if (m_progressBar != null) {
+			// [AOC] For visual purposes, always show a minimum amount of bar
+			_value = Mathf.Max(_value, Mathf.Lerp(m_progressBar.minValue, m_progressBar.maxValue, m_minBarThreshold));
+
 			if(_animDuration < 0f) {
 				m_progressBar.value = _value;
 				if(_checkAchieved) RefreshAchieved(false);
