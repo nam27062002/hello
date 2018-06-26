@@ -1,10 +1,36 @@
-﻿using System;
+﻿// RandomExt.cs
+// Hungry Dragon
+// 
+// Created by Marc Saña on 03/05/2018.
+// Copyright (c) 2018 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------//
+// INCLUDES																//
+//----------------------------------------------------------------------//
+using System;
+using System.Reflection;
+using System.Globalization;
+
 using UnityEngine;
 
+//----------------------------------------------------------------------//
+// CLASSES																//
+//----------------------------------------------------------------------//
 public static class RandomExt {
+	//------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES											//
+	//------------------------------------------------------------------//
 	private static System.Random s_rand = new System.Random();
 	private static byte[] s_buf = new byte[8];
 
+	//------------------------------------------------------------------//
+	// METHODS															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_min"></param>
+	/// <param name="_max"></param>
 	public static long Range(long _min, long _max) {
         if (_min == _max) {
             return _min;
