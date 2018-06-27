@@ -70,13 +70,19 @@ public static class RandomExt {
 	/// </summary>
 	/// <param name="_s">the Random State where the parsed values will be stored.</param>
 	/// <param name="_string">String to be parsed.</param>
-	public static void Deserialize(this UnityEngine.Random.State _s, string _string) {
+	/// <returns>A new Random.State with the parsed data.</returns>
+	public static UnityEngine.Random.State Deserialize(this UnityEngine.Random.State _s, string _string) {
 		// Split input string
 		string[] seeds = _string.Split('|');
 
+		// We're using Reflection to access internal data of the struct
+		// However, being a struct it gets boxed when attempting to set the values, so we must do a series of casts to work around this
+		// See https://stackoverflow.com/questions/6280506/is-there-a-way-to-set-properties-on-struct-instances-using-reflection
+		FieldInfo prop = null;
+		object obj = _s;
+
 		// A random state is composed of 4 int seeds named "s0", "s1", "s2", "s3"
 		// Initialize them with the values read from the string
-		FieldInfo prop = null;
 		int seedValue = 0;
 		for(int i = 0; i < 4; ++i) {
 			// Do we have data for that seed
@@ -85,9 +91,14 @@ public static class RandomExt {
 				if(int.TryParse(seeds[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out seedValue)) {
 					// Initialize the seed using reflection
 					prop = _s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-					prop.SetValue(_s, seedValue);
+					prop.SetValue(obj, seedValue);
 				}
 			}
 		}
+
+		// Cast back
+		UnityEngine.Random.State ret = (UnityEngine.Random.State)obj;
+		Debug.Log(Colors.orange.Tag(ret.Serialize()));
+		return ret;
 	}
 }
