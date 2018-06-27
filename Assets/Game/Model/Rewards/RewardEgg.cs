@@ -123,8 +123,7 @@ namespace Metagame {
 			DefinitionNode rewardTypeDef = null;
 			if(m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
 				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
-			} else {				
-				EggManager.SetWeightIDs(m_weightIDs);
+			} else {
 				if (m_hasCustomWeights) {
 					rewardTypeDef = EggManager.GenerateReward(m_weightIDs);
 				} else {
