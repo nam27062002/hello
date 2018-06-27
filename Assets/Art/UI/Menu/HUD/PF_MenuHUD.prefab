@@ -854,6 +854,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224247275970424208}
+  - component: {fileID: 114038088407149158}
   m_Layer: 5
   m_Name: EventButton
   m_TagString: Untagged
@@ -2016,6 +2017,39 @@ MonoBehaviour:
   m_tid: 
   m_caseType: 0
   m_replacements: []
+--- !u!114 &114038088407149158
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1219085147985576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tooltip: {fileID: 114901059665064956}
+  m_prefabPath: 
+  m_anchor: {fileID: 0}
+  m_offset: {x: 50, y: 50}
+  m_keepOriginalPosition: 0
+  m_checkScreenBounds: 0
+  OnTooltipOpen:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: OnTooltipOpen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UITooltipTrigger+TooltipEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &114050556006395272
 MonoBehaviour:
   m_ObjectHideFlags: 1
