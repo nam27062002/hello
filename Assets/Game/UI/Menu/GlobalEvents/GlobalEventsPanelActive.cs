@@ -121,7 +121,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Progress
 		if (m_progressBar != null) {
 			m_progressBar.RefreshRewards( def, questManager.m_questData.m_globalScore );
-			m_progressBar.RefreshProgress( questManager.progress );
+			m_progressBar.RefreshProgress( questManager.m_questData.m_globalScore );
 		}
 
 		// Force a first update on the timer
@@ -154,7 +154,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			if(questManager.EventExists()) {
 				HDQuestData data = questManager.data as HDQuestData;
 				HDQuestDefinition def = data.definition as HDQuestDefinition;
-				currentValue = (long)(m_progressBar.progressBar.normalizedValue * (float)def.m_goal.m_amount);
+				currentValue = (long)m_progressBar.progressBar.value;
 			}
 		}
 
@@ -172,7 +172,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				HDQuestDefinition def = data.definition as HDQuestDefinition;
 				if(m_progressBar != null) {
 					m_progressBar.RefreshRewards( def, _to );
-					m_progressBar.RefreshProgress( _to / (float) def.m_goal.m_amount );
+					m_progressBar.RefreshProgress( _to );
 				}
 			}
 		} else {
@@ -192,7 +192,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			if (m_progressBar != null) 
 			{
 				m_progressBar.RefreshRewards( def, _from );
-				m_progressBar.RefreshProgress( _from / (float) def.m_goal.m_amount );
+				m_progressBar.RefreshProgress( _from );
 			}
 
 			if(m_receiveContributionFX != null) {
@@ -208,7 +208,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				long v = _from + (long)((_to - _from) * (t / _duration));
 				if (m_progressBar != null) 
 				{
-					m_progressBar.RefreshProgress( v / (float) def.m_goal.m_amount, -1f, false );
+					m_progressBar.RefreshProgress( v , -1f, false );
 					m_progressBar.RefreshAchieved( true );
 				}
 				yield return null;
@@ -218,7 +218,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			if (m_progressBar != null) 
 			{
 				//m_progressBar.RefreshAchieved( def, _to );
-				m_progressBar.RefreshProgress( _to / (float) def.m_goal.m_amount );
+				m_progressBar.RefreshProgress( _to );
 			}
 
 			if(m_receiveContributionFX != null) {

@@ -60,11 +60,20 @@ namespace Metagame {
 
 			m_rarity = Reward.SkuToRarity(_def.GetAsString("rarity"));
 
-			bool duplicated = false;
+			CheckReplacement();
+		}
+
+		/// <summary>
+		/// Checks whether this reward needs to be replaced and creates a replacement
+		/// reward if needed.
+		/// </summary>
+		override public void CheckReplacement() {
 			// If the pet is already owned, give special egg part or coins instead
+			bool duplicated = false;
+
 			// Cheat support
 			switch (CPGachaTest.duplicateMode) {
-				case CPGachaTest.DuplicateMode.DEFAULT: duplicated = UsersManager.currentUser.petCollection.IsPetUnlocked(_def.sku); break;
+				case CPGachaTest.DuplicateMode.DEFAULT: duplicated = UsersManager.currentUser.petCollection.IsPetUnlocked(m_sku); break;
 				case CPGachaTest.DuplicateMode.ALWAYS: 	duplicated = true; 	break;
 				case CPGachaTest.DuplicateMode.NEVER: 	duplicated = false; break;
 				case CPGachaTest.DuplicateMode.RANDOM: 	duplicated = Random.value > 0.5f; break;
@@ -72,7 +81,7 @@ namespace Metagame {
 
 			// If duplicated, give alternative rewards
 			if(duplicated) {
-				string petRewardSku = "pet_" + _def.GetAsString("rarity");
+				string petRewardSku = "pet_" + m_def.GetAsString("rarity");
 				DefinitionNode petRewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, petRewardSku);
 
 				// Have all golden eggs been collected?
@@ -93,6 +102,18 @@ namespace Metagame {
 			UsersManager.currentUser.petCollection.UnlockPet(m_sku);
 
 			HDTrackingManager.Instance.Notify_Pet(m_sku, m_source);
+		}
+
+		/// <summary>
+		/// Return a visual representation of the reward.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.RewardEgg"/>.</returns>
+		override public string ToString() {
+			if(def == null) {
+				return "NULL";
+			} else {
+				return def.sku + (this.WillBeReplaced() ? " (d)" : "");
+			}
 		}
 	}
 }
