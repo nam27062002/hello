@@ -318,7 +318,20 @@ public class AssetFinder : EditorWindow {
 		}
 		return -1;
 	}
-
+	/*
+	public static int checkTriggerArrayKill(Spawner.SpawnKillCondition[] triggerArray)
+	{
+		if (triggerArray.Length > 0)
+		{
+			for (int c = 0; c < triggerArray.Length; c++) 
+			{
+				if (triggerArray [c].category.Length > 0)
+					return c;
+			}
+		}
+		return -1;
+	}
+*/
 
     [MenuItem("Hungry Dragon/Balancing/Spawners Rename Part 1")]
     public static void SceneSpawnersRenamePart1()
@@ -332,11 +345,16 @@ public class AssetFinder : EditorWindow {
             int deactivationCheck = checkTriggerArray(obj.deactivationTriggers);
 			int activationCheckTime = checkTriggerArrayTime(obj.activationTriggers);
 			int deactivationCheckTime = checkTriggerArrayTime(obj.deactivationTriggers);
+			//int activationCheckKill = checkTriggerArrayKill (obj.activationKillTriggers);
+			//int deactivationCheckKill = checkTriggerArrayKill (obj.deactivationKillTriggers);
 
             Spawner.SpawnCondition activation = (activationCheck >= 0) ? obj.activationTriggers[activationCheck] : null;
             Spawner.SpawnCondition deactivation = (deactivationCheck >= 0) ? obj.deactivationTriggers[deactivationCheck] : null;
 			Spawner.SpawnCondition activationTime = (activationCheckTime >= 0) ? obj.activationTriggers[activationCheckTime] : null;
 			Spawner.SpawnCondition deactivationTime = (deactivationCheckTime >= 0) ? obj.deactivationTriggers[deactivationCheckTime] : null;
+			//Spawner.SpawnKillCondition activationKill = (activationCheckKill >= 0) ? obj.activationTriggers[activationCheckKill] : null;
+			//Spawner.SpawnKillCondition deactivationKill = (deactivationCheckKill >= 0) ? obj.activationTriggers[deactivationCheckKill] : null;
+
             Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
             if (prefab != null)
             {
@@ -348,7 +366,11 @@ public class AssetFinder : EditorWindow {
 				if (activationTime != null || deactivationTime != null)
 				{
 					prefabName = prefabName + "_TIME_" + ((activationTime != null) ? activationTime.value.ToString() : "0") + "_" + ((deactivationTime != null) ? deactivationTime.value.ToString() : "0");
-				}					
+				}
+				/*if (activationKill != null || deactivationKill != null) 
+				{
+					prefabName = prefabName + "_KILL_";
+				}*/
 				obj.gameObject.name = prefabName + "@";
 				// Inactive spawners ends with "-IN"
 				if (!obj.gameObject.activeInHierarchy)
