@@ -265,6 +265,14 @@ namespace Metagame {
 		protected abstract void DoCollect();
 
 		/// <summary>
+		/// Checks whether this reward needs to be replaced and creates a replacement
+		/// reward if needed.
+		/// </summary>
+		public virtual void CheckReplacement() {
+			// To be implemented by heirs if needed
+		}
+
+		/// <summary>
 		/// Simple method to know if the reward is a duplicate and will be replaced by another reward.
 		/// You can check the replacement reward with the <c>replacement</c> property.
 		/// Keep in mind that not all reward types can be replaced!
