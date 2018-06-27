@@ -87,7 +87,21 @@ public class TrackerBaseTime : TrackerBase {
 		return StringUtils.FormatNumber(p, 0, false) + "%";
 	}
 
+	/// <summary>
+	/// Sets the initial value for the tracker.
+	/// Doesn't perform any check or trigger any event.
+	/// Use for initialization/reset/restore persistence.
+	/// Use also by heirs to reset any custom vars that needed to be reset.
+	/// </summary>
+	/// <param name="_initialValue">Initial value.</param>
+	override public void InitValue(long _initialValue) {
+		// Call parent
+		base.InitValue(_initialValue);
 
+		// Reset local vars
+		m_updateTime = false;
+		m_deltaTime = 0f;
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
