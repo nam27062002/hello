@@ -386,11 +386,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             TrackingPersistenceSystem.IsDirty = false;
             PersistenceFacade.instance.Save_Request(false);
         }
-
-        if (Session_AnyRoundsStarted)
-        {
-            Session_PlayTime += Time.deltaTime;
-        }
+        
+        Session_PlayTime += Time.deltaTime;        
 
 #if EDITOR_MODE
         Debug_Update();
@@ -513,12 +510,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             Track_EtlStartEvent();
 
             if (Session_IsNotifyOnPauseEnabled)
-            {
-                // If the dna session had been started then it has to be restarted
-                if (Session_AnyRoundsStarted)
-                {
-                    Track_MobileStartEvent();
-                }
+            {               
+                Track_MobileStartEvent();            
             }            
         }
 
@@ -560,14 +553,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// Called when the user starts a round
     /// </summary>    
     public override void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets)
-    {
-        // custom.game.start has to be send just the first time
-        if (!Session_AnyRoundsStarted)
-        {
-            Session_AnyRoundsStarted = true;
-            Track_MobileStartEvent();
-        }
-
+    {        
         // Resets the amount of runs in the current round because a new round has just started
         Session_RunsAmountInCurrentRound = 0;
         Session_HungryLettersCount = 0;
@@ -1184,6 +1170,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Track_SendEvent(e);
         }
+
+        Track_MobileStartEvent();
     }    
 
     private void Track_ApplicationEndEvent(string stopCause)
@@ -2503,8 +2491,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Session_IsPayingSession = false;
         Session_IsAdSession = false;
-        Session_PlayTime = 0f;        
-        Session_AnyRoundsStarted = false;
+        Session_PlayTime = 0f;                
         Session_RunsAmountInCurrentRound = 0;
         Session_LastDeathType = null;
         Session_LastDeathSource = null;
