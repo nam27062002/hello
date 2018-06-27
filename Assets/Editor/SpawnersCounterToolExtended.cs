@@ -20,7 +20,7 @@ class SpawnerCounterToolExtended : EditorWindow
 
     string currentSceneName = "none";
 
-    [MenuItem("Hungry Dragon/Tools/Spawners All Info")]
+    [MenuItem("Hungry Dragon/Balancing/Spawners All Info")]
 
     public static void ShowWindow()
     {
