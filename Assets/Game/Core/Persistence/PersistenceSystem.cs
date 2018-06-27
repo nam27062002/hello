@@ -85,6 +85,34 @@ public abstract class PersistenceSystem
         }
     }
 
+	protected class CacheDataFloat : CacheData
+	{
+		public CacheDataFloat(string key, float defaultValue)
+		{
+			Key = key;
+			DefaultValue = defaultValue;
+			Value = DefaultValue;
+		}
+
+		public float DefaultValue { get; set; }
+		public float Value { get; set; }
+
+		public override void Reset()
+		{
+			Value = DefaultValue;
+		}
+
+		public override void Load(PersistenceSystem saveSystem)
+		{
+			Value = saveSystem.GetFloat(Key, DefaultValue);
+		}
+
+		public override void Save(PersistenceSystem saveSystem)
+		{
+			saveSystem.SetFloat(Key, Value);
+		}
+	}
+
     protected class CacheDataLong : CacheData
     {
         public CacheDataLong(string key, long defaultValue)
@@ -183,6 +211,30 @@ public abstract class PersistenceSystem
             }
         }
     }
+
+	protected float Cache_GetFloat(string key)
+	{
+		float returnValue = 0f;
+		if (m_cacheData.ContainsKey(key))
+		{
+			returnValue = ((CacheDataFloat)m_cacheData[key]).Value;
+		}
+
+		return returnValue;
+	}
+
+	protected void Cache_SetFloat(string key, float value)
+	{
+		if (m_cacheData != null && m_cacheData.ContainsKey(key))
+		{
+			CacheDataFloat dataFloat = ((CacheDataFloat)m_cacheData[key]);
+			if (dataFloat != null && dataFloat.Value != value)
+			{
+				dataFloat.Value = value;
+				IsDirty = true;
+			}
+		}
+	}
 
     protected long Cache_GetLong(string key)
     {
