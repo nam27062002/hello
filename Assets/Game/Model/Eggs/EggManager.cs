@@ -380,6 +380,15 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		return -1;
 	}
 
+	public static DefinitionNode GenerateReward(float[] _customWeights) {
+		float[] save = sm_weightIDs;
+		SetWeightIDs(_customWeights);
+		DefinitionNode def = GenerateReward();
+		SetWeightIDs(save);
+		BuildDynamicProbabilities();
+		return def;
+	}
+
 	/// <summary>
 	/// Generate a random reward respecting drop chances.
 	/// </summary>
