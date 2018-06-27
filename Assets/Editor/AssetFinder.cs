@@ -363,13 +363,13 @@ public class AssetFinder : EditorWindow {
                 {
                     prefabName = prefabName + "_XP_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
                 }
-				if (activationTime != null || deactivationTime != null)
+				else if (activationTime != null || deactivationTime != null)
 				{
 					prefabName = prefabName + "_TIME_" + ((activationTime != null) ? activationTime.value.ToString() : "0") + "_" + ((deactivationTime != null) ? deactivationTime.value.ToString() : "0");
 				}
-				if (activationKill != null || deactivationKill != null) 
+				else if (activationKill != null || deactivationKill != null) 
 				{
-					prefabName = prefabName + "_AK_" + ((activationKill != null) ? activationKill.sku.ToString() : "None") + "_" + ((activationKill != null) ? activationKill.value.ToString() : "0") + "_DK_" + ((deactivationKill != null) ? deactivationKill.sku.ToString() : "None") + "_" + ((deactivationKill != null) ? deactivationKill.value.ToString() : "0") ;
+					prefabName = prefabName + "_KILL_" + ((activationKill != null) ? activationKill.sku.ToString() : "None") + "-" + ((activationKill != null) ? activationKill.value.ToString() : "0") + "_" + ((deactivationKill != null) ? deactivationKill.sku.ToString() : "None") + "-" + ((deactivationKill != null) ? deactivationKill.value.ToString() : "0") ;
 				}
 				obj.gameObject.name = prefabName + "@";
 				// Inactive spawners ends with "-IN"
@@ -409,13 +409,13 @@ public class AssetFinder : EditorWindow {
 				{
 					prefabName = prefabName + "_XP_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
 				}
-				if (activationTime != null || deactivationTime != null)
+				else if (activationTime != null || deactivationTime != null)
 				{
 					prefabName = prefabName + "_TIME_" + ((activationTime != null) ? activationTime.value.ToString() : "0") + "_" + ((deactivationTime != null) ? deactivationTime.value.ToString() : "0");
 				}					
-				if (activationKill != null || deactivationKill != null) 
+				else if (activationKill != null || deactivationKill != null) 
 				{
-					prefabName = prefabName + "_AK_" + ((activationKill != null) ? activationKill.sku.ToString() : "None") + "_" + ((activationKill != null) ? activationKill.value.ToString() : "0") + "_DK_" + ((deactivationKill != null) ? deactivationKill.sku.ToString() : "None") + "_" + ((deactivationKill != null) ? deactivationKill.value.ToString() : "0") ;
+					prefabName = prefabName + "_KILL_" + ((activationKill != null) ? activationKill.sku.ToString() : "None") + "-" + ((activationKill != null) ? activationKill.value.ToString() : "0") + "_" + ((deactivationKill != null) ? deactivationKill.sku.ToString() : "None") + "-" + ((deactivationKill != null) ? deactivationKill.value.ToString() : "0") ;
 				}
 				obj.gameObject.name = prefabName.Replace("@","");
 				// Inactive spawners ends with "-IN"
