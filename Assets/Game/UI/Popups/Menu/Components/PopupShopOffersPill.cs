@@ -137,7 +137,9 @@ public class PopupShopOffersPill : IPopupShopPill {
 		m_previousPriceText.text = StringUtils.FormatNumber(m_previousPrice, 2);
 
 		// Featured highlight
-		m_featuredHighlight.SetActive(m_pack.featured);
+		if(m_featuredHighlight != null) {
+			m_featuredHighlight.SetActive(m_pack.featured);
+		}
 
 		// Items
 		for(int i = 0; i < m_itemSlots.Length; ++i) {
