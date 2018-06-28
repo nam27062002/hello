@@ -9,7 +9,7 @@ public class ModGatchaPet : ModifierGatcha {
 	//------------------------------------------------------------------------//
 	public ModGatchaPet(DefinitionNode _def) : base(_def) {
 		m_sku = _def.Get("param1");
-		m_weight = _def.GetAsFloat("param1");
+		m_weight = _def.GetAsFloat("param2");
 		BuildTextParams(UIConstants.PET_CATEGORY_SPECIAL.ToHexString("#"));
 	}
 
