@@ -67,7 +67,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
     public HDTournamentManager m_tournament = new HDTournamentManager();
     public HDQuestManager m_quest = new HDQuestManager();
-    public HDLiveEventManager m_passive = new HDLiveEventManager();
+	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
 
         // Avoid using dictionaries when possible
     private List<string> m_types;

@@ -88,6 +88,9 @@ public class HDLiveEventData {
 		// m_definition.Clean();
 	}
 
+	/// <summary>
+	/// Check for state changes based on timestamps.
+	/// </summary>
 	public virtual void UpdateStateFromTimers()
 	{
 		if ( m_eventId > 0 && definition.m_eventId == m_eventId)
