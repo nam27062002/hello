@@ -644,11 +644,16 @@ public class HDTrackingManagerImp : HDTrackingManager
         if (TrackingPersistenceSystem != null)
         {
             TrackingPersistenceSystem.TotalPurchases++;
+			
+			// first purchase
 			if ( TrackingPersistenceSystem.TotalPurchases == 1 )
-	        {
-                // first purchase
+			{
                 Track_FirstPurchase();
 	        }
+
+			TrackingPersistenceSystem.TotalSpent += moneyUSD;
+
+			TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;	// Millis to Seconds
         }
       
         Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isOffer);
