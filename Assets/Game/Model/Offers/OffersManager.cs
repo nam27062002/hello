@@ -55,6 +55,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.AddListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
 		Messenger.AddListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
+		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnGameStateChanged6);
 	}
 
 	/// <summary>
@@ -77,6 +78,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.RemoveListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
 		Messenger.RemoveListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
+		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnGameStateChanged6);
 
 		// Parent
 		base.OnDestroy();
@@ -281,5 +283,8 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 	private void OnGameStateChanged5(OfferPack _p1) { 
 		OnGameStateChanged(); 
+	}
+	private void OnGameStateChanged6(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
+		OnGameStateChanged();
 	}
 }
