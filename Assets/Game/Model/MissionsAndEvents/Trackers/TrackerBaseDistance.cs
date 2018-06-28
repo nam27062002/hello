@@ -83,7 +83,6 @@ public class TrackerBaseDistance : TrackerBase {
 		base.InitValue(_initialValue);
 
 		// Reset local vars
-		m_updateDistance = false;
 		m_deltaDistance = 0f;
 	}
 
