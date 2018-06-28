@@ -103,13 +103,7 @@ namespace Metagame {
 				m_hasCustomWeights = false;
 			}
 
-			if(_buildReward) BuildReward();
-
-			if (m_reward != null) {
-				m_rarity = m_reward.rarity;
-			} else {
-				m_rarity = Rarity.COMMON;
-			}
+			m_rarity = Rarity.COMMON;
 		}
 
 		/// <summary>
@@ -265,12 +259,18 @@ namespace Metagame {
 					}
 				} break;
 			}
+
+			if (m_reward != null) {
+				m_rarity = m_reward.rarity;
+			}
 		}
 
 		/// <summary>
 		/// Implementation of the abstract Collect() method.
 		/// </summary>
 		override protected void DoCollect() {
+			BuildReward();
+
             HDTrackingManager.Instance.Notify_EggOpened();
 
             // Push the egg's reward to the stack
