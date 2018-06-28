@@ -27,9 +27,21 @@ public class PowerTooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Localizer m_nameText = null;
+	public Localizer nameText {
+		get { return m_nameText; }
+	}
+
 	[SerializeField] private TMPro.TextMeshProUGUI m_descriptionText = null;
+	public TMPro.TextMeshProUGUI descriptionText {
+		get { return m_descriptionText; }
+	}
+
 	[Space]
 	[SerializeField] private Image m_powerIcon = null;
+	public Image powerIcon {
+		get { return m_powerIcon; }
+	}
+
 	[SerializeField] private GameObject m_lockInfo = null;
 
 	// Data
