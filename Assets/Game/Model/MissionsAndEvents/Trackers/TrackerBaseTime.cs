@@ -99,7 +99,6 @@ public class TrackerBaseTime : TrackerBase {
 		base.InitValue(_initialValue);
 
 		// Reset local vars
-		m_updateTime = false;
 		m_deltaTime = 0f;
 	}
 
