@@ -187,7 +187,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 					tid = "TID_TOURNAMENT_ICON_STARTS_IN";
 				}
 
-				m_timerText.Localize(m_timerText.tid,
+				m_timerText.Localize(tid,
 					TimeUtils.FormatTime(
 						System.Math.Max(0, remainingSeconds), // Just in case, never go negative
 						TimeUtils.EFormat.ABBREVIATIONS,
