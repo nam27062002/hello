@@ -63,6 +63,9 @@ namespace Metagame {
 			get { return m_reward; }
 		}
 
+		private float[] m_weightIDs;
+		private bool m_hasCustomWeights;
+
 		//------------------------------------------------------------------------//
 		// METHODS																  //
 		//------------------------------------------------------------------------//
@@ -89,13 +92,18 @@ namespace Metagame {
 			m_sku = _sku;
 			m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _sku);
 
-			if(_buildReward) BuildReward();
-
-			if (m_reward != null) {
-				m_rarity = m_reward.rarity;
+			//
+			m_weightIDs = new float[3];
+			if (m_def.Has("weightCommon")) {
+				m_weightIDs[0] = m_def.GetAsFloat("weightCommon", 1);
+				m_weightIDs[1] = m_def.GetAsFloat("weightRare", 2);
+				m_weightIDs[2] = m_def.GetAsFloat("weightEpic", 3);
+				m_hasCustomWeights = true;
 			} else {
-				m_rarity = Rarity.COMMON;
+				m_hasCustomWeights = false;
 			}
+
+			m_rarity = Rarity.COMMON;
 		}
 
 		/// <summary>
@@ -110,7 +118,11 @@ namespace Metagame {
 			if(m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
 				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
 			} else {
-				rewardTypeDef = EggManager.GenerateReward();
+				if (m_hasCustomWeights) {
+					rewardTypeDef = EggManager.GenerateReward(m_weightIDs);
+				} else {
+					rewardTypeDef = EggManager.GenerateReward();
+				}
 			}
 
 			// Nothing else to do if def is null
@@ -259,12 +271,18 @@ namespace Metagame {
 					}
 				} break;
 			}
+
+			if (m_reward != null) {
+				m_rarity = m_reward.rarity;
+			}
 		}
 
 		/// <summary>
 		/// Implementation of the abstract Collect() method.
 		/// </summary>
 		override protected void DoCollect() {
+			BuildReward();
+
             HDTrackingManager.Instance.Notify_EggOpened();
 
             // Push the egg's reward to the stack
