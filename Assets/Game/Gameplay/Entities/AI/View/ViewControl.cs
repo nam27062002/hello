@@ -416,7 +416,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		GetViewFromManager();
 		#endif
 
-		if(Camera.main != null && m_camera == null) {
+		if(m_camera == null && Camera.main != null ) {
 			m_camera = Camera.main.GetComponent<GameCamera>();
 		}
 

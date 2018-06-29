@@ -6,13 +6,16 @@ Shader "Hungry Dragon/DarkEyesEffect"
 		_TimeOffset("Time offset", float) = 2.0
 		_TimeFlick("Time flick", float) = 0.5
 		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+
+		_StencilMask("Stencil Mask", int) = 10
+
 	}
 	
 	Subshader
 	{
 		Pass
 		{
-			Tags{ "Queue" = "Geometry + 1110" "RenderType" = "Opaque" "DisableBatching" = "True" }
+			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "DisableBatching" = "True" }
 
 			cull off
 			
