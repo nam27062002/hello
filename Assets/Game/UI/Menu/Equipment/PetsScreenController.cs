@@ -375,46 +375,6 @@ public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
-	/*
-	/// <summary>
-	/// Instantiates the required amount of pills in a background process.
-	/// Do this to prevent massive Awake() lag spike.
-	/// </summary>
-	/// <returns>The coroutine.</returns>
-	public IEnumerator InstantiatePillsAsync() {
-		// If not done yet, load the pet definitions!
-		if(m_defs.Count == 0) {
-			// Get all pet definitions, no filter
-			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
-		}
-
-		// Clear all placeholder content from the scroll list
-		scrollList.content.DestroyAllChildren(false);
-		m_pills.Clear();
-
-		// Create a pill for every definition, one per frame
-		// Do more than one per frame
-		int createdThisFrame = 0;
-		for(int i = 0; i < m_defs.Count; i++) {		// Only if we don't have enough of them!
-			// Instantiate pill
-			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, scrollList.content, false);
-			m_pills.Add(newPillObj.GetComponent<PetPill>());
-			m_pills[i].animator.ForceHide(false);	// Start hidden and disabled
-			m_pills[i].gameObject.SetActive(false);
-
-			// React if the pill is tapped!
-			m_pills[i].OnPillTapped.AddListener(OnPillTapped);
-
-			// Wait a bit before next chunk of pills (to prevent massive lag spike)
-			createdThisFrame++;
-			if(createdThisFrame == 3) {
-				createdThisFrame = 0;	// Reset counter
-				yield return new WaitForSecondsRealtime(m_pillCreationDelay);
-			}
-		}
-	}
-	*/
-
 	/// <summary>
 	/// Initialize all the pills with current dragon data, and create new ones if needed.
 	/// </summary>

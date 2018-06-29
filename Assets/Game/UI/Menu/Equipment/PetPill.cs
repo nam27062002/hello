@@ -24,7 +24,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Single pill representing a pet.
 /// </summary>
-public class PetPill : MonoBehaviour {
+public class PetPill : ScrollRectItem<DefinitionNode> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -48,7 +48,7 @@ public class PetPill : MonoBehaviour {
 	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
 	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
 	[Space]
-	[SerializeField] private GameObject m_equippedFrame = null;
+	[SerializeField] private GameObject m_equippedFrame = null;ScrollRectItem<DefinitionNode>
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
 	[Space]
 	[SerializeField] private Image m_seasonalIcon = null;
@@ -174,7 +174,17 @@ public class PetPill : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//º	
+	//------------------------------------------------------------------------//
+	public void SetDragonData(DragonData _data) {
+		m_dragonData = _data;
+	}
+
+	public override void InitWithData(DefinitionNode _data) {
+		Init(_data, m_dragonData);
+	}
+
+
+
 	/// <summary>
 	/// Initialize from a given pet definition.
 	/// </summary>
