@@ -93,7 +93,7 @@ public class PetFilters : MonoBehaviour {
 	private void Awake() {
 
 		m_scrollRect = GetComponentInChildren<SnappingScrollRect>();
-		m_scrollRect.onValueChanged.AddListener(OnScrollMoved);
+		//m_scrollRect.onValueChanged.AddListener(OnScrollMoved);
 		m_softMask = GetComponentInChildren<SoftMasking.SoftMask>();
 		m_softMaskTransform = m_softMask.GetComponent<RectTransform>();
 		// Start with all filters toggled!
@@ -298,7 +298,7 @@ public class PetFilters : MonoBehaviour {
 		// Readjust the scroll list's content size to fit all filtered pills
 		// [AOC] Usually we would use a content size fitter, but since we're enabling 
 		// the pills with delay, the scrolling logic goes all crazy
-		HorizontalLayoutGroup layout = petsScreen.scrollList.content.GetComponent<HorizontalLayoutGroup>();
+/*		HorizontalLayoutGroup layout = petsScreen.scrollList.content.GetComponent<HorizontalLayoutGroup>();
 		layout.enabled = false;
 		//float pillWidth = petsScreen.pills[0].GetComponent<LayoutElement>().preferredWidth;
 		m_pillWidth = petsScreen.pills[0].GetComponent<RectTransform>().sizeDelta.x;
@@ -319,7 +319,7 @@ public class PetFilters : MonoBehaviour {
 
 		m_defStart = 0;
 
-		SetPills(m_defStart);
+		SetPills(m_defStart);*/
 	}
 
 	void SetPills( int startDefIndex )

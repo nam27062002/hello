@@ -33,6 +33,7 @@ public class PetsScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private PetScrollRect m_petScrollRect = null;
 	[SerializeField] private SnappingScrollRect m_scrollList = null;
 	public SnappingScrollRect scrollList {
 		get { return m_scrollList; }
@@ -198,6 +199,12 @@ public class PetsScreenController : MonoBehaviour {
 		bool wasActive = this.gameObject.activeSelf;
 		this.gameObject.SetActive(true);
 
+		// Store reference to target dragon data for faster access
+		MenuSceneController menuController = InstanceManager.menuSceneController;
+		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+		m_petScrollRect.Setup(m_dragonData);
+		return;
+
 		// If not done yet, load the pet definitions!
 		if(m_defs.Count == 0) {
 			// Get all pet definitions, no filter
@@ -268,9 +275,7 @@ public class PetsScreenController : MonoBehaviour {
 			}
 		});
 
-		// Store reference to target dragon data for faster access
-		MenuSceneController menuController = InstanceManager.menuSceneController;
-		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+
 
 		// Slots
 		for(int i = 0; i < m_petSlots.Count; i++) {
@@ -407,7 +412,7 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Hide dragon's pets whenever preview is ready
 		m_waitingForDragonPreviewToLoad = true;
-
+		/*
 		// Reset scroll list postiion
 		scrollList.horizontalNormalizedPosition = 0f;
 
@@ -415,7 +420,7 @@ public class PetsScreenController : MonoBehaviour {
 		if(string.IsNullOrEmpty(m_initialPetSku)) {
 			scrollList.viewport.SetLocalPosX(1000f);
 			scrollList.viewport.DOLocalMoveX(0f, 1f).SetDelay(0.1f).SetEase(Ease.OutQuad);
-		}
+		}*/
 	}
 
 	/// <summary>

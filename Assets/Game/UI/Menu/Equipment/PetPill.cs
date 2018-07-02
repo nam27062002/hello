@@ -21,10 +21,16 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
+public class PetPillData {
+	public DefinitionNode def;
+	public DragonData dragon;
+}
+
+
 /// <summary>
 /// Single pill representing a pet.
 /// </summary>
-public class PetPill : ScrollRectItem<DefinitionNode> {
+public class PetPill : ScrollRectItem<PetPillData> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -48,7 +54,7 @@ public class PetPill : ScrollRectItem<DefinitionNode> {
 	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
 	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
 	[Space]
-	[SerializeField] private GameObject m_equippedFrame = null;ScrollRectItem<DefinitionNode>
+	[SerializeField] private GameObject m_equippedFrame = null;
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
 	[Space]
 	[SerializeField] private Image m_seasonalIcon = null;
@@ -175,12 +181,8 @@ public class PetPill : ScrollRectItem<DefinitionNode> {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-	public void SetDragonData(DragonData _data) {
-		m_dragonData = _data;
-	}
-
-	public override void InitWithData(DefinitionNode _data) {
-		Init(_data, m_dragonData);
+	public override void InitWithData(PetPillData _data) {
+		Init(_data.def, _data.dragon);
 	}
 
 
@@ -196,7 +198,7 @@ public class PetPill : ScrollRectItem<DefinitionNode> {
 
 		// Optimization: if target def is the same as current one, just do a refresh
 		if(_petDef == m_def) {
-			Refresh();
+			//Refresh();
 			return;
 		}
 

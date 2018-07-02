@@ -79,10 +79,15 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	//------------------------------------------------------------------------//
 	protected float Top() 		{ return (m_containerSize.y * 0.5f) - (m_padding.top); }
 	protected float Bottom() 	{ return (m_containerSize.y * 0.5f) - (m_visibleAreaSize.y - m_padding.bottom); }
-	protected float Left() 		{ return (m_containerSize.x * 0.5f) - (m_padding.left);	}
-	protected float Right() 	{ return (m_containerSize.x * 0.5f) - (m_visibleAreaSize.x - m_padding.right); }
+	protected float Left() 		{ return (m_padding.left) - (m_containerSize.x * 0.5f);	}
+	protected float Right() 	{ return (m_visibleAreaSize.x - m_padding.right) - (m_containerSize.x * 0.5f); }
 
-	protected Vector2 GetPillPosition(int _index) { return (m_containerSize * 0.5f) - m_pillPosition[_index];  }
+	protected Vector2 GetPillPosition(int _index) { 
+		Vector2 ret = GameConstants.Vector2.zero;
+		ret.y = (m_containerSize.y * 0.5f) - m_pillPosition[_index].y;
+		ret.x = m_pillPosition[_index].x - (m_containerSize.x * 0.5f);
+		return ret;
+	}
 
 
 
@@ -186,6 +191,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 		m_isAutoScrolling = false;
 		m_autoScrollVelocity = GameConstants.Vector2.zero;
 		m_firstVisibleItemIndex = 0;
+
 		ShowPillsFrom(m_firstVisibleItemIndex);
 	}
 
@@ -220,7 +226,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 		}
 
 		if (horizontal) {
-			screenPos = m_pillPosition[itemIndex].x - content.anchoredPosition.x;
+			screenPos = content.anchoredPosition.x + m_pillPosition[itemIndex].x;
 			screenLimit = m_visibleAreaSize.x - m_padding.right;
 		}
 
@@ -255,7 +261,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 					pillSize = m_pills[pillType][0].size.y;
 				}
 				if (horizontal) {
-					screenPos = m_pillPosition[itemIndex].x - content.anchoredPosition.x;
+					screenPos = m_pillPosition[itemIndex].x + content.anchoredPosition.x;
 					pillSize = m_pills[pillType][0].size.x;
 				}
 			}
@@ -305,19 +311,23 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 
 		if (deltaMove.magnitude < 10f) {
 			Vector2 anchoredPos = content.anchoredPosition; //it is more accurate to use the anchor pos than the transform pos.
-			Vector2 relativePos = GameConstants.Vector2.zero;
 			int startIndex = 0;
 
 			for (int i = 0; i < m_itemCount; ++i) {
 				T pill = m_pills[m_itemData[i].pillType][0];
-				relativePos = m_pillPosition[i] - content.anchoredPosition;
-				if (vertical && relativePos.y >= -pill.size.y) {
-					startIndex = i;
-					break;
+				if (vertical) {
+					float relativeY = m_pillPosition[i].y - content.anchoredPosition.y;
+					if (relativeY >= -pill.size.y) {
+						startIndex = i;
+						break;
+					}
 				}
-				if (horizontal && relativePos.x >= -pill.size.x) {
-					startIndex = i;
-					break;
+				if (horizontal) {
+					float relativeX = m_pillPosition[i].x + content.anchoredPosition.x;
+					if (relativeX >= -pill.size.x) {
+						startIndex = i;
+						break;
+					}
 				}
 			}
 
