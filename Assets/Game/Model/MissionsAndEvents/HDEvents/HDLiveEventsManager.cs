@@ -67,7 +67,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
     public HDTournamentManager m_tournament = new HDTournamentManager();
     public HDQuestManager m_quest = new HDQuestManager();
-    public HDLiveEventManager m_passive = new HDLiveEventManager();
+	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
 
         // Avoid using dictionaries when possible
     private List<string> m_types;
@@ -109,8 +109,6 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
 		// Load Cache?
 		LoadEventsFromCache();
-
-		// m_passive.Activate();
 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
@@ -399,23 +397,15 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
 	public void SwitchToTournament()
 	{
-		// if hd live events enabled
-		// if (GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN >= UsersManager.currentUser.gamesPlayed)
-		{
-			m_tournament.Activate();
-		}
+		m_tournament.Activate();
 		m_passive.Deactivate();
 		m_quest.Deactivate();
 	}
 
 	public void SwitchToQuest()
 	{
-		// if hd live events enabled
 		m_tournament.Deactivate();
-		// if (GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN >= UsersManager.currentUser.gamesPlayed)
-		{
-			m_passive.Activate();
-			m_quest.Activate();	
-		}
+		m_passive.Activate();
+		m_quest.Activate();	
 	}
 }

@@ -9,9 +9,9 @@ Set objShell 			= WScript.CreateObject("WScript.Shell")
 Set objOutputFile 		= objFSO.CreateTextFile("spawnersProg.txt", 2, true)
 
 
-Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village.unity")
+REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village.unity")
 REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle.unity")
-REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Dark.unity")
+Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Dark.unity")
 Dim substrToFind
 
 	Do until objInputFile.AtEndOfStream
@@ -30,6 +30,7 @@ Dim substrToFind
 			End If
 			tmpStr3 = ";XP"
 			tmpStr4 = ";TIME"
+			tmpStr5 = ";KILL"
 			If foundStrMatch(tmpStr,tmpStr3) = true Then
 				tmpStr = Replace(tmpStr,tmpStr3,"")
 				tmpStr = tmpStr + tmpStr3
@@ -38,6 +39,11 @@ Dim substrToFind
 				tmpStr = Replace(tmpStr,tmpStr4,"")
 				tmpStr = tmpStr + tmpStr4
 			End If
+			
+			If foundStrMatch(tmpStr,tmpStr5) = true Then
+				tmpStr = Replace(tmpStr,tmpStr5,"")
+				tmpStr = tmpStr + tmpStr5
+			End If			
 			
 			tmpStr = tmpStr + vbCrLf
 			REM inactive spawners ends with "-IN" (check the 'rename' script in Unity)

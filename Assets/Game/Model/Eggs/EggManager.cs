@@ -28,10 +28,12 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	public static readonly int INVENTORY_SIZE = 3;
 
-	private static readonly string PET_COMMON 	= "pet_common";
-	private static readonly string PET_RARE 	= "pet_rare";
-	private static readonly string PET_EPIC 	= "pet_epic";
-	private static readonly string PET_SPECIAL 	= "pet_special";
+	private const string PET_COMMON 	= "pet_common";
+	private const string PET_RARE 		= "pet_rare";
+	private const string PET_EPIC 		= "pet_epic";
+	private const string PET_SPECIAL 	= "pet_special";
+
+	private const string RANDOM_STATE_PREFS_KEY = "EggManager.RandomState";
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -169,16 +171,9 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 
 		// Restore saved random state from preferences so the distribution is respected
 		// Only if we have a state saved!
-		if(PlayerPrefs.HasKey("EggManager.RandomState.s0")) {
-			// [AOC] GOING TO HELL!! Random.State is a private struct that can't be easily serialized, so use reflection to do so.
-			// We know the internal structure of Random.State thanks to unofficial UnityDecompiled repo (https://github.com/MattRix/UnityDecompiled/blob/master/UnityEngine/UnityEngine/Random.cs)
+		if(PlayerPrefs.HasKey(RANDOM_STATE_PREFS_KEY)) {
 			UnityEngine.Random.State s = instance.m_rewardDropRate.randomState;
-			for(int i = 0; i < 4; ++i) {
-				FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-				prop.SetValue(s, PlayerPrefs.GetInt("EggManager.RandomState.s" + i));
-				//Debug.Log("<color=magenta>Restoring RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
-			}
-			instance.m_rewardDropRate.randomState = s;
+			instance.m_rewardDropRate.randomState = s.Deserialize(PlayerPrefs.GetString(RANDOM_STATE_PREFS_KEY));
 		}
 
 		// Initialize required golden egg fragments requirements
@@ -283,7 +278,11 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 			}
 
 			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
-			weight = 1f / Mathf.Pow(sm_weightIDs[i], a); // i+1 is the weightID of the formula
+			if (sm_weightIDs[i] > 0) {
+				weight = 1f / Mathf.Pow(sm_weightIDs[i], a); // i+1 is the weightID of the formula
+			} else {
+				weight = 0f;
+			}
 			m_weights[i] = weight;
 			weightTotal += weight;
 
@@ -376,6 +375,15 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		return -1;
 	}
 
+	public static DefinitionNode GenerateReward(float[] _customWeights) {
+		float[] save = sm_weightIDs;
+		SetWeightIDs(_customWeights);
+		DefinitionNode def = GenerateReward();
+		SetWeightIDs(save);
+		BuildDynamicProbabilities();
+		return def;
+	}
+
 	/// <summary>
 	/// Generate a random reward respecting drop chances.
 	/// </summary>
@@ -401,14 +409,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 					}
 
 					// Save random state to preferences so the distribution is respected
-					// [AOC] GOING TO HELL!! Random.State is a private struct that can't be easily serialized, so use reflection to do so.
-					// We know the internal structure of Random.State thanks to unofficial UnityDecompiled repo (https://github.com/MattRix/UnityDecompiled/blob/master/UnityEngine/UnityEngine/Random.cs)
-					UnityEngine.Random.State s = instance.m_rewardDropRate.randomState;
-					for(int i = 0; i < 4; ++i) {
-						FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-						PlayerPrefs.SetInt("EggManager.RandomState.s" + i, (int)prop.GetValue(s));
-						//Debug.Log("<color=magenta>Saving RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
-					}
+					PlayerPrefs.SetString(RANDOM_STATE_PREFS_KEY, instance.m_rewardDropRate.randomState.Serialize());
 				} else {
 					rewardSku = PET_COMMON;
 				}

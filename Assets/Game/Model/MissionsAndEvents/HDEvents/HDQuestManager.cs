@@ -86,7 +86,7 @@ public class HDQuestManager : HDLiveEventManager{
     	if ( m_tracker != null)
     	{
 			m_tracker.enabled = m_isActive;
-			m_tracker.SetValue(0, false);
+			m_tracker.InitValue(0);
     	}
     }
     public void OnGameEnded(){

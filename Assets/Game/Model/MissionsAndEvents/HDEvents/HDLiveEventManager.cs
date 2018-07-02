@@ -185,6 +185,7 @@ public class HDLiveEventManager
     /// </summary>
 	public void ClearEvent()
     {
+		Deactivate();
     	CleanData();
     }
 
@@ -314,7 +315,7 @@ public class HDLiveEventManager
     }
 
 
-	public void FinishEvent()
+	public virtual void FinishEvent()
 	{
 		// Tell server
 		if ( HDLiveEventsManager.TEST_CALLS )

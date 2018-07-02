@@ -815,8 +815,8 @@ public class GameSceneController : GameSceneControllerBase {
             }
         }
 
-		m_boostTimeTracker.SetValue(0, false);
-		m_mapUsageTracker.SetValue(0, false);
+		m_boostTimeTracker.InitValue(0);
+		m_mapUsageTracker.InitValue(0);
 
 		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
 

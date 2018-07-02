@@ -22,7 +22,7 @@ namespace Metagame {
 		// CONSTANTS															  //
 		//------------------------------------------------------------------------//
 		public const string TYPE_CODE = "egg";
-
+		private const string RANDOM_STATE_PREFS_KEY = "RewardEgg.RandomState";
 
 		//------------------------------------------------------------------------//
 		// CLASS MEMBERS AND METHODS											  //
@@ -63,6 +63,9 @@ namespace Metagame {
 			get { return m_reward; }
 		}
 
+		private float[] m_weightIDs;
+		private bool m_hasCustomWeights;
+
 		//------------------------------------------------------------------------//
 		// METHODS																  //
 		//------------------------------------------------------------------------//
@@ -89,13 +92,18 @@ namespace Metagame {
 			m_sku = _sku;
 			m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _sku);
 
-			if(_buildReward) BuildReward();
-
-			if (m_reward != null) {
-				m_rarity = m_reward.rarity;
+			//
+			m_weightIDs = new float[3];
+			if (m_def.Has("weightCommon")) {
+				m_weightIDs[0] = m_def.GetAsFloat("weightCommon", 1);
+				m_weightIDs[1] = m_def.GetAsFloat("weightRare", 2);
+				m_weightIDs[2] = m_def.GetAsFloat("weightEpic", 3);
+				m_hasCustomWeights = true;
 			} else {
-				m_rarity = Rarity.COMMON;
+				m_hasCustomWeights = false;
 			}
+
+			m_rarity = Rarity.COMMON;
 		}
 
 		/// <summary>
@@ -110,7 +118,11 @@ namespace Metagame {
 			if(m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
 				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
 			} else {
-				rewardTypeDef = EggManager.GenerateReward();
+				if (m_hasCustomWeights) {
+					rewardTypeDef = EggManager.GenerateReward(m_weightIDs);
+				} else {
+					rewardTypeDef = EggManager.GenerateReward();
+				}
 			}
 
 			// Nothing else to do if def is null
@@ -182,6 +194,7 @@ namespace Metagame {
 						// If tutorial is not completed, choose from a limited pool
 						if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) 
 						{
+							Debug.Log(Colors.pink.Tag("TUTORIAL NOT COMPLETED, USING REDUCED POOL"));
 							List<DefinitionNode> newPetDefs = new List<DefinitionNode>();
 							for (int i = 0; i < petDefs.Count; i++) {
 								DefinitionNode newPetDef = petDefs[i];
@@ -200,12 +213,21 @@ namespace Metagame {
 								petDef = petDefs.GetRandomValue();	
 							}
 						} else {
+							// Default behaviour
 							float totalWeight = 0f;
 							if (sm_petWeights.Count < petDefs.Count) {
 								sm_petWeights.Resize(petDefs.Count);
 							}
 
+							// [AOC] Creating a new probability set every time will reset the random seed, causing the random to always return the same value
+							//		 Restore the random seed every time we generate a reward so we keep the probability uniform.
 							ProbabilitySet petProb = new ProbabilitySet();
+							if(PlayerPrefs.HasKey(RANDOM_STATE_PREFS_KEY)) {
+								UnityEngine.Random.State s = petProb.randomState;
+								petProb.randomState = s.Deserialize(PlayerPrefs.GetString(RANDOM_STATE_PREFS_KEY));
+							}
+
+							// Add pets to the probability set
 							for (int i = 0; i < petDefs.Count; ++i) {
 								float value = 1f;
 								if (sm_petOverrideProbs.ContainsKey(petDefs[i].sku)) {
@@ -218,14 +240,17 @@ namespace Metagame {
 								petProb.AddElement(petDefs[i].sku, 1);
 							}
 
+							// Set weights for each pet
 							for (int i = 0; i < petDefs.Count; ++i) {
 								petProb.SetProbability(i, sm_petWeights[i] / totalWeight);
 							}
 
+							// Get a random one!
 							int idx = petProb.GetWeightedRandomElementIdx();
-
-							// Default behaviour
 							petDef = petDefs[idx];
+
+							// Store random state to be used on the next Egg reward
+							PlayerPrefs.SetString(RANDOM_STATE_PREFS_KEY, petProb.randomState.Serialize());
 						}
 					}
 
@@ -233,19 +258,22 @@ namespace Metagame {
 					if(petDef != null) {
 						m_reward = CreateTypePet(petDef, m_sku);
 						#if UNITY_EDITOR
-						string[] colorTags = {
-							"<color=#ffffff>",
-							"<color=#00ffff>",
-							"<color=#ffaa00>",
-							"<color=#ff7f00>"
+						Color[] colorTags = {
+							UIConstants.GetRarityColor(Rarity.COMMON),
+							UIConstants.GetRarityColor(Rarity.RARE),
+							UIConstants.GetRarityColor(Rarity.EPIC),
+							UIConstants.GetRarityColor(Rarity.SPECIAL)
 						};
-						Debug.Log("EGG REWARD GENERATED: " + colorTags[(int)m_reward.rarity] + m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "") + "</color>");
-						Debug.Log("<color=purple>EGG REWARD GENERATED FOR EGG " + m_sku + ":\n" + m_reward.ToString() + "</color>");
+						Debug.Log(Colors.purple.Tag("EGG REWARD GENERATED FOR EGG " + m_sku + ":\n") + colorTags[(int)m_reward.rarity].Tag(m_reward.ToString()));
 						#endif
 					} else {
-						Debug.LogError("<color=red>COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + " and rarity " + m_rarity + "!" + "</color>");
+						Debug.LogError(Color.red.Tag("COULDN'T GENERATE EGG REWARD FOR EGG " + m_sku + " and rarity " + m_rarity + "!"));
 					}
 				} break;
+			}
+
+			if (m_reward != null) {
+				m_rarity = m_reward.rarity;
 			}
 		}
 
@@ -253,12 +281,25 @@ namespace Metagame {
 		/// Implementation of the abstract Collect() method.
 		/// </summary>
 		override protected void DoCollect() {
+			BuildReward();
+
             HDTrackingManager.Instance.Notify_EggOpened();
 
             // Push the egg's reward to the stack
             if (m_reward != null) {
+				// Check again whether the reward needs to be replaced or not
+				// (i.e. we just opened an egg that has given us the same reward)
+				m_reward.CheckReplacement();
 				UsersManager.currentUser.PushReward(m_reward);
 			}
+		}
+
+		/// <summary>
+		/// Return a visual representation of the reward.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.RewardEgg"/>.</returns>
+		override public string ToString() {
+			return m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "");
 		}
 	}
 }
