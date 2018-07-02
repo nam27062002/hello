@@ -638,14 +638,15 @@ public class OfferPack {
 		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
 
 		// Time since last purchase
-		// If a new IAP is performed, the timer resets, which could cause the offer to expire
-		// Ignore if player hasn't yet purchased
-		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-		if(trackingPersistence == null) return false;
-		if(trackingPersistence.TotalPurchases <= 0) return false;	// Player hasn't yet purchased
-		long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
-		long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
-		if(m_secondsSinceLastPurchase > timeSinceLastPurchase) return false;	// Not enough time has passed
+		if(m_secondsSinceLastPurchase > 0) {	// Nothing to check if default
+			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+			if(trackingPersistence == null) return false;
+			if(trackingPersistence.TotalPurchases > 0) {	// Ignore if player hasn't yet purchased
+				long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
+				long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
+				if(m_secondsSinceLastPurchase > timeSinceLastPurchase) return false;	// Not enough time has passed
+			}
+		}
 
 		// All checks passed!
 		return true;
