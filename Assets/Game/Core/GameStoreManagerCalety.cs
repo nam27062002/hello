@@ -27,13 +27,52 @@ public class GameStoreManagerCalety : GameStoreManager
 		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
-                Debug.Log("onPurchaseCompleted");
+            {
+                string msg = "onPurchaseCompleted sku = " + sku + " strTransactionID = " + strTransactionID + " strPlatformOrderID = " + strPlatformOrderID + " receipt = ";
+                if (kReceiptJSON == null)
+                {
+                    msg += "null";
+                }
+                else
+                {
+                    msg +=  kReceiptJSON.ToString();
+                }
 
-			// string gameSku = PlatformSkuToGameSku( sku );
-			Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
-		}
+                ControlPanel.Log(msg, ControlPanel.ELogChannel.Store);
+            }
 
-		public override void onPurchaseCancelled(string sku, string strTransactionID) 
+            bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
+            System.Action onDone = delegate()
+            {
+                // string gameSku = PlatformSkuToGameSku( sku );
+                Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
+            };
+
+            System.Action<bool> onConfirmDone = delegate(bool success)
+            {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                {
+                    ControlPanel.Log("Server confirmation for purchase " + sku + " received with success = " + success, ControlPanel.ELogChannel.Store);
+                }
+
+                if (needsServerConfirmation)
+                {
+                    onDone();
+                }
+            };
+
+            Transaction transaction = new Transaction();
+            transaction.SetId(strPlatformOrderID);
+            transaction.SetSource("shop");
+            TransactionManager.instance.Pending_ConfirmTransactionWithServer(transaction, onConfirmDone);                        
+
+            if (!needsServerConfirmation)
+            {                                                    
+                onDone();
+            }            
+		}       
+
+        public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
                 Debug.Log("onPurchaseCancelled");

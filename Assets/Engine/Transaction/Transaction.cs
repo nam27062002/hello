@@ -36,23 +36,37 @@ public class Transaction
     /// List of involving resource transactions that compose this transaction. Each simple transaction has 
     /// </summary>
     private List<TransactionResource> m_transactionResources;    
-    
-    private string GetId()
+
+    public enum EPerformType
+    {
+        // The transaction is performed directly so the user gets the resources immediately
+        Direct, 
+
+        // The transaction is added to the user's profile as a reward so the user will receive it when the reward flow is triggered, typically when entering in dragon selection screen
+        AddToUserProfile
+    };    
+
+    public Transaction()
+    {
+        Reset();
+    }
+
+    public string GetId()
     {
         return m_id;
     }
 
-    private void SetId(string value)
+    public void SetId(string value)
     {
         m_id = value;
     }
 
-    private string GetSource()
+    public string GetSource()
     {
         return m_source;
     }
 
-    private void SetSource(string value)
+    public void SetSource(string value)
     {
         m_source = value;
     }
@@ -220,19 +234,21 @@ public class Transaction
         return returnValue;
     }
 
-    public bool Perform()
+    public bool Perform(EPerformType performType)
     {
         bool canPerform = CanPerform();
         if (canPerform)
         {
-            if (m_transactionResources != null)
+            switch (performType)
             {
-                int count = m_transactionResources.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    m_transactionResources[i].Perform();
-                }
-            }
+                case EPerformType.Direct:
+                    PerformDirect();
+                    break;
+
+                case EPerformType.AddToUserProfile:
+                    AddToUserProfile();
+                    break;
+            }            
 
             SetHasBeenPerformed(true);
         }
@@ -306,6 +322,51 @@ public class Transaction
         }
 
         return returnValue;
+    }
+
+    public List<Metagame.Reward> ToRewards()
+    {
+        List<Metagame.Reward> returnValue = new List<Metagame.Reward>();
+        if (m_transactionResources != null)
+        {
+            int count = m_transactionResources.Count;
+            Metagame.Reward reward;
+            for (int i = 0; i < count; i++)
+            {
+                reward = m_transactionResources[i].ToReward(m_source);
+                if (reward != null)
+                {
+                    returnValue.Add(reward);
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
+    private void PerformDirect()
+    {
+        if (m_transactionResources != null)
+        {
+            int count = m_transactionResources.Count;
+            for (int i = 0; i < count; i++)
+            {
+                m_transactionResources[i].Perform();
+            }
+        }
+    }
+
+    private void AddToUserProfile()
+    {
+        List<Metagame.Reward> rewards = ToRewards();
+        if (rewards != null)
+        {
+            int count = rewards.Count;
+            for (int i = 0; i < count; i++)
+            {
+                UsersManager.currentUser.PushReward(rewards[i]);
+            }
+        }
     }
 }
  

@@ -71,4 +71,27 @@
 
         return returnValue;
     }
+
+    public Metagame.Reward ToReward(string source)
+    {
+        Metagame.Reward returnValue = null;
+
+        switch (GetCurrency())
+        {
+            case UserProfile.Currency.SOFT:
+                returnValue = Metagame.Reward.CreateTypeSoftCurrency(GetAmount(), HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, source);
+                break;
+
+            case UserProfile.Currency.HARD:
+                returnValue = Metagame.Reward.CreateTypeHardCurrency(GetAmount(), HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, source);
+                break;
+        }
+
+        if (FeatureSettingsManager.IsDebugEnabled && returnValue == null)
+        {
+            TransactionManager.LogWarning("No support to translate currency type " + GetCurrency() + " into Metaga.Reward");
+        }
+
+        return returnValue;      
+    }
 }
