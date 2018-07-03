@@ -6,8 +6,9 @@ public class Transaction
     private const string KEY_SOURCE = "source";
     private const string KEY_ITEMS = "items";
 
-    private const string KEY_SC = "sc";
-    private const string KEY_HC = "hc";
+    public const string KEY_SC = "sc";
+    public const string KEY_HC = "hc";
+    public const string KEY_GF = "gf";
 
     private const string KEY_ITEM_SKU = "sku";
     private const string KEY_ITEM_TYPE = "type";
@@ -20,7 +21,8 @@ public class Transaction
     {
         "none",
         KEY_SC,
-        KEY_HC
+        KEY_HC,
+        KEY_GF
     };
 
     private static int KEYS_CURRENCIES_COUNT = KEYS_CURRENCIES.Count;
@@ -36,6 +38,10 @@ public class Transaction
 
             case KEY_HC:
                 returnValue = UserProfile.Currency.HARD;
+                break;
+
+            case KEY_GF:
+                returnValue = UserProfile.Currency.GOLDEN_FRAGMENTS;
                 break;
         }
 
@@ -423,6 +429,11 @@ public class Transaction
 
             case UserProfile.Currency.HARD:
                 returnValue = Metagame.Reward.CreateTypeHardCurrency(amount, HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, GetSource());
+                break;
+
+            case UserProfile.Currency.GOLDEN_FRAGMENTS:
+                // Rarity is unknown at this place so we just use COMMON. It's not important because it's used only for visuals. We can't use UNKNOWN because the visuals crash with that rarity
+                returnValue = Metagame.Reward.CreateTypeGoldenFragments((int)amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, GetSource());
                 break;
         }       
 
