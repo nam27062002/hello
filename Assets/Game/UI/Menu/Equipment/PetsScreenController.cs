@@ -21,7 +21,6 @@ using TMPro;
 /// <summary>
 /// Main controller for the pets menu screen.
 /// </summary>
-[RequireComponent(typeof(PetFilters))]
 public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -33,10 +32,6 @@ public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private PetScrollRect m_petScrollRect = null;
-	[SerializeField] private SnappingScrollRect m_scrollList = null;
-	public SnappingScrollRect scrollList {
-		get { return m_scrollList; }
-	}
 	[SerializeField] private Localizer m_counterText = null;
 
 
@@ -49,16 +44,6 @@ public class PetsScreenController : MonoBehaviour {
 	// Animation setup
 	[SerializeField] private float m_initialScrollAnimDelay = 0.5f;
 
-	// Collections
-	private List<PetPill> m_pills = new List<PetPill>();
-	public List<PetPill> pills {
-		get { return m_pills; }
-	}
-
-	private List<DefinitionNode> m_defs = new List<DefinitionNode>();
-	public List<DefinitionNode> defs {
-		get { return m_defs; }
-	}
 
 	// Internal references
 	private NavigationShowHideAnimator m_animator = null;
@@ -115,13 +100,7 @@ public class PetsScreenController : MonoBehaviour {
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
-		// Disable all pills to prevent the OnEnable being called on all of them at once next time we enter the screen
-		for(int i = 0; i < m_pills.Count; ++i) {
-			m_pills[i].animator.ForceHide(false);
-			m_pills[i].gameObject.SetActive(false);
-		}
-
+	private void OnDisable() {		
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 	}
@@ -203,33 +182,6 @@ public class PetsScreenController : MonoBehaviour {
 
 		// We're done! Restore original object state
 		this.gameObject.SetActive(wasActive);
-
-
-		/*
-		// If not done yet, load the pet definitions!
-		if(m_defs.Count == 0) {
-			// Get all pet definitions, no filter
-			m_defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
-		}
-
-		// Purge hidden pets (unless cheating!)
-		if(!DebugSettings.showHiddenPets) {
-			for( int i = m_defs.Count - 1; i >= 0; --i )
-			{
-				if ( m_defs[i].GetAsBool("hidden") )
-				{
-					m_defs.RemoveAt(i);
-				}
-			}
-		}
-
-		// Sort them!
-		// Category order: same as filter buttons
-
-
-		*/
-
-
 	}
 
 	/// <summary>
@@ -275,15 +227,6 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Hide dragon's pets whenever preview is ready
 		m_waitingForDragonPreviewToLoad = true;
-		/*
-		// Reset scroll list postiion
-		scrollList.horizontalNormalizedPosition = 0f;
-
-		// Program initial animation, except if going to a pet
-		if(string.IsNullOrEmpty(m_initialPetSku)) {
-			scrollList.viewport.SetLocalPosX(1000f);
-			scrollList.viewport.DOLocalMoveX(0f, 1f).SetDelay(0.1f).SetEase(Ease.OutQuad);
-		}*/
 	}
 
 	/// <summary>
@@ -439,7 +382,6 @@ public class PetsScreenController : MonoBehaviour {
 		// Check id
 		if(_id == DebugSettings.SHOW_HIDDEN_PETS) {
 			// Force a reload of the pets list the next time we enter the screen
-			m_defs.Clear();
 			Initialize();
 		}
 	}

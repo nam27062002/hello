@@ -400,14 +400,18 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 
 		m_targetPosition = content.anchoredPosition;
 		if (vertical) {
-			m_targetPosition.y = m_pillPosition[_index].y - m_visibleAreaSize.y/2f;
-			if (m_targetPosition.y < m_padding.top) m_targetPosition.y = m_padding.top;
-			if (m_targetPosition.y > (m_containerSize.y - m_visibleAreaSize.y + m_padding.bottom)) m_targetPosition.y = (m_containerSize.y - m_visibleAreaSize.y + m_padding.bottom);
+			if (m_containerSize.y > m_visibleAreaSize.y) {
+				m_targetPosition.y = m_pillPosition[_index].y - m_visibleAreaSize.y/2f;
+				if (m_targetPosition.y < m_padding.top) m_targetPosition.y = m_padding.top;
+				if (m_targetPosition.y > (m_containerSize.y - m_visibleAreaSize.y - m_padding.bottom)) m_targetPosition.y = (m_containerSize.y - m_visibleAreaSize.y - m_padding.bottom);
+			}
 		}
 		if (horizontal)	{
-			m_targetPosition.x = m_visibleAreaSize.x/2f - m_pillPosition[_index].x;
-			if (m_targetPosition.x > m_padding.left) m_targetPosition.x = m_padding.left;
-			if (m_targetPosition.x < -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right)) m_targetPosition.x = -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right);
+			if (m_containerSize.x > m_visibleAreaSize.x) {
+				m_targetPosition.x = m_visibleAreaSize.x/2f - m_pillPosition[_index].x;
+				if (m_targetPosition.x > m_padding.left) m_targetPosition.x = m_padding.left;
+				if (m_targetPosition.x < -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right)) m_targetPosition.x = -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right);
+			}
 		}
 
 		m_focusToPillIndex = _index;
