@@ -38,7 +38,7 @@ public class GameStoreManagerCalety : GameStoreManager
                     msg +=  kReceiptJSON.ToString();
                 }
 
-                ControlPanel.Log(msg, ControlPanel.ELogChannel.Store);
+                Log(msg);
             }
 
             bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
@@ -52,7 +52,7 @@ public class GameStoreManagerCalety : GameStoreManager
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                 {
-                    ControlPanel.Log("Server confirmation for purchase " + sku + " received with success = " + success, ControlPanel.ELogChannel.Store);
+                    Log("Server confirmation for purchase " + sku + " received with success = " + success);
                 }
 
                 if (needsServerConfirmation)
@@ -75,7 +75,7 @@ public class GameStoreManagerCalety : GameStoreManager
         public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
-                Debug.Log("onPurchaseCancelled");
+                Log("onPurchaseCancelled");
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, sku);
 		}
@@ -83,7 +83,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
-				Debug.Log("onPurchaseFailed sku = " + sku + " transactionID = " + strTransactionID);
+				Log("onPurchaseFailed sku = " + sku + " transactionID = " + strTransactionID);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, sku);
 		}
@@ -91,7 +91,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		public override void onStoreIsReady() 
 		{
             if (FeatureSettingsManager.IsDebugEnabled)
-                Debug.Log("onStoreIsReady");
+                Log("onStoreIsReady");
 
 			m_isReady = true;	
 		}
@@ -119,7 +119,7 @@ public class GameStoreManagerCalety : GameStoreManager
         public override void onStoreIosInitFail(int errorCode)
         {
             if (FeatureSettingsManager.IsDebugEnabled)
-                Debug.Log("onStoreIosInitFail errorCode = " + errorCode);
+                Log("onStoreIosInitFail errorCode = " + errorCode);
 
             m_hasInitFailed = true;
         }
@@ -191,7 +191,7 @@ public class GameStoreManagerCalety : GameStoreManager
     private void TryToSolveInitializeProblems()
     {
 		if (FeatureSettingsManager.IsDebugEnabled)
-			Debug.Log("TryToSolveInitializedProblems isReady = " + IsReady() + " HasInitFailed = " + m_storeListener.HasInitFailed());
+			Log("TryToSolveInitializedProblems isReady = " + IsReady() + " HasInitFailed = " + m_storeListener.HasInitFailed());
 		
         // Checks if there was an initialize problem
         if (!IsReady() && m_storeListener.HasInitFailed())
@@ -315,5 +315,25 @@ public class GameStoreManagerCalety : GameStoreManager
 			return GOOGLE_ATTRIBUTE;
 		#endif
     	return "";
-    }        
+    }
+
+    #region log
+    private static void Log(string msg)
+    {
+        msg = "[Store] " + msg;
+        ControlPanel.Log(msg, ControlPanel.ELogChannel.Store);
+    }
+
+    private static void LogError(string msg)
+    {
+        msg = "[Store] " + msg;
+        ControlPanel.LogError(msg, ControlPanel.ELogChannel.Store);
+    }
+
+    private static void LogWarning(string msg)
+    {
+        msg = "[Store] " + msg;
+        ControlPanel.LogWarning(msg, ControlPanel.ELogChannel.Store);
+    }
+    #endregion
 }
