@@ -183,24 +183,13 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                                     isValid = transaction.FromJSON(transactionNode);
                                     if (isValid)
                                     {
-                                        // UI is prepared to give only a resource type (either sc or pc), so if the transaction contains more than one resource type an error is shown and the 
-                                        // transaction is ignored
-                                        if (transaction.GetResourceTypesAmount() == 1)
-                                        {
-                                            Pending_AddTransaction(transaction);
-                                        }
-                                        else if (FeatureSettingsManager.IsDebugEnabled)
-                                        {
-                                            LogError("Transaction " + transactionNode.ToString() + " received from the server contains more than one resource type and the client only support one resource type transactions so it's ignored");
-                                        }
+                                        Pending_AddTransaction(transaction);                                        
                                     }
                                     else if (FeatureSettingsManager.IsDebugEnabled)
                                     {
                                         LogError("Transaction " + transactionNode.ToString() + " received from the server is not supported by the client so it's ignored");
                                     }
                                 }
-
-
                             }
                         }
                     }
