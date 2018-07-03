@@ -26,8 +26,7 @@ public class PetsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const int INSTANT_INITIAL_PILLS = 0;
-	private const string PILL_PATH = "UI/Metagame/Pets/PF_PetPill";
+
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -40,8 +39,6 @@ public class PetsScreenController : MonoBehaviour {
 	}
 	[SerializeField] private Localizer m_counterText = null;
 
-	[Space]
-	[SerializeField] private float m_pillCreationDelay = 0.025f;
 
 	[Space]
 	[SerializeField] private List<PetSlot> m_petSlots = new List<PetSlot>();
@@ -50,8 +47,6 @@ public class PetsScreenController : MonoBehaviour {
 	}
 
 	// Animation setup
-	[Space]
-	[SerializeField] private float m_scrollAnimDuration = 0.5f;
 	[SerializeField] private float m_initialScrollAnimDelay = 0.5f;
 
 	// Collections
@@ -76,16 +71,6 @@ public class PetsScreenController : MonoBehaviour {
 		}
 	}
 
-	private PetFilters m_petFilters = null;
-	public PetFilters petFilters {
-		get {
-			if(m_petFilters == null) {
-				m_petFilters = this.GetComponent<PetFilters>();
-			}
-			return m_petFilters;
-		}
-	}
-
 	// Cache some data for faster access
 	private DragonData m_dragonData = null;
 	private string m_initialPetSku = "";
@@ -106,7 +91,8 @@ public class PetsScreenController : MonoBehaviour {
 		animator.OnHidePreAnimation.AddListener(OnHidePreAnimation);
 
 		// Subscribe to other events
-		petFilters.OnFilterChanged.AddListener(OnFilterChanged);
+		m_petScrollRect.OnFilterChanged.AddListener(OnFilterChanged);
+		m_petScrollRect.OnPillTapped.AddListener(OnPillTapped);
 
 		// Subscribe to external events
 		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
@@ -170,7 +156,8 @@ public class PetsScreenController : MonoBehaviour {
 		animator.OnHidePreAnimation.RemoveListener(OnHidePreAnimation);
 
 		// Unsubscribe from other events
-		petFilters.OnFilterChanged.RemoveListener(OnFilterChanged);
+		m_petScrollRect.OnFilterChanged.RemoveListener(OnFilterChanged);
+		m_petScrollRect.OnPillTapped.RemoveListener(OnPillTapped);
 
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
@@ -199,12 +186,26 @@ public class PetsScreenController : MonoBehaviour {
 		bool wasActive = this.gameObject.activeSelf;
 		this.gameObject.SetActive(true);
 
+
+		// Slots
+		for(int i = 0; i < m_petSlots.Count; i++) {
+			m_petSlots[i].Init(i);
+		}
+
 		// Store reference to target dragon data for faster access
 		MenuSceneController menuController = InstanceManager.menuSceneController;
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 		m_petScrollRect.Setup(m_dragonData);
-		return;
 
+
+		// Do a first refresh - without animation
+		Refresh(false);
+
+		// We're done! Restore original object state
+		this.gameObject.SetActive(wasActive);
+
+
+		/*
 		// If not done yet, load the pet definitions!
 		if(m_defs.Count == 0) {
 			// Get all pet definitions, no filter
@@ -224,78 +225,11 @@ public class PetsScreenController : MonoBehaviour {
 
 		// Sort them!
 		// Category order: same as filter buttons
-		Dictionary<string, int> filterOrder = new Dictionary<string, int>();
-		for(int i = 0; i < petFilters.filterButtons.Length; i++) {
-			filterOrder[petFilters.filterButtons[i].filterName] = i;
-		}
-
-		// Rarity order: rarer pets first
-		Dictionary<string, int> rarityOrder = new Dictionary<string, int>();
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL)] = 0;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.EPIC)] = 1;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.RARE)] = 2;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.COMMON)] = 3;
-
-		// Put owned pets at the beginning of the list, then sort by category (following filter buttons order), finally by content order
-		m_defs.Sort((DefinitionNode _def1, DefinitionNode _def2) => {
-			bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def1.sku);
-			bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(_def2.sku);
-			if(unlocked1 && !unlocked2) {
-				return -1;
-			} else if(unlocked2 && !unlocked1) {
-				return 1;
-			} else {
-				// Both pets locked or unlocked:
-				// Sort by rarity (rarest ones first)
-				int rarityOrder1 = int.MaxValue;
-				int rarityOrder2 = int.MaxValue;
-				rarityOrder.TryGetValue(_def1.Get("rarity"), out rarityOrder1);
-				rarityOrder.TryGetValue(_def2.Get("rarity"), out rarityOrder2);
-				if(rarityOrder1 < rarityOrder2) {
-					return -1;
-				} else if(rarityOrder2 < rarityOrder1) {
-					return 1;
-				} else {
-					// Same rarity:
-					// Sort by category (following filter buttons order)
-					int catOrder1 = int.MaxValue;
-					int catOrder2 = int.MaxValue;
-					filterOrder.TryGetValue(_def1.Get("category"), out catOrder1);
-					filterOrder.TryGetValue(_def2.Get("category"), out catOrder2);
-					if(catOrder1 < catOrder2) {
-						return -1;
-					} else if(catOrder2 < catOrder1) {
-						return 1;
-					} else {
-						// Same category:
-						// Sort by order as defined in content
-						return _def1.GetAsInt("order").CompareTo(_def2.GetAsInt("order"));
-					}
-				}
-			}
-		});
 
 
+		*/
 
-		// Slots
-		for(int i = 0; i < m_petSlots.Count; i++) {
-			m_petSlots[i].Init(i);
-		}
 
-		//
-		InitPills();
-
-		// Reset filters
-		petFilters.ResetFilters();
-
-		// Do a first refresh - without animation
-		Refresh(false);
-
-		// Initialize the pills!
-		// InitPillsWithDragonData();
-
-		// We're done! Restore original object state
-		this.gameObject.SetActive(wasActive);
 	}
 
 	/// <summary>
@@ -320,84 +254,13 @@ public class PetsScreenController : MonoBehaviour {
 	/// <param name="_showUnlockAnim">Whether to launch the unlock animation or not.</param>
 	/// <param name="_delay">Add delay, mostly to sync with other animations and to wait for the target pill to be instantiated.</param>
 	public void ScrollToPet(string _petSku, bool _showUnlockAnim, float _delay = 0f) {
-		// If a delay is required, call ourselves later on
-		if(_delay > 0f) {
-			UbiBCN.CoroutineManager.DelayedCall(() => ScrollToPet(_petSku, _showUnlockAnim, 0f), _delay);
-			return;
-		}
-
-		// Aux vars
-		int targetPillIdx = 0;
-		int pillCount = 0;
-		PetPill targetPill = null;
-		PetPill pill = null;
-
-		// Find pet's pill
-		for(int i = 0; i < m_pills.Count; i++) {
-			// If pill is not visible, ignore
-			pill = m_pills[i];
-			if(!pill.animator.visible) continue;
-
-			// Increase active pill count
-			pillCount++;
-
-			// Is it the target pill?
-			if(pill.def.sku == _petSku) {
-				// Yes! Store reference
-				targetPill = pill;
-				targetPillIdx = pillCount;	// Relative index within all active pills
-			}
-		}
-
-		// If a target pill was selected, scroll to it!
-		if(targetPill != null) {
-			// Prepare unlock anim
-			if(_showUnlockAnim) {
-				targetPill.PrepareUnlockAnim();
-			}
-
-			// Kill any existing anim on the scrolllist
-			scrollList.DOKill();
-
-			// Use scroll list snapping tech, respecting delay
-			m_scrollList.SelectPoint(targetPill.GetComponent<ScrollRectSnapPoint>());
-
-			// Once scroll animation has finished, launch target animation
-			UbiBCN.CoroutineManager.DelayedCall(
-				() => {
-					// Show some feedback!
-					if(_showUnlockAnim) {
-						targetPill.LaunchUnlockAnim();
-					} else {
-						targetPill.LaunchBounceAnim();
-					}
-				},
-				m_scrollList.snapAnimDuration
-			);
-		}
+		m_petScrollRect.FocusOn(_petSku, _showUnlockAnim);
 	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize all the pills with current dragon data, and create new ones if needed.
-	/// </summary>
-	private void InitPills() {
-		if ( m_pills.Count == 0 ){
-			GameObject prefab = Resources.Load<GameObject>(PILL_PATH);
-			for(int i = 0; i < 8; i++) {
-				// Instantiate pill
-				GameObject newPillObj = GameObject.Instantiate<GameObject>(prefab, scrollList.content, false);
-				m_pills.Add(newPillObj.GetComponent<PetPill>());
-				m_pills[i].animator.ForceHide(false);	// Start hidden
 
-				// React if the pill is tapped!
-				m_pills[i].OnPillTapped.AddListener(OnPillTapped);
-			}
-			prefab = null;
-		}
-	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -489,16 +352,16 @@ public class PetsScreenController : MonoBehaviour {
 	/// The filters have changed.
 	/// </summary>
 	/// <param name="_filters">The filters collection that triggered the event.</param>
-	public void OnFilterChanged(PetFilters _filters) {
+	public void OnFilterChanged(PetScrollRect _filters) {
 		// Find out unlocked pets in the current filtered list
 		int unlockedCount = _filters.filteredDefs.Where(
-			(_def) => UsersManager.currentUser.petCollection.IsPetUnlocked(_def.sku)
+			(_item) => UsersManager.currentUser.petCollection.IsPetUnlocked(_item.data.def.sku)
 		).ToList().Count;
 
 		// Get current filter name
 		string categorySku = "";
 		string categoryName = "all";
-		if(string.IsNullOrEmpty(_filters.currentFilter)) {
+		if(_filters.currentFilter == PetScrollRect.ALL_FILTERS) {
 			categoryName = LocalizationManager.SharedInstance.Localize("TID_PET_CATEGORY_ALL");
 		} else {
 			DefinitionNode categoryDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_CATEGORIES, _filters.currentFilter);
@@ -565,9 +428,6 @@ public class PetsScreenController : MonoBehaviour {
 				text.text.color = Color.red;
 			}
 		}
-
-		// Snap to that pill in any case
-		m_scrollList.SelectPoint(_pill.GetComponent<ScrollRectSnapPoint>());
 	}
 
 	/// <summary>

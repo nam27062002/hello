@@ -13,9 +13,11 @@ public class ScrollRectItemData<D> {
 
 public abstract class ScrollRectItem<D> : MonoBehaviour {	
 	public Vector2 size;
+	public int pillType;
 	private RectTransform m_rt;
 
 	public abstract void InitWithData(D _data);
+	public abstract void Animate(int _index);
 
 	public void ComputeSize() {
 		if (m_rt == null) {
@@ -58,8 +60,10 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	private List<GameObject> m_pillPrefabs;
 	private List<ScrollRectItemData<D>> m_itemData;
 	private Vector2[] m_pillPosition;
-	private List<List<T>> m_pills;
-	private List<int> m_usedPills;
+
+	private List<T> m_pillsReference; // query for sizes
+	private List<T> m_slotsOfPills;
+	private List<Stack<T>> m_poolsOfPills;
  
 	protected Vector2 m_visibleAreaSize = GameConstants.Vector2.zero;
 	protected Vector2 m_containerSize = GameConstants.Vector2.zero;
@@ -69,6 +73,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 
 	private Vector2 m_lastPosition;
 
+	private int m_focusToPillIndex;
 	private bool m_isAutoScrolling;
 	private Vector2 m_autoScrollVelocity;
 	private Vector2 m_targetPosition;
@@ -101,6 +106,14 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 
 	protected override void OnDisable() {
 		base.OnDisable();
+
+		// return all used pills
+		if (m_slotsOfPills != null) {
+			for (int i = 0; i < m_slotsOfPills.Count; ++i) {
+				ReturnPillToPool(i);
+			}
+		}
+
 		onValueChanged.RemoveListener(OnValueChanged);
 	}
 
@@ -110,15 +123,14 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	public void Clear() {
 		m_itemData.Clear();
 		m_pillPrefabs.Clear();
-		m_usedPills.Clear();
+		m_slotsOfPills.Clear();
 
-		for (int i = 0; i < m_pills.Count; ++i) {
-			for (int j = 0; j < m_pills.Count; ++j) {
-				GameObject.Destroy(m_pills[i][j].gameObject);
+		for (int i = 0; i < m_poolsOfPills.Count; ++i) {
+			while (m_poolsOfPills[i].Count > 0) {
+				GameObject.Destroy(m_poolsOfPills[i].Pop().gameObject);
 			}
-			m_pills[i].Clear();
 		}
-		m_pills.Clear();
+		m_poolsOfPills.Clear();
 
 		content.sizeDelta = GameConstants.Vector2.zero;
 	}
@@ -132,38 +144,48 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	public void Setup(List<GameObject> _pillPrefabs, List<ScrollRectItemData<D>> _itemData) {
 		m_pillPrefabs = _pillPrefabs;
 		m_itemData = _itemData;
+		m_itemCount = m_itemData.Count;
 
 		m_visibleAreaSize.x = viewRect.rect.width;
 		m_visibleAreaSize.y = viewRect.rect.height;
 
 		//
 		// Create the smallest 
-		if (m_pills == null) {
-			m_pills = new List<List<T>>();
-			m_usedPills = new List<int>();
+		if (m_poolsOfPills == null || m_poolsOfPills.Count == 0) {
+			m_poolsOfPills = new List<Stack<T>>();
+			m_pillsReference = new List<T>();
 
 			for (int i = 0; i < m_pillPrefabs.Count; ++i) {				
-				m_pills.Add(new List<T>());
-				m_usedPills.Add(0);
-
+				m_poolsOfPills.Add(new Stack<T>());
 				CreatePillOfType(i);
+				m_pillsReference.Add(m_poolsOfPills[i].Peek());
 			}
-		}
 
-		for (int i = 0; i < m_usedPills.Count; ++i) {
-			m_usedPills[i] = 0;
+			m_slotsOfPills = new List<T>();
+			for (int i = 0; i < m_itemCount; ++i) {
+				m_slotsOfPills.Add(null);
+			}
+		} else  {
+			// return all used pills
+			for (int i = 0; i < m_slotsOfPills.Count; ++i) {
+				ReturnPillToPool(i);
+			}
+
+			// maybe we have more items now
+			for (int i = m_slotsOfPills.Count; i < m_itemCount; ++i) {
+				m_slotsOfPills.Add(null);
+			}
 		}
 
 		//
 		// Resize container
-		m_itemCount = m_itemData.Count;
 		m_pillPosition = new Vector2[m_itemCount];
 		m_containerSize = GameConstants.Vector2.zero;
 
 		if (vertical) {
 			m_containerSize.y = m_padding.top;
 			for (int i = 0; i < m_itemCount; ++i) {
-				T pill = m_pills[m_itemData[i].pillType][0];
+				T pill = m_pillsReference[m_itemData[i].pillType];
 				m_containerSize.y += pill.size.y * 0.5f;
 				m_pillPosition[i] = m_containerSize;
 				m_containerSize.y += pill.size.y * 0.5f + m_padding.spacing;
@@ -174,7 +196,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 		if (horizontal) {
 			m_containerSize.x = m_padding.left;
 			for (int i = 0; i < m_itemCount; ++i) {
-				T pill = m_pills[m_itemData[i].pillType][0];
+				T pill = m_pillsReference[m_itemData[i].pillType];
 				m_containerSize.x += pill.size.x * 0.5f;
 				m_pillPosition[i] = m_containerSize;
 				m_containerSize.x += pill.size.x * 0.5f + m_padding.spacing;
@@ -182,13 +204,14 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 			m_containerSize.x += m_padding.right;
 		}
 
+		content.anchoredPosition = GameConstants.Vector2.zero;
 		content.sizeDelta = m_containerSize;
-
 
 		//
 		m_lastPosition = content.anchoredPosition;
 
 		m_isAutoScrolling = false;
+		m_focusToPillIndex = -1;
 		m_autoScrollVelocity = GameConstants.Vector2.zero;
 		m_firstVisibleItemIndex = 0;
 
@@ -197,85 +220,112 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 
 	private void CreatePillOfType(int _type) {
 		GameObject instance = GameObject.Instantiate<GameObject>(m_pillPrefabs[_type], content, false);
+		instance.SetActive(false);
 		T pill = instance.GetComponent<T>();
+		pill.pillType = _type;
 		pill.ComputeSize();
-		m_pills[_type].Add(pill);
+		m_poolsOfPills[_type].Push(pill);
 
-		OnPillCreated();
+		OnPillCreated(pill);
+	}
+
+	private void ReturnPillToPool(int _itemIndex) {
+		T pill = m_slotsOfPills[_itemIndex];
+		if (pill != null) {
+			pill.gameObject.SetActive(false);
+			m_poolsOfPills[pill.pillType].Push(pill);
+			m_slotsOfPills[_itemIndex] = null;
+		}
 	}
 
 	/// <summary>
 	/// Draw all visible items.
 	/// </summary>
 	/// <param name="_index">First visible item index.</param>
-	private void ShowPillsFrom(int _index) {	
+	private void ShowPillsFrom(int _firstItemIndex) {	
 		// Ignore if there is no data
 		if(m_itemData == null) return;
 		if(m_itemData.Count == 0) return;
-		_index = Mathf.Clamp(_index, 0, m_itemData.Count - 1);
+		_firstItemIndex = Mathf.Clamp(_firstItemIndex, 0, m_itemData.Count - 1);
 
 		float screenPos = 0;
 		float screenLimit = 0;
 		float pillSize = 0;
-		int pillType = m_itemData[_index].pillType;
-		int itemIndex = _index;
+		int pillType = m_itemData[_firstItemIndex].pillType;
+		int lastItemIndex = _firstItemIndex;
 
 		if (vertical) {
-			screenPos = m_pillPosition[itemIndex].y - content.anchoredPosition.y;
+			screenPos = m_pillPosition[lastItemIndex].y - content.anchoredPosition.y;
 			screenLimit = m_visibleAreaSize.y - m_padding.bottom;
 		}
 
 		if (horizontal) {
-			screenPos = content.anchoredPosition.x + m_pillPosition[itemIndex].x;
+			screenPos = content.anchoredPosition.x + m_pillPosition[lastItemIndex].x;
 			screenLimit = m_visibleAreaSize.x - m_padding.right;
-		}
-
-		//reset used pills counter
-		for (int i = 0; i < m_usedPills.Count; ++i) {
-			m_usedPills[i] = 0;
 		}
 
 		//draw all the pills visible inside the viewport
 		do {
-			//if we don't have enough pills of one type, create them
-			if (m_usedPills[pillType] >= m_pills[pillType].Count) {
-				CreatePillOfType(pillType);
-			}
-
-			T pill = m_pills[pillType][m_usedPills[pillType]];
-			pill.InitWithData(m_itemData[itemIndex].data);
-			pill.SetPosition(GetPillPosition(itemIndex));
-			pill.gameObject.SetActive(true);
-
-			m_usedPills[pillType]++;
-
 			//Next pill. We will check if it fits inside the viewport.
-			itemIndex++;
-			if (itemIndex >= m_itemCount) {
+			lastItemIndex++;
+			if (lastItemIndex >= m_itemCount) {
 				break;
 			} else {
-				pillType = m_itemData[itemIndex].pillType;
+				pillType = m_itemData[lastItemIndex].pillType;
 
 				if (vertical) {
-					screenPos = m_pillPosition[itemIndex].y - content.anchoredPosition.y;
-					pillSize = m_pills[pillType][0].size.y;
+					screenPos = m_pillPosition[lastItemIndex].y - content.anchoredPosition.y;
+					pillSize = m_pillsReference[pillType].size.y;
 				}
 				if (horizontal) {
-					screenPos = m_pillPosition[itemIndex].x + content.anchoredPosition.x;
-					pillSize = m_pills[pillType][0].size.x;
+					screenPos = m_pillPosition[lastItemIndex].x + content.anchoredPosition.x;
+					pillSize = m_pillsReference[pillType].size.x;
 				}
 			}
 		} while (screenPos < screenLimit + pillSize);
 
-		// Disable unused pills 
-		for (int i = 0; i < m_usedPills.Count; ++i) {
-			for (int j = m_usedPills[i]; j < m_pills[i].Count; ++j) {
-				m_pills[i][j].gameObject.SetActive(false);
+
+		// we have to show pills from _firstIndex to lastItemIndex,
+		// and return all the other pills to the pool
+
+		// first, return all the pills not visible
+		// left side
+		int i = _firstItemIndex - 1;
+		while (i >= 0) {			
+			ReturnPillToPool(i);
+			i--;
+		}
+
+		// right side
+		i = lastItemIndex + 1;
+		while (i < m_itemCount) {
+			ReturnPillToPool(i);
+			i++;
+		}
+
+		// setup new items
+		for (i = _firstItemIndex; i <= lastItemIndex && i < m_itemCount; ++i) {
+			if (m_slotsOfPills[i] == null) {
+				D data = m_itemData[i].data;
+				pillType = m_itemData[i].pillType;
+
+				//if we don't have enough pills of one type, create them
+				if (m_poolsOfPills[pillType].Count == 0) {
+					CreatePillOfType(pillType);
+				}
+
+				T pill = m_poolsOfPills[pillType].Pop();
+
+				pill.InitWithData(data);
+				pill.SetPosition(GetPillPosition(i));
+				pill.gameObject.SetActive(true);
+
+				m_slotsOfPills[i] = pill;
 			}
 		}
 
-		m_firstVisibleItemIndex = _index;
-		OnShowPillsFrom(_index);
+		m_firstVisibleItemIndex = _firstItemIndex;
+		OnShowPillsFrom(_firstItemIndex);
 	}
 
 	//
@@ -285,7 +335,9 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 			content.anchoredPosition = Vector2.SmoothDamp(content.anchoredPosition, m_targetPosition, ref m_autoScrollVelocity, m_autoScrollTime, 10000f, Time.deltaTime);
 
 			// Stop moving at some point!
-			if(m_autoScrollVelocity.sqrMagnitude < 0.01f) {
+			if(m_autoScrollVelocity.sqrMagnitude < 1f) {
+				OnFocusFinished(m_slotsOfPills[m_focusToPillIndex]);
+				m_focusToPillIndex = -1;
 				m_isAutoScrolling = false;
 			}
 		}
@@ -296,6 +348,8 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	//------------------------------------------------------------------//
 	public override void OnBeginDrag(PointerEventData _eventData) {
 		base.OnBeginDrag(_eventData);
+		OnFocusCanceled();
+		m_focusToPillIndex = -1;
 		m_isAutoScrolling = false;
 	}
 
@@ -314,7 +368,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 			int startIndex = 0;
 
 			for (int i = 0; i < m_itemCount; ++i) {
-				T pill = m_pills[m_itemData[i].pillType][0];
+				T pill = m_pillsReference[m_itemData[i].pillType];
 				if (vertical) {
 					float relativeY = m_pillPosition[i].y - content.anchoredPosition.y;
 					if (relativeY >= -pill.size.y) {
@@ -342,21 +396,43 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	/// </summary>
 	/// <param name="_index">Item index.</param>
 	public void FocusOn(int _index, bool _animate) {
-		T pill = m_pills[m_itemData[_index].pillType][0];
+		T pill = m_pillsReference[m_itemData[_index].pillType];
 
 		m_targetPosition = content.anchoredPosition;
-		m_targetPosition.y = m_pillPosition[_index].y - m_padding.top - m_visibleAreaSize.y/2f;
+		if (vertical) {
+			m_targetPosition.y = m_pillPosition[_index].y - m_visibleAreaSize.y/2f;
+			if (m_targetPosition.y < m_padding.top) m_targetPosition.y = m_padding.top;
+			if (m_targetPosition.y > (m_containerSize.y - m_visibleAreaSize.y + m_padding.bottom)) m_targetPosition.y = (m_containerSize.y - m_visibleAreaSize.y + m_padding.bottom);
+		}
+		if (horizontal)	{
+			m_targetPosition.x = m_visibleAreaSize.x/2f - m_pillPosition[_index].x;
+			if (m_targetPosition.x > m_padding.left) m_targetPosition.x = m_padding.left;
+			if (m_targetPosition.x < -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right)) m_targetPosition.x = -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right);
+		}
 
-		if (_animate) {
+		m_focusToPillIndex = _index;
+
+		if (_animate) {			
 			m_isAutoScrolling = true;
 		} else {
 			content.anchoredPosition = m_targetPosition;
+			OnFocusFinished(m_slotsOfPills[m_focusToPillIndex]);
+			m_focusToPillIndex = -1;
 			m_isAutoScrolling = false;
 		}
 	}
 
+	public void AnimateVisiblePills() {
+		int i = m_firstVisibleItemIndex;
+		while (m_slotsOfPills[i] != null) {
+			m_slotsOfPills[i].Animate(i - m_firstVisibleItemIndex);
+			i++;
+		}
+	}
 
 	protected virtual void OnShowPillsFrom(int _index) {}
 	protected virtual void OnScrollMoved() {}
-	protected virtual void OnPillCreated() {}
+	protected virtual void OnPillCreated(T _pill) {}
+	protected virtual void OnFocusFinished(T _pill) {}
+	protected virtual void OnFocusCanceled() {}
 }

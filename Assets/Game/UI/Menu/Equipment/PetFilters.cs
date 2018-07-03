@@ -68,7 +68,7 @@ public class PetFilters : MonoBehaviour {
 	}
 
 	// Events
-	public PetFiltersEvent OnFilterChanged = new PetFiltersEvent();
+	//public PetFiltersEvent OnFilterChanged = new PetFiltersEvent();
 
 	// Internal logic
 	private Dictionary<string, bool> m_activeFilters = new Dictionary<string, bool>();	// Dictionary of <filterName, status>. If a filterName is not on the dictionary, filter is considered off.
@@ -250,7 +250,7 @@ public class PetFilters : MonoBehaviour {
 		m_filteredDefs = new List<DefinitionNode>(petsScreen.defs);
 
 		// Notify listeners
-		OnFilterChanged.Invoke(this);
+		//OnFilterChanged.Invoke(this);
 
 		// Mark as dirty
 		SetDirty();
@@ -377,7 +377,7 @@ public class PetFilters : MonoBehaviour {
 		).ToList();
 
 		// Notify listeners
-		OnFilterChanged.Invoke(this);
+		//OnFilterChanged.Invoke(this);
 
 		// Mark as dirty
 		SetDirty();

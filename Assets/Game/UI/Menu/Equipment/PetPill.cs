@@ -183,8 +183,18 @@ public class PetPill : ScrollRectItem<PetPillData> {
 	//------------------------------------------------------------------------//
 	public override void InitWithData(PetPillData _data) {
 		Init(_data.def, _data.dragon);
+		animator.ForceShow(false);
 	}
 
+	public override void Animate(int _index) {
+		animator.ForceHide(false);
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				animator.RestartShow();
+			},
+			0.0375f * (_index + 1) 	// Sync with animation!
+		);
+	}
 
 
 	/// <summary>
@@ -426,7 +436,7 @@ public class PetPill : ScrollRectItem<PetPillData> {
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
 			// Open popup with the filtered list!
-			petPopup.Init(m_def, parentScreen.petFilters.filteredDefs);
+			petPopup.Init(m_def, null);//parentScreen.petFilters.filteredDefs);
 		}
 	}
 
