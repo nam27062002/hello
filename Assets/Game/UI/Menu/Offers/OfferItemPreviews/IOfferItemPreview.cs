@@ -65,11 +65,12 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 		rectTransform.anchorMax = GameConstants.Vector2.one;
 		rectTransform.offsetMin = GameConstants.Vector2.zero;
 		rectTransform.offsetMax = GameConstants.Vector2.zero;*/
-		rectTransform.localScale = new Vector3(
-			_t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon),	// Prevent division by 0
-			_t.rect.height / Mathf.Max(rectTransform.rect.height, float.Epsilon),	// Prevent division by 0
-			1f
-		);
+
+		float sx = _t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon);// Prevent division by 0
+		float sy = _t.rect.height / Mathf.Max(rectTransform.rect.height, float.Epsilon);// Prevent division by 0
+		float scale = (sx < sy)? sx : sy;
+	
+		rectTransform.localScale = new Vector3(scale, scale, scale);
 	}
 
 	//------------------------------------------------------------------------//

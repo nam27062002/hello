@@ -689,11 +689,7 @@ public class RewardSceneController : MonoBehaviour {
 	/// <param name="_tapCount">Tap count.</param>
 	private void OnEggTap(EggView _egg, int _tapCount) {
 		// Show the right particle effect based on rarity!
-		if(_tapCount == 1 && _egg == m_eggView) {
-			// Activate tap FX, both static and dynamic
-			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFX);
-			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic);
-
+		if(_tapCount == 1 && _egg == m_eggView) {			
 			// Hide UI
 			m_rewardInfoUI.SetRewardType(string.Empty);
 
@@ -711,7 +707,11 @@ public class RewardSceneController : MonoBehaviour {
 		if(eggData == null) return;
 
 		// If it matches our curent egg, launch its animation!
-		if(_egg == eggData) {
+		if(_egg == eggData) {			
+			// Activate tap FX, both static and dynamic
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFX);
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic);
+
 			// Launch animation!
 			// Delay to sync with the egg anim
 			UbiBCN.CoroutineManager.DelayedCall(LaunchEggExplosionAnim, UIConstants.openEggExplosionDuration, false);
