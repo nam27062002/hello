@@ -61,6 +61,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Init panels
 		for(int i = 0; i < m_panels.Length; i++) {
 			m_panels[i].panelId = (Panel)i;
+			m_panels[i].anim = m_panels[i].GetComponent<ShowHideAnimator>();
 		}
 	}
 
@@ -213,14 +214,20 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Set the given panel as active one.
 	/// </summary>
 	/// <param name="_panel">Panel to be set as active.</param>
-	private void SetActivePanel(Panel _panel) {
+	/// <param name="_animate">Trigger animations?</param>
+	private void SetActivePanel(Panel _panel, bool _animate = true) {
 		// Store active panel
 		m_activePanel = _panel;
 
 		// Toggle active panel
-		// [AOC] Use animators?
 		for(int i = 0; i < m_panels.Length; ++i) {
-			m_panels[i].gameObject.SetActive(i == (int)m_activePanel);
+			// Use animators if available
+			bool show = (i == (int)m_activePanel);
+			if(m_panels[i].anim != null) {
+				m_panels[i].anim.Set(show, _animate);
+			} else {
+				m_panels[i].gameObject.SetActive(show);
+			}
 		}
 
 		// If showing the ACTIVE panel for the first time, trigger the tutorial
@@ -245,7 +252,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnShowPreAnimation() {
 		// Show loading panel
-		SetActivePanel(Panel.LOADING);
+		SetActivePanel(Panel.LOADING, false);
 		m_questManager.UpdateStateFromTimers();
 		OnQuestDataUpdated();
 	}
