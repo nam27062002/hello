@@ -1132,7 +1132,7 @@ TID_POWERUP_ALCOHOL_RESISTANCE _DESC_SHORT=<color=%U0>Liver of Steel</color>
 TID_POWERUP_CAGE_BREAKER_NAME=Cage Breaker
 TID_POWERUP_CAGE_BREAKER_DESC=<TID_PET> dashes into cages and destroys them.
 TID_POWERUP_CAGE_BREAKER_DESC_SHORT=<color=%U0>Destroys cages</color>
-TID_POWERUP_STUN_NAME=Stun Canon
+TID_POWERUP_STUN_NAME=Stun Cannon
 TID_POWERUP_STUN_DESC=<TID_PET> stuns enemies if touched, and renders them unable to move for a couple of seconds.
 TID_POWERUP_STUN_DESC_SHORT=<color=%U0>Master stunner</color>
 TID_POWERUP_FASTER_BOOST_NAME=Faster Boost Regeneration
@@ -1304,7 +1304,7 @@ TID_GEN_LOGOUT=LOG OUT
 TID_EVENT_BONUS_DRAGON_TITLE=Dragon bonus
 TID_EVENT_SUBTITLE=Contribute as much as you can to the global objective.
 TID_EVENT_DESCRIPTION=You will win lots of rewards!
-TID_FAQ_EVENTS_DESCRIPTION=How do the <TID_QUEST_NAME_PLURAL> work?
+TID_FAQ_EVENTS_DESCRIPTION=How do the <TID_COLOR_QUESTS><TID_QUEST_NAME_PLURAL><TID_END_COLOR> work?
 TID_FAQ_EVENT_INFO=<TID_QUEST_NAME_PLURAL>
 TID_BLOCKER_BLOCKED=You shall not pass! ...just yet.
 TID_EGG_GOLDEN_ALL_COLLECTED=You have already collected all the <TID_GOLDEN_EGG_PLURAL>!
@@ -1662,7 +1662,7 @@ TID_MOD_BBQ_DESCRIPTION=Fire rush is always active!
 TID_MOD_BLEEDING_DESCRIPTION=Life drain increased by %U0
 TID_MOD_BOOST_REGEN_DOWN_DESCRIPTION=Boost regenerates %U0 slower
 TID_MOD_CHAIN_KILL_DESCRIPTION=Mutliplier is easier to improve!
-TID_MOD_DOUBLE_COINS_DESCRIPTION=Coin earned increased by %U0
+TID_MOD_DOUBLE_COINS_DESCRIPTION=Coins earned increased by %U0
 TID_MOD_DOUBLE_MISSION_DESCRIPTION=Coins earned from missions are increased by %U0
 TID_MOD_DOUBLE_PET_EFFECT_DESCRIPTION=Stat bonuses from pets are doubled
 TID_MOD_DOUBLE_XP_DESCRIPTION=XP earned increased by %U0
@@ -1686,7 +1686,7 @@ TID_MOD_STARVING_DESCRIPTION=Everything you eat gives you %U0 less food
 TID_MOD_STRUCK_LIGHTNING_DESCRIPTION=Dragon has unlimited boost!
 TID_MOD_WELL_FED_DESCRIPTION=Life drain decreased by %U0
 TID_MOD_WINDY_DESCRIPTION=You go %U0 faster when moving through an air current
-TID_MOD_X2_FOREVER_DESCRIPTION=Multiplier reduces %U0 slower
+TID_MOD_X2_FOREVER_DESCRIPTION=Multiplier is +%U0 faster
 TID_MOD_BOOST_REGEN_DOWN_NAME=Slow regen
 TID_TOURNAMENT_PLAY_PC=<color=#f9cba1>ENTER</color>\n<sprite name="icon_pc">%U0
 TID_TOURNAMENT_PLAY_SC=<color=#f9cba1>ENTER</color>\n<sprite name="icon_sc">%U0
@@ -1721,7 +1721,7 @@ TID_EVENT_TOURNAMENT_KILL_NORMAL_BIRDS=Eat as many birds as you can in a single 
 TID_EVENT_TOURNAMENT_KILL_NORMAL_FLYINGBUNNIES=Eat as many flying bunnies as you can in a single run!
 TID_EVENT_TOURNAMENT_KILL_NORMAL_FLYINGPIGS=Eat as many flying pigs as you can in a single run!
 TID_EVENT_TOURNAMENT_KILL_NORMAL_JALAPENOS=Eat as many jalapenos as you can in a single run!
-TID_EVENT_TOURNAMENT_KILL_NORMAL_EAGLES=Eat as many eagles as you can in a single run!
+TID_EVENT_TOURNAMENT_KILL_NORMAL_EAGLES=Eat as many hawks as you can in a single run!
 TID_EVENT_TOURNAMENT_KILL_NORMAL_DRAGONS=Eat as many dragons as you can in a single run!
 TID_EVENT_TOURNAMENT_KILL_NORMAL_COCKTAILS=Eat as many cocktails as you can in a single run!
 TID_EVENT_TOURNAMENT_KILL_NORMAL_ROCKETGOBLINS=Eat as many rocket goblins as you can in a single run!
@@ -1769,10 +1769,10 @@ TID_MOD_GATCHA_PET_33_DESC_SHORT=Motherclucker appears
 TID_MOD_GATCHA_PET_35_DESC_SHORT=Angelico appears
 TID_MOD_GATCHA_PET_36_DESC_SHORT=Fireball appears
 TID_QUESTS_TUTORIAL_TITLE=<TID_QUEST_NAME_PLURAL>
-TID_QUESTS_TUTORIAL_SUBTITLE=Cooperate with other players to complete the <TID_QUEST_NAME> objectives.
+TID_QUESTS_TUTORIAL_SUBTITLE=Cooperate with other players to complete the <TID_COLOR_QUESTS><TID_QUEST_NAME><TID_END_COLOR> objectives.
 TID_QUESTS_TUTORIAL_DESCRIPTION=Everyone who contributes gets a reward!
 TID_TOURNAMENTS_TUTORIAL_TITLE=<TID_TOURNAMENT_NAME_PLURAL>
-TID_TOURNAMENTS_TUTORIAL_SUBTITLE=<TID_TOURNAMENT_NAME_PLURAL> will test your abilities competing against other players.
+TID_TOURNAMENTS_TUTORIAL_SUBTITLE=<TID_COLOR_TOURNAMENT><TID_TOURNAMENT_NAME_PLURAL><TID_END_COLOR> will test your abilities competing against other players.
 TID_TOURNAMENTS_TUTORIAL_DESCRIPTION=The higher you end up in the leaderboard, the bigger the reward!
 TID_TOURNAMENT_BUILD_TUTORIAL_TITLE=<TID_TOURNAMENT_BUILD_TITLE>
 TID_EVENT_RESULTS_RUN_SCORE=Run score:
@@ -1813,4 +1813,15 @@ TID_STORE_PACK_CURRENCYCATCHUPPACK2=Mountain o' Coins!
 TID_STORE_PACK_MEGAHCPACKCLASSIC=Age of Gempires
 TID_GLOBAL_EVENT_DIVE=Swim %U0 meters.
 TID_FAQ_TOURNAMENTS_INFO=<TID_TOURNAMENT_NAME_PLURAL>
-TID_FAQ_TOURNAMENTS_DESCRIPTION=How do <TID_TOURNAMENT_NAME_PLURAL> work?
+TID_FAQ_TOURNAMENTS_DESCRIPTION=How do <TID_COLOR_TOURNAMENT><TID_TOURNAMENT_NAME_PLURAL><TID_END_COLOR> work?
+TID_COLOR_TOURNAMENT=<color=#FBCD92>
+TID_COLOR_QUESTS=<color=#91FEFF>
+TID_EGG_RARE=Rare <TID_EGG> guaranteed
+TID_EGG_EPIC=Epic <TID_EGG> guaranteed
+TID_EGG_BETTER=Improved <TID_EGG>
+TID_EGG_RARE_PLURAL=Rare <TID_EGG_PLURAL> guaranteed
+TID_EGG_EPIC_PLURAL=Epic <TID_EGG_PLURAL> guaranteed
+TID_EGG_BETTER_PLURAL=Improved <TID_EGG_PLURAL>
+TID_PREREG_REWARDS_TITLE=Pre-Registration Rewards
+TID_PREREG_REWARDS_COLLECT=Collect
+TID_SEASON_SUMMER_NAME=Summer
