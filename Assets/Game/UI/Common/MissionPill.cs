@@ -80,6 +80,7 @@ public class MissionPill : MonoBehaviour {
 		if(FeatureSettingsManager.IsControlPanelEnabled) {
 			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 		}
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 	}
 
 	/// <summary>
@@ -93,6 +94,7 @@ public class MissionPill : MonoBehaviour {
 			if (FeatureSettingsManager.IsControlPanelEnabled) {
 				Messenger.RemoveListener (MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 			}
+			Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		}
 	}
 
@@ -544,6 +546,10 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Just update all the info
+		Refresh();
+	}
+
+	private void OnEventFinished(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
 		Refresh();
 	}
 

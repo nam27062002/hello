@@ -65,6 +65,7 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	/// </summary>
 	override public void FinishEvent() {
 		// In the case of passive events, we don't need to notify the server
+		Deactivate();
 		m_data.m_state = HDLiveEventData.State.FINALIZED;
 		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR);
 	}
