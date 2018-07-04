@@ -124,7 +124,7 @@ public class HDLiveEventDefinition {
 		// MEMBERS																  //
 		//------------------------------------------------------------------------//
 		public Metagame.Reward reward = null;
-		public float targetPercentage = 0f;
+		public long target = 0;
 
 		//------------------------------------------------------------------------//
 		// METHODS																  //
@@ -156,9 +156,18 @@ public class HDLiveEventDefinition {
 				}
 			}
 
-			// Init target percentage
-			// Target amount should be initialized from outside, knowing the global target
-			targetPercentage = _data["targetPercentage"].AsFloat;
+			// Init target amount
+			target = _data["target"].AsLong;
+		}
+
+		/// <summary>
+		/// Serialize into json.
+		/// </summary>
+		/// <returns>The json.</returns>
+		public virtual JSONClass ToJson() {
+			JSONClass data = reward.ToJson() as JSONClass;
+			data.Add("target", target);
+			return data;
 		}
 	};
 
