@@ -98,8 +98,12 @@ public class Pool {
 			GameObject.Destroy(go);
 		}
 
+		List<GameObject> toDestroy = new List<GameObject>();
 		foreach(GameObject go in m_notFreeObjects) {
-			GameObject.Destroy(go);
+			toDestroy.Add(go);
+		}
+		for (int i = toDestroy.Count - 1; i >= 0; --i) {
+			GameObject.Destroy(toDestroy[i]);
 		}
 
 		while(m_returnObjects.Count > 0) {
