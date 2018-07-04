@@ -116,6 +116,9 @@ public class FeatureSettings
     // Period in seconds between two automatic relogin checks
     public const string KEY_AUTOMATIC_RELOGIN_PERIOD = "automaticReloginPeriod";
 
+    // Wheter or not pending transactions need server confirmation to be given to the user
+    public const string KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM = "pendingTransactionsServerConfirm";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -289,6 +292,10 @@ public class FeatureSettings
 
             key = KEY_AUTOMATIC_RELOGIN_PERIOD;
             data = new DataInt(key, EValueType.Int, 60);
+            Datas.Add(key, data);
+
+            key = KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
             /*
