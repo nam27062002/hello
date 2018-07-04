@@ -123,11 +123,16 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     }
 
     /// <summary>
-    /// It should be used only for debug purposes. By calling this event the pending transactions request is forced to be sent so the flow can be easily
+    /// It should be used only for debug purposes. The server is requested for pending transactions. This method makes it easier to trigger the pending transactions flow
     /// </summary>
     private void Pending_ForceRequestTransactions()
     {
         Pending_SetState(EState.WaitingToRequest);        
+        Pending_SetTimeToRequest(0f);
+    }
+
+    public void Pending_UrgeToRequestTransactions()
+    {
         Pending_SetTimeToRequest(0f);
     }
 

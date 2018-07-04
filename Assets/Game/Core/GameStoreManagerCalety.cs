@@ -12,10 +12,12 @@ public class GameStoreManagerCalety : GameStoreManager
     {
     	public bool m_isReady = false;
         private bool m_hasInitFailed = false;
+        private GameStoreManagerCalety m_manager;
 
-        public CaletyGameStoreListener() : base()
+        public CaletyGameStoreListener(GameStoreManagerCalety manager) : base()
         {
             Reset();
+            m_manager = manager;
         }
 
         public void Reset()
@@ -26,9 +28,11 @@ public class GameStoreManagerCalety : GameStoreManager
 
 		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
+            string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
+
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                string msg = "onPurchaseCompleted sku = " + sku + " strTransactionID = " + strTransactionID + " strPlatformOrderID = " + strPlatformOrderID + " receipt = ";
+                string msg = "onPurchaseCompleted sku = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " strTransactionID = " + strTransactionID + " strPlatformOrderID = " + strPlatformOrderID + " receipt = ";
                 if (kReceiptJSON == null)
                 {
                     msg += "null";
@@ -41,52 +45,76 @@ public class GameStoreManagerCalety : GameStoreManager
                 Log(msg);
             }
 
-            bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
-            System.Action onDone = delegate()
-            {
-                // string gameSku = PlatformSkuToGameSku( sku );
-                Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
-            };
-
-            System.Action<bool> onConfirmDone = delegate(bool success)
+            // If the user hasn't triggered this purchase then it means that this purchase is being resumed from a purchase that was interrupted in a previous session
+            if (string.IsNullOrEmpty(purchaseSkuTriggered) || purchaseSkuTriggered != sku)
             {
                 if (FeatureSettingsManager.IsDebugEnabled)
                 {
-                    Log("Server confirmation for purchase " + sku + " received with success = " + success);
+                    Log("Pending transactions are urged because of an interrupted IAP");
                 }
 
-                if (needsServerConfirmation)
+                // We need to urge to request for pending transactions
+                TransactionManager.instance.Pending_UrgeToRequestTransactions();
+            }
+            else
+            {
+                bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
+                System.Action onDone = delegate ()
+                {
+                    // string gameSku = PlatformSkuToGameSku( sku );
+                    Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
+                };
+
+                System.Action<bool> onConfirmDone = delegate (bool success)
+                {
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                    {
+                        Log("Server confirmation for purchase " + sku + " received with success = " + success);
+                    }
+
+                    if (needsServerConfirmation)
+                    {
+                        onDone();
+                    }
+                };
+
+                Transaction transaction = new Transaction();
+                transaction.SetId(strPlatformOrderID);
+                transaction.SetSource("shop");
+                TransactionManager.instance.Pending_ConfirmTransactionWithServer(transaction, onConfirmDone);
+
+                if (!needsServerConfirmation)
                 {
                     onDone();
                 }
-            };
+            }
 
-            Transaction transaction = new Transaction();
-            transaction.SetId(strPlatformOrderID);
-            transaction.SetSource("shop");
-            TransactionManager.instance.Pending_ConfirmTransactionWithServer(transaction, onConfirmDone);                        
-
-            if (!needsServerConfirmation)
-            {                                                    
-                onDone();
-            }            
+            m_manager.OnPurchaseDone();
 		}       
 
         public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
+            string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
+
             if (FeatureSettingsManager.IsDebugEnabled)
-                Log("onPurchaseCancelled");
+                Log("onPurchaseCancelled sku completed " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, sku);
+
+            m_manager.OnPurchaseDone();
 		}
 
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
+            string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
+
             if (FeatureSettingsManager.IsDebugEnabled)
-				Log("onPurchaseFailed sku = " + sku + " transactionID = " + strTransactionID);
+				Log("onPurchaseFailed sku completed = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " transactionID = " + strTransactionID);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, sku);
-		}
+
+            m_manager.OnPurchaseDone();
+        }
 
 		public override void onStoreIsReady() 
 		{
@@ -139,11 +167,14 @@ public class GameStoreManagerCalety : GameStoreManager
 	string[] m_storeSkus;
 
     private bool m_isFirstInit;
+
+    private string m_purchaseSkuTriggeredByUser;
     
     public GameStoreManagerCalety () 
 	{
-		m_storeListener = new CaletyGameStoreListener();
+		m_storeListener = new CaletyGameStoreListener(this);
         m_isFirstInit = true;
+        m_purchaseSkuTriggeredByUser = null;
     }
 
     private void Reset()
@@ -261,8 +292,10 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public override void Buy( string _sku )
 	{
+        m_purchaseSkuTriggeredByUser = _sku;
+
 #if UNITY_EDITOR
-		StoreManager.SharedInstance.StartCoroutine( SimulatePurchase(_sku) );
+        StoreManager.SharedInstance.StartCoroutine( SimulatePurchase(_sku) );
 #else
     	if (StoreManager.SharedInstance.CanMakePayments()) 
     	{
@@ -281,6 +314,16 @@ public class GameStoreManagerCalety : GameStoreManager
 		yield return new WaitForSecondsRealtime( 0.25f );
 		// string item = GameSkuToPlatformSku( _sku );
 		m_storeListener.onPurchaseCompleted( _sku, "", null, "");
+    }
+
+    void OnPurchaseDone()
+    {
+        m_purchaseSkuTriggeredByUser = null;
+    }
+
+    string GetPurchaseSkuTriggeredByUser()
+    {
+        return m_purchaseSkuTriggeredByUser;
     }
     /*
     private string GameSkuToPlatformSku( string gameSku )
