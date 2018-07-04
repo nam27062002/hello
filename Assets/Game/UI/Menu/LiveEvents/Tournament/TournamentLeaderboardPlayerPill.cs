@@ -78,6 +78,8 @@ public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 		m_scoreText.text = StringUtils.FormatBigNumber(data.leaderboardLine.m_score);
 	}
 
+	public override void Animate(int _index) {}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
