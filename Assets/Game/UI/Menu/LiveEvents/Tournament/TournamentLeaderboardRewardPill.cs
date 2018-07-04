@@ -52,6 +52,8 @@ public class TournamentLeaderboardRewardPill : TournamentLeaderboardPillBase {
 		m_rewardView.InitFromReward(data.reward);
 	}
 
+	public override void Animate(int _index) { }
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
