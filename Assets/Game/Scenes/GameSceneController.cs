@@ -602,7 +602,8 @@ public class GameSceneController : GameSceneControllerBase {
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 				
 				m_levelLoadingTasks = LevelManager.LoadLevel();
-				
+
+				PoolManager.PreBuild();
 				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well
