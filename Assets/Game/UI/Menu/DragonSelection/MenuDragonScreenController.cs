@@ -66,8 +66,7 @@ public class MenuDragonScreenController : MonoBehaviour {
         m_showPendingTransactions = false;
 
         // Subscribe to external events.
-        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
-        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnded);
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);        
 
         // Check whether we need to move to another screen
         // Check order is relevant!
@@ -93,10 +92,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 				}
 			}
 		}
-		*/
-
-        // Lowest priority: show pending transactions. They're showing here because we know that the currencies are visible for the user on this screen
-        m_showPendingTransactions = TransactionManager.instance.Flow_NeedsToShowPendingTransactions();        
+		*/        
     }
 
 	/// <summary>
@@ -104,8 +100,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
-        Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnded);        
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);    
     }
 
 	/// <summary>
@@ -516,20 +511,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Save persistence to store current dragon
 			PersistenceFacade.instance.Save_Request(true);
 		}
-	}
-
-    /// <summary>
-	/// The current menu screen has changed (animation ends now).
-	/// </summary>
-	/// <param name="_from">Source screen.</param>
-	/// <param name="_to">Target screen.</param>
-    private void OnTransitionEnded(MenuScreen _from, MenuScreen _to) {
-        if (_to == MenuScreen.DRAGON_SELECTION && m_showPendingTransactions)
-        {
-            m_showPendingTransactions = false;
-            TransactionManager.instance.Flow_PerformPendingTransactions(InstanceManager.menuSceneController.GetUICanvasGO());
-        }        
-    }
+	}    
 
     /// <summary>
     /// Play button has been pressed.

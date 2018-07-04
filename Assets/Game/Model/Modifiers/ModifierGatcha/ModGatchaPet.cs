@@ -10,7 +10,9 @@ public class ModGatchaPet : ModifierGatcha {
 	public ModGatchaPet(DefinitionNode _def) : base(_def) {
 		m_sku = _def.Get("param1");
 		m_weight = _def.GetAsFloat("param2");
-		BuildTextParams(UIConstants.PET_CATEGORY_SPECIAL.ToHexString("#"));
+
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_sku);
+		BuildTextParams(def.GetLocalized("tidName"), StringUtils.FormatBigNumber(m_weight), UIConstants.PET_CATEGORY_SPECIAL.ToHexString("#"));
 	}
 
 	public override void Apply() {
