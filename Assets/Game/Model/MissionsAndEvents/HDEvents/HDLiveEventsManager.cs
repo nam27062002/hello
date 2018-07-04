@@ -106,11 +106,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         m_types.Add("passive");
         m_managers.Add(m_passive);
 
-
-		// Load Cache?
-		LoadEventsFromCache();
-
-        Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
 		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
 		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED,  SaveEventsToCache);
