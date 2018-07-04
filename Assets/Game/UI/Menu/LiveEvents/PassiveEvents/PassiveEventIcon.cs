@@ -25,6 +25,22 @@ public class PassiveEventIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 
+	//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
+	//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
+	//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
+	//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
+	//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
+	//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
+	//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
+	//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
+	//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
+	/*private enum DisplayLocation {
+		PLAY_SCREEN,
+		NORMAL_MODE_SCREEN,
+		TOURNAMENT_MODE_SCREEN,
+		INGAME
+	}*/
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -116,21 +132,11 @@ public class PassiveEventIcon : MonoBehaviour {
 
 		// Make sure icon is showing the right info
 		if(m_modifierIcon != null) {
-			// Grab the fisrt valid mod
-			HDLiveEventDefinition def = m_passiveEventManager.data.definition;
-			IModifierDefinition mod = null;
-			if(def.m_otherMods.Count > 0) {
-				mod = def.m_otherMods[0];
-			} else if(def.m_dragonMods.Count > 0) {
-				mod = def.m_dragonMods[0];
-			} else {
-				Debug.LogError(Color.red.Tag("ERROR! Passive event has no modifiers defined!"));
-			}
-				
 			// Init icon
-			if(mod != null) {
+			HDPassiveEventDefinition def = m_passiveEventManager.data.definition as HDPassiveEventDefinition;
+			if(def.mainMod != null) {
 				m_modifierIcon.gameObject.SetActive(true);
-				m_modifierIcon.InitFromDefinition(mod);
+				m_modifierIcon.InitFromDefinition(def.mainMod);
 			} else {
 				m_modifierIcon.gameObject.SetActive(false);
 			}
@@ -181,7 +187,7 @@ public class PassiveEventIcon : MonoBehaviour {
 			return false;
 		}
 
-		// Do we have a valid tournament?
+		// Do we have a valid event?
 		bool show = false;
 		if(m_passiveEventManager.EventExists()) {
 			// Show only for specific states
@@ -197,6 +203,56 @@ public class PassiveEventIcon : MonoBehaviour {
 						show = true;
 					}
 				} break;
+			}
+
+			// Check current screen and event's UI settings
+			Modifier mod = m_passiveEventManager.m_passiveEventDefinition.mainMod;
+			if(mod != null) {
+				/*// Are we in the menu?
+				if(InstanceManager.menuSceneController != null) {
+					MenuScreen currentScreen = InstanceManager.menuSceneController.currentScreen;
+					switch(mod.def.Get("uiCategory")) {
+						// case "stats":
+						// case "metagame":
+						// case "levelUp":
+						case "stats": {
+							switch(currentScreen) {
+								case MenuScreen.PLAY:
+								case MenuScreen.DRAGON_SELECTION:
+								case MenuScreen.TOURNAMENT_INFO: {
+									show = true;
+								} break;
+							}
+						} break;
+
+						case "metagame": {
+							switch(currentScreen) {
+								case MenuScreen.PLAY:
+								case MenuScreen.DRAGON_SELECTION:
+								case MenuScreen.TOURNAMENT_INFO: {
+									show = true;
+								} break;
+							}
+						} break;
+					}
+				} else {
+					// No! Loading / Ingame / Results
+					// Tournament mode?
+					if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) {
+
+					}
+				}*/
+
+
+				//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
+				//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
+				//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
+				//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
+				//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
+				//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
+				//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
+				//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
+				//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
 			}
 		}
 

@@ -44,12 +44,12 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 
 			// Initialize the reward info corresponding to this reward
 			m_rewardInfos[i].InitFromReward(_evt.m_rewards[i]);
-			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].targetAmount, false );
+			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].target, false );
 
 			// Put into position (except last reward, which has a fixed position)
-			if(i < _evt.m_rewards.Count - 1) {
+			//if(i < _evt.m_rewards.Count - 1) {	// [AOC] With new desing, last reward too!
 				// Set min and max anchor in X to match the target percentage
-				float targetPercentage = (float)_evt.m_rewards[i].targetAmount / (float)_evt.m_goal.m_amount;
+				float targetPercentage = (float)_evt.m_rewards[i].target / (float)_evt.m_goal.m_amount;
 
 				Vector2 anchor = m_rewardInfos[i].rectTransform.anchorMin;
 				anchor.x = targetPercentage;
@@ -62,7 +62,7 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 				anchor = m_rewardInfos[i].rectTransform.anchoredPosition;
 				anchor.x = 0f;
 				m_rewardInfos[i].rectTransform.anchoredPosition = anchor;
-			}
+			//}
 		}
 
 		if (m_currentValueText_DEBUG != null) {
@@ -81,7 +81,7 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	public void RefreshAchieved(bool _animate) {
 		// Use current bar value
 		for(int i = 0; i < m_rewardInfos.Length; ++i) {
-			m_rewardInfos[i].ShowAchieved(m_progressBar.value >= m_rewardInfos[i].questReward.targetAmount, _animate);
+			m_rewardInfos[i].ShowAchieved(m_progressBar.value >= m_rewardInfos[i].questReward.target, _animate);
 		}
 	}
 

@@ -32,8 +32,8 @@ public class GlobalEventsRewardInfo : MetagameRewardView {
 	[SerializeField] protected Image m_tick = null;
 
 	// Internal
-	private HDQuestDefinition.QuestReward m_questReward = null;
-	public HDQuestDefinition.QuestReward questReward {
+	private HDLiveEventDefinition.HDLiveEventReward m_questReward = null;
+	public HDLiveEventDefinition.HDLiveEventReward questReward {
 		get { return m_questReward; }
 		set { InitFromReward(value); }
 	}
@@ -48,7 +48,7 @@ public class GlobalEventsRewardInfo : MetagameRewardView {
 	/// <summary>
 	/// Refresh the widget with the data of a specific reward.
 	/// </summary>
-	public void InitFromReward(HDQuestDefinition.QuestReward _questReward) {
+	public void InitFromReward(HDLiveEventDefinition.HDLiveEventReward _questReward) {
 		// Store new reward
 		m_questReward = _questReward;
 
@@ -71,7 +71,7 @@ public class GlobalEventsRewardInfo : MetagameRewardView {
 		// Set target text
 		if(m_targetText != null) {
 			// Abbreviated for big amounts
-			m_targetText.text = StringUtils.FormatBigNumber(m_questReward.targetAmount);
+			m_targetText.text = StringUtils.FormatBigNumber(m_questReward.target);
 		}
 
 		// Parent will do the rest
