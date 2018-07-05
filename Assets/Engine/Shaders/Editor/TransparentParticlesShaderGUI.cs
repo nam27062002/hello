@@ -103,7 +103,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_enableDissolve;
     MaterialProperty mp_enableColorRamp;
     MaterialProperty mp_enableColorVertex;
-    MaterialProperty mp_enableAutomaticPanning;
+//    MaterialProperty mp_enableAutomaticPanning;
     MaterialProperty mp_enableEmissivePower;
     MaterialProperty mp_enableExtendedParticles;
     MaterialProperty mp_enableRBGColorVertex;
@@ -169,7 +169,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
         mp_enableColorRamp = FindProperty("_EnableColorRamp", props);
         mp_enableColorVertex = FindProperty("_EnableColorVertex", props);
-        mp_enableAutomaticPanning = FindProperty("_EnableAutomaticPanning", props);
+//        mp_enableAutomaticPanning = FindProperty("_EnableAutomaticPanning", props);
         mp_enableEmissivePower = FindProperty("_EnableEmissivePower", props);
         mp_enableExtendedParticles = FindProperty("_EnableExtendedParticles", props);
         mp_enableDissolve = FindProperty("_EnableAlphaDissolve", props);
@@ -440,7 +440,6 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         {
             materialEditor.TextureProperty(mp_mainTex, Styles.mainTexText);
 
-            if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
             {
                 Vector4 tem = mp_panning.vectorValue;
                 Vector2 p1 = new Vector2(tem.x, tem.y);
@@ -521,12 +520,14 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                     materialEditor.TextureProperty(mp_noiseTex, Styles.noiseTextureText, false);
                 }
 
-                Vector4 tem = mp_noisePanning.vectorValue;
-                Vector2 p1 = new Vector2(tem.x, tem.y);
-                p1 = EditorGUILayout.Vector2Field(Styles.panningText, p1);
-                //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
-                tem.x = p1.x; tem.y = p1.y;
-                mp_noisePanning.vectorValue = tem;
+                {
+                    Vector4 tem = mp_noisePanning.vectorValue;
+                    Vector2 p1 = new Vector2(tem.x, tem.y);
+                    p1 = EditorGUILayout.Vector2Field(Styles.panningText, p1);
+                    //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
+                    tem.x = p1.x; tem.y = p1.y;
+                    mp_noisePanning.vectorValue = tem;
+                }
 
                 materialEditor.ShaderProperty(mp_enableNoiseTextureEmission, Styles.noiseTextureEmissionText);
                 materialEditor.ShaderProperty(mp_enableNoiseTextureAlpha, Styles.noiseTextureAlphaText);
@@ -538,15 +539,15 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_tintColor, Styles.tintColorText);
             materialEditor.ShaderProperty(mp_mainTex, Styles.mainTexText);
 
-            if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
-            {
+//            if (featureSet(mp_enableAutomaticPanning, Styles.enableAutomaticPanningText))
+//            {
                 Vector4 tem = mp_panning.vectorValue;
                 Vector2 p1 = new Vector2(tem.x, tem.y);
                 p1 = EditorGUILayout.Vector2Field(Styles.panningText, p1);
                 //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
                 tem.x = p1.x; tem.y = p1.y;
                 mp_panning.vectorValue = tem;
-            }
+//            }
 
             if (featureSet(mp_enableEmissivePower, Styles.enableEmissivePowerText))
             {

@@ -16,7 +16,7 @@ struct v2f {
 	float2 particledata : TEXCOORD1;
 #endif	//EXTENDED_PARTICLES
 
-#if defined(NOISEUV)
+#if defined(NOISE_TEXTURE)
 	float2 noiseuv : TEXCOORD2;
 #endif
 };
@@ -61,9 +61,7 @@ float _EmissivePower;
 
 #endif	//EXTENDED_PARTICLES
 
-#if defined(AUTOMATICPANNING)
 float2 _Panning;
-#endif	//AUTOMATICPANNING
 
 #if defined(BLENDMODE_ADDITIVEALPHABLEND)
 float _ABOffset;
@@ -78,15 +76,18 @@ v2f vert(appdata_t v)
 	v2f o;
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.color = v.color;
-#ifdef AUTOMATICPANNING
-	v.texcoord.xy += _Panning.xy * _Time.yy;
-#endif	//AUTOMATICPANNING
 
-	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+	o.texcoord = TRANSFORM_TEX(v.texcoord + _Panning.xy * _Time.yy, _MainTex);
+
+#if defined(NOISE_TEXTURE)
 
 #if defined(NOISEUV)
-	o.noiseuv = TRANSFORM_TEX(v.texcoord, _NoiseTex);
+	o.noiseuv = TRANSFORM_TEX(v.texcoord, _NoiseTex) + (_NoisePanning.xy * _Time.yy);
+#else
+	o.noiseuv = TRANSFORM_TEX(v.texcoord, _MainTex) + (_NoisePanning.xy * _Time.yy);
 #endif
+
+#endif	//NOISE_TEXTURE
 
 #ifdef EXTENDED_PARTICLES
 	o.particledata = v.texcoord.zw;
@@ -98,6 +99,7 @@ v2f vert(appdata_t v)
 fixed4 frag(v2f i) : COLOR
 {
 	fixed4 tex = tex2D(_MainTex, i.texcoord);
+	//fixed4 tex = fixed4(1.0, 1.0, 1.0, 1.0);// tex2D(_MainTex, i.texcoord);
 	fixed4 col;
 
 #ifdef EXTENDED_PARTICLES
@@ -110,11 +112,7 @@ fixed4 frag(v2f i) : COLOR
 
 #if defined(NOISE_TEXTURE)
 
-#if defined(NOISEUV)
-	float3 noise = tex2D(_NoiseTex, i.noiseuv + float2(_Time.y * _NoisePanning.x, _Time.y * _NoisePanning.y));
-#else
-	float3 noise = tex2D(_NoiseTex, i.texcoord + float2(_Time.y * _NoisePanning.x, _Time.y * _NoisePanning.y));
-#endif
+	float3 noise = tex2D(_NoiseTex, i.noiseuv);
 
 #if defined(NOISE_TEXTURE_EMISSION)
 //	return fixed4(1.0, 1.0, 0.0, 1.0);
