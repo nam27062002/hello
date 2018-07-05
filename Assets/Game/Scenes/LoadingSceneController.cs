@@ -578,6 +578,7 @@ public class LoadingSceneController : SceneController {
         config.IsButtonCloseVisible = false;
 
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+		config.TextType = IPopupMessage.Config.ETextType.SYSTEM;	// By this point TMPro fonts haven't been loaded yet, show default font.
 
         if ( _warningSupport ){
 			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";

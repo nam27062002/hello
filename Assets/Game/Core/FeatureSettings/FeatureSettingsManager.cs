@@ -1654,6 +1654,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool NeedPendingTransactionsServerConfirm()
+    {        
+        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM);        
+    }
     #endregion
 
     #region log
