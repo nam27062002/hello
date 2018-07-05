@@ -302,6 +302,8 @@ public class GameSceneController : GameSceneControllerBase {
                                                                   
                                 m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
 
+								PoolManager.PreBuild();
+								ParticleManager.PreBuild();
 								ParticleManager.Rebuild();
 
 								if ( m_switchingAreaTasks != null )
@@ -602,8 +604,6 @@ public class GameSceneController : GameSceneControllerBase {
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 				
 				m_levelLoadingTasks = LevelManager.LoadLevel();
-				
-				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well
 				m_timer = MIN_LOADING_TIME;

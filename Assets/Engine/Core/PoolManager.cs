@@ -3,6 +3,10 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
+using System;
+using System.IO;
+
+
 public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	private class PoolData {
 		public int 			size;
@@ -15,10 +19,16 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		public PoolData		buildData;
 	}
 
+	public static bool sm_printPools = false;
+
 	// Entity Pools requests (delayed pool manager)
-	private Dictionary<string, PoolContaier> m_pools = new Dictionary<string, PoolContaier>();
+	private SortedDictionary<string, PoolContaier> m_pools = new SortedDictionary<string, PoolContaier>();
 	private List<Pool> m_iterator = new List<Pool>();
 
+	private SortedDictionary<string, int> m_poolSizes = new SortedDictionary<string, int>();
+
+
+	private float m_printTimer = 10f;
 
 
 	//---------------------------------------------------------------//
@@ -44,6 +54,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	public static bool ContainsPool(string _prefabName) {
 		return instance.m_pools.ContainsKey(_prefabName);
+	}
+
+	public static void PreBuild() {
+		instance.GetPoolSizesForCurrentArea();
 	}
 
 	public static void Build() { 
@@ -92,13 +106,48 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	//---------------------------------------------------------------//
 
 	void Update() {
+		if (sm_printPools) {			
+			m_printTimer -= Time.deltaTime;
+			if (m_printTimer <= 0f) {
+				if (LevelManager.currentLevelData != null) {
+					string fileName = "NPC_Pools_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
+					using (StreamWriter sw = new StreamWriter(fileName, false)) {
+						sw.WriteLine("<Definitions>");
+						foreach (KeyValuePair<string, PoolContaier> pair in m_pools) {
+							if (pair.Value.pool != null) {
+								sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.pool.Size() + "\"/>");
+							}
+						}
+						sw.WriteLine("</Definitions>");
+						sw.Close();
+					}
+				}
+				m_printTimer = 10f;
+			}
+		}
+
 		for (int i = 0; i < m_iterator.Count; i++) {
 			m_iterator[i].Update();
 		}
 	}
 
+	private void GetPoolSizesForCurrentArea(){
+		m_poolSizes.Clear();
+
+		string category = "POOL_MANAGER_SETTINGS_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea;
+		List<DefinitionNode> poolSizes = DefinitionsManager.SharedInstance.GetDefinitionsList(category.ToUpper());
+		for (int i = 0; i < poolSizes.Count; ++i) {
+			m_poolSizes.Add(poolSizes[i].Get("sku"), poolSizes[i].GetAsInt("poolSize"));
+		}
+	}
+
+
 	private PoolHandler __RequestPool(string _prefabName, string _prefabPath, int _size) {
 		PoolContaier container;
+
+		if (m_poolSizes.ContainsKey(_prefabName)) {
+			_size = m_poolSizes[_prefabName];
+		}
 
 		if (m_pools.ContainsKey(_prefabName)) {
 			container = m_pools[_prefabName];
@@ -186,7 +235,11 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 			PoolData data = _container.buildData;
 			GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
 			if (go != null) {
-				Pool pool = new Pool(go, transform, data.size, _canGrow, true, _temporay);
+				int size = data.size;
+
+				if (sm_printPools) size = 1;				
+
+				Pool pool = new Pool(go, transform, size, _canGrow, true, _temporay);
 				_container.pool = pool;
 				m_iterator.Add(pool);
 			} else {
