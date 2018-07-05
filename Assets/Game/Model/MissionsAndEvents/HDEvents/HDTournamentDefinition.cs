@@ -41,9 +41,9 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			m_dailyFree = 100000000;
 		}
 	}
-	public TournamentEntrance m_entrance;
+	public TournamentEntrance m_entrance = new TournamentEntrance();
 
-	public long m_leaderboardSegmentation = -1;
+	public LeaderboardData m_leaderboard = new LeaderboardData();
 
 	public HDTournamentBuild m_build = new HDTournamentBuild();
 
@@ -160,6 +160,47 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		public RangeInt ranks = new RangeInt(0, 100);
 	}
 
+	public class LeaderboardData {
+		public int type = -1;
+		public int segmentation = -1;
+		public int matchmakerType = -1;
+
+		public void Clean() {
+			type = -1;
+			segmentation = -1;
+			matchmakerType = -1;
+		}
+
+		public void ParseJson(JSONNode _data) {
+			if(_data.ContainsKey("type")) {
+				type = _data["type"].AsInt;
+			}
+
+			if(_data.ContainsKey("segmentation")) {
+				segmentation = _data["segmentation"].AsInt;
+			}
+
+			if(_data.ContainsKey("matchmaker")) {
+				JSONClass matchmakerData = _data["matchmaker"] as JSONClass;
+				if(matchmakerData.ContainsKey("type")) {
+					matchmakerType = matchmakerData["type"].AsInt;
+				}
+			}
+		}
+
+		public JSONClass ToJson() {
+			JSONClass data = new JSONClass();
+			data.Add("type", type);
+			data.Add("segmentation", segmentation);
+			{
+				JSONClass _matchmaker = new JSONClass();
+				_matchmaker.Add("type", matchmakerType);
+				data.Add("matchmaker", _matchmaker);
+			}
+			return data;
+		}
+	}
+
 	public TournamentGoal m_goal = new TournamentGoal();
 
 	public List<TournamentReward> m_rewards = new List<TournamentReward>();
@@ -185,7 +226,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	{
 		base.Clean();
 		m_entrance.Clean();
-		m_leaderboardSegmentation = -1;
+		m_leaderboard.Clean();
 		m_build.Clean();
 		m_rewards.Clear();
 	}
@@ -215,9 +256,10 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			}
 		}
 
-		if ( _data.ContainsKey("leaderboardSegmentation") )
+		// Leaderboard
+		if ( _data.ContainsKey("leaderboard") )
 		{
-			m_leaderboardSegmentation = _data["leaderboardSegmentation"].AsLong;
+			m_leaderboard.ParseJson(_data["leaderboard"]);
 		}
 
 		// Build
@@ -236,7 +278,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				// Compute ranks. Min can only be computed based on previous reward.
 				// Since we can't assume rewards are received sorted, we'll do it afterwards in a separate loop.
 				r.ranks.min = 0;
-				r.ranks.max = Mathf.Max(0, Mathf.FloorToInt(r.targetPercentage * (float)m_leaderboardSegmentation) - 1);	// 0-99
+				r.ranks.max = Mathf.Max(0, (int)(r.target) - 1);	// 0-99
 
 				m_rewards.Add(r);
 			}
@@ -244,7 +286,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			// Sort by target percentage
 			m_rewards.Sort(
 				(TournamentReward _reward1, TournamentReward _reward2) => {
-					return _reward1.targetPercentage.CompareTo(_reward2.targetPercentage);
+					return _reward1.target.CompareTo(_reward2.target);
 				}
 			);
 
@@ -260,6 +302,9 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 	{
 		SimpleJSON.JSONClass ret = base.ToJson();
 
+		// Goal
+		ret.Add("goal", m_goal.ToJson());
+
 		// Entrance
 		SimpleJSON.JSONClass _entrance = new JSONClass();
 		_entrance.Add("type", m_entrance.m_type);
@@ -267,11 +312,11 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		_entrance.Add("dailyFreeTimer", m_entrance.m_dailyFree);
 		ret.Add("entrance", _entrance);
 
-		ret.Add("leaderboardSegmentation", m_leaderboardSegmentation);
+		// Leaderboard
+		ret.Add("leaderboard", m_leaderboard.ToJson());
 
 		// Build
-		SimpleJSON.JSONClass _build = m_build.ToJson();
-		ret.Add("build", _build);
+		ret.Add("build", m_build.ToJson());
 
 		return ret;
 	}

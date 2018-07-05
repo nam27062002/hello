@@ -41,22 +41,24 @@ namespace AI {
 
 				if (m_data.damage > 0) {
 					if (_param != null && _param.Length > 0) {
-						GameObject collider = (GameObject)_param[0];
+						if (_param[0] is GameObject) {
+							GameObject collider = (GameObject)_param[0];
 
-						if (collider.CompareTag("Player")) {
-							playerTriggeredExplosion = true;
-							m_entity.onDieStatus.source = IEntity.Type.PLAYER;
-						} else if ( collider.CompareTag("Pet") ){
-							// is armored pet we should push it
-							Pet pet = collider.GetComponent<Pet>();
-							if ( pet != null && !pet.CanExplodeMines)
-								return;
-							// Check powerup is explode_mine
-							m_entity.onDieStatus.source = IEntity.Type.PET;
-						} else if (collider.layer == LayerMask.NameToLayer("GroundPreys")) {
-							IMachine machine = collider.GetComponent<IMachine>();
-							if (machine != null) {
-								machine.Burn(m_machine.transform, IEntity.Type.OTHER);
+							if (collider.CompareTag("Player")) {
+								playerTriggeredExplosion = true;
+								m_entity.onDieStatus.source = IEntity.Type.PLAYER;
+							} else if ( collider.CompareTag("Pet") ){
+								// is armored pet we should push it
+								Pet pet = collider.GetComponent<Pet>();
+								if ( pet != null && !pet.CanExplodeMines)
+									return;
+								// Check powerup is explode_mine
+								m_entity.onDieStatus.source = IEntity.Type.PET;
+							} else if (collider.layer == LayerMask.NameToLayer("GroundPreys")) {
+								IMachine machine = collider.GetComponent<IMachine>();
+								if (machine != null) {
+									machine.Burn(m_machine.transform, IEntity.Type.OTHER);
+								}
 							}
 						}
 					}

@@ -536,6 +536,9 @@ public class LoadingSceneController : SceneController {
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
 
+				// Live events cache
+				HDLiveEventsManager.instance.LoadEventsFromCache();
+
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_01_persistance_applied);
 
                 // Game will be loaded only if the device is supported, otherwise a popup is shown suggesting the user download HSE. 

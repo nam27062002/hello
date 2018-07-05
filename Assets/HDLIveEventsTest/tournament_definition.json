@@ -31,28 +31,34 @@
       "dailyFreeTimer":100,
       "type":"hc"
    },
-   "leaderboardSegmentation" : "100",
+   "leaderboard" : {
+		"type" : 1,
+		"segmentation" : 20,
+		"matchmaker" : {
+			"type" : 1
+		}
+	},
    "rewards":[  
       {  
          "amount":1,
-         "targetPercentage":0.1,
+         "target":1,
          "type":"pet",
 		 "sku":"pet_57"
       },
       {  
          "amount":3,
-         "targetPercentage":0.25,
+         "target":5,
          "type":"egg",
 		 "sku":"egg_event"
       },
       {  
          "amount":10,
-         "targetPercentage":0.5,
+         "target":25,
          "type":"hc"
       },
       {  
          "amount":50000,
-         "targetPercentage":1,
+         "target":100,
          "type":"sc"
       }
    ]
