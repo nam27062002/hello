@@ -35,7 +35,7 @@ public class IncubatorSlot : MonoBehaviour {
 
 	// External references
 	[Space]
-	[SerializeField] private MenuEggUISceneLoader m_eggPreview = null;
+	[SerializeField] private MenuEggLoader m_eggPreview = null;
 
 	[Space]
 	[SerializeField] private Slider m_incubationTimeSlider = null;

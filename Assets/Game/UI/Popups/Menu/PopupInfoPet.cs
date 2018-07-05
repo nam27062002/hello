@@ -28,7 +28,7 @@ public class PopupInfoPet : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private UIScene3DLoader m_preview = null;
+	[SerializeField] private MenuPetLoader m_preview = null;
 	[SerializeField] private DragControlRotation m_rotationController = null;
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
@@ -51,7 +51,6 @@ public class PopupInfoPet : MonoBehaviour {
 	[SerializeField] private PopupInfoPetScroller m_scroller = null;
 
 	// Internal
-	private MenuPetLoader m_petLoader = null;
 	private Sequence m_scrollSequence = null;
 	private bool m_hasScrolled = false;
 	
@@ -120,20 +119,16 @@ public class PopupInfoPet : MonoBehaviour {
 		if(petDef == null) return;
 
 		// Load 3D preview
-		if(m_petLoader == null) {
-			// Find it 
-			m_petLoader = m_preview.scene.FindComponentRecursive<MenuPetLoader>();
-		}
-		if(m_petLoader != null) {
+		if(m_preview != null) {
 			// Assign it as target of the rotation drag controller
 			if(m_rotationController != null) {
 				// Reset value
-				m_rotationController.target = m_petLoader.transform;
+				m_rotationController.target = m_preview.transform;
 				m_rotationController.RestoreOriginalValue();
 			}
 
 			// Load target pet!
-			m_petLoader.Load(petDef.sku);
+			m_preview.Load(petDef.sku);
 			//m_petLoader.petInstance.SetAnim(MenuPetPreview.Anim.IDLE);	// [AOC] TODO!! Pose the pet
 		}
 
