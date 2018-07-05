@@ -63,6 +63,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string rgbColorVertexText = "Use RGB color vertex";
         readonly public static string renderQueueText = "Render queue";
         readonly public static string zTestText = "Z Test";
+        readonly public static string zCullMode = "Cull Mode";
         readonly public static string dissolveTipText = "Alpha dissolve receives custom data from particle system in TEXCOORD0.zw and MainTex.gb.";
         readonly public static string enableNoiseTextureText = "Enable noise texture";
         readonly public static string noiseTextureText = "Noise texture";
@@ -120,6 +121,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_srcBlend;
     MaterialProperty mp_dstBlend;
     MaterialProperty mp_zTest;
+    MaterialProperty mp_cullMode;
 
     MaterialEditor m_materialEditor;
 
@@ -183,6 +185,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_srcBlend = FindProperty("_SrcBlend", props);
         mp_dstBlend = FindProperty("_DstBlend", props);
         mp_zTest = FindProperty("_ZTest", props);
+        mp_cullMode = FindProperty("_Cull", props);
 
     }
 
@@ -553,6 +556,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         }
 
         featureSet(mp_zTest, Styles.zTestText);
+        featureSet(mp_cullMode, Styles.zCullMode);
 
         EditorGUILayout.BeginHorizontal(editorSkin.customStyles[2]);
         EditorGUILayout.LabelField(Styles.renderQueueText);
