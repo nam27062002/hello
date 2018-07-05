@@ -393,26 +393,21 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// [AOC] Are we testing?
 		string rewardSku = "";
 		switch(CPGachaTest.rewardChanceMode) {
-			case CPGachaTest.RewardChanceMode.DEFAULT: {
-				// [AOC] Force common pet during tutorial
-				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+			case CPGachaTest.RewardChanceMode.DEFAULT: {				
+				instance.__BuildDynamicProbabilities();
 
-					instance.__BuildDynamicProbabilities();
+				// Get a weighted element
+				rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
 
-					// Get a weighted element
-					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
-
-					if (rewardSku.Equals(PET_COMMON)) {
-						instance.m_user.openEggTriesWithoutRares++;
-					} else {
-						instance.m_user.openEggTriesWithoutRares = 0;
-					}
-
-					// Save random state to preferences so the distribution is respected
-					PlayerPrefs.SetString(RANDOM_STATE_PREFS_KEY, instance.m_rewardDropRate.randomState.Serialize());
+				if (rewardSku.Equals(PET_COMMON)) {
+					instance.m_user.openEggTriesWithoutRares++;
 				} else {
-					rewardSku = PET_COMMON;
+					instance.m_user.openEggTriesWithoutRares = 0;
 				}
+
+				// Save random state to preferences so the distribution is respected
+				PlayerPrefs.SetString(RANDOM_STATE_PREFS_KEY, instance.m_rewardDropRate.randomState.Serialize());
+
 			} break;
 
 			case CPGachaTest.RewardChanceMode.COMMON_ONLY:	rewardSku = PET_COMMON; break;
