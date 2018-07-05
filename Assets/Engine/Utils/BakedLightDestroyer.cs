@@ -6,14 +6,14 @@ public class BakedLightDestroyer : MonoBehaviour {
 
     void Awake()
     {
-        /*Light[] lights = GetComponentsInChildren<Light>();
+        Light[] lights = GetComponentsInChildren<Light>();
         foreach (Light light in lights)
         {
-            if (light.lightmapBakeType == LightmapBakeType.Baked)
+            if (light.type != LightType.Directional)
             {
                 Destroy(light.gameObject);
             }
-        }*/
+        }
     }
     // Use this for initialization
     void Start () {
