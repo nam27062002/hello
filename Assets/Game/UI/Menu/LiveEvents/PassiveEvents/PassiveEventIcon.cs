@@ -246,7 +246,6 @@ public class PassiveEventIcon : MonoBehaviour {
 					// Menu
 					else if(InstanceManager.menuSceneController != null) {
 						// Which screen?
-
 						MenuScreen currentScreen = InstanceManager.menuSceneController.currentScreen;
 						switch(currentScreen) {
 							case MenuScreen.PLAY: {
