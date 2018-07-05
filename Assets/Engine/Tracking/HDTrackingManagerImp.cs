@@ -1164,6 +1164,19 @@ public class HDTrackingManagerImp : HDTrackingManager
 			Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
             Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
+#if UNITY_ANDROID
+
+            float rating = FeatureSettingsManager.instance.Device_CalculateRating();
+            int systemMemorySize = FeatureSettingsManager.instance.Device_GetSystemMemorySize();
+            int gfxMemorySize = FeatureSettingsManager.instance.Device_GetGraphicsMemorySize();
+            string profileName = FeatureSettingsManager.deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
+#else
+            string profileName = "not available";
+#endif
+            Track_AddParamString(e, TRACK_PARAM_INITIALQUALITY, profileName);
+            
+
+
             Track_SendEvent(e);            
         }
 
@@ -2115,7 +2128,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void Track_SendEvent(TrackingEvent e)
 	{
 		// Events are not sent in EDITOR_MODE because DNA crashes on Mac
-#if !EDITOR_MODE  
+#if !EDITOR_MODE
 		TrackingManager.SharedInstance.SendEvent(e);
 #endif
 	}

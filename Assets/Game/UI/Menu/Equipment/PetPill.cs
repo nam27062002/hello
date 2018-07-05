@@ -21,10 +21,16 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
+public class PetPillData {
+	public DefinitionNode def;
+	public DragonData dragon;
+}
+
+
 /// <summary>
 /// Single pill representing a pet.
 /// </summary>
-public class PetPill : MonoBehaviour {
+public class PetPill : ScrollRectItem<PetPillData> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -174,7 +180,23 @@ public class PetPill : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//º	
+	//------------------------------------------------------------------------//
+	public override void InitWithData(PetPillData _data) {
+		Init(_data.def, _data.dragon);
+		animator.ForceShow(false);
+	}
+
+	public override void Animate(int _index) {
+		animator.ForceHide(false);
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				animator.RestartShow();
+			},
+			0.0375f * (_index + 1) 	// Sync with animation!
+		);
+	}
+
+
 	/// <summary>
 	/// Initialize from a given pet definition.
 	/// </summary>
@@ -186,7 +208,7 @@ public class PetPill : MonoBehaviour {
 
 		// Optimization: if target def is the same as current one, just do a refresh
 		if(_petDef == m_def) {
-			Refresh();
+			//Refresh();
 			return;
 		}
 
@@ -414,7 +436,7 @@ public class PetPill : MonoBehaviour {
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
 			// Open popup with the filtered list!
-			petPopup.Init(m_def, parentScreen.petFilters.filteredDefs);
+			petPopup.Init(m_def, null);//parentScreen.petFilters.filteredDefs);
 		}
 	}
 

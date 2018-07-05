@@ -550,13 +550,6 @@ public class RewardSceneController : MonoBehaviour {
 
 		// Launch intro as soon as possible (wait for the camera to stop moving)
 		m_eggView.gameObject.SetActive(false);
-
-		// Attach tap FX to the egg's view (but don't activate it just yet)
-		ParticleSystem tapFX = m_rarityFXSetup[(int)_eggReward.rarity].tapFX;
-		if(tapFX != null) {
-			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
-			tapFX.gameObject.SetActive(false);
-		}
 	}
 
 	/// <summary>
@@ -709,6 +702,11 @@ public class RewardSceneController : MonoBehaviour {
 		// If it matches our curent egg, launch its animation!
 		if(_egg == eggData) {			
 			// Activate tap FX, both static and dynamic
+			ParticleSystem tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFX;
+			if(tapFX != null) {
+				tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
+			}
+
 			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFX);
 			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic);
 
