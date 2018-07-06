@@ -57,7 +57,13 @@ public class DragonPowerUp : MonoBehaviour {
 		}
 
 		// Disguise power up
-		string disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
+		string disguise;
+		if (HDLiveEventsManager.instance.m_tournament.m_isActive) {
+			disguise = HDLiveEventsManager.instance.m_tournament.GetToUseSkin();
+		} else {
+			disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
+		}
+
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
 		if (def != null) {
 			string powerUp = def.Get("powerup");
@@ -66,9 +72,15 @@ public class DragonPowerUp : MonoBehaviour {
 			}
 		}
 
-
 		// Pet power ups
-		List<string> pets = UsersManager.currentUser.GetEquipedPets(dragonSku);
+		List<string> pets;
+		// Check if tournament
+		if (HDLiveEventsManager.instance.m_tournament.m_isActive) {
+			pets = HDLiveEventsManager.instance.m_tournament.GetToUsePets();
+		} else {
+			pets = UsersManager.currentUser.GetEquipedPets(dragonSku);
+		}
+
 		for( int i = 0; i<pets.Count; i++ )
 		{
 			if ( !string.IsNullOrEmpty( pets[i] ) )
