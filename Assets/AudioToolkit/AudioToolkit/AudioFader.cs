@@ -135,6 +135,12 @@ public class AudioFader
         }
     }
 
+    public float Get()
+    {
+        bool finishedFadeOut;
+        return Get( out finishedFadeOut );
+    }
+
     public float Get( out bool finishedFadeOut )
     {
         float fadeVolume = 1;

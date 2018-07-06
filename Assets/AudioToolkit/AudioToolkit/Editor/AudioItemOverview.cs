@@ -127,7 +127,7 @@ public class AudioItemOverview : EditorWindow
 
                 if ( !_foldedOutCategories.ContainsKey( category.Name ) )
                 {
-                    Debug.LogWarning( "can not find category.Name" + category.Name );
+                    Debug.LogWarning( "can not find category.Name: " + category.Name ); // TODO: find out why this can happen sometimes
                     continue;
                 }
 
