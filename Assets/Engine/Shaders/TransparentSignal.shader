@@ -25,8 +25,8 @@ Shader "Hungry Dragon/Particles/Transparent Signal"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma shader_feature  __ EMISSIVEPOWER
-			#pragma shader_feature  __ AUTOMATICPANNING
+//			#pragma shader_feature  __ EMISSIVEPOWER
+//			#pragma shader_feature  __ AUTOMATICPANNING
 
 			#include "UnityCG.cginc"
 
