@@ -1521,6 +1521,13 @@ namespace TMPro
         /// </summary>
         protected virtual void SetShaderDepth() { }
 
+		// [AOC] ADDITION
+		/// <summary>
+		/// Change the render queue of this text instance.
+		/// </summary>
+		/// <param name="_newRenderQueue">New render queue order.</param>
+		public virtual void SetRenderQueue(int _newRenderQueue) { }
+
         /// <summary>
         /// Set the culling mode on the material.
         /// </summary>
