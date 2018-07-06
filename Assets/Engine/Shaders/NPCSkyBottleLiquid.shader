@@ -38,8 +38,8 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle liquid"
 			#pragma fragment frag
 
 //			#pragma multi_compile __ OPAQUEALPHA
-			#pragma multi_compile __ FREEZE
-			#pragma multi_compile __ TINT
+//			#pragma multi_compile __ FREEZE
+//			#pragma multi_compile __ TINT
 
 
 			#include "UnityCG.cginc"
