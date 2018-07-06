@@ -22,6 +22,8 @@ public class RenderQueueSetter : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const int DEFAULT_UI_QUEUE = 3000;
+
 	[Serializable]
 	public class Target {
 		public Renderer renderer = null;
@@ -87,31 +89,25 @@ public class RenderQueueSetter : MonoBehaviour {
 
 		// Transforms
 		for(int i = 0; i < m_transformTargets.Length; ++i) {
-			if (m_transformTargets[i].renderers) {
-				List<Renderer> renderers = m_transformTargets[i].target.FindComponentsRecursive<Renderer>();
-				for (int r = 0; r < renderers.Count; r++) {
-					Apply(renderers[r], _overrideRenderQueue < 0 ? m_transformTargets[i].newRenderQueue : _overrideRenderQueue);
-				}
-			}
-
-			if (m_transformTargets[i].graphics) {
-				List<Graphic> graphics = m_transformTargets[i].target.FindComponentsRecursive<Graphic>();
-				for (int g = 0; g < graphics.Count; g++) {
-					Apply(graphics[g], _overrideRenderQueue < 0 ? m_transformTargets[i].newRenderQueue : _overrideRenderQueue);
-				}
-			}
+			Apply(
+				m_transformTargets[i].target, 
+				_overrideRenderQueue < 0 ? m_transformTargets[i].newRenderQueue : _overrideRenderQueue,
+				m_transformTargets[i].renderers,
+				m_transformTargets[i].graphics
+			);
 		}
-
 	}
 
-	private void Apply(Renderer _target, int _queue) {
-		Debug.Log(_target.name);
+	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	public static void Apply(Renderer _target, int _queue) {
 		for(int j = 0; j < _target.materials.Length; ++j) {
 			_target.materials[j].renderQueue = _queue;
 		}
 	}
 
-	private void Apply(Graphic _target, int _queue) {
+	public static void Apply(Graphic _target, int _queue) {
 		// Special case for TMPro Textfields
 		if(_target is TMPro.TMP_Text) {
 			(_target as TMPro.TMP_Text).SetRenderQueue(_queue);
@@ -123,6 +119,22 @@ public class RenderQueueSetter : MonoBehaviour {
 				_target.material = new Material(_target.defaultMaterial);
 			}
 			_target.material.renderQueue = _queue;
+		}
+	}
+
+	public static void Apply(Transform _t, int _queue, bool _applyToRenderers = true, bool _applyToGraphics = true) {
+		if (_applyToRenderers) {
+			List<Renderer> renderers = _t.FindComponentsRecursive<Renderer>();
+			for (int r = 0; r < renderers.Count; r++) {
+				Apply(renderers[r], _queue);
+			}
+		}
+
+		if (_applyToGraphics) {
+			List<Graphic> graphics = _t.FindComponentsRecursive<Graphic>();
+			for (int g = 0; g < graphics.Count; g++) {
+				Apply(graphics[g], _queue);
+			}
 		}
 	}
 
