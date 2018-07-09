@@ -63,6 +63,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 
 			m_bounds = new Bounds();
+			m_bounds.center = transform.position;
+
 			GameObject view = transform.Find("view").gameObject;
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 			for (int i = 0; i < renderers.Length; ++i) {
@@ -233,4 +235,12 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public virtual void Save( ref AbstractSpawnerData _data){}
 	public virtual void Load(AbstractSpawnerData _data){}
 	#endregion
+
+	/// <summary>
+	/// Callback to draw gizmos that are pickable and always drawn.
+	/// </summary>
+	void OnDrawGizmos()
+	{
+		Gizmos.DrawWireCube((Vector3)m_rect.center, (Vector3)m_rect.size);
+	}
 }
