@@ -35,12 +35,20 @@ public class AudioToolkitDemo : MonoBehaviour
         string txt = string.Format( "ClockStone Audio Toolkit - Demo" );
         GUI.Label( new Rect( 22, 10, 500, 20 ), txt, headerStyle );
 
+        
+
         int ypos = 10;
         int yposOff = 35;
         int buttonWidth = 200;
         int scrollbarWidth = 130;
 
         ypos += 30;
+
+        if ( !AudioController.DoesInstanceExist() )
+        {
+            GUI.Label( new Rect( 250, ypos, buttonWidth, 30 ), "No Audio Controller found!" );
+            return;
+        }
 
         GUI.Label( new Rect( 250, ypos, buttonWidth, 30 ), "Global Volume" );
 
@@ -81,7 +89,19 @@ public class AudioToolkitDemo : MonoBehaviour
 
         ypos += yposOff;
 
-        
+        if( GUI.Button( new Rect( 20, ypos, buttonWidth, 30 ), "Fade out music category" ) )
+        {
+            AudioController.FadeOutCategory( "Music", 2 );
+        }
+
+        ypos += yposOff;
+
+        if ( GUI.Button( new Rect( 20, ypos, buttonWidth, 30 ), "Fade in music category" ) )
+        {
+            AudioController.FadeInCategory( "Music", 2 );
+        }
+
+        ypos += yposOff;
 
         if ( GUI.Button( new Rect( 20, ypos, buttonWidth, 30 ), "Stop Music" ) )
         {
@@ -228,7 +248,14 @@ public class AudioToolkitDemo : MonoBehaviour
 
         if ( GUI.Button( new Rect( Screen.width - ( buttonWidth + 20 ), ypos, buttonWidth, 30 ), "Play gapless audio loop" ) )
         {
-            AudioController.Play( "GaplessLoopTest" ).Stop( 1, 4 );
+            var ao = AudioController.Play( "GaplessLoopTest" );
+            if( ao )
+            {
+                ao.Stop( 1, 4 );
+            } else
+            {
+                // this can happen if you press the button twice really quickly so the audio is skipped because of the "Min Time Between Play" setting
+            }
         }
         ypos += yposOff;
 
