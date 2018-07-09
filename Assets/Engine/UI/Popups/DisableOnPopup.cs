@@ -40,6 +40,7 @@ public class DisableOnPopup : MonoBehaviour {
 
 	// Internal
 	private bool m_pendingActivation = false;
+	private int m_targetPopups = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -83,6 +84,9 @@ public class DisableOnPopup : MonoBehaviour {
 		}
 
 		// Set flag
+		if(!m_pendingActivation) {
+			m_targetPopups = PopupManager.openPopupsCount - 1;	// [AOC] Exclude the one that just opened!
+		}
 		m_pendingActivation = true;
 
 		// Execute all aditional actions
@@ -95,7 +99,7 @@ public class DisableOnPopup : MonoBehaviour {
 	/// <param name="_popup">The popup that has been closed.</param>
 	private void OnPopupClosed(PopupController _popup) {
 		// If there are no more popups opened and activation was pending, re-enable the game object
-		if(m_pendingActivation && PopupManager.openPopupsCount <= 0) {
+		if(m_pendingActivation && PopupManager.openPopupsCount <= m_targetPopups) {
 			// Reset flag
 			m_pendingActivation = false;
 
