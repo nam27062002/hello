@@ -73,7 +73,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 			Vector2 position = (Vector2)m_bounds.min;
 			Vector2 size = (Vector2)m_bounds.size;
-			Vector2 extraSize = size * (transform.position.z * 4f) / 100f; // we have to increase the size due to z depth
+			Vector2 extraSize = size * (transform.position.z * 2f) / 100f; // we have to increase the size due to z depth
 
 			m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
 
@@ -244,8 +244,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	/// <summary>
 	/// Callback to draw gizmos that are pickable and always drawn.
 	/// </summary>
-	void OnDrawGizmos()
-	{
+	private void OnDrawGizmosSelected() {
 		Gizmos.DrawWireCube((Vector3)m_rect.center, (Vector3)m_rect.size);
 	}
 }
