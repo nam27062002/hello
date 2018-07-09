@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *           Registered Component (c) by ClockStone 2011                    *
  * 
  * A component derived from this class will get registered in a global 
@@ -56,7 +56,7 @@ public abstract class RegisteredComponent : MonoBehaviour, IRegisteredComponent
             isUnregistered = false;
         }
         else
-            Debug.LogWarning( "RegisteredComponent: Awake() / OnDestroy() not correctly called. Object: " + name );
+            Debug.LogWarning( "RegisteredComponent: Awake() not correctly called. Object: " + name );
     }
 
     protected virtual void OnDestroy()
@@ -73,7 +73,7 @@ public abstract class RegisteredComponent : MonoBehaviour, IRegisteredComponent
 
             if ( !alreadyUnregisteredProperly ) // for poolable objects OnDestroy() can get called multiple times
             {
-                Debug.LogWarning( "RegisteredComponent: Awake() / OnDestroy() not correctly called. Object: " + name + " isRegistered:" + isRegistered + " isUnregistered:" + isUnregistered );
+                Debug.LogWarning( "RegisteredComponent: OnDestroy() not correctly called. Object: " + name + " isRegistered:" + isRegistered + " isUnregistered:" + isUnregistered );
             }
         }
     }
@@ -93,7 +93,7 @@ public abstract class RegisteredComponent : MonoBehaviour, IRegisteredComponent
 /// </remarks>
 static public class RegisteredComponentController
 {
-    public class InstanceContainer : HashSet_Flash<IRegisteredComponent>
+    public class InstanceContainer : HashSet<IRegisteredComponent>
     {
 
     }

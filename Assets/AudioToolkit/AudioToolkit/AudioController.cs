@@ -60,7 +60,7 @@
 #define UNITY_AUDIO_FEATURES_4_1
 #endif
 
-#if UNITY_5 || UNITY_6 || UNITY_7
+#if UNITY_5 || UNITY_2017 || UNITY_2017_1_OR_NEWER
 #define UNITY_5_OR_NEWER
 #endif
 
@@ -128,7 +128,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// <summary>
     /// A string containing the version number of the Audio Toolkit
     /// </summary>
-    public const string AUDIO_TOOLKIT_VERSION = "8.0";
+    public const string AUDIO_TOOLKIT_VERSION = "8.5";
 
     /// <summary>
     /// Disables all audio playback.
@@ -523,6 +523,31 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
             return _systemDeltaTime;
         }
     }
+    /// <summary>
+    /// sets/gets the parent transform for music 
+    /// </summary>
+    /// <remarks>Changing the transform does not effect the currently playing music</remarks>
+    static public Transform musicParent
+    {
+        set
+        {
+            _musicParent = value;
+        }
+        get { return _musicParent; }
+    }
+
+    /// <summary>
+    /// sets/gets the parent transform for ambience sounds 
+    /// </summary>
+    /// <remarks>Changing the transform does not effect the currently playing ambience sound</remarks>
+    static public Transform ambienceParent
+    {
+        set
+        {
+            _ambienceParent = value;
+        }
+        get { return _ambienceParent; }
+    }
 
 
     // **************************************************************************************************/
@@ -690,7 +715,6 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// </remarks>
     static public AudioObject PlayAmbienceSound( string audioID, float volume = 1, float delay = 0, float startTime = 0 )
     {
-        _isPlaylistPlaying = false;
         return Instance._PlayAmbienceSound( audioID, volume, delay, startTime );
     }
 
@@ -713,7 +737,6 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// </remarks>
     static public AudioObject PlayAmbienceSound( string audioID, Vector3 worldPosition, Transform parentObj = null, float volume = 1, float delay = 0, float startTime = 0 )
     {
-        _isPlaylistPlaying = false;
         return Instance._PlayAmbienceSound( audioID, worldPosition, parentObj, volume, delay, startTime );
     }
 
@@ -862,12 +885,12 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// <returns>
     /// The playlist audio item ID array
     /// </returns>
-    static public string[ ] GetMusicPlaylist( string playlistName = null )
+    static public string[] GetMusicPlaylist( string playlistName = null )
     {
         Playlist pl;
 
         if ( string.IsNullOrEmpty( playlistName ) ) pl = Instance._GetCurrentPlaylist();
-        else pl = Instance.GetPlaylistByName(  playlistName );
+        else pl = Instance.GetPlaylistByName( playlistName );
         if ( pl == null ) return null;
 
         string[ ] playlistCopy = new string[ pl.playlistItems != null ? pl.playlistItems.Length : 0 ];
@@ -980,7 +1003,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// </summary>
     /// <param name="playlistName">The name of the playlist to be added</param>
     /// <param name="audioItemIDs">A list of audio item IDs that will represent the playlist</param>
-    static public void AddPlaylist( string playlistName, string[ ] audioItemIDs )
+    static public void AddPlaylist( string playlistName, string[] audioItemIDs )
     {
         var pl = new Playlist( playlistName, audioItemIDs );
         ArrayHelper.AddArrayElement( ref Instance.musicPlaylists, pl );
@@ -1097,7 +1120,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     static public AudioObject Play( string audioID, Vector3 worldPosition, Transform parentObj = null )
     {
         //Debug.Log( "Play: '" + audioID + "'" );
-        return Instance._PlayAsSound( audioID, 1, worldPosition, parentObj, 0, 0, false );
+        return Instance._PlayEx( audioID, AudioChannelType.Default, 1, worldPosition, parentObj, 0, 0, false );
     }
 
     /// <summary>
@@ -1120,7 +1143,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     static public AudioObject Play( string audioID, Vector3 worldPosition, Transform parentObj, float volume, float delay = 0, float startTime = 0 )
     {
         //Debug.Log( "Play: '" + audioID + "'" );
-        return Instance._PlayAsSound( audioID, volume, worldPosition, parentObj, delay, startTime, false );
+        return Instance._PlayEx( audioID, AudioChannelType.Default, volume, worldPosition, parentObj, delay, startTime, false );
     }
 
     /// <summary>
@@ -1138,7 +1161,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// </returns>
     static public AudioObject PlayScheduled( string audioID, double dspTime, Vector3 worldPosition, Transform parentObj = null, float volume = 1.0f, float startTime = 0 )
     {
-        return AudioController.Instance._PlayAsSound( audioID, volume, worldPosition, parentObj, 0, startTime, false, dspTime );
+        return AudioController.Instance._PlayEx( audioID, AudioChannelType.Default, volume, worldPosition, parentObj, 0, startTime, false, dspTime );
     }
 
     /// <summary>
@@ -1640,35 +1663,17 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// <param name="volume">The volume (between 0 and 1).</param>
     static public void SetCategoryVolume( string name, float volume )
     {
-        bool found = false;
-        var primaryInstance = Instance;
+        var catList = _GetAllCategories( name );
 
-        AudioCategory cat = primaryInstance._GetCategory( name );
-
-        if ( cat != null )
-        {
-            cat.Volume = volume;
-            found = true;
-        }
-
-        if ( primaryInstance._additionalAudioControllers != null )
-        {
-            for ( int index = 0; index < primaryInstance._additionalAudioControllers.Count; index++ )
-            {
-                var ac = primaryInstance._additionalAudioControllers[ index ];
-                cat = ac._GetCategory( name );
-
-                if ( cat != null )
-                {
-                    cat.Volume = volume;
-                    found = true;
-                }
-            }
-        }
-
-        if ( !found )
+        if ( catList.Count == 0 )
         {
             Debug.LogWarning( "No audio category with name " + name );
+            return;
+        }
+
+        for ( int i = 0; i < catList.Count; i++ )
+        {
+            catList[ i ].Volume = volume;
         }
     }
 
@@ -1688,6 +1693,53 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
         {
             Debug.LogWarning( "No audio category with name " + name );
             return 0;
+        }
+    }
+
+    /// <summary>
+    /// Starts a fade-out of an audio category.
+    /// </summary>
+    /// <param name="name">The category name.</param>
+    /// <remarks>
+    /// If the category is already fading out the requested fade-out is combined with the existing one.
+    /// </remarks>
+    /// <param name="fadeOutLength">The fade time in seconds. If a negative value is specified, the fade out as specified in the corresponding <see cref="AudioSubItem.FadeOut"/> is used</param>
+    /// <param name="startToFadeTime">Fade out starts after <c>startToFadeTime</c> seconds have passed</param>
+    static public void FadeOutCategory( string name, float fadeOutLength, float startToFadeTime = 0 )
+    {
+        var catList = _GetAllCategories( name );
+
+        if ( catList.Count == 0 )
+        {
+            Debug.LogWarning( "No audio category with name " + name );
+            return;
+        }
+
+        for ( int i = 0; i < catList.Count; i++ )
+        {
+            catList[ i ].FadeOut( fadeOutLength, startToFadeTime );
+        }
+    }
+
+    /// <summary>
+    /// Starts a fade-in of an audio category.
+    /// </summary>
+    /// <param name="name">The category name.</param>
+    /// <param name="fadeInTime">The fade time in seconds.</param>
+    /// <param name="stopCurrentFadeOut">In case of an existing fade-out this parameter determines if the fade-out is stopped.</param>
+    static public void FadeInCategory( string name, float fadeInTime, bool stopCurrentFadeOut = true )
+    {
+        var catList = _GetAllCategories( name );
+
+        if ( catList.Count == 0 )
+        {
+            Debug.LogWarning( "No audio category with name " + name );
+            return;
+        }
+
+        for ( int i = 0; i < catList.Count; i++ )
+        {
+            catList[ i ].FadeIn( fadeInTime, stopCurrentFadeOut );
         }
     }
 
@@ -2018,6 +2070,9 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 
     protected AudioListener _currentAudioListener = null;
 
+    static private Transform _musicParent = null;
+    static private Transform _ambienceParent = null;
+
     private bool _musicEnabled = true;
     private bool _ambienceSoundEnabled = true;
     private bool _soundMuted = false;
@@ -2070,24 +2125,37 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 
     protected AudioObject _PlayMusic( string audioID, float volume, float delay, float startTime )
     {
-        AudioListener al = GetCurrentAudioListener();
-        if ( al == null )
+        if ( _musicParent == null )
         {
-            Debug.LogWarning( "No AudioListener found in the scene" );
-            return null;
+            AudioListener al = GetCurrentAudioListener();
+            if ( al == null )
+            {
+                Debug.LogWarning( "No AudioListener found in the scene" );
+                return null;
+            }
+            return _PlayMusic( audioID, al.transform.position + al.transform.forward, null, volume, delay, startTime );
+        } else
+        {
+            return _PlayMusic( audioID, _musicParent.position, _musicParent, volume, delay, startTime );
         }
-        return _PlayMusic( audioID, al.transform.position + al.transform.forward, null, volume, delay, startTime );
     }
 
     protected AudioObject _PlayAmbienceSound( string audioID, float volume, float delay, float startTime )
     {
-        AudioListener al = GetCurrentAudioListener();
-        if ( al == null )
+        if ( _ambienceParent == null )
         {
-            Debug.LogWarning( "No AudioListener found in the scene" );
-            return null;
+            AudioListener al = GetCurrentAudioListener();
+            if ( al == null )
+            {
+                Debug.LogWarning( "No AudioListener found in the scene" );
+                return null;
+            }
+            return _PlayAmbienceSound( audioID, al.transform.position + al.transform.forward, null, volume, delay, startTime );
+        } else
+        {
+            return _PlayAmbienceSound( audioID, _ambienceParent.position, _ambienceParent, volume, delay, startTime );
+
         }
-        return _PlayAmbienceSound( audioID, al.transform.position + al.transform.forward, null, volume, delay, startTime );
     }
 
     protected bool _StopMusic( float fadeOutLength )
@@ -2148,14 +2216,13 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 
         //Debug.Log( "PlayMusic " + audioID );
 
-        _currentMusic = _PlayAsMusicOrAmbienceSound( audioID, volume, position, parentObj, delay, startTime, false );
+        if ( musicCrossFadeTime_In <= 0 ) doFadeIn = false;
 
-        if ( _currentMusic )
+        _currentMusic = _PlayEx( audioID, AudioChannelType.Music, volume, position, parentObj, delay, startTime, false, 0, null, doFadeIn ? 0 : 1 );
+
+        if ( doFadeIn && _currentMusic )
         {
-            if ( doFadeIn && musicCrossFadeTime_In > 0 )
-            {
-                _currentMusic.FadeIn( musicCrossFadeTime_In );
-            }
+            _currentMusic.FadeIn( musicCrossFadeTime_In );
         }
 
         return _currentMusic;
@@ -2175,15 +2242,13 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
         else
             doFadeIn = false;
 
+        if ( ambienceSoundCrossFadeTime_In <= 0 ) doFadeIn = false;
 
-        _currentAmbienceSound = _PlayAsMusicOrAmbienceSound( audioID, volume, position, parentObj, delay, startTime, false );
+        _currentAmbienceSound = _PlayEx( audioID, AudioChannelType.Ambience, volume, position, parentObj, delay, startTime, false, 0, null, doFadeIn ? 0 : 1 );
 
-        if ( _currentAmbienceSound )
+        if ( doFadeIn && _currentAmbienceSound )
         {
-            if ( doFadeIn && ambienceSoundCrossFadeTime_In > 0 )
-            {
-                _currentAmbienceSound.FadeIn( ambienceSoundCrossFadeTime_In );
-            }
+            _currentAmbienceSound.FadeIn( ambienceSoundCrossFadeTime_In );
         }
 
         return _currentAmbienceSound;
@@ -2318,7 +2383,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 
     private int _GetNextMusicTrackShuffled()
     {
-        var playedTracksHashed = new HashSet_Flash<int>();
+        var playedTracksHashed = new HashSet<int>();
 
         int disallowTracksCount = _playlistPlayed.Count;
 
@@ -2421,17 +2486,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
         return next;
     }
 
-    protected AudioObject _PlayAsSound( string audioID, float volume, Vector3 worldPosition, Transform parentObj, float delay, float startTime, bool playWithoutAudioObject, double dspTime = 0, AudioObject useExistingAudioObject = null )
-    {
-        return _PlayEx( audioID, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, dspTime, useExistingAudioObject, false );
-    }
-
-    protected AudioObject _PlayAsMusicOrAmbienceSound( string audioID, float volume, Vector3 worldPosition, Transform parentObj, float delay, float startTime, bool playWithoutAudioObject, double dspTime = 0, AudioObject useExistingAudioObject = null )
-    {
-        return _PlayEx( audioID, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, dspTime, useExistingAudioObject, true );
-    }
-
-    protected AudioObject _PlayEx( string audioID, float volume, Vector3 worldPosition, Transform parentObj, float delay, float startTime, bool playWithoutAudioObject, double dspTime = 0, AudioObject useExistingAudioObject = null, bool playAsMusicOrAmbienceSound = false )
+    protected AudioObject _PlayEx( string audioID, AudioChannelType channel, float volume, Vector3 worldPosition, Transform parentObj, float delay, float startTime, bool playWithoutAudioObject, double dspTime = 0, AudioObject useExistingAudioObject = null, float startVolumeMultiplier = 1 )
     {
         //Debug.Log( "AudioController Play: " + audioID );
 
@@ -2443,7 +2498,6 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
             //Debug.LogWarning( "Audio item with name '" + audioID + "' does not exist" );
             return null;
         }
-
 
         if ( sndItem._lastPlayedTime > 0 && dspTime == 0 )
         {
@@ -2515,7 +2569,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
             }
         }
 
-        return PlayAudioItem( sndItem, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, useExistingAudioObject, dspTime, playAsMusicOrAmbienceSound );
+        return PlayAudioItem( sndItem, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, useExistingAudioObject, dspTime, channel, startVolumeMultiplier );
     }
 
     /// <summary>
@@ -2537,10 +2591,11 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// <param name="useExistingAudioObj">if specified this existing audio object is used instead of creating a new <see cref="AudioObject"/></param>
     /// <param name="dspTime">The high precision DSP time at which to schedule playing the audio [default=0]</param>
     /// <param name="playAsMusicOrAmbienceSound">Determines if it is effected by sound muting [default=false]</param>
+    /// <param name="startVolumeMultiplier">allows to adjust the start volume if e.g. a FadeOut will follow immediately after</param>
     /// <returns>
     /// The created <see cref="AudioObject"/> or <c>null</c>
     /// </returns>
-    public AudioObject PlayAudioItem( AudioItem sndItem, float volume, Vector3 worldPosition, Transform parentObj = null, float delay = 0, float startTime = 0, bool playWithoutAudioObject = false, AudioObject useExistingAudioObj = null, double dspTime = 0, bool playAsMusicOrAmbienceSound = false )
+    public AudioObject PlayAudioItem( AudioItem sndItem, float volume, Vector3 worldPosition, Transform parentObj = null, float delay = 0, float startTime = 0, bool playWithoutAudioObject = false, AudioObject useExistingAudioObj = null, double dspTime = 0, AudioChannelType channel = AudioChannelType.Default, float startVolumeMultiplier = 1 )
     {
         AudioObject audioObj = null;
 
@@ -2560,7 +2615,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
             var sndSubItem = sndSubItems[ index ];
             if ( sndSubItem != null )
             {
-                var audioObjRet = PlayAudioSubItem( sndSubItem, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, useExistingAudioObj, dspTime, playAsMusicOrAmbienceSound );
+                var audioObjRet = PlayAudioSubItem( sndSubItem, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, useExistingAudioObj, dspTime, channel, startVolumeMultiplier );
 
                 if ( audioObjRet )
                 {
@@ -2627,14 +2682,11 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
         if ( _lastSystemTime >= 0 )
         {
             _systemDeltaTime = newSystemTime - _lastSystemTime;
-            if ( _systemDeltaTime <= Time.maximumDeltaTime + 0.01f )
+            if ( _systemDeltaTime > Time.maximumDeltaTime + 0.01f )
             {
-                _systemTime += _systemDeltaTime;
+                _systemDeltaTime = Time.deltaTime;
             }
-            else
-            {
-                _systemDeltaTime = 0;
-            }
+            _systemTime += _systemDeltaTime;
         }
         else
         {
@@ -2648,72 +2700,52 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 #if AUDIO_TOOLKIT_DEMO
     protected virtual void Awake()
     {
-        if ( isAdditionalAudioController )
-        {
-            AudioController.Instance._RegisterAdditionalAudioController( this );
-        } else
-            _SetDefaultCurrentPlaylist();
-    }
-
-    protected virtual void OnDestroy()
-    {
-        if ( isAdditionalAudioController && AudioController.DoesInstanceExist() )
-        {
-            AudioController.Instance._UnregisterAdditionalAudioController( this );
-        }
-    }
-
-    public virtual bool isSingletonObject
-    {
-        get
-        {
-            return !_isAdditionalAudioController;
-        }
-    }
-
 #else
     protected override void Awake()
     {
         base.Awake();
-        // all initialisation must be done in AwakeSingleton()
-
-        if ( !isAdditionalAudioController )
+#endif 
+        if ( Persistent )
         {
-            AwakeSingleton(); // AwakeSingleton only gets called by UnitySingleton if this is the main singleton object
-            _SetDefaultCurrentPlaylist();
+            DontDestroyOnLoad( gameObject );
         }
+
+        // all initialisation must be done in AwakeSingleton()
     }
+
+    static List<AudioController> _additionalControllerToRegister;
 
     void OnEnable()
     {
         if ( isAdditionalAudioController )
         {
-            AudioController.Instance._RegisterAdditionalAudioController( this );
-        }
-        else
+            if ( AudioController.DoesInstanceExist() )
+            {
+                AudioController.Instance._RegisterAdditionalAudioController( this );
+            }
+            else
+            {
+                if( _additionalControllerToRegister == null )
+                {
+                    _additionalControllerToRegister = new List<AudioController>();
+                }
+                _additionalControllerToRegister.Add( this );
+            }
+        } else
         {
-            AwakeSingleton(); // AwakeSingleton only gets called by UnitySingleton if this is the main singleton object
+            if ( _additionalControllerToRegister != null )
+            {
+                for( int i=0; i< _additionalControllerToRegister.Count; i++ )
+                {
+                    var ac = _additionalControllerToRegister[ i ];
+                    if ( ac && ac.enabled )
+                    {
+                        AudioController.Instance._RegisterAdditionalAudioController( ac );
+                    }
+                }
+                _additionalControllerToRegister = null;
+            }
         }
-    }
-
-    /// <summary>
-    /// returns <c>true </c>if the AudioController is the main controller (not an additional controller)
-    /// </summary>
-    public override bool isSingletonObject
-    {
-        get
-        {
-            return !_isAdditionalAudioController;
-        }
-    }
-
-    protected override void OnDestroy()
-    {
-        if ( UnloadAudioClipsOnDestroy )
-        {
-            UnloadAllAudioClips();
-        }
-        base.OnDestroy();
     }
 
     void OnDisable()
@@ -2723,16 +2755,44 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
             AudioController.Instance._UnregisterAdditionalAudioController( this );
         }
     }
+
+    /// <summary>
+    /// returns <c>true </c>if the AudioController is the main controller (not an additional controller)
+    /// </summary>
+#if AUDIO_TOOLKIT_DEMO
+    public virtual
+#else
+    public override
 #endif
+    bool isSingletonObject
+    {
+        get
+        {
+            return !_isAdditionalAudioController;
+        }
+    }
+
+#if AUDIO_TOOLKIT_DEMO
+    protected virtual
+#else
+    protected override
+#endif
+    void OnDestroy()
+    {
+        if ( UnloadAudioClipsOnDestroy )
+        {
+            UnloadAllAudioClips();
+        }
+#if !AUDIO_TOOLKIT_DEMO
+        base.OnDestroy();
+#endif
+    }
 
     void AwakeSingleton() // is called by singleton, can be called before Awake() 
     {
         _UpdateSystemTime();
 
-        if ( Persistent )
-        {
-            DontDestroyOnLoad( gameObject );
-        }
+        //Debug.Log( "AwakeSingleton" );
 
         if ( AudioObjectPrefab == null )
         {
@@ -2749,6 +2809,7 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
             _playlistPlayed = new List<int>();
             _isPlaylistPlaying = false;
         }
+        _SetDefaultCurrentPlaylist();
     }
 
     protected void _ValidateCategories()
@@ -2861,6 +2922,35 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 
     }
 
+    private static List<AudioCategory> _GetAllCategories( string name )
+    {
+        var primaryInstance = Instance;
+
+        var catList = new List<AudioCategory>();
+
+        AudioCategory cat = primaryInstance._GetCategory( name );
+
+        if ( cat != null )
+        {
+            catList.Add( cat );
+        }
+
+        if ( primaryInstance._additionalAudioControllers != null )
+        {
+            for ( int index = 0; index < primaryInstance._additionalAudioControllers.Count; index++ )
+            {
+                var ac = primaryInstance._additionalAudioControllers[ index ];
+                cat = ac._GetCategory( name );
+
+                if ( cat != null )
+                {
+                    catList.Add( cat );
+                }
+            }
+        }
+        return catList;
+    }
+
     /// <summary>
     /// Plays a specific AudioSubItem.
     /// </summary>
@@ -2879,11 +2969,12 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     /// </param>
     /// <param name="useExistingAudioObj">if specified this existing audio object is used instead of creating a new <see cref="AudioObject"/></param>
     /// <param name="dspTime">The high precision DSP time at which to schedule playing the audio [default=0]</param>
-    /// <param name="playAsMusicOrAmbienceSound">if <c>true</c>plays the audio as music or ambience track [default=<c>false</c>]</param>
+    /// <param name="channel">if <c>true</c>specifies the audio channel</param>
+    /// <param name="startVolumeMultiplier">allows to adjust the start volume if e.g. a FadeOut will follow immediately after</param>
     /// <returns>
     /// The created <see cref="AudioObject"/> or <c>null</c>
     /// </returns>
-    public AudioObject PlayAudioSubItem( AudioSubItem subItem, float volume, Vector3 worldPosition, Transform parentObj, float delay, float startTime, bool playWithoutAudioObject, AudioObject useExistingAudioObj, double dspTime = 0, bool playAsMusicOrAmbienceSound = false )
+    public AudioObject PlayAudioSubItem( AudioSubItem subItem, float volume, Vector3 worldPosition, Transform parentObj, float delay, float startTime, bool playWithoutAudioObject, AudioObject useExistingAudioObj, double dspTime = 0, AudioChannelType channel = AudioChannelType.Default, float startVolumeMultiplier = 1 )
     {
         _ValidateCategories();
 
@@ -2891,15 +2982,15 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 
         switch ( subItem.SubItemType )
         {
-        case AudioSubItemType.Item:
+            case AudioSubItemType.Item:
             if ( subItem.ItemModeAudioID.Length == 0 )
             {
                 Debug.LogWarning( "No item specified in audio sub-item with ITEM mode (audio item: '" + audioItem.Name + "')" );
                 return null;
             }
-            return _PlayAsSound( subItem.ItemModeAudioID, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, dspTime, useExistingAudioObj );
+            return _PlayEx( subItem.ItemModeAudioID, channel, volume, worldPosition, parentObj, delay, startTime, playWithoutAudioObject, dspTime, useExistingAudioObj );
 
-        case AudioSubItemType.Clip:
+            case AudioSubItemType.Clip:
             break;
         }
 
@@ -3026,9 +3117,15 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
         sndObj._volumeExcludingCategory = volumeWithoutCategory;
         sndObj._volumeFromScriptCall = volume;
         sndObj.category = audioCategory;
-        sndObj.isPlayedAsMusicOrAmbienceSound = playAsMusicOrAmbienceSound;
+        sndObj.channel = channel;
 
-        sndObj._ApplyVolumePrimary();
+        if ( subItem.FadeIn > 0 )
+        {
+            // call FadeIn to correctly set start volume in _ApplyVolumePrimary
+            sndObj.FadeIn( subItem.FadeIn );
+        }
+
+        sndObj._ApplyVolumePrimary( startVolumeMultiplier );
 
 #if UNITY_5_OR_NEWER
 
@@ -3139,10 +3236,6 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
     // is public because custom inspector must access it
     public AudioController_CurrentInspectorSelection _currentInspectorSelection = new AudioController_CurrentInspectorSelection();
 
-    public AudioController()
-    {
-        AudioController.SetSingletonType( typeof( AudioController ) );
-    }
 #pragma warning disable 612
 
     public void OnAfterDeserialize()
@@ -3184,5 +3277,12 @@ public class AudioController_CurrentInspectorSelection
     public int currentSubitemIndex = 0;
     public int currentPlaylistEntryIndex = 0;
     public int currentPlaylistIndex = 0;
+}
+
+public enum AudioChannelType
+{
+    Default = 0,
+    Music = 1,
+    Ambience = 2,
 }
 

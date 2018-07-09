@@ -207,7 +207,12 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	}
 		
 	private void Spawn() {
-		gameObject.SetActive(true);
+		if (m_respawnCount == 0) {
+			if (m_decoration != null) {
+				EntityManager.instance.RegisterDecoration(m_decoration);
+			}
+			gameObject.SetActive(true);
+		}
 
 		ISpawnable[] components = GetComponents<ISpawnable>();
 		foreach (ISpawnable component in components) {
