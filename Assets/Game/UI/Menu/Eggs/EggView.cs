@@ -252,7 +252,7 @@ public class EggView : MonoBehaviour {
 
 			case Egg.State.SHOWROOM: {
 				// Only for premium eggs (or if forced)
-				if(m_forceIdleFX || m_showIdleFX || (m_eggData != null && m_eggData.def.sku == Egg.SKU_PREMIUM_EGG)) {
+				if(m_forceIdleFX || m_showIdleFX) {
 					showIdleFX = true;
 				}
 			} break;
