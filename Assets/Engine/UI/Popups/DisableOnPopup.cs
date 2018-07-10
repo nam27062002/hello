@@ -40,7 +40,11 @@ public class DisableOnPopup : MonoBehaviour {
 
 	// Internal
 	private bool m_pendingActivation = false;
-	private int m_targetPopups = 0;
+	private int m_refPopupCount = -1;
+	public int refPopupCount {
+		get { return m_refPopupCount; }
+		set { m_refPopupCount = value; }
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -56,6 +60,16 @@ public class DisableOnPopup : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// If target popups was not manually defined, store current popup count as reference
+		if(m_refPopupCount < 0) {
+			m_refPopupCount = PopupManager.openPopupsCount;
+		}
+	}
+
+	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
@@ -63,6 +77,21 @@ public class DisableOnPopup : MonoBehaviour {
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupClosed);
+	}
+
+	/// <summary>
+	/// Check opened popups count and check whether this object should be displayed or not.
+	/// </summary>
+	/// <returns>Was it active?</returns>
+	private bool CheckVisibility() {
+		// In order for the object to be visible, there can't be more popups opened than our target ref
+		bool show = PopupManager.openPopupsCount <= m_refPopupCount;
+		if(m_animator != null) {
+			m_animator.ForceSet(show);
+		} else {
+			gameObject.SetActive(show);
+		}
+		return show;
 	}
 
 	//------------------------------------------------------------------------//
@@ -76,18 +105,11 @@ public class DisableOnPopup : MonoBehaviour {
 		// Skip if object already disabled
 		if(!gameObject.activeSelf) return;
 
-		// Disable this object
-		if(m_animator != null) {
-			m_animator.ForceHide();
-		} else {
-			gameObject.SetActive(false);
-		}
+		// Hide object?
+		bool show = CheckVisibility();
 
 		// Set flag
-		if(!m_pendingActivation) {
-			m_targetPopups = PopupManager.openPopupsCount - 1;	// [AOC] Exclude the one that just opened!
-		}
-		m_pendingActivation = true;
+		m_pendingActivation = !show;
 
 		// Execute all aditional actions
 		m_onPopupOpened.Invoke();
@@ -99,19 +121,16 @@ public class DisableOnPopup : MonoBehaviour {
 	/// <param name="_popup">The popup that has been closed.</param>
 	private void OnPopupClosed(PopupController _popup) {
 		// If there are no more popups opened and activation was pending, re-enable the game object
-		if(m_pendingActivation && PopupManager.openPopupsCount <= m_targetPopups) {
-			// Reset flag
-			m_pendingActivation = false;
+		if(m_pendingActivation) {
+			// Must the object be restored?
+			bool show = CheckVisibility();
+			if(show) {
+				// Reset flag
+				m_pendingActivation = false;
 
-			// Enable the object
-			if(m_animator != null) {
-				m_animator.ForceShow();
-			} else {
-				gameObject.SetActive(true);
+				// Execute all aditional actions
+				m_onAllPopupsClosed.Invoke();
 			}
-
-			// Execute all aditional actions
-			m_onAllPopupsClosed.Invoke();
 		}
 	}
 }
