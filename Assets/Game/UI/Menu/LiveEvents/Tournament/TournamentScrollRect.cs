@@ -49,7 +49,7 @@ public class TournamentScrollRect : OptimizedScrollRect<TournamentLeaderboardPil
 		}
 	}
 
-	protected override void OnPillCreated() {
+	protected override void OnPillCreated(TournamentLeaderboardPillBase _pill) {
 		// Player pill should be the last one in the hierarchy (so it is drawed on top)
 		if(m_playerPill != null) m_playerPill.transform.SetAsLastSibling();
 	}

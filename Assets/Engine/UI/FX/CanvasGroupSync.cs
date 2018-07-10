@@ -48,7 +48,7 @@ public class CanvasGroupSync : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-        ParticleSystemRenderer[] m_prenderers = GetComponentsInChildren<ParticleSystemRenderer>();
+		ParticleSystemRenderer[] m_prenderers = GetComponentsInChildren<ParticleSystemRenderer>(true);
         foreach (ParticleSystemRenderer psr in m_prenderers)
         {
             Material[] m = psr.materials;

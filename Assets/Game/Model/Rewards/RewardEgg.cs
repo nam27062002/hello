@@ -115,7 +115,7 @@ namespace Metagame {
 
 			// Get the reward definition
 			DefinitionNode rewardTypeDef = null;
-			if(m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
+			if (m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
 				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
 			} else {
 				if (m_hasCustomWeights) {
@@ -192,26 +192,19 @@ namespace Metagame {
 					// c) Normal case: random pet of the target rarity
 					else {
 						// If tutorial is not completed, choose from a limited pool
-						if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) 
-						{
+						if (!m_hasCustomWeights && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
 							Debug.Log(Colors.pink.Tag("TUTORIAL NOT COMPLETED, USING REDUCED POOL"));
 							List<DefinitionNode> newPetDefs = new List<DefinitionNode>();
 							for (int i = 0; i < petDefs.Count; i++) {
 								DefinitionNode newPetDef = petDefs[i];
-								if (newPetDef.GetAsBool("startingPool"))
-								{
+								if (newPetDef.GetAsBool("startingPool")) {
 									newPetDefs.Add( newPetDef );
 								}
 							}
 
-							if ( newPetDefs.Count > 0 )
-							{
-								petDef = newPetDefs.GetRandomValue();
-							}
-							else
-							{
-								petDef = petDefs.GetRandomValue();	
-							}
+							if (newPetDefs.Count > 0) 	petDef = newPetDefs.GetRandomValue();
+							else						petDef = petDefs.GetRandomValue();	
+
 						} else {
 							// Default behaviour
 							float totalWeight = 0f;

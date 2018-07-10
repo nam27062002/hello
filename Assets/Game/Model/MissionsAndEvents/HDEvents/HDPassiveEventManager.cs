@@ -26,6 +26,8 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	public HDPassiveEventData m_passiveEventData = null;
+	public HDPassiveEventDefinition m_passiveEventDefinition = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -48,6 +50,15 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Create the data object for this live event manager.
+	/// </summary>
+	public override void BuildData() {
+		m_data = new HDPassiveEventData();
+		m_passiveEventData = m_data as HDPassiveEventData;
+		m_passiveEventDefinition = m_passiveEventData.definition as HDPassiveEventDefinition;
+	}
+
+	/// <summary>
 	/// Check for state changes based on timestamps.
 	/// </summary>
 	override public void UpdateStateFromTimers() {
@@ -65,6 +76,7 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	/// </summary>
 	override public void FinishEvent() {
 		// In the case of passive events, we don't need to notify the server
+		Deactivate();
 		m_data.m_state = HDLiveEventData.State.FINALIZED;
 		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR);
 	}
