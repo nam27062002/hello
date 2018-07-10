@@ -46,6 +46,19 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 		} else {
 			m_dragonLoader.LoadDragon(m_def.GetAsString("dragonSku"), m_def.sku);
 		}
+
+		// Disable VFX whenever a popup is opened in top of this preview (they don't render well with a popup on top)
+		if(m_dragonLoader.dragonInstance != null) {
+			ParticleSystem[] ps = m_dragonLoader.dragonInstance.GetComponentsInChildren<ParticleSystem>();
+			for(int i = 0; i < ps.Length; ++i) {
+				// [AOC] At this point the popup containing this preview hasn't yet been 
+				// registered into the PopupManager, so we need to count for it in order 
+				// for the disabler to work as expected.
+				// By doing this, we are assuming the item preview belongs ALWAYS to a popup.
+				DisableOnPopup disabler = ps[i].gameObject.AddComponent<DisableOnPopup>();
+				disabler.refPopupCount = PopupManager.openPopupsCount + 1;
+			}
+		}
 	}
 
 	/// <summary>
@@ -57,5 +70,24 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 			return m_def.GetLocalized("tidName");
 		}
 		return LocalizationManager.SharedInstance.Localize("TID_DISGUISE");	// (shouldn't happen) use generic
+	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The info button has been pressed.
+	/// </summary>
+	override public void OnInfoButton() {
+		// Open info popup
+		// [AOC] TODO!!
+		UIFeedbackText.CreateAndLaunch(
+			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
+			GameConstants.Vector2.down,
+			GetComponentInParent<Canvas>().transform as RectTransform
+		);
+		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
+		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
+		popup.Open();*/
 	}
 }
