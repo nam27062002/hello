@@ -52,7 +52,12 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 
 		// Disable VFX whenever a popup is opened in top of this preview (they don't render well with a popup on top)
 		if(m_eggLoader.eggView.idleFX != null) {
+			// [AOC] At this point the popup containing this preview hasn't yet been 
+			// registered into the PopupManager, so we need to count for it in order 
+			// for the disabler to work as expected.
+			// By doing this, we are assuming the item preview belongs ALWAYS to a popup.
 			DisableOnPopup disabler = m_eggLoader.eggView.idleFX.AddComponent<DisableOnPopup>();
+			disabler.refPopupCount = PopupManager.openPopupsCount + 1;
 		}
 	}
 
@@ -88,7 +93,7 @@ public class OfferItemPreviewEgg3d : IOfferItemPreview {
 		// Move it forward in Z so it doesn't conflict with our 3d preview!
 		popup.transform.SetLocalPosZ(-2500f);
 
-		// Oopen it!
+		// Open it!
 		popup.Open();
 	}
 
