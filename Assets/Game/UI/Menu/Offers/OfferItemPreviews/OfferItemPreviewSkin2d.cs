@@ -58,4 +58,23 @@ public class OfferItemPreviewSkin2d : IOfferItemPreview {
 		}
 		return LocalizationManager.SharedInstance.Localize("TID_DISGUISE");	// (shouldn't happen) use generic
 	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The info button has been pressed.
+	/// </summary>
+	override public void OnInfoButton() {
+		// Open info popup
+		// [AOC] TODO!!
+		UIFeedbackText.CreateAndLaunch(
+			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
+			GameConstants.Vector2.center,
+			GetComponentInParent<Canvas>().transform as RectTransform
+		);
+		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
+		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
+		popup.Open();*/
+	}
 }
