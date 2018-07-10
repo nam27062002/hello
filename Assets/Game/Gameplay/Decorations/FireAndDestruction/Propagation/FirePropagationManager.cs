@@ -133,7 +133,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// </summary>
 	/// <param name="_fireNode">Fire node.</param>
 	public static void StopBurnAudio() {
-		if (instance.m_burningFireNodes != null) {
+		if (instance != null && instance.m_burningFireNodes != null) {
 			if (instance.m_burningFireNodes.Count <= 0)
 				if (instance.m_fireNodeAudio != null && instance.m_fireNodeAudio != null)
 					instance.m_fireNodeAudio.Stop();
