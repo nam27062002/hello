@@ -98,7 +98,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_timer = 0f;
 	}
 
-	public void Disable() { m_nextState = State.Extinguish; }
+	public void Disable() { 
+		StopFireEffect();
+		FirePropagationManager.UnregisterBurningNode(this);
+		m_state = m_nextState = State.Extinguished; 
+	}
 
 	public bool IsSpreadingFire() 	{ return m_state == State.Spreading;  		}
 	public bool IsBurning() 		{ return m_state == State.Burning; 	  		}

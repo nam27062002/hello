@@ -198,7 +198,10 @@ public class MenuPetLoader : MonoBehaviour {
 				}
 
 				// Show rarity glow if required
-				petPreview.ToggleRarityGlow(m_showRarityGlow);
+				// [AOC] Only when playing, otherwise causes a null reference!
+				if(Application.isPlaying) {
+					petPreview.ToggleRarityGlow(m_showRarityGlow);
+				}
 
 				// Reset scale if required
 				if(m_resetScale) {
