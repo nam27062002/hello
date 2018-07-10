@@ -23,34 +23,39 @@ public class PopupInfoPet : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoPet";
+	public const string PATH_SIMPLE = "UI/Popups/Tutorial/PF_PopupInfoPetSimple";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Separator("Pet Info")]
 	[SerializeField] private MenuPetLoader m_preview = null;
 	[SerializeField] private DragControlRotation m_rotationController = null;
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
-	[SerializeField] private Localizer m_infoText = null;
 	[SerializeField] private PowerTooltip m_powerInfo = null;
 	[Space]
 	[SerializeField] private Localizer m_rarityText = null;
 	[SerializeField] private Image m_rarityIcon = null;
-	[Space]
+
+	[Separator("Lock Info (Optional)")]
 	[SerializeField] private GameObject m_ownedInfo = null;
 	[SerializeField] private GameObject m_lockedInfo = null;
 	[Space]
 	[SerializeField] private GameObject m_basicLock = null;
 	[SerializeField] private GameObject m_specialLock = null;
 	[SerializeField] private Localizer m_unlockInfoText = null;
-	[Space]
+
+	[Separator("Scrolling Between Pets (Optional)")]
 	[SerializeField] private GameObject m_panel = null;
 	[SerializeField] private ShowHideAnimator m_arrowAnimPrev = null;
 	[SerializeField] private ShowHideAnimator m_arrowanimNext = null;
 	[SerializeField] private PopupInfoPetScroller m_scroller = null;
 
 	// Internal
+	private DefinitionNode m_petDef = null;
+
 	private Sequence m_scrollSequence = null;
 	private bool m_hasScrolled = false;
 	
@@ -61,14 +66,14 @@ public class PopupInfoPet : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		m_scroller.OnSelectionIndexChanged.AddListener(OnPetSelected);
+		if(m_scroller != null) m_scroller.OnSelectionIndexChanged.AddListener(OnPetSelected);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		m_scroller.OnSelectionIndexChanged.RemoveListener(OnPetSelected);
+		if(m_scroller != null) m_scroller.OnSelectionIndexChanged.RemoveListener(OnPetSelected);
 	}
 
 	//------------------------------------------------------------------------//
@@ -78,36 +83,50 @@ public class PopupInfoPet : MonoBehaviour {
 	/// Initialize the popup with the given pet info.
 	/// </summary>
 	/// <param name="_petDef">Pet definition used for the initialization.</param>
+	public void Init(DefinitionNode _petDef) {
+		List<DefinitionNode> defs = new List<DefinitionNode>();
+		defs.Add(_petDef);
+		Init(_petDef, defs);
+	}
+
+	/// <summary>
+	/// Initialize the popup with the given pet info.
+	/// </summary>
+	/// <param name="_petDef">Pet definition used for the initialization.</param>
 	/// <param name="_scrollDefs">List of pet definitions to scroll around. Initial def should be included. Arrows won't be displayed if null or 0-lengthed</param>
 	public void Init(DefinitionNode _petDef, List<DefinitionNode> _scrollDefs) {
 		// Skip if definition is not valid
 		if(_petDef == null) return;
+		m_petDef = _petDef;
 
-		// Disable selection change events
-		m_scroller.enableEvents = false;
+		// Init scroll logic
+		if(m_scroller != null) {
+			// Disable selection change events
+			m_scroller.enableEvents = false;
 
-		int defaultIndex = 0;
-		List<PetScrollerItem> scrollItems = new List<PetScrollerItem>();
-		foreach (DefinitionNode def in _scrollDefs) {
-			PetScrollerItem item;
-			item.def = def;
-			scrollItems.Add(item);
+			int defaultIndex = 0;
+			List<PetScrollerItem> scrollItems = new List<PetScrollerItem>();
+			foreach (DefinitionNode def in _scrollDefs) {
+				PetScrollerItem item;
+				item.def = def;
+				scrollItems.Add(item);
 
-			if (def == _petDef)
-				defaultIndex = scrollItems.Count - 1;
+				if (def == _petDef)
+					defaultIndex = scrollItems.Count - 1;
+			}
+		
+			// Init list of pets to scroll around
+			m_scroller.Init(scrollItems);
+
+			// Select target def
+			m_scroller.SelectItem(scrollItems[defaultIndex]);
 		}
-
-		// Init list of pets to scroll around
-		m_scroller.Init(scrollItems);
-
-		// Select target def
-		m_scroller.SelectItem(scrollItems[defaultIndex]);
 
 		// Initialize with currently selected pet
 		Refresh();
 
 		// Restore selection change events
-		m_scroller.enableEvents = true;
+		if(m_scroller != null) m_scroller.enableEvents = true;
 	}
 
 	/// <summary>
@@ -115,8 +134,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// </summary>
 	private void Refresh() {
 		// Only if current def is valid
-		DefinitionNode petDef = m_scroller.selectedItem.def;
-		if(petDef == null) return;
+		if(m_petDef == null) return;
 
 		// Load 3D preview
 		if(m_preview != null) {
@@ -128,36 +146,51 @@ public class PopupInfoPet : MonoBehaviour {
 			}
 
 			// Load target pet!
-			m_preview.Load(petDef.sku);
-			//m_petLoader.petInstance.SetAnim(MenuPetPreview.Anim.IDLE);	// [AOC] TODO!! Pose the pet
+			m_preview.Load(m_petDef.sku);
+
+			// Make sure billboards look at the right camera!
+			LookAtMainCamera[] billboards = m_preview.petInstance.GetComponentsInChildren<LookAtMainCamera>(true);
+			for(int i = 0; i < billboards.Length; ++i) {
+				billboards[i].overrideCamera = PopupManager.canvas.worldCamera;
+			}
 		}
 
 		// Initialize name and description texts
-		if(m_nameText != null) m_nameText.Localize(petDef.Get("tidName"));
-		if(m_infoText != null) m_infoText.Localize(petDef.Get("tidDesc"));
+		if(m_nameText != null) m_nameText.Localize(m_petDef.Get("tidName"));
 
 		// Initialize rarity info
 		// Don't show if common
-		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(petDef.Get("rarity"));
+		string raritySku = m_petDef.Get("rarity");
+		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
 		if(m_rarityIcon != null) {
 			m_rarityIcon.gameObject.SetActive(rarity != Metagame.Reward.Rarity.COMMON);
 			m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
 		}
 		if(m_rarityText != null) {
-			DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, petDef.Get("rarity"));
+			DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, raritySku);
 			m_rarityText.gameObject.SetActive(rarity != Metagame.Reward.Rarity.COMMON);
 			m_rarityText.Localize(rarityDef.Get("tidName"));
-			m_rarityText.text.color = UIConstants.RARITY_COLORS[(int)rarity];
+
+			// Text color based on rarity
+			Gradient4 rarityGradient = UIConstants.GetRarityTextGradient(rarity);
+			m_rarityText.text.color = Color.white;
+			m_rarityText.text.enableVertexGradient = true;
+			m_rarityText.text.colorGradient = new TMPro.VertexGradient(
+				rarityGradient.topLeft,
+				rarityGradient.topRight,
+				rarityGradient.bottomLeft,
+				rarityGradient.bottomRight
+			);
 		}
 
 		// Initialize power info
 		if(m_powerInfo != null) {
-			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_petDef.Get("powerup"));
 			m_powerInfo.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
 		}
 
 		// Initialize lock state
-		bool owned = UsersManager.currentUser.petCollection.IsPetUnlocked(petDef.sku);
+		bool owned = UsersManager.currentUser.petCollection.IsPetUnlocked(m_petDef.sku);
 		if(m_ownedInfo != null) m_ownedInfo.SetActive(owned);
 		if(m_lockedInfo != null) m_lockedInfo.SetActive(!owned);
 
@@ -165,18 +198,24 @@ public class PopupInfoPet : MonoBehaviour {
 		if(!owned) {
 			// Special pets are unlocked with golden fragments!
 			bool isSpecial = (rarity == Metagame.Reward.Rarity.SPECIAL);
-			m_basicLock.SetActive(!isSpecial);
-			m_specialLock.SetActive(isSpecial);
-			if(isSpecial) {
-				m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO_SPECIAL");
-			} else {
-				m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO");
+
+			if(m_basicLock != null) m_basicLock.SetActive(!isSpecial);
+			if(m_specialLock != null) m_specialLock.SetActive(isSpecial);
+
+			if(m_unlockInfoText != null) {
+				if(isSpecial) {
+					m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO_SPECIAL");
+				} else {
+					m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO");
+				}
 			}
 		}
 
 		// Update arrows visibility
-		m_arrowAnimPrev.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem.def != m_scroller.items.First().def);	// At least 2 pets and selected pet is not the first one
-		m_arrowanimNext.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem.def != m_scroller.items.Last().def);	// At least 2 pets and selected pet is not the last one
+		if(m_scroller != null) {
+			if(m_arrowAnimPrev != null) m_arrowAnimPrev.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem.def != m_scroller.items.First().def);	// At least 2 pets and selected pet is not the first one
+			if(m_arrowanimNext != null) m_arrowanimNext.Set(m_scroller.items.Count > 1 && m_scroller.selectedItem.def != m_scroller.items.Last().def);	// At least 2 pets and selected pet is not the last one
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -188,6 +227,9 @@ public class PopupInfoPet : MonoBehaviour {
 	/// </summary>
 	/// <param name="_backwards">Left or right?</param>
 	private void LaunchAnim(bool _backwards) {
+		// Doesn't make sense if we have no scroller
+		if(m_scroller == null) return;
+
 		// If not already programmed, do it now
 		if(m_scrollSequence == null) {
 			float offset = 500f;
@@ -237,6 +279,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <param name="_looped">Have we looped to do the new selection?
 	public void OnPetSelected(int _oldIdx, int _newIdx, bool _looped) {
 		// Record selection change
+		m_petDef = m_scroller.selectedItem.def;
 		m_hasScrolled = true;
 
 		// Figure out animation direction and launch it!
@@ -250,7 +293,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// </summary>
 	public void OnNextPet() {
 		// UISelector will do it for us
-		m_scroller.SelectNextItem();
+		if(m_scroller != null) m_scroller.SelectNextItem();
 	}
 
 	/// <summary>
@@ -258,7 +301,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// </summary>
 	public void OnPreviousPet() {
 		// UISelector will do it for us
-		m_scroller.SelectPreviousItem();
+		if(m_scroller != null) m_scroller.SelectPreviousItem();
 	}
 
 	/// <summary>
