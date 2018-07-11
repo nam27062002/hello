@@ -65,7 +65,14 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	}
 
+	private void OnEnable() {
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+	}
 
+	private void OnDisable() {
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+	}
+		
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -183,19 +190,21 @@ public class TournamentBuildScreen : MonoBehaviour {
 			}
 		}
 
-		if (m_definition.timeToEnd.TotalSeconds <= 0f) {
-			if (!m_waitingRewardsData) {
-				Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+		if (!m_definition.m_refund) {
+			if (m_definition.timeToEnd.TotalSeconds <= 0f) {
+				if (!m_waitingRewardsData) {
+					Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 
-				// Request rewards data and wait for it to be loaded
-				m_tournament.RequestRewards();
+					// Request rewards data and wait for it to be loaded
+					m_tournament.RequestRewards();
 
-				// Show busy screen
-				BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
-				BusyScreen.Show(this);
+					// Show busy screen
+					BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
+					BusyScreen.Show(this);
 
-				m_waitingRewardsData = true;
-				CancelInvoke();
+					m_waitingRewardsData = true;
+					CancelInvoke();
+				}
 			}
 		}
 	}
@@ -351,6 +360,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			{
 				SendFeedback("TID_TOURNAMENT_OVER");
 				m_tournament.RequestDefinition(true);
+
 			}break;
 			case HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR: 
 			default:
@@ -378,6 +388,12 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		// Go to play!
 		InstanceManager.menuSceneController.OnPlayButton();
+	}
+
+	private void OnNewDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err) {
+		if (m_definition.m_refund) { // maybe we'll need some feedback
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+		}
 	}
 
 
