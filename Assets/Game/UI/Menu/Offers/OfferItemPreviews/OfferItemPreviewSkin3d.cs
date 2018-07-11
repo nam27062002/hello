@@ -83,7 +83,7 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 		// [AOC] TODO!!
 		UIFeedbackText.CreateAndLaunch(
 			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			GameConstants.Vector2.down,
+			GameConstants.Vector2.center,
 			GetComponentInParent<Canvas>().transform as RectTransform
 		);
 		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
