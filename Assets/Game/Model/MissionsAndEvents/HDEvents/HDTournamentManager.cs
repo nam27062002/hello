@@ -560,6 +560,38 @@ public class HDTournamentManager : HDLiveEventManager {
 	// UI HELPER METHODS													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Gets the description of this tournament localized and properly formatted.
+	/// Override to customize text in specific objective types.
+	/// </summary>
+	/// <returns>The description properly formatted.</returns>
+	public virtual string GetDescription() {
+		// Depends on tournament mode
+		switch(m_tournamentDefinition.m_goal.m_mode) {
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT: {
+				// Add formatted time limit
+				return LocalizationManager.SharedInstance.Localize(
+					m_tournamentDefinition.m_goal.m_desc,
+					TimeUtils.FormatTime(m_tournamentDefinition.m_goal.m_seconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 3)
+				);
+			} break;
+
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK: {
+				// Add target amount
+				return LocalizationManager.SharedInstance.Localize(
+					m_tournamentDefinition.m_goal.m_desc,
+					FormatScore(m_tournamentDefinition.m_goal.m_targetAmount)
+				);
+			} break;
+
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
+			default: {
+				// Just translation as is
+				return LocalizationManager.SharedInstance.Localize(m_tournamentDefinition.m_goal.m_desc);
+			} break;
+		}
+	}
+
+	/// <summary>
 	/// Given a score, format it based on tournament type
 	/// </summary>
 	public string FormatScore(long _score) {
