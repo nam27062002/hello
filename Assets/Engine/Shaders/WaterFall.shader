@@ -54,10 +54,11 @@ Shader "Hungry Dragon/Waterfall"
 				struct v2f {
 					float4 vertex : SV_POSITION;
 //					float3 viewDir: TEXCOORD2;
-					float2 uv : TEXCOORD0;
-					float2 uv2:TEXCOORD1;
+					float2 uv0 : TEXCOORD0;
+					float2 uv1 : TEXCOORD1;
+					float2 uv2 : TEXCOORD2;
 					float4 color : COLOR;
-					HG_FOG_COORDS(2)
+					HG_FOG_COORDS(3)
 				};
 
 				sampler2D _MainTex;
@@ -75,10 +76,15 @@ Shader "Hungry Dragon/Waterfall"
 				v2f vert (appdata_t v) 
 				{
 					v2f o;
-
 					o.vertex = UnityObjectToClipPos(v.vertex);
-					o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-					o.uv2 = TRANSFORM_TEX(v.uv2, _BlendTex);
+
+					float time = frac(_Time.x);
+					float2 anim = float2(0.0, time * _WaterSpeed * 20.0);
+
+					o.uv1 = o.uv0 = TRANSFORM_TEX(v.uv, _MainTex);
+					o.uv0 += anim;
+					o.uv1 += anim * 0.75;
+					o.uv2 = TRANSFORM_TEX(v.uv2, _BlendTex) + anim * 1.5;
 
 					o.color = v.color;
 
@@ -94,12 +100,10 @@ Shader "Hungry Dragon/Waterfall"
 
 				fixed4 frag (v2f i) : SV_Target
 				{
-					float time = frac(_Time.x);
-					float2 anim = float2(0.0, time * _WaterSpeed * 20.0);
 
-					fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
-					col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
-					fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
+					fixed4 col = tex2D(_MainTex, i.uv0);
+					col += tex2D(_DetailTex, i.uv1) * 0.5f;
+					fixed4 blend = tex2D(_BlendTex, i.uv2);
 					col = lerp(col, blend, i.color.w);
 
 					fixed3 one = fixed3(1, 1, 1);
@@ -145,9 +149,12 @@ Shader "Hungry Dragon/Waterfall"
 
 			struct v2f {
 				float4 vertex : SV_POSITION;
-				float2 uv : TEXCOORD0;
-				float2 uv2 : TEXCOORD1;
+				//					float3 viewDir: TEXCOORD2;
+				float2 uv0 : TEXCOORD0;
+				float2 uv1 : TEXCOORD1;
+				float2 uv2 : TEXCOORD2;
 				float4 color : COLOR;
+				HG_FOG_COORDS(3)
 			};
 
 			fixed4 _BackColor;
@@ -163,21 +170,27 @@ Shader "Hungry Dragon/Waterfall"
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.uv2 = TRANSFORM_TEX(v.uv2, _BlendTex);
+
+				float time = frac(_Time.x);
+				float2 anim = float2(0.0, time * _WaterSpeed * 20.0);
+
+				o.uv1 = o.uv0 = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv0 += anim;
+				o.uv1 += anim * 0.75;
+				o.uv2 = TRANSFORM_TEX(v.uv2, _BlendTex) + anim * 1.5;
+
 				o.color = v.color;
+
 				return o;
 			}
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				float time = frac(_Time.x);
-				float2 anim = float2(0.0, time * _WaterSpeed * 20.0);
-
-				fixed4 col = tex2D(_MainTex, 1.0f * (i.uv.xy + anim)) * 1.0f;
-				col += tex2D(_DetailTex, 1.0f * (i.uv.xy + anim * 0.75)) * 0.5f;
-				fixed4 blend = tex2D(_BlendTex, 1.0f * (i.uv2.xy + anim * 1.5));
+				fixed4 col = tex2D(_MainTex, i.uv0);
+				col += tex2D(_DetailTex, i.uv1) * 0.5f;
+				fixed4 blend = tex2D(_BlendTex, i.uv2);
 				col = lerp(col, blend, i.color.w);
+
 				fixed saturate = (col.r + 0.7152 * col.g + 0.0722 * col.b) * col.a * 0.5;
 
 				fixed4 fcol = _BackColor;
