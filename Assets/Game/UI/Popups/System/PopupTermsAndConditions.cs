@@ -58,6 +58,8 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	/// </summary>
     void Awake() {
 		// Init internal vars
+        // Show loading until we know country or age
+
         HasBeenAccepted = false;
         TimeAtOpen = Time.unscaledTime;
 

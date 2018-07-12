@@ -416,7 +416,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				NetworkManager.DestroyInstance ();
 				GameContext.DestroyInstance ();
 				// Update Gradle
-				CaletySettingsEditor.UpdateGradleConfig();
+                CaletySettingsEditor.UpdateGradleConfig(currentModularSettings);
 				// Generate Manifest
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
