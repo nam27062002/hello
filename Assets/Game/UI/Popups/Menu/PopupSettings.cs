@@ -40,6 +40,10 @@ public class PopupSettings : MonoBehaviour {
 #else
             m_saveTab.SetActive(false);
 #endif
+            if ( GDPRManager.SharedInstance.IsAgeRestrictionEnabled() )
+            {
+                m_saveTab.SetActive(false);
+            }
         }
 		if (m_3dTouch != null)
 		{
