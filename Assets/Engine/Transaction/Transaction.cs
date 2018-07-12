@@ -269,8 +269,13 @@ public class Transaction
 
                             amount = itemNode[KEY_ITEM_AMOUNT].AsInt;
                             if (amount > 0)
-                            {                                
-                                AddRewardItemData(CreateRewardItemData(itemNode[KEY_ITEM_SKU], itemNode[KEY_ITEM_TYPE], amount));
+                            {   
+								// An issue was reported (HDK-2164) caused by using multiegg reward implementation. We're fixing that issue, in the meantime we just avoid using it by
+								// creating as many eggs as needed
+								for(int j = 0; j < amount; j++) 
+								{
+									AddRewardItemData(CreateRewardItemData(itemNode[KEY_ITEM_SKU], itemNode[KEY_ITEM_TYPE], 1));
+								}
                             }
                         }
                     }
@@ -347,8 +352,12 @@ public class Transaction
     }
 
     public bool Perform(EPerformType performType)
-    {
+    {		
         bool canPerform = CanPerform();
+
+		if(FeatureSettingsManager.IsDebugEnabled)
+			TransactionManager.Log("Trying to perform transaction " + ToJSON().ToString() + " canPerform = " + canPerform);
+
         if (canPerform)
         {
             switch (performType)
@@ -467,6 +476,9 @@ public class Transaction
 
     private void AddRewardCurrency(UserProfile.Currency currency, Metagame.Reward reward)
     {
+		if(FeatureSettingsManager.IsDebugEnabled)
+			TransactionManager.Log("Add Currency " + currency.ToString());
+		
         if (m_rewardCurrencies == null)
         {
             m_rewardCurrencies = new Dictionary<UserProfile.Currency, Metagame.Reward>();
@@ -489,6 +501,9 @@ public class Transaction
 
     private ItemData CreateRewardItemData(string sku, string type, long amount)
     {
+		if(FeatureSettingsManager.IsDebugEnabled)
+			TransactionManager.Log("CreateRewardItemData sku = " + sku + " type = " + type + " amount = " + amount);
+		
         string source = GetSource();        
         Metagame.Reward.Data data = new Metagame.Reward.Data();
         data.sku = sku;

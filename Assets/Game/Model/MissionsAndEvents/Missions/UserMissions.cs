@@ -56,6 +56,9 @@ public class UserMissions {
 		}
 	}
 
+    public bool ExistsMission(Mission.Difficulty _difficulty) {
+        return m_missions != null && m_missions[(int)_difficulty] != null;
+    }
 
 	/// <summary>
 	/// Get a reference to the active mission with the given difficulty.
