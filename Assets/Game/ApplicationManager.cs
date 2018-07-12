@@ -443,16 +443,24 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         	// Mission notifications
 			bool waiting = false;
 			double seconds = 0;
-			for (Mission.Difficulty i = Mission.Difficulty.EASY; i < Mission.Difficulty.COUNT; i++) 
-			{
-				Mission m = UsersManager.currentUser.userMissions.GetMission(i);
-				if (m.state == Mission.State.COOLDOWN)
-				{
-					waiting = true;
-					if ( m.cooldownRemaining.TotalSeconds > seconds)
-						seconds = m.cooldownRemaining.TotalSeconds;
-				}
-			}
+
+            UserMissions userMissions = UsersManager.currentUser.userMissions;
+            if (userMissions != null)
+            {
+                for (Mission.Difficulty i = Mission.Difficulty.EASY; i < Mission.Difficulty.COUNT; i++)
+                {
+                    if (userMissions.ExistsMission(i))
+                    {
+                        Mission m = userMissions.GetMission(i);
+                        if (m.state == Mission.State.COOLDOWN)
+                        {
+                            waiting = true;
+                            if (m.cooldownRemaining.TotalSeconds > seconds)
+                                seconds = m.cooldownRemaining.TotalSeconds;
+                        }
+                    }
+                }
+            }
 
 			if ( waiting )
 			{
