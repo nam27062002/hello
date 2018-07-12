@@ -127,6 +127,19 @@ public class LoadingSceneController : SceneController {
     }
 
 
+    private class GDPRListener : GDPRManager.GDPRListenerBase
+    {
+        public bool m_infoRecievedFromServer = false;
+        public string m_userCountry = "";
+        public override void onGDPRInfoReceivedFromServer(string strUserCountryByIP, int iCountryAgeRestriction, bool bCountryConsentRequired) 
+        {
+            base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
+            m_userCountry = strUserCountryByIP;
+            m_infoRecievedFromServer = true;
+        }
+    }
+
+    GDPRListener m_gdprListener = new GDPRListener();
 
     //------------------------------------------------------------------//
     // MEMBERS															//
@@ -151,6 +164,7 @@ public class LoadingSceneController : SceneController {
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
+        WAITING_COUNTRY_CODE,
         WAITING_TERMS,
         WAITING_FOR_RULES,        
         LOADING_RULES,
@@ -351,7 +365,20 @@ public class LoadingSceneController : SceneController {
             case State.LOADING_RULES:
             {
                 // A tick is enought to do this state stuff as we just want to wait a tick so all scripts have the chance to realize content is ready
-                SetState(State.WAITING_TERMS);
+                SetState(State.WAITING_COUNTRY_CODE);
+            }break;
+            case State.WAITING_COUNTRY_CODE:
+            {
+                if (m_gdprListener.m_infoRecievedFromServer)
+                {
+                    string country = m_gdprListener.m_userCountry;
+                    if ( string.IsNullOrEmpty(country) || country.Equals("Unknown"))
+                    {
+                        // We set the most restrictive path
+                        GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
+                    }
+                    SetState( State.WAITING_TERMS );
+                }
             }break;
             case State.WAITING_TERMS:
             {
@@ -430,10 +457,16 @@ public class LoadingSceneController : SceneController {
         	case State.SHOWING_UPGRADE_POPUP:
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
-        	}break;
+            }break;
+            case State.WAITING_COUNTRY_CODE:
+                {
+                    GDPRManager.SharedInstance.Initialise(false);
+                    GDPRManager.SharedInstance.SetListener( m_gdprListener );
+                    GDPRManager.SharedInstance.RequestCountryAndAge();
+                }break;
             case State.WAITING_TERMS:
             {
-                if (PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION)
+                if (PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION || GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() || GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
                 {
                     Debug.Log("<color=RED>LEGAL</color>");
                     PopupController popupController = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
