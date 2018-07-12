@@ -16,6 +16,7 @@ namespace GameConstants
 		public static readonly UnityEngine.Vector3 down 	= UnityEngine.Vector3.down;
 		public static readonly UnityEngine.Vector3 forward 	= UnityEngine.Vector3.forward;
 		public static readonly UnityEngine.Vector3 back 	= UnityEngine.Vector3.back;
+		public static readonly UnityEngine.Vector3 center	= new UnityEngine.Vector3(0.5f, 0.5f, 0.5f);
 	}
 
 	public class Vector2
@@ -26,6 +27,7 @@ namespace GameConstants
 		public static readonly UnityEngine.Vector2 left 	= UnityEngine.Vector2.left;
 		public static readonly UnityEngine.Vector2 up 		= UnityEngine.Vector2.up;
 		public static readonly UnityEngine.Vector2 down 	= UnityEngine.Vector2.down;
+		public static readonly UnityEngine.Vector2 center	= new UnityEngine.Vector2(0.5f, 0.5f);
 	}
 
 	public class Quaternion

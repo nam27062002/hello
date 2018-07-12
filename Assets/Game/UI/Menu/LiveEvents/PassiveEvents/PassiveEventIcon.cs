@@ -32,7 +32,8 @@ public class PassiveEventIcon : MonoBehaviour {
 		PLAY_SCREEN				= 1 << 1,
 		NORMAL_MODE				= 1 << 2,
 		TOURNAMENT_MODE			= 1 << 3,
-		INGAME					= 1 << 4
+		INGAME					= 1 << 4,
+		OPEN_EGG_SCREEN			= 1 << 5
 	}
 
 	//------------------------------------------------------------------------//
@@ -218,7 +219,8 @@ public class PassiveEventIcon : MonoBehaviour {
 
 						case "metagame": {
 							location = DisplayLocation.PLAY_SCREEN 
-								| DisplayLocation.NORMAL_MODE;
+								| DisplayLocation.NORMAL_MODE
+								| DisplayLocation.OPEN_EGG_SCREEN;
 						} break;
 
 						case "levelUp": {
@@ -258,6 +260,10 @@ public class PassiveEventIcon : MonoBehaviour {
 
 							case MenuScreen.TOURNAMENT_INFO: {
 								show &= CheckLocation(location, DisplayLocation.TOURNAMENT_MODE);
+							} break;
+
+							case MenuScreen.OPEN_EGG: {
+								show &= CheckLocation(location, DisplayLocation.OPEN_EGG_SCREEN);
 							} break;
 						}
 					}

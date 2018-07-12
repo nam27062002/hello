@@ -8,7 +8,7 @@
 #define UNITY_4_3_OR_NEWER
 #endif
 
-#if UNITY_5 || UNITY_6 || UNITY_7
+#if UNITY_5 || UNITY_2017 || UNITY_2017_1_OR_NEWER
 #define UNITY_5_OR_NEWER
 #endif
 
@@ -430,9 +430,14 @@ abstract public class EditorEx : Editor
 
     protected bool EditString( ref string txt, string label, GUIStyle styleText = null, string tooltip = null )
     {
+        return EditString( ref txt, label, styleLabel, styleText, tooltip );
+    }
+
+    protected bool EditString( ref string txt, string label, GUIStyle styleLable, GUIStyle styleText, string tooltip = null )
+    {
         EditorGUILayout.BeginHorizontal();
         //GUILayout.Label( label, styleLabel );
-        EditorGUILayout.LabelField( new GUIContent( label, tooltip ), labelFieldOption );
+        EditorGUILayout.LabelField( new GUIContent( label, tooltip ), styleLable, labelFieldOption );
         //EditorGUILayout.Space();
         BeginEditableField();
 
@@ -602,6 +607,7 @@ abstract public class EditorEx : Editor
         {
             EditorUtility.SetDirty( target );
         }
+        serializedObject.Update();
         serializedObject.ApplyModifiedProperties();
     }
 
@@ -636,7 +642,10 @@ public class AudioController_Editor : EditorEx
         }
         set
         {
-            AC._currentInspectorSelection.currentItemIndex = value;
+            if ( value != AC._currentInspectorSelection.currentItemIndex )
+            {
+                AC._currentInspectorSelection.currentItemIndex = value;
+            }
         }
     }
 
@@ -906,6 +915,7 @@ public class AudioController_Editor : EditorEx
             textInfoStyleLabel.normal.textColor = new Color( 0.6f, 0.6f, 0.6f );
     }
 
+    bool duplicatedItemNameEntered = false;
 
     public override void OnInspectorGUI()
     {
@@ -945,8 +955,8 @@ public class AudioController_Editor : EditorEx
                 AC.isAdditionalAudioController = currentlyAdditionalController;
             }
             EditBool( ref AC.Persistent, "Persist Scene Loading", "A non-persisting AudioController will get destroyed when loading the next scene." );
-            EditBool( ref AC.UnloadAudioClipsOnDestroy, "Unload Audio On Destroy", "This option will unload all AudioClips from memory which referenced by this AudioController if the controller gets destroyed (e.g. when loading a new scene and the AudioController is not persistent). \n" +
-                "Use this option in combination with additional none-persistent AudioControllers to keep only those audios in memory that are used by the current scene. Use the primary persistent AudioController for all global audio that is used throughout all scenes."
+            EditBool( ref AC.UnloadAudioClipsOnDestroy, "Unload Audio On Destroy", "This option forces Unity to unload all AudioClips from memory which are referenced by this AudioController if the controller gets destroyed (e.g. when loading a new scene and the AudioController is not persistent). \n\n" +
+                "Use this option in combination with additional none-persistent AudioControllers to keep only those audios in memory that are used by the current scene. Use a primary persistent AudioController for all global audio that is used throughout all scenes."
                 );
 
             bool currentlyDisabled = AC.DisableAudio;
@@ -1009,26 +1019,28 @@ public class AudioController_Editor : EditorEx
             EditorGUILayout.BeginHorizontal();
             var playlistNames = GetPlaylistNames();
 
-            currentPlaylistIndex = PopupWithStyle("Playlist", currentPlaylistIndex, playlistNames, popupStyleColored, "List of playlists, click on '+' to add a new playlist", false);
+            currentPlaylistIndex = PopupWithStyle( "Playlist", currentPlaylistIndex, playlistNames, popupStyleColored, "List of playlists, click on '+' to add a new playlist", false );
 
-            if( GUILayout.Button("+", GUILayout.Width(25)) && AC.musicPlaylists != null && AC.musicPlaylists.Length > 0 )
+            if ( GUILayout.Button( "+", GUILayout.Width( 25 ) ) && AC.musicPlaylists != null && AC.musicPlaylists.Length > 0 )
             {
-                ArrayHelper.AddArrayElement(ref AC.musicPlaylists, new Playlist { name = _nameForNewPlaylist });
+                LogUndo( "Add Playlist" );
+                ArrayHelper.AddArrayElement( ref AC.musicPlaylists, new Playlist { name = _nameForNewPlaylist } );
                 currentPlaylistIndex = AC.musicPlaylists.Length - 1;
                 KeepChanges();
             }
 
-            if( GUILayout.Button("-", GUILayout.Width(25)) && AC.musicPlaylists != null && AC.musicPlaylists.Length > 0 )
+            if ( GUILayout.Button( "-", GUILayout.Width( 25 ) ) && AC.musicPlaylists != null && AC.musicPlaylists.Length > 0 )
             {
-                if(AC.musicPlaylists.Length > 1)
+                if ( AC.musicPlaylists.Length > 1 )
                 {
-                    ArrayHelper.DeleteArrayElement(ref AC.musicPlaylists, currentPlaylistIndex);
-                    currentPlaylistIndex = Mathf.Clamp(currentPlaylistIndex - 1, 0, AC.musicPlaylists.Length - 1);
+                    LogUndo( "Del Playlist" );
+                    ArrayHelper.DeleteArrayElement( ref AC.musicPlaylists, currentPlaylistIndex );
+                    currentPlaylistIndex = Mathf.Clamp( currentPlaylistIndex - 1, 0, AC.musicPlaylists.Length - 1 );
                     KeepChanges();
                 }
                 else
                 {
-                    AC.musicPlaylists[0] = new Playlist();
+                    AC.musicPlaylists[ 0 ] = new Playlist();
                 }
             }
 
@@ -1036,7 +1048,7 @@ public class AudioController_Editor : EditorEx
 
             EditorGUILayout.BeginHorizontal();
 
-            EditString(ref AC.musicPlaylists[currentPlaylistIndex].name, "Playlist Name", AC.musicPlaylists[currentPlaylistIndex].name == _nameForNewPlaylist ? textAttentionStyle : null);
+            EditString( ref AC.musicPlaylists[ currentPlaylistIndex ].name, "Playlist Name", AC.musicPlaylists[ currentPlaylistIndex ].name == _nameForNewPlaylist ? textAttentionStyle : null );
 
 
             EditorGUILayout.EndHorizontal();
@@ -1048,7 +1060,8 @@ public class AudioController_Editor : EditorEx
             GUI.enabled = playlistEntryNames.Length > 0;
             if ( GUILayout.Button( "Up", GUILayout.Width( 35 ) ) && AC.musicPlaylists != null && AC.musicPlaylists.Length > 0 )
             {
-                if ( SwapArrayElements( AC.musicPlaylists[currentPlaylistIndex].playlistItems, currentPlaylistEntryIndex, currentPlaylistEntryIndex - 1 ) )
+                LogUndo( "Move Playlist entry" );
+                if ( SwapArrayElements( AC.musicPlaylists[ currentPlaylistIndex ].playlistItems, currentPlaylistEntryIndex, currentPlaylistEntryIndex - 1 ) )
                 {
                     currentPlaylistEntryIndex--;
                     KeepChanges();
@@ -1056,7 +1069,8 @@ public class AudioController_Editor : EditorEx
             }
             if ( GUILayout.Button( "Dwn", GUILayout.Width( 40 ) ) && AC.musicPlaylists != null && AC.musicPlaylists.Length > 0 )
             {
-                if( SwapArrayElements(AC.musicPlaylists[currentPlaylistIndex].playlistItems, currentPlaylistEntryIndex, currentPlaylistEntryIndex + 1 ) )
+                LogUndo( "Move Playlist entry" );
+                if ( SwapArrayElements( AC.musicPlaylists[ currentPlaylistIndex ].playlistItems, currentPlaylistEntryIndex, currentPlaylistEntryIndex + 1 ) )
                 {
                     currentPlaylistEntryIndex++;
                     KeepChanges();
@@ -1064,7 +1078,8 @@ public class AudioController_Editor : EditorEx
             }
             if ( GUILayout.Button( "-", GUILayout.Width( 25 ) ) && AC.musicPlaylists != null && AC.musicPlaylists.Length > 0 )
             {
-                ArrayHelper.DeleteArrayElement( ref AC.musicPlaylists[currentPlaylistIndex].playlistItems, currentPlaylistEntryIndex );
+                LogUndo( "Del Playlist entry" );
+                ArrayHelper.DeleteArrayElement( ref AC.musicPlaylists[ currentPlaylistIndex ].playlistItems, currentPlaylistEntryIndex );
                 currentPlaylistEntryIndex = Mathf.Clamp( currentPlaylistEntryIndex - 1, 0, AC.musicPlaylists.Length - 1 );
                 KeepChanges();
             }
@@ -1076,14 +1091,24 @@ public class AudioController_Editor : EditorEx
             string itemToAdd = _ChooseItem( "Add to Playlist" );
             if ( !string.IsNullOrEmpty( itemToAdd ) )
             {
-                AddToPlayList(playlistNames[currentPlaylistIndex],  itemToAdd );
+                LogUndo( "Add Playlist entry" );
+                AddToPlayList( playlistNames[ currentPlaylistIndex ], itemToAdd );
             }
-            
+
             EditBool( ref AC.loopPlaylist, "Loop Playlist" );
             EditBool( ref AC.shufflePlaylist, "Shuffle Playlist", "Enables random playback of music playlists. Takes care that the same audio will not get played again too early" );
             EditBool( ref AC.crossfadePlaylist, "Crossfade Playlist" );
             EditFloat( ref AC.delayBetweenPlaylistTracks, "Delay Betw. Playlist Tracks", "sec" );
 
+            GUI.enabled = _IsAudioControllerInPlayMode() && playlistEntryNames.Length > 0;
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label( "" );
+            if ( GUILayout.Button( "Play", GUILayout.Width( 60 ) ) )
+            {
+                AudioController.PlayMusicPlaylist( AC.musicPlaylists[ currentPlaylistIndex ].name );
+            }
+            EditorGUILayout.EndHorizontal();
+            GUI.enabled = true;
         }
 
         VerticalSpace();
@@ -1143,6 +1168,7 @@ public class AudioController_Editor : EditorEx
                 currentCategoryIndex = newCategoryIndex;
                 currentItemIndex = 0;
                 currentSubitemIndex = 0;
+                duplicatedItemNameEntered = false;
                 _ValidateCurrentItemIndex();
                 _ValidateCurrentSubItemIndex();
             }
@@ -1165,6 +1191,15 @@ public class AudioController_Editor : EditorEx
                 float volTmp = curCat.Volume;
                 EditFloat01( ref volTmp, "Volume", " %" );
                 curCat.Volume = volTmp;
+
+                /*if ( Application.isPlaying )  // repaint consumes too much UI performance
+                {
+                    volTmp = curCat.VolumeTotal;
+                    GUI.enabled = false;
+                    EditFloat01( ref volTmp, " -> Effective Volume", " %" );
+                    GUI.enabled = true;
+                    KeepChanges(); // otherwise inspector does not update every frame 
+                }*/
 
                 EditPrefab( ref curCat.AudioObjectPrefab, "Audio Object Prefab Override", "Use different Audio Object prefabs if you want to specify different parameters such as the volume rolloff etc. per category" );
             
@@ -1254,17 +1289,12 @@ public class AudioController_Editor : EditorEx
                         AudioClip[ ] audioClips = GetSelectedAudioclips();
                         if ( audioClips.Length > 0 )
                         {
-                            int firstIndex = itemCount;
-                            currentItemIndex = firstIndex;
                             foreach ( AudioClip audioClip in audioClips )
                             {
-                                ArrayHelper.AddArrayElement( ref curCat.AudioItems );
-                                AudioItem audioItem = curCat.AudioItems[ currentItemIndex ];
-                                audioItem.Name = audioClip.name;
-                                ArrayHelper.AddArrayElement( ref audioItem.subItems ).Clip = audioClip;
-                                currentItemIndex++;
+                                AddAudioItemFromClip( curCat, audioClip );
                             }
-                            currentItemIndex = firstIndex;
+                            currentItemIndex += audioClips.Length;
+
                             KeepChanges();
                         }
                     }
@@ -1282,6 +1312,7 @@ public class AudioController_Editor : EditorEx
 
                     if ( GUILayout.Button( "+", GUILayout.Width( 30 ) ) )
                     {
+                        LogUndo( "Add Audio Item" );
                         bool lastEntryIsNew = false;
 
                         if ( itemCount > 0 )
@@ -1301,6 +1332,7 @@ public class AudioController_Editor : EditorEx
 
                     if ( GUILayout.Button( "-", GUILayout.Width( 30 ) ) && itemCount > 0 )
                     {
+                        LogUndo( "Del Audio Item" );
                         if ( currentItemIndex < curCat.AudioItems.Length - 1 )
                         {
                             newItemIndex = currentItemIndex;
@@ -1319,6 +1351,7 @@ public class AudioController_Editor : EditorEx
                     {
                         currentItemIndex = newItemIndex;
                         currentSubitemIndex = 0;
+                        duplicatedItemNameEntered = false;
                         _ValidateCurrentSubItemIndex();
                     }
 
@@ -1337,12 +1370,32 @@ public class AudioController_Editor : EditorEx
                         bool isNewDummyName = curItem.Name == _nameForNewAudioItemEntry;
 
                         string originalName = curItem.Name;
+                        string nameToChange = originalName;
 
-                        if ( EditString( ref curItem.Name, "Name", isNewDummyName ? textAttentionStyle : null, "You must specify a unique name here (=audioID). This is the ID used in the script code to play this audio item."  ) )
+                        if ( EditString( ref nameToChange, duplicatedItemNameEntered ? "Name duplicate" : "Name", duplicatedItemNameEntered ? textAttentionStyleLabel : styleLabel, isNewDummyName ? textAttentionStyle : null, "You must specify a unique name here (=audioID). This is the ID used in the script code to play this audio item." ) )
                         {
-                            if ( !isNewDummyName )
+                            if ( !curCat.AudioItems.Any( x => x.Name == nameToChange ) )
                             {
-                                _RenamePlaylistEntries( originalName, curItem.Name );
+                                duplicatedItemNameEntered = false;
+                                curItem.Name = nameToChange;
+                                if ( !isNewDummyName )
+                                {
+                                    _RenamePlaylistEntries( originalName, curItem.Name );
+                                }
+                            }
+                            else
+                            {
+                                duplicatedItemNameEntered = true;
+                            }
+                        }
+                        else
+                        {
+                            // info: while focus is still on input the EditString does not display nameToChange.
+                            // if user inputs nameToChange again, then EditString returns false (incorrectly detecting no text change),
+                            // and we need to check if the name is now valid
+                            if ( duplicatedItemNameEntered )
+                            {
+                                duplicatedItemNameEntered = curCat.AudioItems.Any( x => x.Name == nameToChange );
                             }
                         }
 
@@ -1358,6 +1411,7 @@ public class AudioController_Editor : EditorEx
 
                         if ( newItemCategoryIndex != currentCategoryIndex )
                         {
+                            LogUndo( "Move Audio Item" );
                             var newCat = AC.AudioCategories[ newItemCategoryIndex ];
                             var oldCat = currentCategory;
                             ArrayHelper.AddArrayElement( ref newCat.AudioItems, curItem );
@@ -1539,8 +1593,9 @@ public class AudioController_Editor : EditorEx
 
                                     int firstIndex = subItemCount;
                                     currentSubitemIndex = firstIndex;
+                                    LogUndo( "Set Audio Clip" );
 
-                                    foreach( AudioClip audioClip in  DragAndDrop.objectReferences )
+                                    foreach ( AudioClip audioClip in  DragAndDrop.objectReferences )
                                     {
                                         ArrayHelper.AddArrayElement(ref curItem.subItems).Clip = audioClip;
                                         currentSubitemIndex++;
@@ -1560,6 +1615,7 @@ public class AudioController_Editor : EditorEx
                                 AudioClip[ ] audioClips = GetSelectedAudioclips();
                                 if ( audioClips.Length > 0 )
                                 {
+                                    LogUndo( "Add Audio Clip" );
                                     int firstIndex = subItemCount;
                                     currentSubitemIndex = firstIndex;
                                     foreach ( AudioClip audioClip in audioClips )
@@ -1599,6 +1655,7 @@ public class AudioController_Editor : EditorEx
 
                                 if ( !lastEntryIsNew )
                                 {
+                                    LogUndo( "Add Audio Subitem" );
                                     currentSubitemIndex = subItemCount;
                                     ArrayHelper.AddArrayElement( ref curItem.subItems );
                                     curItem.subItems[ currentSubitemIndex ].SubItemType = curSubItemType;
@@ -1608,6 +1665,7 @@ public class AudioController_Editor : EditorEx
 
                             if ( GUILayout.Button( "-", GUILayout.Width( 30 ) ) && subItemCount > 0 )
                             {
+                                LogUndo( "Del Audio Subitem" );
                                 ArrayHelper.DeleteArrayElement( ref curItem.subItems, currentSubitemIndex );
                                 if ( currentSubitemIndex >= curItem.subItems.Length )
                                 {
@@ -1685,6 +1743,23 @@ public class AudioController_Editor : EditorEx
         EndInspectorGUI();
 
         //Debug.Log( "currentCategoryIndex: " + currentCategoryIndex );
+    }
+
+    private void AddAudioItemFromClip( AudioCategory curCat, AudioClip audioClip )
+    {
+        string name = audioClip.name;
+        // make sure name is unique
+        if( curCat.AudioItems.Any( x => x.Name == name ) )
+        {
+            for(int index = 1; ;index++ )
+            {
+                name = audioClip.name + " " + index;
+                if ( !curCat.AudioItems.Any( x => x.Name == name ) ) break;
+            }
+        }
+        var audioItem = ArrayHelper.AddArrayElement( ref curCat.AudioItems );
+        audioItem.Name = name;
+        ArrayHelper.AddArrayElement( ref audioItem.subItems ).Clip = audioClip; 
     }
 
     private void _RenamePlaylistEntries( string originalName, string newName )
