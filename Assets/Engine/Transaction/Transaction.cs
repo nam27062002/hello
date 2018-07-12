@@ -6,6 +6,26 @@ public class Transaction
     private const string KEY_SOURCE = "source";
     private const string KEY_ITEMS = "items";
 
+    private const string SOURCE_SHOP = "shop";
+    private const string SOURCE_CUSTOMER_SUPPORT = "crm";
+
+    private static HDTrackingManager.EEconomyGroup GetEconomyGroupFromSource(string source)
+    {
+        HDTrackingManager.EEconomyGroup returnValue = HDTrackingManager.EEconomyGroup.UNKNOWN;
+        switch (source)
+        {
+            case SOURCE_SHOP:
+                returnValue = HDTrackingManager.EEconomyGroup.SHOP_PURCHASE_RESUMED;
+                break;
+
+            case SOURCE_CUSTOMER_SUPPORT:
+                returnValue = HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT;
+                break;
+        }
+
+        return returnValue;
+    }
+
     public const string KEY_SC = "sc";
     public const string KEY_HC = "hc";
     public const string KEY_GF = "gf";
@@ -415,30 +435,35 @@ public class Transaction
                 }
             }
         }
+
+        // Save current profile state in case the open egg flow is interrupted
+        PersistenceFacade.instance.Save_Request(true);
     }
 
     private Metagame.Reward CreateRewardCurrency(UserProfile.Currency currency, long amount)    
     {
         Metagame.Reward returnValue = null;
 
+        string source = GetSource();
+        HDTrackingManager.EEconomyGroup economyGroup = GetEconomyGroupFromSource(source);
         switch (currency)
         {
             case UserProfile.Currency.SOFT:
-                returnValue = Metagame.Reward.CreateTypeSoftCurrency(amount, HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, GetSource());
+                returnValue = Metagame.Reward.CreateTypeSoftCurrency(amount, economyGroup, source);
                 break;
 
             case UserProfile.Currency.HARD:
-                returnValue = Metagame.Reward.CreateTypeHardCurrency(amount, HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, GetSource());
+                returnValue = Metagame.Reward.CreateTypeHardCurrency(amount, economyGroup, source);
                 break;
 
             case UserProfile.Currency.GOLDEN_FRAGMENTS:
                 // Rarity is unknown at this place so we just use COMMON. It's not important because it's used only for visuals. We can't use UNKNOWN because the visuals crash with that rarity
-                returnValue = Metagame.Reward.CreateTypeGoldenFragments((int)amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, GetSource());
+                returnValue = Metagame.Reward.CreateTypeGoldenFragments((int)amount, Metagame.Reward.Rarity.COMMON, economyGroup, source);
                 break;
         }       
 
         return returnValue;
-    }
+    }    
 
     private void AddRewardCurrency(UserProfile.Currency currency, Metagame.Reward reward)
     {
@@ -464,11 +489,12 @@ public class Transaction
 
     private ItemData CreateRewardItemData(string sku, string type, long amount)
     {
+        string source = GetSource();        
         Metagame.Reward.Data data = new Metagame.Reward.Data();
         data.sku = sku;
         data.typeCode = type;
         data.amount = amount;
-        Metagame.Reward reward = Metagame.Reward.CreateFromData(data, HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT, GetSource());
+        Metagame.Reward reward = Metagame.Reward.CreateFromData(data, GetEconomyGroupFromSource(source), source);
 
         return new ItemData(data, reward);
     }
