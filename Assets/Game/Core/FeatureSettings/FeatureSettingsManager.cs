@@ -1620,6 +1620,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool IsBloodEnabled()
+    {
+        bool ret = false;
+        if (!GDPRManager.SharedInstance.IsAgeRestrictionEnabled() && Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true))
+        {
+            ret = true;
+        }
+        return ret;
+    }
+
 	public bool IfPetRigidbodyInterpolates
     {
         get
@@ -1809,7 +1819,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     }
 
-	
+
 
     #endregion //fps
 }
