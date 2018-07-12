@@ -198,8 +198,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		switch(_to) {
 			case MenuScreen.PLAY: {
-				// 1. Terms and Conditions
-				CheckTermsAndConditions();
+				// 1. Terms and Conditions -> moved to loading scene controlled
+				// CheckTermsAndConditions();
 
 				CheckCustomizerPopup();
 			} break;

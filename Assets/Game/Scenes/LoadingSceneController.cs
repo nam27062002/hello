@@ -151,16 +151,18 @@ public class LoadingSceneController : SceneController {
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
+        WAITING_TERMS,
         WAITING_FOR_RULES,        
         LOADING_RULES,
         CREATING_SINGLETONS,
         WAITING_FOR_CUSTOMIZER,
-        SHOWING_UPGRADE_POPUP,        
+        SHOWING_UPGRADE_POPUP,
         COUNT
     }
     private State m_state = State.NONE;
 	private AndroidPermissionsListener m_androidPermissionsListener = null;
 	private string m_buildVersion;
+    private bool m_waitingTermsDone = false;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -349,9 +351,14 @@ public class LoadingSceneController : SceneController {
             case State.LOADING_RULES:
             {
                 // A tick is enought to do this state stuff as we just want to wait a tick so all scripts have the chance to realize content is ready
-                SetState(State.CREATING_SINGLETONS);                    
+                SetState(State.WAITING_TERMS);
             }break;
-
+            case State.WAITING_TERMS:
+            {
+                if (m_waitingTermsDone){
+                    SetState(State.CREATING_SINGLETONS);
+                }
+            }break;
             case State.CREATING_SINGLETONS:
             {
                 if (FeatureSettingsManager.instance.IsCustomizerBlocker)
@@ -424,6 +431,21 @@ public class LoadingSceneController : SceneController {
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
         	}break;
+            case State.WAITING_TERMS:
+            {
+                if (PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION)
+                {
+                    Debug.Log("<color=RED>LEGAL</color>");
+                    PopupController popupController = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+                    popupController.OnClosePostAnimation.AddListener(OnTermsDone);
+                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
+                }
+                else
+                {
+                    m_waitingTermsDone = true;
+                }
+                
+            }break;
             case State.CREATING_SINGLETONS:
             {
                 // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
@@ -511,7 +533,10 @@ public class LoadingSceneController : SceneController {
         }
     }
 
-
+    private void OnTermsDone()
+    {
+        m_waitingTermsDone = true;
+    }
         
     private void StartLoadFlow()
     {
