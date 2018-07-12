@@ -125,15 +125,12 @@ public class GameStoreManagerCalety : GameStoreManager
 		}
 
 		/// <summary>
-		// TODO: TEST!!!!!
 		/// Ons the IAP promoted received. 
 		/// </summary>
 		/// <param name="strSku">String sku Product bought on the store.</param>
 		public override void onIAPPromotedReceived (string strSku) 
 		{
-			// Check if this sku is valid. Is it a one time purchase?
-			// if the user cannot purchase -> show message: You already have this item
-			// it the user can purchase -> GameStoreManager.SharedInstance.Buy(strSku)
+			m_manager.RegisterPromotedIAP(strSku);
 		}
 
         /*
@@ -170,8 +167,12 @@ public class GameStoreManagerCalety : GameStoreManager
 
     private string m_purchaseSkuTriggeredByUser;
     
+	private Stack<string> m_promotedIAPs;
+
+
     public GameStoreManagerCalety () 
 	{
+		m_promotedIAPs = new Stack<string>();
 		m_storeListener = new CaletyGameStoreListener(this);
         m_isFirstInit = true;
         m_purchaseSkuTriggeredByUser = null;
@@ -255,6 +256,9 @@ public class GameStoreManagerCalety : GameStoreManager
 		m_storeSkus = skus.ToArray();
 	}
 
+	public void RegisterPromotedIAP(string _sku) {
+		m_promotedIAPs.Push(_sku);
+	}
 
 	public override bool IsReady()
 	{
@@ -288,7 +292,25 @@ public class GameStoreManagerCalety : GameStoreManager
 #endif	
 	}
     
+	/// <summary>
+	/// Processes the promoted in app purchases.
+	/// </summary>
+	/// <returns><c>true</c>, if a purchases is being processed, <c>false</c> we have finished.</returns>
+	public override bool ProcessPromotedIAPs() {
+		if (m_promotedIAPs.Count > 0) {
+			string sku = m_promotedIAPs.Peek();
 
+			if (m_purchaseSkuTriggeredByUser != sku) {
+				// Check if this sku is valid. Is it a one time purchase?
+				// if the user cannot purchase -> show message: You already have this item
+				// it the user can purchase -> GameStoreManager.SharedInstance.Buy(strSku)
+				Buy(sku);
+			}
+			return true;
+		}
+
+		return false;
+	}
 
 	public override void Buy( string _sku )
 	{
@@ -318,6 +340,9 @@ public class GameStoreManagerCalety : GameStoreManager
 
     void OnPurchaseDone()
     {
+		if (m_purchaseSkuTriggeredByUser == m_promotedIAPs.Peek()) {
+			m_promotedIAPs.Pop();
+		}
         m_purchaseSkuTriggeredByUser = null;
     }
 
