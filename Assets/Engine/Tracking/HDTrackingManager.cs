@@ -72,7 +72,8 @@ public class HDTrackingManager
 
 		TOURNAMENT_ENTRY,			    // Tournament Support
 
-        CUSTOMER_SUPPORT                // Reward received via customer support tool
+        CUSTOMER_SUPPORT,               // Reward received via customer support tool
+        SHOP_PURCHASE_RESUMED           // Reward given when resuming a purchase that was interrupted
     };
 
 	public enum EFunnels
