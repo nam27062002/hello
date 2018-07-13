@@ -291,27 +291,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		return StoreManager.SharedInstance.CanMakePayments();
 #endif	
 	}
-    
-	/// <summary>
-	/// Processes the promoted in app purchases.
-	/// </summary>
-	/// <returns><c>true</c>, if a purchases is being processed, <c>false</c> we have finished.</returns>
-	public override bool ProcessPromotedIAPs() {
-		if (m_promotedIAPs.Count > 0) {
-			string sku = m_promotedIAPs.Peek();
-
-			if (m_purchaseSkuTriggeredByUser != sku) {
-				// Check if this sku is valid. Is it a one time purchase?
-				// if the user cannot purchase -> show message: You already have this item
-				// it the user can purchase -> GameStoreManager.SharedInstance.Buy(strSku)
-				Buy(sku);
-			}
-			return true;
-		}
-
-		return false;
-	}
-
+    	
 	public override void Buy( string _sku )
 	{
         m_purchaseSkuTriggeredByUser = _sku;
@@ -340,9 +320,6 @@ public class GameStoreManagerCalety : GameStoreManager
 
     void OnPurchaseDone()
     {
-		if (m_purchaseSkuTriggeredByUser == m_promotedIAPs.Peek()) {
-			m_promotedIAPs.Pop();
-		}
         m_purchaseSkuTriggeredByUser = null;
     }
 
@@ -350,6 +327,18 @@ public class GameStoreManagerCalety : GameStoreManager
     {
         return m_purchaseSkuTriggeredByUser;
     }
+
+
+    public override bool HavePromotedIAPs() { 
+        return m_promotedIAPs.Count > 0; 
+    }
+
+    public override string GetNextPromotedIAP() {
+        return m_promotedIAPs.Pop(); 
+    }
+
+
+
     /*
     private string GameSkuToPlatformSku( string gameSku )
     {

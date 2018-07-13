@@ -249,6 +249,18 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 	}
 
+
+    public static OfferPack GetOfferPack(string _sku) {
+        int count = m_instance.m_allOffers.Count;
+        for (int i = 0; i < count; i++) {
+            OfferPack offerPack = m_instance.m_allOffers[i];
+            if (offerPack.def.sku == _sku) {
+                return offerPack;
+            }
+        }
+        return null;
+    }
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//

@@ -53,6 +53,7 @@ public class HDTrackingManager
 		SHOP_PC_PACK,
 		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
+        SHOP_PROMOTED_IAP,
 		SHOP_KEYS_PACK,
         NOT_ENOUGH_RESOURCES,
         INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
