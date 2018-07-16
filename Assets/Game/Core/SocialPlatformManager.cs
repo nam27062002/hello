@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 public class SocialPlatformManager : MonoBehaviour
 {
-
 	// Singleton ///////////////////////////////////////////////////////////
 	
 	private static SocialPlatformManager s_pInstance = null;
@@ -22,107 +21,58 @@ public class SocialPlatformManager : MonoBehaviour
 		}
 	}
     
-	//////////////////////////////////////////////////////////////////////////
-
-	// Social Listener //////////////////////////////////////////////////////
-	public class GameSocialListener : FacebookManager.FacebookListenerBase
-	{
-		const string TAG = "GameSocialListener";
-		private SocialPlatformManager m_manager;
-
-		public GameSocialListener( SocialPlatformManager manager )
-		{
-			m_manager = manager;
-		}
-
-		public override void onLogInCompleted()
-		{
-			Debug.TaggedLog(TAG, "onLogInCompleted");
-			m_manager.OnSocialPlatformLogin();
-		}
-
-        public override void onLogInCancelled()
-        {
-            Debug.TaggedLog(TAG, "onLogInCancelled");
-            m_manager.OnSocialPlatformLoginFailed();
-        }
-
-        public override void onLogInFailed()
-		{
-			Debug.TaggedLog(TAG, "onLogInFailed");
-			m_manager.OnSocialPlatformLoginFailed();
-		}
-		
-		public override void onLogOut()
-		{
-			m_manager.OnSocialPlatformLogOut();
-			Debug.TaggedLog(TAG, "onLogOut");
-		}
-		
-		public override void onPublishCompleted()
-		{
-			Debug.TaggedLog(TAG, "onPublishCompleted");
-		}
-
-		public override void onPublishFailed()
-		{
-			Debug.TaggedLog(TAG, "onPublishFailed");
-		}
-		
-		public override void onFriendsReceived()
-		{
-			Debug.TaggedLog(TAG, "onFriendsReceived");
-		}
-		public override void onLikesReceived(bool bIsLiked)
-		{
-			Debug.TaggedLog(TAG, "onLikesReceived");
-		}
-
-		public override void onPostsReceived()
-		{
-			Debug.TaggedLog(TAG, "onPostsReceived");
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////	
 
 	// Social Platform Response //////////////////////////////////////////////
 
-	void OnSocialPlatformLogin()
+	public void OnSocialPlatformLogin()
 	{
 		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());        
     }
 
-	void OnSocialPlatformLoginFailed()
+    public void OnSocialPlatformLoginFailed()
 	{
 		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());        
     }
 
-	void OnSocialPlatformLogOut()
+    public void OnSocialPlatformLogOut()
 	{
 		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());
 	}
-    //////////////////////////////////////////////////////////////////////////
-
-    private GameSocialListener m_socialListener;
+    //////////////////////////////////////////////////////////////////////////    
 	
     private bool IsInited { get; set; }    
 
     private SocialUtils m_socialUtils;
 
-    public void Init()
+    public void Init(bool useAgeProtection)
 	{
         if (!IsInited)
-        {
-            m_socialListener = new GameSocialListener(this);
-
+        {            
             IsInited = true;
+            
+            if (useAgeProtection)
+            {
+                m_socialUtils = new SocialUtilsDummy(false, false);
+            }
+            else
+            {
+                m_socialUtils = new SocialUtilsFb();
+            }
 
-            // TODO
-            // m_platform = Get Platform from calety settings            
-            m_socialUtils = new SocialUtilsFb();
-            m_socialUtils.Init(m_socialListener);            
+            m_socialUtils.Init(this);            
         }        
     }    
+    
+    public void Reset()
+    {
+        IsInited = false;
+    }    
+
+    public bool GetIsEnabled()
+    {
+        return (IsInited && m_socialUtils.GetIsEnabled());
+    }
 
     public string GetPlatformName()
 	{
@@ -210,7 +160,7 @@ public class SocialPlatformManager : MonoBehaviour
     private bool Login_IsLogging { get; set; }            
 
     private string Login_MergePersistence { get; set;  }
-
+    
     public bool IsLoggedIn()
     {
         return m_socialUtils.IsLoggedIn();
@@ -267,7 +217,7 @@ public class SocialPlatformManager : MonoBehaviour
         if (!Login_IsLogInReady)
         {
             Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
-            GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
+            m_socialUtils.Login(isAppInit);
         }
 
         /*
@@ -300,7 +250,7 @@ public class SocialPlatformManager : MonoBehaviour
             }
         }  
         */      
-    }
+    }    
 
     private void Login_OnLoggedInHelper(bool logged)
     {
