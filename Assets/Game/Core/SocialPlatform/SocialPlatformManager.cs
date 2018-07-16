@@ -57,7 +57,8 @@ public class SocialPlatformManager : MonoBehaviour
             }
             else
             {
-                m_socialUtils = new SocialUtilsFb();
+                //m_socialUtils = new SocialUtilsFb();
+                m_socialUtils = new SocialUtilsWeibo();
             }
 
             m_socialUtils.Init(this);            
