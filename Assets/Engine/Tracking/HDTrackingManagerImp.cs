@@ -375,7 +375,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private void InitCP2()
     {
         // At the moment CP2 doesn't support api level 19 (it uses a function that doesn't exist under api level 19)
-#if UNITY_ANDROID
+#if !UNITY_EDITOR && UNITY_ANDROID
         var clazz = new AndroidJavaClass("android.os.Build$VERSION");
         if (clazz != null)
         {
