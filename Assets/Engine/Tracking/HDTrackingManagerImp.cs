@@ -383,11 +383,17 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             if (apiLevel < 19)
             {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    ControlPanel.Log("CP2 can't be initialized because apiLevel (" + apiLevel + ") is lower than 19");
+
                 return;
             }
         }
 #endif
 
+        if (FeatureSettingsManager.IsDebugEnabled)
+            ControlPanel.Log("INIT CP2......");
+    
         CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");        
         if (settingsInstance != null)
         {
