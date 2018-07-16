@@ -183,6 +183,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
+    private void CheckPromotedIAPs() {
+        if (GameStoreManager.SharedInstance.HavePromotedIAPs()) {
+            PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
+            m_popupDisplayed = true;
+        }
+    }
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -192,12 +199,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// <param name="_from">Screen we're coming from.</param>
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
-		// Ignore if a popup has already been displayed in this iteration
-		if(m_popupDisplayed) return;
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
 
 		switch(_to) {
 			case MenuScreen.PLAY: {
+                CheckPromotedIAPs();
+
 				// 1. Terms and Conditions
 				CheckTermsAndConditions();
 

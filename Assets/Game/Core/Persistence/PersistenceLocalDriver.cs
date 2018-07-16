@@ -277,7 +277,7 @@ public class PersistenceLocalDriver
                 UserProfile.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardAmount, false, HDTrackingManager.EEconomyGroup.INCENTIVISE_SOCIAL_LOGIN);
 
                 // Mark it as already rewarded
-                UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndInventivised;
+                UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndIncentivised;
                 Save(onDone);
             };
 
@@ -286,7 +286,7 @@ public class PersistenceLocalDriver
         else
         {
             // Mark it as already rewarded
-            UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndInventivised;
+            UserProfile.SocialState = UserProfile.ESocialState.LoggedInAndIncentivised;
             Save(onDone);
         }
 	}

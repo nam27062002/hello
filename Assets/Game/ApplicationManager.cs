@@ -266,7 +266,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test persistence save
             //Debug_TestPersistenceSave();
-            // ---------------------------            
+            // ---------------------------        
+
+            // ---------------------------
+            // Test social platform with/without age protection
+            //Debug_TestSocialPlatformToggleAgeProtection();
+            // ---------------------------        
+
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
@@ -1398,6 +1404,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	{
 		Debug.Log("OnAdPlayed result = " + success);
 	}
+
+    private bool m_debugUseAgeProtection = false;
+    private void Debug_TestSocialPlatformToggleAgeProtection()
+    {
+        m_debugUseAgeProtection = !m_debugUseAgeProtection;        
+        NeedsToRestartFlow = true;
+    }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
     private static void Log(string msg)
