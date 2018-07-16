@@ -50,18 +50,17 @@ public class MenuPlayScreen : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() 
-	{    
+	{   
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
         m_tournamentBtn = transform.FindTransformRecursive("BtnTournament");
         Refresh();
 
+		//create modifiers HERE
 		if (create_mods) {
 			InstanceManager.CREATE_MODIFIERS();
 			InstanceManager.APPLY_MODIFIERS();
 			create_mods=false;
 		}
-
-		//create modifiers HERE
     }
 
     /// <summary>
@@ -126,9 +125,8 @@ public class MenuPlayScreen : MonoBehaviour {
 
         if (m_tournamentBtn)
         {
-            m_tournamentBtn.gameObject.SetActive( HDLiveEventsManager.instance.m_tournament.EventExists() );
+            m_tournamentBtn.gameObject.SetActive(HDLiveEventsManager.instance.m_tournament.EventExists());
         }
-
     }    
     
    	
