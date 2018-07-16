@@ -191,7 +191,7 @@ public class QuadTree<T> where T : IQuadTreeItem {
 			Gizmos.DrawWireCube(m_nodes[i].bounds.center, m_nodes[i].bounds.size);
 			if (m_nodes[i].IsLeaf()) {
 				for (int j = 0; j < m_nodes[i].items.Count; j++) {
-					Gizmos.color = Colors.coral;
+                    Gizmos.color = Colors.slateBlue;
 					Gizmos.DrawWireCube((Vector3)m_nodes[i].items[j].boundingRect.center, (Vector3)m_nodes[i].items[j].boundingRect.size);
 				}
 			}
