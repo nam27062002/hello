@@ -48,7 +48,7 @@ public class PersistenceFacade
         // Tries to log in as soon as possible so the chances to have online stuff such as customizer (which may contain offers) ready when main menu is loaded are higher
         GameServerManager.SharedInstance.Auth(null);
 
-        SocialPlatformManager.SharedInstance.Init();
+        SocialPlatformManager.SharedInstance.Init(false);
 	}
 
 	public void Destroy()

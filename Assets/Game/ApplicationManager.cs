@@ -266,7 +266,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test persistence save
             //Debug_TestPersistenceSave();
-            // ---------------------------            
+            // ---------------------------        
+
+            // ---------------------------
+            // Test social platform with/without age protection
+            //Debug_TestSocialPlatformToggleAgeProtection();
+            // ---------------------------        
+
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
@@ -443,16 +449,24 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         	// Mission notifications
 			bool waiting = false;
 			double seconds = 0;
-			for (Mission.Difficulty i = Mission.Difficulty.EASY; i < Mission.Difficulty.COUNT; i++) 
-			{
-				Mission m = UsersManager.currentUser.userMissions.GetMission(i);
-				if (m.state == Mission.State.COOLDOWN)
-				{
-					waiting = true;
-					if ( m.cooldownRemaining.TotalSeconds > seconds)
-						seconds = m.cooldownRemaining.TotalSeconds;
-				}
-			}
+
+            UserMissions userMissions = UsersManager.currentUser.userMissions;
+            if (userMissions != null)
+            {
+                for (Mission.Difficulty i = Mission.Difficulty.EASY; i < Mission.Difficulty.COUNT; i++)
+                {
+                    if (userMissions.ExistsMission(i))
+                    {
+                        Mission m = userMissions.GetMission(i);
+                        if (m.state == Mission.State.COOLDOWN)
+                        {
+                            waiting = true;
+                            if (m.cooldownRemaining.TotalSeconds > seconds)
+                                seconds = m.cooldownRemaining.TotalSeconds;
+                        }
+                    }
+                }
+            }
 
 			if ( waiting )
 			{
@@ -1390,6 +1404,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	{
 		Debug.Log("OnAdPlayed result = " + success);
 	}
+
+    private bool m_debugUseAgeProtection = false;
+    private void Debug_TestSocialPlatformToggleAgeProtection()
+    {
+        m_debugUseAgeProtection = !m_debugUseAgeProtection;
+        SocialPlatformManager.SharedInstance.Reset();
+        SocialPlatformManager.SharedInstance.Init(m_debugUseAgeProtection);
+        NeedsToRestartFlow = true;
+    }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
     private static void Log(string msg)

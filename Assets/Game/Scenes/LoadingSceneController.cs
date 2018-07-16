@@ -372,10 +372,16 @@ public class LoadingSceneController : SceneController {
                 if (m_gdprListener.m_infoRecievedFromServer)
                 {
                     string country = m_gdprListener.m_userCountry;
+                        // Recieved values are not good
                     if ( string.IsNullOrEmpty(country) || country.Equals("Unknown"))
                     {
-                        // We set the most restrictive path
-                        GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
+                        country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
+                            // Cached Values are not good
+                        if (string.IsNullOrEmpty(country) || country.Equals("Unknown"))
+                        {
+                            // We set the most restrictive path
+                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
+                        }    
                     }
                     SetState( State.WAITING_TERMS );
                 }
