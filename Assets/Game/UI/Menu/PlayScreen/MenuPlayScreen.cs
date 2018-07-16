@@ -41,8 +41,6 @@ public class MenuPlayScreen : MonoBehaviour {
 
 	private static bool create_mods = true;
 
-	private bool m_processingPromotedPurchases;
-
 
 
     //------------------------------------------------------------------//
@@ -52,8 +50,7 @@ public class MenuPlayScreen : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() 
-	{    
-		m_processingPromotedPurchases = false;
+	{   
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
         m_tournamentBtn = transform.FindTransformRecursive("BtnTournament");
         Refresh();
@@ -95,15 +92,6 @@ public class MenuPlayScreen : MonoBehaviour {
        
 	}
 
-	private void OnUpdate() {
-		if (m_processingPromotedPurchases) {
-			m_processingPromotedPurchases = GameStoreManagerCalety.SharedInstance.ProcessPromotedIAPs();
-			if (!m_processingPromotedPurchases) {
-				BusyScreen.Hide(this, true);
-			}
-		}
-	}
-
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
@@ -137,13 +125,8 @@ public class MenuPlayScreen : MonoBehaviour {
 
         if (m_tournamentBtn)
         {
-            m_tournamentBtn.gameObject.SetActive( HDLiveEventsManager.instance.m_tournament.EventExists() );
+            m_tournamentBtn.gameObject.SetActive(HDLiveEventsManager.instance.m_tournament.EventExists());
         }
-
-		m_processingPromotedPurchases = GameStoreManagerCalety.SharedInstance.ProcessPromotedIAPs();
-		if (m_processingPromotedPurchases) {
-			BusyScreen.Show(this, true);
-		}
     }    
     
    	

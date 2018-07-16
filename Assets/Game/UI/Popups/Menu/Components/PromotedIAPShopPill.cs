@@ -22,12 +22,13 @@ public class PromotedIAPShopPill : IPopupShopPill {
             m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
 
             // then, is an standard shop pack
-            m_shopPack = new Metagame.Reward.Data
-            {
+            m_shopPack = new Metagame.Reward.Data {
                 sku = m_def.sku,
                 typeCode = m_def.Get("type"),
                 amount = m_def.GetAsLong("amount")
             };
+            if (m_shopPack.typeCode == "hc")
+                m_shopPack.typeCode = "pc";
         } else {
             m_def = m_offerPack.def;
         }

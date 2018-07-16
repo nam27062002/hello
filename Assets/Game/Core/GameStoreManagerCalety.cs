@@ -167,12 +167,12 @@ public class GameStoreManagerCalety : GameStoreManager
 
     private string m_purchaseSkuTriggeredByUser;
     
-	private Stack<string> m_promotedIAPs;
+    private Queue<string> m_promotedIAPs;
 
 
     public GameStoreManagerCalety () 
 	{
-		m_promotedIAPs = new Stack<string>();
+        m_promotedIAPs = new Queue<string>();
 		m_storeListener = new CaletyGameStoreListener(this);
         m_isFirstInit = true;
         m_purchaseSkuTriggeredByUser = null;
@@ -257,7 +257,7 @@ public class GameStoreManagerCalety : GameStoreManager
 	}
 
 	public void RegisterPromotedIAP(string _sku) {
-		m_promotedIAPs.Push(_sku);
+        m_promotedIAPs.Enqueue(_sku);
 	}
 
 	public override bool IsReady()
@@ -334,7 +334,7 @@ public class GameStoreManagerCalety : GameStoreManager
     }
 
     public override string GetNextPromotedIAP() {
-        return m_promotedIAPs.Pop(); 
+        return m_promotedIAPs.Dequeue(); 
     }
 
 
