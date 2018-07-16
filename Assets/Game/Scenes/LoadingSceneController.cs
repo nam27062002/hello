@@ -472,7 +472,9 @@ public class LoadingSceneController : SceneController {
                 }break;
             case State.WAITING_TERMS:
             {
-				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION || GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() || GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
+				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
+					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
+					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
                 {
                     Debug.Log("<color=RED>LEGAL</color>");
                     PopupController popupController = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
