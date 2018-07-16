@@ -27,28 +27,42 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	public const string VERSION_PREFS_KEY = "LegalVersionAgreed";
 	public const int LEGAL_VERSION = 1;
 
-	public const string AGE_PREFS_KEY = "PopupTermsAndConditions.Age";
+	public const string TRACKING_CONSENT_KEY = "PopupTermsAndConditions.TrackingConsent";
+	public const string ADS_CONSENT_KEY = "PopupTermsAndConditions.AdsConsent";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
+	[SerializeField] private Localizer m_titleText = null;
 	[SerializeField] private Slider m_ageSlider = null;
 	[SerializeField] private TextMeshProUGUI m_ageText = null;
 	[SerializeField] private Button m_acceptButton = null;
 	[Space]
 	[SerializeField] private GameObject m_ageGroup = null;
 	[SerializeField] private GameObject m_termsGroup = null;
+	[SerializeField] private GameObject m_consentGroup = null;
 
 	// Internal refs
     private PopupController m_popupController;
+	private PopupTermsAndConditionsMoreInfo m_moreInfoPopup = null;
    
 	// Internal logic
-    private bool HasBeenAccepted { get; set; }
-    private float TimeAtOpen { get; set; }
+	private bool m_hasBeenAccepted = false;
+	private float m_timeAtOpen = 0f;
 
 	private int m_ageValue = -1;
-	private int m_initialAgeValue = -1;
+
+	// Internal properties
+	private bool trackingConsent {
+		get { return Prefs.GetBoolPlayer(TRACKING_CONSENT_KEY, true); }
+		set { Prefs.SetBoolPlayer(TRACKING_CONSENT_KEY, value); }
+	}
+
+	private bool adsConsent {
+		get { return Prefs.GetBoolPlayer(ADS_CONSENT_KEY, true); }
+		set { Prefs.SetBoolPlayer(ADS_CONSENT_KEY, value); }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -58,23 +72,31 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	/// </summary>
     void Awake() {
 		// Init internal vars
-        // Show loading until we know country or age
-
-        HasBeenAccepted = false;
-        TimeAtOpen = Time.unscaledTime;
+        m_hasBeenAccepted = false;
+        m_timeAtOpen = Time.unscaledTime;
 
 		// Subscribe to popup's close event
         m_popupController = GetComponent<PopupController>();
         m_popupController.OnClosePreAnimation.AddListener(OnClose);
 
-		// Init age text and subscribe to slider's OnChange event
-		m_ageValue = PlayerPrefs.GetInt(AGE_PREFS_KEY, -1);
-		m_initialAgeValue = m_ageValue;
-		m_ageSlider.onValueChanged.AddListener(OnAgeChanged);
-		m_ageSlider.value = m_ageValue;
+		// Show Age Group?
+		if(GDPRManager.SharedInstance.IsAgeRestrictionRequired()) {
+			// Special title
+			m_titleText.Localize("TID_AGE_GATE_TITLE");
 
-		// Start with button disabled if age has never been initialized
-		m_acceptButton.interactable = m_ageValue >= 0;
+			// Init age text and subscribe to slider's OnChange event
+			m_ageValue = GDPRManager.SharedInstance.GetCachedUserAge();
+			m_ageSlider.onValueChanged.AddListener(OnAgeChanged);
+			m_ageSlider.value = m_ageValue;
+
+			// Start with button disabled if age required and never initialized
+			m_acceptButton.interactable = m_ageValue > -1;
+		} else {
+			m_ageGroup.SetActive(false);
+		}
+
+		// Show Consent Group?
+		m_consentGroup.SetActive(GDPRManager.SharedInstance.IsConsentRequired());
     }
 
 	/// <summary>
@@ -84,6 +106,12 @@ public class PopupTermsAndConditions : MonoBehaviour {
         if (m_popupController != null) { 
             m_popupController.OnClosePreAnimation.RemoveListener(OnClose);
         }
+
+		// [AOC] Should never happen, but just in case
+		if(m_moreInfoPopup != null) {
+			m_moreInfoPopup.popupController.Close(true);
+			m_moreInfoPopup = null;
+		}
     }
 
 	//------------------------------------------------------------------------//
@@ -145,20 +173,58 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// More info button has been pressed.
+	/// </summary>
+	public void OnMoreInfoButton() {
+		// Load more info popup
+		PopupController popup = PopupManager.LoadPopup(PopupTermsAndConditionsMoreInfo.PATH);
+		m_moreInfoPopup = popup.GetComponent<PopupTermsAndConditionsMoreInfo>();
+
+		// Initialize it with current settings
+		m_moreInfoPopup.Init(
+			m_ageValue > -1 && m_ageValue >= GDPRManager.SharedInstance.GetAgeToCheck(),
+			trackingConsent, adsConsent
+		);
+
+		// When the popup closes, we'll store the new settings
+		popup.OnClosePreAnimation.AddListener(OnMoreInfoPopupClosed);
+
+		// Open the popup!
+		popup.Open();
+	}
+
+	/// <summary>
 	/// The accept button has been pressed.
 	/// </summary>
 	public void OnAccept() {
-        HasBeenAccepted = true;
+		// Update internal flags
+        m_hasBeenAccepted = true;
+
+		// Store version
         PlayerPrefs.SetInt(VERSION_PREFS_KEY, LEGAL_VERSION);
-		GetComponent<PopupController>().Close(true);
+
+		// Tell GDPR manager
+		// Age
+		if(GDPRManager.SharedInstance.IsAgeRestrictionRequired()) {
+			GDPRManager.SharedInstance.SetUserAge(m_ageValue);
+		}
+
+		// Consent
+		if(GDPRManager.SharedInstance.IsConsentRequired()) {
+			// [AOC] Give consent only when both consents (tracking and ads) are given
+			GDPRManager.SharedInstance.SetUserConsentGiven(trackingConsent && adsConsent);
+		}
+
+		// Close popup
+		m_popupController.Close(true);
 	}
 
 	/// <summary>
 	/// The popup has been closed.
 	/// </summary>
     private void OnClose() {
-        int duration = Convert.ToInt32(Time.unscaledTime - TimeAtOpen);
-        HDTrackingManager.Instance.Notify_LegalPopupClosed(duration, HasBeenAccepted);
+        int duration = Convert.ToInt32(Time.unscaledTime - m_timeAtOpen);
+        HDTrackingManager.Instance.Notify_LegalPopupClosed(duration, m_hasBeenAccepted);
     }
 
 	/// <summary>
@@ -173,6 +239,22 @@ public class PopupTermsAndConditions : MonoBehaviour {
 		SetAgeText(m_ageValue);
 
 		// Enable accept button!
-		m_acceptButton.interactable = m_ageValue >= 0;
+		m_acceptButton.interactable = m_ageValue > -1;
+	}
+
+	/// <summary>
+	/// The more info popup has been closed.
+	/// </summary>
+	private void OnMoreInfoPopupClosed() {
+		// Just in case
+		if(m_moreInfoPopup == null) return;
+
+		// Gather new values and store them
+		trackingConsent = m_moreInfoPopup.trackingConsented;
+		adsConsent = m_moreInfoPopup.adsConsented;
+
+		// Remove listener and clear popup reference
+		m_moreInfoPopup.popupController.OnClosePreAnimation.RemoveListener(OnMoreInfoPopupClosed);
+		m_moreInfoPopup = null;
 	}
 }
