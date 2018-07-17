@@ -1059,8 +1059,19 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         int width = (int)((float)m_OriginalScreenWidth * resolutionFactor);
         int height = (int)((float)m_OriginalScreenHeight * resolutionFactor);
 
-        Screen.SetResolution(width, height, true);
-
+        if ( Screen.width != width || Screen.height != height )
+        {
+#if UNITY_ANDROID
+            // if bigger than oreo (8.0)
+            // This is a tmp fix for HDK-1911
+            if ( PlatformUtilsAndroidImpl.GetSDKLevel() >= 26 && width == 1920 && height == 1080 ) 
+            {
+                width--;
+                height--;
+            }
+#endif
+            Screen.SetResolution(width, height, true);    
+        }
     }
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
