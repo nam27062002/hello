@@ -71,8 +71,13 @@ namespace Metagame {
 			}
 		}
 
-		//------------------------------------------------------------------------//
-		// CALLBACKS															  //
-		//------------------------------------------------------------------------//
-	}
+        public override void LoadCustomJsonData(SimpleJSON.JSONNode _data)
+        {
+            // We don't need to parse the rewards contained in this item because individual eggs have already been created in the constructor
+        }
+
+        //------------------------------------------------------------------------//
+        // CALLBACKS															  //
+        //------------------------------------------------------------------------//
+    }
 }
