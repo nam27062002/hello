@@ -64,6 +64,10 @@ public class SocialUtilsFb : SocialUtils
     }
     //////////////////////////////////////////////////////////////////////////
     
+    public SocialUtilsFb() : base(EPlatform.Facebook)
+    {
+    }
+
     public override string GetPlatformNameTID()
     {
         return "TID_SOCIAL_FACEBOOK";

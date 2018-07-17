@@ -40,7 +40,7 @@ public class SocialPlatformManager : MonoBehaviour
 		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());
 	}
     //////////////////////////////////////////////////////////////////////////    
-	
+	    
     private bool IsInited { get; set; }    
 
     private SocialUtils m_socialUtils;
@@ -57,8 +57,8 @@ public class SocialPlatformManager : MonoBehaviour
             }
             else
             {
-                //m_socialUtils = new SocialUtilsFb();
-                m_socialUtils = new SocialUtilsWeibo();
+                m_socialUtils = new SocialUtilsFb();
+                //m_socialUtils = new SocialUtilsWeibo();
             }
 
             m_socialUtils.Init(this);            
@@ -69,6 +69,11 @@ public class SocialPlatformManager : MonoBehaviour
     {
         IsInited = false;
     }    
+
+    public SocialUtils.EPlatform GetPlatform()
+    {
+        return (m_socialUtils == null) ? SocialUtils.EPlatform.None : m_socialUtils.Platform;
+    }
 
     public bool GetIsEnabled()
     {

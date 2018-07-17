@@ -38,6 +38,10 @@ public class SocialUtilsWeibo : SocialUtils
     }
     //////////////////////////////////////////////////////////////////////////
 
+    public SocialUtilsWeibo() : base(EPlatform.Weibo)
+    {
+    }
+
     public override void Init(SocialPlatformManager manager)
     {
         GameSocialListener listener = new GameSocialListener(manager);

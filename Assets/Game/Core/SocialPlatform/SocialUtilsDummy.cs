@@ -3,7 +3,7 @@ public class SocialUtilsDummy : SocialUtils
 {    
     private bool m_mockLoggedIn;
 
-    public SocialUtilsDummy(bool isEnabled, bool mockLoggedIn)
+    public SocialUtilsDummy(bool isEnabled, bool mockLoggedIn) : base(EPlatform.None)
     {
         SetIsEnabled(isEnabled);
         m_mockLoggedIn = mockLoggedIn;
