@@ -25,7 +25,8 @@ public class MenuPlayScreen : MonoBehaviour {
     // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//    
     public GameObject m_badge;
-	public Button m_connectButton;
+	public Button m_fbConnectButton;
+    public Button m_weiboConnectButton;
 
     [SerializeField]
     private GameObject m_incentivizeRoot = null;
@@ -115,7 +116,8 @@ public class MenuPlayScreen : MonoBehaviour {
     
     private void Refresh()
     {
-        m_connectButton.interactable = true;
+        m_fbConnectButton.interactable = true;
+        m_weiboConnectButton.interactable = true;        
 
         UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
         SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;      

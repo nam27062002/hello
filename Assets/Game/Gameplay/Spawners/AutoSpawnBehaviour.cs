@@ -64,10 +64,15 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
             GameObject view = transform.Find("view").gameObject;
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 
-            m_bounds = renderers[0].bounds;
-            for (int i = 1; i < renderers.Length; ++i) {
-				m_bounds.Encapsulate(renderers[i].bounds);
-			}
+            if (renderers.Length > 0) {
+                m_bounds = renderers[0].bounds;
+                for (int i = 1; i < renderers.Length; ++i)
+                {
+                    m_bounds.Encapsulate(renderers[i].bounds);
+                }
+            } else {
+                m_bounds = new Bounds(transform.position, GameConstants.Vector3.one);
+            }
 
 			Vector2 position = (Vector2)m_bounds.min;
 			Vector2 size = (Vector2)m_bounds.size;
