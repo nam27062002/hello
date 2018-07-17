@@ -119,6 +119,9 @@ public class FeatureSettings
     // Wheter or not pending transactions need server confirmation to be given to the user
     public const string KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM = "pendingTransactionsServerConfirm";
 
+    // Whether or not CP2 is enabled
+    public const string KEY_CP2 = "cp2";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -288,7 +291,7 @@ public class FeatureSettings
 
             key = KEY_AUTOMATIC_RELOGIN;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
-            Datas.Add(key, data);
+            Datas.Add(key, data);            
 
             key = KEY_AUTOMATIC_RELOGIN_PERIOD;
             data = new DataInt(key, EValueType.Int, 60);
@@ -298,6 +301,9 @@ public class FeatureSettings
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
+            key = KEY_CP2;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
             /*
             // intTest
             key = KEY_INT_TEST;
