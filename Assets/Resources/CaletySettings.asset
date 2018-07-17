@@ -144,7 +144,13 @@ MonoBehaviour:
     />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
-    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>"
+    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>\n\n<activity
+    android:name=\"com.ironsource.sdk.controller.ControllerActivity\" android:configChanges=\"orientation|screenSize\"
+    android:hardwareAccelerated=\"true\" />\n<activity android:name=\"com.ironsource.sdk.controller.InterstitialActivity\"
+    android:configChanges=\"orientation|screenSize\" android:hardwareAccelerated=\"true\"
+    android:theme=\"@android:style/Theme.Translucent\"  />\n<activity android:name=\"com.ironsource.sdk.controller.OpenUrlActivity\"
+    android:configChanges=\"orientation|screenSize\" android:hardwareAccelerated=\"true\"
+    android:theme=\"@android:style/Theme.Translucent\"  />"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0
