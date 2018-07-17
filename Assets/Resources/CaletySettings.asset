@@ -14,6 +14,9 @@ MonoBehaviour:
   m_kGameShaders:
     m_kGameShadersInfo: []
     m_kGlobalShaderVariants: []
+  m_kAPKCRCFiles: []
+  m_kLocalisedAppNamesAndroid: []
+  m_kLocalisedAppNamesIOS: []
   m_strBuildFilename: 
   m_strPVPProtoFile: 
   m_iBuildEnvironmentSelected: 2
@@ -21,7 +24,7 @@ MonoBehaviour:
   m_strBundleDEV: com.ubisoft.hungrydragon.dev
   m_strBundleSTAGEPROD: com.ubisoft.hungrydragon
   m_strLocalServerURL:
-  - 10.44.4.45
+  - 10.44.4.131
   - bcn-int-dragon01
   - bcn-dev-dragon01
   - dragon-qc.ubi.com
@@ -44,14 +47,14 @@ MonoBehaviour:
   m_strWeiboAppKey:
   - 
   - 
-  - 
+  - 2973636461
   - 
   - 
   - 
   m_strWeiboRedirectURL:
   - 
   - 
-  - 
+  - http://www.sina.com
   - 
   - 
   - 
@@ -90,12 +93,12 @@ MonoBehaviour:
   - 
   - 
   - 
-  m_strVersionIOS: 1.6
-  m_strVersionIOSCode: 151
-  m_strVersionAndroidGplay: 1.6
-  m_strVersionAndroidGplayCode: 151
-  m_strVersionAndroidAmazon: 1.6
-  m_strVersionAndroidAmazonCode: 151
+  m_strVersionIOS: 1.10
+  m_strVersionIOSCode: 174
+  m_strVersionAndroidGplay: 1.10
+  m_strVersionAndroidGplayCode: 174
+  m_strVersionAndroidAmazon: 1.10
+  m_strVersionAndroidAmazonCode: 174
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 0
   m_biOSPushNotifications: 1
@@ -125,7 +128,7 @@ MonoBehaviour:
   - NSPhotoLibraryAddUsageDescription/Used to take pictures of your dragons!
   m_iAndroidMarketSelected: 0
   m_iAndroidMinSDKVersion: 1
-  m_iAndroidTargetSDKVersion: 10
+  m_iAndroidTargetSDKVersion: 11
   m_bAndroidDebuggable: 1
   m_bAndroidTVSupported: 0
   m_iAndroidOrientationSelected: 2
@@ -137,15 +140,16 @@ MonoBehaviour:
   m_kAndroidDangerousPermissions:
   - android.permission.WRITE_EXTERNAL_STORAGE
   - android.permission.READ_EXTERNAL_STORAGE
-  m_strAndroidManifestExtraData: "<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
+  m_strAndroidManifestExtraData: "<meta-data android:name=\"android.max_aspect\" android:value=\"2.1\"
+    />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
-    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n
-    \             </provider>"
+    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0
   m_bDontDeleteTrackingLogs: 0
+  m_bFilterEmojisFromKeyboard: 0
   m_bTrackingFlurryEnabled: 0
   m_bTrackingFacebookEnabled: 1
   m_bTrackingAppsFlyerEnabled: 1

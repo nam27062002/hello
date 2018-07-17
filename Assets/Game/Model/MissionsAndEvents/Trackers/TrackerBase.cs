@@ -39,7 +39,7 @@ public class TrackerBase {
 	[SerializeField] private long m_currentValue = 0;
 	public long currentValue { 
 		get { return m_currentValue; }
-		set { SetValue(value, true); }
+		set { SetValue(value); }
 	}
 
 	private bool m_enabled = true;
@@ -117,7 +117,7 @@ public class TrackerBase {
 	/// <param name="_value">Value to be formatted.</param>
 	public virtual string FormatValue(long _value) {
 		// Default: the number as is
-		return StringUtils.FormatNumber(_value, 2);
+		return StringUtils.FormatNumber(_value);
 	}
 
 	/// <summary>
@@ -148,11 +148,22 @@ public class TrackerBase {
 	}
 
 	/// <summary>
-	/// Sets a new value and optionally triggers OnValueChanged event.
+	/// Sets the initial value for the tracker.
+	/// Doesn't perform any check or trigger any event.
+	/// Use for initialization/reset/restore persistence.
+	/// Use also by heirs to reset any custom vars that needed to be reset.
+	/// </summary>
+	/// <param name="_initialValue">Initial value.</param>
+	public virtual void InitValue(long _initialValue) {
+		// Just store new value
+		m_currentValue = _initialValue;
+	}
+
+	/// <summary>
+	/// Sets a new value and triggers OnValueChanged event.
 	/// </summary>
 	/// <param name="_newValue">The new value to be set.</param>
-	/// <param name="_triggerEvent">Whether to trigger the OnValueChanged event or not.</param>
-	public virtual void SetValue(long _newValue, bool _triggerEvent) {
+	public virtual void SetValue(long _newValue) {
 		// Skip if not enabled
 		if(!m_enabled) return;
 
@@ -162,8 +173,8 @@ public class TrackerBase {
 		// Store new value
 		m_currentValue = _newValue;
 
-		// Trigger event (if required)
-		if(_triggerEvent) OnValueChanged.Invoke();
+		// Trigger event
+		OnValueChanged.Invoke();
 	}
 
 	//------------------------------------------------------------------------//

@@ -81,6 +81,7 @@ namespace AI {
 					m_direction = GameConstants.Vector3.left;
 				}
 			}
+			m_directionForced = false;
 
 			Stop();
 

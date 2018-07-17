@@ -71,11 +71,6 @@ public class Localizer : MonoBehaviour {
 		// Check required stuff
 		m_text = GetComponent<TextMeshProUGUI>();
 		DebugUtils.Assert(m_text != null, "Required member!");
-
-		// If tid is not defined, grab text as tid
-		if(string.IsNullOrEmpty(m_tid)) {
-			m_tid = m_text.text;
-		}
 	}
 
 	/// <summary>
@@ -134,7 +129,7 @@ public class Localizer : MonoBehaviour {
 			} else {
 				// Replace formatting tag with the same tag in lower case
 				string formattingTag = processedText.Substring(startIdx, endIdx - startIdx);
-				processedText = processedText.Replace(formattingTag, formattingTag.ToLowerInvariant());
+				processedText = processedText.Replace(formattingTag, formattingTag.ToLower(LocalizationManager.SharedInstance.Culture));
 
 				// Find next one
 				startIdx = processedText.IndexOf("<", endIdx);
@@ -152,8 +147,14 @@ public class Localizer : MonoBehaviour {
 	/// Update the text with the current tid, replacements and language.
 	/// </summary>
 	private void Localize() {
-		// Just do it
+		// Check params
 		if(m_text == null) return;
+
+		// Special Case: if tid is empty, skip localization, replacement and casing and put an empty string
+		if(string.IsNullOrEmpty(m_tid)) {
+			m_text.text = string.Empty;
+			return;
+		}
 
 		// Perform the localization
         string localizedString = LocalizationManager.SharedInstance.Localize(m_tid, replacements);

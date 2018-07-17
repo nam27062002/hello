@@ -562,6 +562,7 @@ namespace TMPro.EditorUtilities
 								case "japanese": isoCode = "ja-JP"; break;
 								case "korean": isoCode = "ko-KR"; break;
 								case "traditional_chinese": isoCode = "zh-TW"; break;
+								case "turkish": isoCode = "tr-TR"; break;
 							}
 							if(!string.IsNullOrEmpty(isoCode)) {
 								characterSequence += m_inputCharactersFiles[i].text.ToUpper(CultureInfo.CreateSpecificCulture(isoCode));

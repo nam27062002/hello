@@ -4,7 +4,7 @@ public struct Reward  {
 	public int score;
 
 	[Separator("", 7)]
-	public int coins;
+	public float coins;
 	public int pc;
 
 	[Separator("", 7)]
@@ -122,7 +122,7 @@ public struct Reward  {
 	public static Reward operator + (Reward _r1, float _amount) {
 		Reward newReward;
 		newReward.score = (int)(_r1.score + _amount);
-		newReward.coins = (int)(_r1.coins + _amount);
+		newReward.coins = (_r1.coins + _amount);
 		newReward.pc = (int)(_r1.pc + _amount);
 		newReward.health = _r1.health + _amount;
 		newReward.energy = _r1.energy + _amount;
@@ -143,7 +143,7 @@ public struct Reward  {
 	public static Reward operator * (Reward _r1, float _factor) {
 		Reward newReward;
 		newReward.score = (int)(_r1.score * _factor);
-		newReward.coins = (int)(_r1.coins * _factor);
+		newReward.coins = (_r1.coins * _factor);
 		newReward.pc = (int)(_r1.pc * _factor);
 		newReward.health = _r1.health * _factor;
 		newReward.energy = _r1.energy * _factor;
@@ -158,8 +158,8 @@ public struct Reward  {
 	/// <summary>
 	/// Sets the no reward.
 	/// </summary>
-	public void SetNoReward(){
-		score = coins = pc = 0;
-		health = energy = xp = alcohol = fury = 0f;
+	public void SetNoReward(){		
+		score = pc = 0;
+		coins = health = energy = xp = alcohol = fury = 0f;
 	}
 }

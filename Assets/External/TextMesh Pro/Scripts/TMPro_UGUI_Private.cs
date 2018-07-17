@@ -898,6 +898,28 @@ namespace TMPro
             }
         }
 
+		// [AOC] ADDITION
+		/// <summary>
+		/// Change the render queue of this text instance.
+		/// </summary>
+		/// <param name="_newRenderQueue">New render queue order.</param>
+		public override void SetRenderQueue(int _newRenderQueue) {
+			//Debug.Log(Color.yellow.Tag("SetRenderQueue from " + m_sharedMaterial.renderQueue + " to " + _newRenderQueue +
+			//	"\n(Material Instance ID " + m_sharedMaterial.GetInstanceID() + ")"));
+
+			// Use material instance if one exists. Otherwise, create a new instance of the shared material.
+			// [AOC] We don't want to change font's default material!!
+			if(m_fontMaterial == null || m_fontMaterial.GetInstanceID() == this.font.material.GetInstanceID()) {
+				m_fontMaterial = CreateMaterialInstance(m_sharedMaterial);
+			}
+			m_fontMaterial.renderQueue = _newRenderQueue;
+
+			// [AOC] Let TMPro know we have a new material
+			m_sharedMaterial = m_fontMaterial;	// [AOC] WHY??? Doesn't make any sense, but won't work otherwise
+			m_havePropertiesChanged = true;
+			SetMaterialDirty();
+		}
+
 
         // Sets the Culling mode of the material
         protected override void SetCulling()

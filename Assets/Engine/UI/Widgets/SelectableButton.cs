@@ -45,6 +45,15 @@ public class SelectableButton : MonoBehaviour {
 		get { return m_selected; }
 	}
 
+	private bool m_selectionAllowed = true;
+	public bool selectionAllowed {
+		get { return m_selectionAllowed; }
+		set {
+			m_selectionAllowed = value;
+			if(m_selected && !m_selectionAllowed) SetSelected(false);	// If it was selected and we're disabling selection, unselect
+		}
+	}
+
 	private Button m_button = null;
 	public Button button {
 		get { 
@@ -76,6 +85,9 @@ public class SelectableButton : MonoBehaviour {
 	/// <param name="_selected">Whether to select or unselect the button.</param>
 	/// <param name="_stayDisabled">If leaving selection state, whether to go to normal state or keep the button disabled. Doesn't apply if <paramref name="_selected"/> is <c>true</c></param>
 	public void SetSelected(bool _selected, bool _stayDisabled = false) {
+		// Ignore if button can't be selected
+		if(_selected && !m_selectionAllowed) return;
+
 		// Change button's transition
 		// Color
 		ColorBlock newColors = button.colors;

@@ -54,18 +54,19 @@ Shader "Hungry Dragon/SkyForeground"
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float4 color : COLOR;
+//				float4 color : COLOR;
 				float2 uv : TEXCOORD0;
-				float2 uv2 : TEXCOORD1;
-		};
+//				float2 uv2 : TEXCOORD1;
+			};
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
 				//				UNITY_FOG_COORDS(1)
-				float4 vCol : COLOR;
 				float4 vertex : SV_POSITION;
-				float depth : TEXCOORD1;
+//				float4 vCol : COLOR;
+				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
+				//				float depth : TEXCOORD1;
 			};
 
 			sampler2D _CloudTex;
@@ -82,18 +83,20 @@ Shader "Hungry Dragon/SkyForeground"
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.vCol = v.color;
-				o.uv = TRANSFORM_TEX(v.uv, _CloudTex);
-				o.depth = mul(unity_ObjectToWorld, v.vertex).z;
+//				o.vCol = v.color;
+				o.uv2 = o.uv = TRANSFORM_TEX(v.uv, _CloudTex);
+				o.uv += float2(_Time.y * _Speed, 0.0);
+				o.uv2 += float2(_Time.y * _Speed * 1.5, 0.3);
+				//				o.depth = mul(unity_ObjectToWorld, v.vertex).z;
 
 				return o;
 			}			
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float vy = i.uv.y / _CloudTex_ST.y;
-				float intensity = tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed, 0.0))).x;
-				i.uv.x += 0.4;
-				intensity += tex2D(_CloudTex, (i.uv.xy + float2(_Time.y * _Speed * 1.5, 0.3))).x;
+				float intensity = tex2D(_CloudTex, i.uv).x;
+//				i.uv.x += 0.4;
+				intensity += tex2D(_CloudTex, i.uv2).x;
 				intensity *= 0.5;
 				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);
 

@@ -390,7 +390,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 				}
 			}
 
-			Debug.Log(name + " >> " + _other.name);
+			//Debug.Log(name + " >> " + _other.name);
 		}
 	}
 
@@ -449,7 +449,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			}
 
 			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
-				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset);
+				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, m_trasnform.rotation);
 			}
 		}
 

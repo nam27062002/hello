@@ -53,12 +53,14 @@ public class HDTrackingManager
 		SHOP_PC_PACK,
 		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
+        SHOP_PROMOTED_IAP,
 		SHOP_KEYS_PACK,
         NOT_ENOUGH_RESOURCES,
         INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
         CHEAT,                          // Use this if the currency comes from a cheat so it won't be tracked
         REWARD_CHEST,
         REWARD_GLOBAL_EVENT,
+		REWARD_LIVE_EVENT,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
@@ -68,7 +70,11 @@ public class HDTrackingManager
 		GLOBAL_EVENT_KEYS_RESET,		// At the end of the event keys are reset back to 0
 		GLOBAL_EVENT_REFUND,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
 		GLOBAL_EVENT_BONUS,				// Spend a key to duplicate score registered to a global event at the end of the run
-        CUSTOMER_SUPPORT                // Reward received via customer support tool
+
+		TOURNAMENT_ENTRY,			    // Tournament Support
+
+        CUSTOMER_SUPPORT,               // Reward received via customer support tool
+        SHOP_PURCHASE_RESUMED           // Reward given when resuming a purchase that was interrupted
     };
 
 	public enum EFunnels
@@ -394,6 +400,27 @@ public class HDTrackingManager
     /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
     /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
     public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
+
+    public virtual void Notify_EggOpened() {}
+
+    /// <summary>
+    /// Called when the user clicks on tournament button on main screen
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// </summary>
+    public virtual void Notify_TournamentClickOnMainScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clicks on next button on tournament description screen
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    public virtual void Notify_TournamentClickOnNextOnDetailsScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clickes on enter tournament button
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// <param name="currency"><c>NONE</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
+    public virtual void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency) {}
     #endregion
 
     #region log

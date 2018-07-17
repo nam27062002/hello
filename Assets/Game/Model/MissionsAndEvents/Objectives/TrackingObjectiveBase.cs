@@ -44,7 +44,7 @@ public abstract class TrackingObjectiveBase {
 	}
 
 	public float progress { 
-		get { return m_targetValue > 0f ? m_tracker.currentValue/targetValue : 1f; }	// Protect for infinite values!
+		get { return m_targetValue > 0f ? (float)((double)m_tracker.currentValue/(double)targetValue) : 1f; }	// Protect for infinite values!
 	}
 
 	// State
@@ -81,7 +81,7 @@ public abstract class TrackingObjectiveBase {
 	/// <param name="_typeDef">Definition of hte objective type.</param>
 	/// <param name="_tidDesc">TID corresponding to the objective's description. Typically contains at least one replacement %U0 for the amount and optional extra replacements for the objectives (i.e. "Eat %U0 %U1", "Swim %U0 meters").</param>
 	/// <param name="_tidTarget">Optional TID for the objective's target (i.e. "Birds").</param>
-	protected virtual void Init(TrackerBase _tracker, long _targetValue, DefinitionNode _typeDef, string _tidDesc, string _tidTarget = "") {
+	public virtual void Init(TrackerBase _tracker, long _targetValue, DefinitionNode _typeDef, string _tidDesc, string _tidTarget = "") {
 		// Check some required parameters
 		Debug.Assert(_tracker != null, "Invalid Tracker!");
 

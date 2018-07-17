@@ -1,17 +1,27 @@
 public class TrackingPersistenceSystem : PersistenceSystem
 {
     private const string PARAM_SERVER_USER_ID = "accID";
-    private const string PARAM_ADS_COUNT = "adsCount";
+	private const string PARAM_USER_ID = "userID";
+    
+	private const string PARAM_ADS_COUNT = "adsCount";
     private const string PARAM_ADS_SESSIONS = "adsSessions";
-    private const string PARAM_GAME_ROUND_COUNT = "gameRoundCount";
+    
+	private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";
+	private const string PARAM_GAME_ROUND_COUNT = "gameRoundCount";
     private const string PARAM_SESSION_COUNT = "sessionCount";
-    private const string PARAM_SOCIAL_ID = "socialID";
+    
+	private const string PARAM_SOCIAL_ID = "socialID";
     private const string PARAM_SOCIAL_PLATFORM = "socialPlatform";
-    private const string PARAM_TOTAL_PLAY_TIME = "totalPlaytime";
-    private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
+    
+	private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
+	private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
+	private const string PARAM_TOTAL_SPENT = "totalSpent";	// Cents of US Dollar (USD * 100)
+	private const string PARAM_LAST_PURCHASE_TIMESTAMP = "lastPurchaseTimestamp";	// Unix timestamp (seconds since 1970)
+
 	private const string PARAM_TOTAL_EGG_PURCHASES = "totalEggPurchases";
-    private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
-    private const string PARAM_USER_ID = "userID";
+    private const string PARAM_TOTAL_EGGS_PURCHASED_WITH_HC = "totalEggsPurchasedWithHC";
+    private const string PARAM_TOTAL_EGGS_FOUND = "totalEggsFound";
+    private const string PARAM_TOTAL_EGGS_OPENED = "totalEggsOpened";
     
     /// Whether or not this is the first time the game is loaded ever    
     private const string PARAM_FIRST_LOADING = "firstLoading";
@@ -133,6 +143,28 @@ public class TrackingPersistenceSystem : PersistenceSystem
         }
     }
 
+	// Cents of US Dollar (USD * 100)
+	public int TotalSpent {
+		get {
+			return Cache_GetInt(PARAM_TOTAL_SPENT);
+		}
+
+		set {
+			Cache_SetInt(PARAM_TOTAL_SPENT, value);
+		}
+	}
+
+	// Seconds since 1970
+	public long LastPurchaseTimestamp {
+		get {
+			return Cache_GetLong(PARAM_LAST_PURCHASE_TIMESTAMP);
+		}
+
+		set {
+			Cache_SetLong(PARAM_LAST_PURCHASE_TIMESTAMP, value);
+		}
+	}
+
 	public int EggPurchases
     {
         get
@@ -143,6 +175,45 @@ public class TrackingPersistenceSystem : PersistenceSystem
         set
         {
             Cache_SetInt(PARAM_TOTAL_EGG_PURCHASES, value);
+        }
+    }
+
+    public int EggSPurchasedWithHC
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_EGGS_PURCHASED_WITH_HC);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_EGGS_PURCHASED_WITH_HC, value);
+        }
+    }
+
+    public int EggsFound
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_EGGS_FOUND);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_EGGS_FOUND, value);
+        }
+    }
+
+    public int EggsOpened
+    {
+        get
+        {
+            return Cache_GetInt(PARAM_TOTAL_EGGS_OPENED);
+        }
+
+        set
+        {
+            Cache_SetInt(PARAM_TOTAL_EGGS_OPENED, value);
         }
     }
 
@@ -255,6 +326,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
         m_systemName = "Tracking";
 
         CacheDataInt dataInt;
+		CacheDataLong dataLong;
         CacheDataBool dataBool;
         CacheDataString dataString = new CacheDataString(PARAM_USER_ID, "");
         Cache_AddData(PARAM_USER_ID, dataString);
@@ -287,6 +359,14 @@ public class TrackingPersistenceSystem : PersistenceSystem
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 
+		key = PARAM_TOTAL_SPENT;
+		dataInt = new CacheDataInt(key, 0);
+		Cache_AddData(key, dataInt);
+
+		key = PARAM_LAST_PURCHASE_TIMESTAMP;
+		dataLong = new CacheDataLong(key, 0);
+		Cache_AddData(key, dataLong);
+
         key = PARAM_TOTAL_STORE_VISITS;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
@@ -316,6 +396,18 @@ public class TrackingPersistenceSystem : PersistenceSystem
         Cache_AddData(key, dataInt);
 
         key = PARAM_TOTAL_EGG_PURCHASES;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_EGGS_PURCHASED_WITH_HC;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_EGGS_FOUND;
+        dataInt = new CacheDataInt(key, 0);
+        Cache_AddData(key, dataInt);
+
+        key = PARAM_TOTAL_EGGS_OPENED;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 

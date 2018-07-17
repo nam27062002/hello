@@ -20,9 +20,7 @@ struct appdata_t
 //#define EMISSIVE_LIGHTMAPCONTRAST
 struct v2f {
 	float4 vertex : SV_POSITION;
-#ifdef MAINCOLOR_TEXTURE
 	float2 texcoord : TEXCOORD0;
-#endif
 
 #if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
 	float2 lmap : TEXCOORD1;
@@ -291,7 +289,8 @@ fixed4 frag (v2f i) : SV_Target
 
 #endif
 
-#if defined(NORMALMAP) && defined(MAINCOLOR_TEXTURE)
+
+#if defined(NORMALMAP)
 	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
 	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
@@ -302,11 +301,16 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef SPECULAR
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower);
-#if defined(NORMALWASSPECULAR)
+
+//#if defined(NORMALMAP) && defined(NORMALWASSPECULAR)
+#if defined(NORMALMAP) && defined(NORMALWASSPECULAR)
 	col = col + (specular * encodedNormal.w * _LightColor0);
+//	col = fixed4(1.0, 0.0, 0.0, 1.0);
 #else
 	col = col + (specular * diffuseAlpha * _LightColor0);
+//	col = fixed4(0.0, 1.0, 0.0, 1.0);
 #endif
+
 #endif	
 
 #if defined(EMISSIVE_CUSTOM)
@@ -316,16 +320,16 @@ fixed4 frag (v2f i) : SV_Target
 #if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)
 
 #if defined(WAVE_EMISSION)
-	float intensity = 1.0 + (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
+	float intensity = (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
 #else 
-	float intensity = 1.0 + (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
+	float intensity = (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
 
 #endif
 
 #if defined(EMISSIVE_COLOR)
-	col += (intensity - 1.0) * _EmissiveColor;
+	col += intensity * _EmissiveColor;
 #else
-	col *= intensity;
+	col *= 1.0 + intensity;
 #endif
 
 #endif
@@ -355,10 +359,10 @@ fixed4 frag (v2f i) : SV_Target
 
 #if defined(FOG)// && !defined(EMISSIVE_BLINK)
 
-#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM)// || defined(EMISSIVE_REFLECTIVE)
+#if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)// || defined(EMISSIVE_REFLECTIVE)
 	fixed4 colc = col;
 	HG_APPLY_FOG(i, col);	// Fog
-	col = lerp(col, colc, diffuseAlpha);
+	col = lerp(col, colc, intensity);
 #else
 	HG_APPLY_FOG(i, col);	// Fog
 #endif
@@ -369,7 +373,7 @@ fixed4 frag (v2f i) : SV_Target
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 #endif
 
-#if !defined(MAINCOLOR_TEXTURE) && defined(TINT)
+#if defined(MAINCOLOR_TEXTURE) && defined(TINT)
 	col *= _Tint;
 #endif
 

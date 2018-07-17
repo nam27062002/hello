@@ -46,7 +46,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
 		[Toggle(NORMALWASSPECULAR)] _EnableNormalwAsSpecular("Enable Normal.w as specular mask", Float) = 0
 		[Toggle(NORMALMAP)] _EnableNormalMap("Enable Normal Map", Float) = 0
-		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 1
+		[Toggle(OPAQUEALPHA)] _EnableOpaqueAlpha("Enable opaque alpha", Float) = 0
 		[Toggle(CUTOFF)] _EnableCutoff("Enable cut off", Float) = 0
 		[Toggle(FOG)] _EnableFog("Enable fog", Float) = 1
 		[Toggle(WAVE_EMISSION)] _EnableWaveEmission("Enable wave emission", Float) = 0
@@ -77,12 +77,14 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
 		[Enum(Opaque, 0, Transparent, 1, CutOff, 2)] _BlendMode("Blend mode", Float) = 0.0
 		[Enum(SingleSided, 0, DoubleSided, 1)] _DoubleSided("Double sided", Float) = 0.0
-		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+//		[HideInInspector] _ZWrite("__zw", Float) = 1.0
+		[Toggle] _ZWrite("__zw", Float) = 1.0
+
 
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" "Queue"="Geometry"}
+		Tags { "RenderType"="Opaque" "Queue"="Geometry" "DisableBatching" = "True" }
 		LOD 100
 		
 		Pass {		
@@ -96,12 +98,12 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma vertex vert
 				#pragma fragment frag
 //				#pragma multi_compile_fwdbase
-				#pragma shader_feature __ BLEND_TEXTURE
+				#pragma multi_compile __ BLEND_TEXTURE
 				#pragma shader_feature __ ADDITIVE_BLEND
 				#pragma shader_feature __ CUSTOM_VERTEXCOLOR
-				#pragma shader_feature __ SPECULAR
+				#pragma multi_compile __ SPECULAR
 				#pragma shader_feature __ NORMALWASSPECULAR
-				#pragma shader_feature __ NORMALMAP
+				#pragma multi_compile __ NORMALMAP
 				#pragma shader_feature __ FOG
 				#pragma shader_feature __ CUTOFF
 				#pragma shader_feature __ OPAQUEALPHA
@@ -112,7 +114,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 //				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST
 				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_CUSTOM EMISSIVE_COLOR
-				#pragma shader_feature MAINCOLOR_TEXTURE MAINCOLOR_COLOR
+				#pragma multi_compile MAINCOLOR_TEXTURE MAINCOLOR_COLOR
 
 				#pragma multi_compile __ LIGHTMAP_ON
 				#pragma multi_compile __ FORCE_LIGHTMAP
@@ -124,17 +126,19 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 
 				#include "HungryDragon.cginc"
 
-				#if LOW_DETAIL_ON
+				#ifdef LOW_DETAIL_ON
 				#undef NORMALMAP
 				#undef SPECULAR
 				#endif
 
-				#if MEDIUM_DETAIL_ON
+				#ifdef MEDIUM_DETAIL_ON
 				#undef SPECULAR
 				#endif
 
-				#if HI_DETAIL_ON
+				#ifdef HI_DETAIL_ON
 				#endif
+
+				//#define TINT
 
 				#include "scenary.cginc"
 			ENDCG

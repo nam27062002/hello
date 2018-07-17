@@ -29,6 +29,7 @@ public class OfferItemSlot : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private Transform m_previewContainer = null;
 	[SerializeField] private TextMeshProUGUI m_text = null;
+	[SerializeField] private GameObject m_infoButton = null;
 	[Space]
 	[SerializeField] private bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
 	[Space]
@@ -156,7 +157,7 @@ public class OfferItemSlot : MonoBehaviour {
 		// Initialize preview with item data
 		if(m_preview != null) {
 			m_preview.InitFromItem(m_item);
-			m_preview.SetParentAndFit(m_previewContainer);
+			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
 		}
 
 		// Set text - preview will given us the text already localized and all
@@ -169,7 +170,7 @@ public class OfferItemSlot : MonoBehaviour {
 
 		// Text color based on item rarity!
 		Gradient4 rarityGradient = null;
-		if(m_item.reward != null) {
+		if(m_item is Metagame.RewardPet && m_item.reward != null) {
 			rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
 		} else {
 			rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
@@ -181,6 +182,15 @@ public class OfferItemSlot : MonoBehaviour {
 			rarityGradient.bottomLeft,
 			rarityGradient.bottomRight
 		);
+
+		// Info button - depends on preview type
+		if(m_infoButton != null) {
+			if(m_preview != null) {
+				m_infoButton.SetActive(m_preview.showInfoButton);
+			} else {
+				m_infoButton.SetActive(false);
+			}
+		}
 	}
 
 	/// <summary>
@@ -202,5 +212,15 @@ public class OfferItemSlot : MonoBehaviour {
 	private void OnLanguageChanged() {
 		// Reapply current reward
 		InitFromItem(m_item);
+	}
+
+	/// <summary>
+	/// Info button has been pressed.
+	/// </summary>
+	public void OnInfoButton() {
+		// If we have a valid preview, and this one supports info button, propagate the event
+		if(m_preview != null && m_preview.showInfoButton) {
+			m_preview.OnInfoButton();
+		}
 	}
 }

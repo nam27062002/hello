@@ -188,7 +188,7 @@ namespace Assets.Code.Game.Spline
             m_spline = this.GetComponent<BezierSpline>();
         }
 
-        public void AddObject(GameObject obj)
+		public void AddObject(GameObject obj, float _multiplier)
         {
             Assert.Expect(obj != null);
 
@@ -210,7 +210,7 @@ namespace Assets.Code.Game.Spline
 				m_objsUnderInfluence.Remove(m_duplicatedObjs[i]);
 			}
 
-			SplineForcedObject forcedObj = new SplineForcedObject(m_spline, obj, m_magnitude, m_timeToLerpForceAfterExit, m_decreaseForceAlongSpline);
+			SplineForcedObject forcedObj = new SplineForcedObject(m_spline, obj, m_magnitude * _multiplier, m_timeToLerpForceAfterExit, m_decreaseForceAlongSpline);
             m_objsUnderInfluence.Add(forcedObj);
         }
 

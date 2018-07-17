@@ -109,7 +109,7 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 
 			case EUserCaseId.Launch_Local_LoggedInAndIncentivised_Cloud_NoConnection:				
 				// Game loads with the persistence defined below 
-				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndInventivised, LOCAL_DRAGON_SKU);
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndIncentivised, LOCAL_DRAGON_SKU);
 				CloudDriverDebug.IsConnectionEnabled = false;
 			break;
 
@@ -213,7 +213,7 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// If the user chooses to connect to cloud then a popup notifying that there's no connection is shown.
 				// When this popup is closed the popup that lets the user choose between connecting to cloud and resetting is shown again
 				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
-                CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndInventivised, CLOUD_DRAGON_SKU);
+                CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndIncentivised, CLOUD_DRAGON_SKU);
                 CloudDriverDebug.IsConnectionEnabled = false;
                 LocalDriverDebug.Prefs_SocialId = "userId";
             break;
@@ -222,7 +222,7 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 				// A popup letting the user know that local persistence is corrupted but it was overriden by the cloud persistence is shown.
                 // When the user clicks on "Ok" button the game continues to load with the cloud persistence                				
 				LocalDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
-				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndInventivised, CLOUD_DRAGON_SKU);
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedInAndIncentivised, CLOUD_DRAGON_SKU);
                 LocalDriverDebug.Prefs_SocialId = "userId";
             break;
 

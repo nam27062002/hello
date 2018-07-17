@@ -28,10 +28,12 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	public static readonly int INVENTORY_SIZE = 3;
 
-	private static readonly string PET_COMMON 	= "pet_common";
-	private static readonly string PET_RARE 	= "pet_rare";
-	private static readonly string PET_EPIC 	= "pet_epic";
-	private static readonly string PET_SPECIAL 	= "pet_special";
+	private const string PET_COMMON 	= "pet_common";
+	private const string PET_RARE 		= "pet_rare";
+	private const string PET_EPIC 		= "pet_epic";
+	private const string PET_SPECIAL 	= "pet_special";
+
+	private const string RANDOM_STATE_PREFS_KEY = "EggManager.RandomState";
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -98,16 +100,23 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		get { return instance.m_user.goldenEggsCollected >= instance.m_goldenEggRequiredFragments.Count; }
 	}
 
-	public static float getProbabilityCommon() 	{ return instance.m_rewardDropRate.GetProbability(PET_COMMON);}
-	public static float getProbabilityRare() 	{ return instance.m_rewardDropRate.GetProbability(PET_RARE);	}
-	public static float getProbabilityEpic() 	{ return instance.m_rewardDropRate.GetProbability(PET_EPIC);	}
+	private static float[] sm_weightIDs = {1f, 2f, 3f};
+	public static void SetWeightIDs(float[] _weightIDs) {
+		sm_weightIDs = _weightIDs;
+	}
 
+	public static void RestoreWeightIDs() {
+		sm_weightIDs = new float[] {1f, 2f, 3f};
+	}
 
 	// Internal
 	UserProfile m_user;
 
 	// Dynamic Probability coeficients
 	private List<float> m_weights;
+
+	// Store default probabilities to display them to the user
+	private List<float> m_defaultProbabilities = null;
 
 	private bool  m_dynamicGatchaEnabled = true;
 	private float m_coeficientG = 4f;
@@ -142,6 +151,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// recalculate the probabilities on each draw based on the luck of the player.
 		m_rewardDropRate = new ProbabilitySet();	
 		m_weights = new List<float>();
+		m_defaultProbabilities = null;	// Force a recalculation of the default probabilities
 
 		DefinitionNode dynamicGatchaDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DYNAMIC_GATCHA, "dynamicGatcha");
 		m_dynamicGatchaEnabled = dynamicGatchaDef.GetAsBool("activated");
@@ -161,16 +171,9 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 
 		// Restore saved random state from preferences so the distribution is respected
 		// Only if we have a state saved!
-		if(PlayerPrefs.HasKey("EggManager.RandomState.s0")) {
-			// [AOC] GOING TO HELL!! Random.State is a private struct that can't be easily serialized, so use reflection to do so.
-			// We know the internal structure of Random.State thanks to unofficial UnityDecompiled repo (https://github.com/MattRix/UnityDecompiled/blob/master/UnityEngine/UnityEngine/Random.cs)
+		if(PlayerPrefs.HasKey(RANDOM_STATE_PREFS_KEY)) {
 			UnityEngine.Random.State s = instance.m_rewardDropRate.randomState;
-			for(int i = 0; i < 4; ++i) {
-				FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-				prop.SetValue(s, PlayerPrefs.GetInt("EggManager.RandomState.s" + i));
-				//Debug.Log("<color=magenta>Restoring RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
-			}
-			instance.m_rewardDropRate.randomState = s;
+			instance.m_rewardDropRate.randomState = s.Deserialize(PlayerPrefs.GetString(RANDOM_STATE_PREFS_KEY));
 		}
 
 		// Initialize required golden egg fragments requirements
@@ -215,28 +218,93 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// PUBLIC UTILS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Gets the default probability of getting a specific reward rarity (ignoring
+	/// the dynamic algorithm).
+	/// </summary>
+	/// <returns>The probability. <c>0</c> if given rarity is not in the gacha system.</returns>
+	/// <param name="_rarity">Reward rarity.</param>
+	public static float GetDefaultProbability(Metagame.Reward.Rarity _rarity) {
+		// Make sure they're initialized
+		if(instance.m_defaultProbabilities == null) return 0f;
+
+		// Matching initialization order (see InitFromDefintions)
+		switch(_rarity) {
+			case Metagame.Reward.Rarity.COMMON:	return instance.m_defaultProbabilities[0];
+			case Metagame.Reward.Rarity.RARE:	return instance.m_defaultProbabilities[1];
+			case Metagame.Reward.Rarity.EPIC:	return instance.m_defaultProbabilities[2];
+		}
+		return 0f;	// Unsupported rarity, 0 chance of getting it
+	}
+
+	/// <summary>
+	/// Gets the probability of getting a specific reward rarity using the dynamic
+	/// algorithm.
+	/// </summary>
+	/// <returns>The probability. <c>0</c> if given rarity is not in the gacha system.</returns>
+	/// <param name="_rarity">Reward rarity.</param>
+	public static float GetDynamicProbability(Metagame.Reward.Rarity _rarity) {
+		string rewardId = "";
+		switch(_rarity) {
+			case Metagame.Reward.Rarity.COMMON:	rewardId = PET_COMMON;	break;
+			case Metagame.Reward.Rarity.RARE:	rewardId = PET_RARE;	break;
+			case Metagame.Reward.Rarity.EPIC:	rewardId = PET_EPIC;	break;
+			default: return 0f;	// Unsupported rarity, 0 chance of getting it
+		}
+
+		return instance.m_rewardDropRate.GetProbability(rewardId);
+	}
 
 	public static void BuildDynamicProbabilities() {
 		instance.__BuildDynamicProbabilities();
 	}
 
 	private void __BuildDynamicProbabilities() {
-		float weightTotal = 0f;
+		// If default probabilites are not initialized, do it now!
+		bool computeDefaultProbabilites = false;
+		float defaultProbabilitiesTotalWeight = 0f;
+		if(m_defaultProbabilities == null) {
+			computeDefaultProbabilites = true;
+			m_defaultProbabilities = new List<float>();
+		}
 
+		float weight = 0f;
+		float weightTotal = 0f;
 		for(int i = 0; i < m_weights.Count; i++) {
 			// Dynamic probability
 			int triesWithoutRares = 0;
 			if (m_dynamicGatchaEnabled && m_user != null) {
 				triesWithoutRares = m_user.openEggTriesWithoutRares;
 			}
-			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
-			m_weights[i] = 1f / Mathf.Pow(i + 1, a); // i+1 is the weightID of the formula
 
-			weightTotal += m_weights[i];
+			float a = m_coeficientG - (m_coeficientX * Mathf.Pow(triesWithoutRares, m_coeficientY));
+			if (sm_weightIDs[i] > 0) {
+				weight = 1f / Mathf.Pow(sm_weightIDs[i], a); // i+1 is the weightID of the formula
+			} else {
+				weight = 0f;
+			}
+			m_weights[i] = weight;
+			weightTotal += weight;
+
+			// Need to compute default probabilities as well?
+			if(computeDefaultProbabilites) {
+				// Same formula with 0 tries without rares
+				weight = 1f / Mathf.Pow(i + 1, m_coeficientG);	// [AOC] Optimization: Since triesWithoutRares is 0, a == coeficientG.
+				m_defaultProbabilities.Add(weight);
+				defaultProbabilitiesTotalWeight += weight;
+			}
 		}
 
+		// Normalize dynamic probabilities
 		for(int i = 0; i < m_weights.Count; i++) {
 			m_rewardDropRate.SetProbability(i, m_weights[i] / weightTotal, false);
+		}
+
+		// Normalize default probabilities
+		if(computeDefaultProbabilites) {
+			for(int i = 0; i < m_defaultProbabilities.Count; ++i) {
+				m_defaultProbabilities[i] = m_defaultProbabilities[i] / defaultProbabilitiesTotalWeight;
+			}
 		}
 	}
 
@@ -307,6 +375,69 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		return -1;
 	}
 
+	public static DefinitionNode GenerateReward(float[] _customWeights) {
+		float[] save = sm_weightIDs;
+		SetWeightIDs(_customWeights);
+		DefinitionNode def = GenerateReward();
+		SetWeightIDs(save);
+		BuildDynamicProbabilities();
+		return def;
+	}
+
+	/// <summary>
+	/// Given a set of custom weights, compute that set.
+	/// </summary>
+	/// <returns>The probabilities.</returns>
+	/// <param name="_customWeights">Custom set of weights by rarity.</param>
+	public static float[] ComputeProbabilities(float[] _customWeights) {
+		// Backup weights and set new ones
+		float[] save = sm_weightIDs;
+		SetWeightIDs(_customWeights);
+		BuildDynamicProbabilities();
+
+		// Get the probability for each rarity
+		float[] probs = new float[(int)Metagame.Reward.Rarity.COUNT];
+		for(int i = 0; i < (int)Metagame.Reward.Rarity.COUNT; ++i) {
+			probs[i] = GetDynamicProbability((Metagame.Reward.Rarity)i);
+		}
+
+		// Restore previous weights
+		SetWeightIDs(save);
+		BuildDynamicProbabilities();
+
+		return probs;
+	}
+
+	/// <summary>
+	/// Given an egg definition, compute the default probabilities (before applying 
+	/// the adjustment algorithm) for that egg type.
+	/// </summary>
+	/// <returns>The probabilities.</returns>
+	/// <param name="_eggDef">Egg definition.</param>
+	public static float[] ComputeProbabilities(DefinitionNode _eggDef) {
+		// Check params
+		Debug.Assert(_eggDef != null, "Invalid egg definition!");
+
+		// Create an array with the probabilities for each rarity
+		float[] probabilities = new float[(int)Metagame.Reward.Rarity.COUNT];
+		if(_eggDef.Has("weightCommon")) {
+			// Custom probabilities
+			float[] weights = new float[(int)Metagame.Reward.Rarity.COUNT];
+			weights[0] = _eggDef.GetAsFloat("weightCommon", 1);
+			weights[1] = _eggDef.GetAsFloat("weightRare", 2);
+			weights[2] = _eggDef.GetAsFloat("weightEpic", 3);
+			probabilities = EggManager.ComputeProbabilities(weights);
+		} else {
+			// Default probabilities
+			for(int i = 0; i < (int)Metagame.Reward.Rarity.COUNT; ++i) {
+				probabilities[i] = EggManager.GetDefaultProbability((Metagame.Reward.Rarity)i);
+			}
+		}
+
+		// Done!
+		return probabilities;
+	}
+
 	/// <summary>
 	/// Generate a random reward respecting drop chances.
 	/// </summary>
@@ -316,33 +447,21 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// [AOC] Are we testing?
 		string rewardSku = "";
 		switch(CPGachaTest.rewardChanceMode) {
-			case CPGachaTest.RewardChanceMode.DEFAULT: {
-				// [AOC] Force common pet during tutorial
-				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+			case CPGachaTest.RewardChanceMode.DEFAULT: {				
+				instance.__BuildDynamicProbabilities();
 
-					instance.__BuildDynamicProbabilities();
+				// Get a weighted element
+				rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
 
-					// Get a weighted element
-					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
-
-					if (rewardSku.Equals(PET_COMMON)) {
-						instance.m_user.openEggTriesWithoutRares++;
-					} else {
-						instance.m_user.openEggTriesWithoutRares = 0;
-					}
-
-					// Save random state to preferences so the distribution is respected
-					// [AOC] GOING TO HELL!! Random.State is a private struct that can't be easily serialized, so use reflection to do so.
-					// We know the internal structure of Random.State thanks to unofficial UnityDecompiled repo (https://github.com/MattRix/UnityDecompiled/blob/master/UnityEngine/UnityEngine/Random.cs)
-					UnityEngine.Random.State s = instance.m_rewardDropRate.randomState;
-					for(int i = 0; i < 4; ++i) {
-						FieldInfo prop = s.GetType().GetField("s" + i, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-						PlayerPrefs.SetInt("EggManager.RandomState.s" + i, (int)prop.GetValue(s));
-						//Debug.Log("<color=magenta>Saving RandomState.s" + i + ": " + ((int)prop.GetValue(s)).ToString() + "</color>");
-					}
+				if (rewardSku.Equals(PET_COMMON)) {
+					instance.m_user.openEggTriesWithoutRares++;
 				} else {
-					rewardSku = PET_COMMON;
+					instance.m_user.openEggTriesWithoutRares = 0;
 				}
+
+				// Save random state to preferences so the distribution is respected
+				PlayerPrefs.SetString(RANDOM_STATE_PREFS_KEY, instance.m_rewardDropRate.randomState.Serialize());
+
 			} break;
 
 			case CPGachaTest.RewardChanceMode.COMMON_ONLY:	rewardSku = PET_COMMON; break;

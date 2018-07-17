@@ -24,7 +24,7 @@ using System;
 // https://msdn.microsoft.com/en-us/library/system.flagsattribute(v=vs.110).aspx
 [Flags]
 public enum TutorialStep {
-	// [AOC] Max 32 values
+	// [AOC] Max 32 values (try inheriting from long if more are needed)
 	// [AOC] DON'T CHANGE THE ORDER!!
 	INIT						= 1 << 0,
 
@@ -50,6 +50,12 @@ public enum TutorialStep {
 	GOLDEN_FRAGMENTS_INFO		= 1 << 16,
 
 	FIRST_EGG_COLLECTED			= 1 << 17,
+
+	BOOST_SPACE					= 1 << 18,
+
+	TOURNAMENT_INFO				= 1 << 19,
+	TOURNAMENT_BUILD			= 1 << 20,
+	QUEST_INFO					= 1 << 21,
 
 	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

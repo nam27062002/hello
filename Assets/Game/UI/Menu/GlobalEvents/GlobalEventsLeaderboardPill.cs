@@ -107,7 +107,7 @@ public class GlobalEventsLeaderboardPill : MonoBehaviour {
 		// Get social info
 		// [AOC] TODO!! Do it properly!
 		// Load picture
-		m_picture.Load(_data.pictureUrl);
+		if(m_picture != null) m_picture.Load(_data.pictureUrl);
 
 		// Set name
 		if(m_nameText != null) m_nameText.text = _data.name;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.

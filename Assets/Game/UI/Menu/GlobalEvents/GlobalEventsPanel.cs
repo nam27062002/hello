@@ -29,6 +29,10 @@ public class GlobalEventsPanel : MonoBehaviour {
 		get; set;
 	}
 
+	public ShowHideAnimator anim {
+		get; set;
+	}
+
 	//------------------------------------------------------------------------//
 	// OVERRIDE CANDIDATES													  //
 	//------------------------------------------------------------------------//
