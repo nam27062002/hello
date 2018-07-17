@@ -137,6 +137,14 @@ public class LoadingSceneController : SceneController {
             m_userCountry = strUserCountryByIP;
             m_infoRecievedFromServer = true;
         }
+
+        public static bool IsValidCountry(string countryStr)
+        {
+            bool ret = true;
+            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("--") || countryStr.Equals("Unknown"))
+                ret = false;
+            return ret;
+        }
     }
 
     GDPRListener m_gdprListener = new GDPRListener();
@@ -373,11 +381,11 @@ public class LoadingSceneController : SceneController {
                 {
                     string country = m_gdprListener.m_userCountry;
                         // Recieved values are not good
-                    if ( string.IsNullOrEmpty(country) || country.Equals("Unknown"))
+                    if (  !GDPRListener.IsValidCountry(country) )
                     {
                         country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
                             // Cached Values are not good
-                        if (string.IsNullOrEmpty(country) || country.Equals("Unknown"))
+                        if ( !GDPRListener.IsValidCountry(country) ) 
                         {
                             // We set the most restrictive path
                             GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
