@@ -37,6 +37,8 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 	// Exposed members
 	[SerializeField] private CheckGroup m_trackingConsentGroup = null;
 	[SerializeField] private CheckGroup m_adsConsentGroup = null;
+	[Space]
+	[SerializeField] private ScrollRect m_scroll = null;
 
 	// Public properties
 	private PopupController m_popupController = null;
@@ -127,5 +129,16 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 
 		// Refresh
 		RefreshVisuals();
+	}
+
+	/// <summary>
+	/// The popup is about to open.
+	/// </summary>
+	public void OnOpenPreAnimation() {
+		// For some unknown reason, we need to delay a little bit the initial scrolling of the scroll view, otherwise it gets resetted to 0
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => { m_scroll.verticalNormalizedPosition = 1f; },
+			0.2f
+		);
 	}
 }
