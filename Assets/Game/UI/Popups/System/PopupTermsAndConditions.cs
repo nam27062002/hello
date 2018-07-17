@@ -86,11 +86,11 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 			// Init age text and subscribe to slider's OnChange event
 			m_ageValue = GDPRManager.SharedInstance.GetCachedUserAge();
-			m_ageSlider.onValueChanged.AddListener(OnAgeChanged);
 			m_ageSlider.value = m_ageValue;
+			m_ageSlider.onValueChanged.AddListener(OnAgeChanged);	// After setting the initial value! Otherwise our age value will be changed
 
-			// Start with button disabled if age required and never initialized
-			m_acceptButton.interactable = m_ageValue > -1;
+			// Initialize age text
+			SetAgeText(m_ageValue);
 		} else {
 			m_ageGroup.SetActive(false);
 		}
@@ -136,13 +136,22 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	/// <param name="_age">Age value.</param>
 	private void SetAgeText(int _age) {
 		// A couple of special cases
-		if(_age < 0) {	// Age never initialized
-			m_ageText.text = string.Empty;
-		} else if(_age >= m_ageSlider.maxValue) {	// [AOC] Support our elders!
+		_age = Mathf.Clamp(_age, (int)m_ageSlider.minValue, (int)m_ageSlider.maxValue);
+		if(_age >= m_ageSlider.maxValue) {	// [AOC] Support our elders!
 			m_ageText.text = StringUtils.FormatNumber(_age) + "+";
 		} else {
 			m_ageText.text = StringUtils.FormatNumber(_age);
 		}
+
+		// Adjust color for invalid values
+		if(_age <= 0) {	// Age never initialized
+			m_ageText.color = Colors.WithAlpha(m_ageText.color, 0.5f);
+		} else {
+			m_ageText.color = Colors.WithAlpha(m_ageText.color, 1f);
+		}
+
+		// Enable accept button?
+		m_acceptButton.interactable = m_ageValue > 0;
 	}
 
 	//------------------------------------------------------------------------//
@@ -182,7 +191,7 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Initialize it with current settings
 		m_moreInfoPopup.Init(
-			m_ageValue > -1 && m_ageValue >= GDPRManager.SharedInstance.GetAgeToCheck(),
+			m_ageValue >= GDPRManager.SharedInstance.GetAgeToCheck(),
 			trackingConsent, adsConsent
 		);
 
@@ -237,9 +246,6 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Update text
 		SetAgeText(m_ageValue);
-
-		// Enable accept button!
-		m_acceptButton.interactable = m_ageValue > -1;
 	}
 
 	/// <summary>
