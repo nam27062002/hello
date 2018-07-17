@@ -123,37 +123,42 @@ namespace Metagame {
 		/// </summary>
 		/// <returns>A reward.</returns>
 		/// <param name="_data">Data for the reward to be created.</param>
-		public static Reward CreateFromData(Data _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
-			switch(_data.typeCode) {
-				// Currency rewards: pretty straight forward
-				case RewardSoftCurrency.TYPE_CODE:	  return CreateTypeSoftCurrency(_data.amount, _economyGroup, _source);
-				case RewardHardCurrency.TYPE_CODE:	  return CreateTypeHardCurrency(_data.amount, _economyGroup, _source);
-				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments((int)_data.amount, Rarity.COMMON, _economyGroup, _source);
+		public static Reward CreateFromData(Data _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {
+            switch (_data.typeCode) {
+                // Currency rewards: pretty straight forward
+                case RewardSoftCurrency.TYPE_CODE: return CreateTypeSoftCurrency(_data.amount, _economyGroup, _source);
+                case RewardHardCurrency.TYPE_CODE: return CreateTypeHardCurrency(_data.amount, _economyGroup, _source);
+                case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments((int)_data.amount, Rarity.COMMON, _economyGroup, _source);
 
-				// Egg reward: if amount is > 1, create a multi reward instead
-				case RewardEgg.TYPE_CODE: {
-					if(_data.amount > 1) {
-						return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
-					} else {
-						return CreateTypeEgg(_data.sku, _source);
-					}
-				} break;
+                // Egg reward: if amount is > 1, create a multi reward instead
+                case RewardEgg.TYPE_CODE: {
+                        if (_data.amount > 1) {
+                            return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
+                        } else {
+                            return CreateTypeEgg(_data.sku, _source);
+                        }
+                    } break;
 
-				// Pet reward - ignoring amount (pets can only be rewarded once)
-				case RewardPet.TYPE_CODE: {
-					return CreateTypePet(_data.sku, _source);
-				} break;
+                // Pet reward - ignoring amount (pets can only be rewarded once)
+                case RewardPet.TYPE_CODE: {
+                        return CreateTypePet(_data.sku, _source);
+                    } break;
 
-				// Skin reward - ignoring amount (skins can only be rewarded once)
-				case RewardSkin.TYPE_CODE: {
-					return CreateTypeSkin(_data.sku, _source);
-				} break;
+                // Skin reward - ignoring amount (skins can only be rewarded once)
+                case RewardSkin.TYPE_CODE: {
+                        return CreateTypeSkin(_data.sku, _source);
+                    } break;
 
-				// Multi-reward: Cannot be created using this method
-				case RewardMulti.TYPE_CODE: { 
-					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
-				} break;
-			}
+                // Multi-reward: Cannot be created using this method
+                case RewardMulti.TYPE_CODE: {
+                        return CreateTypeMulti(new List<Data>(), _source, _economyGroup);   // No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
+                    } break;
+
+                case RewardMultiEgg.TYPE_CODE: {
+                        return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
+                    } break;
+            }
+
 			return null;
 		}
 
