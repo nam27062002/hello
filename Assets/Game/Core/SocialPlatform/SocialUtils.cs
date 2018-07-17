@@ -226,9 +226,19 @@ public abstract class SocialUtils
 
     protected abstract void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256);
 
-    public SocialUtils()
+    public enum EPlatform
+    {
+        None,
+        Facebook,
+        Weibo
+    };
+
+    public EPlatform Platform { get; set; }
+
+    public SocialUtils(EPlatform platform)
     {
         SetIsEnabled(true);
+        Platform = platform;
     }
 
     public virtual void Login(bool isAppInit)
