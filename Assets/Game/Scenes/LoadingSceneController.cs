@@ -513,8 +513,8 @@ public class LoadingSceneController : SceneController {
                 // Game		        
                 PersistenceFacade.instance.Reset();
 
-                // TODO: to adapt to GDPR
-                SocialPlatformManager.SharedInstance.Init(false);
+                // Social Platform with age restriction param
+                SocialPlatformManager.SharedInstance.Init( GDPRManager.SharedInstance.IsAgeRestrictionEnabled() );
 
                 // Meta
                 SeasonManager.CreateInstance(true);
