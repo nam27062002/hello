@@ -110,8 +110,8 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newValue">New value of the toggle.</param>
 	public void OnTrackingConsentChanged(bool _newValue) {
-		// Store new value
-		m_trackingConsentGroup.consented = _newValue;
+		// Store new value (only if age allows it)
+		if(m_minAgeReached) m_trackingConsentGroup.consented = _newValue;
 
 		// Refresh
 		RefreshVisuals();
@@ -122,8 +122,8 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newValue">New value of the toggle.</param>
 	public void OnAdsConsentChanged(bool _newValue) {
-		// Store new value
-		m_adsConsentGroup.consented = _newValue;
+		// Store new value (only if age allows it)
+		if(m_minAgeReached) m_adsConsentGroup.consented = _newValue;
 
 		// Refresh
 		RefreshVisuals();
