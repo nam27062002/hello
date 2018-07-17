@@ -57,8 +57,42 @@ public class SocialPlatformManager : MonoBehaviour
             }
             else
             {
-                m_socialUtils = new SocialUtilsFb();
-                //m_socialUtils = new SocialUtilsWeibo();
+                // Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
+                string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
+                SocialUtils.EPlatform socialPlatform = SocialUtils.KeyToEPlatform(socialPlatformKey);
+
+                // If no social platform has ever been used then we decide which one to show based on the country
+                if (socialPlatform == SocialUtils.EPlatform.None)
+                {
+                    string countryCode = PlatformUtils.Instance.GetCountryCode();
+                    if (countryCode != null)
+                    {
+                        countryCode.ToUpper();
+                    }
+
+                    countryCode = "CN";
+
+                    // Weibo is shown only in China
+                    if (countryCode == "CN")
+                    {
+                        socialPlatform = SocialUtils.EPlatform.Weibo;
+                    }
+                    else
+                    {
+                        socialPlatform = SocialUtils.EPlatform.Facebook;
+                    }
+                }
+
+                switch (socialPlatform)
+                {
+                    case SocialUtils.EPlatform.Facebook:
+                        m_socialUtils = new SocialUtilsFb();
+                        break;
+
+                    case SocialUtils.EPlatform.Weibo:
+                        m_socialUtils = new SocialUtilsWeibo();
+                        break;
+                }                
             }
 
             m_socialUtils.Init(this);            
@@ -72,7 +106,12 @@ public class SocialPlatformManager : MonoBehaviour
 
     public SocialUtils.EPlatform GetPlatform()
     {
-        return (m_socialUtils == null) ? SocialUtils.EPlatform.None : m_socialUtils.Platform;
+        return (m_socialUtils == null) ? SocialUtils.EPlatform.None : m_socialUtils.GetPlatform();
+    }
+
+    public string GetPlatformKey()
+    {
+        return SocialUtils.EPlatformToKey(GetPlatform());
     }
 
     public bool GetIsEnabled()
@@ -268,7 +307,7 @@ public class SocialPlatformManager : MonoBehaviour
     }
 
     protected void Login_OnLoggedIn(bool logged)
-    {
+    {       
         Login_IsLogInReady = true;
         if (!logged)
         {
