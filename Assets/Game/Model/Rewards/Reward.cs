@@ -153,7 +153,11 @@ namespace Metagame {
 				case RewardMulti.TYPE_CODE: { 
 					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
 				}
-			}
+
+                case RewardMultiEgg.TYPE_CODE: {
+                    return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
+                } break;
+            }
 			return null;
 		}
 
