@@ -556,7 +556,7 @@ public class LoadingSceneController : SceneController {
                 InstanceManager.CreateInstance(true);
                 FontManager.instance.Init();
 
-                GameAds.CreateInstance(false);
+                GameAds.CreateInstance(true);
                 GameAds.instance.Init();
 
                 ControlPanel.CreateInstance();

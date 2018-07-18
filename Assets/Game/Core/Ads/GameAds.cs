@@ -55,11 +55,12 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 			if (!IsInited)  {
 				IsInited = true;				
 
-				CurrentAdPurpose = EAdPurpose.NONE;				
+				CurrentAdPurpose = EAdPurpose.NONE;
 
                 // Age protection disabled by default
-                // TODO: true if the user protection should be used
-                GetAdProvider().Init(false);                
+                // true if the user protection should be used
+                bool ageProtection = GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || GDPRManager.SharedInstance.IsConsentRestrictionEnabled();
+                GetAdProvider().Init(ageProtection);
 			}
         }
 	}

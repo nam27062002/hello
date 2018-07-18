@@ -21,7 +21,6 @@ public class AdProviderIronSource : AdProvider
 
     protected override void ExtendedInit(bool useAgeProtection)
     {
-        useAgeProtection = true;
         string appId = null;        
 
         // Ad units depend on the user's age (<13)
@@ -49,6 +48,9 @@ public class AdProviderIronSource : AdProvider
 
         //  Initialize game object (for IronSource engine)
         GameObject go = GameObject.Find(IronSourceGameObjectName);
+        if (go != null)
+            GameObject.Destroy(go);
+        go = null;
         if (go == null)
         {
             go = new GameObject(IronSourceGameObjectName);
