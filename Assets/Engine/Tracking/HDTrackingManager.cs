@@ -53,6 +53,7 @@ public class HDTrackingManager
 		SHOP_PC_PACK,
 		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
+        SHOP_PROMOTED_IAP,
 		SHOP_KEYS_PACK,
         NOT_ENOUGH_RESOURCES,
         INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
@@ -72,7 +73,8 @@ public class HDTrackingManager
 
 		TOURNAMENT_ENTRY,			    // Tournament Support
 
-        CUSTOMER_SUPPORT                // Reward received via customer support tool
+        CUSTOMER_SUPPORT,               // Reward received via customer support tool
+        SHOP_PURCHASE_RESUMED           // Reward given when resuming a purchase that was interrupted
     };
 
 	public enum EFunnels
@@ -282,6 +284,23 @@ public class HDTrackingManager
     /// The user has logged in the social platform.
     /// </summary>    
     public virtual void Notify_SocialAuthentication() {}
+
+    /// <summary>
+    /// Notifies the consent popup display.
+    /// </summary>
+    public virtual void Notify_ConsentPopupDisplay() { }
+
+    /// <summary>
+    /// Notifies the consent popup accept.
+    /// </summary>
+    /// <param name="_age">Age.</param>
+    /// <param name="_enableAnalytics">If set to <c>true</c> enable analytics.</param>
+    /// <param name="_enableMarketing">If set to <c>true</c> enable marketing.</param>
+    /// <param name="_enableSocial">If set to <c>true</c> enable social.</param>
+    /// <param name="_modVersion">Mod version.</param>
+    /// <param name="_duration">Duration.</param>
+    public virtual void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {}
+
 
     /// <summary>
     /// The user has closed the legal popup.

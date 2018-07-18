@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 222713167430815732}
   - component: {fileID: 114849600393819666}
   - component: {fileID: 114810126665934904}
+  - component: {fileID: 114336644021896472}
   m_Layer: 5
   m_Name: HDLogo
   m_TagString: Untagged
@@ -1231,6 +1232,26 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114336644021896472
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000382724801538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcad63d37b1ca485cb5bc0dfd8b2db90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_image: {fileID: 114849600393819666}
+  m_defaultPath: UI/Common/Logo/logo
+  m_paths:
+  - languageSku: lang_japanese
+    logoPath: UI/Common/Logo/logo_jp
+  - languageSku: lang_chinese
+    logoPath: UI/Common/Logo/logo_zh
+  - languageSku: lang_chinese_trad
+    logoPath: UI/Common/Logo/logo_zh
 --- !u!114 &114352563402338920
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3038,7 +3059,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 1579.6492}
+  m_AnchoredPosition: {x: 0, y: 1613}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!225 &225297024028442636

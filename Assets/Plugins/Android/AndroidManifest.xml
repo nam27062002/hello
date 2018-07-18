@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ubisoft.hungrydragon" android:installLocation="auto" android:versionCode="167" android:versionName="1.8">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ubisoft.hungrydragon" android:installLocation="auto" android:versionCode="174" android:versionName="1.10">
   <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="27" />
   <uses-feature android:glEsVersion="0x00020000" />
   <uses-feature android:name="android.software.leanback" android:required="false" />
@@ -14,6 +14,7 @@
       </intent-filter>
     </activity>
     <meta-data android:name="unityplayer.SkipPermissionsDialog" android:value="true" />
+    <meta-data android:name="CP2_use_dev" android:value="true" />
     <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\ 138106562250" />
     <meta-data android:name="com.google.android.gms.appstate.APP_ID" android:value="\ 138106562250" />
     <meta-data android:name="com.calety.GameLib.SERVER_CLIENT_ID" android:value="\ 138106562250-eb1567f1hbe9areet1u2hnfe1numi55o.apps.googleusercontent.com" />
@@ -43,12 +44,6 @@
     <activity android:name="org.calety.CoreLib.Utils.CyAlertDialog" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:label="@string/app_name" />
     <activity android:name="com.adcolony.sdk.AdColonyInterstitialActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:hardwareAccelerated="true" />
     <activity android:name="com.adcolony.sdk.AdColonyAdViewActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:hardwareAccelerated="true" />
-    <activity android:name="com.mopub.mobileads.MoPubActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
-    <activity android:name="com.mopub.mobileads.MraidActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
-    <activity android:name="com.mopub.common.MoPubBrowser" android:configChanges="keyboardHidden|orientation|screenSize" />
-    <activity android:name="com.mopub.mobileads.MraidVideoPlayerActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
-    <activity android:name="com.mopub.mobileads.RewardedMraidActivity" android:configChanges="keyboardHidden|orientation|screenSize" />
-    <activity android:name="com.unity3d.ads.android.view.UnityAdsFullscreenActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
     <activity android:label="@string/app_name" android:screenOrientation="fullSensor" android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:name="com.vungle.publisher.VideoFullScreenAdActivity">
     </activity>
     <activity android:name="com.vungle.publisher.MraidFullScreenAdActivity" android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
@@ -57,6 +52,13 @@
     <provider android:name="android.support.v4.content.FileProvider" android:authorities="com.ubisoft.hungrydragon.provider" android:exported="false" android:grantUriPermissions="true">
       <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" />
     </provider>
+    <!-- IronSource -->
+    <activity android:name="com.ironsource.sdk.controller.ControllerActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" />
+    <activity android:name="com.ironsource.sdk.controller.InterstitialActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent" />
+    <activity android:name="com.ironsource.sdk.controller.OpenUrlActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent" />
+    <!-- UnityAds -->
+    <activity android:name="com.unity3d.ads.adunit.AdUnitActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+    <activity android:name="com.unity3d.ads.adunit.AdUnitSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
     <activity android:name="com.facebook.unity.FBUnityLoginActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
     <activity android:name="com.facebook.unity.FBUnityDialogsActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
     <activity android:name="com.facebook.unity.FBUnityAppLinkActivity" android:exported="true" />

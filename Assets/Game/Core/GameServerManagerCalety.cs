@@ -1075,7 +1075,9 @@ public class GameServerManagerCalety : GameServerManager {
 				}break;
 
 				case ECommand.HDLiveEvents_GetMyEvents:{
-                    Command_SendCommand( COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, null, null, "" );
+                    Dictionary<string, string> kParams = new Dictionary<string, string>();
+                    kParams.Add("isChildren", GDPRManager.SharedInstance.IsAgeRestrictionEnabled().ToString().ToLower());
+                    Command_SendCommand( COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, kParams);
 				}break;
 				case ECommand.HDLiveEvents_GetEventDefinition:
 				case ECommand.HDLiveEvents_GetMyProgress:

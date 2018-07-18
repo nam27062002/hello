@@ -33,6 +33,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[Space]
 	[SerializeField]
 	private Slider m_notificationsSlider;
+    [SerializeField]
+    private GameObject m_bloodToggle;
 
     // Internal
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
@@ -82,10 +84,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
 
 		m_dirty = true;
-    }
+        if (m_bloodToggle != null)
+        {
+            m_bloodToggle.SetActive(!GDPRManager.SharedInstance.IsAgeRestrictionEnabled());
+        }
 
-    void OnDestroy(){
-		
     }
 
 	void Update() {
