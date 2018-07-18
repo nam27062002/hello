@@ -74,10 +74,17 @@ SubShader {
 	{
 		v2f o;
 		o.pos = UnityObjectToClipPos(v.vertex);
-		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex); 
+#ifdef AUTOMATIC_PANNING
+		float2 anim = float2(_Time.y * _PanSpeed, 0.0f);
+		o.uv = TRANSFORM_TEX(v.texcoord.xy, _MainTex) + anim;
+		anim = float2(_Time.y * _PanSpeed * 0.5, 0.0f);
+		o.uv2 = TRANSFORM_TEX(v.texcoord.xy, _DetailTex) + anim + _DetailOffset;
+#else
+		o.uv = TRANSFORM_TEX(v.texcoord.xy,_MainTex);
+		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex) + _DetailOffset;
+#endif
+		o.uv3 = TRANSFORM_TEX(v.texcoord.xy, _MoonTex) + _MoonOffset;
 		o.height = v.texcoord.y;
-		o.uv2 = TRANSFORM_TEX(v.texcoord.xy,_DetailTex);
-		o.uv3 = TRANSFORM_TEX(v.texcoord.xy, _MoonTex);
 		HG_TRANSFER_FOG(o, mul(unity_ObjectToWorld, v.vertex));	// Fog
 		return o;
 	}
@@ -88,19 +95,19 @@ SubShader {
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
-		#pragma fragmentoption ARB_precision_hint_fastest		
+//		#pragma fragmentoption ARB_precision_hint_fastest		
 		fixed4 frag (v2f i) : COLOR
 		{			
-#ifdef AUTOMATIC_PANNING
+/*#ifdef AUTOMATIC_PANNING
 			float2 anim = float2(_Time.y * _PanSpeed, 0.0f);
 			fixed4 tex = tex2D(_MainTex, i.uv + anim);
 			anim = float2(_Time.y * _PanSpeed * 0.5, 0.0f);
 			fixed4 tex2 = tex2D(_DetailTex, i.uv2 + _DetailOffset + anim);
-#else
+#else*/
 			fixed4 tex = tex2D(_MainTex, i.uv);
-			fixed4 tex2 = tex2D (_DetailTex, i.uv2 + _DetailOffset);
-#endif
-			fixed4 tex3 = tex2D(_MoonTex, i.uv3 + _MoonOffset) * _MoonColor;
+			fixed4 tex2 = tex2D (_DetailTex, i.uv2);
+//#endif
+			fixed4 tex3 = tex2D(_MoonTex, i.uv3) * _MoonColor;
 
 			fixed4 one = fixed4(1,1,1,1);
 			fixed4 col = one - ((one - tex) * (one - tex2) * (one - tex3));

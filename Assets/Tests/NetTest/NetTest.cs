@@ -19,7 +19,7 @@ public class NetTest : MonoBehaviour
 		m_waitingText.SetActive(false);
 
         Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, OnSocialLog);
-        SocialPlatformManager.SharedInstance.Init();        
+        SocialPlatformManager.SharedInstance.Init(false);        
     }
 
 	void OnLog( bool logged)
