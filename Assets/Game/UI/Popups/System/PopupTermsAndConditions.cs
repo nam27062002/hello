@@ -121,6 +121,9 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
         // Show Cancel button?
         m_cancelButton.SetActive(m_mode == Mode.MANUAL);
+
+        //Tracking
+        HDTrackingManager.Instance.Notify_ConsentPopupDisplay();
     }
 
 	/// <summary>

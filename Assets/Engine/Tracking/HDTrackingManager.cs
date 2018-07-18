@@ -285,6 +285,10 @@ public class HDTrackingManager
     /// </summary>    
     public virtual void Notify_SocialAuthentication() {}
 
+    /// <summary>
+    /// Notifies the consent popup display.
+    /// </summary>
+    public virtual void Notify_ConsentPopupDisplay() { }
 
     /// <summary>
     /// Notifies the consent popup accept.
