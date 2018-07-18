@@ -144,13 +144,18 @@ MonoBehaviour:
     />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
-    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>\n\n<activity
-    android:name=\"com.ironsource.sdk.controller.ControllerActivity\" android:configChanges=\"orientation|screenSize\"
-    android:hardwareAccelerated=\"true\" />\n<activity android:name=\"com.ironsource.sdk.controller.InterstitialActivity\"
-    android:configChanges=\"orientation|screenSize\" android:hardwareAccelerated=\"true\"
-    android:theme=\"@android:style/Theme.Translucent\"  />\n<activity android:name=\"com.ironsource.sdk.controller.OpenUrlActivity\"
-    android:configChanges=\"orientation|screenSize\" android:hardwareAccelerated=\"true\"
-    android:theme=\"@android:style/Theme.Translucent\"  />"
+    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>\n\n<!--
+    IronSource -->\n<activity android:name=\"com.ironsource.sdk.controller.ControllerActivity\"
+    android:configChanges=\"orientation|screenSize\" android:hardwareAccelerated=\"true\"/>\n<activity
+    android:name=\"com.ironsource.sdk.controller.InterstitialActivity\" android:configChanges=\"orientation|screenSize\"
+    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.Translucent\"/>\n<activity
+    android:name=\"com.ironsource.sdk.controller.OpenUrlActivity\" android:configChanges=\"orientation|screenSize\"
+    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.Translucent\"/>\n\n<!--
+    UnityAds -->\n<activity android:name=\"com.unity3d.ads.adunit.AdUnitActivity\"
+    android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
+    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n<activity
+    android:name=\"com.unity3d.ads.adunit.AdUnitSoftwareActivity\" android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
+    android:hardwareAccelerated=\"false\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/> "
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0
