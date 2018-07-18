@@ -273,19 +273,7 @@
                 "etl"
             ]
         },
-		"custom.game.legalpopup": {
-            "Parameters": [
-                {"nbViews": {"Status": "OK"}},
-                {"legalPopupType": {"Status": "OK"}},
-				{"duration": {"Status": "OK"}},
-				{"accepted": {"Status": "OK"}}
-            ],
-            "APIs": [
-                "dna",
-                "etl"
-            ]
-        },
-        "game.start": {
+		    "game.start": {
             "Parameters": [
                 {"acq_marketing_id": {"Status": "OK"}},
                 {"hardware": {"Status": "OK"}},
@@ -487,18 +475,32 @@
                 "etl"
             ]
         },
-		"custom.game.tournament": {
-            "Parameters": [
-				{"stepName": {"Status": "OK"}},
-				{"paid": {"Status": "OK"}},
-				{"currency": {"Status": "OK"}},
-				{"tournamentSku": {"Status": "OK"}}
-            ],
-            "APIs": [
-                "dna",
-                "etl"
-            ]
-        },
+      "custom.game.tournament": {
+        "Parameters": [
+          { "stepName": { "Status": "OK" } },
+          { "paid": { "Status": "OK" } },
+          { "currency": { "Status": "OK" } },
+          { "tournamentSku": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+      "custom.game.consentpopup": {
+        "Parameters": [
+          { "age": { "Status": "OK" } },
+          { "analytics_optin": { "Status": "OK" } },
+          { "duration": { "Status": "OK" } },
+          { "marketing_optin": { "Status": "OK" } },
+          { "popup_modular_version": { "Status": "OK" } },
+          { "sns_optin": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1205,6 +1207,26 @@
 		"paid": {
             "Type": "BOOL",
             "Values": []
-        }
+        },
+      "age": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "analytics_optin": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "marketing_optin": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "popup_modular_version": {
+        "Type": "STRING:5",
+        "Values": []
+      },
+      "sns_optin": {
+        "Type": "INT:4",
+        "Values": []
+      }
     }
 }
