@@ -489,7 +489,7 @@ public class LoadingSceneController : SceneController {
 					popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.LOADING_FUNNEL);
                     popupController.OnClosePostAnimation.AddListener(OnTermsDone);
 					popupController.Open();
-                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
+                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
                 }
                 else
                 {

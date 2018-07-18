@@ -80,7 +80,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
 			Debug.Log("<color=RED>LEGAL</color>");
 			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
-			HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
 			m_popupDisplayed = true;
 		}
 	}
