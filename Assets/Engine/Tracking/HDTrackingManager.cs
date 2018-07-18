@@ -288,7 +288,7 @@ public class HDTrackingManager
     /// <summary>
     /// Notifies the consent popup display.
     /// </summary>
-    public virtual void Notify_ConsentPopupDisplay() { }
+    public virtual void Notify_ConsentPopupDisplay(bool _sourceSettings) { }
 
     /// <summary>
     /// Notifies the consent popup accept.
@@ -296,10 +296,9 @@ public class HDTrackingManager
     /// <param name="_age">Age.</param>
     /// <param name="_enableAnalytics">If set to <c>true</c> enable analytics.</param>
     /// <param name="_enableMarketing">If set to <c>true</c> enable marketing.</param>
-    /// <param name="_enableSocial">If set to <c>true</c> enable social.</param>
     /// <param name="_modVersion">Mod version.</param>
     /// <param name="_duration">Duration.</param>
-    public virtual void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {}
+    public virtual void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {}
 
 
     /// <summary>
