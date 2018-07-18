@@ -291,14 +291,15 @@ public class PersistenceLocalDriver
         }
 	}
 
-	public void NotifyUserHasLoggedIn(string socialPlatform, string socialId, Action onDone)
+	public void NotifyUserHasLoggedIn(string socialPlatformKey, string socialId, Action onDone)
 	{
+        Prefs_SocialPlatformKey = socialPlatformKey;
         Prefs_SocialId = socialId;
         PersistencePrefs.Social_WasLoggedInWhenQuit = true;
 
         if (TrackingPersistenceSystem != null)
         {            
-            TrackingPersistenceSystem.SetSocialParams(socialPlatform, socialId);
+            TrackingPersistenceSystem.SetSocialParams(socialPlatformKey, socialId);
         }
 
 		// Checks if it's the first time the user logs in, if so then socialState has to be updated
@@ -407,6 +408,12 @@ public class PersistenceLocalDriver
     #endregion
 
     #region prefs
+    public virtual string Prefs_SocialPlatformKey
+    {
+        get { return PersistencePrefs.Social_PlatformKey; }
+        set { PersistencePrefs.Social_PlatformKey = value; }
+    }
+
     public virtual string Prefs_SocialId
     {
         get { return PersistencePrefs.Social_Id; }
