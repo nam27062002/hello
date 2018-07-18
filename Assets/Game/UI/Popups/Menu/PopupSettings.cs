@@ -1,5 +1,5 @@
 // PopupSettings.cs
-// 
+//
 // Created by Alger Ortín Castellví on 11/04/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -20,7 +20,7 @@ public class PopupSettings : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Menu/PF_PopupSettings";
 
-    public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";	
+    public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
 
     [SerializeField]
     private GameObject m_saveTab;
@@ -129,6 +129,15 @@ public class PopupSettings : MonoBehaviour {
 	public void OnCreditsButton() {
 		// Open the credits popup
 		PopupManager.OpenPopupInstant(PopupCredits.PATH);
+	}
+
+	/// <summary>
+	/// The privacy settings button has been pressed.
+	/// </summary>
+	public void OnPrivacySettingsButton() {
+		PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
+		popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.MANUAL);
+		popupController.Open();
 	}
 
 	public void OnCommentsButton(){

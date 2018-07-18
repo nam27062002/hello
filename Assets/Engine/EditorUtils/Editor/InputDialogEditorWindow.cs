@@ -109,7 +109,7 @@ class InputDialog : EditorWindow {
 
 		// Capture Enter and Escape keys for fast submit/cancel
 		switch(Event.current.type) {
-			case EventType.keyDown: {
+			case EventType.KeyDown: {
 				switch(Event.current.keyCode) {
 					case KeyCode.Return:
 					case KeyCode.KeypadEnter: {

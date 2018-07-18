@@ -10,7 +10,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		Respawning
 	};
 
-	
+
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
@@ -87,7 +87,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		}
 
 		// we are not goin to use this spawner, lets destroy it
-		Destroy(gameObject);        
+		Destroy(gameObject);
 	}
 
 	/// <summary>
@@ -112,7 +112,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		if (ApplicationManager.IsAlive) {
 			if (SpawnerManager.isInstanceCreated)
 				SpawnerManager.instance.Unregister (this, true);
-		
+
 			if (m_decoration != null) {
 				EntityManager.instance.UnregisterDecoration (m_decoration);
 			}
@@ -154,7 +154,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		// entity.SetGolden(Spawner.EntityGoldMode.Gold);
 	}
 
-    public void StartRespawn() {	
+    public void StartRespawn() {
 		m_respawnCount++;
 
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
@@ -172,7 +172,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 			m_state = State.Respawning;
 		}
-	}        
+	}
 
 	public bool IsRespawing() {
 		return (m_state == State.Respawning);
@@ -208,7 +208,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 		Spawn();
 		return true;
 	}
-		
+
 	private void Spawn() {
 		if (m_respawnCount == 0) {
 			if (m_decoration != null) {
@@ -234,7 +234,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public virtual bool SpawnersCheckCurrents(){ return false; }
 
 	public void DrawStateGizmos() {}
-  
+
     /*
     private void OnDrawGizmosSelected()
     {
@@ -258,4 +258,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	public virtual void Save( ref AbstractSpawnerData _data){}
 	public virtual void Load(AbstractSpawnerData _data){}
 	#endregion
+
+	/// <summary>
+	/// Callback to draw gizmos that are pickable and always drawn.
+	/// </summary>
+	private void OnDrawGizmosSelected() {
+		Gizmos.DrawWireCube((Vector3)m_rect.center, (Vector3)m_rect.size);
+	}
 }

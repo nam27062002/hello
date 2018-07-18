@@ -683,9 +683,9 @@ public class PersistenceCloudDriver
             SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
             HDTrackingManager.Instance.Notify_SocialAuthentication();
 
-            string socialPlatform = manager.GetPlatformName();
+            string socialPlatformKey = manager.GetPlatformKey();
             string socialId = manager.GetUserID();
-			LocalDriver.NotifyUserHasLoggedIn(socialPlatform, socialId, onUserLoggedIn);
+			LocalDriver.NotifyUserHasLoggedIn(socialPlatformKey, socialId, onUserLoggedIn);
 		} 
 		else
 		{

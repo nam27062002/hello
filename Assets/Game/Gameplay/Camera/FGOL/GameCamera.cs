@@ -68,8 +68,6 @@ public class GameCamera : MonoBehaviour
     private float m_maxLookUpOffset = 3.0f;
     [SerializeField]
     private float m_maxLookDownOffset = 3.0f;
-	[SerializeField]
-    private float m_spaceHeight = 150.0f;
     [SerializeField]
     private float m_spaceHeightLookUpMin = -10.0f;
     [SerializeField]
@@ -432,8 +430,6 @@ public class GameCamera : MonoBehaviour
 	{
 		float pw = m_unityCamera.pixelWidth;
 		float ph = m_unityCamera.pixelHeight;
-		Debug.Log("pw " + pw);
-		Debug.Log("ph " + ph);
 		m_pixelWidth = (int)pw;
 		m_pixelHeight = (int)ph;
 		m_pixelAspectX = pw/ph;
@@ -442,7 +438,6 @@ public class GameCamera : MonoBehaviour
 
 	private void OnResolutionChanged(Vector2 resolution)
 	{
-		Debug.Log("New resolution " + resolution);
 		UpdatePixelData ();
 	}
 
@@ -877,7 +872,7 @@ public class GameCamera : MonoBehaviour
 
 	void UpdateSpaceLevelOffset()
 	{
-		float y = m_targetObject.transform.position.y - m_spaceHeight;
+        float y = m_targetObject.transform.position.y - DragonMotion.SpaceStart;
 		float halfHeight = (m_spaceHeightLookUpMax + m_spaceHeightLookDownMin) / 2.0f;
 
 		if (y < m_spaceHeightLookUpMin)
