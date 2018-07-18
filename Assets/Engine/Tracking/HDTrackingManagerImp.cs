@@ -892,6 +892,10 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }    
 
+    public override void Notify_ConsentPopupDisplay() {
+        Track_ConsentPopupDisplay();
+    }
+
     public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {
         Track_ConsentPopupAccept(_age, _enableAnalytics, _enableMarketing, _enableSocial, _modVersion, _duration);
     }
@@ -1656,6 +1660,21 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             Track_SendEvent(e);
         }
+    }
+
+    private void Track_ConsentPopupDisplay()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_ConsentPopupDisplay");
+        }
+
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup_display");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+
     }
 
     private void Track_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {
