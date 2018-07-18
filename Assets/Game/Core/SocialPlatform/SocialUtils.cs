@@ -133,9 +133,20 @@ public abstract class SocialUtils
         }
     }
 
+    private bool mIsEnabled;
+    public bool GetIsEnabled()
+    {
+        return mIsEnabled;
+    }
+
+    protected void SetIsEnabled(bool value)
+    {
+        mIsEnabled = value;
+    }
+
     public abstract string GetPlatformNameTID();
 
-    public abstract void Init(SocialPlatformManager.GameSocialListener listener);
+    public abstract void Init(SocialPlatformManager manager);
 
     public abstract string GetSocialID();
 
@@ -214,6 +225,26 @@ public abstract class SocialUtils
     }
 
     protected abstract void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256);
+
+    public enum EPlatform
+    {
+        None,
+        Facebook,
+        Weibo
+    };
+
+    public EPlatform Platform { get; set; }
+
+    public SocialUtils(EPlatform platform)
+    {
+        SetIsEnabled(true);
+        Platform = platform;
+    }
+
+    public virtual void Login(bool isAppInit)
+    {
+        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
+    }
 
     public void OnLoggedIn()
     {
