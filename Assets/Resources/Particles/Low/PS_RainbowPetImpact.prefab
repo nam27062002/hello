@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 198549469350125030}
   - component: {fileID: 199876722156100592}
   - component: {fileID: 114212484405215928}
-  - component: {fileID: 114502655181329580}
+  - component: {fileID: 114029005772872976}
   m_Layer: 0
   m_Name: PS_RainbowPetImpact
   m_TagString: Untagged
@@ -74,6 +74,17 @@ Transform:
   m_Father: {fileID: 4021428234789632}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114029005772872976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1813807423660918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f909925ab84d41e690e75abdd8a2027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114212484405215928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -85,21 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114502655181329580
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1813807423660918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeTime: 2
-  m_returnTo: 1
-  m_disableOnInvisible: 0
-  m_alwaysActive: 0
 --- !u!198 &198331549935527940
 ParticleSystem:
   m_ObjectHideFlags: 1
