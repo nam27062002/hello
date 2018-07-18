@@ -27,10 +27,10 @@ public class AdProviderIronSource : AdProvider
         else
         {
 #if UNITY_IPHONE
-		    appId = "6d850bb5"; // HSE
+		    //appId = "6d850bb5"; // HSE
             appId = "757a3c7d"; // HD
 #elif UNITY_ANDROID
-            appId = "6be092bd"; // HSE
+            //appId = "6be092bd"; // HSE
             appId = "7579c96d"; // HD
 #endif
         }
