@@ -68,9 +68,7 @@ public class SocialPlatformManager : MonoBehaviour
                     if (countryCode != null)
                     {
                         countryCode.ToUpper();
-                    }
-
-                    countryCode = "CN";
+                    }                    
 
                     // Weibo is shown only in China
                     if (countryCode == "CN")
