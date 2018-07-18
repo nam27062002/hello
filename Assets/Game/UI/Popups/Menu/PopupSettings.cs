@@ -131,6 +131,15 @@ public class PopupSettings : MonoBehaviour {
 		PopupManager.OpenPopupInstant(PopupCredits.PATH);
 	}
 
+	/// <summary>
+	/// The privacy settings button has been pressed.
+	/// </summary>
+	public void OnPrivacySettingsButton() {
+		PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
+		popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.MANUAL);
+		popupController.Open();
+	}
+
 	public void OnCommentsButton(){
 		MiscUtils.SendFeedbackEmail();
 	}

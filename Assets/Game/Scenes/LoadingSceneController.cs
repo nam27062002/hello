@@ -485,8 +485,10 @@ public class LoadingSceneController : SceneController {
 					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
                 {
                     Debug.Log("<color=RED>LEGAL</color>");
-                    PopupController popupController = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
+					popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.LOADING_FUNNEL);
                     popupController.OnClosePostAnimation.AddListener(OnTermsDone);
+					popupController.Open();
                     HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
                 }
                 else
