@@ -316,7 +316,7 @@ public class MenuDragonPreview : MonoBehaviour {
 
 	public void StartBlood()
 	{
-		bool useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+        bool useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
 		if ( useBlood )
 			m_bloodParticle.Play();
 	}

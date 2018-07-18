@@ -119,7 +119,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	}
 
 	private void __PreBuild() {
-		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+        m_useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
 		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
 				List<DefinitionNode> poolSizes = GetPoolSizesForCurrentArea();
@@ -196,7 +196,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// Rebuild. When changin area, this funcion makes the proper changes to adapt to the area
 	/// </summary>
 	private void __Rebuild() {
-		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+        m_useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
 		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
 				Dictionary<string, PoolContainer> toDelete = new Dictionary<string, PoolContainer>( m_pools );

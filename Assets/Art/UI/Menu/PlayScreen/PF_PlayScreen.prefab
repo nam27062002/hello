@@ -30,6 +30,7 @@ GameObject:
   - component: {fileID: 22272902}
   - component: {fileID: 11477896}
   - component: {fileID: 11456586}
+  - component: {fileID: 114291173671087916}
   m_Layer: 5
   m_Name: ImageLogo
   m_TagString: Untagged
@@ -3932,6 +3933,26 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0, b: 0, a: 0.553}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 1
+--- !u!114 &114291173671087916
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcad63d37b1ca485cb5bc0dfd8b2db90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_image: {fileID: 11477896}
+  m_defaultPath: UI/Common/Logo/logo
+  m_paths:
+  - languageSku: lang_japanese
+    logoPath: UI/Common/Logo/logo_jp
+  - languageSku: lang_chinese
+    logoPath: UI/Common/Logo/logo_zh
+  - languageSku: lang_chinese_trad
+    logoPath: UI/Common/Logo/logo_zh
 --- !u!114 &114298941638826534
 MonoBehaviour:
   m_ObjectHideFlags: 1
