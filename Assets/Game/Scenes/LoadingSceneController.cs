@@ -450,6 +450,9 @@ public class LoadingSceneController : SceneController {
                 // Game		        
                 PersistenceFacade.instance.Reset();
 
+                // TODO: to adapt to GDPR
+                SocialPlatformManager.SharedInstance.Init(false);
+
                 // Meta
                 SeasonManager.CreateInstance(true);
                 DragonManager.CreateInstance(true);

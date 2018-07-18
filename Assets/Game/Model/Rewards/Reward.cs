@@ -137,23 +137,27 @@ namespace Metagame {
 					} else {
 						return CreateTypeEgg(_data.sku, _source);
 					}
-				} break;
+				}
 
-				// Pet reward - ignoring amount (pets can only be rewarded once)
+                // Pet reward - ignoring amount (pets can only be rewarded once)
 				case RewardPet.TYPE_CODE: {
 					return CreateTypePet(_data.sku, _source);
-				} break;
+				}
 
 				// Skin reward - ignoring amount (skins can only be rewarded once)
 				case RewardSkin.TYPE_CODE: {
 					return CreateTypeSkin(_data.sku, _source);
-				} break;
+				}
 
 				// Multi-reward: Cannot be created using this method
 				case RewardMulti.TYPE_CODE: { 
 					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
-				} break;
-			}
+				}
+
+                case RewardMultiEgg.TYPE_CODE: {
+                    return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
+                } break;
+            }
 			return null;
 		}
 

@@ -1408,9 +1408,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private bool m_debugUseAgeProtection = false;
     private void Debug_TestSocialPlatformToggleAgeProtection()
     {
-        m_debugUseAgeProtection = !m_debugUseAgeProtection;
-        SocialPlatformManager.SharedInstance.Reset();
-        SocialPlatformManager.SharedInstance.Init(m_debugUseAgeProtection);
+        m_debugUseAgeProtection = !m_debugUseAgeProtection;        
         NeedsToRestartFlow = true;
     }
 
