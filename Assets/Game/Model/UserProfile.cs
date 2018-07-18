@@ -331,7 +331,7 @@ public class UserProfile : UserPersistenceSystem
     {
         NeverLoggedIn,
         LoggedIn,
-        LoggedInAndInventivised
+        LoggedInAndIncentivised
     };
 
 

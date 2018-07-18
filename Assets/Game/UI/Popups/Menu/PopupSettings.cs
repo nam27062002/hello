@@ -35,11 +35,7 @@ public class PopupSettings : MonoBehaviour {
     {
         if (m_saveTab != null)
         {
-#if CLOUD_SAVE && (WEIBO || FACEBOOK)
-            m_saveTab.SetActive(true);
-#else
-            m_saveTab.SetActive(false);
-#endif
+            m_saveTab.SetActive(SocialPlatformManager.SharedInstance.GetIsEnabled());            
         }
 		if (m_3dTouch != null)
 		{

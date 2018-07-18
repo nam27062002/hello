@@ -1,17 +1,81 @@
 ﻿using Facebook.Unity;
-using FGOL.Server;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 public class SocialUtilsFb : SocialUtils
-{   
+{
+    // Social Listener //////////////////////////////////////////////////////
+    private  class GameSocialListener : FacebookManager.FacebookListenerBase
+    {
+        const string TAG = "GameSocialListener";
+        private SocialPlatformManager m_manager;
+
+        public GameSocialListener(SocialPlatformManager manager)
+        {
+            m_manager = manager;
+        }
+
+        public override void onLogInCompleted()
+        {
+            Debug.TaggedLog(TAG, "onLogInCompleted");
+            m_manager.OnSocialPlatformLogin();
+        }
+
+        public override void onLogInCancelled()
+        {
+            Debug.TaggedLog(TAG, "onLogInCancelled");
+            m_manager.OnSocialPlatformLoginFailed();
+        }
+
+        public override void onLogInFailed()
+        {
+            Debug.TaggedLog(TAG, "onLogInFailed");
+            m_manager.OnSocialPlatformLoginFailed();
+        }
+
+        public override void onLogOut()
+        {
+            m_manager.OnSocialPlatformLogOut();
+            Debug.TaggedLog(TAG, "onLogOut");
+        }
+
+        public override void onPublishCompleted()
+        {
+            Debug.TaggedLog(TAG, "onPublishCompleted");
+        }
+
+        public override void onPublishFailed()
+        {
+            Debug.TaggedLog(TAG, "onPublishFailed");
+        }
+
+        public override void onFriendsReceived()
+        {
+            Debug.TaggedLog(TAG, "onFriendsReceived");
+        }
+        public override void onLikesReceived(bool bIsLiked)
+        {
+            Debug.TaggedLog(TAG, "onLikesReceived");
+        }
+
+        public override void onPostsReceived()
+        {
+            Debug.TaggedLog(TAG, "onPostsReceived");
+        }
+    }
+    //////////////////////////////////////////////////////////////////////////
+    
+    public SocialUtilsFb() : base(EPlatform.Facebook)
+    {
+    }
+
     public override string GetPlatformNameTID()
     {
         return "TID_SOCIAL_FACEBOOK";
     }
 
-    public override void Init(SocialPlatformManager.GameSocialListener listener)
+    public override void Init(SocialPlatformManager manager)
     {        
+        GameSocialListener listener = new GameSocialListener(manager);
         FacebookManager.SharedInstance.AddFacebookListener(listener);
         FacebookManager.SharedInstance.Initialise();
     }
