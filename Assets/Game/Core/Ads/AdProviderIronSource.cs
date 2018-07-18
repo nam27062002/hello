@@ -11,8 +11,17 @@ public class AdProviderIronSource : AdProvider
 
     private static IronSourceEvents mIronSourceEvents = null;
 
+    private string mAppId = null;
+    private bool mUseAgeProtection;
+
+    protected override string ExtendedGetInfo()
+    {        
+        return "Id: " + mAppId + " (" + ((mUseAgeProtection) ? "<" : ">=") + "13" + ")";
+    }
+
     protected override void ExtendedInit(bool useAgeProtection)
     {
+        useAgeProtection = true;
         string appId = null;        
 
         // Ad units depend on the user's age (<13)
@@ -34,6 +43,9 @@ public class AdProviderIronSource : AdProvider
             appId = "7579c96d"; // HD
 #endif
         }
+
+        mUseAgeProtection = useAgeProtection;
+        mAppId = appId;
 
         //  Initialize game object (for IronSource engine)
         GameObject go = GameObject.Find(IronSourceGameObjectName);

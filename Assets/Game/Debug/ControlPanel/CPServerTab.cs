@@ -35,7 +35,8 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_enviromentText = null;
 	[SerializeField] private TextMeshProUGUI m_trackingIdText = null;
 	[SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
-	[SerializeField] private Toggle m_debugServerToggle = null;
+    [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
+    [SerializeField] private Toggle m_debugServerToggle = null;
 
 	// Internal
 	private DateTime m_startTimestamp;
@@ -70,8 +71,9 @@ public class CPServerTab : MonoBehaviour {
 
 		m_trackingIdText.text = "TrackingId: " + HDTrackingManager.Instance.GetTrackingID();
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
+        m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
 
-		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
+        m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
 	}
 

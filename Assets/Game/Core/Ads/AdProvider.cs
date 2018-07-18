@@ -63,6 +63,16 @@ public abstract class AdProvider
 
     protected Ad m_ad;
 
+    public string GetInfo()
+    {
+        return GetId() + " " + ExtendedGetInfo();
+    }
+
+    protected virtual string ExtendedGetInfo()
+    {
+        return "";
+    }
+
     public void Init(bool useAgeProtection)
     {        
         m_ad = new Ad();

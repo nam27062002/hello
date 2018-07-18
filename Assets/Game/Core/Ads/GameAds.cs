@@ -46,6 +46,10 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         return m_adProvider;
     }
 
+    public string GetInfo() {
+        return GetAdProvider().GetInfo();
+    }
+
     public void Init() {
 		if (FeatureSettingsManager.AreAdsEnabled) {
 			if (!IsInited)  {
