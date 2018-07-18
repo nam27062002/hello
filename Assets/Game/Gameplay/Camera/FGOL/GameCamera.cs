@@ -430,8 +430,6 @@ public class GameCamera : MonoBehaviour
 	{
 		float pw = m_unityCamera.pixelWidth;
 		float ph = m_unityCamera.pixelHeight;
-		Debug.Log("pw " + pw);
-		Debug.Log("ph " + ph);
 		m_pixelWidth = (int)pw;
 		m_pixelHeight = (int)ph;
 		m_pixelAspectX = pw/ph;
@@ -440,7 +438,6 @@ public class GameCamera : MonoBehaviour
 
 	private void OnResolutionChanged(Vector2 resolution)
 	{
-		Debug.Log("New resolution " + resolution);
 		UpdatePixelData ();
 	}
 
