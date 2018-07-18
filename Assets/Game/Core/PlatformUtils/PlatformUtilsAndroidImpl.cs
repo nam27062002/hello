@@ -137,11 +137,11 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 #endif
 	}
 	
-	private static int GetSDKLevel()
+	public static int GetSDKLevel()
 	{
 		int _sdkLevel = 18;
 #if (UNITY_ANDROID && !UNITY_EDITOR) || SKIP_DEFINES
-		IntPtr _class = AndroidJNI.FindClass("android.os.Build$VERSION");
+		IntPtr _class = AndroidJNI.FindClass("android/os/Build$VERSION");
 		IntPtr _fieldId = AndroidJNI.GetStaticFieldID( _class, "SDK_INT", "I");
 		_sdkLevel = AndroidJNI.GetStaticIntField( _class, _fieldId);
 #endif

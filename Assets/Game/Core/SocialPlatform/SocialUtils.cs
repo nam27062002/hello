@@ -233,12 +233,52 @@ public abstract class SocialUtils
         Weibo
     };
 
-    public EPlatform Platform { get; set; }
+    private static string[] sm_platformKeys;
+
+    public static string EPlatformToKey(EPlatform value)
+    {
+        return value.ToString();
+    }
+
+    public static EPlatform KeyToEPlatform(string value)
+    {
+        if (sm_platformKeys == null)
+        {
+            sm_platformKeys = Enum.GetNames(typeof(EPlatform));            
+        }
+
+        int count = sm_platformKeys.Length;
+        for (int i = 0; i < count; i++)
+        {
+            if (sm_platformKeys[i] == value)
+            {
+                return (EPlatform)i;
+            }
+        }
+
+        return EPlatform.None;
+    }
+
+    private EPlatform m_platform;
+    public EPlatform GetPlatform()
+    {
+        return m_platform;
+    }
+
+    private void SetPlatform(EPlatform value)
+    {
+        m_platform = value;
+    }
+
+    public string GetPlatformKey()
+    {
+        return EPlatformToKey(GetPlatform());
+    }
 
     public SocialUtils(EPlatform platform)
     {
         SetIsEnabled(true);
-        Platform = platform;
+        SetPlatform(platform);
     }
 
     public virtual void Login(bool isAppInit)

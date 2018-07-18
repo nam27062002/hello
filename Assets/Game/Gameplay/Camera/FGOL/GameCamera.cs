@@ -68,8 +68,6 @@ public class GameCamera : MonoBehaviour
     private float m_maxLookUpOffset = 3.0f;
     [SerializeField]
     private float m_maxLookDownOffset = 3.0f;
-	[SerializeField]
-    private float m_spaceHeight = 150.0f;
     [SerializeField]
     private float m_spaceHeightLookUpMin = -10.0f;
     [SerializeField]
@@ -877,7 +875,7 @@ public class GameCamera : MonoBehaviour
 
 	void UpdateSpaceLevelOffset()
 	{
-		float y = m_targetObject.transform.position.y - m_spaceHeight;
+        float y = m_targetObject.transform.position.y - DragonMotion.SpaceStart;
 		float halfHeight = (m_spaceHeightLookUpMax + m_spaceHeightLookDownMin) / 2.0f;
 
 		if (y < m_spaceHeightLookUpMin)
