@@ -7,7 +7,6 @@ using TMPro;
 /// <summary>
 /// Simple controller to store common stuff among different hud widgets showing a piece of data.
 /// </summary>
-[RequireComponent(typeof(TextMeshProUGUI))]
 public abstract class HudWidget : MonoBehaviour
 {
     //------------------------------------------------------------------//
