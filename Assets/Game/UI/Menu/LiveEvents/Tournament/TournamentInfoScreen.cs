@@ -13,7 +13,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_timerText;
 
 	[SeparatorAttribute("Goal")]
-	[SerializeField] private Localizer m_goalText;
+	[SerializeField] private TextMeshProUGUI m_goalText;
 	[SerializeField] private Image m_goalIcon;
 
 	[SeparatorAttribute("Modifiers")]
@@ -40,16 +40,32 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 
 	//----------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+	}
 
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+	}
 
-	//TEMP
+	/// <summary>
+	/// Refresh all the info in the screen.
+	/// </summary>
 	void Refresh() {
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
 		m_definition = m_tournament.data.definition as HDTournamentDefinition;
 
 		if (m_definition != null) {
 			//GOALS
-			m_goalText.Localize(m_definition.m_goal.m_desc);
+			m_goalText.text = m_tournament.GetDescription();
 			m_goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_definition.m_goal.m_icon);
 
 			//MODIFIERS
@@ -103,7 +119,9 @@ public class TournamentInfoScreen : MonoBehaviour {
 		}
 	}
 
-	// Update timers periodically
+	/// <summary>
+	/// Update timers periodically.
+	/// </summary>
 	void UpdatePeriodic() {
 		if (m_definition != null) {
 			double seconds = m_definition.timeToEnd.TotalSeconds;
@@ -193,5 +211,12 @@ public class TournamentInfoScreen : MonoBehaviour {
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
 		}
+	}
+
+	/// <summary>
+	/// Language has been changed.
+	/// </summary>
+	private void OnLanguageChanged() {
+		Refresh();
 	}
 }

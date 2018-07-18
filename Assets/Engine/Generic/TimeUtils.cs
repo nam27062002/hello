@@ -218,11 +218,14 @@ public class TimeUtils {
 					
 				case EFormat.DIGITS: {
 					// Specification says "YYYY:DD HH:MM:SS"
+					// No zero-padding on the first field
+					bool zeroPadding = i > firstIdx;
+
 					// Put value properly formatted
 					if(i == (int)EPrecision.YEARS) {
-						m_writer.Write(StringUtils.FormatNumber(val, 4, false));
+						m_writer.Write(StringUtils.FormatNumber(val, zeroPadding ? 4 : 0, false));
 					} else {
-						m_writer.Write(StringUtils.FormatNumber(val, 2, false));
+						m_writer.Write(StringUtils.FormatNumber(val, zeroPadding ? 2 : 0, false));
 					}
 
 					// Increase counter
