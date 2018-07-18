@@ -87,7 +87,7 @@ public class BezierSplineEditor : Editor
             // keep the spline selected 
             Selection.activeObject = target;
 
-            if(Event.current.type == EventType.mouseDown)
+            if(Event.current.type == EventType.MouseDown)
             {
                 // add new point
                 Ray worldRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);

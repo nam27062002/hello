@@ -29,7 +29,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private Transform[]		m_petEditSlots;
 
 	[SeparatorAttribute("Tournament Info")]
-	[SerializeField] private Localizer			m_goalText;
+	[SerializeField] private TextMeshProUGUI	m_goalText;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
 	[SeparatorAttribute("Enter button")]
@@ -124,7 +124,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		//-- Tournament Info ------------------------------------------//
 		//GOALS
-		m_goalText.Localize(m_definition.m_goal.m_desc);
+		m_goalText.text = m_tournament.GetDescription();
 
 		//MODIFIERS
 		List<IModifierDefinition> mods = new List<IModifierDefinition>();

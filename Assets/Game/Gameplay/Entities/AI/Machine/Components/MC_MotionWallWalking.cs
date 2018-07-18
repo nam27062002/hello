@@ -30,6 +30,8 @@ namespace AI {
 
 		private Vector3 m_gravity;
 
+		private RaycastHit[] m_raycastHits;
+
 		private bool m_onGround;
 		private float m_heightFromGround;
 
@@ -60,6 +62,10 @@ namespace AI {
 
 
 		//--------------------------------------------------
+		protected override void ExtendedAttach() {
+			m_raycastHits = new RaycastHit[255];
+		}
+		
 		protected override void ExtendedInit() {
 			m_onGround = false;
 			m_checkCollisions = true;
@@ -163,8 +169,13 @@ namespace AI {
 					pos += dir * 0.15f;
 				}
 
-				RaycastHit hit;
-				if (Physics.Raycast(pos, -m_upVector, out hit, 6f, GROUND_MASK)) {
+				Ray ray = new Ray();
+				ray.origin = pos;
+				ray.direction = -m_upVector;
+
+				int hitCount = Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GROUND_MASK);
+				if (hitCount > 0) {
+					RaycastHit hit = m_raycastHits[0];
 					normal = (hit.normal * 0.75f) + (m_groundNormal * 0.25f);
 					hitPos = hit.point;
 					m_heightFromGround = hit.distance - 3f;
@@ -187,13 +198,26 @@ namespace AI {
 		}
 
 		private void FindUpVector() {
+			bool[] hasHit = {false, false, false, false};
 			RaycastHit[] hit = new RaycastHit[4];
-			bool[] hasHit = new bool[4];
+			Ray ray = new Ray();
+			ray.origin = position;
 
-			hasHit[0] = Physics.Raycast(position, GameConstants.Vector3.down,  	out hit[0], 10f, GROUND_MASK);
-			hasHit[1] = Physics.Raycast(position, GameConstants.Vector3.up,	 	out hit[1], 10f, GROUND_MASK);
-			hasHit[2] = Physics.Raycast(position, GameConstants.Vector3.right, 	out hit[2], 10f, GROUND_MASK);
-			hasHit[3] = Physics.Raycast(position, GameConstants.Vector3.left,  	out hit[3], 10f, GROUND_MASK);
+			//down
+			ray.direction = GameConstants.Vector3.down;
+			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[0] = m_raycastHits[0]; hasHit[0] = true; }
+
+			//up
+			ray.direction = GameConstants.Vector3.up;
+			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[1] = m_raycastHits[0]; hasHit[1] = true; }
+
+			//right
+			ray.direction = GameConstants.Vector3.right;
+			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[2] = m_raycastHits[0]; hasHit[2] = true; }
+
+			//left
+			ray.direction = GameConstants.Vector3.left;
+			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[3] = m_raycastHits[0]; hasHit[3] = true; }
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {
@@ -234,9 +258,7 @@ namespace AI {
 		}
 
 		//--------------------------------------------------
-		//--------------------------------------------------
-		protected override void ExtendedAttach() {}
-
+		//--------------------------------------------------		
 		protected override void OnSetVelocity() {}
 
 		public override void OnCollisionGroundEnter(Collision _collision) {

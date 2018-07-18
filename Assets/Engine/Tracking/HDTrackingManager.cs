@@ -286,6 +286,22 @@ public class HDTrackingManager
     public virtual void Notify_SocialAuthentication() {}
 
     /// <summary>
+    /// Notifies the consent popup display.
+    /// </summary>
+    public virtual void Notify_ConsentPopupDisplay(bool _sourceSettings) { }
+
+    /// <summary>
+    /// Notifies the consent popup accept.
+    /// </summary>
+    /// <param name="_age">Age.</param>
+    /// <param name="_enableAnalytics">If set to <c>true</c> enable analytics.</param>
+    /// <param name="_enableMarketing">If set to <c>true</c> enable marketing.</param>
+    /// <param name="_modVersion">Mod version.</param>
+    /// <param name="_duration">Duration.</param>
+    public virtual void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {}
+
+
+    /// <summary>
     /// The user has closed the legal popup.
     /// </summary>
     public virtual void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted) {}

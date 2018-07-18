@@ -1631,6 +1631,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool IsBloodEnabled()
+    {
+        bool ret = false;
+        if (!GDPRManager.SharedInstance.IsAgeRestrictionEnabled() && Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true))
+        {
+            ret = true;
+        }
+        return ret;
+    }
+
 	public bool IfPetRigidbodyInterpolates
     {
         get
@@ -1656,6 +1666,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {     
         return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
     }
+
+	public int GetAdTimeout()
+	{
+		return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AD_TIMEOUT);
+	}
 
     public bool IsCP2Enabled()
     {
@@ -1825,7 +1840,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     }
 
-	
+
 
     #endregion //fps
 }
