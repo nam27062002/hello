@@ -119,11 +119,8 @@ public class PopupTermsAndConditions : MonoBehaviour {
 			m_consentGroup.SetActive(false);
 		}
 
-		// Show Cancel button?
-		m_cancelButton.SetActive(m_mode == Mode.MANUAL);
-
-		// [AOC] TODO!! Tracking
-		// consentpopup event
+        // Show Cancel button?
+        m_cancelButton.SetActive(m_mode == Mode.MANUAL);
     }
 
 	/// <summary>
@@ -266,7 +263,7 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Tracking
 		int duration = Convert.ToInt32(Time.unscaledTime - m_timeAtOpen);
-		// [AOC] TODO!! Tracking consentpopup event
+        HDTrackingManager.Instance.Notify_ConsentPopupAccept(m_ageValue, m_trackingConsent, m_adsConsent, !GDPRManager.SharedInstance.IsAgeRestrictionEnabled(), "1_1_1", duration);
 
 		// Loading Funnel
 		if(m_mode == Mode.LOADING_FUNNEL) {
