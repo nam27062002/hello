@@ -268,7 +268,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // We need to wait for the session to be started to send the first Calety funnel step
-        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_persistance);        
+        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);        
     }    
 
     private void InitSDKs()
@@ -823,7 +823,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Session_HasMenuEverLoaded = true;
             HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
-            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);            
+            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_game_loaded);            
 
             HDTrackingManager.Instance.Notify_DeviceStats();
         }

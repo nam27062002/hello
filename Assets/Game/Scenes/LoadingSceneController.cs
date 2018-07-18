@@ -487,7 +487,7 @@ public class LoadingSceneController : SceneController {
                     Debug.Log("<color=RED>LEGAL</color>");
                     PopupController popupController = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
                     popupController.OnClosePostAnimation.AddListener(OnTermsDone);
-                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
+                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
                 }
                 else
                 {
