@@ -11,15 +11,30 @@ public class AdProviderIronSource : AdProvider
 
     private static IronSourceEvents mIronSourceEvents = null;
 
-    protected override void ExtendedInit()
+    protected override void ExtendedInit(bool useAgeProtection)
     {
-        string appId = null;
+        string appId = null;        
 
-#if UNITY_IPHONE
-		appId = "6d850bb5";
-#elif UNITY_ANDROID
-        appId = "6be092bd";
+        // Ad units depend on the user's age (<13)
+        if (useAgeProtection)
+        {
+#if UNITY_IPHONE		    
+            appId = "757a7605"; // HD
+#elif UNITY_ANDROID            
+            appId = "757aaf8d"; // HD
 #endif
+        }
+        else
+        {
+#if UNITY_IPHONE
+		    appId = "6d850bb5"; // HSE
+            appId = "757a3c7d"; // HD
+#elif UNITY_ANDROID
+            appId = "6be092bd"; // HSE
+            appId = "7579c96d"; // HD
+#endif
+        }
+
         //  Initialize game object (for IronSource engine)
         GameObject go = GameObject.Find(IronSourceGameObjectName);
         if (go == null)
@@ -177,8 +192,8 @@ public class AdProviderIronSource : AdProvider
 
 			if (FeatureSettingsManager.IsDebugEnabled) 
 			{
-				IronSource.Agent.validateIntegration ();
-				IronSource.Agent.setAdaptersDebug (true);
+				IronSource.Agent.validateIntegration();
+				IronSource.Agent.setAdaptersDebug(true);
 			}
 
             //			IronSource.Agent.setUserId ("uniqueUserId");
