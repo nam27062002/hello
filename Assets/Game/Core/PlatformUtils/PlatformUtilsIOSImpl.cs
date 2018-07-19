@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-// #if UNITY_IOS
+#if UNITY_IOS
 public class PlatformUtilsIOSImpl : PlatformUtils
 {
 	[DllImport("__Internal")]
