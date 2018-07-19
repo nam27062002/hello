@@ -434,11 +434,11 @@ Camera:
   m_TargetEye: 3
   m_HDR: 0
   m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
-  m_StereoMirrorMode: 0
 --- !u!54 &54849159819458158
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -526,6 +526,7 @@ MonoBehaviour:
   m_EventMask:
     serializedVersion: 2
     m_Bits: 4294934495
+  m_MaxRayIntersections: 0
 --- !u!114 &114223205425487668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -641,24 +642,24 @@ MonoBehaviour:
   m_defaultAreaFog:
     m_fogGradient:
       serializedVersion: 2
-      key0: {r: 0, g: 0.09817442, b: 0.11764705, a: 0}
-      key1: {r: 0.07352942, g: 0.73164296, b: 1, a: 0.33333334}
-      key2: {r: 0.6420307, g: 0.7585982, b: 0.9191176, a: 0.9843137}
+      key0: {r: 0, g: 0.087221086, b: 0.29411763, a: 0.23137255}
+      key1: {r: 0.335, g: 0.5745456, b: 0.9044118, a: 1}
+      key2: {r: 0.335, g: 0.5745456, b: 0.9044118, a: 0.9843137}
       key3: {r: 0.53676474, g: 0.75081116, b: 1, a: 0.69411767}
       key4: {r: 0.38235295, g: 0.6677485, b: 1, a: 0.69411767}
       key5: {r: 0.38235295, g: 0.6677485, b: 1, a: 0.69411767}
       key6: {r: 0, g: 0.7490196, b: 1, a: 0.69411767}
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
-      ctime1: 52533
-      ctime2: 61526
+      ctime1: 65535
+      ctime2: 65535
       ctime3: 64733
       ctime4: 65535
       ctime5: 65535
       ctime6: 65535
       ctime7: 0
-      atime0: 244
-      atime1: 52951
+      atime0: 0
+      atime1: 65500
       atime2: 61526
       atime3: 65535
       atime4: 65535
@@ -666,8 +667,8 @@ MonoBehaviour:
       atime6: 65535
       atime7: 0
       m_Mode: 0
-      m_NumColorKeys: 5
-      m_NumAlphaKeys: 4
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
     m_fogStart: 0
     m_fogEnd: 1000
   m_transitionDuration: 0
