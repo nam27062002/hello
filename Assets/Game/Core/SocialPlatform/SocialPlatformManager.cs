@@ -57,6 +57,10 @@ public class SocialPlatformManager : MonoBehaviour
             }
             else
             {
+                SocialUtils.EPlatform socialPlatform = SocialUtils.EPlatform.Facebook;
+
+                // In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
+#if UNITY_IOS
                 // Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
                 string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
                 SocialUtils.EPlatform socialPlatform = SocialUtils.KeyToEPlatform(socialPlatformKey);
@@ -80,6 +84,7 @@ public class SocialPlatformManager : MonoBehaviour
                         socialPlatform = SocialUtils.EPlatform.Facebook;
                     }
                 }
+#endif
 
                 switch (socialPlatform)
                 {
