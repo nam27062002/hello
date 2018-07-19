@@ -16,19 +16,13 @@
 -keep class com.vungle.** { *; }
 -keep class javax.inject.*
 
--keepclassmembers class com.ironsource.sdk.controller.IronSourceWebView$JSInterface {
-    public *;
-}
--keepclassmembers class * implements android.os.Parcelable {
-    public static final android.os.Parcelable$Creator *;
-}
--keep public class com.google.android.gms.ads.** {
-   public *;
-}
--keep class com.ironsource.adapters.** { *;
-}
--keep class com.ironsource.unity.androidbridge.** { *;
-}
+# ironSource
+-keepclassmembers class com.ironsource.sdk.controller.IronSourceWebView$JSInterface {public *;}
+-keepclassmembers class * implements android.os.Parcelable {public static final android.os.Parcelable$Creator *;}
+-keep public class com.google.android.gms.ads.** {public *;}
+-keep class com.ironsource.** { *;}
+-keep class com.ironsource.adapters.** { *;}
+-keep class com.ironsource.unity.androidbridge.** { *;}
 
 -keepclassmembers class * { 
     @android.webkit.JavascriptInterface <methods>; 
