@@ -146,6 +146,9 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_ApplicationResumed() {}
 
+
+    public virtual void Notify_MarketingID() {}
+
     /// <summary>
     /// Called when the user starts a round.
     /// </summary>

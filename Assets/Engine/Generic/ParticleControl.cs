@@ -67,11 +67,11 @@ public class ParticleControl : MonoBehaviour {
 
 			ParticleSystem.EmissionModule em = system.emission;
 			em.enabled = true;
-
+/*
 			if (main.prewarm && _prewarm) {
 				system.Simulate(1f, false);
 			}
-
+*/
 			system.Play(false);
 		}
 
