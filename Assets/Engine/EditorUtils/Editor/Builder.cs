@@ -567,6 +567,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
                     
                     // Add array after the key on dict
                 keyURLTypeDict.AppendChild(keyURLSchemesArray);
+                urlTypesArray.AppendChild(keyURLTypeDict);
 
 
                 // Add hungrysharkevolution and hungrysharkworld to LSApplicationQueriesSchemes so we can ask for them

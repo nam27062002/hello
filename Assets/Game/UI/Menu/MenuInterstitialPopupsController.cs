@@ -133,7 +133,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 #if UNITY_ANDROID
         ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
 #elif UNITY_IOS
-        ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution");
+        ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
 #endif
         return ret;
     }
