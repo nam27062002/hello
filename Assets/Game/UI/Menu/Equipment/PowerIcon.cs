@@ -34,7 +34,7 @@ public class PowerIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Mode m_mode = Mode.SKIN;
-	[SerializeField] private Image m_powerIcon = null;
+	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
 	[Tooltip("Optional")] [SerializeField] private GameObject m_lockIcon = null;
 	[Tooltip("Optional")] [SerializeField] private Localizer m_nameText = null;
 	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
@@ -74,18 +74,10 @@ public class PowerIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		// Check required fields
-		Debug.Assert(m_powerIcon != null, "Required field!");
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-
 	/// <summary>
 	/// Initialize this button with the data from the given definition.
 	/// </summary>
@@ -156,7 +148,7 @@ public class PowerIcon : MonoBehaviour {
 		if(m_lockIcon != null) m_lockIcon.SetActive(_locked);
 
 		// Image color
-		m_powerIcon.color = _locked ? Color.gray : Color.white;
+		if(m_powerIcon != null) m_powerIcon.color = _locked ? Color.gray : Color.white;
 	}
 
 	//------------------------------------------------------------------------//
