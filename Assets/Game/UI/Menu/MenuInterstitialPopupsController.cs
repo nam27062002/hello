@@ -114,14 +114,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
                 UsersManager.currentUser.petCollection.UnlockPet(sharkPetSku);
 
                 // Show popup
-                PopupController popup = PopupManager.OpenPopupInstant(PopupInfoPet.PATH);
-                PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
-                if (petPopup != null)
-                {
-                    DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, sharkPetSku);
-                    // Open popup with the filtered list!
-                    petPopup.Init(definition, null);
-                }
+                PopupController popup = PopupManager.OpenPopupInstant("UI/Popups/Tutorial/PF_PopupInfoPetShark");
                 m_popupDisplayed = true;
 
                 // If pets are disabled, equip it automatically
