@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-#if UNITY_IOS
+// #if UNITY_IOS
 public class PlatformUtilsIOSImpl : PlatformUtils
 {
 	[DllImport("__Internal")]
@@ -165,5 +165,18 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 		}
 		return Input.touchPressureSupported;
 	}
+
+
+    [DllImport("__Internal")] private static extern bool IOsApplicationExists(string appID);
+    public override bool ApplicationExists(string applicationURI) 
+    { 
+        if (string.IsNullOrEmpty(applicationURI))
+        {
+            Debug.LogError("AppName is null or empty!");
+            return false;
+        }
+        return IOsApplicationExists(applicationURI);
+    }
+
 }
-#endif
+// #endif

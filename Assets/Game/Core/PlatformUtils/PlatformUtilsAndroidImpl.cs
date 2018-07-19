@@ -185,5 +185,31 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		return 0;
 	}
 
+
+    override public bool ApplicationExists(String applicationURI)
+    {
+        bool ret = false;
+        try
+        {
+            AndroidJavaObject currentActivity = GetCurrentActivity();
+            AndroidJavaObject packageManager = currentActivity.Call<AndroidJavaObject>("getPackageManager");
+            try
+            {
+                object[] args = new object[] { applicationURI, 1 };
+                AndroidJavaObject packageInfo = packageManager.Call<AndroidJavaObject>("getPackageInfo", args);
+                ret = true;
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Exception getPackageInfo: " + e.Message);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Exception ApplicationExists: " + e.Message);
+        }
+
+        return ret;
+    }
 }
 #endif
