@@ -155,7 +155,11 @@ MonoBehaviour:
     android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
     android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n<activity
     android:name=\"com.unity3d.ads.adunit.AdUnitSoftwareActivity\" android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
-    android:hardwareAccelerated=\"false\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/> "
+    android:hardwareAccelerated=\"false\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n<!--
+    AdColony -->\n<activity android:name=\"com.adcolony.sdk.AdColonyInterstitialActivity\"
+    android:configChanges=\"keyboardHidden|orientation|screenSize\" android:hardwareAccelerated=\"true\"/>\n<activity
+    android:name=\"com.adcolony.sdk.AdColonyAdViewActivity\" android:configChanges=\"keyboardHidden|orientation|screenSize\"
+    android:hardwareAccelerated=\"true\"/>"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0
