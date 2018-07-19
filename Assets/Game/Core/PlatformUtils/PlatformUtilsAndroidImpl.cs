@@ -189,6 +189,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
     override public bool ApplicationExists(String applicationURI)
     {
         bool ret = false;
+#if !UNITY_EDITOR || SKIP_DEFINES
         try
         {
             AndroidJavaObject currentActivity = GetCurrentActivity();
@@ -208,7 +209,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
         {
             Debug.LogError("Exception ApplicationExists: " + e.Message);
         }
-
+#endif
         return ret;
     }
 }
