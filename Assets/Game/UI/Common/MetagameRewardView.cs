@@ -27,13 +27,13 @@ public class MetagameRewardView : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] protected Image m_icon = null;
-	[SerializeField] protected TextMeshProUGUI m_rewardText = null;
+	[Tooltip("Optional")] [SerializeField] protected Image m_icon = null;
+	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_rewardText = null;
 	[Space]
 	[SerializeField] protected bool m_showNameForEggsAndPets = true;	// [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
-	[SerializeField] protected GameObject m_nameContainer = null;
+	[Tooltip("Optional")] [SerializeField] protected GameObject m_nameContainer = null;
 	[Space]
-	[SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
+	[Tooltip("Optional")] [SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -173,12 +173,12 @@ public class MetagameRewardView : MonoBehaviour {
 		}
 
 		// Name
-		if(m_nameContainer) {
+		if(m_nameContainer != null) {
 			m_nameContainer.SetActive(!string.IsNullOrEmpty(rewardText));   // If empty, hide the whole object
 		}
 
 		// Power
-		if(m_powerIcon) {
+		if(m_powerIcon != null) {
 			// Show?
 			m_powerIcon.gameObject.SetActive(powerDef != null);
 
