@@ -735,6 +735,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224314021250829734}
   - component: {fileID: 225163248328923080}
+  - component: {fileID: 114592229151357156}
   m_Layer: 5
   m_Name: AnimationRoot
   m_TagString: Untagged
@@ -2033,7 +2034,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9252346f259f4638a435e9bfbc5ff1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 1062873581975060}
+  m_root: {fileID: 114592229151357156}
   m_modifierIcon: {fileID: 114189858816377688}
   m_timerText: {fileID: 114416906195019598}
 --- !u!114 &114034288749349226
@@ -2057,7 +2058,7 @@ MonoBehaviour:
   m_showIfOwned: 1
   m_checkScreens: 1
   m_mode: 0
-  m_targetScreens: 00000000010000000c000000
+  m_targetScreens: 00000000010000000c00000007000000
   m_restartShowAnimation: 0
 --- !u!114 &114035393865193684
 MonoBehaviour:
@@ -3460,7 +3461,7 @@ MonoBehaviour:
   m_showIfOwned: 1
   m_checkScreens: 1
   m_mode: 1
-  m_targetScreens: 08000000070000000a0000000b000000
+  m_targetScreens: 080000000a0000000b000000
   m_restartShowAnimation: 0
 --- !u!114 &114467994205185046
 MonoBehaviour:
@@ -4422,6 +4423,58 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &114592229151357156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1062873581975060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 6
+  m_tweenDuration: 0.15
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114594694089679416
 MonoBehaviour:
@@ -5578,7 +5631,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 225.01, y: -77}
+  m_AnchoredPosition: {x: 225.00977, y: -77}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224067591079577718

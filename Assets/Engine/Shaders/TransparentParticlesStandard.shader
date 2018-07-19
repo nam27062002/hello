@@ -45,12 +45,13 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 5.0 //"SrcAlpha"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 1.0 //"One"
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
+		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
 	}
 
 	Category{
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		Blend [_SrcBlend] [_DstBlend]
-		Cull Off
+		Cull [_Cull]
 		Lighting Off
 		ZWrite Off
 		ZTest[_ZTest]

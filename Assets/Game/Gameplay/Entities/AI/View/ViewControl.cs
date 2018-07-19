@@ -249,14 +249,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				Renderer renderer = m_renderers[i];
 
 				// Keep the vertex count (for DEBUG)
-				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
+				/*if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
 					m_vertexCount += (renderer as SkinnedMeshRenderer).sharedMesh.vertexCount;
 				} else if (renderer.GetType() == typeof(MeshRenderer)) {
 					MeshFilter filter = renderer.GetComponent<MeshFilter>();
 					if (filter != null) {
 						m_vertexCount += filter.sharedMesh.vertexCount;
 					}
-				}
+				}*/
 
 				Material[] materials = renderer.sharedMaterials;
 

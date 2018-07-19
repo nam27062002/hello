@@ -127,6 +127,27 @@ public class LoadingSceneController : SceneController {
     }
 
 
+    private class GDPRListener : GDPRManager.GDPRListenerBase
+    {
+        public bool m_infoRecievedFromServer = false;
+        public string m_userCountry = "";
+        public override void onGDPRInfoReceivedFromServer(string strUserCountryByIP, int iCountryAgeRestriction, bool bCountryConsentRequired) 
+        {
+            base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
+            m_userCountry = strUserCountryByIP;
+            m_infoRecievedFromServer = true;
+        }
+
+        public static bool IsValidCountry(string countryStr)
+        {
+            bool ret = true;
+            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("--") || countryStr.Equals("Unknown"))
+                ret = false;
+            return ret;
+        }
+    }
+
+    GDPRListener m_gdprListener = new GDPRListener();
 
     //------------------------------------------------------------------//
     // MEMBERS															//
@@ -151,16 +172,19 @@ public class LoadingSceneController : SceneController {
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
+        WAITING_COUNTRY_CODE,
+        WAITING_TERMS,
         WAITING_FOR_RULES,        
         LOADING_RULES,
         CREATING_SINGLETONS,
         WAITING_FOR_CUSTOMIZER,
-        SHOWING_UPGRADE_POPUP,        
+        SHOWING_UPGRADE_POPUP,
         COUNT
     }
     private State m_state = State.NONE;
 	private AndroidPermissionsListener m_androidPermissionsListener = null;
 	private string m_buildVersion;
+    private bool m_waitingTermsDone = false;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -349,9 +373,33 @@ public class LoadingSceneController : SceneController {
             case State.LOADING_RULES:
             {
                 // A tick is enought to do this state stuff as we just want to wait a tick so all scripts have the chance to realize content is ready
-                SetState(State.CREATING_SINGLETONS);                    
+                SetState(State.WAITING_COUNTRY_CODE);
             }break;
-
+            case State.WAITING_COUNTRY_CODE:
+            {
+                if (m_gdprListener.m_infoRecievedFromServer)
+                {
+                    string country = m_gdprListener.m_userCountry;
+                        // Recieved values are not good
+                    if (  !GDPRListener.IsValidCountry(country) )
+                    {
+                        country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
+                            // Cached Values are not good
+                        if ( !GDPRListener.IsValidCountry(country) ) 
+                        {
+                            // We set the most restrictive path
+                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
+                        }    
+                    }
+                    SetState( State.WAITING_TERMS );
+                }
+            }break;
+            case State.WAITING_TERMS:
+            {
+                if (m_waitingTermsDone){
+                    SetState(State.CREATING_SINGLETONS);
+                }
+            }break;
             case State.CREATING_SINGLETONS:
             {
                 if (FeatureSettingsManager.instance.IsCustomizerBlocker)
@@ -423,7 +471,32 @@ public class LoadingSceneController : SceneController {
         	case State.SHOWING_UPGRADE_POPUP:
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
-        	}break;
+            }break;
+            case State.WAITING_COUNTRY_CODE:
+                {
+                    GDPRManager.SharedInstance.Initialise(false);
+                    GDPRManager.SharedInstance.SetListener( m_gdprListener );
+                    GDPRManager.SharedInstance.RequestCountryAndAge();
+                }break;
+            case State.WAITING_TERMS:
+            {
+				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
+					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
+					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
+                {
+                    Debug.Log("<color=RED>LEGAL</color>");
+					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
+					popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.LOADING_FUNNEL);
+                    popupController.OnClosePostAnimation.AddListener(OnTermsDone);
+					popupController.Open();
+                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
+                }
+                else
+                {
+                    m_waitingTermsDone = true;
+                }
+                
+            }break;
             case State.CREATING_SINGLETONS:
             {
                 // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
@@ -449,6 +522,9 @@ public class LoadingSceneController : SceneController {
 
                 // Game		        
                 PersistenceFacade.instance.Reset();
+
+                // Social Platform with age restriction param
+                SocialPlatformManager.SharedInstance.Init( GDPRManager.SharedInstance.IsAgeRestrictionEnabled() );
 
                 // Meta
                 SeasonManager.CreateInstance(true);
@@ -480,7 +556,7 @@ public class LoadingSceneController : SceneController {
                 InstanceManager.CreateInstance(true);
                 FontManager.instance.Init();
 
-                GameAds.CreateInstance(false);
+                GameAds.CreateInstance(true);
                 GameAds.instance.Init();
 
                 ControlPanel.CreateInstance();
@@ -511,7 +587,10 @@ public class LoadingSceneController : SceneController {
         }
     }
 
-
+    private void OnTermsDone()
+    {
+        m_waitingTermsDone = true;
+    }
         
     private void StartLoadFlow()
     {
@@ -535,6 +614,9 @@ public class LoadingSceneController : SceneController {
 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
+
+				// Live events cache
+				HDLiveEventsManager.instance.LoadEventsFromCache();
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_01_persistance_applied);
 

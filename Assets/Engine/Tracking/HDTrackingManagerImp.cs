@@ -268,7 +268,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         // We need to wait for the session to be started to send the first Calety funnel step
-        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_persistance);        
+        Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);        
     }    
 
     private void InitSDKs()
@@ -278,6 +278,11 @@ public class HDTrackingManagerImp : HDTrackingManager
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             InitDNA(settingsInstance);
             InitAppsFlyer(settingsInstance);
+
+            if (FeatureSettingsManager.instance.IsCP2Enabled())
+            {
+                InitCP2();
+            }
 
             AreSDKsInitialised = true;
         }
@@ -365,7 +370,53 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             TrackingManager.SharedInstance.Initialise(kTrackingConfig);            
         }
-    }        
+    }  
+    
+    private void InitCP2()
+    {
+        // At the moment CP2 doesn't support api level 19 (it uses a function that doesn't exist under api level 19)
+#if !UNITY_EDITOR && UNITY_ANDROID
+        var clazz = new AndroidJavaClass("android.os.Build$VERSION");
+        if (clazz != null)
+        {
+            int apiLevel = clazz.GetStatic<int>("SDK_INT");
+
+            if (apiLevel < 19)
+            {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    ControlPanel.Log("CP2 can't be initialized because apiLevel (" + apiLevel + ") is lower than 19");
+
+                return;
+            }
+        }
+#endif
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+            ControlPanel.Log("INIT CP2......");
+    
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");        
+        if (settingsInstance != null)
+        {
+            int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
+            int playerProgress = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
+            string countryCode = DeviceUtilsManager.SharedInstance.GetDeviceCountryCode();
+            if (string.IsNullOrEmpty(countryCode))
+            {
+                countryCode = "UNKNOWN";
+            }
+
+            CP2Manager.CrossPromotionConfig kCrossPromotionConfig = new CP2Manager.CrossPromotionConfig();
+            kCrossPromotionConfig.m_strLocalCP2DataPath = "data.zip";
+            kCrossPromotionConfig.m_bIsDEVEnvironment = (settingsInstance.m_iBuildEnvironmentSelected != (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);
+            kCrossPromotionConfig.m_strGameCode = "728";
+            kCrossPromotionConfig.m_strAdZone = "7: Gameplay to Main Menu loading";
+            kCrossPromotionConfig.m_strCountry = countryCode;
+            kCrossPromotionConfig.m_strLevelReached = "" + playerProgress;
+            kCrossPromotionConfig.m_strIAPCount = "" + totalPurchases;
+
+            CP2Manager.SharedInstance.Initialise(kCrossPromotionConfig);         
+        }        
+    }      
 
     public override void Update()
     {
@@ -772,7 +823,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             Session_HasMenuEverLoaded = true;
             HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._02_game_loaded);
-            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_game_loaded);            
+            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_game_loaded);            
 
             HDTrackingManager.Instance.Notify_DeviceStats();
         }
@@ -841,16 +892,15 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }    
 
-    public override void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted)
-    {
-        int nbViews = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.TotalLegalVisits : 0;
-
-        // The current time is accumulated
-        nbViews++;
-        Track_LegalPopupClosed(nbViews, duration, hasBeenAccepted);
+    public override void Notify_ConsentPopupDisplay(bool _sourceSettings) {
+        Track_ConsentPopupDisplay((_sourceSettings)? "Settings_Page" : "Home_Page");
     }
 
-	public override void Notify_Pet(string _sku, string _source) 
+    public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
+        Track_ConsentPopupAccept(_age, _enableAnalytics, _enableMarketing, _modVersion, _duration);
+    }
+
+    public override void Notify_Pet(string _sku, string _source) 
 	{
 		if (FeatureSettingsManager.IsDebugEnabled)
 		{
@@ -1612,20 +1662,37 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_LegalPopupClosed(int nbViews, int duration, bool hasBeenAccepted)
+    private void Track_ConsentPopupDisplay(string _source)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_LegalPopupClosed nbViews = " + nbViews + " duration = " + duration + " hasBeenAccepted = " + hasBeenAccepted);
+            Log("Track_ConsentPopupDisplay");
         }
 
-        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.legalpopup");
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup_display");
         if (e != null)
         {
-            e.SetParameterValue(TRACK_PARAM_NB_VIEWS, nbViews);
-            Track_AddParamString(e, TRACK_PARAM_LEGAL_POPUP_TYPE, "Classical");
-            e.SetParameterValue(TRACK_PARAM_DURATION, duration);
-            Track_AddParamBool(e, TRACK_PARAM_ACCEPTED, hasBeenAccepted);            
+            e.SetParameterValue(TRACK_PARAM_SOURCE, _source);
+
+            Track_SendEvent(e);
+        }
+
+    }
+
+    private void Track_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_ConsentPopupAccept age = " + _age + " analytics_optin = " + _enableAnalytics + " duration = " + _duration +" marketing_optin = " + _enableMarketing +" popup_modular_version = " + _modVersion);
+        }    
+
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup");
+        if (e != null)
+        {
+            e.SetParameterValue(TRACK_PARAM_AGE, _age);
+            e.SetParameterValue(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
+            e.SetParameterValue(TRACK_PARAM_DURATION, _duration);
+            e.SetParameterValue(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
+            e.SetParameterValue(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
 
             Track_SendEvent(e);
         }
@@ -2002,8 +2069,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_AF_DEF_CURRENCY            = "af_def_currency";
     private const string TRACK_PARAM_AF_DEF_LOGPURCHASE         = "af_def_logPurchase";
     private const string TRACK_PARAM_AF_DEF_QUANTITY            = "af_quantity";
+    private const string TRACK_PARAM_AGE                        = "age";
     private const string TRACK_PARAM_AMOUNT_BALANCE             = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA               = "amountDelta";
+    private const string TRACK_PARAM_ANALYTICS_OPTION           = "analytics_optin";
     private const string TRACK_PARAM_AVERAGE_FPS                = "avgFPS";
 	private const string TRACK_PARAM_BOOST_TIME                 = "boostTime";
     private const string TRACK_PARAM_CATEGORY                   = "category";
@@ -2054,9 +2123,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_ITEM_ID                    = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY              = "itemQuantity";
     private const string TRACK_PARAM_LANGUAGE                   = "language";
-    private const string TRACK_PARAM_LEGAL_POPUP_TYPE           = "legalPopupType";
 	private const string TRACK_PARAM_LOADING_TIME               = "loadingTime";
 	private const string TRACK_PARAM_MAP_USAGE                  = "mapUsedNB";
+    private const string TRACK_PARAM_MARKETING_OPTION           = "marketing_optin";
     private const string TRACK_PARAM_MAX_REACHED                = "maxReached";
 	private const string TRACK_PARAM_MAX_XP                     = "maxXp";
 	private const string TRACK_PARAM_MISSION_DIFFICULTY			= "missionDifficulty";
@@ -2082,6 +2151,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_PLAYER_PROGRESS            = "playerProgress";
 	private const string TRACK_PARAM_PLAYING_MODE				= "playingMode";
     private const string TRACK_PARAM_POPUP_ACTION               = "popupAction";    
+    private const string TRACK_PARAM_POPUP_MODULAR_VERSION      = "popup_modular_version";        
     private const string TRACK_PARAM_POPUP_NAME					= "popupName";
     private const string TRACK_PARAM_PROMOTION_TYPE             = "promotionType";    
     private const string TRACK_PARAM_PROVIDER                   = "provider";
@@ -2098,7 +2168,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 	private const string TRACK_PARAM_EVENT_SCORE_TOTAL 			= "scoreTotal";
     private const string TRACK_PARAM_SESSION_PLAY_TIME          = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
-	private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
+    private const string TRACK_PARAM_SOCIAL_NETWORK_OPTION      = "sns_optin";	
+    private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
+    private const string TRACK_PARAM_SOURCE                     = "source";
     private const string TRACK_PARAM_SPECIAL_OFFER_ACTION       = "specialOfferAction";
     private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
 	private const string TRACK_PARAM_STEP_NAME	                = "stepName";

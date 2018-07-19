@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TournamentRewardScreen : MonoBehaviour {	
 	//------------------------------------------------------------------//
@@ -39,7 +40,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 	// Individual elements references
 	[Space]
 	[SerializeField] private Localizer m_titleText;
-	[SerializeField] private Localizer m_goalText = null;
+	[SerializeField] private TextMeshProUGUI m_goalText = null;
 	[SerializeField] private Image m_tournamentIcon = null;
 	[SerializeField] private TournamentLeaderboardView m_leaderboard = null;
 
@@ -126,7 +127,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 				m_tournamentIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_tournamentDef.m_goal.m_icon);
 			}
 			if(m_goalText != null) {
-				m_goalText.Localize(m_tournamentDef.m_goal.m_desc);
+				m_goalText.text = m_tournamentManager.GetDescription();
 			}
 
 			// Stack all rewards into the pending rewards stack

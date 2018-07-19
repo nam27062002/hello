@@ -385,6 +385,60 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	}
 
 	/// <summary>
+	/// Given a set of custom weights, compute that set.
+	/// </summary>
+	/// <returns>The probabilities.</returns>
+	/// <param name="_customWeights">Custom set of weights by rarity.</param>
+	public static float[] ComputeProbabilities(float[] _customWeights) {
+		// Backup weights and set new ones
+		float[] save = sm_weightIDs;
+		SetWeightIDs(_customWeights);
+		BuildDynamicProbabilities();
+
+		// Get the probability for each rarity
+		float[] probs = new float[(int)Metagame.Reward.Rarity.COUNT];
+		for(int i = 0; i < (int)Metagame.Reward.Rarity.COUNT; ++i) {
+			probs[i] = GetDynamicProbability((Metagame.Reward.Rarity)i);
+		}
+
+		// Restore previous weights
+		SetWeightIDs(save);
+		BuildDynamicProbabilities();
+
+		return probs;
+	}
+
+	/// <summary>
+	/// Given an egg definition, compute the default probabilities (before applying 
+	/// the adjustment algorithm) for that egg type.
+	/// </summary>
+	/// <returns>The probabilities.</returns>
+	/// <param name="_eggDef">Egg definition.</param>
+	public static float[] ComputeProbabilities(DefinitionNode _eggDef) {
+		// Check params
+		Debug.Assert(_eggDef != null, "Invalid egg definition!");
+
+		// Create an array with the probabilities for each rarity
+		float[] probabilities = new float[(int)Metagame.Reward.Rarity.COUNT];
+		if(_eggDef.Has("weightCommon")) {
+			// Custom probabilities
+			float[] weights = new float[(int)Metagame.Reward.Rarity.COUNT];
+			weights[0] = _eggDef.GetAsFloat("weightCommon", 1);
+			weights[1] = _eggDef.GetAsFloat("weightRare", 2);
+			weights[2] = _eggDef.GetAsFloat("weightEpic", 3);
+			probabilities = EggManager.ComputeProbabilities(weights);
+		} else {
+			// Default probabilities
+			for(int i = 0; i < (int)Metagame.Reward.Rarity.COUNT; ++i) {
+				probabilities[i] = EggManager.GetDefaultProbability((Metagame.Reward.Rarity)i);
+			}
+		}
+
+		// Done!
+		return probabilities;
+	}
+
+	/// <summary>
 	/// Generate a random reward respecting drop chances.
 	/// </summary>
 	/// <returns>The definition of the reward to be given, as defined in the EGG_REWARDS definitions category.</returns>
@@ -393,26 +447,21 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		// [AOC] Are we testing?
 		string rewardSku = "";
 		switch(CPGachaTest.rewardChanceMode) {
-			case CPGachaTest.RewardChanceMode.DEFAULT: {
-				// [AOC] Force common pet during tutorial
-				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+			case CPGachaTest.RewardChanceMode.DEFAULT: {				
+				instance.__BuildDynamicProbabilities();
 
-					instance.__BuildDynamicProbabilities();
+				// Get a weighted element
+				rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
 
-					// Get a weighted element
-					rewardSku = instance.m_rewardDropRate.GetWeightedRandomElement().label;
-
-					if (rewardSku.Equals(PET_COMMON)) {
-						instance.m_user.openEggTriesWithoutRares++;
-					} else {
-						instance.m_user.openEggTriesWithoutRares = 0;
-					}
-
-					// Save random state to preferences so the distribution is respected
-					PlayerPrefs.SetString(RANDOM_STATE_PREFS_KEY, instance.m_rewardDropRate.randomState.Serialize());
+				if (rewardSku.Equals(PET_COMMON)) {
+					instance.m_user.openEggTriesWithoutRares++;
 				} else {
-					rewardSku = PET_COMMON;
+					instance.m_user.openEggTriesWithoutRares = 0;
 				}
+
+				// Save random state to preferences so the distribution is respected
+				PlayerPrefs.SetString(RANDOM_STATE_PREFS_KEY, instance.m_rewardDropRate.randomState.Serialize());
+
 			} break;
 
 			case CPGachaTest.RewardChanceMode.COMMON_ONLY:	rewardSku = PET_COMMON; break;

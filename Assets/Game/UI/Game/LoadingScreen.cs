@@ -32,6 +32,16 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	[SerializeField] private Image m_dragonIcon = null;
 	[SerializeField] private PowerIcon[] m_powerIcons = null;
 
+	public static bool isVisible {
+		get { 
+			if(instance == null) return false;
+			if(instance.m_animator != null) {
+				return instance.m_animator.visible; 
+			}
+			return instance.gameObject.activeInHierarchy;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//

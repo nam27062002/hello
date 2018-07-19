@@ -354,14 +354,16 @@ public class HDLiveEventManager
     public void Activate()
     {
     	if (!m_isActive)
-    	{
-    		m_isActive = true;
-    		HDLiveEventData data = GetEventData();
-    		if ( data != null && data.definition != null )
-    		{
-	    		List<Modifier> mods = data.definition.m_otherMods;
-				for (int i = 0; i < mods.Count; i++) {
-	    			mods[i].Apply();
+    	{    		
+    		HDLiveEventData data = GetEventData();		
+			if (data.m_state < HDLiveEventData.State.FINALIZED) {
+				m_isActive = true;
+				if (data != null && data.definition != null)
+	    		{
+		    		List<Modifier> mods = data.definition.m_otherMods;
+					for (int i = 0; i < mods.Count; i++) {
+		    			mods[i].Apply();
+					}
 				}
 			}
     	}

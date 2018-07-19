@@ -51,15 +51,17 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 				m_amount = _data["amount"].AsLong;
 			}
 		}
-	}
 
-	public class QuestReward : HDLiveEventReward {
-		public long targetAmount = 0;
+		public override JSONClass ToJson() {
+			JSONClass data = base.ToJson();
+			data.Add("amount", m_amount);
+			return data;
+		}
 	}
 
 	public QuestGoal m_goal = new QuestGoal();
 
-	public List<QuestReward> m_rewards = new List<QuestReward>();
+	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();
 		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -90,15 +92,28 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				QuestReward reward = new QuestReward();
+				HDLiveEventReward reward = new HDLiveEventReward();
 				reward.ParseJson(arr[i], m_name);
-
-				if(m_goal != null) {
-					reward.targetAmount = (long)(reward.targetPercentage * m_goal.m_amount);
-				}
 
 				m_rewards.Add( reward );
 			}
 		}
+	}
+
+	public override JSONClass ToJson() {
+		JSONClass data = base.ToJson();
+
+		// Add goal?
+		data.Add("goal", m_goal.ToJson());
+
+		// Add rewards
+		// [AOC] TODO!! Restoring caching rewards cause a null pointer exception. Investigate why, don't cache them meanwhile
+		/*JSONArray rewardsData = new JSONArray();
+		for(int i = 0; i < m_rewards.Count; ++i) {
+			rewardsData.Add(m_rewards[i].ToJson());
+		}
+		data.Add("rewards", rewardsData);*/
+
+		return data;
 	}
 }

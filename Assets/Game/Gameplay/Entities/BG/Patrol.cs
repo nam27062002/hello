@@ -20,6 +20,7 @@ public class Patrol : MonoBehaviour {
 	private Animator m_animator;
 
 	private Transform m_transform;
+	private Vector3 m_startPosition;
 	private Vector3 m_position;
 	private Vector3 m_direction;
 
@@ -41,8 +42,9 @@ public class Patrol : MonoBehaviour {
 		m_animator = GetComponent<Animator>();
 
 		m_transform = transform;
+		m_startPosition = m_transform.position;
 		if (m_nodes.Length > 0) {
-			m_transform.position = m_nodes[0];
+			m_transform.position = GetNodePosition(0);
 		}
 		m_position = m_transform.position;
 
@@ -68,12 +70,12 @@ public class Patrol : MonoBehaviour {
 
 			case State.Walk: {
 					float delta = Time.deltaTime * m_speed;
-					float dSqr = (m_nodes[m_targetIndex] - m_position).sqrMagnitude;
+					float dSqr = (GetNodePosition(m_targetIndex) - m_position).sqrMagnitude;
 
 					if (dSqr > delta * delta) {
 						m_position += m_direction * delta;
 					} else {
-						m_position = m_nodes[m_targetIndex];
+						m_position = GetNodePosition(m_targetIndex);
 						if (Random.Range(0f, 1f) < m_idleChance) {
 							Idle();
 						} else {
@@ -119,7 +121,7 @@ public class Patrol : MonoBehaviour {
 			m_targetIndex += m_listDirection;
 		}
 
-		m_direction = m_nodes[m_targetIndex] - m_position;
+		m_direction = GetNodePosition(m_targetIndex) - m_position;
 		m_direction.Normalize();
 
 		Vector3 lookAt = m_direction;
@@ -129,10 +131,14 @@ public class Patrol : MonoBehaviour {
 		m_state = State.Walk;
 	}
 
+	private Vector3 GetNodePosition(int _index) {
+		return m_nodes[_index] + m_startPosition;
+	}
+
 	void OnDrawGizmosSelected() {
 		for (int i = 0; i < m_nodes.Length; i++) {
 			Gizmos.color = m_nodeColor;
-			Gizmos.DrawCube(m_nodes[i] + Vector3.up * 1f, new Vector3(0.25f, 2f, 0.25f));
+			Gizmos.DrawCube(m_nodes[i] + transform.position + Vector3.up * 1f, new Vector3(0.25f, 2f, 0.25f));
 		}
 	}
 }

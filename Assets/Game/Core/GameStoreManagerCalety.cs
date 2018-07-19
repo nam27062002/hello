@@ -125,15 +125,12 @@ public class GameStoreManagerCalety : GameStoreManager
 		}
 
 		/// <summary>
-		// TODO: TEST!!!!!
 		/// Ons the IAP promoted received. 
 		/// </summary>
 		/// <param name="strSku">String sku Product bought on the store.</param>
 		public override void onIAPPromotedReceived (string strSku) 
 		{
-			// Check if this sku is valid. Is it a one time purchase?
-			// if the user cannot purchase -> show message: You already have this item
-			// it the user can purchase -> GameStoreManager.SharedInstance.Buy(strSku)
+			m_manager.RegisterPromotedIAP(strSku);
 		}
 
         /*
@@ -170,8 +167,12 @@ public class GameStoreManagerCalety : GameStoreManager
 
     private string m_purchaseSkuTriggeredByUser;
     
+    private Queue<string> m_promotedIAPs;
+
+
     public GameStoreManagerCalety () 
 	{
+        m_promotedIAPs = new Queue<string>();
 		m_storeListener = new CaletyGameStoreListener(this);
         m_isFirstInit = true;
         m_purchaseSkuTriggeredByUser = null;
@@ -255,6 +256,9 @@ public class GameStoreManagerCalety : GameStoreManager
 		m_storeSkus = skus.ToArray();
 	}
 
+	public void RegisterPromotedIAP(string _sku) {
+        m_promotedIAPs.Enqueue(_sku);
+	}
 
 	public override bool IsReady()
 	{
@@ -287,9 +291,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		return StoreManager.SharedInstance.CanMakePayments();
 #endif	
 	}
-    
-
-
+    	
 	public override void Buy( string _sku )
 	{
         m_purchaseSkuTriggeredByUser = _sku;
@@ -325,6 +327,18 @@ public class GameStoreManagerCalety : GameStoreManager
     {
         return m_purchaseSkuTriggeredByUser;
     }
+
+
+    public override bool HavePromotedIAPs() { 
+        return m_promotedIAPs.Count > 0; 
+    }
+
+    public override string GetNextPromotedIAP() {
+        return m_promotedIAPs.Dequeue(); 
+    }
+
+
+
     /*
     private string GameSkuToPlatformSku( string gameSku )
     {

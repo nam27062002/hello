@@ -684,7 +684,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     state = (isLoggedIn) ? EState.LoggedIn : EState.PreviouslyLoggedIn;
                     break;
 
-                case UserProfile.ESocialState.LoggedInAndInventivised:
+                case UserProfile.ESocialState.LoggedInAndIncentivised:
                     state = (isLoggedIn) ? EState.LoggedInAndIncentivised : EState.PreviouslyLoggedIn;
                     break;                
             }

@@ -25,11 +25,22 @@ public class PassiveEventIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 
+	[Flags]
+	private enum DisplayLocation {
+		// [AOC] Max 32 values (try inheriting from long if more are needed)
+		NONE					= 1 << 0,
+		PLAY_SCREEN				= 1 << 1,
+		NORMAL_MODE				= 1 << 2,
+		TOURNAMENT_MODE			= 1 << 3,
+		INGAME					= 1 << 4,
+		OPEN_EGG_SCREEN			= 1 << 5
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private GameObject m_root = null;
+	[SerializeField] private ShowHideAnimator m_root = null;
 	[SerializeField] private ModifierIcon m_modifierIcon = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 
@@ -57,6 +68,7 @@ public class PassiveEventIcon : MonoBehaviour {
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
 		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
 		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
 	/// <summary>
@@ -66,6 +78,7 @@ public class PassiveEventIcon : MonoBehaviour {
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
 		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
 		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
 	/// <summary>
@@ -112,25 +125,15 @@ public class PassiveEventIcon : MonoBehaviour {
 		bool show = RefreshVisibility();
 
 		// Nothing else to do if there is no active event
-		if(!show) return;
+		if(!m_passiveEventManager.EventExists()) return;
 
 		// Make sure icon is showing the right info
 		if(m_modifierIcon != null) {
-			// Grab the fisrt valid mod
-			HDLiveEventDefinition def = m_passiveEventManager.data.definition;
-			IModifierDefinition mod = null;
-			if(def.m_otherMods.Count > 0) {
-				mod = def.m_otherMods[0];
-			} else if(def.m_dragonMods.Count > 0) {
-				mod = def.m_dragonMods[0];
-			} else {
-				Debug.LogError(Color.red.Tag("ERROR! Passive event has no modifiers defined!"));
-			}
-				
 			// Init icon
-			if(mod != null) {
+			HDPassiveEventDefinition def = m_passiveEventManager.data.definition as HDPassiveEventDefinition;
+			if(def.mainMod != null) {
 				m_modifierIcon.gameObject.SetActive(true);
-				m_modifierIcon.InitFromDefinition(mod);
+				m_modifierIcon.InitFromDefinition(def.mainMod);
 			} else {
 				m_modifierIcon.gameObject.SetActive(false);
 			}
@@ -177,11 +180,11 @@ public class PassiveEventIcon : MonoBehaviour {
 	private bool RefreshVisibility() {
 		// Never during tutorial
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_TOURNAMENTS_AT_RUN) {
-			m_root.SetActive(false);
+			m_root.ForceHide(false);
 			return false;
 		}
 
-		// Do we have a valid tournament?
+		// Do we have a valid event?
 		bool show = false;
 		if(m_passiveEventManager.EventExists()) {
 			// Show only for specific states
@@ -198,10 +201,105 @@ public class PassiveEventIcon : MonoBehaviour {
 					}
 				} break;
 			}
+
+			// Check current screen and event's UI settings
+			// Skip if we shouldn't be displayed anyway
+			if(show) {
+				Modifier mod = m_passiveEventManager.m_passiveEventDefinition.mainMod;
+				if(mod != null) {
+					// Where can this mod be displayed?
+					DisplayLocation location = DisplayLocation.NONE;
+					switch(mod.def.Get("uiCategory")) {
+						case "stats": {
+							location = DisplayLocation.PLAY_SCREEN 
+								| DisplayLocation.NORMAL_MODE
+								| DisplayLocation.TOURNAMENT_MODE
+								| DisplayLocation.INGAME;
+						} break;
+
+						case "metagame": {
+							location = DisplayLocation.PLAY_SCREEN 
+								| DisplayLocation.NORMAL_MODE
+								| DisplayLocation.OPEN_EGG_SCREEN;
+						} break;
+
+						case "levelUp": {
+							location = DisplayLocation.PLAY_SCREEN 
+								| DisplayLocation.NORMAL_MODE
+								| DisplayLocation.INGAME;
+						} break;
+					}
+
+					// Are we in the right place?
+					// Loading Screen
+					if(LoadingScreen.isVisible) {
+						// Check tournament mode
+						switch(GameSceneController.s_mode) {
+							case GameSceneController.Mode.DEFAULT: {
+								show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.NORMAL_MODE);
+							} break;
+
+							case GameSceneController.Mode.TOURNAMENT: {
+								show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.TOURNAMENT_MODE);
+							} break;
+						}
+					}
+
+					// Menu
+					else if(InstanceManager.menuSceneController != null) {
+						// Which screen?
+						MenuScreen currentScreen = InstanceManager.menuSceneController.currentScreen;
+						switch(currentScreen) {
+							case MenuScreen.PLAY: {
+								show &= CheckLocation(location, DisplayLocation.PLAY_SCREEN);
+							} break;
+
+							case MenuScreen.DRAGON_SELECTION: {
+								show &= CheckLocation(location, DisplayLocation.NORMAL_MODE);
+							} break;
+
+							case MenuScreen.TOURNAMENT_INFO: {
+								show &= CheckLocation(location, DisplayLocation.TOURNAMENT_MODE);
+							} break;
+
+							case MenuScreen.OPEN_EGG: {
+								show &= CheckLocation(location, DisplayLocation.OPEN_EGG_SCREEN);
+							} break;
+						}
+					}
+
+					// Ingame / Results
+					else {
+						// Check tournament mode
+						switch(GameSceneController.s_mode) {
+							case GameSceneController.Mode.DEFAULT: {
+								show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.NORMAL_MODE);
+							} break;
+
+							case GameSceneController.Mode.TOURNAMENT: {
+								show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.TOURNAMENT_MODE);
+							} break;
+						}
+					}
+				}
+			}
 		}
 
-		if(m_root != null) m_root.SetActive(show);
+		if(m_root != null) m_root.Set(show);
 		return show;
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL	UTILS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Compare two location flags.
+	/// </summary>
+	/// <returns><c>true</c>, if the location to check is included in the reference location.</returns>
+	/// <param name="_ref">Reference location.</param>
+	/// <param name="_toCheck">Location to check.</param>
+	private bool CheckLocation(DisplayLocation _ref, DisplayLocation _toCheck) {
+		return (_ref & _toCheck) == _toCheck;	// This tells us if all the flags in _toCheck are included in _ref
 	}
 
 	//------------------------------------------------------------------------//
@@ -216,5 +314,9 @@ public class PassiveEventIcon : MonoBehaviour {
 
 	private void OnStateUpdated() {
 		RefreshData();
+	}
+
+	private void OnMenuScreenTransition(MenuScreen _from, MenuScreen _to) {
+		RefreshVisibility();
 	}
 }
