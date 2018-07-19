@@ -892,8 +892,12 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }    
 
-    public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {
-        Track_ConsentPopupAccept(_age, _enableAnalytics, _enableMarketing, _enableSocial, _modVersion, _duration);
+    public override void Notify_ConsentPopupDisplay(bool _sourceSettings) {
+        Track_ConsentPopupDisplay((_sourceSettings)? "Settings_Page" : "Home_Page");
+    }
+
+    public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
+        Track_ConsentPopupAccept(_age, _enableAnalytics, _enableMarketing, _modVersion, _duration);
     }
 
     public override void Notify_Pet(string _sku, string _source) 
@@ -1658,10 +1662,27 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {
+    private void Track_ConsentPopupDisplay(string _source)
+    {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_ConsentPopupAccept age = " + _age + " analytics_optin = " + _enableAnalytics + " duration = " + _duration +" marketing_optin = " + _enableMarketing +" popup_modular_version = " + _modVersion + " sns_optin = " + _enableSocial);
+            Log("Track_ConsentPopupDisplay");
+        }
+
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup_display");
+        if (e != null)
+        {
+            e.SetParameterValue(TRACK_PARAM_SOURCE, _source);
+
+            Track_SendEvent(e);
+        }
+
+    }
+
+    private void Track_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_ConsentPopupAccept age = " + _age + " analytics_optin = " + _enableAnalytics + " duration = " + _duration +" marketing_optin = " + _enableMarketing +" popup_modular_version = " + _modVersion);
         }    
 
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup");
@@ -1672,7 +1693,6 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_DURATION, _duration);
             e.SetParameterValue(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
             e.SetParameterValue(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
-            e.SetParameterValue(TRACK_PARAM_SOCIAL_NETWORK_OPTION, (_enableSocial) ? 1 : 0);
 
             Track_SendEvent(e);
         }
@@ -2150,6 +2170,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
     private const string TRACK_PARAM_SOCIAL_NETWORK_OPTION      = "sns_optin";	
     private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
+    private const string TRACK_PARAM_SOURCE                     = "source";
     private const string TRACK_PARAM_SPECIAL_OFFER_ACTION       = "specialOfferAction";
     private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
 	private const string TRACK_PARAM_STEP_NAME	                = "stepName";

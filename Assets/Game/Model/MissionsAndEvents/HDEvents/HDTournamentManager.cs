@@ -21,8 +21,11 @@ using System.Collections.Generic;
 [Serializable]
 public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
-	// CLASSES   															  //
+	// CONSTANTS   															  //
 	//------------------------------------------------------------------------//
+	private const float TIME_LIMIT_END_OF_GAME_DELAY = 2f;
+	private const float TIME_ATTACK_END_OF_GAME_DELAY = 2f;
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -325,7 +328,7 @@ public class HDTournamentManager : HDLiveEventManager {
 						// Tell hud to show "Time is Up!"
 						Messenger.Broadcast(MessengerEvents.TIMES_UP);
 						m_doneChecking = true;
-						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
+						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd(TIME_LIMIT_END_OF_GAME_DELAY) );
 					}
 					
 				}
@@ -341,7 +344,7 @@ public class HDTournamentManager : HDLiveEventManager {
 						// Tell hud to show "Target accomplished"
 						Messenger.Broadcast(MessengerEvents.TARGET_REACHED);
 						m_doneChecking = true;
-						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd() );
+						InstanceManager.gameSceneController.StartCoroutine( DelayedEnd(TIME_ATTACK_END_OF_GAME_DELAY) );
 					}
 				}
 			}break;
@@ -349,7 +352,7 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	}
 
-	IEnumerator DelayedEnd()
+	IEnumerator DelayedEnd(float _delay)
 	{
 		// InstanceManager.gameSceneController.PauseGame(true, true);
 		InstanceManager.gameSceneController.freezeElapsedSeconds = true;
@@ -358,7 +361,7 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
 		InstanceManager.player.playable = false;
 		InstanceManager.player.dragonMotion.control.enabled = false;
-		yield return new WaitForSecondsRealtime(4f);
+		yield return new WaitForSecondsRealtime(_delay);
 
 		while( InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state < GameSceneController.EStates.FINISHED)
 		{
@@ -559,6 +562,38 @@ public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
 	// UI HELPER METHODS													  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Gets the description of this tournament localized and properly formatted.
+	/// Override to customize text in specific objective types.
+	/// </summary>
+	/// <returns>The description properly formatted.</returns>
+	public virtual string GetDescription() {
+		// Depends on tournament mode
+		switch(m_tournamentDefinition.m_goal.m_mode) {
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_LIMIT: {
+				// Add formatted time limit
+				return LocalizationManager.SharedInstance.Localize(
+					m_tournamentDefinition.m_goal.m_desc,
+					TimeUtils.FormatTime(m_tournamentDefinition.m_goal.m_seconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 3)
+				);
+			} break;
+
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK: {
+				// Add target amount
+				return LocalizationManager.SharedInstance.Localize(
+					m_tournamentDefinition.m_goal.m_desc,
+					FormatScore(m_tournamentDefinition.m_goal.m_targetAmount)
+				);
+			} break;
+
+			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
+			default: {
+				// Just translation as is
+				return LocalizationManager.SharedInstance.Localize(m_tournamentDefinition.m_goal.m_desc);
+			} break;
+		}
+	}
+
 	/// <summary>
 	/// Given a score, format it based on tournament type
 	/// </summary>

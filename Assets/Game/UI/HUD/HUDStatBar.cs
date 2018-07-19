@@ -68,6 +68,7 @@ public class HUDStatBar : MonoBehaviour {
 	private float m_timerDuration = 0;
 	private bool m_instantSet;
 	private ParticleSystem m_particles;
+	private bool m_areParticlesPlaying;
 
 	private bool m_ready = false; // patch for particles!
 
@@ -111,6 +112,7 @@ public class HUDStatBar : MonoBehaviour {
 		m_particles = gameObject.FindComponentRecursive<ParticleSystem>();
 		if (m_particles != null)
 			m_particles.Stop();
+		m_areParticlesPlaying = false;
 
 
 		child = transform.Find("Icon");
@@ -288,11 +290,15 @@ public class HUDStatBar : MonoBehaviour {
 				if(m_type == Type.SuperFury || m_type == Type.Fury) {
 					if(m_particles != null) {
 						if(Math.Abs(targetValue - targetValueStep) > 0.001f) {
-							if ( !m_particles.isPlaying )
+							if ( !m_areParticlesPlaying ) {
 								m_particles.Play();
+								m_areParticlesPlaying = true;
+							}
 						} else {
-							if ( m_particles.isPlaying )
+							if ( m_areParticlesPlaying ) {
 								m_particles.Stop();
+								m_areParticlesPlaying = false;
+							}
 						}
 					}
 				}
@@ -545,21 +551,20 @@ public class HUDStatBar : MonoBehaviour {
 				m_timer = 1;
 			}
 		}
-		 
-		/*if (m_particles != null) {
-			if (_active) m_particles.Play();
-			else 		 m_particles.Stop();
-		}*/
 	}
 
 	void OnBoostToggled(bool _active) {
 		if (m_particles != null) {
 			if (_active) {
-				if ( !m_particles.isPlaying )
+				if ( !m_areParticlesPlaying ) {
 					m_particles.Play();
+					m_areParticlesPlaying = true;
+				}
 			}else{
-				if ( m_particles.isPlaying )
+				if ( m_areParticlesPlaying ) {
 			 		m_particles.Stop();
+					 m_areParticlesPlaying = false;
+				}
 			}
 		}
 	}

@@ -121,6 +121,9 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
         // Show Cancel button?
         m_cancelButton.SetActive(m_mode == Mode.MANUAL);
+
+        //Tracking
+        HDTrackingManager.Instance.Notify_ConsentPopupDisplay(m_mode == Mode.MANUAL);
     }
 
 	/// <summary>
@@ -263,7 +266,7 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Tracking
 		int duration = Convert.ToInt32(Time.unscaledTime - m_timeAtOpen);
-        HDTrackingManager.Instance.Notify_ConsentPopupAccept(m_ageValue, m_trackingConsent, m_adsConsent, !GDPRManager.SharedInstance.IsAgeRestrictionEnabled(), "1_1_1", duration);
+        HDTrackingManager.Instance.Notify_ConsentPopupAccept(m_ageValue, m_trackingConsent, m_adsConsent, "1_1_1", duration);
 
 		// Loading Funnel
 		if(m_mode == Mode.LOADING_FUNNEL) {
