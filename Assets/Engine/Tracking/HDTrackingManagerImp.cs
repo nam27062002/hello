@@ -600,6 +600,11 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_PlayTime = 0f;        
     }
 
+    public override void Notify_MarketingID() {
+        if (Session_IsFirstTime)
+            Track_MarketingID();
+    }
+
     /// <summary>
     /// Called when the user starts a round
     /// </summary>    
@@ -608,15 +613,15 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Resets the amount of runs in the current round because a new round has just started
         Session_RunsAmountInCurrentRound = 0;
         Session_HungryLettersCount = 0;
-
+        
         // One more game round
         TrackingPersistenceSystem.GameRoundCount++;
-
+        
         if ( m_playingMode == EPlayingMode.NONE )
         {
         	Track_StartPlayingMode( EPlayingMode.PVE );
         }
-
+        
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
 
@@ -1241,6 +1246,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         Track_MobileStartEvent();
     }    
+
+    private void Track_MarketingID() {
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.info");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
 
     private void Track_ApplicationEndEvent(string stopCause)
     {
