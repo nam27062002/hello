@@ -24,7 +24,7 @@ public class CPServerTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -32,17 +32,18 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private ScrollRect m_outputScroll = null;
 	[SerializeField] private TextMeshProUGUI m_outputText = null;
 	[SerializeField] private TextMeshProUGUI m_accountIdText = null;
-    [SerializeField] private TextMeshProUGUI m_enviromentText = null;
-    [SerializeField] private TextMeshProUGUI m_trackingIdText = null;
-    [SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
+	[SerializeField] private TextMeshProUGUI m_enviromentText = null;
+	[SerializeField] private TextMeshProUGUI m_trackingIdText = null;
+	[SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
+    [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
     [SerializeField] private Toggle m_debugServerToggle = null;
 
-    // Internal
-    private DateTime m_startTimestamp;
+	// Internal
+	private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();
 
-    //private RequestNetwork requestNetwork;
-	
+	//private RequestNetwork requestNetwork;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -58,31 +59,32 @@ public class CPServerTab : MonoBehaviour {
 		m_startTimestamp = DateTime.UtcNow;
 		OnClearConsoleButton();
 
-        //RequestNetworkOnline.CreateInstance();
-        //requestNetwork = new RequestNetworkOnline();
+		//RequestNetworkOnline.CreateInstance();
+		//requestNetwork = new RequestNetworkOnline();
 
-    }
+	}
 
-    private void OnEnable()
-    {
-        m_accountIdText.text = "AccountId: " + GameSessionManager.SharedInstance.GetUID();
-        m_enviromentText.text = "Env: " + ServerManager.SharedInstance.GetServerConfig().m_eBuildEnvironment.ToString();
+	private void OnEnable()
+	{
+		m_accountIdText.text = "AccountId: " + GameSessionManager.SharedInstance.GetUID();
+		m_enviromentText.text = "Env: " + ServerManager.SharedInstance.GetServerConfig().m_eBuildEnvironment.ToString();
 
-        m_trackingIdText.text = "TrackingId: " + HDTrackingManager.Instance.GetTrackingID();
-        m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
+		m_trackingIdText.text = "TrackingId: " + HDTrackingManager.Instance.GetTrackingID();
+		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
+        m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
 
         m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
-    }
+	}
 
 	private void OnDisable() {
 		m_debugServerToggle.onValueChanged.RemoveListener(OnToggleDebugServer);
 	}
 
-    private void Update()
-    {
-        //requestNetwork.Update();
-    }
+	private void Update()
+	{
+		//requestNetwork.Update();
+	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
@@ -179,7 +181,7 @@ public class CPServerTab : MonoBehaviour {
 				}
 			}
 		);
-    }
+	}
 
 	/// <summary>
 	/// Generic button callback.
@@ -188,9 +190,9 @@ public class CPServerTab : MonoBehaviour {
 		// Get optional parameters
 		string paramString = GetInputText(_input);
 
-        // Forces a crash
-        DragonData data = null;
-        data.ToString();
+		// Forces a crash
+		DragonData data = null;
+		data.ToString();
 
 		// Do stuff!		
 		Output("Button 2 pressed with params " + paramString + " TO FORCE A CRASH");
@@ -203,16 +205,16 @@ public class CPServerTab : MonoBehaviour {
 		// Get optional parameters
 		string paramString = GetInputText(_input);
 
-        // Do stuff!		
-        bool changesApplied = ApplicationManager.instance.Game_ApplyCustomizer();
-        string msg = "Button 3 pressed with params " + paramString;
-        if (changesApplied) {
-            msg += " CUSTOMIZER APPLIED";
-        } else {
-            msg += " NO CUSTOMIZER TO APPLY";
-        }       
+		// Do stuff!		
+		bool changesApplied = ApplicationManager.instance.Game_ApplyCustomizer();
+		string msg = "Button 3 pressed with params " + paramString;
+		if (changesApplied) {
+			msg += " CUSTOMIZER APPLIED";
+		} else {
+			msg += " NO CUSTOMIZER TO APPLY";
+		}       
 
-        Output(msg);        
+		Output(msg);        
 	}
 
 	/// <summary>
@@ -220,11 +222,18 @@ public class CPServerTab : MonoBehaviour {
 	/// </summary>
 	public void OnButton4(GameObject _input) {
 		// Get optional parameters
-		string paramString = GetInputText(_input);
+		//string paramString = GetInputText(_input);
 
 		// Do stuff!
-		Debug.Log("Button 4 pressed with params " + paramString + " - TODO!!");
-		Output("Button 4 pressed with params " + paramString);
+		//Debug.Log("Button 4 pressed GameAds.ShowDebugInfo");
+		//GameAds.instance.ShowDebugInfo();
+		GameAds.instance.ShowRewarded(GameAds.EAdPurpose.REVIVE, OnAdDone);
+	}
+
+	private void OnAdDone(bool success)
+	{
+		string msg = "OnAdDone success = " + success;
+		Output(msg);
 	}
 
 	/// <summary>

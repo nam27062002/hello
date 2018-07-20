@@ -64,6 +64,8 @@ public enum MessengerEvents {
 	// Profile events
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
 	PROFILE_MAP_UNLOCKED,		// no params
+	PROFILE_REWARD_PUSHED,		// params Metagame.Reward _reward
+	PROFILE_REWARD_POPPED,		// params Metagame.Reward _reward
 	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed
 	
 	// Game logic events
@@ -223,6 +225,19 @@ public enum MessengerEvents {
 	OFFERS_RELOADED,	// no params
 	OFFERS_CHANGED,		// no params
 	OFFER_APPLIED,		// OfferPack _pack
+
+
+	LIVE_EVENT_STATES_UPDATED,
+	LIVE_EVENT_NEW_DEFINITION,
+	LIVE_EVENT_REWARDS_RECEIVED,
+	LIVE_EVENT_FINISHED,
+	TOURNAMENT_LEADERBOARD,
+	TOURNAMENT_SCORE_SENT,
+	TOURNAMENT_ENTRANCE,
+	QUEST_SCORE_UPDATED,
+	QUEST_SCORE_SENT,
+	TIMES_UP,
+	TARGET_REACHED,
 
 	COUNT
 }

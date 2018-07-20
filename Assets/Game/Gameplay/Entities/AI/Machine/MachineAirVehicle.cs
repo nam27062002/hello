@@ -50,7 +50,8 @@ namespace AI {
 			if (!GetSignal(Signals.Type.Burning)) {
 				if (m_armorDurability.count > 0) {
 					if (!m_armorDurability.needBoost || _boost) {
-						m_armorDurability.count--;
+                        ReceiveHit();
+                        m_armorDurability.count--;
 						if (m_armorDurability.count <= 0) {
 							if (m_passengersSpawner != null) {
 								m_passengersSpawner.PassengersLeaveDevice();

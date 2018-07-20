@@ -27,7 +27,7 @@ namespace Metagame {
 		//------------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES												  //
 		//------------------------------------------------------------------------//
-		private List<Reward> m_rewards = new List<Reward>();
+		protected List<Reward> m_rewards = new List<Reward>();
 		public List<Reward> rewards {
 			get { return m_rewards; }
 		}
@@ -35,6 +35,13 @@ namespace Metagame {
 		//------------------------------------------------------------------------//
 		// GENERIC METHODS														  //
 		//------------------------------------------------------------------------//
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		protected RewardMulti() {
+
+		}
+
 		/// <summary>
 		/// Parametrized constructor.
 		/// </summary>
@@ -68,13 +75,8 @@ namespace Metagame {
 		/// </summary>
 		override protected void DoCollect() {
 			// Collect all rewards internally
-			/*for(int i = 0; i< m_rewards.Count; ++i) {
+			for(int i = 0; i< m_rewards.Count; ++i) {
 				m_rewards[i].Collect();
-			}*/
-
-			// Push all rewards to the rewards stack
-			for(int i = 0; i < m_rewards.Count; ++i) {
-				UsersManager.currentUser.PushReward(m_rewards[i]);
 			}
 		}
 

@@ -83,7 +83,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 				ZFail keep
 			}
 
-			Cull[_Cull]
+			Cull [_Cull]
 			Blend[_SrcBlend][_DstBlend]
 			ZWrite[_ZWrite]
 			ztest less

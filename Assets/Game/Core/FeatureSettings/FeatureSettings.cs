@@ -116,6 +116,15 @@ public class FeatureSettings
     // Period in seconds between two automatic relogin checks
     public const string KEY_AUTOMATIC_RELOGIN_PERIOD = "automaticReloginPeriod";
 
+	// Max time in seconds that the user will have to wait for an ad. If no ad is available after this time then ad is not shown and UI is enabled again
+	public const string KEY_AD_TIMEOUT = "adTimeout";
+
+    // Wheter or not pending transactions need server confirmation to be given to the user
+    public const string KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM = "pendingTransactionsServerConfirm";
+
+    // Whether or not CP2 is enabled
+    public const string KEY_CP2 = "cp2";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -285,12 +294,23 @@ public class FeatureSettings
 
             key = KEY_AUTOMATIC_RELOGIN;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
-            Datas.Add(key, data);
+            Datas.Add(key, data);            
 
             key = KEY_AUTOMATIC_RELOGIN_PERIOD;
             data = new DataInt(key, EValueType.Int, 60);
             Datas.Add(key, data);
 
+			key = KEY_AD_TIMEOUT;
+			data = new DataRangeInt(key, 5, 0, int.MaxValue);
+			Datas.Add(key, data);
+
+            key = KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            key = KEY_CP2;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
             /*
             // intTest
             key = KEY_INT_TEST;

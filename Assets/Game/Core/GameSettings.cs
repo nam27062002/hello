@@ -92,8 +92,11 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private int m_enableMissionsAtRun = 2;
 	public static int ENABLE_MISSIONS_AT_RUN { get { return instance.m_enableMissionsAtRun; }}
 
-	[SerializeField] private int m_enableGlobalEventsAtRun = 3;
-	public static int ENABLE_GLOBAL_EVENTS_AT_RUN { get { return instance.m_enableGlobalEventsAtRun; }}
+	[SerializeField] private int m_enableQuestsAtRun = 3;
+	public static int ENABLE_QUESTS_AT_RUN { get { return instance.m_enableQuestsAtRun; }}
+
+	[SerializeField] private int m_enableTournamentsAtRun = 3;
+	public static int ENABLE_TOURNAMENTS_AT_RUN { get { return instance.m_enableTournamentsAtRun; }}
 
 	[SerializeField] private int m_enableInterstitialPopupsAtRun = 12;
 	public static int ENABLE_INTERSTITIAL_POPUPS_AT_RUN { get { return instance.m_enableInterstitialPopupsAtRun; }}

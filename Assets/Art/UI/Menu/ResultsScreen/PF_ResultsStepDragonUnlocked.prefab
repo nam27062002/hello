@@ -4037,6 +4037,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_Palm
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114174455508316334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4361,6 +4362,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114207417697385236
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4432,6 +4434,7 @@ MonoBehaviour:
   m_parentName: Dragon_RLeg_1
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114229370407758546
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4673,6 +4676,7 @@ MonoBehaviour:
   m_forceInitialValue: 0
   m_initialValue: {x: 0, y: 0}
   m_restoreOnDisable: 1
+  m_restoreOnRelease: 0
   m_restoreDuration: 0.15
   OnValueChanged:
     m_PersistentCalls:
@@ -5006,6 +5010,7 @@ MonoBehaviour:
   m_parentName: Dragon_LArm_Shoulder
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114461150924454172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5162,6 +5167,7 @@ MonoBehaviour:
   m_parentName: Dragon_Hip
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 0
+  m_resetScale: 0
 --- !u!114 &114480117011132128
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5472,6 +5478,8 @@ MonoBehaviour:
   m_keepLayers: 0
   m_useResultsScreen: 0
   m_allowAltAnimations: 1
+  m_altAnimationsMaxLevel: 10
+  m_loadAsync: 0
   m_placeholderDragonSku: dragon_classic
 --- !u!114 &114631458522460464
 MonoBehaviour:
@@ -5906,6 +5914,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114669551918175812
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6195,6 +6204,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114731146166483642
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6214,6 +6224,7 @@ MonoBehaviour:
     newRenderQueue: 1000
   - renderer: {fileID: 199111293943598852}
     newRenderQueue: 1000
+  m_uiTargets: []
 --- !u!114 &114734451060930672
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6228,6 +6239,7 @@ MonoBehaviour:
   m_parentName: Dragon_Spine
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114736570909780528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6706,6 +6718,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114821858885072438
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6875,6 +6888,7 @@ MonoBehaviour:
   m_parentName: Dragon_RArm_Shoulder
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114854289189962552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6945,6 +6959,7 @@ MonoBehaviour:
   m_parentName: Dragon_Tail6
   m_parentRoot: {fileID: 4626716922894610}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114864271770596656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7358,7 +7373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.99264705, b: 0.75735295, a: 1}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:

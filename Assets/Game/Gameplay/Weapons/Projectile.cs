@@ -390,7 +390,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 				}
 			}
 
-			Debug.Log(name + " >> " + _other.name);
+			//Debug.Log(name + " >> " + _other.name);
 		}
 	}
 

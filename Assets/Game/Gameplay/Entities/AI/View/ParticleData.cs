@@ -88,7 +88,7 @@ public class ParticleData {
 				CreatePool();
 			}
 			GameObject go = m_handler.Spawn(this, _at);
-			if ( orientate )
+            if (orientate && go != null)
 				go.transform.rotation = _orientation;
 			return go;
 		}
@@ -101,7 +101,7 @@ public class ParticleData {
 				CreatePool();
 			}
 			GameObject go = m_handler.Spawn(this, _parent, _offset, _prewarm);
-			if ( orientate )
+            if (orientate && go != null)
 				go.transform.rotation = _orientation;
 			return go;
 		}

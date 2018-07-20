@@ -20,7 +20,8 @@ Set objOutputFile 		= objFSO.CreateTextFile("spawnersData.txt", 2, true)
 
 For Each CurrentSpawner In SpawnersFolder.Files
 	blackList1 = "SP_Seasonal.prefab"
-	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false Then
+	blacklist2 = "SP_FlyingTicket.prefab"
+	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false AND foundStrMatch(CurrentSpawner.Path, blackList2) = false Then
 		Set objInputFile = objFSO.OpenTextFile(CurrentSpawner)
 		Dim substrToFind
 		Do until objInputFile.AtEndOfStream

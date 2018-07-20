@@ -129,10 +129,10 @@ public class MenuEggLoader : MonoBehaviour {
 	/// </summary>
     public void Unload() {
 		// Destroy all childs of the loader and clear references
-		foreach(Transform child in transform) {
-			GameObject.DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
-			m_eggView = null;
+		while(transform.childCount > 0) {
+			GameObject.DestroyImmediate(transform.GetChild(0).gameObject);	// Immediate so it can be called from the editor
 		}
+		m_eggView = null;
     }
 
 	//------------------------------------------------------------------------//

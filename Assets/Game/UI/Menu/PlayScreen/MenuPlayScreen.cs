@@ -21,11 +21,12 @@ public class MenuPlayScreen : MonoBehaviour {
     //------------------------------------------------------------------//
     // CONSTANTS														//
     //------------------------------------------------------------------//
-	 //------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//    
     public GameObject m_badge;
-	public Button m_connectButton;
+	public Button m_fbConnectButton;
+    public Button m_weiboConnectButton;
 
     [SerializeField]
     private GameObject m_incentivizeRoot = null;
@@ -34,7 +35,15 @@ public class MenuPlayScreen : MonoBehaviour {
     private Localizer m_incentivizeLabelLocalizer = null; 
 
     private static bool m_firstTimeMenu = true;
-        
+
+    private Transform m_tournamentBtn;
+
+
+
+	private static bool create_mods = true;
+
+
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -42,9 +51,17 @@ public class MenuPlayScreen : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() 
-	{    
-        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);        
+	{   
+        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
+        m_tournamentBtn = transform.FindTransformRecursive("BtnTournament");
         Refresh();
+
+		//create modifiers HERE
+		if (create_mods) {
+			InstanceManager.CREATE_MODIFIERS();
+			InstanceManager.APPLY_MODIFIERS();
+			create_mods=false;
+		}
     }
 
     /// <summary>
@@ -63,12 +80,10 @@ public class MenuPlayScreen : MonoBehaviour {
             Refresh();
         }
 
-        if (m_firstTimeMenu)
-        {
+        if (m_firstTimeMenu) {
             FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
             m_firstTimeMenu = false;
         }
-
     }
 
     /// <summary>
@@ -82,8 +97,7 @@ public class MenuPlayScreen : MonoBehaviour {
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
 
-	public void OnConnectBtn()
-	{        
+	public void OnConnectBtn() {        
         PersistenceFacade.Popups_OpenLoadingPopup();
 
         PersistenceFacade.instance.Sync_FromSettings(delegate()
@@ -102,13 +116,19 @@ public class MenuPlayScreen : MonoBehaviour {
     
     private void Refresh()
     {
-        m_connectButton.interactable = true;
+        m_fbConnectButton.interactable = true;
+        m_weiboConnectButton.interactable = true;        
 
         UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
-        SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+        SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;      
 
-        m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndInventivised);
-        m_badge.SetActive(!SocialIsLoggedIn);
+        m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndIncentivised);
+        m_badge.SetActive(SocialPlatformManager.SharedInstance.GetIsEnabled() && !SocialIsLoggedIn);
+
+        if (m_tournamentBtn)
+        {
+            m_tournamentBtn.gameObject.SetActive(HDLiveEventsManager.instance.m_tournament.EventExists());
+        }
     }    
     
    	

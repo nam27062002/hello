@@ -19,7 +19,7 @@ MonoBehaviour:
   m_kLocalisedAppNamesIOS: []
   m_strBuildFilename: 
   m_strPVPProtoFile: 
-  m_iBuildEnvironmentSelected: 2
+  m_iBuildEnvironmentSelected: 3
   m_iSocialPlatformSelected: 1
   m_strBundleDEV: com.ubisoft.hungrydragon.dev
   m_strBundleSTAGEPROD: com.ubisoft.hungrydragon
@@ -45,19 +45,19 @@ MonoBehaviour:
   - dragon
   - dragon
   m_strWeiboAppKey:
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - 4246043480
+  - 4246043480
+  - 4246043480
+  - 4246043480
+  - 4246043480
+  - 4246043480
   m_strWeiboRedirectURL:
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - 10.44.4.131/dragon/api/weibo/callback
+  - http://bcn-int-dragon01:8080/dragon/api/weibo/callback
+  - http://bcn-dev-dragon01:8080/dragon/api/weibo/callback
+  - http://dragon-qc.ubi.com/dragon/api/weibo/callback
+  - http://dragon-stage.ubi.com/dragon/api/weibo/callback
+  - http://dragon.ubi.com/dragon/api/weibo/callback
   m_strGameCenterAppGoogle:
   - 
   - 
@@ -93,12 +93,12 @@ MonoBehaviour:
   - 
   - 
   - 
-  m_strVersionIOS: 1.8
-  m_strVersionIOSCode: 166
-  m_strVersionAndroidGplay: 1.8
-  m_strVersionAndroidGplayCode: 166
-  m_strVersionAndroidAmazon: 1.8
-  m_strVersionAndroidAmazonCode: 166
+  m_strVersionIOS: 1.10
+  m_strVersionIOSCode: 183
+  m_strVersionAndroidGplay: 1.10
+  m_strVersionAndroidGplayCode: 183
+  m_strVersionAndroidAmazon: 1.10
+  m_strVersionAndroidAmazonCode: 183
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 0
   m_biOSPushNotifications: 1
@@ -140,11 +140,36 @@ MonoBehaviour:
   m_kAndroidDangerousPermissions:
   - android.permission.WRITE_EXTERNAL_STORAGE
   - android.permission.READ_EXTERNAL_STORAGE
-  m_strAndroidManifestExtraData: "<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
+  m_strAndroidManifestExtraData: "<meta-data android:name=\"android.max_aspect\" android:value=\"2.1\"
+    />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
-    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n
-    \             </provider>"
+    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>\n\n<!--
+    IronSource -->\n<activity android:name=\"com.ironsource.sdk.controller.ControllerActivity\"
+    android:configChanges=\"orientation|screenSize\" android:hardwareAccelerated=\"true\"/>\n<activity
+    android:name=\"com.ironsource.sdk.controller.InterstitialActivity\" android:configChanges=\"orientation|screenSize\"
+    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.Translucent\"/>\n<activity
+    android:name=\"com.ironsource.sdk.controller.OpenUrlActivity\" android:configChanges=\"orientation|screenSize\"
+    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.Translucent\"/>\n\n<!--
+    UnityAds -->\n<activity android:name=\"com.unity3d.ads.adunit.AdUnitActivity\"
+    android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
+    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n<activity
+    android:name=\"com.unity3d.ads.adunit.AdUnitSoftwareActivity\" android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
+    android:hardwareAccelerated=\"false\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n\n<!--
+    AdColony -->\n<activity android:name=\"com.adcolony.sdk.AdColonyInterstitialActivity\"
+    android:configChanges=\"keyboardHidden|orientation|screenSize\" android:hardwareAccelerated=\"true\"/>\n<activity
+    android:name=\"com.adcolony.sdk.AdColonyAdViewActivity\" android:configChanges=\"keyboardHidden|orientation|screenSize\"
+    android:hardwareAccelerated=\"true\"/>\n\n<!-- VUNGLE -->\n<activity android:name=\"com.vungle.publisher.FullScreenAdActivity\"
+    android:configChanges=\"keyboardHidden|orientation|screenSize\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n<activity
+    android:name=\"com.vungle.publisher.MraidFullScreenAdActivity\" android:configChanges=\"keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize\"
+    android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\"/>\n<activity
+    android:name=\"com.vungle.publisher.VideoFullScreenAdActivity\" android:configChanges=\"keyboardHidden|orientation|screenSize\"
+    android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n<activity android:name=\"com.vungle.publisher.FlexViewAdActivity\"
+    android:configChanges=\"keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize\"
+    android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\" />\n<service
+    android:name=\"com.vungle.publisher.VungleService\" android:exported=\"false\"/>\n\n<!--
+    AdMob -->\n<activity android:name=\"com.google.android.gms.ads.AdActivity\" android:configChanges=\"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize\"
+    android:theme=\"@android:style/Theme.Translucent\" />"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0
