@@ -266,10 +266,13 @@ public class ARKitManager : MonoBehaviour
 
 		if (m_pARKitListener != null)
 		{
-		#if UNITY_EDITOR_OSX
+#if UNITY_EDITOR_OSX
 			m_pARKitListener.onARIsAvailableResult (true);
-		#else
-			m_pARKitListener.onARIsAvailableResult (false);
+#else
+            if (m_pARKitListener != null)
+            {
+                m_pARKitListener.onARIsAvailableResult(false);
+            }
 		#endif
 		}
 #endif

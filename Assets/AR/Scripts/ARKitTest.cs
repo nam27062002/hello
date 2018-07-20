@@ -59,15 +59,23 @@ public class ARKitTest : MonoBehaviour
 
 			if (bAvailable)
 			{
-				m_kSource.m_bARToBeActive = true;
 
-				m_kSource.mGOARButtonOptions.SetActive (m_kSource.m_bARToBeActive);
-				m_kSource.mGOARButtonOptions.GetComponent<Button>().onClick.RemoveListener(m_kSource.__arButtonPressed);
-				m_kSource.mGOARButtonOptions.GetComponent<Button>().onClick.AddListener(m_kSource.__arButtonPressed);
-				
-				m_kSource.mGOARButtonPhoto.SetActive (true);
-				m_kSource.mGOARButtonPhoto.GetComponent<Button>().onClick.RemoveListener(m_kSource.__arPhotoButtonPressed);
-				m_kSource.mGOARButtonPhoto.GetComponent<Button>().onClick.AddListener(m_kSource.__arPhotoButtonPressed);
+                if (m_kSource != null)
+                {
+                    m_kSource.m_bARToBeActive = true;
+
+                    m_kSource.mGOARButtonOptions.SetActive(m_kSource.m_bARToBeActive);
+                    m_kSource.mGOARButtonOptions.GetComponent<Button>().onClick.RemoveListener(m_kSource.__arButtonPressed);
+                    m_kSource.mGOARButtonOptions.GetComponent<Button>().onClick.AddListener(m_kSource.__arButtonPressed);
+
+                    m_kSource.mGOARButtonPhoto.SetActive(true);
+                    m_kSource.mGOARButtonPhoto.GetComponent<Button>().onClick.RemoveListener(m_kSource.__arPhotoButtonPressed);
+                    m_kSource.mGOARButtonPhoto.GetComponent<Button>().onClick.AddListener(m_kSource.__arPhotoButtonPressed);
+                }
+                else
+                {
+                    Debug.Log("m_kSource = null !!!!!");
+                }
 			}
 		}
 	};

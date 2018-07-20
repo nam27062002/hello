@@ -169,6 +169,10 @@ public class ARGameManager : MonoBehaviour
 		{
 			m_pARGameListener.onARIsAvailableResult (bAvailable);
 		}
+        else
+        {
+            Debug.Log("ARGameListener is null!!!!!!");
+        }
 	}
 
 	public void OnARIsInstalledResult (bool bInstalled)
