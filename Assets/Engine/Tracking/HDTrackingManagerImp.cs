@@ -21,6 +21,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         Banned
     }
 
+    private Queue<TrackingEvent> m_preInitEvents = new Queue<TrackingEvent>();
+
     // Load funnel events are tracked by two different apis (Calety and Razolytics). 
     private FunnelData_Load m_loadFunnelCalety;
     private FunnelData_LoadRazolytics m_loadFunnelRazolytics;
@@ -266,6 +268,12 @@ public class HDTrackingManagerImp : HDTrackingManager
 		{
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
+
+        while(m_preInitEvents.Count > 0) {
+            Track_SendEvent(m_preInitEvents.Dequeue());
+        }
+
+        Notify_MarketingID();
 
         // We need to wait for the session to be started to send the first Calety funnel step
         Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);        
@@ -513,7 +521,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_ApplicationEnd()
-    {         
+    {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Notify_ApplicationEnd");
@@ -592,12 +600,12 @@ public class HDTrackingManagerImp : HDTrackingManager
             // Current session play time is added up to the total
             int sessionTime = (int)Session_PlayTime;
             TrackingPersistenceSystem.TotalPlaytime += sessionTime;
-        }            
+        }
 
         Track_ApplicationEndEvent(reason.ToString());
 
         // It needs to be reseted after tracking the event because the end application event needs to send the session play time
-        Session_PlayTime = 0f;        
+        Session_PlayTime = 0f;
     }
 
     public override void Notify_MarketingID() {
@@ -1248,6 +1256,10 @@ public class HDTrackingManagerImp : HDTrackingManager
     }    
 
     private void Track_MarketingID() {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_MarketingID");
+        } 
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.info");
         if (e != null)
         {
@@ -2212,10 +2224,16 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_SendEvent(TrackingEvent e)
 	{
-		// Events are not sent in EDITOR_MODE because DNA crashes on Mac
+        if (State == EState.SessionStarted) 
+        {// Events are not sent in EDITOR_MODE because DNA crashes on Mac
 #if !EDITOR_MODE
-		TrackingManager.SharedInstance.SendEvent(e);
+        TrackingManager.SharedInstance.SendEvent(e);
 #endif
+        }
+        else
+        {
+            m_preInitEvents.Enqueue(e);
+        }		
 	}
 
     private void Track_AddParamSubVersion(TrackingEvent e)
