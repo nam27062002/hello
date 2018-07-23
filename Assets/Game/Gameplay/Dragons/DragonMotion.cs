@@ -1991,7 +1991,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	public void OnAreaChangeEvent(Collider _other)
 	{
-		if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null )
+        if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null && _other.bounds.Intersects(m_mainGroundCollider.bounds))
 		{
 			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			if ( LevelManager.currentArea != destinationArea )
