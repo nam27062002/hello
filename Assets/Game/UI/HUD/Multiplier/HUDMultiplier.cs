@@ -39,6 +39,8 @@ public class HUDMultiplier : HudWidget {
 	private int m_comboSFXIdx = 0;
     private long m_multiplierToShow;
 	private Vector2 m_fillTextureOffset = GameConstants.Vector2.zero;
+    
+    private Material m_fontMaterial;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -53,6 +55,9 @@ public class HUDMultiplier : HudWidget {
 
     protected override void Start() {
         base.Start();
+
+        m_fontMaterial = m_progressFillText.fontMaterial;
+
         SetMultiplierToShow(RewardManager.currentScoreMultiplierData,RewardManager.currentFireRushMultiplier,true);                
 		UpdateProgress();
     }
@@ -101,7 +106,7 @@ public class HUDMultiplier : HudWidget {
 			// When full (value 1), map the bottom half to the text mesh
 			// In between, interpolate fill texture offsetY between 0 and -0.5
 			m_fillTextureOffset.y = Mathf.Lerp(0, -0.5f, RewardManager.scoreMultiplierProgress);
-			m_progressFillText.fontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
+			m_fontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
 		}
 	}
 

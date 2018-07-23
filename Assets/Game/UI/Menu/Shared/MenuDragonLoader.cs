@@ -107,6 +107,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_allowAltAnimations = value; }
 	}
 
+	[SerializeField] private int m_altAnimationsMaxLevel = 10;
+	public int altAnimationsMaxLevel {
+		get { return m_altAnimationsMaxLevel; }
+		set { m_altAnimationsMaxLevel = value; }
+	}
+
 	public bool m_loadAsync = false;
 	private ResourceRequest m_asyncRequest = null;
 
@@ -133,6 +139,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	public delegate void OnDragonLoaded( MenuDragonLoader loader );
 	public OnDragonLoaded onDragonLoaded;
 
+	private bool m_configured = false;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -186,10 +193,18 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <param name="_disguiseSku">The sku of the disguise to be applied to this dragon.</param>
 	public void LoadDragon(string _sku, string _disguiseSku, bool forceSync = false) {
 
-		Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
+		//Debug.Log("<color=red>Load Dragon: " + _sku + "</color>");
 		if (m_dragonInstance != null || m_asyncRequest != null){
 			if (_sku == m_dragonSku && _disguiseSku == m_disguiseSku )
+			{
+				if ( m_asyncRequest == null && !m_configured )
+				{
+					ConfigureInstance( m_dragonInstance.gameObject );
+					if (onDragonLoaded != null)
+						onDragonLoaded(this);
+				}
 				return;
+			}
 		}
 
 		// Unload current dragon if any
@@ -240,6 +255,8 @@ public class MenuDragonLoader : MonoBehaviour {
 
 	public void ConfigureInstance(GameObject newInstance){
 
+		m_configured = true;
+
 		newInstance.transform.SetParent(this.transform, false);
 		newInstance.transform.localPosition = Vector3.zero;
 		newInstance.transform.localRotation = Quaternion.identity;
@@ -266,7 +283,7 @@ public class MenuDragonLoader : MonoBehaviour {
 				equip.Init();
 			}
 			// Apply disguise (if any)
-			if(!string.IsNullOrEmpty(m_disguiseSku)) {
+			if(!string.IsNullOrEmpty(m_disguiseSku) && equip.dragonDisguiseSku != m_disguiseSku) {
 				equip.EquipDisguise(m_disguiseSku);
 			}
 
@@ -289,6 +306,7 @@ public class MenuDragonLoader : MonoBehaviour {
 
 		// Allow alt animations?
 		m_dragonInstance.allowAltAnimations = m_allowAltAnimations;
+		m_dragonInstance.altAnimationsMaxLevel = m_altAnimationsMaxLevel;
 
 		// Make sure particles are properly scaled as well
 		RescaleParticles();
@@ -310,14 +328,22 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <summary>
 	/// Reload dragon preview based on mode.
 	/// </summary>
-	public void RefreshDragon() {
+	public void RefreshDragon(bool _force = false) {
+		// Force?
+		string currentDragonSku = m_dragonSku;
+		string currentDisguiseSku = m_disguiseSku;
+		if(_force) {
+			m_dragonSku = "";
+			m_disguiseSku = "";
+		}
+
 		// Load different dragons based on mode
 		// If the game is not running, we don't have any data on current dragon/skin,
 		// so load a placeholder one manually instead
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON: {
 				if(Application.isPlaying) {
-					LoadDragon(UsersManager.currentUser.currentDragon);
+					LoadDragon(UsersManager.currentUser.currentDragon, DragonManager.currentDragon.diguise);
 				} else {
 					LoadDragon(m_placeholderDragonSku);
 				}
@@ -332,7 +358,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			} break;
 
 			case Mode.MANUAL: {
-				LoadDragon(m_dragonSku, m_disguiseSku);
+				LoadDragon(currentDragonSku, currentDisguiseSku);
 			} break;
 		}
 	}
@@ -344,6 +370,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Just make sure the object doesn't have anything attached
 		m_asyncRequest = null;
 		m_dragonInstance = null;
+		m_configured = false;
 		foreach(Transform child in transform) {
 			GameObject.Destroy(child.gameObject);	// Immediate so it can be called from the editor
 		}

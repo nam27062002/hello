@@ -11,9 +11,8 @@ using System.Xml;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-public class Builder : MonoBehaviour 
-{	
-	
+public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
+{
 	const string m_bundleIdentifier = "com.ubisoft.hungrydragon.dev";
 	const string m_iOSSymbols = "";
 
@@ -25,6 +24,15 @@ public class Builder : MonoBehaviour
     /// </summary>
     const bool OVERRIDE_SYMBOLS = false;
 
+	public int callbackOrder { get { return 0; } }
+	public void OnPreprocessBuild(BuildTarget target, string path) {
+		Debug.Log("MyCustomBuildProcessor.OnPreprocessBuild for target " + target + " at path " + path);
+		if (target == BuildTarget.iOS) {
+			// We make sure bundleVersiont is set to game settings version so xcode files generated manually have the right version number
+			PlayerSettings.bundleVersion = GameSettings.internalVersion.ToString();
+		}
+	}
+
 	//[MenuItem ("Build/IOs")]
 	static void GenerateXcode()
 	{
@@ -32,7 +40,7 @@ public class Builder : MonoBehaviour
 		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS);
 
-		// Generate project		
+		// Generate project
 		PlayerSettings.applicationIdentifier = m_bundleIdentifier;
         if (OVERRIDE_SYMBOLS)
         {
@@ -55,9 +63,9 @@ public class Builder : MonoBehaviour
 		UnityEngine.Debug.Log("Generating XCode project at path: " + stagePath);
 
 		// Do the build!
-		BuildPipeline.BuildPlayer( GetBuildingScenes(), stagePath, BuildTarget.iOS, BuildOptions.None); 
+		BuildPipeline.BuildPlayer( GetBuildingScenes(), stagePath, BuildTarget.iOS, BuildOptions.None);
 
-		// Restore 
+		// Restore
 		PlayerSettings.applicationIdentifier = oldBundleIdentifier;
         if (OVERRIDE_SYMBOLS)
         {
@@ -65,7 +73,7 @@ public class Builder : MonoBehaviour
         }
 		PlayerSettings.bundleVersion = oldBundleVersion;
 	}
-	
+
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
 	{
@@ -301,7 +309,7 @@ public class Builder : MonoBehaviour
 			}
 		}
 	}
-	
+
 	//[MenuItem ("Build/Increase Version Codes")]
 	private static void IncreaseVersionCodes()
 	{
@@ -408,7 +416,7 @@ public class Builder : MonoBehaviour
 				NetworkManager.DestroyInstance ();
 				GameContext.DestroyInstance ();
 				// Update Gradle
-				CaletySettingsEditor.UpdateGradleConfig();
+				CaletySettingsEditor.UpdateGradleConfig(currentModularSettings);
 				// Generate Manifest
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
@@ -423,11 +431,11 @@ public class Builder : MonoBehaviour
 
 
 	/// <summary>
-	/// Print a message to the output terminal. Attach BUILDER prefix to make it 
+	/// Print a message to the output terminal. Attach BUILDER prefix to make it
 	/// easy to filter among Unity's default messages.
 	/// Filtering can be done by attaching the following command after the Unity instruction:
 	/// <c>| grep BUILDER</c>
-	/// To be able to see the output in when launching in batch mode, the -logfile 
+	/// To be able to see the output in when launching in batch mode, the -logfile
 	/// parameter without any value must be used.
 	/// </summary>
 	private static void PrintMessage(string _msg) {
@@ -457,7 +465,7 @@ public class Builder : MonoBehaviour
 				{
 					levels.Add(areaList[i]);
 				}
-			}	
+			}
 			areaIndex++;
 			areaList = def.GetAsList<string>("area"+areaIndex);
 		}
@@ -514,22 +522,23 @@ public class Builder : MonoBehaviour
     [PostProcessBuild(1080)]
     public static void OnPostProcessBuild(BuildTarget target, string path)
     {
-		if (target == BuildTarget.Android) 
+		if (target == BuildTarget.Android)
 		{
 			//GenerateAdaptiveAPK (path);
 		}
     }
 
-    [MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
+    /*[MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]
     public static void GenerateAdaptiveApkFromMenu()
     {
         string path = ValidatePath(Application.dataPath + "/../HD.apk");
         GenerateAdaptiveAPK(path);
     }
+    */
 
     public static void GenerateAdaptiveAPK(string path)
     {
-        string error = null;        
+        string error = null;
 
         UnityEngine.Debug.Log("------------------------------------------------------");
         UnityEngine.Debug.Log("Processing adaptive icons...");
@@ -573,7 +582,7 @@ public class Builder : MonoBehaviour
 
                 string decompressFolder = ValidatePath(tempDirectoryPath + "/DecompressFolder");
 
-                // Decompress apk            
+                // Decompress apk
                 DecompressApk(rootPath, path, decompressFolder);
 
                 // Makes sure the temp directory was created
@@ -581,29 +590,29 @@ public class Builder : MonoBehaviour
                 {
                     string destPath = ValidatePath(decompressFolder + "/res");
 
-                    // Delete old icons                    
+                    // Delete old icons
                     UnityEngine.Debug.Log("Deleting old icons...");
-					DeleteOldIcon(destPath, "drawable-ldpi");      
+					DeleteOldIcon(destPath, "drawable-ldpi");
 					DeleteOldIcon(destPath, "drawable-mdpi");
 					DeleteOldIcon(destPath, "drawable-hdpi");
 					DeleteOldIcon(destPath, "drawable-xhdpi");
 					DeleteOldIcon(destPath, "drawable-xxhdpi");
 					DeleteOldIcon(destPath, "drawable-xxxhdpi");
-					                     
+
                     // Copy icons
-                    string sourcePath = ValidatePath(Application.dataPath + "/Game/UI/Icon/Android/AdaptiveIcons");                    
+                    string sourcePath = ValidatePath(Application.dataPath + "/Game/UI/Icon/Android/AdaptiveIcons");
                     UnityEngine.Debug.Log("Copying adaptive icons from " + sourcePath + " to " + destPath + "...");
                     CopyFilesRecursively(new DirectoryInfo(sourcePath), new DirectoryInfo(destPath));
 
                     // Change manifest
                     UnityEngine.Debug.Log("Changing icons in Manifest ...");
-                    SetMipmapIconsInManifest(decompressFolder);                    
-                    
+                    SetMipmapIconsInManifest(decompressFolder);
+
                     // Compress apk again
                     string resultPath = ValidatePath(tempDirectoryPath + "/" + apkFileName);
                     UnityEngine.Debug.Log("Compressing the APK file with adaptive icons ...");
-                    CompressApk(rootPath, decompressFolder, resultPath);									
-					
+                    CompressApk(rootPath, decompressFolder, resultPath);
+
                     // Makes sure that the file was created
                     if (File.Exists(resultPath))
                     {
@@ -623,7 +632,7 @@ public class Builder : MonoBehaviour
                         string apkAlignedPath = ValidatePath(tempDirectoryPath + "/" + apkAlignedFileName);
                         if (File.Exists(apkAlignedPath))
                         {
-                            // Signs the apk                            
+                            // Signs the apk
                             UnityEngine.Debug.Log("Signing the APK file with adaptive icons ...");
 
                             try
@@ -714,7 +723,7 @@ public class Builder : MonoBehaviour
 		{
 			File.Delete(ValidatePath(path + "/" + folder + "/app_icon.png"));
 		}
-		catch (Exception e) 
+		catch (Exception e)
 		{
 			UnityEngine.Debug.Log("No old icon found: " + e.ToString());
 		}
@@ -822,14 +831,14 @@ public class Builder : MonoBehaviour
         return path;
     }
 
-    public static void SetMipmapIconsInManifest(string workingDirectoryPath)            
+    public static void SetMipmapIconsInManifest(string workingDirectoryPath)
     {
         // Patch android manifest to remove debuggable property
         // the gradle build file will automatically turn debuggable to true/false
         // lint will throw errors on a release build if the debuggable property is hard coded.
         string manifestPath = ValidatePath(workingDirectoryPath + "/AndroidManifest.xml");
         string manifestContent = File.ReadAllText(manifestPath);
-        manifestContent = manifestContent.Replace("android:icon=\"@drawable/app_icon\"", "android:icon=\"@mipmap/ic_launcher\" android_roundIcon=\"@mipmap/ic_launcher_round\"");        
+        manifestContent = manifestContent.Replace("android:icon=\"@drawable/app_icon\"", "android:icon=\"@mipmap/ic_launcher\" android_roundIcon=\"@mipmap/ic_launcher_round\"");
         File.WriteAllText(manifestPath, manifestContent);
     }
 

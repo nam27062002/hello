@@ -14,9 +14,13 @@ struct appdata_t
 struct v2f
 {
 	float4 vertex : SV_POSITION;
-
-	float2 uv : TEXCOORD0;
 	float4 color : COLOR;
+
+	float3 normalWorld : NORMAL;
+#if defined(NORMALMAP)
+	float3 tangentWorld : TANGENT;
+	float3 binormalWorld : TEXCOORD5;
+#endif
 
 #if defined(DYNAMIC_LIGHT)
 	float3 vLight : TEXCOORD2;
@@ -26,15 +30,11 @@ struct v2f
 	float3 halfDir : TEXCOORD7;
 #endif
 
-#if defined(FRESNEL) || defined(FREEZE)
+#if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP)
 	float3 viewDir : VECTOR;
 #endif
 
-	float3 normalWorld : NORMAL;
-#if defined(NORMALMAP)
-	float3 tangentWorld : TANGENT;
-	float3 binormalWorld : TEXCOORD5;
-#endif
+	float2 uv : TEXCOORD0;
 
 #if defined(MATCAP) || defined(FREEZE)
 	float2 cap : TEXCOORD1;
@@ -107,6 +107,11 @@ uniform float4 _SecondLightDir;
 uniform float4 _AmbientColor;
 #endif
 
+#if defined(REFLECTIONMAP)
+uniform samplerCUBE _ReflectionMap;
+uniform float _ReflectionAmount;
+#endif
+
 
 v2f vert(appdata_t v)
 {
@@ -167,7 +172,7 @@ v2f vert(appdata_t v)
 
 #endif
 
-#if defined(FRESNEL) || defined(FREEZE)
+#if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP)
 	o.viewDir = viewDirection;
 #endif
 
@@ -190,6 +195,8 @@ fixed4 frag(v2f i) : SV_Target
 #if defined(SPECMASK)
 	fixed4 colspec = tex2D(_SpecMask, i.uv);
 	half specMask = 0.2126 * colspec.r + 0.7152 * colspec.g + 0.0722 * colspec.b + col.a;
+#elif defined(OPAQUESPECULAR)
+	half specMask = 1.0;
 #else
 	half specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 #endif
@@ -213,16 +220,41 @@ fixed4 frag(v2f i) : SV_Target
 	float3 normalDirection = i.normalWorld;
 #endif
 
+#if defined (REFLECTIONMAP)
+	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
+
+	//	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
+	//	float ref = specMask * _ReflectionAmount * detail.b;
+
+	float ref = _ReflectionAmount;
+
+	col = (1.0 - ref) * col + ref * reflection;
+#endif
+
+
+
 	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 #if defined(DYNAMIC_LIGHT)
 	col.xyz *= diffuse + i.vLight;
 #else
+
+#if defined(NOAMBIENT)
+	col.xyz *= diffuse;// +UNITY_LIGHTMODEL_AMBIENT.xyz;
+#else
 	col.xyz *= diffuse + UNITY_LIGHTMODEL_AMBIENT.xyz;
 #endif
+
+#endif
+
 
 #if defined(SPECULAR)
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
 	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
+
+#if defined(OPAQUESPECULAR)
+	col.a = max(col.a, specular * 4.0);
+#endif
+
 
 #elif defined(SPECMASK)
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * specMask;
@@ -257,11 +289,9 @@ fixed4 frag(v2f i) : SV_Target
 	UNITY_OPAQUE_ALPHA(col.a);	// Opaque
 
 #elif defined(FRESNEL) && defined(GHOST)
-//	col.a = fresnel + specMask;
 	col.a = clamp(fresnel + specMask, 0.0, 1.0);
-//	col.a = clamp(col.a, (fixed)0.0, (fixed)1.0);
-//	col.a = clamp(fresnel + specMask, 0.0, 1.0);
-
+#elif defined(FRESNEL) && defined(OPAQUESPECULAR)
+	col.a = max(fresnel, col.a);
 #endif
 
 #if defined(TINT)

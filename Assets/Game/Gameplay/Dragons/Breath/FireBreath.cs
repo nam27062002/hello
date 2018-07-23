@@ -107,7 +107,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override public bool IsInsideArea(Vector2 _point) { 
 	
-		if (m_isFuryOn) {
+		if (IsFuryOn()) {
 			if (m_bounds2D.Contains(_point)) {
 				return IsInsideTriangle( _point );
 			}
@@ -118,7 +118,7 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override public bool Overlaps(CircleAreaBounds _circle)
 	{
-		if (m_isFuryOn) 
+		if (IsFuryOn()) 
 		{
 			if (_circle.Overlaps(m_bounds2D)) 
 			{
@@ -315,7 +315,7 @@ public class FireBreath : DragonBreathBehaviour {
 	}
 
 	void OnDrawGizmos() {
-		if (m_isFuryOn) {
+		if (IsFuryOn()) {
 			Gizmos.color = Color.magenta;
 
 			Gizmos.DrawLine(m_triP0, m_triP1);
@@ -343,7 +343,7 @@ public class FireBreath : DragonBreathBehaviour {
 	{
 		if ( _other.CompareTag("Water") )
 		{
-			if ( m_isFuryOn )
+			if ( IsFuryOn() )
 			{
 				m_isFuryPaused = true;
 				m_animator.SetBool( GameConstants.Animator.BREATH , false);

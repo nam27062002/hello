@@ -26,6 +26,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected Animator m_animator;
 
 	// Cache content values
+	protected bool m_modInfiniteFury = false;
+	public bool modInfiniteFury
+	{
+		get { return m_modInfiniteFury; }
+		set { m_modInfiniteFury = value; }
+	}
 
 	protected float m_furyMax = 1f;
 	public float furyMax
@@ -56,7 +62,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
         None
     };
 
-	protected bool m_isFuryOn;
+    public float m_prewarmDuration = 0.5f;
+	protected float m_prewarmFuryTimer;
 	protected bool m_isFuryPaused;
     protected Type m_type = Type.None;
     public Type type
@@ -96,6 +103,16 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	protected float m_lengthPowerUpMultiplier = 0;
 
+	public enum State
+	{
+		NONE,
+		NORMAL,
+		PREWARM_BREATH,
+		BREATHING
+	};
+	protected State m_state = State.NONE;
+
+	protected int tournamentMegaFireValue = 0;
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -121,7 +138,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();		
 		m_animator = transform.Find("view").GetComponent<Animator>();
-		m_isFuryOn = false;
 		m_bounds2D = new Rect();
 
 		m_tier = m_dragon.data.tier;
@@ -148,6 +164,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
+
+		ChangeState(State.NORMAL);
 	}
 
 	/// <summary>
@@ -185,7 +203,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	void OnDisable() {
 		if ( ApplicationManager.IsAlive )
 		{
-			if (m_isFuryOn) 
+			if (m_state == State.BREATHING) 
 			{
 				EndFury( false );
 			}
@@ -194,29 +212,63 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	public bool IsFuryOn() {
 		
-		return m_isFuryOn;
+		return m_state == State.BREATHING;
 	}
 
 	protected virtual void Update() {
-		if (!m_dragon.changingArea) {
 
-			#if UNITY_EDITOR
+
+		#if UNITY_EDITOR
 			if (Input.GetKeyDown(KeyCode.F)) {
 				AddFury(m_furyMax);
 			}
+			else if (Input.GetKeyDown(KeyCode.G)) {
+				SetMegaFireValue((int)m_superFuryMax);
+			}
 			#endif
-				
 
-			// Cheat for infinite fire
-			bool cheating = ((DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+		// Cheat for infinite fire
+		bool infiniteFury = ((m_modInfiniteFury || DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
 
+		if (m_dragon.changingArea) return;
 
-			if (m_isFuryOn) 
+		switch( m_state )
+		{
+			case State.NORMAL:
+			{
+				if (infiniteFury)
+				{
+					if (DebugSettings.infiniteFire)
+						AddFury(m_furyMax - m_currentFury);	// Set to max fury
+					else if (DebugSettings.infiniteSuperFire){
+						SetMegaFireValue((int)m_superFuryMax);
+					}
+				}
+
+				if ( !m_dragon.dragonEatBehaviour.IsEating())
+				{
+					if (GetMegaFireValue() >= m_superFuryMax)
+					{
+						PrewarmFury(Type.Mega);
+					}
+					else if (m_currentFury >= m_furyMax)
+					{
+						BeginFury( Type.Standard );
+					}
+				}
+			}break;
+			case State.PREWARM_BREATH:
+			{
+				m_prewarmFuryTimer -= Time.unscaledDeltaTime;
+				if ( m_prewarmFuryTimer <= 0)
+					BeginFury( Type.Mega );
+			}break;
+			case State.BREATHING:
 			{
 				if ( !m_isFuryPaused )
 				{
 					// Don't decrease fury if cheating
-					if(!cheating && !m_dragon.changingArea)
+					if(!infiniteFury && !m_dragon.changingArea)
 					{
 						m_currentRemainingFuryDuration -= Time.deltaTime;
 					}
@@ -225,7 +277,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					{
 						case Type.Standard:	{
 								m_currentFury = m_currentRemainingFuryDuration / m_currentFuryDuration * m_furyMax;
-								if (UsersManager.currentUser.superFuryProgression + 1 == m_superFuryMax) {
+								if (GetMegaFireValue() + 1 == m_superFuryMax) {
 									if (m_currentRemainingFuryDuration <= 0.25f) {
 										MegaFireUp();
 									}
@@ -243,8 +295,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					m_dragon.AddEnergy(m_dragon.energyMax);
 
 
-
-
 					if (m_currentRemainingFuryDuration <= 0)
 					{
 						EndFury();
@@ -256,32 +306,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 						m_animator.SetBool( GameConstants.Animator.BREATH, true);
 					}
 				}
-			} else {
-
-				if (cheating)
-				{
-					if (DebugSettings.infiniteFire)
-						AddFury(m_furyMax - m_currentFury);	// Set to max fury
-					else if (DebugSettings.infiniteSuperFire)
-						UsersManager.currentUser.superFuryProgression = (int)m_superFuryMax;
-				}
-
-				if ( !m_dragon.dragonEatBehaviour.IsEating())
-				{
-					if (UsersManager.currentUser.superFuryProgression >= m_superFuryMax)
-					{
-						BeginFury( Type.Mega );
-
-					}
-					else if (m_currentFury >= m_furyMax)
-					{
-						BeginFury( Type.Standard );
-					}
-				}
-			}
-
-			ExtendedUpdate();
+			}break;
 		}
+
 	}
 
 
@@ -301,13 +328,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	protected virtual void OnGamePaused( bool _paused )
 	{
-		if ( _paused && m_isFuryOn)
+		if ( _paused && m_state == State.BREATHING)
 		{
 			// Pause sound
 			if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() )
 				m_breathSoundAO.Pause();
 		}
-		else if ( m_isFuryOn )
+		else if ( m_state == State.BREATHING )
 		{
 			// Resume sound
 			if (m_breathSoundAO != null && m_breathSoundAO.IsPaused() )
@@ -321,46 +348,17 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	virtual protected void ExtendedUpdate() {}
 	virtual public void RecalculateSize(){}
 
+	virtual protected void PrewarmFury( Type _type )
+	{
+		m_type = _type;
+		ChangeState(State.PREWARM_BREATH);
+	}
+
 	virtual protected void BeginFury( Type _type ) 
 	{
 		RecalculateSize();
 		m_type = _type;
-		m_isFuryOn = true;
-
-		UsersManager.currentUser.furyUsed = true;
-
-		switch( m_type )
-		{
-			case Type.Mega:
-			{
-				// Set super gold rush progress
-				m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration * m_superFuryDurationModifier;
-
-				// Set coins multiplier for burn
-				RewardManager.burnCoinsMultiplier = m_superFuryCoinsMultiplier;
-
-				if ( !string.IsNullOrEmpty(m_superBreathSound) )
-					m_superBreathSoundAO = AudioController.Play( m_superBreathSound, transform);
-
-			}break;
-			case Type.Standard:
-			{
-				m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration;
-
-				// Set coins multiplier for burn
-				RewardManager.burnCoinsMultiplier = 1;
-
-				if ( !string.IsNullOrEmpty(m_breathSound) )
-					m_breathSoundAO = AudioController.Play( m_breathSound, transform);
-			}break;
-		}
-
-		RewardManager.currentFireRushMultiplier = m_fireRushMultiplier;
-
-		if (m_healthBehaviour) m_healthBehaviour.enabled = false;
-		if (m_attackBehaviour) m_attackBehaviour.enabled = false;
-
-		Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, true, m_type);
+		ChangeState(State.BREATHING);
 	}
 	virtual protected void Breath() 
 	{
@@ -373,46 +371,50 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	virtual protected void EndFury( bool increase_mega_fire = true ) 
 	{
-		switch (m_type) {
-			case Type.Standard: {
-				if ( increase_mega_fire )
-					MegaFireUp();
-				m_currentFury = 0;
-				m_furyRushesCompleted++;
-
-				if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ){
-					m_breathSoundAO.Stop();
-					m_breathSoundAO = null;
-				}
-			} break;
-
-			case Type.Mega: {
-				// Set super fury counter to 0
-				UsersManager.currentUser.superFuryProgression = 0;
-
-				if (m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying()) {
-					m_superBreathSoundAO.Stop();
-					m_superBreathSoundAO = null;
-				}
-			} break;
-
-		}
-
-		RewardManager.currentFireRushMultiplier = 1;
-		m_isFuryOn = false;
-		m_currentFury = Mathf.Clamp(m_furyRushesCompleted * m_scoreToAddForNextFuryRushes, 0, m_maxScoreToAddForNextFuryRushes);
-
-		if (m_healthBehaviour) m_healthBehaviour.enabled = true;
-		if (m_attackBehaviour) m_attackBehaviour.enabled = true;
-
-		Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, m_type);
-        m_type = Type.None;
+		if ( m_type == Type.Standard && increase_mega_fire )
+			MegaFireUp();
+		ChangeState( State.NORMAL );
 	}
 
 	private void MegaFireUp() {		
-		if (UsersManager.currentUser.superFuryProgression < m_superFuryMax) {
-			UsersManager.currentUser.superFuryProgression++;
+
+		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		{
+			if (tournamentMegaFireValue < m_superFuryMax)
+				tournamentMegaFireValue++;
 		}
+		else
+		{
+			if (UsersManager.currentUser.superFuryProgression < m_superFuryMax) {
+				UsersManager.currentUser.superFuryProgression++;
+			}
+		}
+	}
+
+	private void SetMegaFireValue( int v)
+	{
+		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		{
+			tournamentMegaFireValue = v;
+		}
+		else
+		{
+			UsersManager.currentUser.superFuryProgression = v;	
+		}
+	}
+
+	public int GetMegaFireValue()
+	{
+		int ret = 0;
+		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		{
+			ret = tournamentMegaFireValue;
+		}
+		else
+		{
+			ret = UsersManager.currentUser.superFuryProgression;
+		}
+		return ret;
 	}
 
 	/// <summary>
@@ -420,15 +422,18 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of fury to be added/removed.</param>
 	public void AddFury(float _offset) {
-		if (!m_isFuryOn) {
+		if ( m_state != State.BREATHING && m_state != State.PREWARM_BREATH) {
 			m_currentFury = Mathf.Clamp(m_currentFury + _offset, 0, m_furyMax);
 		}
 	}
 
+	public void AddFuryPercentage(float _value) {
+		AddFury(m_furyMax * _value);
+	}
 
 	public float GetFuryProgression()
 	{
-		if ( m_isFuryOn && m_type == Type.Standard )
+		if ( m_state == State.BREATHING && m_type == Type.Standard )
 		{
 			return m_currentRemainingFuryDuration / m_currentFuryDuration;
 		}
@@ -440,13 +445,13 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	public float GetSuperFuryProgression()
 	{
-		if ( m_isFuryOn && m_type == Type.Mega )
+		if ( m_state == State.BREATHING && m_type == Type.Mega )
 		{
 			return m_currentRemainingFuryDuration / m_currentFuryDuration;
 		}
 		else
 		{
-			return UsersManager.currentUser.superFuryProgression/m_superFuryMax;
+			return GetMegaFireValue()/m_superFuryMax;
 		}
 	}
 
@@ -476,5 +481,114 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public void AddPowerUpLengthMultiplier(float value)
     {
 		m_lengthPowerUpMultiplier += value;
+    }
+
+
+    // 
+    void ChangeState( State _newState )
+    {
+    	if ( m_state == _newState ) return;
+
+    	switch(m_state )
+    	{
+    		case State.NONE:
+    		{
+    		}break;
+			case State.NORMAL:
+    		{
+    		}break;
+			case State.PREWARM_BREATH:
+    		{
+	    	}break;
+			case State.BREATHING:
+    		{
+				switch (m_type) {
+					case Type.Standard: {
+						m_currentFury = 0;
+						m_furyRushesCompleted++;
+
+						if (m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ){
+							m_breathSoundAO.Stop();
+							m_breathSoundAO = null;
+						}
+
+					} break;
+
+					case Type.Mega: {
+						// Set super fury counter to 0
+						SetMegaFireValue(0);
+
+						if (m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying()) {
+							m_superBreathSoundAO.Stop();
+							m_superBreathSoundAO = null;
+						}
+					} break;
+
+				}
+
+				RewardManager.currentFireRushMultiplier = 1;
+				m_currentFury = Mathf.Clamp(m_furyRushesCompleted * m_scoreToAddForNextFuryRushes, 0, m_maxScoreToAddForNextFuryRushes);
+
+				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
+				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
+
+				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, m_type);
+		        m_type = Type.None;
+    		}break;
+    	}
+    	m_state = _newState;
+
+		switch(m_state )
+    	{
+    		case State.NONE:
+    		{
+    		}break;
+			case State.NORMAL:
+    		{
+    		}break;
+			case State.PREWARM_BREATH:
+    		{
+				m_prewarmFuryTimer = m_prewarmDuration;
+				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
+				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
+				Messenger.Broadcast<Type, float>(MessengerEvents.PREWARM_FURY_RUSH, m_type, m_prewarmDuration);
+	    	}break;
+			case State.BREATHING:
+    		{
+				UsersManager.currentUser.furyUsed = true;
+				switch( m_type )
+				{
+					case Type.Mega:
+					{
+						// Set super gold rush progress
+						m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration * m_superFuryDurationModifier;
+
+						// Set coins multiplier for burn
+						RewardManager.burnCoinsMultiplier = m_superFuryCoinsMultiplier;
+
+						if ( !string.IsNullOrEmpty(m_superBreathSound) )
+							m_superBreathSoundAO = AudioController.Play( m_superBreathSound, transform);
+
+					}break;
+					case Type.Standard:
+					{
+						m_currentFuryDuration = m_currentRemainingFuryDuration = m_furyDuration;
+
+						// Set coins multiplier for burn
+						RewardManager.burnCoinsMultiplier = 1;
+
+						if ( !string.IsNullOrEmpty(m_breathSound) )
+							m_breathSoundAO = AudioController.Play( m_breathSound, transform);
+					}break;
+				}
+
+				RewardManager.currentFireRushMultiplier = m_fireRushMultiplier;
+
+				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
+				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
+
+				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, true, m_type);
+    		}break;
+    	}
     }
 }

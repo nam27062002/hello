@@ -48,7 +48,10 @@ public class HDCustomizerManager
 #if APPLY_ON_DEMAND
         public override void onPopupIsPrepared(CyCustomiser.CustomiserPopupConfig kPopupConfig) { }
 #else
-        public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig) { }
+        public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig)
+		{
+			HDCustomizerManager.instance.NotifyPopupIsPrepared(kPopupConfig);
+		}
 #endif
 
         public override void onCustomizationFinished()
@@ -125,6 +128,13 @@ public class HDCustomizerManager
     /// </summary>
     private List<string> m_filesToRevert;
 
+
+	/// <summary>
+	/// At this point we only support one popup. This will have a reference after the callback from CustomizerMAnager is received.
+	/// </summary>
+	private CustomizerManager.CustomiserPopupConfig m_lastPreparedPopupConfig;
+
+
     /// <summary>
     /// Time in seconds left to make customizer expire
     /// </summary>
@@ -156,10 +166,6 @@ public class HDCustomizerManager
 
     public void Initialise()
     {
-        if (FeatureSettingsManager.IsDebugEnabled && DEBUG_ENABLED) {
-            ControlPanel.Log_SetupChannel(ControlPanel.ELogChannel.Customizer, Color.green);
-        }
-
         Reset();
     }
 
@@ -311,6 +317,15 @@ public class HDCustomizerManager
     }
 
     /// <summary>
+    /// Returns whether or not the customizer has been received
+    /// </summary>
+    /// <returns></returns>
+    public bool IsReady()
+    {
+        return m_state == EState.Done;
+    }
+
+    /// <summary>
     /// Applies changes to rules if current customizer requires so
     /// </summary>
     /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
@@ -393,6 +408,41 @@ public class HDCustomizerManager
         return returnValue;
 #endif
     }
+
+	public bool IsCustomiserPopupAvailable()
+	{
+		if (m_state == EState.Done)
+		{
+			return CustomizerManager.SharedInstance.IsCustomiserPopupAvailable(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
+		}
+
+		return false;
+	}
+
+	public CustomizerManager.CustomiserPopupConfig GetOrRequestCustomiserPopup(string _isoLanguageName)
+    {
+        CustomizerManager.CustomiserPopupConfig returnValue = null;
+
+        // Makes sure that there's a customizer and that is has already been applied
+        if (m_state == EState.Done)
+        {
+			returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN, _isoLanguageName);
+        }
+
+        return returnValue;
+    }
+
+	public CustomizerManager.CustomiserPopupConfig GetLastPreparedPopupConfig()
+	{		
+		CustomizerManager.CustomiserPopupConfig config = m_lastPreparedPopupConfig;
+		m_lastPreparedPopupConfig = null;
+		return config;
+	}
+
+	private void NotifyPopupIsPrepared(CustomizerManager.CustomiserPopupConfig _config) 
+	{
+		m_lastPreparedPopupConfig = _config;
+	}
 
     private void NotifyFilesChanged(List<string> files)
     {

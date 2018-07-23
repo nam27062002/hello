@@ -15,11 +15,15 @@ using DG.Tweening;
 /// </summary>
 public class PopupSettingsOptionsTab : MonoBehaviour
 {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	private const string LANGUAGE_PILL_PATH = "UI/Metagame/Settings/PF_LanguagesFlagPill";
+
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed
-    [SerializeField] private GameObject m_languagePillPrefab = null;
 	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
 	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
@@ -29,6 +33,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[Space]
 	[SerializeField]
 	private Slider m_notificationsSlider;
+    [SerializeField]
+    private GameObject m_bloodToggle;
 
     // Internal
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
@@ -60,13 +66,15 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 		// Sort definitions by "order" field, create a pill for each language and init with selected language
 		DefinitionsManager.SharedInstance.SortByProperty(ref languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
+		GameObject prefab = Resources.Load<GameObject>(LANGUAGE_PILL_PATH);
 		for(int i = 0; i < languageDefs.Count; i++) {
 			// Create and initialize pill
-			GameObject pillObj = GameObject.Instantiate<GameObject>(m_languagePillPrefab, m_languageScrollList.content.transform, false);
+			GameObject pillObj = GameObject.Instantiate<GameObject>(prefab, m_languageScrollList.content.transform, false);
 			PopupSettingsLanguagePill pill = pillObj.GetComponent<PopupSettingsLanguagePill>();
 			pill.InitFromDef(languageDefs[i]);
 			m_pills.Add(pill);
 		}
+		prefab = null;
 
 		if (m_pills.Count == 1) {
 			m_languageScrollList.enabled = false;
@@ -76,10 +84,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
 
 		m_dirty = true;
-    }
+        if (m_bloodToggle != null)
+        {
+            m_bloodToggle.SetActive(!GDPRManager.SharedInstance.IsAgeRestrictionEnabled());
+        }
 
-    void OnDestroy(){
-		
     }
 
 	void Update() {

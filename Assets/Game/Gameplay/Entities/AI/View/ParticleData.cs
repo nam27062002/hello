@@ -17,6 +17,7 @@ public class ParticleData {
 	[Space]
 	public Vector3 offset = Vector3.zero;
 	public float scale = 1f;
+	public bool orientate = false;
 
 	//--------------//
 	private ParticleHandler m_handler;
@@ -81,22 +82,28 @@ public class ParticleData {
 		}
 	}
 
-	public GameObject Spawn(Vector3 _at = default(Vector3)) {
+	public GameObject Spawn(Vector3 _at = default(Vector3), Quaternion _orientation = default(Quaternion)) {
 		if (m_handler != null) {
 			if (!m_handler.isValid) {
 				CreatePool();
 			}
-			return m_handler.Spawn(this, _at);
+			GameObject go = m_handler.Spawn(this, _at);
+            if (orientate && go != null)
+				go.transform.rotation = _orientation;
+			return go;
 		}
 		return null;
 	}
 
-	public GameObject Spawn(Transform _parent, Vector3 _offset = default(Vector3), bool _prewarm = true) {
+	public GameObject Spawn(Transform _parent, Vector3 _offset = default(Vector3), bool _prewarm = true, Quaternion _orientation = default(Quaternion)) {
 		if (m_handler != null) {
 			if (!m_handler.isValid) {
 				CreatePool();
 			}
-			return m_handler.Spawn(this, _parent, _offset, _prewarm);
+			GameObject go = m_handler.Spawn(this, _parent, _offset, _prewarm);
+            if (orientate && go != null)
+				go.transform.rotation = _orientation;
+			return go;
 		}
 		return null;
 	}

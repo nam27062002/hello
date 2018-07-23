@@ -28,7 +28,6 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private MenuDragonLoader m_dragonLoader = null;
-	[SerializeField] private UI3DScaler m_scaler = null;
 
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
@@ -47,6 +46,19 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 		} else {
 			m_dragonLoader.LoadDragon(m_def.GetAsString("dragonSku"), m_def.sku);
 		}
+
+		// Disable VFX whenever a popup is opened in top of this preview (they don't render well with a popup on top)
+		if(m_dragonLoader.dragonInstance != null) {
+			ParticleSystem[] ps = m_dragonLoader.dragonInstance.GetComponentsInChildren<ParticleSystem>();
+			for(int i = 0; i < ps.Length; ++i) {
+				// [AOC] At this point the popup containing this preview hasn't yet been 
+				// registered into the PopupManager, so we need to count for it in order 
+				// for the disabler to work as expected.
+				// By doing this, we are assuming the item preview belongs ALWAYS to a popup.
+				DisableOnPopup disabler = ps[i].gameObject.AddComponent<DisableOnPopup>();
+				disabler.refPopupCount = PopupManager.openPopupsCount + 1;
+			}
+		}
 	}
 
 	/// <summary>
@@ -64,17 +76,18 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Set this preview's parent and adjust its size to fit it.
+	/// The info button has been pressed.
 	/// </summary>
-	/// <param name="_t">New parent!</param>
-	public override void SetParentAndFit(Transform _t) {
-		// Let parent do its thing
-		base.SetParentAndFit(_t);
-
-		// Refresh scaler
-		m_scaler.Refresh(true, true);
-
-		// Refresh particle scaler
-		//m_dragonLoader.dragonInstance..DoScale();
+	override public void OnInfoButton() {
+		// Open info popup
+		// [AOC] TODO!!
+		UIFeedbackText.CreateAndLaunch(
+			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
+			GameConstants.Vector2.center,
+			GetComponentInParent<Canvas>().transform as RectTransform
+		);
+		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
+		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
+		popup.Open();*/
 	}
 }

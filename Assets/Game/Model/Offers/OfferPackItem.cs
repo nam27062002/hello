@@ -86,7 +86,7 @@ public class OfferPackItem {
 	/// Initialize from definition.
 	/// </summary>
 	/// <param name="_def">Def.</param>
-	/// <param name="_itemIdx">Index of the item within the pack (0..N-1)</param>
+	/// <param name="_itemIdx">Index of the item within the pack (1..N)</param>
 	public void InitFromDefinition(DefinitionNode _def, int _itemIdx) {
 		// Aux vars
 		string prefix = GetPrefix(_itemIdx);

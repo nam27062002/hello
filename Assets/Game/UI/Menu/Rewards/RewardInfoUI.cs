@@ -210,7 +210,8 @@ public class RewardInfoUI : MonoBehaviour {
 			} break;
 
 			// Egg
-			case Metagame.RewardEgg.TYPE_CODE: {
+			case Metagame.RewardEgg.TYPE_CODE:
+			case Metagame.RewardMultiEgg.TYPE_CODE: {
 				// Nothing to do
 			} break;
 		}

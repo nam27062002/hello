@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class VerticalMotion : Initializable {
+public class VerticalMotion : Initializable, ISpawnable {
 
 	public static float DEFAULT_AMPLITUDE { get { return 2f; } }
 
@@ -21,19 +21,26 @@ public class VerticalMotion : Initializable {
 
 	
 	public override void Initialize() {		
+		m_time = 0f;
 		m_originalPostion = transform.position;
 	}
+
+	public void Spawn(ISpawner _spawner) {
+		m_time = 0f;
+		m_originalPostion = transform.position;
+	}
+
+	public void CustomUpdate() {}
 
 
 	// Update is called once per frame
 	void Update() {
 	
 		if (m_frequency > 0) {
-			m_time += Time.deltaTime;
-
 			Vector3 position = transform.position;
-			position.y = m_originalPostion.y + (Mathf.Cos(m_time / m_frequency) * m_amplitude);
+			position.y = m_originalPostion.y + (Mathf.Sin(m_time / m_frequency) * m_amplitude);
 			transform.position = position;
+			m_time += Time.deltaTime;
 		}
 	}
 }

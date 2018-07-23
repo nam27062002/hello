@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace UnityEngine.SocialPlatforms {
 
@@ -11,7 +11,7 @@ namespace UnityEngine.SocialPlatforms {
 		/// Reports an achievement natively if running Game Center on iOS. Otherwise using Social.ReportProgress
 		/// </summary>
 		public static void ReportAchievement(string achievementID, float progress, bool showsCompletionBanner) {
-
+/*
 			if (Social.Active is GameCenter.GameCenterPlatform && Application.platform == RuntimePlatform.IPhonePlayer) {
 
                 // Use native iOS code if running GameCenter on an iOS device
@@ -24,6 +24,7 @@ namespace UnityEngine.SocialPlatforms {
 				// Otherwise trust the Unity Social API
 				Social.ReportProgress(achievementID, progress, null);
 			}
+ */
 		}
 
 #if UNITY_IOS

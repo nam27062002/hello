@@ -7,7 +7,7 @@
 #define UNITY_AUDIO_FEATURES_4_1
 #endif
 
-#if UNITY_5 || UNITY_6 || UNITY_7
+#if UNITY_5 || UNITY_2017 || UNITY_2017_1_OR_NEWER
 #define UNITY_5_OR_NEWER
 #endif
 
@@ -88,7 +88,7 @@ public class AudioObject : RegisteredComponent
     /// <summary>
     /// Returns true if the audio object is treated as music
     /// </summary>
-    public bool isPlayedAsMusicOrAmbienceSound
+    public AudioChannelType channel
     {
         get;
         internal set;
@@ -248,7 +248,7 @@ public class AudioObject : RegisteredComponent
             {
                 vol *= ac.Volume;
 
-                if ( ac.soundMuted && !isPlayedAsMusicOrAmbienceSound )
+                if ( ac.soundMuted && channel == AudioChannelType.Default )
                 {
                     vol = 0;
                 }
@@ -437,7 +437,7 @@ public class AudioObject : RegisteredComponent
 #if UNITY_5_OR_NEWER
             return primaryAudioSource.panStereo;
 #else
-           return primaryAudioSource.pan;
+           return primaryAudioSource.panStereo;
 #endif
         }
         set
@@ -445,7 +445,7 @@ public class AudioObject : RegisteredComponent
 #if UNITY_5_OR_NEWER
             primaryAudioSource.panStereo = value;
 #else
-            primaryAudioSource.pan = value;
+            primaryAudioSource.panStereo = value;
 #endif
         }
     }
@@ -465,7 +465,7 @@ public class AudioObject : RegisteredComponent
     }
 
     /// <summary>
-    /// If enabled, the audio will stop plaing if a fadeout is finished.
+    /// If enabled, the audio will stop playing if a fadeout is finished.
     /// </summary>
     /// <remarks>
     /// Enabled by default.
@@ -1141,7 +1141,7 @@ public class AudioObject : RegisteredComponent
        _audioSource2.spatialBlend = _audioSource1.spatialBlend;
        _audioSource2.outputAudioMixerGroup = _audioSource1.outputAudioMixerGroup;
 #else
-       _audioSource2.panLevel = _audioSource1.panLevel;
+       _audioSource2.spatialBlend = _audioSource1.spatialBlend;
 #endif
        _audioSource2.velocityUpdateMode = _audioSource1.velocityUpdateMode;
        _audioSource2.ignoreListenerVolume = _audioSource1.ignoreListenerVolume;
@@ -1155,6 +1155,12 @@ public class AudioObject : RegisteredComponent
 
 #if UNITY_AUDIO_FEATURES_4_1
        _audioSource2.ignoreListenerPause = _audioSource1.ignoreListenerPause;
+#endif
+
+#if UNITY_5_3_OR_NEWER
+        _audioSource2.bypassListenerEffects = _audioSource1.bypassListenerEffects;
+        _audioSource2.bypassReverbZones = _audioSource1.bypassReverbZones;
+        _audioSource2.reverbZoneMix = _audioSource1.reverbZoneMix;
 #endif
 
     }
@@ -1547,8 +1553,9 @@ public class AudioObject : RegisteredComponent
         if ( fadeVolumePrimary != _volumeFromPrimaryFade )
         {
             _volumeFromPrimaryFade = fadeVolumePrimary;
-            _ApplyVolumePrimary();
         }
+
+        _ApplyVolumePrimary();
 
         // secondary AudioSource
         if ( _audioSource2 != null )
@@ -1716,18 +1723,24 @@ public class AudioObject : RegisteredComponent
         }
     }
 
-    internal void _ApplyVolumePrimary()
+    internal void _ApplyVolumePrimary( float volumeMultiplier = 1 )
     {
-        float volumeToSet = TransformVolume( volumeTotalWithoutFade * _volumeFromPrimaryFade );
-        primaryAudioSource.volume = volumeToSet;
+        float volumeToSet = TransformVolume( volumeTotalWithoutFade * _volumeFromPrimaryFade * volumeMultiplier );
+        if ( primaryAudioSource.volume != volumeToSet )
+        {
+            primaryAudioSource.volume = volumeToSet;
+        }
     }
 
-    internal void _ApplyVolumeSecondary()
+    internal void _ApplyVolumeSecondary( float volumeMultiplier = 1 )
     {
         if ( secondaryAudioSource )
         {
-            float volumeToSet = TransformVolume( volumeTotalWithoutFade * _volumeFromSecondaryFade );
-            secondaryAudioSource.volume = volumeToSet;
+            float volumeToSet = TransformVolume( volumeTotalWithoutFade * _volumeFromSecondaryFade * volumeMultiplier );
+            if ( secondaryAudioSource.volume != volumeToSet )
+            {
+                secondaryAudioSource.volume = volumeToSet;
+            }
         }
     }
 

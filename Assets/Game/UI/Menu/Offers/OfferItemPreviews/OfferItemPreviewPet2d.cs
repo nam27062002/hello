@@ -58,4 +58,22 @@ public class OfferItemPreviewPet2d : IOfferItemPreview {
 		}
 		return LocalizationManager.SharedInstance.Localize("TID_PET");	// (shouldn't happen) use generic
 	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The info button has been pressed.
+	/// </summary>
+	override public void OnInfoButton() {
+		// Intiialize info popup
+		PopupController popup = PopupManager.LoadPopup(PopupInfoPet.PATH_SIMPLE);
+		popup.GetComponent<PopupInfoPet>().Init(m_def);
+
+		// Move it forward in Z so it doesn't conflict with our 3d preview!
+		popup.transform.SetLocalPosZ(-2500f);
+
+		// Open it!
+		popup.Open();
+	}
 }

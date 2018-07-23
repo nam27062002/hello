@@ -59,6 +59,11 @@ public class MathUtils {
 		return Mathf.Round(_value/_factor) * _factor;
 	}
 
+	public static long Snap(long _value, long _factor) {
+		if(_factor == 0) return _value;
+		return (_value/_factor) * _factor;
+	}
+
 	/// <summary>
 	/// Find out the order of magnitude of the given value.
 	/// </summary>
@@ -246,5 +251,24 @@ public class MathUtils {
 	public static bool FuzzyEquals(float a, float b)
 	{
 	    return Mathf.Abs(a - b) < Mathf.Epsilon;
+	}
+
+	public static Quaternion DragonRotation( float angleInRadians )
+	{
+		float rad = angleInRadians * 0.5f;
+		float sin = Mathf.Sin(rad);
+		float cos = Mathf.Cos(rad);
+
+		Quaternion q1 = GameConstants.Quaternion.identity;
+		q1.w = cos;
+		q1.z = sin;
+
+		Quaternion q2 = GameConstants.Quaternion.identity;
+		q2.w = cos;
+		q2.x = sin;
+
+		Quaternion ret = q1 * q2;
+
+		return ret;
 	}
 }

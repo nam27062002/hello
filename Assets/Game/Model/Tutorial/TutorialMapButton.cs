@@ -8,7 +8,7 @@ public class TutorialMapButton : MonoBehaviour {
 	[SerializeField] private GameObject m_mapButton;
 	[SerializeField] private GameObject m_mapButtonGodRays;
 	[SerializeField] private RectTransform m_targetTransform;
-	[SerializeField] private Image m_godRays;
+	[SerializeField] private ParticleSystem m_godRays;
 	[SerializeField] private float m_delay = 5f;
 
 	private enum State {		
@@ -46,22 +46,10 @@ public class TutorialMapButton : MonoBehaviour {
 			m_mapButton.SetActive(false);
 			m_mapButtonGodRays.SetActive(false);
 
-			if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
-				m_timer = new DeltaTimer();
-				m_timer.Stop();
+			if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {				
+				m_state = State.Idle;
 
-				m_rTransform.localScale = GameConstants.Vector3.zero;
-
-				m_posO = m_rTransform.position;
-
-				m_color = m_godRays.color;
-				m_color.a = 0f;
-				m_godRays.color = m_color;
-
-				m_rotation = 0f;
-
-				m_timer.Start(m_delay * 1000f);
-				m_state = State.Delay;
+				Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 			} else {
 				GameObject.Destroy(m_rTransform.parent.gameObject);
 			}
@@ -70,6 +58,23 @@ public class TutorialMapButton : MonoBehaviour {
 
 	private void OnDestroy() {
 		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+	}
+
+	private void OnGameStarted() {
+		m_timer = new DeltaTimer();
+		m_timer.Stop();
+
+		m_rTransform.localScale = GameConstants.Vector3.zero;
+
+		m_posO = m_rTransform.position;
+
+		m_godRays.gameObject.SetActive(false);
+
+		m_rotation = 0f;
+
+		m_timer.Start(m_delay * 1000f);
+		m_state = State.Delay;
 	}
 
 	private void StartAnim(Transform _t, Reward _reward) {
@@ -79,7 +84,7 @@ public class TutorialMapButton : MonoBehaviour {
 		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
 	}
 
-	void Update() {
+	private void Update() {
 		float dt = 0; 
 
 		switch (m_state) {
@@ -98,6 +103,9 @@ public class TutorialMapButton : MonoBehaviour {
 			m_rTransform.localScale = Vector3.Lerp(GameConstants.Vector3.zero, GameConstants.Vector3.one * 2f, dt);
 			if (m_timer.IsFinished()) {
 				m_timer.Start(1500f);
+
+				m_godRays.gameObject.SetActive(true);
+
 				m_state = State.GodRays;
 			}
 			break;
@@ -109,9 +117,12 @@ public class TutorialMapButton : MonoBehaviour {
 			m_rTransform.localRotation = Quaternion.AngleAxis(m_rotation, GameConstants.Vector3.forward);
 
 			m_color.a = Mathf.Lerp(0f, 1f, dt);
-			m_godRays.color = m_color;
 			if (m_timer.IsFinished()) {
 				m_timer.Start(800f);
+
+				ParticleSystem.EmissionModule em = m_godRays.emission;
+				em.enabled = false;
+
 				m_state = State.Move;
 			}
 			break;
@@ -123,7 +134,6 @@ public class TutorialMapButton : MonoBehaviour {
 			m_rTransform.localRotation = Quaternion.AngleAxis(m_rotation, GameConstants.Vector3.forward);
 
 			m_color.a = Mathf.Lerp(1f, 0f, dt * 10f);
-			m_godRays.color = m_color;
 			m_rTransform.position = Vector3.Lerp(m_posO, m_targetTransform.position, dt);
 			m_rTransform.localScale = Vector3.Lerp(GameConstants.Vector3.one * 2f, GameConstants.Vector3.one, dt);
 			if (m_timer.IsFinished()) {

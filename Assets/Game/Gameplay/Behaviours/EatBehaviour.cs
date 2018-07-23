@@ -192,7 +192,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	}
 
     protected virtual void Start () {
-		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+        m_useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
 		m_eatingEntitiesEnabled = m_canEatEntities;
 
 		m_holdingBloodParticle.CreatePool();

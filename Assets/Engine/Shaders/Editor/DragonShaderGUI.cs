@@ -274,6 +274,7 @@ internal class DragonShaderGUI : ShaderGUI
         bool bNormalMap = mp_normalTexture.textureValue != null as Texture;
 
         SetKeyword(material, kw_normalmap, bNormalMap);
+        mp_EnableNormalMap.floatValue = bNormalMap ? 1.0f : 0.0f;
         EditorGUI.BeginChangeCheck();
 
         if (bNormalMap)
@@ -338,8 +339,11 @@ internal class DragonShaderGUI : ShaderGUI
                 materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
                 break;
 
-            case 3:     //SELFILLUMINATE_BLINKLIGHTS
+            case 2:     //SELFILLUMINATE_BLINKLIGHTS
                 EditorGUILayout.HelpBox(Styles.blinkLightsSelfIluminationText, MessageType.Info);
+                materialEditor.ShaderProperty(mp_innerLightWaveSpeed, Styles.innerLightWaveSpeedText);
+                materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
                 break;
         }
 

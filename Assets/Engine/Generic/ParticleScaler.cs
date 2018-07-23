@@ -189,7 +189,7 @@ public class ParticleScaler : MonoBehaviour
 			case ParticleSystemShapeType.BoxShell:
 			case ParticleSystemShapeType.BoxEdge:
 			{
-				data.m_boxShapeSize = shape.box;
+				data.m_boxShapeSize = shape.scale;
 			}break;
 			case ParticleSystemShapeType.Mesh:
 			{
@@ -343,7 +343,7 @@ public class ParticleScaler : MonoBehaviour
                 case ParticleSystemShapeType.BoxShell:
                 case ParticleSystemShapeType.BoxEdge:
                     {
-                        shape.box = data.m_boxShapeSize;
+                        shape.scale = data.m_boxShapeSize;
                     }
                     break;
                 case ParticleSystemShapeType.Mesh:
@@ -540,7 +540,7 @@ public class ParticleScaler : MonoBehaviour
 	                case ParticleSystemShapeType.BoxShell:
 	                case ParticleSystemShapeType.BoxEdge:
 	                    {
-	                        shape.box *= scale;
+	                        shape.scale *= scale;
 	                    }
 	                    break;
 	                case ParticleSystemShapeType.Mesh:

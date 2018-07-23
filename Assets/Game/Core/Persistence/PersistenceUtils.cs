@@ -24,20 +24,22 @@ public class PersistenceUtils
         if (_useDefaultProfile)
         {
             // The default profile is created from rules
-            DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
-            if (_def != null)
+			// ignore xml to avoid hackers modfying it
+			_returnValue = new SimpleJSON.JSONClass();
+			DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+			DefinitionNode initialSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
+
+            if (initialSettingsDef != null)
             {
-            	// ignore xml to avoid hackers moding it
                 //string _sc = _def.Get("softCurrency");
                 // string _pc = _def.Get("hardCurrency");
 				string _sc = "0";
                 string _pc = "0";
                 if (_initialDragonSku == null)
                 {
-                    _initialDragonSku = _def.Get("initialDragonSKU");
+                    _initialDragonSku = initialSettingsDef.Get("initialDragonSKU");
                 }
 
-                _returnValue = new SimpleJSON.JSONClass();
 
                 // User Profile: sc, pc, currentDragon
                 SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
@@ -70,6 +72,14 @@ public class PersistenceUtils
 
                 _returnValue.Add("dragons", _dragons);
             }
+
+			// [AOC] Start with the map unlocked
+			// Use default 24hrs timer if the settings rules are not ready
+			System.DateTime mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);
+			if(gameSettingsDef != null) {
+				mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+			}
+			_returnValue.Add("mapResetTimestamp", mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         }
         else
         {

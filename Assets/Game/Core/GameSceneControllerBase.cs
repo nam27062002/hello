@@ -44,6 +44,11 @@ public class GameSceneControllerBase : SceneController {
 		get { return m_paused; }
 	}
 
+	protected bool m_freezeElapsedSeconds = false;
+	public bool freezeElapsedSeconds {
+		get { return m_freezeElapsedSeconds; }
+		set { m_freezeElapsedSeconds = value; }
+	}
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

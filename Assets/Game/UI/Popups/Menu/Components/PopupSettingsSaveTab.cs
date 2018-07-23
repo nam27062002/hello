@@ -517,10 +517,13 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private bool User_IsAvatarLoaded { get; set; }
 
-    private EState User_LastState { get; set; }
+    private string User_NameLoaded { get; set; }
+
+    private EState User_LastState { get; set; }    
 
     private void User_Init()
-    {        
+    {
+        User_NameLoaded = null;
         User_IsAvatarLoaded = false;
 
         // Nothing is shown
@@ -540,7 +543,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
         if (User_LastState != Model_State)
         {
             bool needsToLoadProfile = (Model_HasBeenLoaded(Model_State) && !Model_HasBeenLoaded(User_LastState)) ||
-                                       SocialPlatformManager.SharedInstance.NeedsProfileInfoToBeUpdated();
+                                       SocialPlatformManager.SharedInstance.NeedsProfileInfoToBeUpdated() || 
+                                       (string.IsNullOrEmpty(User_NameLoaded) && Model_State != EState.NeverLoggedIn);
 
             bool needsSocialIdToBeUpdated = SocialPlatformManager.SharedInstance.NeedsSocialIdToBeUpdated();
 
@@ -560,7 +564,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 case EState.LoggedIn:
                 case EState.LoggedInAndIncentivised:
                 case EState.PreviouslyLoggedIn:
-                    m_userLoggedInRoot.SetActive(true);
+                    User_UpdateLoggedInRoot();
 
                     if (needsSocialIdToBeUpdated)
                     {
@@ -571,8 +575,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 
                 case EState.NeverLoggedIn:
                     if (FeatureSettingsManager.instance.IsIncentivisedLoginEnabled())
-                    {
-                        m_userNotLoggedInRoot.SetActive(true);
+                    {                        
                         m_userNotLoggedInRewardText.gameObject.SetActive(true);
                         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
                         m_userNotLoggedInMessageText.gameObject.SetActive(true);
@@ -600,7 +603,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
         }
 
         Action<string, Texture2D> onDone = delegate (string userName, Texture2D profileImage)
-        {            
+        {
+            User_NameLoaded = userName;
+
+            User_UpdateLoggedInRoot();
+
             if (!string.IsNullOrEmpty(userName) && m_userNameText != null)
             {
                 m_userNameText.text = userName;
@@ -623,7 +630,18 @@ public class PopupSettingsSaveTab : MonoBehaviour
             }                            
         };
 
+        // Profile picture and name are hidden until the updated information is receiveds
+        m_userNotLoggedInRoot.SetActive(false);
         SocialPlatformManager.SharedInstance.GetSimpleProfileInfo(onDone);
+    }
+
+    private void User_UpdateLoggedInRoot()
+    {
+        // Picture and name are shown only if the name is valid
+        if (m_userLoggedInRoot != null)
+        {
+            m_userLoggedInRoot.SetActive(!string.IsNullOrEmpty(User_NameLoaded));
+        }
     }
     #endregion
 
@@ -666,7 +684,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     state = (isLoggedIn) ? EState.LoggedIn : EState.PreviouslyLoggedIn;
                     break;
 
-                case UserProfile.ESocialState.LoggedInAndInventivised:
+                case UserProfile.ESocialState.LoggedInAndIncentivised:
                     state = (isLoggedIn) ? EState.LoggedInAndIncentivised : EState.PreviouslyLoggedIn;
                     break;                
             }

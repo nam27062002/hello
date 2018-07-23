@@ -46,9 +46,7 @@ public class PersistenceFacade
 		GameServerManager.SharedInstance.Configure();
 
         // Tries to log in as soon as possible so the chances to have online stuff such as customizer (which may contain offers) ready when main menu is loaded are higher
-        GameServerManager.SharedInstance.Auth(null);
-
-        SocialPlatformManager.SharedInstance.Init();
+        GameServerManager.SharedInstance.Auth(null);        
 	}
 
 	public void Destroy()
@@ -739,13 +737,13 @@ public class PersistenceFacade
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_CLOUD_ACTIVE_NAME";
 
-        long lastUploadTime = instance.Sync_LatestSyncTime;
+        long lastUploadTime = instance.Sync_LatestSyncTime;        
         if (lastUploadTime > 0)
         {
             config.MessageTid = "TID_SAVE_CLOUD_ACTIVE_DESC";
             DateTime lastUpload = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             lastUpload = lastUpload.AddMilliseconds(lastUploadTime).ToLocalTime();
-            string lastUploadStr = lastUpload.ToString("F");
+            string lastUploadStr = lastUpload.ToString("F", LocalizationManager.SharedInstance.Culture);
             config.MessageParams = new string[] { lastUploadStr };
         }
         else

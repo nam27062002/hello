@@ -20,7 +20,7 @@ class SpawnerCounterToolExtended : EditorWindow
 
     string currentSceneName = "none";
 
-    [MenuItem("Hungry Dragon/Tools/Spawners All Info")]
+    [MenuItem("Hungry Dragon/Balancing/Spawners All Info")]
 
     public static void ShowWindow()
     {
@@ -98,12 +98,14 @@ class SpawnerCounterToolExtended : EditorWindow
 		finalArray[0] = "spawner_sku;entity_spawned (AVG);respawn_time;activating_chance;xp;total_xp;agressive;min_entities;max_entities;hasBonus";
         for (int i = 0; i < totalObjects; i++)
         {
-			if ((initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkEye") || (initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkFrog") || (initalArray[i].m_entityPrefabList[0].name == "Junk/PF_BadJunkMagicBottle"))
-				finalArray[i+1] = "Junk/PF_BadJunkBone;" + (((decimal)(initalArray[i].m_quantity.min + initalArray[i].m_quantity.max)/2)) + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
-			else if ((initalArray[i].m_entityPrefabList[0].name == "Surface/PF_RatSmall") || (initalArray[i].m_entityPrefabList[0].name == "Surface/PF_RatSmall_Static") || (initalArray[i].m_entityPrefabList[0].name == "Surface/PF_RatSmall_Wall"))
-				finalArray[i+1] = "Surface/PF_Rat;" + (((decimal)(initalArray[i].m_quantity.min + initalArray[i].m_quantity.max)/2)) + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
-			else
-				finalArray[i+1] = initalArray[i].m_entityPrefabList[0].name + ";" + (((decimal)(initalArray[i].m_quantity.min + initalArray[i].m_quantity.max)/2)) + ";" + initalArray[i].m_spawnTime.center + ";" + initalArray[i].m_activationChance + ";" + ";;;" + initalArray[i].m_quantity.min + ";" + initalArray[i].m_quantity.max + ";" + initalArray[i].HasGroupBonus;
+			if ((initalArray [i].m_entityPrefabList [0].name == "Junk/PF_BadJunkEye") || (initalArray [i].m_entityPrefabList [0].name == "Junk/PF_BadJunkFrog") || (initalArray [i].m_entityPrefabList [0].name == "Junk/PF_BadJunkMagicBottle"))
+				finalArray [i + 1] = "Junk/PF_BadJunkBone;" + (((decimal)(initalArray [i].m_quantity.min + initalArray [i].m_quantity.max) / 2)) + ";" + initalArray [i].m_spawnTime.center + ";" + initalArray [i].m_activationChance + ";" + ";;;" + initalArray [i].m_quantity.min + ";" + initalArray [i].m_quantity.max + ";" + initalArray [i].HasGroupBonus;
+			else {
+				if ((initalArray [i].m_entityPrefabList [0].name == "Surface/PF_RatSmall") || (initalArray [i].m_entityPrefabList [0].name == "Surface/PF_RatSmall_Static") || (initalArray [i].m_entityPrefabList [0].name == "Surface/PF_RatSmall_Wall"))
+					finalArray [i + 1] = "Surface/PF_Rat;" + (((decimal)(initalArray [i].m_quantity.min + initalArray [i].m_quantity.max) / 2)) + ";" + initalArray [i].m_spawnTime.center + ";" + initalArray [i].m_activationChance + ";" + ";;;" + initalArray [i].m_quantity.min + ";" + initalArray [i].m_quantity.max + ";" + initalArray [i].HasGroupBonus;
+				else
+					finalArray [i + 1] = initalArray [i].m_entityPrefabList [0].name + ";" + (((decimal)(initalArray [i].m_quantity.min + initalArray [i].m_quantity.max) / 2)) + ";" + initalArray [i].m_spawnTime.center + ";" + initalArray [i].m_activationChance + ";" + ";;;" + initalArray [i].m_quantity.min + ";" + initalArray [i].m_quantity.max + ";" + initalArray [i].HasGroupBonus;
+			}
 			finalArray[i+1] = finalArray[i+1].Replace(".",",");
         }
         return (finalArray);

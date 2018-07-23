@@ -751,7 +751,7 @@ public class PolyMeshEditor : Editor {
 		}
 
 		if(m_editing || autoEdit) {
-			if(e.type == EventType.keyDown && e.keyCode == KeyCode.Keypad0) {
+			if(e.type == EventType.KeyDown && e.keyCode == KeyCode.Keypad0) {
 				if(polyMesh.transform.GetComponent<MeshRenderer>().enabled) {
 					polyMesh.transform.GetComponent<MeshRenderer>().enabled = false;
 				} else {

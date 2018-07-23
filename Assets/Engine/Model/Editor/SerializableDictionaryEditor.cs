@@ -88,9 +88,12 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 				pos.height = EditorGUI.GetPropertyHeight(prop, GUIContent.none, true);
 				maxHeight = Mathf.Max(maxHeight, pos.height);
 
-				// If of unknown type, display the type as label to give the suer a hint on what it is
+				// If of unknown type, display the type as label to give the user a hint on what it is
+				// If string, use a delayed textfield to detect duplicated keys
 				if(prop.propertyType == SerializedPropertyType.Generic) {
 					EditorGUI.PropertyField(pos, prop, new GUIContent(prop.propertyType.ToString()), true);
+				} else if(prop.propertyType == SerializedPropertyType.String) {
+					EditorGUI.DelayedTextField(pos, prop, GUIContent.none);
 				} else {
 					EditorGUI.PropertyField(pos, prop, GUIContent.none, true);
 				}
@@ -121,9 +124,11 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 				pos.x += pos.width;
 				pos.width = REMOVE_BUTTON_WIDTH;
 				pos.height = m_pos.height;
+				GUI.color = Color.red;
 				if(GUI.Button(pos, "-")) {
 					toRemove = i;
 				}
+				GUI.color = Color.white;
 
 				// Next line
 				AdvancePos(maxHeight, 1f);
@@ -134,8 +139,9 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 			AdvancePos(5f);	// Extra spacing
 			pos = m_pos;
 			pos.width = 100f;
-			pos.height = 30f;
+			pos.height = 20f;
 			pos.x += m_pos.width/2f - pos.width/2f;
+			GUI.color = Color.green;
 			if(GUI.Button(pos, "+")) {
 				// Insert a new key
 				// Inserting a new element duplicates the last one, and keys must be unique
@@ -151,6 +157,7 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 				prop = valuesProp.GetArrayElementAtIndex(idx);
 				prop.isExpanded = true;	// Expanded by default to hint the user he has to fill in the data!
 			}
+			GUI.color = Color.white;
 			AdvancePos(pos.height);
 
 			// Process item to be removed

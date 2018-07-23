@@ -16,13 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Tracker for traveling distance.
 /// </summary>
-public class TrackerDistance : TrackerBase {
-	//------------------------------------------------------------------------//
-	// MEMBERS																  //
-	//------------------------------------------------------------------------//
-	// Internal
-	private Vector3 m_lastPosition = Vector3.zero;
-
+public class TrackerDistance : TrackerBaseDistance {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -30,9 +24,6 @@ public class TrackerDistance : TrackerBase {
 	/// Default constructor.
 	/// </summary>
 	public TrackerDistance() {
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
 	}
 
 	/// <summary>
@@ -42,20 +33,7 @@ public class TrackerDistance : TrackerBase {
 		
 	}
 
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Finalizer method. Leave the tracker ready for garbage collection.
-	/// </summary>
-	override public void Clear() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_UPDATED, OnGameUpdated);
 
-		// Call parent
-		base.Clear();
-	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -63,18 +41,9 @@ public class TrackerDistance : TrackerBase {
 	/// <summary>
 	/// A new game has started.
 	/// </summary>
-	private void OnGameStarted() {
-		// Store initial dragon position
-		m_lastPosition = InstanceManager.player.transform.position;
-	}
+	protected override void OnGameStarted() {
+		base.OnGameStarted();
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void OnGameUpdated() {
-		// We'll receive this event only while the game is actually running, so no need to check anything else
-		currentValue += (InstanceManager.player.transform.position - m_lastPosition).magnitude;
-		//Debug.Log("<color=orange>" + (InstanceManager.player.transform.position - m_lastPosition).magnitude + "</color><color=red> (" + currentValue + ")</color>");
-		m_lastPosition = InstanceManager.player.transform.position;
+		m_updateDistance = true;
 	}
 }

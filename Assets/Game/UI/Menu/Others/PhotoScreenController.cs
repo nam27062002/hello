@@ -297,7 +297,7 @@ public class PhotoScreenController : MonoBehaviour {
 						);
 
 						// Power description and icon
-						m_eggRewardDesc.text = DragonPowerUp.GetDescription(powerDef, false);	// Custom formatting depending on powerup type, already localized
+						m_eggRewardDesc.text = DragonPowerUp.GetDescription(powerDef, false, true);	// Custom formatting depending on powerup type, already localized
 						m_eggRewardIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + powerDef.GetAsString("icon"));
 					} break;
 

@@ -187,6 +187,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -229,6 +230,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1.25
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -267,6 +269,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: Soldier_Dead
   m_firePoints: []
   m_burnParticle:
@@ -307,6 +310,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 1.37, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -346,6 +350,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: Soldier_Attack
@@ -370,6 +375,7 @@ MonoBehaviour:
   m_knockback: 0
   m_trail: {fileID: 0}
   m_trailParticles: []
+  m_weaponParticle: {fileID: 0}
 --- !u!114 &11498554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -390,7 +396,7 @@ MonoBehaviour:
     min: 2
     max: 3
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"damage":25,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":4,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"damage":15,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":4,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
   m_databaseKey: PF_BadFarmer_Static
 --- !u!1001 &100100000
 Prefab:
