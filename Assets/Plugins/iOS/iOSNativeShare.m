@@ -69,9 +69,9 @@ void ShowAlertMessage (NSString *title, NSString *message){
 	NSMutableArray *items = [NSMutableArray new];
 	
 	if(mText != NULL && mText.length > 0){
-		
-		[items addObject:mText];
-		
+        MyActivityItemProvider *activityItem = [[MyActivityItemProvider alloc] initWithPlaceholderItem:mText];
+        [items addObject:activityItem];
+		// [items addObject:mText];
 	}
 	
 	if(mfilePath != NULL && mfilePath.length > 0){
@@ -131,16 +131,30 @@ void ShowAlertMessage (NSString *title, NSString *message){
     }
 	
 	UIViewController *rootViewController = UnityGetGLViewController();
-    //if iPhone
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-          [rootViewController presentViewController:activity animated:YES completion:Nil];
+    //if iPad
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        activity.popoverPresentationController.sourceView = rootViewController.view;
+        activity.popoverPresentationController.sourceRect = CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height/4, 0, 0);
+        /*
+        activity.completionWithItemsHandler = ^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError){
+            if ( completed ) {
+                NSLog(@"The selected activity was %@", activityType);
+            }
+        };
+         */
     }
+    [rootViewController presentViewController:activity animated:YES completion:Nil];
+    /*
     //if iPad
     else {
         // Change Rect to position Popover
         UIPopoverController *popup = [[UIPopoverController alloc] initWithContentViewController:activity];
         [popup presentPopoverFromRect:CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height/4, 0, 0)inView:rootViewController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+ 
     }
+     */
+    
+    
     return self;
 }
 
