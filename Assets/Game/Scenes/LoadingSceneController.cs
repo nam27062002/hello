@@ -590,7 +590,6 @@ public class LoadingSceneController : SceneController {
     private void OnTermsDone()
     {
         m_waitingTermsDone = true;
-        HDTrackingManager.Instance.Notify_MarketingID();
     }
         
     private void StartLoadFlow()

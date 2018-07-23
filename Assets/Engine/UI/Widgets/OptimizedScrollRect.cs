@@ -335,7 +335,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 			content.anchoredPosition = Vector2.SmoothDamp(content.anchoredPosition, m_targetPosition, ref m_autoScrollVelocity, m_autoScrollTime, 10000f, Time.deltaTime);
 
 			// Stop moving at some point!
-			if(m_autoScrollVelocity.sqrMagnitude < 1f) {
+            if (m_autoScrollVelocity.sqrMagnitude < 1f) {
 				OnFocusFinished(m_slotsOfPills[m_focusToPillIndex]);
 				m_focusToPillIndex = -1;
 				m_isAutoScrolling = false;
@@ -402,21 +402,21 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 		if (vertical) {
 			if (m_containerSize.y > m_visibleAreaSize.y) {
 				m_targetPosition.y = m_pillPosition[_index].y - m_visibleAreaSize.y/2f;
-				if (m_targetPosition.y < m_padding.top) m_targetPosition.y = m_padding.top;
-				if (m_targetPosition.y > (m_containerSize.y - m_visibleAreaSize.y - m_padding.bottom)) m_targetPosition.y = (m_containerSize.y - m_visibleAreaSize.y - m_padding.bottom);
+				if (m_targetPosition.y < 0) m_targetPosition.y = 0;
+				if (m_targetPosition.y > (m_containerSize.y - m_visibleAreaSize.y)) m_targetPosition.y = (m_containerSize.y - m_visibleAreaSize.y);
 			}
 		}
 		if (horizontal)	{
 			if (m_containerSize.x > m_visibleAreaSize.x) {
 				m_targetPosition.x = m_visibleAreaSize.x/2f - m_pillPosition[_index].x;
-				if (m_targetPosition.x > m_padding.left) m_targetPosition.x = m_padding.left;
-				if (m_targetPosition.x < -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right)) m_targetPosition.x = -(m_containerSize.x - m_visibleAreaSize.x + m_padding.right);
+				if (m_targetPosition.x > 0) m_targetPosition.x = 0;
+				if (m_targetPosition.x < -(m_containerSize.x - m_visibleAreaSize.x)) m_targetPosition.x = -(m_containerSize.x - m_visibleAreaSize.x);
 			}
 		}
 
 		m_focusToPillIndex = _index;
 
-		if (_animate) {			
+		if (_animate) {
 			m_isAutoScrolling = true;
 		} else {
 			content.anchoredPosition = m_targetPosition;
