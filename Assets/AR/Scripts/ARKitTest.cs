@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +22,6 @@ public class ARKitTest : MonoBehaviour
 
 	private GameObject	  mButtonsContainer;
 	private GameObject	  mGOARButtonOptions;
-	private GameObject	  mGOARButtonPhoto;
 
 	private GameObject    mButtonSelectSurface;
 	private GameObject    mButtonClose;
@@ -51,32 +49,6 @@ public class ARKitTest : MonoBehaviour
 			Debug.Log ("onNeedToAskForCameraPermission");
 
 			ARGameManager.SharedInstance.RequestNativeCameraPermission ();
-		}
-
-		public override void onARIsAvailableResult (bool bAvailable)
-		{
-			Debug.Log ("onARIsAvailableResult: " + bAvailable);
-
-			if (bAvailable)
-			{
-
-                if (m_kSource != null)
-                {
-                    m_kSource.m_bARToBeActive = true;
-
-                    m_kSource.mGOARButtonOptions.SetActive(m_kSource.m_bARToBeActive);
-                    m_kSource.mGOARButtonOptions.GetComponent<Button>().onClick.RemoveListener(m_kSource.__arButtonPressed);
-                    m_kSource.mGOARButtonOptions.GetComponent<Button>().onClick.AddListener(m_kSource.__arButtonPressed);
-
-                    m_kSource.mGOARButtonPhoto.SetActive(true);
-                    m_kSource.mGOARButtonPhoto.GetComponent<Button>().onClick.RemoveListener(m_kSource.__arPhotoButtonPressed);
-                    m_kSource.mGOARButtonPhoto.GetComponent<Button>().onClick.AddListener(m_kSource.__arPhotoButtonPressed);
-                }
-                else
-                {
-                    Debug.Log("m_kSource = null !!!!!");
-                }
-			}
 		}
 	};
 
@@ -119,7 +91,7 @@ public class ARKitTest : MonoBehaviour
 		string arSurfacePrefab = "ARSurfacePrefab";
 		if (arSurfacePrefab != null && arSurfacePrefab != "") {
 
-			mGOARSurfacePrefab = (GameObject) GameObject.Instantiate (Resources.Load ("UI/Screens/" + arSurfacePrefab));
+			mGOARSurfacePrefab = (GameObject) GameObject.Instantiate (Resources.Load ("AR/UI/Screens/" + arSurfacePrefab));
 			mGOARSurfacePrefab.transform.SetParent (this.transform, false);
 		}
 	}
@@ -129,9 +101,6 @@ public class ARKitTest : MonoBehaviour
 		if (bCameraIsGranted) {
 			if (mGOARButtonOptions != null) {
 				mGOARButtonOptions.SetActive (false);
-			}
-			if (mGOARButtonPhoto != null) {
-				mGOARButtonPhoto.SetActive (false);
 			}
 
 			if (mGOScreenContainer != null) {
@@ -171,7 +140,7 @@ public class ARKitTest : MonoBehaviour
 				kAffectedARObjects.Add (kArena);
 			}
 
-			ARKitManager.SharedInstance.SetAffectedARObjects (kAffectedARObjects, 0.01f);
+			ARKitManager.SharedInstance.SetAffectedARObjects (kAffectedARObjects, 0.05f);
 
 
 
@@ -191,9 +160,6 @@ public class ARKitTest : MonoBehaviour
 
 		if (mGOARButtonOptions != null) {
 			mGOARButtonOptions.SetActive (m_bARToBeActive);
-		}
-		if (mGOARButtonPhoto != null) {
-			mGOARButtonPhoto.SetActive (m_bARToBeActive);
 		}
 
 		if (mGOScreenContainer != null) {
@@ -239,9 +205,6 @@ public class ARKitTest : MonoBehaviour
 
 				if (mGOARButtonOptions != null) {
 					mGOARButtonOptions.SetActive (true);
-				}
-				if (mGOARButtonPhoto != null) {
-					mGOARButtonPhoto.SetActive (true);
 				}
 
 				if (mGOScreenContainer != null) {
@@ -291,6 +254,8 @@ public class ARKitTest : MonoBehaviour
 	public void onPressedButtonReturnToMainMenu()
 	{
 		ARKitManager.SharedInstance.UnInitialise ();
+
+//		CaletyTesterMain.UnLoadScene ();
 	}
 
 
@@ -298,87 +263,12 @@ public class ARKitTest : MonoBehaviour
 	private void __arButtonPressed()
 	{
 		if (ARKitManager.SharedInstance.GetARState () != ARKitManager.eARState.E_AR_PLAYING) {
+			ARGameManager.SharedInstance.Initialise ();
+
 			ARGameManager.SharedInstance.onPressedButtonAR ();
 		} else {
 			__buttonOptionsPressed ();
 		}
-	}
-
-	protected virtual bool IsFileUnavailable(string path)
-	{
-		if (!File.Exists(path))
-			return true;
-
-		FileInfo file = new FileInfo(path);
-		FileStream stream = null;
-
-		try
-		{
-			stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
-		}
-		catch (IOException)
-		{
-			return true;
-		}
-		finally
-		{
-			if (stream != null)
-				stream.Close();
-		}
-
-		return false;
-	}
-
-	IEnumerator ShareCoroutine (string strFilePath)
-	{
-		yield return new WaitForEndOfFrame();
-
-		Texture2D kTexture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-
-		kTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-		kTexture.Apply();
-
-		yield return 0;
-
-		byte[] bytes = kTexture.EncodeToPNG();
-
-		File.WriteAllBytes(strFilePath, bytes);
-
-		DestroyObject(kTexture);
-
-
-
-		while (IsFileUnavailable(strFilePath))
-		{
-			yield return new WaitForSeconds(.05f);
-		}
-
-		NativeSharingManager.ShareContentConfig kShareConfig = new NativeSharingManager.ShareContentConfig ();
-		kShareConfig.m_strFilePaths.Add (strFilePath);
-
-		NativeSharingManager.SharedInstance.Share (kShareConfig);
-
-		yield return null;
-	}
-
-	private void __arPhotoButtonPressed ()
-	{
-		string strCaptureFolder = "captures";
-		string strCapturePath = FileUtils.GetDeviceStoragePath (strCaptureFolder, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
-
-		if (!Directory.Exists (strCapturePath))
-		{
-			Directory.CreateDirectory (strCapturePath);
-		}
-
-		string strFilePath = strCapturePath + "/capture.png";
-
-		if (File.Exists (strFilePath))
-		{
-			File.Delete (strFilePath);
-		}
-
-		StartCoroutine (ShareCoroutine (strFilePath));
 	}
 
 	public void surfaceSelectionAR () {
@@ -392,9 +282,6 @@ public class ARKitTest : MonoBehaviour
 
 		if (mGOARButtonOptions != null) {
 			mGOARButtonOptions.SetActive (false);
-		}
-		if (mGOARButtonPhoto != null) {
-			mGOARButtonPhoto.SetActive (false);
 		}
 
 		if (mARSurfaceComponent != null) {
@@ -454,10 +341,6 @@ public class ARKitTest : MonoBehaviour
 			{
 				mGOARButtonOptions = child.gameObject;
 			}
-			else if (child.name == "ButtonARPhoto")
-			{
-				mGOARButtonPhoto = child.gameObject;
-			}
 			else if (child.name == "ButtonSelectSurface")
 			{
 				mButtonSelectSurface = child.gameObject;
@@ -475,15 +358,28 @@ public class ARKitTest : MonoBehaviour
 
 	void Start ()
 	{
-		m_pARGameListener = new ARGameListener (this);
-		ARGameManager.SharedInstance.SetListener (m_pARGameListener);
-
-		ARGameManager.SharedInstance.Initialise ();
+		bool bARAvailable = false;
 
 #if (UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
-		StartCoroutine (ARKitManager.SharedInstance.CheckARIsAvailable ());
+		if (ARKitManager.SharedInstance.IsARKitAvailable ())
+		{
+			bARAvailable = true;
+		}
 #endif
-	}
+
+		if (bARAvailable)
+		{
+			m_pARGameListener = new ARGameListener (this);
+			ARGameManager.SharedInstance.SetListener (m_pARGameListener);
+
+			m_bARToBeActive = true;
+
+			mGOARButtonOptions.SetActive (m_bARToBeActive);
+			mGOARButtonOptions.GetComponent<Button>().onClick.RemoveListener(__arButtonPressed);
+			mGOARButtonOptions.GetComponent<Button>().onClick.AddListener(__arButtonPressed);
+
+        }
+    }
 
 	private float m_fImageRot = 0.0f;
 

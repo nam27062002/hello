@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-#if UNITY_ANDROID
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
+	using UnityEngine.XR.iOS;
+#elif UNITY_ANDROID
 	#if ARCORE_SDK_ENABLED
 		using GoogleARCore;
 	#endif
-#elif (UNITY_IOS || UNITY_EDITOR_OSX)
-	using UnityEngine.XR.iOS;
 #endif
 
 public class ARKitManager : MonoBehaviour
@@ -36,10 +36,6 @@ public class ARKitManager : MonoBehaviour
 	public class ARKitListenerBase
 	{
 		public virtual void onCameraPermissionGranted (bool bGranted) {}
-
-		public virtual void onARIsAvailableResult (bool bAvailable) {}
-
-		public virtual void onARIsInstalledResult (bool bInstalled) {}
 	};
 
 	private ARKitListenerBase m_pARKitListener = null;
@@ -72,13 +68,7 @@ public class ARKitManager : MonoBehaviour
 
 		public string m_strARHitLayer;
 
-		public string m_strAndroidARSessionConfigPath;
-
-		public string m_strAndroidARBackgroundMaterialPath;
-
 		private int m_iARHitLayerMask;
-
-
 
 		public ARConfig ()
 		{
@@ -196,8 +186,6 @@ public class ARKitManager : MonoBehaviour
 
 	private bool m_bARSurfacesFound = false;
 
-	private bool m_bNeedToInstallARApk = false;
-
 	private bool m_bInitialised = false;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -219,114 +207,17 @@ public class ARKitManager : MonoBehaviour
 
 	// GETTERS ///////////////////////////////////////////////////////////////
 
-	public IEnumerator CheckARIsAvailable ()
+	public bool IsARKitAvailable ()
 	{
 #if !UNITY_EDITOR
-	#if UNITY_IOS
-		if (m_pARKitListener != null)
-		{
-			m_pARKitListener.onARIsAvailableResult (m_kARConfigChecker.IsSupported);
-		}
-	#elif UNITY_ANDROID
-		#if ARCORE_SDK_ENABLED
-			AsyncTask<ApkAvailabilityStatus> kAsyncTask = null;
-
-			try 
-			{
-				kAsyncTask = GoogleARCore.Session.CheckApkAvailability();
-			}
-			catch (Exception e)
-			{
-				m_bNeedToInstallARApk = true;
-
-				m_pARKitListener.onARIsAvailableResult (false);
-			}
-
-			
-			
-			if (kAsyncTask != null)
-			{
-				while (!kAsyncTask.IsComplete)
-				{
-					yield return null;
-				}
-
-				m_bNeedToInstallARApk = (kAsyncTask.Result == ApkAvailabilityStatus.SupportedNotInstalled);
-
-				m_pARKitListener.onARIsAvailableResult ((kAsyncTask.Result == ApkAvailabilityStatus.SupportedApkTooOld || kAsyncTask.Result == ApkAvailabilityStatus.SupportedInstalled || kAsyncTask.Result == ApkAvailabilityStatus.SupportedNotInstalled));
-			}
-		#else
-			if (m_pARKitListener != null)
-			{
-				m_pARKitListener.onARIsAvailableResult (false);
-			}
-		#endif
-	#endif
-#else
-
-		if (m_pARKitListener != null)
-		{
-#if UNITY_EDITOR_OSX
-			m_pARKitListener.onARIsAvailableResult (true);
-#else
-            if (m_pARKitListener != null)
-            {
-                m_pARKitListener.onARIsAvailableResult(false);
-            }
-		#endif
-		}
+#if UNITY_IOS
+		return m_kARConfigChecker.IsSupported;
+#elif UNITY_ANDROID
+		return true;
 #endif
-
-		yield return null;
-	}
-
-	public IEnumerator RequestARInstallation ()
-	{
-#if !UNITY_EDITOR
-	#if UNITY_IOS
-		if (m_pARKitListener != null)
-		{
-			m_pARKitListener.onARIsInstalledResult (true);
-		}
-	#elif UNITY_ANDROID
-		#if ARCORE_SDK_ENABLED
-			if (m_bNeedToInstallARApk)
-			{
-				AsyncTask<ApkInstallationStatus> kAsyncTask = GoogleARCore.Session.RequestApkInstallation(true);
-				while (!kAsyncTask.IsComplete)
-				{
-					yield return null;
-				}
-
-				bool bInstalled = (kAsyncTask.Result == ApkInstallationStatus.Success);
-
-				m_bNeedToInstallARApk = !bInstalled;
-
-				m_pARKitListener.onARIsInstalledResult (bInstalled);
-			}
-			else
-			{
-				m_pARKitListener.onARIsInstalledResult (true);
-			}
-		#else
-			if (m_pARKitListener != null)
-			{
-				m_pARKitListener.onARIsInstalledResult (false);
-			}
-		#endif
-	#endif
 #else
-		if (m_pARKitListener != null)
-		{
-		#if UNITY_EDITOR_OSX
-			m_pARKitListener.onARIsInstalledResult (true);
-		#else
-			m_pARKitListener.onARIsInstalledResult (false);
-		#endif
-		}
+		return true;
 #endif
-
-		yield return null;
 	}
 
 	public bool AreARSurfacesFound ()
@@ -446,6 +337,8 @@ public class ARKitManager : MonoBehaviour
 			m_kPermissionsListener = new PermissionsListener ();
 			PermissionsManager.SharedInstance.AddPermissionsListener (m_kPermissionsListener);
 
+			Debug.Log ("AR API Available: " + IsARKitAvailable ());
+
 			m_kARConfig = kConfig;
 
 #if UNITY_ANDROID
@@ -455,6 +348,14 @@ public class ARKitManager : MonoBehaviour
 				m_kARKitGO = new GameObject ("ARKitManager");
 				DontDestroyOnLoad (m_kARKitGO);
 			}
+#endif
+
+#if (UNITY_IOS && UNITY_EDITOR_OSX)
+			m_kARKitGO = new GameObject ("ARKitManager");
+			DontDestroyOnLoad (m_kARKitGO);
+
+			GameObject kARRemoteConnectionGO = Instantiate (Resources.Load (m_kARConfig.m_strARConnectionPrefab) as GameObject);
+			kARRemoteConnectionGO.transform.SetParent (m_kARKitGO.transform);
 #endif
 
 			m_kARKitSurfaceSelector = Instantiate (Resources.Load (m_kARConfig.m_strSurfaceSelectorPrefab) as GameObject);
@@ -493,30 +394,17 @@ public class ARKitManager : MonoBehaviour
 				m_kARKitContentCameraGO = null;
 			}
 
-		#if (UNITY_EDITOR_OSX)
-			GameObject kRemoteConnectionGO = GameObject.Find ("ARKitWorldTrackingRemoteConnection");
-			if (kRemoteConnectionGO != null)
-			{
-				DestroyImmediate (kRemoteConnectionGO);
-
-				kRemoteConnectionGO = null;
-			}
-		#endif
-
-		#if UNITY_ANDROID
-			m_kARAnchorManager.Destroy ();
-
-			if (m_kARKitGO != null)
-			{
-				DestroyImmediate (m_kARKitGO);
-
-				m_kARKitGO = null;
-			}
-		#endif
-
 			DestroyImmediate (m_kARKitSurfaceSelector);
 
 			m_kARKitSurfaceSelector = null;
+
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
+			if (m_kARKitGO != null)
+			{
+				DestroyImmediate (m_kARKitGO);
+				m_kARKitGO = null;
+			}
+#endif
 
 			m_kARKitTrackingCamera = null;
 
@@ -575,7 +463,7 @@ public class ARKitManager : MonoBehaviour
 				{
 					GameObject kARCoreDeviceGO = new GameObject ("ARCoreDevice");
 
-					System.Type kARCoreSessionType = CaletyUtils.GetTypeByClassName ("GoogleARCore.ARCoreSession");
+					System.Type kARCoreSessionType = CaletyUtils.GetTypeByClassName ("GoogleARCore.ARCoreSessionCustom");
 					if (kARCoreSessionType != null)
 					{
 						MethodInfo[] kMethods = typeof(GameObject).GetMethods ();
@@ -593,7 +481,7 @@ public class ARKitManager : MonoBehaviour
 
 									if (kFieldSessionConfig != null)
 									{
-										UnityEngine.Object kDefaultConfig = Resources.Load (m_kARConfig.m_strAndroidARSessionConfigPath);
+										UnityEngine.Object kDefaultConfig = Resources.Load ("AR/Configurations/DefaultSessionConfig");
 
 										if (kDefaultConfig != null)
 										{
@@ -636,7 +524,7 @@ public class ARKitManager : MonoBehaviour
 
 									if (kFieldBGMat != null)
 									{
-										Material kMaterial = Resources.Load<Material> (m_kARConfig.m_strAndroidARBackgroundMaterialPath);
+										Material kMaterial = Resources.Load<Material> ("AR/Materials/ARBackground");
 
 										if (kMaterial != null)
 										{
@@ -848,7 +736,6 @@ public class ARKitManager : MonoBehaviour
 
 	void Update ()
 	{
-#if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
 		if (m_kARAnchorManager != null)
 		{
 			m_kARAnchorManager.Update ();
@@ -856,48 +743,16 @@ public class ARKitManager : MonoBehaviour
 
 		if (m_eARState == eARState.E_AR_SEARCHING_SURFACES)
 		{
-#if UNITY_ANDROID
-			List<GameObject> kARAnchors = m_kARAnchorManager.GetCurrentPlaneAnchors ();
-#elif (UNITY_IOS || UNITY_EDITOR_OSX)
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
 			List<ARPlaneAnchorGameObject> kARAnchors = m_kARAnchorManager.GetCurrentPlaneAnchors ();
+#elif UNITY_ANDROID
+			List<GameObject> kARAnchors = m_kARAnchorManager.GetCurrentPlaneAnchors ();
 #endif
 			if (kARAnchors != null && kARAnchors.Count > 0)
 			{
 				m_bARSurfacesFound = true;
 
-#if UNITY_ANDROID
-
-			#if ARCORE_SDK_ENABLED
-				// Raycast against the location the player touched to search for planes.
-				TrackableHit hit;
-				TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinBounds | TrackableHitFlags.PlaneWithinPolygon;
-
-				if (Frame.Raycast (Screen.currentResolution.width * 0.5f, Screen.currentResolution.height * 0.5f, raycastFilter, out hit))
-				{
-					m_kARKitSurfaceSelector.SetActive (true);
-
-					m_bSurfaceSelectorHitPoint = hit.Pose.position;
-
-					if (!m_bSurfaceSelectorWasMoving)
-					{
-						m_kARKitSurfaceSelector.transform.position = m_bSurfaceSelectorHitPoint;
-					}
-					else
-					{
-						m_kARKitSurfaceSelector.transform.position = Vector3.Lerp(m_kARKitSurfaceSelector.transform.position, m_bSurfaceSelectorHitPoint, 0.25f);
-					}
-
-					m_bSurfaceSelectorWasMoving = true;
-				}
-				else
-				{
-					m_kARKitSurfaceSelector.SetActive (false);
-
-					m_bSurfaceSelectorWasMoving = false;
-				}
-			#endif
-
-#elif (UNITY_IOS || UNITY_EDITOR_OSX)
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
 
 				Ray ray = m_kARKitTrackingCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 				RaycastHit hit;
@@ -925,12 +780,42 @@ public class ARKitManager : MonoBehaviour
 
 					m_bSurfaceSelectorWasMoving = false;
 				}
+					
+#elif UNITY_ANDROID
+
+			#if ARCORE_SDK_ENABLED
+				// Raycast against the location the player touched to search for planes.
+				TrackableHit hit;
+				TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinBounds | TrackableHitFlags.PlaneWithinPolygon;
+
+				if (Session.Raycast (Screen.currentResolution.width * 0.5f, Screen.currentResolution.height * 0.5f, raycastFilter, out hit))
+				{
+					m_kARKitSurfaceSelector.SetActive (true);
+
+					m_bSurfaceSelectorHitPoint = hit.Pose.position;
+
+					if (!m_bSurfaceSelectorWasMoving)
+					{
+						m_kARKitSurfaceSelector.transform.position = m_bSurfaceSelectorHitPoint;
+					}
+					else
+					{
+						m_kARKitSurfaceSelector.transform.position = Vector3.Lerp(m_kARKitSurfaceSelector.transform.position, m_bSurfaceSelectorHitPoint, 0.25f);
+					}
+
+					m_bSurfaceSelectorWasMoving = true;
+				}
+				else
+				{
+					m_kARKitSurfaceSelector.SetActive (false);
+
+					m_bSurfaceSelectorWasMoving = false;
+				}
+			#endif
 
 #endif
-
 			}
 		}
-#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////

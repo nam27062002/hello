@@ -47,9 +47,7 @@ namespace GoogleARCore
 
         private Camera m_Camera;
 
-	#if ARCORE_SDK_ENABLED
         private ARBackgroundRenderer m_BackgroundRenderer;
-	#endif
 
         private bool m_bInitialised;
 
@@ -66,7 +64,11 @@ namespace GoogleARCore
 
         private void OnDisable()
         {
-			Disable();
+            if (m_BackgroundRenderer != null)
+            {
+                m_BackgroundRenderer.camera = null;
+                m_BackgroundRenderer = null;
+            }
         }
 
         private void Initialise ()
@@ -92,52 +94,40 @@ namespace GoogleARCore
 
             if (BackgroundMaterial == null)
             {
-				//Disable();
-				return;
+                // A background rending material has not been assigned.
+                return;
+            }
+#if ARCORE_SDK_ENABLED
+            else if (Frame.CameraImage.Texture == null)
+            {
+                // TODO (mtsmall): Consider rendering a default background in this case.
+                // No texture is available.
+                return;
             }
 
-#if ARCORE_SDK_ENABLED
-			Texture backgroundTexture = Frame.CameraImage.Texture;
-			if (backgroundTexture == null)
-			{
-				Disable();
-				return;
-			}
+            const string mainTexVar = "_MainTex";
+            const string topLeftRightVar = "_UvTopLeftRight";
+            const string bottomLeftRightVar = "_UvBottomLeftRight";
 
-			const string mainTexVar = "_MainTex";
-			const string topLeftRightVar = "_UvTopLeftRight";
-			const string bottomLeftRightVar = "_UvBottomLeftRight";
+            BackgroundMaterial.SetTexture(mainTexVar, Frame.CameraImage.Texture);
 
-			BackgroundMaterial.SetTexture(mainTexVar, backgroundTexture);
+            ApiDisplayUvCoords uvQuad = Frame.CameraImage.DisplayUvCoords;
 
-			var uvQuad = Frame.CameraImage.DisplayUvCoords;
-			BackgroundMaterial.SetVector(topLeftRightVar,
-				new Vector4(uvQuad.TopLeft.x, uvQuad.TopLeft.y, uvQuad.TopRight.x, uvQuad.TopRight.y));
-			BackgroundMaterial.SetVector(bottomLeftRightVar,
-				new Vector4(uvQuad.BottomLeft.x, uvQuad.BottomLeft.y, uvQuad.BottomRight.x, uvQuad.BottomRight.y));
+            BackgroundMaterial.SetVector(topLeftRightVar,
+                new Vector4(uvQuad.TopLeft.x, uvQuad.TopLeft.y, uvQuad.TopRight.x, uvQuad.TopRight.y));
+            BackgroundMaterial.SetVector(bottomLeftRightVar,
+                new Vector4(uvQuad.BottomLeft.x, uvQuad.BottomLeft.y, uvQuad.BottomRight.x, uvQuad.BottomRight.y));
 
-			m_Camera.projectionMatrix = Frame.CameraImage.GetCameraProjectionMatrix(
-				m_Camera.nearClipPlane, m_Camera.farClipPlane);
+            m_Camera.projectionMatrix = Frame.CameraImage.GetCameraProjectionMatrix(m_Camera.nearClipPlane, m_Camera.farClipPlane);
 
-			if (m_BackgroundRenderer == null)
-			{
-				m_BackgroundRenderer = new ARBackgroundRenderer();
-				m_BackgroundRenderer.backgroundMaterial = BackgroundMaterial;
-				m_BackgroundRenderer.camera = m_Camera;
-				m_BackgroundRenderer.mode = ARRenderMode.MaterialAsBackground;
-			}
+            if (m_BackgroundRenderer == null)
+            {
+                m_BackgroundRenderer = new ARBackgroundRenderer();
+                m_BackgroundRenderer.backgroundMaterial = BackgroundMaterial;
+                m_BackgroundRenderer.camera = m_Camera;
+                m_BackgroundRenderer.mode = ARRenderMode.MaterialAsBackground;
+            }
 #endif
         }
-
-		private void Disable()
-		{
-		#if ARCORE_SDK_ENABLED
-			if (m_BackgroundRenderer != null)
-			{
-				m_BackgroundRenderer.camera = null;
-				m_BackgroundRenderer = null;
-			}
-		#endif
-		}
     }
 }

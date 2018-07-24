@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,8 +30,6 @@ public class ARGameManager : MonoBehaviour
 		public virtual void onProceedWithARSurfaceSelector (bool bCameraIsGranted) {}
 
 		public virtual void onNeedToAskForCameraPermission () {}
-
-		public virtual void onARIsAvailableResult (bool bAvailable) {}
 	};
 
 	private ARGameListenerBase m_pARGameListener = null;
@@ -53,20 +52,16 @@ public class ARGameManager : MonoBehaviour
 
 		public override void onCameraPermissionGranted (bool bGranted)
 		{
+/*
+#if !IN_CALETY_TESTER
+            // Tracking -> Permiso camara
+            TrackingStatesManager.TrackAR (TrackingStatesManager.eARStep.AR_Start);
+#endif
+*/
 			if (m_kARGameManager.IsAskingForCameraPermission ())
 			{
 				m_kARGameManager.ProceedWithARSurfaceSelector (bGranted);
 			}
-		}
-
-		public override void onARIsAvailableResult (bool bAvailable)
-		{
-			m_kARGameManager.OnARIsAvailableResult (bAvailable);
-		}
-
-		public override void onARIsInstalledResult (bool bInstalled)
-		{
-			m_kARGameManager.OnARIsInstalledResult (bInstalled);
 		}
 	};
 
@@ -91,9 +86,44 @@ public class ARGameManager : MonoBehaviour
 		BUTTON_AR_CONTENT_ZOOM_SELECTED,
 		BUTTON_AR_FROM_GAME
 	};
+/*
+    protected const string MEDIA_STORE_IMAGE_MEDIA = "android.provider.MediaStore$Images$Media";
+    protected static AndroidJavaObject m_Activity;
 
-	public void onPressedButtonAR ()
+    protected static Uri GetMediaPath()
+    {
+        using (AndroidJavaClass mediaClass = new AndroidJavaClass(MEDIA_STORE_IMAGE_MEDIA))
+        {
+            Uri uri = mediaClass.Get<Uri>("INTERNAL_CONTENT_URI");
+            Debug.Log("INTERNAL_CONTENT_URI" + uri);
+            uri = mediaClass.Get<Uri>("EXTERNAL_CONTENT_URI");
+            Debug.Log("EXTERNAL_CONTENT_URI" + uri);
+            return uri;
+        }
+    }
+*/
+/*
+    protected static AndroidJavaObject Texture2DToAndroidBitmap(Texture2D a_Texture)
+    {
+        byte[] encodedTexture = a_Texture.EncodeToPNG();
+        using (AndroidJavaClass bitmapFactory = new AndroidJavaClass("android.graphics.BitmapFactory"))
+        {
+            return bitmapFactory.CallStatic<AndroidJavaObject>("decodeByteArray", encodedTexture, 0, encodedTexture.Length);
+        }
+    }
+*/
+    private readonly string screenShotName = "Screenshot";
+    public void onPressedScreenshotButton()
+    {
+        int count = 0;
+        while (System.IO.File.Exists(Application.persistentDataPath + "/" + screenShotName + count + ".png")) count++;
+        ScreenCapture.CaptureScreenshot(screenShotName + count + ".png");
+    }
+
+    public void onPressedButtonAR ()
 	{
+//        Uri uri = GetMediaPath();
+
 		if (!ARKitManager.SharedInstance.CheckIfInitialised ())
 		{
 			ARKitManager.ARConfig kConfig = new ARKitManager.ARConfig ();
@@ -109,33 +139,28 @@ public class ARGameManager : MonoBehaviour
 			kConfig.m_strARContentCameraPrefab = "AR/ARContentCameraBase";
 			kConfig.m_strSceneContentObject = "ARCameras";
 			kConfig.m_strSurfaceSelectorPrefab = "AR/ARKitSurfaceSelector";
-			kConfig.m_strARHitLayer = "ARHitLayer";
-
-			kConfig.m_strAndroidARSessionConfigPath = "AR/Configurations/DefaultSessionConfig";
-			kConfig.m_strAndroidARBackgroundMaterialPath = "AR/Materials/ARBackground";
+            kConfig.m_strARHitLayer = "Player";// "ARHitLayer";
 
 			ARKitManager.SharedInstance.Initialise (kConfig);
 		}
 
 		bool bForceAR = false;
 
-		#if UNITY_EDITOR_OSX
+#if UNITY_EDITOR_OSX
 		bForceAR = true;
-		#endif
+#endif
 
 #if (UNITY_IOS || UNITY_EDITOR_OSX)
 		PermissionsManager.EPermissionStatus eCameraStatus = PermissionsManager.SharedInstance.GetIOSPermissionStatus (PermissionsManager.EIOSPermission.Camera);
 #elif UNITY_ANDROID
 		PermissionsManager.EPermissionStatus eCameraStatus = PermissionsManager.SharedInstance.GetAndroidPermissionStatus ("android.permission.CAMERA");
-#elif UNITY_EDITOR_WIN
-		PermissionsManager.EPermissionStatus eCameraStatus = PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED;
 #endif
 
 		Debug.Log ("onPressedButtonAR eCameraStatus: " + eCameraStatus);
 
 		if (bForceAR || eCameraStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED)
 		{
-			StartCoroutine (ARKitManager.SharedInstance.RequestARInstallation ());
+			ProceedWithARSurfaceSelector (true);
 		}
 		else if (eCameraStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED)
 		{
@@ -161,26 +186,6 @@ public class ARGameManager : MonoBehaviour
 		}
 
 		m_bAskingForCameraPermission = false;
-	}
-	
-	public void OnARIsAvailableResult (bool bAvailable)
-	{
-		if (m_pARGameListener != null)
-		{
-			m_pARGameListener.onARIsAvailableResult (bAvailable);
-		}
-        else
-        {
-            Debug.Log("ARGameListener is null!!!!!!");
-        }
-	}
-
-	public void OnARIsInstalledResult (bool bInstalled)
-	{
-		if (bInstalled)
-		{
-			ProceedWithARSurfaceSelector (true);
-		}
 	}
 
 	public void RequestNativeCameraPermission ()

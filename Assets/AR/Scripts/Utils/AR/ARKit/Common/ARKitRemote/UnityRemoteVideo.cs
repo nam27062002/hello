@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
+
 namespace UnityEngine.XR.iOS
 {
 
@@ -110,3 +112,5 @@ namespace UnityEngine.XR.iOS
 		#endif
 	}
 }
+
+#endif

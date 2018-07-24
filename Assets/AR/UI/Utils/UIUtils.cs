@@ -739,7 +739,7 @@ public class UIUtils {
     public static void enableButton (GameObject _button, bool _enabled, string _path = "") {
         if (_button != null && _button.GetComponent <Image> () != null) {
             if (_enabled) {
-                _button.GetComponent <Image> ().sprite = Resources.Load <Sprite> ("UI/Assets/Buttons/Regular/btn-active");
+                _button.GetComponent <Image> ().sprite = Resources.Load <Sprite> ("AR/UI/Assets/Buttons/Regular/btn-active");
                 Text t = _button.GetComponentInChildren <Text> ();
                 if (t != null) {
                     t.color = UIUtils.hexStrtoColor ("593902");
@@ -751,7 +751,7 @@ public class UIUtils {
                     }
                 }
             } else {
-                _button.GetComponent <Image> ().sprite = Resources.Load <Sprite> ("UI/Assets/Buttons/Regular/brown-up");
+                _button.GetComponent <Image> ().sprite = Resources.Load <Sprite> ("AR/UI/Assets/Buttons/Regular/brown-up");
                 Text t = _button.GetComponentInChildren <Text> ();
                 if (t != null) {
                     t.color = Color.white;
