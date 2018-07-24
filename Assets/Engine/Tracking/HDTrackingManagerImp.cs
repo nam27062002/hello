@@ -521,7 +521,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_ApplicationEnd()
-    {         
+    {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Notify_ApplicationEnd");
@@ -2224,7 +2224,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_SendEvent(TrackingEvent e)
 	{
-        if (TrackingManager.SharedInstance.CheckIfInitialised(false)) 
+        if (State == EState.SessionStarted) 
         {// Events are not sent in EDITOR_MODE because DNA crashes on Mac
 #if !EDITOR_MODE
         TrackingManager.SharedInstance.SendEvent(e);

@@ -102,6 +102,43 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
+    private void CheckShark()
+    {
+        string sharkPetSku = "pet_68";
+        if (!UsersManager.currentUser.petCollection.IsPetUnlocked(sharkPetSku))
+        {
+            // Check if hungry shark is installed
+            if (IsHungrySharkGameInstalled())
+            {
+                // Unlock pet
+                UsersManager.currentUser.petCollection.UnlockPet(sharkPetSku);
+
+                // Show popup
+                PopupController popup = PopupManager.OpenPopupInstant("UI/Popups/Tutorial/PF_PopupInfoPetShark");
+                m_popupDisplayed = true;
+
+                // If pets are disabled, equip it automatically
+                bool petsDisabled = (UsersManager.currentUser.gamesPlayed < 2);
+                if (petsDisabled)
+                {
+                    UsersManager.currentUser.EquipPet(UsersManager.currentUser.currentDragon, sharkPetSku);
+                }
+            }
+        }
+    }
+
+    private bool IsHungrySharkGameInstalled()
+    {
+        bool ret = false;
+#if UNITY_ANDROID
+        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
+#elif UNITY_IOS
+        ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
+#endif
+        return ret;
+    }
+        
+
 	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
@@ -220,6 +257,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
                 CheckPromotedIAPs();
 				//CheckTermsAndConditions();
 				CheckCustomizerPopup();
+
+                CheckShark();
 			} break;
 
 		case MenuScreen.DRAGON_SELECTION: {
