@@ -20,11 +20,11 @@
 
 using System.Collections.Generic;
 
-#if UNITY_ANDROID
+//#if UNITY_ANDROID
 	#if ARCORE_SDK_ENABLED
 		using GoogleARCore;
 	#endif
-#endif
+//#endif
 
 using UnityEngine;
 
