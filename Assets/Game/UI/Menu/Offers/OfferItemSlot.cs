@@ -29,11 +29,12 @@ public class OfferItemSlot : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private Transform m_previewContainer = null;
 	[SerializeField] private TextMeshProUGUI m_text = null;
-	[SerializeField] private GameObject m_infoButton = null;
+	[Tooltip("Optional")] [SerializeField] private GameObject m_infoButton = null;
+	[Tooltip("Optional")] [SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
 	[Space]
 	[SerializeField] private bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
 	[Space]
-	[SerializeField] private GameObject m_separator = null;
+	[Tooltip("Optional")] [SerializeField] private GameObject m_separator = null;
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -190,6 +191,37 @@ public class OfferItemSlot : MonoBehaviour {
 			} else {
 				m_infoButton.SetActive(false);
 			}
+		}
+
+		// Power info - only for some types
+		if(m_powerIcon != null) {
+			DefinitionNode powerDef = null;
+			switch(reward.type) {
+				case Metagame.RewardPet.TYPE_CODE: {
+					// Get the pet preview
+					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
+					if(petDef != null) {
+						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+					}
+				} break;
+
+				case Metagame.RewardSkin.TYPE_CODE: {
+					DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
+					if(skinDef != null) {
+						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+					}
+				} break;
+
+				default: {
+					// No power to be displayed :)
+				} break;
+			}
+
+			// Show?
+			m_powerIcon.gameObject.SetActive(powerDef != null);
+
+			// Initialize
+			m_powerIcon.InitFromDefinition(powerDef, false);
 		}
 	}
 
