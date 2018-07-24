@@ -11,6 +11,8 @@ namespace AI {
 
 		private bool m_isCollected;
 
+        private bool m_dieOutsideFrustumRestoreValue;
+
 
 		public Vector3 eye						{ get { return Vector3.zero; } }
 		public Vector3 target					{ get { return Vector3.zero; } }
@@ -35,7 +37,9 @@ namespace AI {
 		protected virtual void Awake() {
 			m_transform = transform;
 			m_viewControl = GetComponent<CollectibleViewControl>();
-			m_entity = GetComponent<IEntity>();	
+			m_entity = GetComponent<IEntity>();
+
+            m_dieOutsideFrustumRestoreValue = (m_entity as CollectibleEntity).dieOutsideFrustum;
 		}
 
 		protected virtual void OnTriggerEnter(Collider _other) {
@@ -51,6 +55,7 @@ namespace AI {
 
 					m_viewControl.Collect();
 
+                    (m_entity as CollectibleEntity).dieOutsideFrustum = false;
 					m_isCollected = true;
 				}
 			}
@@ -58,6 +63,7 @@ namespace AI {
 
 		public void Spawn(ISpawner _spawner) {
 			m_isCollected = false;
+            (m_entity as CollectibleEntity).dieOutsideFrustum = m_dieOutsideFrustumRestoreValue;
 		}
 
 		public void Activate() {
