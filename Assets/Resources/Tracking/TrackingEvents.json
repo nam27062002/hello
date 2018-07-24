@@ -275,7 +275,6 @@
         },
 		    "game.start": {
             "Parameters": [
-                {"acq_marketing_id": {"Status": "OK"}},
                 {"hardware": {"Status": "OK"}},
                 {"installDate": {"Status": "OK"}},
                 {"osVersion": {"Status": "OK"}},
@@ -493,8 +492,7 @@
           { "analytics_optin": { "Status": "OK" } },
           { "duration": { "Status": "OK" } },
           { "marketing_optin": { "Status": "OK" } },
-          { "popup_modular_version": { "Status": "OK" } },
-          { "sns_optin": { "Status": "OK" } }
+          { "popup_modular_version": { "Status": "OK" } }
         ],
         "APIs": [
           "dna",
@@ -503,6 +501,16 @@
       },
       "custom.game.consentpopup_display":  {
         "Parameters": [
+          {"source": {"Status": "OK"}}
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+      "custom.player.info": {
+        "Parameters": [
+          { "acq_marketing_id": { "Status": "OK" } }
         ],
         "APIs": [
           "dna",
@@ -1232,8 +1240,8 @@
         "Type": "STRING:5",
         "Values": []
       },
-      "sns_optin": {
-        "Type": "INT:4",
+      "source": {
+        "Type": "STRING:5",
         "Values": []
       }
     }

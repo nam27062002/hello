@@ -3,6 +3,11 @@
 //
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
+#if UNITY_EDITOR
+	#define TEST_COPPA
+	#define TEST_GDPR
+#endif
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -89,6 +94,9 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Show Age Group?
 		m_ageEnabled = m_mode != Mode.TERMS_AND_CONDITIONS_ONLY && GDPRManager.SharedInstance.IsAgeRestrictionRequired();
+#if TEST_COPPA
+		m_ageEnabled = true;
+#endif
 		if(m_ageEnabled) {
 			// Special title
 			m_titleText.Localize("TID_AGE_GATE_TITLE");
@@ -107,6 +115,9 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Show Consent Group?
 		m_consentEnabled = m_mode != Mode.TERMS_AND_CONDITIONS_ONLY && GDPRManager.SharedInstance.IsConsentRequired();
+#if TEST_GDPR
+		m_consentEnabled = true;
+#endif
 		if(m_consentEnabled) {
 			m_trackingConsent = Prefs.GetBoolPlayer(TRACKING_CONSENT_KEY, true);
 			m_initialTrackingConsent = m_trackingConsent;
@@ -123,7 +134,7 @@ public class PopupTermsAndConditions : MonoBehaviour {
         m_cancelButton.SetActive(m_mode == Mode.MANUAL);
 
         //Tracking
-        HDTrackingManager.Instance.Notify_ConsentPopupDisplay();
+        HDTrackingManager.Instance.Notify_ConsentPopupDisplay(m_mode == Mode.MANUAL);
     }
 
 	/// <summary>
@@ -266,7 +277,7 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Tracking
 		int duration = Convert.ToInt32(Time.unscaledTime - m_timeAtOpen);
-        HDTrackingManager.Instance.Notify_ConsentPopupAccept(m_ageValue, m_trackingConsent, m_adsConsent, !GDPRManager.SharedInstance.IsAgeRestrictionEnabled(), "1_1_1", duration);
+        HDTrackingManager.Instance.Notify_ConsentPopupAccept(m_ageValue, m_trackingConsent, m_adsConsent, "1_1_1", duration);
 
 		// Loading Funnel
 		if(m_mode == Mode.LOADING_FUNNEL) {

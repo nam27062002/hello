@@ -21,6 +21,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         Banned
     }
 
+    private Queue<TrackingEvent> m_preInitEvents = new Queue<TrackingEvent>();
+
     // Load funnel events are tracked by two different apis (Calety and Razolytics). 
     private FunnelData_Load m_loadFunnelCalety;
     private FunnelData_LoadRazolytics m_loadFunnelRazolytics;
@@ -266,6 +268,12 @@ public class HDTrackingManagerImp : HDTrackingManager
 		{
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
+
+        while(m_preInitEvents.Count > 0) {
+            Track_SendEvent(m_preInitEvents.Dequeue());
+        }
+
+        Notify_MarketingID();
 
         // We need to wait for the session to be started to send the first Calety funnel step
         Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);        
@@ -513,7 +521,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     public override void Notify_ApplicationEnd()
-    {         
+    {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Notify_ApplicationEnd");
@@ -592,12 +600,17 @@ public class HDTrackingManagerImp : HDTrackingManager
             // Current session play time is added up to the total
             int sessionTime = (int)Session_PlayTime;
             TrackingPersistenceSystem.TotalPlaytime += sessionTime;
-        }            
+        }
 
         Track_ApplicationEndEvent(reason.ToString());
 
         // It needs to be reseted after tracking the event because the end application event needs to send the session play time
-        Session_PlayTime = 0f;        
+        Session_PlayTime = 0f;
+    }
+
+    public override void Notify_MarketingID() {
+        if (Session_IsFirstTime)
+            Track_MarketingID();
     }
 
     /// <summary>
@@ -608,15 +621,15 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Resets the amount of runs in the current round because a new round has just started
         Session_RunsAmountInCurrentRound = 0;
         Session_HungryLettersCount = 0;
-
+        
         // One more game round
         TrackingPersistenceSystem.GameRoundCount++;
-
+        
         if ( m_playingMode == EPlayingMode.NONE )
         {
         	Track_StartPlayingMode( EPlayingMode.PVE );
         }
-
+        
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
 
@@ -892,12 +905,12 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }    
 
-    public override void Notify_ConsentPopupDisplay() {
-        Track_ConsentPopupDisplay();
+    public override void Notify_ConsentPopupDisplay(bool _sourceSettings) {
+        Track_ConsentPopupDisplay((_sourceSettings)? "Settings_Page" : "Home_Page");
     }
 
-    public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {
-        Track_ConsentPopupAccept(_age, _enableAnalytics, _enableMarketing, _enableSocial, _modVersion, _duration);
+    public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
+        Track_ConsentPopupAccept(_age, _enableAnalytics, _enableMarketing, _modVersion, _duration);
     }
 
     public override void Notify_Pet(string _sku, string _source) 
@@ -1241,6 +1254,18 @@ public class HDTrackingManagerImp : HDTrackingManager
 
         Track_MobileStartEvent();
     }    
+
+    private void Track_MarketingID() {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_MarketingID");
+        } 
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.info");
+        if (e != null)
+        {
+            Track_SendEvent(e);
+        }
+    }
 
     private void Track_ApplicationEndEvent(string stopCause)
     {
@@ -1662,7 +1687,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-    private void Track_ConsentPopupDisplay()
+    private void Track_ConsentPopupDisplay(string _source)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
@@ -1672,15 +1697,17 @@ public class HDTrackingManagerImp : HDTrackingManager
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup_display");
         if (e != null)
         {
+            e.SetParameterValue(TRACK_PARAM_SOURCE, _source);
+
             Track_SendEvent(e);
         }
 
     }
 
-    private void Track_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {
+    private void Track_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Track_ConsentPopupAccept age = " + _age + " analytics_optin = " + _enableAnalytics + " duration = " + _duration +" marketing_optin = " + _enableMarketing +" popup_modular_version = " + _modVersion + " sns_optin = " + _enableSocial);
+            Log("Track_ConsentPopupAccept age = " + _age + " analytics_optin = " + _enableAnalytics + " duration = " + _duration +" marketing_optin = " + _enableMarketing +" popup_modular_version = " + _modVersion);
         }    
 
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup");
@@ -1691,7 +1718,6 @@ public class HDTrackingManagerImp : HDTrackingManager
             e.SetParameterValue(TRACK_PARAM_DURATION, _duration);
             e.SetParameterValue(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
             e.SetParameterValue(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
-            e.SetParameterValue(TRACK_PARAM_SOCIAL_NETWORK_OPTION, (_enableSocial) ? 1 : 0);
 
             Track_SendEvent(e);
         }
@@ -2169,6 +2195,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_SESSIONS_COUNT             = "sessionsCount";    
     private const string TRACK_PARAM_SOCIAL_NETWORK_OPTION      = "sns_optin";	
     private const string TRACK_PARAM_SOURCE_OF_PET	            = "sourceOfPet";
+    private const string TRACK_PARAM_SOURCE                     = "source";
     private const string TRACK_PARAM_SPECIAL_OFFER_ACTION       = "specialOfferAction";
     private const string TRACK_PARAM_STEP_DURATION              = "stepDuration";
 	private const string TRACK_PARAM_STEP_NAME	                = "stepName";
@@ -2197,10 +2224,16 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_SendEvent(TrackingEvent e)
 	{
-		// Events are not sent in EDITOR_MODE because DNA crashes on Mac
+        if (State == EState.SessionStarted) 
+        {// Events are not sent in EDITOR_MODE because DNA crashes on Mac
 #if !EDITOR_MODE
-		TrackingManager.SharedInstance.SendEvent(e);
+        TrackingManager.SharedInstance.SendEvent(e);
 #endif
+        }
+        else
+        {
+            m_preInitEvents.Enqueue(e);
+        }		
 	}
 
     private void Track_AddParamSubVersion(TrackingEvent e)

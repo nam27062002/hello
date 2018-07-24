@@ -493,7 +493,7 @@ public class LoadingSceneController : SceneController {
                 }
                 else
                 {
-                    m_waitingTermsDone = true;
+                    OnTermsDone();
                 }
                 
             }break;
