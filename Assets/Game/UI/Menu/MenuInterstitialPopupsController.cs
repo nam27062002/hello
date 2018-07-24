@@ -189,6 +189,21 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
         }
     }
 
+	/// <summary>
+	/// Checks whether the Pre-Registration Rewards popup must be displayed or not and does it.
+	/// </summary>
+	private void CheckPreRegRewards() {
+		// Ignore if it has already been triggered
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
+
+		// Previous tutorial step must be completed
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) return;
+
+		// Just launch the popup
+		PopupManager.OpenPopupInstant(PopupPreRegRewards.PATH);
+		m_popupDisplayed = true;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -203,33 +218,31 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		switch(_to) {
 			case MenuScreen.PLAY: {
                 CheckPromotedIAPs();
-
-				// 1. Terms and Conditions
 				//CheckTermsAndConditions();
-
 				CheckCustomizerPopup();
 			} break;
 
 		case MenuScreen.DRAGON_SELECTION: {
+				// Coming from any screen (high priority)
+				CheckPreRegRewards();
+
+				// Coming from specific screens
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
-						// 1. Rating
 						CheckRating();
-
-						// 2. Survey
 						CheckSurvey();
-
-						// 3. Featured Offer
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
 					} break;
 
 					// Coming from PLAY screen
 					case MenuScreen.PLAY: {
-						// 1. Featured Offer
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
 					} break;
 				}
+
+				// Coming from any screen (low priority)
+				// Nothing for now
 			} break;
 		}
 	}
