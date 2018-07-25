@@ -21,7 +21,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Banned
     }
 
-    private Queue<TrackingEvent> m_preInitEvents = new Queue<TrackingEvent>();
+    private Queue<Dictionary<string, string>> m_preInitEvents = new Queue<Dictionary<string, string>>();
 
     // Load funnel events are tracked by two different apis (Calety and Razolytics). 
     private FunnelData_Load m_loadFunnelCalety;
@@ -270,7 +270,16 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
 
         while(m_preInitEvents.Count > 0) {
-            Track_SendEvent(m_preInitEvents.Dequeue());
+            Dictionary<string, string> eData = m_preInitEvents.Dequeue();
+            TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(eData["eventName"]);
+            if (e != null) {
+                foreach(KeyValuePair<string,string> pair in eData) {
+                    if (pair.Key != "eventName") {
+                        e.SetParameterValue(pair.Key, pair.Value);
+                    }
+                }
+                Track_SendEvent(e);
+            }
         }
 
         Notify_MarketingID();
@@ -846,10 +855,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 	/// The game has reached a step in the loading funnel.
 	/// </summary>
 	/// <param name="_step">Step to notify.</param>
-	public override void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {  
+	public override void Notify_Calety_Funnel_Load(FunnelData_Load.Steps _step) {
         // Calety funnel, unlike Razolytics funnel, sends all steps for all devices even for those that are not supported by the game. This is done because we can filter out those devices when  checking
         // the loading funnel on DNA
-        Track_Funnel(m_loadFunnelCalety.name, m_loadFunnelCalety.GetStepName(_step), m_loadFunnelCalety.GetStepDuration(_step), m_loadFunnelCalety.GetStepTotalTime(_step), Session_IsFirstTime);                                            
+        Track_Funnel(m_loadFunnelCalety.name, m_loadFunnelCalety.GetStepName(_step), m_loadFunnelCalety.GetStepDuration(_step), m_loadFunnelCalety.GetStepTotalTime(_step), Session_IsFirstTime);
 	}  
     
     public override void Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps _step) {
@@ -1650,24 +1659,31 @@ public class HDTrackingManagerImp : HDTrackingManager
         }
     }
 
-	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad)
-	{
-		if (FeatureSettingsManager.IsDebugEnabled)
-		{
-			Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);
-		}
+	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);
+        }
 
-		TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(_event);
-		if (e != null)
-		{
-			e.SetParameterValue(TRACK_PARAM_STEP_NAME, _step);
-			e.SetParameterValue(TRACK_PARAM_STEP_DURATION, _stepDuration);
-			e.SetParameterValue(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
-            Track_AddParamBool(e, TRACK_PARAM_FIRST_LOAD, _fistLoad);	
-			
-			Track_SendEvent(e);
-		}
-	}
+        if (State == EState.SessionStarted) {
+            TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(_event);
+            if (e != null) {
+                e.SetParameterValue(TRACK_PARAM_STEP_NAME, _step);
+                e.SetParameterValue(TRACK_PARAM_STEP_DURATION, _stepDuration);
+                e.SetParameterValue(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
+                Track_AddParamBool(e, TRACK_PARAM_FIRST_LOAD, _fistLoad);
+
+                Track_SendEvent(e);
+            }
+        } else {
+            Dictionary<string, string> e = new Dictionary<string, string>();
+            e.Add("eventName", _event);
+            e.Add(TRACK_PARAM_STEP_NAME, _step);
+            e.Add(TRACK_PARAM_STEP_DURATION, "" + _stepDuration);
+            e.Add(TRACK_PARAM_TOTAL_DURATION, "" + _totalDuration);
+            e.Add(TRACK_PARAM_FIRST_LOAD, "" + _fistLoad);
+            m_preInitEvents.Enqueue(e);
+        }
+    }
 
     private void Track_SocialAuthentication(string provider, int yearOfBirth, string gender)
     {
@@ -1694,32 +1710,47 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Track_ConsentPopupDisplay");
         }
 
-        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup_display");
-        if (e != null)
-        {
-            e.SetParameterValue(TRACK_PARAM_SOURCE, _source);
+        if (State == EState.SessionStarted) {
+            TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup_display");
+            if (e != null) {
+                e.SetParameterValue(TRACK_PARAM_SOURCE, _source);
 
-            Track_SendEvent(e);
+                Track_SendEvent(e);
+            }
+        } else {
+            Dictionary<string, string> e = new Dictionary<string, string>();
+            e.Add("eventName", "custom.game.consentpopup_display");
+            e.Add(TRACK_PARAM_SOURCE, _source);
+
+            m_preInitEvents.Enqueue(e);
         }
-
     }
 
     private void Track_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("Track_ConsentPopupAccept age = " + _age + " analytics_optin = " + _enableAnalytics + " duration = " + _duration +" marketing_optin = " + _enableMarketing +" popup_modular_version = " + _modVersion);
-        }    
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_ConsentPopupAccept age = " + _age + " analytics_optin = " + _enableAnalytics + " duration = " + _duration + " marketing_optin = " + _enableMarketing + " popup_modular_version = " + _modVersion);
+        }
 
-        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup");
-        if (e != null)
-        {
-            e.SetParameterValue(TRACK_PARAM_AGE, _age);
-            e.SetParameterValue(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
-            e.SetParameterValue(TRACK_PARAM_DURATION, _duration);
-            e.SetParameterValue(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
-            e.SetParameterValue(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
+        if (State == EState.SessionStarted) {
+            TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.game.consentpopup");
+            if (e != null) {
+                e.SetParameterValue(TRACK_PARAM_AGE, _age);
+                e.SetParameterValue(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
+                e.SetParameterValue(TRACK_PARAM_DURATION, _duration);
+                e.SetParameterValue(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
+                e.SetParameterValue(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
 
-            Track_SendEvent(e);
+                Track_SendEvent(e);
+            }
+        } else {
+            Dictionary<string, string> e = new Dictionary<string, string>();
+            e.Add("eventName", "custom.game.consentpopup");
+            e.Add(TRACK_PARAM_AGE, "" + _age);
+            e.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? "1" : "0");
+            e.Add(TRACK_PARAM_DURATION, "" + _duration);
+            e.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? "1" : "0");
+            e.Add(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
+            m_preInitEvents.Enqueue(e);
         }
     }
 
@@ -2224,16 +2255,9 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_SendEvent(TrackingEvent e)
 	{
-        if (State == EState.SessionStarted) 
-        {// Events are not sent in EDITOR_MODE because DNA crashes on Mac
 #if !EDITOR_MODE
         TrackingManager.SharedInstance.SendEvent(e);
 #endif
-        }
-        else
-        {
-            m_preInitEvents.Enqueue(e);
-        }		
 	}
 
     private void Track_AddParamSubVersion(TrackingEvent e)
