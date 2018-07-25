@@ -2696,13 +2696,19 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Session_IsARoundRunning = false;
 
-        string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
-        UserProfile userProfile = UsersManager.currentUser;
-
-        // TrackingManager is notified with all currencies earned during the run
-        foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound)
+        if (Session_RewardsInRound != null)
         {
-            Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key));
+            string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
+            UserProfile userProfile = UsersManager.currentUser;
+
+            // TrackingManager is notified with all currencies earned during the run
+            foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound)
+            {
+                if (pair.Value > 0)
+                {
+                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key));
+                }
+            }
         }
     }
 
