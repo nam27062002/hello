@@ -92,7 +92,7 @@ public class HDLiveEventManager
     {
 		bool ret = false;
         HDLiveEventData data = GetEventData();
-        if (data != null && data.m_eventId > 0 )
+		if (data != null && data.m_eventId > 0)
         {
             ret = data.m_state == HDLiveEventData.State.NOT_JOINED || data.m_state == HDLiveEventData.State.JOINED;
         }
@@ -173,10 +173,15 @@ public class HDLiveEventManager
         {
         	int oldId = data.m_eventId;
             data.ParseState(_data);
-            if ( data.m_eventId != oldId )
-            {
-            	OnEventIdChanged();
-            }
+
+			if (data.m_state == HDLiveEventData.State.REFUND) {
+				GetRefund();
+			} else {
+	            if ( data.m_eventId != oldId )
+	            {
+	            	OnEventIdChanged();
+	            }
+			}
         }
     }
 
@@ -263,9 +268,14 @@ public class HDLiveEventManager
             		Deactivate();
             	}
                 ParseDefinition(responseJson);
-                if (wasActive){
-                	Activate();
-                }
+
+				if (data.definition.m_refund) {
+					GetRefund();
+				} else {
+	                if (wasActive){
+	                	Activate();
+	                }
+				}
             }
 		}
 		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
@@ -346,6 +356,31 @@ public class HDLiveEventManager
 		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
     }
 
+	public void GetRefund()
+	{
+		if ( HDLiveEventsManager.TEST_CALLS )
+		{
+			
+		}
+		else
+		{
+			HDLiveEventData data = GetEventData();
+			GameServerManager.SharedInstance.HDEvents_GetRefund(data.m_eventId, GetRefundResponse);    
+		}
+	}
+
+	private void GetRefundResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
+	{
+		HDLiveEventsManager.ResponseLog("Refund", _error, _response);
+		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		{
+			Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
+			UsersManager.currentUser.PushReward(r);
+			ClearEvent();
+		}
+	}
 
 #endregion
 
