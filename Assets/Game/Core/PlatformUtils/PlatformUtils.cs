@@ -46,4 +46,6 @@ public abstract class PlatformUtils
 	public virtual string[] GetCommandLineArgs(){ return System.Environment.GetCommandLineArgs(); }
 
 	public virtual bool InputPressureSupprted(){ return Input.touchPressureSupported; }
+
+    public virtual bool ApplicationExists(string applicationURI){ return false; }
 }

@@ -123,7 +123,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	/// Update timers periodically.
 	/// </summary>
 	void UpdatePeriodic() {
-		if (m_definition != null) {
+		if (m_definition != null && !m_definition.m_refund) {
 			double seconds = m_definition.timeToEnd.TotalSeconds;
 			if (seconds <= 0f) {
 				seconds = 0f;
