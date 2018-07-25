@@ -297,6 +297,9 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	/// Cancel button has been presed.
 	/// </summary>
 	public void OnCancel() {
+		// Only allow cancelling when the popup is triggered manually
+		if(m_mode != Mode.MANUAL) return;
+
 		// Close popup
 		m_popupController.Close(true);
 	}
