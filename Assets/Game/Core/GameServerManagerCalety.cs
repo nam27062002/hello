@@ -266,6 +266,19 @@ public class GameServerManagerCalety : GameServerManager {
 
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
+
+        // Social platform in Calety depends on our social platform (either Fb or Weibo), which depends on the user's country
+        SocialUtils.EPlatform socialPlatform = SocialPlatformManager.GetSocialPlatform();
+        switch (socialPlatform)
+        {
+            case SocialUtils.EPlatform.Facebook:
+                settingsInstance.m_iSocialPlatformSelected = (int)CaletyConstants.eSocialPlatforms.FACEBOOK;
+                break;
+
+            case SocialUtils.EPlatform.Weibo:
+                settingsInstance.m_iSocialPlatformSelected = (int)CaletyConstants.eSocialPlatforms.WEIBO;
+                break;
+        }
         ServerManager.SharedInstance.Initialise(ref kServerConfig);
 
 		m_delegate = new GameSessionDelegate(Commands_OnResponse);
