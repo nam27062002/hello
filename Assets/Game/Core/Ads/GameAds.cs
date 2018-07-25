@@ -30,6 +30,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
     private AdProvider m_adProvider;
 
+    private const string INTERSTITIAL_RUNS_KEY = "GameAds.InterstitialRuns";
+
     private AdProvider GetAdProvider()
     {
         if (m_adProvider == null)
@@ -48,6 +50,11 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
     public string GetInfo() {
         return GetAdProvider().GetInfo();
+    }
+    
+    public AdProvider.AdType GetAdType()
+    {
+        return GetAdProvider().GetAdType();
     }
 
     public void Init() {
@@ -152,7 +159,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
     public void StopWaitingToPlayAnAd()
     {
-    	MopubAdsManager.SharedInstance.StopWaitingToPlayAVideo();
+        GetAdProvider().StopWaitingToPlayAnAd();
     }
 
 	public void ShowDebugInfo()
@@ -172,4 +179,83 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         return Track_EAdPurposeToAdType(adPurpose);
     }
 #endregion
+    #region interstitial
+
+    public bool ShouldShowInterstitial(bool advanceCountIfTrue = true)
+    {
+        bool ret = false;
+
+        bool isValidProfile = false;
+        // Check profiles
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList("");
+        int max = defs.Count;
+        for (int i = 0; i < max && !isValidProfile; i++)
+        {
+            if (defs[i].GetAsBool("check"))
+            {
+                string sku = defs[i].Get("sku");
+                switch (sku)
+                {
+                    case "hacker":
+                        isValidProfile = UsersManager.currentUser.isBadUser;
+                        break;
+                    case "non_payer":
+                        int progress = UsersManager.currentUser.GetPlayerProgress();
+                        int progressCheck = defs[i].GetAsInt("params");
+                        if (progress >= progressCheck)
+                        {
+                            TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+                            int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+                            isValidProfile = totalPurchases <= 0;
+                        }
+                        break;
+                    case "unnoficial":
+#if UNITY_EDITOR                        
+                        isValidProfile = !DeviceUtilsManager.SharedInstance.CheckIsAppFromStore();
+#endif
+                        break;
+                }
+            }
+        }
+
+        // if one profile is valid check number of runs
+        if ( isValidProfile )
+        {
+            int runs = 0;
+            if (PlayerPrefs.HasKey(INTERSTITIAL_RUNS_KEY))
+            {
+                runs = PlayerPrefs.GetInt(INTERSTITIAL_RUNS_KEY);
+            }
+            else
+            {
+                runs = Random.Range(1,3);
+            }
+
+            if ( runs <= 0 )
+            {
+                ret = true;
+            }
+            // if we play an insterstitial reduce number of runs?
+            if (advanceCountIfTrue)
+                ReduceInterstitialRuns();
+        }
+        return ret;
+    }
+
+    public void ReduceInterstitialRuns()
+    {
+        int runs = 0;
+        if (PlayerPrefs.HasKey(INTERSTITIAL_RUNS_KEY))
+        {
+            runs = PlayerPrefs.GetInt(INTERSTITIAL_RUNS_KEY);
+        }
+        runs--;
+        if ( runs < 0 )
+        {
+            runs = Random.Range(1, 3);
+        }
+        PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, runs);
+    }
+
+    #endregion
 }

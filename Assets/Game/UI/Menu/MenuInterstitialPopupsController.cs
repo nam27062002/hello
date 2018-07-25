@@ -151,6 +151,23 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		BusyScreen.Hide(this, true);
 	}
+    
+    /// <summary>
+    /// Checks the interstitial ads.
+    /// </summary>
+    private void CheckInterstitialAds()
+    {
+        // this function takes care of the interstitial logic. It looks the profiles and advances the number of attempts
+        if ( GameAds.instance.ShouldShowInterstitial() ) 
+        {
+            GameAds.instance.ShowInterstitial(InterstitialCallback);
+        }
+    }
+    
+    private void InterstitialCallback( bool rewardGiven )
+    {
+        
+    }
 
 	/// <summary>
 	/// Checks whether the Rating popup must be opened or not and does it.
@@ -253,6 +270,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
+                        // 0. Interstitial Ads
+                        CheckInterstitialAds();
+                        
 						// 1. Rating
 						CheckRating();
 
