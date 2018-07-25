@@ -1712,9 +1712,9 @@ public class HDTrackingManagerImp : HDTrackingManager
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.player.authentication");
         if (e != null)
         {
-            e.SetParameterValue(TRACK_PARAM_PROVIDER, provider);
+			Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);
             e.SetParameterValue(TRACK_PARAM_YEAR_OF_BIRTH, yearOfBirth);
-            e.SetParameterValue(TRACK_PARAM_GENDER, gender);            
+			Track_AddParamString(e, TRACK_PARAM_GENDER, gender);            
 
             Track_SendEvent(e);
         }
