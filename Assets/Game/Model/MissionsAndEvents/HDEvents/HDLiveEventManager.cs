@@ -377,8 +377,9 @@ public class HDLiveEventManager
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
-			UsersManager.currentUser.PushReward(r);
-			ClearEvent();
+			UsersManager.currentUser.PushReward(r);			
+            FinishEvent();
+            ClearEvent();
 		}
 	}
 
