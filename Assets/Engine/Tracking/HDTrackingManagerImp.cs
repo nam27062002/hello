@@ -72,24 +72,31 @@ public class HDTrackingManagerImp : HDTrackingManager
             TrackingPersistenceSystem.Reset();
         }
 
-        Session_Reset();
-        m_loadFunnelCalety.Reset();
-        m_loadFunnelRazolytics.Reset();
-        m_firstUXFunnel.Reset();
+        Reset();
 
-		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+        Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 		Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
 		Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }
 
-    public override void Destroy ()
+    private void Reset()
     {
+        Performance_Reset();
+        Session_Reset();
+        m_loadFunnelCalety.Reset();
+        m_loadFunnelRazolytics.Reset();
+        m_firstUXFunnel.Reset();
+    }
+
+    public override void Destroy ()
+    {        
 		base.Destroy ();
 		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
 		Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
 		Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+        Reset();
     }
 
     public override string GetTrackingID()
@@ -669,7 +676,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Notifies that one more round has started
         Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
 
-//        Notify_StartPerformanceTracker();
+        Session_NotifyRoundStart();
+        //        Notify_StartPerformanceTracker();
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound, 
@@ -691,6 +699,8 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);
+
+        Session_NotifyRoundEnd();
     }
 
     public override void Notify_RunEnd(int dragonXp, int timePlayed, int score, string deathType, string deathSource, Vector3 deathCoordinates)
@@ -705,7 +715,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_LastDeathCoordinates = deathCoordinatesAsString;
 
         // Actual track
-        Track_RunEnd(dragonXp, timePlayed, score, deathType, deathSource, deathCoordinatesAsString);    
+        Track_RunEnd(dragonXp, timePlayed, score, deathType, deathSource, deathCoordinatesAsString);        
     }
 
     /// <summary>
@@ -806,8 +816,16 @@ public class HDTrackingManagerImp : HDTrackingManager
     /// <param name="amountDelta">Amount of the currency earned</param>
     /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
     public override void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance)
-    {       
-        Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance);
+    {
+        // All currencies earned during a round should be collected so a single event with the accumulated amount is sent at the end of the round in order to avoid spamming tracking
+        if (economyGroup == EEconomyGroup.REWARD_RUN && Session_IsARoundRunning)
+        {
+            Session_AccumRewardInRun(moneyCurrencyCode, amountDelta);
+        }
+        else
+        {
+            Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance);
+        }
     }
 
     /// <summary>
@@ -2652,6 +2670,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private int Session_HungryLettersCount { get; set; }
 
+    private Dictionary<UserProfile.Currency, int> Session_RewardsInRound;
+
+    private bool Session_IsARoundRunning { get; set; }
+
     private void Session_Reset()
     {
         Session_IsPayingSession = false;
@@ -2665,7 +2687,53 @@ public class HDTrackingManagerImp : HDTrackingManager
         Session_IsNotifyOnPauseEnabled = true;
         Session_HasMenuEverLoaded = false;
         Session_HungryLettersCount = 0;
+        Session_IsARoundRunning = false;
+        if (Session_RewardsInRound != null)
+        {
+            Session_RewardsInRound.Clear();
+        }
      }
+
+    private void Session_NotifyRoundStart()
+    {
+        Session_IsARoundRunning = true;
+        if (Session_RewardsInRound != null)
+        {
+            Session_RewardsInRound.Clear();
+        }
+    }
+
+    private void Session_NotifyRoundEnd()
+    {
+        Session_IsARoundRunning = false;
+
+        string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
+        UserProfile userProfile = UsersManager.currentUser;
+
+        // TrackingManager is notified with all currencies earned during the run
+        foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound)
+        {
+            Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key));
+        }
+    }
+
+    private void Session_AccumRewardInRun(UserProfile.Currency currency, int amount)
+    {
+        if (Session_RewardsInRound == null)
+        {
+            Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>();
+        }
+
+        if (Session_RewardsInRound.ContainsKey(currency))
+        {
+            int currentAmount = Session_RewardsInRound[currency];
+            Session_RewardsInRound[currency] = currentAmount + amount;
+        }
+        else
+        {
+            Session_RewardsInRound.Add(currency, amount);
+        }
+    }
 #endregion
 
 #region performance
@@ -2679,6 +2747,17 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private bool m_Performance_FireRush;
     private float m_Performance_FireRushStartTime;
+
+    private void Performance_Reset()
+    {
+        Performance_IsTrackingEnabled = false;
+        Performance_TrackingDelay = 0f;
+        m_Performance_LastTrackTime = 0f;    
+        m_Performance_TickCounter = 0;
+        m_Performance_FireRush = false;
+        m_Performance_FireRushStartTime = 0f;
+    }
+
     private float Performance_Timer
     {
         get
