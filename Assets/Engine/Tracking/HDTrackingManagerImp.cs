@@ -17,6 +17,7 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         None,
         WaitingForSessionStart,
+        SessionStarting,
         SessionStarted,
         Banned
     }
@@ -232,46 +233,63 @@ public class HDTrackingManagerImp : HDTrackingManager
                 }
             }
         }
-    }       
+    }
 
-    private void StartSession()
-    {     
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
+    private void StartSession() {
+        if (FeatureSettingsManager.IsDebugEnabled) {
             Log("StartSession");
         }
 
-        State = EState.SessionStarted;
+        State = EState.SessionStarting;
 
         CheckAndGenerateUserID();
 
         Session_IsFirstTime = TrackingPersistenceSystem.IsFirstLoading;
 
         // It has to be true only in the first loading
-        if (Session_IsFirstTime)
-        {
+        if (Session_IsFirstTime) {
             TrackingPersistenceSystem.IsFirstLoading = false;
         }
 
         // Session counter advanced
         TrackingPersistenceSystem.SessionCount++;
 
+        Debug.Log("[MARC][HDTrackingMaangerImp] InitTracking");
         // Calety needs to be initialized every time a session starts because the session count has changed
         InitTrackingManager();
 
-		InitSDKs();
+        Debug.Log("[MARC][HDTrackingMaangerImp] InitSDKs");
+        InitSDKs();
 
         // Sends the start session event
+        Debug.Log("[MARC][HDTrackingMaangerImp] Track_StartSessionEvent");
         Track_StartSessionEvent();
 
-		if ( Session_IsFirstTime )
+        Debug.Log("[MARC][HDTrackingMaangerImp] Track_GameStart");
+        Track_GameStart();
+    }
+
+    private void PostInitEvents() {
+        TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
+        if (e != null) {
+            string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
+            Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
+
+            Track_SendEvent(e);
+        }
+
+        Track_MobileStartEvent();
+
+		if (Session_IsFirstTime)
 		{
+            Debug.Log("[MARC][HDTrackingMaangerImp] Track_StartPlayingMode");
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
 
+        Debug.Log("[MARC][HDTrackingMaangerImp] Track m_preInitEvents");
         while(m_preInitEvents.Count > 0) {
             Dictionary<string, string> eData = m_preInitEvents.Dequeue();
-            TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent(eData["eventName"]);
+            e = TrackingManager.SharedInstance.GetNewTrackingEvent(eData["eventName"]);
             if (e != null) {
                 foreach(KeyValuePair<string,string> pair in eData) {
                     if (pair.Key != "eventName") {
@@ -282,8 +300,10 @@ public class HDTrackingManagerImp : HDTrackingManager
             }
         }
 
+        Debug.Log("[MARC][HDTrackingMaangerImp] Notify_MarketingID");
         Notify_MarketingID();
 
+        Debug.Log("[MARC][HDTrackingMaangerImp] Notify_Calety_Funnel_Load");
         // We need to wait for the session to be started to send the first Calety funnel step
         Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);        
     }    
@@ -445,7 +465,14 @@ public class HDTrackingManagerImp : HDTrackingManager
 					// We need to start session here in Update() so GameCenterManager has time to get the acq_marketing_id, otherwise
 					// that field will be empty in "game.start" event
 					StartSession();
-				}               
+				}
+                break;
+
+            case EState.SessionStarting:
+                if (UbiservicesManager.SharedInstance.GetUbiServicesFacade() != null) {
+                    State = EState.SessionStarted;
+                    PostInitEvents();
+                }
                 break;
         }
 
@@ -555,7 +582,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Notify_ApplicationPaused Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled + " State = " + State);
         }
 
-        if (State != EState.WaitingForSessionStart)
+        if (State == EState.SessionStarted)
         {
             if (Session_IsNotifyOnPauseEnabled)
             {
@@ -573,7 +600,7 @@ public class HDTrackingManagerImp : HDTrackingManager
             Log("Notify_ApplicationResumed Session_IsNotifyOnPauseEnabled = " + Session_IsNotifyOnPauseEnabled);
         }
 
-        if (State != EState.WaitingForSessionStart)
+        if (State == EState.SessionStarted)
         {
             Track_EtlStartEvent();
 
@@ -849,7 +876,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 
             HDTrackingManager.Instance.Notify_DeviceStats();
         }
-    }
+}
 
 	/// <summary>
 	/// The game has reached a step in the loading funnel.
@@ -1209,18 +1236,21 @@ public class HDTrackingManagerImp : HDTrackingManager
     private bool Track_HasEventBeenSent(string e)
     {
         return TrackingPersistenceSystem != null && TrackingPersistenceSystem.HasEventAlreadyBeenSent(e);
-    }    
+    }
 
-    private void Track_StartSessionEvent()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
+    private void Track_StartSessionEvent() {
+        if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_StartSessionEvent");
         }
 
         Track_EtlStartEvent();
+    }
 
+    private void Track_GameStart() {
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
+
+        Debug.Log("[MARC][HDTrackingMaangerImp] Track_GameStart -> e: " + (e != null));
+
         if (e != null)
         {
             Track_AddParamSubVersion(e);
@@ -1247,21 +1277,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
             Track_AddParamString(e, TRACK_PARAM_INITIALQUALITY, profileName);
             
-
-
-            Track_SendEvent(e);            
+            Track_SendEvent(e, true);            
         }
-
-        e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
-        if (e != null)
-        {
-            string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
-            Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
-
-            Track_SendEvent(e);
-        }
-
-        Track_MobileStartEvent();
     }    
 
     private void Track_MarketingID() {
@@ -1321,7 +1338,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.etl.session.start");
         if (e != null)
         {
-            Track_SendEvent(e);
+            Track_SendEvent(e, true);
         }
     }
 
@@ -2253,11 +2270,14 @@ public class HDTrackingManagerImp : HDTrackingManager
     private const string TRACK_PARAM_XP                         = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH              = "yearOfBirth";
 
-    private void Track_SendEvent(TrackingEvent e)
+    private void Track_SendEvent(TrackingEvent e, bool _force = false)
 	{
+        if (State == EState.SessionStarted || _force) {
 #if !EDITOR_MODE
-        TrackingManager.SharedInstance.SendEvent(e);
+            Debug.Log("[MARC][HDTrackingMaangerImp] send event " + e.m_strName);
+            TrackingManager.SharedInstance.SendEvent(e);
 #endif
+        }
 	}
 
     private void Track_AddParamSubVersion(TrackingEvent e)
