@@ -418,6 +418,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
+        GameAds.instance.IncreaseRunsWithoutAds();
+
         Track_RoundStart();
 
         // Reset timer
