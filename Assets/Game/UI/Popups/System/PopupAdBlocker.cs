@@ -182,7 +182,8 @@ public class PopupAdBlocker : MonoBehaviour {
 	}
 
 	public void OnOpenPostAnimation(){
-		m_cancelButton.SetActive( true );
+        if ( m_rewarded )
+    		m_cancelButton.SetActive( true );
 	}
 
 	public void OnClosePreAnimation(){
