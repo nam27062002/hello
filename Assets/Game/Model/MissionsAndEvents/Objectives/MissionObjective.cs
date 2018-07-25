@@ -155,12 +155,12 @@ public class MissionObjective : TrackingObjectiveBase {
 	public virtual void OnGameStarted() {
 		// If we're a single-run objective, reset counter
 		if(m_singleRun) {
-			m_tracker.SetValue(0, false);
+			m_tracker.InitValue(0);
 
 		}
 
 		// Disable during FTUX
-		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN);
+		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN && SceneController.s_mode != SceneController.Mode.TOURNAMENT);
 
 		// Disable too if mission is not active
 		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;
@@ -175,7 +175,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		// If we're a single-run objective, reset counter
 		// Unless objective was completed
 		if(m_singleRun && !isCompleted) {
-			m_tracker.SetValue(0, false);
+			m_tracker.InitValue(0);
 
 		}
 	}
@@ -189,7 +189,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		// Check completion
 		if(isCompleted) {
 			// Cap value to target value
-			m_tracker.SetValue(Math.Min(currentValue, targetValue), false);
+			m_tracker.InitValue(Math.Min(currentValue, targetValue));
 
 			// Stop tracking
 			m_tracker.enabled = false;

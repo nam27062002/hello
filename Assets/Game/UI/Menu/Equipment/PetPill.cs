@@ -21,10 +21,16 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
+public class PetPillData {
+	public DefinitionNode def;
+	public DragonData dragon;
+}
+
+
 /// <summary>
 /// Single pill representing a pet.
 /// </summary>
-public class PetPill : MonoBehaviour {
+public class PetPill : ScrollRectItem<PetPillData> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -174,7 +180,23 @@ public class PetPill : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//º	
+	//------------------------------------------------------------------------//
+	public override void InitWithData(PetPillData _data) {
+		Init(_data.def, _data.dragon);
+		animator.ForceShow(false);
+	}
+
+	public override void Animate(int _index) {
+		animator.ForceHide(false);
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				animator.RestartShow();
+			},
+			0.0375f * (_index + 1) 	// Sync with animation!
+		);
+	}
+
+
 	/// <summary>
 	/// Initialize from a given pet definition.
 	/// </summary>
@@ -186,7 +208,7 @@ public class PetPill : MonoBehaviour {
 
 		// Optimization: if target def is the same as current one, just do a refresh
 		if(_petDef == m_def) {
-			Refresh();
+			//Refresh();
 			return;
 		}
 
@@ -230,7 +252,7 @@ public class PetPill : MonoBehaviour {
 
 			// Power short description
 			if(m_shortDescriptionText != null) {
-				m_shortDescriptionText.text = DragonPowerUp.GetDescription(powerDef, true);	// Custom formatting depending on powerup type, already localized
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(powerDef, true, true);	// Custom formatting depending on powerup type, already localized
 			}
 		} else {
 			if(m_powerIcon != null) {
@@ -268,8 +290,10 @@ public class PetPill : MonoBehaviour {
 		} else {
 			// Custome season: Show icon
 			m_seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, targetSeason);
-			m_seasonalIconRoot.SetActive(true);
-			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
+            if (m_seasonDef != null) {
+                m_seasonalIconRoot.SetActive(true);
+                m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
+            }
 		}
 		m_isNotInGatcha = _petDef.GetAsBool("notInGatcha", false);
 
@@ -414,7 +438,7 @@ public class PetPill : MonoBehaviour {
 		PopupInfoPet petPopup = popup.GetComponent<PopupInfoPet>();
 		if(petPopup != null) {
 			// Open popup with the filtered list!
-			petPopup.Init(m_def, parentScreen.petFilters.filteredDefs);
+			petPopup.Init(m_def, null);//parentScreen.petFilters.filteredDefs);
 		}
 	}
 

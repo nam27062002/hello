@@ -22,12 +22,19 @@ public class PowerIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
+	public enum Mode {
+		SKIN = 0,
+		PET,
+		MODFIER
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private Image m_powerIcon = null;
+	[SerializeField] private Mode m_mode = Mode.SKIN;
+	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
 	[Tooltip("Optional")] [SerializeField] private GameObject m_lockIcon = null;
 	[Tooltip("Optional")] [SerializeField] private Localizer m_nameText = null;
 	[Tooltip("Optional")] [SerializeField] private TextMeshProUGUI m_shortDescriptionText = null;
@@ -67,17 +74,22 @@ public class PowerIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		// Check required fields
-		Debug.Assert(m_powerIcon != null, "Required field!");
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize this button with the data from the given definition.
+	/// </summary>
+	/// <param name="_powerDef">Power definition.</param>
+	/// <param name="_locked">Whether the power is locked or not.</param>
+	/// <parma name="_animate">Whether to show animations or not.</param>
+	/// <parma name="_mode">It can be a Skin or Pet power</param>
+	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked, bool _animate, Mode _mode) {
+		m_mode = _mode;
+		InitFromDefinition(_powerDef, _locked, _animate);
+	}
+
 	/// <summary>
 	/// Initialize this button with the data from the given definition.
 	/// </summary>
@@ -119,7 +131,7 @@ public class PowerIcon : MonoBehaviour {
 
 			// Short description
 			if(m_shortDescriptionText != null) {
-				m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true);	// Custom formatting depending on powerup type, already localized
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true, m_mode == Mode.PET);	// Custom formatting depending on powerup type, already localized
 			}
 
 			// Lock
@@ -136,7 +148,7 @@ public class PowerIcon : MonoBehaviour {
 		if(m_lockIcon != null) m_lockIcon.SetActive(_locked);
 
 		// Image color
-		m_powerIcon.color = _locked ? Color.gray : Color.white;
+		if(m_powerIcon != null) m_powerIcon.color = _locked ? Color.gray : Color.white;
 	}
 
 	//------------------------------------------------------------------------//
@@ -158,7 +170,7 @@ public class PowerIcon : MonoBehaviour {
 		PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
 		if(powerTooltip != null) {
 			// Initialize
-			powerTooltip.InitFromDefinition(m_powerDef);
+			powerTooltip.InitFromDefinition(m_powerDef, m_mode);
 
 			// Set lock state
 			powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not

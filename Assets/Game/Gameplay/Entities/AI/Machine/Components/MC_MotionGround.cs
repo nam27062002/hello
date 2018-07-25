@@ -32,6 +32,8 @@ namespace AI {
 
 		private Vector3 m_gravity;
 
+		private RaycastHit[] m_raycastHits;
+
 		private bool m_onGround;
 		private float m_heightFromGround;
 
@@ -45,14 +47,21 @@ namespace AI {
 
 
 		//--------------------------------------------------
+		protected override void ExtendedAttach() {
+			m_raycastHits = new RaycastHit[255];
+		}
+
 		protected override void ExtendedInit() {
 			m_onGround = false;
 
 			GetGroundNormal(0.3f);
-			RaycastHit hit;
-			bool hasHit = Physics.Raycast(position + m_upVector * 0.1f, -m_groundNormal, out hit, 5f, GROUND_MASK);
-			if (hasHit) {
-				position = hit.point;
+			Ray ray = new Ray();
+			ray.origin = position + m_upVector * 0.1f;
+			ray.direction = -m_groundNormal;
+
+			int hits = Physics.RaycastNonAlloc(ray, m_raycastHits, 5f, GROUND_MASK);
+			if (hits > 0) {
+				position = m_raycastHits[0].point;
 				m_heightFromGround = 0f;
 				m_viewControl.Height(0f);
 				m_onGround = true;
@@ -210,11 +219,14 @@ namespace AI {
 			Vector3 hitPos = position;
 			Vector3 pos = position + (m_upVector * 3f);
 
-			RaycastHit hit;		
-			if (Physics.Raycast(pos, -m_upVector, out hit, 6f, GROUND_MASK)) {
-				normal = hit.normal;
-				hitPos = hit.point;
-				m_heightFromGround = hit.distance - 3f;
+			Ray ray = new Ray();
+			ray.origin = pos;
+			ray.direction = -m_upVector;
+
+			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GROUND_MASK) > 0) {
+				normal = m_raycastHits[0].normal;
+				hitPos = m_raycastHits[0].point;
+				m_heightFromGround = m_raycastHits[0].distance - 3f;
 			} else {
 				m_heightFromGround = 100f;
 			}
@@ -291,19 +303,19 @@ namespace AI {
 
 		//--------------------------------------------------
 		//--------------------------------------------------
-		protected override void ExtendedAttach() {}
-
 		public override void OnCollisionGroundEnter(Collision _collision) {
 			OnCollisionGroundStay(_collision);
 		}
 
 		public override void OnCollisionGroundStay(Collision _collision) {
-			for (int i = 0; i < _collision.contacts.Length; i++) {
-				Vector3 hitPoint = _collision.contacts[i].point;
+            ContactPoint[] _contacts = _collision.contacts;
+            int _count = _contacts.Length;
+            for (int i = 0; i < _count; i++) {
+				Vector3 hitPoint = _contacts[i].point;
 				float error = (hitPoint - position).sqrMagnitude;
 
 				if (error <= 0.3f) {					
-					m_groundNormal = _collision.contacts[i].normal;
+					m_groundNormal = _contacts[i].normal;
 					m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_groundNormal);
 
 					m_gravity = GameConstants.Vector3.zero;

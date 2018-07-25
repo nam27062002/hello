@@ -46,8 +46,7 @@ namespace Metagame {
 				case "common":	return Rarity.COMMON; 
 				case "rare":	return Rarity.RARE;	
 				case "epic":	return Rarity.EPIC;	
-				case "special":	return Rarity.SPECIAL;
-				default:		return Rarity.UNKNOWN;
+				case "special":	return Rarity.SPECIAL;				
 			}
 			return Rarity.UNKNOWN;
 		}
@@ -100,6 +99,8 @@ namespace Metagame {
 
 			rewardData.typeCode = _data["type"];
 			rewardData.typeCode = rewardData.typeCode.ToLower();
+			if ( rewardData.typeCode == "hc" )
+				rewardData.typeCode = "pc";
 
 			if(_data.ContainsKey("sku")) {
 				rewardData.sku = _data["sku"];
@@ -132,35 +133,31 @@ namespace Metagame {
 				// Egg reward: if amount is > 1, create a multi reward instead
 				case RewardEgg.TYPE_CODE: {
 					if(_data.amount > 1) {
-						List<Data> multiRewardData = new List<Data>();
-						for(int i = 0; i < _data.amount; ++i) {
-							Data newData = new Data();
-							newData.typeCode = _data.typeCode;
-							newData.sku = _data.sku;
-							newData.amount = 1;
-							multiRewardData.Add(newData);
-						}
-						return CreateTypeMulti(multiRewardData, _source, _economyGroup);
+						return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
 					} else {
 						return CreateTypeEgg(_data.sku, _source);
 					}
-				} break;
+				}
 
-				// Pet reward - ignoring amount (pets can only be rewarded once)
+                // Pet reward - ignoring amount (pets can only be rewarded once)
 				case RewardPet.TYPE_CODE: {
 					return CreateTypePet(_data.sku, _source);
-				} break;
+				}
 
 				// Skin reward - ignoring amount (skins can only be rewarded once)
 				case RewardSkin.TYPE_CODE: {
 					return CreateTypeSkin(_data.sku, _source);
-				} break;
+				}
 
 				// Multi-reward: Cannot be created using this method
 				case RewardMulti.TYPE_CODE: { 
 					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
-				} break;
-			}
+				}
+
+                case RewardMultiEgg.TYPE_CODE: {
+                    return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
+                } break;
+            }
 			return null;
 		}
 
@@ -169,6 +166,7 @@ namespace Metagame {
 		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 	{ return new RewardGoldenFragments(_amount, _rarity, _economyGroup, _source); }
 
 		public static RewardEgg CreateTypeEgg(string _sku, string _source) 				{ return new RewardEgg(_sku, _source); }
+		public static RewardMultiEgg CreateTypeMultiEgg(long _amount, string _sku, string _source) { return new RewardMultiEgg(_amount, _sku, _source); }
 
 		public static RewardPet CreateTypePet(string _sku, string _source)				{ return new RewardPet(_sku, _source); }
 		public static RewardPet CreateTypePet(DefinitionNode _def, string _source)		{ return new RewardPet(_def, _source); }
@@ -190,7 +188,7 @@ namespace Metagame {
 		}
 
 		protected string m_type = "";
-		public string type { get { return m_type; } }
+		public string type { get { return m_type; }}
 
 		// Optional:
 		// To be used by each reward type if needed
@@ -269,6 +267,14 @@ namespace Metagame {
 		/// Do the actual collection based on reward type.
 		/// </summary>
 		protected abstract void DoCollect();
+
+		/// <summary>
+		/// Checks whether this reward needs to be replaced and creates a replacement
+		/// reward if needed.
+		/// </summary>
+		public virtual void CheckReplacement() {
+			// To be implemented by heirs if needed
+		}
 
 		/// <summary>
 		/// Simple method to know if the reward is a duplicate and will be replaced by another reward.

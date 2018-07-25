@@ -22,7 +22,22 @@ public class HUDScore : HudWidget {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//		
-
+	private void Awake() {
+		base.Awake();
+		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		{
+			HDTournamentData _data = HDLiveEventsManager.instance.m_tournament.GetEventData() as HDTournamentData;
+			HDTournamentDefinition _def = _data.definition as HDTournamentDefinition;
+			if ( ( _def.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL && _def.m_goal.m_type == "survive_time" ) || _def.m_goal.m_type == "score")
+			{
+				gameObject.SetActive(true);
+			}
+			else
+			{
+				gameObject.SetActive(false);
+			}
+		}
+	}
 	/// <summary>
 	/// The spawner has been enabled.
 	/// </summary>

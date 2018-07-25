@@ -165,5 +165,18 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 		}
 		return Input.touchPressureSupported;
 	}
+
+
+    [DllImport("__Internal")] private static extern bool IOsApplicationExists(string appID);
+    public override bool ApplicationExists(string applicationURI) 
+    { 
+        if (string.IsNullOrEmpty(applicationURI))
+        {
+            Debug.LogError("AppName is null or empty!");
+            return false;
+        }
+        return IOsApplicationExists(applicationURI);
+    }
+
 }
 #endif

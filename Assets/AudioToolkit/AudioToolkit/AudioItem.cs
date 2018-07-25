@@ -1,4 +1,4 @@
-#if UNITY_5 || UNITY_6 || UNITY_7
+#if UNITY_5 || UNITY_2017 || UNITY_2017_1_OR_NEWER
 #define UNITY_5_OR_NEWER
 using UnityEngine.Audio;
 #endif
@@ -27,21 +27,25 @@ public class AudioCategory
     public float Volume
     {
         get { return _volume; }
-        set { _volume = value; _ApplyVolumeChange(); }
+        set { _volume = value;
+            _ApplyVolumeChange(); //TODO:  maybe call to _ApplyVolumeChange not necessary anymore since change to AudioObject._UpdateFadeVolume
+        }
     }
 
     /// <summary>
-    /// The volume factor applied to all audio items in the category (including a possible <see cref="parentCategory"/>)
+    /// The volume factor applied to all audio items in the category (including a possible <see cref="parentCategory"/> and fade out/in)
     /// </summary>
     public float VolumeTotal
     {
         get {
+            _UpdateFadeTime();
+            float fadeVal = audioFader.Get();
             if ( parentCategory != null )
             {
-                return parentCategory.VolumeTotal * _volume;
+                return parentCategory.VolumeTotal * _volume * fadeVal;
             }
             else 
-                return _volume; 
+                return _volume * fadeVal; 
         }
     }
 
@@ -83,8 +87,20 @@ public class AudioCategory
     }
 
     private AudioCategory _parentCategory;
+    private AudioFader _audioFader;
+    private AudioFader audioFader
+    {
+        get
+        {
+            if ( _audioFader == null )
+            {
+                _audioFader = new AudioFader();
+            }
+            return _audioFader;
+        }
+    }
 
-    [SerializeField]
+    [ SerializeField]
     private string _parentCategoryName;
 
 
@@ -206,7 +222,7 @@ public class AudioCategory
                     }
                     catch ( ArgumentException )
                     {
-                        Debug.LogWarning( "Multiple audio items with name '" + ai.Name + "'");
+                        Debug.LogWarning( "Multiple audio items with name '" + ai.Name + "'", audioController);
                     }
                 }
             }
@@ -264,6 +280,73 @@ public class AudioCategory
         for ( int i = 0; i < AudioItems.Length; i++ )
         {
             AudioItems[ i ].UnloadAudioClip();
+        }
+    }
+
+
+    /// <summary>
+    /// Starts a fade-in of the audio category.
+    /// </summary>
+    /// <param name="fadeInTime">The fade time in seconds.</param>
+    /// <param name="stopCurrentFadeOut">In case of an existing fade-out this parameter determines if the fade-out is stopped.</param>
+    public void FadeIn( float fadeInTime, bool stopCurrentFadeOut = true )
+    {
+        _UpdateFadeTime();
+        audioFader.FadeIn( fadeInTime, stopCurrentFadeOut );
+    }
+
+    /// <summary>
+    /// Starts a fade-out of the audio category.
+    /// </summary>
+    /// <remarks>
+    /// If the category is already fading out the requested fade-out is combined with the existing one.
+    /// </remarks>
+    /// <param name="fadeOutLength">The fade time in seconds. If a negative value is specified, the fade out as specified in the corresponding <see cref="AudioSubItem.FadeOut"/> is used</param>
+    /// <param name="startToFadeTime">Fade out starts after <c>startToFadeTime</c> seconds have passed</param>
+    public void FadeOut( float fadeOutLength, float startToFadeTime = 0 )
+    {
+        _UpdateFadeTime();
+        audioFader.FadeOut( fadeOutLength, startToFadeTime );
+    }
+
+    private void _UpdateFadeTime()
+    {
+        audioFader.time = AudioController.systemTime;
+    } 
+
+    /// <summary>
+    /// return <c>true</c> if the category is currently fading in
+    /// </summary>
+    public bool isFadingIn
+    {
+        get
+        {
+            return audioFader.isFadingIn;
+        }
+    }
+
+    /// <summary>
+    /// return <c>true</c> if the category is currently fading out
+    /// </summary>
+    /// <remarks>
+    /// If the fade-out is complete then <see cref="isFadingOut"/> return <c>false</c> and <see cref="isFadeOutComplete"/> returns <c>true</c>
+    /// </remarks>
+    public bool isFadingOut
+    {
+        get
+        {
+            return audioFader.isFadingOut;
+        }
+    }
+
+    /// <summary>
+    /// return <c>true</c> if the category has completely faded out
+    /// </summary>
+    public bool isFadeOutComplete
+    {
+        get
+        {
+            return audioFader.isFadingOutComplete;
         }
     }
 }
@@ -624,9 +707,23 @@ public class AudioItem
     {
         foreach( var si in subItems )
         {
-            if( si.Clip )
+            if ( si.Clip )
             {
+                //Debug.Log( "Unload " + si.Clip.name );
+#if UNITY_5_OR_NEWER
+                if ( !si.Clip.preloadAudioData )
+                {
+                    si.Clip.UnloadAudioData();
+                }
+                else
+                {
+#if UNITY_5_4_OR_NEWER || UNITY_5_3_7 // not working in other versions due to a bug in Unity (after scene reload clip may not be played again)
+                    Resources.UnloadAsset( si.Clip );
+#endif
+                }
+#else
                 Resources.UnloadAsset( si.Clip );
+#endif
             }
         }
     }
@@ -657,15 +754,15 @@ public class AudioSubItem
     /// <summary>
     /// Copy constructor
     /// </summary>
-    public AudioSubItem(AudioSubItem orig, AudioItem item)
+    public AudioSubItem( AudioSubItem orig, AudioItem item )
     {
         SubItemType = orig.SubItemType;
 
-        if(SubItemType == AudioSubItemType.Clip)
+        if ( SubItemType == AudioSubItemType.Clip )
         {
             Clip = orig.Clip;
         }
-        else if(SubItemType == AudioSubItemType.Item)
+        else if ( SubItemType == AudioSubItemType.Item )
         {
             ItemModeAudioID = orig.ItemModeAudioID;
         }
@@ -687,8 +784,8 @@ public class AudioSubItem
         FadeOut = orig.FadeOut;
         RandomStartPosition = orig.RandomStartPosition;
 
-        for(int i = 0; i < orig.individualSettings.Count; ++i)
-            individualSettings.Add(orig.individualSettings[i]);
+        for ( int i = 0; i < orig.individualSettings.Count; ++i )
+            individualSettings.Add( orig.individualSettings[ i ] );
 
         this.item = item;
     }
@@ -791,7 +888,7 @@ public class AudioSubItem
     /// <summary>
     /// List of attribute names that have individual setings, ie. that are not inherited by the parent AudioItem
     /// </summary>
-    public List<string> individualSettings = new List<string>(); 
+    public List<string> individualSettings = new List<string>();
 
     private float _summedProbability = -1.0f; // -1 means not initialized or invalid
     internal int _subItemID = 0;
@@ -831,11 +928,20 @@ public class AudioSubItem
     }
 
 }
-
+/// <summary>
+/// Allows to define a playlist consisting of a list of audio IDs
+/// </summary>
 [System.Serializable]
 public class Playlist
 {
+    /// <summary>
+    /// Name of the playlist as used for e.g. by <see cref="AudioController.PlayMusicPlaylist"/>
+    /// </summary>
     public string name;
+
+    /// <summary>
+    /// An array of audio IDs defining the playlist
+    /// </summary>
     public string[] playlistItems;
 
     public Playlist()

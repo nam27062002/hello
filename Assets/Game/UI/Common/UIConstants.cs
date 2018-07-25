@@ -43,9 +43,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public enum SpecialDevice {
 		NONE,
 		IPHONE_X,
-
-		COUNT
-	}
+        ANDROID_MAX_ASPECT_RATIO,
+        COUNT
+    }
 
 	//------------------------------------------------------------------------//
 	// STATIC MEMBERS														  //
@@ -144,6 +144,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string SEASON_ICONS_PATH {
 		get { return instance.m_seasonIconsPath; }
 	}
+
+	[SerializeField] private string m_modifierIconsPath = "UI/Metagame/Powers/";
+	public static string MODIFIER_ICONS_PATH {
+		get { return instance.m_modifierIconsPath; }
+	}
+
+	[SerializeField] private string m_liveEventsIconsPath = "UI/Metagame/Powers/";
+	public static string LIVE_EVENTS_ICONS_PATH {
+		get { return instance.m_liveEventsIconsPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------
@@ -175,12 +185,19 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PET_CATEGORY_DEFENSE { get { return instance.m_petCategoryColorDefense; }}
 	public static Color PET_CATEGORY_SPECIAL { get { return instance.m_petCategoryColorSpecial; }}
 	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; }}
-	#endregion
+    #endregion
 
-	// -------------------------------------------------------------------------
-	// Open Egg animation setup
-	#region OpenEggAnimSetup
-	[SerializeField] private float m_openEggExplosionDuration = 3.6f;	// Sync with actual animation
+
+    // -------------------------------------------------------------------------
+    // 
+    #region MinAspectRatio
+    private static float MIN_ASPECT_RATIO_TO_SUPPORT_ROUND_CORNERS = 1.95f; // (16:9) is 1.77 )
+    #endregion
+
+    // -------------------------------------------------------------------------
+    // Open Egg animation setup
+    #region OpenEggAnimSetup
+    [SerializeField] private float m_openEggExplosionDuration = 3.6f;	// Sync with actual animation
 	public static float openEggExplosionDuration {
 		get { return instance.m_openEggExplosionDuration; }
 	}
@@ -262,10 +279,18 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 				else if(UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhoneX) {
 					instance.m_specialDevice = SpecialDevice.IPHONE_X;
 				}
-				#endif
-
-				// Mark as initialized!
-				instance.m_specialDeviceInitialized = true;
+				#elif UNITY_ANDROID
+                else
+                {
+                    float ar = (float)Screen.width / (float)Screen.height;
+                    if (ar > MIN_ASPECT_RATIO_TO_SUPPORT_ROUND_CORNERS)
+                    {
+                        instance.m_specialDevice = SpecialDevice.ANDROID_MAX_ASPECT_RATIO;
+                    }
+                }
+                #endif
+                // Mark as initialized!
+                instance.m_specialDeviceInitialized = true;
 			}
 			return instance.m_specialDevice;
 		}

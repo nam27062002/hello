@@ -16,8 +16,9 @@ public class SpawnerIdAssign
         {
 			if ( ids.Contains( spawners[i].GetSpawnerID() ) )
 			{
-				// ERROR!!
-				EditorUtility.DisplayDialog( "Spawner Collision!", "This spawner "+spawners[i].name+" has a collision!", "OK");
+                // ERROR!!
+                string fullPath = CaletyUtils.GetGameObjectPath( spawners[i].gameObject );
+                EditorUtility.DisplayDialog( "Spawner Collision!", "This spawner "+spawners[i].name+" has a collision!\n" + fullPath, "OK");
 
 			}
 			ids.Add( spawners[i].GetSpawnerID() );

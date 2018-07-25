@@ -22,6 +22,7 @@ using UnityEngine;
 /// </summary>
 public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSettingsManager>
 {
+
     private DeviceQualityManager m_deviceQualityManager;
 
     public static DeviceQualityManager deviceQualityManager
@@ -35,7 +36,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if FREQFORMULA
 //    private static string m_qualityFormulaVersion = "2.0";
 //  After fix the mistake in freqformula the version changes to 2.5
-    private static string m_qualityFormulaVersion = "2.5";
+//    private static string m_qualityFormulaVersion = "2.5";
+    private static string m_qualityFormulaVersion = "3.0";
 #else
     private static string m_qualityFormulaVersion = "1.0";
 #endif
@@ -1057,8 +1059,19 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         int width = (int)((float)m_OriginalScreenWidth * resolutionFactor);
         int height = (int)((float)m_OriginalScreenHeight * resolutionFactor);
 
-        Screen.SetResolution(width, height, true);
-
+        if ( Screen.width != width || Screen.height != height )
+        {
+#if UNITY_ANDROID
+            // if bigger than oreo (8.0)
+            // This is a tmp fix for HDK-1911
+            if ( PlatformUtilsAndroidImpl.GetSDKLevel() >= 26 && width == 1920 && height == 1080 ) 
+            {
+                width--;
+                height--;
+            }
+#endif
+            Screen.SetResolution(width, height, true);    
+        }
     }
     private void ApplyFeatureSetting(FeatureSettings settings)
     {
@@ -1618,6 +1631,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool IsBloodEnabled()
+    {
+        bool ret = false;
+        if (!GDPRManager.SharedInstance.IsAgeRestrictionEnabled() && Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true))
+        {
+            ret = true;
+        }
+        return ret;
+    }
+
 	public bool IfPetRigidbodyInterpolates
     {
         get
@@ -1644,6 +1667,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AUTOMATIC_RELOGIN_PERIOD);        
     }
 
+	public int GetAdTimeout()
+	{
+		return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_AD_TIMEOUT);
+	}
+
+    public bool IsCP2Enabled()
+    {
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CP2);
+    }
+
 	public static bool MenuDragonsAsyncLoading
     {
         get
@@ -1652,6 +1685,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    public bool NeedPendingTransactionsServerConfirm()
+    {        
+        return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM);        
+    }
     #endregion
 
     #region log
@@ -1803,7 +1840,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     }
 
-	
+
 
     #endregion //fps
 }

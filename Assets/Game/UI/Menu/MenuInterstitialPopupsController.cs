@@ -77,10 +77,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_popupDisplayed) return;
 
 		// Is the last accepted version the same as the current one?
-		if(PlayerPrefs.GetInt(PopupTermsAndConditions.KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
+		if(PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
 			Debug.Log("<color=RED>LEGAL</color>");
 			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
-			HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._03_terms_and_conditions);
 			m_popupDisplayed = true;
 		}
 	}
@@ -102,6 +101,43 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			}
 		}
 	}
+
+    private void CheckShark()
+    {
+        string sharkPetSku = "pet_68";
+        if (!UsersManager.currentUser.petCollection.IsPetUnlocked(sharkPetSku))
+        {
+            // Check if hungry shark is installed
+            if (IsHungrySharkGameInstalled())
+            {
+                // Unlock pet
+                UsersManager.currentUser.petCollection.UnlockPet(sharkPetSku);
+
+                // Show popup
+                PopupController popup = PopupManager.OpenPopupInstant("UI/Popups/Tutorial/PF_PopupInfoPetShark");
+                m_popupDisplayed = true;
+
+                // If pets are disabled, equip it automatically
+                bool petsDisabled = (UsersManager.currentUser.gamesPlayed < 2);
+                if (petsDisabled)
+                {
+                    UsersManager.currentUser.EquipPet(UsersManager.currentUser.currentDragon, sharkPetSku);
+                }
+            }
+        }
+    }
+
+    private bool IsHungrySharkGameInstalled()
+    {
+        bool ret = false;
+#if UNITY_ANDROID
+        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
+#elif UNITY_IOS
+        ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
+#endif
+        return ret;
+    }
+        
 
 	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
@@ -183,6 +219,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
+    private void CheckPromotedIAPs() {
+        if (GameStoreManager.SharedInstance.HavePromotedIAPs()) {
+            PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
+            m_popupDisplayed = true;
+        }
+    }
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -192,16 +235,18 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// <param name="_from">Screen we're coming from.</param>
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
-		// Ignore if a popup has already been displayed in this iteration
-		if(m_popupDisplayed) return;
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
 
 		switch(_to) {
 			case MenuScreen.PLAY: {
+                CheckPromotedIAPs();
+
 				// 1. Terms and Conditions
-				CheckTermsAndConditions();
+				//CheckTermsAndConditions();
 
 				CheckCustomizerPopup();
+
+                CheckShark();
 			} break;
 
 		case MenuScreen.DRAGON_SELECTION: {

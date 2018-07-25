@@ -80,6 +80,10 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	DragonPlayer			m_dragon;
 	// DragonHealthBehaviour	m_health;
 	DragonControlPlayer			m_controls;
+	public DragonControlPlayer control
+	{
+		get{ return m_controls; }
+	}
 	DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_mainGroundCollider;
@@ -226,6 +230,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	[SerializeField] public float m_dragonForce = 20;
 	private float m_dragonForcePowerupMultiplier = 0;
+	private float m_airCurrentModifier = 0f;
 	public float m_dragonMass = 10;
 	public float m_dragonFricction = 15.0f;
 	public float m_dragonGravityModifier = 0.3f;
@@ -435,10 +440,14 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_dragonForce = m_dragonForce + m_dragonForce * m_dragonForcePowerupMultiplier / 100.0f;
 	}
 
-	public void AddSpeedPowerup( float value )
+	public void AddSpeedModifier( float value )
 	{
 		m_dragonForcePowerupMultiplier += value;
 		RecalculateDragonForce();
+	}
+
+	public void AddAirCurrentModifier(float _percentage) {
+		m_airCurrentModifier += _percentage;
 	}
 
 	void OnEnable() {
@@ -791,7 +800,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				// if(m_isVisible)
 				{
 					// we're not inside a current, check for entry
-					current = m_regionManager.CheckIfObjIsInCurrent(gameObject);
+					current = m_regionManager.CheckIfObjIsInCurrent(gameObject, 1f + (m_airCurrentModifier / 100f));
 					if(current != null)
 					{
 						// notify the machine that it's now in a current.

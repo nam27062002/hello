@@ -28,8 +28,11 @@ public class CPStats : MonoBehaviour {
     public TextMeshProUGUI m_FpsLabel;
 	public TextMeshProUGUI m_ScreenSize;
 	public TextMeshProUGUI m_LevelName;
+    public TextMeshProUGUI m_freeMemory;
+    public TextMeshProUGUI m_maxMemory;
+    public TextMeshProUGUI m_totalMemory;
 
-	ControlPanel m_ControlPanel;
+    ControlPanel m_ControlPanel;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -50,7 +53,12 @@ public class CPStats : MonoBehaviour {
 
         m_FpsLabel.text = "FPS: ";
 		m_LevelName.text = "Scene Name: "+ SceneManager.GetActiveScene().name;
-		m_ControlPanel = GetComponentInParent<ControlPanel>();
+
+        m_freeMemory.text = "Heap memory: " + SystemInfo.heapMemorySize;
+        m_maxMemory.text = "Total memory: " + SystemInfo.deviceMemorySize;
+        m_totalMemory.text = "Available memory: " + SystemInfo.availableMemorySize;
+
+        m_ControlPanel = GetComponentInParent<ControlPanel>();
 
         DeviceToken = null;
     }    

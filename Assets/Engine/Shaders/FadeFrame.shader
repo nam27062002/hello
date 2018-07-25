@@ -68,9 +68,9 @@ Shader "Hungry Dragon/FadeEffect"
 				float rv2 = clamp(rv1 + invrr, -ainvrr, RADIUS + ainvrr);
 				float rv3 = clamp(rv1 - invrr, -ainvrr, RADIUS + ainvrr);
 
-				s = smoothstep(0.0, t, abs(dc - rv1) - w);
-				s *= smoothstep(0.0, t, abs(dc - rv2) - w);
-				s *= smoothstep(0.0, t, abs(dc - rv3) - w);
+				s = smoothstep(-0.001, t, abs(dc - rv1) - w);
+				s *= smoothstep(-0.001, t, abs(dc - rv2) - w);
+				s *= smoothstep(-0.001, t, abs(dc - rv3) - w);
 
 				return s;
 			}

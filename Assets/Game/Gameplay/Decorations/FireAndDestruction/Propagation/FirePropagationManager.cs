@@ -116,13 +116,14 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	}
 
 	public static void UnregisterBurningNode(FireNode _fireNode) {
-		instance.m_burningFireNodes.Remove(_fireNode);
+        if (instance != null) {
+            instance.m_burningFireNodes.Remove(_fireNode);
+        }
 	}
 
 	/// <summary>
 	/// Inserts the burning. Registers a burning fire node while on fire
 	/// </summary>
-	/// <param name="_fireNode">Fire node.</param>
 	public static void PlayBurnAudio() {
 		if(instance.m_fireNodeAudio != null && !instance.m_fireNodeAudio.isPlaying)
 			instance.m_fireNodeAudio.Play();
@@ -131,9 +132,8 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// <summary>
 	/// Removes the burning fire node from the registered burning list
 	/// </summary>
-	/// <param name="_fireNode">Fire node.</param>
 	public static void StopBurnAudio() {
-		if (instance.m_burningFireNodes != null) {
+        if (instance != null && instance.m_burningFireNodes != null) {
 			if (instance.m_burningFireNodes.Count <= 0)
 				if (instance.m_fireNodeAudio != null && instance.m_fireNodeAudio != null)
 					instance.m_fireNodeAudio.Stop();

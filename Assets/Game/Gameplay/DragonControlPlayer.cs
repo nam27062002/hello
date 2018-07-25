@@ -142,6 +142,8 @@ public class DragonControlPlayer : MonoBehaviour {
 
 		impulse = Vector3.zero;
 
+		if (!enabled) return;
+
 		// if app mode is test -> input something else?
 		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_followingSpline != null) {
 			float m_followingClosestT;
@@ -210,8 +212,8 @@ public class DragonControlPlayer : MonoBehaviour {
 	void OnDisable() {
 		if(touchControls != null) {
 			touchControls.SetTouchObjRendering(false);
+			touchControls.SetTouch2ObjRendering(false, false);
 			touchControls.enabled = false;
-		
 		}
 
 		if(tiltControls != null)

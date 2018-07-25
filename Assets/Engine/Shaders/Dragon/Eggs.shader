@@ -10,8 +10,8 @@ Shader "Hungry Dragon/Dragon/Eggs"
 		_MainTex ("Texture", 2D) = "white" {}
 		_NormalTex("Normal (RGBA)", 2D) = "white" {}
 		_ColorRamp("Color Ramp (RGB)", 2D) = "white" {}
-		[Toggle(EMISSIVE)]_EnableEmissive("Enable emissive", Float) = 0.0
 		[Toggle(COLORRAMP)]_EnableColorRamp("Enable color ramp", Float) = 0.0
+		[Toggle(EMISSIVE)]_EnableEmissive("Enable emissive", Float) = 0.0
 		_GlowTex("Emissive (RGBA)", 2D) = "white" {}
 		_EmissiveColor("Emissive color (Color)", Color) = (0, 0, 0, 0)
 

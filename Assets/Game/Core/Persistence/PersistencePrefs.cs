@@ -14,6 +14,9 @@ public class PersistencePrefs
     // We want the cloud save to stores per device instead of per profile
     private static string KEY_CLOUD_SAVE_ENABLED = "cloudSaveEnabled";
 
+    // Social platform used: Facebook, Weibo
+    private static string KEY_SOCIAL_PLATFORM_KEY = "socialPlatform";
+
     private static string KEY_SOCIAL_ID = "socialId";
 
     private static string KEY_SOCIAL_PROFILE_NAME = "socialProfileName";
@@ -34,6 +37,7 @@ public class PersistencePrefs
     {
         KEY_ACTIVE_PROFILE_NAME,
         KEY_CLOUD_SAVE_ENABLED,
+        KEY_SOCIAL_PLATFORM_KEY,
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
@@ -116,6 +120,12 @@ public class PersistencePrefs
     }
 
     #region social
+    public static string Social_PlatformKey
+    {
+        get { return PlayerPrefs.GetString(KEY_SOCIAL_PLATFORM_KEY, null); }
+        set { SetString(KEY_SOCIAL_PLATFORM_KEY, value); }
+    }
+
     public static string Social_Id
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_ID, null); }
