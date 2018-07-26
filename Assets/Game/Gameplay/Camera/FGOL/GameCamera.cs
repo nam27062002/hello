@@ -691,6 +691,8 @@ public class GameCamera : MonoBehaviour
 
 	void PlayUpdate()
 	{
+        if (InstanceManager.gameSceneControllerBase.paused)
+            return;
 		float dt = Time.deltaTime;
 		Vector3 targetPosition;
 
