@@ -101,6 +101,10 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         if (FeatureSettingsManager.IsDebugEnabled)
             AdProvider.Log("onShowInterstitial success = " +giveReward + " duration = " + duration + " msg = " + msg);
 
+        if ( giveReward ){
+            PlayerPrefs.SetInt(RUNS_WITHOUT_ADS_KEY, 0);
+        }
+        
         if (m_onInterstitialCallback != null)
         {
             m_onInterstitialCallback(giveReward);
@@ -215,7 +219,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
                             break;
                         case "longTermNonPayer":
                             int progress = UsersManager.currentUser.GetPlayerProgress();
-                            int progressCheck = defs[i].GetAsInt("params");
+                            int progressCheck = defs[i].GetAsInt("param");
                             if (progress >= progressCheck)
                             {                                
                                 isValidProfile = true;
@@ -228,7 +232,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
                             break;
                         case "nonAdUser":
                             {
-                                int checkNoAdRuns = defs[i].GetAsInt("params");
+                                int checkNoAdRuns = defs[i].GetAsInt("param");
                                 int runsWithoutAds = 0;
                                 if (PlayerPrefs.HasKey(RUNS_WITHOUT_ADS_KEY))
                                     runsWithoutAds = PlayerPrefs.GetInt(RUNS_WITHOUT_ADS_KEY);
