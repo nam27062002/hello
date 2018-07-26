@@ -273,15 +273,15 @@ public class HDTrackingManagerImp : HDTrackingManager
     }
 
     private void PostInitEvents() {
+        Track_MobileStartEvent();
+
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
         if (e != null) {
             string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
             Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
 
             Track_SendEvent(e);
-        }
-
-        Track_MobileStartEvent();
+        }        
 
 		if (Session_IsFirstTime)
 		{
