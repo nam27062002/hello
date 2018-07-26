@@ -209,8 +209,10 @@ public class LoadingSceneController : SceneController {
 
 		// Used for android permissions
 		PopupManager.CreateInstance(true);
-        // Initialize localization
-        SetSavedLanguage();      
+        
+		// Initialize localization
+        SetSavedLanguage();
+		FontManager.instance.Init();
     }    
 
 	/// <summary>
@@ -551,7 +553,6 @@ public class LoadingSceneController : SceneController {
                 EntityManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
-                FontManager.instance.Init();
 
                 GameAds.CreateInstance(true);
                 GameAds.instance.Init();
