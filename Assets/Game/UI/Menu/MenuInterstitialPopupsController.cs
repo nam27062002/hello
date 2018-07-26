@@ -157,17 +157,25 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     /// </summary>
     private void CheckInterstitialAds()
     {
-        // this function takes care of the interstitial logic. It looks the profiles and advances the number of attempts
-        if ( GameAds.instance.ShouldShowInterstitial() ) 
+        if ( FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials() )
         {
-            // GameAds.instance.ShowInterstitial(InterstitialCallback);
-            PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
+            if ( GameAds.instance.GetRunsToInterstitial() <= 0 )
+            {
+                PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
+            }
+            else
+            {
+                GameAds.instance.ReduceRunsToInterstitial();
+            }
         }
     }
     
     private void InterstitialCallback( bool rewardGiven )
     {
-        
+        if ( rewardGiven )
+        {
+            GameAds.instance.ResetRunsToInterstitial();
+        }
     }
 
 	/// <summary>
