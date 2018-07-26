@@ -136,12 +136,13 @@ public class LoadingSceneController : SceneController {
             base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
             m_userCountry = strUserCountryByIP;
             m_infoRecievedFromServer = true;
+            Debug.Log("<color=BLUE> Country: " + strUserCountryByIP + " Age Restriction: " + iCountryAgeRestriction + " Consent Required: " + bCountryConsentRequired + " </color> ");
         }
 
         public static bool IsValidCountry(string countryStr)
         {
             bool ret = true;
-            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("--") || countryStr.Equals("Unknown"))
+            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("Unknown"))
                 ret = false;
             return ret;
         }
@@ -382,14 +383,15 @@ public class LoadingSceneController : SceneController {
                         // Recieved values are not good
                     if ( !GDPRListener.IsValidCountry(country) )
                     {
-                        country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
+                        // country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
                             // Cached Values are not good
-                        if ( !GDPRListener.IsValidCountry(country) ) 
+                        // if ( !GDPRListener.IsValidCountry(country) ) 
                         {
                             // We set the most restrictive path
                             GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 13, false);
                         }    
                     }
+                    Debug.Log("<color=BLUE>"+country+"</color>");
                     SetState( State.WAITING_TERMS );
                 }
             }break;
@@ -481,7 +483,8 @@ public class LoadingSceneController : SceneController {
             {
 				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
 					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
-					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
+					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() 
+                    )
                 {
                     Debug.Log("<color=RED>LEGAL</color>");
 					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
