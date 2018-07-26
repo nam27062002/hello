@@ -38,6 +38,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	private Corpse     m_corpse;
 
 	private AutoSpawnBehaviour m_autoSpawner;
+	private InflammableDecoration m_inflammableBehaviour;
 	private BoxCollider m_collider;
 	private Decoration m_entity;
 
@@ -82,6 +83,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	private void OnLevelLoaded() {
 		m_entity = GetComponent<Decoration>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
+		m_inflammableBehaviour = GetComponent<InflammableDecoration>();
 		m_collider = GetComponent<BoxCollider>();
 	
 		m_zone = InstanceManager.zoneManager.GetZone(transform.position.z);
@@ -264,6 +266,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		m_view.SetActive(false);
 		m_viewDestroyed.SetActive(true);
 		if (m_autoSpawner) m_autoSpawner.StartRespawn();
+		if (m_inflammableBehaviour != null) m_inflammableBehaviour.enabled = false;
 		if (m_corpse != null) m_corpse.Spawn(false, false);
 
 		m_spawned = false;

@@ -81,27 +81,39 @@ public class Pool {
 		// Destroying the container is enough, but we don't want to do that if the container wasn't created by us
 
 		if (m_dontDestroyContainer) {
-			while(m_freeObjects.Count > 0) {
-				GameObject go = m_freeObjects.Dequeue();
-				GameObject.Destroy(go);
-			}
-
-			foreach(GameObject go in m_notFreeObjects) {
-				GameObject.Destroy(go);
-			}
-
-			while(m_returnObjects.Count > 0) {
-				GameObject go = m_returnObjects.Dequeue();
-				GameObject.Destroy(go);
-			}
+			ClearInstances();
 		} else {
 			GameObject.Destroy(m_containerObj);
+			m_freeObjects.Clear();
+			m_notFreeObjects.Clear();
+			m_returnObjects.Clear();
+		}
+
+		m_containerObj = null;
+	}
+
+	public void ClearInstances() {
+		while(m_freeObjects.Count > 0) {
+			GameObject go = m_freeObjects.Dequeue();
+			GameObject.Destroy(go);
+		}
+
+		List<GameObject> toDestroy = new List<GameObject>();
+		foreach(GameObject go in m_notFreeObjects) {
+			toDestroy.Add(go);
+		}
+		for (int i = toDestroy.Count - 1; i >= 0; --i) {
+			GameObject.Destroy(toDestroy[i]);
+		}
+
+		while(m_returnObjects.Count > 0) {
+			GameObject go = m_returnObjects.Dequeue();
+			GameObject.Destroy(go);
 		}
 
 		m_freeObjects.Clear();
 		m_notFreeObjects.Clear();
 		m_returnObjects.Clear();
-		m_containerObj = null;
 	}
 	
 	public GameObject Get(bool _activate) {			

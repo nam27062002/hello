@@ -253,6 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: dragon_fat
   m_invulnerableTime: 5
+  m_energy: 0
   m_alcoholDrain: 1
   m_dragonCommonSettings: {fileID: 11400000, guid: 34ea001d389df4d7d9d597b2896ba653,
     type: 2}
@@ -322,6 +323,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_bubbles: {fileID: 105258, guid: f3cddb62f324a4668b40f72b9be4eb4e, type: 2}
   m_bubblesAnchor: {fileID: 4000012015477780}
   m_bubblesDrowningMultiplier: 3
@@ -381,6 +383,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_shieldAnchor: {fileID: 490078}
   m_bodyParticles: []
   m_trailsParticle:
@@ -421,6 +424,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_trailsAnchor: {fileID: 4367826975242444}
   m_landingParticle:
     name: 
@@ -460,6 +464,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_megaFireRush: PS_MegaFireCharge
   m_megaFireRushAnchor: {fileID: 4422010019933228}
 --- !u!114 &11438592
@@ -489,7 +494,7 @@ MonoBehaviour:
   m_dragonFricction: 15
   m_dragonGravityModifier: 10
   m_dragonAirGravityModifier: 0.3
-  m_dragonAirExpMultiplier: 0.05
+  m_dragonAirExpMultiplier: 0.1
   m_dragonAirBoostForce: 3
   m_dragonAirFreeFallMultiplier: 1.35
   m_dragonAirBoostFallMultiplier: 1
@@ -3781,18 +3786,18 @@ MonoBehaviour:
         FadeOut: 5
         RandomStartPosition: 0
         individualSettings: []
-    - Name: hd_megafire_charge
-      Loop: 0
+    - Name: dragonfat_flap
+      Loop: 1
       loopSequenceCount: 0
       loopSequenceOverlap: 0
       loopSequenceRandomDelay: 0
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 1
+      Volume: 0.8
       SubItemPickMode: 2
       MinTimeBetweenPlayCalls: 0.1
-      MaxInstanceCount: 0
+      MaxInstanceCount: 1
       Delay: 0
       RandomVolume: 0
       RandomPitch: 0
@@ -3806,9 +3811,48 @@ MonoBehaviour:
         Probability: 1
         DisableOtherSubitems: 0
         ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: a55d21f502ee1aa4b92a238fbaac3b2c, type: 3}
+        Clip: {fileID: 8300000, guid: 8949f0f56ccf0ad4e9514f7568bd5900, type: 3}
         Volume: 1
         PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: dragonfat_flap_idle
+      Loop: 1
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 0.75
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 1
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 2460cb651a998fe45bc58b737ebc0dd7, type: 3}
+        Volume: 1
+        PitchShift: -2
         Pan2D: 0
         Delay: 0
         RandomPitch: 0
@@ -3835,7 +3879,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 16
+    currentItemIndex: 17
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -3892,6 +3936,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1.2
+    orientate: 0
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
@@ -3930,6 +3975,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_burpSound: 
   m_canEatEntities: 1
   m_randomSpeedRange:
@@ -4175,8 +4221,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Idle_Flaps
-  m_wingsFlyingSound: Dragon_Flaps
+  m_wingsIdleSound: dragonfat_flap_idle
+  m_wingsFlyingSound: dragonfat_flap
   m_eatSound: Dragon_Eat_2
   m_eatHoldSound: 
   m_wingsWindSound: Dragon_wind_boost

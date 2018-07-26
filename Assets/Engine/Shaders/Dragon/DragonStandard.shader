@@ -83,7 +83,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 				ZFail keep
 			}
 
-			Cull[_Cull]
+			Cull [_Cull]
 			Blend[_SrcBlend][_DstBlend]
 			ZWrite[_ZWrite]
 			ztest less
@@ -114,16 +114,16 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 //			#define FRESNEL
 
-			#if LOW_DETAIL_ON
+			#ifdef LOW_DETAIL_ON
 			#undef NORMALMAP
 			#undef SPECULAR
 			#endif
 
-			#if MEDIUM_DETAIL_ON
+			#ifdef MEDIUM_DETAIL_ON
 			#undef SPECULAR
 			#endif
 
-			#if HI_DETAIL_ON
+			#ifdef HI_DETAIL_ON
 			#endif
 
 			#include "dragon.cginc"

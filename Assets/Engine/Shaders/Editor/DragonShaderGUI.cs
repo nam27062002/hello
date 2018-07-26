@@ -274,6 +274,7 @@ internal class DragonShaderGUI : ShaderGUI
         bool bNormalMap = mp_normalTexture.textureValue != null as Texture;
 
         SetKeyword(material, kw_normalmap, bNormalMap);
+        mp_EnableNormalMap.floatValue = bNormalMap ? 1.0f : 0.0f;
         EditorGUI.BeginChangeCheck();
 
         if (bNormalMap)

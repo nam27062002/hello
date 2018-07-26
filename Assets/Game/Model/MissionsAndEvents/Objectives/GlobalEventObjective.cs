@@ -99,10 +99,10 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 	/// </summary>
 	public virtual void OnGameStarted() {
 		// Reset counter!
-		m_tracker.SetValue(0, false);
+		m_tracker.InitValue(0);
 
 		// Disable during FTUX
-		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN);
+		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN);
 
 		// Disable too if parent event is not active!
 		this.enabled &= m_parentEvent.isActive;

@@ -11,19 +11,20 @@ public class Projectile : MonoBehaviour, IProjectile {
 		FreeFall
 	}
 
-	private enum State {
-		Idle = 0,
-		Charging,
-		Shot,
-		Stuck_On_Player,
-		Die
-	}
-
 	private enum RotationAxis {
 		Up = 0,
 		Right,
 		Forward
 	}
+
+    protected enum State
+    {
+        Idle = 0,
+        Charging,
+        Shot,
+        Stuck_On_Player,
+        Die
+    }
 
 	//---------------------------------------------------------------------------------------
 
@@ -80,7 +81,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	private Vector3 m_velocity;
 	public Vector3 velocity { get { return m_velocity; } }
 
-	private Transform m_trasnform;
+	protected Transform m_trasnform;
 	public Vector3 upVector { get { return m_trasnform.up; } }
 
 
@@ -90,7 +91,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private Explosive m_explosive;
 
-	private State m_state;
+    protected State m_state;
 	public bool hasBeenShot { get { return m_state == State.Shot; } }
 
 	private float m_timer;
@@ -99,9 +100,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 	private Transform m_oldParent;
 
 	//This may be a machine
-	private Entity m_entity;
-	private AI.MachineProjectile m_machine;
-	private Collider m_hitCollider;
+    protected Entity m_entity;
+	protected AI.MachineProjectile m_machine;
+	protected Collider m_hitCollider;
 
 	//-------------------------------------------------------------------------------------
 
@@ -379,7 +380,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 	}
 
-	private void OnTriggerEnter(Collider _other) {
+	protected virtual void OnTriggerEnter(Collider _other) {
 		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				m_hitCollider = _other;
@@ -390,7 +391,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 				}
 			}
 
-			Debug.Log(name + " >> " + _other.name);
+			//Debug.Log(name + " >> " + _other.name);
 		}
 	}
 
@@ -423,33 +424,15 @@ public class Projectile : MonoBehaviour, IProjectile {
 	}
 
 	public void Explode(bool _triggeredByPlayer) {
-		DragonPlayer player = InstanceManager.player;
-
-		// dealing damage
-		float actualKnockback = m_knockback;
-		if (player.data.tier > m_knockbackTier) {
-			actualKnockback = 0f;
-		}
-
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
-			m_explosive.Explode(transform, actualKnockback, _triggeredByPlayer);
+            DealExplosiveDamage(_triggeredByPlayer);
 		} else {
 			if (_triggeredByPlayer) {
-				if (actualKnockback > 0) {
-					DragonMotion dragonMotion = player.dragonMotion;
-
-					Vector3 knockBackDirection = dragonMotion.transform.position - m_trasnform.position;
-					knockBackDirection.z = 0f;
-					knockBackDirection.Normalize();
-
-					dragonMotion.AddForce(knockBackDirection * actualKnockback);
-				}
-
-				player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, m_source);
+                DealDamage();
 			}
 
 			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
-				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset);
+				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, m_trasnform.rotation);
 			}
 		}
 
@@ -468,6 +451,41 @@ public class Projectile : MonoBehaviour, IProjectile {
 			Die();
 		}
 	}
+
+    protected virtual void DealExplosiveDamage(bool _triggeredByPlayer) {
+        DragonPlayer player = InstanceManager.player;
+
+        // dealing damage
+        float actualKnockback = m_knockback;
+        if (player.data.tier > m_knockbackTier)
+        {
+            actualKnockback = 0f;
+        }
+
+        m_explosive.Explode(transform, actualKnockback, _triggeredByPlayer);
+    }
+
+    protected virtual void DealDamage() {
+        DragonPlayer player = InstanceManager.player;
+
+        // dealing damage
+        float actualKnockback = m_knockback;
+        if (player.data.tier > m_knockbackTier) {
+            actualKnockback = 0f;
+        }
+
+        if (actualKnockback > 0) {
+            DragonMotion dragonMotion = player.dragonMotion;
+
+            Vector3 knockBackDirection = dragonMotion.transform.position - m_trasnform.position;
+            knockBackDirection.z = 0f;
+            knockBackDirection.Normalize();
+
+            dragonMotion.AddForce(knockBackDirection * actualKnockback);
+        }
+
+        player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, m_source);
+    }
 
 	private void StickOnCollider() {
 		m_state = State.Stuck_On_Player;
@@ -495,7 +513,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		return holdTransform;
 	}
 
-	private void Die() {
+	protected void Die() {
 		m_timer = m_dieTime;
 		m_state = State.Die;
 	}

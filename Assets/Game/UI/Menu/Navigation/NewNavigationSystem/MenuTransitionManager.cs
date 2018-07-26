@@ -78,6 +78,9 @@ public class MenuTransitionManager : MonoBehaviour {
 
 	// Internal
 	private MenuScreen m_prevScreen = MenuScreen.NONE;
+	public MenuScreen prevScreen {
+		get { return m_prevScreen; }
+	}
 	private MenuScreen m_currentScreen = MenuScreen.NONE;
 	public MenuScreen currentScreen {
 		get { return m_currentScreen; }

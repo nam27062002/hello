@@ -26,7 +26,8 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
 		_Panning("Automatic Panning", Vector) = (0.0, 0.0, 0.0, 0.0)
 
-		_TintColor("Tint Color", Color) = (0.5,0.5,0.5,0.5)
+		_TintColor("Tint Color", Color) = (0.5, 0.5, 0.5, 0.5)
+		_GlobalAlpha("Global alpha", float) = 1.0
 
 		[Toggle(EMISSIVEPOWER)] _EnableEmissivePower("Enable Emissive Power", int) = 0.0
 		_EmissivePower("Emissive Power", Range(1.0, 4.0)) = 1.0
@@ -37,18 +38,20 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Toggle(NOISE_TEXTURE_EMISSION)] _EnableNoiseTextureEmission("Enable noise texture emission", int) = 0.0
 		[Toggle(NOISE_TEXTURE_ALPHA)] _EnableNoiseTextureAlpha("Enable noise texture alpha", int) = 0.0
 		[Toggle(NOISE_TEXTURE_DISSOLVE)] _EnableNoiseTextureDissolve("Enable noise texture dissolve", int) = 0.0
+		[Toggle(NOISEUV)] _EnableNoiseUV("Enable noise uv channel", int) = 0.0
 
 		[Enum(Additive, 0, SoftAdditive, 1, AdditiveDouble, 2, AlphaBlend, 3, AdditiveAlphaBlend, 4, Premultiply, 5)] BlendMode("Blend mode", Float) = 0.0
 
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 5.0 //"SrcAlpha"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 1.0 //"One"
 		[Enum(LEqual, 2, Always, 6)] _ZTest("Ztest:", Float) = 2.0
+		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
 	}
 
 	Category{
 		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		Blend [_SrcBlend] [_DstBlend]
-		Cull Off
+		Cull [_Cull]
 		Lighting Off
 		ZWrite Off
 		ZTest[_ZTest]
@@ -73,6 +76,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma shader_feature _ NOISE_TEXTURE_EMISSION
 				#pragma shader_feature _ NOISE_TEXTURE_ALPHA
 				#pragma shader_feature _ NOISE_TEXTURE_DISSOLVE
+				#pragma shader_feature _ NOISEUV
 
 				#pragma shader_feature BLENDMODE_ADDITIVE BLENDMODE_SOFTADDITIVE BLENDMODE_ADDITIVEDOUBLE BLENDMODE_ALPHABLEND BLENDMODE_ADDITIVEALPHABLEND BLENDMODE_PREMULTIPLY
 //				#pragma shader_feature DISSOLVE_NONE DISSOLVE_ENABLED DISSOLVE_EXTENDED

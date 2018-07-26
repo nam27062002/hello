@@ -20,7 +20,7 @@ public class GameCamera : MonoBehaviour
 	private const float			m_minZ = 10.0f;
 	private const float			m_frameWidthDefault = 20.0f;
 	private const float			m_frameWidthBoss = 40.0f; // TEMP boss cam just zooms out
-    private const float         m_frameWidthBoost = 30.0f;
+    private const float         m_frameWidthBoost = 32.5f;
 	private const float         m_frameWidthFury = 30.0f;
 	private const float         m_frameWidthSpace = 40.0f;
 
@@ -68,8 +68,6 @@ public class GameCamera : MonoBehaviour
     private float m_maxLookUpOffset = 3.0f;
     [SerializeField]
     private float m_maxLookDownOffset = 3.0f;
-	[SerializeField]
-    private float m_spaceHeight = 150.0f;
     [SerializeField]
     private float m_spaceHeightLookUpMin = -10.0f;
     [SerializeField]
@@ -432,8 +430,6 @@ public class GameCamera : MonoBehaviour
 	{
 		float pw = m_unityCamera.pixelWidth;
 		float ph = m_unityCamera.pixelHeight;
-		Debug.Log("pw " + pw);
-		Debug.Log("ph " + ph);
 		m_pixelWidth = (int)pw;
 		m_pixelHeight = (int)ph;
 		m_pixelAspectX = pw/ph;
@@ -442,7 +438,6 @@ public class GameCamera : MonoBehaviour
 
 	private void OnResolutionChanged(Vector2 resolution)
 	{
-		Debug.Log("New resolution " + resolution);
 		UpdatePixelData ();
 	}
 
@@ -696,6 +691,8 @@ public class GameCamera : MonoBehaviour
 
 	void PlayUpdate()
 	{
+        if (InstanceManager.gameSceneControllerBase.paused)
+            return;
 		float dt = Time.deltaTime;
 		Vector3 targetPosition;
 
@@ -833,7 +830,9 @@ public class GameCamera : MonoBehaviour
 							 }
 							 else
 							 {
-					 frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+					 //frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
+							//TONI: Testing, instead of linear, cubic interpolation.
+							frameWidth = m_frameWidthDefault + ((m_frameWidthBoost - m_frameWidthDefault) * m_targetMachine.howFast * m_targetMachine.howFast * m_targetMachine.howFast);
 				 }
 						 }
 		        }
@@ -847,8 +846,7 @@ public class GameCamera : MonoBehaviour
 					frameWidth += m_largestBossFrameIncrement;
 				}
             }
-
-
+				
 			UpdateZooming(frameWidth, hasBoss);
 		}
 
@@ -876,7 +874,7 @@ public class GameCamera : MonoBehaviour
 
 	void UpdateSpaceLevelOffset()
 	{
-		float y = m_targetObject.transform.position.y - m_spaceHeight;
+        float y = m_targetObject.transform.position.y - DragonMotion.SpaceStart;
 		float halfHeight = (m_spaceHeightLookUpMax + m_spaceHeightLookDownMin) / 2.0f;
 
 		if (y < m_spaceHeightLookUpMin)
@@ -1514,19 +1512,8 @@ public class GameCamera : MonoBehaviour
     {
         NeedsToSetupPostProcessEffects = false;
 
-        SetupGlowEffect();
         SetupDrunkEffect();
         SetupFrameColorEffect();
-    }
-
-    private void SetupGlowEffect()
-    {
-        // The effect is enabled if the feature is enabled for this device
-        GlowEffect.GlowEffect glow = GetComponent<GlowEffect.GlowEffect>();
-        if (glow != null)
-        {
-            glow.enabled = FeatureSettingsManager.instance.IsGlowEffectEnabled;
-        }
     }
 
     private void SetupDrunkEffect()

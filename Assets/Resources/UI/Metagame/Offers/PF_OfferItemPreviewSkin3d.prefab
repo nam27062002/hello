@@ -3955,6 +3955,7 @@ MonoBehaviour:
     m_special: 0
     m_timeToNext: 0
     m_isPreferedAnimation: 0
+    m_animationLevel: 0
   - m_range:
       min: 4
       max: 8
@@ -3964,6 +3965,7 @@ MonoBehaviour:
     m_special: 1
     m_timeToNext: 0
     m_isPreferedAnimation: 0
+    m_animationLevel: 0
   m_hasFire: 0
   m_dragonFlameStandard: {fileID: 0}
   m_bloodParticle: {fileID: 0}
@@ -4215,6 +4217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6ace68a2407942789cbde60eeae8cc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_showInfoButton: 1
   m_dragonLoader: {fileID: 114868293444290136}
 --- !u!114 &114647288510316996
 MonoBehaviour:
@@ -4418,6 +4421,7 @@ MonoBehaviour:
   m_keepLayers: 0
   m_useResultsScreen: 0
   m_allowAltAnimations: 0
+  m_altAnimationsMaxLevel: 10
   m_loadAsync: 0
   m_placeholderDragonSku: dragon_classic
 --- !u!114 &114910661634947732
@@ -7940,10 +7944,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 500}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224837106264055228
 RectTransform:

@@ -195,18 +195,55 @@ public class GameServerManagerOffline : GameServerManagerCalety {
         SimpleJSON.JSONArray _array = new SimpleJSON.JSONArray();
 
         // T1: pc:1
-        SimpleJSON.JSONNode _transaction = new SimpleJSON.JSONClass();
+        SimpleJSON.JSONNode _transaction = new SimpleJSON.JSONClass();        
         _transaction["order_id"] = "1";
         _transaction["source"] = "support";
-        _transaction["hc"] = 1;        
+        _transaction[Transaction.KEY_HC] = 1;        
         _array.Add(null, _transaction);
 
         // T2: sc:100 
         _transaction = new SimpleJSON.JSONClass();
-        _transaction["order_id"] = "1";
+        _transaction["order_id"] = "2";
         _transaction["source"] = "support";        
-        _transaction["sc"] = 100000;
+        _transaction[Transaction.KEY_SC] = 100000;
         _array.Add(null, _transaction);        
+
+        // T3: gf:2 
+        _transaction = new SimpleJSON.JSONClass();
+        _transaction["order_id"] = "3";
+        _transaction["source"] = "support";
+        _transaction[Transaction.KEY_GF] = 2;
+        _array.Add(null, _transaction);
+
+        // T3: Items
+        SimpleJSON.JSONArray _items = new SimpleJSON.JSONArray();
+
+        // Item egg:eggEvent:1
+        SimpleJSON.JSONNode _item = new SimpleJSON.JSONClass();
+        _item["sku"] = "egg_event";
+        _item["type"] = "egg";
+        _item["amount"] = "1";        
+        _items.Add(_item);
+
+        // Item pet
+        _item = new SimpleJSON.JSONClass();
+        _item["sku"] = "pet_25";
+        _item["type"] = "pet";
+        _item["amount"] = "1";
+        _items.Add(_item);
+
+        // Item skin
+        _item = new SimpleJSON.JSONClass();
+        _item["sku"] = "dragon_crocodile_1";
+        _item["type"] = "skin";
+        _item["amount"] = "1";
+        _items.Add(_item);
+
+        _transaction = new SimpleJSON.JSONClass();
+        _transaction["order_id"] = "4";
+        _transaction["source"] = "support";
+        _transaction["items"] = _items;
+        _array.Add(null, _transaction);                
 
         SimpleJSON.JSONNode _json = new SimpleJSON.JSONClass();
         _json["txs"] = _array;

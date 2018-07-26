@@ -249,14 +249,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				Renderer renderer = m_renderers[i];
 
 				// Keep the vertex count (for DEBUG)
-				if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
+				/*if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
 					m_vertexCount += (renderer as SkinnedMeshRenderer).sharedMesh.vertexCount;
 				} else if (renderer.GetType() == typeof(MeshRenderer)) {
 					MeshFilter filter = renderer.GetComponent<MeshFilter>();
 					if (filter != null) {
 						m_vertexCount += filter.sharedMesh.vertexCount;
 					}
-				}
+				}*/
 
 				Material[] materials = renderer.sharedMaterials;
 
@@ -416,7 +416,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		GetViewFromManager();
 		#endif
 
-		if(Camera.main != null && m_camera == null) {
+		if(m_camera == null && Camera.main != null ) {
 			m_camera = Camera.main.GetComponent<GameCamera>();
 		}
 
@@ -1093,7 +1093,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	public void PlayExplosion()
 	{
 		if (m_camera.IsInsideCameraFrustrum(m_transform.position)) {
-			m_explosionParticles.Spawn(m_transform.position + m_explosionParticles.offset);
+			GameObject go = m_explosionParticles.Spawn(m_transform.position + m_explosionParticles.offset, m_transform.rotation);
 
 			if (!string.IsNullOrEmpty(m_onExplosionAudio))
 				AudioController.Play(m_onExplosionAudio, m_transform.position);

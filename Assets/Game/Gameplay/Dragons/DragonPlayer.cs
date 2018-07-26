@@ -50,7 +50,7 @@ public class DragonPlayer : MonoBehaviour {
 	private float m_health;
 	public float health { get { return m_health; } }
 	
-	private float m_energy;
+	[SerializeField] private float m_energy;
 	public float energy { get { return m_energy; } }
 
 	private float m_alcohol = 0;
@@ -99,6 +99,9 @@ public class DragonPlayer : MonoBehaviour {
 	public HoldPreyPoint[] holdPreyPoints { get{ return m_holdPreyPoints; } }
 
 	private int m_numLatching = 0;
+
+	// default size
+	private float m_defaultSize = 1;
 
 	// Super size transformation
 	private float m_superSizeTarget = 1;
@@ -185,6 +188,12 @@ public class DragonPlayer : MonoBehaviour {
 		set{ m_superSizeInvulnerable = value; }
 	}
 
+	private bool m_modInvulnerable = false;
+	public bool modInvulnerable {
+		get { return m_modInvulnerable; }
+		set { m_modInvulnerable = value; }
+	}
+
 	public DragonCommonSettings m_dragonCommonSettings;
 
 	//------------------------------------------------------------------//
@@ -199,8 +208,29 @@ public class DragonPlayer : MonoBehaviour {
 		m_shieldTimers = new Dictionary<DamageType, float>(comparer);
 
 		// Get data from dragon manager
-		m_data = DragonManager.GetDragonData(m_sku);
+		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		{
+			if ( HDLiveEventsManager.instance.m_tournament.UsingProgressionDragon() )
+			{
+				m_data = DragonManager.GetDragonData(m_sku);	
+			}
+			else
+			{
+				// Use tmp data
+				m_data = new DragonData();
+				m_data.Init( DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DRAGONS , m_sku)  );
+				m_data.progression.SetToMaxLevel();
+			}
+		}
+		else
+		{
+			m_data = DragonManager.GetDragonData(m_sku);
+		}
+
+
 		DebugUtils.Assert(m_data != null, "Attempting to instantiate a dragon player with an ID not defined in the manager.");
+
+		m_defaultSize = m_data.scale;
 
 		// Store reference into Instance Manager for immediate global access
 		InstanceManager.player = this;
@@ -271,7 +301,7 @@ public class DragonPlayer : MonoBehaviour {
 	private void OnEnable() 
 	{
 		// Make sure the dragon has the scale according to its level
-		gameObject.transform.localScale = Vector3.one * data.scale;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize;
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
 	}
@@ -290,10 +320,10 @@ public class DragonPlayer : MonoBehaviour {
 		while( timer < duration )
 		{
 			timer += Time.deltaTime;
-			gameObject.transform.localScale = Vector3.one * data.scale * m_dragonCommonSettings.m_reviveScaleCurve.Evaluate( timer );
+			gameObject.transform.localScale = Vector3.one * m_defaultSize * m_dragonCommonSettings.m_reviveScaleCurve.Evaluate( timer );
 			yield return null;
 		}
-		gameObject.transform.localScale = Vector3.one * data.scale;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize;
 		playable = true;
 	}
 
@@ -331,7 +361,7 @@ public class DragonPlayer : MonoBehaviour {
 			{
 				m_superSizeSize = m_superSizeTarget;
 			}
-			gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
+			gameObject.transform.localScale = Vector3.one * m_defaultSize * m_superSizeSize;
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
@@ -366,6 +396,9 @@ public class DragonPlayer : MonoBehaviour {
 			m_invulnerableAfterReviveTimer = m_invulnerableTime;
 			m_dragonMotion.Revive();
 
+			//TONI START
+			m_dragonHeatlhBehaviour.SetReviveBonusTime();
+			//TONI END
 			// If health modifier changed, notify game
 			if(m_currentHealthModifier != oldHealthModifier) {
 				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
@@ -585,6 +618,8 @@ public class DragonPlayer : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c> if the dragon currently is invulnerable; otherwise, <c>false</c>.</returns>
 	public bool IsInvulnerable() {
+		if (m_modInvulnerable) return true;
+
 		// After revive, we're invulnerable
 		if(m_invulnerableAfterReviveTimer > 0) return true;
 
@@ -609,13 +644,15 @@ public class DragonPlayer : MonoBehaviour {
 	private void OnLevelUp(DragonData _data) {
 		// Assume it's this dragon
 		// Make sure the dragon has the scale according to its level
-		// gameObject.transform.localScale = Vector3.one * data.scale;
-		gameObject.transform.localScale = Vector3.one * data.scale * m_superSizeSize;
+		// gameObject.transform.localScale = Vector3.one * m_defaultSize;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize * m_superSizeSize;
 		if (m_breathBehaviour.IsFuryOn())
 			m_breathBehaviour.RecalculateSize();
 
 		SetHealthBonus( m_healthBonus );
 		SetBoostBonus( m_energyBonus );
+		//TONI
+		m_dragonMotion.RecalculateDragonForce();
 	}
 
 	void OnPrewardmFuryRush(DragonBreathBehaviour.Type type, float duration)
@@ -791,5 +828,9 @@ public class DragonPlayer : MonoBehaviour {
 		m_superSizeDuration = m_superSizeTimer = 0.5f;
 	}
 
-
+	public void OverrideSize( float size )
+	{
+		m_defaultSize = size;
+		gameObject.transform.localScale = Vector3.one * m_defaultSize;
+	}
 }

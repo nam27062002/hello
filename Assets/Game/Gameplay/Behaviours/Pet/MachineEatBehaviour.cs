@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class MachineEatBehaviour : EatBehaviour {
 
 	[SerializeField] private DragonTier m_eaterTier;
-	public DragonTier eaterTier { get {return m_eaterTier; }}
+    public DragonTier eaterTier { get {return m_eaterTier; } set{ m_eaterTier = value; }}
 
 	[SerializeField] private bool m_isPet = false;
 

@@ -98,15 +98,32 @@ public class FeatureSettings
     // Whether or not the events that couldn't be sent over the network should be cached
     public const string KEY_TRACKING_OFFLINE_CACHED = "trackingOfflineCached";
 
+    // When <true> a safe check if checked to prevent too big tracking data cached from making the app to get stuck
+    public const string KEY_SAFE_TRACKING_OFFLINE_CACHED = "trackingSafeOfflineCached";    
+
     public const string KEY_CONTENT_DELTAS = "contentDeltas";
 
     public const string KEY_CONTENT_DELTAS_CACHED = "contentDeltasCached";
+
+    /// <summary>
+    /// Wether or not the customizer blocks the first loading screen
+    /// </summary>
+    public const string KEY_CUSTOMIZER_BLOCKER = "customizerBlocker";
 
     // Whether or not automatic relogin is enabled (this features tries to login to our server and to the cloud if network is up)
     public const string KEY_AUTOMATIC_RELOGIN = "automaticRelogin";
 
     // Period in seconds between two automatic relogin checks
     public const string KEY_AUTOMATIC_RELOGIN_PERIOD = "automaticReloginPeriod";
+
+	// Max time in seconds that the user will have to wait for an ad. If no ad is available after this time then ad is not shown and UI is enabled again
+	public const string KEY_AD_TIMEOUT = "adTimeout";
+
+    // Wheter or not pending transactions need server confirmation to be given to the user
+    public const string KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM = "pendingTransactionsServerConfirm";
+
+    // Whether or not CP2 is enabled
+    public const string KEY_CP2 = "cp2";
 
     // Examples of how to use different type datas
     /*
@@ -253,9 +270,13 @@ public class FeatureSettings
 
             // tracking offline cached
             key = KEY_TRACKING_OFFLINE_CACHED;
-            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
 
+            key = KEY_SAFE_TRACKING_OFFLINE_CACHED;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+       
             // Content deltas. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
@@ -266,14 +287,30 @@ public class FeatureSettings
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
 
+            // Customizer blocker. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
+            key = KEY_CUSTOMIZER_BLOCKER;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
             key = KEY_AUTOMATIC_RELOGIN;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
-            Datas.Add(key, data);
+            Datas.Add(key, data);            
 
             key = KEY_AUTOMATIC_RELOGIN_PERIOD;
             data = new DataInt(key, EValueType.Int, 60);
             Datas.Add(key, data);
 
+			key = KEY_AD_TIMEOUT;
+			data = new DataRangeInt(key, 5, 0, int.MaxValue);
+			Datas.Add(key, data);
+
+            key = KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+
+            key = KEY_CP2;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
             /*
             // intTest
             key = KEY_INT_TEST;

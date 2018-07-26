@@ -125,6 +125,8 @@ public class OfferPack {
 	private int m_gamesPlayed = 0;
 	private PayerType m_payerType = PayerType.ANYONE;
 	private float m_minSpent = 0f;
+	private int m_minNumberOfPurchases = 0;
+	private long m_secondsSinceLastPurchase = 0;
 
 	private string[] m_dragonUnlocked = new string[0];
 	private string[] m_dragonOwned = new string[0];
@@ -241,6 +243,14 @@ public class OfferPack {
 		// Has state changed?
 		return (oldState != m_state);
 	}
+
+	/// <summary>
+	/// Immediately mark this pack as expired!
+	/// No checks will be performed.
+	/// </summary>
+	public void ForceExpiration() {
+		ChangeState(State.EXPIRED);
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -279,6 +289,8 @@ public class OfferPack {
 		m_gamesPlayed = 0;
 		m_payerType = PayerType.ANYONE;
 		m_minSpent = 0f;
+		m_minNumberOfPurchases = 0;
+		m_secondsSinceLastPurchase = 0;
 
 		m_dragonUnlocked = new string[0];
 		m_dragonOwned = new string[0];
@@ -369,7 +381,9 @@ public class OfferPack {
 			case "nonPayer":	m_payerType = PayerType.NON_PAYER;		break;
 			default:			break;	// Already has the default value
 		}
-		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent);
+		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent) * 100;	// Content in USD, we work in cents of USD
+		m_minNumberOfPurchases = _def.GetAsInt("minNumberOfPurchases", m_minNumberOfPurchases);
+		m_secondsSinceLastPurchase = _def.GetAsLong("minutesSinceLastPurchase", m_secondsSinceLastPurchase / 60L) * 60L;		// Content in minutes, we work in seconds
 
 		m_dragonUnlocked = ParseArray(_def.GetAsString("dragonUnlocked"));
 		m_dragonOwned = ParseArray(_def.GetAsString("dragonOwned"));
@@ -434,6 +448,8 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "gamesPlayed", m_gamesPlayed.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "payerType", "");
 		SetValueIfMissing(ref _def, "minSpent", m_minSpent.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "minNumberOfPurchases", m_minNumberOfPurchases.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "minutesSinceLastPurchase", (m_secondsSinceLastPurchase / 60L).ToString(CultureInfo.InvariantCulture));
 
 		SetValueIfMissing(ref _def, "dragonUnlocked", string.Join(";", m_dragonUnlocked));
 		SetValueIfMissing(ref _def, "dragonOwned", string.Join(";", m_dragonOwned));
@@ -480,6 +496,7 @@ public class OfferPack {
 	private bool CheckActivation() {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
+		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 
 		// Start date
 		if(GameServerManager.SharedInstance.GetEstimatedServerTime() < m_startDate) return false;
@@ -490,13 +507,19 @@ public class OfferPack {
 		if(profile.eggsCollected < m_openedEggs) return false;
 
 		// Payer profile
-		int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
+		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
 		switch(m_payerType) {
 			case PayerType.PAYER: {
 				if(totalPurchases == 0) return false;
 			} break;
 		}
-		//if(m_minSpent > TODO!!) return false;	// [AOC] TODO!! We don't store total spent in the client. Will be segmented via CRM.
+
+		// Min spent
+		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
+		if(m_minSpent > totalSpent) return false;
+
+		// Min number of purchases
+		if(m_minNumberOfPurchases > totalPurchases) return false;
 
 		// Dragons
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
@@ -531,8 +554,24 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>Whether this pack has expired.</returns>
 	private bool CheckExpiration() {
+		// Order is relevant!
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
+
+		// Multiple packs may have the same unique ID, with the intention to make 
+		// them mutually exclusive.
+		// If another pack with the same unique ID is active, mark this one as expired!
+		// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
+		for(int i = 0; i < OffersManager.activeOffers.Count; ++i) {
+			// Skip if it's ourselves
+			if(OffersManager.activeOffers[i] == this) continue;
+
+			// Is there a pack with the same unique ID already active?
+			if(OffersManager.activeOffers[i].uniqueId == this.uniqueId) {
+				// Yes! Mark offer as expired ^^
+				return true;
+			}
+		}
 
 		// Timers
 		if(m_isTimed) {
@@ -597,6 +636,17 @@ public class OfferPack {
 		UserProfile profile = UsersManager.currentUser;
 		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
 		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
+
+		// Time since last purchase
+		if(m_secondsSinceLastPurchase > 0) {	// Nothing to check if default
+			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+			if(trackingPersistence == null) return false;
+			if(trackingPersistence.TotalPurchases > 0) {	// Ignore if player hasn't yet purchased
+				long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
+				long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
+				if(m_secondsSinceLastPurchase > timeSinceLastPurchase) return false;	// Not enough time has passed
+			}
+		}
 
 		// All checks passed!
 		return true;
@@ -912,6 +962,13 @@ public class OfferPack {
 		// To do so, we will only store relevant data whose value is different than the default one
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Sku
+		// Multiple packs may have the same unique ID, with the intention to make 
+		// them mutually exclusive. In order to know which pack with that ID is actually triggered,
+		// store the sku of the pack as well.
+		// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
+		data.Add("sku", m_def.sku);
 
 		// State
 		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));

@@ -49,10 +49,26 @@ public class MenuScreensControllerToolbar {
 		}
 	}
 
-	// Prefs keys
-	private const string MAIN_SCREENS_EXPANDED_KEY = "MenuScreensControllerToolbar.MainScreensExpanded";
-	private const string GOALS_SCREENS_EXPANDED_KEY = "MenuScreensControllerToolbar.GoalsScreensExpanded";
-	private const string REWARD_SCREENS_EXPANDED_KEY = "MenuScreensControllerToolbar.RewardScreensExpanded";
+	private class ScreensGroup {
+		public string key = "";
+		public List<MenuScreen> screens = new List<MenuScreen>();
+		public string displayName = "";
+
+		public ScreensGroup(string _key, string _displayName) {
+			key = _key;
+			displayName = _displayName;
+		}
+	}
+
+	// Screen groups
+	private enum EScreensGroup {
+		MAIN_SCREENS,
+		GOALS_SCREENS,
+		REWARD_SCREENS,
+		TOURNAMENT_SCREENS,
+
+		COUNT
+	}
 
 	// Other consts
 	private const float MARGIN = 5f;
@@ -68,10 +84,11 @@ public class MenuScreensControllerToolbar {
 	private static MenuTransitionManager s_transitionManager = null;
 	private static Queue<SelectionAction> s_pendingSelections = new Queue<SelectionAction>();
 	private static int s_frameCount = 0;
-	private static Dictionary<string, List<MenuScreen>> s_screenGroups = new Dictionary<string, List<MenuScreen>>();
+	private static ScreensGroup[] s_screenGroups = new ScreensGroup[(int)EScreensGroup.COUNT];
 
 	private static Rect s_rect = new Rect();
 	private static Rect s_lastTotalRect = new Rect();
+	private static float s_maxWidth = 0f;
 
 	//----------------------------------------------------------------------//
 	// METHODS																//
@@ -94,31 +111,37 @@ public class MenuScreensControllerToolbar {
 		FindMenuScreensController();
 
 		// Initialize screen groups
-		List<MenuScreen> mainScreens = new List<MenuScreen>();
-		List<MenuScreen> goalsScreens = new List<MenuScreen>();
-		List<MenuScreen> rewardScreens = new List<MenuScreen>();
+		s_screenGroups = new ScreensGroup[(int)EScreensGroup.COUNT];
+		s_screenGroups[(int)EScreensGroup.MAIN_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.MainScreensExpanded", "Main Screens");
+		s_screenGroups[(int)EScreensGroup.GOALS_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.GoalsScreensExpanded", "Goals Screens");
+		s_screenGroups[(int)EScreensGroup.REWARD_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.RewardScreensExpanded", "Reward Screens");
+		s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.TournamentScreensExpanded", "Tournament Screens");
 		for(MenuScreen scr = MenuScreen.PLAY; scr < MenuScreen.COUNT; ++scr) {
 			switch(scr) {
 				case MenuScreen.MISSIONS:
 				case MenuScreen.CHESTS:
 				case MenuScreen.GLOBAL_EVENTS: {
-					goalsScreens.Add(scr);
+					s_screenGroups[(int)EScreensGroup.GOALS_SCREENS].screens.Add(scr);
 				} break;
 
 				case MenuScreen.OPEN_EGG:
 				case MenuScreen.EVENT_REWARD:
 				case MenuScreen.PENDING_REWARD: {
-					rewardScreens.Add(scr);
+					s_screenGroups[(int)EScreensGroup.REWARD_SCREENS].screens.Add(scr);
+				} break;
+
+				case MenuScreen.TOURNAMENT_INFO:
+				case MenuScreen.TOURNAMENT_DRAGON_SELECTION:
+				case MenuScreen.TOURNAMENT_DRAGON_SETUP:
+				case MenuScreen.TOURNAMENT_REWARD: {
+					s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS].screens.Add(scr);
 				} break;
 
 				default: {
-					mainScreens.Add(scr);
+					s_screenGroups[(int)EScreensGroup.MAIN_SCREENS].screens.Add(scr);
 				} break;
 			}
 		}
-		s_screenGroups[MAIN_SCREENS_EXPANDED_KEY] = mainScreens;
-		s_screenGroups[GOALS_SCREENS_EXPANDED_KEY] = goalsScreens;
-		s_screenGroups[REWARD_SCREENS_EXPANDED_KEY] = rewardScreens;
 
 		// Initialize rects
 		s_rect = new Rect(POSITION.x + MARGIN, POSITION.y + MARGIN, ELEMENT_SIZE.x, ELEMENT_SIZE.y);
@@ -143,6 +166,12 @@ public class MenuScreensControllerToolbar {
 	/// </summary>
 	/// <param name="_sceneview">The target scene.</param>
 	private static void OnSceneGUI(SceneView _sceneview) {
+		if(Event.current.type == EventType.Layout) {
+			s_maxWidth = 0f;
+		} else if(Event.current.type == EventType.Repaint) {
+			s_rect.width = s_maxWidth;
+		}
+
 		// Extra processing for older Unity versions: always check for the menu screens controller
 		#if !UNITY_5_6_OR_NEWER
 		if(s_transitionManager == null) {
@@ -169,9 +198,9 @@ public class MenuScreensControllerToolbar {
 			s_lastTotalRect.width = LAYOUT == Layout.VERTICAL ? s_rect.width : 0f;
 
 			GUI.enabled = true;
-			DoGroup(ref s_rect, MAIN_SCREENS_EXPANDED_KEY, "Main Screens", ref screenToEdit);
-			DoGroup(ref s_rect, GOALS_SCREENS_EXPANDED_KEY, "Goals Screens", ref screenToEdit);
-			DoGroup(ref s_rect, REWARD_SCREENS_EXPANDED_KEY, "Rewards Screens", ref screenToEdit);
+			for(int i = 0; i < (int)EScreensGroup.COUNT; i++) {
+				DoGroup(ref s_rect, s_screenGroups[i], ref screenToEdit);
+			}
 		} Handles.EndGUI();
 
 		// If the user has selected a screen to edit, react to it!
@@ -241,7 +270,7 @@ public class MenuScreensControllerToolbar {
 				if(_rect.x + _rect.width > viewport.xMax) {
 					_rect.x = viewport.xMin + POSITION.x;
 					_rect.y += _rect.height + POSITION.y;
-					s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + toAdvance);
+					s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + _rect.height + POSITION.y);
 				}
 			} break;
 
@@ -255,7 +284,7 @@ public class MenuScreensControllerToolbar {
 				if(_rect.y + _rect.height > viewport.yMax) {
 					_rect.y = viewport.yMin + 5f;
 					_rect.x += _rect.width + 5f;
-					s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + toAdvance);
+					s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + _rect.width + 5f);
 				}
 			} break;
 		}
@@ -265,14 +294,13 @@ public class MenuScreensControllerToolbar {
 	/// Displays a screen group.
 	/// </summary>
 	/// <param name="_pos">Cursor.</param>
-	/// <param name="_groupKey">Group key.</param>
-	/// <param name="_label">Label.</param>
+	/// <param name="_group">Group to be displayed.</param>
 	/// <returns>If a screen button has been pressed, target screen..</returns>
-	private static void DoGroup(ref Rect _pos, string _groupKey, string _label, ref MenuScreen _screenToEdit) {
+	private static void DoGroup(ref Rect _pos, ScreensGroup _group, ref MenuScreen _screenToEdit) {
 		// Main Screens Foldable Group
-		bool expanded = Prefs.GetBoolEditor(_groupKey, true);
-		expanded = EditorGUI.Foldout(_pos, expanded, _label);
-		Prefs.SetBoolEditor(_groupKey, expanded);
+		bool expanded = Prefs.GetBoolEditor(_group.key, true);
+		expanded = EditorGUI.Foldout(_pos, expanded, _group.displayName);
+		Prefs.SetBoolEditor(_group.key, expanded);
 		AdvancePos(ref _pos);
 		if(expanded) {
 			// Indent in
@@ -280,11 +308,15 @@ public class MenuScreensControllerToolbar {
 			_pos.width -= INDENT_SIZE;
 
 			// Do a button for each screen in the group
-			List<MenuScreen> screens = s_screenGroups[_groupKey];
-			for(int i = 0; i < screens.Count; ++i) {
-				if(GUI.Button(_pos, screens[i].ToString())) {
+			for(int i = 0; i < _group.screens.Count; ++i) {
+				// Figure out required element width
+				GUIContent label = new GUIContent(_group.screens[i].ToString());
+				s_maxWidth = Mathf.Max(GUI.skin.button.CalcSize(label).x, s_maxWidth);
+
+				// Draw button
+				if(GUI.Button(_pos, label)) {
 					// Save it as target screen!
-					_screenToEdit = screens[i];
+					_screenToEdit = _group.screens[i];
 				}
 				AdvancePos(ref _pos);
 			}

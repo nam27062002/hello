@@ -148,7 +148,7 @@ public class MenuDragonScroller : MonoBehaviour {
 			// Instantly move camera anchor
 			cameraAnimator.snapPoint = menuOrder;
 
-			// Instntly apply position to camera
+			// Instantly apply position to camera
 			if(m_snapCamera) {	// Only if allowed! (we're in the right screen)
 				if(m_cameraTransform != null && m_cameraAnchor != null) {
 					m_cameraTransform.position = m_cameraAnchor.position;
@@ -344,13 +344,13 @@ public class MenuDragonScroller : MonoBehaviour {
 		for( int i = 0; i<m_dragonSlots.Count; ++i )
 		{
 			MenuDragonSlot slot = m_dragonSlots[i];
-			// Use slot's ShowHideAnimator
-			// Show always if it's the selected dragon!
 			if ( slot.dragonPreview != null )
 			{
+				// Show always if it's the selected dragon!
 				DragonData data = DragonManager.GetDragonData(slot.dragonPreview.sku);
-				slot.gameObject.SetActive((showAll && data.lockState != DragonData.LockState.HIDDEN) || slot.dragonPreview.sku == InstanceManager.menuSceneController.selectedDragon);
-				// slot.animator.Set((showAll && data.lockState != DragonData.LockState.HIDDEN) || slot.dragonPreview.sku == InstanceManager.menuSceneController.selectedDragon, animate);
+				bool show = (showAll && data.lockState != DragonData.LockState.HIDDEN) 
+						 || slot.dragonPreview.sku == InstanceManager.menuSceneController.selectedDragon;
+				slot.dragonPreview.gameObject.SetActive(show);
 			}
 		}
 

@@ -709,6 +709,7 @@ MonoBehaviour:
   m_parentName: Dummy_Rock
   m_parentRoot: {fileID: 4620811608935718}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114000010154447894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -778,6 +779,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_feedbackParticleMatchDirection: 0
   m_burnParticle:
     name: PF_FireProc
@@ -817,8 +819,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_disintegrateParticle:
-    name: PS_NewFireExplosion
+    name: PS_MachineSlorgExplosion
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -855,6 +858,8 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
+  m_useAnimator: 0
   m_boxelSize: 2
   m_hitRadius: 1.5
 --- !u!114 &114000011749396012
@@ -963,6 +968,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: always_disintegrate
+  m_tier: 0
   m_disintegrable: 1
 --- !u!114 &114000013813529552
 MonoBehaviour:
@@ -988,6 +994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zone1Interaction: 1
   m_knockBackStrength: 2
+  m_damageOnDestruction: 0
   m_particleFaceDragonDirection: 0
   m_feedbackParticle:
     name: 
@@ -1027,6 +1034,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_destroyParticle:
     name: PS_D_WoodDestruction
     path: 
@@ -1064,9 +1072,11 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
-    scale: 1
+    scale: 0.75
+    orientate: 0
   m_onDestroyAudio: Catapult_Destroyed
   m_onFeedbackAudio: 
+  m_cameraShake: 0
 --- !u!114 &114000014221262268
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1079,6 +1089,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawnTime: 120
+  m_maxSpawns: 0
+  m_mustBedestroyed: 1
   m_ground: []
 --- !u!114 &114819502056840876
 MonoBehaviour:

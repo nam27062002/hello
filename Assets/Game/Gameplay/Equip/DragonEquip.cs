@@ -75,7 +75,24 @@ public class DragonEquip : MonoBehaviour {
 
 		// Equip current disguise
 		if (m_equipOnAwake){
-			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+			if ( m_menuMode )
+			{
+				EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+			}
+			else
+			{
+				// Check if tournament/build active
+				if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+				{
+					string skin = HDLiveEventsManager.instance.m_tournament.GetToUseSkin();
+					EquipDisguise(skin);
+				}
+				else
+				{
+					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+				}
+
+			}
 		}
 	}
 
@@ -149,6 +166,15 @@ public class DragonEquip : MonoBehaviour {
 		// Equip current pets loadout
 		if (m_equipPets) {
 			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+			if ( !m_menuMode )
+			{
+				// Check if tournament
+				if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+				{
+					pets = HDLiveEventsManager.instance.m_tournament.GetToUsePets();
+				}
+			}
+
 			for(int i = 0; i < pets.Count; i++) {
 				EquipPet(pets[i], i);
 			}
@@ -191,6 +217,10 @@ public class DragonEquip : MonoBehaviour {
 				}
 			}
 			m_renderers[i].materials = materials;
+			if (m_renderers[i].tag == "DragonWings")
+			{
+				m_renderers[i].material.renderQueue += 10;	
+			}
 		}
 
 		// Remove old body parts
