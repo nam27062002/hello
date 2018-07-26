@@ -261,39 +261,33 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Session counter advanced
         TrackingPersistenceSystem.SessionCount++;
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] InitTracking");
         // Calety needs to be initialized every time a session starts because the session count has changed
         InitTrackingManager();
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] InitSDKs");
         InitSDKs();
 
         // Sends the start session event
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track_StartSessionEvent");
         Track_StartSessionEvent();
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track_GameStart");
         Track_GameStart();
     }
 
     private void PostInitEvents() {
+        Track_MobileStartEvent();
+
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
         if (e != null) {
             string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
             Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
 
             Track_SendEvent(e);
-        }
-
-        Track_MobileStartEvent();
+        }        
 
 		if (Session_IsFirstTime)
 		{
-            Debug.Log("[MARC][HDTrackingMaangerImp] Track_StartPlayingMode");
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track m_preInitEvents");
         while(m_preInitEvents.Count > 0) {
             Dictionary<string, string> eData = m_preInitEvents.Dequeue();
             e = TrackingManager.SharedInstance.GetNewTrackingEvent(eData["eventName"]);
@@ -307,10 +301,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             }
         }
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Notify_MarketingID");
         Notify_MarketingID();
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Notify_Calety_Funnel_Load");
         // We need to wait for the session to be started to send the first Calety funnel step
         Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);        
     }    
@@ -1266,8 +1258,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_GameStart() {
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
-
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track_GameStart -> e: " + (e != null));
 
         if (e != null)
         {
@@ -2292,7 +2282,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 	{
         if (State == EState.SessionStarted || _force) {
 #if !EDITOR_MODE
-            Debug.Log("[MARC][HDTrackingMaangerImp] send event " + e.m_strName);
             TrackingManager.SharedInstance.SendEvent(e);
 #endif
         }
