@@ -37,21 +37,32 @@ public class IncubatorTutorial : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake()  {
-		// Only check if the tutorial should be displayed once per menu (don't check between screen changes!)
-		// We can easily do that by doing it on the Awake() call
-		m_showPending = false;
+		
+	}
 
+	/// <summary>
+	/// The component has been enabled.
+	/// </summary>
+	private void OnEnable() {
 		// Show egg info popup if:
+		m_showPending = false;
 		if(//!EggManager.isInventoryEmpty		// We have a valid egg in the inventory
-			!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INFO)	// We have not done it yet
-			&& UsersManager.currentUser.gamesPlayed >= 2) {	// We've played at least a couple of games
+			!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_INFO)    // We have not done it yet
+			&& UsersManager.currentUser.gamesPlayed >= 2	// We've played at least a couple of games
+		    && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) {	// Previous required step
 			m_showPending = true;
 		}
 
-		// If we don't have to show the tutorial, disable the component
-		if(!m_showPending) this.enabled = false;
+		// Disable the component and don't check again until next menu run if no 
+		// unlock conditions can be triggered during this menu run
+		else if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) {
+			this.enabled = false;
+		}
 	}
 
+	/// <summary>
+	/// Update loop.
+	/// </summary>
 	private void Update() {
 		// If we must show the popup, do it with some delay
 		// Make sure we're on the right screen
