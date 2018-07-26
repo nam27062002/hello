@@ -222,7 +222,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
                             }
                             break;
                         case "unofficial":
-    #if UNITY_EDITOR                        
+    #if !UNITY_EDITOR                        
                             isValidProfile = !DeviceUtilsManager.SharedInstance.CheckIsAppFromStore();
     #endif
                             break;
@@ -281,6 +281,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
             runs = Random.Range( adFrequency.GetAsInt("minRuns") ,adFrequency.GetAsInt("maxRuns"));
         }
         PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, runs);
+        PlayerPrefs.Save();
     }
     
     public void IncreaseRunsWithoutAds()
@@ -292,6 +293,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         }
         runs++;
         PlayerPrefs.SetInt(RUNS_WITHOUT_ADS_KEY, runs);
+        PlayerPrefs.Save();
     }
 
     #endregion
