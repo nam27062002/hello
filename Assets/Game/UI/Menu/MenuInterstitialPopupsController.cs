@@ -108,7 +108,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
     private void CheckShark()
     {
-        string sharkPetSku = "pet_68";
+		// Don't show if a more important popup has already been displayed in this menu loop
+		if(m_popupDisplayed) return;
+
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_SHARK_PET_REWARD_POPUP_AT_RUN) return;
+
+		string sharkPetSku = PopupSharkPetReward.PET_SKU;
         if (!UsersManager.currentUser.petCollection.IsPetUnlocked(sharkPetSku))
         {
             // Check if hungry shark is installed
@@ -118,15 +124,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
                 UsersManager.currentUser.petCollection.UnlockPet(sharkPetSku);
 
                 // Show popup
-                PopupController popup = PopupManager.OpenPopupInstant("UI/Popups/Tutorial/PF_PopupInfoPetShark");
+				PopupController popup = PopupManager.OpenPopupInstant(PopupSharkPetReward.PATH);
                 m_popupDisplayed = true;
-
-                // If pets are disabled, equip it automatically
-                bool petsDisabled = (UsersManager.currentUser.gamesPlayed < 2);
-                if (petsDisabled)
-                {
-                    UsersManager.currentUser.EquipPet(UsersManager.currentUser.currentDragon, sharkPetSku);
-                }
             }
         }
     }
@@ -134,10 +133,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     private bool IsHungrySharkGameInstalled()
     {
         bool ret = false;
-#if UNITY_ANDROID
+#if UNITY_EDITOR
+		ret = true;
+#elif UNITY_ANDROID
         ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
 #elif UNITY_IOS
-        ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
+		ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
 #endif
         return ret;
     }
@@ -229,7 +230,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
     private void CheckPromotedIAPs() {
         if (GameStoreManager.SharedInstance.HavePromotedIAPs()) {
-            PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
             m_popupDisplayed = true;
         }
     }
@@ -241,11 +242,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if it has already been triggered
 		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
 
-		// Previous tutorial step must be completed
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) return;
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PRE_REG_REWARDS_POPUP_AT_RUN) return;
 
 		// Just launch the popup
-		PopupManager.OpenPopupInstant(PopupPreRegRewards.PATH);
+		m_currentPopup = PopupManager.OpenPopupInstant(PopupPreRegRewards.PATH);
 		m_popupDisplayed = true;
 	}
 
@@ -265,13 +266,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
                 CheckPromotedIAPs();
 				//CheckTermsAndConditions();
 				CheckCustomizerPopup();
-
-                CheckShark();
 			} break;
 
 		case MenuScreen.DRAGON_SELECTION: {
 				// Coming from any screen (high priority)
 				CheckPreRegRewards();
+				CheckShark();
 
 				// Coming from specific screens
 				switch(_from) {
