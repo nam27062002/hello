@@ -468,7 +468,12 @@ public class HDTrackingManagerImp : HDTrackingManager
                 break;
 
             case EState.SessionStarting:
-                if (UbiservicesManager.SharedInstance.GetUbiServicesFacade() != null) {
+#if UNITY_EDITOR
+                if (Time.realtimeSinceStartup > 5f)
+#else
+                if (UbiservicesManager.SharedInstance.GetUbiServicesFacade() != null)
+#endif
+                {
                     State = EState.SessionStarted;
                     PostInitEvents();
                 }
@@ -1237,9 +1242,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Track_TournamentStep(tournamentSku, "Enter", Track_UserCurrencyToString(currency));
     }
-    #endregion
+#endregion
 
-    #region track	
+#region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
