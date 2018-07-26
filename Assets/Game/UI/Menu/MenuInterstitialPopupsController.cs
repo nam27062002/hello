@@ -30,6 +30,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private bool m_waitForCustomPopup = false;
 	private float m_waitTimeOut;
 
+	private PopupController m_currentPopup = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -39,6 +41,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void Awake() {
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -47,6 +50,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unregister from external events
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	private void Update() {
@@ -79,7 +83,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Is the last accepted version the same as the current one?
 		if(PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
 			Debug.Log("<color=RED>LEGAL</color>");
-			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
 			m_popupDisplayed = true;
 		}
 	}
@@ -88,7 +92,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
+		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			m_waitForCustomPopup = HDCustomizerManager.instance.IsCustomiserPopupAvailable();
 			if (m_waitForCustomPopup) {
 				m_waitTimeOut = 5f;
@@ -148,6 +152,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		m_waitForCustomPopup = false;
 		m_popupDisplayed = true;
+		m_currentPopup = pController;
 
 		BusyScreen.Hide(this, true);
 	}
@@ -159,7 +164,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
+		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			// Is dragon unlocked?
 			DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
 			if(data.GetLockState() > DragonData.LockState.LOCKED) {
@@ -176,10 +181,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 						if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {
 							// Start Asking!
 							if(Application.platform == RuntimePlatform.Android) {
-								PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
+								m_currentPopup = PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
 								m_popupDisplayed = true;
 							} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-								PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
+								m_currentPopup = PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
 								m_popupDisplayed = true;
 							}
 						}
@@ -199,8 +204,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
-			m_popupDisplayed = PopupAskSurvey.Check();
+		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
+			m_currentPopup = PopupAskSurvey.Check();
+			m_popupDisplayed = m_currentPopup != null;
 		}
 	}
 
@@ -212,10 +218,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
-			if(OffersManager.featuredOffer != null) {
-				m_popupDisplayed = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
-			}
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_OFFERS_POPUPS_AT_RUN) return;
+
+		if(OffersManager.featuredOffer != null) {
+			m_currentPopup = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
+			m_popupDisplayed = m_currentPopup != null;
 		}
 	}
 
@@ -283,6 +291,18 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				// Coming from any screen (low priority)
 				// Nothing for now
 			} break;
+		}
+	}
+
+	/// <summary>
+	/// A popup has been closed.
+	/// </summary>
+	/// <param name="_popup">Popup.</param>
+	private void OnPopupClosed(PopupController _popup) {
+		// Is it our current popup?
+		if(_popup == m_currentPopup) {
+			// Yes! Nullify current popup reference
+			m_currentPopup = null;
 		}
 	}
 }
