@@ -322,10 +322,7 @@ public class LoadingSceneController : SceneController {
 			// No language was defined, load default system language
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
-
-        // TO REMOVE to enable multilanguage support. Quick implementation to make sure only english will be set
-        strLanguageSku = "lang_english";
-        LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
+		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
 		if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
@@ -381,14 +378,14 @@ public class LoadingSceneController : SceneController {
                 {
                     string country = m_gdprListener.m_userCountry;
                         // Recieved values are not good
-                    if (  !GDPRListener.IsValidCountry(country) )
+                    if ( !GDPRListener.IsValidCountry(country) )
                     {
                         country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
                             // Cached Values are not good
                         if ( !GDPRListener.IsValidCountry(country) ) 
                         {
                             // We set the most restrictive path
-                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
+                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 13, false);
                         }    
                     }
                     SetState( State.WAITING_TERMS );
@@ -493,7 +490,7 @@ public class LoadingSceneController : SceneController {
                 }
                 else
                 {
-                    m_waitingTermsDone = true;
+                    OnTermsDone();
                 }
                 
             }break;

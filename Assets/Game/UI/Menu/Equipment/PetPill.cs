@@ -290,8 +290,10 @@ public class PetPill : ScrollRectItem<PetPillData> {
 		} else {
 			// Custome season: Show icon
 			m_seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, targetSeason);
-			m_seasonalIconRoot.SetActive(true);
-			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
+            if (m_seasonDef != null) {
+                m_seasonalIconRoot.SetActive(true);
+                m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
+            }
 		}
 		m_isNotInGatcha = _petDef.GetAsBool("notInGatcha", false);
 

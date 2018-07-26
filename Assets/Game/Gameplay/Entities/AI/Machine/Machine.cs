@@ -327,32 +327,35 @@ namespace AI {
 		// Update is called once per frame
 		public virtual void CustomUpdate() {			
 			if (!IsDead()) {
-				CheckFreeze();
+                CheckStun();
 
-				if (m_willPlaySpawnSound) {
-					if (m_entity.isOnScreen) {
-						PlaySound(m_onSpawnSound);
-						m_willPlaySpawnSound = false;
-					}
-				}
+                if (m_stunned <= 0) {
+                    CheckFreeze();
 
-				if (m_enableSensor) m_sensor.Update();
-				if (m_motion != null) m_motion.Update();
+                    if (m_willPlaySpawnSound) {
+                        if (m_entity.isOnScreen) {
+                            PlaySound(m_onSpawnSound);
+                            m_willPlaySpawnSound = false;
+                        }
+                    }
+
+                    if (m_enableSensor) m_sensor.Update();
+                    if (m_motion != null) m_motion.Update();
 
 
-				//forward special actions
-				if (m_pilot != null) {
-					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
-					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
-					m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
+                    //forward special actions
+                    if (m_pilot != null) {
+                        m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
+                        m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
+                        m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
 
-					m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
-				}
+                        m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
+                    }
+                }
 			}
 			m_inflammable.Update();
 			if (m_checkCurrents)
-				CheckForCurrents();
-			CheckStun();
+				CheckForCurrents();			
 		}
 
 		public virtual void CustomFixedUpdate() {
@@ -365,7 +368,9 @@ namespace AI {
 					m_motion.externalVelocity = m_externalForces;
 					m_externalForces = Vector3.zero;
 
-					m_motion.FixedUpdate();
+                    if (m_stunned <= 0) {
+                        m_motion.FixedUpdate();
+                    }
 				}
 			}
 		}
@@ -453,6 +458,7 @@ namespace AI {
 		}
 
 		public void Stun(float _stunTime) {
+            if (m_motion != null) m_motion.Stop();
 			m_stunned = Mathf.Max( _stunTime, m_stunned);
 		}
 

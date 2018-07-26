@@ -275,7 +275,6 @@
         },
 		    "game.start": {
             "Parameters": [
-                {"acq_marketing_id": {"Status": "OK"}},
                 {"hardware": {"Status": "OK"}},
                 {"installDate": {"Status": "OK"}},
                 {"osVersion": {"Status": "OK"}},
@@ -503,6 +502,15 @@
       "custom.game.consentpopup_display":  {
         "Parameters": [
           {"source": {"Status": "OK"}}
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+      "custom.player.info": {
+        "Parameters": [
+          { "acq_marketing_id": { "Status": "OK" } }
         ],
         "APIs": [
           "dna",
