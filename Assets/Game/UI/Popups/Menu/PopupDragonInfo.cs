@@ -328,6 +328,7 @@ public class PopupDragonInfo : MonoBehaviour {
 		Animator[] animators = _loader.loadedInstance.GetComponentsInChildren<Animator>();
 		for(int i = 0; i < animators.Length; i++) {
 			animators[i].updateMode = AnimatorUpdateMode.UnscaledTime;
+			animators[i].cullingMode = AnimatorCullingMode.AlwaysAnimate;	// Also make sure they are not culled!
 		}
 
 		// Remove listener

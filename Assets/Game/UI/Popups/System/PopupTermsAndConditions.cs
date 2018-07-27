@@ -289,6 +289,8 @@ public class PopupTermsAndConditions : MonoBehaviour {
 
 		// Restart flow? Only in manual mode
 		if(m_mode == Mode.MANUAL && hasChanged) {
+            // We need to force logout so the game will login again when restarting and it will send whether or not the user is a child to the server, which is needed to ban children from tournaments
+            GameServerManager.SharedInstance.LogOut();
 			ApplicationManager.instance.NeedsToRestartFlow = true;
 		}
 	}
