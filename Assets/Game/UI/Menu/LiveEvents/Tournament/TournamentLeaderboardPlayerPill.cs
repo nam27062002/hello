@@ -75,7 +75,7 @@ public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 		if(m_nameText != null) m_nameText.text = data.leaderboardLine.m_name;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 
 		// Set score
-		m_scoreText.text = StringUtils.FormatBigNumber(data.leaderboardLine.m_score);
+		m_scoreText.text = StringUtils.FormatBigNumber(data.leaderboardLine.m_score, 2, 1000000d);
 	}
 
 	public override void Animate(int _index) {}

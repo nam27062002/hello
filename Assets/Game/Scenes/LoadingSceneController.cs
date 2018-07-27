@@ -136,12 +136,13 @@ public class LoadingSceneController : SceneController {
             base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
             m_userCountry = strUserCountryByIP;
             m_infoRecievedFromServer = true;
+            Debug.Log("<color=BLUE> Country: " + strUserCountryByIP + " Age Restriction: " + iCountryAgeRestriction + " Consent Required: " + bCountryConsentRequired + " </color> ");
         }
 
         public static bool IsValidCountry(string countryStr)
         {
             bool ret = true;
-            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("--") || countryStr.Equals("Unknown"))
+            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("Unknown"))
                 ret = false;
             return ret;
         }
@@ -209,8 +210,9 @@ public class LoadingSceneController : SceneController {
 
 		// Used for android permissions
 		PopupManager.CreateInstance(true);
-        // Initialize localization
-        SetSavedLanguage();      
+        
+		// Initialize localization
+        SetSavedLanguage();
     }    
 
 	/// <summary>
@@ -378,16 +380,17 @@ public class LoadingSceneController : SceneController {
                 {
                     string country = m_gdprListener.m_userCountry;
                         // Recieved values are not good
-                    if (  !GDPRListener.IsValidCountry(country) )
+                    if ( !GDPRListener.IsValidCountry(country) )
                     {
-                        country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
+                        // country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
                             // Cached Values are not good
-                        if ( !GDPRListener.IsValidCountry(country) ) 
+                        // if ( !GDPRListener.IsValidCountry(country) ) 
                         {
                             // We set the most restrictive path
-                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
+                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 13, false);
                         }    
                     }
+                    Debug.Log("<color=BLUE>"+country+"</color>");
                     SetState( State.WAITING_TERMS );
                 }
             }break;
@@ -461,8 +464,19 @@ public class LoadingSceneController : SceneController {
             Log(m_state + " -> " + state + " time = " + deltaTime);
         }
 
+		// Actions to perform when leaving a specific state
+		switch(m_state) {
+			case State.LOADING_RULES: {
+				// Initialize fonts before showing any other popup
+				// Do it here because we need the Android permissions to be given and the rules to be loaded
+				FontManager.instance.Init();
+			} break;
+		}
+
+		// Switch state
         m_state = state;
 
+		// Actions to perform when entering a specific state
         switch (state)
         {            
         	case State.SHOWING_UPGRADE_POPUP:
@@ -479,7 +493,8 @@ public class LoadingSceneController : SceneController {
             {
 				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
 					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
-					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
+					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() 
+                    )
                 {
                     Debug.Log("<color=RED>LEGAL</color>");
 					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
@@ -551,7 +566,6 @@ public class LoadingSceneController : SceneController {
                 EntityManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
-                FontManager.instance.Init();
 
                 GameAds.CreateInstance(true);
                 GameAds.instance.Init();

@@ -46,24 +46,24 @@ public class PopupAskSurvey : MonoBehaviour {
 	/// Check whether the popup must be triggered considering the current profile.
 	/// If all checks are passed, opens the popup.
 	/// </summary>
-	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened.</returns>
-	public static bool Check() {
-		return false;	// [AOC] As of version 1.3, disable temporarily the survey popup
+	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
+	public static PopupController Check() {
+		return null;	// [AOC] As of version 1.3, disable temporarily the survey popup
 
 		// Not if already checked!
-		if(!Prefs.GetBoolPlayer(PREF_CHECK, true)) return false;
+		if(!Prefs.GetBoolPlayer(PREF_CHECK, true)) return null;
 
 		// Not if we don't have internet access!
-		if(Application.internetReachability == NetworkReachability.NotReachable) return false;
+		if(Application.internetReachability == NetworkReachability.NotReachable) return null;
 
 		// Not if we don't have a tracking ID
 		#if !UNITY_EDITOR
-		if(HDTrackingManager.Instance.GetDNAProfileID() == null) return false;
+		if(HDTrackingManager.Instance.GetDNAProfileID() == null) return null;
 		#endif
 
 		// Not if target min dragon is not properly defined
 		DragonData minDragon = DragonManager.GetDragonData(MIN_OWNED_DRAGON);
-		if(minDragon == null) return false;	// Something went really wrong
+		if(minDragon == null) return null;	// Something went really wrong
 
 		// Not if target min dragon not yet owned (or bigger one)
 		// Check whether player owns a dragon bigger than the min required and has played at least MIN_RUNS with it
@@ -76,20 +76,19 @@ public class PopupAskSurvey : MonoBehaviour {
 				break;
 			}
 		}
-		if(targetDragon == null) return false;
+		if(targetDragon == null) return null;
 
 		// Only after a run!
-		if(GameSceneManager.prevScene.CompareTo(ResultsScreenController.NAME) != 0 
-		&& GameSceneManager.prevScene.CompareTo(GameSceneController.NAME) != 0) {
-			return false;
+		if(GameSceneManager.prevScene != ResultsScreenController.NAME 
+		&& GameSceneManager.prevScene != GameSceneController.NAME) {
+			return null;
 		}
 
 		// Not if not enough sessions have passed since last time we showed the popup
-		if(HDTrackingManager.Instance.TrackingPersistenceSystem.SessionCount < Prefs.GetIntPlayer(PREF_LAST_DISPLAYED_SESSION, 0) + MIN_SESSIONS) return false;
+		if(HDTrackingManager.Instance.TrackingPersistenceSystem.SessionCount < Prefs.GetIntPlayer(PREF_LAST_DISPLAYED_SESSION, 0) + MIN_SESSIONS) return null;
 
 		// All checks passed! Popup can be displayed!
-		PopupManager.OpenPopupInstant(PATH);
-		return true;
+		return PopupManager.OpenPopupInstant(PATH);
 	}
 
 	/// <summary>

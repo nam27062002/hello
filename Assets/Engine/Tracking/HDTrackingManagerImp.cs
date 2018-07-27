@@ -22,7 +22,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         Banned
     }
 
-    private Queue<Dictionary<string, string>> m_preInitEvents = new Queue<Dictionary<string, string>>();
+    private Queue<Dictionary<string, object>> m_preInitEvents = new Queue<Dictionary<string, object>>();
 
     // Load funnel events are tracked by two different apis (Calety and Razolytics). 
     private FunnelData_Load m_loadFunnelCalety;
@@ -261,44 +261,38 @@ public class HDTrackingManagerImp : HDTrackingManager
         // Session counter advanced
         TrackingPersistenceSystem.SessionCount++;
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] InitTracking");
         // Calety needs to be initialized every time a session starts because the session count has changed
         InitTrackingManager();
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] InitSDKs");
         InitSDKs();
 
         // Sends the start session event
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track_StartSessionEvent");
         Track_StartSessionEvent();
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track_GameStart");
         Track_GameStart();
     }
 
     private void PostInitEvents() {
+        Track_MobileStartEvent();
+
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("custom.session.started");
         if (e != null) {
             string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
             Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
 
             Track_SendEvent(e);
-        }
-
-        Track_MobileStartEvent();
+        }        
 
 		if (Session_IsFirstTime)
 		{
-            Debug.Log("[MARC][HDTrackingMaangerImp] Track_StartPlayingMode");
 			Track_StartPlayingMode( EPlayingMode.TUTORIAL );
         }
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track m_preInitEvents");
         while(m_preInitEvents.Count > 0) {
-            Dictionary<string, string> eData = m_preInitEvents.Dequeue();
-            e = TrackingManager.SharedInstance.GetNewTrackingEvent(eData["eventName"]);
+            Dictionary<string, object> eData = m_preInitEvents.Dequeue();
+            e = TrackingManager.SharedInstance.GetNewTrackingEvent(eData["eventName"] as string);
             if (e != null) {
-                foreach(KeyValuePair<string,string> pair in eData) {
+                foreach(KeyValuePair<string,object> pair in eData) {
                     if (pair.Key != "eventName") {
                         e.SetParameterValue(pair.Key, pair.Value);
                     }
@@ -307,10 +301,8 @@ public class HDTrackingManagerImp : HDTrackingManager
             }
         }
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Notify_MarketingID");
         Notify_MarketingID();
 
-        Debug.Log("[MARC][HDTrackingMaangerImp] Notify_Calety_Funnel_Load");
         // We need to wait for the session to be started to send the first Calety funnel step
         Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);        
     }    
@@ -476,7 +468,12 @@ public class HDTrackingManagerImp : HDTrackingManager
                 break;
 
             case EState.SessionStarting:
-                if (UbiservicesManager.SharedInstance.GetUbiServicesFacade() != null) {
+#if UNITY_EDITOR
+                if (Time.realtimeSinceStartup > 5f)
+#else
+                if (UbiservicesManager.SharedInstance.GetUbiServicesFacade() != null)
+#endif
+                {
                     State = EState.SessionStarted;
                     PostInitEvents();
                 }
@@ -1245,9 +1242,9 @@ public class HDTrackingManagerImp : HDTrackingManager
     {
         Track_TournamentStep(tournamentSku, "Enter", Track_UserCurrencyToString(currency));
     }
-    #endregion
+#endregion
 
-    #region track	
+#region track	
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
@@ -1266,8 +1263,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 
     private void Track_GameStart() {
         TrackingEvent e = TrackingManager.SharedInstance.GetNewTrackingEvent("game.start");
-
-        Debug.Log("[MARC][HDTrackingMaangerImp] Track_GameStart -> e: " + (e != null));
 
         if (e != null)
         {
@@ -1710,12 +1705,12 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Track_SendEvent(e);
             }
         } else {
-            Dictionary<string, string> e = new Dictionary<string, string>();
+            Dictionary<string, object> e = new Dictionary<string, object>();
             e.Add("eventName", _event);
             e.Add(TRACK_PARAM_STEP_NAME, _step);
-            e.Add(TRACK_PARAM_STEP_DURATION, "" + _stepDuration);
-            e.Add(TRACK_PARAM_TOTAL_DURATION, "" + _totalDuration);
-            e.Add(TRACK_PARAM_FIRST_LOAD, "" + _fistLoad);
+            e.Add(TRACK_PARAM_STEP_DURATION, _stepDuration);
+            e.Add(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
+            e.Add(TRACK_PARAM_FIRST_LOAD, (_fistLoad) ? 1 : 0);
             m_preInitEvents.Enqueue(e);
         }
     }
@@ -1753,7 +1748,7 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Track_SendEvent(e);
             }
         } else {
-            Dictionary<string, string> e = new Dictionary<string, string>();
+            Dictionary<string, object> e = new Dictionary<string, object>();
             e.Add("eventName", "custom.game.consentpopup_display");
             e.Add(TRACK_PARAM_SOURCE, _source);
 
@@ -1778,12 +1773,12 @@ public class HDTrackingManagerImp : HDTrackingManager
                 Track_SendEvent(e);
             }
         } else {
-            Dictionary<string, string> e = new Dictionary<string, string>();
+            Dictionary<string, object> e = new Dictionary<string, object>();
             e.Add("eventName", "custom.game.consentpopup");
-            e.Add(TRACK_PARAM_AGE, "" + _age);
-            e.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? "1" : "0");
-            e.Add(TRACK_PARAM_DURATION, "" + _duration);
-            e.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? "1" : "0");
+            e.Add(TRACK_PARAM_AGE, _age);
+            e.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
+            e.Add(TRACK_PARAM_DURATION, _duration);
+            e.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
             e.Add(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
             m_preInitEvents.Enqueue(e);
         }
@@ -2292,7 +2287,6 @@ public class HDTrackingManagerImp : HDTrackingManager
 	{
         if (State == EState.SessionStarted || _force) {
 #if !EDITOR_MODE
-            Debug.Log("[MARC][HDTrackingMaangerImp] send event " + e.m_strName);
             TrackingManager.SharedInstance.SendEvent(e);
 #endif
         }

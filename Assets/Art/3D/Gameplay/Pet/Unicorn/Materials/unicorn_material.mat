@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: unicorn_material
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_BLINKLIGHTS SPECULAR
     _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -69,7 +69,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
-    - SelfIlluminate: 0
+    - SelfIlluminate: 2
     - _BlendMode: 0
     - _BumpScale: 1
     - _Cull: 2
@@ -92,17 +92,17 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 0
+    - _InnerLightAdd: 0.7
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 1
+    - _InnerLightWaveSpeed: 0
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1
+    - _NormalStrenght: 0.77
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 28.01
+    - _SpecExponent: 29.2
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -115,5 +115,5 @@ Material:
     - _FresnelColor: {r: 0.5441177, g: 0.2440528, b: 0.49859053, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: -0.9660026, g: 0.25853235, b: -0, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightDir: {r: 0.9688027, g: 0.2478332, b: -0, a: 0}
+    - _Tint: {r: 0.50281143, g: 0.66135305, b: 0.6838235, a: 1}
