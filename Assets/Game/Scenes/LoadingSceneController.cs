@@ -136,12 +136,13 @@ public class LoadingSceneController : SceneController {
             base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
             m_userCountry = strUserCountryByIP;
             m_infoRecievedFromServer = true;
+            Debug.Log("<color=BLUE> Country: " + strUserCountryByIP + " Age Restriction: " + iCountryAgeRestriction + " Consent Required: " + bCountryConsentRequired + " </color> ");
         }
 
         public static bool IsValidCountry(string countryStr)
         {
             bool ret = true;
-            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("--") || countryStr.Equals("Unknown"))
+            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("Unknown"))
                 ret = false;
             return ret;
         }
@@ -209,8 +210,10 @@ public class LoadingSceneController : SceneController {
 
 		// Used for android permissions
 		PopupManager.CreateInstance(true);
-        // Initialize localization
-        SetSavedLanguage();      
+        
+		// Initialize localization
+        SetSavedLanguage();
+		FontManager.instance.Init();
     }    
 
 	/// <summary>
@@ -322,10 +325,7 @@ public class LoadingSceneController : SceneController {
 			// No language was defined, load default system language
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
-
-        // TO REMOVE to enable multilanguage support. Quick implementation to make sure only english will be set
-        strLanguageSku = "lang_english";
-        LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
+		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
 		if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
@@ -381,16 +381,17 @@ public class LoadingSceneController : SceneController {
                 {
                     string country = m_gdprListener.m_userCountry;
                         // Recieved values are not good
-                    if (  !GDPRListener.IsValidCountry(country) )
+                    if ( !GDPRListener.IsValidCountry(country) )
                     {
-                        country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
+                        // country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
                             // Cached Values are not good
-                        if ( !GDPRListener.IsValidCountry(country) ) 
+                        // if ( !GDPRListener.IsValidCountry(country) ) 
                         {
                             // We set the most restrictive path
-                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 16, true);
+                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 13, false);
                         }    
                     }
+                    Debug.Log("<color=BLUE>"+country+"</color>");
                     SetState( State.WAITING_TERMS );
                 }
             }break;
@@ -482,7 +483,8 @@ public class LoadingSceneController : SceneController {
             {
 				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
 					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
-					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() )
+					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() 
+                    )
                 {
                     Debug.Log("<color=RED>LEGAL</color>");
 					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
@@ -554,7 +556,6 @@ public class LoadingSceneController : SceneController {
                 EntityManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
-                FontManager.instance.Init();
 
                 GameAds.CreateInstance(true);
                 GameAds.instance.Init();
@@ -590,7 +591,6 @@ public class LoadingSceneController : SceneController {
     private void OnTermsDone()
     {
         m_waitingTermsDone = true;
-        HDTrackingManager.Instance.Notify_MarketingID();
     }
         
     private void StartLoadFlow()

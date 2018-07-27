@@ -717,34 +717,34 @@ public class OfferPack {
 	/// <summary>
 	/// Check whether the featured popup should be displayed or not, and do it.
 	/// </summary>
-	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
+	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
 	/// <param name="_areaToCheck">Area to check.</param>
-	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
+	public PopupController ShowPopupIfPossible(WhereToShow _areaToCheck) {
 		// Just in case
-		if(m_def == null) return false;
+		if(m_def == null) return null;
 
 		// Not if not featured
-		if(!m_featured) return false;
+		if(!m_featured) return null;
 
 		// Only active offers!
-		if(!isActive) return false;
+		if(!isActive) return null;
 
 		// Check max views
-		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return false;
+		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return null;
 
 		// Check area
 		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
 			// Special case for dragon selection screen: count both initial time and after run
-			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return false;
+			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return null;
 		} else {
 			// Standard case: just make sure we're in the right place
-			if(_areaToCheck != m_whereToShow) return false;
+			if(_areaToCheck != m_whereToShow) return null;
 		}
 
 		// Check frequency
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
-		if(timeSinceLastView.TotalMinutes < m_frequency) return false;
+		if(timeSinceLastView.TotalMinutes < m_frequency) return null;
 
 		// All checks passed!
 		// Show popup
@@ -758,7 +758,7 @@ public class OfferPack {
 		// Update control vars and return
 		m_viewsCount++;
 		m_lastViewTimestamp = serverTime;
-		return true;
+		return popup;
 	}
 
 	/// <summary>
