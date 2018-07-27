@@ -327,7 +327,8 @@ public class PopupInfoPet : MonoBehaviour {
 			if(petsScreen == null) return;
 
 			// Tell it to scroll to the target pet!
-			petsScreen.ScrollToPet(m_scroller.selectedItem.def.sku, false, 0.15f);
+            if ( m_scroller != null )
+			    petsScreen.ScrollToPet(m_scroller.selectedItem.def.sku, false, 0.15f);
 		}
 	}
 }
