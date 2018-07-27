@@ -57,5 +57,7 @@ public enum TutorialStep {
 	TOURNAMENT_BUILD			= 1 << 20,
 	QUEST_INFO					= 1 << 21,
 
+	PRE_REG_REWARDS				= 1 << 22,
+
 	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

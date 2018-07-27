@@ -70,6 +70,7 @@ public class DefinitionsCategory
 	public const string GOLDEN_EGGS = "GOLDEN_EGGS";
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
+	public const string PREREG_REWARDS = "PREREG_REWARDS";
 	public const string RARITIES = "RARITIES";
 	public const string HUNGRY_LETTERS = "HUNGRY_LETTERS";
 	public const string DYNAMIC_GATCHA = "DYNAMIC_GATCHA";

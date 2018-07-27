@@ -65,14 +65,14 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	protected virtual void OnEnable() {
 		if(m_scroller != null) m_scroller.OnSelectionIndexChanged.AddListener(OnPetSelected);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	protected virtual void OnDisable() {
 		if(m_scroller != null) m_scroller.OnSelectionIndexChanged.RemoveListener(OnPetSelected);
 	}
 
@@ -83,7 +83,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// Initialize the popup with the given pet info.
 	/// </summary>
 	/// <param name="_petDef">Pet definition used for the initialization.</param>
-	public void Init(DefinitionNode _petDef) {
+	public virtual void Init(DefinitionNode _petDef) {
 		List<DefinitionNode> defs = new List<DefinitionNode>();
 		defs.Add(_petDef);
 		Init(_petDef, defs);
@@ -94,7 +94,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// </summary>
 	/// <param name="_petDef">Pet definition used for the initialization.</param>
 	/// <param name="_scrollDefs">List of pet definitions to scroll around. Initial def should be included. Arrows won't be displayed if null or 0-lengthed</param>
-	public void Init(DefinitionNode _petDef, List<DefinitionNode> _scrollDefs) {
+	public virtual void Init(DefinitionNode _petDef, List<DefinitionNode> _scrollDefs) {
 		// Skip if definition is not valid
 		if(_petDef == null) return;
 		m_petDef = _petDef;
@@ -132,7 +132,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <summary>
 	/// Initialize the popup with the current pet info.
 	/// </summary>
-	private void Refresh() {
+	protected virtual void Refresh() {
 		// Only if current def is valid
 		if(m_petDef == null) return;
 
@@ -277,7 +277,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <param name="_oldIdx">Previous selected pet index.</param>
 	/// <param name="_newIdx">New selected pet index.</param>
 	/// <param name="_looped">Have we looped to do the new selection?
-	public void OnPetSelected(int _oldIdx, int _newIdx, bool _looped) {
+	public virtual void OnPetSelected(int _oldIdx, int _newIdx, bool _looped) {
 		// Record selection change
 		m_petDef = m_scroller.selectedItem.def;
 		m_hasScrolled = true;
@@ -291,7 +291,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <summary>
 	/// Scroll to next pet!
 	/// </summary>
-	public void OnNextPet() {
+	public virtual void OnNextPet() {
 		// UISelector will do it for us
 		if(m_scroller != null) m_scroller.SelectNextItem();
 	}
@@ -299,7 +299,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <summary>
 	/// Scroll to previous pet!
 	/// </summary>
-	public void OnPreviousPet() {
+	public virtual void OnPreviousPet() {
 		// UISelector will do it for us
 		if(m_scroller != null) m_scroller.SelectPreviousItem();
 	}
@@ -307,7 +307,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <summary>
 	/// The popup is about to be opened.
 	/// </summary>
-	public void OnOpenPreAnimation() {
+	public virtual void OnOpenPreAnimation() {
 		// Reset scrolled flag
 		m_hasScrolled = false;
 	}
@@ -315,7 +315,7 @@ public class PopupInfoPet : MonoBehaviour {
 	/// <summary>
 	/// The popup has just closed.
 	/// </summary>
-	public void OnClosePostAnimation() {
+	public virtual void OnClosePostAnimation() {
 		// If we have changed selected pet, scroll to it!
 		if(m_hasScrolled || true) {	// Do it always for now
 			// If active, scroll pets screen to the current pet!
