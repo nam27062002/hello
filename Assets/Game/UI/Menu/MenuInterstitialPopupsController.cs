@@ -161,13 +161,20 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
         {
             if ( GameAds.instance.GetRunsToInterstitial() <= 0 )
             {
-                PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
+                // Lets be loading friendly
+                StartCoroutine( LaunchInterstitial() );
             }
             else
             {
                 GameAds.instance.ReduceRunsToInterstitial();
             }
         }
+    }
+    
+    IEnumerator LaunchInterstitial()
+    {
+        yield return new WaitForSeconds(0.25f);
+        PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
     }
     
     private void InterstitialCallback( bool rewardGiven )
