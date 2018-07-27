@@ -26,6 +26,7 @@ public class IARSurface : MonoBehaviour
     GameObject mGODetectingSurface;
     GameObject mGODetectedSurface;
 	GameObject mGOBackground;
+    GameObject mGOPhoto;
     
     GameObject mGOStatus;
     GameObject mGOStatusText;
@@ -95,7 +96,28 @@ public class IARSurface : MonoBehaviour
     private void __buttonGoPressed()
     {
 		setState (eARSurfaceState.AR);
+        mGOPhoto.SetActive(true);
     }
+
+    private void __doScreenshot()
+    {
+        mGOPhoto.SetActive(false);
+        mGOARButtonOptions.SetActive(false);
+        StartCoroutine(doScreenshot());
+//        ARGameManager.SharedInstance.onPressedScreenshotButton();
+//        mGOPhoto.SetActive(true);
+    }
+
+    // every 2 seconds perform the print()
+    private IEnumerator doScreenshot()
+    {
+        yield return new WaitForSeconds(0.5f);
+        ARGameManager.SharedInstance.onPressedScreenshotButton();
+        yield return new WaitForSeconds(1.5f);
+        mGOPhoto.SetActive(true);
+        mGOARButtonOptions.SetActive(true);
+    }
+
 
     bool mExpanded = false;
     private void __buttonOptionsPressed()
@@ -205,15 +227,19 @@ public class IARSurface : MonoBehaviour
 
 				SetSelectSurfaceButtonEnabled (false);
 
-				mGOStatusText.transform.parent.gameObject.SetActive (true);
+                if (mGOPhoto != null)
+                {
+                    mGOPhoto.SetActive(false);
+                }
 
-				break;
+                break;
 			}
 
 			case eARSurfaceState.DETECTED_SURFACE: {
 				SetSelectSurfaceButtonEnabled (true);
 
-				ARKitManager.SharedInstance.ChangeZoom (c_fDefaultZoomValue);
+
+                ARKitManager.SharedInstance.ChangeZoom (c_fDefaultZoomValue);
 
 				mZoomSlider.value = c_fDefaultZoomValue;
 
@@ -226,9 +252,12 @@ public class IARSurface : MonoBehaviour
 				if (mAvoidARUI && mGOARButtonOptions != null) {
 					mGOARButtonOptions.SetActive (false);
 				}
-
-				mGOStatusText.transform.parent.gameObject.SetActive (false);
-
+/*
+                if (mGOStatusText != null)
+                {
+                    mGOStatusText.transform.parent.gameObject.SetActive(false);
+                }
+*/
 				ARKitManager.SharedInstance.SelectedZoom ();
 
 				break;
@@ -256,7 +285,7 @@ public class IARSurface : MonoBehaviour
 		if (_state != eARSurfaceState.INIT) {
 			UIUtils.setGOVisible (ref mGODetectingSurface, _state == eARSurfaceState.DETECTING_SURFACE, _state == eARSurfaceState.DETECTING_SURFACE);
 			UIUtils.setGOVisible (ref mGODetectedSurface, _state == eARSurfaceState.DETECTED_SURFACE, _state == eARSurfaceState.DETECTED_SURFACE);
-			UIUtils.setGOVisible (ref mGOStatus, _state != eARSurfaceState.AR, _state != eARSurfaceState.AR);
+//			UIUtils.setGOVisible (ref mGOStatus, _state != eARSurfaceState.AR, _state != eARSurfaceState.AR);
 			UIUtils.setGOVisible (ref mGOAR, _state == IARSurface.eARSurfaceState.AR, _state == IARSurface.eARSurfaceState.AR);
 		}
 
@@ -338,6 +367,14 @@ public class IARSurface : MonoBehaviour
                 child.GetComponent<Button>().onClick.RemoveListener(__buttonGoPressed);
                 child.GetComponent<Button>().onClick.AddListener(__buttonGoPressed);
             }
+            else if (child.name == "ButtonPhoto")
+            {
+                mGOPhoto = child.gameObject;
+                mGOPhoto.GetComponent<Button>().onClick.RemoveListener(__doScreenshot);
+                mGOPhoto.GetComponent<Button>().onClick.AddListener(__doScreenshot);
+                mGOPhoto.SetActive(false);
+            }
+
             else if (child.name == "ButtonDetected")
             {
 				mButtonSurfaceDetected = child.GetComponent<Button>();
@@ -390,6 +427,7 @@ public class IARSurface : MonoBehaviour
 				mButtonSelectSurface.onClick.AddListener(selectSurfacePressed);
 			}
 		}
+
 
 		setState (eARSurfaceState.DETECTING_SURFACE);
 	}
