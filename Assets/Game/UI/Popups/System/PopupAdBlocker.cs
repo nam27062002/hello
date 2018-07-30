@@ -60,9 +60,17 @@ public class PopupAdBlocker : MonoBehaviour {
 		// If ad can't be displayed, show error message instead of the popup
 		if(!GameAds.adsAvailable) {
 			PopupManager.canvas.worldCamera.gameObject.SetActive(true);
+
+            string text = "";
+            if ( _rewarded ){
+                text = LocalizationManager.SharedInstance.Localize("TID_AD_ERROR");
+            } else {
+                text = LocalizationManager.SharedInstance.Localize("TID_AD_AUTO_ERROR");
+            }
+            
 			// Show some feedback
 			UIFeedbackText errorText = UIFeedbackText.CreateAndLaunch(
-				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"), 
+				text, 
 				new Vector2(0.5f, 0.33f), 
 				PopupManager.canvas.transform as RectTransform
 			);
@@ -156,8 +164,15 @@ public class PopupAdBlocker : MonoBehaviour {
 
 		// If the ad couldn't be displayed, show message
 		if(!_success && !m_forcedCancel) {
+            string text = "";
+            if ( m_rewarded ){
+                text = LocalizationManager.SharedInstance.Localize("TID_AD_ERROR");
+            } else {
+                text = LocalizationManager.SharedInstance.Localize("TID_AD_AUTO_ERROR");
+            }
+            
 			UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
-				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"),
+				text,
 				Vector2.one * 0.5f,
 				PopupManager.canvas.transform as RectTransform
 			);
@@ -182,7 +197,8 @@ public class PopupAdBlocker : MonoBehaviour {
 	}
 
 	public void OnOpenPostAnimation(){
-		m_cancelButton.SetActive( true );
+        if ( m_rewarded )
+    		m_cancelButton.SetActive( true );
 	}
 
 	public void OnClosePreAnimation(){

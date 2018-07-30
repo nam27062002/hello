@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: unicorn_material
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_BLINKLIGHTS SPECULAR
     _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -69,10 +69,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
-    - SelfIlluminate: 0
+    - SelfIlluminate: 2
     - _BlendMode: 0
     - _BumpScale: 1
-    - _Cull: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -88,21 +88,21 @@ Material:
     - _EnableVertexOffset: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 1.76
+    - _Fresnel: 4.38
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 1
+    - _InnerLightAdd: 0.7
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 1
+    - _InnerLightWaveSpeed: 0
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1
+    - _NormalStrenght: 0.77
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 30.74
+    - _SpecExponent: 29.2
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -112,8 +112,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.41515777, g: 0.28189877, b: 0.4852941, a: 1}
+    - _FresnelColor: {r: 0.5441177, g: 0.2440528, b: 0.49859053, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0.8161765, g: 0.81071323, b: 0.7801687, a: 0}
-    - _SecondLightDir: {r: 0.11207531, g: 0.44830135, b: -0.8868286, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SecondLightDir: {r: 0.9688027, g: 0.2478332, b: -0, a: 0}
+    - _Tint: {r: 0.50281143, g: 0.66135305, b: 0.6838235, a: 1}

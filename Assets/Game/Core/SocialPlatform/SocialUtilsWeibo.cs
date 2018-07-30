@@ -75,12 +75,48 @@ public class SocialUtilsWeibo : SocialUtils
     }
 
     public override void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo)
-    {
-        if (onGetProfileInfo != null)
-        {
-            onGetProfileInfo(null);
-        }
+    {		
+		ProfileInfo profileInfo = new ProfileInfo();
+		profileInfo.SetValueAsString(ProfileInfo.KEY_ID, WeiboManager.SharedInstance.GetAuthUserID());
+		profileInfo.SetValueAsString(ProfileInfo.KEY_FIRST_NAME, WeiboManager.SharedInstance.GetAuthUserName()); 
+
+		// Translates the gender returned by Weibo into the values defined by the specification of this event
+		string gender = WeiboManager.SharedInstance.GetAuthUserGender();
+		switch(gender) 
+		{
+			case "m":
+				gender = "male";
+				break;
+
+			case "f":
+				gender = "female";
+				break;
+		}			
+		
+		profileInfo.SetValueAsString(ProfileInfo.KEY_GENDER, gender);
+
+		if (onGetProfileInfo != null)
+		{
+			onGetProfileInfo(profileInfo);
+		}
     }
 
-    protected override void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256) { }
+    protected override void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256) 
+	{
+		string url = WeiboManager.SharedInstance.GetAuthUserProfileImageUrl();
+
+		if(string.IsNullOrEmpty(url)) 
+		{
+			onGetProfilePicture(false);
+		} 
+		else 
+		{
+			UnityEngine.Events.UnityAction<bool, string, long> onThisDone = delegate(bool success, string key, long size) 
+			{
+				onGetProfilePicture(success);
+			};
+
+			NetworkManager.SharedInstance.DownloadFile("profilePic_" + socialID, url, FileUtils.GetDeviceStoragePath(storagePath, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED), onThisDone);
+		}
+	}
 }

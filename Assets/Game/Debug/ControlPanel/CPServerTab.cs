@@ -229,12 +229,23 @@ public class CPServerTab : MonoBehaviour {
 		//GameAds.instance.ShowDebugInfo();
 		GameAds.instance.ShowRewarded(GameAds.EAdPurpose.REVIVE, OnAdDone);
 	}
+    
+    private void OnAdDone(bool success)
+    {
+        string msg = "OnAdDone success = " + success;
+        Output(msg);
+    }
+    
+    public void OnButton5()
+    {
+        GameAds.instance.ShowInterstitial(OnIntersitialDone);
+    }
 
-	private void OnAdDone(bool success)
-	{
-		string msg = "OnAdDone success = " + success;
-		Output(msg);
-	}
+	private void OnIntersitialDone( bool success )
+    {
+        string msg = "OnInterstitialDone success = " + success;
+        Output(msg);
+    }
 
 	/// <summary>
 	/// Clear console button has been pressed.

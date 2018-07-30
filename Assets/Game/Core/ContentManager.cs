@@ -179,8 +179,12 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.GOLDEN_EGGS, new string[] { "Rules/goldenEggDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.EGG_REWARDS, new string[] { "Rules/eggRewardDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.CHEST_REWARDS, new string[] { "Rules/chestRewardDefinitions" });
+		kDefinitionFiles.Add(DefinitionsCategory.PREREG_REWARDS, new string[] { "Rules/preRegRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[] { "Rules/rarityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
+            // Interstitials
+        kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_SETUP, new string[] { "Rules/interstitialAdsSettingsDefinitions" });    
 
 		kDefinitionFiles.Add(DefinitionsCategory.DYNAMIC_GATCHA, new string[] {"Rules/dynamicGatchaDefinition"});
 		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modsDefinitions"});
