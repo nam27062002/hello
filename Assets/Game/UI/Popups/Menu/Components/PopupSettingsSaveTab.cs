@@ -504,7 +504,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private Image m_userAvatarImage;
 
     [SerializeField]
-    private TextMeshProUGUI m_userNameText;
+	private Text m_userNameText;
     
     [SerializeField]
     private Localizer m_userNotLoggedInMessageText;

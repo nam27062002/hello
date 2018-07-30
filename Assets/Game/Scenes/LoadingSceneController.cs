@@ -213,7 +213,6 @@ public class LoadingSceneController : SceneController {
         
 		// Initialize localization
         SetSavedLanguage();
-		FontManager.instance.Init();
     }    
 
 	/// <summary>
@@ -325,6 +324,7 @@ public class LoadingSceneController : SceneController {
 			// No language was defined, load default system language
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
+        strLanguageSku = "lang_english";
 		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
@@ -465,8 +465,19 @@ public class LoadingSceneController : SceneController {
             Log(m_state + " -> " + state + " time = " + deltaTime);
         }
 
+		// Actions to perform when leaving a specific state
+		switch(m_state) {
+			case State.LOADING_RULES: {
+				// Initialize fonts before showing any other popup
+				// Do it here because we need the Android permissions to be given and the rules to be loaded
+				FontManager.instance.Init();
+			} break;
+		}
+
+		// Switch state
         m_state = state;
 
+		// Actions to perform when entering a specific state
         switch (state)
         {            
         	case State.SHOWING_UPGRADE_POPUP:
