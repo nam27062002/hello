@@ -48,6 +48,7 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	[SerializeField] private Localizer m_titleText = null;
 	[SerializeField] private Slider m_ageSlider = null;
 	[SerializeField] private TextMeshProUGUI m_ageText = null;
+	[SerializeField] private GameObject m_ageHighlight = null;
 	[Space]
 	[SerializeField] private Button m_acceptButton = null;
 	[SerializeField] private GameObject m_cancelButton = null;
@@ -180,8 +181,10 @@ public class PopupTermsAndConditions : MonoBehaviour {
 		// Adjust color for invalid values
 		if(_age <= 0) {	// Age never initialized
 			m_ageText.color = Colors.WithAlpha(m_ageText.color, 0.5f);
+			m_ageHighlight.gameObject.SetActive(true);
 		} else {
 			m_ageText.color = Colors.WithAlpha(m_ageText.color, 1f);
+			m_ageHighlight.gameObject.SetActive(false);
 		}
 
 		// Enable accept button?
