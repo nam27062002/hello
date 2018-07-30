@@ -64,6 +64,7 @@ public class HDTrackingManager
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
+		REWARD_PREREG,					// Reward given from pre-registration
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
@@ -145,6 +146,9 @@ public class HDTrackingManager
     /// Called when the application is resumed
     /// </summary>
     public virtual void Notify_ApplicationResumed() {}
+
+
+    public virtual void Notify_MarketingID() {}
 
     /// <summary>
     /// Called when the user starts a round.
@@ -288,7 +292,7 @@ public class HDTrackingManager
     /// <summary>
     /// Notifies the consent popup display.
     /// </summary>
-    public virtual void Notify_ConsentPopupDisplay() { }
+    public virtual void Notify_ConsentPopupDisplay(bool _sourceSettings) { }
 
     /// <summary>
     /// Notifies the consent popup accept.
@@ -296,10 +300,9 @@ public class HDTrackingManager
     /// <param name="_age">Age.</param>
     /// <param name="_enableAnalytics">If set to <c>true</c> enable analytics.</param>
     /// <param name="_enableMarketing">If set to <c>true</c> enable marketing.</param>
-    /// <param name="_enableSocial">If set to <c>true</c> enable social.</param>
     /// <param name="_modVersion">Mod version.</param>
     /// <param name="_duration">Duration.</param>
-    public virtual void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, bool _enableSocial, string _modVersion, int _duration) {}
+    public virtual void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {}
 
 
     /// <summary>

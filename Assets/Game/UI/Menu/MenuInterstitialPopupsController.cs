@@ -1,6 +1,6 @@
 // MenuInterstitialPopupsController.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 22/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
@@ -30,6 +30,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private bool m_waitForCustomPopup = false;
 	private float m_waitTimeOut;
 
+	private PopupController m_currentPopup = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -39,6 +41,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void Awake() {
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
+		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	/// <summary>
@@ -47,11 +50,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unregister from external events
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 	}
 
 	private void Update() {
 		if (m_waitForCustomPopup) {
-			if (!m_popupDisplayed) {				
+			if (!m_popupDisplayed) {
 				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
@@ -79,7 +83,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Is the last accepted version the same as the current one?
 		if(PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
 			Debug.Log("<color=RED>LEGAL</color>");
-			PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
 			m_popupDisplayed = true;
 		}
 	}
@@ -88,7 +92,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
+		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			m_waitForCustomPopup = HDCustomizerManager.instance.IsCustomiserPopupAvailable();
 			if (m_waitForCustomPopup) {
 				m_waitTimeOut = 5f;
@@ -102,6 +106,44 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
+    private void CheckShark()
+    {
+		// Don't show if a more important popup has already been displayed in this menu loop
+		if(m_popupDisplayed) return;
+
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_SHARK_PET_REWARD_POPUP_AT_RUN) return;
+
+		string sharkPetSku = PopupSharkPetReward.PET_SKU;
+        if (!UsersManager.currentUser.petCollection.IsPetUnlocked(sharkPetSku))
+        {
+            // Check if hungry shark is installed
+            if (IsHungrySharkGameInstalled())
+            {
+                // Unlock pet
+                UsersManager.currentUser.petCollection.UnlockPet(sharkPetSku);
+
+                // Show popup
+				PopupController popup = PopupManager.OpenPopupInstant(PopupSharkPetReward.PATH);
+                m_popupDisplayed = true;
+            }
+        }
+    }
+
+    private bool IsHungrySharkGameInstalled()
+    {
+        bool ret = false;
+#if UNITY_EDITOR
+		ret = true;
+#elif UNITY_ANDROID
+        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
+#elif UNITY_IOS
+		ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
+#endif
+        return ret;
+    }
+
+
 	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
@@ -111,9 +153,43 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		m_waitForCustomPopup = false;
 		m_popupDisplayed = true;
+		m_currentPopup = pController;
 
 		BusyScreen.Hide(this, true);
 	}
+
+    /// <summary>
+    /// Checks the interstitial ads.
+    /// </summary>
+    private void CheckInterstitialAds()
+    {
+        if ( FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials() )
+        {
+            if ( GameAds.instance.GetRunsToInterstitial() <= 0 )
+            {
+                // Lets be loading friendly
+                StartCoroutine( LaunchInterstitial() );
+            }
+            else
+            {
+                GameAds.instance.ReduceRunsToInterstitial();
+            }
+        }
+    }
+
+    IEnumerator LaunchInterstitial()
+    {
+        yield return new WaitForSeconds(0.25f);
+        PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
+    }
+
+    private void InterstitialCallback( bool rewardGiven )
+    {
+        if ( rewardGiven )
+        {
+            GameAds.instance.ResetRunsToInterstitial();
+        }
+    }
 
 	/// <summary>
 	/// Checks whether the Rating popup must be opened or not and does it.
@@ -122,7 +198,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
+		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			// Is dragon unlocked?
 			DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
 			if(data.GetLockState() > DragonData.LockState.LOCKED) {
@@ -139,10 +215,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 						if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {
 							// Start Asking!
 							if(Application.platform == RuntimePlatform.Android) {
-								PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
+								m_currentPopup = PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
 								m_popupDisplayed = true;
 							} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-								PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
+								m_currentPopup = PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
 								m_popupDisplayed = true;
 							}
 						}
@@ -162,8 +238,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
-			m_popupDisplayed = PopupAskSurvey.Check();
+		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
+			m_currentPopup = PopupAskSurvey.Check();
+			m_popupDisplayed = m_currentPopup != null;
 		}
 	}
 
@@ -175,19 +252,36 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
-		if (UsersManager.currentUser.gamesPlayed > GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
-			if(OffersManager.featuredOffer != null) {
-				m_popupDisplayed = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
-			}
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_OFFERS_POPUPS_AT_RUN) return;
+
+		if(OffersManager.featuredOffer != null) {
+			m_currentPopup = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
+			m_popupDisplayed = m_currentPopup != null;
 		}
 	}
 
     private void CheckPromotedIAPs() {
         if (GameStoreManager.SharedInstance.HavePromotedIAPs()) {
-            PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
             m_popupDisplayed = true;
         }
     }
+
+	/// <summary>
+	/// Checks whether the Pre-Registration Rewards popup must be displayed or not and does it.
+	/// </summary>
+	private void CheckPreRegRewards() {
+		// Ignore if it has already been triggered
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
+
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PRE_REG_REWARDS_POPUP_AT_RUN) return;
+
+		// Just launch the popup
+		m_currentPopup = PopupManager.OpenPopupInstant(PopupPreRegRewards.PATH);
+		m_popupDisplayed = true;
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -203,34 +297,46 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		switch(_to) {
 			case MenuScreen.PLAY: {
                 CheckPromotedIAPs();
-
-				// 1. Terms and Conditions
 				//CheckTermsAndConditions();
-
 				CheckCustomizerPopup();
 			} break;
 
 		case MenuScreen.DRAGON_SELECTION: {
+				// Coming from any screen (high priority)
+				CheckPreRegRewards();
+				CheckShark();
+
+				// Coming from specific screens
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
-						// 1. Rating
+            CheckInterstitialAds();
 						CheckRating();
-
-						// 2. Survey
 						CheckSurvey();
-
-						// 3. Featured Offer
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
 					} break;
 
 					// Coming from PLAY screen
 					case MenuScreen.PLAY: {
-						// 1. Featured Offer
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
 					} break;
 				}
+
+				// Coming from any screen (low priority)
+				// Nothing for now
 			} break;
+		}
+	}
+
+	/// <summary>
+	/// A popup has been closed.
+	/// </summary>
+	/// <param name="_popup">Popup.</param>
+	private void OnPopupClosed(PopupController _popup) {
+		// Is it our current popup?
+		if(_popup == m_currentPopup) {
+			// Yes! Nullify current popup reference
+			m_currentPopup = null;
 		}
 	}
 }

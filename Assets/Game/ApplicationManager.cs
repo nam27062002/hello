@@ -336,7 +336,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (pause)
         {
         	if ( GameAds.isInstanceCreated && GameAds.instance.IsWaitingToPlayAnAd())
-        		GameAds.instance.StopWaitingToPlayAnAd();
+            {
+                if ( GameAds.instance.GetAdType() != AdProvider.AdType.Interstitial )
+        		    GameAds.instance.StopWaitingToPlayAnAd();
+            }
 
            HDTrackingManager.Instance.Notify_ApplicationPaused();
            ScheduleLocalNotifications();

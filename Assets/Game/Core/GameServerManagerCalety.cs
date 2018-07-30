@@ -266,6 +266,19 @@ public class GameServerManagerCalety : GameServerManager {
 
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
+
+        // Social platform in Calety depends on our social platform (either Fb or Weibo), which depends on the user's country
+        SocialUtils.EPlatform socialPlatform = SocialPlatformManager.GetSocialPlatform();
+        switch (socialPlatform)
+        {
+            case SocialUtils.EPlatform.Facebook:
+                settingsInstance.m_iSocialPlatformSelected = (int)CaletyConstants.eSocialPlatforms.FACEBOOK;
+                break;
+
+            case SocialUtils.EPlatform.Weibo:
+                settingsInstance.m_iSocialPlatformSelected = (int)CaletyConstants.eSocialPlatforms.WEIBO;
+                break;
+        }
         ServerManager.SharedInstance.Initialise(ref kServerConfig);
 
 		m_delegate = new GameSessionDelegate(Commands_OnResponse);
@@ -658,6 +671,12 @@ public class GameServerManagerCalety : GameServerManager {
 		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_FinishMyEvent, parameters, _callback);
 	}
+
+	public override void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetRefund, parameters, _callback);
+	}
 #endregion
 
 	//------------------------------------------------------------------------//
@@ -704,7 +723,8 @@ public class GameServerManagerCalety : GameServerManager {
         HDLiveEvents_SetScore,     // params: int _eventID. _score on tournaments
         HDLiveEvents_Enter,       // params: int _eventID. entrance type, amount, matchmaking value
 		HDLiveEvents_GetMyReward,		// params: int _eventID
-		HDLiveEvents_FinishMyEvent		// params: int _eventID
+		HDLiveEvents_FinishMyEvent,		// params: int _eventID
+		HDLiveEvents_GetRefund			// params: int _eventID
 	}    
 
 	/// <summary>
@@ -925,6 +945,7 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.HDLiveEvents_Enter:
 			case ECommand.HDLiveEvents_GetMyReward:
 			case ECommand.HDLiveEvents_FinishMyEvent:
+			case ECommand.HDLiveEvents_GetRefund:
                 returnValue = true;
                 break;
         }
@@ -1083,7 +1104,8 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.HDLiveEvents_GetMyProgress:
                 case ECommand.HDLiveEvents_GetLeaderboard:
 				case ECommand.HDLiveEvents_GetMyReward:
-				case ECommand.HDLiveEvents_FinishMyEvent: {					
+				case ECommand.HDLiveEvents_FinishMyEvent: 
+				case ECommand.HDLiveEvents_GetRefund: {					
 					Dictionary<string, string> kParams = new Dictionary<string, string>();						
 					kParams["eventId"] = parameters["eventId"];
 					string global_event_command = "";
@@ -1094,6 +1116,7 @@ public class GameServerManagerCalety : GameServerManager {
                         case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;
 						case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD;break;
 						case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT;break;
+						case ECommand.HDLiveEvents_GetRefund: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_REFUND;break;
 					}
 
                     Command_SendCommand( global_event_command, kParams );					
@@ -1465,7 +1488,7 @@ public class GameServerManagerCalety : GameServerManager {
                 {
                     callback(error, null);
                 }
-            }
+			}
 
             Commands_List[i].Clear();
         }       
@@ -1524,6 +1547,7 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_ENTER = "/api/levent/register";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getRewards";
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
+	private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";
@@ -1570,6 +1594,7 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_ENTER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_REFUND, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
     }    
 
     /// <summary>

@@ -336,10 +336,17 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		OpenUrlDelayed("https://www.facebook.com/HungryDragonGame");
 	}
 
-	/// <summary>
-	/// The Twitter button has been pressed.
+    /// <summary>
+	/// The Weibo button has been pressed.
 	/// </summary>
-	public void OnTwitterButton() {
+	public void OnWeiboButton() {
+        OpenUrlDelayed("https://www.weibo.com/ubichinamobile");
+    }
+
+    /// <summary>
+    /// The Twitter button has been pressed.
+    /// </summary>
+    public void OnTwitterButton() {
 		OpenUrlDelayed("https://twitter.com/_HungryDragon");
 	}
 

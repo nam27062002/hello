@@ -27,11 +27,14 @@ public class MetagameRewardView : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] protected Image m_icon = null;
-	[SerializeField] protected TextMeshProUGUI m_rewardText = null;
+	[Tooltip("Optional")] [SerializeField] protected Image m_icon = null;
+	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_rewardText = null;
 	[Space]
-	[SerializeField] protected bool m_showNameForEggsAndPets = true;	// [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
-	[SerializeField] protected GameObject m_nameContainer = null;
+	[SerializeField] protected bool m_showNameForEggsAndPets = true;    // [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
+	[SerializeField] protected bool m_showNameForCurrencies = false;	// [AOC] Usually not needed, but in some cases looks better
+	[Tooltip("Optional")] [SerializeField] protected GameObject m_nameContainer = null;
+	[Space]
+	[Tooltip("Optional")] [SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -87,10 +90,10 @@ public class MetagameRewardView : MonoBehaviour {
 	public virtual void Refresh() {
 		if(m_reward == null) return;
 
-		// Set reward icon and text
 		// Based on type
 		string rewardText = string.Empty;
 		Sprite iconSprite = null;
+		DefinitionNode powerDef = null;
 		switch(m_reward.type) {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// Get the pet preview
@@ -98,14 +101,26 @@ public class MetagameRewardView : MonoBehaviour {
 				if(petDef != null) {
 					iconSprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
 					rewardText = petDef.GetLocalized("tidName");
+					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
 				} else {
 					// (shouldn't happen)
-					iconSprite = null;
 					rewardText = LocalizationManager.SharedInstance.Localize("TID_PET");
 				}
 
 				// [AOC] Don't show name for some specific cases
 				if(!m_showNameForEggsAndPets) rewardText = string.Empty;
+			} break;
+
+			case Metagame.RewardSkin.TYPE_CODE: {
+				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_reward.sku);
+				if(skinDef != null) {
+					iconSprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + skinDef.Get("dragonSku")  + "/" + skinDef.Get("icon"));
+					rewardText = skinDef.GetLocalized("tidName");
+					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+				} else {
+					// (shouldn't happen)
+					rewardText = LocalizationManager.SharedInstance.Localize("TID_DISGUISE");
+				}
 			} break;
 
 			case Metagame.RewardEgg.TYPE_CODE:
@@ -116,9 +131,6 @@ public class MetagameRewardView : MonoBehaviour {
 				if(eggDef != null) {
 					iconSprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
 					tidName = eggDef.Get("tidName");
-				} else {
-					// (shouldn't happen) Use generic
-					iconSprite = null;
 				}
 
 				// Use plural tid instead if needed
@@ -142,19 +154,49 @@ public class MetagameRewardView : MonoBehaviour {
 			case Metagame.RewardGoldenFragments.TYPE_CODE: {
 				// Get the icon linked to this currency
 				iconSprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(m_reward.currency));
-				rewardText = StringUtils.FormatNumber(m_reward.amount, 0);
+
+				// Show currency name?
+				string amountText = StringUtils.FormatNumber(m_reward.amount, 0);
+				if(m_showNameForCurrencies) {
+					rewardText = LocalizationManager.SharedInstance.Localize(
+						"TID_REWARD_AMOUNT",
+						amountText,
+						LocalizationManager.SharedInstance.Localize(m_reward.GetTID(m_reward.amount > 1))
+					);
+				} else {
+					rewardText = amountText;
+				}
 			} break;
 		
 			default: {
-				iconSprite = null;
 				rewardText = "Unknown reward type";
 			} break;
 		}
 
 		// Apply
-		if(m_icon != null) m_icon.sprite = iconSprite;
-		if(m_rewardText != null) m_rewardText.text = rewardText;
-		if(m_nameContainer) m_nameContainer.SetActive(!string.IsNullOrEmpty(rewardText));	// If empty, hide the whole object
+		// Icon
+		if(m_icon != null) {
+			m_icon.sprite = iconSprite;
+		}
+
+		// Reward
+		if(m_rewardText != null) {
+			m_rewardText.text = rewardText;	
+		}
+
+		// Name
+		if(m_nameContainer != null) {
+			m_nameContainer.SetActive(!string.IsNullOrEmpty(rewardText));   // If empty, hide the whole object
+		}
+
+		// Power
+		if(m_powerIcon != null) {
+			// Show?
+			m_powerIcon.gameObject.SetActive(powerDef != null);
+
+			// Initialize
+			m_powerIcon.InitFromDefinition(powerDef, false);
+		}
 	}
 
 	//------------------------------------------------------------------------//

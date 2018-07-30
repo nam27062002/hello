@@ -39,11 +39,11 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4.1381e-38, g: 1.368e-40, b: 4.138071e-38, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 1.64392e-40, b: 2.5578847, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 11
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -55,7 +55,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
-    serializedVersion: 8
+    serializedVersion: 9
     m_Resolution: 2
     m_BakeResolution: 1
     m_TextureWidth: 1024
@@ -90,9 +90,10 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-  m_LightingDataAsset: {fileID: 112000010, guid: 9fb041ae7b8e51a4b8a8d108c29f53fe,
+    m_ShowResolutionOverlay: 1
+  m_LightingDataAsset: {fileID: 112000012, guid: 9fb041ae7b8e51a4b8a8d108c29f53fe,
     type: 2}
-  m_ShadowMaskMode: 2
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -112,6 +113,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    debug:
+      m_Flags: 0
   m_NavMeshData: {fileID: 0}
 --- !u!1001 &5080291
 Prefab:
@@ -150,7 +153,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalScale.x
@@ -509,6 +512,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -520,10 +524,11 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
+  m_ScaleInLightmap: 2
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -577,7 +582,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 9ae325eaca2b5c041afb7ff5ce2ca766, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 9ae325eaca2b5c041afb7ff5ce2ca766, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -590,6 +595,10 @@ Prefab:
     - target: {fileID: 100000, guid: 9ae325eaca2b5c041afb7ff5ce2ca766, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 9ae325eaca2b5c041afb7ff5ce2ca766, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9ae325eaca2b5c041afb7ff5ce2ca766, type: 3}
@@ -685,19 +694,19 @@ Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1047481738}
+    m_TransformParent: {fileID: 1547570297}
     m_Modifications:
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -4.0961914
+      value: 241.52588
       objectReference: {fileID: 0}
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -13.15
+      value: -57.010044
       objectReference: {fileID: 0}
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -1.5324211
+      value: 151.89398
       objectReference: {fileID: 0}
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalRotation.x
@@ -721,15 +730,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalScale.x
-      value: 0.7973203
+      value: 0.79732066
       objectReference: {fileID: 0}
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalScale.y
-      value: 0.79732
+      value: 0.7973199
       objectReference: {fileID: 0}
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalScale.z
-      value: 1.136369
+      value: 1.1363695
       objectReference: {fileID: 0}
     - target: {fileID: 1560514202641048, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_StaticEditorFlags
@@ -754,6 +763,11 @@ Prefab:
     - target: {fileID: 4933266834938266, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.055000003
+      objectReference: {fileID: 0}
+    - target: {fileID: 23441563048681388, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412,
+        type: 2}
+      propertyPath: m_ScaleInLightmap
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6f8e788a2bf8f9e44bb8aaa83a9d5412, type: 2}
@@ -850,7 +864,7 @@ Transform:
   - {fileID: 519206164}
   - {fileID: 1250363475}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &126283359
 GameObject:
@@ -920,6 +934,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -935,6 +950,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1026,6 +1042,10 @@ Prefab:
       propertyPath: m_Name
       value: L1_general_rock_big_textured (137)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
   m_IsPrefabParent: 0
@@ -1073,6 +1093,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1088,6 +1109,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1144,6 +1166,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1155,10 +1178,11 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
+  m_ScaleInLightmap: 2
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1257,76 +1281,6 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
   m_PrefabInternal: {fileID: 165780795}
---- !u!1001 &170666648
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1035948653}
-    m_Modifications:
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 70.96002
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.7070305
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.583096
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.0773533
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.99700373
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2300000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 23d2bfecbc1f18e4f9c2c9e5ae887940, type: 2}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 4294967187
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_Name
-      value: L2_torch (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-  m_IsPrefabParent: 0
 --- !u!1001 &206654257
 Prefab:
   m_ObjectHideFlags: 0
@@ -1446,7 +1400,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d2d354d0261252843a46aab7306d9c06, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: d2d354d0261252843a46aab7306d9c06, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1530,6 +1484,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.84200007
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 67cca9b2c7ff1014aba9fd35fde7f22d, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 67cca9b2c7ff1014aba9fd35fde7f22d, type: 3}
   m_IsPrefabParent: 0
@@ -1577,6 +1535,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1588,10 +1547,11 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
+  m_ScaleInLightmap: 2
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1679,6 +1639,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.x
       value: -23.523
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: f0ed4c7aff8e61849816e3929c2569a2, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f0ed4c7aff8e61849816e3929c2569a2, type: 3}
   m_IsPrefabParent: 0
@@ -1761,6 +1725,10 @@ Prefab:
       propertyPath: m_Name
       value: L1_general_rock_big_textured (145)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
   m_IsPrefabParent: 0
@@ -1808,6 +1776,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1823,6 +1792,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1961,6 +1931,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1976,6 +1947,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -2205,6 +2177,10 @@ Prefab:
       propertyPath: m_LocalPosition.z
       value: 0.55
       objectReference: {fileID: 0}
+    - target: {fileID: 2300006, guid: 33281a6d95402fc4c982bd557d617add, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 33281a6d95402fc4c982bd557d617add, type: 3}
   m_IsPrefabParent: 0
@@ -2364,6 +2340,16 @@ Prefab:
     - target: {fileID: 4752333973624534, guid: f33c7fc9b177b634f92b35c22a6a1bd9, type: 2}
       propertyPath: m_LocalScale.z
       value: 0.46549678
+      objectReference: {fileID: 0}
+    - target: {fileID: 23687951518489586, guid: f33c7fc9b177b634f92b35c22a6a1bd9,
+        type: 2}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 23948345232921464, guid: f33c7fc9b177b634f92b35c22a6a1bd9,
+        type: 2}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f33c7fc9b177b634f92b35c22a6a1bd9, type: 2}
@@ -2717,6 +2703,10 @@ Prefab:
     - target: {fileID: 100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_Name
       value: L1_general_rock_big_textured (153)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
@@ -3110,6 +3100,10 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 31b46fdc9fd73334da8dc7ea5c2d3520, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 31b46fdc9fd73334da8dc7ea5c2d3520, type: 3}
   m_IsPrefabParent: 0
@@ -3153,6 +3147,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -3168,6 +3163,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -3334,6 +3330,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -3349,6 +3346,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -4080,15 +4078,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 87.92
+      value: 87.09
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -38.11
+      value: -40.17
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.71
+      value: -11.96
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalRotation.x
@@ -4646,7 +4644,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &522277690
 Prefab:
@@ -4770,6 +4768,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -4785,6 +4784,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -4841,6 +4841,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -4856,6 +4857,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -4938,6 +4940,10 @@ Prefab:
     - target: {fileID: 400000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -316.846
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
@@ -5143,7 +5149,6 @@ Transform:
   - {fileID: 915865645}
   - {fileID: 1788505005}
   - {fileID: 1038337366}
-  - {fileID: 1035948653}
   - {fileID: 1237701868}
   m_Father: {fileID: 115908745}
   m_RootOrder: 0
@@ -5374,6 +5379,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -5389,6 +5395,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -5662,6 +5669,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -5677,6 +5685,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -5715,7 +5724,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 87.12
+      value: 84.46
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5723,7 +5732,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.66
+      value: -9.59
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalRotation.x
@@ -5780,6 +5789,10 @@ Prefab:
     - target: {fileID: 100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_Name
       value: L1_general_rock_big_textured (138)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
@@ -6023,6 +6036,14 @@ Prefab:
       propertyPath: m_Name
       value: L1_general_rock_big_textured (131)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ImportantGI
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
   m_IsPrefabParent: 0
@@ -6264,7 +6285,7 @@ Transform:
   - {fileID: 232767321}
   - {fileID: 1876636593}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &738742744
 GameObject:
@@ -6306,6 +6327,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -6317,10 +6339,11 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
+  m_ScaleInLightmap: 3
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -6377,6 +6400,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -6392,6 +6416,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -6935,6 +6960,10 @@ Prefab:
       propertyPath: m_Name
       value: L1_general_rock_big_textured (152)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
   m_IsPrefabParent: 0
@@ -7147,6 +7176,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -7162,6 +7192,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -7252,6 +7283,10 @@ Prefab:
     - target: {fileID: 100000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
@@ -7408,6 +7443,10 @@ Prefab:
     - target: {fileID: 400000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -316.846
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
@@ -7609,7 +7648,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4752333973624534, guid: f33c7fc9b177b634f92b35c22a6a1bd9, type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1835335562976394, guid: f33c7fc9b177b634f92b35c22a6a1bd9, type: 2}
       propertyPath: m_Name
@@ -7638,6 +7677,16 @@ Prefab:
     - target: {fileID: 4752333973624534, guid: f33c7fc9b177b634f92b35c22a6a1bd9, type: 2}
       propertyPath: m_LocalScale.z
       value: 0.46549916
+      objectReference: {fileID: 0}
+    - target: {fileID: 23687951518489586, guid: f33c7fc9b177b634f92b35c22a6a1bd9,
+        type: 2}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 23948345232921464, guid: f33c7fc9b177b634f92b35c22a6a1bd9,
+        type: 2}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f33c7fc9b177b634f92b35c22a6a1bd9, type: 2}
@@ -7721,6 +7770,10 @@ Prefab:
     - target: {fileID: 100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_Name
       value: L1_general_rock_big_textured (149)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
@@ -7851,6 +7904,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -7862,10 +7916,11 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
+  m_ScaleInLightmap: 3
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -8332,6 +8387,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -8347,6 +8403,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -8529,6 +8586,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -8544,6 +8602,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -8600,6 +8659,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -8615,6 +8675,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -8668,7 +8729,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 46d03dfe99ca0b04b8c12286f9ba4512, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 46d03dfe99ca0b04b8c12286f9ba4512, type: 3}
       propertyPath: m_LocalScale.x
@@ -8741,6 +8802,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -8756,6 +8818,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -8950,6 +9013,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -8965,6 +9029,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -9063,80 +9128,6 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
   m_PrefabInternal: {fileID: 1034264996}
---- !u!1001 &1035948652
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 587149485}
-    m_Modifications:
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -7.0751343
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -22.362553
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 10.51787
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.0773533
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.99700373
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_RootOrder
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2300000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 23d2bfecbc1f18e4f9c2c9e5ae887940, type: 2}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 4294967187
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -8.819
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-  m_IsPrefabParent: 0
---- !u!4 &1035948653 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-  m_PrefabInternal: {fileID: 1035948652}
 --- !u!1001 &1036989344
 Prefab:
   m_ObjectHideFlags: 0
@@ -9245,13 +9236,12 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1047481737}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 58.807556, y: 18.470333, z: 0.26038456}
+  m_LocalPosition: {x: 245.62207, y: -43.860046, z: 153.42639}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 311970939}
-  - {fileID: 93895778}
   - {fileID: 860532798}
-  m_Father: {fileID: 1585916977}
+  m_Father: {fileID: 1547570297}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1048873274
@@ -9540,6 +9530,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -9555,6 +9546,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -9857,6 +9849,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -9872,6 +9865,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -9925,15 +9919,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.138275
+      value: -16.98
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -22.29
+      value: -23.31
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.52
+      value: -4.12
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalRotation.x
@@ -9961,7 +9955,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.6129106
+      value: 0.6713779
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalScale.z
@@ -10331,6 +10325,10 @@ Prefab:
       propertyPath: m_CastShadows
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300006, guid: 33281a6d95402fc4c982bd557d617add, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 33281a6d95402fc4c982bd557d617add, type: 3}
   m_IsPrefabParent: 0
@@ -10689,6 +10687,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 16.238998
       objectReference: {fileID: 0}
+    - target: {fileID: 2300004, guid: 467c1aedcfd5d4843a576995a62e7196, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 467c1aedcfd5d4843a576995a62e7196, type: 3}
   m_ParentPrefab: {fileID: 100100000, guid: 467c1aedcfd5d4843a576995a62e7196, type: 3}
@@ -10862,15 +10864,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.47467
+      value: 19.39
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -38.491062
+      value: -38.93
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4227663
+      value: -1.28
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalRotation.x
@@ -10890,7 +10892,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalScale.x
@@ -10975,6 +10977,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -10990,6 +10993,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -11235,7 +11239,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalScale.x
@@ -11348,6 +11352,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -11363,6 +11368,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -11453,6 +11459,10 @@ Prefab:
     - target: {fileID: 100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_Name
       value: L1_general_rock_big_textured (147)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
@@ -12024,6 +12034,10 @@ Prefab:
       propertyPath: m_Name
       value: L1_general_rock_big_textured (146)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
   m_IsPrefabParent: 0
@@ -12302,6 +12316,10 @@ Prefab:
       propertyPath: m_StaticEditorFlags
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
   m_IsPrefabParent: 0
@@ -12431,6 +12449,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -12446,6 +12465,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -12502,6 +12522,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -12517,6 +12538,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -12979,6 +13001,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -12990,10 +13013,11 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
+  m_ScaleInLightmap: 2
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -13132,6 +13156,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -13147,6 +13172,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -13394,6 +13420,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: -361.919
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
   m_IsPrefabParent: 0
@@ -13441,6 +13471,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -13456,6 +13487,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -13509,7 +13541,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalScale.x
@@ -13624,9 +13656,11 @@ Transform:
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 295.3, y: -15.2, z: -143.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1047481738}
+  - {fileID: 93895778}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1550118123
 Prefab:
@@ -13665,7 +13699,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalScale.x
@@ -13930,6 +13964,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: -316.846
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
   m_IsPrefabParent: 0
@@ -13977,6 +14015,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -13992,6 +14031,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -14034,7 +14074,6 @@ Transform:
   m_LocalPosition: {x: 482.1145, y: -77.53038, z: 9.466016}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1047481738}
   - {fileID: 1383598163}
   - {fileID: 88810395}
   - {fileID: 786619767}
@@ -14213,6 +14252,10 @@ Prefab:
       propertyPath: m_StaticEditorFlags
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
   m_IsPrefabParent: 0
@@ -14285,7 +14328,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 3901730e651635e49a64dfed7ff95ae1, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3901730e651635e49a64dfed7ff95ae1, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -14491,7 +14534,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
       propertyPath: m_Name
@@ -14545,6 +14588,30 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.78
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 400004, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0049552917
+      objectReference: {fileID: 0}
+    - target: {fileID: 400004, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.8778176
+      objectReference: {fileID: 0}
+    - target: {fileID: 400004, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0018902966
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
   m_IsPrefabParent: 0
@@ -14588,6 +14655,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -14599,10 +14667,11 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
+  m_ScaleInLightmap: 2
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -15174,7 +15243,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -20.3
+      value: -20.76
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
       propertyPath: m_LocalPosition.z
@@ -15227,6 +15296,10 @@ Prefab:
     - target: {fileID: 400000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -316.846
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
@@ -15802,6 +15875,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -15817,6 +15891,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -16292,6 +16367,10 @@ Prefab:
       propertyPath: m_Name
       value: L1_Village_Air_Coll_Wall_Ruins (23)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 67cca9b2c7ff1014aba9fd35fde7f22d, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 67cca9b2c7ff1014aba9fd35fde7f22d, type: 3}
   m_IsPrefabParent: 0
@@ -16446,6 +16525,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -16461,6 +16541,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -16604,7 +16685,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 042e1086356a6834c9cc59bfe3197e05, type: 3}
       propertyPath: m_LocalScale.x
@@ -17095,6 +17176,64 @@ Transform:
   m_Father: {fileID: 1483910794}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1981228100
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 541.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -27.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 14.203
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1534745125603088, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_Name
+      value: PF_Torch_Mines (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.71713555
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 0.71713555
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287111184897200, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 0.71713555
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 733d71f9c5fa303488ec536ebda2ea19, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &2010471242
 Prefab:
   m_ObjectHideFlags: 0
@@ -17104,15 +17243,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.95
+      value: -10.64
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -27.154514
+      value: -26.57
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.01
+      value: -0.42
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalRotation.x
@@ -17140,7 +17279,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.61291045
+      value: 0.7186014
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5b4ba3a76d0f4f84090c22afd73aafd5, type: 3}
       propertyPath: m_LocalScale.z
@@ -17622,76 +17761,6 @@ Transform:
   m_Father: {fileID: 1938458049}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2058902198
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1035948653}
-    m_Modifications:
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 82.99005
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.7070305
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.583096
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.0773533
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.99700373
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2300000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 23d2bfecbc1f18e4f9c2c9e5ae887940, type: 2}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 4294967187
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_Name
-      value: L2_torch (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 645fd5f914c71b94fa470d67a84790c8, type: 3}
-  m_IsPrefabParent: 0
 --- !u!1001 &2060075591
 Prefab:
   m_ObjectHideFlags: 0
@@ -18004,6 +18073,10 @@ Prefab:
     - target: {fileID: 400000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -154.39601
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 16a61440916b25443a3ffbb45b6f3a24, type: 3}
@@ -18411,7 +18484,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0bc21498dc8c87641a902bef17a429a0, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 0bc21498dc8c87641a902bef17a429a0, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -18440,6 +18513,10 @@ Prefab:
     - target: {fileID: 100000, guid: 0bc21498dc8c87641a902bef17a429a0, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 0bc21498dc8c87641a902bef17a429a0, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 0bc21498dc8c87641a902bef17a429a0, type: 3}
@@ -18544,6 +18621,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -18559,6 +18637,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -18612,7 +18691,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: 79397b9ddc6c7714bae5e72ae38a7c6b, type: 3}
       propertyPath: m_Name
@@ -18796,7 +18875,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2300050, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -18885,6 +18964,42 @@ Prefab:
     - target: {fileID: 100064, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300042, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300028, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300040, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300024, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300058, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300038, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300026, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300050, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300060, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0b3a7490c45e2d145917e6f410708769, type: 3}

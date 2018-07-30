@@ -354,6 +354,9 @@ public class AdProviderIronSource : AdProvider
                         if (mStateRewarded == EState.Caching && (DateTime.Now - mlastRewardedReadyCheckAt).TotalSeconds >= 3)
                         {
                             mlastRewardedReadyCheckAt = DateTime.Now;
+
+// Ads are not supported by editor
+#if !UNITY_EDITOR
                             if (IronSource.Agent.isRewardedVideoAvailable())
                             {
                                 mStateRewarded = EState.Loaded;
@@ -361,6 +364,7 @@ public class AdProviderIronSource : AdProvider
                                 if (FeatureSettingsManager.IsDebugEnabled)
                                     Log("IronSource::: ... ... Loaded  " + "(Rewarded)");
                             }
+#endif
                         }
                         else if (mStateInterstitial == EState.Caching && (DateTime.Now - mlastInterstitialReadyCheckAt).TotalSeconds >= 5)
                         {
@@ -372,6 +376,9 @@ public class AdProviderIronSource : AdProvider
                             else
                             {
                                 mlastInterstitialReadyCheckAt = DateTime.Now;
+
+// Ads are not supported by editor
+#if !UNITY_EDITOR
                                 if (IronSource.Agent.isInterstitialReady())
                                 {
                                     mStateInterstitial = EState.Loaded;
@@ -380,6 +387,7 @@ public class AdProviderIronSource : AdProvider
 
                                     mInterstitialCachingTry = 1;
                                 }
+#endif
                             }
                         }
 
@@ -535,7 +543,7 @@ public class AdProviderIronSource : AdProvider
         }
 
 
-        #region Interstitial IronSource callbacks
+#region Interstitial IronSource callbacks
 
         void InterstitialAdReadyEvent()
         {
@@ -592,9 +600,9 @@ public class AdProviderIronSource : AdProvider
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> Interstitial Ad Rewarded Event");
         }
-        #endregion
+#endregion
 
-        #region Rewarded IronSource callbacks
+#region Rewarded IronSource callbacks
 
         void RewardedVideoAvailabilityChangedEvent(bool canShowAd)
         {
@@ -647,7 +655,7 @@ public class AdProviderIronSource : AdProvider
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> Rewarded VideoAd Clicked Event");
         }
-        #endregion
+#endregion
 
         // ==================================================== //
 		public string GetEngineStep()

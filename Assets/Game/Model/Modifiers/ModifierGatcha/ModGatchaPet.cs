@@ -12,7 +12,7 @@ public class ModGatchaPet : ModifierGatcha {
 		m_weight = _def.GetAsFloat("param2");
 
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_sku);
-		BuildTextParams(def.GetLocalized("tidName"), StringUtils.FormatBigNumber(m_weight), UIConstants.PET_CATEGORY_SPECIAL.ToHexString("#"));
+		BuildTextParams(def.GetLocalized("tidName"), StringUtils.FormatNumber(m_weight, 2), UIConstants.PET_CATEGORY_SPECIAL.ToHexString("#"));
 	}
 
 	public override void Apply() {

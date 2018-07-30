@@ -21,6 +21,40 @@ public class SocialPlatformManager : MonoBehaviour
 		}
 	}
     
+    public static SocialUtils.EPlatform GetSocialPlatform()
+    {
+        SocialUtils.EPlatform returnValue = SocialUtils.EPlatform.Facebook;
+        
+        // In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
+#if UNITY_IOS
+            // Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
+            string socialPlatformKey = PersistencePrefs.Social_PlatformKey;
+            returnValue = SocialUtils.KeyToEPlatform(socialPlatformKey);
+
+            // If no social platform has ever been used then we decide which one to show based on the country
+            if (returnValue == SocialUtils.EPlatform.None)
+            {
+                string countryCode = PlatformUtils.Instance.GetCountryCode();
+                if (countryCode != null)
+                {
+                    countryCode.ToUpper();
+                }                    
+
+                // Weibo is shown only in China
+                if (countryCode == "CN")
+                {
+                    returnValue = SocialUtils.EPlatform.Weibo;
+                }
+                else
+                {
+                    returnValue = SocialUtils.EPlatform.Facebook;
+                }
+            }
+#endif
+
+        return returnValue;
+    }
+
 	//////////////////////////////////////////////////////////////////////////	
 
 	// Social Platform Response //////////////////////////////////////////////
@@ -57,21 +91,19 @@ public class SocialPlatformManager : MonoBehaviour
             }
             else
             {
+                SocialUtils.EPlatform socialPlatform = SocialUtils.EPlatform.Facebook;
+
+                // In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
+#if UNITY_IOS
                 // Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
                 string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
-                SocialUtils.EPlatform socialPlatform = SocialUtils.KeyToEPlatform(socialPlatformKey);
+                socialPlatform = SocialUtils.KeyToEPlatform(socialPlatformKey);
 
                 // If no social platform has ever been used then we decide which one to show based on the country
                 if (socialPlatform == SocialUtils.EPlatform.None)
-                {
-                    string countryCode = PlatformUtils.Instance.GetCountryCode();
-                    if (countryCode != null)
-                    {
-                        countryCode.ToUpper();
-                    }                    
-
+                {                
                     // Weibo is shown only in China
-                    if (countryCode == "CN")
+                    if (PlatformUtils.Instance.IsChina())
                     {
                         socialPlatform = SocialUtils.EPlatform.Weibo;
                     }
@@ -80,7 +112,7 @@ public class SocialPlatformManager : MonoBehaviour
                         socialPlatform = SocialUtils.EPlatform.Facebook;
                     }
                 }
-
+#endif
                 switch (socialPlatform)
                 {
                     case SocialUtils.EPlatform.Facebook:
