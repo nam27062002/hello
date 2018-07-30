@@ -492,14 +492,14 @@ public class LoadingSceneController : SceneController {
                 }break;
             case State.WAITING_TERMS:
             {
-				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
+				if (PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION 
 					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
 					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() 
                     )
                 {
                     Debug.Log("<color=RED>LEGAL</color>");
-					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
-					popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.LOADING_FUNNEL);
+					PopupController popupController = PopupManager.LoadPopup(PopupConsentLoading.PATH);
+					popupController.GetComponent<PopupConsentLoading>().Init();
                     popupController.OnClosePostAnimation.AddListener(OnTermsDone);
 					popupController.Open();
                     HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
