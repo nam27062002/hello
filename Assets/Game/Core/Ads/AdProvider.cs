@@ -140,6 +140,11 @@ public abstract class AdProvider
     {
         return m_ad.Type != AdType.None;        
     }
+    
+    public AdType GetAdType()
+    {
+        return m_ad.Type;
+    }
 
     public void OnAdPlayed(Ad ad, bool videoPlayed, string msg=null)
     {

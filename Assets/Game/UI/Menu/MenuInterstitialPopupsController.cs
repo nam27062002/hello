@@ -1,6 +1,6 @@
 // MenuInterstitialPopupsController.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 22/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
@@ -55,7 +55,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 	private void Update() {
 		if (m_waitForCustomPopup) {
-			if (!m_popupDisplayed) {				
+			if (!m_popupDisplayed) {
 				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
@@ -142,7 +142,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 #endif
         return ret;
     }
-        
+
 
 	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
@@ -157,6 +157,39 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		BusyScreen.Hide(this, true);
 	}
+
+    /// <summary>
+    /// Checks the interstitial ads.
+    /// </summary>
+    private void CheckInterstitialAds()
+    {
+        if ( FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials() )
+        {
+            if ( GameAds.instance.GetRunsToInterstitial() <= 0 )
+            {
+                // Lets be loading friendly
+                StartCoroutine( LaunchInterstitial() );
+            }
+            else
+            {
+                GameAds.instance.ReduceRunsToInterstitial();
+            }
+        }
+    }
+
+    IEnumerator LaunchInterstitial()
+    {
+        yield return new WaitForSeconds(0.25f);
+        PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
+    }
+
+    private void InterstitialCallback( bool rewardGiven )
+    {
+        if ( rewardGiven )
+        {
+            GameAds.instance.ResetRunsToInterstitial();
+        }
+    }
 
 	/// <summary>
 	/// Checks whether the Rating popup must be opened or not and does it.
@@ -277,6 +310,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
+            CheckInterstitialAds();
 						CheckRating();
 						CheckSurvey();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
