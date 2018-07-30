@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ARDragonManager : MonoBehaviour
+public class ARDragonManagerTest : MonoBehaviour
 {
 	private GameObject m_kARStartTab = null;
 	private GameObject m_kARSurfaceSelectTab = null;
@@ -32,9 +32,9 @@ public class ARDragonManager : MonoBehaviour
 
 	public class ARGameListener : ARGameManager.ARGameListenerBase
 	{
-		private ARDragonManager m_kSource = null;
+		private ARDragonManagerTest m_kSource = null;
 
-		public ARGameListener (ARDragonManager kSource)
+		public ARGameListener (ARDragonManagerTest kSource)
 		{
 			m_kSource = kSource;
 		}
@@ -58,9 +58,9 @@ public class ARDragonManager : MonoBehaviour
 
 	public class ARSurfacePrefabListener : IARSurface.ARSurfacePrefabListenerBase
 	{
-		private ARDragonManager mSource;
+		private ARDragonManagerTest mSource;
 
-		public ARSurfacePrefabListener (ARDragonManager _source)
+		public ARSurfacePrefabListener (ARDragonManagerTest _source)
 		{
 			mSource = _source;
 		}
@@ -337,7 +337,7 @@ public class ARDragonManager : MonoBehaviour
 			{
 				mButtonsContainer = child.gameObject;
 			}
-			else if (child.name == "ButtonAR")
+			else if (child.name == "ButtonAROptions")
 			{
 				mGOARButtonOptions = child.gameObject;
 			}
