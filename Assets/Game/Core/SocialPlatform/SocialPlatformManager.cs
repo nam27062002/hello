@@ -67,15 +67,9 @@ public class SocialPlatformManager : MonoBehaviour
 
                 // If no social platform has ever been used then we decide which one to show based on the country
                 if (socialPlatform == SocialUtils.EPlatform.None)
-                {
-                    string countryCode = PlatformUtils.Instance.GetCountryCode();
-                    if (countryCode != null)
-                    {
-                        countryCode.ToUpper();
-                    }                    
-
+                {                
                     // Weibo is shown only in China
-                    if (countryCode == "CN")
+                    if (PlatformUtils.Instance.IsChina())
                     {
                         socialPlatform = SocialUtils.EPlatform.Weibo;
                     }
