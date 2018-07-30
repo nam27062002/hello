@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GameConstants
 {
-	public class Material{
+	public static class Material{
 		public static readonly int BLEND_MODE = Shader.PropertyToID("_BlendMode");
 
 
