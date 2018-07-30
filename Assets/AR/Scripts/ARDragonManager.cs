@@ -330,14 +330,14 @@ public class ARDragonManager : MonoBehaviour
 	{
 		Transform [] ts = this.gameObject.GetComponentsInChildren <Transform> (true);
 		foreach (Transform child in ts) {
-			if (child.name == "Container") {
+			if (child.name == "Container") {        //BottomBar
 				mGOScreenContainer = child.gameObject;
 			}
-			else if (child.name == "ButtonsContainer")
+			else if (child.name == "RightMiddleAction")
 			{
 				mButtonsContainer = child.gameObject;
 			}
-			else if (child.name == "ButtonAR")
+			else if (child.name == "ButtonAR")      //ButtonAROptions
 			{
 				mGOARButtonOptions = child.gameObject;
 			}
@@ -347,11 +347,11 @@ public class ARDragonManager : MonoBehaviour
 				child.GetComponent<Button>().onClick.RemoveListener(surfaceSelectionAR);
 				child.GetComponent<Button>().onClick.AddListener(surfaceSelectionAR);
 			}
-			else if (child.name == "ButtonClose")
-			{
+			else if (child.name == "ButtonExtended")    //ButtonClose
+            {
 				mButtonClose = child.gameObject;
-				child.GetComponent<Button>().onClick.RemoveListener(backAR);
-				child.GetComponent<Button>().onClick.AddListener(backAR);
+				child.GetComponent<ButtonExtended>().onClick.RemoveListener(backAR);
+				child.GetComponent<ButtonExtended>().onClick.AddListener(backAR);
 			}
 		}
 	}
