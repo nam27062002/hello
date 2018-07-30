@@ -30,7 +30,8 @@ public class MetagameRewardView : MonoBehaviour {
 	[Tooltip("Optional")] [SerializeField] protected Image m_icon = null;
 	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_rewardText = null;
 	[Space]
-	[SerializeField] protected bool m_showNameForEggsAndPets = true;	// [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
+	[SerializeField] protected bool m_showNameForEggsAndPets = true;    // [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
+	[SerializeField] protected bool m_showNameForCurrencies = false;	// [AOC] Usually not needed, but in some cases looks better
 	[Tooltip("Optional")] [SerializeField] protected GameObject m_nameContainer = null;
 	[Space]
 	[Tooltip("Optional")] [SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
@@ -153,7 +154,18 @@ public class MetagameRewardView : MonoBehaviour {
 			case Metagame.RewardGoldenFragments.TYPE_CODE: {
 				// Get the icon linked to this currency
 				iconSprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(m_reward.currency));
-				rewardText = StringUtils.FormatNumber(m_reward.amount, 0);
+
+				// Show currency name?
+				string amountText = StringUtils.FormatNumber(m_reward.amount, 0);
+				if(m_showNameForCurrencies) {
+					rewardText = LocalizationManager.SharedInstance.Localize(
+						"TID_REWARD_AMOUNT",
+						amountText,
+						LocalizationManager.SharedInstance.Localize(m_reward.GetTID(m_reward.amount > 1))
+					);
+				} else {
+					rewardText = amountText;
+				}
 			} break;
 		
 			default: {

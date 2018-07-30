@@ -175,7 +175,9 @@ public class PlatformUtilsIOSImpl : PlatformUtils
             Debug.LogError("AppName is null or empty!");
             return false;
         }
-        return IOsApplicationExists(applicationURI);
+        if ( Application.platform == RuntimePlatform.IPhonePlayer )
+            return IOsApplicationExists(applicationURI);
+        return false;
     }
 
 }
