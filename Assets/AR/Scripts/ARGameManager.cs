@@ -220,18 +220,25 @@ public class ARGameManager : MonoBehaviour
 		m_pARGameListener = kListener;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+
+    private float m_backupTimeScale;
+    private float m_backupFixedDeltaTime;
 
 
+    // METHODS ///////////////////////////////////////////////////////////////
 
-	// METHODS ///////////////////////////////////////////////////////////////
-
-	public void Initialise ()
+    public void Initialise ()
 	{
 		if (!m_bInitialised)
 		{
-			m_pARKitListener = new ARKitListener (this);
+            m_backupTimeScale = Time.timeScale;
+            m_backupFixedDeltaTime = Time.fixedDeltaTime;
+
+            m_pARKitListener = new ARKitListener (this);
 			ARKitManager.SharedInstance.SetARKitListener (m_pARKitListener);
+
+            Debug.Log("----->>>>>> AR Initialise ....");
 
 			m_bInitialised = true;
 		}
@@ -245,7 +252,12 @@ public class ARGameManager : MonoBehaviour
 
 			ARKitManager.SharedInstance.UnInitialise ();
 
-			m_bInitialised = false;
+            Time.timeScale = m_backupTimeScale;
+            Time.fixedDeltaTime = m_backupFixedDeltaTime;
+
+            Debug.Log("----->>>>>> AR UnInitialise ....");
+
+            m_bInitialised = false;
 		}
 	}
 

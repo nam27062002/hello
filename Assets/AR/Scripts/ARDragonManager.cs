@@ -28,9 +28,7 @@ public class ARDragonManager : MonoBehaviour
 
 	private bool m_bARToBeActive = false;
 
-
-
-	public class ARGameListener : ARGameManager.ARGameListenerBase
+    public class ARGameListener : ARGameManager.ARGameListenerBase
 	{
 		private ARDragonManager m_kSource = null;
 
@@ -123,14 +121,10 @@ public class ARDragonManager : MonoBehaviour
 				mARSurfaceComponent.setState (IARSurface.eARSurfaceState.INIT);
 			}
 
-
-
 			List<GameObject> kHiddenARObjects = new List<GameObject> ();
 			kHiddenARObjects.Add (GameObject.Find ("MenuScene3D/PF_MenuCameraSetup/Camera3D"));
 
 			ARKitManager.SharedInstance.SetHiddenARObjects (kHiddenARObjects);
-
-
 
 			List<GameObject> kAffectedARObjects = new List<GameObject> ();
 
@@ -141,8 +135,6 @@ public class ARDragonManager : MonoBehaviour
 			}
 
 			ARKitManager.SharedInstance.SetAffectedARObjects (kAffectedARObjects, 0.05f);
-
-
 
 			ARKitManager.SharedInstance.StartSurfaceDetection ();
 		} else {
@@ -226,8 +218,6 @@ public class ARDragonManager : MonoBehaviour
 			}
 		}
 	}
-
-
 
 	private enum eARUITabs
 	{
