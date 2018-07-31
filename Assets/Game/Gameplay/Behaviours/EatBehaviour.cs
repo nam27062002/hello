@@ -1006,8 +1006,17 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 							AI.IMachine machine = entity.machine;
 							if ( machine.CanBeBitten() )
 							{
+                                Vector3 target = GameConstants.Vector3.zero;
+                                if ( entity.circleArea != null )
+                                {
+                                    target = entity.circleArea.center;
+                                }
+                                else
+                                {
+                                    target = machine.position;
+                                }
                                 // Check if collision between us!
-                                if (!Physics.Linecast(m_swallow.position, machine.position, GameConstants.Layers.GROUNDS))
+                                if (!Physics.Linecast(m_swallow.position, target, GameConstants.Layers.GROUNDS))
                                 {
     								preyToHold = machine;
     								entityToHold = entity;
