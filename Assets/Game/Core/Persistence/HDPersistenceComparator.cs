@@ -6,6 +6,17 @@ public class HDPersistenceComparator : PersistenceComparator
     private PersistenceComparatorSystem m_localProgress = null;
     private PersistenceComparatorSystem m_cloudProgress = null;
 
+    public override void Reset()
+    {
+        if (m_localProgress != null) {
+            m_localProgress.Reset();
+        }
+
+        if (m_cloudProgress != null) {
+            m_cloudProgress.Reset();
+        }
+    }
+
     public override PersistenceStates.EConflictState Compare(PersistenceData local, PersistenceData cloud)
     {
         m_localProgress = null;
