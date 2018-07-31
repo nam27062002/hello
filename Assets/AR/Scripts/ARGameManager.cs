@@ -137,7 +137,7 @@ public class ARGameManager : MonoBehaviour
 			kConfig.m_strSurfaceBasePrefab = "AR/ARCoreTrackedPlaneVisualizer";
 #endif
 			kConfig.m_strARContentCameraPrefab = "AR/ARContentCameraBase";
-			kConfig.m_strSceneContentObject = "ARCameras";
+			kConfig.m_strSceneContentObject = "MenuScene3D/ARBasePrefab/ARCameras";
 			kConfig.m_strSurfaceSelectorPrefab = "AR/ARKitSurfaceSelector";
             kConfig.m_strARHitLayer = "Player";// "ARHitLayer";
 
