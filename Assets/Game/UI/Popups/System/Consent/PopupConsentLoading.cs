@@ -3,11 +3,6 @@
 //
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-#if UNITY_EDITOR
-	#define TEST_COPPA
-	#define TEST_GDPR
-#endif
-
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -20,49 +15,35 @@ using TMPro;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// This COPPA/GDPR Popup.
+/// The COPPA/GDPR Popup triggered during the loading funnel.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupTermsAndConditions : MonoBehaviour {
+public class PopupConsentLoading : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Message/PF_PopupTermsAndConditions";
+	public const string PATH = "UI/Popups/Message/Consent/PF_PopupConsentLoading";
 
 	public const string VERSION_PREFS_KEY = "LegalVersionAgreed";
 	public const int LEGAL_VERSION = 1;
-
-	public const string TRACKING_CONSENT_KEY = "PopupTermsAndConditions.TrackingConsent";
-	public const string ADS_CONSENT_KEY = "PopupTermsAndConditions.AdsConsent";
-
-	public enum Mode {
-		LOADING_FUNNEL,
-		MANUAL,
-		TERMS_AND_CONDITIONS_ONLY
-	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
-	[SerializeField] private Localizer m_titleText = null;
 	[SerializeField] private Slider m_ageSlider = null;
 	[SerializeField] private TextMeshProUGUI m_ageText = null;
 	[SerializeField] private GameObject m_ageHighlight = null;
 	[Space]
 	[SerializeField] private Button m_acceptButton = null;
-	[SerializeField] private GameObject m_cancelButton = null;
 	[Space]
 	[SerializeField] private GameObject m_ageGroup = null;
 	[SerializeField] private GameObject m_termsGroup = null;
 	[SerializeField] private GameObject m_consentGroup = null;
 
-	// Public setup
-	private Mode m_mode = Mode.LOADING_FUNNEL;
-
 	// Internal refs
     private PopupController m_popupController;
-	private PopupTermsAndConditionsMoreInfo m_moreInfoPopup = null;
+	private PopupConsentMoreInfo m_moreInfoPopup = null;
    
 	// Internal logic
 	private float m_timeAtOpen = 0f;
@@ -85,23 +66,16 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	public void Init(Mode _mode) {
+	public void Init() {
 		// Init internal vars
         m_timeAtOpen = Time.unscaledTime;
-		m_mode = _mode;
 
 		// Subscribe to popup's close event
         m_popupController = GetComponent<PopupController>();
 
 		// Show Age Group?
-		m_ageEnabled = m_mode != Mode.TERMS_AND_CONDITIONS_ONLY && GDPRManager.SharedInstance.IsAgeRestrictionRequired();
-#if TEST_COPPA
-		m_ageEnabled = true;
-#endif
+		m_ageEnabled = GDPRManager.SharedInstance.IsAgeRestrictionRequired();	// Country requires age restriction
 		if(m_ageEnabled) {
-			// Special title
-			m_titleText.Localize("TID_AGE_GATE_TITLE");
-
 			// Init age text and subscribe to slider's OnChange event
 			m_ageValue = GDPRManager.SharedInstance.GetCachedUserAge();
 			m_initialAgeValue = m_ageValue;
@@ -115,15 +89,12 @@ public class PopupTermsAndConditions : MonoBehaviour {
 		}
 
 		// Show Consent Group?
-		m_consentEnabled = m_mode != Mode.TERMS_AND_CONDITIONS_ONLY && GDPRManager.SharedInstance.IsConsentRequired();
-#if TEST_GDPR
-		m_consentEnabled = true;
-#endif
+		m_consentEnabled = GDPRManager.SharedInstance.IsConsentRequired();
 		if(m_consentEnabled) {
-			m_trackingConsent = Prefs.GetBoolPlayer(TRACKING_CONSENT_KEY, true);
+			m_trackingConsent = Prefs.GetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, true);
 			m_initialTrackingConsent = m_trackingConsent;
 
-			m_adsConsent = Prefs.GetBoolPlayer(ADS_CONSENT_KEY, true);
+			m_adsConsent = Prefs.GetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, true);
 			m_initialAdsConsent = m_adsConsent;
 
 			m_consentGroup.SetActive(true);
@@ -131,11 +102,8 @@ public class PopupTermsAndConditions : MonoBehaviour {
 			m_consentGroup.SetActive(false);
 		}
 
-        // Show Cancel button?
-        m_cancelButton.SetActive(m_mode == Mode.MANUAL);
-
         //Tracking
-        HDTrackingManager.Instance.Notify_ConsentPopupDisplay(m_mode == Mode.MANUAL);
+        HDTrackingManager.Instance.Notify_ConsentPopupDisplay(false);
     }
 
 	/// <summary>
@@ -152,19 +120,6 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Opens the URL after a short delay.
-	/// </summary>
-	/// <param name="_url">URL to be opened.</param>
-	private void OpenUrlDelayed(string _url) {
-		// Add some delay to give enough time for SFX to be played before losing focus
-		UbiBCN.CoroutineManager.DelayedCall(
-			() => {
-				Application.OpenURL(_url);
-			}, 0.15f
-		);
-	}
-
 	/// <summary>
 	/// Sets the age text with a given age value.
 	/// </summary>
@@ -198,24 +153,21 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	/// The privacy policy button has been pressed.
 	/// </summary>
 	public void OnPrivacyPolicyButton() {
-		string privacyPolicyUrl = "https://legal.ubi.com/privacypolicy/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		OpenUrlDelayed(privacyPolicyUrl);
+		IPopupConsentTermsAndConditions.OpenPrivacyPolicy();
 	}
 
 	/// <summary>
 	/// The EULA button has been pressed.
 	/// </summary>
 	public void OnEulaButton() {
-		string eulaUrl = "https://legal.ubi.com/eula/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		OpenUrlDelayed(eulaUrl);
+		IPopupConsentTermsAndConditions.OpenEULA();
 	}
 
 	/// <summary>
 	/// The terms of use button has been pressed.
 	/// </summary>
 	public void OnTermsOfUseButton() {
-		string touUrl = "https://legal.ubi.com/termsofuse/" + LocalizationManager.SharedInstance.Culture.Name;	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		OpenUrlDelayed(touUrl);
+		IPopupConsentTermsAndConditions.OpenTOU();
 	}
 
 	/// <summary>
@@ -223,8 +175,8 @@ public class PopupTermsAndConditions : MonoBehaviour {
 	/// </summary>
 	public void OnMoreInfoButton() {
 		// Load more info popup
-		PopupController popup = PopupManager.LoadPopup(PopupTermsAndConditionsMoreInfo.PATH);
-		m_moreInfoPopup = popup.GetComponent<PopupTermsAndConditionsMoreInfo>();
+		PopupController popup = PopupManager.LoadPopup(PopupConsentMoreInfo.PATH);
+		m_moreInfoPopup = popup.GetComponent<PopupConsentMoreInfo>();
 
 		// Initialize it with current settings
 		m_moreInfoPopup.Init(
@@ -268,8 +220,8 @@ public class PopupTermsAndConditions : MonoBehaviour {
 			GDPRManager.SharedInstance.SetUserConsentGiven(m_trackingConsent && m_adsConsent);
 
 			// Store new value to user prefs
-			Prefs.SetBoolPlayer(TRACKING_CONSENT_KEY, m_trackingConsent);
-			Prefs.SetBoolPlayer(ADS_CONSENT_KEY, m_adsConsent);
+			Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, m_trackingConsent);
+			Prefs.SetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, m_adsConsent);
 
 			// Has consent changed?
 			if(m_trackingConsent != m_initialTrackingConsent
@@ -283,27 +235,7 @@ public class PopupTermsAndConditions : MonoBehaviour {
         HDTrackingManager.Instance.Notify_ConsentPopupAccept(m_ageValue, m_trackingConsent, m_adsConsent, "1_1_1", duration);
 
 		// Loading Funnel
-		if(m_mode == Mode.LOADING_FUNNEL) {
-			HDTrackingManager.Instance.Notify_LegalPopupClosed(duration, true);
-		}
-
-		// Close popup
-		m_popupController.Close(true);
-
-		// Restart flow? Only in manual mode
-		if(m_mode == Mode.MANUAL && hasChanged) {
-            // We need to force logout so the game will login again when restarting and it will send whether or not the user is a child to the server, which is needed to ban children from tournaments
-            GameServerManager.SharedInstance.LogOut();
-			ApplicationManager.instance.NeedsToRestartFlow = true;
-		}
-	}
-
-	/// <summary>
-	/// Cancel button has been presed.
-	/// </summary>
-	public void OnCancel() {
-		// Only allow cancelling when the popup is triggered manually
-		if(m_mode != Mode.MANUAL) return;
+		HDTrackingManager.Instance.Notify_LegalPopupClosed(duration, true);
 
 		// Close popup
 		m_popupController.Close(true);

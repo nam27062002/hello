@@ -182,6 +182,8 @@ public class PersistenceCloudDriver
 
 	private void Syncer_Reset()
 	{
+        Syncer_Comparator.Reset();
+
 		Syncer_Step = ESyncSetp.None;
 		Syncer_IsAppInit = false;
 		Syncer_IsSilent = false;
