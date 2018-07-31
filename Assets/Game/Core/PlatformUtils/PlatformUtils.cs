@@ -48,4 +48,15 @@ public abstract class PlatformUtils
 	public virtual bool InputPressureSupprted(){ return Input.touchPressureSupported; }
 
     public virtual bool ApplicationExists(string applicationURI){ return false; }
+
+    public bool IsChina()
+    {
+        string countryCode = PlatformUtils.Instance.GetCountryCode();
+        if (countryCode != null)
+        {
+            countryCode.ToUpper();
+        }
+
+        return countryCode == "CN";
+    }
 }

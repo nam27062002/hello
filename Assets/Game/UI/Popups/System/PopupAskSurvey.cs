@@ -58,7 +58,7 @@ public class PopupAskSurvey : MonoBehaviour {
 
 		// Not if we don't have a tracking ID
 		#if !UNITY_EDITOR
-		if(HDTrackingManager.Instance.GetDNAProfileID() == null) return false;
+		if(HDTrackingManager.Instance.GetDNAProfileID() == null) return null;
 		#endif
 
 		// Not if target min dragon is not properly defined
