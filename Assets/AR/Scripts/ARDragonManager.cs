@@ -125,10 +125,10 @@ public class ARDragonManager : MonoBehaviour
 
 
 
-//			List<GameObject> kHiddenARObjects = new List<GameObject> ();
-//			kHiddenARObjects.Add (GameObject.Find ("Arena/Model/Env_skybox"));
+			List<GameObject> kHiddenARObjects = new List<GameObject> ();
+			kHiddenARObjects.Add (GameObject.Find ("MenuScene3D/PF_MenuCameraSetup/Camera3D"));
 
-//			ARKitManager.SharedInstance.SetHiddenARObjects (kHiddenARObjects);
+			ARKitManager.SharedInstance.SetHiddenARObjects (kHiddenARObjects);
 
 
 
