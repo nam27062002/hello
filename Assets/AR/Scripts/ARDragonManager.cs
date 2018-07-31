@@ -125,16 +125,16 @@ public class ARDragonManager : MonoBehaviour
 
 
 
-			List<GameObject> kHiddenARObjects = new List<GameObject> ();
-			kHiddenARObjects.Add (GameObject.Find ("Arena/Model/Env_skybox"));
+//			List<GameObject> kHiddenARObjects = new List<GameObject> ();
+//			kHiddenARObjects.Add (GameObject.Find ("Arena/Model/Env_skybox"));
 
-			ARKitManager.SharedInstance.SetHiddenARObjects (kHiddenARObjects);
+//			ARKitManager.SharedInstance.SetHiddenARObjects (kHiddenARObjects);
 
 
 
 			List<GameObject> kAffectedARObjects = new List<GameObject> ();
 
-			GameObject kArena = GameObject.Find ("Arena");
+			GameObject kArena = GameObject.Find ("MenuScene3D/ARBasePrefab/Arena");
 			if (kArena != null)
 			{
 				kAffectedARObjects.Add (kArena);
@@ -330,14 +330,14 @@ public class ARDragonManager : MonoBehaviour
 	{
 		Transform [] ts = this.gameObject.GetComponentsInChildren <Transform> (true);
 		foreach (Transform child in ts) {
-			if (child.name == "Container") {        //BottomBar
+			if (child.name == "Container") {
 				mGOScreenContainer = child.gameObject;
 			}
-			else if (child.name == "RightMiddleAction")
+			else if (child.name == "ButtonsContainer")
 			{
 				mButtonsContainer = child.gameObject;
 			}
-			else if (child.name == "ButtonAR")      //ButtonAROptions
+			else if (child.name == "ButtonAROptions")
 			{
 				mGOARButtonOptions = child.gameObject;
 			}
@@ -347,7 +347,7 @@ public class ARDragonManager : MonoBehaviour
 				child.GetComponent<Button>().onClick.RemoveListener(surfaceSelectionAR);
 				child.GetComponent<Button>().onClick.AddListener(surfaceSelectionAR);
 			}
-			else if (child.name == "ButtonExtended")    //ButtonClose
+			else if (child.name == "ButtonClose")
             {
 				mButtonClose = child.gameObject;
 				child.GetComponent<ButtonExtended>().onClick.RemoveListener(backAR);
