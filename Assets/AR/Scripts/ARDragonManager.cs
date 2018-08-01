@@ -340,8 +340,8 @@ public class ARDragonManager : MonoBehaviour
 			else if (child.name == "ButtonClose")
             {
 				mButtonClose = child.gameObject;
-				child.GetComponent<ButtonExtended>().onClick.RemoveListener(backAR);
-				child.GetComponent<ButtonExtended>().onClick.AddListener(backAR);
+				child.GetComponent<ButtonExtended>().onClick.RemoveListener(onPressedButtonReturnToMainMenu);
+				child.GetComponent<ButtonExtended>().onClick.AddListener(onPressedButtonReturnToMainMenu);
 			}
 		}
 	}
