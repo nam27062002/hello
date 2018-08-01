@@ -310,6 +310,7 @@ public class IARSurface : MonoBehaviour
 		}
 	}
 		
+	// [AOC] DONE
 	private bool SetSelectSurfaceButtonEnabled_Internal (bool bEnabled)
 	{
 		if (mButtonSelectSurface != null)
@@ -319,6 +320,8 @@ public class IARSurface : MonoBehaviour
 
 		return true;
 	}
+
+	// [AOC] DONE
 	public void SetSelectSurfaceButtonEnabled (bool bEnabled) {
 		m_bNeedToSetSelectSurfaceButtonEnabled = SetSelectSurfaceButtonEnabled_Internal (bEnabled);
 		m_bNeedToSetSelectSurfaceButtonEnabledValue = bEnabled;
@@ -327,11 +330,13 @@ public class IARSurface : MonoBehaviour
 	// ======================================================================================================================
 	// INIT
 	// ======================================================================================================================
+	// [AOC] DONE
 	public void Start ()
 	{
 		configure ();
 	}
 
+	// [AOC] DONE
 	protected void configure () {
 
 		GameObject kMainCamerasGO = GameObject.Find ("Scene Cameras");
@@ -435,6 +440,7 @@ public class IARSurface : MonoBehaviour
 	// ======================================================================================================================
 	// UPDATE
 	// ======================================================================================================================
+
 	public void Update () {
 		if (mARSurfaceState == eARSurfaceState.FINISH) {
 			if (mBackgroundTimer != null && mCanHideAffectedObjects && mBackgroundTimer.IsFinished ()) {
@@ -464,6 +470,7 @@ public class IARSurface : MonoBehaviour
 			}
 		}
 
+		// [AOC] DONE
 		if (mARSurfaceState == eARSurfaceState.DETECTING_SURFACE) {
 			if (mButtonSurfaceDetected != null && mZoomIndicator != null) {
 				bool bSurfacesFound = ARKitManager.SharedInstance.AreARSurfacesFound ();

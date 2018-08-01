@@ -55,6 +55,7 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private ModeSetup[] m_modes = new ModeSetup[(int)Mode.COUNT];
 
 	[Separator("Shared Objects")]
+	[SerializeField] private GameObject m_bottomBar = null;
 	[SerializeField] private DOTweenAnimation m_flashFX = null;
 	[SerializeField] private List<GameObject> m_objectsToHide = new List<GameObject>();
 
@@ -73,6 +74,10 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
 	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
 
+	[Separator("AR")]
+	[SerializeField] private GameObject m_arButton = null;
+	[SerializeField] private PhotoScreenARFlow m_arFlow = null;
+
 	// Public properties
 	private Mode m_mode = Mode.DRAGON;
 	public Mode mode {
@@ -83,7 +88,10 @@ public class PhotoScreenController : MonoBehaviour {
 	// Internal
 	private Texture2D m_picture = null;
 	private List<GameObject> m_objectsToRestore = new List<GameObject>();
-	private string m_targetName = "";	// Localized name of the target of the picture: Dragon name, pet name, etc.
+	private string m_targetName = "";   // Localized name of the target of the picture: Dragon name, pet name, etc.
+
+	// AR Internal
+	private bool m_isARAvailable = false;
 
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
@@ -107,7 +115,23 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		SetMode(m_mode);	// Apply initial mode
+		// Is AR available?
+#if(UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
+		if(ARKitManager.SharedInstance.IsARKitAvailable()) {
+			m_isARAvailable = true;
+		}
+#endif
+
+		// Subscribe to AR events
+		if(m_isARAvailable) {
+			m_arFlow.onTakePicture.AddListener(OnARTakePicture);
+			m_arFlow.onStateChanged.AddListener(OnARStateChanged);
+			m_arFlow.onExit.AddListener(OnARExit);
+		}
+		m_arFlow.gameObject.SetActive(false);
+
+		// Apply initial mode
+		SetMode(m_mode);
 
 		// Load qr code
 		m_qrContainer.sprite = Resources.Load<Sprite>(shareData.qrCodePath);
@@ -157,8 +181,6 @@ public class PhotoScreenController : MonoBehaviour {
 	/// </summary>
 	/// <returns>The coroutine.</returns>
 	private IEnumerator TakePicture() {
-		
-
 		// Hide all UI elements
 		m_objectsToRestore.Clear();	// Only those that were actually active will be restored
 		for(int i = 0; i < m_objectsToHide.Count; i++) {
@@ -246,6 +268,9 @@ public class PhotoScreenController : MonoBehaviour {
 			if(m_modes[i].zoomControl != null) m_modes[i].zoomControl.gameObject.SetActive(active);
 		}
 
+		// Make sure bottom bar is active
+		m_bottomBar.SetActive(true);
+
 		// Store new mode
 		m_mode = _mode;
 	}
@@ -314,6 +339,10 @@ public class PhotoScreenController : MonoBehaviour {
 		// Disable drag controller
 		currentMode.dragControl.gameObject.SetActive(false);
 		currentMode.zoomControl.gameObject.SetActive(false);
+
+		// Initialize AR stuff
+		m_arButton.SetActive(m_mode == Mode.DRAGON && m_isARAvailable);
+		m_arFlow.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -376,5 +405,74 @@ public class PhotoScreenController : MonoBehaviour {
 	public void OnTakePictureButton() {
 		// Do it in a coroutine to wait until the end of the frame
 		StartCoroutine(TakePicture());
+	}
+
+	/// <summary>
+	/// The back button has been pressed.
+	/// </summary>
+	public void OnBackButton() {
+		// Ignore if we are in AR
+		if(!m_arFlow.isActiveAndEnabled) {
+			// Go back to previous menu screen
+			InstanceManager.menuSceneController.transitionManager.Back(true);
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// AR CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The AR button has been pressed.
+	/// </summary>
+	public void OnARButton() {
+		// Start AR flow
+		if(!m_arFlow.isActiveAndEnabled) {
+			// Hide bottom bar
+			m_bottomBar.gameObject.SetActive(false);
+
+			// Do it!
+			m_arFlow.StartFlow();
+		}
+	}
+
+	/// <summary>
+	/// AR flow wants to finish.
+	/// </summary>
+	private void OnARExit() {
+		// Terminate AR flow
+		m_arFlow.EndFlow();
+
+		// Restore bottom bar
+		m_bottomBar.gameObject.SetActive(true);
+	}
+
+	/// <summary>
+	/// AR flow wants to take a picture.
+	/// </summary>
+	private void OnARTakePicture() {
+		// Use the same picture functionality as in normal mode
+		OnTakePictureButton();
+	}
+
+	/// <summary>
+	/// AR flow has changed its state.
+	/// </summary>
+	/// <param name="_oldState">Old state.</param>
+	/// <param name="_newState">New state.</param>
+	private void OnARStateChanged(PhotoScreenARFlow.State _oldState, PhotoScreenARFlow.State _newState) {
+		// Don't show dragon info while detecting the surface
+		currentMode.uiContainer.SetActive(_newState != PhotoScreenARFlow.State.DETECTING_SURFACE);
+
+		// When surface is fixed, enable drag controllers!
+		if(_newState == PhotoScreenARFlow.State.DETECTED_SURFACE) {
+			currentMode.dragControl.target = m_arFlow.dragonLoader.transform;
+			currentMode.dragControl.gameObject.SetActive(true);
+
+			//currentMode.zoomControl.camera = ?	// [AOC] TODO!!
+			currentMode.zoomControl.gameObject.SetActive(true);
+		} else {
+			currentMode.dragControl.gameObject.SetActive(false);
+			currentMode.zoomControl.gameObject.SetActive(false);
+		}
 	}
 }

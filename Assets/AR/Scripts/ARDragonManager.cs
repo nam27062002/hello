@@ -29,6 +29,7 @@ public class ARDragonManager : MonoBehaviour
 
 	private bool m_bARToBeActive = false;
 
+	// [AOC] DONE
     public class ARGameListener : ARGameManager.ARGameListenerBase
 	{
 		private ARDragonManager m_kSource = null;
@@ -54,7 +55,7 @@ public class ARDragonManager : MonoBehaviour
 	private ARGameListener m_pARGameListener = null;
 
 
-
+	// [AOC] DONE
 	public class ARSurfacePrefabListener : IARSurface.ARSurfacePrefabListenerBase
 	{
 		private ARDragonManager mSource;
@@ -80,12 +81,13 @@ public class ARDragonManager : MonoBehaviour
 	private ARSurfacePrefabListener mARSurfaceListener;
 
 
-
+	// [AOC] CHECK
 	public void onSurfaceDetectedPressed ()
 	{
 		ARKitManager.SharedInstance.RotateAffectedARObjects (new Vector3(0.0f, 20.0f, 0.0f), false);
 	}
 
+	// [AOC] DONE
     private static string arSurfacePrefab = "ARSurfacePrefab";
     public void loadARSurfacePrefab () {
 		if (arSurfacePrefab != null && arSurfacePrefab != "") {
@@ -95,6 +97,7 @@ public class ARDragonManager : MonoBehaviour
 		}
 	}
 
+	// [AOC] DONE
 	public void onProceedWithARSurfaceSelector (bool bCameraIsGranted)
 	{
 		if (bCameraIsGranted) {
@@ -147,6 +150,7 @@ public class ARDragonManager : MonoBehaviour
 		}
 	}
 
+	// [AOC] DONE
 	public void onPressedARSurfaceBack ()
 	{
 		if (ARKitManager.s_pInstance != null) {
@@ -176,6 +180,7 @@ public class ARDragonManager : MonoBehaviour
         onChangeState (IARSurface.eARSurfaceState.INIT);
 	}
 
+	// [AOC] DONE
 	public void onChangeState (IARSurface.eARSurfaceState eState)
 	{
 		bool bContentCamerasEnabled = false;
@@ -251,6 +256,7 @@ public class ARDragonManager : MonoBehaviour
 		BUTTON_AR_FROM_GAME
 	};
 
+	// [AOC] DONE
 	public void onPressedButtonReturnToMainMenu()
 	{
         //		ARKitManager.SharedInstance.UnInitialise ();
@@ -264,7 +270,7 @@ public class ARDragonManager : MonoBehaviour
     }
 
 
-
+	// [AOC] DONE
     private void __arButtonPressed()
 	{
 		if (ARKitManager.SharedInstance.GetARState () != ARKitManager.eARState.E_AR_PLAYING) {
@@ -276,6 +282,7 @@ public class ARDragonManager : MonoBehaviour
 		}
 	}
 
+	// [AOC] DONE
 	public void surfaceSelectionAR () {
 		__buttonOptionsPressed ();
 
@@ -294,6 +301,7 @@ public class ARDragonManager : MonoBehaviour
 		}
 	}
 
+	// [AOC] DONE
 	public void backAR () {
 		if (mARSurfaceComponent != null) {
 			__buttonOptionsPressed ();
@@ -304,6 +312,7 @@ public class ARDragonManager : MonoBehaviour
 		}
 	}
 
+	// [AOC] DONE
 	bool mExpanded = false;
 	private void __buttonOptionsPressed()
 	{
@@ -331,6 +340,7 @@ public class ARDragonManager : MonoBehaviour
 		}
 	}
 
+	// [AOC] DONE
 	void Awake ()
 	{
 		Transform [] ts = this.gameObject.GetComponentsInChildren <Transform> (true);
@@ -361,6 +371,7 @@ public class ARDragonManager : MonoBehaviour
 		}
 	}
 
+	// [AOC] DONE
 	void Start ()
 	{
 		bool bARAvailable = false;
@@ -388,6 +399,7 @@ public class ARDragonManager : MonoBehaviour
 
 	private float m_fImageRot = 0.0f;
 
+	// [AOC] CHECK
 	void Update ()
 	{
 		if (ARKitManager.SharedInstance.GetARState () == ARKitManager.eARState.E_AR_SEARCHING_SURFACES ||
