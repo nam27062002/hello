@@ -253,6 +253,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         get { return instance.m_furySuperfireRushAmount; }
     }
 
+    private bool m_switchingArea = false;
+
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
 
@@ -285,6 +287,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         // Required for tracking purposes
         Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
         Messenger.AddListener<bool>(MessengerEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
+        
+        Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+        Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
     }
 
 	/// <summary>
@@ -306,14 +311,19 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         // Required for tracking purposes
         Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
         Messenger.RemoveListener<bool>(MessengerEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
+        
+        Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+        Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
     }
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+        
+    
 		// Update score multiplier (won't be called if we're in the first multiplier)
-		if(m_scoreMultiplierTimer > 0) {
+		if(m_scoreMultiplierTimer > 0 && !m_switchingArea) {
 			// Update timer
 			m_scoreMultiplierTimer -= Time.deltaTime;
 			
@@ -419,6 +429,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         instance.m_enterSpaceAmount = 0;
         instance.m_furyFireRushAmount = 0;
         instance.m_furySuperfireRushAmount = 0;
+        instance.m_switchingArea = false;
     }
 
 	/// <summary>
@@ -772,6 +783,16 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
             m_enterSpaceAmount++;
         }
     }    
+    
+    private void OnEnteringArea()
+    {
+        m_switchingArea = false;
+    }
+    
+    private void OnLeavingArea(float t)
+    {
+        m_switchingArea = true;
+    }
 
     public static int GetReviveCost()
     {
