@@ -1,4 +1,4 @@
-// PopupTermsAndConditionsMoreInfo.cs
+// IPopupConsentGDPR.cs
 // Hungry Dragon
 //
 // Copyright (c) 2018 Ubisoft. All rights reserved.
@@ -15,42 +15,35 @@ using TMPro;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// COPPA/GDPR More info popup.
+/// Interface to handle the GDPR checkboxes logic.
 /// </summary>
-[RequireComponent(typeof(PopupController))]
-public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
+public class IPopupConsentGDPR : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Message/PF_PopupTermsAndConditionsMoreInfo";
-
 	[System.Serializable]
 	public class CheckGroup {
 		public Toggle checkbox = null;
-		public GameObject tooltip = null;
+		public Transform tooltipAnchor = null;
 		[NonSerialized] public bool consented = false;
 	}
+
+	public const string TRACKING_CONSENT_KEY = "GDPR.TrackingConsent";
+	public const string ADS_CONSENT_KEY = "GDPR.AdsConsent";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
-	[SerializeField] private CheckGroup m_trackingConsentGroup = null;
-	[SerializeField] private CheckGroup m_adsConsentGroup = null;
+	[SerializeField] protected CheckGroup m_trackingConsentGroup = null;
+	[SerializeField] protected CheckGroup m_adsConsentGroup = null;
 	[Space]
-	[SerializeField] private ScrollRect m_scroll = null;
+	[SerializeField] protected GameObject m_tooltip = null;
+	[SerializeField] protected Localizer m_tooltipText = null;
+	[Space]
+	[SerializeField] protected ScrollRect m_scroll = null;
 
 	// Public properties
-	private PopupController m_popupController = null;
-	public PopupController popupController {
-		get {
-			if(m_popupController == null) {
-				m_popupController = GetComponent<PopupController>();
-			}
-			return m_popupController;
-		}
-	}
-
 	public bool trackingConsented {
 		get { return m_trackingConsentGroup.consented; }
 	}
@@ -60,7 +53,7 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 	}
 
 	// Internal logic
-	private bool m_minAgeReached = true;
+	protected bool m_minAgeReached = true;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -75,7 +68,7 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 	/// <param name="_minAgeReached">Is the player old enough to give his/her consent?</param>
 	/// <param name="_trackingConsented">Does the player consent using his/her data for tracking purposes?</param>
 	/// <param name="_adsConsented">Does the player consent using his/her data for targeted ads?</param>
-	public void Init(bool _minAgeReached, bool _trackingConsented, bool _adsConsented) {
+	public virtual void Init(bool _minAgeReached, bool _trackingConsented, bool _adsConsented) {
 		// Store values
 		m_minAgeReached = _minAgeReached;
 		m_trackingConsentGroup.consented = _trackingConsented;
@@ -87,21 +80,19 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 
 		// Initialize visuals
 		RefreshVisuals();
+
+		// Tooltip hidden
+		m_tooltip.SetActive(false);
 	}
 
 	/// <summary>
 	/// Update popup visuals with latest data.
 	/// </summary>
-	private void RefreshVisuals() {
+	protected virtual void RefreshVisuals() {
 		// Checkboxes
 		// Never toggled when minimum age not reached
 		m_trackingConsentGroup.checkbox.isOn = m_minAgeReached && trackingConsented;
 		m_adsConsentGroup.checkbox.isOn = m_minAgeReached && adsConsented;
-
-		// Toggle tooltips
-		// Never toggled when minimum age not reached
-		m_trackingConsentGroup.tooltip.SetActive(m_minAgeReached && !trackingConsented);
-		m_adsConsentGroup.tooltip.SetActive(m_minAgeReached && !adsConsented);
 	}
 
 	//------------------------------------------------------------------------//
@@ -117,6 +108,18 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 
 		// Refresh
 		RefreshVisuals();
+
+		// Toggle tooltip
+		if(m_minAgeReached) {
+			// Place in position
+			m_tooltip.transform.position = m_trackingConsentGroup.tooltipAnchor.position;
+
+			// Set text according to this toggle
+			m_tooltipText.Localize("TID_LEGAL_MANAGE_OFF_1");
+
+			// Activate only if toggle had been turned off
+			m_tooltip.SetActive(!_newValue);
+		}
 	}
 
 	/// <summary>
@@ -129,12 +132,24 @@ public class PopupTermsAndConditionsMoreInfo : MonoBehaviour {
 
 		// Refresh
 		RefreshVisuals();
+
+		// Toggle tooltip
+		if(m_minAgeReached) {
+			// Place in position
+			m_tooltip.transform.position = m_adsConsentGroup.tooltipAnchor.position;
+
+			// Set text according to this toggle
+			m_tooltipText.Localize("TID_LEGAL_MANAGE_OFF_2");
+
+			// Activate only if toggle had been turned off
+			m_tooltip.SetActive(!_newValue);
+		}
 	}
 
 	/// <summary>
 	/// The popup is about to open.
 	/// </summary>
-	public void OnOpenPreAnimation() {
+	public virtual void OnOpenPreAnimation() {
 		// For some unknown reason, we need to delay a little bit the initial scrolling of the scroll view, otherwise it gets resetted to 0
 		UbiBCN.CoroutineManager.DelayedCall(
 			() => { m_scroll.verticalNormalizedPosition = 1f; },

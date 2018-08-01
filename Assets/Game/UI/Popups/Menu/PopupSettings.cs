@@ -135,9 +135,7 @@ public class PopupSettings : MonoBehaviour {
 	/// The privacy settings button has been pressed.
 	/// </summary>
 	public void OnPrivacySettingsButton() {
-		PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
-		popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.MANUAL);
-		popupController.Open();
+		PopupController popupController = PopupManager.OpenPopupInstant(PopupConsentSettings.PATH);
 	}
 
 	public void OnCommentsButton(){

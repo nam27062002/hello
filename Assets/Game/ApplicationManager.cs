@@ -336,7 +336,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (pause)
         {
         	if ( GameAds.isInstanceCreated && GameAds.instance.IsWaitingToPlayAnAd())
-        		GameAds.instance.StopWaitingToPlayAnAd();
+            {
+                if ( GameAds.instance.GetAdType() != AdProvider.AdType.Interstitial )
+        		    GameAds.instance.StopWaitingToPlayAnAd();
+            }
 
            HDTrackingManager.Instance.Notify_ApplicationPaused();
            ScheduleLocalNotifications();
@@ -345,6 +348,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             HDTrackingManager.Instance.Notify_ApplicationResumed();
             CancelLocalNotifications();
+            
+            if ( GameCenterManager.SharedInstance.CheckIfInitialised() )
+            {
+                bool auth = GameCenterManager.SharedInstance.CheckIfAuthenticated();
+            }
+            
         }
 
         // If the persistences are not being synced then we need to make sure the local progress will be stored when going to pause
