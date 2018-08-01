@@ -81,9 +81,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_popupDisplayed) return;
 
 		// Is the last accepted version the same as the current one?
-		if(PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
+		if(PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION) {
 			Debug.Log("<color=RED>LEGAL</color>");
-			m_currentPopup = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupConsentLoading.PATH);
 			m_popupDisplayed = true;
 		}
 	}
