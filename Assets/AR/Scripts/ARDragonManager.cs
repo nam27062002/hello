@@ -245,6 +245,8 @@ public class ARDragonManager : MonoBehaviour
 	{
 //		ARKitManager.SharedInstance.UnInitialise ();
         ARGameManager.SharedInstance.UnInitialise();
+        Destroy(mGOARSurfacePrefab);
+        mGOARSurfacePrefab = null;
 
         //		CaletyTesterMain.UnLoadScene ();
     }
