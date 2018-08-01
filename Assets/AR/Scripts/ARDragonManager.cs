@@ -15,6 +15,7 @@ public class ARDragonManager : MonoBehaviour
 	private bool m_bAskingForCameraPermission = false;
 
 
+    private MenuDragonLoader m_dragonLoader;
 
 	private GameObject    mGOScreenContainer;
 	private GameObject	  mGOARSurfacePrefab;
@@ -131,6 +132,10 @@ public class ARDragonManager : MonoBehaviour
 			GameObject kArena = GameObject.Find ("MenuScene3D/ARBasePrefab/Arena");
 			if (kArena != null)
 			{
+                m_dragonLoader = kArena.FindComponentRecursive<MenuDragonLoader>();
+                if (m_dragonLoader != null) {
+                    m_dragonLoader.LoadDragon(InstanceManager.menuSceneController.selectedDragon);
+                }
 				kAffectedARObjects.Add (kArena);
 			}
 
@@ -159,6 +164,10 @@ public class ARDragonManager : MonoBehaviour
 			mGOScreenContainer.GetComponent<CanvasGroup> ().interactable = true;
 			mGOScreenContainer.GetComponent<CanvasGroup> ().blocksRaycasts = true;
 		}
+
+        if (m_dragonLoader != null) {
+            m_dragonLoader.UnloadDragon();
+        }
 
 		mGOARSurfacePrefab.GetComponent<IARSurface> ().SetMainCamerasEnabled (true);
 		Destroy (mGOARSurfacePrefab);
@@ -340,8 +349,8 @@ public class ARDragonManager : MonoBehaviour
 			else if (child.name == "ButtonClose")
             {
 				mButtonClose = child.gameObject;
-				child.GetComponent<ButtonExtended>().onClick.RemoveListener(onPressedButtonReturnToMainMenu);
-				child.GetComponent<ButtonExtended>().onClick.AddListener(onPressedButtonReturnToMainMenu);
+				child.GetComponent<ButtonExtended>().onClick.RemoveListener(backAR);
+				child.GetComponent<ButtonExtended>().onClick.AddListener(backAR);
 			}
 		}
 	}
