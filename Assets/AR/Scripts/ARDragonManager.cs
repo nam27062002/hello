@@ -243,14 +243,15 @@ public class ARDragonManager : MonoBehaviour
 
 	public void onPressedButtonReturnToMainMenu()
 	{
-		ARKitManager.SharedInstance.UnInitialise ();
+//		ARKitManager.SharedInstance.UnInitialise ();
+        ARGameManager.SharedInstance.UnInitialise();
 
-//		CaletyTesterMain.UnLoadScene ();
-	}
+        //		CaletyTesterMain.UnLoadScene ();
+    }
 
 
 
-	private void __arButtonPressed()
+    private void __arButtonPressed()
 	{
 		if (ARKitManager.SharedInstance.GetARState () != ARKitManager.eARState.E_AR_PLAYING) {
 			ARGameManager.SharedInstance.Initialise ();
