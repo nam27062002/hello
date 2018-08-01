@@ -162,8 +162,9 @@ public class ARDragonManager : MonoBehaviour
 
 		mGOARSurfacePrefab.GetComponent<IARSurface> ().SetMainCamerasEnabled (true);
 		Destroy (mGOARSurfacePrefab);
+        mGOARSurfacePrefab = null;
 
-		onChangeState (IARSurface.eARSurfaceState.INIT);
+        onChangeState (IARSurface.eARSurfaceState.INIT);
 	}
 
 	public void onChangeState (IARSurface.eARSurfaceState eState)
@@ -243,10 +244,12 @@ public class ARDragonManager : MonoBehaviour
 
 	public void onPressedButtonReturnToMainMenu()
 	{
-//		ARKitManager.SharedInstance.UnInitialise ();
+        //		ARKitManager.SharedInstance.UnInitialise ();
+        backAR();
+        onPressedARSurfaceBack();
         ARGameManager.SharedInstance.UnInitialise();
-        Destroy(mGOARSurfacePrefab);
-        mGOARSurfacePrefab = null;
+//        Destroy(mGOARSurfacePrefab);
+//        mGOARSurfacePrefab = null;
 
         //		CaletyTesterMain.UnLoadScene ();
     }
