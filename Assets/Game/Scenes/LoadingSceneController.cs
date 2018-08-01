@@ -324,7 +324,16 @@ public class LoadingSceneController : SceneController {
 			// No language was defined, load default system language
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
-        strLanguageSku = "lang_english";
+
+        // If language sku not found or not enabled in current platform, use english instead
+        DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, strLanguageSku);
+        if(langDef == null
+        || (Application.platform == RuntimePlatform.Android && !langDef.GetAsBool("android"))
+        || (Application.platform == RuntimePlatform.IPhonePlayer && !langDef.GetAsBool("iOS"))) {
+            strLanguageSku = "lang_english";
+        }
+
+        // Initialize localization manager
 		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
