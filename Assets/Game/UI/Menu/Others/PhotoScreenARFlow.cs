@@ -249,6 +249,7 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 
 				// Unload dragon preview
 				if(m_dragonLoader != null) {
+					m_dragonLoader.onDragonLoaded -= OnDragonLoaded;
 					m_dragonLoader.UnloadDragon();
 				}
 
@@ -349,12 +350,7 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				if(m_dragonLoader != null) {
 					// Load dragon preview
 					m_dragonLoader.LoadDragon(InstanceManager.menuSceneController.selectedDragon);
-
-					// Disable colliders to prevent unexpected interactions
-					Collider[] cols = m_dragonLoader.dragonInstance.GetComponentsInChildren<Collider>();
-					for(int i = 0; i < cols.Length; ++i) {
-						cols[i].enabled = false;
-					}
+					m_dragonLoader.onDragonLoaded += OnDragonLoaded;
 				}
 				affectedARObjects.Add(arena);
 
@@ -368,6 +364,20 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 		} else {
 			// Cancel the whole flow
 			EndFlow();
+		}
+	}
+
+	/// <summary>
+	/// The dragon has been loaded.
+	/// </summary>
+	/// <param name="_loader">Who loaded it?</param>
+	void OnDragonLoaded(MenuDragonLoader _loader) {
+		if(m_dragonLoader.dragonInstance == null) return;
+
+		// Disable colliders to prevent unexpected interactions
+		Collider[] cols = m_dragonLoader.dragonInstance.GetComponentsInChildren<Collider>();
+		for(int i = 0; i < cols.Length; ++i) {
+			cols[i].enabled = false;
 		}
 	}
 }
