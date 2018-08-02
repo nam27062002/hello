@@ -473,7 +473,7 @@ public class PhotoScreenController : MonoBehaviour {
 		currentMode.uiContainer.SetActive(_newState != PhotoScreenARFlow.State.DETECTING_SURFACE);
 
 		// When surface is fixed, enable drag controllers!
-		if(_newState == PhotoScreenARFlow.State.DETECTED_SURFACE) {
+		/*if(_newState == PhotoScreenARFlow.State.DETECTED_SURFACE) {
 			currentMode.dragControl.target = m_arFlow.dragonLoader.transform;
 			currentMode.dragControl.gameObject.SetActive(true);
 
@@ -482,6 +482,6 @@ public class PhotoScreenController : MonoBehaviour {
 		} else {
 			currentMode.dragControl.gameObject.SetActive(false);
 			currentMode.zoomControl.gameObject.SetActive(false);
-		}
+		}*/
 	}
 }

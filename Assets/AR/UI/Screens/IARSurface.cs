@@ -88,8 +88,7 @@ public class IARSurface : MonoBehaviour
 
     private void __sliderValueChanged(float value)
     {
-		ZoomChanged (value);
-
+//		ZoomChanged (value);
 		ARKitManager.SharedInstance.ChangeZoom (value);
     }
 
@@ -243,7 +242,7 @@ public class IARSurface : MonoBehaviour
 
 				mZoomSlider.value = c_fDefaultZoomValue;
 
-				ZoomChanged (mZoomSlider.value);
+//				ZoomChanged (mZoomSlider.value);
 
 				break;
 			}
