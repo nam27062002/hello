@@ -10,14 +10,14 @@ public class DetectedSurfaceController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         if (m_arFlow.dragonLoader != null) {
-            m_dragRotation.target = m_arFlow.dragonLoader.transform;
+            m_dragRotation.InitFromTarget(m_arFlow.dragonLoader.transform, true);
         }
 	}
 	
 	// Update is called once per frame
 	void OnEnable() {
         if (m_arFlow.dragonLoader != null) {
-            m_dragRotation.target = m_arFlow.dragonLoader.transform;
+            m_dragRotation.InitFromTarget(m_arFlow.dragonLoader.transform, true);
         }
 	}
 }
