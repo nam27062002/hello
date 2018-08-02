@@ -213,7 +213,7 @@ public class ARKitManager : MonoBehaviour
 #if UNITY_IOS
 		return m_kARConfigChecker.IsSupported;
 #elif UNITY_ANDROID
-		return true;
+		return false;
 #endif
 #else
 		return true;
