@@ -10,7 +10,11 @@ public abstract class AdProvider
         None,
         V4VC,
         Interstitial
-    }   
+    }
+
+    public delegate void VoidDelegate();
+    public VoidDelegate onVideoAdOpen;
+    public VoidDelegate onVideoAdClosed;
 
     public delegate void OnPlayVideoCallback(bool giveReward, int duration, string msg);        
 
