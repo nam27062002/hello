@@ -190,6 +190,10 @@ public class AdProviderIronSource : AdProvider
 
         private AdProvider mAdProvider;
 
+        private bool mRewardAvailable = false;
+        private bool mWaitingReward = false;
+        private float mWaitingRewardTimer = 0;
+
         // --------------------------------------------------------------- //
 
 
@@ -274,6 +278,9 @@ public class AdProviderIronSource : AdProvider
             switch (newStep)
             {
                 case EStep.PlayingVideo:
+
+                    mRewardAvailable = false;
+                    mWaitingReward = false;
 
                     mPlaybackResult = PlaybackResult.NONE;
 
@@ -417,6 +424,23 @@ public class AdProviderIronSource : AdProvider
                     break;
 
                 case EStep.PlayingVideo:
+                    if ( mWaitingReward )
+                    {
+                        if ( mRewardAvailable )
+                        {
+                            NotifyPlaybackResult(PlaybackResult.SUCCESS);
+                            mWaitingReward = false;
+                        }
+                        else
+                        {
+                            mWaitingRewardTimer -= Time.unscaledDeltaTime;
+                            if ( mWaitingRewardTimer <= 0)
+                            {
+                                mWaitingReward = false;
+                                NotifyPlaybackResult(PlaybackResult.FAILED);
+                            }
+                        }
+                    }
 
                     if (mPlaybackResult != PlaybackResult.NONE)
                     {
@@ -612,12 +636,15 @@ public class AdProviderIronSource : AdProvider
 
         void RewardedVideoAdOpenedEvent()
         {
+            mRewardAvailable = false;
+            mWaitingReward = false;
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> I got RewardedVideoAdOpenedEvent");
         }
 
         void RewardedVideoAdRewardedEvent(IronSourcePlacement ssp)
         {
+            mRewardAvailable = true;
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> I got RewardedVideoAdRewardedEvent, amount = " + ssp.getRewardAmount() + " name = " + ssp.getRewardName());
         }
@@ -627,7 +654,16 @@ public class AdProviderIronSource : AdProvider
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> I got RewardedVideoAdClosedEvent");
 
-            NotifyPlaybackResult(PlaybackResult.SUCCESS);
+            if (mRewardAvailable)
+            {
+                NotifyPlaybackResult(PlaybackResult.SUCCESS);
+            }
+            else
+            {
+                // Wait one second 
+                mWaitingReward = true;
+                mWaitingRewardTimer = 1.0f;
+            }
         }
 
         void RewardedVideoAdStartedEvent()
