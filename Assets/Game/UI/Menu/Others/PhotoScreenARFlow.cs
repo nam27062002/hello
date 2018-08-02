@@ -117,8 +117,9 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 					// Hide zoom indicator
 					m_zoomIndicator.SetActive(false);
 				} else {
+					// Hide button and show zoom indicator
 					m_confirmSurfaceButtonAnim.ForceHide();
-					m_zoomIndicator.SetActive(false);
+					m_zoomIndicator.SetActive(true);
 				}
 			} break;
 
@@ -224,6 +225,9 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				ToggleMainCameras(false);
 				ToggleContentCameras(false);
 
+				// Hide affected objects
+				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
+
 				// Notify AR manager
 				ARKitManager.SharedInstance.StartSurfaceDetection();
 			} break;
@@ -232,8 +236,13 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				// Toggle target screen
 				GoToScreen((int)Screen.DETECTED_SURFACE);
 
+				// Fix surface
+				ARKitManager.SharedInstance.SelectCurrentPositionAsARPivot();
+
 				// Show content!
 				ToggleContentCameras(true);
+				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
+				ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
 			} break;
 
 			case State.FINISH: {
@@ -340,9 +349,9 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				affectedARObjects.Add(arena);
 
 				// Find content cameras as well
-				m_contentCameras = arena.GetComponentsInChildren<Camera>();
+				m_contentCameras = arena.transform.parent.GetComponentsInChildren<Camera>();
 			}
-			ARKitManager.SharedInstance.SetAffectedARObjects(affectedARObjects, 0.05f);
+			ARKitManager.SharedInstance.SetAffectedARObjects(affectedARObjects, 0.025f);
 
 			// Go to next step
 			ChangeState(State.DETECTING_SURFACE);
