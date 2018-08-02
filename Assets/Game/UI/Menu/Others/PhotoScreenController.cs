@@ -116,6 +116,7 @@ public class PhotoScreenController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Is AR available?
+		m_isARAvailable = false;
 #if(UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
 		if(ARKitManager.SharedInstance.IsARKitAvailable()) {
 			m_isARAvailable = true;
@@ -192,6 +193,14 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Hide HUD as well
 		InstanceManager.menuSceneController.hud.gameObject.SetActive(false);
+
+		// If we are in AR, hide AR UI as well
+		if(m_isARAvailable && m_arFlow.isActiveAndEnabled) {
+			if(m_arFlow.currentScreen != null) {
+				m_arFlow.currentScreen.gameObject.SetActive(false);
+				m_objectsToRestore.Add(m_arFlow.currentScreen.gameObject);
+			}
+		}
 
 		// Display QR code
 		m_qrContainer.gameObject.SetActive(true);
