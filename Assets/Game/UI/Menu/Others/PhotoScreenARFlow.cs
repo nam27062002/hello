@@ -111,53 +111,20 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 		switch(m_state) {
 			case State.DETECTING_SURFACE: {
 				// Do we have a valid surface?
-				if(ARKitManager.SharedInstance.AreARSurfacesFound()) {
-					// Show confirm surface if the surface is valid
-					m_confirmSurfaceButtonAnim.ForceSet(
-						ARKitManager.SharedInstance.IsPossibleARPivotSet()
-					);
+				bool validSurface = ARKitManager.SharedInstance.AreARSurfacesFound();
 
-					// Hide zoom indicator
-					m_zoomIndicator.SetActive(false);
+				// Do we have a pivot candidate on screen?
+				bool validPivot = validSurface && ARKitManager.SharedInstance.IsPossibleARPivotSet();
 
-					// Show the right tooltip
-					m_tooltip1.Hide();
-					m_tooltip2.Show();
-				} else {
-					// Hide button and show zoom indicator
-					m_confirmSurfaceButtonAnim.ForceHide();
-					m_zoomIndicator.SetActive(true);
+				// Show confirm surface button if the surface and pivot are valid
+				m_confirmSurfaceButtonAnim.ForceSet(validPivot);
 
-					// Show the right tooltip
-					m_tooltip1.Show();
-					m_tooltip2.Hide();
-				}
-			} break;
+				// Show zoom indicator when we don't have a valid pivot
+				m_zoomIndicator.SetActive(!validPivot);
 
-			case State.FINISH: {
-				if(m_stateTimer <= 0f) {
-					// Close the AR session
-					ARKitManager.SharedInstance.FinishingARSession();
-
-					// Finalize AR Game Manager
-					ARGameManager.SharedInstance.UnInitialise();
-
-					// Restore affected objects
-					if(ARKitManager.s_pInstance != null) {
-						ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
-					}
-
-					// Restore main cameras
-					ToggleMainCameras(true);
-
-					// Unload dragon preview
-					if(m_dragonLoader != null) {
-						m_dragonLoader.UnloadDragon();
-					}
-
-					// Go to OFF state
-					ChangeState(State.OFF);
-				}
+				// Show the right tooltip
+				m_tooltip1.Set(!validPivot);
+				m_tooltip2.Set(validPivot);
 			} break;
 		}
 	}
@@ -264,8 +231,29 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 			} break;
 
 			case State.FINISH: {
-				// Hide ourselves after a short delay
-				m_stateTimer = 0.25f;
+				// Close the AR session
+				ARKitManager.SharedInstance.FinishingARSession();
+
+				// Finalize AR Game Manager
+				ARGameManager.SharedInstance.UnInitialise();
+
+				// Restore affected objects
+				if(ARKitManager.s_pInstance != null) {
+					ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
+					ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
+				}
+
+				// Restore main cameras
+				ToggleMainCameras(true);
+				ToggleContentCameras(false);
+
+				// Unload dragon preview
+				if(m_dragonLoader != null) {
+					m_dragonLoader.UnloadDragon();
+				}
+
+				// Go to OFF state
+				ChangeState(State.OFF);
 			} break;
 		}
 
@@ -319,9 +307,6 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 	/// The take picture button has been pressed.
 	/// </summary>
 	public void OnTakePictureButton() {
-		// Tell AR Manager we've fixed the zoom
-		ARKitManager.SharedInstance.SelectedZoom();
-
 		// Notify listeners
 		onTakePicture.Invoke();
 	}
@@ -362,14 +347,21 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				// Initialize with current dragon
 				m_dragonLoader = arena.FindComponentRecursive<MenuDragonLoader>();
 				if(m_dragonLoader != null) {
+					// Load dragon preview
 					m_dragonLoader.LoadDragon(InstanceManager.menuSceneController.selectedDragon);
+
+					// Disable colliders to prevent unexpected interactions
+					Collider[] cols = m_dragonLoader.dragonInstance.GetComponentsInChildren<Collider>();
+					for(int i = 0; i < cols.Length; ++i) {
+						cols[i].enabled = false;
+					}
 				}
 				affectedARObjects.Add(arena);
 
 				// Find content cameras as well
 				m_contentCameras = arena.transform.parent.GetComponentsInChildren<Camera>();
 			}
-			ARKitManager.SharedInstance.SetAffectedARObjects(affectedARObjects, 0.025f);
+			ARKitManager.SharedInstance.SetAffectedARObjects(affectedARObjects, 0.1f);
 
 			// Go to next step
 			ChangeState(State.DETECTING_SURFACE);
