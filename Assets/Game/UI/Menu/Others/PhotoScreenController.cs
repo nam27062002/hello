@@ -439,6 +439,10 @@ public class PhotoScreenController : MonoBehaviour {
 			// Hide bottom bar
 			m_bottomBar.gameObject.SetActive(false);
 
+
+            currentMode.dragControl.gameObject.SetActive(false);
+            currentMode.zoomControl.gameObject.SetActive(false);
+
 			// Do it!
 			m_arFlow.StartFlow();
 		}
@@ -453,6 +457,9 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Restore bottom bar
 		m_bottomBar.gameObject.SetActive(true);
+
+        currentMode.dragControl.gameObject.SetActive(true);
+        currentMode.zoomControl.gameObject.SetActive(true);
 	}
 
 	/// <summary>
@@ -471,17 +478,5 @@ public class PhotoScreenController : MonoBehaviour {
 	private void OnARStateChanged(PhotoScreenARFlow.State _oldState, PhotoScreenARFlow.State _newState) {
 		// Don't show dragon info while detecting the surface
 		currentMode.uiContainer.SetActive(_newState != PhotoScreenARFlow.State.DETECTING_SURFACE);
-
-		// When surface is fixed, enable drag controllers!
-		/*if(_newState == PhotoScreenARFlow.State.DETECTED_SURFACE) {
-			currentMode.dragControl.target = m_arFlow.dragonLoader.transform;
-			currentMode.dragControl.gameObject.SetActive(true);
-
-			//currentMode.zoomControl.camera = ?	// [AOC] TODO!!
-			currentMode.zoomControl.gameObject.SetActive(true);
-		} else {
-			currentMode.dragControl.gameObject.SetActive(false);
-			currentMode.zoomControl.gameObject.SetActive(false);
-		}*/
 	}
 }

@@ -22,7 +22,7 @@ public class DragControlARZoom : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Zoom setup
 	[Space]
-	[SerializeField] private Range m_range = new Range(1f, 10f);
+	[SerializeField] private Range m_range = new Range(0f, 10f);
 	public Range range {
 		get { return m_range; }
 		set { SetRange(value); }
@@ -49,8 +49,8 @@ public class DragControlARZoom : MonoBehaviour {
 	}
 
 	// Internal
-	private float m_initialValue = -1f;
-	private float m_value = -1f;
+	private float m_initialValue = 1f;
+	private float m_value = 1f;
 	private Range m_actualRange = new Range();
 
 	//------------------------------------------------------------------------//
@@ -60,8 +60,8 @@ public class DragControlARZoom : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-        m_value = 0f;
-        m_initialValue = 0f;
+        m_value = 1f;
+        m_initialValue = 1f;
 	}
 
 	/// <summary>
@@ -75,7 +75,8 @@ public class DragControlARZoom : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-        m_initialValue = 0f;
+        m_initialValue = 1f;
+        SetRange(m_range);
         ApplyValue(m_initialValue);
 	}
 
@@ -137,7 +138,7 @@ public class DragControlARZoom : MonoBehaviour {
 				float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
 				// ... change the zoom value based on the change in distance between the touches.
-				zoomOffset = deltaMagnitudeDiff * zoomSpeed;
+				zoomOffset = -1 * deltaMagnitudeDiff * zoomSpeed;
 
 				// Apply sensitivity correction based on platform
 				// Compute corrected sensitivity
@@ -200,11 +201,30 @@ public class DragControlARZoom : MonoBehaviour {
         // Clamp new value to limits
         _value = m_actualRange.Clamp(_value);
 
+        ZoomChanged(_value);
         ARKitManager.SharedInstance.ChangeZoom(_value);
 
 		// Store new value
 		m_value = _value;
 	}
+
+    private void ZoomChanged(float fValue) {
+        float fInvScale = 1.0f / (ARKitManager.SharedInstance.GetAffectedARObjectsScale() / ARKitManager.c_fDefaultAffectedARObjectsScale);
+
+        float fNewFarCameraPlane = (12.0f - ((fValue / 10.0f) * 4.0f)) * fInvScale;
+
+        ARKitManager.SharedInstance.GetTrackingCamera().farClipPlane = fNewFarCameraPlane;
+
+        Camera[] kContentCameras = ARKitManager.SharedInstance.GetSceneContentObject().GetComponentsInChildren<Camera>();
+        if (kContentCameras != null) {
+            for (int i = 0; i < kContentCameras.Length; ++i) {
+                if (!kContentCameras[i].orthographic) {
+                    kContentCameras[i].farClipPlane = fNewFarCameraPlane;
+                }
+            }
+        }
+    }
+
 
 	/// <summary>
 	/// Compute the touch delta to be screen-independent.
