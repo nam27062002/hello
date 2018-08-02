@@ -61,7 +61,10 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 	[SerializeField] private GameObject m_zoomIndicator = null;
 	[SerializeField] private ShowHideAnimator m_confirmSurfaceButtonAnim = null;
 	[SerializeField] private GameObject m_background = null;
-	//[SerializeField] private Localizer m_infoText = null;
+	[Space]
+	[SerializeField] private ShowHideAnimator m_tooltip1 = null;
+	[SerializeField] private ShowHideAnimator m_tooltip2 = null;
+	[SerializeField] private ShowHideAnimator m_tooltip3 = null;
 
 	// Public properties
 	private State m_state = State.OFF;
@@ -116,10 +119,18 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 
 					// Hide zoom indicator
 					m_zoomIndicator.SetActive(false);
+
+					// Show the right tooltip
+					m_tooltip1.Hide();
+					m_tooltip2.Show();
 				} else {
 					// Hide button and show zoom indicator
 					m_confirmSurfaceButtonAnim.ForceHide();
 					m_zoomIndicator.SetActive(true);
+
+					// Show the right tooltip
+					m_tooltip1.Show();
+					m_tooltip2.Hide();
 				}
 			} break;
 
@@ -230,6 +241,10 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 
 				// Notify AR manager
 				ARKitManager.SharedInstance.StartSurfaceDetection();
+
+				// Hide both tooltips, right one will be selected in the Update() loop
+				m_tooltip1.ForceHide(false);	
+				m_tooltip2.ForceHide(false);
 			} break;
 
 			case State.DETECTED_SURFACE: {
@@ -243,6 +258,9 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				ToggleContentCameras(true);
 				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
 				ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
+
+				// Show tooltip
+				m_tooltip3.RestartShow();
 			} break;
 
 			case State.FINISH: {
