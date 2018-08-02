@@ -328,7 +328,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private long LastPauseTime { get; set; }
 
-    // It has to be an IEnumerator to increase our chances tracking popUnsentEvents are sent
+    // It has to be an IEnumerator to increase unsent events chances of being sent
     public IEnumerator OnApplicationPause(bool pause)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
