@@ -328,9 +328,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private long LastPauseTime { get; set; }
 
-    public void OnApplicationPause(bool pause)
+    // It has to be an IEnumerator to increase our chances tracking popUnsentEvents are sent
+    public IEnumerator OnApplicationPause(bool pause)
     {
-        Debug.Log("OnApplicationPause " + pause);
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug.Log("OnApplicationPause " + pause);
 
         // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
         if (pause)
@@ -448,7 +450,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 m_storeManager.OnApplicationPause(pause);
             }
             */            
-        }        
+        }
+
+        return null;     
     }        
 
     private void ScheduleLocalNotifications()
