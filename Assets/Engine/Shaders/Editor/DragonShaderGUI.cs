@@ -358,7 +358,16 @@ internal class DragonShaderGUI : ShaderGUI
 
         EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
 
+        float cull = mp_cullMode.floatValue;
         materialEditor.ShaderProperty(mp_cullMode, Styles.cullModeText);
+
+        if (cull != mp_cullMode.floatValue)
+        {
+            bool value = (mp_cullMode.floatValue == 0.0f);
+            SetKeyword(material, kw_doubleSided, value);
+            material.SetFloat("_EnableDoublesided", value ? 1.0f: 0.0f);
+        }
+
         materialEditor.ShaderProperty(mp_zWrite, Styles.zWriteText);
 
         EditorGUILayout.BeginHorizontal();
