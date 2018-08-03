@@ -99,18 +99,21 @@ public class ARKitAnchorManager
 		}
 	}
 
+    public void ClearAnchors() {
+        foreach (ARPlaneAnchorGameObject kStoredARPlaneAnchor in GetCurrentPlaneAnchors()) {
+            GameObject.Destroy(kStoredARPlaneAnchor.gameObject);
+        }
+
+        m_kPlaneAnchorMap.Clear();
+    }
+
 	public void Destroy()
 	{
 		UnityARSessionNativeInterface.ARAnchorAddedEvent -= AddAnchor;
 		UnityARSessionNativeInterface.ARAnchorUpdatedEvent -= UpdateAnchor;
 		UnityARSessionNativeInterface.ARAnchorRemovedEvent -= RemoveAnchor;
 
-		foreach (ARPlaneAnchorGameObject kStoredARPlaneAnchor in GetCurrentPlaneAnchors())
-		{
-			GameObject.Destroy (kStoredARPlaneAnchor.gameObject);
-		}
-
-		m_kPlaneAnchorMap.Clear ();
+        ClearAnchors();
 	}
 
 	public List<ARPlaneAnchorGameObject> GetCurrentPlaneAnchors()
@@ -181,6 +184,10 @@ public class ARKitAnchorManager
 			}
 		}
 	}
+
+    public void ClearAnchors() 
+    {
+    }
 
 	public void Destroy()
 	{

@@ -196,6 +196,9 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 			} break;
 
 			case State.DETECTING_SURFACE: {
+                //
+                ARKitManager.SharedInstance.ResetScene();
+
 				// Toggle target screen
 				GoToScreen((int)Screen.DETECTING_SURFACE);
 

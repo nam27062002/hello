@@ -447,6 +447,13 @@ public class ARKitManager : MonoBehaviour
 
 			m_bInitialised = false;
 		}
+
+#if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
+        if (m_kARAnchorManager != null) {
+            m_kARAnchorManager.Destroy();
+            m_kARAnchorManager = null;
+        }
+#endif
 	}
 
 	public void StartSurfaceDetection ()
@@ -602,9 +609,6 @@ public class ARKitManager : MonoBehaviour
 				}
 			}
 
-
-
-
 			m_kARKitSurfaceSelector.SetActive (false);
 
 			SetCurrentAnchorsVisible (true);
@@ -614,6 +618,13 @@ public class ARKitManager : MonoBehaviour
 			m_eARState = eARState.E_AR_SEARCHING_SURFACES;
 		}
 	}
+
+    public void ResetScene() {
+        ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration(UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.Horizontal);
+        UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
+
+        m_kARAnchorManager.ClearAnchors();
+    }
 
 	public void SelectCurrentPositionAsARPivot ()
 	{
