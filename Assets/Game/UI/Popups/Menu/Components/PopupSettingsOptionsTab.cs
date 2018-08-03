@@ -31,10 +31,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
 	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
 	[Space]
-	[SerializeField]
-	private Slider m_notificationsSlider;
-    [SerializeField]
-    private GameObject m_bloodToggle;
+	[SerializeField] private Slider m_notificationsSlider;
+    [SerializeField] private GameObject m_bloodToggle;
+	[SerializeField] private GameObject m_gameCenterForChildrenGroup = null;
 
     // Internal
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
@@ -84,11 +83,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
 
 		m_dirty = true;
-        if (m_bloodToggle != null)
-        {
-            m_bloodToggle.SetActive(!GDPRManager.SharedInstance.IsAgeRestrictionEnabled());
-        }
 
+		// Toggle some components on/off if Age Restriction is enabled
+		bool ageRestriction = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();
+        if(m_bloodToggle != null) m_bloodToggle.SetActive(!ageRestriction);
+		if(m_gameCenterForChildrenGroup != null) m_gameCenterForChildrenGroup.SetActive(ageRestriction);
     }
 
 	void Update() {
