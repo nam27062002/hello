@@ -252,9 +252,10 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 					m_dragonLoader.onDragonLoaded -= OnDragonLoaded;
 					m_dragonLoader.UnloadDragon();
 				}
+                Application.targetFrameRate = 30;
 
-				// Go to OFF state
-				ChangeState(State.OFF);
+                // Go to OFF state
+                ChangeState(State.OFF);
 			} break;
 		}
 
