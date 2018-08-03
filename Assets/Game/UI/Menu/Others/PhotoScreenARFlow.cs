@@ -196,6 +196,9 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 			} break;
 
 			case State.DETECTING_SURFACE: {
+                //
+                ARKitManager.SharedInstance.ResetScene();
+
 				// Toggle target screen
 				GoToScreen((int)Screen.DETECTING_SURFACE);
 
@@ -225,6 +228,8 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				ToggleContentCameras(true);
 				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
 				ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
+
+                ARKitManager.SharedInstance.ChangeZoom(1f);
 
 				// Show tooltip
 				m_tooltip3.RestartShow();
