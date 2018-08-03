@@ -282,6 +282,12 @@ public class PersistenceFacade
         if (Config.LocalDriver.IsLoadedInGame)
         {
             Config.LocalDriver.Save(null);
+
+            if (FeatureSettingsManager.instance.IsTrackingStoreUnsentOnSaveGameEnabled)
+            {
+                // Makes sure tracking events won't get lost if playing offline 
+                HDTrackingManager.Instance.SaveOfflineUnsentEvents();
+            }
         }
 	}
 	#endregion
