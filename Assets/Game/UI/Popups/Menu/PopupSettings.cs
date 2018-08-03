@@ -28,10 +28,7 @@ public class PopupSettings : MonoBehaviour {
 	[SerializeField]
     private GameObject m_3dTouch;
 
-	[SerializeField] private Localizer m_versionText = null;
-	[SerializeField] private Localizer m_userIdText = null;
-
-    void Awake()
+	void Awake()
     {
         if (m_saveTab != null)
         {
@@ -42,10 +39,9 @@ public class PopupSettings : MonoBehaviour {
 			// m_3dTouch.SetActive( Input.touchPressureSupported );
 			m_3dTouch.SetActive( PlatformUtils.Instance.InputPressureSupprted());
 		}
-        CS_Init();
-
-		// Set version number
-		m_versionText.Localize(m_versionText.tid, GameSettings.internalVersion.ToString() + " ("+ ServerManager.SharedInstance.GetRevisionVersion() +")");
+        
+		// Init Customer Support stuff
+		CS_Init();
 
 		// Subscribe to popup events
 		PopupController controller = GetComponent<PopupController>();
@@ -55,10 +51,7 @@ public class PopupSettings : MonoBehaviour {
     }
 
 	private void OnOpenPreAnimation() {
-		// Refresh user ID (might have changed from the last time we opened the popup, so refresh it every time
-		string uid = GameSessionManager.SharedInstance.GetUID();
-		m_userIdText.gameObject.SetActive(!string.IsNullOrEmpty(uid));	// Dont show if id not initialized (we never ever did a successful auth)
-		m_userIdText.Localize(m_userIdText.tid, uid);
+		
 	}
 
     private void OnOpenAnimation()
@@ -122,40 +115,6 @@ public class PopupSettings : MonoBehaviour {
 		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
 		popup.Init(DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon));
 	}
-
-	/// <summary>
-	/// The credits button has been pressed.
-	/// </summary>
-	public void OnCreditsButton() {
-		// Open the credits popup
-		PopupManager.OpenPopupInstant(PopupCredits.PATH);
-	}
-
-	/// <summary>
-	/// The privacy settings button has been pressed.
-	/// </summary>
-	public void OnPrivacySettingsButton() {
-		PopupController popupController = PopupManager.OpenPopupInstant(PopupConsentSettings.PATH);
-	}
-
-	public void OnCommentsButton(){
-		MiscUtils.SendFeedbackEmail();
-	}
-
-	public void OpenCustomerSupport()
-    {
-        //CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
-		if (Application.internetReachability != NetworkReachability.NotReachable)
-		{
-			CSTSManager.SharedInstance.OpenView(LocalizationManager.SharedInstance.Culture.Name, false);	// Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.;
-	        HDTrackingManager.Instance.Notify_CustomerSupportRequested();
-        }
-        else
-        {
-			string str = LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION");
-        	UIFeedbackText.CreateAndLaunch(str, new Vector2(0.5f, 0.5f), GetComponentInParent<Canvas>().transform as RectTransform);
-        }
-    }
 
 	public void OnBackButton()
 	{
