@@ -447,6 +447,13 @@ public class ARKitManager : MonoBehaviour
 
 			m_bInitialised = false;
 		}
+
+#if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
+        if (m_kARAnchorManager != null) {
+            m_kARAnchorManager.Destroy();
+            m_kARAnchorManager = null;
+        }
+#endif
 	}
 
 	public void StartSurfaceDetection ()
@@ -602,9 +609,6 @@ public class ARKitManager : MonoBehaviour
 				}
 			}
 
-
-
-
 			m_kARKitSurfaceSelector.SetActive (false);
 
 			SetCurrentAnchorsVisible (true);
@@ -614,6 +618,13 @@ public class ARKitManager : MonoBehaviour
 			m_eARState = eARState.E_AR_SEARCHING_SURFACES;
 		}
 	}
+
+    public void ResetScene() {
+        ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration(UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.Horizontal);
+        UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
+
+        m_kARAnchorManager.ClearAnchors();
+    }
 
 	public void SelectCurrentPositionAsARPivot ()
 	{
@@ -665,7 +676,26 @@ public class ARKitManager : MonoBehaviour
 
 	public void ChangeZoom (float fValue)
 	{
-		m_kContentScalerManager.ContentScale = m_fAffectedARObjectsScale * fValue;
+        if (m_kARKitTrackingCamera != null) {
+            float fInvScale = 1.0f / (m_fAffectedARObjectsScale / c_fDefaultAffectedARObjectsScale);
+
+            float fNewFarCameraPlane = (120.0f - ((fValue / 100.0f) * 40.0f)) * fInvScale;
+
+            m_kARKitTrackingCamera.farClipPlane = fNewFarCameraPlane;
+
+            Camera[] kContentCameras = m_kSceneContentObject.GetComponentsInChildren<Camera>();
+            if (kContentCameras != null) {
+                for (int i = 0; i < kContentCameras.Length; ++i) {
+                    if (!kContentCameras[i].orthographic) {
+                        kContentCameras[i].farClipPlane = fNewFarCameraPlane;
+                    }
+                }
+            }
+        }
+
+        if (m_kContentScalerManager != null) {
+            m_kContentScalerManager.ContentScale = m_fAffectedARObjectsScale * fValue;
+        }
 	}
 
 	public void SelectedZoom ()
