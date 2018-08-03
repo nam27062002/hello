@@ -595,7 +595,7 @@ public class DragonEquip : MonoBehaviour {
 				if(dragonPreview) {
 					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonPreview.sku);
 					newInstance.transform.localScale = Vector3.one * ((def.GetAsFloat("petScale") * transform.localScale.x) / def.GetAsFloat("scaleMin"));
-					newInstance.transform.localScale = newInstance.transform.localScale * 0.8f;	// [AOC] Going to Hell!! Manually set up a factor for all pets in the menu to make it look as before fixing the issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2235
+					newInstance.transform.localScale = newInstance.transform.localScale * 0.75f;	// [AOC] Going to Hell!! Manually set up a factor for all pets in the menu to make it look as before fixing the issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2235
 				}
 
 				// Initialize preview and launch intro animation
