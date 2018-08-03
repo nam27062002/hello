@@ -5,172 +5,150 @@ using System.Reflection;
 using UnityEngine;
 
 #if (UNITY_IOS || UNITY_EDITOR_OSX)
-	using UnityEngine.XR.iOS;
+using UnityEngine.XR.iOS;
 #elif UNITY_ANDROID
-	#if ARCORE_SDK_ENABLED
+#if ARCORE_SDK_ENABLED
 		using GoogleARCore;
-	#endif
+#endif
 #endif
 
-public class ARKitManager : MonoBehaviour
-{
-	// Singleton ///////////////////////////////////////////////////////////
+public class ARKitManager : MonoBehaviour {
+    // Singleton ///////////////////////////////////////////////////////////
 
-	public static ARKitManager s_pInstance = null;
+    public static ARKitManager s_pInstance = null;
 
-	public static ARKitManager SharedInstance
-	{
-		get
-		{
-			if (s_pInstance == null)
-			{
-				s_pInstance = GameContext.AddMainComponent<ARKitManager> ();
-			}
+    public static ARKitManager SharedInstance {
+        get {
+            if (s_pInstance == null) {
+                s_pInstance = GameContext.AddMainComponent<ARKitManager>();
+            }
 
-			return s_pInstance;
-		}
-	}
+            return s_pInstance;
+        }
+    }
 
-	// Delegates /////////////////////////////////////////////////////////////
+    // Delegates /////////////////////////////////////////////////////////////
 
-	public class ARKitListenerBase
-	{
-		public virtual void onCameraPermissionGranted (bool bGranted) {}
-	};
+    public class ARKitListenerBase {
+        public virtual void onCameraPermissionGranted(bool bGranted) { }
+    };
 
-	private ARKitListenerBase m_pARKitListener = null;
+    private ARKitListenerBase m_pARKitListener = null;
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
-	public enum eARState
-	{
-		E_AR_SEARCHING_SURFACES,
-		E_AR_SELECTING_ZOOM,
-		E_AR_PLAYING,
-		E_AR_FINISH,
+    public enum eARState {
+        E_AR_SEARCHING_SURFACES,
+        E_AR_SELECTING_ZOOM,
+        E_AR_PLAYING,
+        E_AR_FINISH,
 
-		E_AR_UNKNOWN
-	}
+        E_AR_UNKNOWN
+    }
 
-	public class ARConfig
-	{
-		public string m_strARConnectionPrefab;
+    public class ARConfig {
+        public string m_strARConnectionPrefab;
 
-		public string m_strARTrackingCameraPrefab;
+        public string m_strARTrackingCameraPrefab;
 
-		public string m_strARContentCameraPrefab;
+        public string m_strARContentCameraPrefab;
 
-		public string m_strSceneContentObject;
+        public string m_strSceneContentObject;
 
-		public string m_strSurfaceBasePrefab;
+        public string m_strSurfaceBasePrefab;
 
-		public string m_strSurfaceSelectorPrefab;
+        public string m_strSurfaceSelectorPrefab;
 
-		public string m_strARHitLayer;
+        public string m_strARHitLayer;
 
-		private int m_iARHitLayerMask;
+        private int m_iARHitLayerMask;
 
-		public ARConfig ()
-		{
-			m_iARHitLayerMask = -1;
-		}
+        public ARConfig() {
+            m_iARHitLayerMask = -1;
+        }
 
-		public int GetLayerMask ()
-		{
-			if (m_iARHitLayerMask == -1)
-			{
-				m_iARHitLayerMask = (1 << LayerMask.NameToLayer(m_strARHitLayer));
-			}
+        public int GetLayerMask() {
+            if (m_iARHitLayerMask == -1) {
+                m_iARHitLayerMask = (1 << LayerMask.NameToLayer(m_strARHitLayer));
+            }
 
-			return m_iARHitLayerMask;
-		}
-	}
+            return m_iARHitLayerMask;
+        }
+    }
 
-	private class ARAffectedObject
-	{
-		public GameObject m_kObjectGO;
+    private class ARAffectedObject {
+        public GameObject m_kObjectGO;
 
-		public Vector3 m_kOriginalOffsetPos;
+        public Vector3 m_kOriginalOffsetPos;
 
-		public Quaternion m_kOriginalOffsetRot;
-	}
+        public Quaternion m_kOriginalOffsetRot;
+    }
 
-	private List<ARAffectedObject> m_kAffectedARObjects = new List<ARAffectedObject> ();
+    private List<ARAffectedObject> m_kAffectedARObjects = new List<ARAffectedObject>();
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
-	private class PermissionsListener : PermissionsManager.PermissionsListenerBase
-	{
-		public override void onIOSPermissionResult (PermissionsManager.EIOSPermission ePermission, PermissionsManager.EPermissionStatus iStatus)
-		{
-			if (ePermission == PermissionsManager.EIOSPermission.Camera)
-			{
-				if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED) 
-				{
-					ARKitManager.SharedInstance.ProcessWithGrantedCamera (true);
-				}
-				else if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED ||
-						iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED)
-				{
-					ARKitManager.SharedInstance.ProcessWithGrantedCamera (false);
-				}
-			}
-		}
+    private class PermissionsListener : PermissionsManager.PermissionsListenerBase {
+        public override void onIOSPermissionResult(PermissionsManager.EIOSPermission ePermission, PermissionsManager.EPermissionStatus iStatus) {
+            if (ePermission == PermissionsManager.EIOSPermission.Camera) {
+                if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED) {
+                    ARKitManager.SharedInstance.ProcessWithGrantedCamera(true);
+                } else if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED ||
+                          iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED) {
+                    ARKitManager.SharedInstance.ProcessWithGrantedCamera(false);
+                }
+            }
+        }
 
-		public override void onAndroidPermissionResult (string strPermission, PermissionsManager.EPermissionStatus iStatus)
-		{
-			if (strPermission.CompareTo("android.permission.CAMERA") == 0)
-			{
-				if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED) 
-				{
-					ARKitManager.SharedInstance.ProcessWithGrantedCamera (true);
-				}
-				else if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED ||
-						iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED)
-				{
-					ARKitManager.SharedInstance.ProcessWithGrantedCamera (false);
-				}
-			}
-		}
-	}
+        public override void onAndroidPermissionResult(string strPermission, PermissionsManager.EPermissionStatus iStatus) {
+            if (strPermission.CompareTo("android.permission.CAMERA") == 0) {
+                if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED) {
+                    ARKitManager.SharedInstance.ProcessWithGrantedCamera(true);
+                } else if (iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED ||
+                          iStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED) {
+                    ARKitManager.SharedInstance.ProcessWithGrantedCamera(false);
+                }
+            }
+        }
+    }
 
-	private PermissionsListener m_kPermissionsListener = null;
+    private PermissionsListener m_kPermissionsListener = null;
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
-	public static readonly float c_fDefaultAffectedARObjectsScale = 0.1f;
+    public static readonly float c_fDefaultAffectedARObjectsScale = 0.1f;
 
-	private GameObject m_kARKitGO = null;
+    private GameObject m_kARKitGO = null;
 
-	private GameObject m_kARKitSurfaceSelector = null;
+    private GameObject m_kARKitSurfaceSelector = null;
 
-	private GameObject m_kARKitTrackingCameraGO = null;
+    private GameObject m_kARKitTrackingCameraGO = null;
 
-	private GameObject m_kARKitContentCameraGO = null;
+    private GameObject m_kARKitContentCameraGO = null;
 
-	private ARKitContentScaleManager m_kContentScalerManager = null;
+    private ARKitContentScaleManager m_kContentScalerManager = null;
 
-	private GameObject m_kSceneContentObject = null;
+    private GameObject m_kSceneContentObject = null;
 
-	private Camera m_kSceneContentCamera = null;
+    private Camera m_kSceneContentCamera = null;
 
-	private Camera m_kSceneContentCameraUI = null;
+    private Camera m_kSceneContentCameraUI = null;
 
-	private Camera m_kARKitTrackingCamera = null;
+    private Camera m_kARKitTrackingCamera = null;
 
 #if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
-	private ARKitAnchorManager m_kARAnchorManager = null;
+    private ARKitAnchorManager m_kARAnchorManager = null;
 #endif
 
-	private List<GameObject> m_kHiddenARObjects = null;
+    private List<GameObject> m_kHiddenARObjects = null;
 
-	private List<GameObject> m_kToShowARObjects = null;
+    private List<GameObject> m_kToShowARObjects = null;
 
-	private float m_fAffectedARObjectsScale = c_fDefaultAffectedARObjectsScale;
+    private float m_fAffectedARObjectsScale = c_fDefaultAffectedARObjectsScale;
 
 
 
-	private ARConfig m_kARConfig = null;
+    private ARConfig m_kARConfig = null;
 
 #if !UNITY_EDITOR
 #if UNITY_IOS
@@ -178,37 +156,35 @@ public class ARKitManager : MonoBehaviour
 #endif
 #endif
 
-	private eARState m_eARState = eARState.E_AR_UNKNOWN;
+    private eARState m_eARState = eARState.E_AR_UNKNOWN;
 
-	private bool m_bSurfaceSelectorWasMoving = false;
+    private bool m_bSurfaceSelectorWasMoving = false;
 
-	private Vector3 m_bSurfaceSelectorHitPoint = new Vector3 ();
+    private Vector3 m_bSurfaceSelectorHitPoint = new Vector3();
 
-	private bool m_bARSurfacesFound = false;
+    private bool m_bARSurfacesFound = false;
 
-	private bool m_bInitialised = false;
+    private bool m_bInitialised = false;
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
 
 
-	// INTERNAL METHODS //////////////////////////////////////////////////////
+    // INTERNAL METHODS //////////////////////////////////////////////////////
 
-	public void SetCurrentAnchorsVisible (bool bVisible)
-	{
+    public void SetCurrentAnchorsVisible(bool bVisible) {
 #if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
-		m_kARAnchorManager.SetCurrentAnchorsVisible (bVisible);
+        m_kARAnchorManager.SetCurrentAnchorsVisible(bVisible);
 #endif
-	}
+    }
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
 
 
-	// GETTERS ///////////////////////////////////////////////////////////////
+    // GETTERS ///////////////////////////////////////////////////////////////
 
-	public bool IsARKitAvailable ()
-	{
+    public bool IsARKitAvailable() {
 #if !UNITY_EDITOR
 #if UNITY_IOS
 		return m_kARConfigChecker.IsSupported;
@@ -216,130 +192,109 @@ public class ARKitManager : MonoBehaviour
 		return false;
 #endif
 #else
-		return true;
+        return true;
 #endif
-	}
+    }
 
-	public bool AreARSurfacesFound ()
-	{
-		return m_bARSurfacesFound;
-	}
+    public bool AreARSurfacesFound() {
+        return m_bARSurfacesFound;
+    }
 
-	public Camera GetTrackingCamera ()
-	{
-		return m_kARKitTrackingCamera;
-	}
+    public Camera GetTrackingCamera() {
+        return m_kARKitTrackingCamera;
+    }
 
-	public GameObject GetSceneContentObject ()
-	{
-		return m_kSceneContentObject;
-	}
+    public GameObject GetSceneContentObject() {
+        return m_kSceneContentObject;
+    }
 
-	public Camera GetSceneContentCamera ()
-	{
-		return m_kSceneContentCamera;
-	}
+    public Camera GetSceneContentCamera() {
+        return m_kSceneContentCamera;
+    }
 
-	public Camera GetSceneContentCameraUI ()
-	{
-		return m_kSceneContentCameraUI;
-	}
+    public Camera GetSceneContentCameraUI() {
+        return m_kSceneContentCameraUI;
+    }
 
-	public bool IsPossibleARPivotSet ()
-	{
-		return m_bSurfaceSelectorWasMoving;
-	}
+    public bool IsPossibleARPivotSet() {
+        return m_bSurfaceSelectorWasMoving;
+    }
 
-	public float GetAffectedARObjectsScale ()
-	{
-		return m_fAffectedARObjectsScale;
-	}
+    public float GetAffectedARObjectsScale() {
+        return m_fAffectedARObjectsScale;
+    }
 
-	public eARState GetARState ()
-	{
-		return m_eARState;
-	}
+    public eARState GetARState() {
+        return m_eARState;
+    }
 
-	public float GetARContentScale ()
-	{
-		if (m_kContentScalerManager != null)
-		{
-			return m_kContentScalerManager.ContentScale;
-		}
+    public float GetARContentScale() {
+        if (m_kContentScalerManager != null) {
+            return m_kContentScalerManager.ContentScale;
+        }
 
-		return 1.0f;
-	}
+        return 1.0f;
+    }
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
 
 
-	// SETTERS ///////////////////////////////////////////////////////////////
+    // SETTERS ///////////////////////////////////////////////////////////////
 
-	public void SetHiddenARObjects (List<GameObject> kObjects)
-	{
-		m_kHiddenARObjects = kObjects;
-	}
+    public void SetHiddenARObjects(List<GameObject> kObjects) {
+        m_kHiddenARObjects = kObjects;
+    }
 
-	public void SetToShowARObjects (List<GameObject> kObjects)
-	{
-		m_kToShowARObjects = kObjects;
-	}
+    public void SetToShowARObjects(List<GameObject> kObjects) {
+        m_kToShowARObjects = kObjects;
+    }
 
-	public void SetAffectedARObjects (List<GameObject> kObjects, float fContentScale)
-	{
-		m_kAffectedARObjects = new List<ARAffectedObject> ();
+    public void SetAffectedARObjects(List<GameObject> kObjects, float fContentScale) {
+        m_kAffectedARObjects = new List<ARAffectedObject>();
 
-		for (int i = 0; i < kObjects.Count; ++i)
-		{
-			ARAffectedObject kARAffectedObject = new ARAffectedObject ();
-			kARAffectedObject.m_kObjectGO = kObjects[i];
-			kARAffectedObject.m_kOriginalOffsetPos = kObjects[i].transform.localPosition;
-			kARAffectedObject.m_kOriginalOffsetRot = kObjects[i].transform.localRotation;
+        for (int i = 0; i < kObjects.Count; ++i) {
+            ARAffectedObject kARAffectedObject = new ARAffectedObject();
+            kARAffectedObject.m_kObjectGO = kObjects[i];
+            kARAffectedObject.m_kOriginalOffsetPos = kObjects[i].transform.localPosition;
+            kARAffectedObject.m_kOriginalOffsetRot = kObjects[i].transform.localRotation;
 
-			m_kAffectedARObjects.Add (kARAffectedObject);
-		}
+            m_kAffectedARObjects.Add(kARAffectedObject);
+        }
 
-		m_fAffectedARObjectsScale = fContentScale;
-	}
+        m_fAffectedARObjectsScale = fContentScale;
+    }
 
-	public void SetARKitListener (ARKitListenerBase pListener)
-	{
-		m_pARKitListener = pListener;
-	}
+    public void SetARKitListener(ARKitListenerBase pListener) {
+        m_pARKitListener = pListener;
+    }
 
-	public void SetAffectedARObjectsEnabled (bool bEnabled)
-	{
-		if (m_kAffectedARObjects != null)
-		{
-			for (int i = 0; i < m_kAffectedARObjects.Count; ++i)
-			{
-				m_kAffectedARObjects [i].m_kObjectGO.SetActive (bEnabled);
-			}
-		}
-	}
+    public void SetAffectedARObjectsEnabled(bool bEnabled) {
+        if (m_kAffectedARObjects != null) {
+            for (int i = 0; i < m_kAffectedARObjects.Count; ++i) {
+                m_kAffectedARObjects[i].m_kObjectGO.SetActive(bEnabled);
+            }
+        }
+    }
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
 
 
-	// METHODS ///////////////////////////////////////////////////////////////
+    // METHODS ///////////////////////////////////////////////////////////////
 
-	public bool CheckIfInitialised ()
-	{
-		return m_bInitialised;
-	}
+    public bool CheckIfInitialised() {
+        return m_bInitialised;
+    }
 
-	public void Initialise (ARConfig kConfig)
-	{
-		if (!m_bInitialised)
-		{
-			m_kPermissionsListener = new PermissionsListener ();
-			PermissionsManager.SharedInstance.AddPermissionsListener (m_kPermissionsListener);
+    public void Initialise(ARConfig kConfig) {
+        if (!m_bInitialised) {
+            m_kPermissionsListener = new PermissionsListener();
+            PermissionsManager.SharedInstance.AddPermissionsListener(m_kPermissionsListener);
 
-			Debug.Log ("AR API Available: " + IsARKitAvailable ());
+            Debug.Log("AR API Available: " + IsARKitAvailable());
 
-			m_kARConfig = kConfig;
+            m_kARConfig = kConfig;
 
 #if UNITY_ANDROID
 			GameObject kARKitManager = GameObject.Find ("ARKitManager");
@@ -351,102 +306,87 @@ public class ARKitManager : MonoBehaviour
 #endif
 
 #if (UNITY_IOS && UNITY_EDITOR_OSX)
-			m_kARKitGO = new GameObject ("ARKitManager");
-			DontDestroyOnLoad (m_kARKitGO);
+            m_kARKitGO = new GameObject("ARKitManager");
+            DontDestroyOnLoad(m_kARKitGO);
 
-			GameObject kARRemoteConnectionGO = Instantiate (Resources.Load (m_kARConfig.m_strARConnectionPrefab) as GameObject);
-			kARRemoteConnectionGO.transform.SetParent (m_kARKitGO.transform);
+            GameObject kARRemoteConnectionGO = Instantiate(Resources.Load(m_kARConfig.m_strARConnectionPrefab) as GameObject);
+            kARRemoteConnectionGO.transform.SetParent(m_kARKitGO.transform);
 #endif
 
-			m_kARKitSurfaceSelector = Instantiate (Resources.Load (m_kARConfig.m_strSurfaceSelectorPrefab) as GameObject);
-			CaletyUtils.SetLayer (m_kARKitSurfaceSelector, m_kARConfig.m_strARHitLayer);
-			m_kARKitSurfaceSelector.SetActive (false);
+            m_kARKitSurfaceSelector = Instantiate(Resources.Load(m_kARConfig.m_strSurfaceSelectorPrefab) as GameObject);
+            CaletyUtils.SetLayer(m_kARKitSurfaceSelector, m_kARConfig.m_strARHitLayer);
+            m_kARKitSurfaceSelector.SetActive(false);
 
-			m_bInitialised = true;
-		}
+            m_bInitialised = true;
+        }
 
 #if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
-		if (m_kARAnchorManager == null)
-		{
-			m_kARAnchorManager = new ARKitAnchorManager (m_kARConfig.m_strSurfaceBasePrefab, m_kARConfig.m_strARHitLayer);
-		}
+        if (m_kARAnchorManager == null) {
+            m_kARAnchorManager = new ARKitAnchorManager(m_kARConfig.m_strSurfaceBasePrefab, m_kARConfig.m_strARHitLayer);
+        }
 #endif
-	}
+    }
 
-	public void UnInitialise ()
-	{
-		if (m_bInitialised)
-		{
-			PermissionsManager.SharedInstance.RemovePermissionsListener (m_kPermissionsListener);
-			m_kPermissionsListener = null;
+    public void UnInitialise() {
+        if (m_bInitialised) {
+            PermissionsManager.SharedInstance.RemovePermissionsListener(m_kPermissionsListener);
+            m_kPermissionsListener = null;
 
-			if (m_kARKitTrackingCameraGO != null)
-			{
-				DestroyImmediate (m_kARKitTrackingCameraGO);
+            if (m_kARKitTrackingCameraGO != null) {
+                DestroyImmediate(m_kARKitTrackingCameraGO);
 
-				m_kARKitTrackingCameraGO = null;
-			}
+                m_kARKitTrackingCameraGO = null;
+            }
 
-			if (m_kARKitContentCameraGO != null)
-			{
-				DestroyImmediate (m_kARKitContentCameraGO);
+            if (m_kARKitContentCameraGO != null) {
+                DestroyImmediate(m_kARKitContentCameraGO);
 
-				m_kARKitContentCameraGO = null;
-			}
+                m_kARKitContentCameraGO = null;
+            }
 
-			DestroyImmediate (m_kARKitSurfaceSelector);
+            DestroyImmediate(m_kARKitSurfaceSelector);
 
-			m_kARKitSurfaceSelector = null;
+            m_kARKitSurfaceSelector = null;
 
 #if (UNITY_IOS || UNITY_EDITOR_OSX)
-			if (m_kARKitGO != null)
-			{
-				DestroyImmediate (m_kARKitGO);
-				m_kARKitGO = null;
-			}
+            if (m_kARKitGO != null) {
+                DestroyImmediate(m_kARKitGO);
+                m_kARKitGO = null;
+            }
 #endif
 
-			m_kARKitTrackingCamera = null;
+            m_kARKitTrackingCamera = null;
 
-			if (m_kHiddenARObjects != null)
-			{
-				for (int i = 0; i < m_kHiddenARObjects.Count; ++i)
-				{
-					if (m_kHiddenARObjects [i] != null)
-					{
-						m_kHiddenARObjects [i].SetActive (true);
-					}
-				}
-			}
-			if (m_kToShowARObjects != null)
-			{
-				for (int i = 0; i < m_kToShowARObjects.Count; ++i)
-				{
-					if (m_kToShowARObjects [i] != null)
-					{
-						m_kToShowARObjects [i].SetActive (false);
-					}
-				}
-			}
+            if (m_kHiddenARObjects != null) {
+                for (int i = 0; i < m_kHiddenARObjects.Count; ++i) {
+                    if (m_kHiddenARObjects[i] != null) {
+                        m_kHiddenARObjects[i].SetActive(true);
+                    }
+                }
+            }
+            if (m_kToShowARObjects != null) {
+                for (int i = 0; i < m_kToShowARObjects.Count; ++i) {
+                    if (m_kToShowARObjects[i] != null) {
+                        m_kToShowARObjects[i].SetActive(false);
+                    }
+                }
+            }
 
-			if (m_kAffectedARObjects != null)
-			{
-				for (int i = 0; i < m_kAffectedARObjects.Count; ++i)
-				{
-					if (m_kAffectedARObjects [i] != null && m_kAffectedARObjects [i].m_kObjectGO != null)
-					{
-						m_kAffectedARObjects [i].m_kObjectGO.SetActive (true);
-					}
-				}
-			}
-			m_kAffectedARObjects = null;
+            if (m_kAffectedARObjects != null) {
+                for (int i = 0; i < m_kAffectedARObjects.Count; ++i) {
+                    if (m_kAffectedARObjects[i] != null && m_kAffectedARObjects[i].m_kObjectGO != null) {
+                        m_kAffectedARObjects[i].m_kObjectGO.SetActive(true);
+                    }
+                }
+            }
+            m_kAffectedARObjects = null;
 
-			SetCurrentAnchorsVisible (false);
+            SetCurrentAnchorsVisible(false);
 
-			m_eARState = eARState.E_AR_UNKNOWN;
+            m_eARState = eARState.E_AR_UNKNOWN;
 
-			m_bInitialised = false;
-		}
+            m_bInitialised = false;
+        }
 
 #if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
         if (m_kARAnchorManager != null) {
@@ -454,15 +394,12 @@ public class ARKitManager : MonoBehaviour
             m_kARAnchorManager = null;
         }
 #endif
-	}
+    }
 
-	public void StartSurfaceDetection ()
-	{
-		if (m_bInitialised)
-		{
-			if (m_kARKitTrackingCameraGO == null)
-			{
-				m_kARKitTrackingCameraGO = Instantiate (Resources.Load (m_kARConfig.m_strARTrackingCameraPrefab) as GameObject);
+    public void StartSurfaceDetection() {
+        if (m_bInitialised) {
+            if (m_kARKitTrackingCameraGO == null) {
+                m_kARKitTrackingCameraGO = Instantiate(Resources.Load(m_kARConfig.m_strARTrackingCameraPrefab) as GameObject);
 
 #if UNITY_ANDROID
 				GameObject kARCoreDevice = GameObject.Find ("ARKitManager/ARCoreDevice");
@@ -557,73 +494,67 @@ public class ARKitManager : MonoBehaviour
 				}
 #endif
 
-				m_kARKitTrackingCamera = m_kARKitTrackingCameraGO.GetComponentInChildren<Camera> ();
-				m_kARKitTrackingCamera.cullingMask = m_kARConfig.GetLayerMask ();
-			}
+                m_kARKitTrackingCamera = m_kARKitTrackingCameraGO.GetComponentInChildren<Camera>();
+                m_kARKitTrackingCamera.cullingMask = m_kARConfig.GetLayerMask();
+            }
 
-			if (m_kARKitContentCameraGO == null)
-			{
-				m_kARKitContentCameraGO = Instantiate (Resources.Load (m_kARConfig.m_strARContentCameraPrefab) as GameObject);
+            if (m_kARKitContentCameraGO == null) {
+                m_kARKitContentCameraGO = Instantiate(Resources.Load(m_kARConfig.m_strARContentCameraPrefab) as GameObject);
 
-				m_kContentScalerManager = m_kARKitContentCameraGO.GetComponent<ARKitContentScaleManager> ();
-				m_kContentScalerManager.ContentScale = m_fAffectedARObjectsScale;
+                m_kContentScalerManager = m_kARKitContentCameraGO.GetComponent<ARKitContentScaleManager>();
+                m_kContentScalerManager.ContentScale = m_fAffectedARObjectsScale;
 
-				m_kSceneContentObject = GameObject.Find (m_kARConfig.m_strSceneContentObject);
-				if (m_kSceneContentObject != null) 
-				{
-					Transform kSceneContentCameraGO = m_kSceneContentObject.transform.Find ("Scene Camera Models");
-					if (kSceneContentCameraGO != null)
-					{
-						m_kSceneContentCamera = kSceneContentCameraGO.GetComponent<Camera> ();
-					}
-					Transform kSceneContentCameraUIGO = m_kSceneContentObject.transform.Find ("Scene Camera UI");
-					if (kSceneContentCameraUIGO != null)
-					{
-						m_kSceneContentCameraUI = kSceneContentCameraUIGO.GetComponent<Camera> ();
-					}
+                m_kSceneContentObject = GameObject.Find(m_kARConfig.m_strSceneContentObject);
+                if (m_kSceneContentObject != null) {
+                    Transform kSceneContentCameraGO = m_kSceneContentObject.transform.Find("Scene Camera Models");
+                    if (kSceneContentCameraGO != null) {
+                        m_kSceneContentCamera = kSceneContentCameraGO.GetComponent<Camera>();
+                    }
+                    Transform kSceneContentCameraUIGO = m_kSceneContentObject.transform.Find("Scene Camera UI");
+                    if (kSceneContentCameraUIGO != null) {
+                        m_kSceneContentCameraUI = kSceneContentCameraUIGO.GetComponent<Camera>();
+                    }
 
-					ARKitCameraScaler kContentScaler = m_kARKitContentCameraGO.GetComponentInChildren<ARKitCameraScaler> ();
-					kContentScaler.SetScaledContent (m_kSceneContentObject);
-					kContentScaler.m_CameraScale = m_fAffectedARObjectsScale;
-				}
-			}
+                    ARKitCameraScaler kContentScaler = m_kARKitContentCameraGO.GetComponentInChildren<ARKitCameraScaler>();
+                    kContentScaler.SetScaledContent(m_kSceneContentObject);
+                    kContentScaler.m_CameraScale = m_fAffectedARObjectsScale;
+                }
+            }
 
-			if (m_kHiddenARObjects != null)
-			{
-				for (int i = 0; i < m_kHiddenARObjects.Count; ++i)
-				{
-					if (m_kHiddenARObjects [i] != null)
-					{
-						m_kHiddenARObjects [i].SetActive (false);
-					}
-				}
-			}
-			if (m_kToShowARObjects != null)
-			{
-				for (int i = 0; i < m_kToShowARObjects.Count; ++i)
-				{
-					if (m_kToShowARObjects [i] != null)
-					{
-						m_kToShowARObjects [i].SetActive (true);
-					}
-				}
-			}
+            if (m_kHiddenARObjects != null) {
+                for (int i = 0; i < m_kHiddenARObjects.Count; ++i) {
+                    if (m_kHiddenARObjects[i] != null) {
+                        m_kHiddenARObjects[i].SetActive(false);
+                    }
+                }
+            }
+            if (m_kToShowARObjects != null) {
+                for (int i = 0; i < m_kToShowARObjects.Count; ++i) {
+                    if (m_kToShowARObjects[i] != null) {
+                        m_kToShowARObjects[i].SetActive(true);
+                    }
+                }
+            }
 
-			m_kARKitSurfaceSelector.SetActive (false);
+            m_kARKitSurfaceSelector.SetActive(false);
 
-			SetCurrentAnchorsVisible (true);
+            SetCurrentAnchorsVisible(true);
 
-			m_bARSurfacesFound = false;
+            m_bARSurfacesFound = false;
 
-			m_eARState = eARState.E_AR_SEARCHING_SURFACES;
-		}
-	}
+            m_eARState = eARState.E_AR_SEARCHING_SURFACES;
+        }
+    }
 
     public void ResetScene() {
+#if !UNITY_EDITOR
+    #if UNITY_IOS
         ARKitWorldTrackingSessionConfiguration sessionConfig = new ARKitWorldTrackingSessionConfiguration(UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.Horizontal);
         UnityARSessionNativeInterface.GetARSessionNativeInterface().RunWithConfigAndOptions(sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
 
         m_kARAnchorManager.ClearAnchors();
+    #endif
+#endif
     }
 
 	public void SelectCurrentPositionAsARPivot ()
@@ -813,7 +744,7 @@ public class ARKitManager : MonoBehaviour
 					
 #elif UNITY_ANDROID
 
-			#if ARCORE_SDK_ENABLED
+#if ARCORE_SDK_ENABLED
 				// Raycast against the location the player touched to search for planes.
 				TrackableHit hit;
 				TrackableHitFlags raycastFilter = TrackableHitFlags.PlaneWithinBounds | TrackableHitFlags.PlaneWithinPolygon;
@@ -841,7 +772,7 @@ public class ARKitManager : MonoBehaviour
 
 					m_bSurfaceSelectorWasMoving = false;
 				}
-			#endif
+#endif
 
 #endif
 			}
