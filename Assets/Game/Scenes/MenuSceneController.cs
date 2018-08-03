@@ -167,14 +167,16 @@ public class MenuSceneController : SceneController {
 	}    
 
 	protected override void OnDestroy() {
-		// Restore stats on the control panel
-		if ( ControlPanel.instance != null )
-			ControlPanel.instance.IsStatsEnabled = m_wereStatsEnabled;
+        if (ApplicationManager.IsAlive) {
+            // Restore stats on the control panel
+            if (ControlPanel.instance != null)
+                ControlPanel.instance.IsStatsEnabled = m_wereStatsEnabled;
 
-		Application.lowMemory -= OnLowMemory;
-		base.OnDestroy();
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Debug_OnDestroy();
+            Application.lowMemory -= OnLowMemory;
+            base.OnDestroy();
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug_OnDestroy();
+        }
     }
 	
 	/// <summary>
