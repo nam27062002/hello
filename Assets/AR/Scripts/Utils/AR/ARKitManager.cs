@@ -665,7 +665,26 @@ public class ARKitManager : MonoBehaviour
 
 	public void ChangeZoom (float fValue)
 	{
-		m_kContentScalerManager.ContentScale = m_fAffectedARObjectsScale * fValue;
+        if (m_kARKitTrackingCamera != null) {
+            float fInvScale = 1.0f / (m_fAffectedARObjectsScale / c_fDefaultAffectedARObjectsScale);
+
+            float fNewFarCameraPlane = (120.0f - ((fValue / 100.0f) * 40.0f)) * fInvScale;
+
+            m_kARKitTrackingCamera.farClipPlane = fNewFarCameraPlane;
+
+            Camera[] kContentCameras = m_kSceneContentObject.GetComponentsInChildren<Camera>();
+            if (kContentCameras != null) {
+                for (int i = 0; i < kContentCameras.Length; ++i) {
+                    if (!kContentCameras[i].orthographic) {
+                        kContentCameras[i].farClipPlane = fNewFarCameraPlane;
+                    }
+                }
+            }
+        }
+
+        if (m_kContentScalerManager != null) {
+            m_kContentScalerManager.ContentScale = m_fAffectedARObjectsScale * fValue;
+        }
 	}
 
 	public void SelectedZoom ()

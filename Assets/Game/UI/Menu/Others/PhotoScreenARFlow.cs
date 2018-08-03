@@ -226,6 +226,8 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
 				ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
 
+                ARKitManager.SharedInstance.ChangeZoom(1f);
+
 				// Show tooltip
 				m_tooltip3.RestartShow();
 			} break;
