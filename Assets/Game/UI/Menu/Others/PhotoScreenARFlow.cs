@@ -253,8 +253,11 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 					m_dragonLoader.UnloadDragon();
 				}
 
-				// Go to OFF state
-				ChangeState(State.OFF);
+                // Target frame rate restored to 30fps
+                Application.targetFrameRate = 30;
+
+                // Go to OFF state
+                ChangeState(State.OFF);
 			} break;
 		}
 
