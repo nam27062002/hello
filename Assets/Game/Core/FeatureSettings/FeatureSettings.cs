@@ -99,7 +99,13 @@ public class FeatureSettings
     public const string KEY_TRACKING_OFFLINE_CACHED = "trackingOfflineCached";
 
     // When <true> a safe check if checked to prevent too big tracking data cached from making the app to get stuck
-    public const string KEY_SAFE_TRACKING_OFFLINE_CACHED = "trackingSafeOfflineCached";    
+    public const string KEY_SAFE_TRACKING_OFFLINE_CACHED = "trackingSafeOfflineCached";
+
+    // Whether or not the unsent events should be stored when the game 
+    public const string KEY_TRACKING_STORE_UNSENT_ON_SAVE_GAME = "trackingStoreUnsentOnSaveGame";
+
+    // Min time (in seconds) to wait between two consecutive requests for storing unsent events
+    public const string KEY_TRACKING_STORE_UNSENT_MIN_TIME = "trackingStoreUnsentMinTime";
 
     public const string KEY_CONTENT_DELTAS = "contentDeltas";
 
@@ -276,7 +282,15 @@ public class FeatureSettings
             key = KEY_SAFE_TRACKING_OFFLINE_CACHED;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
-       
+
+            key = KEY_TRACKING_STORE_UNSENT_ON_SAVE_GAME;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_TRACKING_STORE_UNSENT_MIN_TIME;
+            data = new DataFloat(key, 5f);
+            Datas.Add(key, data);
+
             // Content deltas. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
