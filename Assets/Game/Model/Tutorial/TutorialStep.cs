@@ -28,9 +28,15 @@ public enum TutorialStep {
 	// [AOC] DON'T CHANGE THE ORDER!!
 	INIT						= 1 << 0,
 
+    /*
+    // The steps below have been commented out because we need to use FIRST_RUN step for all of them instead since we want the user to have exactly the same
+    // experience until she completes a whole run, which finishes when she sees the results screen.
+    //
+    // IMPORTANT: The values of the constants have to stay the same in order to maintain compatibility with users who started playing before this change was applied
 	FIRST_PLAY_SCREEN			= 1 << 1,
 	CONTROLS_POPUP				= 1 << 2,
-	BOOST						= 1 << 3,
+    */
+	BOOST						= 1 << 3,    
 	FIRST_RUN					= 1 << 4,
 
 	DRAGON_SELECTION			= 1 << 5,
