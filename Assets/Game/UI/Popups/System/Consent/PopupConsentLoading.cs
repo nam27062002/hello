@@ -74,7 +74,7 @@ public class PopupConsentLoading : MonoBehaviour {
         m_popupController = GetComponent<PopupController>();
 
 		// Show Age Group?
-		m_ageEnabled = GDPRManager.SharedInstance.IsAgeRestrictionRequired();	// Country requires age restriction
+		m_ageEnabled = GDPRManager.SharedInstance.IsAgePopupNeededToBeShown();	// Country requires age restriction and age has never been set before
 		if(m_ageEnabled) {
 			// Init age text and subscribe to slider's OnChange event
 			m_ageValue = GDPRManager.SharedInstance.GetCachedUserAge();
