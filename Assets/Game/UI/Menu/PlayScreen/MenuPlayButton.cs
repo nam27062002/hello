@@ -35,20 +35,24 @@ public class MenuPlayButton : MenuNavigationButton {
 	/// Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-		SceneController.s_mode = SceneController.Mode.DEFAULT;
-		HDLiveEventsManager.instance.SwitchToQuest();
-		// Depends on the tutorial status
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {			
-			// Go straight to game
-			OnStartGameButton();
-		} else {
-			// Go to the dragon default screen defined in the inspector
-			OnNavigationButton();
-		}
-			
-		// Save flag to not display play screen again
-		GameVars.playScreenShown = true;
+        if (SceneController.s_playMenuButtonLock == false) {
+            SceneController.s_playMenuButtonLock = true;
 
-		HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._04_click_play);
+            SceneController.s_mode = SceneController.Mode.DEFAULT;
+            HDLiveEventsManager.instance.SwitchToQuest();
+            // Depends on the tutorial status
+            if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+                // Go straight to game
+                OnStartGameButton();
+            } else {
+                // Go to the dragon default screen defined in the inspector
+                OnNavigationButton();
+            }
+
+            // Save flag to not display play screen again
+            GameVars.playScreenShown = true;
+
+            HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._04_click_play);
+        }
 	}
 }
