@@ -98,12 +98,13 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_GhostBlood
+    name: PS_GhostDie
     path: Blood
     changeStartColor: 1
     startColor: {r: 0.18103445, g: 0.75, b: 0, a: 1}
@@ -140,6 +141,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -178,6 +180,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: 
   m_firePoints: []
   m_burnParticle:
@@ -218,6 +221,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -257,6 +261,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -475,6 +480,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -490,6 +496,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

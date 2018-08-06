@@ -119,12 +119,36 @@ public class HDTrackingManager
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
     
+    public HDTrackingManager()
+    {
+        SaveOfflineUnsentEventsEnabled = true;
+    }
+
     public virtual void GoToGame() {}
     public virtual void GoToMenu() {}
 
     public virtual void Update()
     {        
     }
+
+    public bool SaveOfflineUnsentEventsEnabled;
+
+    private float SaveOfflineUnsentEventLastTimestamp;
+
+    public void SaveOfflineUnsentEvents()
+    {
+        if (SaveOfflineUnsentEventsEnabled)
+        {
+            float now = Time.realtimeSinceStartup;
+            if (now - SaveOfflineUnsentEventLastTimestamp >= FeatureSettingsManager.instance.TrackingStoreUnsentMinTime)
+            {
+                SaveOfflineUnsentEventLastTimestamp = now;
+                SaveOfflineUnsentEventsExtended();
+            }
+        }
+    }
+
+    protected virtual void SaveOfflineUnsentEventsExtended() {}
 
 #region notify    
     /// <summary>

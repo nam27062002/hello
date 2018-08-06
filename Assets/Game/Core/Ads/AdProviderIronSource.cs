@@ -283,7 +283,7 @@ public class AdProviderIronSource : AdProvider
                     mWaitingReward = false;
 
                     mPlaybackResult = PlaybackResult.NONE;
-
+                            
                     if (FeatureSettingsManager.IsDebugEnabled)
                         Log("IronSource::: ... ... ... Playing " + mTryingToPlayAd.Type);                                                                   
 
@@ -611,12 +611,16 @@ public class AdProviderIronSource : AdProvider
         {
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> Interstitial Ad Opened Event");
+            if (mAdProvider.onVideoAdOpen != null)
+                mAdProvider.onVideoAdOpen();
         }
 
         void InterstitialAdClosedEvent()
         {
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> Interstitial Ad Closed Event");
+            if (mAdProvider.onVideoAdClosed!= null)
+                mAdProvider.onVideoAdClosed();
         }
 
         void InterstitialAdRewardedEvent()
@@ -638,6 +642,8 @@ public class AdProviderIronSource : AdProvider
         {
             mRewardAvailable = false;
             mWaitingReward = false;
+            if (mAdProvider.onVideoAdOpen != null)
+                mAdProvider.onVideoAdOpen();
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> I got RewardedVideoAdOpenedEvent");
         }
@@ -653,7 +659,8 @@ public class AdProviderIronSource : AdProvider
         {
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("IronSource: --> I got RewardedVideoAdClosedEvent");
-
+            if (mAdProvider.onVideoAdClosed!= null)
+                mAdProvider.onVideoAdClosed();
             if (mRewardAvailable)
             {
                 NotifyPlaybackResult(PlaybackResult.SUCCESS);

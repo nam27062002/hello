@@ -38,11 +38,7 @@ public class MenuPlayButton : MenuNavigationButton {
 		SceneController.s_mode = SceneController.Mode.DEFAULT;
 		HDLiveEventsManager.instance.SwitchToQuest();
 		// Depends on the tutorial status
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_PLAY_SCREEN)) {
-			// Advance tutorial step
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_PLAY_SCREEN);
-			PersistenceFacade.instance.Save_Request();
-
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {			
 			// Go straight to game
 			OnStartGameButton();
 		} else {

@@ -13,17 +13,16 @@ using DG.Tweening;
 /// <summary>
 /// This class is responsible for handling the options tab in the settings popup.
 /// </summary>
-public class PopupSettingsOptionsTab : MonoBehaviour
-{
+public class PopupSettingsOptionsTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const string LANGUAGE_PILL_PATH = "UI/Metagame/Settings/PF_LanguagesFlagPill";
 
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES												  //
-    //------------------------------------------------------------------------//
-    // Exposed
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed
 	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
 	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
@@ -31,12 +30,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
 	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
 	[Space]
-	[SerializeField]
-	private Slider m_notificationsSlider;
-    [SerializeField]
-    private GameObject m_bloodToggle;
+	[SerializeField] private Slider m_notificationsSlider;
+	[SerializeField] private GameObject m_bloodToggle;
+	[SerializeField] private GameObject m_gameCenterForChildrenGroup = null;
 
-    // Internal
+	// Internal
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
 
 	private bool m_dirty = false;
@@ -44,13 +42,13 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	private int m_graphicsMaxLevel = 4;
 	private int m_initialGraphicsQualityLevel = -1;
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialization.
-    /// </summary>
-    public void Awake() {
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	public void Awake() {
 		// Clear all content of the scroll list (used to do the layout)
 		m_languageScrollList.content.DestroyAllChildren(false);
 
@@ -76,7 +74,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		}
 		prefab = null;
 
-		if (m_pills.Count == 1) {
+		if(m_pills.Count == 1) {
 			m_languageScrollList.enabled = false;
 		}
 
@@ -84,11 +82,20 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 		m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
 
 		m_dirty = true;
-        if (m_bloodToggle != null)
-        {
-            m_bloodToggle.SetActive(!GDPRManager.SharedInstance.IsAgeRestrictionEnabled());
-        }
 
+		// Toggle some components on/off if Age Restriction is enabled
+		bool ageRestriction = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();
+		if(m_bloodToggle != null) {
+			m_bloodToggle.SetActive(!ageRestriction);
+		}
+
+		if(m_gameCenterForChildrenGroup != null) {
+#if UNITY_IOS
+			m_gameCenterForChildrenGroup.SetActive(ageRestriction);
+#else
+			m_gameCenterForChildrenGroup.SetActive(false);
+#endif
+		}
     }
 
 	void Update() {

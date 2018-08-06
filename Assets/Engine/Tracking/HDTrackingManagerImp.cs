@@ -150,7 +150,7 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
 	}
     
-    private bool IsSaveOfflineUnsentEventsEnabled
+    private bool IsSaveOfflineUnsentEventsAllowed
     {
         get
         {            
@@ -162,9 +162,10 @@ public class HDTrackingManagerImp : HDTrackingManager
 #endif
         }
     }
-    private void SaveOfflineUnsentEvents()
+
+    protected override void SaveOfflineUnsentEventsExtended()
     {
-        if (IsSaveOfflineUnsentEventsEnabled)
+        if (IsSaveOfflineUnsentEventsAllowed)
         {
             DNAManager.SharedInstance.SaveOfflineUnsentEvents();		
         }
