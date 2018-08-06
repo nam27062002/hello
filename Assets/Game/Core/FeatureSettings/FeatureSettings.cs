@@ -131,6 +131,9 @@ public class FeatureSettings
     // Whether or not CP2 is enabled
     public const string KEY_CP2 = "cp2";
 
+    // Max time to wait for log in social platform to finish
+    public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeou";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -289,7 +292,7 @@ public class FeatureSettings
 
             key = KEY_TRACKING_STORE_UNSENT_MIN_TIME;
             data = new DataFloat(key, 5f);
-            Datas.Add(key, data);
+            Datas.Add(key, data);            
 
             // Content deltas. This default value is really important and it's not in xmls because it has to be used before the rules are loaded
             key = KEY_CONTENT_DELTAS;
@@ -324,6 +327,10 @@ public class FeatureSettings
 
             key = KEY_CP2;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT;
+            data = new DataFloat(key, 10f);
             Datas.Add(key, data);
             /*
             // intTest

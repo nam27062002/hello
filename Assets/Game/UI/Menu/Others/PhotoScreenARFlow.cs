@@ -208,12 +208,13 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 
 				// Hide affected objects
 				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
+                ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
 
 				// Notify AR manager
 				ARKitManager.SharedInstance.StartSurfaceDetection();
 
 				// Hide both tooltips, right one will be selected in the Update() loop
-				m_tooltip1.ForceHide(false);	
+				m_tooltip1.ForceHide(false);
 				m_tooltip2.ForceHide(false);
 			} break;
 
@@ -226,13 +227,15 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 
 				// Show content!
 				ToggleContentCameras(true);
-				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
-				ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
-
-                ARKitManager.SharedInstance.ChangeZoom(1f);
+				ARKitManager.SharedInstance.ChangeZoom(1f);
 
 				// Show tooltip
 				m_tooltip3.RestartShow();
+
+				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
+                
+                //
+
 			} break;
 
 			case State.FINISH: {
