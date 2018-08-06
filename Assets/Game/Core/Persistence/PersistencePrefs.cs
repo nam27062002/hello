@@ -33,6 +33,9 @@ public class PersistencePrefs
     // User's profile name. The name instead of the level is stored in order to prevent the wrong profile from being applied if we happen to add/remove profile levels
     private static string KEY_USER_PROFILE_NAME = "userProfileLevel";
 
+    // User's language set in server
+    private static string KEY_SERVER_LANGUAGE = "serverLanguage";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
@@ -43,7 +46,8 @@ public class PersistencePrefs
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
-        KEY_USER_PROFILE_NAME
+        KEY_USER_PROFILE_NAME,
+        KEY_SERVER_LANGUAGE
     };        
 
     public static bool IsDirty = false;
@@ -117,6 +121,16 @@ public class PersistencePrefs
     public static void SetUserProfileName(string value)
     {
         SetString(KEY_USER_PROFILE_NAME, value);
+    }
+
+    public static string GetServerLanguage()
+    {
+        return PlayerPrefs.GetString(KEY_SERVER_LANGUAGE, null);        
+    }
+
+    public static void SetServerLanguage(string value)
+    {
+        SetString(KEY_SERVER_LANGUAGE, value);
     }
 
     #region social
