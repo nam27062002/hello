@@ -272,7 +272,7 @@ public class GameSceneController : GameSceneControllerBase {
 				
 			case EStates.RUNNING: {
 				// Update running time
-				if (!m_freezeElapsedSeconds)
+				if (!m_freezeElapsedSeconds && !m_switchingArea)
 					m_elapsedSeconds += Time.deltaTime;
 
 				// Dynamic loading
