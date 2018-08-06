@@ -1704,6 +1704,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {        
         return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_PENDING_TRANSACTIONS_SERVER_CONFIRM);        
     }
+
+    public float SocialPlatformLoginTimeout
+    {
+        get
+        {
+            return (Device_CurrentFeatureSettings == null) ? 5f : Device_CurrentFeatureSettings.GetValueAsFloat(FeatureSettings.KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT);
+        }
+    }
     #endregion
 
     #region log
