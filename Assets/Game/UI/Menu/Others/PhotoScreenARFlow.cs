@@ -239,17 +239,17 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 			} break;
 
 			case State.FINISH: {
+                // Restore affected objects
+                if(ARKitManager.s_pInstance != null) {
+                    ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
+                    ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
+                }
+                
 				// Close the AR session
 				ARKitManager.SharedInstance.FinishingARSession();
-
+                
 				// Finalize AR Game Manager
 				ARGameManager.SharedInstance.UnInitialise();
-
-				// Restore affected objects
-				if(ARKitManager.s_pInstance != null) {
-					ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
-					ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
-				}
 
 				// Restore main cameras
 				ToggleMainCameras(true);
