@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 
 using System;
+using System.Text;
 
 using TMPro;
 using DG.Tweening;
@@ -54,6 +55,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 	// Internal
 	private float m_previousPrice = 0f;
+	private StringBuilder m_sb = new StringBuilder();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -179,13 +181,17 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 		// If pack is active, update text
 		if(m_pack.isActive) {
+			m_sb.Length = 0;
 			m_remainingTimeText.Localize(
 				m_remainingTimeText.tid, 
-				TimeUtils.FormatTime(
+				m_sb.Append("<nobr>")
+				.Append(TimeUtils.FormatTime(
 					System.Math.Max(0, m_pack.remainingTime.TotalSeconds), // Just in case, never go negative
 					TimeUtils.EFormat.ABBREVIATIONS,
 					4
-				)
+				))
+				.Append("</nobr>")
+				.ToString()
 			);
 		
 		// If pack has expired, hide this pill

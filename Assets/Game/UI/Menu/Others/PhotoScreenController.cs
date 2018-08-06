@@ -454,12 +454,6 @@ public class PhotoScreenController : MonoBehaviour {
 	private void OnARExit() {
 		// Terminate AR flow
 		m_arFlow.EndFlow();
-
-		// Restore bottom bar
-		m_bottomBar.gameObject.SetActive(true);
-
-        currentMode.dragControl.gameObject.SetActive(true);
-        currentMode.zoomControl.gameObject.SetActive(true);
 	}
 
 	/// <summary>
@@ -478,5 +472,11 @@ public class PhotoScreenController : MonoBehaviour {
 	private void OnARStateChanged(PhotoScreenARFlow.State _oldState, PhotoScreenARFlow.State _newState) {
 		// Don't show dragon info while detecting the surface
 		currentMode.uiContainer.SetActive(_newState != PhotoScreenARFlow.State.DETECTING_SURFACE);
+
+		// Don't show bottom bar or drag controls while AR is active
+		bool arOff = _newState == PhotoScreenARFlow.State.FINISH || _newState == PhotoScreenARFlow.State.OFF;
+		m_bottomBar.gameObject.SetActive(arOff);
+		currentMode.dragControl.gameObject.SetActive(arOff);
+		currentMode.zoomControl.gameObject.SetActive(arOff);
 	}
 }
