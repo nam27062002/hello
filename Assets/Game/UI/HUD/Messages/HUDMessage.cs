@@ -117,7 +117,6 @@ public class HUDMessage : MonoBehaviour {
 	[SerializeField] private float m_idleDuration = 1f;	// Only applies for TIMER hide mode
 
 	[SerializeField] private bool m_onlyFirstTime = false;	// Check if only one time!
-	private bool m_firstTime = true;
 
 	// Custom exposed setup for specific types - editor will decide when to show them
 	[Separator]
@@ -157,6 +156,8 @@ public class HUDMessage : MonoBehaviour {
 
 	private bool m_gameStarted = false;
 	private bool m_hasEverPerformedAction = false;
+
+    private string m_zoneId = "";
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -624,30 +625,44 @@ public class HUDMessage : MonoBehaviour {
 		if ( toggle ){
 			if ( m_onlyFirstTime )
 			{
-				if ( _fistTime )
-				{
-					// Get text to show
-					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-					string localizedZone = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
-					string localized = LocalizationManager.SharedInstance.Localize("TID_LEVEL_AREA_WELCOME", localizedZone);
-			        text.text = localized;
-			        Show();		
-				}
+				// Get text to show
+                if (!UsersManager.currentUser.m_visitedZones.Contains(zone.m_zoneId))
+                {
+                    m_zoneId = zone.m_zoneId;
+    				TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+    				string localizedZone = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+    				string localized = LocalizationManager.SharedInstance.Localize("TID_LEVEL_AREA_WELCOME", localizedZone);
+    		        text.text = localized;
+                    // Delay register zone so the other message can check that the zone is not in the list
+                    OnHide.AddListener( RegisterZone );
+    		        Show();
+                }
 			}
 			else
 			{
-				if(!_fistTime)
-				{
-					// Get text to show
-					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-			        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
-			        text.text = localized;
-			        Show();		
-				}
+                if (UsersManager.currentUser.m_visitedZones.Contains(zone.m_zoneId))
+                {
+    				// Get text to show
+    				TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+    		        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+    		        text.text = localized;
+    		        Show();			
+                }
 			}
-			m_firstTime = false;
 		}
+        else
+        {
+            // Hide small reminder
+            if (!m_onlyFirstTime)
+                Hide();
+        }
 	}
+    
+    private void RegisterZone( HUDMessage message )
+    {
+        UsersManager.currentUser.m_visitedZones.Add( m_zoneId );
+        OnHide.RemoveListener( RegisterZone );
+    }
 
 	private void OnShieldLostMine(DamageType _type, Transform _tr) {
 		// For now we're only interested in the type
