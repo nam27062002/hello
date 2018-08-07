@@ -717,11 +717,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, currentLanguage);
                 if (langDef != null)
                 {
-                    string isoCode = langDef.Get("isoCode");
-                    if (!string.IsNullOrEmpty(isoCode))
+                    string serverCode = langDef.Get("serverCode");
+                    if (!string.IsNullOrEmpty(serverCode))
                     {
                         m_languageRequested = currentLanguage;
-                        GameServerManager.SharedInstance.SetLanguage(isoCode, Language_OnSetInServer);
+                        GameServerManager.SharedInstance.SetLanguage(serverCode, Language_OnSetInServer);
                     }
                 }
             }

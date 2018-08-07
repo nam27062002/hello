@@ -69,6 +69,8 @@ public class SnappingScrollRect : ScrollRect {
 	}
 
 	[Space]
+	[SerializeField] protected bool m_autoInitialSelection = true;
+
 	[SerializeField]
 	protected ScrollRectSnapPoint m_selectedPoint = null;
 	public ScrollRectSnapPoint selectedPoint {
@@ -122,7 +124,7 @@ public class SnappingScrollRect : ScrollRect {
 		if(m_dirty) {
 			// If a default selection is not defined, try to find one instead
 			if(m_selectedPoint == null) {
-				Snap();
+				if(m_autoInitialSelection) Snap();
 			} else {
 				ScrollToSelection();
 			}

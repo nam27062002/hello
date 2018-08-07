@@ -283,6 +283,8 @@ public class LightmapTool : EditorWindow {
                 LightingSettingsHelper.SetFinalGatherEnabled(false);
                 RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
                 RenderSettings.fog = false;
+
+                Debug.Log("Scene name: " + s.name);
             }
         }
     }

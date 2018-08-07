@@ -541,10 +541,10 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.PendingTransactions_Confirm, parameters, callback);
     }
 
-    public override void SetLanguage(string isoCode, ServerCallback onDone)
+    public override void SetLanguage(string serverCode, ServerCallback onDone)
     {
         JSONNode json = new JSONClass();
-        json["language"] = isoCode;
+        json["language"] = serverCode;
         
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("body", json.ToString());
