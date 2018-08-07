@@ -2294,9 +2294,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 	}
 
     private void Track_AddParamSubVersion(TrackingEvent e)
-    {
-        // "SoftLaunch" is sent so far. It will be changed wto "HardLaunch" after WWL
-        Track_AddParamString(e, TRACK_PARAM_SUBVERSION, "SoftLaunch");
+    {        
+        Track_AddParamString(e, TRACK_PARAM_SUBVERSION, "WorldLaunch");
     }
 
     private void Track_AddParamProviderAuth(TrackingEvent e)
