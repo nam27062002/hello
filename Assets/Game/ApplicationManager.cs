@@ -40,8 +40,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public Mode appMode
     {
     	get{ return m_appMode; }
-    }
-
+    }    
 
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
@@ -69,9 +68,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, Game_OnEnded);        
+        Messenger.AddListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
+        Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
 
-		Device_Init();
+        Device_Init();
 
         GameCenter_Init();
 
@@ -95,8 +95,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		}
 
         // Subscribe to external events
-        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
+            Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+        }
 
 		CancelLocalNotifications();
 
@@ -119,7 +122,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();        
+        base.OnDestroy();
+
+        Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
+        Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
+        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
+        Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
+            Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+        }
 
         m_isAlive = false;
 
@@ -154,6 +168,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Game_IsInGame = false;
         Game_IsPaused = false;
         Debug_IsPaused = false;
+        Language_Reset();
     }
 
     public bool NeedsToRestartFlow { get; set; }    
@@ -280,6 +295,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             //PersistencePrefs.Clear();
         }
 #endif
+
+        Language_Update();
 
         PersistenceFacade.instance.Update();
         HDTrackingManager.Instance.Update();
@@ -657,9 +674,62 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
         }
     }
-#endregion
+    #endregion
 
-#region memory_profiler
+    #region language
+    private string m_languageRequested;
+    private bool m_languageNeedsToBeUpdated;
+
+    private void Language_Reset()
+    {
+        m_languageNeedsToBeUpdated = true;
+        m_languageRequested = null;
+    }
+
+    private void Language_OnChanged()
+    {
+        m_languageNeedsToBeUpdated = true;
+    }
+
+    private void Language_OnSetInServer(FGOL.Server.Error error, GameServerManager.ServerResponse response)
+    {
+        // It's stored only if the server has stored it successfully
+        if (error == null && !string.IsNullOrEmpty(m_languageRequested))
+        {
+            PersistencePrefs.SetServerLanguage(m_languageRequested);            
+        }
+
+        m_languageRequested = null;
+    }
+
+    private void Language_Update()
+    {
+        // We need to way for ContentManager to be ready in order to make sure that current laguange has been loaded in LocalizationManager
+        // Checks that language has changed and there's no a request already being processed
+        if (ContentManager.m_ready && m_languageNeedsToBeUpdated && m_languageRequested == null && false)
+        {
+            m_languageNeedsToBeUpdated = false;
+
+            string currentLanguage = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
+            string serverLanguage = PersistencePrefs.GetServerLanguage();
+            if (currentLanguage != serverLanguage)
+            {
+                DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, currentLanguage);
+                if (langDef != null)
+                {
+                    string isoCode = langDef.Get("isoCode");
+                    if (!string.IsNullOrEmpty(isoCode))
+                    {
+                        m_languageRequested = currentLanguage;
+                        GameServerManager.SharedInstance.SetLanguage(isoCode, Language_OnSetInServer);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region memory_profiler
     private bool m_memoryProfilerIsEnabled = false;
     private bool MemoryProfiler_IsEnabled
     {
