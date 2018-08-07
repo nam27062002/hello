@@ -34,8 +34,9 @@ public class ShaderCacheTool : EditorWindow {
     };
 
     private static string shaderCacheSource = "shader_cache_source.txt";
+    private static string shaderCacheExcludeList = "shader_cache_exclude_list.txt";
 
-    static bool addVariantRecursive(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords, List<string> currentVariant, int level)
+    private static bool addVariantRecursive(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords, List<string> currentVariant, int level)
     {
         if (level >= keywords.Count) return false;
 
@@ -82,7 +83,7 @@ public class ShaderCacheTool : EditorWindow {
         return true;
     }
 
-    static bool addVariant(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords)
+    private static bool addVariant(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords)
     {
         ShaderVariantCollection.ShaderVariant sv;
         sv.keywords = keywords.ToArray();
@@ -91,7 +92,7 @@ public class ShaderCacheTool : EditorWindow {
         return svc.Add(sv);
     }
 
-    static void DebugVariant(Shader shader, string[] keywords, bool succes)
+    private static void DebugVariant(Shader shader, string[] keywords, bool succes)
     {
         string kw = "";
         for (int c = 0; c < keywords.Length; c++)
@@ -100,6 +101,24 @@ public class ShaderCacheTool : EditorWindow {
         }
         Debug.Log("Variant: " + shader.name + " with keywords: " + kw + ((succes) ? " added to collection." : "already exists."));
     }
+
+
+    private static string[] excludeList;
+    private static void loadShaderCacheExcludeList()
+    {
+        excludeList = File.ReadAllLines(shaderCacheExcludeList);
+    }
+
+    private static bool excludeShader(Shader shader)
+    {
+        if (excludeList == null) return false;
+        for (int c = 0; c < excludeList.Length; c++)
+        {
+            if (shader.name == excludeList[c]) return true;
+        }
+        return false;
+    }
+
 
     [MenuItem("Tools/Create shader caches recursive")]
     static void CreateShaderCachesRecursive()
@@ -173,7 +192,11 @@ public class ShaderCacheTool : EditorWindow {
     {
         Material[] materialList;
         AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        loadShaderCacheExcludeList();
+
         List<string> keywords = new List<string>();
+
         for (int quality = 0; quality < qualityVariants.Length; quality++)
         {
             ShaderVariantCollection svc = new ShaderVariantCollection();
@@ -181,6 +204,9 @@ public class ShaderCacheTool : EditorWindow {
             for (int c = 0; c < materialList.Length; c++)
             {
                 Material m = materialList[c];
+
+                if (excludeShader(m.shader)) continue;
+
                 ShaderVariantCollection.ShaderVariant sv;
 
                 string lightMode = m.GetTag("LightMode", false, "Normal");
