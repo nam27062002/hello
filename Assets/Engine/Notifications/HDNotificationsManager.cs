@@ -72,8 +72,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 			ControlPanel.Log(LOG_CHANNEL + "================= ");
 			UnityEngine.iOS.NotificationServices.ClearRemoteNotifications();
 		}
-	}
-	#endif
+	}	
 
 	public bool IsNotificationSilent( UnityEngine.iOS.RemoteNotification _notification )
 	{
@@ -83,6 +82,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 		}
 		return ret;
 	}
+    #endif
 
 	public bool GetNotificationsEnabled()
     {
