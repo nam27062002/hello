@@ -40,7 +40,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	[SerializeField] private Localizer m_remainingTimeText = null;
 	[Space]
 	[SerializeField] private Text m_priceText = null;
-	[SerializeField] private TextMeshProUGUI m_previousPriceText = null;
+	[SerializeField] private Text m_previousPriceText = null;
 	[SerializeField] private GameObject m_featuredHighlight = null;
 	[Separator("Optional Decorations")]
 	[SerializeField] private UIGradient m_backgroundGradient = null;
@@ -92,8 +92,9 @@ public class PopupShopOffersPill : IPopupShopPill {
 		// Pricing
 		m_currency = UserProfile.Currency.REAL;	// For now offer packs are only bought wtih real money!
 		m_price = m_def.GetAsFloat("refPrice");
+		StoreManager.StoreProduct productInfo = null;
 		if(GameStoreManager.SharedInstance.IsReady()) {
-			StoreManager.StoreProduct productInfo = GameStoreManager.SharedInstance.GetStoreProduct(GetIAPSku());
+			productInfo = GameStoreManager.SharedInstance.GetStoreProduct(GetIAPSku());
 			if(productInfo != null) {
 				// Price is localized by the store api, if available
 				m_price = productInfo.m_fLocalisedPriceValue;
@@ -129,14 +130,43 @@ public class PopupShopOffersPill : IPopupShopPill {
 		);
 
 		// Price
-		m_priceText.text = GetLocalizedIAPPrice(m_price);
+		string localizedPrice = GetLocalizedIAPPrice(m_price);
+		m_priceText.text = localizedPrice;
 
 		// Original price
 		// [AOC] This gets quite tricky. We will try to keep the format of the 
 		//		 localized price (given by the store), but replacing the actual amount.
-		// $150 150€ 150 €
-		// [AOC] TODO!! Let's just put the formatted number for now
-		m_previousPriceText.text = StringUtils.FormatNumber(m_previousPrice, 2);
+		// Supported cases: "$150" "150€" "$ 150" "150 €"
+		string localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
+		string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
+
+		// a) "$150"
+		if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+			localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
+		}
+
+		// b) "$ 150"
+		else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
+			localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
+		}
+
+		// c) "150€"
+		else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+			localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
+		}
+
+		// d) "150 €"
+		else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+			localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
+		}
+
+		// e) Anything else
+		else {
+			// Show just the formatted number - nothing to do
+		}
+
+		// Done! Set text
+		m_previousPriceText.text = localizedPreviousPrice;
 
 		// Featured highlight
 		if(m_featuredHighlight != null) {

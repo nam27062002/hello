@@ -109,7 +109,12 @@ public class HDQuestManager : HDLiveEventManager{
 		get { return Mathf.Clamp01(m_questData.m_globalScore/(float)m_questDefinition.m_goal.m_amount); }
 	}
 
-#region server_comunication
+    #region server_comunication
+    protected override void RequestEventDefinitionResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+        base.RequestEventDefinitionResponse(_error, _response);
+        if (ShouldRequestProgress())
+            RequestProgress();
+    }
 
 	public bool ShouldRequestProgress()
 	{

@@ -501,17 +501,27 @@ public class LoadingSceneController : SceneController {
                 }break;
             case State.WAITING_TERMS:
             {
-				if (PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION 
-					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
-					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() 
-                    )
+				bool termsNeeded = PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION;
+				bool ageNeeded = GDPRManager.SharedInstance.IsAgePopupNeededToBeShown();
+				bool consentNeeded = GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown();
+				if(termsNeeded || ageNeeded || consentNeeded)
                 {
-                    Debug.Log("<color=RED>LEGAL</color>");
-					PopupController popupController = PopupManager.LoadPopup(PopupConsentLoading.PATH);
+					// Different popup depending on requirement
+					string popupPath = string.Empty;
+					if(ageNeeded || consentNeeded) {
+						Debug.Log("<color=RED>LEGAL COPPA / GDPR</color>");
+						popupPath = PopupConsentLoadingCoppaGdpr.PATH_COPPA_GDPR;
+					} else {
+						Debug.Log("<color=RED>LEGAL ROTW</color>");
+						popupPath = PopupConsentLoading.PATH;
+					}
+
+					// Open popup
+					PopupController popupController = PopupManager.LoadPopup(popupPath);
 					popupController.GetComponent<PopupConsentLoading>().Init();
-                    popupController.OnClosePostAnimation.AddListener(OnTermsDone);
+					popupController.OnClosePostAnimation.AddListener(OnTermsDone);
 					popupController.Open();
-                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
+					HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
                 }
                 else
                 {

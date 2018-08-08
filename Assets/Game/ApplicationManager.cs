@@ -706,7 +706,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         // We need to way for ContentManager to be ready in order to make sure that current laguange has been loaded in LocalizationManager
         // Checks that language has changed and there's no a request already being processed
-        if (ContentManager.m_ready && m_languageNeedsToBeUpdated && m_languageRequested == null && false)
+        if (ContentManager.m_ready && m_languageNeedsToBeUpdated && m_languageRequested == null)
         {
             m_languageNeedsToBeUpdated = false;
 
@@ -717,11 +717,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, currentLanguage);
                 if (langDef != null)
                 {
-                    string isoCode = langDef.Get("isoCode");
-                    if (!string.IsNullOrEmpty(isoCode))
+                    string serverCode = langDef.Get("serverCode");
+                    if (!string.IsNullOrEmpty(serverCode))
                     {
                         m_languageRequested = currentLanguage;
-                        GameServerManager.SharedInstance.SetLanguage(isoCode, Language_OnSetInServer);
+                        GameServerManager.SharedInstance.SetLanguage(serverCode, Language_OnSetInServer);
                     }
                 }
             }

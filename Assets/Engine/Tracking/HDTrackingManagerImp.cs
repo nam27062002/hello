@@ -1528,8 +1528,17 @@ public class HDTrackingManagerImp : HDTrackingManager
         {
             if (TrackingPersistenceSystem != null)
             {
-                e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingPersistenceSystem.AdsCount);
-                e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, TrackingPersistenceSystem.AdsSessions);
+                // According to specification we need to include the current ad
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_LTD, TrackingPersistenceSystem.AdsCount + 1);
+
+                // According to specification we need to include the current session is it hasn't been condisered yet
+                int adsSessions = TrackingPersistenceSystem.AdsSessions;
+                if (!Session_IsAdSession)
+                {
+                    adsSessions++;
+                }
+
+                e.SetParameterValue(TRACK_PARAM_NB_ADS_SESSION, adsSessions);
             }
 
             Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
@@ -2294,9 +2303,8 @@ public class HDTrackingManagerImp : HDTrackingManager
 	}
 
     private void Track_AddParamSubVersion(TrackingEvent e)
-    {
-        // "SoftLaunch" is sent so far. It will be changed wto "HardLaunch" after WWL
-        Track_AddParamString(e, TRACK_PARAM_SUBVERSION, "SoftLaunch");
+    {        
+        Track_AddParamString(e, TRACK_PARAM_SUBVERSION, "WorldLaunch");
     }
 
     private void Track_AddParamProviderAuth(TrackingEvent e)
