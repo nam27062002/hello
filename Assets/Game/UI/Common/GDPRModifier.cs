@@ -33,8 +33,8 @@ public class GDPRModifier : MonoBehaviour {
 
 	public enum CountryGroup {
 		ALL_COUNTRIES = 0,
-		EUROPE,
-		NA,
+		GDPR,
+		COPPA,
 		GERMANY,
 		UNKNOWN
 	}
@@ -42,7 +42,7 @@ public class GDPRModifier : MonoBehaviour {
 	private static readonly string[][] COUNTRY_GROUPS = new string[][] {
 		new string[] { },
 		new string[] { "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "GB" },
-		new string[] { "US", "CA" },
+		new string[] { "US" },
 		new string[] { "DE" },
 		new string[] { "Unknown", "--" }
 	};
