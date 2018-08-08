@@ -2,12 +2,19 @@
 public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
 {
 	private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
-
+	public const string SILENT_FLAG = "Notifications.Silent";
 
     public void Initialise()
     {
         if (!NotificationsManager.SharedInstance.CheckIfInitialised())
         {
+			/*
+			#if UNITY_IOS
+			UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound, true);
+			CheckRemoteNotifications();
+			#endif
+			*/
+
 #if UNITY_ANDROID
 			NotificationsManager.NotificationChannelConfig kNotificationsConfig = new NotificationsManager.NotificationChannelConfig ();
 			kNotificationsConfig.m_strResSmallIconName = "push_notifications";
@@ -28,7 +35,56 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
         }
     }
 
-    public bool GetNotificationsEnabled()
+    public void Update()
+    {
+#if UNITY_IOS    
+		CheckRemoteNotifications();
+#endif        
+    }
+
+	#if UNITY_IOS
+	private void CheckRemoteNotifications() {
+		if ( UnityEngine.iOS.NotificationServices.remoteNotificationCount > 0)
+		{
+			ControlPanel.Log(LOG_CHANNEL + "================= ");
+			ControlPanel.Log(LOG_CHANNEL + " Number Of remote notificaions: " + UnityEngine.iOS.NotificationServices.remoteNotificationCount);
+			int max = UnityEngine.iOS.NotificationServices.remoteNotificationCount;
+			for (int i = 0; i < max; i++)
+			{
+				UnityEngine.iOS.RemoteNotification notification = UnityEngine.iOS.NotificationServices.remoteNotifications[i];
+				ControlPanel.Log(LOG_CHANNEL + " Body:" + notification.alertBody);
+				ControlPanel.Log(LOG_CHANNEL + " Sound:" + notification.soundName);
+				ControlPanel.Log(LOG_CHANNEL + " BadgeNumber:" + notification.applicationIconBadgeNumber);
+				ControlPanel.Log(LOG_CHANNEL + " Has Action:" + notification.hasAction);
+				ControlPanel.Log(LOG_CHANNEL + " UserInfo Size:" + notification.userInfo.Count);
+				foreach (System.Collections.DictionaryEntry entry in notification.userInfo)
+				{
+					ControlPanel.Log(LOG_CHANNEL + " \t\t entry: " + entry.Key + " value:" + entry.Value);    
+				}
+
+				// if notification is silent save a flag for the game to know
+				if ( IsNotificationSilent( notification ) )
+				{
+					ControlPanel.Log( LOG_CHANNEL + "Is Silent Notification");  
+					PlayerPrefs.SetInt(SILENT_FLAG, 1);
+				}
+			}
+			ControlPanel.Log(LOG_CHANNEL + "================= ");
+			UnityEngine.iOS.NotificationServices.ClearRemoteNotifications();
+		}
+	}
+	#endif
+
+	public bool IsNotificationSilent( UnityEngine.iOS.RemoteNotification _notification )
+	{
+		bool ret = false;
+		if(string.IsNullOrEmpty(_notification.alertBody) && string.IsNullOrEmpty(_notification.soundName)) {
+			ret = true;
+		}
+		return ret;
+	}
+
+	public bool GetNotificationsEnabled()
     {
         return NotificationsManager.SharedInstance.GetNotificationsEnabled();
     }

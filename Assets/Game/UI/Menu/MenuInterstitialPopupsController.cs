@@ -31,6 +31,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private float m_waitTimeOut;
 
 	private PopupController m_currentPopup = null;
+	private bool m_checkingConnection = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -42,6 +43,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		m_checkingConnection = false;
 	}
 
 	/// <summary>
@@ -235,6 +237,46 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			}
 		}
 	}
+	private void CheckSilentNotification() {
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed)
+			return;
+
+		if(PlayerPrefs.GetInt(HDNotificationsManager.SILENT_FLAG) == 1 && !m_checkingConnection) 
+		{
+			if(Application.internetReachability == NetworkReachability.NotReachable) {
+				ShowGoOnlinePopup();
+				PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
+			} else {
+				m_checkingConnection = true;
+				GameServerManager.SharedInstance.CheckConnection( ConnectionCallback );
+			}
+		}
+	}
+
+	private void ConnectionCallback( FGOL.Server.Error _error) {
+		if(_error != null) {
+			// if there was a connection error show popup
+			ShowGoOnlinePopup();			
+		}
+		PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
+		m_checkingConnection = false;
+	}
+
+	private void ShowGoOnlinePopup() {
+		IPopupMessage.Config config = IPopupMessage.GetConfig();
+		config.TextType = IPopupMessage.Config.ETextType.DEFAULT;
+		config.TitleTid = "TID_GO_ONLINE_FOR_TOURNAMENTS_TITLE";
+		config.ShowTitle = true;
+		config.MessageTid = "TID_GO_ONLINE_FOR_TOURNAMENTS_BODY";
+		config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.Close;
+		config.ConfirmButtonTid = "TID_GEN_OK";
+		config.OnConfirm = null;
+		config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
+		config.IsButtonCloseVisible = true;
+
+		PopupManager.PopupMessage_Open(config);		
+	}
 
 	/// <summary>
 	/// Checks whether the Survey popup must be opened or not and does it.
@@ -315,7 +357,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
-            CheckInterstitialAds();
+            			CheckInterstitialAds();
 						CheckRating();
 						CheckSurvey();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
@@ -323,6 +365,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 					// Coming from PLAY screen
 					case MenuScreen.PLAY: {
+						CheckSilentNotification();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
 					} break;
 				}
