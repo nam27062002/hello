@@ -84,11 +84,11 @@ public class GDPRModifier : MonoBehaviour {
 		// Check condition - return if condition is not met
 		switch(m_condition) {
 			case Condition.UNDERAGE: {
-				if(underage) return;
+				if(!underage) return;
 			} break;
 
 			case Condition.CONSENT_NOT_GIVEN: {
-				if(!consented) return;
+				if(consented) return;
 			} break;
 		}
 
