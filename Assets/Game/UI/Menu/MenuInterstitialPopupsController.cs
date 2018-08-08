@@ -98,7 +98,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				m_waitTimeOut = 5f;
 				BusyScreen.Show(this, false);
 
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(LocalizationManager.SharedInstance.Culture.TwoLetterISOLanguageName);
+				string langServerCode = "en";
+				DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, LocalizationManager.SharedInstance.GetCurrentLanguageSKU());
+				if(langDef != null) {
+					langServerCode = langDef.GetAsString("serverCode", langServerCode);
+				}
+				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				}
