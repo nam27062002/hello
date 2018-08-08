@@ -143,6 +143,11 @@ public class SpawnerEditor : Editor {
 					if(EditorGUI.EndChangeCheck()) {
 						// Check for wrong setups (once the property changes have been applied!)
 						checkForErrors = true;
+
+                        if (m_activationTriggersProp.arraySize > 5)
+                        {
+                            m_activationTriggersProp.arraySize = 5;
+                        }
 					}
 
 					// Show feedback messages
@@ -163,17 +168,25 @@ public class SpawnerEditor : Editor {
 					}
 				}
 
-	            else if (p.name == m_activationKillTriggersProp.name) { 
-					// Do nothing
-				}
+	            else if (p.name == m_activationKillTriggersProp.name) {
+                    // Do nothing
+                    if (m_activationKillTriggersProp.arraySize > 5)
+                    {
+                        m_activationKillTriggersProp.arraySize = 5;
+                    }
+                }
 
-	            // Ignore both activation triggers (we're showing them manually)
-	            else if (p.name == m_deactivationTriggersProp.name) { 
-					// Do nothing
-				}
+                // Ignore both activation triggers (we're showing them manually)
+                else if (p.name == m_deactivationTriggersProp.name) {
+                    // Do nothing
+                    if (m_deactivationTriggersProp.arraySize > 5)
+                    {
+                        m_deactivationTriggersProp.arraySize = 5;
+                    }
+                }
 
-				// Default
-				else {
+                // Default
+                else {
 	                if (isRangeRegisteredProperty(p))
 	                {
 						SerializedProperty min = p.FindPropertyRelative("min");

@@ -324,7 +324,16 @@ public class LoadingSceneController : SceneController {
 			// No language was defined, load default system language
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
-        strLanguageSku = "lang_english";
+
+        // If language sku not found or not enabled in current platform, use english instead
+        DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, strLanguageSku);
+        if(langDef == null
+        || (Application.platform == RuntimePlatform.Android && !langDef.GetAsBool("android"))
+        || (Application.platform == RuntimePlatform.IPhonePlayer && !langDef.GetAsBool("iOS"))) {
+            strLanguageSku = "lang_english";
+        }
+
+        // Initialize localization manager
 		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
@@ -492,17 +501,27 @@ public class LoadingSceneController : SceneController {
                 }break;
             case State.WAITING_TERMS:
             {
-				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
-					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
-					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() 
-                    )
+				bool termsNeeded = PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION;
+				bool ageNeeded = GDPRManager.SharedInstance.IsAgePopupNeededToBeShown();
+				bool consentNeeded = GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown();
+				if(termsNeeded || ageNeeded || consentNeeded)
                 {
-                    Debug.Log("<color=RED>LEGAL</color>");
-					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
-					popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.LOADING_FUNNEL);
-                    popupController.OnClosePostAnimation.AddListener(OnTermsDone);
+					// Different popup depending on requirement
+					string popupPath = string.Empty;
+					if(ageNeeded || consentNeeded) {
+						Debug.Log("<color=RED>LEGAL COPPA / GDPR</color>");
+						popupPath = PopupConsentLoadingCoppaGdpr.PATH_COPPA_GDPR;
+					} else {
+						Debug.Log("<color=RED>LEGAL ROTW</color>");
+						popupPath = PopupConsentLoading.PATH;
+					}
+
+					// Open popup
+					PopupController popupController = PopupManager.LoadPopup(popupPath);
+					popupController.GetComponent<PopupConsentLoading>().Init();
+					popupController.OnClosePostAnimation.AddListener(OnTermsDone);
 					popupController.Open();
-                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
+					HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
                 }
                 else
                 {

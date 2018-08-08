@@ -45,6 +45,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 #else
             m_adProvider = new AdProviderDummy();
 #endif
+            m_adProvider.onVideoAdOpen += onVideoOpen;
+            m_adProvider.onVideoAdClosed += onVideoClosed;
         }
 
         return m_adProvider;
@@ -73,6 +75,15 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 			}
         }
 	}
+
+    public void onVideoOpen()
+    {
+        AudioListener.volume = 0;    
+    }
+    public void onVideoClosed()
+    {
+        AudioListener.volume = 1;
+    }
 
 	public void ShowInterstitial(OnPlayVideoCallback callback)
 	{

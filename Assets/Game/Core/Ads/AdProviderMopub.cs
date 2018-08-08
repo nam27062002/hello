@@ -2,6 +2,18 @@
 
 public class AdProviderMopub : AdProvider
 {
+
+    ~AdProviderMopub()
+    {
+        #if MOPUB_SDK_ENABLED
+            MoPubManager.OnRewardedVideoClosedEvent -= onRewardedVideoClosedEvent;
+            MoPubManager.OnRewardedVideoShownEvent -= onRewardedVideoShownEvent;
+            
+            MoPubManager.OnInterstitialShownEvent -= onInterstitialShown;
+            MoPubManager.OnInterstitialDismissedEvent -= OnInterstitialDismissed;
+        #endif            
+    }
+    
     protected override void ExtendedInit(bool useAgeProtection)
     {
         if (useAgeProtection)
@@ -18,7 +30,7 @@ public class AdProviderMopub : AdProvider
             string rewardId = "";
             bool isPhone = !MiscUtils.IsDeviceTablet(FeatureSettingsManager.m_OriginalScreenWidth, FeatureSettingsManager.m_OriginalScreenHeight, Screen.dpi);
             if (UnityEngine.Debug.isDebugBuild)
-            {                
+            {
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     if (isPhone)
@@ -78,7 +90,27 @@ public class AdProviderMopub : AdProvider
 
             // TODO: Validate all interstitialId values are configurated correctly (Ask Juan how to validate configuration for these ids)
             MopubAdsManager.SharedInstance.Init(interstitialId, false, rewardId, true, 30);
+#if MOPUB_SDK_ENABLED
+            MoPubManager.OnRewardedVideoShownEvent += onVideoAdOpen;
+            MoPubManager.OnRewardedVideoClosedEvent += OnVideoEnded;
+            
+            
+            MoPubManager.OnInterstitialShownEvent += onVideoAdOpen;
+            MoPubManager.OnInterstitialDismissedEvent += OnVideoEnded;
+#endif            
         }
+    }
+    
+    void OnVideoStarted( string id )
+    {
+        if (onVideoAdOpen != null)
+            onVideoAdOpen();
+    }
+    
+    void OnVideoEnded( string id )
+    {
+        if (onVideoAdClosed != null)
+            onVideoAdClosed();
     }
 
     protected override void ExtendedShowInterstitial()

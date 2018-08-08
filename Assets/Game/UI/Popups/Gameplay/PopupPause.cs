@@ -137,7 +137,7 @@ public class PopupPause : PopupPauseBase {
 
 		// Open the dragon info popup and initialize it with the current dragon's data
 		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
-		popup.Init(DragonManager.currentDragon);
+		popup.Init(InstanceManager.player.data);
 	}
 
 	/// <summary>

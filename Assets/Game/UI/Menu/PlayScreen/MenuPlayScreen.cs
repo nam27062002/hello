@@ -71,6 +71,8 @@ public class MenuPlayScreen : MonoBehaviour {
 	{
         HDTrackingManager.Instance.Notify_MenuLoaded();        
 
+        SceneController.s_playMenuButtonLock = false;
+
 		// Check Facebook/Weibo Connect visibility        
         Refresh();
     }

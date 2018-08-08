@@ -81,9 +81,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_popupDisplayed) return;
 
 		// Is the last accepted version the same as the current one?
-		if(PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
+		if(PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION) {
 			Debug.Log("<color=RED>LEGAL</color>");
-			m_currentPopup = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupConsentLoading.PATH);
 			m_popupDisplayed = true;
 		}
 	}
@@ -98,7 +98,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				m_waitTimeOut = 5f;
 				BusyScreen.Show(this, false);
 
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(LocalizationManager.SharedInstance.Culture.TwoLetterISOLanguageName);
+				string langServerCode = "en";
+				DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, LocalizationManager.SharedInstance.GetCurrentLanguageSKU());
+				if(langDef != null) {
+					langServerCode = langDef.GetAsString("serverCode", langServerCode);
+				}
+				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				}

@@ -321,6 +321,8 @@ public class GameServerManager
         return json;
     }
 
+    public virtual void SetLanguage(string serverCode, ServerCallback onDone) {}
+
     //------------------------------------------------------------------------//
     // GLOBAL EVENTS														  //
     //------------------------------------------------------------------------//

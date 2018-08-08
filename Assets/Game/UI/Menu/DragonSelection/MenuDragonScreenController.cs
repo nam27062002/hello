@@ -35,6 +35,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	[SerializeField] private float m_unlockAnimFinalPauseDuration = 1f;
 	[Space]
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
+    [SerializeField] private NavigationShowHideAnimator[] m_toHideOnTeaseAnim = null;
 
 	private bool m_isAnimating = false;
 	private bool isAnimating {
@@ -319,6 +320,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
 
+                for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                    m_toHideOnTeaseAnim[i].ForceHide(true, false);
+                }
+
 				// Do not desactivate to allow async loading
 				slot.animator.ForceHide(false, false);
 
@@ -352,6 +357,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
 					}
+                    for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                        m_toHideOnTeaseAnim[i].ForceShow(true);
+                    }
+
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
@@ -381,7 +390,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
-
+                for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                    m_toHideOnTeaseAnim[i].ForceHide(true, false);
+                }
 				if (!dragonData.isTeased) {
 					// Do not desactivate to allow async loading
 					slot.animator.ForceHide(false, false);
@@ -422,6 +433,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
 					}
+                    for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                        m_toHideOnTeaseAnim[i].ForceShow(true);
+                    }
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
