@@ -13,9 +13,11 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 	
 	public override string GetCountryCode()
 	{
-		if (Application.platform == RuntimePlatform.IPhonePlayer )
-			return IOsGetCountryCode();
-		return "US";
+        string ret = "US";
+		if (Application.platform == RuntimePlatform.IPhonePlayer ){
+			ret = IOsGetCountryCode();
+        }
+		return ret;
 	}
 	
 	[DllImport("__Internal")]
