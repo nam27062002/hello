@@ -145,8 +145,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
                         // Start real money transaction flow
                         m_loadingPopupController = PopupManager.PopupLoading_Open();
 						m_loadingPopupController.OnClosePostAnimation.AddListener(OnConnectionCheck);
-						RenderQueueSetter.Apply(m_loadingPopupController.transform, RenderQueueSetter.DEFAULT_UI_QUEUE + 1500);		// [AOC] In this particular case we want the loading popup to show on top of everything (specially meant for the offers popup with eggs, pets and sking VFX)
-                        GameServerManager.SharedInstance.CheckConnection(delegate (FGOL.Server.Error connectionError)
+						GameServerManager.SharedInstance.CheckConnection(delegate (FGOL.Server.Error connectionError)
                         {
                             m_checkConnectionError = connectionError;
                     #if UNITY_EDITOR
