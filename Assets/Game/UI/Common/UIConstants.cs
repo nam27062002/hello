@@ -302,11 +302,14 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			// Select target safe area based on special device
 			//return instance.m_safeAreas[(int)specialDevice];
 
-			if(m_safeArea == null || true) {
+			if(m_safeArea == null) {
 				// Unity's safe area is in Screen pixels
 				// Normalize and multiply by our Canvases reference resolution (hardcoded)
-				//Rect systemSafeArea = Screen.safeArea;
+				#if UNITY_EDITOR
 				Rect systemSafeArea = new Rect(132f, 63f, 2172f, 1062f);	// iPhoneX
+				#else
+				Rect systemSafeArea = Screen.safeArea;
+				#endif
 				ControlPanel.Log(Colors.orange.Tag("SYSTEM SAFE AREA: " + systemSafeArea.ToString()));
 
 				Rect normalizedSafeArea = new Rect(
