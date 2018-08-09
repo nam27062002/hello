@@ -305,8 +305,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			if(m_safeArea == null) {
 				// Unity's safe area is in Screen pixels
 				// Normalize and multiply by our Canvases reference resolution (hardcoded)
-				Rect systemSafeArea = Screen.safeArea;
-				ControlPanel.Log("SYSTEM SAFE AREA: " + systemSafeArea.ToString());
+				//Rect systemSafeArea = Screen.safeArea;
+				Rect systemSafeArea = new Rect(132f, 63f, 2172f, 1062f);	// iPhoneX
+				ControlPanel.Log(Colors.orange.Tag("SYSTEM SAFE AREA: " + systemSafeArea.ToString()));
 
 				Rect normalizedSafeArea = new Rect(
 					systemSafeArea.x / Screen.width,
@@ -314,15 +315,19 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 					systemSafeArea.width / Screen.width,
 					systemSafeArea.height / Screen.height
 				);
-				ControlPanel.Log("NORMALIZED SAFE AREA: " + systemSafeArea.ToString());
+				ControlPanel.Log(Colors.orange.Tag("NORMALIZED SAFE AREA: " + normalizedSafeArea.ToString()));
 
+				float ar = Screen.width / Screen.height;
+				float canvasH = 1536f;
+				float canvasW = canvasH * ar;
+				ControlPanel.Log(Colors.orange.Tag("ar: " + ar + " | canvas: " + canvasW + ", " + canvasH));
 				m_safeArea = new UISafeArea(
-					normalizedSafeArea.yMin * 1536f,
-					normalizedSafeArea.xMin * 2048f,
-					normalizedSafeArea.xMax * 2048f,
-					normalizedSafeArea.yMax * 1536f
+					normalizedSafeArea.yMin * canvasH,
+					normalizedSafeArea.xMin * canvasW,
+					(1f - normalizedSafeArea.xMax) * canvasW,
+					(1f - normalizedSafeArea.yMax) * canvasH
 				);
-				ControlPanel.Log("SAFE AREA: " + systemSafeArea.ToString());
+				ControlPanel.Log(Colors.orange.Tag("SAFE AREA: " + m_safeArea.ToString()));
 			}
 			return m_safeArea;
 		}
